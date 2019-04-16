@@ -1,0 +1,308 @@
+﻿using Ict;
+using Sci.Production.PublicPrg;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Transactions;
+using System.Windows.Forms;
+using Sci.Win.Tems;
+using Ict.Win;
+using Sci.Data;
+
+namespace Sci.Production.Logistic
+{
+    /// <summary>
+    /// P11
+    /// </summary>
+    public partial class P11 : Sci.Win.Tems.Input6
+    {
+        /// <summary>
+        /// P11
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
+        public P11(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+            this.DefaultFilter = $"MDivisionID = '{Env.User.Keyword}'";
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Visible = false;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["DisposeDate"] = DateTime.Now;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+
+            this.OnDetailGridRemoveClick();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            this.lblStatus.Text = this.CurrentMaintain["status"].ToString();
+
+            if (this.EditMode)
+            {
+                this.btnImport.Enabled = true;
+            }
+            else
+            {
+                this.btnImport.Enabled = false;
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickDeleteBefore()
+        {
+            if (this.CurrentMaintain["Status"].Equals("Confirmed"))
+            {
+                MyUtility.Msg.WarningBox("Confirmed data can not delete!!");
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = $@"  
+select  
+        cdd.ID,
+        cdd.PackingListID,
+        cdd.CTNStartNO,
+        pd.OrderID,
+        o.CustPoNo,
+        o.StyleID,
+        pd.Article,
+        pd.Color,
+        [Size] =  (SELECT Stuff((select  concat( '/',SizeCode)
+						from (select distinct pda.SizeCode,osca.Seq
+								from PackingList_Detail pda with (nolock)
+								inner join Orders o2 with (nolock) on pda.OrderID = o2.ID
+						        inner join Order_SizeCode osca with (nolock) on o2.POID = osca.ID and pda.SizeCode = osca.SizeCode
+								where pda.ID = cdd.PackingListID and pda.CTNStartNO = cdd.CTNStartNO ) a  order by Seq
+					FOR XML PATH('')),1,1,'')) ,
+        [QtyPerCTN] = (SELECT Stuff((select  concat( '/',QtyPerCTN)
+						from (select [QtyPerCTN] = sum(pda.QtyPerCTN),osca.Seq
+								from PackingList_Detail pda with (nolock)
+								inner join Orders o2 with (nolock) on pda.OrderID = o2.ID
+						        inner join Order_SizeCode osca with (nolock) on o2.POID = osca.ID and pda.SizeCode = osca.SizeCode
+								where pda.ID = cdd.PackingListID and pda.CTNStartNO = cdd.CTNStartNO group by  pda.SizeCode,osca.Seq ) a  order by Seq
+							FOR XML PATH('')),1,1,'')) ,
+        pd.ClogLocationID
+from ClogGarmentDispose_Detail cdd with (nolock)
+left join PackingList_Detail pd with (nolock) on  pd.ID = cdd.PackingListID and pd.CTNStartNO = cdd.CTNStartNO and CTNQty = 1
+left join Orders o with (nolock) on o.ID = pd.OrderID
+where cdd.ID = '{masterID}'
+";
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDetailGridSetup()
+        {
+            #region -- 欄位設定 --
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("CTNStartNO", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Article", header: "ColorWay", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Size", header: "Size", width: Widths.AnsiChars(18), iseditingreadonly: true)
+            .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(18), iseditingreadonly: true)
+            .CellClogLocation("ClogLocationID", header: "Location", width: Widths.AnsiChars(10), iseditingreadonly: true);
+
+            #endregion 欄位設定
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            if (!this.CurrentMaintain["Status"].Equals("New"))
+            {
+                MyUtility.Msg.WarningBox("The record status is not new, can't modify !!");
+                return false;
+            }
+
+            return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickSaveBefore()
+        {
+            bool isNewSave = MyUtility.Check.Empty(this.CurrentMaintain["ID"]);
+            if (isNewSave)
+            {
+                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "GD", "ClogGarmentDispose", DateTime.Now);
+            }
+
+            return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickConfirm()
+        {
+            base.ClickConfirm();
+
+            DualResult result;
+
+            var listDistinctPKID = this.DetailDatas.Select(s => s["PackingListID"].ToString()).Distinct();
+            bool isPackingAlreadyPullout = false;
+            foreach (string packingID in listDistinctPKID)
+            {
+                isPackingAlreadyPullout = MyUtility.Check.Seek($"select 1 from PackingList where ID = '{packingID}' and PulloutDate is not null");
+                if (isPackingAlreadyPullout)
+                {
+                    MyUtility.Msg.WarningBox($"<{packingID}> already pullout, cannot confirm!!");
+                    return;
+                }
+            }
+
+            #region 檢查detail資料是否已被confirm過
+            string sqlCheckConfirmed = $@"
+select cd.ID,cd.PackingListID,cd.CTNStartNO
+from ClogGarmentDispose c
+inner join ClogGarmentDispose_Detail cd with (nolock) on c.ID = cd.ID
+inner join ClogGarmentDispose_Detail cd1 on cd1.ID = '{this.CurrentMaintain["ID"]}' and cd.PackingListID = cd1.PackingListID and cd.CTNStartNO = cd1.CTNStartNO
+where c.Status = 'Confirmed' and c.ID <> '{this.CurrentMaintain["ID"]}'";
+
+            DataTable dtDisposeConfirmed;
+            result = DBProxy.Current.Select(null, sqlCheckConfirmed, out dtDisposeConfirmed);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            bool isDetailAlreadyConfirmed = dtDisposeConfirmed.Rows.Count > 0;
+            if (isDetailAlreadyConfirmed)
+            {
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dtDisposeConfirmed, "Detail data are already confirmed by other ID, please check the following data");
+                return;
+            }
+            #endregion
+
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+                try
+                {
+                    string updateCMD = $@"
+update ClogGarmentDispose set Status = 'Confirmed' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
+
+update pd set pd.DisposeFromClog = 1
+from PackingList_Detail pd
+where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
+";
+                    DataTable dtResult;
+                    DataTable dtDetail = this.DetailDatas.CopyToDataTable();
+                    result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, updateCMD, out dtResult);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        transactionScope.Dispose();
+                        return;
+                    }
+
+                    DataTable dtOrderID = this.DetailDatas.GroupBy(s => s["OrderID"]).Select(s =>
+                    {
+                        DataRow dr = dtDetail.NewRow();
+                        dr["OrderID"] = s.Key;
+                        return dr;
+                    }).CopyToDataTable();
+
+                    result = Prgs.UpdateOrdersCTN(dtOrderID);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        transactionScope.Dispose();
+                        return;
+                    }
+
+                    transactionScope.Complete();
+                    MyUtility.Msg.InfoBox("Confirmed successful");
+                }
+                catch (Exception ex)
+                {
+                    transactionScope.Dispose();
+                    this.ShowErr(ex);
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+                try
+                {
+                    string updateCMD = $@"
+update ClogGarmentDispose set Status = 'New' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
+
+update pd set pd.DisposeFromClog = 0
+from PackingList_Detail pd
+where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
+";
+                    DataTable dtResult;
+                    DataTable dtDetail = this.DetailDatas.CopyToDataTable();
+                    DualResult result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, updateCMD, out dtResult);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        transactionScope.Dispose();
+                        return;
+                    }
+
+                    DataTable dtOrderID = this.DetailDatas.GroupBy(s => s["OrderID"]).Select(s =>
+                    {
+                        DataRow dr = dtDetail.NewRow();
+                        dr["OrderID"] = s.Key;
+                        return dr;
+                    }).CopyToDataTable();
+
+                    result = Prgs.UpdateOrdersCTN(dtOrderID);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        transactionScope.Dispose();
+                        return;
+                    }
+
+                    transactionScope.Complete();
+                    MyUtility.Msg.InfoBox("UnConfirmed successful");
+                }
+                catch (Exception ex)
+                {
+                    transactionScope.Dispose();
+                    this.ShowErr(ex);
+                }
+            }
+        }
+
+        private void BtnImport_Click(object sender, EventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            P11_Import p11_Import = new P11_Import(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource);
+            p11_Import.ShowDialog();
+        }
+    }
+}
