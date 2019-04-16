@@ -68,9 +68,9 @@ namespace Sci.Production
                         OpenLogin();
                     }
                 };
-
-                
             }
+
+            this.OnLineHelpID = "Production";
         }
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
