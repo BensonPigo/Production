@@ -2332,6 +2332,8 @@
     <Build Include="dbo\Tables\LocalPO_IrregularPrice.sql" />
     <Build Include="dbo\Tables\ArtworkPO_IrregularPrice.sql" />
     <Build Include="dbo\Tables\PackingError.sql" />
+    <Build Include="dbo\Tables\ClogGarmentDispose.sql" />
+    <Build Include="dbo\Tables\ClogGarmentDispose_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
