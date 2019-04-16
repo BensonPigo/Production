@@ -763,13 +763,14 @@ and p2.CTNQty > 0";
             StringBuilder warningmsgCLog = new StringBuilder();
             string strSqlcmdCLog =
                    $@"
-select p2.ID+p2.CTNStartNo idCTN
+select p2.ID,p2.CTNStartNo
 from GMTBooking g
 inner join PackingList p1 on p1.INVNo = g.id
 inner join PackingList_Detail p2 on p1.ID=p2.ID
 where g.ShipPlanID='{this.CurrentMaintain["id"]}'
 and (TransferCFADate is not null or ReceiveDate is null)
 and p2.CTNQty > 0
+and p1.Type <> 'S'
 ";
             if (result = DBProxy.Current.Select(null, strSqlcmdCLog, out dtCLog))
             {
@@ -777,10 +778,10 @@ and p2.CTNQty > 0
                 {
                     foreach (DataRow dr in dtCLog.Rows)
                     {
-                        warningmsgCLog.Append($@"<{dr["idCTN"]}> not in clog, cannot confirm !!" + Environment.NewLine);
+                        warningmsgCLog.Append($@"<PackingList#:{dr["ID"]}, CTN#:{dr["CTNStartNo"]}>" + Environment.NewLine);
                     }
 
-                    MyUtility.Msg.WarningBox(warningmsgCLog.ToString());
+                    MyUtility.Msg.WarningBox("Below records are not in clog, cannot confirm!!\r\n" + warningmsgCLog.ToString());
                     return;
                 }
             }
