@@ -108,6 +108,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["issuedate"] = DateTime.Today;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["ChooseSupp"] = 1;
+            this.CurrentMaintain["QuotDate1"] = DateTime.Now;
         }
 
         //修改前檢查
@@ -141,6 +142,8 @@ namespace Sci.Production.Subcon
             var suppid = "";
             var price = 0.0;
             var currencyid = "";
+            DateTime? QuotDate = null;
+
             #region 選取的報價資料
             switch (CurrentMaintain["ChooseSupp"].ToString())
             {
@@ -148,26 +151,30 @@ namespace Sci.Production.Subcon
                     suppid = CurrentMaintain["localsuppid1"].ToString();
                     price = double.Parse(CurrentMaintain["price1"].ToString());
                     currencyid = CurrentMaintain["currencyid1"].ToString();
+                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate1"]);
                     break;
                 case "2":
                     suppid = CurrentMaintain["localsuppid2"].ToString();
                     price = double.Parse(CurrentMaintain["price2"].ToString());
                     currencyid = CurrentMaintain["currencyid2"].ToString();
+                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate2"]);
                     break;
                 case "3":
                     suppid = CurrentMaintain["localsuppid3"].ToString();
                     price = double.Parse(CurrentMaintain["price3"].ToString());
                     currencyid = CurrentMaintain["currencyid3"].ToString();
+                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate3"]);
                     break;
                 case "4":
                     suppid = CurrentMaintain["localsuppid4"].ToString();
                     price = double.Parse(CurrentMaintain["price4"].ToString());
                     currencyid = CurrentMaintain["currencyid4"].ToString();
+                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate4"]);
                     break;
             }
             #endregion
 
-            if (string.IsNullOrWhiteSpace(suppid) || string.IsNullOrWhiteSpace(currencyid) || price == 0.0)
+            if (string.IsNullOrWhiteSpace(suppid) || string.IsNullOrWhiteSpace(currencyid) || price == 0.0 || MyUtility.Check.Empty(QuotDate))
             {
                 MyUtility.Msg.WarningBox("Choosed Set of data can't be empty!!");
                 return false;

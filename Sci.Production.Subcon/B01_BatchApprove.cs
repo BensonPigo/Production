@@ -37,6 +37,7 @@ namespace Sci.Production.Subcon
                 .Text("Category", header: "Category", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("IsApproved", header: "Is Approved", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("AccountIDN", header: "Account No", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("sLocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -53,6 +54,7 @@ namespace Sci.Production.Subcon
                 .Text("SuppAbb", header: "Supp Abb", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(8), decimal_places: 4, iseditingreadonly: true)
+                .Date("QuotDate", header: "QuotDate", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 ;
 
             // 按Header沒有排序功能
@@ -67,6 +69,7 @@ namespace Sci.Production.Subcon
                 this.grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             query();
+            this.listControlBindingSource1.Filter = "IsApproved='N'";
         }
         
         public string sqlcmd(string Refno = "",string ukey = "")
@@ -91,6 +94,7 @@ from
 	select l.Category
 			,l.Refno
 			,l.Description
+            ,[IsApproved]=IIF(lq.Status='Approved','Y','N')
 			,l.UnitID
 			,l.LocalSuppID
 			,l.CurrencyID
@@ -115,7 +119,7 @@ from
 	
 	from LocalItem l
 	inner join LocalItem_Quot lq on l.RefNo = lq.RefNo
-	where lq.status <> 'Approved'
+	where 1=1 --lq.status <> 'Approved'
 	{wheresql}
 )l
 left join LocalSupp ls on l.LocalSuppID = ls.ID
@@ -138,54 +142,65 @@ select	RefNo
 		, [Status]
 into #bas
 from LocalItem_Quot
-where [Status] != 'Approved'
+--where [Status] != 'Approved'
 
 select	[Selected] = iif (tmp.ChooseSupp = tmp.seq, 1, 0)
-		, *
+        , RefNo
+		, IssueDate
+		, Ukey
+		, ChooseSupp
+        , LocalSuppID
+        , CurrencyID
+        , QuotDate
+        , SuppAbb
 from (
-	select *
+	select *, [QuotDate]=one.QuotDate1
 	from #bas bas
 	outer apply (
 		select	seq = 1
 				, LocalSuppID = liq.LocalSuppID1
 				, CurrencyID = liq.CurrencyID1
 				, Price = liq.Price1
+                , QuotDate1=liq.QuotDate1
 		from LocalItem_Quot liq
 		where bas.Ukey = liq.Ukey
 	) one
 
 	union all 
-	select *
+	select *, [QuotDate]=two.QuotDate1
 	from #bas bas
 	outer apply (
 		select	seq = 2
 				, LocalSuppID = liq.LocalSuppID2
 				, CurrencyID = liq.CurrencyID2
 				, Price = liq.Price2
+                , QuotDate1=liq.QuotDate2
 		from LocalItem_Quot liq
 		where bas.Ukey = liq.Ukey
 	) two
 
 	union all 
-	select *
+	select *, [QuotDate]=three.QuotDate1
 	from #bas bas
 	outer apply (
 		select	seq = 3
 				, LocalSuppID = liq.LocalSuppID3
 				, CurrencyID = liq.CurrencyID3
 				, Price = liq.Price3
+                , QuotDate1=liq.QuotDate3
 		from LocalItem_Quot liq
 		where bas.Ukey = liq.Ukey
 	) three
 
 	union all 
-	select *
+	select *, [QuotDate]=four.QuotDate1
 	from #bas bas
 	outer apply (
 		select	seq = 4
 				, LocalSuppID = liq.LocalSuppID4
 				, CurrencyID = liq.CurrencyID4
 				, Price = liq.Price4
+                , QuotDate1=liq.QuotDate4
 		from LocalItem_Quot liq
 		where bas.Ukey = liq.Ukey
 	) four
@@ -211,33 +226,33 @@ drop table #bas
                 listControlBindingSource2.DataSource = null;
             }
 
-            var query = from t in datas.Tables[0].AsEnumerable()
-                        group t by new { t1 = MyUtility.Convert.GetString(t["Refno"]) } into m
-                        select new
-                        {
-                            refno = m.Key.t1,
-                            ct = m.Count()
-                        };
-            List<string> msg = new List<string>();
-            if (query.ToList().Count > 0)
-            {
-                query.ToList().ForEach(q =>
-                {
-                    if (q.ct > 1)
-                    {
-                        msg.Add(q.refno);
-                        foreach (var item in datas.Tables[0].Select($"Refno = '{q.refno}'"))
-                        {
-                            item.Delete();
-                        }
+            //var query = from t in datas.Tables[0].AsEnumerable()
+            //            group t by new { t1 = MyUtility.Convert.GetString(t["Refno"]) } into m
+            //            select new
+            //            {
+            //                refno = m.Key.t1,
+            //                ct = m.Count()
+            //            };
+            //List<string> msg = new List<string>();
+            //if (query.ToList().Count > 0)
+            //{
+            //    query.ToList().ForEach(q =>
+            //    {
+            //        if (q.ct > 1)
+            //        {
+            //            msg.Add(q.refno);
+            //            foreach (var item in datas.Tables[0].Select($"Refno = '{q.refno}'"))
+            //            {
+            //                item.Delete();
+            //            }
 
-                        foreach (var item in datas.Tables[1].Select($"Refno = '{q.refno}'"))
-                        {
-                            item.Delete();
-                        }
-                    }
-                });
-            }
+            //            foreach (var item in datas.Tables[1].Select($"Refno = '{q.refno}'"))
+            //            {
+            //                item.Delete();
+            //            }
+            //        }
+            //    });
+            //}
             datas.Tables[0].AcceptChanges();
             datas.Tables[1].AcceptChanges();
 
@@ -252,10 +267,15 @@ drop table #bas
             detail = datas.Tables[1];
             detail.TableName = "Detail";
 
+            //DataRelation relation = new DataRelation("rel1"
+            //        , new DataColumn[] { master.Columns["Refno"] }
+            //        , new DataColumn[] { detail.Columns["Refno"] }
+            //        );
             DataRelation relation = new DataRelation("rel1"
-                    , new DataColumn[] { master.Columns["Refno"] }
-                    , new DataColumn[] { detail.Columns["Refno"] }
-                    );
+                 , new DataColumn[] { master.Columns["Ukey"] }
+                 , new DataColumn[] { detail.Columns["Ukey"] }
+                 );
+
 
             datas.Relations.Add(relation);
 
@@ -265,10 +285,18 @@ drop table #bas
             listControlBindingSource2.DataMember = "rel1";
             this.grid1.AutoResizeColumns();
             this.grid1.Columns["Description"].Width = 100;
-            if (msg.Count > 0)
+            //            if (msg.Count > 0)
+            //            {
+            //                MyUtility.Msg.WarningBox($@"Refno have more than one new quotation, please handle those individually.
+            //Refno {string.Join(",", msg)} ");
+            //            }
+
+            for (int i = 0; i < this.grid1.Rows.Count; i++)
             {
-                MyUtility.Msg.WarningBox($@"Refno have more than one new quotation, please handle those individually.
-Refno {string.Join(",", msg)} ");
+                if (this.grid1.Rows[i].Cells["IsApproved"].Value.ToString() == "Y")
+                {
+                    this.grid1.Rows[i].DefaultCellStyle.BackColor = Color.LightGray;
+                }
             }
 
         }
@@ -285,12 +313,12 @@ Refno {string.Join(",", msg)} ");
                 return;
             }
             this.grid1.ValidateControl();
-            if (master.Select("Selected = 1").Length == 0)
+            if (master.Select("Selected = 1 AND IsApproved='N'").Length == 0)
             {
                 MyUtility.Msg.WarningBox("Must select datas!");
                 return;
             }
-            DataTable selectdt = master.Select("Selected = 1").CopyToDataTable();
+            DataTable selectdt = master.Select("Selected = 1 AND IsApproved='N'").CopyToDataTable();
 
             List<string> chkmsg = new List<string>();
             foreach (DataRow drow in selectdt.Rows)
@@ -360,5 +388,31 @@ when matched then update set
             MyUtility.Msg.InfoBox("Success!");
             return true;
         }
+
+        private void chkIncludeApproved_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkIncludeApproved.Checked)
+            {
+                this.listControlBindingSource1.Filter = "IsApproved='Y' OR IsApproved='N'";
+
+                for (int i = 0; i < this.grid1.Rows.Count; i++)
+                {
+                    if (this.grid1.Rows[i].Cells["IsApproved"].Value.ToString() == "Y")
+                    {
+                        this.grid1.Rows[i].DefaultCellStyle.BackColor = Color.LightGray;
+                    }
+                }
+            }
+            else
+            {
+                this.listControlBindingSource1.Filter = "IsApproved='N'";
+
+                for (int i = 0; i < this.grid1.Rows.Count; i++)
+                {
+                    this.grid1.Rows[i].DefaultCellStyle.BackColor = Color.White;
+                }
+            }
+        }
+
     }
 }
