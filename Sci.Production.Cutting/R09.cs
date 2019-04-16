@@ -54,9 +54,53 @@ namespace Sci.Production.Cutting
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             StringBuilder strSqlCmd = new StringBuilder();
+            StringBuilder sqlWhere = new StringBuilder();
+            #region Filter 條件字串
+
+            if (!MyUtility.Check.Empty(strM))
+            {
+                sqlWhere.Append($" and w.MdivisionID = '{strM}'");
+            }
+
+            if (!MyUtility.Check.Empty(strFty))
+            {
+                sqlWhere.Append($" and w.FactoryID = '{strFty}'");
+            }
+
+            if (!MyUtility.Check.Empty(dateEstCut1) && !MyUtility.Check.Empty(dateEstCut2))
+            {
+                sqlWhere.Append($@" and w.EstCutDate between '{dateEstCut1}' and '{dateEstCut2}'");
+            }
+
+            if (!MyUtility.Check.Empty(strSpreadingNo1))
+            {
+                sqlWhere.Append($@" and w.SpreadingNoID >='{strSpreadingNo1}'");
+            }
+
+            if (!MyUtility.Check.Empty(strSpreadingNo2))
+            {
+                sqlWhere.Append($@" and w.SpreadingNoID <='{strSpreadingNo2}'");
+            }
+
+            if (!MyUtility.Check.Empty(strCutCell1))
+            {
+                sqlWhere.Append($@" and w.CutCellid >='{strCutCell1}'");
+            }
+
+            if (!MyUtility.Check.Empty(strCutCell2))
+            {
+                sqlWhere.Append($@" and w.CutCellid <='{strCutCell2}'");
+            }
+
+            if (!MyUtility.Check.Empty(strCuttingSPNo))
+            {
+                sqlWhere.Append($@" and w.id ='{strCuttingSPNo}'");
+            }
+
+            #endregion
+
             strSqlCmd.Append($@"
 select [Factory] = wo_Before.FactoryID
-,wo_Before.WorkOrderUkey
 ,[CutCell] = wo_Before.CutCellid
 ,[SpreadingNo] = wo_Before.SpreadingNoID
 ,[CuttingPlanID] = CutplanID.CutplanID
@@ -80,18 +124,20 @@ select [Factory] = wo_Before.FactoryID
 ,[ExcessQty_Before] = isnull( Excess_Before.qty,0)
 ,[ExcessQty_After] = isnull( Excess_After.strQty,0)
 ,[Roll] = iif(isnull(n.NoofRoll,0)<1,1,n.NoofRoll)
-,[NoOfWindow] = CONVERT(float,round((wo_Before.Cons/ wo_Before.Layer),2))
+,[NoOfWindow] = CONVERT(float,round((wo_Before.Cons/ wo_Before.Layer) * 0.9144 / isnull(ct.WindowLength,1),2))
 ,[Perimeter_Before] = cast(iif(wo_before.ActCuttingPerimeter not like '%yd%','0',ROUND(dbo.GetActualPerimeterYd(wo_before.ActCuttingPerimeter),2)) as float)
 ,[Perimeter_After] = Perimeter_After.strPerimeter
 ,[CuttingSpeed_Before] = ISNULL(  ActSpeed_Before.ActualSpeed,0)
 ,[CuttingSpeed_After] =ISNULL( ActSpeed_After.strActualSpeed,0)
 ,[SpreadingTime_Before] = isnull(cast(round(dbo.GetSpreadingTime(f.WeaveTypeID,wo_before.Refno,iif(isnull(n.NoofRoll,0)<1,1,n.NoofRoll),sl.Layer,sc.Cons,1)/60,2)as float),0)
 ,[CuttingTime_Before] = ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeterYd(iif(wo_before.ActCuttingPerimeter not like '%yd%','0',wo_before.ActCuttingPerimeter)),4),wo_Before.CutCellid,sl.Layer,f.WeaveTypeID,sc.Cons),0 )as Float) /60,2)
+,wo_Before.Ukey
 into #tmp
 from WorkOrderRevisedMarkerOriginalData wo_Before
 left join orders o on o.ID=wo_Before.ID
 left join Fabric f on f.SCIRefno=wo_Before.SCIRefno
 left join PO_Supp_Detail po3 on po3.ID=wo_Before.ID and po3.SEQ1=wo_Before.SEQ1 and po3.SEQ2=wo_Before.SEQ2
+left join CuttingTime ct with (nolock) on f.WeaveTypeID = ct.WeaveTypeID
 outer apply(select Layer = sum(wo_Before.Layer)over(partition by wo_Before.CutRef))sl
 outer apply(select Cons = sum(wo_Before.Cons)over(partition by wo_Before.CutRef))sc
 outer apply(
@@ -99,7 +145,7 @@ select strLength = stuff(
 (
 	select concat(',', MarkerLength)
 	from WorkOrder
-	where Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,','))
+	where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
 	For XML path('')
 	),1,1,'')
 )MarkerLength_After
@@ -113,7 +159,7 @@ select strLayer = stuff(
 (
 	select concat(',', Layer)
 	from WorkOrder
-	where Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,','))
+	where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
 	For XML path('')
 	),1,1,'')
 )Layer_After
@@ -122,7 +168,7 @@ select strCons = stuff(
 (
 	select concat(',', convert(varchar(100), isnull(sum(Cons)over(partition by cutref),0)))
 	from WorkOrder
-	where Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,','))
+	where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
 	For XML path('')
 	),1,1,'')
 )Cons_After
@@ -131,7 +177,7 @@ select strPerimeter = stuff(
 (
 	select concat(',',isnull(convert(varchar(100),iif(ActCuttingPerimeter not like '%yd%','0',ROUND(dbo.GetActualPerimeterYd(ActCuttingPerimeter),2))),0))
 	from WorkOrder
-	where Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,','))
+	where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
 	For XML path('')
 	),1,1,'')
 )Perimeter_After
@@ -159,11 +205,10 @@ select strQty = stuff(
 	(
 		select concat(',',qty) from 
 		(
-			select isnull( sum(qty),0) qty ,WorkOrderUkey
+			select isnull( sum(qty),0) qty ,wodd.WorkOrderUkey
 			from WorkOrder_SizeRatio ws	
-			inner join (select data from  dbo.SplitString((select WorkOrderUkey from WorkOrderRevisedMarkerOriginalData where Ukey=wo_Before.Ukey),',') )
-			s on ws.WorkOrderUkey=s.Data
-			group by WorkOrderUkey	
+			inner join WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) on wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey and ws.WorkOrderUkey= wodd.WorkorderUkey
+			group by wodd.WorkOrderUkey	
 		) a
 		For XML path('')
 	),1,1,'')
@@ -203,9 +248,7 @@ outer apply(
 		inner join CutCell cc on cc.CuttingMachineID = cmd.id
 		inner join (
 			select * from WorkOrder 
-			where ukey in (select data from dbo.SplitString(
-			(select WorkOrderUkey from WorkOrderRevisedMarkerOriginalData where convert(varchar(100),ukey) = wo_Before.Ukey)
-			,',')) 
+			where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
 		)s on s.CutCellid= cc.ID 
 		where 1=1	
 		and CAST(s.Layer as int) between CAST( cmd.LayerLowerBound as int) and CAST(cmd.LayerUpperBound as int)
@@ -226,10 +269,9 @@ select strQty = stuff(
 		(
 			select isnull(sum(qty),0) qty ,wod.WorkOrderUkey
 			from Workorder_distribute wod WITH (NOLOCK)	
-			inner join (select data from  dbo.SplitString((select WorkOrderUkey from WorkOrderRevisedMarkerOriginalData where Ukey=wo_Before.Ukey),',') )
-			s on wod.WorkOrderUkey=s.Data
+			inner join WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) on wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey and wod.WorkOrderUkey= wodd.WorkorderUkey
 			where wod.OrderID='EXCESS'
-			group by WorkOrderUkey	
+			group by wod.WorkOrderUkey	
 		) a
 		For XML path('')
 	),1,1,'')
@@ -242,14 +284,13 @@ outer apply(
 	and fi.InQty is not null
 ) as fi
 outer apply(select NoofRoll = iif(isnull(fi.avgInQty,0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
-
-
 outer apply(	
 	SELECT [CutplanID]=STUFF(
 	(
 		SELECT CONCAT(',',CutplanID )
 		FROM WorkOrder 
-		WHERE Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,',')) AND CutplanID <>'' AND CutplanID IS NOT NULL
+		WHERE	exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
+				AND CutplanID <>'' AND CutplanID IS NOT NULL
 		For XML path('')
 	),1,1,'')
 )CutplanID
@@ -258,57 +299,17 @@ outer apply(
 	(
 		SELECT CONCAT(',',CutRef )
 		FROM WorkOrder 
-		WHERE Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,',')) AND CutRef <>'' AND CutRef IS NOT NULL
+		WHERE	exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
+				AND CutRef <>'' AND CutRef IS NOT NULL
 		For XML path('')
 	),1,1,'')
 )CutRefNo
+where 
+exists (select 1 
+		from WorkOrder w with (nolock)
+		inner join WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) on w.Ukey = wodd.WorkorderUkey
+		 where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = wo_Before.Ukey {sqlWhere})
 
-where 1=1
-");
-
-            #region Filter 條件字串
-
-            if (!MyUtility.Check.Empty(strM))
-            {
-                strSqlCmd.Append($" and wo_Before.MdivisionID = '{strM}'");
-            }
-
-            if (!MyUtility.Check.Empty(strFty))
-            {
-                strSqlCmd.Append($" and wo_Before.FactoryID = '{strFty}'");
-            }
-
-            if (!MyUtility.Check.Empty(dateEstCut1) && !MyUtility.Check.Empty(dateEstCut2))
-            {
-                strSqlCmd.Append($@" and wo_Before.EstCutDate between '{dateEstCut1}' and '{dateEstCut2}'");
-            }
-
-            if (!MyUtility.Check.Empty(strSpreadingNo1))
-            {
-                strSqlCmd.Append($@" and wo_Before.SpreadingNoID >='{strSpreadingNo1}'");
-            }
-
-            if (!MyUtility.Check.Empty(strSpreadingNo2))
-            {
-                strSqlCmd.Append($@" and wo_Before.SpreadingNoID <='{strSpreadingNo2}'");
-            }
-
-            if (!MyUtility.Check.Empty(strCutCell1))
-            {
-                strSqlCmd.Append($@" and wo_Before.CutCellid >='{strCutCell1}'");
-            }
-
-            if (!MyUtility.Check.Empty(strCutCell2))
-            {
-                strSqlCmd.Append($@" and wo_Before.CutCellid <='{strCutCell2}'");
-            }
-
-            if (!MyUtility.Check.Empty(strCuttingSPNo))
-            {
-                strSqlCmd.Append($@" and wo_Before.id ='{strCuttingSPNo}'");
-            }
-
-            strSqlCmd.Append($@"
 
 select [Factory],[CutCell] ,[SpreadingNo] ,[CuttingPlanID] 
 ,[SP] ,[SubSP],[Style],[Size] 
@@ -333,7 +334,7 @@ select Cons= cast(  t.Cons_Before - round((sum(cons)),2) as float)
 	from (
 		select cons= isnull(round((sum(Cons)over(partition by cutref) ),2) ,0)
 		from WorkOrder
-		where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
+		where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = t.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
 	) a
 )TotalCons
 outer apply(
@@ -341,7 +342,7 @@ select strCons = stuff(
 (
 	select concat(',', convert(varchar(100), cast(round((sum(Cons)over(partition by cutref)),2)as float)))
 	from WorkOrder
-	where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
+	where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = t.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
 	For XML path('')
 	),1,1,'')
 )Cons_After
@@ -361,7 +362,7 @@ outer apply(
 			and fi.InQty is not null
 		) as fi
 		outer apply(select NoofRoll = iif(isnull(fi.avgInQty,0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
-		where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
+		where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = t.Ukey and a.Ukey = wodd.WorkorderUkey)
 	) a
 )TotalSpreadingTime
 outer apply(
@@ -381,7 +382,7 @@ select Time = stuff(
 			and fi.InQty is not null
 		) as fi
 		outer apply(select NoofRoll = iif(isnull(fi.avgInQty,0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
-		where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
+		where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = t.Ukey and a.Ukey = wodd.WorkorderUkey)
 		) a
 	For XML path('')
 	),1,1,'')
@@ -396,7 +397,7 @@ outer apply(
 		from WorkOrder
 		outer apply(select Layer = sum(Layer)over(partition by CutRef))sl
 		outer apply(select Cons = sum(Cons)over(partition by CutRef))sc
-		where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
+		where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = t.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
 		) a
 )TotalCutting
 outer apply(
@@ -410,15 +411,18 @@ select CuttingTime =
 		from WorkOrder
 		outer apply(select Layer = sum(Layer)over(partition by CutRef))sl
 		outer apply(select Cons = sum(Cons)over(partition by CutRef))sc
-		where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
+		where exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wodd with (nolock) where wodd.WorkorderUkeyRevisedMarkerOriginalUkey = t.Ukey and WorkOrder.Ukey = wodd.WorkorderUkey)
 		) a
 	For XML path('')
 	),1,1,'')
 )Cutting_After
 
 
-drop table #tmp");
-            #endregion
+drop table #tmp
+
+");
+
+           
 
             DualResult result = DBProxy.Current.Select(null, strSqlCmd.ToString(), out printData);
             if (!result)
