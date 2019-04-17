@@ -30,7 +30,7 @@ BEGIN
 	select
 		@Setuptime = Setuptime,
 		@Windowtime = WindowTime,
-		@WindowNo = @MarkerLength/WindowLength
+		@WindowNo = iif(isnull(WindowLength,0) = 0,0,@MarkerLength/WindowLength)
 	from CuttingTime
 	where WeaveTypeID = @WeaveTypeID
 

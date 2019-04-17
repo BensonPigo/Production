@@ -37,7 +37,6 @@
     [StraightLength]      VARCHAR (15)   NULL,
     [CurvedLength]        VARCHAR (15)   NULL,
     [SpreadingNoID]       VARCHAR (3)    NULL,
-    [WorkOrderUkey]       BIGINT         NOT NULL,
     CONSTRAINT [PK_WorkOrderRevisedMarkerOriginalData] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

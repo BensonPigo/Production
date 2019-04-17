@@ -2334,6 +2334,7 @@
     <Build Include="dbo\Tables\PackingError.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose_Detail.sql" />
+    <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
