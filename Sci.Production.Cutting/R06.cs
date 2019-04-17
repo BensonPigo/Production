@@ -101,10 +101,6 @@ select d.Readydate,f.ID into #df from #dateranges d,Factory f where f.Junk=0
 --撈工廠設定的Holiday,和星期日,欄位holiday = 1
 select d.Readydate,d.ID,h.FactoryID,holiday = iif(h.FactoryID is not null,1,iif(DATEPART(WEEKDAY, Readydate) =1,1,0))
 INTO #DHoliday from #df d left join Holiday h on d.Readydate = h.HolidayDate and d.ID = h.FactoryID
-
-select h1.Readydate,h1.ID,h1.holiday,SewOffLine=CAST(NULL AS date),BuyerDelivery=CAST(NULL AS date),CutGapDay=CAST(NULL AS date)
-into #tmp1
-from #DHoliday h1
 ";
             }
             else
@@ -113,14 +109,14 @@ from #DHoliday h1
 --星期日,欄位holiday = 1
 select d.Readydate,d.ID,holiday = iif(DATEPART(WEEKDAY, Readydate) =1,1,0)
 INTO #DHoliday from #df d 
-
-select h1.Readydate,h1.ID,h1.holiday,SewOffLine=CAST(NULL AS date),BuyerDelivery=CAST(NULL AS date),CutGapDay=CAST(NULL AS date)
-into #tmp1
-from #DHoliday h1
 ";
             }
 
             sqlcmd += $@"
+select h1.Readydate,h1.ID,h1.holiday,SewOffLine=CAST(NULL AS date),BuyerDelivery=CAST(NULL AS date),CutGapDay=CAST(NULL AS date)
+into #tmp1
+from #DHoliday h1
+
 Declare @Readydate date,@factory nvarchar(8),@holiday int,@sewoffline date,@Buyerday date,@CutGapDay date
 DECLARE c1 CURSOR FOR select * from #tmp1 order by ID,Readydate
 OPEN c1
@@ -190,19 +186,17 @@ CLOSE c1
 DEALLOCATE c1
 
 select Readydate,Factory=ID,SewOffLine,BuyerDelivery,CutGapDay into #tmp2 from #tmp1 where holiday =0 and Readydate between @ReadyOffline1 and @ReadyOffline2
-";
-
-            sqlcmd += $@"
 ------------------------------------------------------------------------------------------------------------------------------------
 --從orders撈資料
 select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Category,c.Alias,o.StyleID,o.CustPONo,o.BrandID,o.ProgramID,o.Qty
 	,o.SewInLine,o.SewOffLine,o.SewLine,o.ShipModeList,a.Article,t.Readydate,o.MDivisionid,t.CutGapDay
 into #orderOffline
 from Orders o with(nolock)
-inner join #tmp2 t on t.SewOffLine = o.SewOffLine and t.Factory = o.FtyGroup
+inner join #tmp2 t on t.SewOffLine = o.SewOffLine and t.Factory = o.FtyGroup--推算的SewOffLine找orders, 以符合SewOffLine
 left join Country c with(nolock) on c.id = o.Dest
 outer apply(select Article = stuff((select concat(',',Article) from Order_Article oa where oa.id = o.id for xml path('')),1,1,''))a
-where o.Junk = 0 and o.Category = 'B' and o.BuyerDelivery >= t.BuyerDelivery
+where o.Junk = 0 and o.Category = 'B'
+and o.BuyerDelivery >= t.BuyerDelivery--BuyerDelivery要大於等於推算出來的BuyerDelivery
 {sqlwhere}
 --and o.MDivisionID = '' and o.FtyGroup = '' and o. BrandID = ''
 
@@ -210,12 +204,11 @@ select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Category,c.Alias,o.StyleI
 	,o.SewInLine,o.SewOffLine,o.SewLine,o.ShipModeList,a.Article,t.Readydate,o.MDivisionid,t.CutGapDay
 into #orderBuyer
 from Orders o with(nolock)
-inner join #tmp2 t on t.BuyerDelivery = o.BuyerDelivery and t.Factory = o.FtyGroup
+inner join #tmp2 t on t.BuyerDelivery = o.BuyerDelivery and t.Factory = o.FtyGroup--推算的BuyerDelivery
 left join Country c with(nolock) on c.id = o.Dest
 outer apply(select Article = stuff((select concat(',',Article) from Order_Article oa where oa.id = o.id for xml path('')),1,1,''))a
 where o.Junk = 0 and o.Category = 'B' 
-and o.BuyerDelivery = t.BuyerDelivery
-and o.id not in(select distinct id from #orderOffline)
+and o.id not in(select distinct id from #orderOffline)--要排除上面的訂單號碼, 才不會重複
 {sqlwhere}
 --and o.MDivisionID = '' and o.FtyGroup = '' and o. BrandID = ''
 
@@ -301,8 +294,6 @@ from #orderBuyer a
 left join #tmpcB3 b on a.ID = b.sp and b.MDivisionid = a.MDivisionid
 
 select * from #tmplast
-order by FtyGroup,BuyerDelivery,SciDelivery
-
 
 select distinct t.MDivisionID from #tmplast t
 select t.MDivisionID,t.FtyGroup,ct=count(1) from #tmplast t group by t.FtyGroup,t.MDivisionID
