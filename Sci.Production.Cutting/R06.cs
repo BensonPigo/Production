@@ -102,15 +102,9 @@ select d.Readydate,f.ID into #df from #dateranges d,Factory f where f.Junk=0
 select d.Readydate,d.ID,h.FactoryID,holiday = iif(h.FactoryID is not null,1,iif(DATEPART(WEEKDAY, Readydate) =1,1,0))
 INTO #DHoliday from #df d left join Holiday h on d.Readydate = h.HolidayDate and d.ID = h.FactoryID
 
-select h1.Readydate,h1.ID,h1.holiday,d.SewOffLine,c.CutGapDay
-into #tmp1 from #DHoliday h1
-outer apply(select a = iif(Holiday=1,null, DATEADD(DAY, @offlinegap,Readydate)))a
-outer apply(
-	select ct = count(1) from (select distinct h2.Readydate from #DHoliday h2 
-	where h2.holiday = 1 and h2.Readydate between h1.Readydate and a.a and (h2.FactoryID = h1.ID or h2.FactoryID is null))c
-)b
-outer apply(select SewOffLine = DATEADD(DAY,@offlinegap+b.ct,Readydate))d
-outer apply(select CutGapDay = DATEADD(DAY,@CutGap+b.ct,Readydate))c
+select h1.Readydate,h1.ID,h1.holiday,SewOffLine=CAST(NULL AS date),BuyerDelivery=CAST(NULL AS date),CutGapDay=CAST(NULL AS date)
+into #tmp1
+from #DHoliday h1
 ";
             }
             else
@@ -120,120 +114,85 @@ outer apply(select CutGapDay = DATEADD(DAY,@CutGap+b.ct,Readydate))c
 select d.Readydate,d.ID,holiday = iif(DATEPART(WEEKDAY, Readydate) =1,1,0)
 INTO #DHoliday from #df d 
 
-select h1.Readydate,h1.ID,h1.holiday,d.SewOffLine,c.CutGapDay
-into #tmp1 from #DHoliday h1
-outer apply(select a = iif(Holiday=1,null, DATEADD(DAY, @offlinegap,Readydate)))a
-outer apply(
-	select ct = count(1) from (select distinct h2.Readydate from #DHoliday h2 
-	where h2.holiday = 1 and h2.Readydate between h1.Readydate and a.a)c
-)b
-outer apply(select SewOffLine = DATEADD(DAY,@offlinegap+b.ct,Readydate))d
-outer apply(select CutGapDay = DATEADD(DAY,@CutGap+b.ct,Readydate))c
+select h1.Readydate,h1.ID,h1.holiday,SewOffLine=CAST(NULL AS date),BuyerDelivery=CAST(NULL AS date),CutGapDay=CAST(NULL AS date)
+into #tmp1
+from #DHoliday h1
 ";
             }
 
             sqlcmd += $@"
---處理推出來的SewOffLine還是假日, 往後加到不是假日
-Declare @Readydate date,@factory nvarchar(8),@holiday int,@sewoffline date,@CutGapDay date
+Declare @Readydate date,@factory nvarchar(8),@holiday int,@sewoffline date,@Buyerday date,@CutGapDay date
 DECLARE c1 CURSOR FOR select * from #tmp1 order by ID,Readydate
 OPEN c1
-FETCH NEXT FROM c1 INTO @Readydate,@factory,@holiday,@sewoffline,@CutGapDay
+FETCH NEXT FROM c1 INTO @Readydate,@factory,@holiday,@sewoffline,@Buyerday,@CutGapDay
 While @@FETCH_STATUS = 0
 Begin
-	declare @d date = @sewoffline
-	while exists (select 1 from #tmp1 where ID = @factory and holiday = 1 and Readydate = @d)
-	begin
-		update #tmp1 set SewOffLine = DATEADD(DAY,1,SewOffLine) where ID = @factory and Readydate = @Readydate
-		set @d = (select SewOffLine from #tmp1 where ID = @factory and Readydate = @Readydate)
-	end
+	--sewoffline
+	declare @count1 int = 0
+	declare @count2 int = 1
+	declare @countTTL int = 0
+	while @count1 < @offlinegap
+	Begin
+		if exists(select 1 from #tmp1 where ID = @factory and holiday = 1 and Readydate = DATEADD(DAY,@count1 + @count2,@Readydate))
+		begin
+			set @countTTL = @countTTL+1
+			set @count2 = @count2 + 1
+		end
+		else
+		begin
+			set @countTTL = @countTTL+1
+			set @count1 = @count1 + 1
+		end
+	End
+	update #tmp1 set SewOffLine = DATEADD(DAY,@countTTL,Readydate) where ID = @factory and Readydate = @Readydate
+	
+	--BuyerDelivery
+	set @count1  = 0
+	set @count2  = 1
+	set @countTTL  = 0
+	while @count1 < @Buyergap
+	Begin
+		if exists(select 1 from #tmp1 where ID = @factory and holiday = 1 and Readydate = DATEADD(DAY,@count1 + @count2,@Readydate))
+		begin
+			set @countTTL = @countTTL+1
+			set @count2 = @count2 + 1
+		end
+		else
+		begin
+			set @countTTL = @countTTL+1
+			set @count1 = @count1 + 1
+		end
+	End
+	update #tmp1 set BuyerDelivery = DATEADD(DAY,@countTTL,Readydate) where ID = @factory and Readydate = @Readydate
+	
+	--Buyer
+	set @count1  = 0
+	set @count2  = 1
+	set @countTTL  = 0
+	while @count1 < @CutGap
+	Begin
+		if exists(select 1 from #tmp1 where ID = @factory and holiday = 1 and Readydate = DATEADD(DAY,@count1 + @count2,@Readydate))
+		begin
+			set @countTTL = @countTTL+1
+			set @count2 = @count2 + 1
+		end
+		else
+		begin
+			set @countTTL = @countTTL+1
+			set @count1 = @count1 + 1
+		end
+	End
+	update #tmp1 set CutGapDay = DATEADD(DAY,@countTTL,Readydate) where ID = @factory and Readydate = @Readydate
 
-	declare @dc date = @CutGapDay
-	while exists (select 1 from #tmp1 where ID = @factory and holiday = 1 and Readydate = @dc)
-	begin
-		update #tmp1 set CutGapDay = DATEADD(DAY,1,CutGapDay) where ID = @factory and Readydate = @Readydate
-		set @dc = (select CutGapDay from #tmp1 where ID = @factory and Readydate = @Readydate)
-	end
-FETCH NEXT FROM c1 INTO @Readydate,@factory,@holiday,@sewoffline,@CutGapDay
+FETCH NEXT FROM c1 INTO @Readydate,@factory,@holiday,@sewoffline,@Buyerday,@CutGapDay
 End
 CLOSE c1
 DEALLOCATE c1
 
-select Readydate,Factory=ID,SewOffLine,CutGapDay into #tmp2 from #tmp1 where holiday =0 and Readydate between @ReadyOffline1 and @ReadyOffline2
-
-------------------------------------------------------------------------------------------------------------------------------------
-create table #daterangesB (Readydate DATE)
-while @DateB1 <= @DateB2
-begin
-	insert into #daterangesB values(@DateB1)	set @DateB1 =  DATEADD(DAY, 1,@DateB1)
-end
-set @DateB1 = DATEADD(DAY, -5, @ReadyBuyer1)
-select d.Readydate,f.ID into #dfB from #daterangesB d,Factory f where f.Junk=0
+select Readydate,Factory=ID,SewOffLine,BuyerDelivery,CutGapDay into #tmp2 from #tmp1 where holiday =0 and Readydate between @ReadyOffline1 and @ReadyOffline2
 ";
-            if (this.boolexHoliday)
-            {
-                sqlcmd += $@"
---撈工廠設定的Holiday,和星期日,欄位holiday = 1
-select d.Readydate,d.ID,h.FactoryID,holiday = iif(h.FactoryID is not null,1,iif(DATEPART(WEEKDAY, Readydate) =1,1,0))
-INTO #DHolidayB from #dfB d left join Holiday h on d.Readydate = h.HolidayDate and d.ID = h.FactoryID
-
-select h1.Readydate,h1.ID,h1.holiday,d.BuyerDelivery,c.CutGapDay
-into #tmp1B from #DHolidayB h1
-outer apply(select a = iif(Holiday=1,null, DATEADD(DAY, @Buyergap,Readydate)))a
-outer apply(
-	select ct = count(1) from (select distinct h2.Readydate from #DHolidayB h2 
-	where h2.holiday = 1 and h2.Readydate between h1.Readydate and a.a and (h2.FactoryID = h1.ID or h2.FactoryID is null))c
-)b
-outer apply(select BuyerDelivery = DATEADD(DAY,@Buyergap+b.ct,Readydate))d
-outer apply(select CutGapDay = DATEADD(DAY,@CutGap+b.ct,Readydate))c
-";
-            }
-            else
-            {
-                sqlcmd += $@"
---欄位holiday = 1
-select d.Readydate,d.ID,holiday = iif(DATEPART(WEEKDAY, Readydate) =1,1,0)
-INTO #DHolidayB from #dfB d
-
-select h1.Readydate,h1.ID,h1.holiday,d.BuyerDelivery,c.CutGapDay
-into #tmp1B from #DHolidayB h1
-outer apply(select a = iif(Holiday=1,null, DATEADD(DAY, @Buyergap,Readydate)))a
-outer apply(
-	select ct = count(1) from (select distinct h2.Readydate from #DHolidayB h2 
-	where h2.holiday = 1 and h2.Readydate between h1.Readydate and a.a)c
-)b
-outer apply(select BuyerDelivery = DATEADD(DAY,@Buyergap+b.ct,Readydate))d
-outer apply(select CutGapDay = DATEADD(DAY,@CutGap+b.ct,Readydate))c
-";
-            }
 
             sqlcmd += $@"
---處理推出來的BuyerDelivery還是假日, 往後加到不是假日
-Declare @ReadydateB date,@factoryB nvarchar(8),@holidayB int,@BuyerDelivery date,@CutGapDayB date
-DECLARE c1 CURSOR FOR select * from #tmp1B order by ID,Readydate
-OPEN c1
-FETCH NEXT FROM c1 INTO @ReadydateB,@factoryB,@holidayB,@BuyerDelivery,@CutGapDayB
-While @@FETCH_STATUS = 0
-Begin
-	declare @dB date = @BuyerDelivery
-	while exists (select 1 from #tmp1B where ID = @factoryB and holiday = 1 and Readydate = @dB)
-	begin
-		update #tmp1B set BuyerDelivery = DATEADD(DAY,1,BuyerDelivery) where ID = @factoryB and Readydate = @ReadydateB
-		set @dB = (select BuyerDelivery from #tmp1B where ID = @factoryB and Readydate = @ReadydateB)
-	end
-	
-	declare @dcb date = @CutGapDayB
-	while exists (select 1 from #tmp1B where ID = @factoryB and holiday = 1 and Readydate = @dcb)
-	begin
-		update #tmp1B set CutGapDay = DATEADD(DAY,1,CutGapDay) where ID = @factoryB and Readydate = @ReadydateB
-		set @dcb = (select CutGapDay from #tmp1B where ID = @factoryB and Readydate = @ReadydateB)
-	end
-FETCH NEXT FROM c1 INTO @ReadydateB,@factoryB,@holidayB,@ReadydateB,@CutGapDayB
-End
-CLOSE c1
-DEALLOCATE c1
-
-select Readydate,Factory=ID,BuyerDelivery,CutGapDay into #tmp2B from #tmp1B where holiday =0 and Readydate between @ReadyBuyer1 and @ReadyBuyer2
-
 ------------------------------------------------------------------------------------------------------------------------------------
 --從orders撈資料
 select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Category,c.Alias,o.StyleID,o.CustPONo,o.BrandID,o.ProgramID,o.Qty
@@ -241,10 +200,9 @@ select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Category,c.Alias,o.StyleI
 into #orderOffline
 from Orders o with(nolock)
 inner join #tmp2 t on t.SewOffLine = o.SewOffLine and t.Factory = o.FtyGroup
-inner join #tmp2B tb on tb.Factory = t.Factory and tb.Readydate = t.Readydate
 left join Country c with(nolock) on c.id = o.Dest
 outer apply(select Article = stuff((select concat(',',Article) from Order_Article oa where oa.id = o.id for xml path('')),1,1,''))a
-where o.Junk = 0 and o.Category = 'B' and o.BuyerDelivery >= tb.BuyerDelivery
+where o.Junk = 0 and o.Category = 'B' and o.BuyerDelivery >= t.BuyerDelivery
 {sqlwhere}
 --and o.MDivisionID = '' and o.FtyGroup = '' and o. BrandID = ''
 
@@ -252,13 +210,12 @@ select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Category,c.Alias,o.StyleI
 	,o.SewInLine,o.SewOffLine,o.SewLine,o.ShipModeList,a.Article,t.Readydate,o.MDivisionid,t.CutGapDay
 into #orderBuyer
 from Orders o with(nolock)
-inner join #tmp2B t on t.BuyerDelivery = o.BuyerDelivery and t.Factory = o.FtyGroup
+inner join #tmp2 t on t.BuyerDelivery = o.BuyerDelivery and t.Factory = o.FtyGroup
 left join Country c with(nolock) on c.id = o.Dest
 outer apply(select Article = stuff((select concat(',',Article) from Order_Article oa where oa.id = o.id for xml path('')),1,1,''))a
 where o.Junk = 0 and o.Category = 'B' 
-and DATEDIFF(day,t.Readydate,o.SewOffLine) - 
-(select count(1) from #tmp1B z where holiday = 1 and z.ID = t.Factory and ReadyDate between o.SewOffLine and o.BuyerDelivery )--減去中間的假日天數
-> @offlinegap
+and o.BuyerDelivery = t.BuyerDelivery
+and o.id not in(select distinct id from #orderOffline)
 {sqlwhere}
 --and o.MDivisionID = '' and o.FtyGroup = '' and o. BrandID = ''
 
@@ -344,6 +301,8 @@ from #orderBuyer a
 left join #tmpcB3 b on a.ID = b.sp and b.MDivisionid = a.MDivisionid
 
 select * from #tmplast
+order by FtyGroup,BuyerDelivery,SciDelivery
+
 
 select distinct t.MDivisionID from #tmplast t
 select t.MDivisionID,t.FtyGroup,ct=count(1) from #tmplast t group by t.FtyGroup,t.MDivisionID
@@ -351,7 +310,8 @@ select t.MDivisionID,t.FtyGroup,ct=count(1),closed = sum(iif(t.CuttingStatus='Y'
 from #tmplast t group by t.FtyGroup,t.MDivisionID
 
 drop table #dateranges,#df,#DHoliday,#tmp1,#tmp2,#orderOffline
-drop table #daterangesB,#dfB,#DHolidayB,#tmp1B,#tmp2B,#orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmpP,#pBuyerB,#tmpPB,#tmplast
+drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmpP,#pBuyerB,#tmpPB,#tmplast
+
 ";
             DBProxy.Current.DefaultTimeout = 2700;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
