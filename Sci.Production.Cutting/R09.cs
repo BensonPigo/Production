@@ -124,7 +124,7 @@ select [Factory] = wo_Before.FactoryID
 ,[ExcessQty_Before] = isnull( Excess_Before.qty,0)
 ,[ExcessQty_After] = isnull( Excess_After.strQty,0)
 ,[Roll] = iif(isnull(n.NoofRoll,0)<1,1,n.NoofRoll)
-,[NoOfWindow] = CONVERT(float,round((wo_Before.Cons/ wo_Before.Layer) * 0.9144 / isnull(ct.WindowLength,1),2))
+,[NoOfWindow] = iif(isnull(ct.WindowLength,0) = 0,null, CONVERT(float,round((wo_Before.Cons/ wo_Before.Layer) * 0.9144 / ct.WindowLength,2)))
 ,[Perimeter_Before] = cast(iif(wo_before.ActCuttingPerimeter not like '%yd%','0',ROUND(dbo.GetActualPerimeterYd(wo_before.ActCuttingPerimeter),2)) as float)
 ,[Perimeter_After] = Perimeter_After.strPerimeter
 ,[CuttingSpeed_Before] = ISNULL(  ActSpeed_Before.ActualSpeed,0)
