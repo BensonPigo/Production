@@ -937,6 +937,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P03";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P03. Packing List Weight & Summary(Bulk)";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";

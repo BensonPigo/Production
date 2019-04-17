@@ -1309,6 +1309,16 @@ into g
                 this.CurrentMaintain["ID"] = id;
             }
 
+            // Get表身 SCICtnNo
+            if (this.IsDetailInserting)
+            {
+                PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource);
+            }
+            else
+            {
+
+            }
+
             // 表身重新計算後,再判斷CBM or GW 是不是0
             if (MyUtility.Check.Empty(this.CurrentMaintain["CBM"]) || MyUtility.Check.Empty(this.CurrentMaintain["GW"]))
             {

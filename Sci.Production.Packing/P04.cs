@@ -822,6 +822,16 @@ where InvA.OrderID = '{0}'
                 this.CurrentMaintain["ID"] = id;
             }
 
+            // Get表身 SCICtnNo
+            if (this.IsDetailInserting)
+            {
+                PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource);
+            }
+            else
+            {
+
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["CBM"]) || MyUtility.Check.Empty(this.CurrentMaintain["GW"]))
             {
                 this.numTtlCBM.Focus();

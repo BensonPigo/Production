@@ -2245,5 +2245,30 @@ order by min(pd.seq)
             return result;
         }
         #endregion
+
+        #region Get SCICtnNo P03/P04/P05
+        public static DualResult GetSCICtnNo(DataTable dt)
+        {
+            string sciCtnNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
+            string sciCtnNoleft = sciCtnNo.Substring(0, 9);
+            int sciNo = MyUtility.Convert.GetInt(sciCtnNo.Substring(9));
+            var ctnlist = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
+                .GroupBy(s => s["CTNStartNo"]).Select(group => new { CTNStartNo = group.Key });
+
+            foreach (var item in ctnlist)
+            {
+                string ctnStartNo = item.CTNStartNo.ToString();
+                foreach (DataRow dr in dt.AsEnumerable()
+                    .Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(ctnStartNo)).ToList())
+                {
+                    dr["SCICtnNo"] = sciCtnNo;
+                }
+            }
+
+            sciNo++;
+            sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
+
+            return new DualResult(true);
+        }
     }
 }

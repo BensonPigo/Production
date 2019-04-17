@@ -933,6 +933,16 @@ where oqd.Id = '{0}'
                 this.CurrentMaintain["INVNo"] = id;
             }
 
+            // Get表身 SCICtnNo
+            if (this.IsDetailInserting)
+            {
+                PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource);
+            }
+            else
+            {
+
+            }
+
             return base.ClickSaveBefore();
         }
 
