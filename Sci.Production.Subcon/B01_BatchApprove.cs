@@ -121,6 +121,7 @@ from
 	from LocalItem l
 	inner join LocalItem_Quot lq on l.RefNo = lq.RefNo
 	where 1=1 --lq.status <> 'Approved'
+	and l.Junk = 0
 	{wheresql}
 )l
 left join LocalSupp ls on l.LocalSuppID = ls.ID
@@ -136,13 +137,15 @@ left join LocalSupp lsn on l.NewSupp = lsn.ID
             #region
             string sqlCmd = sqlcmd() +
                 $@"
-select	RefNo
-		, IssueDate
-		, Ukey
-		, ChooseSupp
-		, [Status]
+select	lq.RefNo
+		, lq.IssueDate
+		, lq.Ukey
+		, lq.ChooseSupp
+		, lq.Status
 into #bas
-from LocalItem_Quot
+from LocalItem_Quot lq
+inner join LocalItem l on lq.RefNo=l.RefNo
+where l.Junk = 0
 --where [Status] != 'Approved'
 
 select	[Selected] = iif (tmp.ChooseSupp = tmp.seq, 1, 0)
@@ -152,6 +155,7 @@ select	[Selected] = iif (tmp.ChooseSupp = tmp.seq, 1, 0)
 		, ChooseSupp
         , LocalSuppID
         , CurrencyID
+        ,Price
         , QuotDate
         , SuppAbb
 from (
@@ -208,7 +212,6 @@ from (
 ) tmp
 outer apply(select SuppAbb = abb from LocalSupp l where l.id=LocalSuppID)abb
 order by Ukey, seq
-
 drop table #bas
 ";
             #endregion
@@ -431,8 +434,8 @@ when matched then update set
                 worksheet.Cells[irow, 12] = selectdt.Rows[i]["currencyid"];
                 worksheet.Cells[irow, 13] = MyUtility.Convert.GetDecimal(selectdt.Rows[i]["price"]).ToString("#,#.####");
 
-                DataView dv = this.detail.Select($"Refno = '{selectdt.Rows[i]["Refno"]}' and Ukey = {selectdt.Rows[i]["ukey"]} and LocalSuppID <> '' ").CopyToDataTable().DefaultView;
-                dv.Sort = "Selected desc";
+                DataView dv = this.detail.Select($"Refno = '{selectdt.Rows[i]["Refno"]}' and Ukey = {selectdt.Rows[i]["ukey"]} and LocalSuppID <> '' and price <> 0 ").CopyToDataTable().DefaultView;
+                dv.Sort = "Selected desc, Price";
                 DataTable ddt = dv.ToTable();
                 for (int j = 0; j < ddt.Rows.Count; j++)
                 {
