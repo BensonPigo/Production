@@ -253,6 +253,11 @@ and ((Orders.LocalOrder = 1 and Orders.SubconInSisterFty = 1) or (Orders.LocalOr
                     strSQL += string.Format(" AND Factory.CountryID = '{0}' ", this.txtCountry1.TextBox1.Text);
                 }
 
+                if (this.chkType.Checked)
+                {
+                    strSQL += " AND Factory.Type <>'S' ";
+                }
+
                 strSQL += @"
 select OutputDate
 ,Category
