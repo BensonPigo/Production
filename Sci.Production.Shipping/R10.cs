@@ -490,7 +490,7 @@ from (
 	LEFT JOIN #tmpTotoalCBM C ON A.ID=C.ID
 	union all
 	select a.*,b.AccountID
-	,[Amount] = iif(c.TotalGW is null or c.TotalGW=0,0, convert(float, round(b.Amount * A.CBM/C.TotalGW,2) ))
+	,[Amount] = iif(c.TotalGW is null or c.TotalGW=0,0, convert(float, round(b.Amount * A.gw/C.TotalGW,2) ))
 	from #temp3 a
 	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
 	LEFT JOIN #tmpTotoalGW C ON A.ID=C.ID
