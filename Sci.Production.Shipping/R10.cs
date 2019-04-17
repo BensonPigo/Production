@@ -469,7 +469,6 @@ Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,pac
 select a.id	,sum(a.CBM) TotalCBM
 into #tmpTotoalCBM
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
 where a.shipmodeID in ('SEA','S-A/P','S-A/C')
 group by a.id
 
@@ -477,7 +476,6 @@ group by a.id
 select a.id	,sum(a.gw) TotalGW
 into #tmpTotoalGW
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
 where a.shipmodeID in ('A/C', 'A/P', 'A/P-C', 'E/C', 'E/P', 'E/P-C')
 group by a.id
 
