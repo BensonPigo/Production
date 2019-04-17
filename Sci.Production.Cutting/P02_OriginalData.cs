@@ -214,7 +214,7 @@ Select
 				)/60.0,0),2)as float),' mins,'
         ,'ActCuttingPerimeter: ' ,a.ActCuttingPerimeter
 	)
-    ,wdd.workorderukey
+    ,[NowWorkOrderUkey] = (SELECT Stuff((select concat( ',',WorkorderUkey)   from WorkOrderRevisedMarkerOriginalData_Detail where WorkorderUkeyRevisedMarkerOriginalUkey = a.Ukey FOR XML PATH('')),1,1,'') )
 from WorkOrderRevisedMarkerOriginalData a WITH (NOLOCK)
 inner join WorkOrderRevisedMarkerOriginalData_Detail wdd with (nolock) on a.Ukey = wdd.WorkorderUkeyRevisedMarkerOriginalUkey
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
@@ -330,7 +330,7 @@ where wdd.workorderukey = '{this.CurrDataRow["ukey"]}'
             string inUkey = "''";
             if (wdtO.Rows.Count > 0)
             {
-                inUkey = "'" + string.Join("','", MyUtility.Convert.GetString(wdtO.Rows[0]["workorderukey"]).Split(',')) + "'";
+                inUkey = "'" + string.Join("','", MyUtility.Convert.GetString(wdtO.Rows[0]["NowWorkOrderUkey"]).Split(',')) + "'";
             }
             else
             {

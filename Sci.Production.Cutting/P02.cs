@@ -2482,7 +2482,7 @@ select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrde
             #endregion
             #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 原本那筆 isbyAdditionalRevisedMarker = 1, 增加的那筆 = 2
             sqlInsertRevisedMarkerOriginalData += " declare @ID2 bigint";
-            foreach (DataRow dr in DetailDatas.Where(w => w.RowState == DataRowState.Modified &&
+            foreach (DataRow dr in DetailDatas.Where(w => (w.RowState == DataRowState.Modified) &&
                         MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 1))
             {
                 string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData_Detail where WorkOrderUkey = ('{dr["ukey"]}')  ";
@@ -2529,7 +2529,7 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
         {
             #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 在此取拆出來資料的ukey,處理刪除的資料
             string sqlUpdateRevisedMarkerOriginalData = string.Empty;
-            var listAdditionalRevisedMarkerSeparate = DetailDatas.Where(w => w.RowState == DataRowState.Modified &&
+            var listAdditionalRevisedMarkerSeparate = DetailDatas.Where(w => (w.RowState == DataRowState.Modified || w.RowState == DataRowState.Added) &&
                        MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 2);
             foreach (DataRow dr in listAdditionalRevisedMarkerSeparate)
             {
@@ -2540,7 +2540,7 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
 ";
             }
 
-            var listDeleteRevisedMarkerSeparate = DetailDatas.Where(w => w.RowState == DataRowState.Deleted);
+            var listDeleteRevisedMarkerSeparate = this.CurrentDetailData.Table.AsEnumerable().Where(w => w.RowState == DataRowState.Deleted);
             foreach (DataRow dr in listDeleteRevisedMarkerSeparate)
             {
                 sqlUpdateRevisedMarkerOriginalData += $@"
