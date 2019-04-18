@@ -936,11 +936,17 @@ where oqd.Id = '{0}'
             // Get表身 SCICtnNo
             if (this.IsDetailInserting)
             {
-                PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource);
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), "IsDetailInserting"))
+                {
+                    return false;
+                }
             }
             else
             {
-
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), ""))
+                {
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();

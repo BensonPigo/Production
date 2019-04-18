@@ -2247,28 +2247,72 @@ order by min(pd.seq)
         #endregion
 
         #region Get SCICtnNo P03/P04/P05
-        public static DualResult GetSCICtnNo(DataTable dt)
+        public static bool GetSCICtnNo(DataTable dt,string id, string type)
         {
-            string sciCtnNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
-            string sciCtnNoleft = sciCtnNo.Substring(0, 9);
-            int sciNo = MyUtility.Convert.GetInt(sciCtnNo.Substring(9));
-            var ctnlist = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
-                .GroupBy(s => s["CTNStartNo"]).Select(group => new { CTNStartNo = group.Key });
-
-            foreach (var item in ctnlist)
+            if (type.EqualString("IsDetailInserting"))
             {
-                string ctnStartNo = item.CTNStartNo.ToString();
-                foreach (DataRow dr in dt.AsEnumerable()
-                    .Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(ctnStartNo)).ToList())
+                string sciCtnNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
+                string sciCtnNoleft = sciCtnNo.Substring(0, 9);
+                int sciNo = MyUtility.Convert.GetInt(sciCtnNo.Substring(9));
+                var ctnlist = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
+                    .GroupBy(s => s["CTNStartNo"]).Select(group => new { CTNStartNo = group.Key });
+
+                foreach (var item in ctnlist)
                 {
-                    dr["SCICtnNo"] = sciCtnNo;
+                    string ctnStartNo = item.CTNStartNo.ToString();
+                    foreach (DataRow dr in dt.AsEnumerable()
+                        .Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(ctnStartNo)).ToList())
+                    {
+                        dr["SCICtnNo"] = sciCtnNo;
+                    }
+                    sciNo++;
+                    sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
                 }
             }
+            else
+            {
+                string sqlcmd = $@"select distinct CTNStartNo,SCICtnNo from PackingList_Detail where id ='{id}'";
+                DataTable ctnDt;
+                DualResult result = DBProxy.Current.Select("Production", sqlcmd, out ctnDt);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return false;
+                }
+                else
+                {
+                    // 維持此ID原有的 (CTNStartNo對應SCICtnNo)
+                    foreach (DataRow ctnDtrow in ctnDt.Rows)
+                    {
+                        foreach (DataRow dr in dt.AsEnumerable()
+                            .Where(w => w.RowState != DataRowState.Deleted
+                                && MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(MyUtility.Convert.GetString(ctnDtrow["CTNStartNo"]))))
+                        {
+                            dr["SCICtnNo"] = ctnDtrow["SCICtnNo"];
+                        }
+                    }
+                }
 
-            sciNo++;
-            sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
+                string sciCtnNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
+                string sciCtnNoleft = sciCtnNo.Substring(0, 9);
+                int sciNo = MyUtility.Convert.GetInt(sciCtnNo.Substring(9));
+                var ctnlist = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted
+                    && !ctnDt.AsEnumerable().Any(r2 => MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(MyUtility.Convert.GetString(r2["CTNStartNo"]))))
+                    .GroupBy(s => s["CTNStartNo"]).Select(group => new { CTNStartNo = group.Key });
 
-            return new DualResult(true);
+                foreach (var item in ctnlist)
+                {
+                    string ctnStartNo = item.CTNStartNo.ToString();
+                    foreach (DataRow dr in dt.AsEnumerable()
+                        .Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(ctnStartNo)).ToList())
+                    {
+                        dr["SCICtnNo"] = sciCtnNo;
+                    }
+                    sciNo++;
+                    sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
+                }
+            }
+            return true;
         }
         #endregion
     }
