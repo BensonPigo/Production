@@ -81,7 +81,7 @@ where BundleNo = @BundleNo";
 
             #region cmdComboType
             string sqlCombotype = $@"
-select Location
+select sl.Location
 into #tmp
 from Bundle_Detail bd with(nolock)
 inner join Bundle b with(nolock) on b.id = bd.id
