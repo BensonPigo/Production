@@ -34,8 +34,6 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabInspectionReport = new System.Windows.Forms.TabPage();
-            this.label7 = new System.Windows.Forms.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnDownloadFile = new Sci.Win.UI.Button();
@@ -66,6 +64,8 @@
             this.inspectionReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInspectionReport.SuspendLayout();
@@ -109,28 +109,6 @@
             this.tabInspectionReport.Size = new System.Drawing.Size(1086, 495);
             this.tabInspectionReport.TabIndex = 0;
             this.tabInspectionReport.Text = "Inspection Report";
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(37, 466);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(689, 15);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Fabric with clima function items, need to check received report included (6.04 Wa" +
-    "ter Absorbency + 6.07 Drying Time) by dyelot.";
-            // 
-            // displayBox1
-            // 
-            this.displayBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(8, 463);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(23, 23);
-            this.displayBox1.TabIndex = 10;
             // 
             // btnClose
             // 
@@ -466,6 +444,28 @@
             this.testReportToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.testReportToolStripMenuItem.Text = "Test Report";
             this.testReportToolStripMenuItem.Click += new System.EventHandler(this.testReportToolStripMenuItem_Click);
+            // 
+            // displayBox1
+            // 
+            this.displayBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.displayBox1.BackColor = System.Drawing.Color.Yellow;
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(8, 463);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(23, 23);
+            this.displayBox1.TabIndex = 10;
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(37, 466);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(689, 15);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "Fabric with clima function items, need to check received report included (6.04 Wa" +
+    "ter Absorbency + 6.07 Drying Time) by dyelot.";
             // 
             // P09
             // 
