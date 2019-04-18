@@ -118,6 +118,7 @@ namespace Sci.Production.Shipping
 					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) 
 		,OrderTtlQty=o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
+		,[ShipPlanID] = gb2.ShipPlanID
 		,o.MDivisionID
 		,o.FactoryID
 		,Alias = isnull(c.Alias,'')		
@@ -227,7 +228,7 @@ outer apply(
 )pkPulloutDate
 left join
 (
-	select distinct gb.FCRDate,pd.orderid, pd.OrderShipmodeSeq
+	select distinct gb.FCRDate,pd.orderid, pd.OrderShipmodeSeq,p.ShipPlanID
 	from packinglist_detail pd
 	inner join PackingList p on p.id = pd.id
 	inner join GMTBooking gb on gb.id = p.INVNo 
