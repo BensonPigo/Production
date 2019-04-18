@@ -234,6 +234,11 @@ update VNConsumption_Detail_Detail
 set 
 StockQty = {stockQty}
 ,Qty = {qty}
+,FabricBrandID = '{fabricBrandID}'
+,FabricType = '{fabricType}'
+,StockUnit = '{stockUnit}'
+,HSCode = '{hSCode}'
+,UnitID = '{unitID}'
 ,UserCreate = 1
 where id = '{id}' and Refno = '{refno}';");
 
@@ -310,7 +315,7 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
                 drResult = DBProxy.Current.Execute(null, idu.ToString());
                 if (!drResult)
                 {
-                    MyUtility.Msg.ErrorBox("Insert/Update datas error!");
+                    this.ShowErr("Insert/Update datas error!", drResult);
                 }
                 else
                 {
