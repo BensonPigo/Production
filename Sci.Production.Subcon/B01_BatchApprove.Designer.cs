@@ -37,6 +37,8 @@
             this.btnconfirm = new Sci.Win.UI.Button();
             this.btnRefresh = new Sci.Win.UI.Button();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.chkIncludeApproved = new Sci.Win.UI.CheckBox();
+            this.btnToExcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -154,17 +156,43 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.btnToExcel);
+            this.splitContainer2.Panel2.Controls.Add(this.chkIncludeApproved);
             this.splitContainer2.Panel2.Controls.Add(this.btnconfirm);
             this.splitContainer2.Panel2.Controls.Add(this.btnRefresh);
             this.splitContainer2.Size = new System.Drawing.Size(1214, 490);
             this.splitContainer2.SplitterDistance = 441;
             this.splitContainer2.TabIndex = 8;
             // 
+            // chkIncludeApproved
+            // 
+            this.chkIncludeApproved.AutoSize = true;
+            this.chkIncludeApproved.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeApproved.Location = new System.Drawing.Point(12, 12);
+            this.chkIncludeApproved.Name = "chkIncludeApproved";
+            this.chkIncludeApproved.Size = new System.Drawing.Size(194, 21);
+            this.chkIncludeApproved.TabIndex = 10;
+            this.chkIncludeApproved.Text = "Include Approved Records";
+            this.chkIncludeApproved.UseVisualStyleBackColor = true;
+            this.chkIncludeApproved.CheckedChanged += new System.EventHandler(this.chkIncludeApproved_CheckedChanged);
+            // 
+            // btnToExcel
+            // 
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Location = new System.Drawing.Point(839, 3);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(117, 30);
+            this.btnToExcel.TabIndex = 12;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            // 
             // B01_BatchApprove
             // 
             this.ClientSize = new System.Drawing.Size(1214, 490);
             this.Controls.Add(this.splitContainer2);
             this.Name = "B01_BatchApprove";
+            this.OnLineHelpID = "Sci.Win.Forms.Base";
             this.Text = "B01.Quotation Batch Approve";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -176,6 +204,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -192,5 +221,7 @@
         private Win.UI.Button btnconfirm;
         private Win.UI.Button btnRefresh;
         private System.Windows.Forms.SplitContainer splitContainer2;
+        private Win.UI.CheckBox chkIncludeApproved;
+        private Win.UI.Button btnToExcel;
     }
 }
