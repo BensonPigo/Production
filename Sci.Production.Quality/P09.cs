@@ -120,7 +120,7 @@ namespace Sci.Production.Quality
             Helper.Controls.Grid.Generator(this.grid1)
             .CheckBox("selected", header: "", trueValue: 1, falseValue: 0, iseditable: true)
             .Text("ID", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
-            .Date("LastEta", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PoID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("seq", header: "Seq#", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -328,7 +328,7 @@ AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
             {
                 listSQLParameter.Add(new SqlParameter("@ETA1", this.dateRange1.Value1));
                 listSQLParameter.Add(new SqlParameter("@ETA2", this.dateRange1.Value2));
-                sqlwheres.Add(" ed.LastEta between @ETA1 and @ETA2 ");
+                sqlwheres.Add(" Export.ETA between @ETA1 and @ETA2 ");
             }
 
             if (!MyUtility.Check.Empty(this.txtsp.Text))
@@ -368,7 +368,7 @@ select distinct
 	FileExistI= cast(0 as bit),
 	FileExistT= cast(0 as bit),
 	ed.id,
-	ed.LastEta,
+	Export.ETA,
 	ed.PoID,
 	seq=ed.seq1+'-'+ed.seq2,
 	ps.SuppID,
