@@ -17,6 +17,7 @@ namespace Sci.Production.Class
     {
         private bool _IssupportJunk = false;
         private bool _FilteMDivision = false;
+        private bool _boolFtyGroupList = true;
 
         [Description("是否要顯示 Junk 的資料")]
         public bool IssupportJunk
@@ -30,6 +31,24 @@ namespace Sci.Production.Class
         {
             get { return _FilteMDivision; }
             set { _FilteMDivision = value; }
+        }
+
+        /// <summary>
+        /// boolFtyGroupList
+        /// 預設值 True
+        /// True：替換單字 FtyGroup
+        /// False：替換單字 ID
+        /// </summary>
+        public bool boolFtyGroupList
+        {
+            get
+            {
+                return _boolFtyGroupList;
+            }
+            set
+            {
+                _boolFtyGroupList = value;
+            }
         }
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
@@ -51,11 +70,22 @@ namespace Sci.Production.Class
             }
             #endregion
             #region SQL CMD
+            // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
+            string strShowColumn = string.Empty;
+            if (boolFtyGroupList)
+            {
+                strShowColumn = "DISTINCT FtyGroup";
+            }
+            else
+            {
+                strShowColumn = "ID";
+            }
+
             string sqlcmd = string.Format(@"
-Select DISTINCT FtyGroup as Factory 
+Select {1} as Factory 
 from Production.dbo.Factory WITH (NOLOCK) 
 {0}
-order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "");
+order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "", strShowColumn);
             #endregion
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, listSqlPar, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
@@ -86,10 +116,21 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
             }
             #endregion
             #region SQL CMD
+            // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
+            string strShowColumn = string.Empty;
+            if (boolFtyGroupList)
+            {
+                strShowColumn = "DISTINCT FtyGroup";
+            }
+            else
+            {
+                strShowColumn = "ID";
+            }
+
             string sqlcmd = string.Format(@"
-Select DISTINCT FtyGroup
+Select {1}
 from Production.dbo.Factory WITH (NOLOCK) 
-{0}", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "");
+{0}", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "", strShowColumn);
             #endregion
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
