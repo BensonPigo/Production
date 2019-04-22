@@ -22,6 +22,7 @@ namespace Sci.Production.Quality
         ToolStripMenuItem edit;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
+        private bool boolFromP02;
         string find = "";
         int index;
         DataRow[] find_dr;
@@ -30,7 +31,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             detailgrid.ContextMenuStrip = detailgridmenus;
-
+            boolFromP02 = false;
         }
 
         public P02(string POID)
@@ -40,6 +41,7 @@ namespace Sci.Production.Quality
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
             detailgrid.ContextMenuStrip = detailgridmenus;
+            boolFromP02 = true;
         }
 
         //表身額外的資料來源
@@ -93,7 +95,7 @@ namespace Sci.Production.Quality
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
                 
-                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
+                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
                 DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                
                 DoForm.ShowDialog(this);
                 DoForm.Close();
@@ -103,7 +105,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;                
-                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
+                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
                 DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                
                 DoForm.ShowDialog(this);
                 DoForm.Close();
@@ -150,10 +152,33 @@ namespace Sci.Production.Quality
 
         protected override void OnFormLoaded()
         {
-
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("ModifyDetail", onclick: (s, e) => ModifyDetail()).Get(out edit);
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data");
+            if (boolFromP02)
+            {
+                this.ExpressQuery = false;
+            }
+            else
+            {
+                queryfors.SelectedIndex = 1;
+                this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                this.ExpressQuery = true;
+            }
             base.OnFormLoaded();
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    case 1:
+                        this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         protected override void OnDetailEntered()
@@ -182,16 +207,16 @@ namespace Sci.Production.Quality
             {
                 if (sciTb.Rows[0]["MinSciDelivery"]==DBNull.Value)
                 {
-                    dateEarliestSCIDel.Text = "";
+                    //dateEarliestSCIDel.Text = "";
                 }
                 else
                 {
-                    dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
+                    //dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
                 }
             }
             else
             {
-                dateEarliestSCIDel.Text = "";
+                //dateEarliestSCIDel.Text = "";
             }
             //找出Cutinline and MinSciDelivery 比較早的日期
             DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
@@ -242,7 +267,7 @@ namespace Sci.Production.Quality
                 }
             }
 
-            displayofInspection.Text = inspnum;
+            //displayofInspection.Text = inspnum;
             DateTime completedate;
             if (inspnum == "100")
             {
@@ -256,6 +281,10 @@ namespace Sci.Production.Quality
 
             // 判斷Batch Encode是否可用
             this.btnBatchEncode.Enabled = this.EditMode ? false : detailTb.AsEnumerable().Where(s => !s["Status"].Equals("Confirmed")).Any();
+
+            string strInspAutoLockAcc=MyUtility.GetValue.Lookup("SELECT InspAutoLockAcc FROM System");
+            chkInspAutoLockAcc.Checked = MyUtility.Convert.GetBool(strInspAutoLockAcc);
+
         }
         
         protected override DualResult ClickSave()
@@ -272,6 +301,14 @@ namespace Sci.Production.Quality
                 {
 
                     if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd)))
+                    {
+                        _transactionscope.Dispose();
+                        return upResult;
+                    }
+
+
+                    //更新PO.AIRInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIR','{CurrentMaintain["ID"]}'")))
                     {
                         _transactionscope.Dispose();
                         return upResult;
@@ -356,7 +393,7 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(CurrentDetailData["ID"].ToString())) return;
             string currentID = CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
-            P02_Detail DoForm = new P02_Detail(IsSupportEdit, this.CurrentDetailData["ID"].ToString());
+            P02_Detail DoForm = new P02_Detail(IsSupportEdit, this.CurrentDetailData["ID"].ToString(),this.CurrentMaintain["ID"].ToString());
             DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
             DoForm.Text = "Accessory Inspection- SP+SEQ+Detail(Modify)";
             DoForm.ShowDialog(this);

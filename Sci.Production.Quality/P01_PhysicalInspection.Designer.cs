@@ -66,6 +66,8 @@
             this.displaydescDetail = new Sci.Win.UI.DisplayBox();
             this.btnToExcel_defect = new Sci.Win.UI.Button();
             this.btnSendMail = new Sci.Win.UI.Button();
+            this.txtPhysicalInspector = new Sci.Win.UI.TextBox();
+            this.labinspector = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -255,7 +257,7 @@
             this.displayColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayColor.Location = new System.Drawing.Point(595, 11);
+            this.displayColor.Location = new System.Drawing.Point(570, 11);
             this.displayColor.Name = "displayColor";
             this.displayColor.Size = new System.Drawing.Size(101, 21);
             this.displayColor.TabIndex = 115;
@@ -263,7 +265,7 @@
             // labelColor
             // 
             this.labelColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelColor.Location = new System.Drawing.Point(517, 10);
+            this.labelColor.Location = new System.Drawing.Point(492, 10);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(75, 23);
             this.labelColor.TabIndex = 116;
@@ -272,7 +274,7 @@
             // labelArriveQty
             // 
             this.labelArriveQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveQty.Location = new System.Drawing.Point(517, 40);
+            this.labelArriveQty.Location = new System.Drawing.Point(492, 40);
             this.labelArriveQty.Name = "labelArriveQty";
             this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
             this.labelArriveQty.TabIndex = 117;
@@ -283,7 +285,7 @@
             this.displayArriveQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayArriveQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayArriveQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayArriveQty.Location = new System.Drawing.Point(595, 41);
+            this.displayArriveQty.Location = new System.Drawing.Point(570, 41);
             this.displayArriveQty.Name = "displayArriveQty";
             this.displayArriveQty.Size = new System.Drawing.Size(101, 21);
             this.displayArriveQty.TabIndex = 118;
@@ -291,7 +293,7 @@
             // labelArriveWHDate
             // 
             this.labelArriveWHDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveWHDate.Location = new System.Drawing.Point(745, 10);
+            this.labelArriveWHDate.Location = new System.Drawing.Point(700, 10);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(123, 23);
             this.labelArriveWHDate.TabIndex = 120;
@@ -300,7 +302,7 @@
             // labelLastInspectionDate
             // 
             this.labelLastInspectionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelLastInspectionDate.Location = new System.Drawing.Point(745, 40);
+            this.labelLastInspectionDate.Location = new System.Drawing.Point(700, 40);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
             this.labelLastInspectionDate.Size = new System.Drawing.Size(123, 23);
             this.labelLastInspectionDate.TabIndex = 121;
@@ -309,9 +311,9 @@
             // labelResult
             // 
             this.labelResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelResult.Location = new System.Drawing.Point(745, 69);
+            this.labelResult.Location = new System.Drawing.Point(492, 70);
             this.labelResult.Name = "labelResult";
-            this.labelResult.Size = new System.Drawing.Size(123, 23);
+            this.labelResult.Size = new System.Drawing.Size(75, 23);
             this.labelResult.TabIndex = 124;
             this.labelResult.Text = "Result";
             // 
@@ -320,7 +322,7 @@
             this.checkNonInspection.AutoSize = true;
             this.checkNonInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkNonInspection.IsSupportEditMode = false;
-            this.checkNonInspection.Location = new System.Drawing.Point(575, 72);
+            this.checkNonInspection.Location = new System.Drawing.Point(602, 162);
             this.checkNonInspection.Name = "checkNonInspection";
             this.checkNonInspection.ReadOnly = true;
             this.checkNonInspection.Size = new System.Drawing.Size(121, 21);
@@ -330,9 +332,9 @@
             // 
             // btnApprove
             // 
-            this.btnApprove.Location = new System.Drawing.Point(887, 159);
+            this.btnApprove.Location = new System.Drawing.Point(918, 158);
             this.btnApprove.Name = "btnApprove";
-            this.btnApprove.Size = new System.Drawing.Size(90, 30);
+            this.btnApprove.Size = new System.Drawing.Size(75, 30);
             this.btnApprove.TabIndex = 127;
             this.btnApprove.Text = "Approve";
             this.btnApprove.UseVisualStyleBackColor = true;
@@ -340,9 +342,9 @@
             // 
             // btnEncode
             // 
-            this.btnEncode.Location = new System.Drawing.Point(791, 159);
+            this.btnEncode.Location = new System.Drawing.Point(827, 158);
             this.btnEncode.Name = "btnEncode";
-            this.btnEncode.Size = new System.Drawing.Size(90, 30);
+            this.btnEncode.Size = new System.Drawing.Size(80, 30);
             this.btnEncode.TabIndex = 128;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
@@ -400,9 +402,9 @@
             this.displayResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayResult.Location = new System.Drawing.Point(871, 70);
+            this.displayResult.Location = new System.Drawing.Point(570, 71);
             this.displayResult.Name = "displayResult";
-            this.displayResult.Size = new System.Drawing.Size(106, 21);
+            this.displayResult.Size = new System.Drawing.Size(101, 21);
             this.displayResult.TabIndex = 132;
             // 
             // textID
@@ -418,18 +420,18 @@
             // 
             // dateLastInspectionDate
             // 
-            this.dateLastInspectionDate.Location = new System.Drawing.Point(871, 41);
+            this.dateLastInspectionDate.Location = new System.Drawing.Point(826, 41);
             this.dateLastInspectionDate.Name = "dateLastInspectionDate";
             this.dateLastInspectionDate.ReadOnly = true;
-            this.dateLastInspectionDate.Size = new System.Drawing.Size(130, 23);
+            this.dateLastInspectionDate.Size = new System.Drawing.Size(150, 23);
             this.dateLastInspectionDate.TabIndex = 138;
             // 
             // dateArriveWHDate
             // 
-            this.dateArriveWHDate.Location = new System.Drawing.Point(871, 12);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(826, 12);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
-            this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
+            this.dateArriveWHDate.Size = new System.Drawing.Size(150, 23);
             this.dateArriveWHDate.TabIndex = 139;
             // 
             // displaydescDetail
@@ -454,17 +456,38 @@
             // 
             // btnSendMail
             // 
-            this.btnSendMail.Location = new System.Drawing.Point(693, 160);
+            this.btnSendMail.Location = new System.Drawing.Point(732, 159);
             this.btnSendMail.Name = "btnSendMail";
-            this.btnSendMail.Size = new System.Drawing.Size(90, 30);
+            this.btnSendMail.Size = new System.Drawing.Size(85, 30);
             this.btnSendMail.TabIndex = 141;
             this.btnSendMail.Text = "Send Mail";
             this.btnSendMail.UseVisualStyleBackColor = true;
             this.btnSendMail.Click += new System.EventHandler(this.btnSendMail_Click);
             // 
+            // txtPhysicalInspector
+            // 
+            this.txtPhysicalInspector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtPhysicalInspector.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtPhysicalInspector.IsSupportEditMode = false;
+            this.txtPhysicalInspector.Location = new System.Drawing.Point(826, 69);
+            this.txtPhysicalInspector.Name = "txtPhysicalInspector";
+            this.txtPhysicalInspector.ReadOnly = true;
+            this.txtPhysicalInspector.Size = new System.Drawing.Size(150, 23);
+            this.txtPhysicalInspector.TabIndex = 234;
+            // 
+            // labinspector
+            // 
+            this.labinspector.Location = new System.Drawing.Point(700, 69);
+            this.labinspector.Name = "labinspector";
+            this.labinspector.Size = new System.Drawing.Size(123, 23);
+            this.labinspector.TabIndex = 233;
+            this.labinspector.Text = "Physical Inspector";
+            // 
             // P01_PhysicalInspection
             // 
             this.ClientSize = new System.Drawing.Size(1008, 733);
+            this.Controls.Add(this.txtPhysicalInspector);
+            this.Controls.Add(this.labinspector);
             this.Controls.Add(this.btnSendMail);
             this.Controls.Add(this.displaydescDetail);
             this.Controls.Add(this.dateArriveWHDate);
@@ -547,6 +570,8 @@
             this.Controls.SetChildIndex(this.dateArriveWHDate, 0);
             this.Controls.SetChildIndex(this.displaydescDetail, 0);
             this.Controls.SetChildIndex(this.btnSendMail, 0);
+            this.Controls.SetChildIndex(this.labinspector, 0);
+            this.Controls.SetChildIndex(this.txtPhysicalInspector, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -595,5 +620,7 @@
         private Win.UI.DisplayBox displaydescDetail;
         private Win.UI.Button btnToExcel_defect;
         private Win.UI.Button btnSendMail;
+        private Win.UI.TextBox txtPhysicalInspector;
+        private Win.UI.Label labinspector;
     }
 }

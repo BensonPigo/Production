@@ -191,6 +191,11 @@ where sd.ID = '{0}'", masterID);
                     break;
             }
             #endregion
+            List<System.Data.SqlClient.SqlParameter> listPara = new List<System.Data.SqlClient.SqlParameter>()
+                {
+                    new System.Data.SqlClient.SqlParameter("@blno", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])),
+                    new System.Data.SqlClient.SqlParameter("@Reason", MyUtility.Convert.GetString(this.CurrentMaintain["Reason"]))
+                };
 
             bool status = MyUtility.Check.Empty(this.CurrentMaintain["Accountant"]);
             this.btnAcctApprove.Enabled = status ? !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Account Payment - Shipping", "CanConfirm") : MyUtility.Check.Empty(this.CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(this.CurrentMaintain["Accountant"].ToString(), "P08. Account Payment - Shipping", "CanUnConfirm");
@@ -198,6 +203,13 @@ where sd.ID = '{0}'", masterID);
             this.btnAcctApprove.ForeColor = status ? Color.Blue : Color.Black;
             this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
             this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
+            // Reason description
+            this.txtReasonDesc.Text = MyUtility.GetValue.Lookup(
+                                $@"select Description from ShippingReason where id=@Reason 
+                                    and type='AP' and junk=0",
+                                listPara);
+            string sql = "select top 1 Vessel from Export where blno = @blno";
+            this.disVesselName.Text = this.CurrentMaintain["Type"].ToString().Equals("IMPORT") && !MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) ? MyUtility.GetValue.Lookup(sql, listPara) : string.Empty;
         }
 
         /// <inheritdoc/>
@@ -217,7 +229,7 @@ where sd.ID = '{0}'", masterID);
                             {
                                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                                 string localSuppID = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]);
-                                string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID, Price,BrandID,UnitID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = '{0}' and AccountID != ''", localSuppID);
+                                string sqlCmd = string.Format("select ID,Description,[Brand]=BrandID,CurrencyID, Price,[Unit]=UnitID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = '{0}' and AccountID != ''", localSuppID);
                                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]), columndecimals: "0,0,0,0,4");
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel)
@@ -396,6 +408,7 @@ where sd.ID = '{0}'", masterID);
             this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             this.CurrentMaintain["InvNo"] = string.Empty;
             this.CurrentMaintain["ID"] = string.Empty;
+            this.CurrentMaintain["VoucherID"] = string.Empty;
         }
 
         // protected override void ClickUndo()
@@ -473,6 +486,18 @@ where sd.ID = '{0}'", masterID);
             }
             #endregion
 
+            // Supplier與B/L No 如果重複才需要填寫原因, Reason 不可為空
+            if (!MyUtility.Check.Empty(this.txtBLNo.Text))
+            {
+                string strSQLcmd = $@"select 1 from ShippingAP where BLNo='{this.txtBLNo.Text}' AND LocalSuppID='{this.CurrentMaintain["LocalSuppID"].ToString()}' ";
+                if (MyUtility.Check.Seek(strSQLcmd) && MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
+                {
+                    MyUtility.Msg.WarningBox(@"<Reason> cannot be empty becusae this <B/L No.> is already exists in other same supplier AP.");
+                    this.txtReason.Focus();
+                    return false;
+                }
+            }
+             
             // InvNo + B/L No不可以重複建立
             if (!MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
             {
@@ -850,12 +875,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
         private void ComboType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.comboType.SelectedValue == null)
-            {
-                return;
-            }
-
-            if (!this.EditMode)
+            if (this.comboType.SelectedValue == null || !this.EditMode)
             {
                 return;
             }
@@ -867,28 +887,129 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     // comboxbs2_1.Position = 0;
                     this.comboType2.DataSource = this.subType_1;
 
-                    // CurrentMaintain["SubType"] = temp;
                     break;
                 case "EXPORT":
                     // comboxbs2_2.Position = 0;
                     this.comboType2.DataSource = this.subType_2;
-
-                    // CurrentMaintain["SubType"] = temp;
                     break;
                 default:
                     // comboxbs2_1.Position = 0;
                     this.comboType2.DataSource = this.subType_1;
-
-                    // CurrentMaintain["SubType"] = temp;
                     break;
             }
-
-            // CurrentMaintain["SubType"] = "";
+            
             this.comboType2.SelectedIndex = -1;
         }
 
-        private void Masterpanel_Paint(object sender, PaintEventArgs e)
+        private void txtReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            string strsqlcmd = $@"select ID,Description from ShippingReason where type='AP' and junk=0";
+            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(strsqlcmd, "8,20", this.txtReason.Text);
+            item.Size = new System.Drawing.Size(410, 666);
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtReason.Text = item.GetSelectedString();
+            this.txtReasonDesc.Text = item.GetSelecteds()[0]["Description"].ToString();
+
+        }
+
+        private void txtReason_Validating(object sender, CancelEventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtReason.Text))
+            {
+                this.txtReasonDesc.Text = string.Empty;
+                return;
+            }
+
+            string strsqlcmd = $@"select ID,Description from ShippingReason where type='AP' and junk=0 and id ='{this.txtReason.Text}'";
+
+            if (!MyUtility.Check.Seek(strsqlcmd))
+            {
+                MyUtility.Msg.WarningBox($@"Reason: {this.txtReason.Text} is not found!");
+                this.txtReason.Text = string.Empty;
+                this.txtReason.Focus();
+            }
+
+            this.CurrentMaintain["Reason"] = this.txtReason.Text;
+        }
+
+        private void comboType2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboType.SelectedValue == null || this.comboType2.SelectedValue == null || !this.EditMode || !this.IsDetailInserting)
+            {
+                return;
+            }
+
+            switch (this.comboType.SelectedValue.ToString())
+            {
+                case "EXPORT":
+                    if (string.Compare(this.comboType2.SelectedValue.ToString(), "Other", true) == 0)
+                    {
+                        MyUtility.Msg.InfoBox(@"
+Please be sure this Account Payable is for the following items, otherwise, please choose corresponding Export Type and complete Share Expense, Thank You.
+      Annual Fee, 
+      Purchaser C/O Form, 
+      Machine Export, 
+      Shred/Scrap Export,
+      CN Fabric for testing, 
+      Non SP# Sample/Mock-up
+");
+                    }
+
+                    break;
+                case "IMPORT":
+                    if (string.Compare(this.comboType2.SelectedValue.ToString(), "Other", true) == 0)
+                    {
+                        MyUtility.Msg.InfoBox(@"
+Please be sure this Account Payable is for the following items, otherwise, please choose corresponding Import Type and complete Share Expense, Thank You.
+Annual Fee, 
+Purchase Form for Import purpose, 
+Machine Import, 
+Shred/Scrap Import.
+Non SP# Sample/Mock-up
+");
+                    }
+
+                    break;
+                default:
+                    this.comboType2.DataSource = this.subType_1;
+                    break;
+            }
+        }
+
+        // B/L NO. Change
+        private void TxtBLNo_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.comboType.SelectedValue == null || !this.EditMode || !this.IsDetailInserting)
+            {
+                return;
+            }
+
+            this.disVesselName.Text = string.Empty;
+            string sBLNo = this.txtBLNo.Text;
+            if (this.comboType.SelectedValue.ToString().Equals("IMPORT") && !MyUtility.Check.Empty(sBLNo))
+            {
+                List<System.Data.SqlClient.SqlParameter> listPara = new List<System.Data.SqlClient.SqlParameter>()
+                {
+                    new System.Data.SqlClient.SqlParameter("@blno", MyUtility.Convert.GetString(sBLNo))
+                };
+                string sql = "select top 1 Vessel from Export where blno = @blno";
+                this.disVesselName.Text = MyUtility.GetValue.Lookup(sql, listPara);
+            }
         }
     }
 }

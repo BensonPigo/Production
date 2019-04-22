@@ -206,6 +206,15 @@ namespace Sci.Production.Quality
                 //btnEncode.Enabled = false;
                 this.btnEdit.Enabled = true;
             }
+            
+            //更新PO.AIRLabInspPercent
+            DualResult upResult;
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIRLab','{maindr["POID"]}'")))
+            {
+                ShowErr(upResult);
+                return;
+            }
+            OnRequery();
         }
         //20161105 改變寫法
         //protected override bool OnSaveBefore()

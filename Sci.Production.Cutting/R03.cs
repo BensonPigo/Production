@@ -102,8 +102,11 @@ select
     [LackingLayers] = wo.Layer - isnull(acc.AccuCuttingLayer,0),    
 	[Qty] = Qty.Qty,
 	[Ratio] = stuff(SQty.SQty,1,1,''),
+	[OrderQty]=noExcessQty.qty,
+	[ExcessQty]=ExcessQty.qty,
 	[Consumption] = wo.Cons,
-	[Marker Length] = wo.MarkerLength
+	[Marker Length] = wo.MarkerLength,
+	wo.ActCuttingPerimeter
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -171,6 +174,24 @@ outer apply(
 	from Orders as o WITH (NOLOCK) 
 	where o.poid = wo.id
 ) as MinSci
+outer apply(
+	select qty=stuff((
+		select concat(',',wd.SizeCode,'/', wd.Qty)
+		from WorkOrder_Distribute wd WITH (NOLOCK)
+		where wd.WorkOrderUkey = wo.Ukey
+		and wd.OrderID <> 'EXCESS'
+		for xml path('')
+		),1,1,'')
+)noExcessQty
+outer apply(
+	select qty=stuff((
+		select concat(',',wd.SizeCode,'/', wd.Qty)
+		from WorkOrder_Distribute wd WITH (NOLOCK)
+		where wd.WorkOrderUkey = wo.Ukey
+		and wd.OrderID = 'EXCESS'
+		for xml path('')
+		),1,1,'')
+)ExcessQty
 where 1=1
 
 ");

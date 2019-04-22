@@ -47,6 +47,8 @@
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.checkForPrintOut = new Sci.Win.UI.CheckBox();
+            this.labSummeryBy = new Sci.Win.UI.Label();
+            this.comboSummaryBy = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -66,7 +68,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 12);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(97, 23);
@@ -75,7 +76,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 48);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(97, 23);
@@ -84,7 +84,6 @@
             // 
             // labelSewingLine
             // 
-            this.labelSewingLine.Lines = 0;
             this.labelSewingLine.Location = new System.Drawing.Point(13, 84);
             this.labelSewingLine.Name = "labelSewingLine";
             this.labelSewingLine.Size = new System.Drawing.Size(97, 23);
@@ -93,7 +92,6 @@
             // 
             // labelInlineAfter
             // 
-            this.labelInlineAfter.Lines = 0;
             this.labelInlineAfter.Location = new System.Drawing.Point(13, 120);
             this.labelInlineAfter.Name = "labelInlineAfter";
             this.labelInlineAfter.Size = new System.Drawing.Size(97, 23);
@@ -102,7 +100,6 @@
             // 
             // labelOfflineBefore
             // 
-            this.labelOfflineBefore.Lines = 0;
             this.labelOfflineBefore.Location = new System.Drawing.Point(13, 156);
             this.labelOfflineBefore.Name = "labelOfflineBefore";
             this.labelOfflineBefore.Size = new System.Drawing.Size(97, 23);
@@ -111,7 +108,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 192);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(97, 23);
@@ -120,7 +116,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(13, 228);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(97, 23);
@@ -129,7 +124,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 264);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(97, 23);
@@ -144,6 +138,7 @@
             this.comboM.IsSupportUnselect = true;
             this.comboM.Location = new System.Drawing.Point(114, 12);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(72, 24);
             this.comboM.TabIndex = 0;
             // 
@@ -155,6 +150,7 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(114, 48);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(72, 24);
             this.comboFactory.TabIndex = 1;
             this.comboFactory.SelectedIndexChanged += new System.EventHandler(this.ComboFactory_SelectedIndexChanged);
@@ -173,7 +169,6 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(156, 84);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(20, 23);
@@ -211,6 +206,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(106, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(128, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(106, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(114, 192);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -219,6 +228,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(106, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(128, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(106, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(114, 228);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -245,9 +268,32 @@
             this.checkForPrintOut.Text = "For Print Out";
             this.checkForPrintOut.UseVisualStyleBackColor = true;
             // 
+            // labSummeryBy
+            // 
+            this.labSummeryBy.Location = new System.Drawing.Point(13, 299);
+            this.labSummeryBy.Name = "labSummeryBy";
+            this.labSummeryBy.Size = new System.Drawing.Size(97, 23);
+            this.labSummeryBy.TabIndex = 108;
+            this.labSummeryBy.Text = "Summary By";
+            // 
+            // comboSummaryBy
+            // 
+            this.comboSummaryBy.BackColor = System.Drawing.Color.White;
+            this.comboSummaryBy.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboSummaryBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSummaryBy.FormattingEnabled = true;
+            this.comboSummaryBy.IsSupportUnselect = true;
+            this.comboSummaryBy.Location = new System.Drawing.Point(114, 299);
+            this.comboSummaryBy.Name = "comboSummaryBy";
+            this.comboSummaryBy.OldText = "";
+            this.comboSummaryBy.Size = new System.Drawing.Size(128, 24);
+            this.comboSummaryBy.TabIndex = 550;
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(486, 327);
+            this.ClientSize = new System.Drawing.Size(486, 368);
+            this.Controls.Add(this.comboSummaryBy);
+            this.Controls.Add(this.labSummeryBy);
             this.Controls.Add(this.checkForPrintOut);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.dateSCIDelivery);
@@ -294,6 +340,8 @@
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.checkForPrintOut, 0);
+            this.Controls.SetChildIndex(this.labSummeryBy, 0);
+            this.Controls.SetChildIndex(this.comboSummaryBy, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -320,5 +368,7 @@
         private Win.UI.DateRange dateSCIDelivery;
         private Class.txtbrand txtbrand;
         private Win.UI.CheckBox checkForPrintOut;
+        private Win.UI.Label labSummeryBy;
+        private Win.UI.ComboBox comboSummaryBy;
     }
 }

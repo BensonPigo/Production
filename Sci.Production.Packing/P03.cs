@@ -104,7 +104,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B'";
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B' and QueryDate >= dateadd(year,-1,getdate())";
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.ReloadTimeoutSeconds = 900;
@@ -161,15 +161,7 @@ namespace Sci.Production.Packing
             this.ComboBox1_RowSource.Add("Size");
             this.comboxbs1 = new BindingSource(this.ComboBox1_RowSource, null);
             this.comboSortby.DataSource = this.comboxbs1;
-
-            #region 新增Bath Confirm 按鈕
-            Sci.Win.UI.Button btnBatchConf = new Win.UI.Button();
-            btnBatchConf.Text = "Batch Confirm";
-            btnBatchConf.Click += new EventHandler(this.btnBatchConf_Click);
-            this.browsetop.Controls.Add(btnBatchConf);
-            btnBatchConf.Size = new Size(122, 30);
-            btnBatchConf.Visible = true;
-            #endregion
+            MyUtility.Tool.SetupCombox(this.cbDuring, 2, 1, "A,Default,B,All");
 
             DataTable queryDT;
             string querySql = string.Format(
@@ -199,7 +191,8 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             };
         }
 
-        private void btnBatchConf_Click(object sender, EventArgs e)
+        // BatchConfirm
+        private void BtnBatchConf_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Packing.P03_BatchConfirm();
             this.ShowWaitMessage("Data Loading....");
@@ -207,6 +200,35 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             frm.ShowDialog(this);
             this.ReloadDatas();
             this.RenewData();
+        }
+
+        private void CbDuring_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox cbDuring = (ComboBox)sender;
+            bool bolInit = this.DefaultFilter.IndexOf("QueryDate >= dateadd(year,-1,getdate())") > 0;
+            bool bolReload = true;
+            switch (cbDuring.SelectedIndex)
+            {
+                case 0:
+                    if (bolInit)
+                    {
+                        bolReload = false;
+                    }
+                    else
+                    {
+                        this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B' and QueryDate >= dateadd(year,-1,getdate())";
+                    }
+
+                    break;
+                case 1:
+                    this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B'";
+                    break;
+            }
+
+            if (bolReload)
+            {
+                this.ReloadDatas();
+            }
         }
 
         /// <summary>
@@ -311,6 +333,18 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }
             }
             #endregion
+
+            #region disClogCFMStatus
+            sqlcmdC = $@"select iif(count(pd.ID) = count(pd.ReceiveDate), 'Y','N') [ClogCFMStatus]
+                         from PackingList_Detail pd
+                         where pd.id = '{this.CurrentMaintain["ID"]}'";
+            if (MyUtility.Check.Seek(sqlcmdC, out cancelOrder))
+            {
+                this.disClogCFMStatus.Text = cancelOrder["ClogCFMStatus"].ToString();
+            }
+            #endregion
+
+            Color_Change();
         }
 
         // 檢查OrderID+Seq不可以重複建立
@@ -864,6 +898,8 @@ order by os.Seq",
                 }
                 #endregion
             };
+
+            Color_Change();
         }
 
         /// <summary>
@@ -876,6 +912,7 @@ order by os.Seq",
             this.CurrentMaintain["Type"] = "B";
             this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["QueryDate"] = DateTime.Now.ToShortDateString();
         }
 
         /// <summary>
@@ -1000,17 +1037,22 @@ outer apply (
 ) CustCD
 where CustCD.value != @CustCD
       or CustCD.value is null";
-            DualResult reslut = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), null, strCheckCustCD, out dtCheckCustCD, paramters: listCheckCustCDSqlParameter);
-            if (reslut == false)
+
+            if (this.DetailDatas.Count > 0)
             {
-                MyUtility.Msg.WarningBox(this.result.ToString());
-                return false;
+                DualResult reslut = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), null, strCheckCustCD, out dtCheckCustCD, paramters: listCheckCustCDSqlParameter);
+                if (reslut == false)
+                {
+                    MyUtility.Msg.WarningBox(this.result.ToString());
+                    return false;
+                }
+                else if (dtCheckCustCD != null && dtCheckCustCD.Rows.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox("CustCD are different, please check!");
+                    return false;
+                }
             }
-            else if (dtCheckCustCD != null && dtCheckCustCD.Rows.Count > 0)
-            {
-                MyUtility.Msg.WarningBox("CustCD are different, please check!");
-                return false;
-            }
+
             #endregion
 
             // 刪除表身SP No.或Qty為空白的資料，表身的CTN#, Ref No., Color Way與Size不可以為空值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
@@ -1525,10 +1567,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 this.col_nnw.IsEditingReadOnly = true;
                 for (int i = 0; i < this.detailgrid.ColumnCount; i++)
                 {
-                    if (i != 17)
-                    {
-                        this.detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
-                    }
+                    this.detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
                 }
 
                 this.col_refno.EditingMouseDown -= new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
@@ -1632,48 +1671,48 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     this.labelLocateforTransferClog.Text = "Locate for Transfer Clog:";
                     this.labelLocateforTransferClog.Width = 156;
                     this.dateLocateforTransferClog.Visible = true;
-                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(538, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(675, 256);
+                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(538, 284);
+                    this.btnFindNow.Location = new System.Drawing.Point(675, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "TransferDate,Seq";
                     break;
                 case "Clog Cfm":
                     this.labelLocateforTransferClog.Text = "Locate for Clog Cfm:";
                     this.labelLocateforTransferClog.Width = 129;
                     this.dateLocateforTransferClog.Visible = true;
-                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(511, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(650, 256);
+                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(511, 284);
+                    this.btnFindNow.Location = new System.Drawing.Point(650, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "ReceiveDate,Seq";
                     break;
                 case "Location No":
                     this.labelLocateforTransferClog.Text = "Locate for Location No:";
                     this.labelLocateforTransferClog.Width = 147;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(525, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(615, 256);
+                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(525, 284);
+                    this.btnFindNow.Location = new System.Drawing.Point(615, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "ClogLocationId,Seq";
                     break;
                 case "ColorWay":
                     this.labelLocateforTransferClog.Text = "Locate for ColorWay:";
                     this.labelLocateforTransferClog.Width = 135;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(513, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(603, 256);
+                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(513, 284);
+                    this.btnFindNow.Location = new System.Drawing.Point(603, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "Article,Seq";
                     break;
                 case "Color":
                     this.labelLocateforTransferClog.Text = "Locate for Color:";
                     this.labelLocateforTransferClog.Width = 106;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(483, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(573, 256);
+                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(483, 284);
+                    this.btnFindNow.Location = new System.Drawing.Point(573, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "Color,Seq";
                     break;
                 case "Size":
                     this.labelLocateforTransferClog.Text = "Locate for Size:";
                     this.labelLocateforTransferClog.Width = 100;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(477, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(567, 256);
+                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(477, 284);
+                    this.btnFindNow.Location = new System.Drawing.Point(567, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "SizeCode,Seq";
                     break;
                 default:
@@ -2328,6 +2367,30 @@ inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
             {
                 strMsg = ex.Message;
                 return null;
+            }
+        }
+
+        private void Color_Change()
+        {
+            if (this.detailgrid.Rows.Count > 0 || !MyUtility.Check.Empty(this.detailgrid))
+            {
+                for (int index = 0; index < this.detailgrid.Rows.Count; index++)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(index);
+                    if (this.detailgrid.Rows.Count <= index || index < 0 )
+                    {
+                        return;
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["DisposeFromClog"]))
+                    {
+                        this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
+                    }
+                    else
+                    {
+                        this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.White;
+                    }
+                }
             }
         }
     }

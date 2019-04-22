@@ -1767,6 +1767,21 @@
           </Border>
         </Style>
       </Image>
+      <Image Name="Image3">
+        <Source>Database</Source>
+        <Value>=First(Fields!Lockname.Value, "DataSet1")</Value>
+        <MIMEType>image/jpeg</MIMEType>
+        <Top>6.12066cm</Top>
+        <Left>6.72348cm</Left>
+        <Height>2.2cm</Height>
+        <Width>5.5cm</Width>
+        <ZIndex>16</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Image>
     </ReportItems>
     <Height>3.42931in</Height>
     <Style />
@@ -2593,6 +2608,10 @@
         <Field Name="Description">
           <DataField>Description</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Lockname">
+          <DataField>Lockname</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
         </Field>
         <Field Name="Order_Qty">
           <DataField>Order_Qty</DataField>

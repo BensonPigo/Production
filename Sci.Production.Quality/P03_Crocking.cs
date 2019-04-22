@@ -54,6 +54,7 @@ namespace Sci.Production.Quality
     c.ExportId,c.WhseArrival,
     d.ColorID,
     e.CrockingDate,e.Crocking,e.nonCrocking,
+    [CrockingInspector] = (select name from pass1 where id= e.CrockingInspector),
     f.SuppID,
     g.DescDetail
 from FIR a WITH (NOLOCK) 
@@ -82,11 +83,13 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 txtResult.Text = fir_dr["Crocking"].ToString();
                 checkNA.Value = fir_dr["nonCrocking"].ToString();
                 editDescription.Text = fir_dr["DescDetail"].ToString();
+                txtCrockingInspector.Text = fir_dr["CrockingInspector"].ToString();
             }
             else
             {
                 txtSP.Text = ""; txtSEQ.Text = ""; txtArriveQty.Text = ""; txtWkno.Text = ""; dateArriveWHDate.Text = ""; txtStyle.Text = ""; txtBrand.Text = "";
                 txtsupplierSupp.Text = ""; txtSCIRefno.Text = ""; txtBrandRefno.Text = ""; txtColor.Text = ""; editDescription.Text = "";
+                txtCrockingInspector.Text = "";
             }
 
 
@@ -705,8 +708,8 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
                     #region  寫入實體Table
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set CrockingEncode=1,Crocking='{0}',CrockingDate ='{2}' where id ='{1}'",
-                    result, maindr["ID"], lastDate.ToShortDateString());
+                    @"Update Fir_Laboratory set CrockingEncode = 1 , Crocking='{0}',CrockingDate ='{2}',CrockingInspector = '{3}' where id ='{1}'",
+                    result, maindr["ID"], lastDate.ToShortDateString(), Sci.Env.User.UserID);
 
                     updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set inspDate='{1}' where id='{0}'", maindr["ID"], Today);
                 }
@@ -714,7 +717,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 {
 
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set CrockingEncode = 1,Crocking='{0}' where id ='{1}'", result, maindr["ID"]);
+                    @"Update Fir_Laboratory set CrockingEncode = 1,Crocking='{0}',CrockingInspector = '{2}'  where id ='{1}'", result, maindr["ID"], Sci.Env.User.UserID);
 
                 }
 
@@ -725,7 +728,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             {
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0,Crocking = '' where id ='{0}'", maindr["ID"]);
+                @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0,Crocking = '',CrockingInspector = '' where id ='{0}'", maindr["ID"]);
 
                 #endregion
             }
@@ -760,6 +763,12 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             spam.Add(new SqlParameter("@Result", returnstr[0]));
             spam.Add(new SqlParameter("@id", maindr["ID"]));
             DBProxy.Current.Execute(null, cmdResult, spam);
+            //更新PO.FIRLabInspPercent
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{maindr["POID"]}'")))
+            {
+                ShowErr(upResult);
+                return;
+            }
             #endregion
 
             OnRequery();

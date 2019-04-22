@@ -145,6 +145,7 @@ and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
 and p2.CFAReturnClogDate is null
+and p2.DisposeFromClog= 0
 and (po.Status = 'New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.CTNStartNo";
@@ -258,6 +259,7 @@ where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
+and p2.DisposeFromClog= 0
 and p2.TransferCFADate is null
 and p2.CFAReturnClogDate is null
 and (po.Status = 'New' or po.Status is null)
@@ -320,6 +322,7 @@ and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
+and p2.DisposeFromClog= 0
 and p2.CFAReturnClogDate is null
 and (po.Status = 'New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
@@ -386,6 +389,7 @@ and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
+and p2.DisposeFromClog= 0
 and p2.CFAReturnClogDate is null
 and (po.Status = 'New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
@@ -441,6 +445,7 @@ order by p2.ID,p2.CTNStartNo
                     }
                 }
             }
+            this.HideWaitMessage();
         }
 
         // Close
@@ -480,7 +485,8 @@ select p2.ReceiveDate ,p2.TransferCFADate ,p.Status
 from PackingList_detail p2
 inner join PackingList p1 on p2.id=p1.id
 left join pullout p on p1.PulloutID = p.id
-where p2.id='{dr["id"].ToString().Trim()}' and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'", out drSelect))
+where p2.id='{dr["id"].ToString().Trim()}' 
+and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog= 0", out drSelect))
                 {
                     warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
                     continue;
@@ -504,11 +510,11 @@ where p2.id='{dr["id"].ToString().Trim()}' and p2.CTNStartNo='{dr["CTNStartNo"].
                         updateCmds.Add($@"
 update PackingList_Detail 
 set TransferCFADate = CONVERT(varchar(100), GETDATE(), 111), ClogReceiveCFADate = null, ClogLocationID  = ''
-where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
+where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and DisposeFromClog= 0
 ");
                         insertCmds.Add($@"
-insert into TransferToCFA(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate)
-values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Sci.Env.User.UserID}',GETDATE())
+insert into TransferToCFA(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,OrigloactionID)
+values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Sci.Env.User.UserID}',GETDATE(),'{dr["ClogLocationId"]}')
 ");
                     }
                 }

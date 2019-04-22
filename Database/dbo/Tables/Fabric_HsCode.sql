@@ -13,7 +13,9 @@
     [EditDate]    DATETIME       NULL,
     [OldSys_Ukey] VARCHAR (10)   CONSTRAINT [DF_Fabric_HsCode_OldSys_Ukey] DEFAULT ('') NULL,
     [OldSys_Ver]  VARCHAR (2)    CONSTRAINT [DF_Fabric_HsCode_OldSys_Ver] DEFAULT ('') NULL,
-    CONSTRAINT [PK_Fabric_HsCode] PRIMARY KEY CLUSTERED ([SCIRefno] ASC, [SuppID] ASC, [Year] ASC)
+    [HSType] VARCHAR NOT NULL DEFAULT (''), 
+    [HSCodeT2] VARCHAR(20) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_Fabric_HsCode] PRIMARY KEY CLUSTERED ([SCIRefno] ASC, [SuppID] ASC, [Year] ASC ,[HSType] ASC)
 );
 
 

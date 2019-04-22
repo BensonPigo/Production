@@ -100,6 +100,10 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
       ,a.MTLDelay	      =b.MtlDelay
+	  ,a.MinSciDelivery   = (select TOP 1 MinSciDelivery from [dbo].[Getsci](a.ID
+																	   ,(SELECT Category FROM Orders WHERE ID = a.ID)
+																	  )
+							)
 from Production.dbo.PO as a inner join #Trade_To_Pms_PO as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.PO(
@@ -134,7 +138,7 @@ INSERT INTO Production.dbo.PO(
       ,EditName
       ,EditDate
       ,MTLDelay
-
+	  ,MinSciDelivery
 )
 select 
        ID
@@ -167,8 +171,11 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-      ,MTLDelay
-
+      ,MTLDelay	  
+	  ,MinSciDelivery   = (select TOP 1 MinSciDelivery from [dbo].[Getsci](b.ID
+																	   ,(SELECT Category FROM Orders WHERE ID = b.ID)
+																	  )
+							)
 from #Trade_To_Pms_PO as b WITH (NOLOCK)
 where not exists(
 select id from Production.dbo.PO as a WITH (NOLOCK) where a.id = b.id )
@@ -665,6 +672,7 @@ SET
       , a.preshrink           = b.preshrink
 	  , a.DWR = isnull(b.DWR,0)
       , a.RibItem           = b.RibItem 
+	  , a.Clima = b.Clima
 from Production.dbo.Fabric as a 
 inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
 -------------------------- INSERT INTO 抓
@@ -701,6 +709,7 @@ INSERT INTO Production.dbo.Fabric(
        , preshrink
 	   , DWR
        , RibItem
+	   , Clima
 )
 select 
       SCIRefno
@@ -735,6 +744,7 @@ select
       , preshrink
 	  , isnull(DWR,0)
       , RibItem
+	  , Clima
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 
@@ -801,7 +811,7 @@ where not exists(select Ukey from Production.dbo.Fabric_Content as a WITH (NOLOC
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.Fabric_HsCode
 from Production.dbo.Fabric_HsCode as a left join Trade_To_Pms.dbo.Fabric_HsCode as b
-on a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year
+on a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType
 where b.SCIRefno is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -820,8 +830,9 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.OldSys_Ukey	      =b.OldSys_Ukey	
       ,a.OldSys_Ver	      =b.OldSys_Ver	
+	  ,a.HSCodeT2         =ISNULL(b.HSCodeT2,'')
 
-from Production.dbo.Fabric_HsCode as a inner join Trade_To_Pms.dbo.Fabric_HsCode as b ON a.SCIRefno=b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year
+from Production.dbo.Fabric_HsCode as a inner join Trade_To_Pms.dbo.Fabric_HsCode as b ON a.SCIRefno=b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.Fabric_HsCode(
        SCIRefno
@@ -838,7 +849,8 @@ INSERT INTO Production.dbo.Fabric_HsCode(
       ,EditDate
       ,OldSys_Ukey
       ,OldSys_Ver
-
+	  ,HSType	  
+	  ,HSCodeT2
 )
 select
        SCIRefno
@@ -855,9 +867,10 @@ select
       ,EditDate
       ,OldSys_Ukey
       ,OldSys_Ver
-
+	  ,HSType
+	  ,ISNULL(HSCodeT2,'')
 from Trade_To_Pms.dbo.Fabric_HsCode as b WITH (NOLOCK)
-where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year)
+where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType)
 
 --CuttingTape
 --CuttingTape_Detail

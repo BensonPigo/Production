@@ -112,6 +112,7 @@ namespace Sci.Production.Quality
             checkNonContinuity.Value = maindr["nonContinuity"].ToString();
             displayResult.Text = maindr["Continuity"].ToString();
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
+            txtContinuityInspector.Text = maindr["ContinuityInspector"].ToString();
             return base.OnRequery();
         }
 
@@ -328,13 +329,14 @@ namespace Sci.Production.Quality
                 maindr["ContinuityEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["ContinuityInspector"] = loginID;
                 #endregion 
                 #region 判斷Result 是否要寫入
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set ContinuityDate = GetDate(),ContinuityEncode=1,EditName='{0}',EditDate = GetDate(),Continuity = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
+                @"Update Fir set ContinuityDate = GetDate(),ContinuityEncode=1,EditName='{0}',EditDate = GetDate(),Continuity = '{1}',Result ='{2}',Status='{4}',ContinuityInspector='{0}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
                 #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
@@ -376,6 +378,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 maindr["ContinuityEncode"] = false;                
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["ContinuityInspector"] = string.Empty;
 
                 //判斷Result and Status 必須先確認Continuity="",判斷才會正確
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
@@ -386,7 +389,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set ContinuityDate = null,ContinuityEncode=0,EditName='{0}',EditDate = GetDate(),Continuity = '',Result ='{2}',Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set ContinuityDate = null,ContinuityEncode=0,EditName='{0}',EditDate = GetDate(),Continuity = '',Result ='{2}',Status='{3}',ContinuityInspector='' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;
@@ -396,6 +399,13 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
+                    {
+                        _transactionscope.Dispose();
+                        return;
+                    }
+
+                    //更新PO.FIRInspPercent和AIRInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{maindr["POID"].ToString()}';")))
                     {
                         _transactionscope.Dispose();
                         return;

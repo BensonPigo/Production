@@ -15,10 +15,18 @@ namespace Sci.Production.Cutting
 {
     public static class P02_PublicFunction
     {
-        private static DataTable GetPoSuppDetail(string sciRefno, string poid, Win.Forms.Base srcForm)
+        private static DataTable GetPoSuppDetail(string refno, string poid, Win.Forms.Base srcForm)
         {
             DataTable dtPoSuppDetail;
-            DualResult result = DBProxy.Current.Select(null, $"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{poid}' and SCIRefno ='{sciRefno}' and Junk != 1 ", out dtPoSuppDetail);
+            string sqlcmd = $@"
+select SEQ1,SEQ2,ColorID
+from PO_Supp_Detail psd1
+where 
+psd1.ID = '{poid}'
+and psd1.Refno = '{refno}'
+and psd1.Junk != 1
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dtPoSuppDetail);
 
             if (!result)
             {
@@ -45,7 +53,7 @@ namespace Sci.Production.Cutting
             string newvalue = e.FormattedValue.ToString();
             if (oldvalue == newvalue) return;
 
-            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["SciRefno"].ToString(), poid, srcForm);
+            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
             if (dtPoSuppDetail == null)
             {
                 return;
@@ -104,7 +112,7 @@ Do you want to continue? ");
             string newvalue = e.FormattedValue.ToString();
             if (oldvalue == newvalue) return;
 
-            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["SciRefno"].ToString(), poid, srcForm);
+            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
             if (dtPoSuppDetail == null)
             {
                 return;
@@ -162,7 +170,7 @@ Do you want to continue? ");
                 DataRow dr = srcGrid.GetDataRow(e.RowIndex);
                 SelectItem sele;
                 DataTable poTb;
-                poTb = GetPoSuppDetail(dr["SciRefno"].ToString(), poid, srcForm);
+                poTb = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
                 if (poTb == null)
                 {
                     return;
@@ -195,7 +203,7 @@ Do you want to continue? ");
                 DataRow dr = srcGrid.GetDataRow(e.RowIndex);
                 SelectItem sele;
                 DataTable poTb;
-                poTb = GetPoSuppDetail(dr["SciRefno"].ToString(), poid, srcForm);
+                poTb = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
                 if (poTb == null)
                 {
                     return;

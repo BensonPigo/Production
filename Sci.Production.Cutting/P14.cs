@@ -55,11 +55,16 @@ namespace Sci.Production.Cutting
 
             #region Datas
             string sqlcmd = $@"
-select b.Orderid,bd.Patterncode,b.Cutno,c.Name,b.Colorid,bd.SizeCode,bd.Qty
+select  b.Orderid
+        , bd.Patterncode
+        , b.Cutno
+        , b.Colorid
+        , bd.SizeCode
+        , bd.Qty
+        , b.Article
 from Bundle_Detail bd with(nolock)
 inner join Bundle b with(nolock) on b.id = bd.id
 inner join orders o with(nolock) on o.id = b.Orderid
-left join color c with(nolock) on c.id = b.Colorid and c.BrandId = o.BrandID
 where BundleNo = @BundleNo";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out dt);
@@ -73,7 +78,7 @@ where BundleNo = @BundleNo";
             this.disSP.Text = MyUtility.Convert.GetString(row["Orderid"]);
             this.disCutpart.Text = MyUtility.Convert.GetString(row["Patterncode"]);
             this.disCutNo.Text = MyUtility.Convert.GetString(row["Cutno"]);
-            this.disColorName.Text = MyUtility.Convert.GetString(row["Name"]);
+            this.disArticle.Text = MyUtility.Convert.GetString(row["Article"]);
             this.disColor.Text = MyUtility.Convert.GetString(row["Colorid"]);
             this.disSize.Text = MyUtility.Convert.GetString(row["SizeCode"]);
             this.disBundleQty.Text = MyUtility.Convert.GetString(row["Qty"]);
@@ -81,7 +86,7 @@ where BundleNo = @BundleNo";
 
             #region cmdComboType
             string sqlCombotype = $@"
-select Location
+select sl.Location
 into #tmp
 from Bundle_Detail bd with(nolock)
 inner join Bundle b with(nolock) on b.id = bd.id
@@ -136,8 +141,7 @@ drop table #tmp
             sqlParameters.Add(new SqlParameter("@ComboType", this.cmdComboType.Text));
             sqlParameters.Add(new SqlParameter("@CutNo", this.disCutNo.Text));
             sqlParameters.Add(new SqlParameter("@CardNo", this.txtCardNo.Text));
-            sqlParameters.Add(new SqlParameter("@ColorName", this.disColorName.Text));
-            sqlParameters.Add(new SqlParameter("@CordColor", this.disColor.Text));
+            sqlParameters.Add(new SqlParameter("@Article", this.disArticle.Text));
             sqlParameters.Add(new SqlParameter("@SizeName", this.disSize.Text));
             sqlParameters.Add(new SqlParameter("@Qty", this.disBundleQty.Text));
 
@@ -149,22 +153,22 @@ update t set
 	t.[CutLotNo]	= @CutNo ,
 	t.[BundNo]		= @CardNo,
 	t.[CardNo]		= @CardNo,
-	t.[ColorName]= @ColorName ,
-	t.[CordColor]	= @CordColor ,
+	t.[ColorName]   = @Article ,
+	t.[CordColor]	= @Article ,
 	t.[SizeName]	= @SizeName ,
 	t.[Qty]			= @Qty ,
-	t.[BarCode]	= @CardNo,
-    t.[CmdType]  ='Update',
-	t.[CmdTime]	= getdate(),
-	t.[InterfaceTime]=null
+	t.[BarCode]	    = @CardNo,
+    t.[CmdType]     ='Update',
+	t.[CmdTime]	    = getdate(),
+	t.[InterfaceTime]   =null
 from [dbo].[tCutbundcard] t
 where t.CardNo =@CardNo
 and(
 	t.[MONO]		<>@SP+'-'+@ComboType or
 	t.[PONO]		<>@SP or
 	t.[CutLotNo]	<>@CutNo or
-	t.[ColorName]<>@ColorName or
-	t.[CordColor]	<>@CordColor or
+	t.[ColorName]   <>@Article or
+	t.[CordColor]	<>@Article or
 	t.[SizeName]	<>@SizeName or
 	t.[Qty]			<>@Qty
 )
@@ -172,11 +176,15 @@ and(
 If not exists (select 1 from [dbo].[tCutbundcard] where CardNo = @CardNo)
 Begin
 	insert into [dbo].[tCutbundcard]
-	(BillDate ,MONO				 ,PONO,CutLotNo,BundNo, CardNo, CardType,ColorName, CordColor, SizeName, QTY,Vatno,
-	BarCode,CmdType,CmdTime, InterfaceTime)
+	(BillDate       , MONO				    , PONO       , CutLotNo     , BundNo
+     , CardNo       , CardType              , ColorName  , CordColor    , SizeName
+     , QTY          , Vatno                 , BarCode    , CmdType      , CmdTime
+     , InterfaceTime)
 	values
-	(getdate(),@SP+'-'+@ComboType,@SP, @CutNo,  @CardNo,@CardNo,2,       @ColorName,@CordColor,@SizeName,@Qty,null,
-	@CardNo,'Insert',getdate(),null)
+	(getdate()      , @SP+'-'+@ComboType    , @SP        , @CutNo       , @CardNo
+     , @CardNo      , 2                     , @Article   , @Article     , @SizeName
+     , @Qty         , null                  , @CardNo    , 'Insert'     , getdate()
+     ,null)
 End
 ";
             using (TransactionScope scope = new TransactionScope())
@@ -230,7 +238,7 @@ End
             this.disSP.Text = string.Empty;
             this.disCutpart.Text = string.Empty;
             this.disCutNo.Text = string.Empty;
-            this.disColorName.Text = string.Empty;
+            this.disArticle.Text = string.Empty;
             this.disColor.Text = string.Empty;
             this.disSize.Text = string.Empty;
             this.disBundleQty.Text = string.Empty;

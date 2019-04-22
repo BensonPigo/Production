@@ -268,7 +268,7 @@ inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
 inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-inner join Order_QtyShip oq WITH (NOLOCK) on p.OrderID=oq.Id
+inner join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID=oq.Id and oq.Seq = pd.OrderShipmodeSeq
 inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(this.date1))
@@ -433,7 +433,7 @@ Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID
 select a.*,b.AccountID,b.Amount 
 into #temp4
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo ");
+inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID");
                     }
                     else
                     {
@@ -465,10 +465,36 @@ outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,su
 group by type,id,OnBoardDate,Shipper,BrandID,Category,CustCDID,
 Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID
 
-select a.*,b.AccountID,b.Amount 
-into #temp4
+-- 取得TOTAL CBM, 用來計算比例
+select a.id	,sum(a.CBM) TotalCBM
+into #tmpTotoalCBM
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo ");
+where a.shipmodeID in ('SEA','S-A/P','S-A/C')
+group by a.id
+
+-- 取得TOTAL GW, 用來計算比例
+select a.id	,sum(a.gw) TotalGW
+into #tmpTotoalGW
+from #temp3 a
+where a.shipmodeID in ('A/C', 'A/P', 'A/P-C', 'E/C', 'E/P', 'E/P-C')
+group by a.id
+
+-- group by GB#+SP# 依TotalCBM, Total GW比例來取得對應的Amount值
+select * 
+into #temp4
+from (
+	select a.*,b.AccountID
+	,[Amount] = iif(c.TotalCBM is null or c.TotalCBM=0,0, convert(float, round(b.Amount * A.CBM/C.TotalCBM,2) ))
+	from #temp3 a
+	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
+	LEFT JOIN #tmpTotoalCBM C ON A.ID=C.ID
+	union all
+	select a.*,b.AccountID
+	,[Amount] = iif(c.TotalGW is null or c.TotalGW=0,0, convert(float, round(b.Amount * A.gw/C.TotalGW,2) ))
+	from #temp3 a
+	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
+	LEFT JOIN #tmpTotoalGW C ON A.ID=C.ID
+) a");
                     }
 
                      queryAccount = string.Format(
@@ -501,7 +527,7 @@ from #temp4
 PIVOT (SUM(Amount)
 FOR AccountID IN ({0})) a
 order by id
-drop table #temp1,#temp2,#temp3,#temp4
+drop table #temp1,#temp2,#temp3,#temp4,#tmpTotoalCBM,#tmpTotoalGW
 ", allAccno.ToString().Substring(0, 1) == "," ? allAccno.ToString().Substring(1, allAccno.Length - 1) : allAccno.ToString()));
                 }
                 else
@@ -932,32 +958,19 @@ where s.Type = 'EXPORT'");
                         objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
                         objArray[0, 24] = Convert.ToDecimal(MyUtility.Check.Empty(dr[22]) ? 0 : dr[22]) + Convert.ToDecimal(MyUtility.Check.Empty(dr[23]) ? 0 : dr[23]);
                         objArray[0, 25] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
-
                         objArray[0, 26] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
                         objArray[0, 27] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
                         objArray[0, 28] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
 
-                        // 動態增加欄位會因來源沒資料沒有，先判斷來源資料數量後再塞
-                        if (this.printData.Columns.Count > 28)
+                        // 多增加的AccountID, 必須要動態的填入欄位值!
+                        if (counts > 0)
                         {
-                            objArray[0, 29] = MyUtility.Check.Empty(dr[28]) ? 0 : dr[28];
+                            for (int c = 1; c <= counts; c++)
+                            {
+                                objArray[0, 28 + c] = MyUtility.Check.Empty(dr[27 + c]) ? 0 : dr[27 + c];
+                            }
                         }
-
-                        // if (counts > 0)
-                        // {
-                        //    for (int t = 1; t <= counts; t++)
-                        //    {
-                        //        objArray[0, 27 + t] = MyUtility.Check.Empty(dr[27 + t]) ? 0 : dr[27 + t];
-                        //    }
-                        // }
                     }
-
-                    //i = 0;
-                    //foreach (DataRow ddr in this.accnoData.Rows)
-                    //{
-                    //    i++;
-                    //    objArray[0, allColumn - (1 + i)] = MyUtility.Check.Empty(dr[allColumn - (1 + i)]) ? 0 : dr[allColumn - (1 + i)];
-                    //}
 
                     objArray[0, allColumn + this.accnoData.Rows.Count] = string.Format("=SUM({2}{0}:{1}{0}) - {3}{0}", intRowsStart, excelSumCol, this.reportType == 1 ? "R" : "V", this.reportType == 1 ? "U" : "Y");
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;

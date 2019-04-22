@@ -21,6 +21,7 @@ namespace Sci.Production.Quality
     {     
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
+        private bool boolFromP01;
        
         int index;
         string find = "";
@@ -41,6 +42,7 @@ namespace Sci.Production.Quality
                 this.modifyOdorTestToolStripMenuItem  });
             //關閉表身Grid DoubleClick 會新增row的問題
             InsertDetailGridOnDoubleClick = false;
+            boolFromP01 = false;
         }
 
         public P01(string Poid) //for Form直接call form
@@ -49,6 +51,38 @@ namespace Sci.Production.Quality
             DefaultFilter = string.Format("ID = '{0}'", Poid);
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
+            boolFromP01 = true;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data");
+            if (boolFromP01)
+            {
+                this.ExpressQuery = false;
+            }
+            else
+            {
+                queryfors.SelectedIndex = 1;
+                this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                this.ExpressQuery = true;
+            }
+
+            base.OnFormLoaded();
+
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    case 1:
+                        this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
@@ -73,6 +107,11 @@ c.ExportID as Wkno
 ,a.Odor
 ,a.OdorEncode
 ,a.OdorDate
+,[PhysicalInspector] = (select name from pass1 where id = a.PhysicalInspector)
+,[WeightInspector] = (select name from pass1 where id = a.WeightInspector)
+,[ShadeboneInspector] = (select name from pass1 where id = a.ShadeboneInspector)
+,[ContinuityInspector] = (select name from pass1 where id = a.ContinuityInspector)
+,[OdorInspector] = (select name from pass1 where id = a.OdorInspector)
 From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
 outer apply(select name from color WITH (NOLOCK) where color.id = d.colorid and color.BrandId = d.BrandId)cn
@@ -343,12 +382,12 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             }
             if (sciTb.Rows.Count > 0)
             {
-                if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
-                else dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
+                //if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
+                //else dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
             }
             else
             {
-                dateEarliestSCIDel.Text = "";
+                //dateEarliestSCIDel.Text = "";
                 dateEarliestEstCutDate.Text = "";
             }
             DateTime? targT;
@@ -386,7 +425,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                     }
                 }
             }
-            displayofInspection.Text = inspnum;
+            //displayofInspection.Text = inspnum;
             DateTime? completedate ,Physicalcompletedate , Weightcompletedate , ShadeBondcompletedate , Continuitycompletedate ;
             if (inspnum == "100")
             {
@@ -456,7 +495,14 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                         _transactionscope.Dispose();
                         return upResult;
                     }
-                    
+
+                    //更新PO.FIRInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{CurrentMaintain["ID"]}'")))
+                    {
+                        _transactionscope.Dispose();
+                        return upResult;
+                    }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();                    
                     MyUtility.Msg.InfoBox("Successfully");

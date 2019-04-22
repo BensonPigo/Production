@@ -61,7 +61,8 @@ namespace Sci.Production.Quality
 	b.styleid,b.BrandID,
 	c.ExportId,c.WhseArrival,
 	d.ColorID,	
-	e.WashDate,e.Wash,e.nonWash,e.SkewnessOptionID,
+	e.WashDate,e.Wash,e.nonWash,e.SkewnessOptionID
+    ,[WashInspector] = (select name from pass1 where id= e.WashInspector),
 	f.SuppID,
 	g.DescDetail										
 from FIR a WITH (NOLOCK) 
@@ -92,6 +93,7 @@ where a.ID='{0}'"
                 checkNA.Value = fir_dr["nonWash"].ToString();
                 editDescription.Text = fir_dr["DescDetail"].ToString();
                 this.radioPanel1.Value = fir_dr["SkewnessOptionID"].ToString();
+                this.txtWashInspector.Text = fir_dr["WashInspector"].ToString();
                 if (fir_dr["SkewnessOptionID"].ToString() == "1")
                 {
                     this.radioOption1.Checked = true;
@@ -110,6 +112,7 @@ where a.ID='{0}'"
             {
                 txtSP.Text = ""; txtSEQ.Text = ""; txtArriveQty.Text = ""; txtWkno.Text = ""; dateArriveWHDate.Text = ""; txtStyle.Text = ""; txtBrand.Text = "";
                 txtsupplierSupp.Text = ""; txtSCIRefno.Text = ""; txtBrandRefno.Text = ""; txtColor.Text = ""; editDescription.Text = "";
+                txtWashInspector.Text = "";
             }
 
             GridView_Visable();
@@ -1074,12 +1077,12 @@ Each Dyelot must be tested!", d));
                         }
                     }
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"], lastDate.ToShortDateString());
+                    @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}',WashInspector = '{3}' where id ='{1}'", result, maindr["ID"], lastDate.ToShortDateString(), Sci.Env.User.UserID);
                 }
                 else
                 {
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"]);
+                    @"Update Fir_Laboratory set WashEncode = 1,Wash='{0}',WashInspector='{2}' where id ='{1}'", result, maindr["ID"], Sci.Env.User.UserID);
                 }
                 #endregion
             }
@@ -1088,7 +1091,7 @@ Each Dyelot must be tested!", d));
             {
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set WashDate = null,WashEncode= 0,Wash = '' where id ='{0}'", maindr["ID"]);
+                @"Update Fir_Laboratory set WashDate = null,WashEncode= 0,Wash = '', WashInspector='' where id ='{0}'", maindr["ID"]);
 
                 // updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
                 #endregion
@@ -1104,6 +1107,7 @@ Each Dyelot must be tested!", d));
                         _transactionscope.Dispose();
                         return;
                     }
+                  
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -1123,6 +1127,12 @@ Each Dyelot must be tested!", d));
             spam.Add(new SqlParameter("@Result", returnstr[0]));
             spam.Add(new SqlParameter("@id", maindr["ID"]));
             DBProxy.Current.Execute(null, cmdResult, spam);
+            //更新PO.FIRLabInspPercent
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{maindr["POID"]}'")))
+            {
+                ShowErr(upResult);
+                return;
+            }
             #endregion
 
             OnRequery();

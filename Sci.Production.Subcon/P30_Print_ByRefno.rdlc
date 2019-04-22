@@ -1146,14 +1146,13 @@
                         </Textbox>
                         <Image Name="Image4">
                           <Source>Database</Source>
-                          <Value>=Fields!ApvName.Value</Value>
+                          <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
                           <MIMEType>image/jpeg</MIMEType>
-                          <Top>0.63664cm</Top>
-                          <Left>0.09356cm</Left>
+                          <Top>0.61864cm</Top>
+                          <Left>0.08298cm</Left>
                           <Height>2.2cm</Height>
                           <Width>5.5cm</Width>
                           <ZIndex>13</ZIndex>
-                          <ToolTip>=Fields!ApvName.Value</ToolTip>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1172,6 +1171,21 @@
                             </Border>
                           </Style>
                         </Line>
+                        <Image Name="Image5">
+                          <Source>Database</Source>
+                          <Value>=First(Fields!Lockname.Value, "DataSet1")</Value>
+                          <MIMEType>image/jpeg</MIMEType>
+                          <Top>0.63664cm</Top>
+                          <Left>5.8652cm</Left>
+                          <Height>2.2cm</Height>
+                          <Width>3.29375cm</Width>
+                          <ZIndex>15</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Image>
                       </ReportItems>
                       <KeepTogether>true</KeepTogether>
                       <Style>
@@ -1245,7 +1259,7 @@
         <Top>0.17639cm</Top>
         <Left>0.1413cm</Left>
         <Height>7.22344cm</Height>
-        <Width>19.31655cm</Width>
+        <Width>19.31657cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1263,7 +1277,7 @@
       </BottomBorder>
     </Style>
   </Body>
-  <Width>7.66057in</Width>
+  <Width>7.66058in</Width>
   <Page>
     <PageHeader>
       <Height>5.77335cm</Height>
@@ -1839,10 +1853,6 @@
           <DataField>ApvName</DataField>
           <rd:TypeName>System.Byte[]</rd:TypeName>
         </Field>
-        <Field Name="ApvName1">
-          <DataField>ApvName1</DataField>
-          <rd:TypeName>System.Byte[]</rd:TypeName>
-        </Field>
         <Field Name="Color_Shade">
           <DataField>Color_Shade</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1854,6 +1864,10 @@
         <Field Name="Description">
           <DataField>Description</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Lockname">
+          <DataField>Lockname</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
         </Field>
         <Field Name="Order_Qty">
           <DataField>Order_Qty</DataField>

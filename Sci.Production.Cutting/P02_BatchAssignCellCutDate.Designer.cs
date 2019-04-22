@@ -458,7 +458,7 @@
             this.txtSpreadingNo.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSpreadingNo.Location = new System.Drawing.Point(103, 123);
-            this.txtSpreadingNo.MDivisionID = "";
+            this.txtSpreadingNo.MDivision = "";
             this.txtSpreadingNo.Name = "txtSpreadingNo";
             this.txtSpreadingNo.Size = new System.Drawing.Size(45, 23);
             this.txtSpreadingNo.TabIndex = 35;

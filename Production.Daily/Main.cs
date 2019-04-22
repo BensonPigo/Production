@@ -17,6 +17,7 @@ using System.IO;
 using Sci;
 using System.Diagnostics;
 using System.Configuration;
+using PostJobLog;
 
 namespace Production.Daily
 {
@@ -27,7 +28,9 @@ namespace Production.Daily
         TransferPms transferPMS = new TransferPms();
         public int groupID_BeforeTransfer = -99999999;
         public int groupID_AfterTransfer = 99999999;
-        
+        string region = string.Empty;
+        string tpeMisMail = string.Empty;
+        bool isTestJobLog = false;
 
         public Main()
         {
@@ -77,9 +80,13 @@ namespace Production.Daily
 
             mailTo = _mailTo.Rows[0];
 
+            this.tpeMisMail = MyUtility.GetValue.Lookup("Select ToAddress From dbo.MailTo Where ID = '100'");
+
             editToAddress.Text = mailTo["ToAddress"].ToString();
             editCcAddress.Text = mailTo["CcAddress"].ToString();
             editContent.Text = mailTo["Content"].ToString();
+
+            this.region = MyUtility.GetValue.Lookup("select RgCode from system");
         }
 
         protected override DualResult ClickSavePost()
@@ -180,7 +187,7 @@ namespace Production.Daily
         }
 
         #region Send Mail
-        private void SendMail(String subject = "", String desc = "")
+        private void SendMail(String subject = "", String desc = "", bool isFail = true)
         {
             String mailServer = this.CurrentData["MailServer"].ToString();
             String eMailID = this.CurrentData["EMailID"].ToString();
@@ -190,8 +197,18 @@ namespace Production.Daily
             String sendFrom = this.CurrentData["SendFrom"].ToString();
             String toAddress = mailTo["ToAddress"].ToString();
             String ccAddress = mailTo["CcAddress"].ToString();
+
+            if (isFail)
+            {
+                toAddress += MyUtility.Check.Empty(toAddress) ? this.tpeMisMail : ";" + this.tpeMisMail;
+            }
             //String toAddress = "willy.wei@sportscity.com.tw";
             //String ccAddress = "";
+            if (MyUtility.Check.Empty(toAddress))
+            {
+                return;
+            }
+
             if (String.IsNullOrEmpty(subject))
             {
                 subject = mailTo["Subject"].ToString();
@@ -204,6 +221,29 @@ namespace Production.Daily
 
             mail.ShowDialog();
         }
+        #endregion
+
+        #region Call JobLog web api回傳執行結果
+        private void CallJobLogApi(string subject, string desc,string startDate, string endDate,bool isTest, bool succeeded)
+        {
+            JobLog jobLog = new JobLog()
+            {
+                GroupID = "P",
+                SystemID = "PMS",
+                Region = this.region,
+                MDivisionID = this.region,
+                OperationName = subject,
+                StartTime = startDate,
+                EndTime = endDate,
+                Description = desc,
+                FileName = new List<string>(),
+                FilePath = string.Empty,
+                Succeeded = succeeded
+            };
+            CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(isTest);
+            callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
+        }
+
         #endregion
 
         #region Update/Update動作
@@ -300,7 +340,8 @@ namespace Production.Daily
             #region 執行前發送通知mail
             subject = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
             desc = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
-            SendMail(subject, desc);           
+            SendMail(subject, desc, false);
+            this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
             #endregion
             #region CHECK THE FIRST NEED MAPPING A DISK,CAN'T USING \\ UNC
             if (importDataPath.Substring(0, 2) == "////" || exportDataPath.Substring(0, 2) == "////")
@@ -342,6 +383,7 @@ namespace Production.Daily
                 subject = "PMS transfer data (New) ERROR";
                 desc = "not found Winrar in your PC ,pls check and re-download.";
                 SendMail(subject, desc);
+                this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                 return new DualResult(false, "Win_RAR File does not exist !");
             }
            
@@ -361,6 +403,7 @@ namespace Production.Daily
                 subject = "PMS transfer data (New) ERROR";
                 desc = "Not found the ZIP(rar) file,pls advice Taipei's Programer";
                 SendMail(subject, desc);
+                this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
             }
             #endregion 
             
@@ -444,7 +487,9 @@ namespace Production.Daily
             #endregion
             subject = mailTo["Subject"].ToString().TrimEnd() +" "+ this.CurrentData["RgCode"].ToString();
 
-            SendMail(subject, desc);
+            // 改call system job log api 將資料回傳至台北紀錄
+            SendMail(subject, desc, false);
+            this.CallJobLogApi(subject, desc, startDate.ToString("yyyyMMdd HH:mm"), endDate.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
             #endregion
 
             return Ict.Result.True;
@@ -485,6 +530,7 @@ Region      Succeeded       Message
             if (!isAuto) title = "<<手動執行>> " + title;
 
             SendMail(title, formatStr);
+            this.CallJobLogApi(title, formatStr, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
             #endregion
         }
 
@@ -538,6 +584,7 @@ Region      Succeeded       Message
                     String subject = "PMS transfer data (New) ERROR";
                     String desc = "Wrong the downloaded file date, FileName:(" + importRegion.RarName + ")!!,Pls contact with Taipei.";
                     SendMail(subject, desc);
+                    this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                     //return Ict.Result.F("Wrong the downloaded file date, FileName(" + importRegion.RarName + ")!!,Pls contact with Taipei.");
                 }
             }
@@ -706,6 +753,7 @@ Region      Succeeded       Message
                     String subject = "PMS transfer data (New) ERROR";
                     String desc = "Wrong the downloaded file date!!,Pls Check File(" + region.RarName + ") is New";
                     SendMail(subject, desc);
+                    this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                     return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File(" + region.RarName + ") is New");
                 }             
             }                      
@@ -760,6 +808,7 @@ Region      Succeeded       Message
                 String subject = "PMS transfer data (New) ERROR";
                 String desc = "Wrong the Update failed!!,Pls contact with Taipei.";
                 SendMail(subject, desc);
+                this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                 return Ict.Result.F("Wrong the Update failed!!,Pls contact with Taipei.");
             }
             return Ict.Result.True;
@@ -1018,7 +1067,7 @@ where p.PulloutDate <= @PullOutLock
                 #region Save Excel
                 // 儲存路徑
                 string path = Sci.Env.Cfg.ReportTempDir;
-                string fileName = this.CurrentData["RgCode"].ToString().Trim() + " Pullout Report " + DateTime.Now.ToString("yyyyMMdd");
+                string fileName = "Pullout Report is pending Lock - " + this.CurrentData["RgCode"].ToString().Trim() + " - " + DateTime.Now.ToString("yyyyMMdd");
                 int lastIndex = 1;
                 
                 //判斷 流水號 = ReCode + " Pullout Report " + Date + 流水號 ( 4 碼 )
@@ -1057,7 +1106,7 @@ where p.PulloutDate <= @PullOutLock
                 }
 
                 #endregion
-                string subject = this.CurrentData["RgCode"].ToString().Trim() + " - Pullout should be lock data.";
+                string subject = "Pullout Report is pending Lock. - " + this.CurrentData["RgCode"].ToString().Trim();
                 string desc = "Attached is the data should be Lock but Pullout Report not yet encode.";
                 Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(this.CurrentData["SendFrom"].ToString(), "Pullout_Lock_Notice@sportscity.com.tw", "", subject, path + "\\" + fileName, desc, true, true);
                 mail.ShowDialog();
@@ -1115,6 +1164,11 @@ where p.PulloutDate <= @PullOutLock
                     responseStream.Close();
             }
             return result;
+        }
+
+        private void btnTestWebApi_Click(object sender, EventArgs e)
+        {
+            this.CallJobLogApi("transfer data", "transfer data", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
         }
     }
 }

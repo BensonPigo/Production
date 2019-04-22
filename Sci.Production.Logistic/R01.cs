@@ -92,15 +92,8 @@ select  o.FactoryID
         , o.CustPONo
         , o.Customize1
         , oq.BuyerDelivery
-        , oq.ShipmodeID        
-        , Location = stuff ((select distinct concat(',',ClogLocationId)
-                            from PackingList_Detail WITH (NOLOCK) 
-                            where   OrderID = o.ID 
-                                    and OrderShipmodeSeq = oq.Seq
-and ClogLocationId !='' and ClogLocationId is not null
-                                     for xml path('')
-                                    ) ,1,1,'')
-        , oq.Seq
+        , oq.ShipmodeID
+		, oq.Seq
         , o.SciDelivery
         , o.TotalCTN
 		, o.DRYCTN
@@ -108,61 +101,7 @@ and ClogLocationId !='' and ClogLocationId is not null
         , o.ClogCTN
 		, o.CfaCTN
         , o.PulloutCTNQty
-        , CTNQty = isnull ((select sum (CTNQty) 
-                            from PackingList_Detail WITH (NOLOCK) 
-                            where   OrderID = o.ID 
-                                    and OrderShipmodeSeq = oq.Seq) 
-                           , 0)
-        , ClogQty = isnull ((select sum (CTNQty) 
-                             from PackingList_Detail WITH (NOLOCK) 
-                             where  OrderID = o.ID 
-                                    and OrderShipmodeSeq = oq.Seq 
-                                    and ReceiveDate is not null)
-                           , 0)
-        , PullQty = isnull ((select sum (pd.CTNQty) 
-                             from PackingList p WITH (NOLOCK) 
-                                  , PackingList_Detail pd WITH (NOLOCK) 
-                             where  p.ID = pd.ID 
-                                    and pd.OrderID = o.ID 
-                                    and pd.OrderShipmodeSeq = oq.Seq 
-                                    and p.PulloutID != '')
-                           , 0)
-        , TtlGMTQty = isnull ((select sum(ShipQty) 
-                               from PackingList_Detail WITH (NOLOCK) 
-                               where OrderID = o.ID)
-                             , 0)
-        , TtlClogGMTQty = isnull ((select sum(ShipQty) 
-                                   from PackingList_Detail WITH (NOLOCK) 
-                                   where    OrderID = o.ID 
-                                            and ReceiveDate is not null)
-                                 , 0)
-        , TtlPullGMTQty = isnull ((select sum(ShipQty) 
-                                   from Pullout p WITH (NOLOCK) 
-                                        , Pullout_Detail pd WITH (NOLOCK) 
-                                   where    pd.OrderID = o.ID 
-                                            and pd.ID = p.ID 
-                                            and p.Status <> 'New')
-                                 , 0)
-        , GMTQty = isnull ((select sum(ShipQty) 
-                            from PackingList_Detail WITH (NOLOCK) 
-                            where   OrderID = o.ID 
-                                    and OrderShipmodeSeq = oq.Seq)
-                          , 0)
-        , ClogGMTQty = isnull ((select sum(ShipQty) 
-                                from PackingList_Detail WITH (NOLOCK) 
-                                where   OrderID = o.ID 
-                                        and OrderShipmodeSeq = oq.Seq 
-                                        and ReceiveDate is not null)
-                              , 0)
-        , PullGMTQty = isnull ((select sum(ShipQty) 
-                                from Pullout p
-                                     , Pullout_Detail pd WITH (NOLOCK) 
-                                where   pd.OrderID = o.ID 
-                                        and pd.OrderShipmodeSeq = oq.Seq 
-                                        and pd.ID = p.ID 
-                                        and p.Status <> 'New')
-                              , 0)
-into #tmp
+into #tmp_Orders
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 inner join Style s  WITH (NOLOCK) on o.StyleUkey = s.Ukey
@@ -199,6 +138,96 @@ where o.Category = 'B'");
             }
 
             sqlCmd.Append(@"
+
+select distinct pd.OrderID,pd.OrderShipmodeSeq,pd.ClogLocationId
+into #tmp_ClogLocationId
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join #tmp_Orders o on pd.OrderID = o.ID  and pd.OrderShipmodeSeq = o.Seq
+where ClogLocationId !='' 
+and ClogLocationId is not null and pd.DisposeFromClog= 0  
+
+select pd.OrderID,pd.OrderShipmodeSeq,sum(CTNQty) CTNQty, sum(ShipQty) GMTQty
+into #tmp_CTNQty
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join #tmp_Orders o on pd.OrderID = o.ID  and pd.OrderShipmodeSeq = o.Seq 
+where pd.DisposeFromClog= 0
+group by pd.OrderID,pd.OrderShipmodeSeq
+
+select pd.OrderID,pd.OrderShipmodeSeq,sum(CTNQty) ClogQty, sum(ShipQty) ClogGMTQty
+into #tmp_ClogQty
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join #tmp_Orders o on pd.OrderID = o.ID  and pd.OrderShipmodeSeq = o.Seq 
+where pd.ReceiveDate is not null and pd.DisposeFromClog= 0
+group by pd.OrderID,pd.OrderShipmodeSeq
+ 
+select  pd.OrderID,pd.OrderShipmodeSeq,sum (pd.CTNQty) PullQty
+into #tmp_PullQty
+from PackingList p WITH (NOLOCK) 
+inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID 
+inner join #tmp_Orders o on pd.OrderID = o.ID  and pd.OrderShipmodeSeq = o.Seq  
+where p.PulloutID != '' and pd.DisposeFromClog= 0
+group by pd.OrderID,pd.OrderShipmodeSeq
+
+select pd.OrderID,sum(ShipQty) TtlGMTQty
+into #tmp_TtlGMTQty
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID   
+where pd.DisposeFromClog= 0
+group by pd.OrderID
+ 
+select pd.OrderID,sum(ShipQty) TtlClogGMTQty
+into #tmp_TtlClogGMTQty
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID   
+where ReceiveDate is not null and pd.DisposeFromClog= 0
+group by pd.OrderID
+
+select pd.OrderID,sum(ShipQty) TtlPullGMTQty
+into #tmp_TtlPullGMTQty
+from Pullout p WITH (NOLOCK) 
+inner join Pullout_Detail pd WITH (NOLOCK) on pd.ID = p.ID 
+inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID  
+where p.Status <> 'New'
+group by pd.OrderID
+ 
+select pd.OrderID,pd.OrderShipmodeSeq,sum(ShipQty) PullGMTQty
+into #tmp_PullGMTQty
+from Pullout p
+inner join Pullout_Detail pd WITH (NOLOCK) on pd.ID = p.ID 
+inner join #tmp_Orders o on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq 
+where p.Status <> 'New'
+group by pd.OrderID,pd.OrderShipmodeSeq
+
+
+
+select o.*,
+	 Location = stuff ((select concat(',',ClogLocationId)  from #tmp_ClogLocationId
+				where   OrderID = o.ID 
+                and OrderShipmodeSeq = o.Seq
+				order by ClogLocationId
+							for xml path('')
+					) ,1,1,'') 
+	,CTNQty = isnull(ctn.CTNQty, 0)
+	,ClogQty = isnull(clog.ClogQty,0)
+	,PullQty = isnull(pull.PullQty,0)
+	,TtlGMTQty = isnull(ttlg.TtlGMTQty,0)
+	,TtlClogGMTQty = isnull(ttlc.TtlClogGMTQty,0)
+	,TtlPullGMTQty = isnull(ttlp.TtlPullGMTQty,0)
+	,GMTQty = isnull(ctn.GMTQty,0)
+	,ClogGMTQty = isnull(clog.ClogGMTQty,0)
+	,PullGMTQty = isnull(pullG.PullGMTQty,0)
+into #tmp 
+from #tmp_Orders o
+left join #tmp_CTNQty ctn on o.ID = ctn.OrderID and o.Seq = ctn.OrderShipmodeSeq
+left join #tmp_ClogQty clog on o.ID = clog.OrderID and o.Seq = clog.OrderShipmodeSeq
+left join #tmp_PullQty pull on o.ID = pull.OrderID and o.Seq = pull.OrderShipmodeSeq
+left join #tmp_TtlGMTQty ttlg on o.ID = ttlg.OrderID 
+left join #tmp_TtlClogGMTQty ttlc on o.ID = ttlc.OrderID
+left join #tmp_TtlPullGMTQty ttlp on o.ID = ttlp.OrderID 
+left join #tmp_PullGMTQty pullG on o.ID = pullG.OrderID and o.Seq = pullG.OrderShipmodeSeq 
+
+drop table #tmp_Orders,#tmp_ClogLocationId,#tmp_CTNQty,#tmp_ClogQty,#tmp_PullQty,#tmp_TtlGMTQty,#tmp_TtlClogGMTQty,#tmp_TtlPullGMTQty,#tmp_PullGMTQty
+
 select t.ID,RetCtnBySP = count(cr.ID)
 into #tmp2
 from #tmp t left join ClogReturn cr on cr.OrderID = t.ID

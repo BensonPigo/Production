@@ -76,6 +76,7 @@
             this.statusStrip = new Sci.Win.UI.StatusStrip();
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.labelProgress = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnTestWebApi = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).BeginInit();
             this.panelFTP.SuspendLayout();
@@ -509,7 +510,7 @@
             // btnTestFTP
             // 
             this.btnTestFTP.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnTestFTP.Location = new System.Drawing.Point(728, 88);
+            this.btnTestFTP.Location = new System.Drawing.Point(728, 74);
             this.btnTestFTP.Name = "btnTestFTP";
             this.btnTestFTP.Size = new System.Drawing.Size(106, 30);
             this.btnTestFTP.TabIndex = 5;
@@ -520,7 +521,7 @@
             // BtnTestMail
             // 
             this.BtnTestMail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.BtnTestMail.Location = new System.Drawing.Point(728, 120);
+            this.BtnTestMail.Location = new System.Drawing.Point(728, 110);
             this.BtnTestMail.Name = "BtnTestMail";
             this.BtnTestMail.Size = new System.Drawing.Size(106, 30);
             this.BtnTestMail.TabIndex = 6;
@@ -532,7 +533,7 @@
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnClose.Location = new System.Drawing.Point(728, 170);
+            this.btnClose.Location = new System.Drawing.Point(729, 183);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(106, 30);
             this.btnClose.TabIndex = 7;
@@ -563,6 +564,17 @@
             this.labelProgress.Size = new System.Drawing.Size(65, 17);
             this.labelProgress.Text = "                   ";
             // 
+            // btnTestWebApi
+            // 
+            this.btnTestWebApi.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnTestWebApi.Location = new System.Drawing.Point(728, 144);
+            this.btnTestWebApi.Name = "btnTestWebApi";
+            this.btnTestWebApi.Size = new System.Drawing.Size(106, 30);
+            this.btnTestWebApi.TabIndex = 9;
+            this.btnTestWebApi.Text = "Testing Web API";
+            this.btnTestWebApi.UseVisualStyleBackColor = true;
+            this.btnTestWebApi.Click += new System.EventHandler(this.btnTestWebApi_Click);
+            // 
             // Main
             // 
             this.AcceptButton = this.btnUpdate;
@@ -570,6 +582,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(846, 444);
+            this.Controls.Add(this.btnTestWebApi);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.BtnTestMail);
@@ -593,6 +606,7 @@
             this.Controls.SetChildIndex(this.BtnTestMail, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.statusStrip, 0);
+            this.Controls.SetChildIndex(this.btnTestWebApi, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).EndInit();
             this.panelFTP.ResumeLayout(false);
@@ -657,5 +671,6 @@
         private System.Windows.Forms.ToolStripStatusLabel labelProgress;
         private System.Windows.Forms.CheckBox chk_import;
         private System.Windows.Forms.CheckBox chk_export;
+        private Sci.Win.UI.Button btnTestWebApi;
     }
 }

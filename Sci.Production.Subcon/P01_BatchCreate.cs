@@ -117,11 +117,13 @@ SELECT 	Selected = 0
 		, Order_TmsCost.artworkoffline
 		, Order_TmsCost.apvdate 
 		, message = '' 
+        , IsArtwork = 1
 FROM Order_TmsCost WITH (NOLOCK) 
 inner join Orders WITH (NOLOCK) on Order_TmsCost.id = Orders.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join view_order_artworks v on v.id = Order_TmsCost.id 
 									and v.artworktypeid = Order_TmsCost.artworktypeid
+inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 WHERE 	not exists(
 			select * 
 			from artworkpo a WITH (NOLOCK) 
@@ -136,11 +138,24 @@ WHERE 	not exists(
 		and factory.mdivisionid = '{1}'
 		and factory.IsProduceFty = 1
 		and Order_TmsCost.localsuppid !=''
-		and Orders.category  in ('B','S')
+        --and Orders.PulloutComplete = 0
 		", poType, Sci.Env.User.Keyword);
 
                 SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
-
+                switch (poType)
+                {
+                    case "O":
+                        SqlCmd += $@" 
+		and (
+                orders.Category ='s' 
+                or (awt.IsArtwork=1 and v.Cost > 0 and orders.Category='B')
+        )";
+                        break;
+                    case "I":
+                        SqlCmd += $@" 
+        and orders.Category in ('S','B') ";
+                        break;
+                }
                 if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate <= '{0}' ", apvdate_e); }
@@ -185,10 +200,12 @@ SELECT 	Selected = 0
 		, Orders.SewInLine
 		, Order_TmsCost.ApvDate
 		, message = '' 
+        , IsArtwork = 0
 FROM Order_TmsCost WITH (NOLOCK) 
 inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join order_qty v WITH (NOLOCK) on v.id = order_tmscost.id
+inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 WHERE 	not exists(
 			select * 
 			from artworkpo a WITH (NOLOCK) 
@@ -202,10 +219,25 @@ WHERE 	not exists(
 		and orders.Finished=0
 		and orders.IsForecast = 0
 		and orders.Junk = 0
-		and Order_TmsCost.localsuppid !=''
-		and Orders.category  in ('B','S')
+		and Order_TmsCost.localsuppid !=''		
+        --and Orders.PulloutComplete = 0
 		", poType, Sci.Env.User.Keyword);
                 SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
+                switch (poType)
+                {
+                    case "O":
+                        SqlCmd += $@" 
+        and (
+                orders.Category ='s' 
+                or (awt.IsArtwork = 0 and Order_TmsCost.Price > 0 
+                and orders.Category = 'B')
+        )";
+                        break;
+                    case "I":
+                        SqlCmd += $@" 
+        and orders.Category in ('S','B') ";
+                        break;
+                }
                 if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate <= '{0}' ", apvdate_e); }
@@ -315,7 +347,7 @@ group by	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.Se
 
             if (poType == "O")  // 外發加工需核可且外發單價 > 0
             {
-                find = dt.Select("(unitprice = 0 or apvdate is null) and Selected = 1");
+                find = dt.Select("(unitprice = 0 or (apvdate is null and IsArtwork = 1)) and Selected = 1");
                 if (find.Length > 0)
                 {
                     foreach (DataRow dr in find)
@@ -535,9 +567,9 @@ group by	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.Se
                                     ,'{13}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
                                     , q2.coststitch, q2.stitch, q2.unitprice, q2.cost
                                     , 1
-                                    , q2.poqty
                                     , q2.unitprice * q2.QtyGarment
                                     , q2.poqty * q2.unitprice * q2.QtyGarment
+                                    , q2.poqty                                  
                                     , q2.ArtworkTypeID));
                                     #endregion
                                 }
@@ -577,9 +609,10 @@ group by	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.Se
                                     ,{11}   
                                     ,{12}   
                                     ,'{13}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
-                                    , q2.coststitch, q2.stitch, q2.unitprice, q2.cost, q2.QtyGarment, q2.poqty
-                                    , q2.unitprice * q2.QtyGarment, q2.poqty * q2.unitprice * q2.QtyGarment
-                                    , q2.ArtworkTypeID));
+                                    , q2.coststitch, q2.stitch, q2.unitprice, q2.cost, q2.QtyGarment
+                                    , q2.unitprice * q2.QtyGarment
+                                    , q2.poqty * q2.unitprice * q2.QtyGarment
+                                    , q2.poqty, q2.ArtworkTypeID));
                                     #endregion
                                 }                                
                             }

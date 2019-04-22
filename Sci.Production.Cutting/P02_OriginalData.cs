@@ -193,11 +193,30 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(fi.avgInQty=0,0,round(a.Cons/fi.avgInQty,0)),a.Layer,a.Cons,1),0)as float),','
-					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,a.Layer,c.WeaveTypeID,a.cons),0)as float)
+	
+	,SandCTime = concat(
+		'Spr.:',cast(round(isnull(
+			dbo.GetSpreadingTime(
+					c.WeaveTypeID,
+					a.Refno,
+					iif(iif(isnull(fi.avgInQty,0)=0,1,round(a.Cons/fi.avgInQty,0))<1,1,iif(isnull(fi.avgInQty,0)=0,1,round(a.Cons/fi.avgInQty,0))),
+					a.Layer,
+					a.Cons,
+					1
+				)/60.0,0),2)as float),' mins,'
+		,'Cut:',cast(round(isnull(
+			dbo.GetCuttingTime(
+					round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),
+					a.CutCellid,
+					a.Layer,
+					c.WeaveTypeID,
+					a.cons
+				)/60.0,0),2)as float),' mins,'
+        ,'ActCuttingPerimeter: ' ,a.ActCuttingPerimeter
 	)
-    ,workorderukey
+    ,[NowWorkOrderUkey] = (SELECT Stuff((select concat( ',',WorkorderUkey)   from WorkOrderRevisedMarkerOriginalData_Detail where WorkorderUkeyRevisedMarkerOriginalUkey = a.Ukey FOR XML PATH('')),1,1,'') )
 from WorkOrderRevisedMarkerOriginalData a WITH (NOLOCK)
+inner join WorkOrderRevisedMarkerOriginalData_Detail wdd with (nolock) on a.Ukey = wdd.WorkorderUkeyRevisedMarkerOriginalUkey
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join dbo.order_Eachcons e WITH (NOLOCK) on e.Ukey = a.Order_EachconsUkey 
 outer apply(select RefNo from ShrinkageConcern WITH (NOLOCK) where RefNo=a.RefNo and Junk=0) shc
@@ -294,7 +313,7 @@ outer apply(
 	where psd.ID = a.id and psd.SCIRefno = a.SCIRefno
 	and fi.InQty is not null
 ) as fi
-where a.workorderukey like '%{this.CurrDataRow["ukey"]}%'
+where wdd.workorderukey = '{this.CurrDataRow["ukey"]}'
 ";
             result = DBProxy.Current.Select(null, sqlcmd, out wdtO);
             if (!result)
@@ -311,7 +330,7 @@ where a.workorderukey like '%{this.CurrDataRow["ukey"]}%'
             string inUkey = "''";
             if (wdtO.Rows.Count > 0)
             {
-                inUkey = "'" + string.Join("','", MyUtility.Convert.GetString(wdtO.Rows[0]["workorderukey"]).Split(',')) + "'";
+                inUkey = "'" + string.Join("','", MyUtility.Convert.GetString(wdtO.Rows[0]["NowWorkOrderUkey"]).Split(',')) + "'";
             }
             else
             {
@@ -354,8 +373,26 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(fi.avgInQty=0,0,round(a.Cons/fi.avgInQty,0)),a.Layer,a.Cons,1),0)as float),','
-					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,a.Layer,c.WeaveTypeID,a.cons),0)as float)
+	
+	,SandCTime = concat(
+		'Spr.:',cast(round(isnull(
+			dbo.GetSpreadingTime(
+					c.WeaveTypeID,
+					a.Refno,
+					iif(iif(isnull(fi.avgInQty,0)=0,1,round(a.Cons/fi.avgInQty,0))<1,1,iif(isnull(fi.avgInQty,0)=0,1,round(a.Cons/fi.avgInQty,0))),
+					a.Layer,
+					a.Cons,
+					1
+				)/60.0,0),2)as float),' mins,'
+		,'Cut:',cast(round(isnull(
+			dbo.GetCuttingTime(
+					round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),
+					a.CutCellid,
+					a.Layer,
+					c.WeaveTypeID,
+					a.cons
+				)/60.0,0),2)as float),' mins,'
+        ,'ActCuttingPerimeter: ',a.ActCuttingPerimeter
 	)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
@@ -467,8 +504,8 @@ where a.ukey in ({inUkey})
             #region PatternPanel
             sqlcmd = $@"
 select p.* from WorkOrder_PatternPanelRevisedMarkerOriginalData p  WITH (NOLOCK)
-inner join WorkOrderRevisedMarkerOriginalData w WITH (NOLOCK) on w.ukey = p.WorkOrderRevisedMarkerOriginalDataUkey
-where w.workorderukey like '%{this.CurrDataRow["ukey"]}%' ";
+inner join WorkOrderRevisedMarkerOriginalData_Detail w WITH (NOLOCK) on w.WorkorderUkeyRevisedMarkerOriginalUkey = p.WorkOrderRevisedMarkerOriginalDataUkey
+where w.workorderukey = '{this.CurrDataRow["ukey"]}' ";
             result = DBProxy.Current.Select(null, sqlcmd, out pdtO);
             if (!result)
             {
@@ -491,8 +528,8 @@ where WorkOrderUkey in ({inUkey}) ";
             sqlcmd = $@"
 Select * 
 from WorkOrder_SizeRatioRevisedMarkerOriginalData s WITH (NOLOCK) 
-inner join WorkOrderRevisedMarkerOriginalData w WITH (NOLOCK) on w.ukey = s.WorkOrderRevisedMarkerOriginalDataUkey
-where w.workorderukey like '%{this.CurrDataRow["ukey"]}%' ";
+inner join WorkOrderRevisedMarkerOriginalData_Detail w WITH (NOLOCK) on w.WorkorderUkeyRevisedMarkerOriginalUkey = s.WorkOrderRevisedMarkerOriginalDataUkey
+where w.workorderukey = '{this.CurrDataRow["ukey"]}' ";
             result = DBProxy.Current.Select(null, sqlcmd, out sdtO);
             if (!result)
             {
@@ -513,8 +550,8 @@ where w.workorderukey like '%{this.CurrDataRow["ukey"]}%' ";
             sqlcmd = $@"
 Select * 
 from WorkOrder_DistributeRevisedMarkerOriginalData d WITH (NOLOCK) 
-inner join WorkOrderRevisedMarkerOriginalData w WITH (NOLOCK) on w.ukey = d.WorkOrderRevisedMarkerOriginalDataUkey
-where w.workorderukey like '%{this.CurrDataRow["ukey"]}%'";
+inner join WorkOrderRevisedMarkerOriginalData_Detail w WITH (NOLOCK) on w.WorkorderUkeyRevisedMarkerOriginalUkey = d.WorkOrderRevisedMarkerOriginalDataUkey
+where w.workorderukey = '{this.CurrDataRow["ukey"]}'";
             result = DBProxy.Current.Select(null, sqlcmd, out ddtO);
             if (!result)
             {

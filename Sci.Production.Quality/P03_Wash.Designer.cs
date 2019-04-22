@@ -63,6 +63,8 @@
             this.radioOption1 = new Sci.Win.UI.RadioButton();
             this.radioOption2 = new Sci.Win.UI.RadioButton();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
+            this.labinspector = new Sci.Win.UI.Label();
+            this.txtWashInspector = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -73,7 +75,7 @@
             // btmcont
             // 
             this.btmcont.Controls.Add(this.btnToExcel);
-            this.btmcont.Location = new System.Drawing.Point(0, 544);
+            this.btmcont.Location = new System.Drawing.Point(0, 556);
             this.btmcont.Size = new System.Drawing.Size(962, 41);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
@@ -84,8 +86,8 @@
             // 
             // gridcont
             // 
-            this.gridcont.Location = new System.Drawing.Point(12, 204);
-            this.gridcont.Size = new System.Drawing.Size(938, 334);
+            this.gridcont.Location = new System.Drawing.Point(12, 215);
+            this.gridcont.Size = new System.Drawing.Size(938, 335);
             // 
             // append
             // 
@@ -125,7 +127,7 @@
             this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editDescription.Location = new System.Drawing.Point(90, 141);
+            this.editDescription.Location = new System.Drawing.Point(90, 152);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.ReadOnly = true;
@@ -134,7 +136,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(12, 141);
+            this.labelDescription.Location = new System.Drawing.Point(12, 152);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 25);
             this.labelDescription.TabIndex = 217;
@@ -152,19 +154,19 @@
             // dateLastInspectionDate
             // 
             this.dateLastInspectionDate.IsSupportEditMode = false;
-            this.dateLastInspectionDate.Location = new System.Drawing.Point(622, 96);
+            this.dateLastInspectionDate.Location = new System.Drawing.Point(610, 96);
             this.dateLastInspectionDate.Name = "dateLastInspectionDate";
             this.dateLastInspectionDate.ReadOnly = true;
-            this.dateLastInspectionDate.Size = new System.Drawing.Size(130, 23);
+            this.dateLastInspectionDate.Size = new System.Drawing.Size(155, 23);
             this.dateLastInspectionDate.TabIndex = 215;
             // 
             // dateArriveWHDate
             // 
             this.dateArriveWHDate.IsSupportEditMode = false;
-            this.dateArriveWHDate.Location = new System.Drawing.Point(622, 67);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(610, 67);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
-            this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
+            this.dateArriveWHDate.Size = new System.Drawing.Size(155, 23);
             this.dateArriveWHDate.TabIndex = 214;
             // 
             // checkNA
@@ -172,7 +174,7 @@
             this.checkNA.AutoSize = true;
             this.checkNA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkNA.IsSupportEditMode = false;
-            this.checkNA.Location = new System.Drawing.Point(884, 146);
+            this.checkNA.Location = new System.Drawing.Point(884, 157);
             this.checkNA.Name = "checkNA";
             this.checkNA.ReadOnly = true;
             this.checkNA.Size = new System.Drawing.Size(50, 21);
@@ -182,7 +184,7 @@
             // 
             // btnEncode
             // 
-            this.btnEncode.Location = new System.Drawing.Point(854, 168);
+            this.btnEncode.Location = new System.Drawing.Point(854, 179);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(80, 30);
             this.btnEncode.TabIndex = 212;
@@ -312,7 +314,7 @@
             // 
             this.labelLastInspectionDate.Location = new System.Drawing.Point(475, 96);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
-            this.labelLastInspectionDate.Size = new System.Drawing.Size(144, 23);
+            this.labelLastInspectionDate.Size = new System.Drawing.Size(132, 23);
             this.labelLastInspectionDate.TabIndex = 200;
             this.labelLastInspectionDate.Text = "Last Inspection Date ";
             // 
@@ -320,7 +322,7 @@
             // 
             this.labelArriveWHDate.Location = new System.Drawing.Point(475, 67);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
-            this.labelArriveWHDate.Size = new System.Drawing.Size(144, 23);
+            this.labelArriveWHDate.Size = new System.Drawing.Size(132, 23);
             this.labelArriveWHDate.TabIndex = 199;
             this.labelArriveWHDate.Text = "Arrive W/H Date";
             // 
@@ -424,7 +426,6 @@
             this.radioOption1.Name = "radioOption1";
             this.radioOption1.Size = new System.Drawing.Size(76, 21);
             this.radioOption1.TabIndex = 6;
-            this.radioOption1.TabStop = true;
             this.radioOption1.Text = "Option1";
             this.radioOption1.UseVisualStyleBackColor = true;
             this.radioOption1.Value = "1";
@@ -438,22 +439,44 @@
             this.radioOption2.Name = "radioOption2";
             this.radioOption2.Size = new System.Drawing.Size(76, 21);
             this.radioOption2.TabIndex = 7;
-            this.radioOption2.TabStop = true;
             this.radioOption2.Text = "Option2";
             this.radioOption2.UseVisualStyleBackColor = true;
             this.radioOption2.Value = "2";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(771, 4);
+            this.pictureBox1.Image = null;
+            this.pictureBox1.Location = new System.Drawing.Point(775, 4);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(163, 136);
             this.pictureBox1.TabIndex = 220;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.WaitOnLoad = true;
+            // 
+            // labinspector
+            // 
+            this.labinspector.Location = new System.Drawing.Point(475, 125);
+            this.labinspector.Name = "labinspector";
+            this.labinspector.Size = new System.Drawing.Size(132, 23);
+            this.labinspector.TabIndex = 221;
+            this.labinspector.Text = "Wash Inspector";
+            // 
+            // txtWashInspector
+            // 
+            this.txtWashInspector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtWashInspector.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtWashInspector.IsSupportEditMode = false;
+            this.txtWashInspector.Location = new System.Drawing.Point(610, 125);
+            this.txtWashInspector.Name = "txtWashInspector";
+            this.txtWashInspector.ReadOnly = true;
+            this.txtWashInspector.Size = new System.Drawing.Size(155, 23);
+            this.txtWashInspector.TabIndex = 222;
             // 
             // P03_Wash
             // 
-            this.ClientSize = new System.Drawing.Size(962, 585);
+            this.ClientSize = new System.Drawing.Size(962, 597);
+            this.Controls.Add(this.txtWashInspector);
+            this.Controls.Add(this.labinspector);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.editDescription);
@@ -525,6 +548,8 @@
             this.Controls.SetChildIndex(this.editDescription, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.pictureBox1, 0);
+            this.Controls.SetChildIndex(this.labinspector, 0);
+            this.Controls.SetChildIndex(this.txtWashInspector, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -573,6 +598,7 @@
         private Win.UI.RadioButton radioOption1;
         private Win.UI.RadioButton radioOption2;
         private Win.UI.PictureBox pictureBox1;
-
+        private Win.UI.Label labinspector;
+        private Win.UI.TextBox txtWashInspector;
     }
 }

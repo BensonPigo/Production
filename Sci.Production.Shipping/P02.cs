@@ -511,29 +511,35 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
-isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
-isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
-isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
-isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Leader)),ed.Leader) as LeaderName,
-CASE ed.Category
-WHEN '1' THEN N'Sample'
-WHEN '2' THEN N'SMS'
-WHEN '3' THEN N'Bulk'
-WHEN '4' THEN N'Material'
-WHEN '5' THEN N'Dox'
-WHEN '6' THEN N'Machine/Parts'
-WHEN '7' THEN N'Mock Up'
-WHEN '8' THEN N'Other Sample'
-WHEN '9' THEN N'Other Material'
-ELSE N''
-END as CategoryName
-from Express_Detail ed WITH (NOLOCK) 
-left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
-left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
-left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
-where ed.ID = '{0}'
-Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
+                @"select ed.*
+	                ,case when ed.Category in ('4','9') then ed.MtlDesc else ed.Description end nDescription
+                from
+                (
+	                select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
+		                dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
+		                isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
+		                isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
+		                isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
+		                isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Leader)),ed.Leader) as LeaderName,
+		                CASE ed.Category
+			                WHEN '1' THEN N'Sample'
+			                WHEN '2' THEN N'SMS'
+			                WHEN '3' THEN N'Bulk'
+			                WHEN '4' THEN N'Material'
+			                WHEN '5' THEN N'Dox'
+			                WHEN '6' THEN N'Machine/Parts'
+			                WHEN '7' THEN N'Mock Up'
+			                WHEN '8' THEN N'Other Sample'
+			                WHEN '9' THEN N'Other Material'
+			                ELSE N''
+		                END as CategoryName
+		                from Express_Detail ed WITH (NOLOCK) 
+		                left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
+		                left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
+		                left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
+	                where ed.ID = '{0}'
+                )ed
+                Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -594,7 +600,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                 .Text("LeaderName", header: "Team Leader", width: Widths.AnsiChars(30))
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8))
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(30))
-                .EditText("Description", header: "Description", width: Widths.AnsiChars(30))
+                .EditText("nDescription", header: "Description", width: Widths.AnsiChars(30))
                 .Text("Dimension", header: "Dimension (cm)", width: Widths.AnsiChars(20))
                 .Numeric("CTNNW", header: "Carton Weight", width: Widths.AnsiChars(10), decimal_places: 2);
         }
@@ -604,7 +610,6 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         {
             base.OnDetailGridRowChanged();
             this.editDescription.Text = string.Empty;
-
             if (this.CurrentDetailData != null)
             {
                 if (MyUtility.Check.Empty(this.CurrentDetailData["OrderID"]) || MyUtility.Check.Empty(this.CurrentDetailData["Seq2"]))
@@ -1251,7 +1256,8 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
             string sqlCmd = @"select c.ID,c.SuppID,isnull(s.AbbEN,isnull(ls.Abb,'')) as Abb,c.Account
 from Carrier c WITH (NOLOCK) 
 left join Supp s WITH (NOLOCK) on c.SuppID = s.ID
-left join Localsupp ls WITH (NOLOCK) on c.SuppID = ls.ID";
+left join Localsupp ls WITH (NOLOCK) on c.SuppID = ls.ID
+where c.Junk = 0";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "5,8,20,20", this.txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

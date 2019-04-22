@@ -75,6 +75,12 @@ namespace Sci.Production.Shipping
             return base.ClickSaveBefore();
         }
 
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.CurrentMaintain["Status"] = "New";
+        }
+
         /// <inheritdoc/>
         protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
@@ -131,6 +137,56 @@ namespace Sci.Production.Shipping
             return base.ClickDelete();
         }
 
+        protected override void ClickConfirm()
+        {
+            string sqlupdate = $@"
+update BIRInvoice set Status='Approved', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+where id = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlupdate);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            base.ClickConfirm();
+        }
+
+        protected override void ClickUnconfirm()
+        {
+            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID !='' and id = '{this.CurrentMaintain["ID"]}'";
+            if (MyUtility.Check.Seek(sqlchk))
+            {
+                MyUtility.Msg.WarningBox("Cannot unconfirm because already created voucher no");
+                return;
+            }
+
+            string sqlupdate = $@"
+update BIRInvoice set Status='New', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+where id = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlupdate);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+            base.ClickUnconfirm();
+        }
+
+        protected override bool ClickDeleteBefore()
+        {
+            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID is not null and id = '{this.CurrentMaintain["ID"]}' and status = 'Approved' ";
+            if (MyUtility.Check.Seek(sqlchk))
+            {
+                MyUtility.Msg.WarningBox("Already approved, cannot delete!");
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
+        }
+
         /// <inheritdoc/>
         private void Btnimport_Click(object sender, EventArgs e)
         {
@@ -151,10 +207,17 @@ namespace Sci.Production.Shipping
                 return;
             }
 
+            string sqlchk = $@"select 1 from BIRInvoice b where b.InvSerial = '{this.CurrentMaintain["InvSerial"]}' and b.BrandID = '{this.CurrentMaintain["BrandID"]}'";
+            if (MyUtility.Check.Seek(sqlchk))
+            {
+                MyUtility.Msg.WarningBox("Already has this reocrd!");
+                return;
+            }
+
             string sqlcmd = $@"
 select *
 from GMTBooking with(nolock)
-where BIRID is null
+where isnull(BIRID,0) = 0
 and BrandID = '{this.CurrentMaintain["BrandID"]}'
 and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
         ";
@@ -163,6 +226,12 @@ and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
             if (!result)
             {
                 this.ShowErr(result);
+                return;
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                this.ShowErr("Import error!");
                 return;
             }
 
@@ -189,15 +258,13 @@ and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
 select 
 	A=o.CustPONo,
 	B=o.StyleID,
-	C=null,
-	D=s.Description,
-	E=null,
-	F=sum(pd.ShipQty),
-	G='PCS',
+	C=s.Description,
+	E=sum(pd.ShipQty),
+	F='PCS',
+	G=o.CurrencyID,
 	H=round(o.PoPrice,2),
-	I=sum(pd.ShipQty)*round(o.PoPrice,2),
-	L=round((o.CPU*isnull(f.CpuCost,0))+(isnull(s1.Price,0)+isnull(s2.Price,0))+isnull(s3.Price,0),2),
-	M=sum(pd.ShipQty)*round((o.CPU*isnull(f.CpuCost,0))+(isnull(s1.Price,0)+isnull(s2.Price,0))+isnull(s3.Price,0),2)
+	J=sum(pd.ShipQty)*round(o.PoPrice,2),
+	M=sum(pd.ShipQty)*Round((((isnull(o.CPU,0) + isnull(s1.Price,0)) * isnull(f.CpuCost,0)) + isnull(s2.Price,0) + isnull(s3.Price,0)), 3)
 from orders o with(nolock)
 inner join PackingList_Detail pd with(nolock) on pd.OrderID = o.id
 inner join PackingList p with(nolock) on p.id = pd.id
@@ -225,14 +292,12 @@ outer apply(
 	where ot.ID = o.id and a.Classify = 'A'
 )s2
 outer apply(
-	select Price = Round(sum(ot.Price),3,1)
-	from Order_TmsCost ot WITH (NOLOCK) 
-	left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
-	where ot.ID = o.id and a.Classify = 'P'
+	select dbo.GetLocalPurchaseStdCost(o.id) price
 )s3
 where p.INVNo in({string.Join(",", ids)})
 group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,
 o.id,o.CPU,isnull(f.CpuCost,0),isnull(s1.Price,0)+isnull(s2.Price,0),isnull(s3.Price,0)
+,s1.Price,s2.Price,s3.price,f.CpuCost,o.CurrencyID
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
@@ -276,7 +341,7 @@ where a.id = '{top1id}'
                 {
                     if (!MyUtility.Check.Empty(BIRShipToarry[i]))
                     {
-                        worksheet.Cells[4 + j, 2] = BIRShipToarry[i];
+                        worksheet.Cells[12 + j, 2] = BIRShipToarry[i];
                         j++;
                     }
                 }
@@ -286,17 +351,18 @@ where a.id = '{top1id}'
             string top1GMT = $@"select * from GMTBooking where id = '{top1id}'";
             if (MyUtility.Check.Seek(top1GMT, out drGMT))
             {
-                worksheet.Cells[1, 9] = drGMT["FCRDate"];
-                worksheet.Cells[3, 9] = drGMT["Vessel"];
-                worksheet.Cells[8, 9] = MyUtility.GetValue.Lookup($@"select NameEN from Country where id = '{drGMT["Dest"]}'");
+                worksheet.Cells[9, 10] = drGMT["FCRDate"];
+                worksheet.Cells[11, 10] = drGMT["Vessel"];
+                worksheet.Cells[16, 10] = MyUtility.GetValue.Lookup($@"select NameEN from Country where id = '{drGMT["Dest"]}'");
             }
 
             // 頁尾
-            decimal sumI = MyUtility.Convert.GetDecimal(dt.Compute("sum(I)", null));
+            decimal sumI = MyUtility.Convert.GetDecimal(dt.Compute("sum(J)", null));
             decimal sumM = MyUtility.Convert.GetDecimal(dt.Compute("sum(M)", null));
-            decimal sumF = MyUtility.Convert.GetDecimal(dt.Compute("sum(F)", null));
+            decimal sumF = MyUtility.Convert.GetDecimal(dt.Compute("sum(E)", null));
 
-            worksheet.Cells[59, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
+            //worksheet.Cells[48, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
+            worksheet.Cells[57, 3] = MyUtility.Convert.USDMoney(sumI);
 
             string sumGW = $@"
 select sumGW = Sum (p.GW),sumNW=sum(p.NW),sumCBM=sum(p.CBM)
@@ -306,15 +372,16 @@ where p.INVNo in ({string.Join(",", ids)})
             DataRow drsum;
             if (MyUtility.Check.Seek(sumGW, out drsum))
             {
-                worksheet.Cells[69, 4] = drsum["sumGW"];
-                worksheet.Cells[70, 4] = drsum["sumNW"];
-                worksheet.Cells[71, 4] = drsum["sumCBM"];
+                worksheet.Cells[66, 3] = drsum["sumGW"];
+                worksheet.Cells[67, 3] = drsum["sumNW"];
+                worksheet.Cells[68, 3] = drsum["sumCBM"];
             }
 
-            worksheet.Cells[65, 9] = sumI;
-            worksheet.Cells[67, 9] = sumM + sumI;
-            worksheet.Cells[69, 9] = sumM;
-            worksheet.Cells[62, 2] = sumF;
+            worksheet.Cells[63, 10] = sumI;
+            worksheet.Cells[65, 10] = sumI - sumM;
+            worksheet.Cells[66, 10] = sumM;
+            worksheet.Cells[60, 2] = sumF;
+            worksheet.Cells[1, 10] = $@"InvSerial: {this.CurrentMaintain["InvSerial"]}";
             #endregion
 
             #region 內容
@@ -332,10 +399,10 @@ where p.INVNo in ({string.Join(",", ids)})
             {
                 var xlNewSheet = (Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i];
                 xlNewSheet.Name = "BIR Invoice-" + i.ToString();
-                int intRowsStart = 13;
+                int intRowsStart = 25;
                 int dataEnd = i * contentCount;
                 int dataStart = dataEnd - contentCount;
-                object[,] objArray = new object[1, 9];
+                object[,] objArray = new object[1, 10];
 
                 for (int j = dataStart; j < dataEnd; j++)
                 {
@@ -349,13 +416,14 @@ where p.INVNo in ({string.Join(",", ids)})
                     objArray[0, 0] = dr["A"];
                     objArray[0, 1] = dr["B"];
                     objArray[0, 2] = dr["C"];
-                    objArray[0, 3] = dr["D"];
+                    objArray[0, 3] = string.Empty;
                     objArray[0, 4] = dr["E"];
                     objArray[0, 5] = dr["F"];
                     objArray[0, 6] = dr["G"];
                     objArray[0, 7] = dr["H"];
-                    objArray[0, 8] = dr["I"];
-                    xlNewSheet.Range[string.Format("A{0}:I{0}", rownum)].Value2 = objArray;
+                    objArray[0, 8] = string.Empty;
+                    objArray[0, 9] = dr["J"];
+                    xlNewSheet.Range[string.Format("A{0}:J{0}", rownum)].Value2 = objArray;
                 }
 
                 Marshal.ReleaseComObject(xlNewSheet);
@@ -374,6 +442,18 @@ where p.INVNo in ({string.Join(",", ids)})
             strExcelName.OpenFile();
             #endregion
             return base.ClickPrint();
+        }
+
+        private void BtnBatchApprove(object sender, EventArgs e)
+        {
+            Sci.Production.Shipping.P11_BatchApprove callNextForm = new P11_BatchApprove(this.Reload);
+            callNextForm.ShowDialog(this);
+        }
+
+        public void Reload()
+        {
+            this.ReloadDatas();
+            this.RenewData();
         }
     }
 }

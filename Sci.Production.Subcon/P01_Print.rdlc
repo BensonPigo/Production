@@ -1378,10 +1378,25 @@
         <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
         <MIMEType>image/jpeg</MIMEType>
         <Top>5.37717cm</Top>
-        <Left>1.30476cm</Left>
+        <Left>1.33298cm</Left>
         <Height>2.2cm</Height>
         <Width>5.5cm</Width>
         <ZIndex>17</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Image>
+      <Image Name="Image3">
+        <Source>Database</Source>
+        <Value>=First(Fields!LockName.Value, "DataSet1")</Value>
+        <MIMEType>image/jpeg</MIMEType>
+        <Top>5.37717cm</Top>
+        <Left>7.00937cm</Left>
+        <Height>2.2cm</Height>
+        <Width>5.13802cm</Width>
+        <ZIndex>18</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2155,6 +2170,10 @@
         <Field Name="ID">
           <DataField>ID</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LockName">
+          <DataField>LockName</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
         </Field>
         <Field Name="OrderID">
           <DataField>OrderID</DataField>

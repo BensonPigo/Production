@@ -322,4 +322,53 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="CFMDate" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="e6195c38-fb08-471b-bd74-b12971db5753" ChangeDateTime="02/25/2019 06:01:36">
+    <Property Name="ElementName" Value="[dbo].[RFIDProcessLocation].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[RFIDProcessLocation]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="1332ba26-42eb-46a4-bbb2-78aaac837d12" ChangeDateTime="02/25/2019 08:06:57">
+    <Property Name="ElementName" Value="[dbo].[RFIDProcessLocation].[Desc]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[RFIDProcessLocation]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Desccription" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="555756c5-52c8-4097-9113-ca9504f82888" ChangeDateTime="02/25/2019 08:07:14">
+    <Property Name="ElementName" Value="[dbo].[RFIDProcessLocation].[Desccription]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[RFIDProcessLocation]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Description" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4f19b508-4872-4db3-b22d-7a43a3e33675" ChangeDateTime="03/12/2019 03:03:41">
+    <Property Name="ElementName" Value="[dbo].[FirstDyelot].[Consignee]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[FirstDyelot]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FactoryGroup" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ce7b7e8d-6305-4f65-9a4b-35e92782f2ef" ChangeDateTime="04/03/2019 09:14:10">
+    <Property Name="ElementName" Value="[dbo].[ClogGarmentDispose].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ClogGarmentDispose]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2517846c-af5f-44c0-a6a2-692dae3a3042" ChangeDateTime="04/03/2019 09:20:53">
+    <Property Name="ElementName" Value="[dbo].[ClogGarmentDispose_Detail].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ClogGarmentDispose_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="77478390-40a4-451b-9fee-d147c25f0502" ChangeDateTime="04/12/2019 02:10:18">
+    <Property Name="ElementName" Value="[dbo].[WorkOrderRevisedMarkerOriginalData_Detail].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[WorkOrderRevisedMarkerOriginalData_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="WorkorderUkeyRevisedMarkerOriginalUkey" />
+  </Operation>
 </Operations>

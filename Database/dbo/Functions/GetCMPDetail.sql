@@ -50,28 +50,29 @@ end
 
 
 insert into @CMPDetail
-select  s.OutputDate
-		, sd.OrderId
-		, s.FactoryID
-		, iif(f.Type='B','Bulk',iif(f.Type='S','Sample',f.Type))
-		, CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
-		, s.MDivisionID
-		, sea.SeasonSCIID
-		, att.ID
-		, [SubconType] = case	when s.Shift = 'O' then 'O'
+select   [OutputDate] = s.OutputDate
+		,[SPNo] = sd.OrderId
+		,[Factory] = s.FactoryID
+		,[FactoryType] = iif(f.Type='B','Bulk',iif(f.Type='S','Sample',f.Type))
+		,[IsDevSample] = CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
+		,[MDivision] = s.MDivisionID
+		,[SCISeason] = sea.SeasonSCIID
+		,[ArtworkType] = iif(s.Category = 'M','SEWING',att.ID)
+		,[SubconType] = case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
 								else 'N' end
-		, [SubconInOut] = case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
+		,[SubconInOut] = case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
 							when o.SubconInSisterFty = 1 then isnull(o.ProgramID,'')
 							else '' end
-		, s.SubConOutContractNumber
-		, sod.UnitPrice
-		, sod.Vat
-		, [CPUPrice] = case when att.ID = 'SEWING' then Sum(sd.QAQty * iif(s.Category = 'M', mo.CPUFactor * mo.CPU, o.CPUFactor * O.CPU  * a.Rate))
+		,[ContractNumber] = s.SubConOutContractNumber
+		,[UnitPrice] = sod.UnitPrice
+		,[Vat] = sod.Vat
+		,[CPUPrice] = case when s.Category = 'M'  then Sum(sd.QAQty * mo.CPUFactor * mo.CPU)
+							when att.ID = 'SEWING' then Sum(sd.QAQty * o.CPUFactor * O.CPU  * a.Rate)
 							when att.ProductionUnit = 'QTY'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 4)
 							when att.ProductionUnit = 'TMS'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 3)
 							else 0 end
-		, [Qty] = Sum(sd.QAQty)
+		,[Qty] = Sum(sd.QAQty)
 from SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
@@ -84,7 +85,7 @@ left join SubconOutContract_Detail sod WITH (NOLOCK) on sod.SubConOutFty = s.Sub
 														sod.ComboType = sd.ComboType and 
 														sod.Article = sd.Article
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
-inner join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and 
+left join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and 
 											att.Classify in ('I','A','P') and 
 											-- Sewing need include data
 											(att.IsTtlTMS = 0 or att.Seq = 1010 ) and 
@@ -92,9 +93,13 @@ inner join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and
 											att.IsPrintToCMP= 1
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 outer apply (select [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100) a
+outer apply (select [Value] = IIF(s.Shift <> 'O' and o.Category <> 'M' and o.LocalOrder = 1, 'I',s.Shift)) as LastShift
 where	s.MDivisionID = isnull(@M, s.MDivisionID) and 
 		(exists(select 1 from SplitString(@Factory,',') where s.FactoryID = Data )  or @Factory is null) and
-		s.OutputDate between @StartDate and @EndDate and (o.CateGory != 'G' or s.Category='M')
+		s.OutputDate between @StartDate and @EndDate and (o.CateGory != 'G' or s.Category='M') and
+		((LastShift.Value = 'O' and o.LocalOrder <> 1) or (LastShift.Value <> 'O') ) 
+          --排除 subcon in non sister的數值
+        and ((LastShift.Value <> 'I') or ( LastShift.Value = 'I' and o.SubconInSisterFty <> 0 ))   
 group by  s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
@@ -102,7 +107,7 @@ group by  s.OutputDate
 		, CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
 		, s.MDivisionID
 		, sea.SeasonSCIID
-		, att.ID
+		, iif(s.Category = 'M','SEWING',att.ID)
 		, case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
 								else 'N' end
@@ -112,14 +117,19 @@ group by  s.OutputDate
 		, s.SubConOutContractNumber
 		, sod.UnitPrice
 		, sod.Vat
-		,att.ProductionUnit
+		, att.ProductionUnit
+		, s.Category
+		, att.ID
 order by 
 		s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
 		, s.MDivisionID
 		, sea.SeasonSCIID
-		, att.ID
+		, iif(s.Category = 'M','SEWING',att.ID)
+
+	delete @CMPDetail where ArtworkType is null
+	
 	return
 end
 

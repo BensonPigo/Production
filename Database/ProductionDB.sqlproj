@@ -2323,6 +2323,18 @@
     <Build Include="dbo\Functions\GetCuttingTime.sql" />
     <Build Include="dbo\Functions\GetActualPerimeter.sql" />
     <Build Include="dbo\Tables\SpreadingNo.sql" />
+    <Build Include="dbo\Tables\CuttingOutputFabricRecord.sql" />
+    <Build Include="dbo\Functions\GetSubProcessDetailByOrderID.sql" />
+    <Build Include="dbo\Tables\FtyReqReturnClog.sql" />
+    <Build Include="dbo\Tables\RFIDProcessLocation.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateInspPercent.sql" />
+    <Build Include="dbo\Tables\UserActionLog.sql" />
+    <Build Include="dbo\Tables\LocalPO_IrregularPrice.sql" />
+    <Build Include="dbo\Tables\ArtworkPO_IrregularPrice.sql" />
+    <Build Include="dbo\Tables\PackingError.sql" />
+    <Build Include="dbo\Tables\ClogGarmentDispose.sql" />
+    <Build Include="dbo\Tables\ClogGarmentDispose_Detail.sql" />
+    <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

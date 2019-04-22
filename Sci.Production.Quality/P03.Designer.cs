@@ -248,6 +248,7 @@
             // displayofInspection
             // 
             this.displayofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayofInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FIRLabInspPercent", true));
             this.displayofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayofInspection.Location = new System.Drawing.Point(530, 18);
@@ -454,7 +455,7 @@
             this.modifyHeatTestToolStripMenuItem,
             this.modifyWashTestToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(197, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(197, 4);
             // 
             // modifyCroclingtestToolStripMenuItem
             // 
@@ -473,7 +474,7 @@
             // modifyWashTestToolStripMenuItem
             // 
             this.modifyWashTestToolStripMenuItem.Name = "modifyWashTestToolStripMenuItem";
-            this.modifyWashTestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.modifyWashTestToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.modifyWashTestToolStripMenuItem.Text = "Modify WashTest";
             this.modifyWashTestToolStripMenuItem.Click += new System.EventHandler(this.modifyWashTestToolStripMenuItem_Click);
             // 
@@ -488,6 +489,7 @@
             // 
             // dateEarliestSCIDel
             // 
+            this.dateEarliestSCIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MinSciDelivery", true));
             this.dateEarliestSCIDel.IsSupportEditMode = false;
             this.dateEarliestSCIDel.Location = new System.Drawing.Point(321, 43);
             this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";

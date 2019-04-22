@@ -78,6 +78,9 @@ where ed.ID = '{0}'", masterID);
                     this.displayPayer.Value = string.Empty;
                     break;
             }
+
+            decimal intPrepaidFtyImportFee = MyUtility.Convert.GetDecimal(this.CurrentMaintain["PrepaidFtyImportFee"]);
+            this.chkImportChange.Enabled = !(intPrepaidFtyImportFee > 0);
         }
 
         /// <inheritdoc/>
@@ -172,6 +175,11 @@ where ed.ID = '{0}'", masterID);
                 }
             }
 
+            if (this.ChkHaveAP())
+            {
+                return false;
+            }
+
             // 已經有做出口費用分攤，不能勾選[No Import Charge]
             if (MyUtility.Check.Seek(string.Format(@"select WKNO from ShareExpense WITH (NOLOCK) where WKNO = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
                 && this.chkImportChange.Checked)
@@ -224,6 +232,46 @@ where ed.ID = '{0}'", masterID);
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// 檢查[Expense Data]有[A/P No]存在、Export.PrepaidFtyImportFee>0
+        /// </summary>
+        /// <returns>Boolean</returns>
+        private bool ChkHaveAP()
+        {
+            bool rtnBol = false;
+            string sqlCmd = string.Empty;
+            bool bolShippingAPID = false;
+            if (this.chkImportChange.Checked)
+            {
+                sqlCmd = string.Format(
+                    @"select se.ShippingAPID
+                      from ShareExpense se WITH (NOLOCK)  
+                      where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                bolShippingAPID = MyUtility.Check.Seek(sqlCmd);
+                if (bolShippingAPID)
+                {
+                    MyUtility.Msg.ErrorBox("Have A/P# already");
+                    this.chkImportChange.Checked = false;
+                    rtnBol = true;
+                }
+            }
+
+            return rtnBol;
+        }
+
+        private void btnBatchUpload_Click(object sender, EventArgs e)
+        {
+            if (!this.Perm.Edit)
+            {
+                MyUtility.Msg.WarningBox("You have no permission.");
+                return;
+            }
+
+            P03_BatchUpload callNextForm = new P03_BatchUpload();
+            callNextForm.ShowDialog(this);
+            this.ReloadDatas();
         }
     }
 }

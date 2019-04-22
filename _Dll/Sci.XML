@@ -3492,6 +3492,26 @@
             get/set property of this form when in query mode or edit mode.
             </summary>
         </member>
+        <member name="P:Sci.Win.IForm.OnLineHelpID">
+            <summary>
+            會記錄掛在 MenuItem 下旳 Form.GetType().FullName
+            </summary>
+        </member>
+        <member name="P:Sci.Win.IForm.SubsMenuText">
+            <summary>
+            記錄 ToolStripMenuItem.OwnerItem.Text
+            </summary>
+        </member>
+        <member name="P:Sci.Win.IForm.FormParameter">
+            <summary>
+            記錄 這個 Form 接收的 Parameter. 主要做為 F1 時. Help 的 Keyvalue 之一
+            </summary>
+        </member>
+        <member name="P:Sci.Win.IForm.ParentIForm">
+            <summary>
+            記錄是誰叫這個 Form
+            </summary>
+        </member>
         <member name="T:Sci.Win.ITemplateForm">
             <summary>
             TemplateForm common properties and behaviors.
@@ -3722,6 +3742,26 @@
         <member name="P:Sci.Win.Forms.Base.OpenTime">
             <summary>
             get property of OpeningTime.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Forms.Base.OnLineHelpID">
+            <summary>
+            from IForm
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Forms.Base.SubsMenuText">
+            <summary>
+            from IForm
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Forms.Base.FormParameter">
+            <summary>
+            from IForm
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Forms.Base.ParentIForm">
+            <summary>
+            from IForm
             </summary>
         </member>
         <member name="P:Sci.Win.Forms.Base.CloseTime">
@@ -4312,6 +4352,11 @@
             </summary>
             <returns>TransactionScope </returns>
         </member>
+        <member name="M:Sci.Win.PrivUtils.OpenOnLineHelp(System.String)">
+            <summary>
+            打開 Help.http:\\misap:8063?onlinehelpID='{OnLineHelpID}'
+            </summary>
+        </member>
         <member name="T:Sci.Win.QueryBuilderOperator">
             <summary>
             Compare operation list.
@@ -4504,6 +4549,11 @@
             </summary>
             <param name="tableschema">ITableSchema object.</param>
             <returns>Result of the method.</returns>
+        </member>
+        <member name="M:Sci.Win.Subs.Base.SetSubsMenuTextandParentIForm">
+            <summary>
+            設定 IForm.SubsMenuText
+            </summary>
         </member>
         <member name="F:Sci.Win.Subs.Base.components">
             <summary>
@@ -10496,6 +10546,11 @@
             Inner class.
             </summary>
         </member>
+        <member name="P:Sci.Win.Tems.InputMasterDetail.DetailKey.KeyString">
+            <summary>
+            Andy ->將 欄位的值 變成字串方便比對值是否相同. "{column1.value}|{column2.value}|{column3.value}|...." 
+            </summary>
+        </member>
         <member name="T:Sci.Win.Tems.InputMasterDetail.RenewDataPostEventArgs">
             <summary>
             RenewDataPostEventArgs class.
@@ -12476,6 +12531,12 @@
             <param name="sender">sender object.</param>
             <param name="e">Event Args information.</param>
         </member>
+        <member name="M:Sci.Win.Tools.Clip.FileDownload(System.Collections.Generic.List{Sci.Win.SYS.CLIPRow})">
+            <summary>
+            Download SingleFile
+            </summary>
+            <param name="datas"> STS.CLIPRow list </param>
+        </member>
         <member name="M:Sci.Win.Tools.Clip.mailto_Click(System.Object,System.EventArgs)">
             <summary>
             MailTo button is pressed.
@@ -14396,6 +14457,16 @@
             Base class of sub page that inherited from BaseGrid.
             </summary>
         </member>
+        <member name="P:Sci.Win.Tools.BaseSelectItem.FilterColumns">
+            <summary>
+            set filter column
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.BaseSelectItem.FilterDefault">
+            <summary>
+            set filter column default value
+            </summary>
+        </member>
         <member name="T:Sci.Win.Tools.BaseSelectItem.ISource">
             <summary>
             Inner Interface.
@@ -14675,6 +14746,12 @@
             </summary>
             <param name="columnsWidth"></param>
         </member>
+        <member name="M:Sci.Win.Tools.BaseSelectItem.SetFilterColumns(System.String,System.String)">
+            <summary>
+            set filter columns
+            </summary>
+            <param name="filterColumns"></param>
+        </member>
         <member name="F:Sci.Win.Tools.BaseSelectItem.components">
             <summary>
             設計工具所需的變數。
@@ -14812,7 +14889,7 @@
         <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <member name="M:Sci.Win.Tools.SelectItem.OnFormLoaded">
             <summary>
             On form loaded method.
@@ -14965,7 +15042,7 @@
             /// <param name="defaults">original selected string.</param>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <member name="M:Sci.Win.Tools.SelectItem2.OnFormLoaded">
             <summary>
             On form loaded method.

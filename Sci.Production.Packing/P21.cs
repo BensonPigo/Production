@@ -39,6 +39,7 @@ namespace Sci.Production.Packing
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("ErrorType", header: "ErrorType", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: false)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
@@ -92,9 +93,12 @@ select
 	,o.BuyerDelivery
 	,o.SciDelivery
 	,[TransferredBy] = dbo.getPass1(pe.AddName)
+    ,[ErrorType] = pe.PackingErrorID+'-'+perr.Description
 from PackErrTransfer pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
+left join PackingError perr with (nolock) on pe.PackingErrorID = perr.ID
+and perr.Type='TP'
 where 1=1
 {sqlwhere}
 order by pe.PackingListID,pe.CTNStartNo,pe.TransferDate

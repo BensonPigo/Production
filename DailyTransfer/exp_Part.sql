@@ -136,10 +136,12 @@ AND PurchaseFrom = 'T'
 ------------------------------------------------
 
 SELECT pod.ID,pod.seq1,pod.SEQ2,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid ,pod.PartReqID,pod.InQty
-	,PartReq_Detail.MinQty,PartReq_Detail.StockQty,PartReq_Detail.RoadQty
+	,prd.MinQty,prd.StockQty,prd.RoadQty
+	,pr.FactoryApprove, pr.FactoryApproveDate, pr.CmdApprove, pr.CmdApproveDate, pr.MgApprove, pr.MgApproveDate
 INTO  PartPO_Detail
 FROM Pms_To_Trade.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
-left join Machine.dbo.PartReq_Detail on PartReq_Detail.ID= pod.PartReqID and PartReq_Detail.PartID=pod.PartID
+left join Machine.dbo.PartReq_Detail prd on prd.ID= pod.PartReqID and prd.PartID=pod.PartID
+left join Machine.dbo.PartReq pr on pr.id=prd.ID
 WHERE PartPO.id= pod.id  
 ORDER BY PartPO.id 
 

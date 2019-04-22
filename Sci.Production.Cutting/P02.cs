@@ -186,10 +186,30 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,n.NoofRoll,sl.Layer,sc.Cons,1),0)as float),','
-				,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(iif(a.ActCuttingPerimeter not like '%yd%','0',a.ActCuttingPerimeter)),4),
-				a.CutCellid,sl.Layer,c.WeaveTypeID,sc.cons),0)as float)
+	
+	,SandCTime = concat(
+		'Spr.:',cast(round(isnull(
+			dbo.GetSpreadingTime(
+					c.WeaveTypeID,
+					a.Refno,
+					iif(iif(isnull(fi.avgInQty,0)=0,1,round(iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId))/fi.avgInQty,0))<1,1,
+                        iif(isnull(fi.avgInQty,0)=0,1,round(iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId))/fi.avgInQty,0))
+                        ),
+					iif(isnull(a.CutRef,'')='',a.Layer,sum(a.Layer)over(partition by a.CutRef,a.MDivisionId)),
+					iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId)),
+					1
+				)/60.0,0),2)as float),' mins, '
+		
+		,'Cut:',cast(round(isnull(
+			dbo.GetCuttingTime(
+					round(dbo.GetActualPerimeter(iif(a.ActCuttingPerimeter not like '%yd%','0',a.ActCuttingPerimeter)),4),
+					a.CutCellid,
+					iif(isnull(a.CutRef,'')='',a.Layer,sum(a.Layer)over(partition by a.CutRef,a.MDivisionId)),
+					c.WeaveTypeID,
+					iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId))
+				)/60.0,0),2)as float),' mins'
 	)--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
+
     ,isbyAdditionalRevisedMarker = cast(0 as int)
     ,fromukey = a.ukey
 from Workorder a WITH (NOLOCK)
@@ -289,9 +309,6 @@ outer apply(
 	where psd.ID = a.id and psd.SCIRefno = a.SCIRefno
 	and fi.InQty is not null
 ) as fi
-outer apply(select Layer = sum(a.Layer)over(partition by a.CutRef))sl
-outer apply(select Cons = sum(a.Cons)over(partition by a.CutRef))sc
-outer apply(select NoofRoll = iif(isnull(round(sc.Cons/fi.avgInQty,0),0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
 where a.id = '{0}'            
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -518,7 +535,7 @@ where WorkOrderUkey={0}", masterID);
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5).Get(out col_layer)
+                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, maximum: 9999M).Get(out col_layer)
                 .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(13)).Get(out col_sp)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out col_seq1)
@@ -670,7 +687,8 @@ where WorkOrderUkey={0}", masterID);
             };
             col_layer.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || e.RowIndex == -1) return;
+                if (!this.EditMode || e.RowIndex == -1 || e.FormattedValue == null)
+                    return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["layer"].ToString();
                 string newvalue = e.FormattedValue.ToString();
@@ -2296,6 +2314,24 @@ END";
         {
             gridValid();
 
+            int index = 0;
+            foreach (DataRow item in DetailDatas)
+            {
+                if (MyUtility.Check.Empty(item["MarkerNo"].ToString()))
+                {
+                    this.detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox("Marker No cannot be empty.");
+                    return false;
+                }
+                else if (MyUtility.Check.Empty(item["FabricPanelCode"].ToString()))
+                {
+                    this.detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox("Fab_Panel Code cannot be empty.");
+                    return false;
+                }
+                index++;
+            }
+
             DataTable Dg = ((DataTable)detailgridbs.DataSource);
             for (int i = Dg.Rows.Count; i > 0; i--)
             {
@@ -2412,23 +2448,24 @@ END";
                     )
                 {
                     // 已經寫過則不再寫入
-                    string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData where WorkOrderUkey like ('%{dr["ukey"]}%')  ";
+                    string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData_Detail where WorkOrderUkey = ('{dr["ukey"]}')  ";
                     if (!MyUtility.Check.Seek(sqlchk))
                     {
                         sqlInsertRevisedMarkerOriginalData += $@"
 INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
 ([ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid],[MarkerLength]
 ,[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo],[MarkerDownLoadId]
-,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID]
-,[WorkOrderUkey])
-
+,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID])
 select [ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid]
 ,[MarkerLength],[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo]
 ,[MarkerDownLoadId],[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength]
-,[CurvedLength],[SpreadingNoID],Ukey
+,[CurvedLength],[SpreadingNoID]
 from WorkOrder where Ukey ={dr["ukey"]}
 
 set @ID = (select @@IDENTITY)
+
+INSERT INTO WorkOrderRevisedMarkerOriginalData_Detail(WorkorderUkeyRevisedMarkerOriginalUkey,WorkorderUkey)
+            values(@ID,{dr["ukey"]})
 
 INSERT INTO [dbo].[WorkOrder_DistributeRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
 select @ID,[ID],[OrderID],[Article],[SizeCode],[Qty] from WorkOrder_Distribute where WorkOrderUkey = {dr["ukey"]}
@@ -2445,26 +2482,27 @@ select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrde
             #endregion
             #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 原本那筆 isbyAdditionalRevisedMarker = 1, 增加的那筆 = 2
             sqlInsertRevisedMarkerOriginalData += " declare @ID2 bigint";
-            foreach (DataRow dr in DetailDatas.Where(w => w.RowState == DataRowState.Modified &&
+            foreach (DataRow dr in DetailDatas.Where(w => (w.RowState == DataRowState.Modified) &&
                         MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 1))
             {
-                string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData where WorkOrderUkey like ('%{dr["ukey"]}%')  ";
+                string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData_Detail where WorkOrderUkey = ('{dr["ukey"]}')  ";
                 if (!MyUtility.Check.Seek(sqlchk))
                 {
                     sqlInsertRevisedMarkerOriginalData += $@"
 INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
 ([ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid],[MarkerLength]
 ,[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo],[MarkerDownLoadId]
-,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID]
-,[WorkOrderUkey])
-
+,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID])
 select [ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid]
 ,[MarkerLength],[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo]
 ,[MarkerDownLoadId],[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength]
-,[CurvedLength],[SpreadingNoID],{dr["ukey"]}
+,[CurvedLength],[SpreadingNoID]
 from WorkOrder where Ukey ={dr["ukey"]}
 
 set @ID2 = (select @@IDENTITY)
+
+INSERT INTO WorkOrderRevisedMarkerOriginalData_Detail(WorkorderUkeyRevisedMarkerOriginalUkey,WorkorderUkey)
+            values(@ID2,{dr["ukey"]})
 
 INSERT INTO [dbo].[WorkOrder_DistributeRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
 select @ID2,[ID],[OrderID],[Article],[SizeCode],[Qty] from WorkOrder_Distribute where WorkOrderUkey = {dr["ukey"]}
@@ -2489,17 +2527,35 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
 
         protected override DualResult ClickSavePost()
         {
-            #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 在此取拆出來資料的ukey
+            #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 在此取拆出來資料的ukey,處理刪除的資料
             string sqlUpdateRevisedMarkerOriginalData = string.Empty;
-            foreach (DataRow dr in DetailDatas.Where(w => w.RowState == DataRowState.Modified &&
-                        MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 1))
+            var listAdditionalRevisedMarkerSeparate = DetailDatas.Where(w => (w.RowState == DataRowState.Modified || w.RowState == DataRowState.Added) &&
+                       MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 2);
+            foreach (DataRow dr in listAdditionalRevisedMarkerSeparate)
             {
-                var ukeylist = DetailDatas.Where(w => MyUtility.Convert.GetString(w["fromukey"]) == MyUtility.Convert.GetString(dr["fromukey"])).Select(s => s["ukey"]).ToList();
-                string ukeys = string.Join(",", ukeylist);
                 sqlUpdateRevisedMarkerOriginalData += $@"
-update WorkOrderRevisedMarkerOriginalData set WorkOrderUkey = '{ukeys}'
-where WorkOrderUkey = '{dr["ukey"]}'
+                Insert into WorkOrderRevisedMarkerOriginalData_Detail(WorkorderUkeyRevisedMarkerOriginalUkey,WorkorderUkey)
+                            select WorkorderUkeyRevisedMarkerOriginalUkey,{dr["Ukey"]}
+                            from WorkOrderRevisedMarkerOriginalData_Detail where WorkorderUkey = {dr["fromukey"]}
 ";
+            }
+
+            var listDeleteRevisedMarkerSeparate = this.CurrentDetailData.Table.AsEnumerable().Where(w => w.RowState == DataRowState.Deleted);
+            foreach (DataRow dr in listDeleteRevisedMarkerSeparate)
+            {
+                sqlUpdateRevisedMarkerOriginalData += $@"
+                delete WorkOrderRevisedMarkerOriginalData_Detail where WorkorderUkey = {dr["Ukey",DataRowVersion.Original]}
+";
+            }
+
+            // 刪除WorkOrderRevisedMarkerOriginalData 沒有detail的資料
+            if (listDeleteRevisedMarkerSeparate.Any())
+            {
+                sqlUpdateRevisedMarkerOriginalData += $@"
+                      delete  w
+                        from WorkOrderRevisedMarkerOriginalData w
+                        where not exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wd 
+                                    where wd.WorkorderUkeyRevisedMarkerOriginalUkey = w.Ukey)";
             }
             #endregion
             int ukey, newkey;
@@ -2696,16 +2752,17 @@ where b.poid = '{0}'
         }
 
         private void txtBoxMarkerNo_Validating(object sender, CancelEventArgs e)
-        {
+        {                       
             if (this.EditMode)
             {
                 if (!MyUtility.Check.Seek(string.Format(@"
-select 1 from Order_EachCons a
-inner join orders b on a.id = b.ID
-where b.poid = '{0}' and a.MarkerNo='{1}'
-", CurrentMaintain["ID"], this.txtBoxMarkerNo.Text)))
+    select 1 from Order_EachCons a
+    inner join orders b on a.id = b.ID
+    where b.poid = '{0}' and a.MarkerNo='{1}'
+    ", CurrentMaintain["ID"], this.txtBoxMarkerNo.Text)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("<MarkerNO: {0} > is not found!", this.txtBoxMarkerNo.Text));
+                    CurrentDetailData["MarkerNo"] = string.Empty;
                     e.Cancel = true;
                     return;
                 }
@@ -2713,11 +2770,13 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             if (MyUtility.Check.Empty(txtBoxMarkerNo.Text))
             {
                 MyUtility.Msg.WarningBox(string.Format("<MarkerNO > cannot be null"));
+                CurrentDetailData["MarkerNo"] = string.Empty;
                 e.Cancel = true;
-                return;
+                return ;
             }
+            return;
         }
-
+        
         private void txtFabricPanelCode_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
@@ -2739,6 +2798,7 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             else
             {
                 MyUtility.Msg.WarningBox(string.Format("This FabricPanelCode<{0}> is wrong", txtFabricPanelCode.Text));
+                CurrentDetailData["FabricPanelCode"] = string.Empty;
                 e.Cancel = true;
                 return;
             };
@@ -2787,13 +2847,6 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
 
         protected override void ClickUndo()
         {
-            //foreach (DataRow dr in DetailDatas)
-            //{
-            //    if (dr.RowState==DataRowState.Added)
-            //    {
-            //        MyUtility.Msg.InfoBox("add row !");
-            //    }
-            //}
             base.ClickUndo();
             RenewData();
             OnDetailEntered();

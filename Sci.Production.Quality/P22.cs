@@ -41,6 +41,7 @@ namespace Sci.Production.Quality
                .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("Alias", header: "Destination", width: Widths.AnsiChars(7), iseditingreadonly: true)
                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Date("ClogCFM", header: "CLOG CFM", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("ClogLocationID", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
         }
@@ -80,6 +81,7 @@ namespace Sci.Production.Quality
             {
                 listSQLFilter.Add("and p2.id= @PackID");
             }
+            
             #endregion
 
           
@@ -105,6 +107,7 @@ CFANeedInsp
 ,p2.ClogLocationId
 ,p2.remark
 ,p2.Seq
+,p2.ReceiveDate as ClogCFM
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -155,8 +158,8 @@ outer apply(
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
---and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
+and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.Seq";
@@ -176,6 +179,7 @@ order by p2.ID,p2.Seq";
             {
                 DataTable dt = dtDBSource.Copy();
                 this.listControlBindingSource.DataSource = dt;
+                Grid_Filter();
             }
         }
 
@@ -209,7 +213,7 @@ order by p2.ID,p2.Seq";
             MyUtility.Tool.ProcessWithDatatable(dt,string.Empty, @"
 select distinct a.* from #tmp a
 inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
-where a.CFANeedInsp <> b.CFANeedInsp ", out selectData);
+where a.CFANeedInsp <> b.CFANeedInsp and b.DisposeFromClog= 0", out selectData);
 
             foreach (DataRow dr in selectData.Rows)
             {
@@ -218,6 +222,7 @@ where a.CFANeedInsp <> b.CFANeedInsp ", out selectData);
 update PackingList_Detail 
 set CFANeedInsp ={CFANeedInsp}
 where id='{dr["id"]}'
+and DisposeFromClog= 0
 and CTNStartNo ='{dr["CTNStartNo"]}'
 ";                
                 
@@ -297,6 +302,43 @@ where CFANeedInsp = 1 ", out dtToExcel);
         private void btnColse_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void checkCartonsInClog_CheckedChanged(object sender, EventArgs e)
+        {
+            Grid_Filter();
+        }
+
+        private void Grid_Filter()
+        {
+            DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
+
+            if (!MyUtility.Check.Empty(dt) && dt.Rows.Count > 0)
+            {
+                string filter = string.Empty;
+                switch (this.checkCartonsInClog.Checked)
+                {
+                    case false:
+                        if (MyUtility.Check.Empty(this.grid))
+                        {
+                            break;
+                        }
+
+                        filter = string.Empty;
+                        ((DataTable)this.listControlBindingSource.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case true:
+                        if (MyUtility.Check.Empty(this.grid))
+                        {
+                            break;
+                        }
+
+                        filter = " ClogCFM is not null ";
+                        ((DataTable)this.listControlBindingSource.DataSource).DefaultView.RowFilter = filter;
+                        break;
+                }
+            }
         }
     }
 }

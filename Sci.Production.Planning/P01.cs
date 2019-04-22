@@ -272,29 +272,53 @@ dr["localsuppid"]);
                     string sqlcmd;
                     if (this.CurrentDetailData["InhouseOSP"].ToString() == "O")
                     {
+                        DataTable dtSelectSupp = null;
                         sqlcmd = string.Format(
                             @"
-SELECT QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
-FROM Order_TmsCost OT WITH (NOLOCK)
-INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
-INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
-INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
-WHERE OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
-GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup",
+
+if (exists (select 1 from ArtworkType where ID = '{1}' and IsArtwork = 1))
+begin
+	SELECT	QU.LocalSuppId
+			, LOCALSUPP.Abb
+			, QU.Mockup
+	FROM Order_TmsCost OT WITH (NOLOCK)
+	INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
+	INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
+	LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
+	INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
+	WHERE OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
+	GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
+end
+else
+begin
+	select	LocalSuppID = ID
+			, Abb = Abb
+			, Mockup = NULL
+	from LocalSupp
+	where junk = 0
+end;",
                             this.CurrentDetailData["ID"],
                             this.CurrentDetailData["Artworktypeid"]);
-                        item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,15,12", null, null);
-                        DialogResult result = item.ShowDialog();
-                        if (result == DialogResult.Cancel)
-                        {
-                            return;
-                        }
 
-                        IList<DataRow> x = item.GetSelecteds();
-                        this.CurrentDetailData["localsuppid"] = x[0][0];
-                        this.CurrentDetailData["localsuppname"] = x[0][1];
-                        this.CurrentDetailData["mockupdate"] = x[0][2];
+                        DualResult resule = DBProxy.Current.Select(string.Empty, sqlcmd, out dtSelectSupp);
+                        if (resule == true)
+                        {
+                            item = new Sci.Win.Tools.SelectItem(dtSelectSupp, "LocalSuppID,Abb,MockUp", "10,15,12", null, null, null);
+                            DialogResult result = item.ShowDialog();
+                            if (result == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
+                            IList<DataRow> x = item.GetSelecteds();
+                            this.CurrentDetailData["localsuppid"] = x[0][0];
+                            this.CurrentDetailData["localsuppname"] = x[0][1];
+                            this.CurrentDetailData["mockupdate"] = x[0][2];
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox(resule.Description);
+                        }
                     }
                     else
                     {
@@ -331,15 +355,30 @@ GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup",
                         bool exist = false;
                         string exists = string.Format(
                             @"
-SELECT QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
-FROM Order_TmsCost OT WITH (NOLOCK)
-INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
-INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
-INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
-WHERE OT.ID = '{0}' 
-AND OT.ARTWORKTYPEID = '{1}' AND qu.Localsuppid = '{2}'
-GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup",
+if (exists (select 1 from ArtworkType where ID = '{1}' and IsArtwork = 1))
+begin
+	SELECT QU.LocalSuppId
+			, LOCALSUPP.Abb
+			, QU.Mockup
+	FROM Order_TmsCost OT WITH (NOLOCK)
+	INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
+	INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
+	LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
+	INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
+	WHERE OT.ID = '{0}' 
+			AND OT.ARTWORKTYPEID = '{1}' 
+			AND qu.Localsuppid = '{2}'
+	GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
+end
+else
+begin
+	select	LocalSuppID = ID
+			, Abb = Abb
+			, Mockup = ''
+	from LocalSupp
+	where junk = 0
+			and ID = '{2}'
+end;",
 this.CurrentDetailData["ID"],
 this.CurrentDetailData["Artworktypeid"],
 e.FormattedValue);

@@ -29,7 +29,9 @@ namespace Sci.Production.Cutting
             if (history == "0")
                 this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=0) and mDivisionid='{0}'", keyword);
             else
-                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);           
+                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);    
+            
+            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Sci.Env.User.Factory}'";       
         }
 
         protected override void OnFormLoaded()
@@ -45,7 +47,14 @@ from Factory WITH (NOLOCK)
 where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
-            queryfors.SelectedIndex = 0;
+            // 取得當前登入工廠index
+            for (int i = 0; i < queryDT.Rows.Count; i++)
+            {   
+                if (String.Compare(queryDT.Rows[i]["FTYGroup"].ToString(), Sci.Env.User.Factory) == 0)
+                {
+                    queryfors.SelectedIndex = i;
+                }
+            }
             queryfors.SelectedIndexChanged += (s, e) =>
             {
                 switch (queryfors.SelectedIndex)
@@ -66,6 +75,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("BundleGroup", header: "Group", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
             .Text("Bundleno", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("PatternCode", header: "Cutpart", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cutpart name", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -102,7 +112,7 @@ order by bundlegroup"
             #region 先撈出底層其他Table
             if (!IsDetailInsertByCopy)
             {
-                string allPart_cmd = string.Format(@"Select sel = 0,b.*, ukey1 = 0, annotation = '' from Bundle_Detail a WITH (NOLOCK) inner join Bundle_Detail_Allpart b WITH (NOLOCK) on a.id = b.id Where a.id ='{0}'", masterID);
+                string allPart_cmd = string.Format(@"Select sel = 0,*, ukey1 = 0, annotation = '' from  Bundle_Detail_Allpart  WITH (NOLOCK)  Where id ='{0}'", masterID);
                 string art_cmd = string.Format(@"Select b.*, ukey1 = 0 from Bundle_Detail a WITH (NOLOCK) inner join Bundle_Detail_art b WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id Where a.id ='{0}' ", masterID);
                 string qty_cmd = string.Format(@"Select No = 0, a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
                 DualResult dRes = null;
@@ -187,7 +197,7 @@ order by bundlegroup"
         public void queryTable()
         {
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
-            string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_Allpart b WITH (NOLOCK) Where a.id ='{0}' and a.id = b.id", masterID);
+            string allPart_cmd = string.Format(@"Select 0 as sel,*, 0 as ukey1,'' as annotation from Bundle_Detail_Allpart  WITH (NOLOCK) Where id ='{0}' ", masterID);
             string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_art b WITH (NOLOCK) Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
             string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
@@ -364,8 +374,8 @@ order by bundlegroup"
                 if (dr.RowState != DataRowState.Deleted)
                 {
                     allpart_cmd = allpart_cmd + string.Format(
-                @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair) values('{0}','{1}','{2}','{3}','{4}');"
-                , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"], dr["isPair"]);
+                @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair,Location) values('{0}','{1}','{2}','{3}','{4}','{5}');"
+                , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"], dr["isPair"], dr["Location"]);
                 }
             }
             #endregion

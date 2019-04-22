@@ -7,17 +7,21 @@ Set NoCount On;
 declare @ToAddress nvarchar(max)
 declare @CcAddress nvarchar(max)
 declare @RgCode nvarchar(255)
+declare @StartDate1 datetime, @EndDate1 datetime
 select @ToAddress = ToAddress ,@CcAddress = CcAddress from MailTo where id = '016';
 select @RgCode = RgCode from system;
+set @StartDate1 = cast(convert(nvarchar(10),@StartDate,112) + ' 00:00:00'  as datetime)
+set @EndDate1 = cast(convert(nvarchar(10),dateadd(dd,1,@EndDate),112) + ' 00:00:00'  as datetime)
 begin try
 --抓出時間區間內SewingSchedule的orderID
 select distinct ss.OrderID,o.StyleID,o.SeasonID,o.BrandID,o.StyleUKey,o.Qty,o.AddName,o.SCIDelivery
 into #SrcOrderID
 from dbo.SewingSchedule ss with (nolock)
 inner join orders o with (nolock) on  ss.OrderID = o.ID
-where inline between @StartDate and @EndDate or 
-	  Offline between @StartDate and @EndDate or
-	  (inline <= @StartDate and Offline >= @EndDate)
+where (inline >= @StartDate1 and inline < @EndDate1) 
+	  or (Offline >= @StartDate1 and Offline < @EndDate1) 
+	  or (inline <= @StartDate1 and Offline >= @EndDate1)
+
 
 
 --tMODCS(制單顏色尺碼錶)
@@ -92,10 +96,9 @@ select
 [CardNo] = isnull(m.RFIDCardNo,0)
 into #tMachineInfo
 from Machine.dbo.Machine m with (nolock)
-inner join Machine.dbo.MachineGroup mg with (nolock) on m.MachineGroupID = mg.id
+inner join Machine.dbo.MachineGroup mg with (nolock) on m.MachineGroupID = mg.id and m.MasterGroupID = mg.MasterGroupID
 where exists (select distinct MachineGroupID from Production.dbo.MachineType
-				inner join #tMOSeqD tM on tm.MachineTypeID = MachineType.ID
-				where ArtworkTypeID = 'SEWING' and MachineType.MachineGroupID = m.MachineGroupID)
+				where ArtworkTypeID = 'SEWING' and MachineType.MachineGroupID = m.MachineGroupID and MachineType.MasterGroupID = m.MasterGroupID)
 
 --tSeqBase(基本工序表)
 select 

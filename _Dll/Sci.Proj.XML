@@ -1554,7 +1554,7 @@
             excel application, be carefully use.
             </summary>
         </member>
-        <member name="M:Sci.Utility.Excel.SaveDataToExcel.AddPivotSheet(Microsoft.Office.Interop.Excel.Application,Microsoft.Office.Interop.Excel.Worksheet,Microsoft.Office.Interop.Excel.Workbook,System.Data.DataTable,System.String,System.Collections.Generic.List{Sci.Utility.Excel.SaveDataToExcel.MyPivotField},System.String,System.Boolean,System.Boolean,System.Boolean)">
+        <member name="M:Sci.Utility.Excel.SaveDataToExcel.AddPivotSheet(Microsoft.Office.Interop.Excel.Application,Microsoft.Office.Interop.Excel.Worksheet,Microsoft.Office.Interop.Excel.Workbook,System.Data.DataTable,System.String,System.Collections.Generic.List{Sci.Utility.Excel.SaveDataToExcel.MyPivotField},System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             Edward : 新增Excel Pivot表
                 create : 2016-04-21 21:00:00
@@ -1569,6 +1569,8 @@
             <param name="repeatAllLabel"> repeat all label </param>
             <param name="closeAllSubtotal"> close all subtotal </param>
             <param name="setDataFieldToColumn"> set data field to column field </param>
+            <param name="showRowGrand"> show row grand total</param>
+            <param name="showColumnGrand"> show column grand total</param>
         </member>
         <member name="M:Sci.Utility.Excel.SaveDataToExcel.#ctor(System.Data.DataTable,System.Int32,System.Boolean)">
             <summary>
@@ -1606,6 +1608,26 @@
                 create : 2016-04-21 21:00:00
             </summary>
         </member>
+        <member name="T:Sci.Utility.Excel.SaveDataToExcel.MyPivotField.SubtotalEnum">
+            <summary>
+            show subtotal : None: 不指定, Open: 顯示各項小計, Close: 不顯示各項小計
+            </summary>
+        </member>
+        <member name="F:Sci.Utility.Excel.SaveDataToExcel.MyPivotField.SubtotalEnum.None">
+            <summary>
+            不指定
+            </summary>
+        </member>
+        <member name="F:Sci.Utility.Excel.SaveDataToExcel.MyPivotField.SubtotalEnum.Open">
+            <summary>
+            顯示各項小計
+            </summary>
+        </member>
+        <member name="F:Sci.Utility.Excel.SaveDataToExcel.MyPivotField.SubtotalEnum.Close">
+            <summary>
+            不顯示各項小計
+            </summary>
+        </member>
         <member name="P:Sci.Utility.Excel.SaveDataToExcel.MyPivotField.FieldName">
             <summary>
             Field name
@@ -1626,7 +1648,12 @@
             list of select item
             </summary>
         </member>
-        <member name="M:Sci.Utility.Excel.SaveDataToExcel.MyPivotField.#ctor(System.String,System.Int32,System.Int32,System.String)">
+        <member name="P:Sci.Utility.Excel.SaveDataToExcel.MyPivotField.XlSubtotal">
+            <summary>
+            enum subtotal : 是否要顯示各項小計
+            </summary>
+        </member>
+        <member name="M:Sci.Utility.Excel.SaveDataToExcel.MyPivotField.#ctor(System.String,System.Int32,System.Int32,System.String,System.Int32)">
             <summary>
             MyPivotField 建構式
             </summary>
@@ -1634,6 +1661,7 @@
             <param name="xlFieldType">Hidden = 0 ,RowField = 1 ,ColumnField = 2 ,PageField = 3 ,DataField = 4</param>
             <param name="xlFieldFn">Unknown = 0 ,Sum = 1 ,Min = 2 ,Max = 3 ,Average = 4</param>
             <param name="selectItems"> select items </param>
+            <param name="xlSubtotal"> 是否要顯示各項小計 None = 0, Open = 1, Close = 2 </param>
         </member>
         <member name="T:Sci.Utility.Excel.SaveDataToExcel.PivotSheet">
             <summary>

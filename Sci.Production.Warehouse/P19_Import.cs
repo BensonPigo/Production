@@ -74,28 +74,36 @@ namespace Sci.Production.Warehouse
             sbSQLCmd.Append(string.Format(@"
 select  0 as selected 
         , '' id
-        , a.id as PoId
-        , a.Seq1
-        , a.Seq2
-        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-        , a.FabricType
-        , a.stockunit
-        , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) Description
+        , c.PoId
+        , c.Seq1
+        , c.Seq2
+        , concat(Ltrim(Rtrim(c.seq1)), ' ', c.Seq2) as seq
+        , export.FabricType
+        , rd.stockunit
+        , dbo.getmtldesc(c.POID,c.seq1,c.seq2,2,0) Description
         , c.Roll
         , c.Dyelot
         , 0.00 as Qty
+        , c.inqty-c.outqty + c.adjustqty as Balance
         , c.StockType
         , c.ukey as ftyinventoryukey
         , dbo.Getlocation(c.ukey) location
         , c.inqty-c.outqty + c.adjustqty as stockqty
-from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
-inner join dbo.Orders on c.POID = orders.id
-inner join dbo.Factory on orders.FactoryID = factory.ID
+from ftyinventory c WITH (NOLOCK) 
+left join Receiving_Detail rd WITH (NOLOCK) on c.POID=rd.PoId
+    and c.Seq1=rd.Seq1 and c.Seq2=rd.Seq2 and c.Roll=rd.Roll and c.Dyelot=rd.Dyelot
+LEFT JOIN Orders o ON o.id =c.poid
+outer apply(
+	select top 1 ed.FabricType,f.MDivisionID 
+    from Export e WITH (NOLOCK)
+	inner join Export_Detail ed WITH (NOLOCK) on e.ID=ed.ID
+	left join Factory f WITH (NOLOCK) on f.ID=e.FactoryID
+	where ed.PoID=c.POID and ed.Seq1=c.Seq1 and ed.Seq2=c.Seq2
+)export
 Where   c.lock = 0 
-and factory.MDivisionID = '{0}' 
+and ( export.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
         and c.inqty-c.outqty + c.adjustqty > 0 
-        and a.id = @sp 
+        and c.Poid = @sp 
         and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
 
             sp_seq1.Value = txtSeq1.seq1;
@@ -105,11 +113,11 @@ and factory.MDivisionID = '{0}'
             if (!txtSeq1.checkSeq1Empty() && txtSeq1.checkSeq2Empty())
             {
                 sbSQLCmd.Append(@"
-        and a.seq1 = @seq1 ");
+        and c.seq1 = @seq1 ");
             }else if (!txtSeq1.checkEmpty(showErrMsg: false))
             {
                 sbSQLCmd.Append(@" 
-        and a.seq1 = @seq1 and a.seq2 = @seq2");
+        and c.seq1 = @seq1 and c.seq2 = @seq2");
                 sp_seq1.Value = txtSeq1.seq1;
                 sp_seq2.Value = txtSeq1.seq2;
 
@@ -120,11 +128,17 @@ and factory.MDivisionID = '{0}'
             if (result = DBProxy.Current.Select(null, sbSQLCmd.ToString(),cmds, out dtImportData))
             {
                 if (dtImportData.Rows.Count == 0)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+                else
+                {
+                    //dtImportData.Columns.Add("Balance", typeof(decimal));
+                   // dtImportData.Columns["Balance"].Expression = "stockqty - qty";
+                    dtImportData.DefaultView.Sort = "poid,seq1,seq2,location,dyelot,roll";
+                }
                 listControlBindingSource1.DataSource = dtImportData;
-                dtImportData.DefaultView.Sort = "poid,seq1,seq2,location,dyelot,roll";
-                dtImportData.Columns.Add("Balance", typeof(decimal));
-                dtImportData.Columns["Balance"].Expression = "stockqty - qty";
+               
             }
             else { ShowErr(sbSQLCmd.ToString(), result); }
             this.HideWaitMessage();
@@ -145,8 +159,7 @@ and factory.MDivisionID = '{0}'
             MyUtility.Tool.SetupCombox(comboStockType, 2, 1, "B,Bulk,I,Inventory");
             comboStockType.SelectedIndex = 0;
 
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = listControlBindingSource1;
+           
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
@@ -156,6 +169,10 @@ and factory.MDivisionID = '{0}'
                     gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                     gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
                     this.sum_checkedqty();
+
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    dr["Balance"] = (decimal)dr["stockqty"] - (decimal)e.FormattedValue;
+                    dr.EndEdit();
                 }
             };
 
@@ -180,7 +197,8 @@ and factory.MDivisionID = '{0}'
                     this.sum_checkedqty();
                 }
             };
-
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1

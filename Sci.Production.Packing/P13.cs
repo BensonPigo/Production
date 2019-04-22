@@ -79,142 +79,16 @@ namespace Sci.Production.Packing
             }
 
             StringBuilder sqlCmd = new StringBuilder();
-            if (MyUtility.Check.Empty(this.dateEstBookingDate.Value1) && MyUtility.Check.Empty(this.dateEstBookingDate.Value2) && MyUtility.Check.Empty(this.dateEstArrivedDate.Value1) && MyUtility.Check.Empty(this.dateEstArrivedDate.Value2))
+            if (MyUtility.Check.Empty(this.dateEstBookingDate.Value1)
+                    && MyUtility.Check.Empty(this.dateEstBookingDate.Value2)
+                    && MyUtility.Check.Empty(this.dateEstArrivedDate.Value1)
+                    && MyUtility.Check.Empty(this.dateEstArrivedDate.Value2))
             {
-                sqlCmd.Append(string.Format(
-                    @"with OrderData
-as
-(select o.BrandID,o.ID,o.SciDelivery,o.SewInLine,o.Dest,c.Alias,ocd.RefNo,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ocd.CTNQty
- from Orders o WITH (NOLOCK) 
- left join Country c WITH (NOLOCK) on c.id = o.Dest
- left join Order_CTNData ocd WITH (NOLOCK) on ocd.ID = o.ID
- left join LocalItem li WITH (NOLOCK) on li.RefNo = ocd.RefNo
- where o.MDivisionID = '{0}'", Sci.Env.User.Keyword));
-                if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
-                {
-                    sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
-                {
-                    sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value1))
-                {
-                    sqlCmd.Append(string.Format(" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.dateSewingInlineDate.Value1).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value2))
-                {
-                    sqlCmd.Append(string.Format(" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.dateSewingInlineDate.Value2).ToString("d")));
-                }
-
-                sqlCmd.Append(@" ),
-POData
-as
-(SELECT BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,SUM(POQty) AS POQty,Delivery
- FROM (select DISTINCT od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ld.Qty as POQty,ld.Delivery
- from OrderData od , LocalPO_Detail ld WITH (NOLOCK) , LocalItem li WITH (NOLOCK) ,LocalPO LP WITH (NOLOCK) 
- where od.ID = ld.OrderId
- and li.RefNo = ld.Refno
- and LP.id= ld.id
- and LP.category='CARTON') a
- group by BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,Delivery
-),
-AccuQty
-as
-(SELECT RefNo,ID,SUM(POQty) as POQty 
- FROM POData 
- GROUP BY RefNo,ID
-)
-select isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.ID,pd.ID) as ID,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Refno,pd.Refno) as Refno,
-isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(od.CTNQty,0)-isnull((select a.POQty from AccuQty a where a.ID = pd.ID and a.Refno = pd.RefNo),0) as AccuQty,isnull(pd.LocalPOID,'') as LocalPOID, pd.Delivery,isnull(pd.POQty,0) as POQty
-from OrderData od
-full outer join POData pd on pd.ID = od.ID and pd.Refno = od.RefNo
-order by SciDelivery,ID,Refno");
+                sqlCmd = this.Query(false);
             }
             else
             {
-                sqlCmd.Append(@"with PackData
-as
-(select distinct pld.OrderID
- from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
- where pl.ID = pld.ID");
-                if (!MyUtility.Check.Empty(this.dateEstBookingDate.Value1))
-                {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking >= '{0}'", Convert.ToDateTime(this.dateEstBookingDate.Value1).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateEstBookingDate.Value2))
-                {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking <= '{0}'", Convert.ToDateTime(this.dateEstBookingDate.Value2).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateEstArrivedDate.Value1))
-                {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive >= '{0}'", Convert.ToDateTime(this.dateEstArrivedDate.Value1).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateEstArrivedDate.Value2))
-                {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive <= '{0}'", Convert.ToDateTime(this.dateEstArrivedDate.Value2).ToString("d")));
-                }
-
-                sqlCmd.Append(string.Format(
-                    @"),
-OrderData
-as
-(select o.BrandID,o.ID,o.SciDelivery,o.SewInLine,o.Dest,c.Alias,ocd.RefNo,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ocd.CTNQty
- from PackData pd
- left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
- left join Country c WITH (NOLOCK) on c.id = o.Dest
- left join Order_CTNData ocd WITH (NOLOCK) on ocd.ID = o.ID
- left join LocalItem li WITH (NOLOCK) on li.RefNo = ocd.RefNo
- where o.MDivisionID = '{0}'", Sci.Env.User.Keyword));
-                if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
-                {
-                    sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
-                {
-                    sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value1))
-                {
-                    sqlCmd.Append(string.Format(" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.dateSewingInlineDate.Value1).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value2))
-                {
-                    sqlCmd.Append(string.Format(" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.dateSewingInlineDate.Value2).ToString("d")));
-                }
-
-                sqlCmd.Append(@" ),
-POData
-as
-(SELECT BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,SUM(POQty) AS POQty,Delivery
- FROM (select DISTINCT od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ld.Qty as POQty,ld.Delivery
- from OrderData od, LocalPO_Detail ld WITH (NOLOCK) , LocalItem li WITH (NOLOCK) ,LocalPO LP WITH (NOLOCK) 
- where od.ID = ld.OrderId
- and li.RefNo = ld.Refno
- and LP.id= ld.id
- and LP.category='CARTON') a
- group by BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,Delivery
-),
-AccuQty
-as
-(SELECT RefNo,ID,SUM(POQty) as POQty 
- FROM POData 
- GROUP BY RefNo,ID
-)
-select isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.ID,pd.ID) as ID,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Refno,pd.Refno) as Refno,
-isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(od.CTNQty,0)-isnull((select a.POQty from AccuQty a where a.ID = pd.ID and a.Refno = pd.RefNo),0) as AccuQty,isnull(pd.LocalPOID,'') as LocalPOID,pd.Delivery,isnull(pd.POQty,0) as POQty
-from OrderData od
-full outer join POData pd on pd.ID = od.ID and pd.Refno = od.RefNo
-order by SciDelivery,ID,Refno");
+                sqlCmd = this.Query(true);
             }
 
             DualResult result;
@@ -236,7 +110,7 @@ order by SciDelivery,ID,Refno");
 
             if (excelTable == null || excelTable.Rows.Count <= 0)
             {
-                MyUtility.Msg.WarningBox("No data!!");
+                MyUtility.Msg.WarningBox("Please query data first!");
                 return;
             }
 
@@ -251,6 +125,133 @@ order by SciDelivery,ID,Refno");
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private StringBuilder Query(bool isPackData)
+        {
+            StringBuilder sqlCmd = new StringBuilder();
+
+            if (isPackData)
+            {
+                sqlCmd.Append(@"
+select distinct pld.OrderID
+into #tmp_PackData
+from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
+where pl.ID = pld.ID
+");
+                if (!MyUtility.Check.Empty(this.dateEstBookingDate.Value1))
+                {
+                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking >= '{0}'", Convert.ToDateTime(this.dateEstBookingDate.Value1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateEstBookingDate.Value2))
+                {
+                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking <= '{0}'", Convert.ToDateTime(this.dateEstBookingDate.Value2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateEstArrivedDate.Value1))
+                {
+                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive >= '{0}'", Convert.ToDateTime(this.dateEstArrivedDate.Value1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateEstArrivedDate.Value2))
+                {
+                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive <= '{0}'", Convert.ToDateTime(this.dateEstArrivedDate.Value2).ToString("d")));
+                }
+            }
+
+            sqlCmd.Append(
+ @"
+select o.BrandID,o.ID,o.SciDelivery,o.SewInLine,o.Dest,c.Alias,ocd.RefNo,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ocd.CTNQty
+into #tmp_OrderData
+from Orders o WITH (NOLOCK) 
+left join Country c WITH (NOLOCK) on c.id = o.Dest
+left join Order_CTNData ocd WITH (NOLOCK) on ocd.ID = o.ID
+left join LocalItem li WITH (NOLOCK) on li.RefNo = ocd.RefNo
+");
+            if (isPackData)
+            {
+                sqlCmd.Append(" inner join #tmp_PackData pd on o.ID = pd.OrderID");
+            }
+
+            sqlCmd.Append(string.Format(" where o.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+            if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value1))
+            {
+                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(this.dateSewingInlineDate.Value1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value2))
+            {
+                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date)", Convert.ToDateTime(this.dateSewingInlineDate.Value2).ToString("d")));
+            }
+
+            sqlCmd.Append(@"  
+
+SELECT BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,SUM(POQty) AS POQty,Delivery
+into #tmp_POData
+from 
+(
+	select DISTINCT od.BrandID
+		,od.ID
+		,od.SciDelivery
+		,od.SewInLine
+		,od.Alias
+		,ld.Id as LocalPOID
+		,ld.Refno
+		,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension
+		,li.CtnUnit
+		,ld.Qty as POQty
+		,ld.Delivery 
+	from #tmp_OrderData od
+	inner join LocalPO_Detail ld WITH (NOLOCK) on od.ID = ld.OrderId 
+	inner join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
+	inner join LocalPO LP WITH (NOLOCK) on LP.id= ld.id 
+	where LP.category='CARTON'
+)a
+group by BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,Delivery;
+
+SELECT RefNo,ID,SUM(POQty) as POQty 
+into #tmp_AccuQty
+FROM #tmp_POData 
+GROUP BY RefNo,ID; 
+
+select isnull(od.BrandID,pd.BrandID) as BrandID
+	,isnull(od.ID,pd.ID) as ID
+	,isnull(od.Alias
+	,isnull(pd.Alias,'')) as Alias
+	,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery
+	,isnull(od.SewInLine,pd.SewInLine) as SewInLine
+	,isnull(od.Refno,pd.Refno) as Refno
+	,isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension
+	,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit
+	,isnull(od.CTNQty,0) as CTNQty
+	,isnull(od.CTNQty,0)-isnull((select a.POQty from #tmp_AccuQty a where a.ID = pd.ID and a.Refno = pd.RefNo),0) as AccuQty
+	,isnull(pd.LocalPOID,'') as LocalPOID, pd.Delivery
+	,isnull(pd.POQty,0) as POQty
+from #tmp_OrderData od
+full outer join #tmp_POData pd on pd.ID = od.ID and pd.Refno = od.RefNo
+order by SciDelivery,ID,Refno;
+
+
+drop table #tmp_AccuQty,#tmp_OrderData,#tmp_POData;
+");
+
+            if (isPackData)
+            {
+                sqlCmd.Append(" drop table #tmp_PackData;");
+            }
+
+            return sqlCmd;
         }
     }
 }

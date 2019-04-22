@@ -131,7 +131,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(182, 23);
             this.label1.TabIndex = 10;
-            this.label1.Text = "PreparationTime(secs/yds)";
+            this.label1.Text = "PreparationTime(sec/yds)";
             // 
             // numChangeOverRollTime
             // 
@@ -289,7 +289,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(182, 23);
             this.label5.TabIndex = 20;
-            this.label5.Text = "SeparatorTime(secs)";
+            this.label5.Text = "SeparatorTime(sec)";
             // 
             // label6
             // 
@@ -297,7 +297,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(182, 23);
             this.label6.TabIndex = 21;
-            this.label6.Text = "SpreadingTime(secs/yds)";
+            this.label6.Text = "SpreadingTime(sec/yds)";
             // 
             // label7
             // 

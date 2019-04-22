@@ -112,6 +112,7 @@ namespace Sci.Production.Quality
             checkNonOdor.Value = maindr["nonOdor"].ToString();
             displayResult.Text = maindr["Odor"].ToString();
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
+            txtOdorInspector.Text = maindr["OdorInspector"].ToString();
             return base.OnRequery();
         }
 
@@ -307,13 +308,14 @@ namespace Sci.Production.Quality
                 maindr["OdorEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["OdorInspector"] = loginID;
                 #endregion 
                 #region 判斷Result 是否要寫入
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set OdorDate = GetDate(),OdorEncode=1,EditName='{0}',EditDate = GetDate(),Odor = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
+                @"Update Fir set OdorDate = GetDate(),OdorEncode=1,EditName='{0}',EditDate = GetDate(),Odor = '{1}',Result ='{2}',Status='{4}',OdorInspector='{0}'  where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
                 #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
@@ -353,6 +355,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 maindr["OdorEncode"] = false;                
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["OdorInspector"] = string.Empty;
 
                 //判斷Result and Status 必須先確認Odor="",判斷才會正確
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
@@ -362,7 +365,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set OdorDate = null,OdorEncode=0,EditName='{0}',EditDate = GetDate(),Odor = '',Result ='{2}',Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set OdorDate = null,OdorEncode=0,EditName='{0}',EditDate = GetDate(),Odor = '',Result ='{2}',Status='{3}',OdorInspector='' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;
@@ -372,6 +375,12 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
+                    {
+                        _transactionscope.Dispose();
+                        return;
+                    }
+                    //更新PO.FIRInspPercent和AIRInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{maindr["POID"].ToString()}'; ")))
                     {
                         _transactionscope.Dispose();
                         return;

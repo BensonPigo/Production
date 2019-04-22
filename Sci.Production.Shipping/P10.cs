@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Transactions;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -61,9 +62,10 @@ select p.ID
 , p.CTNQty
 , p.CBM
 , ClogCTNQty = (
-	select sum(CTNQty) 
+	select isnull(sum(CTNQty) ,0)
 	from PackingList_Detail pd WITH (NOLOCK) 
 	where pd.ID = p.ID and pd.ReceiveDate is not null
+    and pd.CFAReceiveDate is null
 )
 , p.InspDate
 , p.InspStatus
@@ -97,6 +99,7 @@ select g.ID
 , ClogCTNQty = (
 	select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 	where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null
+    and pd.CFAReceiveDate is null
 )
 ,[TotalShipQty] =  isnull(g.TotalShipQty,0)
 from GMTBooking g WITH (NOLOCK) 
@@ -224,7 +227,6 @@ order by g.ID", masterID);
                     {
                         if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["PulloutDate"]))
                         {
-                            object newPulloutDate = MyUtility.Convert.GetDate(e.FormattedValue);
                             if (!MyUtility.Check.Empty(dr["PulloutDate"]) && this.CheckPullout((DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
                             {
                                 this.PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]));
@@ -341,7 +343,13 @@ order by g.ID", masterID);
                     this.updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
 
                     // 根據GMTBooking.ID篩選出對應的PackingList，這些是預先存在Form裡面的，不是DB裡面最新的資料
-                    DataTable packingListDt_on_Form = packingList_List.AsEnumerable().Where(o => o["INVNo"].ToString() == MyUtility.Convert.GetString(dr["ID"])).CopyToDataTable();
+                    DataTable packingListDt_on_Form = null;
+                    var rows = packingList_List.AsEnumerable().Where(o => o["INVNo"].ToString() == MyUtility.Convert.GetString(dr["ID"]));
+
+                    if (rows.Any())
+                    {
+                        packingListDt_on_Form = rows.CopyToDataTable();
+                    }
 
                     // DB可能已經被修改，因此回DB撈出GMTBooking底下最新的PackingList
                     DataTable packingListDt_new;
@@ -353,7 +361,12 @@ order by g.ID", masterID);
                         {
                             // 因為User會修改InspDate、InspStatus、PulloutDate三個欄位，這些欄會在Form上面，因此要把Form上面的PackingList、DB裡的PackingList比對
                             // packingListDt_new是最新的PackingList清單，packingListDt_on_Form是User修改過的PackingList清單
-                            DataTable packingList_Merge = packingListDt_on_Form.AsEnumerable().Where(o => o["ID"].ToString() == pldatarow["ID"].ToString()).CopyToDataTable();
+                            DataTable packingList_Merge = null;
+                            var rows1 = packingListDt_on_Form.AsEnumerable().Where(o => o["ID"].ToString() == pldatarow["ID"].ToString());
+                            if (rows1.Any())
+                            {
+                                packingList_Merge = rows1.CopyToDataTable();
+                            }
 
                             // 如果該筆資料packingListDt_on_Form有，但不存在packingListDt_new，表示這筆PackingList是被Import到Form上面後，其他功能在DB裡面異動過
                             // 這類的PackingList就不UPDATE
@@ -431,6 +444,12 @@ order by g.ID", masterID);
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "New")
             {
                 MyUtility.Msg.WarningBox(string.Format("This record status is < {0} >, can't be delete!", MyUtility.Convert.GetString(this.CurrentMaintain["Status"])));
+                return false;
+            }
+
+            if (this.plData.AsEnumerable().Any(a => !MyUtility.Check.Empty(a["pulloutdate"])))
+            {
+                MyUtility.Msg.WarningBox("Can't delete this ship plan! already has pullout date!");
                 return false;
             }
 
@@ -712,6 +731,65 @@ and p2.ReceiveDate is null ", this.CurrentMaintain["id"]), out dtRec);
             {
                 MyUtility.Msg.WarningBox("The CTNs were not received by CLog yet!! Cannot confirm!!\r\n" + msgReceDate.ToString());
                 return;
+            }
+
+            #endregion
+
+            #region 檢查是否還有箱子在CFA
+            DataTable dtCfa;
+            StringBuilder warningmsg = new StringBuilder();
+            string strSqlcmd =
+                   $@"
+select distinct p1.INVNo,p2.OrderID,p2.ID
+from PackingList p1
+inner join PackingList_Detail p2 on p1.ID=p2.ID
+where ShipPlanID='{this.CurrentMaintain["id"]}'
+and p2.CFAReceiveDate is not null
+and p2.CFAReturnClogDate is null
+and p2.CTNQty > 0";
+            if (result = DBProxy.Current.Select(null, strSqlcmd, out dtCfa))
+            {
+                if (dtCfa.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dtCfa.Rows)
+                    {
+                        warningmsg.Append($@"GB#: {dr["INVNo"]}, SP: {dr["OrderID"]}
+, Packing#: {dr["ID"]}" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox("The CTNs are in CFA now, Cannot confirm!" + Environment.NewLine + warningmsg.ToString());
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region 檢查是否還有箱子在CLog
+            DataTable dtCLog;
+            StringBuilder warningmsgCLog = new StringBuilder();
+            string strSqlcmdCLog =
+                   $@"
+select p2.ID,p2.CTNStartNo
+from GMTBooking g
+inner join PackingList p1 on p1.INVNo = g.id
+inner join PackingList_Detail p2 on p1.ID=p2.ID
+where g.ShipPlanID='{this.CurrentMaintain["id"]}'
+and (TransferCFADate is not null or ReceiveDate is null)
+and p2.CTNQty > 0
+and p1.Type <> 'S'
+";
+            if (result = DBProxy.Current.Select(null, strSqlcmdCLog, out dtCLog))
+            {
+                if (dtCLog.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dtCLog.Rows)
+                    {
+                        warningmsgCLog.Append($@"<PackingList#:{dr["ID"]}, CTN#:{dr["CTNStartNo"]}>" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox("Below records are not in clog, cannot confirm!!\r\n" + warningmsgCLog.ToString());
+                    return;
+                }
             }
 
             #endregion

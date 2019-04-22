@@ -45,6 +45,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label3 = new Sci.Win.UI.Label();
             this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.label4 = new Sci.Win.UI.Label();
+            this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -60,6 +62,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboRFIDProcessLocation);
+            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.comboMDivision);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.groupBox1);
@@ -102,25 +106,25 @@
             // 
             // labelID
             // 
-            this.labelID.Location = new System.Drawing.Point(35, 37);
+            this.labelID.Location = new System.Drawing.Point(21, 37);
             this.labelID.Name = "labelID";
-            this.labelID.Size = new System.Drawing.Size(97, 23);
+            this.labelID.Size = new System.Drawing.Size(111, 23);
             this.labelID.TabIndex = 0;
             this.labelID.Text = "ID";
             // 
             // labelSubprocess
             // 
-            this.labelSubprocess.Location = new System.Drawing.Point(35, 71);
+            this.labelSubprocess.Location = new System.Drawing.Point(21, 71);
             this.labelSubprocess.Name = "labelSubprocess";
-            this.labelSubprocess.Size = new System.Drawing.Size(97, 23);
+            this.labelSubprocess.Size = new System.Drawing.Size(111, 23);
             this.labelSubprocess.TabIndex = 1;
             this.labelSubprocess.Text = "Sub-process";
             // 
             // labelStockType
             // 
-            this.labelStockType.Location = new System.Drawing.Point(35, 110);
+            this.labelStockType.Location = new System.Drawing.Point(21, 110);
             this.labelStockType.Name = "labelStockType";
-            this.labelStockType.Size = new System.Drawing.Size(97, 23);
+            this.labelStockType.Size = new System.Drawing.Size(111, 23);
             this.labelStockType.TabIndex = 2;
             this.labelStockType.Text = "Stock Type";
             // 
@@ -164,9 +168,9 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(35, 148);
+            this.label1.Location = new System.Drawing.Point(21, 148);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 23);
+            this.label1.Size = new System.Drawing.Size(111, 23);
             this.label1.TabIndex = 3;
             this.label1.Text = "Sewing Line ID";
             // 
@@ -241,13 +245,13 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(35, 186);
+            this.label3.Location = new System.Drawing.Point(21, 186);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(97, 23);
+            this.label3.Size = new System.Drawing.Size(111, 23);
             this.label3.TabIndex = 9;
             this.label3.Text = "M";
             // 
-            // comboMDivision1
+            // comboMDivision
             // 
             this.comboMDivision.BackColor = System.Drawing.Color.White;
             this.comboMDivision.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "MDivisionID", true));
@@ -255,10 +259,32 @@
             this.comboMDivision.FormattingEnabled = true;
             this.comboMDivision.IsSupportUnselect = true;
             this.comboMDivision.Location = new System.Drawing.Point(136, 186);
-            this.comboMDivision.Name = "comboMDivision1";
+            this.comboMDivision.Name = "comboMDivision";
             this.comboMDivision.OldText = "";
             this.comboMDivision.Size = new System.Drawing.Size(120, 24);
             this.comboMDivision.TabIndex = 10;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(21, 225);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(111, 23);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Process Location";
+            // 
+            // comboRFIDProcessLocation
+            // 
+            this.comboRFIDProcessLocation.BackColor = System.Drawing.Color.White;
+            this.comboRFIDProcessLocation.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RFIDProcessLocationID", true));
+            this.comboRFIDProcessLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboRFIDProcessLocation.FormattingEnabled = true;
+            this.comboRFIDProcessLocation.IncludeJunk = false;
+            this.comboRFIDProcessLocation.IsSupportUnselect = true;
+            this.comboRFIDProcessLocation.Location = new System.Drawing.Point(135, 225);
+            this.comboRFIDProcessLocation.Name = "comboRFIDProcessLocation";
+            this.comboRFIDProcessLocation.OldText = "";
+            this.comboRFIDProcessLocation.Size = new System.Drawing.Size(121, 24);
+            this.comboRFIDProcessLocation.TabIndex = 12;
             // 
             // B40
             // 
@@ -304,5 +330,7 @@
         private Win.UI.Label label3;
         private System.Windows.Forms.GroupBox groupBox1;
         private Class.comboMDivision comboMDivision;
+        private Class.comboRFIDProcessLocation comboRFIDProcessLocation;
+        private Win.UI.Label label4;
     }
 }

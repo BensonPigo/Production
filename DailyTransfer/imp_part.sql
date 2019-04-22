@@ -8,6 +8,28 @@ AS
 BEGIN
 
 	---------- Parts, type='P'---------------------
+	--Step.1 Insert Table [PartFormula_History] if [Formula] is different
+SELECT 
+ [PartID]=ISNULL(t.ID,'')
+,[OldFormula]=ISNULL(t.Formula,0)
+,[NewFormula]=ISNULL(s.Formula,0)
+,[AddName]=t.EditName
+,[AddDate]=t.EditDate
+INTO #Formula_Change_Table
+FROM Machine.dbo.Part t
+INNER JOIN Trade_To_Pms.dbo.Part s
+ON t.id=s.Refno  AND s.Type='P'
+AND t.Formula<> s.Formula
+;
+IF EXISTS (SELECT 1 FROM #Formula_Change_Table)
+BEGIN
+	INSERT INTO [Machine].[dbo].[PartFormula_History]
+	SELECT * FROM #Formula_Change_Table
+END
+;
+DROP TABLE #Formula_Change_Table
+;
+	--Step.2. Merge
 Merge Machine.dbo.Part as t
 Using (
 	select * 
@@ -289,7 +311,9 @@ s.DescriptionDetail
 	----------------PartPO2-------------------------
 
 	update [Machine].[dbo].[PartPO_Detail]
-	set Junk = b.Cancel 
+	set 
+		Junk = b.Cancel 
+		,TPEPOID = b.MmsPoID
 	from [Machine].[dbo].[PartPO_Detail] a
 	inner join [Trade_To_Pms].[dbo].[MmsReq_Detail] b on a.id=b.ID and a.SEQ2=b.Seq2
 
@@ -299,18 +323,19 @@ s.DescriptionDetail
 	insert @Sayfty select id from Machine.dbo.Factory
 	
 	-- if type<>'M'
-	UPDATE Machine.DBO.PartPO_Detail
-	SET TPEPOID = B.id,
-	SEQ1=b.Seq1,
-	SuppDelivery=b.SuppDelivery,
-	EstETA=b.EstETA,
-	TPEQty=B.Qty,
-	Foc=B.Foc,
-	ShipQty=B.ShipQty,
-	ShipFoc=B.ShipFoc,
-	ShipETA=B.ShipETA
+	UPDATE A
+	SET
+	A.SEQ1=b.Seq1,
+	A.SuppDelivery=b.SuppDelivery,
+	A.EstETA=b.EstETA,
+	A.Complete = ISNULL(b.Complete,0),
+	A.TPEQty=B.Qty,
+	A.Foc=B.Foc,
+	A.ShipQty=B.ShipQty,
+	A.ShipFoc=B.ShipFoc,
+	A.ShipETA=B.ShipETA
 	FROM Machine.DBO.PartPO_Detail A
-	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno and  a.SEQ2=b.Seq2 and a.id = b.MmsReqID and b.Junk=0
+	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno AND a.SEQ2=b.Seq2 and a.id = b.MmsReqID and b.Junk=0 AND b.ID=a.TPEPOID
 	INNER JOIN  Machine.DBO.PartPO C ON A.ID=C.ID
 	WHERE C.FactoryID in (select id from @Sayfty)
 
@@ -363,7 +388,7 @@ s.DescriptionDetail
 
 -----------------MachinePO_Detail Type <>'M'---------------------
 update t
-		set t.TpePOID = s.id,
+		set 
 		t.seq1=s.seq1,
 		t.SuppDelivery=s.SuppDelivery,
 		t.EstETA=s.EstETA,
@@ -374,7 +399,7 @@ update t
 		t.ShipFoc=s.ShipFoc,
 		t.ShipETA=s.ShipETA
 		from  Machine.dbo.PartPO_Detail as  t
-		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2 and s.Junk=0
+		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID and t.seq2=s.seq2 and s.Junk=0 AND s.ID=t.TPEPOID
 		inner join Machine.dbo.PartPO a on t.id=a.ID
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
 		where 1=1
@@ -411,10 +436,16 @@ update t
 				t.Remark= s.Remark,
 				t.MachineReqID= s.MmsReqID,
 				t.Junk= s.Junk,
-				t.RefNo = ISNULL(s.RefNo,'')
+				t.RefNo = ISNULL(s.RefNo,''),
+				t.DescriptionDetail = s.DescriptionDetail,
+				t.UnitID = s.UnitID,
+				t.Delivery = s.Delivery,
+				t.SuppEstETA = s.SuppEstETA
 		when not matched by target then
-		insert  (ID,Seq1,Seq2,MasterGroupID,MachineGroupID,MachineBrandID,Model,Description,Qty,FOC,Price,Remark,MachineReqID,Junk,RefNo)
-		values	(s.ID,s.Seq1,s.Seq2,s.MasterGroupID,s.MachineGroupID,s.MachineBrandID,s.Model,s.Description,s.Qty,s.FOC,s.Price,s.Remark,s.MmsReqID,s.Junk,ISNULL(s.RefNo,''));
+		insert  (ID ,Seq1 ,Seq2 ,MasterGroupID ,MachineGroupID ,MachineBrandID ,Model ,Description 
+				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA)
+		values	(s.ID ,s.Seq1 ,s.Seq2 ,s.MasterGroupID ,s.MachineGroupID ,s.MachineBrandID ,s.Model ,s.Description
+				 ,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA);
 
 	--------------Partunit-------------------------------
 		Merge [Machine].[dbo].[MMSUnit] as t

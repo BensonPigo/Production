@@ -243,12 +243,14 @@ where not exists(
 
 --Invtrans
 ----------------------刪除主TABLE多的資料
+declare @ID varchar(13)
+select top 1 @ID = id from  Trade_To_Pms.dbo.Invtrans order by id
 Delete Production.dbo.Invtrans 
 from Production.dbo.Invtrans  as a
 left join Trade_To_Pms.dbo.Invtrans  as b on a.id = b.id 
 											 and a.Ukey = b.Ukey
 where	b.id is null
-		AND a.ID > (select top 1 id from  Trade_To_Pms.dbo.Invtrans order by id)
+		AND a.ID > @ID
 
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a

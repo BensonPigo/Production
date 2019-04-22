@@ -269,14 +269,14 @@ as
 (select ot.ID,ot.ArtworkTypeID
 from NoOutputOrderID o
 inner join Order_TmsCost ot WITH (NOLOCK) on o.ID = ot.ID
-inner join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID and a.IsArtwork = 0
+inner join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID 
 ),
 --撈出應該要有的全部資料
 AllData
 as
 (select isnull(o.ID,'') as ID,st.ArtworkTypeID,st.Seq,st.Qty,st.ArtworkUnit,st.Tms,st.Price
 from Style_TmsCost st WITH (NOLOCK) 
-inner join ArtworkType a WITH (NOLOCK) on st.ArtworkTypeID = a.ID and a.IsArtwork = 0
+inner join ArtworkType a WITH (NOLOCK) on st.ArtworkTypeID = a.ID
 left join NoOutputOrderID o on 1=1
 where st.StyleUkey = @styleukey
 ),

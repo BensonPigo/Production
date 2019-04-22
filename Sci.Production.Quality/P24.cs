@@ -127,6 +127,7 @@ where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.CFAReceiveDate  is not null
+and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.CTNStartNo";
@@ -235,6 +236,7 @@ where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.CFAReceiveDate is not null
+and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 and p2.id='{sl[1].Substring(0, 13)}'
 and p2.CTNStartNo='{sl[1].Substring(13, sl[1].Length - 13)}'
@@ -290,6 +292,7 @@ outer apply(
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
+and p2.DisposeFromClog= 0
 and p2.CFAReceiveDate is not null
 and (po.Status ='New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
@@ -352,6 +355,7 @@ where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.CFAReceiveDate is not null
+and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
 order by p2.ID,p2.CTNStartNo
@@ -437,7 +441,8 @@ select p2.TransferCFADate ,p.Status ,p2.CFAReceiveDate
 from PackingList_detail p2
 inner join PackingList p1 on p2.id=p1.id
 left join pullout p on p1.PulloutID = p.id
-where p2.id='{dr["id"].ToString().Trim()}' and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'", out drSelect))
+where p2.id='{dr["id"].ToString().Trim()}' 
+and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog= 0", out drSelect))
                 {
                     warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
                     continue;
@@ -468,6 +473,7 @@ set TransferCFADate = null
 , CFAReceiveDate = null
 , CFAReturnClogDate = CONVERT(varchar(100), GETDATE(), 111)
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
+and DisposeFromClog= 0
 ");
                                 break;
 
@@ -481,6 +487,7 @@ set TransferCFADate = null
 , TransferDate = null
 , CFAReturnFtyDate = CONVERT(varchar(100), GETDATE(), 111)
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
+and DisposeFromClog= 0
 ");
                                 break;
                             default:

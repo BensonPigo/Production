@@ -29,7 +29,8 @@ select
 [selected] = 0,
 pd.ID,
 pd.CTNStartNo,
-[OrderID] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail where ID = pd.ID and CTNStartNo = pd.CTNStartNo  FOR XML PATH('')),1,1,''),
+[OrderID] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail 
+        where ID = pd.ID and CTNStartNo = pd.CTNStartNo and DisposeFromClog= 0  FOR XML PATH('')),1,1,''),
 o.CustPONo,
 o.StyleID,
 o.SeasonID,
@@ -41,12 +42,17 @@ pd.TransferDate,
 pd.DRYReceiveDate,
 pd.PackErrTransferDate,
 pu.Status,
-[MainSP] = pd.OrderID
+[MainSP] = pd.OrderID,
+[ErrorType] = pt.PackingErrorID+'-'+ pe.Description
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
 left join Country c with (nolock) on c.ID = o.Dest
 left join Pullout pu with (nolock) on pu.ID = p.PulloutID
+left join PackErrTransfer pt with (nolock) on pd.id=pt.PackingListID
+and pt.OrderID=pd.OrderID and pt.CTNStartNo=pd.CTNStartNo
+left join PackingError pe with (nolock) on pt.PackingErrorID=pe.ID
+and pe.Type='TP'
  ";
 
         /// <summary>
@@ -74,6 +80,7 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("SeasonID", header: "Season", width: Widths.AnsiChars(12), iseditingreadonly: true)
            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+           .Text("ErrorType", header: "ErrorType", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Text("Alias", header: "Destination", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Date("BuyerDelivery", header: "Buyer Delivery")
            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
@@ -92,6 +99,8 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
                 MyUtility.Msg.InfoBox("No Data Found!");
                 return;
             }
+
+            this.gridPackErrTransfer.AutoResizeColumns();
         }
 
         private void TxtScanBarcode_Validating(object sender, CancelEventArgs e)
@@ -229,7 +238,9 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
                     foreach (DataRow dr in drSelected)
                     {
                         saveSql = $@"
-update PackingList_Detail set PackErrTransferDate = null where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}'
+update PackingList_Detail 
+set PackErrTransferDate = null 
+where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}' and DisposeFromClog= 0;
 
 insert into PackErrCFM(CFMDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate)
                     values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE())
@@ -319,6 +330,7 @@ insert into PackErrCFM(CFMDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddN
 where	pd.CTNStartNo <> '' 
 		and p.MDivisionID = '{Env.User.Keyword}' 
 		and p.Type in ('B','L') 
+        and pd.DisposeFromClog= 0
 		and pd.PackErrTransferDate is not null 
 		and (pu.Status = 'New' or pu.Status is null) 
         and pd.CTNQty = 1
@@ -367,6 +379,7 @@ where	pd.CTNStartNo <> ''
 		and p.MDivisionID = '{Env.User.Keyword}' 
 		and p.Type in ('B','L') 
         and pd.CTNQty = 1
+        and pd.DisposeFromClog= 0
         {keyWhere}
 ";
             bool result = MyUtility.Check.Seek(checkPackSql, listPar, out drPackResult);
