@@ -223,6 +223,12 @@ namespace Sci.Production.Win
                 }
             }
             #endregion
+            #region 在台北端(PMSDB 或 testing)登入時, 關閉紀錄UserLog功能
+            if (DBProxy.Current.DefaultModuleName.Contains("PMSDB") || DBProxy.Current.DefaultModuleName.Contains("testing"))
+            {
+                Sci.Env.Cfg.EnableUserLog = false;
+            }
+            #endregion
             return result;
         }
 
