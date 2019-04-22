@@ -215,9 +215,12 @@ namespace Sci.Production.Win
             }
             #endregion
             #region 寫入登入時間
-            if (!(result = DBProxy.Current.Execute(null, string.Format("update pass1 set LastLoginTime = GETDATE() where id = '{0}'", userid))))
+            if (!DBProxy.Current.DefaultModuleName.Contains("PMSDB"))
             {
-                return result;
+                if (!(result = DBProxy.Current.Execute(null, string.Format("update pass1 set LastLoginTime = GETDATE() where id = '{0}'", userid))))
+                {
+                    return result;
+                }
             }
             #endregion
             return result;
