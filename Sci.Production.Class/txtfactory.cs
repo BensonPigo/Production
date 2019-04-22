@@ -105,7 +105,7 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
             #endregion
             #region SQL Filte
             List<string> listFilte = new List<string>();
-            listFilte.Add("FtyGroup = @str");
+            
             if (!IssupportJunk)
             {
                 listFilte.Add("Junk = 0");
@@ -121,10 +121,12 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
             if (boolFtyGroupList)
             {
                 strShowColumn = "DISTINCT FtyGroup";
+                listFilte.Add("FtyGroup = @str");
             }
             else
             {
                 strShowColumn = "ID";
+                listFilte.Add("id = @str");
             }
 
             string sqlcmd = string.Format(@"
