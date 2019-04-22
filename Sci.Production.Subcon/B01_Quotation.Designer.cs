@@ -54,6 +54,14 @@
             this.labelSupplier4Price = new Sci.Win.UI.Label();
             this.dateIssueDate = new Sci.Win.UI.DateBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.dateQuotation4 = new Sci.Win.UI.DateBox();
+            this.dateQuotation3 = new Sci.Win.UI.DateBox();
+            this.dateQuotation2 = new Sci.Win.UI.DateBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.dateQuotation1 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -69,6 +77,14 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.dateQuotation4);
+            this.detailcont.Controls.Add(this.dateQuotation3);
+            this.detailcont.Controls.Add(this.dateQuotation2);
+            this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Controls.Add(this.label4);
+            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.dateQuotation1);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.labelSupplier4Price);
             this.detailcont.Controls.Add(this.numSupplier4Price);
@@ -483,6 +499,70 @@
             this.label2.TabIndex = 23;
             this.label2.TextStyle.Color = System.Drawing.Color.Red;
             // 
+            // dateQuotation4
+            // 
+            this.dateQuotation4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QuotDate4", true));
+            this.dateQuotation4.Location = new System.Drawing.Point(738, 128);
+            this.dateQuotation4.Name = "dateQuotation4";
+            this.dateQuotation4.Size = new System.Drawing.Size(130, 23);
+            this.dateQuotation4.TabIndex = 57;
+            // 
+            // dateQuotation3
+            // 
+            this.dateQuotation3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QuotDate3", true));
+            this.dateQuotation3.Location = new System.Drawing.Point(738, 100);
+            this.dateQuotation3.Name = "dateQuotation3";
+            this.dateQuotation3.Size = new System.Drawing.Size(130, 23);
+            this.dateQuotation3.TabIndex = 58;
+            // 
+            // dateQuotation2
+            // 
+            this.dateQuotation2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QuotDate2", true));
+            this.dateQuotation2.Location = new System.Drawing.Point(738, 72);
+            this.dateQuotation2.Name = "dateQuotation2";
+            this.dateQuotation2.Size = new System.Drawing.Size(130, 23);
+            this.dateQuotation2.TabIndex = 59;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(633, 100);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(102, 23);
+            this.label5.TabIndex = 63;
+            this.label5.Text = "Quotation Date";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(633, 129);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(102, 23);
+            this.label4.TabIndex = 62;
+            this.label4.Text = "Quotation Date";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(633, 72);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(102, 23);
+            this.label3.TabIndex = 61;
+            this.label3.Text = "Quotation Date";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(633, 41);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(102, 23);
+            this.label1.TabIndex = 60;
+            this.label1.Text = "Quotation Date";
+            // 
+            // dateQuotation1
+            // 
+            this.dateQuotation1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QuotDate1", true));
+            this.dateQuotation1.Location = new System.Drawing.Point(738, 41);
+            this.dateQuotation1.Name = "dateQuotation1";
+            this.dateQuotation1.Size = new System.Drawing.Size(130, 23);
+            this.dateQuotation1.TabIndex = 56;
+            // 
             // B01_Quotation
             // 
             this.ApvChkValue = "New";
@@ -538,5 +618,13 @@
         private Class.txtsubcon txtsubconSupplier2;
         private Class.txtsubcon txtsubconSupplier1;
         private Win.UI.Label label2;
+        private Win.UI.DateBox dateQuotation4;
+        private Win.UI.DateBox dateQuotation3;
+        private Win.UI.DateBox dateQuotation2;
+        private Win.UI.Label label5;
+        private Win.UI.Label label4;
+        private Win.UI.Label label3;
+        private Win.UI.Label label1;
+        private Win.UI.DateBox dateQuotation1;
     }
 }

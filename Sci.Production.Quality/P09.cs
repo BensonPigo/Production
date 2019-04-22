@@ -34,6 +34,7 @@ namespace Sci.Production.Quality
         private string Filepath = @"MMC\";
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ApprovedSeason;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_FirstDyelot;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_TestReportCheckClima;
 
         protected override void OnFormLoaded()
         {
@@ -80,6 +81,8 @@ namespace Sci.Production.Quality
             // 帶出grade
             DataGridViewGeneratorNumericColumnSettings T2IY = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings T2DP = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings col_CheckClima = new DataGridViewGeneratorCheckBoxColumnSettings();
+
             T2IY.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -98,13 +101,26 @@ namespace Sci.Production.Quality
                 dr.EndEdit();
                 T2Validating(s, e);
             };
+
+            col_CheckClima.CellEditable += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                    return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr)
+                    return;
+                if (MyUtility.Check.Empty(dr["Clima"]))
+                {
+                    e.IsEditable = false;
+                }
+            };
             #endregion settings Event
             #region Set_grid1 Columns
             this.grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
             .CheckBox("selected", header: "", trueValue: 1, falseValue: 0, iseditable: true)
             .Text("ID", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
-            .Date("LastEta", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PoID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("seq", header: "Seq#", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -116,6 +132,7 @@ namespace Sci.Production.Quality
             .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
             .Date("TPEInspectionReport", header: "Inspection Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: Inspection)
             .Date("TestReport", header: "Test Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
+            .CheckBox("TestReportCheckClima", header: "Test Report\r\n Check Clima", trueValue: 1, falseValue: 0, iseditable: true,settings:col_CheckClima).Get(out col_TestReportCheckClima)
             .Date("TPETestReport", header: "Test Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: Test)
             .Date("ContinuityCard", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
             .Date("TPEContinuityCard", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -204,7 +221,31 @@ namespace Sci.Production.Quality
                  {
                      this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                  }
-             };   
+             };
+
+            this.col_TestReportCheckClima.CellFormatting += (s, e) =>
+           {
+               if (e.RowIndex == -1)
+               {
+                   return;
+               }
+
+               DataRow dr = this.grid1.GetDataRow(e.RowIndex);
+               if (dr == null)
+               {
+                   return;
+               }
+
+               if (MyUtility.Check.Empty(dr["Clima"]))
+               {   
+                   e.CellStyle.BackColor = Color.White;
+               }
+               else
+               {
+                   e.CellStyle.BackColor = Color.Pink;
+               }
+           };
+
         }
         #region Tab_Page1
 
@@ -287,7 +328,7 @@ AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
             {
                 listSQLParameter.Add(new SqlParameter("@ETA1", this.dateRange1.Value1));
                 listSQLParameter.Add(new SqlParameter("@ETA2", this.dateRange1.Value2));
-                sqlwheres.Add(" ed.LastEta between @ETA1 and @ETA2 ");
+                sqlwheres.Add(" Export.ETA between @ETA1 and @ETA2 ");
             }
 
             if (!MyUtility.Check.Empty(this.txtsp.Text))
@@ -327,7 +368,7 @@ select distinct
 	FileExistI= cast(0 as bit),
 	FileExistT= cast(0 as bit),
 	ed.id,
-	ed.LastEta,
+	Export.ETA,
 	ed.PoID,
 	seq=ed.seq1+'-'+ed.seq2,
 	ps.SuppID,
@@ -338,6 +379,7 @@ select distinct
 	sr.InspectionReport,
 	sr.TPEInspectionReport,
 	sr.TestReport,
+    sr.TestReportCheckClima,
 	sr.TPETestReport,
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
@@ -430,11 +472,12 @@ when matched then update set
 	t.T2DefectPoint=isnull(s.T2DefectPoint,0),
 	t.T2Grade=isnull(s.T2Grade,''),
     t.EditName='{Sci.Env.User.UserID}',
-    t.EditDate = getdate()	
+    t.EditDate = getdate()	,
+    t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
 when not matched by target then 
 insert([Export_DetailUkey]
-,[InspectionReport],[TestReport],[ContinuityCard],[T2InspYds],[T2DefectPoint],[T2Grade],[EditName],[EditDate])
-VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYds,0),isnull(s.T2DefectPoint,0),isnull(s.T2Grade,''),'{Sci.Env.User.UserID}',getdate())
+,[InspectionReport],[TestReport],[ContinuityCard],[T2InspYds],[T2DefectPoint],[T2Grade],[EditName],[EditDate],TestReportCheckClima)
+VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYds,0),isnull(s.T2DefectPoint,0),isnull(s.T2Grade,''),'{Sci.Env.User.UserID}',getdate(), isnull(s.TestReportCheckClima,0))
 ;
 ";
             DataTable odt;

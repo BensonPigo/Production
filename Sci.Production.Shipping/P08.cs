@@ -408,6 +408,7 @@ where sd.ID = '{0}'", masterID);
             this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             this.CurrentMaintain["InvNo"] = string.Empty;
             this.CurrentMaintain["ID"] = string.Empty;
+            this.CurrentMaintain["VoucherID"] = string.Empty;
         }
 
         // protected override void ClickUndo()
