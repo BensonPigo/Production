@@ -12,18 +12,18 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class P12 : Sci.Win.Tems.Input6
+    public partial class P14: Sci.Win.Tems.Input6
     {
         // 宣告Context Menu Item
         ToolStripMenuItem add, edit, delete;
 
-        public P12(ToolStripMenuItem menuitem)
+        public P14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.detailgrid.ContextMenuStrip = detailgridmenus;
             InsertDetailGridOnDoubleClick = false;
-            this.DefaultFilter = "Type = 'S'";
+            this.DefaultFilter = "Type = 'B'";
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -64,7 +64,7 @@ where ID = '{0}'"
         // Context Menu選擇Create New test
         private void CreateNewTest()
         {
-            Sci.Production.Quality.P12_Detail callNewDetailForm = new P12_Detail(true, this.CurrentMaintain["ID"].ToString(), string.Empty, null, "New");
+            Sci.Production.Quality.P14_Detail callNewDetailForm = new P14_Detail(true, this.CurrentMaintain["ID"].ToString(), string.Empty, null, "New");
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
@@ -74,7 +74,7 @@ where ID = '{0}'"
         // Context Menu選擇Edit This Record's Detail
         private void EditThisDetail()
         {
-            Sci.Production.Quality.P12_Detail callNewDetailForm = new P12_Detail(true, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Edit");
+            Sci.Production.Quality.P14_Detail callNewDetailForm = new P14_Detail(true, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Edit");
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
@@ -121,7 +121,7 @@ where ID = '{0}'"
                 {
                     return;
                 }
-                Sci.Production.Quality.P12_Detail callNewDetailForm = new P12_Detail(false, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Query");
+                Sci.Production.Quality.P14_Detail callNewDetailForm = new P14_Detail(false, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Query");
                 callNewDetailForm.ShowDialog(this);
                 callNewDetailForm.Dispose();
             };
