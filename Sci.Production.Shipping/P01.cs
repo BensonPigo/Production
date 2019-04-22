@@ -306,6 +306,7 @@ where o.Id = '{0}'",
                 return false;
             }
 
+            this.ChangeQuotationAVG();
             return base.ClickSaveBefore();
         }
 
@@ -1393,16 +1394,11 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]
         private void ChangeQuotationAVG()
         {
             string strSqlCmd = $@"
-select [QuotationAVG] = ISNULL(iIf(sum(GW)=0 , 0, ROUND(sum(lastYear.Amt) / sum(GW) ,2)),0)
+select [QuotationAVG] = ISNULL(iIf(sum(a.GW)=0 , 0, convert(float, ROUND(sum(a.ActualAmount) / sum(a.GW) ,2))),0)
 from AirPP a
 left join orders o on a.OrderID = o.ID
-outer apply(
-	select sum(ActualAmount) as Amt
-	from AirPP
-	where id=a.ID
-	and DATEPART(YEAR,AddDate) = DATEPART(year, DATEADD(year,-1,getdate()))
-)lastYear
-where BrandID = '{this.displayBrand.Text}' 
+where DATEPART(YEAR,a.AddDate) = DATEPART(year, DATEADD(year,-1,getdate()))
+and BrandID = '{this.displayBrand.Text}' 
 and Dest = '{this.txtCountryDestination.TextBox1.Text}' 
 and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
 
