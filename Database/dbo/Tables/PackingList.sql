@@ -37,6 +37,7 @@
     [EditDate]          DATETIME        NULL,
     [TransFerToClogID]  VARCHAR (13)    NULL,
     [ClogReceiveID]     VARCHAR (13)    NULL,
+    [QueryDate] DATE NOT NULL, 
     CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -204,3 +205,13 @@ GO
 CREATE NONCLUSTERED INDEX [INVNo]
     ON [dbo].[PackingList]([INVNo] ASC);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'查詢日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList',
+    @level2type = N'COLUMN',
+    @level2name = N'QueryDate'

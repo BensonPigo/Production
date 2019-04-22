@@ -186,6 +186,7 @@ from (
 	        and b.ReceiveDate is not null
             and b.TransferCFADate is null
             and b.CFAReturnClogDate is null
+            and b.DisposeFromClog= 0
 	        and c.Dest = d.ID 
             and a.MDivisionID = '{0}' 
             and (a.Type = 'B' or a.Type = 'L') 
@@ -337,7 +338,7 @@ pd.OrderID
 ,pd.TransferCFADate ,pd.CFAReturnClogDate 
 ,p.FactoryID
 from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
-where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
+where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0",
                                     dr["PackingListID"].ToString(),
                                     dr["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -402,8 +403,9 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                     sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
 ,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID
-from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
-where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
+from PackingList_Detail pd WITH (NOLOCK)  
+inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0";
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
                                         if (MyUtility.Check.Empty(seekData["ReturnDate"]))
@@ -483,8 +485,9 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
                                 string sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
 ,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID
-from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
-where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
+from PackingList_Detail pd WITH (NOLOCK)  
+inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     if (MyUtility.Check.Empty(seekData["ReturnDate"]))
@@ -623,7 +626,7 @@ values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}');",
                 updateCmds.Add(string.Format(
                     @"update PackingList_Detail 
 set TransferDate = null, ReceiveDate = null, ClogLocationId = '', ReturnDate = GETDATE(), ClogReceiveCFADate =null
-where ID = '{0}' and CTNStartNo = '{1}'; ",
+where ID = '{0}' and CTNStartNo = '{1}' and DisposeFromClog= 0 ; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"])));
             }

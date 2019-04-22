@@ -535,7 +535,7 @@ where WorkOrderUkey={0}", masterID);
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5).Get(out col_layer)
+                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, maximum: 9999M).Get(out col_layer)
                 .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(13)).Get(out col_sp)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out col_seq1)
@@ -687,7 +687,8 @@ where WorkOrderUkey={0}", masterID);
             };
             col_layer.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || e.RowIndex == -1) return;
+                if (!this.EditMode || e.RowIndex == -1 || e.FormattedValue == null)
+                    return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["layer"].ToString();
                 string newvalue = e.FormattedValue.ToString();
@@ -2447,23 +2448,24 @@ END";
                     )
                 {
                     // 已經寫過則不再寫入
-                    string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData where WorkOrderUkey like ('%{dr["ukey"]}%')  ";
+                    string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData_Detail where WorkOrderUkey = ('{dr["ukey"]}')  ";
                     if (!MyUtility.Check.Seek(sqlchk))
                     {
                         sqlInsertRevisedMarkerOriginalData += $@"
 INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
 ([ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid],[MarkerLength]
 ,[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo],[MarkerDownLoadId]
-,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID]
-,[WorkOrderUkey])
-
+,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID])
 select [ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid]
 ,[MarkerLength],[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo]
 ,[MarkerDownLoadId],[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength]
-,[CurvedLength],[SpreadingNoID],Ukey
+,[CurvedLength],[SpreadingNoID]
 from WorkOrder where Ukey ={dr["ukey"]}
 
 set @ID = (select @@IDENTITY)
+
+INSERT INTO WorkOrderRevisedMarkerOriginalData_Detail(WorkorderUkeyRevisedMarkerOriginalUkey,WorkorderUkey)
+            values(@ID,{dr["ukey"]})
 
 INSERT INTO [dbo].[WorkOrder_DistributeRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
 select @ID,[ID],[OrderID],[Article],[SizeCode],[Qty] from WorkOrder_Distribute where WorkOrderUkey = {dr["ukey"]}
@@ -2480,26 +2482,27 @@ select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrde
             #endregion
             #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 原本那筆 isbyAdditionalRevisedMarker = 1, 增加的那筆 = 2
             sqlInsertRevisedMarkerOriginalData += " declare @ID2 bigint";
-            foreach (DataRow dr in DetailDatas.Where(w => w.RowState == DataRowState.Modified &&
+            foreach (DataRow dr in DetailDatas.Where(w => (w.RowState == DataRowState.Modified) &&
                         MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 1))
             {
-                string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData where WorkOrderUkey like ('%{dr["ukey"]}%')  ";
+                string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData_Detail where WorkOrderUkey = ('{dr["ukey"]}')  ";
                 if (!MyUtility.Check.Seek(sqlchk))
                 {
                     sqlInsertRevisedMarkerOriginalData += $@"
 INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
 ([ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid],[MarkerLength]
 ,[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo],[MarkerDownLoadId]
-,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID]
-,[WorkOrderUkey])
-
+,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID])
 select [ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid]
 ,[MarkerLength],[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo]
 ,[MarkerDownLoadId],[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength]
-,[CurvedLength],[SpreadingNoID],{dr["ukey"]}
+,[CurvedLength],[SpreadingNoID]
 from WorkOrder where Ukey ={dr["ukey"]}
 
 set @ID2 = (select @@IDENTITY)
+
+INSERT INTO WorkOrderRevisedMarkerOriginalData_Detail(WorkorderUkeyRevisedMarkerOriginalUkey,WorkorderUkey)
+            values(@ID2,{dr["ukey"]})
 
 INSERT INTO [dbo].[WorkOrder_DistributeRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
 select @ID2,[ID],[OrderID],[Article],[SizeCode],[Qty] from WorkOrder_Distribute where WorkOrderUkey = {dr["ukey"]}
@@ -2524,17 +2527,35 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
 
         protected override DualResult ClickSavePost()
         {
-            #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 在此取拆出來資料的ukey
+            #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 在此取拆出來資料的ukey,處理刪除的資料
             string sqlUpdateRevisedMarkerOriginalData = string.Empty;
-            foreach (DataRow dr in DetailDatas.Where(w => w.RowState == DataRowState.Modified &&
-                        MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 1))
+            var listAdditionalRevisedMarkerSeparate = DetailDatas.Where(w => (w.RowState == DataRowState.Modified || w.RowState == DataRowState.Added) &&
+                       MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 2);
+            foreach (DataRow dr in listAdditionalRevisedMarkerSeparate)
             {
-                var ukeylist = DetailDatas.Where(w => MyUtility.Convert.GetString(w["fromukey"]) == MyUtility.Convert.GetString(dr["fromukey"])).Select(s => s["ukey"]).ToList();
-                string ukeys = string.Join(",", ukeylist);
                 sqlUpdateRevisedMarkerOriginalData += $@"
-update WorkOrderRevisedMarkerOriginalData set WorkOrderUkey = '{ukeys}'
-where WorkOrderUkey = '{dr["ukey"]}'
+                Insert into WorkOrderRevisedMarkerOriginalData_Detail(WorkorderUkeyRevisedMarkerOriginalUkey,WorkorderUkey)
+                            select WorkorderUkeyRevisedMarkerOriginalUkey,{dr["Ukey"]}
+                            from WorkOrderRevisedMarkerOriginalData_Detail where WorkorderUkey = {dr["fromukey"]}
 ";
+            }
+
+            var listDeleteRevisedMarkerSeparate = this.CurrentDetailData.Table.AsEnumerable().Where(w => w.RowState == DataRowState.Deleted);
+            foreach (DataRow dr in listDeleteRevisedMarkerSeparate)
+            {
+                sqlUpdateRevisedMarkerOriginalData += $@"
+                delete WorkOrderRevisedMarkerOriginalData_Detail where WorkorderUkey = {dr["Ukey",DataRowVersion.Original]}
+";
+            }
+
+            // 刪除WorkOrderRevisedMarkerOriginalData 沒有detail的資料
+            if (listDeleteRevisedMarkerSeparate.Any())
+            {
+                sqlUpdateRevisedMarkerOriginalData += $@"
+                      delete  w
+                        from WorkOrderRevisedMarkerOriginalData w
+                        where not exists (select 1 from WorkOrderRevisedMarkerOriginalData_Detail wd 
+                                    where wd.WorkorderUkeyRevisedMarkerOriginalUkey = w.Ukey)";
             }
             #endregion
             int ukey, newkey;

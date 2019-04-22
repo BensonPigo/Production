@@ -30,6 +30,7 @@ namespace Sci.Production.Packing
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision1.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
@@ -73,6 +74,7 @@ namespace Sci.Production.Packing
 
         // 驗證輸入條件
         private string _ScanName;
+        private string _Barcode;
         /// <summary>
         /// ValidateInput
         /// </summary>
@@ -125,6 +127,7 @@ namespace Sci.Production.Packing
             this._mDivision = this.txtMdivision1.Text;
             this._factory = this.comboFactory.Text;
             this._ScanName = this.txtuser1.TextBox1.Text;
+            this._Barcode = this.txtBarcode.Text;
 
             return base.ValidateInput();
         }
@@ -239,6 +242,11 @@ namespace Sci.Production.Packing
             {
                 sqlwhere.Append(" and (pld.ScanEditDate ='' or pld.ScanEditDate is null or pld.Lacking = 1)");
             }
+
+            if (!MyUtility.Check.Empty(this._Barcode))
+            {
+                sqlwhere.Append(string.Format(" and pld.Barcode = '{0}'", this._Barcode));
+            }
             #endregion
 
             #region 先準備主要資料table
@@ -257,6 +265,7 @@ select
 	,[P.O.#] = o.CustPONo
 	,[Buyer] = b.BuyerID
 	,[CTN#] = pld.CTNStartNo
+	,[CTN Barcode] = pl.ID + pld.CTNStartNo
 	,[Qty] = pld.ShipQty
 	,[Scan Date] = pld.ScanEditDate
     ,[Scan Name] = dbo.getPass1_ExtNo(pld.ScanName)
@@ -276,6 +285,7 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],Customize1
 	,[Color] = c3.Color
 	,[Size] = c4.Size
 	,[CTN#]
+    ,[CTN Barcode]
 	,[PC/CTN] = c5.QtyPerCTN
 	,[QTY] = SUM(t.Qty)
 	,[PC/CTN Scanned] = c6.ScanQty
@@ -350,7 +360,7 @@ outer apply(
 	and pld.Lacking=1
 )LackingQty
 group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]
-	,[CTN#]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name] ,[Actual CTN Weight],Lacking,LackingQty.Qty
+	,[CTN#],[CTN Barcode]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name] ,[Actual CTN Weight],Lacking,LackingQty.Qty
 order by ROW_NUMBER() OVER(ORDER BY [Packing#],[SP#], RIGHT(REPLICATE('0', 3) + CAST([CTN#] as NVARCHAR), 3))
 DROP TABLE #TMP
 ", sqlwhere.ToString());

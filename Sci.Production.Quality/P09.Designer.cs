@@ -64,6 +64,8 @@
             this.inspectionReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInspectionReport.SuspendLayout();
@@ -87,6 +89,8 @@
             // 
             // tabInspectionReport
             // 
+            this.tabInspectionReport.Controls.Add(this.label7);
+            this.tabInspectionReport.Controls.Add(this.displayBox1);
             this.tabInspectionReport.Controls.Add(this.btnClose);
             this.tabInspectionReport.Controls.Add(this.btnSave);
             this.tabInspectionReport.Controls.Add(this.btnDownloadFile);
@@ -280,6 +284,7 @@
             // 
             // displayBoxapvSeasonNull
             // 
+            this.displayBoxapvSeasonNull.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.displayBoxapvSeasonNull.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxapvSeasonNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayBoxapvSeasonNull.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
@@ -290,6 +295,7 @@
             // 
             // labapprovedSeasoinNull
             // 
+            this.labapprovedSeasoinNull.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labapprovedSeasoinNull.BackColor = System.Drawing.Color.Transparent;
             this.labapprovedSeasoinNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.labapprovedSeasoinNull.Location = new System.Drawing.Point(41, 462);
@@ -439,12 +445,35 @@
             this.testReportToolStripMenuItem.Text = "Test Report";
             this.testReportToolStripMenuItem.Click += new System.EventHandler(this.testReportToolStripMenuItem_Click);
             // 
+            // displayBox1
+            // 
+            this.displayBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.displayBox1.BackColor = System.Drawing.Color.Yellow;
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(8, 463);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(23, 23);
+            this.displayBox1.TabIndex = 10;
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(37, 466);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(689, 15);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "Fabric with clima function items, need to check received report included (6.04 Wa" +
+    "ter Absorbency + 6.07 Drying Time) by dyelot.";
+            // 
             // P09
             // 
             this.ClientSize = new System.Drawing.Size(1094, 524);
             this.Controls.Add(this.tabControl1);
             this.DefaultControl = "txtSPNo";
             this.Name = "P09";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P09.Fabric Inspection Document Record";
             this.Controls.SetChildIndex(this.tabControl1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
@@ -495,5 +524,7 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private Win.UI.DisplayBox displayBoxapvSeasonNull;
         private Win.UI.Label labapprovedSeasoinNull;
+        private System.Windows.Forms.Label label7;
+        private Win.UI.DisplayBox displayBox1;
     }
 }

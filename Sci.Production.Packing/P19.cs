@@ -29,7 +29,9 @@ select
 [selected] = 0,
 pd.ID,
 pd.CTNStartNo,
-[OrderID] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail where ID = pd.ID and CTNStartNo = pd.CTNStartNo  FOR XML PATH('')),1,1,''),
+[OrderID] = Stuff((select distinct concat( '/',OrderID)   
+    from PackingList_Detail where ID = pd.ID 
+    and CTNStartNo = pd.CTNStartNo and DisposeFromClog= 0  FOR XML PATH('')),1,1,''),
 o.CustPONo,
 o.StyleID,
 o.SeasonID,
@@ -41,7 +43,9 @@ pd.TransferDate,
 pd.DRYReceiveDate,
 pd.PackErrTransferDate,
 pu.Status,
-[MainSP] = pd.OrderID
+[MainSP] = pd.OrderID,
+[ErrorID]='',
+[ErrorType] = ''
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
@@ -65,6 +69,28 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
         {
             base.OnFormLoaded();
 
+            #region 設定Comobx TypeError
+
+            DataTable dtTypeError;
+            DualResult resulterror;
+            string strSqlCmd = $@"
+select '' as Error,'' as id
+union all
+select id+'-'+Description as Error,id from PackingError
+where Type='TP' and Junk=0";
+            if (resulterror = DBProxy.Current.Select(null, strSqlCmd, out dtTypeError))
+            {
+                this.comboErrorType.DataSource = dtTypeError;
+                this.comboErrorType.DisplayMember = "Error";
+                this.comboErrorType.ValueMember = "id";
+            }
+            else
+            {
+                this.ShowErr(resulterror);
+            }
+
+            #endregion
+
             this.Helper.Controls.Grid.Generator(this.gridPackErrTransfer)
            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
            .Text("ID", header: "Pack ID", width: Widths.AnsiChars(16), iseditingreadonly: true)
@@ -74,6 +100,7 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("SeasonID", header: "Season", width: Widths.AnsiChars(12), iseditingreadonly: true)
            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+           .Text("ErrorType", header: "ErrorType", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Text("Alias", header: "Destination", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Date("BuyerDelivery", header: "Buyer Delivery")
            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
@@ -209,6 +236,7 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
 
             // 檢查資料
             var drSelected = this.dtPackErrTransfer.AsEnumerable().Where(s => (int)s["selected"] == 1).ToList();
+            StringBuilder warningmsg = new StringBuilder();
 
             foreach (DataRow dr in drSelected)
             {
@@ -216,8 +244,22 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
                 if (!checkPackResult.IsOK)
                 {
                     MyUtility.Msg.WarningBox(checkPackResult.ErrMsg);
+                    this.HideWaitMessage();
                     return;
                 }
+
+                if (MyUtility.Check.Empty(dr["ErrorID"]))
+                {
+                    warningmsg.Append($@"Packing ID:{dr["id"]}, SP#: {dr["MainSP"]}
+, CTN#: {dr["CTNStartNo"]} " + Environment.NewLine);
+                }
+            }
+
+            if (!MyUtility.Check.Empty(warningmsg.ToString()))
+            {
+                MyUtility.Msg.WarningBox("Below records needs input Error Type!" + Environment.NewLine + warningmsg.ToString());
+                this.HideWaitMessage();
+                return;
             }
 
             string saveSql = string.Empty;
@@ -229,10 +271,11 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
                     foreach (DataRow dr in drSelected)
                     {
                         saveSql = $@"
-update PackingList_Detail set PackErrTransferDate = GETDATE() where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}'
-
-insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate)
-                    values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE())
+update PackingList_Detail 
+set PackErrTransferDate = GETDATE() 
+where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}' and DisposeFromClog= 0;
+insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,PackingErrorID)
+                    values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{dr["ErrorID"]}')
 ";
                         updateResult = DBProxy.Current.Execute(null, saveSql);
                         if (!updateResult)
@@ -315,6 +358,7 @@ where	pd.CTNStartNo <> ''
 		and p.Type in ('B','L') 
 		and pd.TransferDate is null 
 		and pd.DRYReceiveDate is null 
+        and pd.DisposeFromClog= 0
 		and pd.PackErrTransferDate is null 
 		and (pu.Status = 'New' or pu.Status is null) 
         and pd.CTNQty = 1
@@ -363,6 +407,7 @@ where	pd.CTNStartNo <> ''
 		and p.MDivisionID = '{Env.User.Keyword}' 
 		and p.Type in ('B','L') 
         and pd.CTNQty = 1
+        and pd.DisposeFromClog= 0
         {keyWhere}
 ";
             bool result = MyUtility.Check.Seek(checkPackSql, listPar, out drPackResult);
@@ -452,6 +497,27 @@ where	pd.CTNStartNo <> ''
                     this.errMsg = value;
                 }
             }
+        }
+
+        private void picUpdate_Click(object sender, EventArgs e)
+        {
+            this.gridPackErrTransfer.EndEdit();
+            this.gridPackErrTransfer.ValidateControl();
+            DataTable dt = (DataTable)this.gridPackErrTransfer.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
+
+            DataRow[] dtfound = dt.Select("Selected = 1");
+            foreach (var item in dtfound)
+            {
+                item["ErrorID"] = this.comboErrorType.SelectedValue;
+                item["ErrorType"] = this.comboErrorType.Text;
+            }
+
+            MyUtility.Msg.InfoBox("Successful!");
+            this.gridPackErrTransfer.AutoResizeColumns();
         }
     }
 }

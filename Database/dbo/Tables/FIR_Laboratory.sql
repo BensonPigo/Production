@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[FIR_Laboratory] (
+CREATE TABLE [dbo].[FIR_Laboratory] (
     [ID]                BIGINT        CONSTRAINT [DF_FIR_Laboratory_ID] DEFAULT ((0)) NOT NULL,
     [POID]              VARCHAR (13)  CONSTRAINT [DF_FIR_Laboratory_POID] DEFAULT ('') NOT NULL,
     [SEQ1]              VARCHAR (3)   CONSTRAINT [DF_FIR_Laboratory_SEQ] DEFAULT ('') NOT NULL,
@@ -22,8 +22,13 @@
     [HeatEncode]        BIT           CONSTRAINT [DF_FIR_Laboratory_HeatEncode] DEFAULT ((0)) NULL,
     [WashEncode]        BIT           CONSTRAINT [DF_FIR_Laboratory_WashEncode] DEFAULT ((0)) NULL,
     [SkewnessOptionID]  VARCHAR (1)   CONSTRAINT [DF_FIR_Laboratory_SkewnessOptionID] DEFAULT ((1)) NULL,
+    [CrockingInspector] VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_CrockingInspector] DEFAULT ('') NOT NULL,
+    [HeatInspector]     VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_HeatInspector] DEFAULT ('') NOT NULL,
+    [WashInspector]     VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_WashInspector] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -127,6 +132,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項',
 
 
 GO
-CREATE NONCLUSTERED INDEX [NonClusteredIndex-20180917-140716]
+CREATE NONCLUSTERED INDEX [ID_FIR_Laboratory_POID_SEQ]
     ON [dbo].[FIR_Laboratory]([POID] ASC, [SEQ1] ASC, [SEQ2] ASC);
 

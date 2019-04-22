@@ -62,9 +62,10 @@ select p.ID
 , p.CTNQty
 , p.CBM
 , ClogCTNQty = (
-	select sum(CTNQty) 
+	select isnull(sum(CTNQty) ,0)
 	from PackingList_Detail pd WITH (NOLOCK) 
 	where pd.ID = p.ID and pd.ReceiveDate is not null
+    and pd.CFAReceiveDate is null
 )
 , p.InspDate
 , p.InspStatus
@@ -98,6 +99,7 @@ select g.ID
 , ClogCTNQty = (
 	select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 	where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null
+    and pd.CFAReceiveDate is null
 )
 ,[TotalShipQty] =  isnull(g.TotalShipQty,0)
 from GMTBooking g WITH (NOLOCK) 
@@ -225,7 +227,6 @@ order by g.ID", masterID);
                     {
                         if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["PulloutDate"]))
                         {
-                            object newPulloutDate = MyUtility.Convert.GetDate(e.FormattedValue);
                             if (!MyUtility.Check.Empty(dr["PulloutDate"]) && this.CheckPullout((DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
                             {
                                 this.PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]));
@@ -724,6 +725,65 @@ and p2.ReceiveDate is null ", this.CurrentMaintain["id"]), out dtRec);
             {
                 MyUtility.Msg.WarningBox("The CTNs were not received by CLog yet!! Cannot confirm!!\r\n" + msgReceDate.ToString());
                 return;
+            }
+
+            #endregion
+
+            #region 檢查是否還有箱子在CFA
+            DataTable dtCfa;
+            StringBuilder warningmsg = new StringBuilder();
+            string strSqlcmd =
+                   $@"
+select distinct p1.INVNo,p2.OrderID,p2.ID
+from PackingList p1
+inner join PackingList_Detail p2 on p1.ID=p2.ID
+where ShipPlanID='{this.CurrentMaintain["id"]}'
+and p2.CFAReceiveDate is not null
+and p2.CFAReturnClogDate is null
+and p2.CTNQty > 0";
+            if (result = DBProxy.Current.Select(null, strSqlcmd, out dtCfa))
+            {
+                if (dtCfa.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dtCfa.Rows)
+                    {
+                        warningmsg.Append($@"GB#: {dr["INVNo"]}, SP: {dr["OrderID"]}
+, Packing#: {dr["ID"]}" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox("The CTNs are in CFA now, Cannot confirm!" + Environment.NewLine + warningmsg.ToString());
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region 檢查是否還有箱子在CLog
+            DataTable dtCLog;
+            StringBuilder warningmsgCLog = new StringBuilder();
+            string strSqlcmdCLog =
+                   $@"
+select p2.ID,p2.CTNStartNo
+from GMTBooking g
+inner join PackingList p1 on p1.INVNo = g.id
+inner join PackingList_Detail p2 on p1.ID=p2.ID
+where g.ShipPlanID='{this.CurrentMaintain["id"]}'
+and (TransferCFADate is not null or ReceiveDate is null)
+and p2.CTNQty > 0
+and p1.Type <> 'S'
+";
+            if (result = DBProxy.Current.Select(null, strSqlcmdCLog, out dtCLog))
+            {
+                if (dtCLog.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dtCLog.Rows)
+                    {
+                        warningmsgCLog.Append($@"<PackingList#:{dr["ID"]}, CTN#:{dr["CTNStartNo"]}>" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox("Below records are not in clog, cannot confirm!!\r\n" + warningmsgCLog.ToString());
+                    return;
+                }
             }
 
             #endregion

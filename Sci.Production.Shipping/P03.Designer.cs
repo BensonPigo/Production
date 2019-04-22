@@ -87,6 +87,7 @@
             this.chkDelay = new Sci.Win.UI.CheckBox();
             this.numTPEPaidUSD = new Sci.Win.UI.NumericBox();
             this.label4 = new Sci.Win.UI.Label();
+            this.btnBatchUpload = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -157,18 +158,18 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelETA);
             this.masterpanel.Controls.Add(this.labelWKNo);
-            this.masterpanel.Controls.Add(this.dateDoxRcvDate);
-            this.masterpanel.Controls.Add(this.dateArriveWHDate);
-            this.masterpanel.Controls.Add(this.dateArrivePortDate);
-            this.masterpanel.Controls.Add(this.datePLRcvDate);
             this.masterpanel.Controls.Add(this.dateETA);
-            this.masterpanel.Size = new System.Drawing.Size(990, 344);
+            this.masterpanel.Controls.Add(this.datePLRcvDate);
+            this.masterpanel.Controls.Add(this.dateArrivePortDate);
+            this.masterpanel.Controls.Add(this.dateArriveWHDate);
+            this.masterpanel.Controls.Add(this.dateDoxRcvDate);
+            this.masterpanel.Size = new System.Drawing.Size(892, 344);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
-            this.masterpanel.Controls.SetChildIndex(this.datePLRcvDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateArrivePortDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDoxRcvDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateArrivePortDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.datePLRcvDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelWKNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelETA, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
@@ -227,7 +228,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 344);
-            this.detailpanel.Size = new System.Drawing.Size(990, 218);
+            this.detailpanel.Size = new System.Drawing.Size(892, 5);
             // 
             // gridicon
             // 
@@ -239,7 +240,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(990, 218);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 5);
             // 
             // detail2
             // 
@@ -255,16 +256,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(990, 600);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(990, 562);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 562);
-            this.detailbtm.Size = new System.Drawing.Size(990, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -935,9 +936,20 @@
             this.label4.TabIndex = 59;
             this.label4.Text = "TPE Paid(USD)";
             // 
+            // btnBatchUpload
+            // 
+            this.btnBatchUpload.Location = new System.Drawing.Point(800, 7);
+            this.btnBatchUpload.Name = "btnBatchUpload";
+            this.btnBatchUpload.Size = new System.Drawing.Size(186, 30);
+            this.btnBatchUpload.TabIndex = 36;
+            this.btnBatchUpload.Text = "Batch Upload-Shipping";
+            this.btnBatchUpload.UseVisualStyleBackColor = true;
+            this.btnBatchUpload.Click += new System.EventHandler(this.btnBatchUpload_Click);
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(998, 662);
+            this.Controls.Add(this.btnBatchUpload);
             this.DefaultControl = "dateArrivePortDate";
             this.DefaultControlForEdit = "dateArrivePortDate";
             this.DefaultDetailOrder = "PoID,Seq1,Seq2";
@@ -955,6 +967,7 @@
             this.UniqueExpress = "ID";
             this.WorkAlias = "Export";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchUpload, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -1035,5 +1048,6 @@
         private Win.UI.CheckBox chkReplacement;
         private Win.UI.Label label4;
         private Win.UI.NumericBox numTPEPaidUSD;
+        private Win.UI.Button btnBatchUpload;
     }
 }

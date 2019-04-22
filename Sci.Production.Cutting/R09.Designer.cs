@@ -111,14 +111,14 @@
             this.dateEstCutDate.DateBox2.Name = "";
             this.dateEstCutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateEstCutDate.DateBox2.TabIndex = 1;
-            this.dateEstCutDate.Location = new System.Drawing.Point(115, 72);
+            this.dateEstCutDate.Location = new System.Drawing.Point(115, 102);
             this.dateEstCutDate.Name = "dateEstCutDate";
             this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateEstCutDate.TabIndex = 101;
+            this.dateEstCutDate.TabIndex = 100;
             // 
             // labEstCutDate
             // 
-            this.labEstCutDate.Location = new System.Drawing.Point(22, 72);
+            this.labEstCutDate.Location = new System.Drawing.Point(22, 102);
             this.labEstCutDate.Name = "labEstCutDate";
             this.labEstCutDate.Size = new System.Drawing.Size(90, 23);
             this.labEstCutDate.TabIndex = 102;
@@ -128,16 +128,16 @@
             // 
             this.txtSpreadingNo2.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo2.Location = new System.Drawing.Point(200, 102);
+            this.txtSpreadingNo2.Location = new System.Drawing.Point(200, 132);
             this.txtSpreadingNo2.MaxLength = 2;
             this.txtSpreadingNo2.Name = "txtSpreadingNo2";
             this.txtSpreadingNo2.Size = new System.Drawing.Size(65, 23);
-            this.txtSpreadingNo2.TabIndex = 104;
+            this.txtSpreadingNo2.TabIndex = 102;
             // 
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Location = new System.Drawing.Point(177, 102);
+            this.label9.Location = new System.Drawing.Point(177, 132);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(20, 23);
             this.label9.TabIndex = 105;
@@ -151,15 +151,15 @@
             // 
             this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo1.Location = new System.Drawing.Point(115, 102);
+            this.txtSpreadingNo1.Location = new System.Drawing.Point(115, 132);
             this.txtSpreadingNo1.MaxLength = 2;
             this.txtSpreadingNo1.Name = "txtSpreadingNo1";
             this.txtSpreadingNo1.Size = new System.Drawing.Size(65, 23);
-            this.txtSpreadingNo1.TabIndex = 103;
+            this.txtSpreadingNo1.TabIndex = 101;
             // 
             // labSpreadingNo
             // 
-            this.labSpreadingNo.Location = new System.Drawing.Point(22, 102);
+            this.labSpreadingNo.Location = new System.Drawing.Point(22, 132);
             this.labSpreadingNo.Name = "labSpreadingNo";
             this.labSpreadingNo.Size = new System.Drawing.Size(90, 23);
             this.labSpreadingNo.TabIndex = 106;
@@ -169,16 +169,16 @@
             // 
             this.txtCutCell2.BackColor = System.Drawing.Color.White;
             this.txtCutCell2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutCell2.Location = new System.Drawing.Point(200, 132);
+            this.txtCutCell2.Location = new System.Drawing.Point(200, 162);
             this.txtCutCell2.MaxLength = 2;
             this.txtCutCell2.Name = "txtCutCell2";
             this.txtCutCell2.Size = new System.Drawing.Size(65, 23);
-            this.txtCutCell2.TabIndex = 108;
+            this.txtCutCell2.TabIndex = 104;
             // 
             // label4
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Location = new System.Drawing.Point(177, 132);
+            this.label4.Location = new System.Drawing.Point(177, 162);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(20, 23);
             this.label4.TabIndex = 109;
@@ -192,15 +192,15 @@
             // 
             this.txtCutCell1.BackColor = System.Drawing.Color.White;
             this.txtCutCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutCell1.Location = new System.Drawing.Point(115, 132);
+            this.txtCutCell1.Location = new System.Drawing.Point(115, 162);
             this.txtCutCell1.MaxLength = 2;
             this.txtCutCell1.Name = "txtCutCell1";
             this.txtCutCell1.Size = new System.Drawing.Size(65, 23);
-            this.txtCutCell1.TabIndex = 107;
+            this.txtCutCell1.TabIndex = 103;
             // 
             // labCutCell
             // 
-            this.labCutCell.Location = new System.Drawing.Point(22, 132);
+            this.labCutCell.Location = new System.Drawing.Point(22, 162);
             this.labCutCell.Name = "labCutCell";
             this.labCutCell.Size = new System.Drawing.Size(90, 23);
             this.labCutCell.TabIndex = 110;
@@ -208,7 +208,7 @@
             // 
             // labCuttingSP
             // 
-            this.labCuttingSP.Location = new System.Drawing.Point(22, 162);
+            this.labCuttingSP.Location = new System.Drawing.Point(22, 72);
             this.labCuttingSP.Name = "labCuttingSP";
             this.labCuttingSP.Size = new System.Drawing.Size(90, 23);
             this.labCuttingSP.TabIndex = 111;
@@ -218,11 +218,11 @@
             // 
             this.txtCuttingSP.BackColor = System.Drawing.Color.White;
             this.txtCuttingSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCuttingSP.Location = new System.Drawing.Point(115, 162);
+            this.txtCuttingSP.Location = new System.Drawing.Point(115, 72);
             this.txtCuttingSP.MaxLength = 20;
             this.txtCuttingSP.Name = "txtCuttingSP";
             this.txtCuttingSP.Size = new System.Drawing.Size(150, 23);
-            this.txtCuttingSP.TabIndex = 112;
+            this.txtCuttingSP.TabIndex = 99;
             // 
             // R09
             // 

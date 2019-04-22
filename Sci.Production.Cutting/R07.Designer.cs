@@ -140,7 +140,7 @@
             this.txtSpreadingNo2.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSpreadingNo2.Location = new System.Drawing.Point(185, 99);
-            this.txtSpreadingNo2.MDivisionID = "";
+            this.txtSpreadingNo2.MDivision = "";
             this.txtSpreadingNo2.Name = "txtSpreadingNo2";
             this.txtSpreadingNo2.Size = new System.Drawing.Size(45, 23);
             this.txtSpreadingNo2.TabIndex = 114;
@@ -150,7 +150,7 @@
             this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSpreadingNo1.Location = new System.Drawing.Point(112, 99);
-            this.txtSpreadingNo1.MDivisionID = "";
+            this.txtSpreadingNo1.MDivision = "";
             this.txtSpreadingNo1.Name = "txtSpreadingNo1";
             this.txtSpreadingNo1.Size = new System.Drawing.Size(45, 23);
             this.txtSpreadingNo1.TabIndex = 113;

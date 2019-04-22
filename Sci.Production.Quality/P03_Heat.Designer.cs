@@ -59,6 +59,8 @@
             this.labelStyle = new Sci.Win.UI.Label();
             this.labelWkno = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
+            this.txtHeatInspector = new Sci.Win.UI.TextBox();
+            this.labinspector = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -68,7 +70,7 @@
             // 
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 545);
-            this.btmcont.Size = new System.Drawing.Size(974, 40);
+            this.btmcont.Size = new System.Drawing.Size(979, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -78,16 +80,16 @@
             // 
             // gridcont
             // 
-            this.gridcont.Location = new System.Drawing.Point(12, 127);
-            this.gridcont.Size = new System.Drawing.Size(950, 408);
+            this.gridcont.Location = new System.Drawing.Point(12, 156);
+            this.gridcont.Size = new System.Drawing.Size(955, 379);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(884, 5);
+            this.undo.Location = new System.Drawing.Point(889, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(804, 5);
+            this.save.Location = new System.Drawing.Point(809, 5);
             // 
             // btnToExcel
             // 
@@ -105,19 +107,18 @@
             this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editDescription.Location = new System.Drawing.Point(553, 67);
+            this.editDescription.Location = new System.Drawing.Point(577, 96);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.ReadOnly = true;
-            this.editDescription.Size = new System.Drawing.Size(320, 54);
+            this.editDescription.Size = new System.Drawing.Size(296, 54);
             this.editDescription.TabIndex = 188;
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
-            this.labelDescription.Location = new System.Drawing.Point(475, 67);
+            this.labelDescription.Location = new System.Drawing.Point(475, 96);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(75, 25);
+            this.labelDescription.Size = new System.Drawing.Size(99, 25);
             this.labelDescription.TabIndex = 187;
             this.labelDescription.Text = "Description";
             // 
@@ -133,7 +134,7 @@
             // dateLastInspectionDate
             // 
             this.dateLastInspectionDate.IsSupportEditMode = false;
-            this.dateLastInspectionDate.Location = new System.Drawing.Point(825, 38);
+            this.dateLastInspectionDate.Location = new System.Drawing.Point(836, 38);
             this.dateLastInspectionDate.Name = "dateLastInspectionDate";
             this.dateLastInspectionDate.ReadOnly = true;
             this.dateLastInspectionDate.Size = new System.Drawing.Size(130, 23);
@@ -142,7 +143,7 @@
             // dateArriveWHDate
             // 
             this.dateArriveWHDate.IsSupportEditMode = false;
-            this.dateArriveWHDate.Location = new System.Drawing.Point(825, 9);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(836, 9);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
             this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
@@ -176,7 +177,7 @@
             this.txtResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtResult.IsSupportEditMode = false;
-            this.txtResult.Location = new System.Drawing.Point(553, 38);
+            this.txtResult.Location = new System.Drawing.Point(578, 38);
             this.txtResult.Name = "txtResult";
             this.txtResult.ReadOnly = true;
             this.txtResult.Size = new System.Drawing.Size(110, 23);
@@ -187,7 +188,7 @@
             this.txtArriveQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtArriveQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtArriveQty.IsSupportEditMode = false;
-            this.txtArriveQty.Location = new System.Drawing.Point(552, 9);
+            this.txtArriveQty.Location = new System.Drawing.Point(577, 9);
             this.txtArriveQty.Name = "txtArriveQty";
             this.txtArriveQty.ReadOnly = true;
             this.txtArriveQty.Size = new System.Drawing.Size(111, 23);
@@ -283,43 +284,38 @@
             // 
             // labelResult
             // 
-            this.labelResult.Lines = 0;
             this.labelResult.Location = new System.Drawing.Point(475, 38);
             this.labelResult.Name = "labelResult";
-            this.labelResult.Size = new System.Drawing.Size(75, 23);
+            this.labelResult.Size = new System.Drawing.Size(100, 23);
             this.labelResult.TabIndex = 171;
             this.labelResult.Text = "Result";
             // 
             // labelLastInspectionDate
             // 
-            this.labelLastInspectionDate.Lines = 0;
-            this.labelLastInspectionDate.Location = new System.Drawing.Point(678, 38);
+            this.labelLastInspectionDate.Location = new System.Drawing.Point(703, 38);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
-            this.labelLastInspectionDate.Size = new System.Drawing.Size(144, 23);
+            this.labelLastInspectionDate.Size = new System.Drawing.Size(130, 23);
             this.labelLastInspectionDate.TabIndex = 170;
             this.labelLastInspectionDate.Text = "Last Inspection Date ";
             // 
             // labelArriveWHDate
             // 
-            this.labelArriveWHDate.Lines = 0;
-            this.labelArriveWHDate.Location = new System.Drawing.Point(678, 9);
+            this.labelArriveWHDate.Location = new System.Drawing.Point(703, 9);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
-            this.labelArriveWHDate.Size = new System.Drawing.Size(144, 23);
+            this.labelArriveWHDate.Size = new System.Drawing.Size(130, 23);
             this.labelArriveWHDate.TabIndex = 169;
             this.labelArriveWHDate.Text = "Arrive W/H Date";
             // 
             // labelArriveQty
             // 
-            this.labelArriveQty.Lines = 0;
             this.labelArriveQty.Location = new System.Drawing.Point(475, 9);
             this.labelArriveQty.Name = "labelArriveQty";
-            this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
+            this.labelArriveQty.Size = new System.Drawing.Size(100, 23);
             this.labelArriveQty.TabIndex = 168;
             this.labelArriveQty.Text = "Arrive Qty";
             // 
             // labelColor
             // 
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(312, 9);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(47, 23);
@@ -328,7 +324,6 @@
             // 
             // labelBrandRefno
             // 
-            this.labelBrandRefno.Lines = 0;
             this.labelBrandRefno.Location = new System.Drawing.Point(187, 96);
             this.labelBrandRefno.Name = "labelBrandRefno";
             this.labelBrandRefno.Size = new System.Drawing.Size(86, 25);
@@ -337,7 +332,6 @@
             // 
             // labelSCIRefno
             // 
-            this.labelSCIRefno.Lines = 0;
             this.labelSCIRefno.Location = new System.Drawing.Point(187, 67);
             this.labelSCIRefno.Name = "labelSCIRefno";
             this.labelSCIRefno.Size = new System.Drawing.Size(86, 23);
@@ -346,7 +340,6 @@
             // 
             // labelSupp
             // 
-            this.labelSupp.Lines = 0;
             this.labelSupp.Location = new System.Drawing.Point(187, 38);
             this.labelSupp.Name = "labelSupp";
             this.labelSupp.Size = new System.Drawing.Size(86, 23);
@@ -355,7 +348,6 @@
             // 
             // labelSEQ
             // 
-            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(187, 9);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(51, 23);
@@ -364,7 +356,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(12, 96);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(46, 23);
@@ -373,7 +364,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(12, 68);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(46, 23);
@@ -382,7 +372,6 @@
             // 
             // labelWkno
             // 
-            this.labelWkno.Lines = 0;
             this.labelWkno.Location = new System.Drawing.Point(12, 38);
             this.labelWkno.Name = "labelWkno";
             this.labelWkno.Size = new System.Drawing.Size(46, 23);
@@ -391,16 +380,36 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(12, 9);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(46, 23);
             this.labelSP.TabIndex = 159;
             this.labelSP.Text = "SP#";
             // 
+            // txtHeatInspector
+            // 
+            this.txtHeatInspector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtHeatInspector.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtHeatInspector.IsSupportEditMode = false;
+            this.txtHeatInspector.Location = new System.Drawing.Point(578, 67);
+            this.txtHeatInspector.Name = "txtHeatInspector";
+            this.txtHeatInspector.ReadOnly = true;
+            this.txtHeatInspector.Size = new System.Drawing.Size(255, 23);
+            this.txtHeatInspector.TabIndex = 224;
+            // 
+            // labinspector
+            // 
+            this.labinspector.Location = new System.Drawing.Point(475, 66);
+            this.labinspector.Name = "labinspector";
+            this.labinspector.Size = new System.Drawing.Size(100, 23);
+            this.labinspector.TabIndex = 223;
+            this.labinspector.Text = "Heat Inspector";
+            // 
             // P03_Heat
             // 
-            this.ClientSize = new System.Drawing.Size(974, 585);
+            this.ClientSize = new System.Drawing.Size(979, 585);
+            this.Controls.Add(this.txtHeatInspector);
+            this.Controls.Add(this.labinspector);
             this.Controls.Add(this.editDescription);
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.txtsupplierSupp);
@@ -468,6 +477,8 @@
             this.Controls.SetChildIndex(this.txtsupplierSupp, 0);
             this.Controls.SetChildIndex(this.labelDescription, 0);
             this.Controls.SetChildIndex(this.editDescription, 0);
+            this.Controls.SetChildIndex(this.labinspector, 0);
+            this.Controls.SetChildIndex(this.txtHeatInspector, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -509,6 +520,7 @@
         private Win.UI.Label labelStyle;
         private Win.UI.Label labelWkno;
         private Win.UI.Label labelSP;
-
+        private Win.UI.TextBox txtHeatInspector;
+        private Win.UI.Label labinspector;
     }
 }

@@ -115,6 +115,7 @@ namespace Sci.Production.Quality
             checkNonWeightTest.Value = maindr["nonWeight"].ToString();
             displayResult.Text = maindr["Weight"].ToString();
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
+            txtWeightInspector.Text = maindr["WeightInspector"].ToString();
             return base.OnRequery();
         }
 
@@ -343,13 +344,14 @@ namespace Sci.Production.Quality
                 maindr["WeightEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["WeightInspector"] = loginID;
                 #endregion 
                 #region 判斷Result 是否要寫入
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
+                @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}',WeightInspector = '{0}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
                 #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
@@ -390,7 +392,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 maindr["WeightEncode"] = false;                
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
-
+                maindr["WeightInspector"] = string.Empty;
                 //判斷Result and Status 必須先確認Weight="", 判斷才會正確
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 maindr["Result"] = returnstr[0];
@@ -398,7 +400,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = null,WeightEncode=0,EditName='{0}',EditDate = GetDate(),Weight = '',Result ='{2}',Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set WeightDate = null,WeightEncode=0,EditName='{0}',EditDate = GetDate(),Weight = '',Result ='{2}',Status='{3}',WeightInspector = ''  where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;
@@ -654,28 +656,108 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
             //產生excel
             using (dt_article)
             {
-                foreach (DataRow articleDr in dt_article.Rows)
+                if (dt_article.Rows.Count != 0)
                 {
-                    excelHeadData.ArticleNo = articleDr["article"].ToString();
-                    var detailbyDate = from r1 in Datas.AsEnumerable()
-                                  group r1 by new
-                                  {
-                                      SubmitDate = r1["SubmitDate"],
-                                      Inspdate = r1["Inspdate"]
-                                  } into g
-                                  select new
-                                  {
-                                      SubmitDate = g.Key.SubmitDate,
-                                      Inspdate = g.Key.Inspdate
-                                  };
+                    //若有Article，PDF則分若有Article顯示，沒有的話則空白
+                    foreach (DataRow articleDr in dt_article.Rows)
+                    {
+                        excelHeadData.ArticleNo = articleDr["article"].ToString();
+                        var detailbyDate = from r1 in Datas.AsEnumerable()
+                                      group r1 by new
+                                      {
+                                          SubmitDate = r1["SubmitDate"],
+                                          Inspdate = r1["Inspdate"]
+                                      } into g
+                                      select new
+                                      {
+                                          SubmitDate = g.Key.SubmitDate,
+                                          Inspdate = g.Key.Inspdate
+                                      };
                  
+                        foreach (var dateFilter in detailbyDate)
+                        {
+                            excelHeadData.SubmitDate = dateFilter.SubmitDate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.SubmitDate).ToOADate().ToString();
+                            excelHeadData.ReportDate = dateFilter.Inspdate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.Inspdate).ToOADate().ToString();
+                            //產生新sheet並填入標題等資料
+                            exlSheets.Add();
+                        
+                            newSheet = exlSheets.Item[1];
+                            AddSheetAndHead(excelHeadData, newSheet);
+
+                            //填入detail資料
+                            DataRow[] dr_detail = Datas.Where(s => s["SubmitDate"].Equals(dateFilter.SubmitDate) && s["Inspdate"].Equals(dateFilter.Inspdate)).ToArray();
+                            string signature = dr_detail.GroupBy(s => s["Inspector"]).Select(s => MyUtility.GetValue.Lookup("Name", s.Key.ToString(), "Pass1", "ID")).JoinToString(",");
+                            int detail_start = 16;
+                            foreach (DataRow dr in dr_detail)
+                            {
+                                newSheet.Cells[detail_start, 1].Value = "'" + dr["Dyelot"];
+                                newSheet.Cells[detail_start, 2].Value = "'" + dr["Roll"];
+                                newSheet.Cells[detail_start, 3].Value = dr["WeightM2"];
+                                newSheet.Cells[detail_start, 4].Value = dr["AverageWeightM2"];
+                                newSheet.Cells[detail_start, 5].Value = dr["Difference"];
+                                newSheet.Cells[detail_start, 6].Value = dr["Result"];
+                                newSheet.Cells[detail_start, 7].Value = dr["Remark"];
+                                newSheet.Range[$"G{detail_start}", $"I{detail_start}"].Merge();
+                                detail_start++;
+                            }
+
+                            newSheet.get_Range($"A16:I{detail_start-1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                            newSheet.get_Range($"A16:I{detail_start-1}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+                       
+                            //簽名欄
+                            newSheet.Cells[detail_start + 1, 6].Value = "Signature";
+                            newSheet.Cells[detail_start + 1, 6].Font.Bold = true;
+                            newSheet.Range[$"F{detail_start+1}", $"I{detail_start+1}"].Merge();
+                            newSheet.Cells[detail_start + 2, 6].Value = signature;
+                            newSheet.Range[$"F{detail_start + 2}", $"I{detail_start + 2}"].Merge();
+                            newSheet.Cells[detail_start + 3, 6].Value = "Checked by:";
+                            newSheet.Range[$"F{detail_start + 3}", $"I{detail_start + 3}"].Merge();
+                            newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                            newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+                            newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Font.Size = 9;
+                            //全部置中
+                            newSheet.get_Range($"A1:I{detail_start + 3}").HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                            newSheet.get_Range($"A1:I{detail_start + 3}").Font.Name = "Arial";
+
+                            //版面保持一頁
+                            newSheet.PageSetup.Zoom = false;
+                            newSheet.PageSetup.FitToPagesWide = 1;
+
+                            //針對merge後會過長的欄位作高度調整
+                            double newHeight;
+                            newSheet.Range["A7", "A7"].RowHeight = MeasureTextHeight(excelHeadData.StyleName, 54);
+                            newHeight = MeasureTextHeight(excelHeadData.FabricDesc, 59);
+                            newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
+                            newHeight = MeasureTextHeight(excelHeadData.FabricRefNo, 13);
+                            newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
+                            newSheet.PageSetup.PrintArea = $"A1:I{detail_start + 3}";
+                        }
+                                      
+
+                    }
+                }
+                else
+                {
+                    excelHeadData.ArticleNo = string.Empty;
+                    var detailbyDate = from r1 in Datas.AsEnumerable()
+                                       group r1 by new
+                                       {
+                                           SubmitDate = r1["SubmitDate"],
+                                           Inspdate = r1["Inspdate"]
+                                       } into g
+                                       select new
+                                       {
+                                           SubmitDate = g.Key.SubmitDate,
+                                           Inspdate = g.Key.Inspdate
+                                       };
+
                     foreach (var dateFilter in detailbyDate)
                     {
                         excelHeadData.SubmitDate = dateFilter.SubmitDate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.SubmitDate).ToOADate().ToString();
                         excelHeadData.ReportDate = dateFilter.Inspdate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.Inspdate).ToOADate().ToString();
                         //產生新sheet並填入標題等資料
                         exlSheets.Add();
-                        
+
                         newSheet = exlSheets.Item[1];
                         AddSheetAndHead(excelHeadData, newSheet);
 
@@ -696,13 +778,13 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                             detail_start++;
                         }
 
-                        newSheet.get_Range($"A16:I{detail_start-1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                        newSheet.get_Range($"A16:I{detail_start-1}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
-                       
+                        newSheet.get_Range($"A16:I{detail_start - 1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                        newSheet.get_Range($"A16:I{detail_start - 1}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+
                         //簽名欄
                         newSheet.Cells[detail_start + 1, 6].Value = "Signature";
                         newSheet.Cells[detail_start + 1, 6].Font.Bold = true;
-                        newSheet.Range[$"F{detail_start+1}", $"I{detail_start+1}"].Merge();
+                        newSheet.Range[$"F{detail_start + 1}", $"I{detail_start + 1}"].Merge();
                         newSheet.Cells[detail_start + 2, 6].Value = signature;
                         newSheet.Range[$"F{detail_start + 2}", $"I{detail_start + 2}"].Merge();
                         newSheet.Cells[detail_start + 3, 6].Value = "Checked by:";
@@ -727,8 +809,6 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                         newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
                         newSheet.PageSetup.PrintArea = $"A1:I{detail_start + 3}";
                     }
-
-            
                 }
             }
             

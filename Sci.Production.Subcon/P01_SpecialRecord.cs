@@ -124,6 +124,7 @@ inner join (
 		, factory WITH (NOLOCK) 
         where c.id = '{0}'            
         and a.FactoryID = factory.id and factory.IsProduceFty = 1
+        --and a.PulloutComplete = 0
 		and a.Category  in ('B','S')", dr["artworktypeid"]);
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and ((a.category='B' and c.isArtwork=0)  or (a.category !='B')) and a.ID = '{0}'", orderID); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and a.poid = '{0}'", poid); }

@@ -343,4 +343,32 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Description" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="4f19b508-4872-4db3-b22d-7a43a3e33675" ChangeDateTime="03/12/2019 03:03:41">
+    <Property Name="ElementName" Value="[dbo].[FirstDyelot].[Consignee]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[FirstDyelot]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FactoryGroup" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ce7b7e8d-6305-4f65-9a4b-35e92782f2ef" ChangeDateTime="04/03/2019 09:14:10">
+    <Property Name="ElementName" Value="[dbo].[ClogGarmentDispose].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ClogGarmentDispose]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2517846c-af5f-44c0-a6a2-692dae3a3042" ChangeDateTime="04/03/2019 09:20:53">
+    <Property Name="ElementName" Value="[dbo].[ClogGarmentDispose_Detail].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ClogGarmentDispose_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="77478390-40a4-451b-9fee-d147c25f0502" ChangeDateTime="04/12/2019 02:10:18">
+    <Property Name="ElementName" Value="[dbo].[WorkOrderRevisedMarkerOriginalData_Detail].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[WorkOrderRevisedMarkerOriginalData_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="WorkorderUkeyRevisedMarkerOriginalUkey" />
+  </Operation>
 </Operations>

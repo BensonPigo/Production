@@ -123,6 +123,7 @@ namespace Sci.Production.Quality
             checkNonInspection.Value = maindr["nonphysical"].ToString();
             displayResult.Text = maindr["physical"].ToString();
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
+            txtPhysicalInspector.Text = maindr["PhysicalInspector"].ToString();
         }
 
         DataTable datas2;
@@ -725,6 +726,7 @@ Where DetailUkey = {15};",
                 maindr["PhysicalEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["PhysicalInspector"] = loginID;
                 int sumPoint = MyUtility.Convert.GetInt(gridTb.Compute("Sum(totalpoint)", ""));
                 decimal sumTotalYds = MyUtility.Convert.GetDecimal(gridTb.Compute("Sum(actualyds)", ""));
                 maindr["TotalDefectPoint"] = sumPoint;
@@ -735,7 +737,8 @@ Where DetailUkey = {15};",
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set PhysicalDate = '{7}',PhysicalEncode=1,EditName='{0}',EditDate = GetDate(),Physical = '{1}',Result ='{2}',TotalDefectPoint = {4},TotalInspYds = {5},Status='{6}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], sumPoint, sumTotalYds, returnstr[1],Convert.ToDateTime(gridTb.Compute("Max(InspDate)", "")).ToString("yyyy/MM/dd"));
+                @"Update Fir set PhysicalDate = '{7}',PhysicalEncode=1,EditName='{0}',EditDate = GetDate(),Physical = '{1}',Result ='{2}',TotalDefectPoint = {4},TotalInspYds = {5},Status='{6}' ,PhysicalInspector = '{0}'
+                  where id ={3}", loginID, result, returnstr[0], maindr["ID"], sumPoint, sumTotalYds, returnstr[1],Convert.ToDateTime(gridTb.Compute("Max(InspDate)", "")).ToString("yyyy/MM/dd"));
                 #endregion
                 
                 maindr["Result"] = returnstr[0];
@@ -751,6 +754,7 @@ Where DetailUkey = {15};",
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
                 maindr["TotalDefectPoint"] = 0;
                 maindr["TotalInspYds"] = 0;
+                maindr["PhysicalInspector"] = string.Empty;
 
                 //判斷Result and Status 必須先確認Physical="",判斷才會正確
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
@@ -759,7 +763,7 @@ Where DetailUkey = {15};",
                 #endregion
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set PhysicalDate = null,PhysicalEncode=0,EditName='{0}',EditDate = GetDate(),Physical = '',Result ='{2}',TotalDefectPoint = 0,TotalInspYds = 0,Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set PhysicalDate = null,PhysicalEncode=0,EditName='{0}',EditDate = GetDate(),Physical = '',Result ='{2}',TotalDefectPoint = 0,TotalInspYds = 0,Status='{3}' ,PhysicalInspector = ''  where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;

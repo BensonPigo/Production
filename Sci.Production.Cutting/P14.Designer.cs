@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -46,7 +46,7 @@
             this.disSP = new Sci.Win.UI.DisplayBox();
             this.disCutpart = new Sci.Win.UI.DisplayBox();
             this.disCutNo = new Sci.Win.UI.DisplayBox();
-            this.disColorName = new Sci.Win.UI.DisplayBox();
+            this.disArticle = new Sci.Win.UI.DisplayBox();
             this.disColor = new Sci.Win.UI.DisplayBox();
             this.disSize = new Sci.Win.UI.DisplayBox();
             this.disBundleQty = new Sci.Win.UI.NumericBox();
@@ -126,7 +126,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(96, 23);
             this.label9.TabIndex = 6;
-            this.label9.Text = "Color Name";
+            this.label9.Text = "Article";
             // 
             // label10
             // 
@@ -199,14 +199,14 @@
             this.disCutNo.Size = new System.Drawing.Size(147, 23);
             this.disCutNo.TabIndex = 23;
             // 
-            // disColorName
+            // disArticle
             // 
-            this.disColorName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disColorName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disColorName.Location = new System.Drawing.Point(365, 41);
-            this.disColorName.Name = "disColorName";
-            this.disColorName.Size = new System.Drawing.Size(147, 23);
-            this.disColorName.TabIndex = 24;
+            this.disArticle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disArticle.Location = new System.Drawing.Point(365, 41);
+            this.disArticle.Name = "disArticle";
+            this.disArticle.Size = new System.Drawing.Size(147, 23);
+            this.disArticle.TabIndex = 24;
             // 
             // disColor
             // 
@@ -268,14 +268,14 @@
             this.grid1.Location = new System.Drawing.Point(17, 158);
             this.grid1.Name = "grid1";
             this.grid1.ReadOnly = true;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid1.RowHeadersVisible = false;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
@@ -294,7 +294,7 @@
             this.Controls.Add(this.disBundleQty);
             this.Controls.Add(this.disSize);
             this.Controls.Add(this.disColor);
-            this.Controls.Add(this.disColorName);
+            this.Controls.Add(this.disArticle);
             this.Controls.Add(this.disCutNo);
             this.Controls.Add(this.disCutpart);
             this.Controls.Add(this.disSP);
@@ -312,6 +312,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "P14";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P14. RFID for Hanger System";
             this.FormLoaded += new System.EventHandler(this.P14_FormLoaded);
             this.Controls.SetChildIndex(this.label1, 0);
@@ -330,7 +331,7 @@
             this.Controls.SetChildIndex(this.disSP, 0);
             this.Controls.SetChildIndex(this.disCutpart, 0);
             this.Controls.SetChildIndex(this.disCutNo, 0);
-            this.Controls.SetChildIndex(this.disColorName, 0);
+            this.Controls.SetChildIndex(this.disArticle, 0);
             this.Controls.SetChildIndex(this.disColor, 0);
             this.Controls.SetChildIndex(this.disSize, 0);
             this.Controls.SetChildIndex(this.disBundleQty, 0);
@@ -360,7 +361,7 @@
         private Win.UI.DisplayBox disSP;
         private Win.UI.DisplayBox disCutpart;
         private Win.UI.DisplayBox disCutNo;
-        private Win.UI.DisplayBox disColorName;
+        private Win.UI.DisplayBox disArticle;
         private Win.UI.DisplayBox disColor;
         private Win.UI.DisplayBox disSize;
         private Win.UI.NumericBox disBundleQty;

@@ -76,11 +76,11 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"with tmpOrder
-as (
+            sqlCmd.Append(@"
 select o.ID,o.BrandID,o.CustCDID,o.StyleID,o.SeasonID,o.Customize1,o.CustPONo,o.MDivisionID,
 o.FactoryID,o.Dest+'-'+ISNULL(c.Alias,'') as Dest, oq.BuyerDelivery,o.SciDelivery,oq.SDPDate,
 oqd.Article,oqd.SizeCode,oqd.Qty as ShipQty,oq.Seq,q.qty as ASQty
+into #tmpOrder
 from Orders o WITH (NOLOCK) 
 inner join Order_Qty q WITH (NOLOCK) on q.ID = o.ID
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
@@ -141,25 +141,26 @@ where 1=1 and isnull(ot.IsGMTMaster,0) != 1");
                 sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}'", Convert.ToDateTime(this.cutoffDate2).ToString("d")));
             }
 
-            sqlCmd.Append(@"),
-PackData
-as (
+            sqlCmd.Append(@"
+select distinct t.ID,t.Seq into #tmpOrderdis from #tmpOrder t
+
 select t.ID,t.Seq,pd.Article,pd.SizeCode,sum(pd.ShipQty) as PackQty,p.INVNo,p.PulloutDate,
 pd.ID as PackID
-from tmpOrder t
+into #PackData
+from #tmpOrderdis t
 inner join PackingList_Detail pd WITH (NOLOCK) on t.ID = pd.OrderID and t.Seq = pd.OrderShipmodeSeq
 inner join PackingList p WITH (NOLOCK) on pd.ID = p.ID
 group by t.ID,t.Seq,pd.Article,pd.SizeCode,p.INVNo,p.PulloutDate,pd.ID
-),
-tempdata
-as (
+
 select t.*,isnull(p.PackQty,0) as PackQty,isnull(p.INVNo,'') as INVNo,p.PulloutDate,isnull(p.PackID,'') as PackID,
-isnull([dbo].getMinCompleteSewQty(t.ID,t.Article,t.SizeCode),0) as SewQty,
-isnull((select sum(isnull(pdd.ShipQty,0)) from Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) where pd.UKey = pdd.Pullout_DetailUKey and pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and pdd.Article = t.Article and pdd.SizeCode = t.SizeCode),0) as PullQty
-from tmpOrder t
-left join PackData p on t.ID = p.ID and t.Seq = p.Seq and t.Article = p.Article and t.SizeCode = p.SizeCode)
+    isnull([dbo].getMinCompleteSewQty(t.ID,t.Article,t.SizeCode),0) as SewQty,
+    isnull((select sum(isnull(pdd.ShipQty,0)) from Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) where pd.UKey = pdd.Pullout_DetailUKey and pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and pdd.Article = t.Article and pdd.SizeCode = t.SizeCode),0) as PullQty
+into #tempdata
+from #tmpOrder t
+left join #PackData p on t.ID = p.ID and t.Seq = p.Seq and t.Article = p.Article and t.SizeCode = p.SizeCode
+
 select *,IIF(ASQty <> SewQty,'Sewing Qty is not equal to Order Qty.','')+IIF(ShipQty <> PackQty,'Packing Qty '+IIF(ShipQty <> PullQty,'and Pullout Qty ','')+'is not equal to Order Qty by ship.',IIF(ShipQty <> PullQty,'Pullout Qty is not equal to Order Qty by ship.','')) as Reason
-from tempdata");
+from #tempdata");
 
             if (this.onlyirregular)
             {

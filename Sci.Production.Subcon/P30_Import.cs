@@ -132,6 +132,7 @@ where a.ApvToPurchase = 1
       and c.Category  in ('B','S')
       and c.Junk = 0
       and factory.IsProduceFty = 1
+      and c.PulloutComplete = 0
 ", Env.User.Factory
                      , Env.User.Keyword
                      , dr_localPO["category"]
@@ -243,6 +244,7 @@ where a.status = 'Approved'
       and c.Category  in ('B','S')
       and exists (select id from orders where poid=b.OrderID and junk=0)
       and b.PurchaseQty > 0 
+      and c.PulloutComplete = 0
       and b.PoId = ''
       {5}
       and not exists (select orderID 

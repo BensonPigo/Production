@@ -1050,6 +1050,14 @@ SET IDENTITY_INSERT oven off";
             {
                 DBProxy.Current.Execute(null, string.Format("update oven set result='',status='New',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dt.Rows[0]["id"]));
             }
+
+            //更新PO.LabOvenPercent
+            DualResult upResult;
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabOven','{maindr["POID"]}'")))
+            {
+                ShowErr(upResult);
+                return;
+            }
             OnRequery();
         }
 

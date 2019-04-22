@@ -121,6 +121,7 @@ namespace Sci.Production.Packing
             }
 
             this.ComputeOrderQty();
+            Color_Change();
         }
 
         /// <summary>
@@ -484,6 +485,7 @@ order by os.Seq", dr["OrderID"].ToString(),
                 }
                 #endregion
             };
+            Color_Change();
         }
 
         // 清空Order相關欄位值
@@ -516,6 +518,7 @@ order by os.Seq", dr["OrderID"].ToString(),
             this.CurrentMaintain["Type"] = "S";
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["QueryDate"] = DateTime.Now.ToShortDateString();
 
             this.gridicon.Append.Enabled = true;
             this.gridicon.Insert.Enabled = true;
@@ -1369,6 +1372,30 @@ where InvA.OrderID = '{0}'
                 dr["OrderQty"] = needPackQty;
                 dr.EndEdit();
                 #endregion
+            }
+        }
+
+        private void Color_Change()
+        {
+            if (this.detailgrid.Rows.Count > 0 || !MyUtility.Check.Empty(this.detailgrid))
+            {
+                for (int index = 0; index < this.detailgrid.Rows.Count; index++)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(index);
+                    if (this.detailgrid.Rows.Count <= index || index < 0)
+                    {
+                        return;
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["DisposeFromClog"]))
+                    {
+                        this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
+                    }
+                    else
+                    {
+                        this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.White;
+                    }
+                }
             }
         }
     }

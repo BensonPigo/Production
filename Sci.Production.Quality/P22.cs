@@ -159,6 +159,7 @@ where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.TransferCFADate is null
+and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.Seq";
@@ -212,7 +213,7 @@ order by p2.ID,p2.Seq";
             MyUtility.Tool.ProcessWithDatatable(dt,string.Empty, @"
 select distinct a.* from #tmp a
 inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
-where a.CFANeedInsp <> b.CFANeedInsp ", out selectData);
+where a.CFANeedInsp <> b.CFANeedInsp and b.DisposeFromClog= 0", out selectData);
 
             foreach (DataRow dr in selectData.Rows)
             {
@@ -221,6 +222,7 @@ where a.CFANeedInsp <> b.CFANeedInsp ", out selectData);
 update PackingList_Detail 
 set CFANeedInsp ={CFANeedInsp}
 where id='{dr["id"]}'
+and DisposeFromClog= 0
 and CTNStartNo ='{dr["CTNStartNo"]}'
 ";                
                 

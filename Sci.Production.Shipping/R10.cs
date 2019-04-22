@@ -268,7 +268,7 @@ inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
 inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-inner join Order_QtyShip oq WITH (NOLOCK) on p.OrderID=oq.Id
+inner join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID=oq.Id and oq.Seq = pd.OrderShipmodeSeq
 inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(this.date1))

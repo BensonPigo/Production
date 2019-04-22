@@ -62,6 +62,24 @@ namespace Sci.Production.Sewing
             {
                 this.toolbar.cmdSend.Enabled = true;
             }
+
+            #region 顯示Recall 按鈕條件
+            if (this.CurrentMaintain != null)
+            {
+                string strSqlcmd = $@"select * from SewingOutput_DailyUnlock
+where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
+                if (MyUtility.Check.Seek(strSqlcmd) &&
+                    this.Perm.Recall &&
+                    string.Compare(this.CurrentMaintain["Status"].ToString(), "Send") == 0)
+                {
+                    this.toolbar.cmdRecall.Enabled = true;
+                }
+                else
+                {
+                    this.toolbar.cmdRecall.Enabled = false;
+                }
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -150,6 +168,8 @@ namespace Sci.Production.Sewing
                         this.txtSubConOutContractNumber.ReadOnly = false;
                     }
                 }
+
+          
             }
         }
 
@@ -1141,14 +1161,21 @@ order by a.OrderId,os.Seq",
             }
             #endregion
 
-            #region 檢查QA Ttl Output是否為0
+            #region 檢查QA Ttl Output是否為0 和Reason ID 是否存在
 
-            // DataGridViewRow dr = this.detailgrid.Rows
             foreach (DataGridViewRow item in this.detailgrid.Rows)
             {
                 if (item.Cells["QAQty"].Value.ToString() == "0" && string.IsNullOrEmpty(item.Cells["SewingReasonID"].Value.ToString()))
                 {
                     MyUtility.Msg.WarningBox("Please input [Reason] if [Qa Ttl Output] is 0!");
+                    return false;
+                }
+
+                string strReasonID = item.Cells["SewingReasonID"].Value.ToString();
+                if (!MyUtility.Check.Empty(strReasonID) &&
+                    !MyUtility.Check.Seek($@"select 1 from SewingReason where id = '{strReasonID}' and Type='SO' AND Junk=0"))
+                {
+                    MyUtility.Msg.WarningBox($@"<Reason ID: {strReasonID}> not found");
                     return false;
                 }
             }
@@ -2393,14 +2420,17 @@ declare @ukey bigint
 select top 1 @ukey=ukey,@reasonID=reasonID,@remark=remark from SewingOutput_DailyUnlock where SewingOutputID = '{this.CurrentMaintain["ID"]}' order by Ukey desc
 
 insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{this.CurrentMaintain["ID"]}','Status','Send','New',@reasonID,@remark,'{Sci.Env.User.UserID}',GETDATE())
+values ('{this.CurrentMaintain["ID"]}','Status','Send','New',isnull(@reasonID,''),isnull(@remark,''),'{Sci.Env.User.UserID}',GETDATE())
 
 Update SewingOutput_DailyUnlock set 
 	UnLockDate = getdate()
 	,UnLockName= '{Sci.Env.User.UserID}'
 where ukey=@ukey
 
-update SewingOutput set Status='New', LockDate = null where ID = '{this.CurrentMaintain["ID"]}' 
+update SewingOutput set Status='New', LockDate = null
+, editname='{Sci.Env.User.UserID}' 
+, editdate=getdate()
+where ID = '{this.CurrentMaintain["ID"]}' 
 ";
 
             using (TransactionScope scope = new TransactionScope())
@@ -2441,6 +2471,7 @@ update SewingOutput set Status='New', LockDate = null where ID = '{this.CurrentM
             string sqlcmd = $@"
 UPDATE  s 
 SET s.LockDate = CONVERT(date, GETDATE()) , s.Status='Send'
+, s.editname='{Sci.Env.User.UserID}', s.editdate=getdate()
 FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON s.ID = s.ID
 INNER JOIN Orders o ON o.ID = sd.OrderId
