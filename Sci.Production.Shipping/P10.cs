@@ -447,6 +447,12 @@ order by g.ID", masterID);
                 return false;
             }
 
+            if (this.plData.AsEnumerable().Any(a => !MyUtility.Check.Empty(a["pulloutdate"])))
+            {
+                MyUtility.Msg.WarningBox("Can't delete this ship plan! already has pullout date!");
+                return false;
+            }
+
             return base.ClickDeleteBefore();
         }
 
