@@ -348,6 +348,7 @@
             this.ClientSize = new System.Drawing.Size(1008, 493);
             this.GridAlias = "MockupOven_Detail";
             this.GridNew = 0;
+            this.IsSupportCopy = false;
             this.KeyField1 = "ID";
             this.Name = "P14";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";

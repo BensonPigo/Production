@@ -485,7 +485,7 @@ where ReportNo = '{this.reportNo}';";
                 return "1";
             }
 
-            string file = haveHT ? "Quality_P12_Detail_Report2" : "Quality_P12_Detail_Report";
+            string file = haveHT ? "Quality_P14_Detail_Report2" : "Quality_P14_Detail_Report";
             int haveHTrow = haveHT ? 6 : 0;
             string sql_cmd = string.Empty;
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\"+ file+ ".xltx");

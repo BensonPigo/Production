@@ -185,6 +185,12 @@ where ID = '{0}'"
             }
         }
 
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.CurrentMaintain["Type"] = "S";
+        }
+
         protected override bool ClickSaveBefore()
         {
             //檢查表頭Style#, Season, Brand, Article / Colorway, T1/SubconName必須輸入

@@ -348,11 +348,12 @@
             this.ClientSize = new System.Drawing.Size(1008, 493);
             this.GridAlias = "MockupWash_Detail";
             this.GridNew = 0;
+            this.IsSupportCopy = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P15";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "P15. Mockup Wash Test";
+            this.Text = "P15. Mockup Wash Test(Bulk)";
             this.WorkAlias = "MockupWash";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
