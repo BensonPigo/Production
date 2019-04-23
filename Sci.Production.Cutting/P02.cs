@@ -1763,7 +1763,7 @@ where WorkOrderUkey={0}", masterID);
             base.OnFormDispose();
             bindingSource2.Dispose();
         }
-
+        
         private void sorting(string sort)
         {
             grid.ValidateControl();
@@ -2796,6 +2796,24 @@ where b.poid = '{0}'
             isAdditionalrevisedmarker = true;
             this.OnDetailGridInsert(-1);
             isAdditionalrevisedmarker = false;
+        }
+
+        private void tabs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
+            {
+                btnCutplanChangeHistory.Enabled = true;
+            }
+            else
+            {
+                btnCutplanChangeHistory.Enabled = false;
+            }
+        }
+
+        private void btnCutplanChangeHistory_Click(object sender, EventArgs e)
+        {
+            P07 callNextForm = new P07(MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            callNextForm.ShowDialog(this);
         }
 
         //Quantity Breakdown

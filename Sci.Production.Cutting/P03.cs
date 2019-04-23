@@ -327,12 +327,6 @@ From
             DataTable saveDataTable = detailTb.Select("Sel = 1").CopyToDataTable();
             foreach (DataRow dr in saveDataTable.Rows)
             {
-                if (!MyUtility.Check.Empty(dr["newestcutdate"]) && 
-                    (DateTime)dr["estcutdate"] >= DateTime.Today)
-                {
-                    MyUtility.Msg.WarningBox("Est. Cut Date cannot modify when origin Est. Cut Date is today or earlier than today.");
-                    return;
-                }
                 if ((dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", "")))) || 
                     (dr["Cutcellid"] != dr["NewCutcellid"] && !MyUtility.Check.Empty(dr["NewCutcellid"])) ||
                     (dr["SpreadingNoID"] != dr["NewSpreadingNoID"] && !MyUtility.Check.Empty(dr["NewSpreadingNoID"]))
@@ -350,20 +344,20 @@ From
                     string orgEstCutDate =((DateTime)dr["EstCutDate"]).ToShortDateString();
                     if (!MyUtility.Check.Empty(dr["newestcutdate"]))
                     {
-                        update = update + $"Update Workorder Set estcutdate ='{((DateTime)dr["newestcutdate"]).ToShortDateString()}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set estcutdate ='{((DateTime)dr["newestcutdate"]).ToShortDateString()}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
                     if (!MyUtility.Check.Empty(dr["NewCutcellid"]))
                     {
-                        update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
                     if (!MyUtility.Check.Empty(dr["NewSpreadingNoID"]))
                     {
-                        update = update + $"Update Workorder Set SpreadingNoID='{dr["NewSpreadingNoID"]}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set SpreadingNoID='{dr["NewSpreadingNoID"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
 
                     update = update + $@"
-Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate      ,NewEstCutDate  ,CutReasonid              ,ID             ,OrgCutCellid       ,NewCutCellid   ,OrgSpreadingNoID         ,NewSpreadingNoID) 
-Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID});";
+Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate      ,NewEstCutDate  ,CutReasonid              ,ID             ,OrgCutCellid       ,NewCutCellid   ,OrgSpreadingNoID         ,NewSpreadingNoID, AddDate, AddName) 
+Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID},getdate(),'{Sci.Env.User.UserID}');";
                 }
             }
 
