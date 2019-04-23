@@ -96,7 +96,6 @@ namespace Sci.Production.Quality
 
         protected override Ict.DualResult OnRequery(out System.Data.DataTable datas)
         {
-
             Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
             Result_RowSource.Add("Pass", "Pass");
             Result_RowSource.Add("Fail", "Fail");
@@ -1052,8 +1051,8 @@ SET IDENTITY_INSERT oven off";
             }
 
             //更新PO.LabOvenPercent
-            DualResult upResult;
-            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabOven','{maindr["POID"]}'")))
+                DualResult upResult;
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabOven','{dtOven.Rows[0]["POID"]}'")))
             {
                 ShowErr(upResult);
                 return;
@@ -1368,9 +1367,5 @@ SET IDENTITY_INSERT oven off";
         {
             isModify = true;
         }
-
-
-        
-
     }
 }
