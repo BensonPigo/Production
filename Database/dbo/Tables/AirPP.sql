@@ -23,7 +23,7 @@
     [PayDate]           DATE            NULL,
     [ReasonID]          VARCHAR (5)     CONSTRAINT [DF_AirPP_ReasonID] DEFAULT ('') NULL,
     [FtyDesc]           NVARCHAR (50)   CONSTRAINT [DF_AirPP_FtyDesc] DEFAULT ('') NULL,
-    [Remark]            NVARCHAR (MAX)   CONSTRAINT [DF_AirPP_Remark] DEFAULT ('') NULL,
+    [Remark]            NVARCHAR (MAX)  CONSTRAINT [DF_AirPP_Remark] DEFAULT ('') NULL,
     [MRComment]         NVARCHAR (MAX)  CONSTRAINT [DF_AirPP_MRComment] DEFAULT ('') NULL,
     [ResponsibleFty]    BIT             CONSTRAINT [DF_AirPP_ResponsibleFty] DEFAULT ((0)) NULL,
     [RatioFty]          NUMERIC (5, 2)  CONSTRAINT [DF_AirPP_RatioFty] DEFAULT ((0)) NULL,
@@ -36,18 +36,18 @@
     [ResponsibleSCI]    BIT             CONSTRAINT [DF_AirPP_ResponsibleSCI] DEFAULT ((0)) NULL,
     [RatioSCI]          NUMERIC (5, 2)  CONSTRAINT [DF_AirPP_RatioSCI] DEFAULT ((0)) NULL,
     [SCIICRNo]          VARCHAR (13)    CONSTRAINT [DF_AirPP_SCIICRNo] DEFAULT ('') NULL,
-    [SCIICRRemark]      NVARCHAR (MAX)   CONSTRAINT [DF_AirPP_SCIICRRemark] DEFAULT ('') NULL,
+    [SCIICRRemark]      NVARCHAR (MAX)  CONSTRAINT [DF_AirPP_SCIICRRemark] DEFAULT ('') NULL,
     [ResponsibleSupp]   BIT             CONSTRAINT [DF_AirPP_ResponsibleSupp] DEFAULT ((0)) NULL,
     [RatioSupp]         NUMERIC (5, 2)  CONSTRAINT [DF_AirPP_RatioSupp] DEFAULT ((0)) NULL,
     [SuppDBCNo]         VARCHAR (13)    CONSTRAINT [DF_AirPP_SuppDBCNo] DEFAULT ('') NULL,
-    [SuppDBCRemark]     NVARCHAR (MAX)   CONSTRAINT [DF_AirPP_SuppDBCRemark] DEFAULT ('') NULL,
+    [SuppDBCRemark]     NVARCHAR (MAX)  CONSTRAINT [DF_AirPP_SuppDBCRemark] DEFAULT ('') NULL,
     [ResponsibleBuyer]  BIT             CONSTRAINT [DF_AirPP_ResponsibleBuyer] DEFAULT ((0)) NULL,
     [RatioBuyer]        NUMERIC (5, 2)  CONSTRAINT [DF_AirPP_RatioBuyer] DEFAULT ((0)) NULL,
     [BuyerDBCNo]        VARCHAR (13)    CONSTRAINT [DF_AirPP_BuyerDBCNo] DEFAULT ('') NULL,
-    [BuyerDBCRemark]    NVARCHAR (MAX)   CONSTRAINT [DF_AirPP_BuyerDBCRemark] DEFAULT ('') NULL,
+    [BuyerDBCRemark]    NVARCHAR (MAX)  CONSTRAINT [DF_AirPP_BuyerDBCRemark] DEFAULT ('') NULL,
     [BuyerICRNo]        VARCHAR (13)    CONSTRAINT [DF_AirPP_BuyerICRNo] DEFAULT ('') NULL,
-    [BuyerICRRemark]    NVARCHAR (MAX)   CONSTRAINT [DF_AirPP_BuyerICRRemark] DEFAULT ('') NULL,
-    [BuyerRemark]       NVARCHAR (MAX)   CONSTRAINT [DF_AirPP_BuyerRemark] DEFAULT ('') NULL,
+    [BuyerICRRemark]    NVARCHAR (MAX)  CONSTRAINT [DF_AirPP_BuyerICRRemark] DEFAULT ('') NULL,
+    [BuyerRemark]       NVARCHAR (MAX)  CONSTRAINT [DF_AirPP_BuyerRemark] DEFAULT ('') NULL,
     [PPICMgr]           VARCHAR (10)    CONSTRAINT [DF_AirPP_PPICMgr] DEFAULT ('') NULL,
     [PPICMgrApvDate]    DATETIME        NULL,
     [FtyMgr]            VARCHAR (10)    CONSTRAINT [DF_AirPP_FtyMgr] DEFAULT ('') NULL,
@@ -67,8 +67,13 @@
     [EditDate]          DATETIME        NULL,
     [TPEEditName]       VARCHAR (10)    CONSTRAINT [DF_AirPP_TPEEditName] DEFAULT ('') NULL,
     [TPEEditDate]       DATETIME        NULL,
+    [ActETD]            DATE            NULL,
+    [ShipLeader]        VARCHAR (10)    NULL,
+    [QuotationAVG]      NUMERIC (5, 2)  CONSTRAINT [DF_AirPP_QuotationAVG] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_AirPP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -347,4 +352,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'台北最�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'報價平均價格(USD)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'QuotationAVG';
 
