@@ -1446,8 +1446,8 @@ Insert into VNConsumption_Detail_Detail (
             {
                 MyUtility.Tool.ProcessWithDatatable(
                     this.AllDetailData,
-                    "NLCode,RefNo,SuppID,BrandID,Description,Type",
-                    @"select distinct RefNo,SuppID,BrandID,Description,Type from #tmp where NLCode = ''",
+                    "NLCode,RefNo,BrandID",
+                    @"select distinct RefNo,BrandID from #tmp where NLCode = ''",
                     out toExcelData);
             }
             catch (Exception ex)
