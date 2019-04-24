@@ -96,7 +96,6 @@ namespace Sci.Production.Quality
 
         protected override Ict.DualResult OnRequery(out System.Data.DataTable datas)
         {
-
             Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
             Result_RowSource.Add("Pass", "Pass");
             Result_RowSource.Add("Fail", "Fail");
@@ -868,9 +867,14 @@ SET IDENTITY_INSERT oven off";
                 }
             }
 
+            //更新PO.LabOvenPercent
+            DualResult result = UpdateInspPercent();
+            if (!result)
+            {
+                return Result.F(result.ToString());
+            }
+
             return base.OnSave();
-
-
         }
 
         protected override void OnInsert()
@@ -1042,8 +1046,7 @@ SET IDENTITY_INSERT oven off";
                             
                         }
                     }
-                }
-              
+                }              
             }
             // Amend
             else
@@ -1052,12 +1055,13 @@ SET IDENTITY_INSERT oven off";
             }
 
             //更新PO.LabOvenPercent
-            DualResult upResult;
-            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabOven','{maindr["POID"]}'")))
+            DualResult res = UpdateInspPercent();
+            if (!res)
             {
-                ShowErr(upResult);
+                this.ShowErr(res);
                 return;
             }
+
             OnRequery();
         }
 
@@ -1369,8 +1373,15 @@ SET IDENTITY_INSERT oven off";
             isModify = true;
         }
 
-
-        
-
+        private DualResult UpdateInspPercent()
+        {
+            //更新PO.LabOvenPercent
+            DualResult upResult;
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabOven','{this.txtSP.Text}'")))
+            {
+                return upResult;
+            }
+            return upResult;
+        }
     }
 }
