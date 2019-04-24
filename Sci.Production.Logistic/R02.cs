@@ -137,8 +137,13 @@ p.MDivisionID
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
-outer apply(select ShipQty=sum(pod.ShipQty) from Pullout_Detail pod WITH (NOLOCK) where pod.id = po.id)s
+outer apply(
+	select ShipQty = sum(podd.ShipQty) 
+	from Pullout_Detail_Detail podd WITH (NOLOCK) 
+	inner join Order_Qty oq WITH (NOLOCK) on oq.id=podd.OrderID 
+	and podd.Article= oq.Article and podd.SizeCode=oq.SizeCode
+	where podd.OrderID = o.ID
+)s
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and o.PulloutComplete = 1
