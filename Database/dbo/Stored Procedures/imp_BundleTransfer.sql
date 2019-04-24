@@ -57,6 +57,7 @@ BEGIN
 						, rd.RFIDProcessLocationID
 				from #tmp tmp				
 				inner join RFIDReader rd on tmp.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = rd.Id
+				where len(tmp.Epcid) <= 10
 			) disBundle
 			outer apply (
 				select top 1
