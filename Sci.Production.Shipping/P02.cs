@@ -977,7 +977,13 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             {
                 if (this.CurrentMaintain["ToTag"].ToString() == "3")
                 {
-                    sqlCmd = "select ID,AbbCH,AbbEN from Supp WITH (NOLOCK) where Junk = 0 union all select ID,AbbCH = Abb,AbbEN = Abb from LocalSupp WITH (NOLOCK) where Junk = 0";
+                    sqlCmd = @"
+select ID,AbbCH,AbbEN from Supp s WITH (NOLOCK) where s.Junk = 0 
+and not exists(select 1 from SCIFty where id=s.id )
+    union all 
+select ID,AbbCH = Abb,AbbEN = Abb 
+from LocalSupp WITH (NOLOCK) where Junk = 0
+and IsFactory=0";
                     item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,20", this.txtTO.Text);
                 }
                 else
@@ -1065,7 +1071,16 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                         if (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "3")
                         {
                             DataTable suppData;
-                            string sqlCmd = "select AbbEN from Supp WITH (NOLOCK) where Junk = 0 and ID = @id  union all select AbbEN = Abb from LocalSupp WITH (NOLOCK) where Junk = 0  and ID = @id";
+                            string sqlCmd = @"
+select ID,AbbCH,AbbEN 
+from Supp s WITH (NOLOCK) where s.Junk = 0 
+and not exists(select * from SCIFty where id=s.id )
+and ID = @id
+union all 
+select ID,AbbCH = Abb,AbbEN = Abb 
+from LocalSupp WITH (NOLOCK) where Junk = 0
+and IsFactory=0
+and ID = @id ";
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out suppData);
 
                             if (!result || suppData.Rows.Count <= 0)
