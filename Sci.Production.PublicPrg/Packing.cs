@@ -109,6 +109,7 @@ ELSE
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
+                MyUtility.Msg.WarningBox(result.ToString());
                 return false;
             }
 
@@ -2312,6 +2313,47 @@ order by min(pd.seq)
                     sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
                 }
             }
+            return true;
+        }
+        #endregion
+
+        #region
+        public static bool PackingP02CreateSCICtnNo(string id)
+        {
+            DataTable packinglist_detaildt;
+            string sqlpld = $@"select * from PackingList_Detail where id = '{id}' order by seq";
+            DualResult result = DBProxy.Current.Select(null, sqlpld, out packinglist_detaildt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+            
+            if (!PublicPrg.Prgs.GetSCICtnNo(packinglist_detaildt, id, "IsDetailInserting"))
+            {
+                return false;
+            }
+
+            string sqlCreateSCICtnNo = $@"
+update pd2 set 
+	SCICtnNo = pd.SCICtnNo
+from #tmp pd
+inner join PackingList_Detail pd2 on
+ pd2.id					=pd.id					
+and pd2.[OrderID]			=pd.[OrderID]			
+and pd2.[OrderShipmodeSeq]	=pd.[OrderShipmodeSeq]	
+and pd2.[CTNStartNo]		=pd.[CTNStartNo]		
+and pd2.[Article]			=pd.[Article]			
+and pd2.[SizeCode]			=pd.[SizeCode]		
+";
+            DataTable dt;
+            result = MyUtility.Tool.ProcessWithDatatable(packinglist_detaildt, string.Empty, sqlCreateSCICtnNo, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+
             return true;
         }
         #endregion
