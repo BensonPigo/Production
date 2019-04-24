@@ -340,6 +340,7 @@ from
 						  from SewingOutput s, SewingOutput_Detail sd
 						  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
 						  and s.ID = sd.ID)
+		  and sd.QAQty > 0
 )l
 group by [POCode],[Process],[Facility],[PDate],[Color],[XSize]
 '

@@ -11,9 +11,12 @@
     [FarmOut]     NUMERIC (5)    CONSTRAINT [DF_Bundle_Detail_FarmOut] DEFAULT ((0)) NULL,
     [PrintDate]   DATETIME       NULL,
     [IsPair]      BIT            NULL,
+    [Location]    VARCHAR (1)    DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC),
     CONSTRAINT [UK_BundleNo_Bundle_Detail] UNIQUE NONCLUSTERED ([BundleNo] ASC)
 );
+
+
 
 
 
