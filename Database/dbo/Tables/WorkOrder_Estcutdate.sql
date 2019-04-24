@@ -9,8 +9,12 @@
     [NewCutCellid]     VARCHAR (2)  NULL,
     [OrgSpreadingNoID] VARCHAR (3)  NULL,
     [NewSpreadingNoID] VARCHAR (3)  NULL,
+    [AddDate]          DATETIME     NULL,
+    [AddName]          VARCHAR (10) CONSTRAINT [DF_WorkOrder_Estcutdate_AddName] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_WorkOrder_Estcutdate] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

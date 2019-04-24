@@ -194,6 +194,11 @@ namespace Sci.Production.Cutting
         }
         private void btnQuery_Click(object sender, EventArgs e)
         {
+            this.Queryable();
+        }
+
+        private void Queryable()
+        {
             if (detailTb != null) detailTb.Clear();
             string cutsp = txtCuttingSPNo.Text;
             string sp = txtSPNo.Text;
@@ -246,10 +251,10 @@ From
         ,NewSpreadingNoID=''
     from Workorder a";
             string where = string.Format(" Where cutplanid!='' and MDivisionId = '{0}'", keyWord);
-            if (!MyUtility.Check.Empty(cutsp)) where = where + string.Format(" and id='{0}'",cutsp);
+            if (!MyUtility.Check.Empty(cutsp)) where = where + string.Format(" and id='{0}'", cutsp);
             if (!MyUtility.Check.Empty(sp)) where = where + string.Format(" and OrderID='{0}'", sp);
             if (!MyUtility.Check.Empty(seq)) where = where + string.Format(" and Seq1+SEQ2='{0}'", seq);
-            if (!MyUtility.Check.Empty(dateEstCutDate.Value)) where = where + string.Format("and estcutdate='{0}'",estcutdate);
+            if (!MyUtility.Check.Empty(dateEstCutDate.Value)) where = where + string.Format("and estcutdate='{0}'", estcutdate);
             if (!MyUtility.Check.Empty(cutref)) where = where + string.Format(" and cutref='{0}'", cutref);
             if (!MyUtility.Check.Empty(txtfactoryByM.Text)) where = where + string.Format(" and a.Factoryid='{0}'", txtfactoryByM.Text);
             if (!MyUtility.Check.Empty(cutplanID)) where = where + string.Format(" and a.CutplanID='{0}'", cutplanID);
@@ -262,7 +267,7 @@ From
             if (detailTb == null || detailTb.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found!!");
-                return ;
+                return;
             }
             gridDetail.DataSource = gridbs;
             gridbs.DataSource = detailTb;
@@ -314,8 +319,13 @@ From
             string update = "";
             if (MyUtility.Check.Empty(detailTb))return;
             if (detailTb.Rows.Count == 0) return;
-            
-            foreach (DataRow dr in detailTb.Rows)
+            if (detailTb.Select("Sel = 1").Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first.");
+                return;
+            }
+            DataTable saveDataTable = detailTb.Select("Sel = 1").CopyToDataTable();
+            foreach (DataRow dr in saveDataTable.Rows)
             {
                 if ((dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", "")))) || 
                     (dr["Cutcellid"] != dr["NewCutcellid"] && !MyUtility.Check.Empty(dr["NewCutcellid"])) ||
@@ -334,24 +344,24 @@ From
                     string orgEstCutDate =((DateTime)dr["EstCutDate"]).ToShortDateString();
                     if (!MyUtility.Check.Empty(dr["newestcutdate"]))
                     {
-                        update = update + $"Update Workorder Set estcutdate ='{((DateTime)dr["newestcutdate"]).ToShortDateString()}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set estcutdate ='{((DateTime)dr["newestcutdate"]).ToShortDateString()}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
                     if (!MyUtility.Check.Empty(dr["NewCutcellid"]))
                     {
-                        update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
                     if (!MyUtility.Check.Empty(dr["NewSpreadingNoID"]))
                     {
-                        update = update + $"Update Workorder Set SpreadingNoID='{dr["NewSpreadingNoID"]}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set SpreadingNoID='{dr["NewSpreadingNoID"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
 
                     update = update + $@"
-Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate      ,NewEstCutDate  ,CutReasonid              ,ID             ,OrgCutCellid       ,NewCutCellid   ,OrgSpreadingNoID         ,NewSpreadingNoID) 
-Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID});";
+Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate      ,NewEstCutDate  ,CutReasonid              ,ID             ,OrgCutCellid       ,NewCutCellid   ,OrgSpreadingNoID         ,NewSpreadingNoID, AddDate, AddName) 
+Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID},getdate(),'{Sci.Env.User.UserID}');";
                 }
             }
 
-            var distnct_id = detailTb.AsEnumerable().
+            var distnct_id = saveDataTable.AsEnumerable().
                 Where(w => w.Field<int>("Sel") == 1 && w.Field<object>("EstCutDate") != w.Field<object>("NewEstCutDate") && !MyUtility.Check.Empty(w.Field < object >("NewEstCutDate"))).
                 Select(row => row.Field<string>("ID")).Distinct();
             foreach (string tmp_id in distnct_id)
@@ -372,18 +382,18 @@ where cutting.ID = '{0}';", tmp_id);
             }
 
             #region 檢查相同M、CutRef#，spreading No、Cut Cell、Est.CutDate, 更新必須都一樣
-            var distnct_List = detailTb.AsEnumerable().
+            var distnct_List = saveDataTable.AsEnumerable().
                 Select(m => new
                 {
                     MDivisionId = m.Field<string>("MDivisionId"),                    
                     CutRef = m.Field<string>("CutRef")
                 }).Distinct();
-            string inUkey = "'" + string.Join("','", detailTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ukey"]))) + "'";
+            string inUkey = "'" + string.Join("','", saveDataTable.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ukey"]))) + "'";
 
             foreach (var item in distnct_List)
             {
                 // 檢查已撈出資料
-                DataRow[] chkdrs = detailTb.Select($@" MDivisionId = '{item.MDivisionId}' and CutRef = '{item.CutRef}'");
+                DataRow[] chkdrs = saveDataTable.Select($@" MDivisionId = '{item.MDivisionId}' and CutRef = '{item.CutRef}'");
 
                 if (chkdrs.Length > 1)
                 {
@@ -470,6 +480,8 @@ and CutRef = '{item.CutRef}'
             _transactionscope.Dispose();
             _transactionscope = null;
             MyUtility.Msg.InfoBox("Finished");
+
+            this.Queryable();
         }
     }
 }
