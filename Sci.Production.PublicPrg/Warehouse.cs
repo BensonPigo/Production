@@ -1821,23 +1821,23 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 select 
     a.id
     ,a.FromFtyinventoryUkey
-    ,a.FromPoId
-    ,a.FromSeq1
-    ,a.FromSeq2
-    ,FromSeq = concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2)
+    ,[FromPoId] = RTRIM(LTRIM(a.FromPoId))
+    ,[FromSeq1] = RTRIM(LTRIM(a.FromSeq1))
+    ,[FromSeq2] = RTRIM(LTRIM(a.FromSeq2))
+    ,FromSeq = concat(Ltrim(Rtrim(a.FromSeq1)), ' ', RTRIM(LTRIM(a.FromSeq2)))
     ,FabricType = Case p1.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
-    ,p1.stockunit
+    ,[stockunit] = RTRIM(LTRIM(p1.stockunit))
     ,description = dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0)
-    ,a.FromRoll
-    ,a.FromDyelot
-    ,a.FromStockType
+    ,[FromRoll] = RTRIM(LTRIM(a.FromRoll))
+    ,[FromDyelot] = RTRIM(LTRIM(a.FromDyelot))
+    ,[FromStockType] = RTRIM(LTRIM(a.FromStockType))
     ,a.Qty
-    ,a.ToPoId
-    ,a.ToSeq1
-    ,a.ToSeq2
-    ,a.ToDyelot
-    ,a.ToRoll
-    ,a.ToStockType
+    ,[ToPoId] = RTRIM(LTRIM(a.ToPoId))
+    ,[ToSeq1] = RTRIM(LTRIM(a.ToSeq1))
+    ,[ToSeq2] = RTRIM(LTRIM(a.ToSeq2))
+    ,[ToDyelot] = RTRIM(LTRIM(a.ToDyelot))
+    ,[ToRoll] = RTRIM(LTRIM(a.ToRoll))
+    ,[ToStockType] = RTRIM(LTRIM(a.ToStockType))
     ,dbo.Getlocation(f.Ukey)  as Fromlocation
     ,a.ukey
     ,a.tolocation
