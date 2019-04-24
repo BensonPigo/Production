@@ -160,102 +160,113 @@ namespace Sci.Production.Centralized
             {
                 string strSQL = @"
 
-Select Orders.ID, Orders.ProgramID, Orders.StyleID, Orders.SeasonID, Orders.BrandID , Orders.FactoryID
-,Orders.POID , Orders.Category, Orders.CdCodeID 
-,Orders.CPU
-,CPURate = (SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU  
-,Orders.BuyerDelivery, Orders.SCIDelivery
-,SewingOutput.SewingLineID 
-,SewingOutput.ManPower
-,SewingOutput_Detail.ComboType
-,SewingOutput_Detail.WorkHour
-,SewingOutput_Detail.QAQty 
-,QARate = SewingOutput_Detail.QAQty * isnull([dbo].[GetOrderLocation_Rate](Orders.id ,SewingOutput_Detail.ComboType)/100,1)
-,Round(SewingOutput_Detail.WorkHour * SewingOutput.ManPower,2) as TotalManHour 
-,CDDesc = CDCode.Description 
-,StyleDesc = Style.Description
-,STYLE.ModularParent, STYLE.CPUAdjusted
+Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
+, [BrandID] = iif(o.BrandID='SUBCON-I' and Order2.BrandID is not null,Order2.BrandID,o.BrandID)
+, o.FactoryID
+,o.POID , o.Category, o.CdCodeID 
+,o.CPU
+,CPURate = (SELECT * FROM GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'Order')) * o.CPU  
+,o.BuyerDelivery, o.SCIDelivery
+,so.SewingLineID 
+,so.ManPower
+,sod.ComboType
+,sod.WorkHour
+,sod.QAQty 
+,QARate = sod.QAQty * isnull([dbo].[GetOrderLocation_Rate](o.id ,sod.ComboType)/100,1)
+,Round(sod.WorkHour * so.ManPower,2) as TotalManHour 
+,CDDesc = c.Description 
+,StyleDesc = s.Description
+,s.ModularParent, s.CPUAdjusted
 ,OutputDate,Shift, Team
-,SCategory = SewingOutput.Category, CPUFactor, Orders.MDivisionID,orderid
-,Rate = isnull([dbo].[GetOrderLocation_Rate]( Orders.id ,SewingOutput_Detail.ComboType)/100,1) 
-,ActManPower= IIF(SewingOutput_Detail.QAQty = 0, SewingOutput.Manpower, SewingOutput.Manpower * SewingOutput_Detail.QAQty)
+,SCategory = so.Category, CPUFactor, o.MDivisionID,orderid
+,Rate = isnull([dbo].[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1) 
+,ActManPower= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
 into #stmp
-FROM Orders WITH (NOLOCK), SewingOutput WITH (NOLOCK), SewingOutput_Detail WITH (NOLOCK) , Brand WITH (NOLOCK) , Factory WITH (NOLOCK), CDCode WITH (NOLOCK) , Style WITH (NOLOCK)
-Where SewingOutput_Detail.OrderID = Orders.ID 
-And SewingOutput.ID = SewingOutput_Detail.ID And SewingOutput.Shift <> 'O'  
-And  Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdCodeID = CDCode.ID AND Orders.StyleUkey  = Style.Ukey 
-and Factory.IsProduceFty = '1'
+ from Orders o WITH (NOLOCK) 
+    inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
+    inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID and so.Shift <> 'O'  
+    inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
+    inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
+	inner join Factory f WITH (NOLOCK) on o.FactoryID=f.id
+    inner join Brand b WITH (NOLOCK) on o.BrandID=b.ID
+	outer apply(
+		select BrandID from orders o1 
+		where o.CustPONo=o1.id
+	)Order2
+Where 1=1
+
+and f.IsProduceFty = '1'
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
-and ((Orders.LocalOrder = 1 and Orders.SubconInSisterFty = 1) or (Orders.LocalOrder = 0 and Orders.SubconInSisterFty = 0))
+and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))
 ";
                 if (this.dateRange1.Value1.HasValue)
                 {
-                    strSQL += string.Format(" and SewingOutput.OutputDate >= '{0}'", ((DateTime)this.dateRange1.Value1).ToString("yyyy-MM-dd"));
+                    strSQL += string.Format(" and so.OutputDate >= '{0}'", ((DateTime)this.dateRange1.Value1).ToString("yyyy-MM-dd"));
                 }
 
                 if (this.dateRange1.Value2.HasValue)
                 {
-                    strSQL += string.Format(" and SewingOutput.OutputDate <= '{0}'", ((DateTime)this.dateRange1.Value2).ToString("yyyy-MM-dd"));
+                    strSQL += string.Format(" and so.OutputDate <= '{0}'", ((DateTime)this.dateRange1.Value2).ToString("yyyy-MM-dd"));
                 }
 
                 if (this.dateRange2.Value1.HasValue)
                 {
-                    strSQL += string.Format(" and Orders.BuyerDelivery  >= '{0}'", ((DateTime)this.dateRange2.Value1).ToString("yyyy-MM-dd"));
+                    strSQL += string.Format(" and o.BuyerDelivery  >= '{0}'", ((DateTime)this.dateRange2.Value1).ToString("yyyy-MM-dd"));
                 }
 
                 if (this.dateRange2.Value2.HasValue)
                 {
-                    strSQL += string.Format(" and Orders.BuyerDelivery  <= '{0}'", ((DateTime)this.dateRange2.Value2).ToString("yyyy-MM-dd"));
+                    strSQL += string.Format(" and o.BuyerDelivery  <= '{0}'", ((DateTime)this.dateRange2.Value2).ToString("yyyy-MM-dd"));
                 }
 
                 if (this.dateRange3.Value1.HasValue)
                 {
-                    strSQL += string.Format(" and Orders.SCIDelivery  >= '{0}'", ((DateTime)this.dateRange3.Value1).ToString("yyyy-MM-dd"));
+                    strSQL += string.Format(" and o.SCIDelivery  >= '{0}'", ((DateTime)this.dateRange3.Value1).ToString("yyyy-MM-dd"));
                 }
 
                 if (this.dateRange3.Value2.HasValue)
                 {
-                    strSQL += string.Format(" and Orders.SCIDelivery  <= '{0}'", ((DateTime)this.dateRange3.Value2).ToString("yyyy-MM-dd"));
+                    strSQL += string.Format(" and o.SCIDelivery  <= '{0}'", ((DateTime)this.dateRange3.Value2).ToString("yyyy-MM-dd"));
                 }
 
                 if (this.txtSeason1.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND Orders.SeasonID = '{0}' ", this.txtSeason1.Text);
+                    strSQL += string.Format(" AND o.SeasonID = '{0}' ", this.txtSeason1.Text);
                 }
 
                 if (this.txtBrand1.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND Orders.BrandID = '{0}' ", this.txtBrand1.Text);
+                    strSQL += string.Format(" AND o.BrandID = '{0}' ", this.txtBrand1.Text);
                 }
 
                 if (this.txtstyle1.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND Orders.StyleID = '{0}' ", this.txtstyle1.Text);
+                    strSQL += string.Format(" AND o.StyleID = '{0}' ", this.txtstyle1.Text);
                 }
 
                 if (this.gstrMRTeam != string.Empty)
                 {
-                    strSQL += string.Format(" AND Brand.MRTeam = '{0}' ", this.gstrMRTeam);
+                    strSQL += string.Format(" AND b.MRTeam = '{0}' ", this.gstrMRTeam);
                 }
 
                 if (this.txtCentralizedFactory1.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND Orders.FactoryID = '{0}' ", this.txtCentralizedFactory1.Text);
+                    strSQL += string.Format(" AND o.FactoryID = '{0}' ", this.txtCentralizedFactory1.Text);
                 }
 
                 if (this.gstrCategory != string.Empty)
                 {
-                    strSQL += string.Format(" AND Orders.Category in ({0})", this.gstrCategory);
+                    strSQL += string.Format(" AND o.Category in ({0})", this.gstrCategory);
                 }
 
                 if (this.txtCountry1.TextBox1.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND Factory.CountryID = '{0}' ", this.txtCountry1.TextBox1.Text);
+                    strSQL += string.Format(" AND f.CountryID = '{0}' ", this.txtCountry1.TextBox1.Text);
                 }
 
                 if (this.chkType.Checked)
                 {
-                    strSQL += " AND Factory.Type <>'S' ";
+                    strSQL += " AND f.Type <>'S' ";
                 }
 
                 strSQL += @"
