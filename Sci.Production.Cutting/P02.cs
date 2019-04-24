@@ -2812,8 +2812,15 @@ where b.poid = '{0}'
 
         private void btnCutplanChangeHistory_Click(object sender, EventArgs e)
         {
-            P07 callNextForm = new P07(MyUtility.Convert.GetString(CurrentMaintain["ID"]));
-            callNextForm.ShowDialog(this);
+            if (callP07 != null && callP07.Visible == true)
+            {
+                callP07.P07Data(CurrentMaintain["ID"].ToString());
+                callP07.Activate();
+            }
+            else
+            {
+                P07FormOpen();
+            }
         }
 
         //Quantity Breakdown
@@ -2915,6 +2922,46 @@ where   id = '{0}'
             gridValid();
             grid.ValidateControl();
             sorting(comboBox1.Text);
+        }
+        
+        Sci.Production.Cutting.P07 callP07 = null;
+        private void P07FormOpen()
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is Sci.Production.Cutting.P07)
+                {
+                    form.Activate();
+                    Sci.Production.Cutting.P07 activateForm = (Sci.Production.Cutting.P07)form;
+                    activateForm.setTxtSPNo(CurrentMaintain["ID"].ToString());
+                    activateForm.Queryable();
+                    return;
+                }
+            }
+
+            ToolStripMenuItem P07MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Cutting"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P07. Query for Change Est. Cut Date Record"))
+                            {
+                                P07MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            callP07 = new P07(CurrentMaintain["ID"].ToString(), P07MenuItem);
+            callP07.MdiParent = MdiParent;
+            callP07.Show();
+            callP07.P07Data(CurrentMaintain["ID"].ToString());
         }
     }
 }

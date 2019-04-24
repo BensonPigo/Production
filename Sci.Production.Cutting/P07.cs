@@ -15,20 +15,41 @@ namespace Sci.Production.Cutting
 {
     public partial class P07 : Sci.Win.Tems.QueryForm
     {
-        public P07(string sp)
-        {
-            InitializeComponent();
-            EditMode = true;
-            setDetailGrid();
-            this.Queryable(sp);
-        }
-
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             EditMode = true;
             setDetailGrid();
+        }
+
+        public P07(string sp, ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            InitializeComponent();
+            EditMode = true;
+            setDetailGrid();
+            this.txtCuttingSPNo.Text = sp;
+            this.Queryable();
+        }
+
+        public void setTxtSPNo(string spNo)
+        {
+            this.txtCuttingSPNo.Text = spNo;
+            txtfactoryByM.Text = string.Empty;
+            txtSPNo.Text = string.Empty;
+            txtSEQ.Text = string.Empty;
+            dateEstCutDate.Text = string.Empty;
+            dateSewingInline.Text = string.Empty;
+            txtCutRefNo.Text = string.Empty;
+            txtCutplanID.Text = string.Empty;
+        }
+        //隨著 P02上下筆SP#切換資料
+        public void P07Data(string P02SPNo)
+        {
+            this.EditMode = true;
+            this.txtCuttingSPNo.Text = P02SPNo;
+            this.Queryable();
         }
 
         public void setDetailGrid()
@@ -65,23 +86,15 @@ namespace Sci.Production.Cutting
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            this.Queryable(string.Empty);
+            this.Queryable();
         }
 
-        private void Queryable(string _sp)
+        public void Queryable()
         {
             DataTable detailTb = null;
             gridDetail.DataSource = null;
             string cutsp = txtCuttingSPNo.Text;
-            string sp = string.Empty;
-            if (MyUtility.Check.Empty(_sp))
-            {
-                sp = txtSPNo.Text;
-            }
-            else
-            {
-                sp = _sp;
-            }
+            string sp = txtSPNo.Text;
             string seq = txtSEQ.Text;
             string estcutdate = dateEstCutDate.Text;
             string sewinginline = dateSewingInline.Text;
@@ -131,7 +144,7 @@ From
 	        Where cut_b.workorderukey = a.Ukey and cut.id = cut_b.id
         )  as actcutdate
     from Workorder a
-	left join WorkOrder_Estcutdate we with(nolock) on a.Ukey = we.WorkOrderUkey
+	inner join WorkOrder_Estcutdate we with(nolock) on a.Ukey = we.WorkOrderUkey
 
 ";
             string where = string.Format(" Where a.cutplanid!='' and a.MDivisionId = '{0}'", Sci.Env.User.Keyword);
