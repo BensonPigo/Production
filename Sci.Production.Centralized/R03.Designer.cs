@@ -52,6 +52,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
+            this.chkType = new Sci.Win.UI.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,6 +70,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkType);
             this.groupBox1.Controls.Add(this.comboDropDownListCategory);
             this.groupBox1.Controls.Add(this.txtstyle1);
             this.groupBox1.Controls.Add(this.label12);
@@ -92,7 +94,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(4, -5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(419, 280);
+            this.groupBox1.Size = new System.Drawing.Size(419, 305);
             this.groupBox1.TabIndex = 94;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.GroupBox1_Enter);
@@ -151,7 +153,7 @@
             // label11
             // 
             this.label11.BackColor = System.Drawing.SystemColors.Control;
-            this.label11.Location = new System.Drawing.Point(4, 254);
+            this.label11.Location = new System.Drawing.Point(4, 279);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(375, 23);
             this.label11.TabIndex = 218;
@@ -339,14 +341,26 @@
             this.label10.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label10.TextStyle.Color = System.Drawing.Color.Blue;
             // 
+            // chkType
+            // 
+            this.chkType.AutoSize = true;
+            this.chkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkType.Location = new System.Drawing.Point(4, 255);
+            this.chkType.Name = "chkType";
+            this.chkType.Size = new System.Drawing.Size(172, 21);
+            this.chkType.TabIndex = 223;
+            this.chkType.Text = "Exclude sample factory";
+            this.chkType.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(520, 298);
+            this.ClientSize = new System.Drawing.Size(520, 325);
             this.ControlBox = false;
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "R03";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. Prod. Efficiency Analysis Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
@@ -385,5 +399,6 @@
         private Class.txtstyle txtstyle1;
         private Win.UI.Label label12;
         private Class.comboDropDownList comboDropDownListCategory;
+        private Win.UI.CheckBox chkType;
     }
 }

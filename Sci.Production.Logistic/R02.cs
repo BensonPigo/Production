@@ -131,12 +131,14 @@ p.MDivisionID
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
 ,pd.id,pd.Seq
-,[PulloutComplete] = iif(o.PulloutComplete=1,'Y','N')
+,[PulloutComplete] = case when o.qty > isnull(s.ShipQty,0) then 'S'
+						               when o.qty <= isnull(s.ShipQty,0) then'Y'  end
 ,[ActPulloutDate] = o.ActPulloutDate
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
+outer apply(select ShipQty=sum(pod.ShipQty) from Pullout_Detail pod WITH (NOLOCK) where pod.id = po.id)s
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and o.PulloutComplete = 1
@@ -158,7 +160,7 @@ p.MDivisionID
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
 ,pd.id,pd.Seq
-,[PulloutComplete] = iif(o.PulloutComplete=1,'Y','N')
+,[PulloutComplete] = 'N'
 ,[ActPulloutDate] = o.ActPulloutDate
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
@@ -231,10 +233,20 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
                 objArray[0, 7] = dr["ClogLocationId"];
                 objArray[0, 8] = dr["BrandID"];
                 objArray[0, 9] = dr["Cancelled"];
-                objArray[0, 10] = dr["PulloutComplete"];
-                objArray[0, 11] = dr["ActPulloutDate"];
+                if (this.Perm.Confirm)
+                {
+                    objArray[0, 10] = dr["PulloutComplete"];
+                    objArray[0, 11] = dr["ActPulloutDate"];
+                }
+
                 worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
+            }
+
+            if (!this.Perm.Confirm)
+            {
+                worksheet.Cells[5, 11] = string.Empty;
+                worksheet.Cells[5, 12] = string.Empty;
             }
 
             #region Save & Show Excel
