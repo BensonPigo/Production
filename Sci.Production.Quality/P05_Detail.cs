@@ -867,9 +867,14 @@ SET IDENTITY_INSERT oven off";
                 }
             }
 
+            //更新PO.LabOvenPercent
+            DualResult result = UpdateInspPercent();
+            if (!result)
+            {
+                return Result.F(result.ToString());
+            }
+
             return base.OnSave();
-
-
         }
 
         protected override void OnInsert()
@@ -1041,8 +1046,7 @@ SET IDENTITY_INSERT oven off";
                             
                         }
                     }
-                }
-              
+                }              
             }
             // Amend
             else
@@ -1051,12 +1055,13 @@ SET IDENTITY_INSERT oven off";
             }
 
             //更新PO.LabOvenPercent
-                DualResult upResult;
-            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabOven','{dtOven.Rows[0]["POID"]}'")))
+            DualResult res = UpdateInspPercent();
+            if (!res)
             {
-                ShowErr(upResult);
+                this.ShowErr(res);
                 return;
             }
+
             OnRequery();
         }
 
@@ -1366,6 +1371,17 @@ SET IDENTITY_INSERT oven off";
         private void txtuserInspector_Validating(object sender, CancelEventArgs e)
         {
             isModify = true;
+        }
+
+        private DualResult UpdateInspPercent()
+        {
+            //更新PO.LabOvenPercent
+            DualResult upResult;
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabOven','{this.txtSP.Text}'")))
+            {
+                return upResult;
+            }
+            return upResult;
         }
     }
 }
