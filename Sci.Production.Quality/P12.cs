@@ -23,6 +23,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.detailgrid.ContextMenuStrip = detailgridmenus;
             InsertDetailGridOnDoubleClick = false;
+            this.DefaultFilter = "Type = 'S'";
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -182,6 +183,12 @@ where ID = '{0}'"
                 e.Cancel = true;
                 return;
             }
+        }
+
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.CurrentMaintain["Type"] = "S";
         }
 
         protected override bool ClickSaveBefore()

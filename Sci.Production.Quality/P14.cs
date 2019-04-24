@@ -12,18 +12,18 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class P13 : Sci.Win.Tems.Input6
+    public partial class P14: Sci.Win.Tems.Input6
     {
         // 宣告Context Menu Item
         ToolStripMenuItem add, edit, delete;
 
-        public P13(ToolStripMenuItem menuitem)
+        public P14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.detailgrid.ContextMenuStrip = detailgridmenus;
             InsertDetailGridOnDoubleClick = false;
-            this.DefaultFilter = "Type = 'S'";
+            this.DefaultFilter = "Type = 'B'";
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -34,7 +34,7 @@ namespace Sci.Production.Quality
     md.No,
     md.ReportNo,
     [SubmitDate] = Format(md.SubmitDate,'yyyy/MM/dd'), 
-    [Artwork] = Stuff((select distinct concat( ',',mdd.ArtworkTypeID)   from MockupWash_Detail_detail mdd where mdd.ReportNo = md.ReportNo FOR XML PATH('')),1,1,''),
+    [Artwork] = Stuff((select distinct concat( ',',mdd.ArtworkTypeID)   from MockupOven_Detail_detail mdd where mdd.ReportNo = md.ReportNo FOR XML PATH('')),1,1,''),
     md.Result,
     [ReceivedDate] = Format(md.ReceivedDate,'yyyy/MM/dd'),
     [ReleasedDate] = Format(md.ReleasedDate,'yyyy/MM/dd'),
@@ -42,7 +42,7 @@ namespace Sci.Production.Quality
     [TechnicianName] = TechnicianName.Name_Extno,
     [MRName] = MRName.Name_Extno,
     [LastEditName] = LastEditName.Name + ' ' + Format(md.EditDate,'yyyy/MM/dd HH:mm:ss')
-from MockupWash_Detail md WITH (NOLOCK) 
+from MockupOven_Detail md WITH (NOLOCK) 
 outer apply (select Name_Extno from View_ShowName where id = md.Technician) TechnicianName
 outer apply (select Name_Extno from View_ShowName where id = md.MR) MRName
 outer apply (select Name from Pass1 where id = md.EditName) LastEditName
@@ -64,7 +64,7 @@ where ID = '{0}'"
         // Context Menu選擇Create New test
         private void CreateNewTest()
         {
-            Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(true, this.CurrentMaintain["ID"].ToString(), string.Empty, null, "New");
+            Sci.Production.Quality.P14_Detail callNewDetailForm = new P14_Detail(true, this.CurrentMaintain["ID"].ToString(), string.Empty, null, "New");
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
@@ -74,7 +74,7 @@ where ID = '{0}'"
         // Context Menu選擇Edit This Record's Detail
         private void EditThisDetail()
         {
-            Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(true, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Edit");
+            Sci.Production.Quality.P14_Detail callNewDetailForm = new P14_Detail(true, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Edit");
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
@@ -86,8 +86,8 @@ where ID = '{0}'"
         {
             if (MyUtility.Msg.QuestionBox("Do you want to delete the data?", buttons: MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
-                string delelete_cmd = $@"delete MockupWash_Detail where ReportNo = '{this.CurrentDetailData["ReportNo"].ToString()}';
-                                        delete MockupWash_Detail_Detail where ReportNo = '{this.CurrentDetailData["ReportNo"].ToString()}';";
+                string delelete_cmd = $@"delete MockupOven_Detail where ReportNo = '{this.CurrentDetailData["ReportNo"].ToString()}';
+                                        delete MockupOven_Detail_Detail where ReportNo = '{this.CurrentDetailData["ReportNo"].ToString()}';";
                 DualResult result =   DBProxy.Current.Execute(null, delelete_cmd);
                 if (!result)
                 {
@@ -121,7 +121,7 @@ where ID = '{0}'"
                 {
                     return;
                 }
-                Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(false, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Query");
+                Sci.Production.Quality.P14_Detail callNewDetailForm = new P14_Detail(false, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Query");
                 callNewDetailForm.ShowDialog(this);
                 callNewDetailForm.Dispose();
             };
@@ -188,7 +188,7 @@ where ID = '{0}'"
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["Type"] = "S";
+            this.CurrentMaintain["Type"] = "B";
         }
 
         protected override bool ClickSaveBefore()
@@ -241,7 +241,7 @@ where ID = '{0}'"
             #region 取得表頭ID
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "WA" , "MockupWash", DateTime.Now);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "OV" , "MockupOven", DateTime.Now);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -258,7 +258,7 @@ where ID = '{0}'"
         protected override DualResult ClickDeletePost()
         {
             DualResult result;
-            result = DBProxy.Current.Execute(null, $"delete MockupWash_Detail_Detail where ID = '{this.CurrentMaintain["ID"]}'");
+            result = DBProxy.Current.Execute(null, $"delete MockupOven_Detail_Detail where ID = '{this.CurrentMaintain["ID"]}'");
             if (!result)
             {
                 this.ShowErr(result);
