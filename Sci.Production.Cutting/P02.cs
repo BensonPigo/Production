@@ -2958,7 +2958,7 @@ where   id = '{0}'
                 }
             }
 
-            callP07 = new P07(CurrentMaintain["ID"].ToString(), P07MenuItem);
+            callP07 = new P07(P07MenuItem);
             callP07.MdiParent = MdiParent;
             callP07.Show();
             callP07.P07Data(CurrentMaintain["ID"].ToString());

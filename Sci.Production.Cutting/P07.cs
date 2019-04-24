@@ -29,7 +29,13 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             EditMode = true;
             setDetailGrid();
-            this.txtCuttingSPNo.Text = sp;
+        }
+
+        //隨著 P02上下筆SP#切換資料
+        public void P07Data(string P02SPNo)
+        {
+            this.EditMode = true;
+            this.txtCuttingSPNo.Text = P02SPNo;
             this.Queryable();
         }
 
@@ -43,13 +49,6 @@ namespace Sci.Production.Cutting
             dateSewingInline.Text = string.Empty;
             txtCutRefNo.Text = string.Empty;
             txtCutplanID.Text = string.Empty;
-        }
-        //隨著 P02上下筆SP#切換資料
-        public void P07Data(string P02SPNo)
-        {
-            this.EditMode = true;
-            this.txtCuttingSPNo.Text = P02SPNo;
-            this.Queryable();
         }
 
         public void setDetailGrid()
