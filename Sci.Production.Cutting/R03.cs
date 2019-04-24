@@ -92,6 +92,7 @@ select
     [Switch to Workorder]=Iif(c.WorkType='1','Combination’',Iif(c.WorkType='2','By SP#’','')),
 	[Ref#] = wo.CutRef,
 	[Cut#] = wo.Cutno,
+    [SpreadingNoID]=wo.SpreadingNoID,
 	[Cut Cell] = wo.CutCellID,
 	[Sewing Line] = stuff(SewingLineID.SewingLineID,1,1,''),
 	[Sewing Cell] = stuff(SewingCell.SewingCell,1,1,''),

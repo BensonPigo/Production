@@ -689,7 +689,8 @@
             this.KeyField1 = "ID";
             this.KeyField2 = "ReportNo";
             this.Name = "P13_Detail";
-            this.Text = "Mockup - Wash Test";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
+            this.Text = "Mockup - Wash Test(Sample)";
             this.WorkAlias = "MockupWash_Detail_Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.panelup, 0);

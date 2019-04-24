@@ -215,9 +215,18 @@ namespace Sci.Production.Win
             }
             #endregion
             #region 寫入登入時間
-            if (!(result = DBProxy.Current.Execute(null, string.Format("update pass1 set LastLoginTime = GETDATE() where id = '{0}'", userid))))
+            if (!DBProxy.Current.DefaultModuleName.Contains("PMSDB"))
             {
-                return result;
+                if (!(result = DBProxy.Current.Execute(null, string.Format("update pass1 set LastLoginTime = GETDATE() where id = '{0}'", userid))))
+                {
+                    return result;
+                }
+            }
+            #endregion
+            #region 在台北端(PMSDB 或 testing)登入時, 關閉紀錄UserLog功能
+            if (DBProxy.Current.DefaultModuleName.Contains("PMSDB") || DBProxy.Current.DefaultModuleName.Contains("testing"))
+            {
+                Sci.Env.Cfg.EnableUserLog = false;
             }
             #endregion
             return result;
