@@ -295,9 +295,11 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
                     if (!isExistsImportData)
                     {
                         idu.Append(string.Format(
-                            "delete VNConsumption_Detail_Detail where id = '{0}' and Refno ='{1}';",
+                            "delete VNConsumption_Detail_Detail where id = '{0}' and Refno ='{1}' and SCIRefno = '{2}' and NLCode = '{3}';",
                             dn["ID"].ToString(),
-                            dn["Refno"].ToString()));
+                            dn["Refno"].ToString(),
+                            dn["SCIRefno"].ToString(),
+                            dn["NLCode"].ToString()));
                     }
                 }
             }

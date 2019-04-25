@@ -259,7 +259,7 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'Y
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
  where f.Refno = @Refno and f.Type = 'F' and f.Junk = 0 {whereSciRefno} {whereNLCode}
-order by f.NLCode,f.EditDate desc
+order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
 ";
             }
             else if (fabricType == "A")
@@ -283,7 +283,7 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
  where f.Refno = @Refno and f.Type = 'A' and f.Junk = 0 {whereSciRefno} {whereNLCode}
-order by f.NLCode,f.EditDate desc
+order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
 ";
             }
             else if (fabricType == "L")
