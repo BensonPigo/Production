@@ -175,7 +175,10 @@ and estcutdate = '{estcutdate}'";
                             iu += string.Format(@"
 insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID,SpreadingNoID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}','{8}');
 ", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"], dr["SpreadingNoID"]);
-                            importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}' and SpreadingNoID = '{2}' ", dr["CuttingID"], dr["cutcellid"], dr["SpreadingNoID"]));
+                            importay = detailTable.Select($@"id = '{dr["CuttingID"]}' 
+and cutcellid = '{dr["cutcellid"]}' 
+and SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='" + dr["SpreadingNoID"].ToString() + "'")}");
+                                                                
                             importedIDs.Add(id);
                             if (importay.Length > 0)
                             {
@@ -208,9 +211,9 @@ insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,
 update Workorder set CutplanID = '{0}' 
 where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}' and SpreadingNoID = '{5}' ;
 ", id, dr["CuttingID"], dr["cutcellid"], keyWord, dateEstCutDate.Text, dr["SpreadingNoID"]);
-                                idnum++;
-                                id = id.Substring(0, id.Length - 4) + idnum.ToString().PadLeft(4,'0');
                             }
+                            idnum++;
+                            id = id.Substring(0, id.Length - 4) + idnum.ToString().PadLeft(4, '0');
                         }
                     }
                 }
