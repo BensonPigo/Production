@@ -206,8 +206,8 @@ insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,
                                 //265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
                                 iu += string.Format(@"
 update Workorder set CutplanID = '{0}' 
-where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}';
-" , id, dr["CuttingID"], dr["cutcellid"], keyWord, dateEstCutDate.Text);
+where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}' and SpreadingNoID = '{5}' ;
+", id, dr["CuttingID"], dr["cutcellid"], keyWord, dateEstCutDate.Text, dr["SpreadingNoID"]);
                                 idnum++;
                                 id = id.Substring(0, id.Length - 4) + idnum.ToString().PadLeft(4,'0');
                             }
