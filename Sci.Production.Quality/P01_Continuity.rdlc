@@ -17,7 +17,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.67056cm</Height>
+              <Height>0.9cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -30,6 +30,7 @@
                             <TextRun>
                               <Value>END LEFT SIDE</Value>
                               <Style>
+                                <FontSize>12pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -65,6 +66,7 @@
                             <TextRun>
                               <Value>END CENTER</Value>
                               <Style>
+                                <FontSize>12pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -100,6 +102,7 @@
                             <TextRun>
                               <Value>END RIGHT SIDE</Value>
                               <Style>
+                                <FontSize>12pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -127,7 +130,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>3.14cm</Height>
+              <Height>4.75cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -222,7 +225,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.67056cm</Height>
+              <Height>0.9cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -235,6 +238,7 @@
                             <TextRun>
                               <Value>MIDDLE LEFT SIDE</Value>
                               <Style>
+                                <FontSize>12pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -270,6 +274,7 @@
                             <TextRun>
                               <Value>MIDDLE CENTER</Value>
                               <Style>
+                                <FontSize>12pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -305,6 +310,7 @@
                             <TextRun>
                               <Value>MIDDLE RIGHT SIDE</Value>
                               <Style>
+                                <FontSize>12pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -332,7 +338,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>3.14cm</Height>
+              <Height>4.75cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -427,7 +433,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.67056cm</Height>
+              <Height>0.9cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -440,6 +446,7 @@
                             <TextRun>
                               <Value>BEGINNING LEFT SIDE</Value>
                               <Style>
+                                <FontSize>12pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -475,6 +482,7 @@
                             <TextRun>
                               <Value>BEGINNING CENTER</Value>
                               <Style>
+                                <FontSize>12pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -510,6 +518,7 @@
                             <TextRun>
                               <Value>BEGINNING RIGHT SIDE</Value>
                               <Style>
+                                <FontSize>12pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -537,7 +546,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>3.14cm</Height>
+              <Height>4.75cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -652,7 +661,7 @@
         </TablixRowHierarchy>
         <Top>0.3175cm</Top>
         <Left>0.06326cm</Left>
-        <Height>11.43168cm</Height>
+        <Height>16.95cm</Height>
         <Width>18.2949cm</Width>
         <Style>
           <Border>
@@ -662,13 +671,13 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>4.68414in</Height>
+    <Height>6.86073in</Height>
     <Style />
   </Body>
   <Width>7.2836in</Width>
   <Page>
     <PageHeader>
-      <Height>5.35162cm</Height>
+      <Height>5.37808cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -1781,9 +1790,9 @@
         </Border>
       </Style>
     </PageFooter>
-    <PageHeight>24.5cm</PageHeight>
+    <PageHeight>29.7cm</PageHeight>
     <PageWidth>21cm</PageWidth>
-    <InteractiveHeight>24.5cm</InteractiveHeight>
+    <InteractiveHeight>29.7cm</InteractiveHeight>
     <InteractiveWidth>21cm</InteractiveWidth>
     <LeftMargin>1.25cm</LeftMargin>
     <RightMargin>1.25cm</RightMargin>
