@@ -175,7 +175,7 @@ and estcutdate = '{estcutdate}'";
                             iu += string.Format(@"
 insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID,SpreadingNoID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}','{8}');
 ", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"], dr["SpreadingNoID"]);
-                            importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}'", dr["CuttingID"], dr["cutcellid"]));
+                            importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}' and SpreadingNoID = '{2}' ", dr["CuttingID"], dr["cutcellid"], dr["SpreadingNoID"]));
                             importedIDs.Add(id);
                             if (importay.Length > 0)
                             {
