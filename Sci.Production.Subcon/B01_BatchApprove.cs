@@ -430,9 +430,9 @@ when matched then update set
                 worksheet.Cells[irow, 5] = selectdt.Rows[i]["UnitID"];
                 worksheet.Cells[irow, 6] = selectdt.Rows[i]["AccountIDN"];
 
-                worksheet.Cells[irow, 11] = selectdt.Rows[i]["sLocalSuppID"];
-                worksheet.Cells[irow, 12] = selectdt.Rows[i]["currencyid"];
-                worksheet.Cells[irow, 13] = MyUtility.Convert.GetDecimal(selectdt.Rows[i]["price"]).ToString("#,#.####");
+                worksheet.Cells[irow, 12] = selectdt.Rows[i]["sLocalSuppID"];
+                worksheet.Cells[irow, 13] = selectdt.Rows[i]["currencyid"];
+                worksheet.Cells[irow, 14] = MyUtility.Convert.GetDecimal(selectdt.Rows[i]["price"]).ToString("#,#.####");
 
                 DataView dv = this.detail.Select($"Refno = '{selectdt.Rows[i]["Refno"]}' and Ukey = {selectdt.Rows[i]["ukey"]} and LocalSuppID <> '' and price <> 0 ").CopyToDataTable().DefaultView;
                 dv.Sort = "Selected desc, Price";
@@ -442,6 +442,7 @@ when matched then update set
                     worksheet.Cells[irow + j, 8] = MyUtility.Convert.GetString(ddt.Rows[j]["LocalSuppID"]) + "-" + MyUtility.Convert.GetString(ddt.Rows[j]["SuppAbb"]);
                     worksheet.Cells[irow + j, 9] = ddt.Rows[j]["CurrencyID"];
                     worksheet.Cells[irow + j, 10] = MyUtility.Convert.GetDecimal(ddt.Rows[j]["Price"]).ToString("#,#.####");
+                    worksheet.Cells[irow + j, 11] = MyUtility.Convert.GetDate(ddt.Rows[j]["QuotDate"]);
                 }
             }
 
