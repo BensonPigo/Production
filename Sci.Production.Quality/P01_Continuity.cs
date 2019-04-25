@@ -617,6 +617,12 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", DateTime.Parse(dateArriveWHDate.Value.ToString()).ToString("yyyy-MM-dd").ToString()));
             report.ReportResource = reportresource;
 
+            #region 用來在Rdlc 加入空的資料來源, 不然會找不到DataSet 
+            DataTable dt = new DataTable();
+            report.ReportDataSource = dt;
+            #endregion
+
+
             // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
