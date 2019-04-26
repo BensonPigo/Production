@@ -33,7 +33,6 @@
             this.checkTargetDate = new Sci.Win.UI.CheckBox();
             this.dateSCIDlvDate = new Sci.Win.UI.DateRange();
             this.labSCIDlv = new Sci.Win.UI.Label();
-            this.comboColumnType = new Sci.Production.Class.comboDropDownList(this.components);
             this.labColumnType = new Sci.Win.UI.Label();
             this.txtstyle = new Sci.Production.Class.txtstyle();
             this.labStyle = new Sci.Win.UI.Label();
@@ -45,6 +44,7 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.comboColumnType = new Sci.Win.UI.ComboBox();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -52,10 +52,10 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.comboColumnType);
             this.panel3.Controls.Add(this.checkTargetDate);
             this.panel3.Controls.Add(this.dateSCIDlvDate);
             this.panel3.Controls.Add(this.labSCIDlv);
-            this.panel3.Controls.Add(this.comboColumnType);
             this.panel3.Controls.Add(this.labColumnType);
             this.panel3.Controls.Add(this.txtstyle);
             this.panel3.Controls.Add(this.labStyle);
@@ -75,6 +75,7 @@
             // 
             this.checkTargetDate.AutoSize = true;
             this.checkTargetDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkTargetDate.IsSupportEditMode = false;
             this.checkTargetDate.Location = new System.Drawing.Point(19, 80);
             this.checkTargetDate.Name = "checkTargetDate";
             this.checkTargetDate.Size = new System.Drawing.Size(206, 21);
@@ -99,6 +100,7 @@
             this.dateSCIDlvDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSCIDlvDate.DateBox2.TabIndex = 1;
             this.dateSCIDlvDate.IsRequired = false;
+            this.dateSCIDlvDate.IsSupportEditMode = false;
             this.dateSCIDlvDate.Location = new System.Drawing.Point(395, 43);
             this.dateSCIDlvDate.Name = "dateSCIDlvDate";
             this.dateSCIDlvDate.Size = new System.Drawing.Size(280, 23);
@@ -111,19 +113,6 @@
             this.labSCIDlv.Size = new System.Drawing.Size(97, 23);
             this.labSCIDlv.TabIndex = 54;
             this.labSCIDlv.Text = "SCI Dlv.";
-            // 
-            // comboColumnType
-            // 
-            this.comboColumnType.BackColor = System.Drawing.Color.White;
-            this.comboColumnType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboColumnType.FormattingEnabled = true;
-            this.comboColumnType.IsSupportUnselect = true;
-            this.comboColumnType.Location = new System.Drawing.Point(118, 43);
-            this.comboColumnType.Name = "comboColumnType";
-            this.comboColumnType.OldText = "";
-            this.comboColumnType.Size = new System.Drawing.Size(157, 24);
-            this.comboColumnType.TabIndex = 53;
-            this.comboColumnType.Type = "PMS_CriticalActivity";
             // 
             // labColumnType
             // 
@@ -138,6 +127,7 @@
             this.txtstyle.BackColor = System.Drawing.Color.White;
             this.txtstyle.BrandObjectName = null;
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.IsSupportEditMode = false;
             this.txtstyle.Location = new System.Drawing.Point(544, 12);
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
@@ -157,6 +147,7 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.IsSupportEditMode = false;
             this.txtbrand.Location = new System.Drawing.Point(363, 12);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(110, 23);
@@ -182,6 +173,7 @@
             // 
             this.txtSPNo.BackColor = System.Drawing.Color.White;
             this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.IsSupportEditMode = false;
             this.txtSPNo.Location = new System.Drawing.Point(118, 12);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(157, 23);
@@ -234,6 +226,19 @@
             this.grid.TabIndex = 21;
             this.grid.TabStop = false;
             // 
+            // comboColumnType
+            // 
+            this.comboColumnType.BackColor = System.Drawing.Color.White;
+            this.comboColumnType.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboColumnType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboColumnType.FormattingEnabled = true;
+            this.comboColumnType.IsSupportUnselect = true;
+            this.comboColumnType.Location = new System.Drawing.Point(118, 44);
+            this.comboColumnType.Name = "comboColumnType";
+            this.comboColumnType.OldText = "";
+            this.comboColumnType.Size = new System.Drawing.Size(157, 24);
+            this.comboColumnType.TabIndex = 57;
+            // 
             // P06
             // 
             this.ClientSize = new System.Drawing.Size(857, 456);
@@ -258,7 +263,6 @@
         private Win.UI.Button btnQuery;
         private Win.UI.Button btnSave;
         private Win.UI.Label labSCIDlv;
-        private Class.comboDropDownList comboColumnType;
         private Win.UI.Label labColumnType;
         private Class.txtstyle txtstyle;
         private Win.UI.Label labStyle;
@@ -270,5 +274,6 @@
         private Win.UI.DateRange dateSCIDlvDate;
         private Win.UI.CheckBox checkTargetDate;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.ComboBox comboColumnType;
     }
 }
