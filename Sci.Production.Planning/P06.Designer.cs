@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.checkTargetDate = new Sci.Win.UI.CheckBox();
+            this.dateSCIDlvDate = new Sci.Win.UI.DateRange();
             this.labSCIDlv = new Sci.Win.UI.Label();
             this.comboColumnType = new Sci.Production.Class.comboDropDownList(this.components);
             this.labColumnType = new Sci.Win.UI.Label();
@@ -41,16 +43,16 @@
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.btnQuery = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
-            this.gridImport = new Sci.Win.UI.Grid();
-            this.dateSCIDlvDate = new Sci.Win.UI.DateRange();
-            this.chxQueryTargetDate = new Sci.Win.UI.CheckBox();
+            this.grid = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.chxQueryTargetDate);
+            this.panel3.Controls.Add(this.checkTargetDate);
             this.panel3.Controls.Add(this.dateSCIDlvDate);
             this.panel3.Controls.Add(this.labSCIDlv);
             this.panel3.Controls.Add(this.comboColumnType);
@@ -68,6 +70,39 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(857, 107);
             this.panel3.TabIndex = 20;
+            // 
+            // checkTargetDate
+            // 
+            this.checkTargetDate.AutoSize = true;
+            this.checkTargetDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkTargetDate.Location = new System.Drawing.Point(19, 80);
+            this.checkTargetDate.Name = "checkTargetDate";
+            this.checkTargetDate.Size = new System.Drawing.Size(206, 21);
+            this.checkTargetDate.TabIndex = 56;
+            this.checkTargetDate.Text = "Query have target date data";
+            this.checkTargetDate.UseVisualStyleBackColor = true;
+            // 
+            // dateSCIDlvDate
+            // 
+            // 
+            // 
+            // 
+            this.dateSCIDlvDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDlvDate.DateBox1.Name = "";
+            this.dateSCIDlvDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDlvDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDlvDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDlvDate.DateBox2.Name = "";
+            this.dateSCIDlvDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDlvDate.DateBox2.TabIndex = 1;
+            this.dateSCIDlvDate.IsRequired = false;
+            this.dateSCIDlvDate.Location = new System.Drawing.Point(395, 43);
+            this.dateSCIDlvDate.Name = "dateSCIDlvDate";
+            this.dateSCIDlvDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDlvDate.TabIndex = 55;
             // 
             // labSCIDlv
             // 
@@ -161,6 +196,7 @@
             this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // btnSave
             // 
@@ -171,78 +207,47 @@
             this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // gridImport
+            // grid
             // 
-            this.gridImport.AllowUserToAddRows = false;
-            this.gridImport.AllowUserToDeleteRows = false;
-            this.gridImport.AllowUserToResizeRows = false;
-            this.gridImport.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridImport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridImport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridImport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridImport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridImport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridImport.Location = new System.Drawing.Point(0, 107);
-            this.gridImport.Name = "gridImport";
-            this.gridImport.RowHeadersVisible = false;
-            this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridImport.RowTemplate.Height = 24;
-            this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(857, 349);
-            this.gridImport.TabIndex = 21;
-            this.gridImport.TabStop = false;
-            // 
-            // dateSCIDlvDate
-            // 
-            // 
-            // 
-            // 
-            this.dateSCIDlvDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateSCIDlvDate.DateBox1.Name = "";
-            this.dateSCIDlvDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateSCIDlvDate.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateSCIDlvDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateSCIDlvDate.DateBox2.Name = "";
-            this.dateSCIDlvDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateSCIDlvDate.DateBox2.TabIndex = 1;
-            this.dateSCIDlvDate.IsRequired = false;
-            this.dateSCIDlvDate.Location = new System.Drawing.Point(395, 43);
-            this.dateSCIDlvDate.Name = "dateSCIDlvDate";
-            this.dateSCIDlvDate.Size = new System.Drawing.Size(280, 23);
-            this.dateSCIDlvDate.TabIndex = 55;
-            // 
-            // chxQueryTargetDate
-            // 
-            this.chxQueryTargetDate.AutoSize = true;
-            this.chxQueryTargetDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chxQueryTargetDate.Location = new System.Drawing.Point(19, 80);
-            this.chxQueryTargetDate.Name = "chxQueryTargetDate";
-            this.chxQueryTargetDate.Size = new System.Drawing.Size(206, 21);
-            this.chxQueryTargetDate.TabIndex = 56;
-            this.chxQueryTargetDate.Text = "Query have target date data";
-            this.chxQueryTargetDate.UseVisualStyleBackColor = true;
+            this.grid.AllowUserToAddRows = false;
+            this.grid.AllowUserToDeleteRows = false;
+            this.grid.AllowUserToResizeRows = false;
+            this.grid.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid.Location = new System.Drawing.Point(0, 107);
+            this.grid.Name = "grid";
+            this.grid.RowHeadersVisible = false;
+            this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid.RowTemplate.Height = 24;
+            this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid.ShowCellToolTips = false;
+            this.grid.Size = new System.Drawing.Size(857, 349);
+            this.grid.TabIndex = 21;
+            this.grid.TabStop = false;
             // 
             // P06
             // 
             this.ClientSize = new System.Drawing.Size(857, 456);
-            this.Controls.Add(this.gridImport);
+            this.Controls.Add(this.grid);
             this.Controls.Add(this.panel3);
             this.Name = "P06";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P06. Critical Activity Target Adjust";
             this.Controls.SetChildIndex(this.panel3, 0);
-            this.Controls.SetChildIndex(this.gridImport, 0);
+            this.Controls.SetChildIndex(this.grid, 0);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -261,8 +266,9 @@
         private Win.UI.Label labBrandID;
         private Win.UI.Label labSPNo;
         private Win.UI.TextBox txtSPNo;
-        private Win.UI.Grid gridImport;
+        private Win.UI.Grid grid;
         private Win.UI.DateRange dateSCIDlvDate;
-        private Win.UI.CheckBox chxQueryTargetDate;
+        private Win.UI.CheckBox checkTargetDate;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }
