@@ -45,6 +45,7 @@ namespace Sci.Production.Thread
             this.sql = @"SELECT 
                       Date = ti.AddDate,
                       IssuNo = ti.ID,
+                      SPNo = ti.RequestID,
                       RefNo = tid.Refno,
                       Description = li.Description,
                       Type = li.Category,
@@ -56,7 +57,8 @@ namespace Sci.Production.Thread
                       NewCone = tid.NewCone,
                       UsedCone = tid.UsedCone,
                       Location = tid.ThreadLocationid,
-					  Remark = tid.Remark
+					  Remark = tid.Remark,
+	                  HeaderRemark = ti.Remark 
                     FROM ThreadIssue ti WITH (NOLOCK) 
                     inner join ThreadIssue_Detail tid WITH (NOLOCK) on ti.ID = tid.ID
                     left join LocalItem li WITH (NOLOCK) on tid.Refno = li.RefNo
