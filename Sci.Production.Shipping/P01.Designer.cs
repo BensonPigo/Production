@@ -171,6 +171,8 @@
             this.txtCountryDestination = new Sci.Production.Class.txtcountry();
             this.labelShipLeader = new Sci.Win.UI.Label();
             this.txtuserShipLeader = new Sci.Production.Class.txtuser();
+            this.labQuotationAVG = new Sci.Win.UI.Label();
+            this.numericQuotationAVG = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -179,8 +181,14 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(996, 668);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numericQuotationAVG);
+            this.detailcont.Controls.Add(this.labQuotationAVG);
             this.detailcont.Controls.Add(this.labelShipLeader);
             this.detailcont.Controls.Add(this.txtResponsibilityJustifcation);
             this.detailcont.Controls.Add(this.btnStatusUpdateHistory);
@@ -232,14 +240,11 @@
             this.detailcont.Controls.Add(this.checkFactory);
             this.detailcont.Controls.Add(this.labelResponsible);
             this.detailcont.Controls.Add(this.editComments);
-            this.detailcont.Controls.Add(this.txtUserPPICmgr);
             this.detailcont.Controls.Add(this.txttpeuserPOHandle);
             this.detailcont.Controls.Add(this.txttpeuserTask);
             this.detailcont.Controls.Add(this.txttpeuserPOSMR);
             this.detailcont.Controls.Add(this.txttpeuserMR);
-            this.detailcont.Controls.Add(this.txtSubconForwarder1);
             this.detailcont.Controls.Add(this.txttpeuserSMR);
-            this.detailcont.Controls.Add(this.txtuserShipLeader);
             this.detailcont.Controls.Add(this.labelComments);
             this.detailcont.Controls.Add(this.displayRemark);
             this.detailcont.Controls.Add(this.labelRemark);
@@ -272,13 +277,16 @@
             this.detailcont.Controls.Add(this.labelForwarder2);
             this.detailcont.Controls.Add(this.labelForwarder1);
             this.detailcont.Controls.Add(this.labelForwarderN);
-            this.detailcont.Controls.Add(this.txtsubcon3);
-            this.detailcont.Controls.Add(this.txtUserFactorymgr);
             this.detailcont.Controls.Add(this.numExchangeRate);
             this.detailcont.Controls.Add(this.numVWeight);
             this.detailcont.Controls.Add(this.numGrossWeight);
+            this.detailcont.Controls.Add(this.txtSubconForwarder1);
             this.detailcont.Controls.Add(this.txtSubconForwarderN);
+            this.detailcont.Controls.Add(this.txtsubcon3);
             this.detailcont.Controls.Add(this.txtUserPreparedBy);
+            this.detailcont.Controls.Add(this.txtuserShipLeader);
+            this.detailcont.Controls.Add(this.txtUserPPICmgr);
+            this.detailcont.Controls.Add(this.txtUserFactorymgr);
             this.detailcont.Controls.Add(this.labelExchangeRate);
             this.detailcont.Controls.Add(this.labelVWeight);
             this.detailcont.Controls.Add(this.labelGrossWeight);
@@ -1900,6 +1908,7 @@
             this.txtSubconForwarderN.Size = new System.Drawing.Size(170, 23);
             this.txtSubconForwarderN.TabIndex = 5;
             this.txtSubconForwarderN.TextBox1Binding = "";
+            this.txtSubconForwarderN.Validated += new System.EventHandler(this.txtSubconForwarderN_Validated);
             // 
             // txttpeuserPOSMR
             // 
@@ -2020,6 +2029,47 @@
             this.txtuserShipLeader.TabIndex = 163;
             this.txtuserShipLeader.TextBox1Binding = "";
             // 
+            // labQuotationAVG
+            // 
+            this.labQuotationAVG.Location = new System.Drawing.Point(434, 121);
+            this.labQuotationAVG.Name = "labQuotationAVG";
+            this.labQuotationAVG.Size = new System.Drawing.Size(203, 18);
+            this.labQuotationAVG.TabIndex = 165;
+            this.labQuotationAVG.Text = "Avg. Act. Amt of last year(USD/KG)";
+            // 
+            // numericQuotationAVG
+            // 
+            this.numericQuotationAVG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericQuotationAVG.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QuotationAVG", true));
+            this.numericQuotationAVG.DecimalPlaces = 4;
+            this.numericQuotationAVG.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericQuotationAVG.IsSupportEditMode = false;
+            this.numericQuotationAVG.Location = new System.Drawing.Point(639, 120);
+            this.numericQuotationAVG.Maximum = new decimal(new int[] {
+            1316134911,
+            2328,
+            0,
+            262144});
+            this.numericQuotationAVG.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericQuotationAVG.Name = "numericQuotationAVG";
+            this.numericQuotationAVG.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericQuotationAVG.ReadOnly = true;
+            this.numericQuotationAVG.Size = new System.Drawing.Size(104, 21);
+            this.numericQuotationAVG.TabIndex = 167;
+            this.numericQuotationAVG.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P01
             // 
             this.ApvChkValue = "Checked";
@@ -2037,6 +2087,7 @@
             this.IsSupportUnconfirm = true;
             this.JunkChkValue = "New";
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "P01. Air Pre-Paid";
             this.UnApvChkValue = "Approved";
             this.UncheckChkValue = "Checked";
@@ -2200,5 +2251,7 @@
         private Class.txtsubcon txtSubconForwarderN;
         private Win.UI.Label labelShipLeader;
         private Class.txtuser txtuserShipLeader;
+        private Win.UI.Label labQuotationAVG;
+        private Win.UI.NumericBox numericQuotationAVG;
     }
 }

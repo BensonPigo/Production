@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Quality
 {
-    partial class P13
+    partial class P14
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -115,7 +115,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2258, 162);
+            this.gridicon.Location = new System.Drawing.Point(2150, 162);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
@@ -329,7 +329,7 @@
             this.txtT1.Location = new System.Drawing.Point(124, 91);
             this.txtT1.Name = "txtT1";
             this.txtT1.Size = new System.Drawing.Size(170, 23);
-            this.txtT1.TabIndex = 15;
+            this.txtT1.TabIndex = 14;
             this.txtT1.TextBox1Binding = "";
             // 
             // txtT2
@@ -340,20 +340,20 @@
             this.txtT2.Location = new System.Drawing.Point(413, 91);
             this.txtT2.Name = "txtT2";
             this.txtT2.Size = new System.Drawing.Size(170, 23);
-            this.txtT2.TabIndex = 16;
+            this.txtT2.TabIndex = 15;
             this.txtT2.TextBox1Binding = "";
             // 
-            // P13
+            // P14
             // 
             this.ClientSize = new System.Drawing.Size(1008, 493);
-            this.GridAlias = "MockupWash_Detail";
+            this.GridAlias = "MockupOven_Detail";
             this.GridNew = 0;
-            this.IsSupportPrint = false;
+            this.IsSupportCopy = false;
             this.KeyField1 = "ID";
-            this.Name = "P13";
+            this.Name = "P14";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "P13. Mockup Wash Test(Sample)";
-            this.WorkAlias = "MockupWash";
+            this.Text = "P14. Mockup Oven Test(Bulk)";
+            this.WorkAlias = "MockupOven";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();

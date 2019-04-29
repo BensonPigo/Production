@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Quality
 {
-    partial class P12_Detail
+    partial class P14_Detail
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -710,16 +710,16 @@
             this.btnSendMR.UseVisualStyleBackColor = true;
             this.btnSendMR.Click += new System.EventHandler(this.btnSendMR_Click);
             // 
-            // P12_Detail
+            // P14_Detail
             // 
             this.ClientSize = new System.Drawing.Size(995, 629);
             this.Controls.Add(this.panelup);
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.KeyField2 = "ReportNo";
-            this.Name = "P12_Detail";
+            this.Name = "P14_Detail";
             this.OnLineHelpID = "Sci.Win.Subs.Input4";
-            this.Text = "Mockup - Oven Test(Sample)";
+            this.Text = "Mockup - Oven Test(Bulk)";
             this.WorkAlias = "MockupOven_Detail_Detail";
             this.Controls.SetChildIndex(this.panelup, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
