@@ -108,19 +108,6 @@ namespace Sci.Production.Shipping
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
-            string sqlcmd = $@"
-select gc.*
-from GMTBooking_CTNR gc with(nolock)
-inner join GMTBooking g with(nolock) on gc.id = g.id
-where g.ShipPlanID ='{this.ShipPlanID}'
-";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out datas);
-            if (!result)
-            {
-                return;
-            }
-
-            this.SetGrid(datas);
 
             datas.Columns.Add("AddBy");
             datas.Columns.Add("EditBy");
@@ -134,6 +121,25 @@ where g.ShipPlanID ='{this.ShipPlanID}'
 
                 gridData.AcceptChanges();
             }
+        }
+
+        protected override DualResult OnRequery()
+        {
+            DataTable datas;
+            string sqlcmd = $@"
+select gc.*
+from GMTBooking_CTNR gc with(nolock)
+inner join GMTBooking g with(nolock) on gc.id = g.id
+where g.ShipPlanID ='{this.ShipPlanID}'
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out datas);
+            if (!result)
+            {
+                return result;
+            }
+
+            this.SetGrid(datas);
+            return Result.True;
         }
     }
 }
