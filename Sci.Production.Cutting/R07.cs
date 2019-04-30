@@ -97,9 +97,15 @@ namespace Sci.Production.Cutting
 select w.CutRef,w.MDivisionId,Layer=sum(w.Layer),Cons=sum(w.Cons)
 into #tmp2a
 from WorkOrder w with(nolock) 
-where 1=1
+where isnull(w.CutRef,'') <> ''
 {where}
 group by w.CutRef,w.MDivisionID
+
+select *
+into #tmp2a2
+from WorkOrder w with(nolock) 
+where isnull(w.CutRef,'') = ''
+{where}
 
 select t.CutRef,t.MDivisionId,t.Layer,t.Cons,
 	noEXCESSqty=sum(iif(wd.OrderID <> 'EXCESS',wd.Qty,0)),
@@ -201,6 +207,102 @@ outer apply(
 	and cmd.WeaveTypeID = f.WeaveTypeID 
 )ActSpd
 
+union all
+
+select t.MDivisionid,
+	FactoryID=isnull(t.FactoryID,''),
+	t.EstCutDate,
+	CutCellid=isnull(t.CutCellid,''),
+	SpreadingNoID=isnull(t.SpreadingNoID,''),
+	CutplanID=isnull(t.CutplanID,''),
+	CutRef=isnull(t.CutRef,''),
+	ID=isnull(t.ID,''),
+	SubSP=isnull(subSp.SubSP,''),
+	StyleID=isnull(o.StyleID,''),
+	Size=isnull(size.Size,''),
+	EQ.noEXCESSqty,
+	Description=isnull(f.Description,''),
+	WeaveTypeID=isnull(f.WeaveTypeID,''),
+	FabricCombo=isnull(t.FabricCombo,''),
+	MarkerLength=iif(t.Layer=0,0,t.cons/t.Layer),
+	PerimeterM=isnull(iif(t.ActCuttingPerimeter not like '%yd%',t.ActCuttingPerimeter,cast(dbo.GetActualPerimeter(t.ActCuttingPerimeter) as nvarchar)),''),
+	PerimeterYd=isnull(iif(t.ActCuttingPerimeter not like '%yd%',t.ActCuttingPerimeter,cast(dbo.GetActualPerimeterYd(t.ActCuttingPerimeter) as nvarchar)),''),
+	t.Layer,
+	SizeCode=isnull(SizeCode.SizeCode,''),
+	t.Cons,
+	EQ.EXCESSqty,
+	NoofRoll= iif(iif(isnull(fi.avgInQty,0)=0,1,round(t.Cons/fi.avgInQty,0))<1,1,iif(isnull(fi.avgInQty,0)=0,1,round(t.Cons/fi.avgInQty,0))),
+	DyeLot=1,
+	NoofWindow=isnull(t.Cons/t.Layer/1.4,0),
+	ActualSpeed=isnull(ActSpd.ActualSpeed,0),
+	PreparationTime=isnull(st.PreparationTime,0),
+	[ChangeoverTime] = iif(isnull(fr.isRoll,0) = 0,st.ChangeOverUnRollTime,st.ChangeOverRollTime),
+	SpreadingSetupTime=isnull(st.SetupTime,0),
+	SpreadingTime=isnull(st.SpreadingTime,0),
+	SeparatorTime=isnull(st.SeparatorTime,0),
+	ForwardTime=isnull(st.ForwardTime,0),
+	CuttingSetUpTime=isnull(ct.SetUpTime,0),
+	WindowTime=isnull(ct.WindowTime,0),
+	Refno=isnull(t.Refno,''),
+	WindowLength=isnull(ct.WindowLength,0)
+from #tmp2a2 t
+inner join orders o with(nolock) on o.id = t.ID
+left join Fabric f with(nolock) on f.SCIRefno = t.SCIRefno
+left join SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
+left join ManufacturingExecution.dbo.RefnoRelaxtime rr WITH (NOLOCK) on rr.Refno = t.Refno
+left join ManufacturingExecution.dbo.FabricRelaxation fr WITH (NOLOCK) on rr.FabricRelaxationID = fr.ID
+left join CuttingTime ct WITH (NOLOCK) on ct.WeaveTypeID = f.WeaveTypeID
+outer apply(
+	select 
+		noEXCESSqty=sum(iif(wd.OrderID <> 'EXCESS',wd.Qty,0)),
+		EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
+	from WorkOrder_Distribute wd with(nolock)
+	where wd.WorkOrderUkey = t.Ukey
+)EQ
+outer apply(
+	select SubSP = stuff((
+		select distinct concat(',',wd.OrderID)
+		from WorkOrder_Distribute wd with(nolock)
+		where wd.WorkOrderUkey = t.Ukey
+		For XML path('')
+	),1,1,'')
+)subSp
+outer apply(
+	select Size = stuff((
+		select distinct concat(',',wd.SizeCode)
+		from WorkOrder_Distribute wd with(nolock)
+		where wd.WorkOrderUkey = t.Ukey
+		For XML path('')
+	),1,1,'')
+)size
+outer apply
+(
+	select SizeCode = stuff(
+	(
+		Select concat(', ' , wd.sizecode, '/ ', wd.qty)
+		From WorkOrder_SizeRatio wd WITH (NOLOCK)
+		Where wd.WorkOrderUkey = t.Ukey
+		For XML path('')
+	),1,1,'')
+)SizeCode
+outer apply(
+	select avgInQty = avg(fi.InQty)
+	from PO_Supp_Detail psd with(nolock)
+	left join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
+	where psd.ID = t.id and psd.SCIRefno = t.SCIRefno
+	and fi.InQty is not null
+) as fi
+outer apply(	
+	select  ActualSpeed
+	from CuttingMachine_detail cmd WITH (NOLOCK) 
+	inner join CutCell cc WITH (NOLOCK) on cc.CuttingMachineID = cmd.id
+	where cc.id = t.CutCellid 
+	and t.Layer between cmd.LayerLowerBound and cmd.LayerUpperBound
+	and cmd.WeaveTypeID = f.WeaveTypeID 
+)ActSpd
+
+
+
 select MDivisionID,FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,WeaveTypeID,FabricCombo,
 	MarkerLength,PerimeterYd,Layer,SizeCode,Cons,EXCESSqty,NoofRoll,NoofWindow,ActualSpeed,
 	[PreparationTime_min],
@@ -230,10 +332,10 @@ outer apply(select [WindowTime_min]=Round(Windowtime * iif(isnull(Layer,0)=0 or 
 
 select * from #detail order by FactoryID,EstCutDate,CutCellid
 
-select MDivisionId=stuff((select distinct concat(',',MDivisionId) from #tmp2a for xml path('')),1,1,'')
+select MDivisionId=stuff((select distinct concat(',',MDivisionId) from #detail for xml path('')),1,1,'')
 select ForecastPeriod=concat(format(min(EstCutDate),'MM/dd'),'-',format(max(EstCutDate),'MM/dd')) from #detail
 select TotalWorkingDays=count(1) from(select distinct EstCutDate from #detail)a
---
+----
 select 
 	d.SpreadingNoID,
 	TotalSpreadingYardage = Sum(d.Cons),
@@ -242,7 +344,7 @@ select
 from #detail d
 where isnull(d.SpreadingNoID,'') <>''
 group by d.SpreadingNoID
---
+----
 select 
 	d.CutCellid,
 	CuttingMachDescription = cm.Description,
@@ -258,13 +360,15 @@ where isnull(d.CutCellid,'') <>''
 group by d.CutCellid, cm.Description
 order by d.CutCellid
 
-drop table #tmp2a,#tmp2,#tmp3,#detail
+drop table #tmp2a,#tmp2,#tmp3,#detail,#tmp2a2
 ";
+            DBProxy.Current.DefaultTimeout = 900;  //加長時間為15分鐘，避免timeout
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out printData);
             if (!result)
             {
                 return Result.F(result.ToString());
             }
+            DBProxy.Current.DefaultTimeout = 300;  //恢復時間為5分鐘
             return Result.True;
         }
 
