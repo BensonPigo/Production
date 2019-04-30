@@ -104,11 +104,23 @@ namespace Sci.Production.Shipping
             return base.OnSaveBefore();
         }
 
-        /// <inheritdoc/>
-        protected override void OnRequeryPost(DataTable datas)
+        protected override void OnRequired()
         {
-            base.OnRequeryPost(datas);
+            base.OnRequired();
+            DataTable datas;
+            string sqlcmd = $@"
+            select gc.*
+            from GMTBooking_CTNR gc with(nolock)
+            inner join GMTBooking g with(nolock) on gc.id = g.id
+            where g.ShipPlanID ='{this.ShipPlanID}'
+            ";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out datas);
+            if (!result)
+            {
+                return;
+            }
 
+            this.SetGrid(datas);
             datas.Columns.Add("AddBy");
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
@@ -121,25 +133,6 @@ namespace Sci.Production.Shipping
 
                 gridData.AcceptChanges();
             }
-        }
-
-        protected override DualResult OnRequery()
-        {
-            DataTable datas;
-            string sqlcmd = $@"
-select gc.*
-from GMTBooking_CTNR gc with(nolock)
-inner join GMTBooking g with(nolock) on gc.id = g.id
-where g.ShipPlanID ='{this.ShipPlanID}'
-";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out datas);
-            if (!result)
-            {
-                return result;
-            }
-
-            this.SetGrid(datas);
-            return Result.True;
         }
     }
 }
