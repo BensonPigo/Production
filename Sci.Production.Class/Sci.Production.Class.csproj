@@ -141,6 +141,12 @@
     <Compile Include="txtCuttingMachineID.Designer.cs">
       <DependentUpon>txtCuttingMachineID.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtLocalPurchaseItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtLocalPurchaseItem.designer.cs">
+      <DependentUpon>txtLocalPurchaseItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtSpreadingNo.cs">
       <SubType>Component</SubType>
     </Compile>

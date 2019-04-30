@@ -509,6 +509,7 @@ SET
       ,a.EditName	      =b.EditName		
       ,a.EditDate	      =b.EditDate		
 	  ,a.IsPrintToCMP	  =b.IsPrintToCMP
+	  ,a.IsLocalPurchase = b.IsLocalPurchase
 from Production.dbo.ArtworkType as a inner join Trade_To_Pms.dbo.ArtworkType as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.ArtworkType(
@@ -533,6 +534,7 @@ INSERT INTO Production.dbo.ArtworkType(
       ,EditName
       ,EditDate
 	  ,IsPrintToCMP
+	  ,IsLocalPurchase
 )
 select 
        ID
@@ -556,6 +558,7 @@ select
       ,EditName
       ,EditDate
 	  ,IsPrintToCMP
+	  ,IsLocalPurchase
 from Trade_To_Pms.dbo.ArtworkType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ArtworkType as a WITH (NOLOCK) where a.id = b.id)
 -------------------------------Artworktype_Detail
