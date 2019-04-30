@@ -762,8 +762,6 @@
             // txtLocalPurchaseItem
             // 
             this.txtLocalPurchaseItem.BackColor = System.Drawing.Color.White;
-            this.txtLocalPurchaseItem.cClassify = "\'P\'";
-            this.txtLocalPurchaseItem.cSubprocess = "";
             this.txtLocalPurchaseItem.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "category", true));
             this.txtLocalPurchaseItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocalPurchaseItem.Location = new System.Drawing.Point(117, 68);
