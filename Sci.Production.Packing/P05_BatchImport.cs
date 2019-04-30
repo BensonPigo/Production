@@ -208,8 +208,20 @@ where   (od.Qty-isnull(pd.PulloutQty,0)) > 0
             cmds.Add(sp8);
             #endregion
 
-            if (this.result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.selectDataTable))
+            DataTable[] dts;
+
+            if (this.result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out dts))
             {
+                this.selectDataTable = dts[1];
+                if (!MyUtility.Check.Empty(dts[0]) && dts[0].Rows.Count > 0)
+                {
+                    StringBuilder msg = new StringBuilder();
+                    foreach (DataRow dr in dts[0].Rows)
+                    {
+                        msg.Append($@"SP: {dr["OrderID"]}, Colorway: {dr["aaa"]}, Size");
+                    }
+                }
+
                 if (this.selectDataTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
