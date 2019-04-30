@@ -134,12 +134,18 @@ namespace Sci.Production.Shipping
             {
                 sqlCmd.Append(string.Format(" and pd.OrderID = '{0}'", this.txtSPNo.Text));
             }
+
+            if (!MyUtility.Check.Empty(this.txtType.Text))
+            {
+                sqlCmd.Append(string.Format(" and g.CYCFS = '{0}'", this.txtType.Text));
+            }
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gbData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query GB error:" + result.ToString());
+                return;
             }
 
             StringBuilder allID = new StringBuilder();

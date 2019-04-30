@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[GMTBooking_CTNR] (
     [ID]       VARCHAR (25) CONSTRAINT [DF_GMTBooking_CTNR_ID] DEFAULT ('') NOT NULL,
+    [CYCFS]    VARCHAR (7)  NULL,
     [Type]     VARCHAR (10) CONSTRAINT [DF_GMTBooking_CTNR_Type] DEFAULT ('') NULL,
     [CTNRNo]   VARCHAR (10) CONSTRAINT [DF_GMTBooking_CTNR_CTNRNo] DEFAULT ('') NOT NULL,
     [SealNo]   VARCHAR (10) CONSTRAINT [DF_GMTBooking_CTNR_SealNo] DEFAULT ('') NULL,
@@ -10,6 +11,8 @@
     [EditDate] DATETIME     NULL,
     CONSTRAINT [PK_GMTBooking_CTNR] PRIMARY KEY CLUSTERED ([ID] ASC, [CTNRNo] ASC, [TruckNo] ASC)
 );
+
+
 
 
 GO

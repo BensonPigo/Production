@@ -96,6 +96,7 @@ select g.ID
 , Status = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed'))
 , [TotalCTNQty] = isnull(g.TotalCTNQty,0)
 , g.TotalCBM
+, g.TotalGW
 , ClogCTNQty = (
 	select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 	where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null
@@ -116,6 +117,46 @@ order by g.ID", masterID);
             base.OnDetailEntered();
             this.btnUpdatePulloutDate.Enabled = !this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Confirmed" && PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P10. Ship Plan", "CanEdit");
             this.SumData();
+            string sqlctnr = $@"
+declare @ShipPlanID varchar(25) = '{this.CurrentMaintain["id"]}'
+select concat('CFS=',(
+select ct=count(1)
+from GMTBooking_CTNR gc with(nolock)
+inner join GMTBooking g with(nolock) on gc.id = g.id
+where g.ShipPlanID =@ShipPlanID and type = 'CFS')
+,' ; '
+,'20 STD=',(
+select ct=count(1)
+from GMTBooking_CTNR gc with(nolock)
+inner join GMTBooking g with(nolock) on gc.id = g.id
+where g.ShipPlanID =@ShipPlanID and type = '20 STD')
+,' ; '
+,'40 STD=',(
+select ct=count(1)
+from GMTBooking_CTNR gc with(nolock)
+inner join GMTBooking g with(nolock) on gc.id = g.id
+where g.ShipPlanID =@ShipPlanID and type = '40 STD')
+,' ; '
+,'40HQ=',(
+select ct=count(1)
+from GMTBooking_CTNR gc with(nolock)
+inner join GMTBooking g with(nolock) on gc.id = g.id
+where g.ShipPlanID =@ShipPlanID and type = '40HQ')
+,' ; '
+,'45HQ=',(
+select ct=count(1)
+from GMTBooking_CTNR gc with(nolock)
+inner join GMTBooking g with(nolock) on gc.id = g.id
+where g.ShipPlanID =@ShipPlanID and type = '45HQ')
+,' ; '
+,'AIR=',(
+select ct=count(1)
+from GMTBooking_CTNR gc with(nolock)
+inner join GMTBooking g with(nolock) on gc.id = g.id
+where g.ShipPlanID =@ShipPlanID and type = 'AIR')
+)
+";
+            this.displayTTLContainer.Text = MyUtility.GetValue.Lookup(sqlctnr);
         }
 
         private void SumData()
@@ -128,13 +169,17 @@ order by g.ID", masterID);
 
             if (tmp_dt.Rows.Count > 0)
             {
-                this.numericBoxTTLCTN.Value = decimal.Parse(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty).ToString());
-                this.numericBoxTTLQTY.Value = decimal.Parse(tmp_dt.Compute("Sum(TotalShipQty)", string.Empty).ToString());
+                this.numericBoxTTLCTN.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty));
+                this.numericBoxTTLQTY.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalShipQty)", string.Empty));
+                this.numericTTLCBM.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY')"));
+                this.numericTTLGW.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P')"));
             }
             else
             {
                 this.numericBoxTTLCTN.Value = 0;
                 this.numericBoxTTLQTY.Value = 0;
+                this.numericTTLCBM.Value = 0;
+                this.numericTTLGW.Value = 0;
             }
         }
 
@@ -162,7 +207,7 @@ order by g.ID", masterID);
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Forwarder", header: "Forwarder", width: Widths.AnsiChars(17), iseditingreadonly: true)
-                .Text("CYCFS", header: "Container Type", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("CYCFS", header: "Loading Type", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("SONo", header: "S/O No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .DateTime("CutOffdate", header: "Cut-off Date/Time", iseditingreadonly: true)
                 .Numeric("WhseNo", header: "Container Terminals", iseditingreadonly: true)
@@ -298,6 +343,13 @@ order by g.ID", masterID);
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            DataTable tmp_dt = (DataTable)this.detailgridbs.DataSource;
+            if(tmp_dt.Select("ShipModeID in('A/C','A/P','E/C','E/P')").Count() > 0 && tmp_dt.Select("ShipModeID = 'SEA'").Count() > 0)
+            {
+                MyUtility.Msg.WarningBox("Can not include  [A/C, A/P, E/C, E/P] and [SEA] in same ship plan!");
+                return false;
+            }
+
             // GetID
             if (this.IsDetailInserting)
             {
@@ -844,6 +896,20 @@ and p1.Type <> 'S'
         private void Detailgridbs_ListChanged(object sender, ListChangedEventArgs e)
         {
             this.SumData();
+        }
+
+        private void BtnContainerTruck_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Please create ship plan first!!");
+                return;
+            }
+
+            bool edit = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToLower().EqualString("new") && this.Perm.Edit;
+            P10_ContainerTruck callNextForm = new P10_ContainerTruck(edit, null, null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            callNextForm.ShowDialog(this);
+            this.OnDetailEntered();
         }
     }
 }
