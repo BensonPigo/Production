@@ -196,7 +196,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(7001, 561);
+            this.refresh.Location = new System.Drawing.Point(6833, 561);
             // 
             // detailgridcont
             // 
@@ -205,7 +205,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(631, 587);
             // 
             // detail
             // 
@@ -831,7 +831,7 @@
             this.gridQtyBreakdown.RowTemplate.Height = 24;
             this.gridQtyBreakdown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakdown.ShowCellToolTips = false;
-            this.gridQtyBreakdown.Size = new System.Drawing.Size(373, 326);
+            this.gridQtyBreakdown.Size = new System.Drawing.Size(373, 93);
             this.gridQtyBreakdown.TabIndex = 49;
             this.gridQtyBreakdown.TabStop = false;
             // 
@@ -1052,7 +1052,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakdown);
             this.splitContainer1.Panel2MinSize = 1;
             this.splitContainer1.Size = new System.Drawing.Size(373, 678);
-            this.splitContainer1.SplitterDistance = 323;
+            this.splitContainer1.SplitterDistance = 567;
             this.splitContainer1.TabIndex = 61;
             // 
             // btnAdditionalrevisedmarker
