@@ -782,15 +782,24 @@ where InvA.OrderID = '{0}'
 
             // Balance < 0 ErrorMsg
             List<string> listErrorMsg = new List<string>();
+            StringBuilder msg = new StringBuilder();
 
             foreach (DataRow dr in this.DetailDatas)
             {
-                #region 刪除表身SP No.或Qty為空白的資料
-                if (MyUtility.Check.Empty(dr["OrderID"]) || MyUtility.Check.Empty(dr["ShipQty"]))
+                #region 刪除表身SP No.為空白的資料
+                if (MyUtility.Check.Empty(dr["OrderID"]))
                 {
                     dr.Delete();
                     continue;
                 }
+                #endregion
+
+                #region Qty 為0的資料
+                if (MyUtility.Check.Empty(dr["ShipQty"]))
+                {
+                    msg.Append($@"SP: {dr["OrderID"]}, Colorway: {dr["Article"]}, Size: {dr["SizeCode"]}" + Environment.NewLine);
+                }
+
                 #endregion
 
                 #region 訂單的BrandID要跟表頭的Brand相同
@@ -904,6 +913,12 @@ where oqd.Id = '{0}'
 
             // ShipQty
             this.CurrentMaintain["ShipQty"] = shipQty;
+
+            if (!MyUtility.Check.Empty(msg.ToString()))
+            {
+                MyUtility.Msg.WarningBox("Below records are in packing FOC already, please check again" + Environment.NewLine + msg.ToString());
+                return false;
+            }
 
             if (isNegativeBalQty)
             {
