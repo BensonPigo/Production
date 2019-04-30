@@ -175,7 +175,7 @@ namespace Sci.Production.Subcon
             if (CurrentMaintain["Category"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Category"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Category >  can't be empty!", "Warning");
-                txtartworktype_ftyCategory.Focus();
+                txtLocalPurchaseItem.Focus();
                 return false;
             }
 
@@ -707,7 +707,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 else displayCloseDate.Text = "";
             }
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
-            txtartworktype_ftyCategory.Enabled = !this.EditMode || IsDetailInserting;
+            txtLocalPurchaseItem.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
             btnIrrPriceReason.Enabled = !this.EditMode;
 
@@ -1215,7 +1215,7 @@ where refno = '{0}'
             if (MyUtility.Check.Empty(dr["category"]))
             {
                 MyUtility.Msg.WarningBox("Please fill category first!");
-                txtartworktype_ftyCategory.Focus();
+                txtLocalPurchaseItem.Focus();
                 return;
             }
             DataTable dg = (DataTable)detailgridbs.DataSource;
@@ -1225,20 +1225,6 @@ where refno = '{0}'
             this.RenewData();
 
             calttlqty();
-        }
-
-        private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
-        {
-            Production.Class.txtartworktype_fty o;
-            o = (Production.Class.txtartworktype_fty)sender;
-
-            if ((o.Text != o.OldValue) && this.EditMode)
-            {
-                if (detailgridbs.DataSource != null && ((DataTable)detailgridbs.DataSource).Rows.Count > 0)
-                {
-                    ((DataTable)detailgridbs.DataSource).Rows.Clear();
-                }
-            }
         }
 
         #region 狀態控制相關事件 Locked/Approved/Closed
@@ -1615,19 +1601,6 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
-        private void txtartworktype_ftyCategory_TextChanged(object sender, EventArgs e)
-        {
-            if (this.txtartworktype_ftyCategory.Text.EqualString("SP_Thread")
-                || this.txtartworktype_ftyCategory.Text.EqualString("EMB_Thread"))
-            {
-                this.GridUniqueKey = "orderid,refno,threadcolorid";
-            }
-            else
-            {
-                this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid";
-            }
-        }
-
         private void btnIrrPriceReason_Click(object sender, EventArgs e)
         {
             //進入Deatail畫面時，會取得_Irregular_Price_Table，直接丟進去開啟
@@ -1706,6 +1679,33 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                     this.dateDeliveryDate.Value = DateTime.Now.Date;
                     e.Cancel = true;
                 }
+            }
+        }
+
+        private void txtLocalPurchaseItem_Validated(object sender, EventArgs e)
+        {
+            Production.Class.txtLocalPurchaseItem o;
+            o = (Production.Class.txtLocalPurchaseItem)sender;
+
+            if ((o.Text != o.OldValue) && this.EditMode)
+            {
+                if (detailgridbs.DataSource != null && ((DataTable)detailgridbs.DataSource).Rows.Count > 0)
+                {
+                    ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                }
+            }
+        }
+
+        private void txtLocalPurchaseItem_TextChanged(object sender, EventArgs e)
+        {
+            if (this.txtLocalPurchaseItem.Text.EqualString("SP_Thread")
+                || this.txtLocalPurchaseItem.Text.EqualString("EMB_Thread"))
+            {
+                this.GridUniqueKey = "orderid,refno,threadcolorid";
+            }
+            else
+            {
+                this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid";
             }
         }
     }

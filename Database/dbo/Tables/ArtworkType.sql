@@ -1,32 +1,35 @@
 ﻿CREATE TABLE [dbo].[ArtworkType] (
-    [ID]             VARCHAR (20)   CONSTRAINT [DF_ArtworkType_ID] DEFAULT ('') NOT NULL,
-    [Abbreviation]   VARCHAR (2)    CONSTRAINT [DF_ArtworkType_Abbreviation] DEFAULT ('') NULL,
-    [Classify]       VARCHAR (1)    CONSTRAINT [DF_ArtworkType_Classify] DEFAULT ('') NULL,
-    [Seq]            VARCHAR (4)    CONSTRAINT [DF_ArtworkType_Seq] DEFAULT ('') NULL,
-    [Junk]           BIT            CONSTRAINT [DF_ArtworkType_Junk] DEFAULT ((0)) NULL,
-    [ArtworkUnit]    VARCHAR (10)   CONSTRAINT [DF_ArtworkType_ArtworkUnit] DEFAULT ('') NULL,
-    [ProductionUnit] VARCHAR (10)   CONSTRAINT [DF_ArtworkType_ProductionUnit] DEFAULT ('') NULL,
-    [IsTMS]          BIT            CONSTRAINT [DF_ArtworkType_IsTMS] DEFAULT ((0)) NULL,
-    [IsPrice]        BIT            CONSTRAINT [DF_ArtworkType_IsPrice] DEFAULT ((0)) NULL,
-    [IsArtwork]      BIT            CONSTRAINT [DF_ArtworkType_IsArtwork] DEFAULT ((0)) NULL,
-    [IsTtlTMS]       BIT            CONSTRAINT [DF_ArtworkType_IsTtlTMS] DEFAULT ((0)) NULL,
-    [IsSubprocess]   BIT            CONSTRAINT [DF_ArtworkType_IsSubprocess] DEFAULT ((0)) NULL,
-    [Remark]         NVARCHAR (60)  CONSTRAINT [DF_ArtworkType_Remark] DEFAULT ('') NULL,
-    [ReportDropdown] BIT            CONSTRAINT [DF_ArtworkType_ReportDropdown] DEFAULT ((0)) NULL,
-    [UseArtwork]     BIT            CONSTRAINT [DF_ArtworkType_UseArtwork] DEFAULT ((0)) NULL,
-    [SystemType]     VARCHAR (1)    CONSTRAINT [DF_ArtworkType_SystemType] DEFAULT ('') NULL,
-    [InhouseOSP]     VARCHAR (1)    CONSTRAINT [DF_ArtworkType_InhouseOSP] DEFAULT ('') NULL,
-    [AccountNo]      VARCHAR (8)    CONSTRAINT [DF_ArtworkType_AccountNo] DEFAULT ('') NULL,
-    [BcsLt]          NUMERIC (2, 1) CONSTRAINT [DF_ArtworkType_BcsLt] DEFAULT ((0)) NULL,
-    [CutLt]          TINYINT        CONSTRAINT [DF_ArtworkType_CutLt] DEFAULT ((0)) NULL,
-    [AddName]        VARCHAR (10)   CONSTRAINT [DF_ArtworkType_AddName] DEFAULT ('') NULL,
-    [AddDate]        DATETIME       NULL,
-    [EditName]       VARCHAR (10)   CONSTRAINT [DF_ArtworkType_EditName] DEFAULT ('') NULL,
-    [EditDate]       DATETIME       NULL,
-    [PostSewingDays] INT NULL DEFAULT ((0)), 
-	[IsPrintToCMP] BIT CONSTRAINT [DF_ArtworkType_IsPrintToCMP] DEFAULT ((1)) NULL,
+    [ID]              VARCHAR (20)   CONSTRAINT [DF_ArtworkType_ID] DEFAULT ('') NOT NULL,
+    [Abbreviation]    VARCHAR (2)    CONSTRAINT [DF_ArtworkType_Abbreviation] DEFAULT ('') NULL,
+    [Classify]        VARCHAR (1)    CONSTRAINT [DF_ArtworkType_Classify] DEFAULT ('') NULL,
+    [Seq]             VARCHAR (4)    CONSTRAINT [DF_ArtworkType_Seq] DEFAULT ('') NULL,
+    [Junk]            BIT            CONSTRAINT [DF_ArtworkType_Junk] DEFAULT ((0)) NULL,
+    [ArtworkUnit]     VARCHAR (10)   CONSTRAINT [DF_ArtworkType_ArtworkUnit] DEFAULT ('') NULL,
+    [ProductionUnit]  VARCHAR (10)   CONSTRAINT [DF_ArtworkType_ProductionUnit] DEFAULT ('') NULL,
+    [IsTMS]           BIT            CONSTRAINT [DF_ArtworkType_IsTMS] DEFAULT ((0)) NULL,
+    [IsPrice]         BIT            CONSTRAINT [DF_ArtworkType_IsPrice] DEFAULT ((0)) NULL,
+    [IsArtwork]       BIT            CONSTRAINT [DF_ArtworkType_IsArtwork] DEFAULT ((0)) NULL,
+    [IsTtlTMS]        BIT            CONSTRAINT [DF_ArtworkType_IsTtlTMS] DEFAULT ((0)) NULL,
+    [IsSubprocess]    BIT            CONSTRAINT [DF_ArtworkType_IsSubprocess] DEFAULT ((0)) NULL,
+    [Remark]          NVARCHAR (60)  CONSTRAINT [DF_ArtworkType_Remark] DEFAULT ('') NULL,
+    [ReportDropdown]  BIT            CONSTRAINT [DF_ArtworkType_ReportDropdown] DEFAULT ((0)) NULL,
+    [UseArtwork]      BIT            CONSTRAINT [DF_ArtworkType_UseArtwork] DEFAULT ((0)) NULL,
+    [SystemType]      VARCHAR (1)    CONSTRAINT [DF_ArtworkType_SystemType] DEFAULT ('') NULL,
+    [InhouseOSP]      VARCHAR (1)    CONSTRAINT [DF_ArtworkType_InhouseOSP] DEFAULT ('') NULL,
+    [AccountNo]       VARCHAR (8)    CONSTRAINT [DF_ArtworkType_AccountNo] DEFAULT ('') NULL,
+    [BcsLt]           NUMERIC (2, 1) CONSTRAINT [DF_ArtworkType_BcsLt] DEFAULT ((0)) NULL,
+    [CutLt]           TINYINT        CONSTRAINT [DF_ArtworkType_CutLt] DEFAULT ((0)) NULL,
+    [AddName]         VARCHAR (10)   CONSTRAINT [DF_ArtworkType_AddName] DEFAULT ('') NULL,
+    [AddDate]         DATETIME       NULL,
+    [EditName]        VARCHAR (10)   CONSTRAINT [DF_ArtworkType_EditName] DEFAULT ('') NULL,
+    [EditDate]        DATETIME       NULL,
+    [PostSewingDays]  INT            DEFAULT ((0)) NULL,
+    [IsPrintToCMP]    BIT            CONSTRAINT [DF_ArtworkType_IsPrintToCMP] DEFAULT ((1)) NULL,
+    [IsLocalPurchase] BIT            CONSTRAINT [DF_ArtworkType_IsLocalPurchase] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_ArtworkType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -127,4 +130,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkType', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'用來判斷此item是否可以在工廠端當地採購', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkType', @level2type = N'COLUMN', @level2name = N'IsLocalPurchase';
 
