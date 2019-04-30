@@ -62,7 +62,7 @@ namespace Sci.Production.Packing
                 .Text("Article", header: "Colorway", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(15))
                 .Numeric("QtyPerCTN", header: "Qty")
-                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(15))
+                .Text("Barcode", header: "Hangtag Barcode", width: Widths.AnsiChars(15))
                 .Numeric("ScanQty", header: "Scan Qty");
             this.Tab_Focus("CARTON");
 
