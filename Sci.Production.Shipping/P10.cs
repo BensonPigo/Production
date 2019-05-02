@@ -171,15 +171,29 @@ where g.ShipPlanID =@ShipPlanID and type = 'AIR')
             {
                 this.numericBoxTTLCTN.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty));
                 this.numericBoxTTLQTY.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalShipQty)", string.Empty));
-                this.numericTTLCBM.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY')"));
-                this.numericTTLGW.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P')"));
             }
             else
             {
                 this.numericBoxTTLCTN.Value = 0;
                 this.numericBoxTTLQTY.Value = 0;
-                this.numericTTLCBM.Value = 0;
-                this.numericTTLGW.Value = 0;
+            }
+
+            if (tmp_dt.Select("CYCFS in ('CFS-CFS','CFS-CY')").Count() > 0)
+            {
+                this.displayTTLCBM.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY')"));
+            }
+            else
+            {
+                this.displayTTLCBM.Text = string.Empty;
+            }
+
+            if (tmp_dt.Select("ShipModeID in('A/C','A/P','E/C','E/P')").Count() > 0)
+            {
+                this.displayTTLGW.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P')"));
+            }
+            else
+            {
+                this.displayTTLGW.Text = string.Empty;
             }
         }
 

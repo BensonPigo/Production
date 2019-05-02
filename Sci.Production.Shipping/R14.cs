@@ -119,8 +119,8 @@ namespace Sci.Production.Shipping
             if (this.Type == 1)
             {
                 sqlCmd = $@"
-select s.ID,g.ID,g.BrandID,g.ShipModeID,g.ShipModeID,g.Forwarder,g.CYCFS,g.CutOffDate,
-	gg.ct,
+select s.ID,g.ID,g.BrandID,g.ShipModeID,g.Forwarder,g.CYCFS,g.CutOffDate,
+	gg.ct,s.Status,
 	pp.TTLShipQty,pp.TTLCTNQty,pp.TTLCBM,
 	pc.ct
 from ShipPlan s with(nolock)
@@ -144,7 +144,7 @@ outer apply(
 	from(
 		select distinct gc.CTNRNo
 		from GMTBooking_CTNR gc with(nolock)
-		where gc.CYCFS = g.CYCFS and gc.id = g.ID
+		where gc.id = g.ID
 	)a
 )gg
 outer apply(
@@ -237,7 +237,6 @@ drop table #tmp
 ";
             }
             #endregion
-
             #region Container Detail
             if (this.Type == 3)
             {

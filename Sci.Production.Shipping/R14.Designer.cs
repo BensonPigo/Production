@@ -228,13 +228,13 @@
             this.txtShipPlanID1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtShipPlanID1.Location = new System.Drawing.Point(122, 12);
             this.txtShipPlanID1.Name = "txtShipPlanID1";
-            this.txtShipPlanID1.Size = new System.Drawing.Size(100, 23);
+            this.txtShipPlanID1.Size = new System.Drawing.Size(123, 23);
             this.txtShipPlanID1.TabIndex = 120;
             // 
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Location = new System.Drawing.Point(225, 12);
+            this.label7.Location = new System.Drawing.Point(248, 12);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(22, 23);
             this.label7.TabIndex = 121;
@@ -248,9 +248,9 @@
             // 
             this.txtShipPlanID2.BackColor = System.Drawing.Color.White;
             this.txtShipPlanID2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShipPlanID2.Location = new System.Drawing.Point(250, 12);
+            this.txtShipPlanID2.Location = new System.Drawing.Point(273, 12);
             this.txtShipPlanID2.Name = "txtShipPlanID2";
-            this.txtShipPlanID2.Size = new System.Drawing.Size(100, 23);
+            this.txtShipPlanID2.Size = new System.Drawing.Size(123, 23);
             this.txtShipPlanID2.TabIndex = 122;
             // 
             // rdbtnDetail

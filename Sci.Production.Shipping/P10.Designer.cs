@@ -47,12 +47,12 @@
             this.numericBoxTTLQTY = new Sci.Win.UI.NumericBox();
             this.numericBoxTTLCTN = new Sci.Win.UI.NumericBox();
             this.btnContainerTruck = new Sci.Win.UI.Button();
-            this.numericTTLCBM = new Sci.Win.UI.NumericBox();
-            this.numericTTLGW = new Sci.Win.UI.NumericBox();
             this.displayTTLContainer = new Sci.Win.UI.DisplayBox();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
+            this.displayTTLCBM = new Sci.Win.UI.DisplayBox();
+            this.displayTTLGW = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -78,12 +78,12 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayTTLGW);
             this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.displayTTLCBM);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.displayTTLContainer);
-            this.masterpanel.Controls.Add(this.numericTTLGW);
-            this.masterpanel.Controls.Add(this.numericTTLCBM);
             this.masterpanel.Controls.Add(this.btnContainerTruck);
             this.masterpanel.Controls.Add(this.btnImportData);
             this.masterpanel.Controls.Add(this.numericBoxTTLCTN);
@@ -108,12 +108,12 @@
             this.masterpanel.Controls.SetChildIndex(this.numericBoxTTLCTN, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportData, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnContainerTruck, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericTTLCBM, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericTTLGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayTTLContainer, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayTTLCBM, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayTTLGW, 0);
             // 
             // detailpanel
             // 
@@ -165,7 +165,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 524);
+            this.browse.Size = new System.Drawing.Size(913, 524);
             // 
             // tabs
             // 
@@ -382,50 +382,6 @@
             this.btnContainerTruck.UseVisualStyleBackColor = true;
             this.btnContainerTruck.Click += new System.EventHandler(this.BtnContainerTruck_Click);
             // 
-            // numericTTLCBM
-            // 
-            this.numericTTLCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericTTLCBM.DecimalPlaces = 4;
-            this.numericTTLCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericTTLCBM.IsSupportEditMode = false;
-            this.numericTTLCBM.Location = new System.Drawing.Point(594, 60);
-            this.numericTTLCBM.Name = "numericTTLCBM";
-            this.numericTTLCBM.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericTTLCBM.ReadOnly = true;
-            this.numericTTLCBM.Size = new System.Drawing.Size(109, 23);
-            this.numericTTLCBM.TabIndex = 68;
-            this.numericTTLCBM.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericTTLGW
-            // 
-            this.numericTTLGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericTTLGW.DecimalPlaces = 3;
-            this.numericTTLGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericTTLGW.IsSupportEditMode = false;
-            this.numericTTLGW.Location = new System.Drawing.Point(594, 89);
-            this.numericTTLGW.Name = "numericTTLGW";
-            this.numericTTLGW.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericTTLGW.ReadOnly = true;
-            this.numericTTLGW.Size = new System.Drawing.Size(109, 23);
-            this.numericTTLGW.TabIndex = 69;
-            this.numericTTLGW.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
             // displayTTLContainer
             // 
             this.displayTTLContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -458,6 +414,24 @@
             this.label3.Size = new System.Drawing.Size(101, 23);
             this.label3.TabIndex = 73;
             this.label3.Text = "Total Container";
+            // 
+            // displayTTLCBM
+            // 
+            this.displayTTLCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTTLCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTTLCBM.Location = new System.Drawing.Point(594, 60);
+            this.displayTTLCBM.Name = "displayTTLCBM";
+            this.displayTTLCBM.Size = new System.Drawing.Size(109, 23);
+            this.displayTTLCBM.TabIndex = 1;
+            // 
+            // displayTTLGW
+            // 
+            this.displayTTLGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTTLGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTTLGW.Location = new System.Drawing.Point(594, 89);
+            this.displayTTLGW.Name = "displayTTLGW";
+            this.displayTTLGW.Size = new System.Drawing.Size(109, 23);
+            this.displayTTLGW.TabIndex = 2;
             // 
             // P10
             // 
@@ -530,7 +504,7 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displayTTLContainer;
-        private Win.UI.NumericBox numericTTLGW;
-        private Win.UI.NumericBox numericTTLCBM;
+        private Win.UI.DisplayBox displayTTLGW;
+        private Win.UI.DisplayBox displayTTLCBM;
     }
 }

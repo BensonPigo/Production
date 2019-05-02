@@ -41,6 +41,7 @@
             // P10_ContainerTruck
             // 
             this.ClientSize = new System.Drawing.Size(831, 497);
+            this.GridPopUp = false;
             this.Name = "P10_ContainerTruck";
             this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Container/Truck";

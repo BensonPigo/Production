@@ -46,6 +46,26 @@ namespace Sci.Production.Shipping
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_CYCFS;
 
             Ict.Win.DataGridViewGeneratorTextColumnSettings id = new DataGridViewGeneratorTextColumnSettings();
+
+            id.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataTable selectDt;
+                    string strSelectSqlCmd = $@"select [GB#]=ID,LoadingType=CYCFS from GMTBooking g WITH(NOLOCK) where g.shipPlanID = '{this.ShipPlanID}'";
+                    DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
+
+                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "GB#,LoadingType", "20,10", this.CurrentData["ID"].ToString());
+                    DialogResult result = selectItem.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    this.CurrentData["ID"] = selectItem.GetSelectedString();
+                    this.CurrentData["CYCFS"] = selectItem.GetSelecteds()[0]["LoadingType"];
+                    this.CurrentData.EndEdit();
+                }
+            };
+
             id.CellValidating += (s, e) =>
             {
                 if (!this.EditMode || MyUtility.Check.Empty(e.FormattedValue) || e.RowIndex == -1)
