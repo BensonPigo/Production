@@ -109,7 +109,7 @@ namespace Sci.Production.Shipping
             base.OnRequired();
             DataTable datas;
             string sqlcmd = $@"
-            select gc.*
+            select gc.*,g.CYCFS
             from GMTBooking_CTNR gc with(nolock)
             inner join GMTBooking g with(nolock) on gc.id = g.id
             where g.ShipPlanID ='{this.ShipPlanID}'
