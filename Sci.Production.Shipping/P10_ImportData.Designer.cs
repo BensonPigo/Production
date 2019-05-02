@@ -32,6 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.label1 = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
@@ -61,8 +62,7 @@
             this.panel8 = new Sci.Win.UI.Panel();
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnImportData = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtType = new Sci.Win.UI.TextBox();
+            this.comboContainerType = new Sci.Win.UI.ComboBox();
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -93,7 +93,7 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.txtType);
+            this.panel3.Controls.Add(this.comboContainerType);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.txtSPNo);
@@ -117,6 +117,14 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(779, 100);
             this.panel3.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(468, 67);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 23);
+            this.label1.TabIndex = 17;
+            this.label1.Text = "Loading Type";
             // 
             // btnQuery
             // 
@@ -414,22 +422,17 @@
             this.btnImportData.UseVisualStyleBackColor = true;
             this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
-            // label1
+            // comboContainerType
             // 
-            this.label1.Location = new System.Drawing.Point(468, 67);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 23);
-            this.label1.TabIndex = 17;
-            this.label1.Text = "Loading Type";
-            // 
-            // txtType
-            // 
-            this.txtType.BackColor = System.Drawing.Color.White;
-            this.txtType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtType.Location = new System.Drawing.Point(563, 66);
-            this.txtType.Name = "txtType";
-            this.txtType.Size = new System.Drawing.Size(120, 23);
-            this.txtType.TabIndex = 18;
+            this.comboContainerType.BackColor = System.Drawing.Color.White;
+            this.comboContainerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboContainerType.FormattingEnabled = true;
+            this.comboContainerType.IsSupportUnselect = true;
+            this.comboContainerType.Location = new System.Drawing.Point(563, 66);
+            this.comboContainerType.Name = "comboContainerType";
+            this.comboContainerType.OldText = "";
+            this.comboContainerType.Size = new System.Drawing.Size(121, 24);
+            this.comboContainerType.TabIndex = 13;
             // 
             // P10_ImportData
             // 
@@ -493,7 +496,7 @@
         private Win.UI.Panel panel8;
         private Win.UI.Button btnCancel;
         private Win.UI.Button btnImportData;
-        private Win.UI.TextBox txtType;
         private Win.UI.Label label1;
+        private Win.UI.ComboBox comboContainerType;
     }
 }

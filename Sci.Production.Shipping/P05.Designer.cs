@@ -864,7 +864,7 @@
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(860, 66);
+            this.btnExpenseData.Location = new System.Drawing.Point(860, 63);
             this.btnExpenseData.Name = "btnExpenseData";
             this.btnExpenseData.Size = new System.Drawing.Size(131, 30);
             this.btnExpenseData.TabIndex = 65;
@@ -900,7 +900,7 @@
             // 
             this.btnImportfrompackinglist.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportfrompackinglist.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnImportfrompackinglist.Location = new System.Drawing.Point(852, 210);
+            this.btnImportfrompackinglist.Location = new System.Drawing.Point(846, 129);
             this.btnImportfrompackinglist.Name = "btnImportfrompackinglist";
             this.btnImportfrompackinglist.Size = new System.Drawing.Size(145, 33);
             this.btnImportfrompackinglist.TabIndex = 19;
@@ -1059,7 +1059,7 @@
             // btnAirPPStatus
             // 
             this.btnAirPPStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAirPPStatus.Location = new System.Drawing.Point(860, 138);
+            this.btnAirPPStatus.Location = new System.Drawing.Point(861, 96);
             this.btnAirPPStatus.Name = "btnAirPPStatus";
             this.btnAirPPStatus.Size = new System.Drawing.Size(131, 30);
             this.btnAirPPStatus.TabIndex = 71;

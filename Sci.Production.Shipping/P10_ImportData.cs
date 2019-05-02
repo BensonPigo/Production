@@ -38,6 +38,7 @@ namespace Sci.Production.Shipping
             this.masterData = masterData;
             this.detailData = detailData;
             this.detail2Data = detail2Data;
+            MyUtility.Tool.SetupCombox(this.comboContainerType, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");
         }
 
         /// <inheritdoc/>
@@ -135,9 +136,9 @@ namespace Sci.Production.Shipping
                 sqlCmd.Append(string.Format(" and pd.OrderID = '{0}'", this.txtSPNo.Text));
             }
 
-            if (!MyUtility.Check.Empty(this.txtType.Text))
+            if (!MyUtility.Check.Empty(this.comboContainerType.Text))
             {
-                sqlCmd.Append(string.Format(" and g.CYCFS = '{0}'", this.txtType.Text));
+                sqlCmd.Append(string.Format(" and g.CYCFS = '{0}'", this.comboContainerType.Text));
             }
             #endregion
 
