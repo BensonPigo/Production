@@ -264,14 +264,27 @@ from(
 	where a.ArtworkType_CPU !=''
 )b
 
+--準備台北資料(須排除這些)
+select ps.ID
+into #TPEtmp
+from PO_Supp ps
+inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
+inner join MtlType ml on ml.id = fb.MtlTypeID
+where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
+and ml.isThread=1 
+and ps.SuppID = 'FTY' and ps.Seq1 Like '5%'
+
 -----orderid & ArtworkTypeID & Seq
 select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS,t.QAQty,t.FactoryID,t.Team,t.OutputDate,t.SewingLineID,
                 IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,t.Category,t.ComboType
 into #idat
 from #tmpSewingGroup t
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = t.OrderId
+inner join orders o with(nolock) on o.ID = t.OrderId
 inner join #AT A on A.ID = ot.ArtworkTypeID
-
+where  ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+			  or ot.ArtworkTypeID <> 'SP_THREAD')
 declare @columnsName nvarchar(max) = stuff((select concat(',[',ArtworkType_Unit,']') from #atall2 for xml path('')),1,1,'')
 declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)')from #atall2 for xml path(''))
 
