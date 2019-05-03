@@ -57,12 +57,15 @@ group by poid,seq1,seq2,description,POUnit";
                 strSqlCmd = $@"
 
 select ed.poid,ed.seq1,ed.seq2
-,[shipqty] = dbo.GetUnitQty(PoUnit,dbo.GetStockUnitBySPSeq(ed.poid,ed.seq1,ed.seq2),sum(ed.Qty)) 
+,[shipqty] = dbo.GetUnitQty(rd.PoUnit,dbo.GetStockUnitBySPSeq(ed.poid,ed.seq1,ed.seq2),sum(ed.Qty)) 
 ,[received] = sum(accu_rcv) 
 ,[receiving] = sum(rcv)
 ,rd.description
 ,Foc = sum(ed.Foc)
 from Export_Detail ed
+inner join dbo.PO_Supp_Detail pod WITH (NOLOCK) on pod.ID= ed.POid   
+                                                 and pod.Seq1 = ed.SEQ1    
+                                                 and pod.Seq2 = ed.SEQ2  
 outer apply(
 	select a.PoId,a.Seq1,a.Seq2,0 as accu_rcv,sum(a.StockQty) as rcv
 		,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] ,a.POUnit 
