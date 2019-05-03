@@ -249,8 +249,8 @@ drop table #tmp,#tmpa
                 sqlCmd = $@"
 select s.ID,g.ID,g.CYCFS,gc.Type,gc.CTNRNo,gc.SealNo,gc.TruckNo,g.SONo
 from ShipPlan s with(nolock)
-left join GMTBooking g with(nolock) on g.ShipPlanID = s.ID
-left join GMTBooking_CTNR gc with(nolock) on gc.ID = g.ID
+inner join GMTBooking g with(nolock) on g.ShipPlanID = s.ID
+inner join GMTBooking_CTNR gc with(nolock) on gc.ID = g.ID
 outer apply(
 	select p.PulloutDate
 	from PackingList p with(nolock)
