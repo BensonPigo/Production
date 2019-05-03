@@ -136,5 +136,12 @@ namespace Sci.Production.Subcon
                 }
             }
         }
+
+        private void btnSetPanelCutcell_Click(object sender, EventArgs e)
+        {
+            string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            var callfrm = new B40_RFIDReaderSetting(this.Perm.Edit, id, null, null,this.CurrentMaintain);
+            callfrm.ShowDialog();
+        }
     }
 }

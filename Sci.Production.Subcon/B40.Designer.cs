@@ -47,6 +47,7 @@
             this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
             this.label4 = new Sci.Win.UI.Label();
             this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
+            this.btnSetPanelCutcell = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -62,6 +63,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnSetPanelCutcell);
             this.detailcont.Controls.Add(this.comboRFIDProcessLocation);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.comboMDivision);
@@ -202,6 +204,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.boolFtyGroupList = true;
             this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -286,6 +289,17 @@
             this.comboRFIDProcessLocation.Size = new System.Drawing.Size(121, 24);
             this.comboRFIDProcessLocation.TabIndex = 12;
             // 
+            // btnSetPanelCutcell
+            // 
+            this.btnSetPanelCutcell.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnSetPanelCutcell.Location = new System.Drawing.Point(749, 30);
+            this.btnSetPanelCutcell.Name = "btnSetPanelCutcell";
+            this.btnSetPanelCutcell.Size = new System.Drawing.Size(72, 55);
+            this.btnSetPanelCutcell.TabIndex = 13;
+            this.btnSetPanelCutcell.Text = "Panel Cut Cell";
+            this.btnSetPanelCutcell.UseVisualStyleBackColor = true;
+            this.btnSetPanelCutcell.Click += new System.EventHandler(this.btnSetPanelCutcell_Click);
+            // 
             // B40
             // 
             this.ClientSize = new System.Drawing.Size(852, 457);
@@ -293,6 +307,7 @@
             this.DefaultControlForEdit = "comboSubprocess";
             this.IsSupportPrint = false;
             this.Name = "B40";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B40.RFID Reader setting";
             this.UniqueExpress = "ID";
             this.WorkAlias = "RFIDReader";
@@ -332,5 +347,6 @@
         private Class.comboMDivision comboMDivision;
         private Class.comboRFIDProcessLocation comboRFIDProcessLocation;
         private Win.UI.Label label4;
+        private Win.UI.Button btnSetPanelCutcell;
     }
 }
