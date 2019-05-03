@@ -259,7 +259,7 @@
             "",
             "Y",
             "N"});
-            this.comboCancel.Location = new System.Drawing.Point(394, 187);
+            this.comboCancel.Location = new System.Drawing.Point(111, 221);
             this.comboCancel.Name = "comboCancel";
             this.comboCancel.OldText = "";
             this.comboCancel.Size = new System.Drawing.Size(80, 24);
@@ -267,15 +267,15 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(304, 187);
+            this.label1.Location = new System.Drawing.Point(13, 221);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(87, 23);
+            this.label1.Size = new System.Drawing.Size(95, 23);
             this.label1.TabIndex = 112;
             this.label1.Text = "Cancel Order";
             // 
             // R02
             // 
-            this.ClientSize = new System.Drawing.Size(536, 250);
+            this.ClientSize = new System.Drawing.Size(536, 294);
             this.Controls.Add(this.comboCancel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dateBuyerDelivery);
