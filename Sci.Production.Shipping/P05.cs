@@ -600,6 +600,12 @@ order by fwd.WhseNo",
 
             #endregion
 
+            // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
+            if (!this.CheckShipMode())
+            {
+                return false;
+            }
+
             #region 檢查Act FCR Date 不可晚於今日or早於一個月前
             if (!MyUtility.Check.Empty(CurrentMaintain["FBDate"]))
             {
@@ -1428,13 +1434,33 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             this.OnDetailEntered();
         }
 
-        // 檢查表身的ShipMode與表頭的ShipMode要相同
+        // 檢查表身的ShipMode與表頭的ShipMode要相同 & ShipModeID 不存在Order_QtyShip 就return
         private bool CheckShipMode()
         {
             StringBuilder msg = new StringBuilder();
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Select(string.Format("ShipModeID <> '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
+
+            DataTable dtShipMode = (DataTable)this.detailgridbs.DataSource;
+            if (dtShipMode == null || dtShipMode.Rows.Count == 0)
             {
-                msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["ShipModeID"])));
+                return false;
+            }
+
+            foreach (DataRow dr in dtShipMode.Rows)
+            {
+                string strSql = $@"
+select 1
+from PackingList p 
+inner join PackingList_Detail pd on p.ID=pd.ID
+where 1=1
+and p.id='{dr["ID"]}'
+and not exists(select 1 from Order_QtyShip oq
+where oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq and oq.ShipmodeID = p.ShipModeID
+)";
+                if (MyUtility.Check.Seek(strSql) ||
+                    dr["ShipModeID"].ToString() != this.CurrentMaintain["ShipModeID"].ToString())
+                {
+                    msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["ShipModeID"])));
+                }
             }
 
             if (msg.Length > 0)
@@ -1508,7 +1534,8 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                 return;
             }
 
-            // 檢查表身的ShipMode與表頭的ShipMode如果不同就不可以Confirm
+            // 檢查表身的ShipMode與表頭的ShipMode如果不同 & ShipModeID 不存在Order_QtyShip
+            // 就不可以Confirm
             if (!this.CheckShipMode())
             {
                 return;

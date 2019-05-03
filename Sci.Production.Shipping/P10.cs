@@ -298,6 +298,13 @@ order by g.ID", masterID);
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
+            if (!this.ChkShipMode())
+            {
+                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!");
+                return false;
+            }
+
             // GetID
             if (this.IsDetailInserting)
             {
@@ -630,6 +637,14 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         protected override void ClickCheck()
         {
             base.ClickCheck();
+
+            // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
+            if (!this.ChkShipMode())
+            {
+                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!");
+                return;
+            }
+
             string updateCmd = string.Format("update ShipPlan set Status = 'Checked', CFMDate = '{0}', EditName = '{1}', EditDate = GETDATE() where ID = '{2}'", DateTime.Today.ToString("d"), Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
@@ -794,6 +809,13 @@ and p1.Type <> 'S'
 
             #endregion
 
+            // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
+            if (!this.ChkShipMode())
+            {
+                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!");
+                return;
+            }
+
             // Garment Booking還沒Confirm就不可以做Confirm
             sqlCmd = string.Format("select ID from GMTBooking WITH (NOLOCK) where ShipPlanID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out dt);
@@ -844,6 +866,39 @@ and p1.Type <> 'S'
         private void Detailgridbs_ListChanged(object sender, ListChangedEventArgs e)
         {
             this.SumData();
+        }
+
+        /// <summary>
+        /// 檢查Ship Mode
+        /// 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
+        /// </summary>
+        /// <returns>bool</returns>
+        private bool ChkShipMode()
+        {
+            DataTable dtShipMode = (DataTable)this.detailgridbs.DataSource;
+            if (dtShipMode == null || dtShipMode.Rows.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (DataRow dr in dtShipMode.Rows)
+            {
+                string strSql = $@"
+select 1
+from PackingList p 
+inner join PackingList_Detail pd on p.ID=pd.ID
+where 1=1
+and p.INVNo='{dr["ID"]}'
+and not exists(select 1 from Order_QtyShip oq
+where oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq and oq.ShipmodeID = '{dr["ShipModeID"]}'
+)";
+                if (MyUtility.Check.Seek(strSql))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
