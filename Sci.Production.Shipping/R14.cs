@@ -183,7 +183,13 @@ outer apply(
 )ppd
 where 1=1
 {where}
-order by s.ID,g.ID
+
+select g.BrandID
+into #tmpa
+from ShipPlan s with(nolock)
+left join GMTBooking g with(nolock) on g.ShipPlanID = s.ID
+where 1=1
+{where}
 
 select a.*,
 	isnull(CFS.GBct,0),isnull(CFS.TTLShipQty,0),isnull(CFS.TTLCBM,0),CFS=0,
@@ -193,9 +199,9 @@ select a.*,
 	isnull(HQ45.GBct,0),isnull(HQ45.TTLShipQty,0),isnull(HQ45.TTLCBM,0),HQ45=0,
 	isnull(AIR.GBct,0),isnull(AIR.TTLShipQty,0),isnull(AIR.TTLCBM,0),AIR=0
 from(
-select t.BrandID,GBct = COUNT(ID)
-from #tmp t
-group by t.BrandID
+    select t.BrandID,GBct = COUNT(1)
+    from #tmpa t
+    group by t.BrandID
 )a
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
@@ -233,7 +239,7 @@ left join(
 	where t.Type = 'AIR'
 	group by t.BrandID	
 )AIR on a.BrandID = AIR.BrandID
-drop table #tmp
+drop table #tmp,#tmpa
 ";
             }
             #endregion
