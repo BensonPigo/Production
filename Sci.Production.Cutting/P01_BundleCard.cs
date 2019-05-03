@@ -26,7 +26,7 @@ namespace Sci.Production.Cutting
         }
         private void requery()
         {
-            string sqlcmd = ($@"
+            string sqlcmd = $@"
 Select a.id,b.BundleNo,a.orderid,a.cdate,a.cutref,a.PatternPanel,a.cutno,b.sizecode,b.bundlegroup,b.Qty,b.PrintDate
 from Bundle a WITH (NOLOCK)
 inner join Bundle_Detail b WITH (NOLOCK) on a.id = b.Id

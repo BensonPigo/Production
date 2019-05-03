@@ -330,7 +330,7 @@ where	1=1
 		group by bbi.OrderID, bbi.FComb, bbi.Colorid, bbi.Pattern
 				, bbi.PtnDes, bbi.Size, bbi.Artwork
 	) DisBundleInfo
-	left join Orders o on DisBundleInfo.Orderid = o.ID
+	left join Orders o on DisBundleInfo.Orderid = o.ID 
 	outer apply (
 		select Qty = sum (oq.Qty)
 		from Order_Qty oq
