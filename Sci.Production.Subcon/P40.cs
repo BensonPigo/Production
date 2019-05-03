@@ -249,7 +249,7 @@ select	LocationID = isnull (bio.LocationID, '')
 into #BasBundleInfo
 from Bundle b
 inner join Bundle_Detail bd on bd.ID = b.ID
-inner join Orders o on b.Orderid = o.ID
+inner join Orders o on b.Orderid = o.ID  and o.MDivisionID  = b.MDivisionID 
 outer apply (
 	select v = stuff ((	select distinct CONCAT ('+', bda.SubprocessId)
 						from Bundle_Detail_Art bda
@@ -260,8 +260,8 @@ outer apply (
 left join BundleInOut bio on bio.BundleNo = bd.BundleNo							 
 							 and bio.SubProcessId = 'Loading'
 							 and bio.InComing is not null
-
-where	1=1
+                             and isnull(bio.RFIDProcessLocationID,'') = ''
+where	1=1 
 {this.sqlWhere.JoinToString($"{Environment.NewLine}")}
 		
 

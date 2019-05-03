@@ -214,7 +214,7 @@ Select
 	,bio.CutCellID
 into #result
 from Bundle b WITH (NOLOCK) 
-inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
 outer apply(
     select s.ID,s.InOutRule,s.ArtworkTypeId

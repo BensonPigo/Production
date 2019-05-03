@@ -84,10 +84,10 @@ select Sel = 0
 	   , M = MDivisionid
 	   , Factory = (select O.FtyGroup 
 					from Orders O 
-					Where O.ID = Bundle.Orderid) 
+					Where O.ID = Bundle.Orderid  and o.MDivisionID  = Bundle.MDivisionID ) 
 	   , Style = (select StyleID 
-				  from Orders 
-				  where Orders.ID = Bundle.OrderID)
+				  from Orders o
+				  where o.ID = Bundle.OrderID  and o.MDivisionID  = Bundle.MDivisionID )
 	   , CutRefNo = CutRef
 	   , SPNo = Orderid
 	   , Size = Sizecode
@@ -220,7 +220,7 @@ from (
        , a.Qty [Qty]
   from dbo.Bundle_Detail a WITH (NOLOCK) 
   left join dbo.Bundle b WITH (NOLOCK) on a.id = b.id
-  left join dbo.orders c WITH (NOLOCK) on c.id = b.Orderid
+  left join dbo.orders c WITH (NOLOCK) on c.id = b.Orderid and c.MDivisionID  = b.MDivisionID 
   outer apply ( 
     select [Cutpart] = iif (a.PatternCode = 'ALLPARTS', iif (@extend = '1', a.PatternCode
                                                                           , a.PatternCode)
@@ -258,7 +258,7 @@ from (
          , a.Qty [Qty]
   from dbo.Bundle_Detail a WITH (NOLOCK) 
   left join dbo.Bundle b WITH (NOLOCK) on a.id = b.id
-  left join dbo.orders c WITH (NOLOCK) on c.id = b.Orderid
+  left join dbo.orders c WITH (NOLOCK) on c.id = b.Orderid and c.MDivisionID  = b.MDivisionID 
   left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id = a.Id
   outer apply (
     select [Cutpart] = iif (a.PatternCode = 'ALLPARTS', iif(@extend = '1', d.PatternCode
@@ -333,7 +333,7 @@ from (
 			,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 	outer apply ( 
 		select [Cutpart]  = iif (a.PatternCode = 'ALLPARTS', iif (@extend = '1', a.PatternCode
 																			   , a.PatternCode)
@@ -371,7 +371,7 @@ from (
 		   , a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 	outer apply (
 		select [Cutpart] = iif (a.PatternCode = 'ALLPARTS', iif (@extend = '1', a.PatternCode
 																			  , a.PatternCode)

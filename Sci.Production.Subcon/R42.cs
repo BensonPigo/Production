@@ -119,7 +119,7 @@ Select distinct
             from BundleTransfer  bt WITH (NOLOCK)
             left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
             left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
-            left join orders o WITH (NOLOCK) on o.Id = b.OrderId
+            left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
             outer apply(
 	             select sub= (
 		             Select distinct concat('+', bda.SubprocessId)

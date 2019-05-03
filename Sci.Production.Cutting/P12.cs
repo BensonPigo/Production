@@ -285,7 +285,7 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 outer apply
 (
     select SubProcess = 
@@ -338,7 +338,7 @@ select
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 outer apply
 (
 	select distinct x.PatternCode,x.PatternDesc,x.Parts
@@ -436,7 +436,7 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 outer apply
 (
     select SubProcess = 
@@ -489,7 +489,7 @@ select
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 outer apply
 (
     select SubProcess = 

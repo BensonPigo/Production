@@ -216,7 +216,7 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
         private void btnBundleCard_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
-            var frm = new Sci.Production.Cutting.P01_BundleCard(CurrentMaintain["ID"].ToString());
+            var frm = new Sci.Production.Cutting.P01_BundleCard(CurrentMaintain["ID"].ToString(), CurrentMaintain["MDivisionID"].ToString());
             frm.ShowDialog(this);
         }
         //Cutpart Check
