@@ -413,7 +413,8 @@ SET
       ,a.AddDate	      =b.AddDate		
       ,a.EditName	      =b.EditName		
       ,a.EditDate	      =b.EditDate
-	  ,a.IsTrimCardOther = b.isTrimCardOther		
+	  ,a.IsTrimCardOther = b.isTrimCardOther	
+	  ,a.IsThread        = b.IsThread
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
 where b.EditDate > a.EditDate
@@ -434,6 +435,7 @@ SET
 	  ,a.IsTrimCardOther = b.isTrimCardOther
       --,a.EditName	      =b.EditName		
       --,a.EditDate	      =b.EditDate		
+	  ,a.IsThread        = b.IsThread
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
 where b.EditDate <= a.EditDate
@@ -453,6 +455,7 @@ ID
       ,EditName
       ,EditDate
 	  ,isTrimCardOther
+	  ,IsThread
 
 )
 select 
@@ -470,6 +473,7 @@ ID
       ,EditName
       ,EditDate
 	  ,isTrimCardOther
+	  ,IsThread
 
 from Trade_To_Pms.dbo.MtlType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.MtlType as a WITH (NOLOCK) where a.id = b.id)
