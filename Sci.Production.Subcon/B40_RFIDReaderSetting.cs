@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Subcon
 {
@@ -70,7 +71,7 @@ namespace Sci.Production.Subcon
 
             this.grid.IsEditingReadOnly = true;
             Helper.Controls.Grid.Generator(this.grid)
-             .Text("PanelNo", header: "Panel No", width: Widths.AnsiChars(20), iseditingreadonly: true)
+             .Text("PanelNo", header: "Panel No", width: Widths.AnsiChars(20))
              .Text("CutCellID", header: "Cut Cell", width: Widths.AnsiChars(8), settings: CutCellID, iseditingreadonly: false)
              .DateTime("addDate", header: "Add Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
              .Text("addName", header: "Add Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -100,7 +101,19 @@ where rp.RFIDReaderID ='{this.ID}'
 
         protected override bool OnSaveBefore()
         {
+            DataTable dt = (DataTable)this.gridbs.DataSource;
+            if (dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && MyUtility.Check.Empty(w["PanelNo"])).Count() > 0)
+            {
+                MyUtility.Msg.WarningBox("Panel No cannot empty");
+                return false;
+            }
             return base.OnSaveBefore();
+        }
+
+        protected override void OnUIConvertToMaintain()
+        {
+            base.OnUIConvertToMaintain();
+            this.revise.Visible = false;
         }
     }
 }

@@ -52,6 +52,7 @@
             // B40_RFIDReaderSetting
             // 
             this.ClientSize = new System.Drawing.Size(935, 497);
+            this.GridPopUp = false;
             this.KeyField1 = "RFIDReaderID";
             this.Name = "B40_RFIDReaderSetting";
             this.OnLineHelpID = "Sci.Win.Subs.Input4";

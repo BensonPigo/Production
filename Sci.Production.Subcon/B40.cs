@@ -15,6 +15,7 @@ namespace Sci.Production.Subcon
 {
     public partial class B40 : Sci.Win.Tems.Input1
     {
+        IList<DataRow> Subprocesslist;
         public B40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -26,13 +27,13 @@ namespace Sci.Production.Subcon
         private void comboload()
         {            
             DataTable dtSubprocessID;
-            DualResult Result;
-            if (Result = DBProxy.Current.Select(null, "select ID from Subprocess WITH (NOLOCK) where Junk = '0'", out dtSubprocessID))
-            {
-                this.comboSubprocess.DataSource = dtSubprocessID;
-                this.comboSubprocess.DisplayMember = "ID";
-            }
-            else { ShowErr(Result); }
+            //DualResult Result;
+            //if (Result = DBProxy.Current.Select(null, "select ID from Subprocess WITH (NOLOCK) where Junk = '0'", out dtSubprocessID))
+            //{
+            //    this.comboSubprocess.DataSource = dtSubprocessID;
+            //    this.comboSubprocess.DisplayMember = "ID";
+            //}
+            //else { ShowErr(Result); }
 
             Dictionary<String, String> comboType_RowSource = new Dictionary<string, string>();
             comboType_RowSource.Add("1", "In");
@@ -43,6 +44,14 @@ namespace Sci.Production.Subcon
             comboStockType.DisplayMember = "Value";
 
             this.comboMDivision.setDefalutIndex();
+        }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            Subprocesslist = null;
+            string sqlsubprocess = $@"select ProcessIDs = stuff((select concat(',',ProcessID)from RFIDReader_SubProcess with(nolock) where RFIDReaderID = '{this.CurrentMaintain["ID"]}' for xml path('')),1,1,'')";
+            this.txtSubprocess.Text = MyUtility.GetValue.Lookup(sqlsubprocess);
         }
 
         protected override void ClickCopyAfter()
@@ -63,7 +72,7 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("ID can not empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(comboSubprocess.Text)|| MyUtility.Check.Empty(comboStockType.Text))
+            if (MyUtility.Check.Empty(txtSubprocess.Text)|| MyUtility.Check.Empty(comboStockType.Text))
             {
                 MyUtility.Msg.WarningBox("Sub-process and Stock Type can not empty!");
                 return false;
@@ -76,6 +85,32 @@ namespace Sci.Production.Subcon
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override DualResult ClickSave()
+        {
+            if (Subprocesslist != null)
+            {
+
+                DataTable sourceDt = Subprocesslist.CopyToDataTable();
+                System.Data.DataColumn newColumn = new System.Data.DataColumn("RFIDReaderID", typeof(System.String));
+                newColumn.DefaultValue = this.CurrentMaintain["ID"];
+                sourceDt.Columns.Add(newColumn);
+                string in_update = $@"
+select RFIDReaderID,ID into #tmp2 from #tmp
+delete RFIDReader_SubProcess where RFIDReaderID = '{this.CurrentMaintain["ID"]}'
+insert RFIDReader_SubProcess select * from #tmp2
+;
+";
+                DataTable dt;
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(sourceDt, string.Empty, in_update, out dt);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            return base.ClickSave();
         }
 
         protected override void ClickSaveAfter()
@@ -142,6 +177,16 @@ namespace Sci.Production.Subcon
             string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
             var callfrm = new B40_RFIDReaderSetting(this.Perm.Edit, id, null, null,this.CurrentMaintain);
             callfrm.ShowDialog();
+        }
+
+        private void txtSubprocess_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlWhere = "select ID from Subprocess WITH (NOLOCK) where Junk = '0'";
+            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, headercaptions: "Subprocess ID", columnwidths: "30", defaults: this.txtSubprocess.Text, defaultValueColumn: "ID");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) return;
+            Subprocesslist = item.GetSelecteds();
+            this.txtSubprocess.Text = item.GetSelectedString();
         }
     }
 }
