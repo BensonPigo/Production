@@ -921,15 +921,16 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
 
     --FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
+    -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
     update s set s.Price = 0
         from #tmpAllSubprocess s
         inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId
-        where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price < a.Price
+        where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
 
     update s set s.Price = 0
         from #tmpAllSubprocess s
         inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId
-        where s.ArtworkTypeID = 'AT (HAND)'  and s.Price < a.Price
+        where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
 
 select ArtworkTypeID = t1.ID
 	   , Price = isnull(sum(Round(t2.Price,t1.DecimalNumber)), 0)
