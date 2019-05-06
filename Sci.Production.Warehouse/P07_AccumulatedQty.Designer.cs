@@ -34,6 +34,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
+            this.chkRcvdQty = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridAccumulatedQty)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -71,6 +72,7 @@
             this.gridAccumulatedQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAccumulatedQty.RowTemplate.Height = 24;
             this.gridAccumulatedQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAccumulatedQty.ShowCellToolTips = false;
             this.gridAccumulatedQty.Size = new System.Drawing.Size(784, 389);
             this.gridAccumulatedQty.TabIndex = 1;
             this.gridAccumulatedQty.TabStop = false;
@@ -86,6 +88,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.chkRcvdQty);
             this.panel2.Controls.Add(this.btnClose);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 389);
@@ -93,16 +96,34 @@
             this.panel2.Size = new System.Drawing.Size(784, 48);
             this.panel2.TabIndex = 0;
             // 
+            // chkRcvdQty
+            // 
+            this.chkRcvdQty.AutoSize = true;
+            this.chkRcvdQty.Checked = true;
+            this.chkRcvdQty.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRcvdQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkRcvdQty.IsSupportEditMode = false;
+            this.chkRcvdQty.Location = new System.Drawing.Point(12, 12);
+            this.chkRcvdQty.Name = "chkRcvdQty";
+            this.chkRcvdQty.Size = new System.Drawing.Size(544, 21);
+            this.chkRcvdQty.TabIndex = 20;
+            this.chkRcvdQty.Text = "only show Rcvd. Qty > 0 data, which does not contain other material received data" +
+    "";
+            this.chkRcvdQty.UseVisualStyleBackColor = true;
+            this.chkRcvdQty.CheckedChanged += new System.EventHandler(this.chkRcvdQty_CheckedChanged);
+            // 
             // P07_AccumulatedQty
             // 
             this.ClientSize = new System.Drawing.Size(784, 437);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.Name = "P07_AccumulatedQty";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P07. Accumulated Qty";
             ((System.ComponentModel.ISupportInitialize)(this.gridAccumulatedQty)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -115,5 +136,6 @@
         private Win.UI.Grid gridAccumulatedQty;
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
+        private Win.UI.CheckBox chkRcvdQty;
     }
 }

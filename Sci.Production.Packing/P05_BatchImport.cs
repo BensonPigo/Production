@@ -170,12 +170,18 @@ select  0 as Selected
         , isnull(fd.Price,-1) as Price
         , od.SeasonID
         , od.Factory
+into #tmp
 from OrderData od
 left join FOCData fd on od.ID = fd.ID and od.Article = fd.Article and od.SizeCode = fd.SizeCode
 left join PulloutData pd on pd.OrderID = od.ID and pd.OrderShipmodeSeq = od.Seq and pd.Article = od.Article and pd.SizeCode = od.SizeCode
 left join View_OrderFAColor voc on voc.ID = od.ID and voc.Article = od.Article
-where   (od.Qty-isnull(pd.PulloutQty,0)) > 0 
-        and isnull(fd.Price,-1) = 0");
+
+select * from #tmp where Price != 0 or ShipQty <= 0
+
+select * from #tmp where ShipQty > 0 and Price = 0
+
+drop table #tmp;
+");
             #region 準備sql參數資料
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brand", this.displayBrand.Value);
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", this.displayM.Value);
@@ -208,9 +214,23 @@ where   (od.Qty-isnull(pd.PulloutQty,0)) > 0
             cmds.Add(sp8);
             #endregion
 
-            if (this.result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.selectDataTable))
+            DataTable[] dts;
+
+            if (this.result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out dts))
             {
-                if (this.selectDataTable.Rows.Count == 0)
+                StringBuilder msg = new StringBuilder();
+                this.selectDataTable = dts[1];
+                if (!MyUtility.Check.Empty(dts[0]) && dts[0].Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dts[0].Rows)
+                    {
+                        msg.Append($@"SP: {dr["OrderID"]}, Colorway: {dr["Article"]}, Size: {dr["SizeCode"]}" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox("Below records are in packing FOC already, please check again" + Environment.NewLine + msg.ToString());
+                }
+
+                if (this.selectDataTable.Rows.Count == 0 && MyUtility.Check.Empty(msg.ToString()))
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }

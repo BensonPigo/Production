@@ -260,6 +260,7 @@ select
 	,[Style] = o.StyleID
 	,[Brand] = pl.BrandID
 	,[Season] = o.SeasonID
+    ,[Sewingline] = o.SewLine
 	,o.Customize1
 	,[Destination] = concat(pl.Dest, ' - ', c.City)
 	,[P.O.#] = o.CustPONo
@@ -280,7 +281,7 @@ left join CustCD c with (nolock) on c.ID = o.CustCDID and c.BrandID = o.BrandID 
 where 1=1 
 {0}
 
-SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],Customize1,[P.O.#],[Buyer],[Destination]
+SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],[Sewingline],Customize1,[P.O.#],[Buyer],[Destination]
 	,[Colorway] = c2.colorway
 	,[Color] = c3.Color
 	,[Size] = c4.Size
@@ -359,7 +360,7 @@ outer apply(
 	where pld.ID=t.Packing# and pld.OrderID=t.SP# and pld.CTNStartNo=t.CTN#
 	and pld.Lacking=1
 )LackingQty
-group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]
+group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season], [Sewingline]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]
 	,[CTN#],[CTN Barcode]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name] ,[Actual CTN Weight],Lacking,LackingQty.Qty
 order by ROW_NUMBER() OVER(ORDER BY [Packing#],[SP#], RIGHT(REPLICATE('0', 3) + CAST([CTN#] as NVARCHAR), 3))
 DROP TABLE #TMP
@@ -431,12 +432,12 @@ select Customize1 = stuff((
             worksheet.Cells[2, 2] = this._sp1 + "~" + this._sp2;
             worksheet.Cells[2, 5] = this._packingno1 + "~" + this._packingno2;
             worksheet.Cells[2, 8] = this._bdate1 + "~" + this._bdate2;
-            worksheet.Cells[2, 11] = this._scandate1 + "~" + this._scandate2;
-            worksheet.Cells[2, 14] = this._po1 + "~" + this.Po2;
-            worksheet.Cells[2, 16] = this._brand;
-            worksheet.Cells[2, 18] = this._factory;
-            worksheet.Cells[2, 20] = this.rdbtnDetail.Checked ? "Complete" : (this.rdbtnSummary.Checked ? "Not Complete" : "ALL");
-            worksheet.Cells[3, 8] = this._columnname;
+            worksheet.Cells[2, 12] = this._scandate1 + "~" + this._scandate2;
+            worksheet.Cells[2, 15] = this._po1 + "~" + this.Po2;
+            worksheet.Cells[2, 17] = this._brand;
+            worksheet.Cells[2, 20] = this._factory;
+            worksheet.Cells[2, 23] = this.rdbtnDetail.Checked ? "Complete" : (this.rdbtnSummary.Checked ? "Not Complete" : "ALL");
+            worksheet.Cells[3, 9] = this._columnname;
             MyUtility.Excel.CopyToXls(this._printData, string.Empty, reportname, 3, showExcel: false, excelApp: objApp);
             worksheet.Columns.AutoFit();
 
