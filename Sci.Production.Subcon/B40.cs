@@ -16,6 +16,8 @@ namespace Sci.Production.Subcon
     public partial class B40 : Sci.Win.Tems.Input1
     {
         IList<DataRow> Subprocesslist;
+        DataTable DT_RFIDReader_Panel;
+
         public B40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -50,6 +52,17 @@ namespace Sci.Production.Subcon
         {
             base.OnDetailEntered();
             Subprocesslist = null;
+
+            string sqlcmd = $@"
+select rp.RFIDReaderID,rp.PanelNo,rp.CutCellID,rp.AddDate,rp.EditDate,AddName=dbo.GetPass1(rp.AddName),EditName=dbo.GetPass1(rp.EditName)
+from RFIDReader_Panel rp with(nolock)
+where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DT_RFIDReader_Panel);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
 
         protected override void ClickCopyAfter()
@@ -89,7 +102,6 @@ namespace Sci.Production.Subcon
         {
             if (Subprocesslist != null)
             {
-
                 DataTable sourceDt = Subprocesslist.CopyToDataTable();
                 System.Data.DataColumn newColumn = new System.Data.DataColumn("RFIDReaderID", typeof(System.String));
                 newColumn.DefaultValue = this.CurrentMaintain["ID"];
@@ -108,6 +120,36 @@ insert RFIDReader_SubProcess select * from #tmp2
                 }
             }
 
+            if (DT_RFIDReader_Panel != null)
+            {
+                foreach (DataRow dr in DT_RFIDReader_Panel.Rows)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        dr["RFIDReaderID"] = this.CurrentMaintain["ID"];
+                    }
+                }
+                string mergeRFIDReader_Panel = $@"
+merge RFIDReader_Panel t
+using #tmp s on t.[RFIDReaderID] = s.[RFIDReaderID] and t.[PanelNo] = s.[PanelNo]
+when matched then update set
+	t.[CutCellID] = s.[CutCellID],
+	t.[EditDate]=getdate(),
+	t.[EditName]='{Sci.Env.User.UserID}'
+when not matched by target then
+	insert ([RFIDReaderID],[PanelNo],[CutCellID],[AddDate],[AddName])
+	values(s.[RFIDReaderID],s.[PanelNo],s.[CutCellID],s.[AddDate],'{Sci.Env.User.UserID}')
+when not matched by source and t.[RFIDReaderID] = '{this.CurrentMaintain["id"]}' then
+	delete
+;
+";
+                DataTable dt;
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(DT_RFIDReader_Panel, string.Empty, mergeRFIDReader_Panel, out dt);
+                if (!result)
+                {
+                    return result;
+                }
+            }
             return base.ClickSave();
         }
 
@@ -122,7 +164,17 @@ insert RFIDReader_SubProcess select * from #tmp2
             base.ClickUndo();
             this.txtID.ReadOnly = true;
         }
-        
+
+        protected override DualResult ClickDelete()
+        {
+            string delete = $@"
+delete RFIDReader_Panel where RFIDReaderID = '{this.CurrentMaintain["ID"]}'
+delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}'
+";
+            DBProxy.Current.Execute(null, delete);
+            return base.ClickDelete();
+        }
+
         private void txtSewingLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             this.txtSewingLine.Text = this.SelectSewingLine(this.txtSewingLine.Text);
@@ -173,8 +225,10 @@ insert RFIDReader_SubProcess select * from #tmp2
         private void btnSetPanelCutcell_Click(object sender, EventArgs e)
         {
             string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
-            var callfrm = new B40_RFIDReaderSetting(this.Perm.Edit, id, null, null,this.CurrentMaintain);
+
+            var callfrm = new B40_RFIDReaderSetting(this.EditMode, id, null, null,this.CurrentMaintain, this.DT_RFIDReader_Panel);
             callfrm.ShowDialog();
+            this.DT_RFIDReader_Panel = callfrm.DetailDT;
         }
 
         private void txtSubprocess_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)

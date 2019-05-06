@@ -16,13 +16,14 @@ namespace Sci.Production.Subcon
     {
         private string ID;
         private DataRow Master;
-
-        public B40_RFIDReaderSetting(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow master) 
+        public DataTable DetailDT;
+        public B40_RFIDReaderSetting(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow master,DataTable dt) 
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
             this.ID = keyvalue1;
             this.Master = master;
+            this.DetailDT = dt;
         }
 
         protected override bool OnGridSetup()
@@ -96,6 +97,10 @@ where rp.RFIDReaderID ='{this.ID}'
             {
                 this.ShowErr(result);
             }
+            if (this.DetailDT != null && this.DetailDT.Rows.Count > 0)
+            {
+                datas = this.DetailDT.Copy();
+            }
             this.gridbs.DataSource = datas;
         }
 
@@ -108,6 +113,21 @@ where rp.RFIDReaderID ='{this.ID}'
                 return false;
             }
             return base.OnSaveBefore();
+        }
+
+        protected override DualResult OnSave()
+        {
+            return Result.True;
+        }
+        protected override DualResult OnSavePost()
+        {
+            return Result.True;
+        }
+
+        protected override void OnSaveAfter()
+        {
+            base.OnSaveAfter();
+            this.DetailDT = ((DataTable)this.gridbs.DataSource).Copy();
         }
 
         protected override void OnUIConvertToMaintain()

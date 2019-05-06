@@ -99,7 +99,7 @@ select Sel = 0
 	   , EstCutDate = (Select top 1 estcutdate 
 					   from workorder WITH (NOLOCK) 
 					   where workorder.id = Bundle.POID 
-							 and workorder.cutref = Bundle.CutRef)
+							 and workorder.cutref = Bundle.CutRef and workorder.MDivisionID  = Bundle.MDivisionID)
 	   , LineID = Sewinglineid
 	   , Item
 	   , SewingCell
