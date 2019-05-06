@@ -99,6 +99,8 @@
             // chkRcvdQty
             // 
             this.chkRcvdQty.AutoSize = true;
+            this.chkRcvdQty.Checked = true;
+            this.chkRcvdQty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkRcvdQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkRcvdQty.IsSupportEditMode = false;
             this.chkRcvdQty.Location = new System.Drawing.Point(12, 12);
