@@ -2467,6 +2467,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                 // 存檔成功後，要再呼叫UpdateOrdersCTN, CreateOrderCTNData
                 bool prgResult = Prgs.UpdateOrdersCTN(this.CurrentMaintain["OrderID"].ToString());
                 prgResult = Prgs.CreateOrderCTNData(this.CurrentMaintain["ID"].ToString());
+                prgResult = Prgs.PackingP02CreateSCICtnNo(this.CurrentMaintain["ID"].ToString());
 
                 MyUtility.Msg.InfoBox("Switch completed!");
             }

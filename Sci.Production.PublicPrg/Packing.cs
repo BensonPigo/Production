@@ -109,6 +109,7 @@ ELSE
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
+                MyUtility.Msg.WarningBox(result.ToString());
                 return false;
             }
 
@@ -2243,6 +2244,117 @@ order by min(pd.seq)
             }
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             return result;
+        }
+        #endregion
+
+        #region Get SCICtnNo P03/P04/P05
+        public static bool GetSCICtnNo(DataTable dt,string id, string type)
+        {
+            if (type.EqualString("IsDetailInserting"))
+            {
+                string sciCtnNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
+                string sciCtnNoleft = sciCtnNo.Substring(0, 9);
+                int sciNo = MyUtility.Convert.GetInt(sciCtnNo.Substring(9));
+                var ctnlist = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
+                    .GroupBy(s => s["CTNStartNo"]).Select(group => new { CTNStartNo = group.Key });
+
+                foreach (var item in ctnlist)
+                {
+                    string ctnStartNo = item.CTNStartNo.ToString();
+                    foreach (DataRow dr in dt.AsEnumerable()
+                        .Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(ctnStartNo)).ToList())
+                    {
+                        dr["SCICtnNo"] = sciCtnNo;
+                    }
+                    sciNo++;
+                    sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
+                }
+            }
+            else
+            {
+                string sqlcmd = $@"select distinct CTNStartNo,SCICtnNo from PackingList_Detail where id ='{id}'";
+                DataTable ctnDt;
+                DualResult result = DBProxy.Current.Select("Production", sqlcmd, out ctnDt);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return false;
+                }
+                else
+                {
+                    // 維持此ID原有的 (CTNStartNo對應SCICtnNo)
+                    foreach (DataRow ctnDtrow in ctnDt.Rows)
+                    {
+                        foreach (DataRow dr in dt.AsEnumerable()
+                            .Where(w => w.RowState != DataRowState.Deleted
+                                && MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(MyUtility.Convert.GetString(ctnDtrow["CTNStartNo"]))))
+                        {
+                            dr["SCICtnNo"] = ctnDtrow["SCICtnNo"];
+                        }
+                    }
+                }
+
+                string sciCtnNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
+                string sciCtnNoleft = sciCtnNo.Substring(0, 9);
+                int sciNo = MyUtility.Convert.GetInt(sciCtnNo.Substring(9));
+                var ctnlist = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted
+                    && !ctnDt.AsEnumerable().Any(r2 => MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(MyUtility.Convert.GetString(r2["CTNStartNo"]))))
+                    .GroupBy(s => s["CTNStartNo"]).Select(group => new { CTNStartNo = group.Key });
+
+                foreach (var item in ctnlist)
+                {
+                    string ctnStartNo = item.CTNStartNo.ToString();
+                    foreach (DataRow dr in dt.AsEnumerable()
+                        .Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(w["CTNStartNo"]).EqualString(ctnStartNo)).ToList())
+                    {
+                        dr["SCICtnNo"] = sciCtnNo;
+                    }
+                    sciNo++;
+                    sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
+                }
+            }
+            return true;
+        }
+        #endregion
+
+        #region
+        public static bool PackingP02CreateSCICtnNo(string id)
+        {
+            DataTable packinglist_detaildt;
+            string sqlpld = $@"select * from PackingList_Detail where id = '{id}' order by seq";
+            DualResult result = DBProxy.Current.Select(null, sqlpld, out packinglist_detaildt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+            
+            if (!PublicPrg.Prgs.GetSCICtnNo(packinglist_detaildt, id, "IsDetailInserting"))
+            {
+                return false;
+            }
+
+            string sqlCreateSCICtnNo = $@"
+update pd2 set 
+	SCICtnNo = pd.SCICtnNo
+from #tmp pd
+inner join PackingList_Detail pd2 on
+ pd2.id					=pd.id					
+and pd2.[OrderID]			=pd.[OrderID]			
+and pd2.[OrderShipmodeSeq]	=pd.[OrderShipmodeSeq]	
+and pd2.[CTNStartNo]		=pd.[CTNStartNo]		
+and pd2.[Article]			=pd.[Article]			
+and pd2.[SizeCode]			=pd.[SizeCode]		
+";
+            DataTable dt;
+            result = MyUtility.Tool.ProcessWithDatatable(packinglist_detaildt, string.Empty, sqlCreateSCICtnNo, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+
+            return true;
         }
         #endregion
     }

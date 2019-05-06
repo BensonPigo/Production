@@ -14,7 +14,7 @@
     [NW]                NUMERIC (9, 3)  CONSTRAINT [DF_PackingList_NW] DEFAULT ((0)) NULL,
     [GW]                NUMERIC (9, 3)  CONSTRAINT [DF_PackingList_GW] DEFAULT ((0)) NULL,
     [NNW]               NUMERIC (9, 3)  CONSTRAINT [DF_PackingList_NNW] DEFAULT ((0)) NULL,
-    [CBM]               NUMERIC (10, 3) CONSTRAINT [DF_PackingList_CBM] DEFAULT ((0)) NULL,
+    [CBM]               NUMERIC (11, 4) CONSTRAINT [DF_PackingList_CBM] DEFAULT ((0)) NULL,
     [CargoReadyDate]    DATE            NULL,
     [Remark]            NVARCHAR (150)  CONSTRAINT [DF_PackingList_Remark] DEFAULT ('') NULL,
     [EstCTNBooking]     DATE            NULL,
@@ -37,9 +37,12 @@
     [EditDate]          DATETIME        NULL,
     [TransFerToClogID]  VARCHAR (13)    NULL,
     [ClogReceiveID]     VARCHAR (13)    NULL,
-    [QueryDate] DATE NOT NULL, 
+    [QueryDate]         DATE            NULL,
+    [RepackFrom]        VARCHAR (13)    NULL,
     CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

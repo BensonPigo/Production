@@ -1,51 +1,54 @@
-﻿CREATE TABLE [dbo].[PackingList_Detail] (
-    [ID]                 VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_ID] DEFAULT ('') NOT NULL,
-    [OrderID]            VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_OrderID] DEFAULT ('') NOT NULL,
-    [OrderShipmodeSeq]   VARCHAR (2)    CONSTRAINT [DF_PackingList_Detail_OrderShipmodeSeq] DEFAULT ('') NOT NULL,
-    [RefNo]              VARCHAR (21)   CONSTRAINT [DF_PackingList_Detail_RefNo] DEFAULT ('') NULL,
-    [CTNStartNo]         VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_CTNStartNo] DEFAULT ('') NOT NULL,
-    [CTNEndNo]           VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_CTNEndNo] DEFAULT ('') NULL,
-    [CTNQty]             INT            CONSTRAINT [DF_PackingList_Detail_CTNQty] DEFAULT ((0)) NULL,
-    [Seq]                VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_Seq] DEFAULT ('') NULL,
-    [Article]            VARCHAR (8)    CONSTRAINT [DF_PackingList_Detail_Article] DEFAULT ('') NOT NULL,
-    [Color]              VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_Color] DEFAULT ('') NULL,
-    [SizeCode]           VARCHAR (8)    CONSTRAINT [DF_PackingList_Detail_SizeCode] DEFAULT ('') NOT NULL,
-    [QtyPerCTN]          INT            CONSTRAINT [DF_PackingList_Detail_QtyPerCTN] DEFAULT ((0)) NULL,
-    [ShipQty]            INT            CONSTRAINT [DF_PackingList_Detail_ShipQty] DEFAULT ((0)) NULL,
-    [NW]                 NUMERIC (7, 3) CONSTRAINT [DF_PackingList_Detail_NW] DEFAULT ((0)) NULL,
-    [GW]                 NUMERIC (7, 3) CONSTRAINT [DF_PackingList_Detail_GW] DEFAULT ((0)) NULL,
-    [NNW]                NUMERIC (7, 3) CONSTRAINT [DF_PackingList_Detail_NNW] DEFAULT ((0)) NULL,
-    [NWPerPcs]           NUMERIC (7, 3) CONSTRAINT [DF_PackingList_Detail_NWPerPcs] DEFAULT ((0)) NULL,
-    [TransferDate]       DATE           NULL,
-    [ReceiveDate]        DATE           NULL,
-    [ClogLocationId]     VARCHAR (10)   CONSTRAINT [DF_PackingList_Detail_ClogLocationId] DEFAULT ('') NULL,
-    [ReturnDate]         DATE           NULL,
-    [Barcode]            VARCHAR (30)   CONSTRAINT [DF_PackingList_Detail_Barcode] DEFAULT ('') NULL,
-    [ScanQty]            SMALLINT       CONSTRAINT [DF_PackingList_Detail_ScanQty] DEFAULT ((0)) NULL,
-    [ScanEditDate]       DATETIME       NULL,
-    [Remark]             NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
-    [Ukey]               BIGINT         IDENTITY (1, 1) NOT NULL,
-    [TransferCFADate]    DATE           NULL,
-    [CFAReceiveDate]     DATE           NULL,
-    [CFAReturnFtyDate]   DATE           NULL,
-    [CFAReturnClogDate]  DATE           NULL,
-    [ClogReceiveCFADate] DATE           NULL,
-    [CFANeedInsp]        BIT            CONSTRAINT [DF_PackingList_Detail_CFANeedInsp] DEFAULT ((0)) NOT NULL,
-    [CFAInspDate]        DATE           NULL,
-    [ScanName]           VARCHAR (10)   DEFAULT ('') NULL,
-    [CustCTN]            VARCHAR (30)   DEFAULT ('') NOT NULL,
-    [DRYReceiveDate]     DATE           NULL,
-    [EditLocationDate]   DATETIME       NULL,
-	[PackErrTransferDate] DATE NULL, 
-    [ActCTNWeight]       NUMERIC (7, 3) NULL,
-    [EditLocationName]   VARCHAR (10)   DEFAULT ('') NULL,
-    [FtyReqReturnDate]   DATE           NULL,
-    [FtyReqReturnReason] VARCHAR (5)    DEFAULT ('') NOT NULL,
-    [Lacking]            BIT            CONSTRAINT [DF_PackingList_Detail_Lacking] DEFAULT ((0)) NULL,
-    [DisposeFromClog] BIT CONSTRAINT [DF_PackingList_Detail_DisposeFromClog] DEFAULT ((0)) NULL,
+CREATE TABLE [dbo].[PackingList_Detail] (
+    [ID]                  VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_ID] DEFAULT ('') NOT NULL,
+    [OrderID]             VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_OrderID] DEFAULT ('') NOT NULL,
+    [OrderShipmodeSeq]    VARCHAR (2)    CONSTRAINT [DF_PackingList_Detail_OrderShipmodeSeq] DEFAULT ('') NOT NULL,
+    [RefNo]               VARCHAR (21)   CONSTRAINT [DF_PackingList_Detail_RefNo] DEFAULT ('') NULL,
+    [CTNStartNo]          VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_CTNStartNo] DEFAULT ('') NOT NULL,
+    [CTNEndNo]            VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_CTNEndNo] DEFAULT ('') NULL,
+    [CTNQty]              INT            CONSTRAINT [DF_PackingList_Detail_CTNQty] DEFAULT ((0)) NULL,
+    [Seq]                 VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_Seq] DEFAULT ('') NULL,
+    [Article]             VARCHAR (8)    CONSTRAINT [DF_PackingList_Detail_Article] DEFAULT ('') NOT NULL,
+    [Color]               VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_Color] DEFAULT ('') NULL,
+    [SizeCode]            VARCHAR (8)    CONSTRAINT [DF_PackingList_Detail_SizeCode] DEFAULT ('') NOT NULL,
+    [QtyPerCTN]           INT            CONSTRAINT [DF_PackingList_Detail_QtyPerCTN] DEFAULT ((0)) NULL,
+    [ShipQty]             INT            CONSTRAINT [DF_PackingList_Detail_ShipQty] DEFAULT ((0)) NULL,
+    [NW]                  NUMERIC (7, 3) CONSTRAINT [DF_PackingList_Detail_NW] DEFAULT ((0)) NULL,
+    [GW]                  NUMERIC (7, 3) CONSTRAINT [DF_PackingList_Detail_GW] DEFAULT ((0)) NULL,
+    [NNW]                 NUMERIC (7, 3) CONSTRAINT [DF_PackingList_Detail_NNW] DEFAULT ((0)) NULL,
+    [NWPerPcs]            NUMERIC (7, 3) CONSTRAINT [DF_PackingList_Detail_NWPerPcs] DEFAULT ((0)) NULL,
+    [TransferDate]        DATE           NULL,
+    [ReceiveDate]         DATE           NULL,
+    [ClogLocationId]      VARCHAR (10)   CONSTRAINT [DF_PackingList_Detail_ClogLocationId] DEFAULT ('') NULL,
+    [ReturnDate]          DATE           NULL,
+    [Barcode]             VARCHAR (30)   CONSTRAINT [DF_PackingList_Detail_Barcode] DEFAULT ('') NULL,
+    [ScanQty]             SMALLINT       CONSTRAINT [DF_PackingList_Detail_ScanQty] DEFAULT ((0)) NULL,
+    [ScanEditDate]        DATETIME       NULL,
+    [Remark]              NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
+    [Ukey]                BIGINT         IDENTITY (1, 1) NOT NULL,
+    [TransferCFADate]     DATE           NULL,
+    [CFAReceiveDate]      DATE           NULL,
+    [CFAReturnFtyDate]    DATE           NULL,
+    [CFAReturnClogDate]   DATE           NULL,
+    [ClogReceiveCFADate]  DATE           NULL,
+    [CFANeedInsp]         BIT            CONSTRAINT [DF_PackingList_Detail_CFANeedInsp] DEFAULT ((0)) NOT NULL,
+    [CFAInspDate]         DATE           NULL,
+    [ScanName]            VARCHAR (10)   DEFAULT ('') NULL,
+    [CustCTN]             VARCHAR (30)   DEFAULT ('') NOT NULL,
+    [DRYReceiveDate]      DATE           NULL,
+    [EditLocationDate]    DATETIME       NULL,
+    [ActCTNWeight]        NUMERIC (7, 3) NULL,
+    [EditLocationName]    VARCHAR (10)   DEFAULT ('') NULL,
+    [PackErrTransferDate] DATE           NULL,
+    [Lacking]             BIT            DEFAULT ((0)) NULL,
+    [FtyReqReturnDate]    DATE           NULL,
+    [FtyReqReturnReason]  VARCHAR (5)    DEFAULT ('') NOT NULL,
+    [DisposeFromClog]     BIT            CONSTRAINT [DF_PackingList_Detail_DisposeFromClog] DEFAULT ((0)) NULL,
+    [SCICtnNo]            VARCHAR (15)   CONSTRAINT [DF_PackingList_Detail_SCICtnNo] DEFAULT ('') NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC),
     CONSTRAINT [UK_PackingList_Detail] UNIQUE NONCLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Packing List Weight & Summary Detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail';
 GO
@@ -141,19 +144,17 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�̫��
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ץ�location�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditLocationDate';
 GO
-EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', 
-	@value=N'工廠要求退回日' 
-	,@level0type=N'SCHEMA',@level0name=N'dbo'
-	,@level1type=N'TABLE',@level1name=N'PackingList_Detail'
-	,@level2type=N'COLUMN',@level2name=N'FtyReqReturnDate'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�u�t�n�D�h�^��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'FtyReqReturnDate';
+
+
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否缺件', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'Lacking';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�O�_�ʥ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'Lacking';
+
+
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠要求退回日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'FtyReqReturnReason';
+
 GO
-EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', 
-	@value=N'要求退箱原因' 
-	,@level0type=N'SCHEMA',@level0name=N'dbo'
-	,@level1type=N'TABLE',@level1name=N'PackingList_Detail'
-	,@level2type=N'COLUMN',@level2name=N'FtyReqReturnReason'
+
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�n�D�h�c��]', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'FtyReqReturnReason';
+
