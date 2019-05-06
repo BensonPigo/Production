@@ -290,6 +290,7 @@
             // txtSubprocess
             // 
             this.txtSubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSubprocess.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ProcessID", true));
             this.txtSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSubprocess.IsSupportEditMode = false;
             this.txtSubprocess.Location = new System.Drawing.Point(135, 71);
