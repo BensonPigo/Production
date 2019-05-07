@@ -11,6 +11,7 @@ using Sci.Data;
 using System.Transactions;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -1245,119 +1246,6 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         // S/O Confirm/UnConfirm
         private void BtnCFM_Click(object sender, EventArgs e)
         {
-            //            if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
-            //            {
-            //                #region Confirm
-            //                if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
-            //                {
-            //                    MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
-            //                    return;
-            //                }
-
-            //                // 檢查表身的ShipMode與表頭的ShipMode如果不同就不可以Confirm
-            //                if (!this.CheckShipMode())
-            //                {
-            //                    return;
-            //                }
-
-            //                bool firstCFM = !MyUtility.Check.Seek(string.Format("select ID from GMTBooking_History WITH (NOLOCK) where ID = '{0}' and HisType = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "SOCFMDate"));
-            //                string insertCmd = string.Format(
-            //                    @"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
-            //values ('{0}','{1}','{2}','{3}','{4}',GETDATE())",
-            //                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-            //                    "SOCFMDate",
-            //                    firstCFM ? string.Empty : "CFM",
-            //                    "Un CFM",
-            //                    Sci.Env.User.UserID);
-
-            //                string updateCmd = string.Format(
-            //                    @"update GMTBooking set SOCFMDate = '{0}' where ID = '{1}';
-            //update PackingList set GMTBookingLock = 'Y' where INVNo = '{1}';",
-            //                    DateTime.Today.ToString("d"),
-            //                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-
-            //                using (TransactionScope transactionScope = new TransactionScope())
-            //                {
-            //                    try
-            //                    {
-            //                        DualResult result = DBProxy.Current.Execute(null, insertCmd);
-            //                        DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
-
-            //                        if (result && result2)
-            //                        {
-            //                            transactionScope.Complete();
-            //                        }
-            //                        else
-            //                        {
-            //                            transactionScope.Dispose();
-            //                            MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try");
-            //                            return;
-            //                        }
-            //                    }
-            //                    catch (Exception ex)
-            //                    {
-            //                        transactionScope.Dispose();
-            //                        this.ShowErr("Commit transaction error.", ex);
-            //                        return;
-            //                    }
-            //                }
-            //                #endregion
-            //            }
-            //            else
-            //            {
-            //                #region UnConfirm
-            //                if (MyUtility.GetValue.Lookup("Status", MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]), "ShipPlan", "ID") == "Confirmed")
-            //                {
-            //                    MyUtility.Msg.WarningBox("Ship Plan already confirmed, can't Un CFM!!");
-            //                    return;
-            //                }
-
-            //                Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("GMTBooking_SO", true);
-            //                DialogResult dResult = callReason.ShowDialog(this);
-            //                if (dResult == System.Windows.Forms.DialogResult.OK)
-            //                {
-            //                    string insertCmd = string.Format(
-            //                        @"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-            //values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
-            //                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-            //                        "SOCFMDate",
-            //                        "Un CFM",
-            //                        "CFM",
-            //                        callReason.ReturnReason,
-            //                        callReason.ReturnRemark,
-            //                        Sci.Env.User.UserID);
-
-            //                    string updateCmd = string.Format(@"update GMTBooking set SOCFMDate = null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-
-            //                    using (TransactionScope transactionScope = new TransactionScope())
-            //                    {
-            //                        try
-            //                        {
-            //                            DualResult result = DBProxy.Current.Execute(null, insertCmd);
-            //                            DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
-
-            //                            if (result && result2)
-            //                            {
-            //                                transactionScope.Complete();
-            //                            }
-            //                            else
-            //                            {
-            //                                transactionScope.Dispose();
-            //                                MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
-            //                                return;
-            //                            }
-            //                        }
-            //                        catch (Exception ex)
-            //                        {
-            //                            transactionScope.Dispose();
-            //                            this.ShowErr("Commit transaction error.", ex);
-            //                            return;
-            //                        }
-            //                    }
-            //                }
-            //                #endregion
-            //            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
                 if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
@@ -1439,28 +1327,51 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
         {
             StringBuilder msg = new StringBuilder();
 
-            DataTable dtShipMode = (DataTable)this.detailgridbs.DataSource;
-            if (dtShipMode == null || dtShipMode.Rows.Count == 0)
+            var dtShipMode = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
+            if (dtShipMode == null || dtShipMode.Count() == 0)
             {
                 return false;
             }
 
-            foreach (DataRow dr in dtShipMode.Rows)
+            DualResult result;
+            DataTable dtCheckResult;
+            string strSql;
+            DataRow drPackingShipModeCheckResult;
+            foreach (DataRow dr in dtShipMode)
             {
-                string strSql = $@"
-select 1
-from PackingList p 
-inner join PackingList_Detail pd on p.ID=pd.ID
-where 1=1
-and p.id='{dr["ID"]}'
-and not exists(select 1 from Order_QtyShip oq
-where oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq and oq.ShipmodeID = p.ShipModeID
-)";
-                if (MyUtility.Check.Seek(strSql) ||
-                    dr["ShipModeID"].ToString() != this.CurrentMaintain["ShipModeID"].ToString())
+                #region 檢查Packing List 的ship mode
+                strSql = $"select ShipModeID from PackingList with (nolock) where ID = '{dr["ID"]}' and ShipModeID <> '{this.CurrentMaintain["ShipModeID"].ToString()}'";
+                bool isPackListShipModeInconsistent = MyUtility.Check.Seek(strSql, out drPackingShipModeCheckResult);
+                if (isPackListShipModeInconsistent)
                 {
-                    msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["ShipModeID"])));
+                    msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(drPackingShipModeCheckResult["ShipModeID"])));
+                    continue;
                 }
+                #endregion
+
+                #region 檢查Order_QtyShip 的ship mode
+                strSql = $@"
+select distinct oq.ID,oq.Seq,oq.ShipmodeID
+from PackingList p  with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID=pd.ID
+inner join Order_QtyShip oq with (nolock) on oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID
+";
+                result = DBProxy.Current.Select(null, strSql, out dtCheckResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return result;
+                }
+
+                if (dtCheckResult.Rows.Count > 0)
+                {
+                    foreach (DataRow drError in dtCheckResult.Rows)
+                    {
+                        msg.Append($"Order ID:{drError["ID"]},   Seq{drError["Seq"]},   Shipping Mode:{drError["ShipmodeID"]}\r\n");
+                    }
+                }
+                #endregion
             }
 
             if (msg.Length > 0)
