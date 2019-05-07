@@ -43,10 +43,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(826, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.editLocalDesc);
@@ -56,11 +52,6 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.labelDefectType);
             this.detailcont.Controls.Add(this.labelDescription);
-            this.detailcont.Size = new System.Drawing.Size(826, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(826, 38);
             // 
             // browse
             // 
@@ -156,11 +147,13 @@
             this.ClientSize = new System.Drawing.Size(834, 457);
             this.DefaultControl = "txtDefectType";
             this.DefaultControlForEdit = "editDescription";
+            this.DefaultOrder = "Seq";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B20";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B20. Defect type for RFT/CFA(Garment)";
             this.WorkAlias = "GarmentDefectType";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
