@@ -206,9 +206,10 @@ BEGIN
 			, t3.ComboType
 			, Article
 			,[QAQty]= Sum(QAQty) 
-			,[InlineQty]= CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --若tOutputTotal.FailQty與OutputQty都為0情況下，也需要把InputQty寫入到Sewing P01中畫面的prod qty中。
-							ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --原本計算方法
-							END
+			,[InlineQty]=  sum(InlineQty)
+			--,[InlineQty]= CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --若tOutputTotal.FailQty與OutputQty都為0情況下，也需要把InputQty寫入到Sewing P01中畫面的prod qty中。
+			--				ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --原本計算方法
+			--				END
 			,[DefectQty]= (sum( ISNULL(FailCount,0) ) + Sum(QAQty)) - Sum(QAQty) 
 			,[TMS] = TMS.CPU * TMS.CPUFactor * ( IIF(o.StyleUnit='PCS',100,Rate.Rate) /100  ) * TMS.StdTMS--CPU * CPUFactor * (Rate/100) * StdTMS
 			into #tmp_Into_SewingOutput_Detail
@@ -274,7 +275,7 @@ BEGIN
 			, [SubConOutContractNumber] = NULL
 			INTO #tmp_1
 			from #tmp_Into_SewingOutput_Detail
-			group by dDate,WorkLine ,TMS
+			group by dDate,WorkLine
 
 			--Get ID
 			SELECT [RowNumber]=row_number()OVER (ORDER BY OutputDate),*
@@ -423,6 +424,7 @@ BEGIN
 					AND s.SewingLineID=a.WorkLine 
 			)Now_SewingOutput_Detail	
 			WHERE Now_SewingOutput_Detail.ukey IS NOT NULL	
+			And a.QAQty > 0
 			-------------Prepare RFT
 			select 
 			[OrderId] =	CASE WHEN MONo LIKE '%-%'
@@ -592,13 +594,4 @@ BEGIN
 		COMMIT TRANSACTION;  
 	
 END
-
-
-
-
-
-
-
 GO
-
-
