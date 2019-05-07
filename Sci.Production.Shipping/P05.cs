@@ -1333,22 +1333,45 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                 return false;
             }
 
+            DualResult result;
+            DataTable dtCheckResult;
+            string strSql;
+            DataRow drPackingShipModeCheckResult;
             foreach (DataRow dr in dtShipMode)
             {
-                string strSql = $@"
-select 1
-from PackingList p 
-inner join PackingList_Detail pd on p.ID=pd.ID
-where 1=1
-and p.id='{dr["ID"]}'
-and not exists(select 1 from Order_QtyShip oq
-where oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq and oq.ShipmodeID = p.ShipModeID
-)";
-                if (MyUtility.Check.Seek(strSql) ||
-                    dr["ShipModeID"].ToString() != this.CurrentMaintain["ShipModeID"].ToString())
+                #region 檢查Packing List 的ship mode
+                strSql = $"select ShipModeID from PackingList with (nolock) where ID = '{dr["ID"]}' and ShipModeID <> '{this.CurrentMaintain["ShipModeID"].ToString()}'";
+                bool isPackListShipModeInconsistent = MyUtility.Check.Seek(strSql, out drPackingShipModeCheckResult);
+                if (isPackListShipModeInconsistent)
                 {
-                    msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["ShipModeID"])));
+                    msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(drPackingShipModeCheckResult["ShipModeID"])));
+                    continue;
                 }
+                #endregion
+
+                #region 檢查Order_QtyShip 的ship mode
+                strSql = $@"
+select distinct oq.ID,oq.Seq,oq.ShipmodeID
+from PackingList p  with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID=pd.ID
+inner join Order_QtyShip oq with (nolock) on oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID
+";
+                result = DBProxy.Current.Select(null, strSql, out dtCheckResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return result;
+                }
+
+                if (dtCheckResult.Rows.Count > 0)
+                {
+                    foreach (DataRow drError in dtCheckResult.Rows)
+                    {
+                        msg.Append($"Order ID:{drError["ID"]},   Seq{drError["Seq"]},   Shipping Mode:{drError["ShipmodeID"]}\r\n");
+                    }
+                }
+                #endregion
             }
 
             if (msg.Length > 0)
