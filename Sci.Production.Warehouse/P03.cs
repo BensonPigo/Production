@@ -627,7 +627,7 @@ from(
 					, Orders.StyleID
                     , b.SuppID
                     , [SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
-                    , [eta] = substring(convert(varchar, a.eta, 101),1,5)
+                    , [eta] = substring(convert(varchar, a.SystemETD, 101),1,5)
                     , [RevisedETA] = substring(convert(varchar,a.RevisedETA, 101),1,5)
                     , a.Refno
                     , a.SCIRefno
@@ -719,7 +719,7 @@ from(
 					, o.StyleID
                     , b.SuppID
                     , [SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
-                    , substring(convert(varchar, a.eta, 101),1,5) as eta
+                    , substring(convert(varchar, a.SystemETD, 101),1,5) as eta
                     , substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA
                     , a.Refno
                     , a.SCIRefno
