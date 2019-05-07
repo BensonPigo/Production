@@ -206,8 +206,8 @@ BEGIN
 			, Article
 			,[QAQty]= Sum(QAQty) 
 			,[InlineQty]=  sum(InlineQty)
-			--CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --若tOutputTotal.FailQty與OutputQty都為0情況下，也需要把InputQty寫入到Sewing P01中畫面的prod qty中。
-			--				ELSE  sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --原本計算方法
+			--,[InlineQty]= CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --若tOutputTotal.FailQty與OutputQty都為0情況下，也需要把InputQty寫入到Sewing P01中畫面的prod qty中。
+			--				ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --原本計算方法
 			--				END
 			,[DefectQty]= (sum( ISNULL(FailCount,0) ) + Sum(QAQty)) - Sum(QAQty) 
 			,[TMS] = TMS.CPU * TMS.CPUFactor * ( IIF(o.StyleUnit='PCS',100,Rate.Rate) /100  ) * TMS.StdTMS--CPU * CPUFactor * (Rate/100) * StdTMS
@@ -243,19 +243,17 @@ BEGIN
 			,o.StyleUnit ,TMS.StdTMS
 
 			
-			--Prepare SewingOutput
-
-			--Begin INSERT，SewingOutput first
-	
-			--insert SewingOutput
-
+			--Prepare SewingOutput_Detail For Insrt
 			select 
 			[OutputDate]=dDate 
 			, [SewingLineID]=WorkLine 
 			, [QAQty]= Sum(QAQty) 
 			, [DefectQty]= sum(DefectQty) 
 			, [InlineQty]= sum(InlineQty) 
-			, [TMS]=IIF(Sum(QAQty)=0, 0 ,TMS) 
+			, [TMS]=IIF(SUM(QAQTY)=0
+							 , 0  
+							 , SUM(TMS * QAQTY) / SUM(QAQTY)
+						 )
 			, [Manpower] = 0
 			, [Manhour] = 0
 			, [Efficiency]=0
@@ -276,8 +274,9 @@ BEGIN
 			, [SubConOutContractNumber] = NULL
 			INTO #tmp_1
 			from #tmp_Into_SewingOutput_Detail
-			group by dDate,WorkLine ,TMS
+			group by dDate,WorkLine
 
+			--Get ID
 			SELECT [RowNumber]=row_number()OVER (ORDER BY OutputDate),*
 			INTO  #tmp_2
 			FROM  #tmp_1
@@ -287,6 +286,8 @@ BEGIN
 				,*
 			INTO #tmp_SewingOutput
 			FROM #tmp_2
+
+			
 
 			--Begin Insert
 
@@ -347,6 +348,36 @@ BEGIN
 			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine  = b.SewingLineID 
 				
 			
+			--------------For cauclator SewingOutput.TMS--------------
+			
+			SELECT DISTINCT
+				t2.ID 
+				,[SumQaqty] = SUM(t2.QAQTY)
+			INTO #tmp_SewingOutputTMS
+			FROM #tmp_SewingOutput t
+			INNER JOIN SewingOutput_Detail t2 ON t.ID=t2.ID
+			WHERE t.ID IN (
+				SELECT ID FROM #tmp_SewingOutput
+			)
+			group by t2.ID
+				
+			SELECT DISTINCT
+			t.id
+			,[TMS]=SUM( IIF (t3.SumQaqty=0,0, t2.TMS * t2.QAQty / t3.SumQaqty)  ) OVER (PARTITION BY  t.id ORDER BY  t.id) 
+			INTO #tmp_SewingOutputTMS_Final
+			FROm SewingOutput t
+			INNER JOIN SewingOutput_Detail t2 ON t.ID=t2.ID
+			INNER JOIN #tmp_SewingOutputTMS t3 ON t.ID=t3.ID
+
+				
+			UPDATE t
+			SET t.TMS= t2.TMS
+			FROM SewingOutput t
+			INNER JOIN #tmp_SewingOutputTMS_Final t2 ON t2.ID=t.ID
+
+			--------------For cauclator SewingOutput.TMS--------------
+
+
 			SELECT 
 			[ID]= b.ID
 			,[OrderId]
@@ -511,23 +542,22 @@ BEGIN
 					, [Qty] = Sum(Qty)
 			FROm #tmp_4
 			GROUP BY ID,[GarmentDefectCodeID],[GarmentDefectTypeid]
-			
-		----------------------------Masil send----------------------------
-			--SET @mailBody   =   'Transfer Date：'+ Cast(@DateStart as varchar)
-			--					+CHAR(10) + 'Result：Success'
-			--					+CHAR(10) 
-			--					+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
-			--					+CHAR(10) + 'Please do not reply this mail.';
-			--EXEC msdb.dbo.sp_send_dbmail  
-			--	@profile_name = 'SUNRISEmailnotice',  
-			--	@recipients ='pmshelp@sportscity.com.tw',
-			--	@copy_recipients= 'roger.lo@sportscity.com.vn',
-			--	@body = @mailBody,  
-			--	@subject = 'Daily Hanger system data to PMS - Sewing Output & RFT'; 
+		
+		------------------------------Masil send----------------------------
+		--	SET @mailBody   =   'Transfer Date：'+ Cast(@DateStart as varchar)
+		--						+CHAR(10) + 'Result：Success'
+		--						+CHAR(10) 
+		--						+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
+		--						+CHAR(10) + 'Please do not reply this mail.';
+		--	EXEC msdb.dbo.sp_send_dbmail  
+		--		@profile_name = 'SUNRISEmailnotice',  
+		--		@recipients ='pmshelp@sportscity.com.tw',
+		--		@copy_recipients= 'roger.lo@sportscity.com.vn',
+		--		@body = @mailBody,  
+		--		@subject = 'Daily Hanger system data to PMS - Sewing Output & RFT'; 
 		commit transaction
 	END TRY
 	BEGIN CATCH
-		print 'Test'
 		EXECUTE [usp_GetErrorString];
 		--Prepare Mail
 		--DECLARE @ErrorMessage As VARCHAR(1000) = CHAR(10)+'Error Code：' +CAST(ERROR_NUMBER() AS VARCHAR)
