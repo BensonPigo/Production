@@ -875,13 +875,13 @@ and p1.Type <> 'S'
         /// <returns>bool</returns>
         private bool ChkShipMode()
         {
-            DataTable dtShipMode = (DataTable)this.detailgridbs.DataSource;
-            if (dtShipMode == null || dtShipMode.Rows.Count == 0)
+            var dtShipMode = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
+            if (dtShipMode == null || dtShipMode.Count() == 0)
             {
                 return false;
             }
 
-            foreach (DataRow dr in dtShipMode.Rows)
+            foreach (DataRow dr in dtShipMode)
             {
                 string strSql = $@"
 select 1
