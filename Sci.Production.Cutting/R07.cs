@@ -94,12 +94,12 @@ namespace Sci.Production.Cutting
             }
             #endregion
             sqlcmd = $@"
-select w.CutRef,w.MDivisionId,Layer=sum(w.Layer),Cons=sum(w.Cons)
+select w.id,w.CutRef,w.MDivisionId,Layer=sum(w.Layer),Cons=sum(w.Cons)
 into #tmp2a
 from WorkOrder w with(nolock) 
 where isnull(w.CutRef,'') <> ''
 {where}
-group by w.CutRef,w.MDivisionID
+group by w.id,w.CutRef,w.MDivisionID
 
 select *
 into #tmp2a2
@@ -107,14 +107,14 @@ from WorkOrder w with(nolock)
 where isnull(w.CutRef,'') = ''
 {where}
 
-select t.CutRef,t.MDivisionId,t.Layer,t.Cons,
+select t.id,t.CutRef,t.MDivisionId,t.Layer,t.Cons,
 	noEXCESSqty=sum(iif(wd.OrderID <> 'EXCESS',wd.Qty,0)),
 	EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
 into #tmp2
 from #tmp2a t
-inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
+inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId and w.id = t.id
 inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
-group by t.CutRef,t.MDivisionId,t.Layer,t.Cons
+group by t.id,t.CutRef,t.MDivisionId,t.Layer,t.Cons
 
 select distinct
 	t.MDivisionid,
@@ -155,7 +155,7 @@ select distinct
 	WindowLength=isnull(ct.WindowLength,0)
 into #tmp3
 from #tmp2 t
-inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
+inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId and w.id = t.id
 inner join orders o with(nolock) on o.id = w.ID
 left join Fabric f with(nolock) on f.SCIRefno = w.SCIRefno
 left join SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
@@ -167,7 +167,7 @@ outer apply(
 		select distinct concat(',',wd.OrderID)
 		from WorkOrder w2 with(nolock)
 		inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
-		where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
+		where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId and w2.id = t.id
 		For XML path('')
 	),1,1,'')
 )subSp
@@ -176,7 +176,7 @@ outer apply(
 		select distinct concat(',',wd.SizeCode)
 		from WorkOrder w2 with(nolock)
 		inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
-		where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
+		where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId and w2.id = t.id
 		For XML path('')
 	),1,1,'')
 )size
@@ -187,7 +187,7 @@ outer apply
 		Select concat(', ' , wd.sizecode, '/ ', wd.qty)
 		From WorkOrder w2 with(nolock)
 		inner join WorkOrder_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderUkey = w2.Ukey
-		Where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
+		Where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId and w2.id = t.id
 		For XML path('')
 	),1,1,'')
 )SizeCode
