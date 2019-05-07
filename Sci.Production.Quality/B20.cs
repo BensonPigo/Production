@@ -70,6 +70,16 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("<Defect Type> cannot be empty! ");
                 return false;
             }
+            if (this.IsDetailInserting)
+            {
+                int seq = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("select max(seq) from GarmentDefectType"));
+                seq++;
+                if (seq > 255)
+                {
+                    seq = 255;
+                }
+                CurrentMaintain["seq"] = seq;
+            }
             return base.ClickSaveBefore();
         }
 
