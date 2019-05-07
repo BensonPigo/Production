@@ -902,7 +902,7 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
 	inner join MtlType ml on ml.id = fb.MtlTypeID
 	where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
 	and ml.isThread=1 
-	and ps.SuppID = 'FTY' and ps.Seq1 Like '5%'
+	and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
     
     select ot.ArtworkTypeID
 		   , a.OrderId
@@ -972,7 +972,7 @@ inner join Fabric fb on psd.SCIRefno = fb.SCIRefno
 inner join MtlType ml on ml.id = fb.MtlTypeID
 where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
 and ml.isThread=1 
-and ps.SuppID = 'FTY' and ps.Seq1 Like '5%'
+and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
 
 ;with tmpArtwork as(
 	Select ID
@@ -1045,7 +1045,7 @@ inner join Fabric fb on psd.SCIRefno = fb.SCIRefno
 inner join MtlType ml on ml.id = fb.MtlTypeID
 where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
 and ml.isThread=1 
-and ps.SuppID = 'FTY' and ps.Seq1 Like '5%'
+and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
 
 ;with tmpArtwork as(
 	Select ID
