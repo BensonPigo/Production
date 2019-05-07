@@ -273,7 +273,7 @@ inner join Fabric fb on psd.SCIRefno = fb.SCIRefno
 inner join MtlType ml on ml.id = fb.MtlTypeID
 where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
 and ml.isThread=1 
-and ps.SuppID = 'FTY' and ps.Seq1 Like '5%'
+and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
 
 -----orderid & ArtworkTypeID & Seq
 select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS,t.QAQty,t.FactoryID,t.Team,t.OutputDate,t.SewingLineID,
