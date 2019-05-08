@@ -220,6 +220,7 @@ SET ARITHABORT ON
 	F.POID,(F.SEQ1+'-'+F.SEQ2)SEQ,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
 	t.ExportId,t.InvNo,t.WhseArrival,
 	SUM(t.StockQty) AS StockQty1,
+	sum(iif(t.StockQty>0,1,0)) as TotalRollsCalculated,
 	(SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))[MinSciDelivery],
 	(SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))[MinBuyerDelivery],
 	F.Refno,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,
