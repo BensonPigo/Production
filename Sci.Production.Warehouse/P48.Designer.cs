@@ -32,6 +32,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.comboCategory = new Sci.Production.Class.txtdropdownlist();
+            this.labCategory = new Sci.Win.UI.Label();
             this.txtSPNo2 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.txtdropdownlistFabricType = new Sci.Production.Class.txtdropdownlist();
@@ -86,12 +88,15 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(953, 331);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboCategory);
+            this.groupBox1.Controls.Add(this.labCategory);
             this.groupBox1.Controls.Add(this.txtSPNo2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.txtdropdownlistFabricType);
@@ -109,6 +114,27 @@
             this.groupBox1.Size = new System.Drawing.Size(953, 89);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(675, 49);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
+            this.comboCategory.Size = new System.Drawing.Size(143, 24);
+            this.comboCategory.TabIndex = 110;
+            this.comboCategory.Type = "Pms_MtlCategory";
+            // 
+            // labCategory
+            // 
+            this.labCategory.Location = new System.Drawing.Point(587, 50);
+            this.labCategory.Name = "labCategory";
+            this.labCategory.Size = new System.Drawing.Size(85, 23);
+            this.labCategory.TabIndex = 111;
+            this.labCategory.Text = "Category";
             // 
             // txtSPNo2
             // 
@@ -135,8 +161,9 @@
             this.txtdropdownlistFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtdropdownlistFabricType.FormattingEnabled = true;
             this.txtdropdownlistFabricType.IsSupportUnselect = true;
-            this.txtdropdownlistFabricType.Location = new System.Drawing.Point(666, 18);
+            this.txtdropdownlistFabricType.Location = new System.Drawing.Point(675, 18);
             this.txtdropdownlistFabricType.Name = "txtdropdownlistFabricType";
+            this.txtdropdownlistFabricType.OldText = "";
             this.txtdropdownlistFabricType.Size = new System.Drawing.Size(143, 24);
             this.txtdropdownlistFabricType.TabIndex = 3;
             this.txtdropdownlistFabricType.Type = "FabricType_Condition";
@@ -164,7 +191,7 @@
             // 
             this.labelFabricType.Location = new System.Drawing.Point(587, 19);
             this.labelFabricType.Name = "labelFabricType";
-            this.labelFabricType.Size = new System.Drawing.Size(123, 23);
+            this.labelFabricType.Size = new System.Drawing.Size(85, 23);
             this.labelFabricType.TabIndex = 6;
             this.labelFabricType.Text = "Fabric Type";
             // 
@@ -264,6 +291,7 @@
             "Inventory"});
             this.comboReason.Location = new System.Drawing.Point(177, 19);
             this.comboReason.Name = "comboReason";
+            this.comboReason.OldText = "";
             this.comboReason.Size = new System.Drawing.Size(437, 24);
             this.comboReason.TabIndex = 0;
             // 
@@ -299,6 +327,7 @@
             this.Controls.Add(this.groupBox2);
             this.EditMode = true;
             this.Name = "P48";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P48 Batch Create Remove From Scrap Whse";
             this.Controls.SetChildIndex(this.groupBox2, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
@@ -336,5 +365,7 @@
         private Win.UI.TextBox txtSPNo2;
         private Win.UI.Label label1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Class.txtdropdownlist comboCategory;
+        private Win.UI.Label labCategory;
     }
 }
