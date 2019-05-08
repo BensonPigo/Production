@@ -381,6 +381,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
             .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6))  //7            
             .Text("ColorID", header: "Color", iseditingreadonly: true,width:Widths.AnsiChars(6))  //9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2))  //10
+            .EditText("GarmentSize", header: "Garment\r\nSize", iseditingreadonly: true, width: Widths.AnsiChars(2))  //8
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2))  //11
             .Text("unitqty", header: "Qty", iseditingreadonly: true, width: Widths.AnsiChars(2),alignment : DataGridViewContentAlignment.MiddleRight)  //12
             .Text("Qty", header: "Order\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //13     
@@ -616,6 +617,7 @@ from(
             , Remark
             , OrderIdList
              , From_Program
+            ,GarmentSize
     from (
         select  *
                 , -len(description) as len_D 
@@ -701,6 +703,7 @@ from(
 		                                    ) tmp for xml path(''))
                                     ,1,1,'')
                     , [From_Program] = 'P03'
+                    , OSS.GarmentSize
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -708,6 +711,13 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
+            outer apply(SELECT top 1 oBOA.SizeItem FROM Order_BOA oBOA WHERE a.ID = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
+                        ) LIST
+            outer apply (select [GarmentSize] = Stuff((select concat( ',',LOSS.SizeCode) 
+            					from Order_SizeSpec LOSS 
+            					LEFT JOIN Order_SizeCode LOSC ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
+            					where LOSS.Id = a.ID AND LOSS.SizeItem = LIST.SizeItem AND LOSS.SizeSpec = a.SizeSpec ORDER BY LOSC.Seq ASC FOR XML PATH('')),1,1,'') 
+                        ) OSS
             
 --很重要要看到,修正欄位要上下一起改
             union
@@ -787,6 +797,7 @@ from(
 		                                     ) tmp for xml path(''))
                                             ,1,1,'')
                     , [From_Program] = 'P03'
+                    , OSS.GarmentSize
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -794,6 +805,13 @@ from(
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
+        outer apply(SELECT top 1 oBOA.SizeItem FROM Order_BOA oBOA WHERE a.ID = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
+                        ) LIST
+            outer apply (select [GarmentSize] = Stuff((select concat( ',',LOSS.SizeCode) 
+            					from Order_SizeSpec LOSS 
+            					LEFT JOIN Order_SizeCode LOSC ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
+            					where LOSS.Id = a.ID AND LOSS.SizeItem = LIST.SizeItem AND LOSS.SizeSpec = a.SizeSpec ORDER BY LOSC.Seq ASC FOR XML PATH('')),1,1,'') 
+                        ) OSS
         where   1=1 
                 AND a.id IS NOT NULL  
                ) as xxx
@@ -850,6 +868,7 @@ select ROW_NUMBER_D = 1
        , [Remark] = '-'
        , [OrderIdList] = l.OrderID
        , [From_Program] = 'P04'
+       , [GarmentSize] = ''
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo
