@@ -1330,7 +1330,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             var dtShipMode = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
             if (dtShipMode == null || dtShipMode.Count() == 0)
             {
-                return false;
+                return true;
             }
 
             DualResult result;
@@ -1355,7 +1355,8 @@ select distinct oq.ID,oq.Seq,oq.ShipmodeID
 from PackingList p  with (nolock)
 inner join PackingList_Detail pd with (nolock) on p.ID=pd.ID
 inner join Order_QtyShip oq with (nolock) on oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID
+inner join Orders o with (nolock) on oq.ID = o.ID
+where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
 ";
                 result = DBProxy.Current.Select(null, strSql, out dtCheckResult);
                 if (!result)
