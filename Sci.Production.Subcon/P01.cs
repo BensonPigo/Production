@@ -107,6 +107,23 @@ namespace Sci.Production.Subcon
             return base.ClickEditBefore();
         }
 
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            # region 如果採購單已建立 AP, 則Supplier欄位不可編輯
+            string chkp10exists = $@"
+select 1
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where  apd.id = '{CurrentMaintain["id"]}' 
+";
+            if (MyUtility.Check.Seek(chkp10exists))
+            {
+                txtsubconSupplier.TextBox1.ReadOnly = true;
+            }
+            #endregion
+        }
+
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
@@ -158,6 +175,20 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
                 txtmfactory.Focus();
                 return false;
+            }
+            #endregion
+
+            #region 如果採購單已建立 AP, 則Supplier更改失敗
+            string chkp10exists = $@"
+select 1
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where  apd.id = '{CurrentMaintain["id"]}' 
+";
+            if (MyUtility.Check.Seek(chkp10exists) && MyUtility.Convert.GetString(this.CurrentMaintain["localsuppid"]) != MyUtility.Convert.GetString(this.CurrentMaintain["localsuppid", DataRowVersion.Original]))
+            {
+                this.CurrentMaintain["localsuppid"] = this.CurrentMaintain["localsuppid", DataRowVersion.Original];
+                MyUtility.Msg.InfoBox("PO had already created AP, supplier cannot modify.");
             }
             #endregion
 
@@ -239,7 +270,6 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             }
             #endregion
             numTotal.Text = (Convert.ToDecimal(numVat.Text) + Convert.ToDecimal(numAmount.Text)).ToString();
-            txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
             btnIrrPriceReason.Enabled = !this.EditMode;
