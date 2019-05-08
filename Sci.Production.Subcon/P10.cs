@@ -455,12 +455,23 @@ where ap.status = 'New' and aa.Id ='{0}'",
             foreach (DataRow ddr in DetailDatas)
             {
                 string sqlpodetail = $@"
-select apd.Price from ArtworkPO_detail apd with(nolock)
+select apd.Price,Stitch,Farmin,ApQty,PatternCode,PatternDesc from ArtworkPO_detail apd with(nolock)
 where  apd.id = '{ddr["ArtworkPoID"]}' and apd.ukey = '{ddr["ArtworkPo_DetailUkey"]}' ";
-                ddr["Price"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlpodetail));
+                DataRow apdrow;
+                MyUtility.Check.Seek(sqlpodetail, out apdrow);
+                ddr["Price"] = apdrow["Price"];
                 ddr["Amount"] = (decimal)ddr["price"] * (decimal)ddr["ApQty"];
+                ddr["Stitch"] = apdrow["Stitch"];
+                ddr["Farmin"] = apdrow["Farmin"];
+                ddr["ApQty"] = apdrow["ApQty"];
+                ddr["PatternCode"] = apdrow["PatternCode"];
+                ddr["PatternDesc"] = apdrow["PatternDesc"];
                 ddr.EndEdit();
-                sqlupfromAP += $" update  ArtworkAP_Detail set Price = {ddr["Price"]}, Amount={ddr["Amount"]} where ukey = {ddr["ukey"]}; ";
+                sqlupfromAP += $@" 
+update  ArtworkAP_Detail set 
+    Price = {ddr["Price"]}, Amount={ddr["Amount"]},Stitch='{ddr["Stitch"]}',
+    Farmin='{ddr["Farmin"]}',ApQty='{ddr["ApQty"]}',PatternCode='{ddr["PatternCode"]}',PatternDesc='{ddr["PatternDesc"]}'
+where ukey = {ddr["ukey"]}; ";
             }
 
             string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
