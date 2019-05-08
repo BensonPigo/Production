@@ -459,7 +459,8 @@ update aad set
 	Stitch=apd.Stitch,
 	Farmin=apd.Farmin,
 	PatternCode=apd.PatternCode,
-	PatternDesc=apd.PatternDesc
+	PatternDesc=apd.PatternDesc,
+    Amount = apd.Price*aad.ApQty
 from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
 where aad.id = '{this.CurrentMaintain["ID"]}'
