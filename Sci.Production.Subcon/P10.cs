@@ -452,27 +452,19 @@ where ap.status = 'New' and aa.Id ='{0}'",
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             #region 從PO更新price資訊(實體欄位) + 加總明細金額至表頭
-            foreach (DataRow ddr in DetailDatas)
-            {
-                string sqlpodetail = $@"
-select apd.Price,Stitch,Farmin,ApQty,PatternCode,PatternDesc from ArtworkPO_detail apd with(nolock)
-where  apd.id = '{ddr["ArtworkPoID"]}' and apd.ukey = '{ddr["ArtworkPo_DetailUkey"]}' ";
-                DataRow apdrow;
-                MyUtility.Check.Seek(sqlpodetail, out apdrow);
-                ddr["Price"] = apdrow["Price"];
-                ddr["Amount"] = (decimal)ddr["price"] * (decimal)ddr["ApQty"];
-                ddr["Stitch"] = apdrow["Stitch"];
-                ddr["Farmin"] = apdrow["Farmin"];
-                ddr["ApQty"] = apdrow["ApQty"];
-                ddr["PatternCode"] = apdrow["PatternCode"];
-                ddr["PatternDesc"] = apdrow["PatternDesc"];
-                ddr.EndEdit();
-                sqlupfromAP += $@" 
-update  ArtworkAP_Detail set 
-    Price = {ddr["Price"]}, Amount={ddr["Amount"]},Stitch='{ddr["Stitch"]}',
-    Farmin='{ddr["Farmin"]}',ApQty='{ddr["ApQty"]}',PatternCode='{ddr["PatternCode"]}',PatternDesc='{ddr["PatternDesc"]}'
-where ukey = {ddr["ukey"]}; ";
-            }
+
+            sqlupfromAP = $@"
+update aad set
+	Price=apd.Price,
+	Stitch=apd.Stitch,
+	Farmin=apd.Farmin,
+	ApQty=apd.ApQty,
+	PatternCode=apd.PatternCode,
+	PatternDesc=apd.PatternDesc
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where aad.id = '{this.CurrentMaintain["ID"]}'
+";
 
             string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
             if (str == null || string.IsNullOrWhiteSpace(str))
@@ -481,10 +473,11 @@ where ukey = {ddr["ukey"]}; ";
                 return;
             }
             int exact = int.Parse(str);
-            object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
-            CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
-            CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
-            sqlupfromAP += $@" update ArtworkAP set amount = {CurrentMaintain["amount"]},vat={CurrentMaintain["vat"]}  where ID = '{this.CurrentMaintain["ID"]}'; ";
+            string sumAmount = $@"select sum(amount) from ArtworkPO_detail where id = '{this.CurrentMaintain["ID"]}'";
+            decimal detail_a = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sumAmount));
+            decimal amount = MyUtility.Math.Round(detail_a, exact);
+            decimal vat = MyUtility.Math.Round(detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
+            sqlupfromAP += $@" update ArtworkAP set amount = {amount},vat={vat}  where ID = '{this.CurrentMaintain["ID"]}'; ";
             #endregion
 
             foreach (DataRow drchk in DetailDatas)
