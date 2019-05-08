@@ -41,8 +41,6 @@ namespace Sci.Production.Subcon
                 if (this.EditMode && this.txtsubconSupplier.TextBox1.Text != this.txtsubconSupplier.TextBox1.OldValue)
                 {
                     CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier.TextBox1.Text, "LocalSupp", "ID");
-                    ((DataTable)detailgridbs.DataSource).Rows.Clear();
-
                 }
             };
         }
