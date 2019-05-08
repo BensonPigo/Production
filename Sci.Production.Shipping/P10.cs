@@ -301,7 +301,6 @@ order by g.ID", masterID);
             // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
             if (!this.ChkShipMode())
             {
-                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!");
                 return false;
             }
 
@@ -641,7 +640,6 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
             // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
             if (!this.ChkShipMode())
             {
-                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!");
                 return;
             }
 
@@ -812,7 +810,6 @@ and p1.Type <> 'S'
             // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
             if (!this.ChkShipMode())
             {
-                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!");
                 return;
             }
 
@@ -881,19 +878,40 @@ and p1.Type <> 'S'
                 return false;
             }
 
+            DualResult result;
+            DataTable dtCheckResult;
+            StringBuilder msg = new StringBuilder();
             foreach (DataRow dr in dtShipMode)
             {
                 string strSql = $@"
-select 1
-from PackingList p 
-inner join PackingList_Detail pd on p.ID=pd.ID
-where 1=1
-and p.INVNo='{dr["ID"]}'
-and not exists(select 1 from Order_QtyShip oq
-where oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq and oq.ShipmodeID = '{dr["ShipModeID"]}'
-)";
-                if (MyUtility.Check.Seek(strSql))
+select distinct oq.ID,oq.Seq,oq.ShipmodeID
+from PackingList p with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID=pd.ID
+inner join Order_QtyShip oq with (nolock) on oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+where p.INVNo='{dr["ID"]}' and o.Category <> 'S' and oq.ShipmodeID <> '{dr["ShipModeID"]}'";
+
+                result = DBProxy.Current.Select(null, strSql, out dtCheckResult);
+                if (!result)
                 {
+                    this.ShowErr(result);
+                    return result;
+                }
+
+                if (dtCheckResult.Rows.Count > 0)
+                {
+                    foreach (DataRow drError in dtCheckResult.Rows)
+                    {
+                        msg.Append($"Order ID:{drError["ID"]},   Seq{drError["Seq"]},   Shipping Mode:{drError["ShipmodeID"]} \r\n");
+                    }
+                }
+
+                if (msg.Length > 0)
+                {
+                    MyUtility.Msg.WarningBox($@"Shipping mode is inconsistent!!
+GB#:{dr["ID"]},   Shipping Mode:{dr["ShipModeID"]}
+{msg.ToString()}
+");
                     return false;
                 }
             }
