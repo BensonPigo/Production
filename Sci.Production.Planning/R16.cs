@@ -159,7 +159,7 @@ select o.FactoryID [Factory]
 			where m.IssueType!='Packing' and p.id = o.POID and p.FabricType = 'F' )) 
 		end
 	, dbo.GetReveivingDate(o.POID,'Fabric') [Fabric receiving Act.]
-	,(select 'Y' where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+    ,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
 		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
 		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType = 'F' )) [Fabric receiving Skip]
@@ -174,7 +174,7 @@ select o.FactoryID [Factory]
 			where m.IssueType!='Packing' and p.id = o.POID and p.FabricType!='F' )) 
 		end
 	, dbo.GetReveivingDate(o.POID,'Accessory') [Accessory receiving Act.]
-	,(select 'Y' where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+    ,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
 		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
 		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType!='F' )) [Accessory receiving Skip]
@@ -189,7 +189,7 @@ select o.FactoryID [Factory]
 			where m.IssueType='Packing' and p.id = o.POID )) 
 		end
 	, dbo.GetReveivingDate(o.POID,'Packing') [Packing material receiving Act.]
-	,(select 'Y' where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+    ,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
 		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
 		where m.IssueType='Packing' and p.id = o.POID )) [Packing material receiving Skip]
