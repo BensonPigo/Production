@@ -447,6 +447,15 @@ where ap.status = 'New' and aa.Id ='{0}'",
                 return;
             }
             #endregion
+            #region 檢查exact
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
+            if (str == null || string.IsNullOrWhiteSpace(str))
+            {
+                MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't approved!", CurrentMaintain["currencyID"]));
+                return;
+            }
+            #endregion
+
             #region 開始更新相關table資料
             sqlupd3 = string.Format("update artworkap set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
@@ -464,20 +473,13 @@ update aad set
 from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
 where aad.id = '{this.CurrentMaintain["ID"]}'
-";
 
-            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
-            if (str == null || string.IsNullOrWhiteSpace(str))
-            {
-                MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't approved!", CurrentMaintain["currencyID"]));
-                return;
-            }
-            int exact = int.Parse(str);
-            string sumAmount = $@"select sum(amount) from ArtworkAP_detail where id = '{this.CurrentMaintain["ID"]}'";
-            decimal detail_a = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sumAmount));
-            decimal amount = MyUtility.Math.Round(detail_a, exact);
-            decimal vat = MyUtility.Math.Round(detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
-            sqlupfromAP += $@" update ArtworkAP set amount = {amount},vat={vat}  where ID = '{this.CurrentMaintain["ID"]}'; ";
+declare @exact int = (Select exact from Currency WITH (NOLOCK) where id = '{CurrentMaintain["currencyId"]}')
+declare @sumAmount numeric(14, 4) = (select sum(amount) from ArtworkAP_detail where id = '{this.CurrentMaintain["ID"]}')
+declare @Amount numeric(14, 4) = (select ROUND(@sumAmount, @exact))
+declare @Vat numeric(11, 2) = ROUND(@sumAmount * (select VatRate from ArtworkAP where id = '{this.CurrentMaintain["ID"]}') / 100,@exact)
+update ArtworkAP set amount = @Amount, vat = @Vat  where ID = '{this.CurrentMaintain["ID"]}';
+";
             #endregion
 
             foreach (DataRow drchk in DetailDatas)
