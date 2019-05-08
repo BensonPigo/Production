@@ -458,7 +458,6 @@ update aad set
 	Price=apd.Price,
 	Stitch=apd.Stitch,
 	Farmin=apd.Farmin,
-	ApQty=apd.ApQty,
 	PatternCode=apd.PatternCode,
 	PatternDesc=apd.PatternDesc
 from ArtworkPO_detail apd with(nolock)
