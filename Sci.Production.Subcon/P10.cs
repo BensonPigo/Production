@@ -473,7 +473,7 @@ where aad.id = '{this.CurrentMaintain["ID"]}'
                 return;
             }
             int exact = int.Parse(str);
-            string sumAmount = $@"select sum(amount) from ArtworkPO_detail where id = '{this.CurrentMaintain["ID"]}'";
+            string sumAmount = $@"select sum(amount) from ArtworkAP_detail where id = '{this.CurrentMaintain["ID"]}'";
             decimal detail_a = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sumAmount));
             decimal amount = MyUtility.Math.Round(detail_a, exact);
             decimal vat = MyUtility.Math.Round(detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
