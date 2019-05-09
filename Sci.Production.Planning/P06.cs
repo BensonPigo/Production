@@ -22,9 +22,11 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.EditMode = true;
+            this.gridIcon1.Insert.Visible = false;
             DualResult result;
             DataTable dt;
-            if (result = DBProxy.Current.Select(null,@"
+            if (result = DBProxy.Current.Select(null, @"
 select id='',name='' ,seq=0
 union all
 select ID
@@ -32,7 +34,7 @@ select ID
 from DropDownList WITH (NOLOCK) 
 where Type = 'PMS_CriticalActivity' 
 order by Seq
-",out dt))
+", out dt))
             {
                 this.comboColumnType.DataSource = dt;
                 this.comboColumnType.DisplayMember = "Name";
@@ -49,16 +51,54 @@ order by Seq
         protected override void OnFormLoaded()
         {
             cellDropDownList dropdown = (cellDropDownList)cellDropDownList.GetGridCell("PMS_CriticalActivity");
-            dropdown.CellValidating += (s, e) =>
+            dropdown.EditingControlShowing += (s, e) =>
             {
-                DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                if (e.RowIndex == -1 || MyUtility.Check.Empty(e.FormattedValue))
-                    return; //沒東西 return
-                if (dr["ColumnType"].ToString() != e.FormattedValue.ToString())
+                if (s == null || e == null)
                 {
-                    string sqlcmd = $@"
+                    return;
+                }
+
+                var eventArgs = (Ict.Win.UI.DataGridViewEditingControlShowingEventArgs)e;
+                ComboBox cb = eventArgs.Control as ComboBox;
+                if (cb != null)
+                {
+                    cb.SelectionChangeCommitted -= this.combo_SelectionChangeCommitted;
+                    cb.SelectionChangeCommitted += this.combo_SelectionChangeCommitted;
+                }
+            };
+            base.OnFormLoaded();
+            this.grid.IsEditingReadOnly = false;
+            this.grid.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Date("SciDelivery", header: "SCI Dlv.", iseditingreadonly: true)
+                .ComboBox("ColumnType", header: "Column Type", width: Widths.AnsiChars(20), settings: dropdown)
+                .Date("OriginalDate", header: "Original Date", iseditingreadonly: true)
+                .Date("NewTargetDate", header: "New Target Date", iseditingreadonly: false);
+
+            this.grid.Columns["NewTargetDate"].DefaultCellStyle.BackColor = Color.Pink;
+        }
+
+        private void combo_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            string newValue = ((Ict.Win.UI.DataGridViewComboBoxEditingControl)sender).EditingControlFormattedValue.ToString();
+            DataRow dr = this.grid.GetDataRow(this.listControlBindingSource1.Position);
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            DataRow[] drSame = dt.Select($@" orderID='{dr["OrderID"]}' and ColumnType = '{newValue}'");
+            if (drSame.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("<OrderID> and <Column Type> cannot be duplicate!");
+                dr["ColumnType"] = string.Empty;
+                dr["OriginalDate"] = DBNull.Value;
+                dr["NewTargetDate"] = DBNull.Value;
+            }
+            else
+            {
+                string sqlcmd = $@"
 select [OriginalDate] = 
-	case '{e.FormattedValue}'
+	case '{newValue}'
 	when 'Fabric Receiving' then FabricReceiving.KPILETA
 	when 'Accessory Receiving' then AccessoryReceiving.KPILETA
 	when 'Packing Material Receiving' then PackingMaterialRreceiving.KPILETA
@@ -69,6 +109,7 @@ select [OriginalDate] =
 	when 'Carton Finished' then CartonFinished.date
 	else null
 end
+,[NewTargetDate] = (select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID='{newValue}')
 from Orders o
 left join Style s on o.StyleUkey=s.Ukey
 outer apply(
@@ -120,30 +161,17 @@ outer apply(
 ) CartonFinished
 where o.id='{dr["OrderID"]}' 
 ";
-                    DataRow drOriginalDate;
-                    if (MyUtility.Check.Seek(sqlcmd,out drOriginalDate))
-                    {
-                        dr["OriginalDate"] = drOriginalDate["OriginalDate"];
-                    }
+                DataRow drOriginalDate;
+                if (MyUtility.Check.Seek(sqlcmd, out drOriginalDate))
+                {
+                    dr["OriginalDate"] = drOriginalDate["OriginalDate"];
+                    dr["NewTargetDate"] = drOriginalDate["NewTargetDate"];
                 }
 
-                dr["ColumnType"] = e.FormattedValue;
-                dr.EndEdit();
-            };
+                dr["ColumnType"] = newValue;
+            }
 
-            base.OnFormLoaded();
-            this.grid.IsEditingReadOnly = false;
-            this.grid.DataSource = this.listControlBindingSource1;
-            this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Date("SciDelivery", header: "SCI Dlv.", iseditingreadonly: true)
-                .ComboBox("ColumnType", header: "Column Type", width: Widths.AnsiChars(20), settings: dropdown)
-                .Date("OriginalDate", header: "Original Date", iseditingreadonly: true)
-                .Date("NewTargetDate", header: "New Target Date", iseditingreadonly: false);
-
-            this.grid.Columns["NewTargetDate"].DefaultCellStyle.BackColor = Color.Pink;
+            dr.EndEdit();
         }
 
         private void Query()
@@ -336,7 +364,12 @@ drop table #tmp
             string sqlcmd = $@"
 Merge CriticalActivity as t
 Using(
-	select * from #tmp
+   select * from (
+	    select * 
+	    ,[row] = ROW_NUMBER() over(partition by orderid,ColumnType order by NewTargetDate desc)
+	    from #tmp 
+    ) t
+    where row=1
 ) as s
 on s.OrderID = t.OrderID and t.DropDownListID = s.ColumnType
 when matched then
@@ -345,13 +378,22 @@ when matched then
 	t.EditName = '{Sci.Env.User.UserID}',
 	t.EditDate = GetDate()
 when not matched by target then
-	insert (OrderID,DropDownListID,TargetDate)
-	values(s.OrderID,s.ColumnType,s.NewTargetDate);
+	insert (OrderID,DropDownListID,TargetDate,EditName,EditDate)
+	values(s.OrderID,s.ColumnType,s.NewTargetDate,'{Sci.Env.User.UserID}',GetDate());
 
 delete t
 from CriticalActivity t
-where exists (select 1 from #tmp s 
-where s.OrderID=t.OrderID and s.ColumnType=t.DropDownListID and s.NewTargetDate is null)";
+where exists (
+	 select * from (
+	    select * 
+	    ,[row] = ROW_NUMBER() over(partition by orderid,ColumnType order by NewTargetDate desc)
+	    from #tmp 
+    ) s
+    where s.row=1 and (s.NewTargetDate is null or s.NewTargetDate ='')
+and s.OrderID=t.OrderID and s.ColumnType=t.DropDownListID 
+)
+
+";
 
             TransactionScope _transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
@@ -382,7 +424,54 @@ where s.OrderID=t.OrderID and s.ColumnType=t.DropDownListID and s.NewTargetDate 
                 {
                     _transactionscope.Dispose();
                 }
-            }  
+            }
+
+            this.Query();
+        }
+
+        private void gridIcon1_AppendClick(object sender, EventArgs e)
+        {
+            this.grid.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dt))
+            {
+                return;
+            }
+
+            int position = this.listControlBindingSource1.Position;
+            DataRow drSelect = this.grid.GetDataRow(position);
+            if (drSelect != null)
+            {
+                DataRow dr = dt.NewRow();
+                dr["OrderID"] = drSelect["OrderID"];
+                dr["BrandID"] = drSelect["BrandID"];
+                dr["StyleID"] = drSelect["StyleID"];
+                dr["SciDelivery"] = drSelect["SciDelivery"];
+                dr["ColumnType"] = string.Empty;
+                dr["OriginalDate"] = DBNull.Value;
+                dr["NewTargetDate"] = DBNull.Value;
+                dt.Rows.InsertAt(dr, position + 1);
+                dt.AcceptChanges();
+            }
+        }
+
+        private void gridIcon1_RemoveClick(object sender, EventArgs e)
+        {
+            this.grid.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dt))
+            {
+                return;
+            }
+
+            DataRow drSelect = this.grid.GetDataRow(this.listControlBindingSource1.Position);
+            if (drSelect != null)
+            {
+                drSelect.Delete();
+                dt.AcceptChanges();
+            }
         }
     }
 }

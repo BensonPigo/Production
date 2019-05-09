@@ -30,13 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.comboColumnType = new Sci.Win.UI.ComboBox();
             this.checkTargetDate = new Sci.Win.UI.CheckBox();
             this.dateSCIDlvDate = new Sci.Win.UI.DateRange();
             this.labSCIDlv = new Sci.Win.UI.Label();
             this.labColumnType = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
             this.labStyle = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labBrandID = new Sci.Win.UI.Label();
             this.labSPNo = new Sci.Win.UI.Label();
             this.txtSPNo = new Sci.Win.UI.TextBox();
@@ -44,7 +43,9 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.comboColumnType = new Sci.Win.UI.ComboBox();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -52,6 +53,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.gridIcon1);
             this.panel3.Controls.Add(this.comboColumnType);
             this.panel3.Controls.Add(this.checkTargetDate);
             this.panel3.Controls.Add(this.dateSCIDlvDate);
@@ -68,8 +70,21 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(857, 107);
+            this.panel3.Size = new System.Drawing.Size(857, 121);
             this.panel3.TabIndex = 20;
+            // 
+            // comboColumnType
+            // 
+            this.comboColumnType.BackColor = System.Drawing.Color.White;
+            this.comboColumnType.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboColumnType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboColumnType.FormattingEnabled = true;
+            this.comboColumnType.IsSupportUnselect = true;
+            this.comboColumnType.Location = new System.Drawing.Point(118, 44);
+            this.comboColumnType.Name = "comboColumnType";
+            this.comboColumnType.OldText = "";
+            this.comboColumnType.Size = new System.Drawing.Size(157, 24);
+            this.comboColumnType.TabIndex = 3;
             // 
             // checkTargetDate
             // 
@@ -79,7 +94,7 @@
             this.checkTargetDate.Location = new System.Drawing.Point(19, 80);
             this.checkTargetDate.Name = "checkTargetDate";
             this.checkTargetDate.Size = new System.Drawing.Size(206, 21);
-            this.checkTargetDate.TabIndex = 56;
+            this.checkTargetDate.TabIndex = 6;
             this.checkTargetDate.Text = "Query have target date data";
             this.checkTargetDate.UseVisualStyleBackColor = true;
             // 
@@ -104,7 +119,7 @@
             this.dateSCIDlvDate.Location = new System.Drawing.Point(395, 43);
             this.dateSCIDlvDate.Name = "dateSCIDlvDate";
             this.dateSCIDlvDate.Size = new System.Drawing.Size(280, 23);
-            this.dateSCIDlvDate.TabIndex = 55;
+            this.dateSCIDlvDate.TabIndex = 5;
             // 
             // labSCIDlv
             // 
@@ -122,19 +137,6 @@
             this.labColumnType.TabIndex = 52;
             this.labColumnType.Text = "Column Type";
             // 
-            // txtstyle
-            // 
-            this.txtstyle.BackColor = System.Drawing.Color.White;
-            this.txtstyle.BrandObjectName = null;
-            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.IsSupportEditMode = false;
-            this.txtstyle.Location = new System.Drawing.Point(544, 12);
-            this.txtstyle.Name = "txtstyle";
-            this.txtstyle.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle.TabIndex = 51;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
-            // 
             // labStyle
             // 
             this.labStyle.Location = new System.Drawing.Point(476, 12);
@@ -142,16 +144,6 @@
             this.labStyle.Size = new System.Drawing.Size(65, 23);
             this.labStyle.TabIndex = 50;
             this.labStyle.Text = "Style";
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.IsSupportEditMode = false;
-            this.txtbrand.Location = new System.Drawing.Point(363, 12);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(110, 23);
-            this.txtbrand.TabIndex = 49;
             // 
             // labBrandID
             // 
@@ -177,7 +169,7 @@
             this.txtSPNo.Location = new System.Drawing.Point(118, 12);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(157, 23);
-            this.txtSPNo.TabIndex = 47;
+            this.txtSPNo.TabIndex = 0;
             // 
             // btnQuery
             // 
@@ -214,7 +206,7 @@
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid.Location = new System.Drawing.Point(0, 107);
+            this.grid.Location = new System.Drawing.Point(0, 121);
             this.grid.Name = "grid";
             this.grid.RowHeadersVisible = false;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
@@ -222,22 +214,46 @@
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(857, 349);
+            this.grid.Size = new System.Drawing.Size(857, 335);
             this.grid.TabIndex = 21;
             this.grid.TabStop = false;
             // 
-            // comboColumnType
+            // txtstyle
             // 
-            this.comboColumnType.BackColor = System.Drawing.Color.White;
-            this.comboColumnType.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboColumnType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboColumnType.FormattingEnabled = true;
-            this.comboColumnType.IsSupportUnselect = true;
-            this.comboColumnType.Location = new System.Drawing.Point(118, 44);
-            this.comboColumnType.Name = "comboColumnType";
-            this.comboColumnType.OldText = "";
-            this.comboColumnType.Size = new System.Drawing.Size(157, 24);
-            this.comboColumnType.TabIndex = 57;
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.IsSupportEditMode = false;
+            this.txtstyle.Location = new System.Drawing.Point(544, 12);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 2;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.IsSupportEditMode = false;
+            this.txtbrand.Location = new System.Drawing.Point(363, 12);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtbrand.Size = new System.Drawing.Size(110, 23);
+            this.txtbrand.TabIndex = 1;
+            // 
+            // gridIcon1
+            // 
+            this.gridIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridIcon1.Location = new System.Drawing.Point(719, 83);
+            this.gridIcon1.Name = "gridIcon1";
+            this.gridIcon1.Size = new System.Drawing.Size(100, 32);
+            this.gridIcon1.TabIndex = 55;
+            this.gridIcon1.Text = "gridIcon1";
+            this.gridIcon1.AppendClick += new System.EventHandler(this.gridIcon1_AppendClick);
+            this.gridIcon1.RemoveClick += new System.EventHandler(this.gridIcon1_RemoveClick);
             // 
             // P06
             // 
@@ -275,5 +291,6 @@
         private Win.UI.CheckBox checkTargetDate;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ComboBox comboColumnType;
+        private Win.UI.GridIcon gridIcon1;
     }
 }
