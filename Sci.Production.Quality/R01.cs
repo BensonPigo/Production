@@ -266,7 +266,7 @@ SET ARITHABORT ON
     ps1.LocalMR
 from dbo.FIR F WITH (NOLOCK) 
     inner join (select R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty,
-				TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.PoId,RD.seq1,RD.seq2,R.ExportId)
+				TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.id,rd.PoId,RD.seq1,RD.seq2,R.ExportId)
 			    from dbo.Receiving R WITH (NOLOCK) 
 			    inner join dbo.Receiving_Detail RD WITH (NOLOCK) on RD.Id = R.Id"
                 + RWhere+ @" 
