@@ -192,7 +192,7 @@ namespace Sci.Production.Planning
                         DataTable[] datas;
                         DualResult res = DBProxy.Current.SelectSP(string.Empty, "Planning_Report_R10", this.NewMethod(art), out datas);
 
-                        if (res && datas[1].Rows.Count > 0)
+                        if (res && datas[1].Rows.Count > 0 && datas[0].Rows.Count > 0)
                         {
                             dic.Add(art, datas);
                         }

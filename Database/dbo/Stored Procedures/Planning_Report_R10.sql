@@ -62,6 +62,17 @@ BEGIN
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
 	And (orders.MDivisionID = @M or @M = '') And (orders.FactoryID = @Fty or @Fty = '')  and localorder = 0
+	
+	if not exists(select 1 from #tmpFactory)
+	begin
+		insert into #tmpFactory
+		SELECT top 1 CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , '' as FactoryID
+			, iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		, CPU=0		,Year=@Year, Month='00', ArtworkTypeID=@ArtWorkType, TMS =0
+		,Capacity=0		, HalfCapacity1=0		, HalfCapacity2=0		,OrderYYMM=concat(@Year,'00')		,FactorySort = 0
+		From Factory inner join Country on Factory.CountryID = Country.ID
+		where (factory.ID = @Fty or @Fty = '') 
+	end
 
 	--Order
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID, CPURate
