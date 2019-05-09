@@ -63,6 +63,9 @@ where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
             {
                 this.ShowErr(result);
             }
+
+            string sqlsubprocess = $@"select ProcessIDs = stuff((select concat(',',ProcessID)from RFIDReader_SubProcess with(nolock) where RFIDReaderID = '{this.CurrentMaintain["ID"]}' for xml path('')),1,1,'')";
+            this.txtSubprocess.Text = MyUtility.GetValue.Lookup(sqlsubprocess);
         }
 
         protected override void ClickCopyAfter()
