@@ -70,6 +70,7 @@ where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
 
         protected override void ClickCopyAfter()
         {
+            this.txtSubprocess.Text = string.Empty;
             txtID.ReadOnly = false;
         }
 
