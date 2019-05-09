@@ -208,7 +208,15 @@ with tmpOrders as (
             , o.SewOffLine
             , o.CutInLine
             , o.CutOffLine
-            , o.Category
+            , Category=case when o.Category='B'then'Bulk'
+							when o.Category='G'then'Garment'
+							when o.Category='M'then'Material'
+							when o.Category='S'then'Sample'
+							when o.Category='T'then'Sample mtl.'
+							when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='' then'Bulk fc'
+							when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='D' then'Dev. sample fc'
+							when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='S' then'Sa. sample fc'
+						end
             , o.PulloutDate
             , o.ActPulloutDate
             , o.SMR
@@ -485,7 +493,15 @@ tmpFilterZone as (
             , o.SewOffLine
             , o.CutInLine
             , o.CutOffLine
-            , o.Category
+            , Category=case when o.Category='B'then'Bulk'
+							when o.Category='G'then'Garment'
+							when o.Category='M'then'Material'
+							when o.Category='S'then'Sample'
+							when o.Category='T'then'Sample mtl.'
+							when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='' then'Bulk fc'
+							when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='D' then'Dev. sample fc'
+							when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='S' then'Sa. sample fc'
+						end
             , o.PulloutDate
             , o.ActPulloutDate
             , o.SMR
