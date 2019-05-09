@@ -189,7 +189,7 @@ where 1=1"));
                 objArray[0, 17] = dr["StatusExp"];
                 objArray[0, 18] = dr["ShipModeID"];
                 objArray[0, 19] = dr["INVNo"];
-                objArray[0, 120] = dr["InvDate"];
+                objArray[0, 21] = dr["InvDate"];
                 worksheet.Range[string.Format("A{0}:U{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
