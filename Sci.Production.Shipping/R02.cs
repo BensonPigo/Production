@@ -70,6 +70,7 @@ namespace Sci.Production.Shipping
             sqlCmd.Append(string.Format(@"select p.MDivisionID,pd.OrderID,isnull(o.BrandID,'') as BrandID,
 isnull((g.Forwarder+'-'+ls.Abb),'') as Forwarder,isnull(o.StyleID,'') as StyleID,
 isnull(o.SeasonID,'') as SeasonID,isnull(o.CustPONo,'') as CustPONo,isnull(o.Customize1,'') as Customize,
+g.CustCDID,
 isnull((o.Dest+'-'+c.Alias),'') as Dest,isnull(o.StyleUnit,'') as StyleUnit,o.SciDelivery,
 oq.BuyerDelivery,p.PulloutDate,isnull(oq.Qty,0) as Qty,IIF(pl.Type = 'B' or pl.Type = 'F',pl.CTNQty,0) as TtlCtn,
 pd.ShipQty,isnull(pl.ShipModeID,'') as ShipModeID,pd.INVNo,g.InvDate,
@@ -165,7 +166,7 @@ where 1=1"));
 
             // 填內容值
             int intRowsStart = 3;
-            object[,] objArray = new object[1, 20];
+            object[,] objArray = new object[1, 21];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
@@ -176,19 +177,20 @@ where 1=1"));
                 objArray[0, 5] = dr["SeasonID"];
                 objArray[0, 6] = dr["CustPONo"];
                 objArray[0, 7] = dr["Customize"];
-                objArray[0, 8] = dr["Dest"];
-                objArray[0, 9] = dr["StyleUnit"];
-                objArray[0, 10] = dr["SciDelivery"];
-                objArray[0, 11] = dr["BuyerDelivery"];
-                objArray[0, 12] = dr["PulloutDate"];
-                objArray[0, 13] = dr["Qty"];
-                objArray[0, 14] = dr["TtlCtn"];
-                objArray[0, 15] = dr["ShipQty"];
-                objArray[0, 16] = dr["StatusExp"];
-                objArray[0, 17] = dr["ShipModeID"];
-                objArray[0, 18] = dr["INVNo"];
-                objArray[0, 19] = dr["InvDate"];
-                worksheet.Range[string.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 8] = dr["CustCDID"];
+                objArray[0, 9] = dr["Dest"];
+                objArray[0, 10] = dr["StyleUnit"];
+                objArray[0, 11] = dr["SciDelivery"];
+                objArray[0, 12] = dr["BuyerDelivery"];
+                objArray[0, 13] = dr["PulloutDate"];
+                objArray[0, 14] = dr["Qty"];
+                objArray[0, 15] = dr["TtlCtn"];
+                objArray[0, 16] = dr["ShipQty"];
+                objArray[0, 17] = dr["StatusExp"];
+                objArray[0, 18] = dr["ShipModeID"];
+                objArray[0, 19] = dr["INVNo"];
+                objArray[0, 120] = dr["InvDate"];
+                worksheet.Range[string.Format("A{0}:U{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
