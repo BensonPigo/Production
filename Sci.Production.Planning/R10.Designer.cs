@@ -116,12 +116,14 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.boolFtyGroupList = false;
+            this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IssupportJunk = true;
             this.txtFactory.Location = new System.Drawing.Point(150, 207);
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(94, 23);
             this.txtFactory.TabIndex = 6;
-            this.txtFactory.IssupportJunk = true;
             // 
             // txtM
             // 
@@ -134,7 +136,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(64, 207);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(83, 23);
@@ -143,7 +144,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(64, 172);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(83, 23);
@@ -197,6 +197,7 @@
             this.comboReport.IsSupportUnselect = true;
             this.comboReport.Location = new System.Drawing.Point(150, 270);
             this.comboReport.Name = "comboReport";
+            this.comboReport.OldText = "";
             this.comboReport.Size = new System.Drawing.Size(190, 24);
             this.comboReport.TabIndex = 8;
             // 
@@ -208,6 +209,7 @@
             this.comboDate.IsSupportUnselect = true;
             this.comboDate.Location = new System.Drawing.Point(150, 239);
             this.comboDate.Name = "comboDate";
+            this.comboDate.OldText = "";
             this.comboDate.Size = new System.Drawing.Size(190, 24);
             this.comboDate.TabIndex = 7;
             // 
@@ -261,7 +263,6 @@
             // 
             // labelMonth
             // 
-            this.labelMonth.Lines = 0;
             this.labelMonth.Location = new System.Drawing.Point(241, 105);
             this.labelMonth.Name = "labelMonth";
             this.labelMonth.Size = new System.Drawing.Size(46, 23);
@@ -270,7 +271,6 @@
             // 
             // labelSource
             // 
-            this.labelSource.Lines = 0;
             this.labelSource.Location = new System.Drawing.Point(64, 302);
             this.labelSource.Name = "labelSource";
             this.labelSource.Size = new System.Drawing.Size(83, 23);
@@ -279,7 +279,6 @@
             // 
             // labelReport
             // 
-            this.labelReport.Lines = 0;
             this.labelReport.Location = new System.Drawing.Point(64, 270);
             this.labelReport.Name = "labelReport";
             this.labelReport.Size = new System.Drawing.Size(83, 23);
@@ -288,7 +287,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(64, 239);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(83, 23);
@@ -297,7 +295,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(64, 138);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(83, 23);
@@ -306,7 +303,6 @@
             // 
             // labelYear
             // 
-            this.labelYear.Lines = 0;
             this.labelYear.Location = new System.Drawing.Point(64, 105);
             this.labelYear.Name = "labelYear";
             this.labelYear.Size = new System.Drawing.Size(83, 23);
@@ -342,7 +338,6 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(363, 132);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 23);
@@ -362,6 +357,7 @@
             this.DefaultControlForEdit = "numYear";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "R10";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R10. Factory Capacity by Month Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
