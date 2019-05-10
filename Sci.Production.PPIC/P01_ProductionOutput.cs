@@ -214,7 +214,7 @@ isnull((select SUM(c.Qty)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridLoading.GetDataRow<DataRow>(e.RowIndex);
                     Sci.Production.PPIC.P01_ProductionOutput_LoadingoutputDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_LoadingoutputDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "S", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
