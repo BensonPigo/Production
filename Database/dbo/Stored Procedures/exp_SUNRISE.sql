@@ -117,7 +117,8 @@ select
 into #tRoute
 from #SrcOrderID so with (nolock)
 inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
-where lm.Status = 'Confirmed'
+where lm.Status = 'Confirmed' 
+	and 1=2 -- add by Roger 04.27
 
 --tRouteLine(加工方案與生產線關係表)
 select 
@@ -129,6 +130,7 @@ from #SrcOrderID so with (nolock)
 inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
 cross apply (select top 1 SewingLineID from SewingSchedule  with (nolock) where OrderID = so.OrderID and ISNUMERIC(SewingLineID) = 1 ) ss 
 where lm.Status = 'Confirmed'
+	and 1=2 -- add by Roger 04.27
 
 --tSeqAssign(加工方案-工序安排)
 ;with tSeqAssignTmp as
@@ -161,6 +163,7 @@ SeasonID,
 OriNO
 into #tSeqAssign
 from tSeqAssignTmp
+	where 1=2  -- add by Roger 04.27
 
 --如果原本tSeqAssign已傳至SunRise將guid更新回本次要傳的資料中
 select * into #tSeqAssignSunRise from [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign
@@ -180,6 +183,7 @@ from #tSeqAssign tsa
 inner join LineMapping lm with (nolock) on tsa.StyleUkey = lm.StyleUKey and tsa.BrandID = lm.BrandID and tsa.SeasonID = lm.SeasonID
 inner join LineMapping_Detail lmd with (nolock) on lm.ID = lmd.ID and lmd.No <> '' and lmd.OriNO = tsa.OriNO
 where tsa.bMerge = 0 and lm.Status = 'Confirmed' and ISNUMERIC(lmd.OriNO) = 1
+	and 1=2 -- add by Roger 04.27
 
 
 --同步資料至SUNRISE db
@@ -235,9 +239,10 @@ update T set CmdType = 'delete',
 			 InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD T
 where exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS ) and  
-not exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and
-T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and 
-T.SeqNo = S.SeqNo)
+  not exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and
+				T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and 
+				T.SeqNo = S.SeqNo)
+  and (T.CmdType <> 'delete' )  -- add by Roger 05.09
 
 --select * from #tMOSeqD where mono = '18052464GGS-B' and Version = '01' and SeqNo = '0620'
 
