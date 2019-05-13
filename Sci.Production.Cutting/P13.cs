@@ -64,50 +64,47 @@ namespace Sci.Production.Cutting
 
             if (this.textBoxPatterPanel.Text.Empty() == false)
             {
-                strPatternPanelFilter = $"and PatternPanel = '{this.textBoxPatterPanel.Text}'";
+                strPatternPanelFilter = $"and b.PatternPanel = '{this.textBoxPatterPanel.Text}'";
             }
 
             if (this.dateRangeCreateDate.Value1.Empty() == false)
             {
-                strCreateDateFilter = $"and '{((DateTime)this.dateRangeCreateDate.Value1).ToString("yyyy/MM/dd")}' <= CDate ";
+                strCreateDateFilter = $"and '{((DateTime)this.dateRangeCreateDate.Value1).ToString("yyyy/MM/dd")}' <= b.CDate ";
             }
 
             if (this.dateRangeCreateDate.Value2.Empty() == false)
             {
-                strCreateDateFilter += $"and CDate <= '{((DateTime)this.dateRangeCreateDate.Value2).ToString("yyyy/MM/dd")}'";
+                strCreateDateFilter += $"and b.CDate <= '{((DateTime)this.dateRangeCreateDate.Value2).ToString("yyyy/MM/dd")}'";
             }
 
             string strQuerySQL = $@"
 select Sel = 0
-	   , ID
-	   , POID
-	   , M = MDivisionid
-	   , Factory = (select O.FtyGroup 
-					from Orders O 
-					Where O.ID = Bundle.Orderid  and o.MDivisionID  = Bundle.MDivisionID ) 
-	   , Style = (select StyleID 
-				  from Orders o
-				  where o.ID = Bundle.OrderID  and o.MDivisionID  = Bundle.MDivisionID )
-	   , CutRefNo = CutRef
-	   , SPNo = Orderid
-	   , Size = Sizecode
-	   , Color = Colorid
-	   , Article
-	   , PatternPanel
-	   , CutNo
-	   , CreateDate = CDate
-	   , EstCutDate = (Select top 1 estcutdate 
+	   , b.ID
+	   , b.POID
+	   , M = b.MDivisionid
+	   , Factory =  O.FtyGroup 
+	   , Style = o.StyleID 
+	   , CutRefNo = b.CutRef
+	   , SPNo = b.Orderid
+	   , Size = b.Sizecode
+	   , Color = b.Colorid
+	   , b.Article
+	   , b.PatternPanel
+	   , b.CutNo
+	   , CreateDate = b.CDate
+	   , EstCutDate = (Select Max(estcutdate)
 					   from workorder WITH (NOLOCK) 
-					   where workorder.id = Bundle.POID 
-							 and workorder.cutref = Bundle.CutRef and workorder.MDivisionID  = Bundle.MDivisionID)
-	   , LineID = Sewinglineid
-	   , Item
-	   , SewingCell
-	   , SizeRatio = Ratio
-	   , PrintDate
-       , SewingCell
-from Bundle
-where POID = '{this.textBoxPOID.Text}'
+					   where workorder.id = b.POID 
+							 and workorder.cutref = b.CutRef and workorder.MDivisionID  = b.MDivisionID)
+	   , LineID = b.Sewinglineid
+	   , b.Item
+	   , b.SewingCell
+	   , SizeRatio = b.Ratio
+	   , b.PrintDate
+       , b.SewingCell
+from Bundle b
+inner join Orders O with(nolock) on  b.Orderid = o.id  and o.MDivisionID  = b.MDivisionID 
+where b.POID = '{this.textBoxPOID.Text}'
       {strPatternPanelFilter}
       {strCreateDateFilter}";
 

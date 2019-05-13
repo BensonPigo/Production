@@ -74,6 +74,13 @@ where BundleNo = @BundleNo";
                 return;
             }
 
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found.");
+                this.txtBundleNo.Text = string.Empty;
+                return;
+            }
+
             DataRow row = dt.Rows[0];
             this.disSP.Text = MyUtility.Convert.GetString(row["Orderid"]);
             this.disCutpart.Text = MyUtility.Convert.GetString(row["Patterncode"]);

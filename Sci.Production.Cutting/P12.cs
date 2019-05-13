@@ -124,72 +124,57 @@ namespace Sci.Production.Cutting
             AddDate = dateBundlecreatedDate.Value;
             Cutno = txtCutno.Text;
             Comb = txtComb.Text;
-
-            //List<SqlParameter> lis = new List<SqlParameter>();
+            
             string sqlWhere = "";
             string sb = "";
             string declare = string.Empty;
             List<string> sqlWheres = new List<string>();
 
             sqlWheres.Add("b.MDivisionID=@Keyword");
-            //lis.Add(new SqlParameter("@Keyword", Sci.Env.User.Keyword));
 
 
             if (!this.txtCutRefStart.Text.Empty() && !this.txtCutRefEnd.Text.Empty())
             {
                 sqlWheres.Add("b.CutRef between @Cut_Ref and @Cut_Ref1");
-                //lis.Add(new SqlParameter("@Cut_Ref", Cut_Ref));
-                //lis.Add(new SqlParameter("@Cut_Ref1", Cut_Ref1));
             }
             if (!this.txtSPNoStart.Text.Empty() && !this.txtSPNoEnd.Text.Empty())
             {
                 sqlWheres.Add("b.OrderID  between @SP and @SP1");
-                //lis.Add(new SqlParameter("@SP", SP));
-                //lis.Add(new SqlParameter("@SP1", SP1));
             }
             if (!this.txtPOID.Text.Empty())
             {
                 sqlWheres.Add("b.POID=@POID");
-                //lis.Add(new SqlParameter("@POID", POID));
             }
             if (!this.txtBundleStart.Text.Empty() && !this.txtBundleEnd.Text.Empty())
             {
                 sqlWheres.Add("a.BundleNo between @Bundle and @Bundle1");
-                //lis.Add(new SqlParameter("@Bundle", Bundle));
-                //lis.Add(new SqlParameter("@Bundle1", Bundle1));
             }
             if (!this.txtCell.Text.Empty())
             {
                 sqlWheres.Add("b.SewingCell =@Cell");
-                //lis.Add(new SqlParameter("@Cell", Cell));
             }
             if (!this.txtSize.Text.Empty())
             {
                 sqlWheres.Add("a.SizeCode =@Size");
-                //lis.Add(new SqlParameter("@Size", size));
             }
 
             if (!this.dateBox1.Value.Empty())
             {
                 sqlWheres.Add("WorkOrder.EstCutDate=@Est_CutDate");
-                //lis.Add(new SqlParameter("@Est_CutDate", Est_CutDate));
                 declare += $@" declare @Est_CutDate date = '{((DateTime)Est_CutDate).ToString("yyyy/MM/dd")}' ";
             }
             if (!MyUtility.Check.Empty(Addname))
             {
                 sqlWheres.Add(" b.AddName = @AddName");
-                //lis.Add(new SqlParameter("@AddName", Addname));
             }
             if (!this.dateBundlecreatedDate.Value.Empty())
             {
                 sqlWheres.Add(" format(b.AddDate,'yyyy/MM/dd') = @AddDate");
-                //lis.Add(new SqlParameter("@AddDate", AddDate));
                 declare += $@" declare @AddDate varchar(10) = '{((DateTime)AddDate).ToString("yyyy/MM/dd")}' ";
             }
             if (!MyUtility.Check.Empty(Cutno))
             {
                 sqlWheres.Add(" b.Cutno=@Cutno");
-                //lis.Add(new SqlParameter("@Cutno", Cutno));
             }
             if (this.comboSortBy.Text == "Bundle#")
             {
@@ -203,13 +188,11 @@ namespace Sci.Production.Cutting
             if (!this.txtfactoryByM.Text.Empty())
             {
                 sqlWheres.Add(" c.FtyGroup  = @FtyGroup ");
-                //lis.Add(new SqlParameter("@FtyGroup ", txtfactoryByM.Text));
             }
 
             if (!this.txtComb.Text.Empty())
             {
                 sqlWheres.Add(" b.PatternPanel  = @Comb ");
-                //lis.Add(new SqlParameter("@Comb ", txtComb.Text));
             }
 
             sqlWhere = string.Join(" and ", sqlWheres);
@@ -218,13 +201,8 @@ namespace Sci.Production.Cutting
                 sqlWhere = " where " + sqlWhere;
             }
 
-            if (checkExtendAllParts.Checked)
+            if (!checkExtendAllParts.Checked)
             {
-                //lis.Add(new SqlParameter("@extend", "1"));
-            }
-            else
-            {
-                //lis.Add(new SqlParameter("@extend", "0"));
                 declare += $@" declare @extend bit = 0 ";
             }
 
@@ -285,7 +263,7 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 outer apply
 (
     select SubProcess = 
@@ -338,7 +316,7 @@ select
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 outer apply
 (
 	select distinct x.PatternCode,x.PatternDesc,x.Parts
@@ -436,7 +414,7 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 outer apply
 (
     select SubProcess = 
@@ -489,7 +467,7 @@ select
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 outer apply
 (
     select SubProcess = 
