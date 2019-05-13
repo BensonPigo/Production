@@ -138,12 +138,10 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(dateEstCutDate1))
             {
-                sqlWhere.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
                 sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateEstCutDate2))
             {
-                sqlWhere.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
                 sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
             }
             #endregion
@@ -153,12 +151,11 @@ namespace Sci.Production.Subcon
             if (sqlWhereWorkOrder.Length > 0)
             {
                 sqlCmd += $@"
-select CutRef,MDivisionId,EstCutDate
+select distinct CutRef,MDivisionId
 into #tmp_Workorder
 from Workorder w
 where 1=1
-{sqlWhereWorkOrder}
-group by  CutRef,MDivisionId,EstCutDate
+{sqlWhereWorkOrder} and CutRef <> '' and EstCutDate is not null
 ";
             }
 
@@ -252,7 +249,7 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 ";
             if (sqlWhereWorkOrder.Length > 0)
             {
-                sqlCmd += " left join #tmp_Workorder w on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                sqlCmd += " inner join #tmp_Workorder w on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
             }
 
             sqlCmd += $@" where 1=1 {sqlWhere} ";

@@ -138,7 +138,7 @@ WHERE 	not exists(
 		and factory.mdivisionid = '{1}'
 		and factory.IsProduceFty = 1
 		and Order_TmsCost.localsuppid !=''
-        --and Orders.PulloutComplete = 0
+        and Orders.PulloutComplete = 0
 		", poType, Sci.Env.User.Keyword);
 
                 SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
@@ -220,7 +220,7 @@ WHERE 	not exists(
 		and orders.IsForecast = 0
 		and orders.Junk = 0
 		and Order_TmsCost.localsuppid !=''		
-        --and Orders.PulloutComplete = 0
+        and Orders.PulloutComplete = 0
 		", poType, Sci.Env.User.Keyword);
                 SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
                 switch (poType)
