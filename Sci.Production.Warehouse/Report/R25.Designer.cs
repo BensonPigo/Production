@@ -99,7 +99,7 @@
             this.txtSP2.Location = new System.Drawing.Point(279, 128);
             this.txtSP2.Name = "txtSP2";
             this.txtSP2.Size = new System.Drawing.Size(130, 23);
-            this.txtSP2.TabIndex = 1;
+            this.txtSP2.TabIndex = 6;
             // 
             // txtSP1
             // 
@@ -108,7 +108,7 @@
             this.txtSP1.Location = new System.Drawing.Point(123, 128);
             this.txtSP1.Name = "txtSP1";
             this.txtSP1.Size = new System.Drawing.Size(130, 23);
-            this.txtSP1.TabIndex = 0;
+            this.txtSP1.TabIndex = 5;
             // 
             // lbSPNo
             // 
@@ -142,11 +142,10 @@
             this.datekPIETA.DateBox2.Name = "";
             this.datekPIETA.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.datekPIETA.DateBox2.TabIndex = 1;
-            this.datekPIETA.IsRequired = false;
             this.datekPIETA.Location = new System.Drawing.Point(123, 12);
             this.datekPIETA.Name = "datekPIETA";
             this.datekPIETA.Size = new System.Drawing.Size(280, 23);
-            this.datekPIETA.TabIndex = 2;
+            this.datekPIETA.TabIndex = 0;
             // 
             // dateWhseArrival
             // 
@@ -164,11 +163,10 @@
             this.dateWhseArrival.DateBox2.Name = "";
             this.dateWhseArrival.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateWhseArrival.DateBox2.TabIndex = 1;
-            this.dateWhseArrival.IsRequired = false;
             this.dateWhseArrival.Location = new System.Drawing.Point(123, 41);
             this.dateWhseArrival.Name = "dateWhseArrival";
             this.dateWhseArrival.Size = new System.Drawing.Size(280, 23);
-            this.dateWhseArrival.TabIndex = 153;
+            this.dateWhseArrival.TabIndex = 1;
             // 
             // label3
             // 
@@ -176,7 +174,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(108, 23);
             this.label3.TabIndex = 154;
-            this.label3.Text = "ETA";
+            this.label3.Text = "Arrive W/H Date";
             // 
             // dateETA
             // 
@@ -194,11 +192,10 @@
             this.dateETA.DateBox2.Name = "";
             this.dateETA.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateETA.DateBox2.TabIndex = 1;
-            this.dateETA.IsRequired = false;
             this.dateETA.Location = new System.Drawing.Point(123, 70);
             this.dateETA.Name = "dateETA";
             this.dateETA.Size = new System.Drawing.Size(280, 23);
-            this.dateETA.TabIndex = 155;
+            this.dateETA.TabIndex = 2;
             // 
             // label4
             // 
@@ -233,7 +230,7 @@
             this.txtWK2.Location = new System.Drawing.Point(279, 99);
             this.txtWK2.Name = "txtWK2";
             this.txtWK2.Size = new System.Drawing.Size(130, 23);
-            this.txtWK2.TabIndex = 158;
+            this.txtWK2.TabIndex = 4;
             // 
             // txtWK1
             // 
@@ -242,7 +239,7 @@
             this.txtWK1.Location = new System.Drawing.Point(123, 99);
             this.txtWK1.Name = "txtWK1";
             this.txtWK1.Size = new System.Drawing.Size(130, 23);
-            this.txtWK1.TabIndex = 157;
+            this.txtWK1.TabIndex = 3;
             // 
             // label7
             // 
@@ -250,7 +247,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(108, 23);
             this.label7.TabIndex = 161;
-            this.label7.Text = "SP#";
+            this.label7.Text = "Brand";
             // 
             // label9
             // 
@@ -258,7 +255,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(108, 23);
             this.label9.TabIndex = 162;
-            this.label9.Text = "SP#";
+            this.label9.Text = "Supplier";
             // 
             // txtsupplier1
             // 
@@ -266,7 +263,7 @@
             this.txtsupplier1.Location = new System.Drawing.Point(123, 186);
             this.txtsupplier1.Name = "txtsupplier1";
             this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier1.TabIndex = 164;
+            this.txtsupplier1.TabIndex = 8;
             this.txtsupplier1.TextBox1Binding = "";
             // 
             // txtbrand1
@@ -276,7 +273,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(123, 157);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(130, 23);
-            this.txtbrand1.TabIndex = 163;
+            this.txtbrand1.TabIndex = 7;
             // 
             // comboMDivision1
             // 
@@ -288,18 +285,19 @@
             this.comboMDivision1.Name = "comboMDivision1";
             this.comboMDivision1.OldText = "";
             this.comboMDivision1.Size = new System.Drawing.Size(80, 24);
-            this.comboMDivision1.TabIndex = 4;
+            this.comboMDivision1.TabIndex = 9;
             // 
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtfactory.IsSupportEditMode = false;
             this.txtfactory.Location = new System.Drawing.Point(123, 245);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtfactory.ReadOnly = true;
             this.txtfactory.Size = new System.Drawing.Size(449, 23);
-            this.txtfactory.TabIndex = 165;
+            this.txtfactory.TabIndex = 10;
             this.txtfactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtfactory_PopUp);
             // 
             // R25

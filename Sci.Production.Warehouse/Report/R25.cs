@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -28,8 +29,10 @@ namespace Sci.Production.Warehouse
         private string Brand;
         private string Supplier;
         private string M;
+        private string Factorys;
         IList<DataRow> FactoryList;
         DataTable dataTable;
+
         public R25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -50,31 +53,66 @@ namespace Sci.Production.Warehouse
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(datekPIETA.TextBox1.Value) ||
-                MyUtility.Check.Empty() ||
-                MyUtility.Check.Empty() ||
-                MyUtility.Check.Empty() ||
-                MyUtility.Check.Empty() ||
-                MyUtility.Check.Empty() ||
-                MyUtility.Check.Empty() ||
+            if (MyUtility.Check.Empty(datekPIETA.Value1) &&
+                MyUtility.Check.Empty(dateWhseArrival.Value1) &&
+                MyUtility.Check.Empty(dateETA.Value1) &&
+                (MyUtility.Check.Empty(txtWK1.Text) && MyUtility.Check.Empty(txtWK2.Text)) &&
+                (MyUtility.Check.Empty(txtSP1.Text) && MyUtility.Check.Empty(txtSP2.Text))
                 )
             {
-                MyUtility.Msg.WarningBox("ETA cannot be empty !");
+                MyUtility.Msg.WarningBox("KPI L/ETA, Arrive W/H, ETA, WK#, SP# can not all empty!");
                 return false;
             }
-            KPIETA1 =
-            KPIETA2 =
-            WhseArrival1 =
-            WhseArrival2 =
-            ETA1 =
-            ETA2 =
-            WK1 =
-            WK2 =
-            SP1 =
-            SP2 =;
-                       Brand =;
-                       Supplier =;
-            M =;
+            if (!MyUtility.Check.Empty(datekPIETA.Value1))
+            {
+                KPIETA1 = ((DateTime)datekPIETA.Value1).ToString("d");
+                KPIETA2 = ((DateTime)datekPIETA.Value2).ToString("d");
+            }
+            else
+            {
+                KPIETA1 = string.Empty;
+                KPIETA2 = string.Empty;
+            }
+
+            if (!MyUtility.Check.Empty(dateWhseArrival.Value1))
+            {
+                WhseArrival1 = ((DateTime)dateWhseArrival.Value1).ToString("d");
+                WhseArrival2 = ((DateTime)dateWhseArrival.Value2).ToString("d");
+            }
+            else
+            {
+                WhseArrival1 = string.Empty;
+                WhseArrival2 = string.Empty;
+            }
+
+            if (!MyUtility.Check.Empty(dateETA.Value1))
+            {
+                ETA1 = ((DateTime)dateETA.Value1).ToString("d");
+                ETA2 = ((DateTime)dateETA.Value2).ToString("d");
+            }
+            else
+            {
+                ETA1 = string.Empty;
+                ETA2 = string.Empty;
+            }
+
+            WK1 = txtWK1.Text;
+            WK2 = txtWK2.Text;
+            SP1 = txtSP1.Text;
+            SP2 = txtSP2.Text;
+            Brand = txtbrand1.Text;
+            Supplier = txtsupplier1.TextBox1.Text;
+            M = comboMDivision1.Text;
+
+            if (FactoryList != null && FactoryList.Count > 0)
+            {
+                List<string> sL = FactoryList.AsEnumerable().Select(s => (string)s["ID"]).ToList();
+                Factorys = "'" + string.Join("','", sL) + "'";
+            }
+            else
+            {
+                Factorys = string.Empty;
+            }
 
             return base.ValidateInput();
         }
@@ -86,12 +124,17 @@ namespace Sci.Production.Warehouse
 select
 	WK=ed.ID,
 	e.eta,
+	e.WhseArrival,
+	o.KPILETA,
+	o.SciDelivery,
+	EarlyDays=DATEDIFF(day,o.SciDelivery,o.KPILETA),
 	o.FtyGroup,
 	ed.PoID,
 	seq = ed.Seq1+' '+ed.Seq2,
 	ed.suppid,
 	suppname = supp.AbbEN,
 	ed.Refno,
+	f.WeaveTypeID,
 	[description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
 	[Color] = dbo.GetColorMultipleID(o.BrandID,psd.ColorID) ,
 	o.ProjectID,
@@ -115,33 +158,59 @@ left join supp on supp.id = ed.suppid
 left join PO_Supp_Detail psd on psd.id = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join po on po.id = ed.PoID
 left join TPEPass1 on TPEPass1.id = po.POHandle
+left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
 where 1 = 1 and ed.PoType = 'G' and (ed.FabricType = 'F' or ed.FabricType = 'A')
+
 ";
-            if (!MyUtility.Check.Empty(strSp1))
+            if (!MyUtility.Check.Empty(KPIETA1))
             {
-                strSql += $@" and ed.PoID >= '{strSp1}' ";
+                strSql += $@" and o.KPILETA between '{KPIETA1}' and '{KPIETA2}' ";
             }
-            if (!MyUtility.Check.Empty(strSp2))
+            if (!MyUtility.Check.Empty(WhseArrival1))
             {
-                strSql += $@" and ed.PoID <= '{strSp2}' ";
+                strSql += $@" and e.WhseArrival between '{WhseArrival1}' and '{WhseArrival2}' ";
             }
-
-            if (!MyUtility.Check.Empty(Eta1))
+            if (!MyUtility.Check.Empty(ETA1))
             {
-                strSql += $@" and e.Eta >= '{Eta1}' ";
-            }
-            if (!MyUtility.Check.Empty(Eta2))
-            {
-                strSql += $@" and e.Eta <= '{Eta2}' ";
+                strSql += $@" and e.eta between '{ETA1}' and '{ETA2}' ";
             }
 
-            if (!MyUtility.Check.Empty(strM))
+            if (!MyUtility.Check.Empty(WK1))
             {
-                strSql += $@" and o.MDivisionID = '{strM}' ";
+                strSql += $@" and ed.ID >= '{WK1}' ";
             }
-            if (!MyUtility.Check.Empty(strFty))
+            if (!MyUtility.Check.Empty(WK2))
             {
-                strSql += $@" and o .FtyGroup = '{strFty}' ";
+                strSql += $@" and ed.ID <= '{WK2}' ";
+            }
+
+            if (!MyUtility.Check.Empty(SP1))
+            {
+                strSql += $@" and ed.PoID >= '{SP1}' ";
+            }
+            if (!MyUtility.Check.Empty(SP2))
+            {
+                strSql += $@" and ed.PoID <= '{SP2}' ";
+            }
+
+            if (!MyUtility.Check.Empty(Brand))
+            {
+                strSql += $@" and o.BrandID = '{Brand}' ";
+            }
+
+            if (!MyUtility.Check.Empty(Supplier))
+            {
+                strSql += $@" and ed.suppid = '{Supplier}' ";
+            }
+
+            if (!MyUtility.Check.Empty(M))
+            {
+                strSql += $@" and o.MDivisionID = '{M}' ";
+            }
+
+            if (!MyUtility.Check.Empty(Factorys))
+            {
+                strSql += $@" and o .FtyGroup in ({Factorys}) ";
             }
 
             #endregion 
