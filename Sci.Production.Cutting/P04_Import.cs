@@ -110,13 +110,14 @@ and estcutdate = '{estcutdate}'";
                             line = MyUtility.GetValue.Lookup(string.Format("Select SewingLineid from Sewingschedule_Detail Where Orderid = '{0}' ", dr["orderid_b"]), null);
                         }
                         dr["Sewinglineid"] = line;
-                        
+
                         //SpreadingNoID可能是DBNULL或空字串，對User來說都一樣，因此放進OR
-                        DataRow[] griddray = gridTable.Select($@"
-                                                                cuttingid = '{dr["id"]}' 
-                                                                and cutcellid ='{dr["cutcellid"]}' 
-                                                                and SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='"+ dr["SpreadingNoID"].ToString()+ "'" )}
-                                                                ");
+                        string selwhere = $@"
+cuttingid = '{dr["id"]}' 
+and cutcellid ='{dr["cutcellid"]}' 
+and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='" + dr["SpreadingNoID"].ToString() + "'")})
+";
+                        DataRow[] griddray = gridTable.Select(selwhere);
 
                         if (griddray.Length == 0)
                         {
@@ -177,7 +178,7 @@ insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName
 ", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"], dr["SpreadingNoID"]);
                             importay = detailTable.Select($@"id = '{dr["CuttingID"]}' 
 and cutcellid = '{dr["cutcellid"]}' 
-and SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='" + dr["SpreadingNoID"].ToString() + "'")}");
+and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='" + dr["SpreadingNoID"].ToString() + "'")})");
                                                                 
                             importedIDs.Add(id);
                             if (importay.Length > 0)
