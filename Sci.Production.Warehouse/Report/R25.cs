@@ -15,30 +15,67 @@ namespace Sci.Production.Warehouse
 {
     public partial class R25 : Sci.Win.Tems.PrintForm
     {
-        string strSp1, strSp2,Eta1,Eta2, strM, strFty;
+        private string KPIETA1;
+        private string KPIETA2;
+        private string WhseArrival1;
+        private string WhseArrival2;
+        private string ETA1;
+        private string ETA2;
+        private string WK1;
+        private string WK2;
+        private string SP1;
+        private string SP2;
+        private string Brand;
+        private string Supplier;
+        private string M;
+        IList<DataRow> FactoryList;
         DataTable dataTable;
         public R25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             this.comboMDivision1.setDefalutIndex(true);
-            this.comboFactory1.setDataSource(this.comboMDivision1.Text);
+        }
+
+        private void txtfactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID";
+            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
+
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) return;
+            FactoryList = item.GetSelecteds();
+            this.txtfactory.Text = item.GetSelectedString();
         }
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateETA.TextBox1.Value)|| MyUtility.Check.Empty(dateETA.TextBox2.Value))
+            if (MyUtility.Check.Empty(datekPIETA.TextBox1.Value) ||
+                MyUtility.Check.Empty() ||
+                MyUtility.Check.Empty() ||
+                MyUtility.Check.Empty() ||
+                MyUtility.Check.Empty() ||
+                MyUtility.Check.Empty() ||
+                MyUtility.Check.Empty() ||
+                )
             {
                 MyUtility.Msg.WarningBox("ETA cannot be empty !");
                 return false;
             }
-            strSp1 = txtSPNoStart.Text.Trim();
-            strSp2 = txtSPNoEnd.Text.Trim();
-            Eta1 = ((DateTime)dateETA.TextBox1.Value).ToString("yyyy/MM/dd");
-            Eta2 = ((DateTime)dateETA.TextBox2.Value).ToString("yyyy/MM/dd");
+            KPIETA1 =
+            KPIETA2 =
+            WhseArrival1 =
+            WhseArrival2 =
+            ETA1 =
+            ETA2 =
+            WK1 =
+            WK2 =
+            SP1 =
+            SP2 =;
+                       Brand =;
+                       Supplier =;
+            M =;
 
-            strM = comboMDivision1.Text;
-            strFty = comboFactory1.Text;
             return base.ValidateInput();
         }
 
@@ -147,6 +184,5 @@ where 1 = 1 and ed.PoType = 'G' and (ed.FabricType = 'F' or ed.FabricType = 'A')
             }
             return true;
         }
-
     }
 }
