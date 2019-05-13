@@ -25,7 +25,7 @@ namespace Sci.Production.Quality
             base.OnFormLoaded();
             btnSettingSort.Enabled = this.Perm.Edit;
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Text("Seq", header: "Seq", width: Widths.AnsiChars(5))
+            .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(5), minimum: 1, maximum: 255)
             .Text("ID", header: "Defect Code", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Text("LocalDescription", header: "Local Desc", width: Widths.AnsiChars(20), iseditingreadonly: true)

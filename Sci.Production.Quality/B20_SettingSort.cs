@@ -25,8 +25,9 @@ namespace Sci.Production.Quality
             this.EditMode = true;
             this.grid1.IsEditingReadOnly = false;
             base.OnLoad(e);
+
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Text("Seq", header: "Seq", width: Widths.AnsiChars(5))
+            .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(5), minimum: 1, maximum: 255)
             .Text("ID", header: "Defect Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Description", header: "Description", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("LocalDescription", header: "Local Desc", width: Widths.AnsiChars(13), iseditingreadonly: true)
