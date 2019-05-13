@@ -289,16 +289,15 @@
             // 
             // txtfactory
             // 
-            this.txtfactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtfactory.IsSupportEditMode = false;
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.Location = new System.Drawing.Point(123, 245);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtfactory.ReadOnly = true;
             this.txtfactory.Size = new System.Drawing.Size(449, 23);
             this.txtfactory.TabIndex = 10;
             this.txtfactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtfactory_PopUp);
+            this.txtfactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtfactory_Validating);
             // 
             // R25
             // 
@@ -337,9 +336,6 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.comboMDivision1, 0);
             this.Controls.SetChildIndex(this.datekPIETA, 0);
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.dateWhseArrival, 0);
             this.Controls.SetChildIndex(this.label4, 0);
@@ -353,6 +349,9 @@
             this.Controls.SetChildIndex(this.txtbrand1, 0);
             this.Controls.SetChildIndex(this.txtsupplier1, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 

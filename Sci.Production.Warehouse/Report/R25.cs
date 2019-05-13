@@ -30,7 +30,6 @@ namespace Sci.Production.Warehouse
         private string Supplier;
         private string M;
         private string Factorys;
-        IList<DataRow> FactoryList;
         DataTable dataTable;
 
         public R25(ToolStripMenuItem menuitem)
@@ -42,13 +41,37 @@ namespace Sci.Production.Warehouse
 
         private void txtfactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID";
-            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
+            string sqlWhere = "select distinct FtyGroup from Factory WITH (NOLOCK) where Junk = 0 order by FtyGroup";
+            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.txtfactory.Text, null, null, null);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) return;
-            FactoryList = item.GetSelecteds();
             this.txtfactory.Text = item.GetSelectedString();
+        }
+
+        private void txtfactory_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtfactory.Text))
+            {
+                return;
+            }
+            string[] str_multi = this.txtfactory.Text.Split(',');
+            string err_factory = "";
+            foreach (string chk_str in str_multi)
+            {
+                if (MyUtility.Check.Seek(chk_str, "Factory", "FtyGroup", "Production") == false)
+                {
+                    err_factory += "," + chk_str;
+                }
+            }
+
+            if (!err_factory.Equals(""))
+            {
+                this.txtfactory.Text = "";
+                e.Cancel = true;
+                MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", err_factory.Substring(1)));
+                return;
+            }
         }
 
         protected override bool ValidateInput()
@@ -104,10 +127,10 @@ namespace Sci.Production.Warehouse
             Supplier = txtsupplier1.TextBox1.Text;
             M = comboMDivision1.Text;
 
-            if (FactoryList != null && FactoryList.Count > 0)
+            if (!MyUtility.Check.Empty(this.txtfactory.Text))
             {
-                List<string> sL = FactoryList.AsEnumerable().Select(s => (string)s["ID"]).ToList();
-                Factorys = "'" + string.Join("','", sL) + "'";
+
+                Factorys = "'" + this.txtfactory.Text.Replace(",","','") + "'";
             }
             else
             {
@@ -210,7 +233,7 @@ where 1 = 1 and ed.PoType = 'G' and (ed.FabricType = 'F' or ed.FabricType = 'A')
 
             if (!MyUtility.Check.Empty(Factorys))
             {
-                strSql += $@" and o .FtyGroup in ({Factorys}) ";
+                strSql += $@" and o.FtyGroup in ({Factorys}) ";
             }
 
             #endregion 
