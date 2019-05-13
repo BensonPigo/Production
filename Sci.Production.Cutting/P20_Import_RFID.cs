@@ -197,8 +197,9 @@ and WO.Ukey in ( SELECT distinct WO.ukey
 FROM BundleInOut BIO
 left join Bundle_Detail BD on BD.BundleNo = BIO.BundleNo
 left join Bundle B on BD.Id = B.ID
-left join workorder WO on WO.cutref=B.cutref and WO.cutno=B.cutno and WO.fabricCombo=B.patternPanel
+left join workorder WO on WO.cutref=B.cutref and WO.cutno=B.cutno and WO.fabricCombo=B.patternPanel and WO.MDivisionID  = b.MDivisionID 
 where BIO.subprocessid='SORTING' 
+and isnull(bio.RFIDProcessLocationID,'') = ''
  ", keyWord, condition));
 
             if (!MyUtility.Check.Empty(rfidDate1))

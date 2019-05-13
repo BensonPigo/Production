@@ -62,7 +62,7 @@ namespace Sci.Production.PPIC
 from Bundle B
 left join Bundle_Detail BD on BD.Id=B.ID
 left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-where Orderid='{0}' and BIO.SubProcessId='LOADING'
+where Orderid='{0}' and BIO.SubProcessId='LOADING' and isnull(BIO.RFIDProcessLocationID,'') = ''
 order by BIO.InComing", this.orderID);
             }
             else
@@ -72,7 +72,7 @@ order by BIO.InComing", this.orderID);
 from Bundle B
 left join Bundle_Detail BD on BD.Id=B.ID
 left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-where Orderid='{0}' and BIO.SubProcessId='LOADING' and B.Article='{1}' and BD.Sizecode='{2}'
+where Orderid='{0}' and BIO.SubProcessId='LOADING' and isnull(BIO.RFIDProcessLocationID,'') = '' and B.Article='{1}' and BD.Sizecode='{2}' 
 order by BIO.InComing",
                     this.orderID,
                     this.article,

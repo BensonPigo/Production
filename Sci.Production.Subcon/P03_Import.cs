@@ -243,9 +243,10 @@ left join ArtworkPO_Detail APD	on  APD.OrderID = B.Orderid
 									--若為[Subcon][P04]呼叫，則改為Farmin
 									and APD.PoQty > APD.Farmout  
 left join ArtworkPO AP			on	AP.ID = APD.ID
-left join Orders O				on	O.ID = B.Orderid
+left join Orders O				on	O.ID = B.Orderid and o.MDivisionID  = b.MDivisionID 
 where	BIO.SubProcessId = @SubProcessID
 		and BIO.OutGoing is not null  
+        and isnull(BIO.RFIDProcessLocationID,'') = ''
 		{0}
 		--SP#查詢條件
 		{1}
@@ -295,6 +296,7 @@ left join ArtworkPO_Detail APD	on	APD.OrderID = B.Orderid
 									and APD.PoQty > APD.Farmout
 left join ArtworkPO AP			on AP.ID = APD.ID
 where	BIO.SubProcessId = @SubProcessID
+        and isnull(BIO.RFIDProcessLocationID,'') = ''
         --若為[Subcon][P04] => InComing
 		and BIO.OutGoing is not null 
 		--Farm Out Datet查詢條件
@@ -350,10 +352,11 @@ left join ArtworkPO_Detail APD	on  APD.OrderID = B.Orderid
 									--若為[Subcon][P03]呼叫，則改為Farmout 
 									and APD.Farmout > APD.Farmin
 left join ArtworkPO AP			on	AP.ID = APD.ID
-left join Orders O				on	O.ID = B.Orderid
+left join Orders O				on	O.ID = B.Orderid  and o.MDivisionID  = b.MDivisionID 
 where	BIO.SubProcessId = @SubProcessID
 		--若為[Subcon][P03] => OutGoing
 		and BIO.InComing is not null  
+        and isnull(BIO.RFIDProcessLocationID,'') = ''
 		{0}
 		--SP#查詢條件
 		{1}
@@ -406,6 +409,7 @@ left join ArtworkPO AP			on AP.ID = APD.ID
 where	BIO.SubProcessId = @SubProcessID
 		--若為[Subcon][P03] => OutGoing
 		and BIO.InComing is not null  
+        and isnull(BIO.RFIDProcessLocationID,'') = ''
 		--Farm Out Datet查詢條件
 		{0}
 		--SP#查詢條件
