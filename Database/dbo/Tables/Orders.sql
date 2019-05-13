@@ -9,7 +9,7 @@
     [OrderTypeID]          VARCHAR (20)   CONSTRAINT [DF_Orders_OrderTypeID] DEFAULT ('') NULL,
     [BuyMonth]             VARCHAR (16)   CONSTRAINT [DF_Orders_BuyMonth] DEFAULT ('') NULL,
     [Dest]                 VARCHAR (2)    CONSTRAINT [DF_Orders_Dest] DEFAULT ('') NULL,
-    [Model]                VARCHAR (5)    CONSTRAINT [DF_Orders_Model] DEFAULT ('') NULL,
+    [Model]                VARCHAR (25)   CONSTRAINT [DF_Orders_Model] DEFAULT ('') NULL,
     [HsCode1]              VARCHAR (14)   CONSTRAINT [DF_Orders_HsCode1] DEFAULT ('') NULL,
     [HsCode2]              VARCHAR (14)   CONSTRAINT [DF_Orders_HsCode2] DEFAULT ('') NULL,
     [PayTermARID]          VARCHAR (5)    CONSTRAINT [DF_Orders_PayTermARID] DEFAULT ('') NULL,
@@ -19,8 +19,8 @@
     [CPU]                  NUMERIC (5, 3) CONSTRAINT [DF_Orders_CPU] DEFAULT ((0)) NULL,
     [Qty]                  INT            CONSTRAINT [DF_Orders_Qty] DEFAULT ((0)) NULL,
     [StyleUnit]            VARCHAR (8)    CONSTRAINT [DF_Orders_StyleUnit] DEFAULT ('') NULL,
-    [PoPrice]              NUMERIC (16, 4) CONSTRAINT [DF_Orders_PoPrice] DEFAULT ((0)) NULL,
-    [CFMPrice]             NUMERIC (16, 4) CONSTRAINT [DF_Orders_CFMPrice] DEFAULT ((0)) NULL,
+    [PoPrice]              NUMERIC (8, 3) CONSTRAINT [DF_Orders_PoPrice] DEFAULT ((0)) NULL,
+    [CFMPrice]             NUMERIC (8, 3) CONSTRAINT [DF_Orders_CFMPrice] DEFAULT ((0)) NULL,
     [CurrencyID]           VARCHAR (3)    CONSTRAINT [DF_Orders_CurrecnyID] DEFAULT ('') NULL,
     [Commission]           NUMERIC (3, 2) CONSTRAINT [DF_Orders_Commission] DEFAULT ((0)) NULL,
     [FactoryID]            VARCHAR (8)    CONSTRAINT [DF_Orders_FactoryID] DEFAULT ('') NULL,
@@ -41,7 +41,7 @@
     [CutOffLine]           DATE           NULL,
     [PulloutDate]          DATE           NULL,
     [CMPUnit]              VARCHAR (8)    CONSTRAINT [DF_Orders_CMPUnit] DEFAULT ('') NULL,
-    [CMPPrice]             NUMERIC (16, 4) CONSTRAINT [DF_Orders_CMPPrice] DEFAULT ((0)) NULL,
+    [CMPPrice]             NUMERIC (6, 2) CONSTRAINT [DF_Orders_CMPPrice] DEFAULT ((0)) NULL,
     [CMPQDate]             DATE           NULL,
     [CMPQRemark]           NVARCHAR (MAX) CONSTRAINT [DF_Orders_CMPQRemark] DEFAULT ('') NULL,
     [EachConsApv]          DATETIME       NULL,
@@ -146,11 +146,14 @@
     [KPIMNotice]           DATE           NULL,
     [GMTComplete]          VARCHAR (1)    CONSTRAINT [DF__Orders__GMTCompl__6C39D5A3] DEFAULT ('') NULL,
     [GFR]                  BIT            CONSTRAINT [DF__Orders__GFR__6D2DF9DC] DEFAULT ((0)) NULL,
-    [CfaCTN] INT NOT NULL DEFAULT ((0)), 
-    [DRCTN] INT CONSTRAINT [DF_Orders_DRCTN] DEFAULT ((0))  NOT NULL, 
-    [PackErrCTN] INT CONSTRAINT [DF_Orders_PackErrCTN] DEFAULT ((0)) NULL,
+    [CfaCTN]               INT            CONSTRAINT [DF_Orders_CfaCTN] DEFAULT ((0)) NULL,
+    [DRYCTN]               INT            CONSTRAINT [DF_Orders_DRYCTN] DEFAULT ((0)) NOT NULL,
+    [PackErrCTN]           INT            CONSTRAINT [DF_Orders_PackErrCTN] DEFAULT ((0)) NULL,
+    [ForecastSampleGroup]  VARCHAR (1)    CONSTRAINT [DF_Orders_ForecastSampleGroup] DEFAULT ('') NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -176,10 +179,7 @@ CREATE NONCLUSTERED INDEX [Index_POID]
     INCLUDE([ID]);
 GO
 
-CREATE NONCLUSTERED INDEX [Index_Orders_StyleID] ON [dbo].[Orders]
-(
-	[StyleID] ASC
-)
+
 GO
 
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Order', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders';
@@ -783,25 +783,16 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'GFR'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'除溼室箱數',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Orders',
-    @level2type = N'COLUMN',
-    @level2name = N'DRCTN'
+
 GO
 CREATE NONCLUSTERED INDEX [IX_SciDelivery]
     ON [dbo].[Orders]([SciDelivery] ASC, [MDivisionID] ASC, [ID] ASC);
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'CFA箱數',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Orders',
-    @level2type = N'COLUMN',
-    @level2name = N'CfaCTN'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA�c��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CfaCTN';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ëǽc��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'DRYCTN';
+

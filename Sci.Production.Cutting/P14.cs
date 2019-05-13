@@ -64,13 +64,20 @@ select  b.Orderid
         , b.Article
 from Bundle_Detail bd with(nolock)
 inner join Bundle b with(nolock) on b.id = bd.id
-inner join orders o with(nolock) on o.id = b.Orderid
+inner join orders o with(nolock) on o.id = b.Orderid and o.MDivisionID  = b.MDivisionID 
 where BundleNo = @BundleNo";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out dt);
             if (!result)
             {
                 this.ShowErr(result);
+                return;
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found.");
+                this.txtBundleNo.Text = string.Empty;
                 return;
             }
 
@@ -90,7 +97,7 @@ select sl.Location
 into #tmp
 from Bundle_Detail bd with(nolock)
 inner join Bundle b with(nolock) on b.id = bd.id
-inner join Orders o with(nolock) on o.id = b.Orderid
+inner join Orders o with(nolock) on o.id = b.Orderid and o.MDivisionID  = b.MDivisionID 
 inner join Style_Location sl with(nolock) on o.StyleUkey = sl.StyleUkey
 where BundleNo = @BundleNo
 If (select count(1) from #tmp)>1

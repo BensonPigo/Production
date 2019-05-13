@@ -1,14 +1,18 @@
 ﻿CREATE TABLE [dbo].[BundleInOut] (
-    [BundleNo]     VARCHAR (10) CONSTRAINT [DF_BundleInOut_BundleNo] DEFAULT ('') NULL,
-    [SubProcessId] VARCHAR (10) CONSTRAINT [DF_BundleInOut_SubProcessId] DEFAULT ('') NULL,
-    [InComing]     DATETIME     NULL,
-    [OutGoing]     DATETIME     NULL,
-    [AddDate]      DATETIME     NULL,
-    [EditDate]     DATETIME     NULL,
-	[SewingLineID] varchar(2) NULL, 
-    [LocationID] VARCHAR(10) NOT NULL DEFAULT (''), 
-    [RFIDProcessLocationID] VARCHAR(15) CONSTRAINT [DF_BundleInOut_RFIDProcessLocationID] DEFAULT ('') NOT NULL
+    [BundleNo]              VARCHAR (10) CONSTRAINT [DF_BundleInOut_BundleNo] DEFAULT ('') NULL,
+    [SubProcessId]          VARCHAR (10) CONSTRAINT [DF_BundleInOut_SubProcessId] DEFAULT ('') NULL,
+    [InComing]              DATETIME     NULL,
+    [OutGoing]              DATETIME     NULL,
+    [AddDate]               DATETIME     NULL,
+    [EditDate]              DATETIME     NULL,
+    [SewingLineID]          VARCHAR (2)  NULL,
+    [LocationID]            VARCHAR (10) DEFAULT ('') NOT NULL,
+    [RFIDProcessLocationID] VARCHAR (15) CONSTRAINT [DF_BundleInOut_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
+    [PanelNo]               VARCHAR (24) CONSTRAINT [DF_BundleInOut_PanelNo] DEFAULT ('') NOT NULL,
+    [CutCellID]             VARCHAR (10) CONSTRAINT [DF_BundleInOut_CutCellID] DEFAULT ('') NOT NULL
 );
+
+
 
 
 
