@@ -34,6 +34,7 @@ namespace Sci.Production.Warehouse
             string refno = this.txtRef.Text.TrimEnd();
             string location = this.txtLocation.Text.TrimEnd();
             string fabrictype = txtdropdownlistFabricType.SelectedValue.ToString();
+            string strCategory = this.comboCategory.SelectedValue.ToString();
 
             if (string.IsNullOrWhiteSpace(sp1)
                 && string.IsNullOrWhiteSpace(sp2)
@@ -67,9 +68,15 @@ select  0 as selected
         , c.stockType
         , c.ukey as ftyinventoryukey
         , [CreateStatus]='' 
+        , [FabricTypeName] = (select name from DropDownList where Type='FabricType_Condition' and id=a.fabrictype)		
+        , [Category] = case o.Category  when 'B' then 'Bulk'
+										when 'M' then 'Material'
+										when 'S' then 'Sample'
+										when 'T' then 'SMTL' end
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'O'
 inner join dbo.factory f WITH (NOLOCK) on a.FactoryID=f.id
+left join Orders o WITH (NOLOCK) on o.id=a.id
 Where   c.lock = 0 
         and c.inqty-c.outqty + c.adjustqty > 0
         and f.mdivisionid = '{0}'        
@@ -114,6 +121,8 @@ Where   c.lock = 0
         And a.fabrictype = 'A'");
                         break;
                 }
+
+                strSQLCmd.Append($@" and o.Category in ({strCategory})");
 
 
                 this.ShowWaitMessage("Data Loading....");
@@ -244,6 +253,8 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                .Text("FabricTypeName", header: "Fabric Type", iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Text("Category", header: "Category", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("QtyBefore", header: "Original Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6))
                 .Numeric("QtyAfter", header: "Current Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))
                 .Numeric("adjustqty", header: "Remove Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6))
@@ -255,6 +266,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
 
             this.gridImport.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridImport.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.comboCategory.SelectedIndex = 4;
         }
 
         // Close
