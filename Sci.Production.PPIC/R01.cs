@@ -362,6 +362,7 @@ select  s.SewingLineID
                                         and s1.ID != s.ID
                         ) a for xml path('')
                     ), '') as Remark
+            ,o.FtyGroup
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
     inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
@@ -440,8 +441,8 @@ Select  w.FactoryID, w.SewingLineID, t.Inline, t.Offline
         , Count(w.Date) as ctn 
 into #tmp_WorkHour
 from WorkHour w WITH (NOLOCK) 
-inner join (select distinct FactoryID,SewingLineID,Convert(Date,Inline) Inline,Convert(Date,Offline)Offline from #tmp_main) t 
-	on w.FactoryID = t.FactoryID  and w.SewingLineID =t.SewingLineID and w.Date between Inline and Offline
+inner join (select distinct FtyGroup,SewingLineID,Convert(Date,Inline) Inline,Convert(Date,Offline)Offline from #tmp_main) t 
+	on w.FactoryID = t.FtyGroup  and w.SewingLineID =t.SewingLineID and w.Date between Inline and Offline
 where w.Hours > 0 
 group by w.FactoryID, w.SewingLineID, t.Inline, t.Offline
   
@@ -555,7 +556,7 @@ from (
 			, isnull(SUBSTRING(ta.Artwork, 1, LEN(ta.Artwork) - 1), '') as ArtWork 
 		from #tmp_main t
 		left join #tmp_PFRemark pf on t.OrderID = pf.Id
-		left join #tmp_WorkHour w on w.FactoryID = t.FactoryID  and w.SewingLineID =t.SewingLineID and w.Inline = Convert(Date,t.Inline) and w.Offline = Convert(Date,t.Offline) 
+		left join #tmp_WorkHour w on w.FactoryID = t.FtyGroup  and w.SewingLineID =t.SewingLineID and w.Inline = Convert(Date,t.Inline) and w.Offline = Convert(Date,t.Offline) 
 		left join #tmpOrderArtwork ta on ta.ID = t.OrderID 
 ) a
 order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID
@@ -614,6 +615,7 @@ select  s.SewingLineID
 			,o.CPU
 			,o.CPUFactor
 			,s.ID
+            ,o.FtyGroup
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
@@ -691,8 +693,8 @@ Select  w.FactoryID, w.SewingLineID, t.Inline, t.Offline
         , Count(w.Date) as ctn 
 into #tmp_WorkHour
 from WorkHour w WITH (NOLOCK) 
-inner join (select distinct FactoryID,SewingLineID,Convert(Date,Inline) Inline,Convert(Date,Offline)Offline from #tmp_main) t 
-	on w.FactoryID = t.FactoryID  and w.SewingLineID =t.SewingLineID and w.Date between Inline and Offline
+inner join (select distinct FtyGroup,SewingLineID,Convert(Date,Inline) Inline,Convert(Date,Offline)Offline from #tmp_main) t 
+	on w.FactoryID = t.FtyGroup  and w.SewingLineID =t.SewingLineID and w.Date between Inline and Offline
 where w.Hours > 0 
 group by w.FactoryID, w.SewingLineID, t.Inline, t.Offline
   
@@ -857,7 +859,7 @@ from
 		, [ClogQty] = ISNULL( clogQty.clogQty,0)
 	from #tmp_main t
 	left join #tmp_PFRemark pf on t.OrderID = pf.Id
-	left join #tmp_WorkHour w on w.FactoryID = t.FactoryID  and w.SewingLineID =t.SewingLineID and w.Inline = Convert(Date,t.Inline) and w.Offline = Convert(Date,t.Offline) 
+	left join #tmp_WorkHour w on w.FactoryID = t.FtyGroup  and w.SewingLineID =t.SewingLineID and w.Inline = Convert(Date,t.Inline) and w.Offline = Convert(Date,t.Offline) 
 	left join #tmpOrderArtwork ta on ta.ID = t.OrderID
 	left join #tmp_Qty qty on qty.OrderID = t.OrderID and qty.Article = t.Article and qty.SizeCode = t.SizeCode
 	left join #tmp_AlloQty alloQty on alloQty.ID = t.ID and alloQty.Article = t.Article and alloQty.SizeCode = t.SizeCode and alloQty.ComboType = t.ComboType
