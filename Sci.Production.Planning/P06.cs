@@ -365,11 +365,9 @@ drop table #tmp
 Merge CriticalActivity as t
 Using(
    select * from (
-	    select * 
-	    ,[row] = ROW_NUMBER() over(partition by orderid,ColumnType order by NewTargetDate desc)
-	    from #tmp 
-    ) t
-    where row=1
+	    select * 	    
+	    from #tmp where ColumnType !=''
+    ) t    
 ) as s
 on s.OrderID = t.OrderID and t.DropDownListID = s.ColumnType
 when matched then
@@ -381,6 +379,7 @@ when not matched by target then
 	insert (OrderID,DropDownListID,TargetDate,EditName,EditDate)
 	values(s.OrderID,s.ColumnType,s.NewTargetDate,'{Sci.Env.User.UserID}',GetDate());
 
+-- 只要TargetDate是空值,就刪除已存在資料
 delete t
 from CriticalActivity t
 where exists (

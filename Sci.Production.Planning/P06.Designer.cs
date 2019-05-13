@@ -30,12 +30,15 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             this.comboColumnType = new Sci.Win.UI.ComboBox();
             this.checkTargetDate = new Sci.Win.UI.CheckBox();
             this.dateSCIDlvDate = new Sci.Win.UI.DateRange();
             this.labSCIDlv = new Sci.Win.UI.Label();
             this.labColumnType = new Sci.Win.UI.Label();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
             this.labStyle = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labBrandID = new Sci.Win.UI.Label();
             this.labSPNo = new Sci.Win.UI.Label();
             this.txtSPNo = new Sci.Win.UI.TextBox();
@@ -43,9 +46,6 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -72,6 +72,18 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(857, 121);
             this.panel3.TabIndex = 20;
+            // 
+            // gridIcon1
+            // 
+            this.gridIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridIcon1.Location = new System.Drawing.Point(719, 83);
+            this.gridIcon1.Name = "gridIcon1";
+            this.gridIcon1.Size = new System.Drawing.Size(100, 32);
+            this.gridIcon1.TabIndex = 55;
+            this.gridIcon1.Text = "gridIcon1";
+            this.gridIcon1.AppendClick += new System.EventHandler(this.gridIcon1_AppendClick);
+            this.gridIcon1.RemoveClick += new System.EventHandler(this.gridIcon1_RemoveClick);
             // 
             // comboColumnType
             // 
@@ -137,6 +149,20 @@
             this.labColumnType.TabIndex = 52;
             this.labColumnType.Text = "Column Type";
             // 
+            // txtstyle
+            // 
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.IsSupportEditMode = false;
+            this.txtstyle.Location = new System.Drawing.Point(544, 12);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 2;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
+            // 
             // labStyle
             // 
             this.labStyle.Location = new System.Drawing.Point(476, 12);
@@ -144,6 +170,17 @@
             this.labStyle.Size = new System.Drawing.Size(65, 23);
             this.labStyle.TabIndex = 50;
             this.labStyle.Text = "Style";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.IsSupportEditMode = false;
+            this.txtbrand.Location = new System.Drawing.Point(363, 12);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtbrand.Size = new System.Drawing.Size(110, 23);
+            this.txtbrand.TabIndex = 1;
             // 
             // labBrandID
             // 
@@ -217,43 +254,6 @@
             this.grid.Size = new System.Drawing.Size(857, 335);
             this.grid.TabIndex = 21;
             this.grid.TabStop = false;
-            // 
-            // txtstyle
-            // 
-            this.txtstyle.BackColor = System.Drawing.Color.White;
-            this.txtstyle.BrandObjectName = null;
-            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.IsSupportEditMode = false;
-            this.txtstyle.Location = new System.Drawing.Point(544, 12);
-            this.txtstyle.Name = "txtstyle";
-            this.txtstyle.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtstyle.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle.TabIndex = 2;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.IsSupportEditMode = false;
-            this.txtbrand.Location = new System.Drawing.Point(363, 12);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtbrand.Size = new System.Drawing.Size(110, 23);
-            this.txtbrand.TabIndex = 1;
-            // 
-            // gridIcon1
-            // 
-            this.gridIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridIcon1.Location = new System.Drawing.Point(719, 83);
-            this.gridIcon1.Name = "gridIcon1";
-            this.gridIcon1.Size = new System.Drawing.Size(100, 32);
-            this.gridIcon1.TabIndex = 55;
-            this.gridIcon1.Text = "gridIcon1";
-            this.gridIcon1.AppendClick += new System.EventHandler(this.gridIcon1_AppendClick);
-            this.gridIcon1.RemoveClick += new System.EventHandler(this.gridIcon1_RemoveClick);
             // 
             // P06
             // 
