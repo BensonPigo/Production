@@ -8,10 +8,11 @@ BEGIN
 	on t.Export_DetailUkey = s.Export_DetailUkey when matched then update set 
 		t.TPEInspectionReport =s.InspectionReport,
 		t.TPETestReport =s.TestReport,
-		t.TPEContinuityCard =s.ContinuityCard
+		t.TPEContinuityCard =s.ContinuityCard,
+		t.AWBNo  = isnull(s.AWBNo,'') 
 	when not matched by target then 	
-		insert(  [Export_DetailUkey],  TPEInspectionReport,  TPETestReport, TPEContinuityCard)
-		values(s.[Export_DetailUkey],s.[InspectionReport] ,s.[TestReport] ,s.[ContinuityCard]);
+		insert(  [Export_DetailUkey],  TPEInspectionReport,  TPETestReport, TPEContinuityCard,		   AWBNo )
+		values(s.[Export_DetailUkey],s.[InspectionReport] ,s.[TestReport] ,s.[ContinuityCard],isnull(s.AWBNo,'') );
 
 
 	Merge Production.dbo.FirstDyelot  as t

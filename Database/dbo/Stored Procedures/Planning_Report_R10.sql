@@ -51,10 +51,12 @@ BEGIN
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1  And Factory.Junk = 0 And Artworktype.ReportDropdown = 1 
 	And Artworktype.ID = @ArtWorkType
-	And (factory.MDivisionID = @M or @M = '') And (factory.ID = @Fty or @Fty = '')
+	And (factory.MDivisionID = @M or @M = '') And (factory.ID = @Fty or @Fty = '') and Factory.IsProduceFty = 1
 
-	select id,FactoryID,CPU,OrderTypeID,ProgramID,Qty,Category,BrandID,BuyerDelivery,SciDelivery,CpuRate
-	into #Orders From orders 
+	select orders.id,orders.FactoryID,orders.CPU,orders.OrderTypeID,orders.ProgramID,orders.Qty,orders.Category,
+			orders.BrandID,orders.BuyerDelivery,orders.SciDelivery,CpuRate
+	into #Orders From orders with (nolock)
+	inner join Factory f on orders.FactoryID = f.ID and f.IsProduceFty = 1
 	outer apply (select CpuRate from GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O') ) gcRate
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
@@ -62,6 +64,17 @@ BEGIN
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
 	And (orders.MDivisionID = @M or @M = '') And (orders.FactoryID = @Fty or @Fty = '')  and localorder = 0
+	
+	if not exists(select 1 from #tmpFactory)
+	begin
+		insert into #tmpFactory
+		SELECT top 1 CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , '' as FactoryID
+			, iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		, CPU=0		,Year=@Year, Month='00', ArtworkTypeID=@ArtWorkType, TMS =0
+		,Capacity=0		, HalfCapacity1=0		, HalfCapacity2=0		,OrderYYMM=concat(@Year,'00')		,FactorySort = 0
+		From Factory inner join Country on Factory.CountryID = Country.ID
+		where (factory.ID = @Fty or @Fty = '') 
+	end
 
 	--Order
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID, CPURate
@@ -179,7 +192,7 @@ BEGIN
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,FactorySort
 	into #tmpForecast1 from Orders
-	left join Factory on Factory.ID = Orders.FactoryID
+	inner join Factory on Orders.FactoryID = Factory.ID and Factory.IsProduceFty = 1
 	left join Style on Style.Ukey = Orders.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID

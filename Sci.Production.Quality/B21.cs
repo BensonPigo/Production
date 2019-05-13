@@ -50,8 +50,19 @@ namespace Sci.Production.Quality
                  return false;
              }
 
-             #endregion
-             return base.ClickSaveBefore();
+            #endregion
+
+            if (this.IsDetailInserting)
+            {
+                int seq = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select max(seq) from GarmentDefectCode where GarmentDefectTypeID = '{this.CurrentMaintain["GarmentDefectTypeID"]}' "));
+                seq++;
+                if (seq > 255)
+                {
+                    seq = 255;
+                }
+                CurrentMaintain["seq"] = seq;
+            }
+            return base.ClickSaveBefore();
          }       
 
          private void txtDefectcode_Validating(object sender, CancelEventArgs e)
