@@ -2336,6 +2336,8 @@
     <Build Include="dbo\Tables\ClogGarmentDispose_Detail.sql" />
     <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData_Detail.sql" />
     <Build Include="dbo\Stored Procedures\SNPAutoTransferToSewingOutput.sql" />
+    <Build Include="dbo\Tables\RFIDReader_SubProcess.sql" />
+    <Build Include="dbo\Tables\RFIDReader_Panel.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

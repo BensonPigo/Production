@@ -108,10 +108,10 @@ from (
                               where DATEDIFF(day,bio.InComing,bio.OutGoing)  <= s.BCSDate)
     from Bundle b WITH (NOLOCK) 
     inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-    inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+    inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
     left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno = bd.Bundleno
     left join SubProcess s WITH (NOLOCK) on s.Id = bio.SubprocessId
-    where 1=1
+    where 1=1 and isnull(bio.RFIDProcessLocationID,'') = ''
           -- SubProcess --
           {0}  
           -- BundleReceive1 --

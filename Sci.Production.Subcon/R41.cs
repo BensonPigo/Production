@@ -207,9 +207,11 @@ Select
 						else '' end,
 	s.InOutRule
 	,b.Item
+	,bio.PanelNo
+	,bio.CutCellID
 into #result
 from Bundle b WITH (NOLOCK) 
-inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
 outer apply(
     select s.ID,s.InOutRule,s.ArtworkTypeId
@@ -321,6 +323,8 @@ select
     gcd.EstCutDate,
     gcd.CuttingOutputDate
 	,r.Item
+	,r.PanelNo
+	,r.CutCellID
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 

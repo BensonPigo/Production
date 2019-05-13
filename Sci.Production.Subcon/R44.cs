@@ -91,6 +91,7 @@ select	masterID = o.POID
 		, o.SewLine
 		, o.SewInLine
 		, o.SewOffLine
+        , o.MDivisionID 
 into #tsp
 from orders o WITH (NOLOCK)
 inner join Factory f WITH (NOLOCK) on o.FactoryID = f.ID
@@ -171,7 +172,7 @@ from #TablePatternCode tpc
 left join Bundle b WITH (NOLOCK) on b.POID = tpc.Poid
 left join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.id
 							  and tpc.PatternCode = bd.Patterncode
-left join #tsp on b.Orderid = #tsp.orderID
+left join #tsp on b.Orderid = #tsp.orderID and #tsp.MDivisionID  = b.MDivisionID 
 left join WorkOrder wo WITH (NOLOCK) on b.POID = wo.id
 						   and b.CutRef = wo.CutRef
 left join Order_BOF ob WITH (NOLOCK) on ob.Id = wo.Id 
@@ -224,7 +225,7 @@ inner join WorkOrder wo WITH (NOLOCK) on b.POID = wo.id
 						   and b.CutRef = wo.CutRef
 left join Order_BOF ob WITH (NOLOCK) on ob.Id = wo.Id 
 						  and ob.FabricCode = wo.FabricCode
-inner join #tsp on b.Orderid = #tsp.orderID
+inner join #tsp on b.Orderid = #tsp.orderID and #tsp.MDivisionID  = b.MDivisionID 
 outer apply (
 	select value = stuff ((	select '+' + subprocessid
 							from (
@@ -239,6 +240,7 @@ outer apply(
 	select value = CONVERT(char(10), bio.InComing, 120)
 ) cDate
 where	bio.SubProcessId = 'loading'
+        and isnull(bio.RFIDProcessLocationID,'') = ''
 		and ob.Kind not in ('0','3')		
 		--{2} 篩選 OrderID
 		{2}
@@ -439,7 +441,7 @@ with step1 as ( --InComing有日期同PatternCode加總，算出每個Pattern總
 			from Bundle b WITH (NOLOCK) 
 			inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
 			left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-			inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+			inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 			inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
 			left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
 			outer apply(
@@ -451,6 +453,7 @@ with step1 as ( --InComing有日期同PatternCode加總，算出每個Pattern總
 					),1,1,'')
 			) as sub
 			where s.Id = 'LOADING' and b.Orderid in (select distinct sp from #print)
+            and isnull(bio.RFIDProcessLocationID,'') = ''
 			and b.PatternPanel in (
 				Select distinct oe.PatternPanel
 				From dbo.Order_EachCons a WITH (NOLOCK) 
