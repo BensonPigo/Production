@@ -163,6 +163,7 @@ select {byType},estCutDate{byType2} from #tmp2 group by {byType},estCutDate{byTy
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyRequest.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
+            excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             #region 寫入共用欄位
@@ -519,7 +520,7 @@ Cutplanid, str_PIVOT);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            excel.Visible = true;
+            excel.Visible = false;
 
             #region 寫入共用欄位
             worksheet.Cells[1, 6] = OrderDr["factoryid"];
