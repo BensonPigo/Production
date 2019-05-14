@@ -300,7 +300,7 @@ select  StyleID
         , StyleUKey
         , Description
         , IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type
-        , ([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),iif(Qty=0.000,0.000,IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)))/Qty) as NewQty
+        , ([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),iif(Qty=0.000,0.000,IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)),default)/Qty) as NewQty
 		, [StockUnit] = UsageUnit
 		, [StockQty] = markerYDS/Qty
 into #tmpBOFNewQty
@@ -407,7 +407,7 @@ select  StyleID
         , StyleUKey
         , Description
         , IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type
-        , [dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,SizeSpec,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
+        , [dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,SizeSpec,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),default) as NewQty
 		, [StockUnit] = UsageUnit
 		, [StockQty] = SizeSpec
 into #tmpBOANewQty
@@ -542,7 +542,7 @@ select  StyleID
         , Description
         , Type
         , SuppID
-        , [dbo].getVNUnitTransfer('',UnitId,CustomsUnit,Qty,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
+        , [dbo].getVNUnitTransfer(Category,UnitId,CustomsUnit,Qty,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),Refno) as NewQty
 		, [StockUnit] = UnitId
 		, [StockQty] = Qty
 into #tmpLocalNewQty

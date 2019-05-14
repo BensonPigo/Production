@@ -843,7 +843,7 @@ and f.NoDeclare = 0),
 tmpBOFNewQty
 as (
 select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,[StockUnit] = UsageUnit,[StockQty] = markerYDS/Qty,
-([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)))/Qty as NewQty
+([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),default))/Qty as NewQty
 from tmpBOFRateData),
 tmpBOFData
 as (
@@ -876,7 +876,7 @@ where (t.BomTypeArticle = 0 and t.BomTypeColor = 0) or ((t.BomTypeArticle = 1 or
 tmpBOANewQty
 as (
 select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit, [StockUnit] = UsageUnit, [StockQty] = SizeSpec,
-[dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,SizeSpec,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
+[dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,SizeSpec,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),default) as NewQty
 from tmpBOAPrepareData
 ),
 tmpBOAData
@@ -888,7 +888,7 @@ group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StockUnit),
 tmpLocalPO
 as (
 select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty
-,isnull(vd.Waste,0) as Waste
+,isnull(vd.Waste,0) as Waste,li.Category
 from LocalPO_Detail ld WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
@@ -899,7 +899,7 @@ and li.NoDeclare = 0
 tmpConeToM
 as (
 select Refno,IIF(UnitId = 'CONE',Qty*MeterToCone,Qty) as Qty,OrderQty, IIF(UnitId = 'CONE','M',UnitId) as UnitId,Waste,
-NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg
+NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg,Category
 from tmpLocalPO),
 tmpPrepareRate
 as (
@@ -907,12 +907,13 @@ select Refno,iif(OrderQty=0,0,Qty/OrderQty) as Qty,UnitId,NLCode,HSCode,CustomsU
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = 'M') as M2RateValue,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate,
+Category
 from tmpConeToM),
 tmpLocalNewQty
 as (
 select Refno as SCIRefno,Refno,'' as BrandID,NLCode,HSCode,CustomsUnit,Waste, [StockUnit] = UnitId, [StockQty] = Qty,
-[dbo].getVNUnitTransfer('',UnitId,CustomsUnit,Qty,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
+[dbo].getVNUnitTransfer(Category,UnitId,CustomsUnit,Qty,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),Refno) as NewQty
 from tmpPrepareRate
 ),
 tmpLocalData

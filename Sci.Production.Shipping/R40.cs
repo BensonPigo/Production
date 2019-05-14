@@ -258,7 +258,7 @@ from
 			(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),
 			(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit 
 			and TO_U = isnull(f.CustomsUnit,''))),'')
-	))
+	,default))
 	,[CustomsUnit] = f.CustomsUnit
 	,[OnRaodQty] = dbo.getUnitRate(psd.PoUnit,dbo.getStockUnit(psd.SciRefno,ed.Suppid))*(ed.qty+ed.foc)
 	,[StockUnit] = dbo.getStockUnit(psd.SciRefno,ed.Suppid)				
@@ -298,7 +298,7 @@ union all
 		,isnull(IIF(isnull(li.CustomsUnit, '') = 'M2',
 			(select Rate from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = 'M'),
 			(select Rate from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = isnull(f.CustomsUnit,''))),'')
-	))
+	,isnull(li.Refno,'')))
 	,[CustomsUnit] = isnull(isnull(f.CustomsUnit,li.CustomsUnit),'')
 	,[OnRaodQty] = isnull(UnitRateQty.qty,0)
 	,[StockUnit] = isnull(StockUnit.unit,'')
@@ -370,7 +370,8 @@ from (
 				,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
 			,isnull(IIF(isnull(f.CustomsUnit, '') = 'M2',
 				(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),''))
+				,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
+                ,default)
 			, 0)
 	,[W/House Unit] = f.CustomsUnit
 	,[W/House Qty(Stock Unit)] = fi.InQty-fi.OutQty+fi.AdjustQty
@@ -398,7 +399,7 @@ select distinct
 	,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 		,l.UnitId
 		,li.CustomsUnit
-		,(l.InQty-l.OutQty+l.AdjustQty)*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1)
+		,(l.InQty-l.OutQty+l.AdjustQty)
 		,0
 		,li.PcsWidth
 		,li.PcsLength
@@ -408,7 +409,8 @@ select distinct
 			,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
 		,isnull(IIF(li.CustomsUnit = 'M2',
 			(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),''))
+			,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
+            ,li.Refno)
 		,0)
 	,[W/House Unit] = li.CustomsUnit
 	,[W/House Qty(Usage Unit)] =l.InQty-l.OutQty+l.AdjustQty
@@ -463,7 +465,8 @@ from
 			,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
 		,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',
 			(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-			,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),''))
+			,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
+            ,default)
 		,0)
     ,f.Refno
     ,[MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
@@ -488,7 +491,7 @@ union all
 	,[Qty] = IIF(l.OutQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 		,l.UnitId
 		,isnull(li.CustomsUnit,'')
-		,l.OutQty*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1)
+		,l.OutQty
 		,0
 		,isnull(li.PcsWidth,0)
 		,isnull(li.PcsLength,0)
@@ -498,7 +501,8 @@ union all
 			,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),1)
 		,isnull(IIF(isnull(li.CustomsUnit,'') = 'M2',
 			(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),''))
+			,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),'')
+            ,li.Refno)
 		,0)
     ,li.Refno
     ,[MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
@@ -804,7 +808,8 @@ from (
 				,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
 			,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2'
 				,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')),0)
+				,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
+                ,default),0)
 	,[CustomsUnit] = isnull(f.CustomsUnit,'')
 	,[ScrapQty] = ft.InQty-ft.OutQty+ft.AdjustQty
 	,[StockUnit] = psd.StockUnit
@@ -829,7 +834,7 @@ union all
 	,[Location] = l.CLocation		
 	,[Qty] = IIF(l.LobQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 			,l.UnitId,li.CustomsUnit
-			,(l.LobQty)*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1)
+			,l.LobQty
 			,0
 			,li.PcsWidth
 			,li.PcsLength
@@ -839,7 +844,8 @@ union all
 				,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
 			,isnull(IIF(li.CustomsUnit = 'M2',
 				(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-				,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')),0)
+				,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
+                ,li.Refno),0)
 	,[CustomsUnit] = isnull(li.CustomsUnit,'')
 	,[ScrapQty] = l.LobQty
 	,[StockUnit] = l.UnitID
