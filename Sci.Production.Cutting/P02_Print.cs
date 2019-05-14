@@ -86,7 +86,7 @@ namespace Sci.Production.Cutting
             {
                 byType = "Cutplanid";
                 byType2 = "";
-                strOrderby = "";
+                strOrderby = "order by cutref";
             }
 
             string workorder_cmd = string.Format(@"
