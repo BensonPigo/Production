@@ -86,3 +86,5 @@ PMSUploadDataToAPS.Daily/bin/Debug/Ict.dll
 PMSUploadDataToAPS.Daily/bin/Debug/Ict.Win.dll
 PMSUploadDataToAPS.Daily/bin/Debug/Ict.Win.UI.dll
 PMSUploadDataToAPS.Daily/bin/Debug/Ict.Win.App.dll
+SNPAutoTransferToSewingOutput.Daily/bin/Debug/
+SNPAutoTransferToSewingOutput.Daily/obj/

@@ -1,7 +1,7 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 2019/04/15 ¤U¤È 04:35:47 ******/
+/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 2019/04/15 ï¿½Uï¿½ï¿½ 04:35:47 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -17,7 +17,7 @@ GO
 -- =============================================
 -- Author:		Benson
 -- Create date: 2019/03/11
--- Description:	Get Hanger Output Data and Insert into SewingOutput¡BRFT 
+-- Description:	Get Hanger Output Data and Insert into SewingOutputï¿½BRFT 
 -- =============================================
 CREATE PROCEDURE [dbo].[SNPAutoTransferToSewingOutput]
 (	
@@ -27,9 +27,8 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	BEGIN TRANSACTION 
 	BEGIN TRY
-
+		begin transaction	
 			--Declare
 			Declare 
 			@DateStart date,
@@ -136,7 +135,7 @@ BEGIN
 				,ColorName as Article
 				, SizeName as SizeCode
 				,[QAQty]=sum(OutputQty) 
-				,[InlineQty]=sum(InputQty) --4/13 InputQty¼g¤J¨ìSewing P01¤¤µe­±ªºprod qty¤¤
+				,[InlineQty]=sum(InputQty) --4/13 InputQtyï¿½gï¿½Jï¿½ï¿½Sewing P01ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½ï¿½prod qtyï¿½ï¿½
 			into #tmp_Into_SewingOutput_Detail_Detail_with0
 			from #tOutputTotal
 			where dDate = @DateStart
@@ -178,7 +177,7 @@ BEGIN
 			SELECt  *
 			INTO #tmp_Into_SewingOutput_Detail_Detail
 			FROM #tmp_Into_SewingOutput_Detail_Detail_1 
-			WHERE QAQty IS NOT NULL --WHERE QAQty > 0  4/15  > 0­n³Q¥]§t¶i¥h
+			WHERE QAQty IS NOT NULL --WHERE QAQty > 0  4/15  > 0ï¿½nï¿½Qï¿½]ï¿½tï¿½iï¿½h
 
 
 			--Prepare SewingOutput_Detail Fail
@@ -207,8 +206,8 @@ BEGIN
 			, Article
 			,[QAQty]= Sum(QAQty) 
 			,[InlineQty]=  sum(InlineQty)
-			--,[InlineQty]= CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --­YtOutputTotal.FailQty»POutputQty³£¬°0±¡ªp¤U¡A¤]»Ý­n§âInputQty¼g¤J¨ìSewing P01¤¤µe­±ªºprod qty¤¤¡C
-			--				ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --­ì¥»­pºâ¤èªk
+			--,[InlineQty]= CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --ï¿½YtOutputTotal.FailQtyï¿½POutputQtyï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½pï¿½Uï¿½Aï¿½]ï¿½Ý­nï¿½ï¿½InputQtyï¿½gï¿½Jï¿½ï¿½Sewing P01ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½ï¿½prod qtyï¿½ï¿½ï¿½C
+			--				ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --ï¿½ì¥»ï¿½pï¿½ï¿½ï¿½k
 			--				END
 			,[DefectQty]= (sum( ISNULL(FailCount,0) ) + Sum(QAQty)) - Sum(QAQty) 
 			,[TMS] = TMS.CPU * TMS.CPUFactor * ( IIF(o.StyleUnit='PCS',100,Rate.Rate) /100  ) * TMS.StdTMS--CPU * CPUFactor * (Rate/100) * StdTMS
@@ -343,7 +342,7 @@ BEGIN
 			,[InlineQty]=a.InlineQty
 			,[OldDetailKey]=NULL
 			,[AutoCreate]=0
-			,[SewingReasonID]= IIF(a.QAQty=0,'00001','') --­YQAQTY¡A¹w³]¥N²Ä¤@­ÓReasionId
+			,[SewingReasonID]= IIF(a.QAQty=0,'00001','') --ï¿½YQAQTYï¿½Aï¿½wï¿½]ï¿½Nï¿½Ä¤@ï¿½ï¿½ReasionId
 			,[Remark]=NULL
 			FROM #tmp_Into_SewingOutput_Detail a
 			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine  = b.SewingLineID 
@@ -544,54 +543,53 @@ BEGIN
 			FROm #tmp_4
 			GROUP BY ID,[GarmentDefectCodeID],[GarmentDefectTypeid]
 		
-		----------------------------Masil send----------------------------
-			SET @mailBody   =   'Transfer Date¡G'+ Cast(@DateStart as varchar)
-								+CHAR(10) + 'Result¡GSuccess'
-								+CHAR(10) 
-								+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
-								+CHAR(10) + 'Please do not reply this mail.';
-			EXEC msdb.dbo.sp_send_dbmail  
-				@profile_name = 'SUNRISEmailnotice',  
-				@recipients ='pmshelp@sportscity.com.tw',
-				@copy_recipients= 'roger.lo@sportscity.com.vn',
-				@body = @mailBody,  
-				@subject = 'Daily Hanger system data to PMS - Sewing Output & RFT'; 
+		------------------------------Masil send----------------------------
+		--	SET @mailBody   =   'Transfer Dateï¿½G'+ Cast(@DateStart as varchar)
+		--						+CHAR(10) + 'Resultï¿½GSuccess'
+		--						+CHAR(10) 
+		--						+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
+		--						+CHAR(10) + 'Please do not reply this mail.';
+		--	EXEC msdb.dbo.sp_send_dbmail  
+		--		@profile_name = 'SUNRISEmailnotice',  
+		--		@recipients ='pmshelp@sportscity.com.tw',
+		--		@copy_recipients= 'roger.lo@sportscity.com.vn',
+		--		@body = @mailBody,  
+		--		@subject = 'Daily Hanger system data to PMS - Sewing Output & RFT'; 
+		commit transaction
 	END TRY
-
 	BEGIN CATCH
-
+		EXECUTE [usp_GetErrorString];
 		--Prepare Mail
-		DECLARE @ErrorMessage As VARCHAR(1000) = CHAR(10)+'Error Code¡G' +CAST(ERROR_NUMBER() AS VARCHAR)
-												+CHAR(10)+'Error Message¡G'+	ERROR_MESSAGE()
-												+CHAR(10)+'Line¡G'+	CAST(ERROR_LINE() AS VARCHAR)
-												+CHAR(10)+'Procedure Name¡G'+	ISNULL(ERROR_PROCEDURE(),'')
-		DECLARE @ErrorSeverity As Numeric = ERROR_SEVERITY()
-		DECLARE @ErrorState As Numeric = ERROR_STATE()
+		--DECLARE @ErrorMessage As VARCHAR(1000) = CHAR(10)+'Error Codeï¿½G' +CAST(ERROR_NUMBER() AS VARCHAR)
+		--										+CHAR(10)+'Error Messageï¿½G'+	ERROR_MESSAGE()
+		--										+CHAR(10)+'Lineï¿½G'+	CAST(ERROR_LINE() AS VARCHAR)
+		--										+CHAR(10)+'Procedure Nameï¿½G'+	ISNULL(ERROR_PROCEDURE(),'')
+		--DECLARE @ErrorSeverity As Numeric = ERROR_SEVERITY()
+		--DECLARE @ErrorState As Numeric = ERROR_STATE()
 		
-		SET @mailBody   =   'Transfer Date¡G'+ Cast( Cast(@execuDatetime as Date) as Varchar)
-							+CHAR(10) + 'Result¡GError'
-							+CHAR(10) 
-							+ @ErrorMessage
-							+CHAR(10) 
-							+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
-							+CHAR(10) + 'Please do not reply this mail.';
-		 IF @@TRANCOUNT > 0  
+		--PRINT @ErrorMessage
+
+		--SET @mailBody   =   'Transfer Dateï¿½G'+ Cast( Cast(@execuDatetime as Date) as Varchar)
+		--					+CHAR(10) + 'Resultï¿½GError'
+		--					+CHAR(10) 
+		--					+ @ErrorMessage
+		--					+CHAR(10) 
+		--					+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
+		--					+CHAR(10) + 'Please do not reply this mail.';
+		IF @@TRANCOUNT > 0  
         ROLLBACK TRANSACTION;
 				
 		----------------------------Masil send----------------------------
-		EXEC msdb.dbo.sp_send_dbmail  
-		@profile_name = 'SUNRISEmailnotice',  
-		@recipients ='pmshelp@sportscity.com.tw',
-		@copy_recipients= 'roger.lo@sportscity.com.vn',
-		@body = @mailBody,  
-		@subject = 'Daily Hanger system data to PMS - Sewing Output & RFT'; 
-	
-
+		--EXEC msdb.dbo.sp_send_dbmail  
+		--@profile_name = 'SUNRISEmailnotice',  
+		--@recipients ='pmshelp@sportscity.com.tw',
+		--@copy_recipients= 'roger.lo@sportscity.com.vn',
+		--@body = @mailBody,  
+		--@subject = 'Daily Hanger system data to PMS - Sewing Output & RFT'; 
 	END CATCH
 
 
-	IF @@TRANCOUNT > 0  
-		COMMIT TRANSACTION;  
-	
+	--IF @@TRANCOUNT > 0  
+	--	COMMIT TRANSACTION;  
 END
-GO
+Go
