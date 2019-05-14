@@ -181,6 +181,7 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 ,SCategory = so.Category, CPUFactor, o.MDivisionID,orderid
 ,Rate = isnull([dbo].[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1) 
 ,ActManPower= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
+,c.ProductionFamilyID
 into #stmp
  from Orders o WITH (NOLOCK) 
     inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
@@ -285,16 +286,17 @@ select OutputDate
 , StyleID
 , Rate
 , MDivisionID
+, ProductionFamilyID
 , QAQty = sum(QAQty)
 , ActManPower= Sum(Round(ActManPower,2))
 , WorkHour = sum(Round(WorkHour,3))
 into #stmp2		
 from #stmp
 group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID
-, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
+, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID, ProductionFamilyID
 
 select 
-a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID 
+a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.MDivisionID,a.FactoryID, a.POID , a.Category, a.CdCodeID 
 , CPU = sum(a.CPU)
 , CPURate = sum(a.CPURate)
 , a.BuyerDelivery, a.SCIDelivery, a.SewingLineID , a.ComboType
@@ -312,6 +314,7 @@ a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Ca
 , a.CDDesc
 , a.StyleDesc
 , a.ModularParent
+, a.ProductionFamilyID
 , CPUAdjusted = sum(a.CPUAdjusted)
 ,QAQty = sum(a.QAQty) 
 ,TotalCPUOut =
@@ -324,10 +327,10 @@ a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Ca
 into #tmpz
 from #stmp a
 group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID ,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID 
-, a.CDDesc, a.StyleDesc,a.ComboType,a.ModularParent,OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
+, a.CDDesc, a.StyleDesc,a.ComboType,a.ModularParent, a.ProductionFamilyID,OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
 ";
                 #region 1.	By Factory
-                string strFactory = string.Format(@"{0} Select FactoryID AS A, QARate, TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
+                string strFactory = string.Format(@"{0} Select A=MDivisionID,B=FactoryID, QARate, TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -344,10 +347,10 @@ group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.PO
                     }
                 }
 
-                sqlcmd = @"select A,B=sum(QARate),C=sum(TotalCPUOut),D=sum(TotalManHour)
-,E=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
-,F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
-from #tmp Group BY A order by A ";
+                sqlcmd = @"select A,B,C=sum(QARate),D=sum(TotalCPUOut),E=sum(TotalManHour)
+,F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
+from #tmp Group BY A,B order by A,B ";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData1o, string.Empty, sqlcmd, out this.gdtData1);
                 #endregion 1.	By Factory
@@ -381,7 +384,7 @@ F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalMan
                 string strFBrand = string.Format(
                     @"
 {0} 
-Select BrandID AS A, FactoryID AS B, QARate, TotalCPUOut,TotalManHour
+Select A=BrandID, B=MDivisionID,C=FactoryID, QARate, TotalCPUOut,TotalManHour
 FROM #tmpz ",
 strSQL);
                 foreach (string conString in connectionString)
@@ -400,10 +403,10 @@ strSQL);
                     }
                 }
 
-                sqlcmd = @"select A,B,C=sum(QARate),D=sum(TotalCPUOut),E=sum(TotalManHour)
-,F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
-,G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)  
-from #tmp Group BY A,B order by A,B";
+                sqlcmd = @"select A,B,C,D=sum(QARate),E=sum(TotalCPUOut),F=sum(TotalManHour)
+,G=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,H=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)  
+from #tmp Group BY A,B,C order by A,B,C";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData3o, string.Empty, sqlcmd, out this.gdtData3);
                 #endregion 3.	By Brand + Factory
@@ -471,7 +474,7 @@ from #tmp Group BY A,B order by A";
                 #endregion 5.	By CD
 
                 #region 6.	By Factory Line
-                string strFactoryLine = string.Format(@"{0}  Select FactoryID AS A, SewingLineID AS B, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
+                string strFactoryLine = string.Format(@"{0}  Select A=MDivisionID,B=FactoryID,C=SewingLineID, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -488,17 +491,17 @@ from #tmp Group BY A,B order by A";
                     }
                 }
 
-                sqlcmd = @"select A,B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E
-,F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
-,G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
-from #tmp Group BY A,B order by A,B";
+                sqlcmd = @"select A,B,C, Sum(QARate) AS D, Sum(TotalCPUOut) AS E, SUM(TotalManHour) AS F
+,G=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,H=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A,B,C order by A,B,C";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData6o, string.Empty, sqlcmd, out this.gdtData6);
                 #endregion 6.	By Factory Line
 
                 #region 7.	By Factory, Brand , CDCode
                 string strFBCDCode = string.Format(
-                    @"{0}  Select BrandID AS A, FactoryID AS B, CdCodeID AS C, CDDesc AS D, QARate, TotalCPUOut,TotalManHour
+                    @"{0}  Select A=BrandID, B=MDivisionID,C=FactoryID, D=CdCodeID,E=CDDesc, QARate, TotalCPUOut,TotalManHour
 FROM #tmpz  ",
                     strSQL);
                 foreach (string conString in connectionString)
@@ -517,10 +520,10 @@ FROM #tmpz  ",
                     }
                 }
 
-                sqlcmd = @"select A,B,C,D,E=sum(QARate),F=sum(TotalCPUOut),G=sum(TotalManHour)
-,H=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
-,I=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
-from #tmp Group BY A,B,C,D order by A,B,C";
+                sqlcmd = @"select A,B,C,D,E,F=sum(QARate),G=sum(TotalCPUOut),H=sum(TotalManHour)
+,I=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,J=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A,B,C,D,E order by A,B,C,D,E";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData7o, string.Empty, sqlcmd, out this.gdtData7);
                 #endregion 7.	By Factory, Brand , CDCode
@@ -529,7 +532,7 @@ from #tmp Group BY A,B,C,D order by A,B,C";
                 string strPOCombo = string.Format(
                     @"
 {0} 
-Select POID AS A, StyleID AS B, BrandID AS C, CdCodeID AS D, CDDesc AS E, StyleDesc AS F, SeasonID AS G, ProgramID AS H, QARate, TotalCPUOut, TotalManHour
+Select A=MDivisionID,POID AS B, StyleID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F,G=ProductionFamilyID, StyleDesc AS H, SeasonID AS I, ProgramID AS J, QARate, TotalCPUOut, TotalManHour
 FROM #tmpz  ",
 strSQL);
                 foreach (string conString in connectionString)
@@ -548,17 +551,17 @@ strSQL);
                     }
                 }
 
-                sqlcmd = @"select A,B,C,D,E,F,G,H
-,I=sum(QARate),J=sum(TotalCPUOut),K=sum(TotalManHour)
-,L=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
-,M=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
-from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,G";
+                sqlcmd = @"select A,B,C,D,E,F,G,H,I,J
+,K=sum(QARate),L=sum(TotalCPUOut),M=sum(TotalManHour)
+,N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,G";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData8o, string.Empty, sqlcmd, out this.gdtData8);
                 #endregion 8.	By PO Combo
 
                 #region 9.	By Program
-                string strProgram = string.Format(@"{0}  Select ProgramID AS A, StyleID AS B, FactoryID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F, StyleDesc AS G, SeasonID AS H, QARate,TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
+                string strProgram = string.Format(@"{0}  Select ProgramID AS A, StyleID AS B, C=MDivisionID,D=FactoryID, BrandID AS E, CdCodeID AS F, CDDesc AS G,H=ProductionFamilyID, StyleDesc AS I, SeasonID AS J, QARate,TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -575,11 +578,11 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,G";
                     }
                 }
 
-                sqlcmd = @"select A,B,C,D,E,F,G,H
-,I=sum(QARate),J=sum(TotalCPUOut),K=sum(TotalManHour)
-,L=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
-,M=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
-from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
+                sqlcmd = @"select A,B,C,D,E,F,G,H,I,J
+,K=sum(QARate),L=sum(TotalCPUOut),M=sum(TotalManHour)
+,N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
+,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData9o, string.Empty, sqlcmd, out this.gdtData9);
                 #endregion 9.	By Program
@@ -625,7 +628,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                 int intRowsCount = this.gdtData1.Rows.Count;
                 int intRowsStart = 2; // 匯入起始位置
                 int rownum = intRowsStart; // 每筆資料匯入之位置
-                int intColumns = 6; // 匯入欄位數
+                int intColumns = 7; // 匯入欄位數
                 if ((this.gdtData1 != null) && (this.gdtData1.Rows.Count > 0))
                 {
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[1];
@@ -637,7 +640,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                             objArray[0, intIndex_C] = this.gdtData1.Rows[intIndex][aryAlpha[intIndex_C]];
                         }
 
-                        wsSheet.Range[string.Format("A{0}:F{0}", intIndex + rownum)].Value2 = objArray;
+                        wsSheet.Range[string.Format("A{0}:G{0}", intIndex + rownum)].Value2 = objArray;
                     }
 
                     // 欄寬調整
@@ -671,7 +674,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                 #region 3.	By Brand-Factory
                 if ((this.gdtData3 != null) && (this.gdtData3.Rows.Count > 0))
                 {
-                    intColumns = 7; // 匯入欄位數
+                    intColumns = 8; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[3];
                     object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
                     for (int intIndex = 0; intIndex < this.gdtData3.Rows.Count; intIndex++)
@@ -681,7 +684,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                             objArray[0, intIndex_C] = this.gdtData3.Rows[intIndex][aryAlpha[intIndex_C]];
                         }
 
-                        wsSheet.Range[string.Format("A{0}:G{0}", intIndex + rownum)].Value2 = objArray;
+                        wsSheet.Range[string.Format("A{0}:H{0}", intIndex + rownum)].Value2 = objArray;
                     }
 
                     // 欄寬調整
@@ -737,7 +740,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                 #region 6.	By Factory Line
                 if ((this.gdtData6 != null) && (this.gdtData6.Rows.Count > 0))
                 {
-                    intColumns = 7; // 匯入欄位數
+                    intColumns = 8; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[6];
                     object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
                     for (int intIndex = 0; intIndex < this.gdtData6.Rows.Count; intIndex++)
@@ -747,7 +750,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                             objArray[0, intIndex_C] = this.gdtData6.Rows[intIndex][aryAlpha[intIndex_C]];
                         }
 
-                        wsSheet.Range[string.Format("A{0}:G{0}", intIndex + rownum)].Value2 = objArray;
+                        wsSheet.Range[string.Format("A{0}:H{0}", intIndex + rownum)].Value2 = objArray;
                     }
 
                     // 欄寬調整
@@ -759,7 +762,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                 #region 7.	By Brand-Factory-CD
                 if ((this.gdtData7 != null) && (this.gdtData7.Rows.Count > 0))
                 {
-                    intColumns = 9; // 匯入欄位數
+                    intColumns = 10; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[7];
                     object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
                     for (int intIndex = 0; intIndex < this.gdtData7.Rows.Count; intIndex++)
@@ -769,7 +772,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                             objArray[0, intIndex_C] = this.gdtData7.Rows[intIndex][aryAlpha[intIndex_C]];
                         }
 
-                        wsSheet.Range[string.Format("A{0}:I{0}", intIndex + rownum)].Value2 = objArray;
+                        wsSheet.Range[string.Format("A{0}:J{0}", intIndex + rownum)].Value2 = objArray;
                     }
 
                     // 欄寬調整
@@ -781,7 +784,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                 #region 8.	By PO Combo
                 if ((this.gdtData8 != null) && (this.gdtData8.Rows.Count > 0))
                 {
-                    intColumns = 13; // 匯入欄位數
+                    intColumns = 15; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[8];
                     object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
                     for (int intIndex = 0; intIndex < this.gdtData8.Rows.Count; intIndex++)
@@ -791,7 +794,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                             objArray[0, intIndex_C] = this.gdtData8.Rows[intIndex][aryAlpha[intIndex_C]];
                         }
 
-                        wsSheet.Range[string.Format("A{0}:M{0}", intIndex + rownum)].Value2 = objArray;
+                        wsSheet.Range[string.Format("A{0}:O{0}", intIndex + rownum)].Value2 = objArray;
                     }
 
                     // 欄寬調整
@@ -803,7 +806,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                 #region 9.	By Program
                 if ((this.gdtData9 != null) && (this.gdtData9.Rows.Count > 0))
                 {
-                    intColumns = 13; // 匯入欄位數
+                    intColumns = 15; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[9];
                     object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
                     for (int intIndex = 0; intIndex < this.gdtData9.Rows.Count; intIndex++)
@@ -813,7 +816,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
                             objArray[0, intIndex_C] = this.gdtData9.Rows[intIndex][aryAlpha[intIndex_C]];
                         }
 
-                        wsSheet.Range[string.Format("A{0}:M{0}", intIndex + rownum)].Value2 = objArray;
+                        wsSheet.Range[string.Format("A{0}:O{0}", intIndex + rownum)].Value2 = objArray;
                     }
 
                     // 欄寬調整
