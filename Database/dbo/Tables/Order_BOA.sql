@@ -169,3 +169,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 
 CREATE INDEX [Boa_Expand] ON [dbo].[Order_BOA] ([Id],[Ukey],[Refno],[Seq])
+go
+
+CREATE NONCLUSTERED INDEX [IDX_Order_BOA_WH_P03] ON [dbo].[Order_BOA] ([Id],[SCIRefno],[Seq1])
