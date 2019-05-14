@@ -136,6 +136,7 @@ namespace Sci.Production.Quality
             .Date("TPETestReport", header: "Test Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: Test)
             .Date("ContinuityCard", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
             .Date("TPEContinuityCard", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("AWBNo", header: "Continuity Card\r\nAWB#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: T2IY) // W
@@ -394,7 +395,8 @@ select distinct
     ed.seq2,
 	ed.Ukey,
     o.BrandID,
-    f.Clima
+    f.Clima,
+    sr.AWBNo
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
