@@ -711,11 +711,11 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            outer apply(SELECT top 1 oBOA.SizeItem FROM Order_BOA oBOA WHERE a.ID = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
+            outer apply(SELECT top 1 oBOA.SizeItem FROM Order_BOA oBOA WITH (NOLOCK) WHERE a.ID = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
                         ) LIST
             outer apply (select [GarmentSize] = Stuff((select concat( ',',LOSS.SizeCode) 
-            					from Order_SizeSpec LOSS 
-            					LEFT JOIN Order_SizeCode LOSC ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
+            					from Order_SizeSpec LOSS WITH (NOLOCK)
+            					LEFT JOIN Order_SizeCode LOSC WITH (NOLOCK) ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
             					where LOSS.Id = a.ID AND LOSS.SizeItem = LIST.SizeItem AND LOSS.SizeSpec = a.SizeSpec ORDER BY LOSC.Seq ASC FOR XML PATH('')),1,1,'') 
                         ) OSS
             
@@ -805,11 +805,11 @@ from(
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
-        outer apply(SELECT top 1 oBOA.SizeItem FROM Order_BOA oBOA WHERE a.ID = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
+        outer apply(SELECT top 1 oBOA.SizeItem FROM Order_BOA oBOA WITH (NOLOCK) WHERE a.ID = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
                         ) LIST
             outer apply (select [GarmentSize] = Stuff((select concat( ',',LOSS.SizeCode) 
-            					from Order_SizeSpec LOSS 
-            					LEFT JOIN Order_SizeCode LOSC ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
+            					from Order_SizeSpec LOSS WITH (NOLOCK)
+            					LEFT JOIN Order_SizeCode LOSC WITH (NOLOCK) ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
             					where LOSS.Id = a.ID AND LOSS.SizeItem = LIST.SizeItem AND LOSS.SizeSpec = a.SizeSpec ORDER BY LOSC.Seq ASC FOR XML PATH('')),1,1,'') 
                         ) OSS
         where   1=1 
