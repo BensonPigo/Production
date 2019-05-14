@@ -20,6 +20,7 @@ namespace Sci.Production.Cutting
         string S1, S2,Poid="";
         string cp,cr;
         private string keyword = Sci.Env.User.Keyword;
+        private string cutrefSort;
         int SheetCount = 1;
         DataTable WorkorderTb, WorkorderSizeTb, WorkorderDisTb, WorkorderPatternTb, CutrefTb, CutDisOrderIDTb, CutSizeTb, SizeTb, CutQtyTb, MarkerTB, FabricComboTb,IssueTb;
         DataRow detDr, OrderDr;
@@ -36,6 +37,7 @@ namespace Sci.Production.Cutting
             cr = detDr["CutRef"].ToString();
             cp = detDr["CutplanID"].ToString();
             txtCutRefNoStart.Select();
+            cmbSort.SelectedIndex = 0;
         }
 
         protected override bool ValidateInput()
@@ -48,6 +50,7 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.WarningBox("<Range> can not be empty", "Warning");
                 return false;
             }
+            cutrefSort = cmbSort.Text;
             return base.ValidateInput();
         }
 
@@ -64,16 +67,39 @@ namespace Sci.Production.Cutting
             paras.Add(new SqlParameter("@Cutref1", S1));
             paras.Add(new SqlParameter("@Cutref2", S2));
             string byType, byType2;
+            string strOrderby = string.Empty;
 
-            if (radioByCutRefNo.Checked)  byType = "Cutref";
-            else byType = "Cutplanid";
-            if (radioByCutRefNo.Checked) byType2 = ",shc";
-            else byType2 = "";
-            string workorder_cmd = string.Format(@"Select a.*,b.Description,b.width,dbo.MarkerLengthToYDS(MarkerLength) as yds 
+            if (radioByCutRefNo.Checked)
+            {
+                byType = "Cutref";
+                byType2 = ",shc";
+                if (cutrefSort.ToLower().EqualString("CutRef#"))
+                {
+                    strOrderby = "order by Cutref";
+                }
+                else
+                {
+                    strOrderby = "order by SpreadingNoID,CutCellID,Cutref";
+                }
+            }
+            else
+            {
+                byType = "Cutplanid";
+                byType2 = "";
+                strOrderby = "";
+            }
+
+            string workorder_cmd = string.Format(@"
+Select a.*,b.Description,b.width,dbo.MarkerLengthToYDS(MarkerLength) as yds 
     ,shc = iif(isnull(shc.RefNo,'')='','','Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension')
-from Workorder a WITH (NOLOCK) Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno 
+from Workorder a WITH (NOLOCK)
+Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno 
 outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc            
-            Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}'", detDr["ID"], byType);
+Where {1}>=@Cutref1 and {1}<=@Cutref2 
+and a.id='{0}'
+{2}
+", detDr["ID"], byType, strOrderby);
+
             DualResult dResult = DBProxy.Current.Select(null, workorder_cmd, paras,out WorkorderTb);
             if (!dResult) return dResult;
 
@@ -91,7 +117,11 @@ outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) s
 
             MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) Where id='{0}'", detDr["ID"]), out OrderDr);
 
-            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},estCutDate{1}", byType,byType2), string.Format("Select distinct {0},estCutDate{1} From #tmp ", byType, byType2), out CutrefTb);
+            string sqlCutrefTb = $@"
+Select {byType},estCutDate{byType2},rn=ROW_NUMBER()over({strOrderby} ) into #tmp2 From #tmp
+select {byType},estCutDate{byType2} from #tmp2 group by {byType},estCutDate{byType2} order by min(rn)
+";
+            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, "SpreadingNoID,CutCellID,Cutref,Cutplanid,estCutDate,shc", sqlCutrefTb, out CutrefTb);
 
             MyUtility.Tool.ProcessWithDatatable(WorkorderDisTb, string.Format("{0},OrderID",byType), string.Format("Select distinct {0},OrderID From #tmp",byType), out CutDisOrderIDTb); //整理sp
 
@@ -202,6 +232,8 @@ outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) s
                 if (WorkorderArry.Length > 0)
                 {
                     worksheet.Cells[8, 13] = WorkorderArry[0]["MarkerDownLoadId"].ToString();
+                    worksheet.Cells[3, 7] = WorkorderArry[0]["SpreadingNoID"].ToString();
+                    worksheet.Cells[3, 12] = WorkorderArry[0]["CutCellid"].ToString();
                     #region 從後面開始寫 先寫Refno,Color
 
                     for (int nColumn = 3; nColumn <= 22; nColumn += 3)
@@ -487,11 +519,13 @@ Cutplanid, str_PIVOT);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
+            excel.Visible = true;
+
             #region 寫入共用欄位
             worksheet.Cells[1, 6] = OrderDr["factoryid"];
             worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
-            worksheet.Cells[3, 7] = detDr["SpreadingNoID"];
-            worksheet.Cells[3, 12] = detDr["CutCellid"];
+            //worksheet.Cells[3, 7] = detDr["SpreadingNoID"];
+            //worksheet.Cells[3, 12] = detDr["CutCellid"];
             worksheet.Cells[9, 2] = OrderDr["Styleid"];
             worksheet.Cells[10, 2] = OrderDr["Seasonid"];
             worksheet.Cells[10, 13] = OrderDr["Sewline"];
@@ -556,6 +590,8 @@ Cutplanid, str_PIVOT);
                     pattern = "";
                     worksheet.Cells[8, 13] = WorkorderArry[0]["MarkerDownLoadId"].ToString();
                     worksheet.Cells[13, 2] = WorkorderArry[0]["FabricPanelCode"].ToString();
+                    worksheet.Cells[3, 7] = WorkorderArry[0]["SpreadingNoID"].ToString();
+                    worksheet.Cells[3, 12] = WorkorderArry[0]["CutCellid"].ToString();
                     if (WorkorderPatternArry.Length > 0)
                     {
                         foreach (DataRow patDr in WorkorderPatternArry)
