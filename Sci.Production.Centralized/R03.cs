@@ -161,7 +161,10 @@ namespace Sci.Production.Centralized
                 string strSQL = @"
 
 Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
-, [BrandID] = iif(o.BrandID='SUBCON-I' and Order2.BrandID is not null,Order2.BrandID,o.BrandID)
+, [BrandID] = case 
+		when o.BrandID != 'SUBCON-I' then o.BrandID
+		when Order2.BrandID is not null then Order2.BrandID
+		else o.BrandID end
 , o.FactoryID
 ,o.POID , o.Category, o.CdCodeID 
 ,o.CPU
