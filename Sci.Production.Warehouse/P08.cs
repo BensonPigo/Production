@@ -268,7 +268,7 @@ namespace Sci.Production.Warehouse
 
                             //jimmy 105/11/14
                             //gird的StockUnit照新規則 抓取值
-                            if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
+                            if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd() +
                                     @"and p.seq1 ='{2}'and p.seq2 = '{3}' and left(p.seq1,1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
                                 CurrentDetailData["seq"] = "";
