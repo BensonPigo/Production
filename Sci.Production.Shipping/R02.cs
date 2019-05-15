@@ -73,7 +73,7 @@ isnull(o.SeasonID,'') as SeasonID,isnull(o.CustPONo,'') as CustPONo,isnull(o.Cus
 g.CustCDID,
 isnull((o.Dest+'-'+c.Alias),'') as Dest,isnull(o.StyleUnit,'') as StyleUnit,o.SciDelivery,
 oq.BuyerDelivery,p.PulloutDate,isnull(oq.Qty,0) as Qty,IIF(pl.Type = 'B' or pl.Type = 'F',pl.CTNQty,0) as TtlCtn,
-pd.ShipQty,isnull(pl.ShipModeID,'') as ShipModeID,pd.INVNo,g.InvDate,
+pd.ShipQty,isnull(pl.ShipModeID,'') as ShipModeID,g.CYCFS,pd.INVNo,g.InvDate,
 case pd.Status when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed'when 'S' then 'Shortage' else '' end as StatusExp
 from Pullout p WITH (NOLOCK) 
 inner join Pullout_Detail pd WITH (NOLOCK) on p.ID = pd.ID
@@ -166,7 +166,7 @@ where 1=1"));
 
             // 填內容值
             int intRowsStart = 3;
-            object[,] objArray = new object[1, 21];
+            object[,] objArray = new object[1, 22];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
@@ -188,9 +188,10 @@ where 1=1"));
                 objArray[0, 16] = dr["ShipQty"];
                 objArray[0, 17] = dr["StatusExp"];
                 objArray[0, 18] = dr["ShipModeID"];
-                objArray[0, 19] = dr["INVNo"];
-                objArray[0, 20] = dr["InvDate"];
-                worksheet.Range[string.Format("A{0}:U{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 19] = dr["CYCFS"];
+                objArray[0, 20] = dr["INVNo"];
+                objArray[0, 21] = dr["InvDate"];
+                worksheet.Range[string.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 

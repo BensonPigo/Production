@@ -257,7 +257,7 @@ namespace Sci.Production.Warehouse
                             return;
                         }
 
-                        if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
+                        if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd() +
                                     @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
                             e.Cancel = true;
