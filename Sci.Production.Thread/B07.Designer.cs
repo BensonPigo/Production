@@ -115,9 +115,12 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
             this.IsSupportMove = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B07";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B07. Thread Color Group";
             this.WorkAlias = "ThreadColorGroup";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();

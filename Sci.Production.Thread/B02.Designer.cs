@@ -139,9 +139,13 @@
             this.ClientSize = new System.Drawing.Size(905, 457);
             this.DefaultControl = "txtThreadColor";
             this.DefaultControlForEdit = "txtDescription";
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B02.Color Index Of Thread";
             this.WorkAlias = "ThreadColor";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();

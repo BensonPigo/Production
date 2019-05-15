@@ -88,7 +88,7 @@
             this.masterpanel.Controls.Add(this.dateSCIDelivery);
             this.masterpanel.Controls.Add(this.dateEstArrived);
             this.masterpanel.Controls.Add(this.dateEstBooking);
-            this.masterpanel.Size = new System.Drawing.Size(1015, 157);
+            this.masterpanel.Size = new System.Drawing.Size(892, 157);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEstBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEstArrived, 0);
@@ -116,7 +116,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 157);
-            this.detailpanel.Size = new System.Drawing.Size(1015, 192);
+            this.detailpanel.Size = new System.Drawing.Size(892, 192);
             // 
             // gridicon
             // 
@@ -130,19 +130,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1015, 192);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1015, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1015, 349);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(1015, 38);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 192);
             // 
             // browse
             // 
@@ -372,11 +360,13 @@
             this.GridAlias = "ThreadRequisition_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "refno,threadcolorid";
-            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportUnconfirm = true;
+            this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.KeyField1 = "OrderID";
             this.Name = "P02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input8";
             this.SubDetailKeyField1 = "ukey";
             this.SubDetailKeyField2 = "ThreadRequisition_DetailUkey";
             this.SubGridAlias = "ThreadRequisition_Detail_Cons";

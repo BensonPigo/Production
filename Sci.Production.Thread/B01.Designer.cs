@@ -64,7 +64,6 @@
             // 
             // labelThreadCombination
             // 
-            this.labelThreadCombination.Lines = 0;
             this.labelThreadCombination.Location = new System.Drawing.Point(50, 46);
             this.labelThreadCombination.Name = "labelThreadCombination";
             this.labelThreadCombination.Size = new System.Drawing.Size(134, 23);
@@ -73,7 +72,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(50, 103);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(134, 23);
@@ -117,9 +115,13 @@
             this.ClientSize = new System.Drawing.Size(905, 457);
             this.DefaultControl = "txtThreadCombination";
             this.DefaultControlForEdit = "txtDescription";
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B01.Thread Combination";
             this.WorkAlias = "ThreadComb";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
