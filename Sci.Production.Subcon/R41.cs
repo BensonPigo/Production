@@ -18,7 +18,7 @@ namespace Sci.Production.Subcon
         DataTable printData;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
         string processLocation;
-        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2;
+        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2, dateBDelivery1, dateBDelivery2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -57,6 +57,8 @@ namespace Sci.Production.Subcon
             dateBundleScanDate2 = this.dateBundleScanDate.Value2;
             dateEstCutDate1 = this.dateEstCutDate.Value1;
             dateEstCutDate2 = this.dateEstCutDate.Value2;
+            dateBDelivery1 = this.dateBDelivery.Value1;
+            dateBDelivery2 = this.dateBDelivery.Value2;
             this.processLocation = this.comboRFIDProcessLocation.Text;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
@@ -136,6 +138,15 @@ namespace Sci.Production.Subcon
                 sqlWhere.Append(string.Format(@" and bio.RFIDProcessLocationID = '{0}'", this.processLocation));
             }
 
+            if (!MyUtility.Check.Empty(dateBDelivery1))
+            {
+                sqlWhere.Append(string.Format(@" and o.BuyerDelivery >= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateBDelivery2))
+            {
+                sqlWhere.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(dateEstCutDate1))
             {
                 sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
@@ -190,6 +201,7 @@ Select
     [Sub-process] = s.Id,
     bio.LocationID,
     b.Cdate,
+    o.BuyerDelivery,
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
     [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
@@ -302,6 +314,7 @@ select
     r.[Sub-process],
     r.LocationID,
     r.Cdate,
+    r.[BuyerDelivery],
     r.[InComing],
     r.[Out (Time)],
     r.[POSupplier],
