@@ -492,7 +492,9 @@ drop table #TmpSource
         }
         #endregion
         #region -- SelePoItem --
-        public static string selePoItemSqlCmd = @"
+        public static string selePoItemSqlCmd(bool junk = true)
+        {
+            return @"
 select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
         , p.Refno   
         , dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
@@ -518,8 +520,8 @@ left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.
 inner join View_unitrate v on v.FROM_U = p.POUnit 
 	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
 where p.id ='{0}'
-and p.Junk=0
-";
+" + (junk ? "and p.Junk = 0" : string.Empty);
+        }
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
@@ -527,10 +529,10 @@ and p.Junk=0
         /// <param name="defaultseq"></param>
         /// <param name="filters"></param>
         /// <returns>Sci.Win.Tools.SelectItem</returns>
-        public static Sci.Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null)
+        public static Sci.Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null, bool junk = true)
         {
             DataTable dt;
-            string PoItemSql = selePoItemSqlCmd;
+            string PoItemSql = selePoItemSqlCmd(junk);
             if (!(MyUtility.Check.Empty(PoItemSql)))
             {
                 PoItemSql += string.Format(" And {0}", filters);
