@@ -31,7 +31,7 @@ namespace Sci.Production.Thread
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.grid = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
@@ -57,18 +57,19 @@ namespace Sci.Production.Thread
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(3, 3);
             this.grid.Name = "grid";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid.ShowCellToolTips = false;
             this.grid.Size = new System.Drawing.Size(593, 319);
             this.grid.TabIndex = 3;
             // 
@@ -90,8 +91,13 @@ namespace Sci.Production.Thread
             this.ClientSize = new System.Drawing.Size(597, 362);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.grid);
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.MinimumSize = new System.Drawing.Size(450, 350);
             this.Name = "B06";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "B06.Thread Allowance Scale";
             this.Controls.SetChildIndex(this.grid, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);

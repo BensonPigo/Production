@@ -39,21 +39,11 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(829, 290);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtThreadType);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.labelThreadType);
-            this.detailcont.Size = new System.Drawing.Size(829, 252);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 252);
-            this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
@@ -78,7 +68,6 @@
             // 
             // labelThreadType
             // 
-            this.labelThreadType.Lines = 0;
             this.labelThreadType.Location = new System.Drawing.Point(50, 46);
             this.labelThreadType.Name = "labelThreadType";
             this.labelThreadType.Size = new System.Drawing.Size(95, 23);
@@ -112,9 +101,13 @@
             this.ClientSize = new System.Drawing.Size(837, 352);
             this.DefaultControl = "txtThreadType";
             this.DefaultControlForEdit = "checkJunk";
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B03.Thread Type";
             this.WorkAlias = "ThreadType";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
