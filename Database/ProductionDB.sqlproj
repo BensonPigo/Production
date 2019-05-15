@@ -2338,6 +2338,7 @@
     <Build Include="dbo\Stored Procedures\SNPAutoTransferToSewingOutput.sql" />
     <Build Include="dbo\Tables\RFIDReader_SubProcess.sql" />
     <Build Include="dbo\Tables\RFIDReader_Panel.sql" />
+    <Build Include="dbo\Tables\CriticalActivity.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
