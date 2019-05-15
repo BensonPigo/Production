@@ -174,7 +174,7 @@
             // 
             // btnGenerate
             // 
-            this.btnGenerate.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnGenerate.Enabled = false;
             this.btnGenerate.Location = new System.Drawing.Point(790, 15);
             this.btnGenerate.Name = "btnGenerate";
             this.btnGenerate.Size = new System.Drawing.Size(80, 30);
@@ -199,6 +199,7 @@
             this.KeyField1 = "Ukey";
             this.KeyField2 = "StyleUkey";
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input8";
             this.SubDetailKeyField1 = "id";
             this.SubGridAlias = "ThreadColorcomb_Operation";
             this.SubKeyField1 = "id";
