@@ -114,17 +114,21 @@
             // 
             this.lbSPNo.Location = new System.Drawing.Point(12, 128);
             this.lbSPNo.Name = "lbSPNo";
+            this.lbSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.lbSPNo.Size = new System.Drawing.Size(108, 23);
             this.lbSPNo.TabIndex = 151;
             this.lbSPNo.Text = "SP#";
+            this.lbSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(12, 12);
             this.label1.Name = "label1";
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label1.Size = new System.Drawing.Size(108, 23);
             this.label1.TabIndex = 152;
             this.label1.Text = "KPI L/ETA Date";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // datekPIETA
             // 
@@ -172,9 +176,11 @@
             // 
             this.label3.Location = new System.Drawing.Point(12, 41);
             this.label3.Name = "label3";
+            this.label3.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label3.Size = new System.Drawing.Size(108, 23);
             this.label3.TabIndex = 154;
             this.label3.Text = "Arrive W/H Date";
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // dateETA
             // 
@@ -201,17 +207,21 @@
             // 
             this.label4.Location = new System.Drawing.Point(12, 70);
             this.label4.Name = "label4";
+            this.label4.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label4.Size = new System.Drawing.Size(108, 23);
             this.label4.TabIndex = 156;
             this.label4.Text = "ETA";
+            this.label4.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label5
             // 
             this.label5.Location = new System.Drawing.Point(12, 99);
             this.label5.Name = "label5";
+            this.label5.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label5.Size = new System.Drawing.Size(108, 23);
             this.label5.TabIndex = 160;
             this.label5.Text = "WK#";
+            this.label5.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label6
             // 
@@ -294,7 +304,7 @@
             this.txtfactory.Location = new System.Drawing.Point(123, 245);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtfactory.Size = new System.Drawing.Size(449, 23);
+            this.txtfactory.Size = new System.Drawing.Size(147, 23);
             this.txtfactory.TabIndex = 10;
             this.txtfactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtfactory_PopUp);
             this.txtfactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtfactory_Validating);
