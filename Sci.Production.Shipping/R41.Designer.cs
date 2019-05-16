@@ -36,6 +36,9 @@
             this.txtNLCode = new Sci.Win.UI.TextBox();
             this.txtContractNo = new Sci.Win.UI.TextBox();
             this.comboType = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.rdSummary = new Sci.Win.UI.RadioButton();
+            this.rdDetail = new Sci.Win.UI.RadioButton();
             this.SuspendLayout();
             // 
             // print
@@ -84,6 +87,20 @@
             // 
             // dateDate
             // 
+            // 
+            // 
+            // 
+            this.dateDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateDate.DateBox1.Name = "";
+            this.dateDate.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.dateDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateDate.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.dateDate.DateBox2.Name = "";
+            this.dateDate.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.dateDate.DateBox2.TabIndex = 1;
             this.dateDate.IsRequired = false;
             this.dateDate.Location = new System.Drawing.Point(123, 12);
             this.dateDate.Name = "dateDate";
@@ -117,12 +134,48 @@
             this.comboType.IsSupportUnselect = true;
             this.comboType.Location = new System.Drawing.Point(123, 83);
             this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(100, 24);
             this.comboType.TabIndex = 101;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(19, 159);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(101, 23);
+            this.label1.TabIndex = 102;
+            this.label1.Text = "Report Type";
+            // 
+            // rdSummary
+            // 
+            this.rdSummary.AutoSize = true;
+            this.rdSummary.Checked = true;
+            this.rdSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdSummary.Location = new System.Drawing.Point(123, 161);
+            this.rdSummary.Name = "rdSummary";
+            this.rdSummary.Size = new System.Drawing.Size(85, 21);
+            this.rdSummary.TabIndex = 103;
+            this.rdSummary.TabStop = true;
+            this.rdSummary.Text = "Summary";
+            this.rdSummary.UseVisualStyleBackColor = true;
+            // 
+            // rdDetail
+            // 
+            this.rdDetail.AutoSize = true;
+            this.rdDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdDetail.Location = new System.Drawing.Point(214, 161);
+            this.rdDetail.Name = "rdDetail";
+            this.rdDetail.Size = new System.Drawing.Size(62, 21);
+            this.rdDetail.TabIndex = 104;
+            this.rdDetail.Text = "Detail";
+            this.rdDetail.UseVisualStyleBackColor = true;
+            // 
             // R41
             // 
-            this.ClientSize = new System.Drawing.Size(468, 183);
+            this.ClientSize = new System.Drawing.Size(468, 224);
+            this.Controls.Add(this.rdDetail);
+            this.Controls.Add(this.rdSummary);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.comboType);
             this.Controls.Add(this.txtContractNo);
             this.Controls.Add(this.txtNLCode);
@@ -145,6 +198,9 @@
             this.Controls.SetChildIndex(this.txtNLCode, 0);
             this.Controls.SetChildIndex(this.txtContractNo, 0);
             this.Controls.SetChildIndex(this.comboType, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.rdSummary, 0);
+            this.Controls.SetChildIndex(this.rdDetail, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -160,5 +216,8 @@
         private Win.UI.TextBox txtNLCode;
         private Win.UI.TextBox txtContractNo;
         private Win.UI.ComboBox comboType;
+        private Win.UI.Label label1;
+        private Win.UI.RadioButton rdSummary;
+        private Win.UI.RadioButton rdDetail;
     }
 }

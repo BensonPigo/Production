@@ -88,14 +88,18 @@ namespace Sci.Production.Warehouse
         }
 
         // edit前檢查
-        protected override bool ClickEditBefore()
+        protected override void ClickEditAfter()
         {
-            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            base.ClickEditAfter();
+
+            if (CurrentMaintain["Status"].EqualString("Confirmed") )
             {
-                MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
-                return false;
+                this.dateIssueDate.ReadOnly = true;
+                this.txtFromFactory.ReadOnly = true;
+                this.editRemark.ReadOnly = true;
+                this.btnClearQtyIsEmpty.Enabled = false;
+                this.gridicon.Enabled = false;
             }
-            return base.ClickEditBefore();
         }
 
         //print
@@ -352,6 +356,14 @@ where a.id = @ID", pars, out dtDetail);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (this.CurrentMaintain["Status"].Equals("Confirmed"))
+            {
+                this.detailgrid.IsEditingReadOnly = true;
+            }
+            else
+            {
+                this.detailgrid.IsEditingReadOnly = false;
+            }
             #region Status Label
 
             label25.Text = CurrentMaintain["status"].ToString();

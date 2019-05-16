@@ -2338,6 +2338,10 @@
     <Build Include="dbo\Stored Procedures\SNPAutoTransferToSewingOutput.sql" />
     <Build Include="dbo\Tables\RFIDReader_SubProcess.sql" />
     <Build Include="dbo\Tables\RFIDReader_Panel.sql" />
+    <Build Include="dbo\Tables\VNContractQtyAdjust_Detail_Detail.sql" />
+    <Build Include="dbo\Tables\VNImportDeclaration_Detail_Detail.sql" />
+    <Build Include="dbo\Functions\GetMaterialTypeDesc.sql" />
+    <Build Include="dbo\Stored Procedures\CreateVNConsumption_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
