@@ -73,13 +73,13 @@ namespace Sci.Production.Planning
 
             if (this.dateRangePulloutDate.HasValue1)
             {
-                this.strWhere += " and p.PulloutDate >= @PulloutDate_From";
+                this.strWhere += " and pd.PulloutDate >= @PulloutDate_From";
                 this.listPar.Add(new SqlParameter("@PulloutDate_From", this.dateRangePulloutDate.DateBox1.Value));
             }
 
             if (this.dateRangePulloutDate.HasValue2)
             {
-                this.strWhere += " and p.PulloutDate <= @PulloutDate_To";
+                this.strWhere += " and pd.PulloutDate <= @PulloutDate_To";
                 this.listPar.Add(new SqlParameter("@PulloutDate_To", this.dateRangePulloutDate.DateBox2.Value));
             }
 
@@ -183,7 +183,7 @@ o.SeasonID,
 [ShipQty] = sum(pd.ShipQty) over (partition by pd.OrderId,pd.OrderShipmodeSeq),
 o.StyleUnit,
 [InvNo] = gmt.ID,
-[PODD] = o.ActPulloutDate,
+[PODD] = pd.PulloutDate,
 [IDD] = gmt.IntendDeliveryDate,
 gmt.SOCFMDate,
 gmt.FCRDate,
@@ -194,7 +194,6 @@ gmt.Shipper,
 o.FtyGroup,
 o.CustCDID,
 [Destination] = gmt.Dest +'-'+ dest.NameEN,
-p.PulloutDate,
 gmt.ETD,
 gmt.ETA,
 gmt.Vessel,
@@ -206,8 +205,7 @@ o.BrandFTYCode,
 [InvoicceStatus] = dd.Name
 into #ExcelDetail
 from GMTBooking gmt with (nolock)
-inner join Pullout_Detail pd with (nolock) on gmt.ID = pd.INVNo
-inner join Pullout p with (nolock) on pd.ID = p.ID
+inner join Pullout_Detail pd with (nolock) on gmt.ID = pd.INVNo and gmt.ShipmodeID = pd.ShipmodeID
 inner join Orders o with (nolock) on pd.OrderID = o.ID
 left join Factory f with (nolock) on gmt.Shipper = f.ID
 left join Country dest with (nolock)  on dest.ID = gmt.Dest

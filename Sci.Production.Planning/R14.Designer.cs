@@ -43,6 +43,11 @@
             this.dateRangeFCRDate = new Sci.Win.UI.DateRange();
             this.dateRangeETD = new Sci.Win.UI.DateRange();
             this.dateRangeETA = new Sci.Win.UI.DateRange();
+            this.labelFactoryKPIDate = new Sci.Win.UI.Label();
+            this.label11 = new Sci.Win.UI.Label();
+            this.label12 = new Sci.Win.UI.Label();
+            this.label13 = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
             this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.comboInvStatus = new Sci.Production.Class.comboDropDownList(this.components);
             this.txtcustcd = new Sci.Production.Class.txtcustcd();
@@ -50,27 +55,25 @@
             this.txtExportOrigin = new Sci.Production.Class.txtcountry();
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.labelFactoryKPIDate = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(420, 12);
             this.print.TabIndex = 4;
+            this.print.TabStop = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(420, 48);
             this.toexcel.TabIndex = 5;
+            this.toexcel.TabStop = false;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(420, 84);
             this.close.TabIndex = 6;
+            this.close.TabStop = false;
             // 
             // label1
             // 
@@ -244,6 +247,76 @@
             this.dateRangeETA.Size = new System.Drawing.Size(280, 23);
             this.dateRangeETA.TabIndex = 6;
             // 
+            // labelFactoryKPIDate
+            // 
+            this.labelFactoryKPIDate.Location = new System.Drawing.Point(19, 41);
+            this.labelFactoryKPIDate.Name = "labelFactoryKPIDate";
+            this.labelFactoryKPIDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelFactoryKPIDate.RectStyle.BorderWidth = 1F;
+            this.labelFactoryKPIDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelFactoryKPIDate.RectStyle.ExtBorderWidth = 1F;
+            this.labelFactoryKPIDate.Size = new System.Drawing.Size(99, 23);
+            this.labelFactoryKPIDate.TabIndex = 162;
+            this.labelFactoryKPIDate.Text = "Pullout Date";
+            this.labelFactoryKPIDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelFactoryKPIDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(19, 137);
+            this.label11.Name = "label11";
+            this.label11.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label11.RectStyle.BorderWidth = 1F;
+            this.label11.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label11.RectStyle.ExtBorderWidth = 1F;
+            this.label11.Size = new System.Drawing.Size(99, 23);
+            this.label11.TabIndex = 163;
+            this.label11.Text = "ETA";
+            this.label11.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label11.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(19, 105);
+            this.label12.Name = "label12";
+            this.label12.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label12.RectStyle.BorderWidth = 1F;
+            this.label12.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label12.RectStyle.ExtBorderWidth = 1F;
+            this.label12.Size = new System.Drawing.Size(99, 23);
+            this.label12.TabIndex = 164;
+            this.label12.Text = "ETD";
+            this.label12.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label12.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(19, 73);
+            this.label13.Name = "label13";
+            this.label13.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label13.RectStyle.BorderWidth = 1F;
+            this.label13.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label13.RectStyle.ExtBorderWidth = 1F;
+            this.label13.Size = new System.Drawing.Size(99, 23);
+            this.label13.TabIndex = 165;
+            this.label13.Text = "FCR Date";
+            this.label13.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label13.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(19, 9);
+            this.label6.Name = "label6";
+            this.label6.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label6.RectStyle.BorderWidth = 1F;
+            this.label6.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label6.RectStyle.ExtBorderWidth = 1F;
+            this.label6.Size = new System.Drawing.Size(99, 23);
+            this.label6.TabIndex = 166;
+            this.label6.Text = "Invoice #";
+            this.label6.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label6.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // comboCategory
             // 
             this.comboCategory.BackColor = System.Drawing.Color.White;
@@ -318,76 +391,6 @@
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 7;
-            // 
-            // labelFactoryKPIDate
-            // 
-            this.labelFactoryKPIDate.Location = new System.Drawing.Point(19, 41);
-            this.labelFactoryKPIDate.Name = "labelFactoryKPIDate";
-            this.labelFactoryKPIDate.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelFactoryKPIDate.RectStyle.BorderWidth = 1F;
-            this.labelFactoryKPIDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labelFactoryKPIDate.RectStyle.ExtBorderWidth = 1F;
-            this.labelFactoryKPIDate.Size = new System.Drawing.Size(99, 23);
-            this.labelFactoryKPIDate.TabIndex = 162;
-            this.labelFactoryKPIDate.Text = "Pullout Date";
-            this.labelFactoryKPIDate.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelFactoryKPIDate.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label11
-            // 
-            this.label11.Location = new System.Drawing.Point(19, 137);
-            this.label11.Name = "label11";
-            this.label11.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label11.RectStyle.BorderWidth = 1F;
-            this.label11.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label11.RectStyle.ExtBorderWidth = 1F;
-            this.label11.Size = new System.Drawing.Size(99, 23);
-            this.label11.TabIndex = 163;
-            this.label11.Text = "ETA";
-            this.label11.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label11.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label12
-            // 
-            this.label12.Location = new System.Drawing.Point(19, 105);
-            this.label12.Name = "label12";
-            this.label12.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label12.RectStyle.BorderWidth = 1F;
-            this.label12.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label12.RectStyle.ExtBorderWidth = 1F;
-            this.label12.Size = new System.Drawing.Size(99, 23);
-            this.label12.TabIndex = 164;
-            this.label12.Text = "ETD";
-            this.label12.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label12.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(19, 73);
-            this.label13.Name = "label13";
-            this.label13.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label13.RectStyle.BorderWidth = 1F;
-            this.label13.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label13.RectStyle.ExtBorderWidth = 1F;
-            this.label13.Size = new System.Drawing.Size(99, 23);
-            this.label13.TabIndex = 165;
-            this.label13.Text = "FCR Date";
-            this.label13.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label13.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(19, 9);
-            this.label6.Name = "label6";
-            this.label6.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label6.RectStyle.BorderWidth = 1F;
-            this.label6.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label6.RectStyle.ExtBorderWidth = 1F;
-            this.label6.Size = new System.Drawing.Size(99, 23);
-            this.label6.TabIndex = 166;
-            this.label6.Text = "Invoice #";
-            this.label6.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label6.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // R14
             // 
