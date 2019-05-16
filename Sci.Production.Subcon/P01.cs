@@ -23,6 +23,7 @@ namespace Sci.Production.Subcon
     public partial class P01 : Sci.Win.Tems.Input6
     {
         string artworkunit;
+        bool isNeedPlanningP03Quote = false;
         Form batchapprove;
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -120,6 +121,10 @@ where  apd.id = '{CurrentMaintain["id"]}'
                 txtsubconSupplier.TextBox1.ReadOnly = true;
             }
             #endregion
+            foreach (DataGridViewRow dr in this.detailgrid.Rows)
+            {
+                this.DetalGridCellEditChange(dr.Index);
+            }
         }
 
         // save前檢查 & 取id
@@ -256,6 +261,10 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             base.OnDetailEntered();
             dateApproveDate.ReadOnly = true;
             ChangeDetailHeader();
+            #region 判斷Artwork 是否需要在 Planning B03 報價
+            this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.CurrentMaintain["artworktypeid"].ToString());
+            #endregion
+
             #region -- 加總明細金額，顯示於表頭 --
             if (!(CurrentMaintain == null))
             {
@@ -427,8 +436,6 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns["stitch"].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
-            //detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;  //Cutpart Name
-            detailgrid.Columns["unitprice"].DefaultCellStyle.BackColor = Color.Pink; //Unit Price
             detailgrid.Columns["qtygarment"].DefaultCellStyle.BackColor = Color.Pink; //Qty/GMT
             #endregion
         }
@@ -579,7 +586,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 txtartworktype_ftyArtworkType.Focus();
                 return;
             }
-            var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource, "P01");
+            var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource, "P01", this.isNeedPlanningP03Quote);
             frm.ShowDialog(this);
 
             DataTable dg = (DataTable)detailgridbs.DataSource;
@@ -645,6 +652,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();
             }
+            this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.CurrentMaintain["artworktypeid"].ToString());
             ChangeDetailHeader();
         }
 
@@ -752,6 +760,37 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             {
                 batchapprove.Dispose();
             }
+        }
+
+        
+
+        private void DetalGridCellEditChange(int index)
+        {
+
+            #region 檢查Qty欄位是否可編輯
+            string spNo = this.detailgrid.GetDataRow(index)["orderid"].ToString();
+
+            string sqlCheckSampleOrder = $@"
+select 1
+from orders with (nolock)
+where id = '{spNo}' and Category = 'S'
+";
+            bool isSampleOrder = MyUtility.Check.Seek(sqlCheckSampleOrder);
+
+            if (!isSampleOrder && isNeedPlanningP03Quote)
+            {
+                this.detailgrid.Rows[index].Cells["unitprice"].ReadOnly = true;
+                this.detailgrid.Rows[index].Cells["unitprice"].Style.ForeColor = Color.Black;
+                this.detailgrid.Rows[index].Cells["unitprice"].Style.BackColor = Color.White; //Unit Price
+            }
+            else
+            {
+                this.detailgrid.Rows[index].Cells["unitprice"].ReadOnly = false;
+                this.detailgrid.Rows[index].Cells["unitprice"].Style.ForeColor = Color.Red;
+                this.detailgrid.Rows[index].Cells["unitprice"].Style.BackColor = Color.Pink; //Unit Price
+            }
+
+            #endregion
         }
     }
 

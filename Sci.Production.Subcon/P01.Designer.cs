@@ -616,6 +616,7 @@
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(373, 14);
             this.txtmfactory.Name = "txtmfactory";
