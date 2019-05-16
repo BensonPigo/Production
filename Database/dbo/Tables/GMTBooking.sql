@@ -41,6 +41,9 @@
     [BLNo]                     VARCHAR (20)    DEFAULT ('') NULL,
 	[ActFCRDate] [date] NULL,
 	[FBDate] [date] NULL,
+    [InvoiceApproveDate] DATE NULL, 
+    [DocumentRefNo] VARCHAR(15) CONSTRAINT [DF_GMTBooking_DocumentRefNo] DEFAULT ('') NULL,
+    [IntendDeliveryDate] DATE NULL, 
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
