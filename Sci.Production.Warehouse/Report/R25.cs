@@ -149,7 +149,7 @@ select
 	e.eta,
 	e.WhseArrival,
 	o.KPILETA,
-	o.SciDelivery,
+	 (SELECT MinSciDelivery FROM DBO.GetSCI(ed.Poid,o.Category)) as [Earliest SCI Delivery],
 	EarlyDays=DATEDIFF(day,o.SciDelivery,o.KPILETA),
 	o.FtyGroup,
 	ed.PoID,
