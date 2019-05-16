@@ -333,7 +333,19 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }
             }
             #endregion
-
+            #region displayPurchaseCtn
+            sqlcmdC = $@"select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id
+where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
+";
+            if (MyUtility.Check.Seek(sqlcmdC ))
+            {
+                this.displayPurchaseCtn.Text = "Y";
+            }
+            else
+            {
+                this.displayPurchaseCtn.Text = "N";
+            }
+            #endregion
             #region disClogCFMStatus
             sqlcmdC = $@"select iif(count(pd.ID) = count(pd.ReceiveDate), 'Y','N') [ClogCFMStatus]
                          from PackingList_Detail pd
