@@ -482,7 +482,9 @@ select  StyleID
         , StyleCPU
         , StyleUKey
         , Refno
-        , IIF(UnitId = 'CONE',Qty*MeterToCone,Qty) as Qty,OrderQty, IIF(UnitId = 'CONE','M',UnitId) as UnitId
+        , Qty
+        , OrderQty
+        , IIF(UnitId = 'CONE','M',UnitId) as UnitId
         , NLCode
         , HSCode
         , CustomsUnit
