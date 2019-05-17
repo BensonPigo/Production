@@ -543,7 +543,8 @@ tmpFilterZone as (
             , o.CPUFactor
             , o.ClogLastReceiveDate
             , o.IsMixMarker
-            , o.GFR "
+            , o.GFR 
+			, isForecast = iif(isnull(o.Category,'')='','1','') "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
