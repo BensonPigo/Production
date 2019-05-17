@@ -208,6 +208,7 @@ namespace Sci.Production.Quality
 
             //預設選取的時候會全部變成大寫，關掉這個設定。
             TextColumnSetting.CharacterCasing= CharacterCasing.Normal;
+            TextColumnSetting.MaxLength = 500;
 
             Helper.Controls.Grid.Generator(this.gridAppearance)
             .Text("Type", header: "After Wash Appearance Check list", width: Widths.AnsiChars(40), iseditingreadonly: false, settings: TextColumnSetting)
