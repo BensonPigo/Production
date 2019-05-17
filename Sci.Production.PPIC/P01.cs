@@ -354,7 +354,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 this.dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(this.CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(this.CurrentMaintain["BuyerDelivery"]) ? Color.Red : Color.Blue;
             }
 
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["IsForecast"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["IsForecast"].ToString()))
             {
                 // 訂單屬於 Forecast，Buy Month 文字改成 Est. Download Date
                 if ((bool)this.CurrentMaintain["IsForecast"])
