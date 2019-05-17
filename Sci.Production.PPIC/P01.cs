@@ -354,6 +354,35 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 this.dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(this.CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(this.CurrentMaintain["BuyerDelivery"]) ? Color.Red : Color.Blue;
             }
 
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["IsForecast"]))
+            {
+                // 訂單屬於 Forecast，Buy Month 文字改成 Est. Download Date
+                if ((bool)this.CurrentMaintain["IsForecast"])
+                {
+                    this.labelBuyMonth.Text = "Est. Download Date";
+
+                    // 加寬
+                    this.labelBuyMonth.Size = new System.Drawing.Size(119, 21);
+
+                    // 其餘控制項往右推
+                    this.displayBuyMonth.Location = new System.Drawing.Point(697, 139);
+                    this.labelOrderQty.Location = new System.Drawing.Point(861, 112);
+                    this.numOrderQty.Location = new System.Drawing.Point(926, 112);
+                    this.labelFOCQty.Location = new System.Drawing.Point(861, 139);
+                    this.numFOCQty.Location = new System.Drawing.Point(926, 139);
+                }
+                else
+                {
+                    this.labelBuyMonth.Text = "Buy Month";
+                    this.labelBuyMonth.Size = new System.Drawing.Size(65, 21);
+
+                    this.displayBuyMonth.Location = new System.Drawing.Point(644, 139);
+                    this.labelOrderQty.Location = new System.Drawing.Point(815, 112);
+                    this.numOrderQty.Location = new System.Drawing.Point(880, 112);
+                    this.labelFOCQty.Location = new System.Drawing.Point(815, 139);
+                    this.numFOCQty.Location = new System.Drawing.Point(880, 139);
+                }
+            }
 
             GetIsDevSample();
         }
