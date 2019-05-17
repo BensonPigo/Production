@@ -652,7 +652,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();
             }
-            this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.CurrentMaintain["artworktypeid"].ToString());
+            this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.txtartworktype_ftyArtworkType.Text);
             ChangeDetailHeader();
         }
 
