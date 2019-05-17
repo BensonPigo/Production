@@ -294,6 +294,7 @@ SET
       ,a.AddDate		      =b.AddDate
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
+      ,a.ProductionFamilyID		      =b.ProductionFamilyID
 from Production.dbo.CDCode as a inner join Trade_To_Pms.dbo.CDCode as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.CDCode(
@@ -306,6 +307,7 @@ INSERT INTO Production.dbo.CDCode(
       ,AddDate
       ,EditName
       ,EditDate
+	  ,ProductionFamilyID
 )
 select 
 		ID
@@ -317,6 +319,7 @@ select
       ,AddDate
       ,EditName
       ,EditDate
+	  ,ProductionFamilyID
 from Trade_To_Pms.dbo.CDCode as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.CDCode as a WITH (NOLOCK) where a.id = b.id)
 

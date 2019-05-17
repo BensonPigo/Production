@@ -731,7 +731,7 @@
             this.labelContainerType.Name = "labelContainerType";
             this.labelContainerType.Size = new System.Drawing.Size(126, 23);
             this.labelContainerType.TabIndex = 41;
-            this.labelContainerType.Text = "Container Type";
+            this.labelContainerType.Text = "Loading Type";
             // 
             // labelSONo
             // 
@@ -805,6 +805,7 @@
             this.txtSONo.Name = "txtSONo";
             this.txtSONo.Size = new System.Drawing.Size(164, 23);
             this.txtSONo.TabIndex = 13;
+            this.txtSONo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSONo_Validating);
             // 
             // dateSOCfmDate
             // 
@@ -888,7 +889,6 @@
             // 
             // btnCFM
             // 
-            this.btnCFM.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnCFM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnCFM.Location = new System.Drawing.Point(766, 165);
             this.btnCFM.Name = "btnCFM";
@@ -1185,6 +1185,7 @@
             this.KeyField1 = "ID";
             this.KeyField2 = "INVNo";
             this.Name = "P05";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P05. Garment Booking";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";

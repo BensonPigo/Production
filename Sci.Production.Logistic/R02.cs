@@ -273,10 +273,10 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
                 objArray[0, 7] = dr["ClogLocationId"];
                 objArray[0, 8] = dr["BrandID"];
                 objArray[0, 9] = dr["Cancelled"];
-                objArray[0, 10] = dr["TTLQty"];
-                objArray[0, 11] = dr["QtyPerSize"];
                 if (this.Perm.Confirm)
                 {
+                    objArray[0, 10] = dr["TTLQty"];
+                    objArray[0, 11] = dr["QtyPerSize"];
                     objArray[0, 12] = dr["PulloutComplete"];
                     objArray[0, 13] = dr["ActPulloutDate"];
                 }
@@ -287,8 +287,10 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
 
             if (!this.Perm.Confirm)
             {
+                worksheet.Cells[5, 11] = string.Empty;
                 worksheet.Cells[5, 12] = string.Empty;
                 worksheet.Cells[5, 13] = string.Empty;
+                worksheet.Cells[5, 14] = string.Empty;
             }
 
             #region Save & Show Excel
