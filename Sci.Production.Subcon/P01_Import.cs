@@ -252,7 +252,7 @@ select  Selected = 0
         , orderid = q.id
         , OrderQty = sum(q.qty)  
         , IssueQty.IssueQty 
-        , poqty = iif (sum(q.qty)-IssueQty.IssueQty < 0, 0, sum(q.qty)-IssueQty.IssueQty)
+        , poqty = iif(sum(q.qty)-IssueQty.IssueQty < 0, 0, sum(q.qty)-IssueQty.IssueQty)
         , oa.ArtworkTypeID
         , oa.ArtworkID
         , oa.PatternCode
@@ -265,7 +265,7 @@ select  Selected = 0
         , Cost = sao.Price
         , unitprice = sao.Price
         , price = sao.Price
-        , amount = (sum(q.qty)-IssueQty.IssueQty)*sao.Price
+        , amount = iif((sum(q.qty)-IssueQty.IssueQty) < 0 ,0 ,(sum(q.qty)-IssueQty.IssueQty) * sao.Price )
         , Style = o.StyleID
 from  orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
@@ -315,7 +315,7 @@ select  Selected = 0
         , orderid = q.id
         , OrderQty = sum(q.qty)  
         , IssueQty.IssueQty 
-        , poqty = iif (sum(q.qty)-IssueQty.IssueQty < 0, 0, sum(q.qty)-IssueQty.IssueQty)
+        , poqty = iif(sum(q.qty)-IssueQty.IssueQty < 0, 0, sum(q.qty)-IssueQty.IssueQty)
         , oa.ArtworkTypeID
         , oa.ArtworkID
         , oa.PatternCode
@@ -328,7 +328,7 @@ select  Selected = 0
         , Cost = iif(at.isArtwork = 1,oa.Cost,bb.Price)
         , unitprice = iif(at.isArtwork = 1,oa.Cost,bb.Price)
         , price = oa.Cost
-        , amount = (sum(q.qty)-IssueQty.IssueQty)*iif(at.isArtwork = 1,oa.Cost,bb.Price)
+        , amount = iif(sum(q.qty)-IssueQty.IssueQty < 0 ,0 ,(sum(q.qty)-IssueQty.IssueQty)*iif(at.isArtwork = 1,oa.Cost,bb.Price)) 
         , Style = o.StyleID
 from orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
@@ -388,7 +388,7 @@ select  Selected = 0
         , Cost = ot.Price
         , unitprice = ot.Price
         , price = ot.Price * isnull (ot.Qty, 1)
-        , amount = (o.qty-IssueQty.IssueQty) * ot.Price * isnull (ot.Qty, 1)
+        , amount = iif(o.qty-IssueQty.IssueQty < 0, 0, (o.qty-IssueQty.IssueQty) * ot.Price * isnull (ot.Qty, 1)) 
         , Style = o.StyleID
 from orders o WITH (NOLOCK) 
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
