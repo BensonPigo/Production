@@ -90,7 +90,12 @@ namespace Sci.Production.Subcon
                 txtartworktype_ftyArtworkType.Focus();
                 return;
             }
-            this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.txtartworktype_ftyArtworkType.Text);
+
+            if (poType == "O")
+            {
+                this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.txtartworktype_ftyArtworkType.Text);
+            }
+                
             if (this.isNeedPlanningP03Quote)
             {
                 SqlCmd = this.QuoteFromPlanningP03();
@@ -522,7 +527,7 @@ SELECT 	Selected = 0
 		, v.PatternCode
 		, v.PatternDesc
 		, LocalSuppID = rtrim(order_tmscost.LocalSuppID) 
-		, [Cost] = sao.Price
+		, [Cost] = iif(awt.isArtwork = 1,vsa.Cost,sao.Price)
 		, costStitch = v.qty
 		, stitch = v.qty
 		, unitprice = sao.Price
@@ -588,7 +593,7 @@ group by 	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.S
 			, Orders.OrderTypeId, Orders.SciDelivery, Order_TmsCost.ArtworkTypeID
 			, order_tmscost.LocalSuppID, order_tmscost.Qty, Order_TmsCost.ArtworkInLine
 			, Order_TmsCost.artworkoffline, Orders.SewInLine, Order_TmsCost.ApvDate
-			, V.ArtworkID, V.PatternCode, V.PatternDesc,  sao.Price, V.ArtworkTypeID, v.qty";
+			, V.ArtworkID, V.PatternCode, V.PatternDesc,   iif(awt.isArtwork = 1,vsa.Cost,sao.Price), V.ArtworkTypeID, v.qty,sao.Price";
 
             return SqlCmd;
         }

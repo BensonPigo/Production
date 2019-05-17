@@ -262,10 +262,10 @@ select  Selected = 0
         , Stitch = oa.qty 
         , oa.PatternDesc
         , qtygarment = 1
-        , Cost = sao.Price
+        , Cost = iif(at.isArtwork = 1,vsa.Cost,sao.Price)
         , unitprice = sao.Price
         , price = sao.Price
-        , amount = iif((sum(q.qty)-IssueQty.IssueQty) < 0 ,0 ,(sum(q.qty)-IssueQty.IssueQty) * sao.Price )
+        , amount = iif((sum(q.qty)-IssueQty.IssueQty) < 0 ,0 ,(sum(q.qty)-IssueQty.IssueQty) *  sao.Price )
         , Style = o.StyleID
 from  orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
@@ -297,7 +297,7 @@ and o.category  in ('B','S')
             if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
-            strSQLCmd += " group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc,IssueQty.IssueQty, o.StyleID,sao.Price";
+            strSQLCmd += " group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc,IssueQty.IssueQty, o.StyleID, o.StyleID,iif(at.isArtwork = 1,vsa.Cost,sao.Price),sao.Price";
 
             return strSQLCmd;
         }
@@ -325,10 +325,10 @@ select  Selected = 0
         , Stitch = oa.qty 
         , oa.PatternDesc
         , qtygarment = 1
-        , Cost = iif(at.isArtwork = 1,oa.Cost,bb.Price)
-        , unitprice = iif(at.isArtwork = 1,oa.Cost,bb.Price)
+        , Cost = oa.Cost
+        , unitprice = oa.Cost
         , price = oa.Cost
-        , amount = iif(sum(q.qty)-IssueQty.IssueQty < 0 ,0 ,(sum(q.qty)-IssueQty.IssueQty)*iif(at.isArtwork = 1,oa.Cost,bb.Price)) 
+        , amount = iif(sum(q.qty)-IssueQty.IssueQty < 0 ,0 ,(sum(q.qty)-IssueQty.IssueQty)*oa.Cost) 
         , Style = o.StyleID
 from orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
@@ -341,7 +341,6 @@ outer apply (
         from ArtworkPO_Detail AD, ArtworkPO A
         where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= oa.PatternCode
 ) IssueQty
-outer apply(select ott.price from Order_TmsCost ott where ott.artworktypeid = oa.ArtworkTypeID and ott.id = o.ID)bb
 where   1=1 
 and f.IsProduceFty=1
 and o.PulloutComplete = 0
@@ -364,7 +363,7 @@ and o.category  in ('B','S')
                 if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
-                strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc,IssueQty.IssueQty, o.StyleID,at.isArtwork,bb.Price";
+                strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc,IssueQty.IssueQty, o.StyleID,at.isArtwork";
             }
             else
             {
