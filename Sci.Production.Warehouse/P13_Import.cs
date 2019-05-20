@@ -154,16 +154,13 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                             if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["UsedQty"]))
                             {
                                 dr["qty"] = dr["UsedQty"];
-                                //dr["UsedQty"] = dr["qty"];
                             }
-
-                            if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["LossQty"]) && Convert.ToInt32(dr["LossQty"]) != 0)
+                            else if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["LossQty"]) && Convert.ToInt32(dr["LossQty"]) != 0)
                             {
                                 dr["qty"] = dr["LossQty"];
-                                //dr["LossQty"] = dr["qty"];
                             }
-
-                            dr["balance"] = dr["qty"];
+                            else
+                                dr["qty"] = dr["balance"];
                         }
                         else
                             dr["qty"] = dr["balance"];

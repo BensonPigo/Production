@@ -50,7 +50,8 @@ namespace Sci.Production.Class
         {
            // base.OnValidating(e);
             string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            //if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            if (!string.IsNullOrWhiteSpace(str) )
             {
                 if (!MyUtility.Check.Seek(Type + str, "WhseReason", "type+ID"))
                 {
@@ -108,7 +109,7 @@ namespace Sci.Production.Class
         private void textBox1_Leave(object sender, EventArgs e)
         {
             string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            if (!string.IsNullOrWhiteSpace(str) )
             {
                 if (!MyUtility.Check.Seek(Type + str, "WhseReason", "type+ID"))
                 {
