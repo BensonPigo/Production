@@ -44,6 +44,13 @@ namespace Sci.Production.Subcon
                     CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
+
+            this.detailgrid.RowsAdded += Detailgrid_RowsAdded;
+        }
+
+        private void Detailgrid_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            this.DetalGridCellEditChange(e.RowIndex);
         }
 
         // 新增時預設資料
@@ -121,10 +128,6 @@ where  apd.id = '{CurrentMaintain["id"]}'
                 txtsubconSupplier.TextBox1.ReadOnly = true;
             }
             #endregion
-            foreach (DataGridViewRow dr in this.detailgrid.Rows)
-            {
-                this.DetalGridCellEditChange(dr.Index);
-            }
         }
 
         // save前檢查 & 取id
