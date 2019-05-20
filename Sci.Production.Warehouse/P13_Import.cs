@@ -153,14 +153,14 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                             //c.Issue Qty帶入Stock Qty
                             if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["UsedQty"]))
                             {
-                                //dr["qty"] = dr["UsedQty"];
-                                dr["UsedQty"] = dr["qty"];
+                                dr["qty"] = dr["UsedQty"];
+                                //dr["UsedQty"] = dr["qty"];
                             }
 
                             if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["LossQty"]) && Convert.ToInt32(dr["LossQty"]) != 0)
                             {
-                                //dr["qty"] = dr["LossQty"];
-                                dr["LossQty"] = dr["qty"];
+                                dr["qty"] = dr["LossQty"];
+                                //dr["LossQty"] = dr["qty"];
                             }
 
                             dr["balance"] = dr["qty"];
