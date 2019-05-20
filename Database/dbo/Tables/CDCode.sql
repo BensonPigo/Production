@@ -1,15 +1,18 @@
 ﻿CREATE TABLE [dbo].[CDCode] (
-    [ID]          VARCHAR (6)    CONSTRAINT [DF_CDCode_ID] DEFAULT ('') NOT NULL,
-    [Junk]        BIT            CONSTRAINT [DF_CDCode_Junk] DEFAULT ((0)) NULL,
-    [Description] NVARCHAR (45)  CONSTRAINT [DF_CDCode_Description] DEFAULT ('') NULL,
-    [Cpu]         NUMERIC (5, 3) CONSTRAINT [DF_CDCode_Cpu] DEFAULT ((0)) NULL,
-    [ComboPcs]    TINYINT        CONSTRAINT [DF_CDCode_ComboPcs] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_CDCode_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_CDCode_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME       NULL,
+    [ID]                 VARCHAR (6)    CONSTRAINT [DF_CDCode_ID] DEFAULT ('') NOT NULL,
+    [Junk]               BIT            CONSTRAINT [DF_CDCode_Junk] DEFAULT ((0)) NULL,
+    [Description]        NVARCHAR (45)  CONSTRAINT [DF_CDCode_Description] DEFAULT ('') NULL,
+    [Cpu]                NUMERIC (5, 3) CONSTRAINT [DF_CDCode_Cpu] DEFAULT ((0)) NULL,
+    [ComboPcs]           TINYINT        CONSTRAINT [DF_CDCode_ComboPcs] DEFAULT ((0)) NULL,
+    [AddName]            VARCHAR (10)   CONSTRAINT [DF_CDCode_AddName] DEFAULT ('') NULL,
+    [AddDate]            DATETIME       NULL,
+    [EditName]           VARCHAR (10)   CONSTRAINT [DF_CDCode_EditName] DEFAULT ('') NULL,
+    [EditDate]           DATETIME       NULL,
+    [ProductionFamilyID] VARCHAR (20)   CONSTRAINT [DF_CDCode_ProductionFamilyID] DEFAULT ('') NULL,
     CONSTRAINT [PK_CDCode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
