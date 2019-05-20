@@ -43,6 +43,12 @@ namespace Sci.Production.Subcon
             this.Text += string.Format(" : {0}", dr_artworkpo["artworktypeid"].ToString());
 
             this.isNeedPlanningP03Quote = isNeedPlanningP03Quote;
+            this.gridBatchImport.RowPostPaint += GridBatchImport_RowPostPaint;
+        }
+
+        private void GridBatchImport_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            this.DetalGridCellEditChange(e.RowIndex);
         }
 
         //Find Now Button
@@ -95,11 +101,6 @@ namespace Sci.Production.Subcon
                 listControlBindingSource1.DataSource = dtArtwork;
             }
             else { ShowErr(strSQLCmd, result); }
-
-            foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
-            {
-                this.DetalGridCellEditChange(dr.Index);
-            }
         }
 
         protected override void OnFormLoaded()

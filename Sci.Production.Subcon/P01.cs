@@ -45,10 +45,10 @@ namespace Sci.Production.Subcon
                 }
             };
 
-            this.detailgrid.RowsAdded += Detailgrid_RowsAdded;
+            this.detailgrid.RowPostPaint += Detailgrid_RowPostPaint;
         }
 
-        private void Detailgrid_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        private void Detailgrid_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             this.DetalGridCellEditChange(e.RowIndex);
         }

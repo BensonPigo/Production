@@ -48,6 +48,13 @@ namespace Sci.Production.Subcon
 
             dateIssueDate.Value = DateTime.Today;
             dateDelivery.Value = DateTime.Today;
+
+            this.gridBatchCreateFromSubProcessData.RowPostPaint += GridBatchCreateFromSubProcessData_RowPostPaint;
+        }
+
+        private void GridBatchCreateFromSubProcessData_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            this.DetalGridCellEditChange(e.RowIndex);
         }
 
         //Find Now Button
@@ -119,10 +126,6 @@ namespace Sci.Production.Subcon
                 ShowErr(SqlCmd, result);
             }
 
-            foreach (DataGridViewRow dr in this.gridBatchCreateFromSubProcessData.Rows)
-            {
-                this.DetalGridCellEditChange(dr.Index);
-            }
         }
 
         protected override void OnFormLoaded()
