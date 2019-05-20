@@ -121,15 +121,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(953, 515);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(947, 469);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(947, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -342,6 +342,7 @@
             this.txtwhseReason.TabIndex = 1;
             this.txtwhseReason.TextBox1Binding = "";
             this.txtwhseReason.Type = "IR";
+            this.txtwhseReason.Validated += new System.EventHandler(this.txtwhseReason_Validated);
             // 
             // P13
             // 
@@ -360,6 +361,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P13";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P13. Issue R/Mtl By Item";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
