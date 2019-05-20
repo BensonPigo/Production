@@ -70,7 +70,7 @@ select  selected = 0
         , ftyinventoryukey = c.ukey  
         , location = dbo.Getlocation(c.ukey)
         , balance = c.inqty-c.outqty + c.adjustqty 
-		,a.UsedQty
+		,a.SystemNetQty
 		,a.LossQty
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
@@ -148,12 +148,12 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                     {
                         if (IsReason06)
                         {
-                            //a.如Stock Qty >= PO_Supp_Detail.UsedQty,則Issue Qty帶入PO_Supp_Detail.UsedQty
+                            //a.如Stock Qty >= PO_Supp_Detail.SystemNetQty,則Issue Qty帶入PO_Supp_Detail.SystemNetQty
                             //b.如Stock Qty >= PO_Supp_Detail.LossQty,則Issue Qty帶入PO_Supp_Detail.LossQty //PO_Supp_Detail.LossQty = 0時跳過此步驟
                             //c.Issue Qty帶入Stock Qty
-                            if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["UsedQty"]))
+                            if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["SystemNetQty"]))
                             {
-                                dr["qty"] = dr["UsedQty"];
+                                dr["qty"] = dr["SystemNetQty"];
                             }
                             else if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["LossQty"]) && Convert.ToInt32(dr["LossQty"]) != 0)
                             {
