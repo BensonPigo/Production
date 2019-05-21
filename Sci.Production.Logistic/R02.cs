@@ -159,9 +159,9 @@ outer apply(
 	select combo = Stuff((
 	select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
 	from(
-		select distinct pd.SizeCode,pd.QtyPerCTN
-		from PackingList_Detail pd1
-		where pd1.ID=pd.ID and pd1.CTNStartNo=pd.CTNStartNo
+		select distinct pp.SizeCode,pp.QtyPerCTN
+		from PackingList_Detail pp
+		where pp.ID=pd.ID and pp.CTNStartNo=pd.CTNStartNo
 	)s
 	for xml path('')
 	),1,1,'')
