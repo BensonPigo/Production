@@ -156,7 +156,7 @@ BEGIN
 			INTO #tmp_Into_SewingOutput_Detail_Detail_1
 			FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t
 			OUTER APPLY(
-				SELECT [Qty]=ISNULL([Qty],0)
+                SELECT [Qty]=round(cast(ISNULL([Qty],0) as decimal)*1.05,0)
 				FROM Order_Qty 
 				WHERE ID=t.OrderId AND Article=t.Article AND SizeCode=t.SizeCode
 			)Order_Qty
