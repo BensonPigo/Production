@@ -306,31 +306,37 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             chcutref.CellValidating += (s, e) =>
             {
                 DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
-                if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1" ? true : false)) return;
-                int oldvalue = Convert.ToInt16(dr["sel"]);
-                int newvalue = Convert.ToInt16(e.FormattedValue);
-                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
-
-                foreach (DataRow row in ArticleAry)
+                if (ArticleSizeTb != null)
                 {
-                    row["Sel"] = newvalue;
+                    if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1" ? true : false)) return;
+                    int oldvalue = Convert.ToInt16(dr["sel"]);
+                    int newvalue = Convert.ToInt16(e.FormattedValue);
+                    DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
+
+                    foreach (DataRow row in ArticleAry)
+                    {
+                        row["Sel"] = newvalue;
+                    }
+                    dr["sel"] = newvalue;
+                    dr.EndEdit();
+                    gridArticleSize.Refresh();
                 }
-                dr["sel"] = newvalue;
-                dr.EndEdit();
-                gridArticleSize.Refresh();
             };
             itemsetting.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1) return; //判斷是Header
-                DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
-                dr["item"] = e.FormattedValue;
-                dr.EndEdit();
-                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
-                foreach (DataRow row in ArticleAry)
+                if (ArticleSizeTb != null)
                 {
-                    row["item"] = dr["item"];
+                    DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
+                    dr["item"] = e.FormattedValue;
+                    dr.EndEdit();
+                    DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
+                    foreach (DataRow row in ArticleAry)
+                    {
+                        row["item"] = dr["item"];
+                    }
+                    gridArticleSize.Refresh();
                 }
-                gridArticleSize.Refresh();
             };
             charticle.CellValidating += (s, e) =>
             {
