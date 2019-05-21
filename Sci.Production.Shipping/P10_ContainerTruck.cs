@@ -32,12 +32,10 @@ namespace Sci.Production.Shipping
         {
             this.ShipPlanID = shipPlanID;
             this.InitializeComponent();
-            this.di_CYCFS.Add("CFS", "CFS");
             this.di_CYCFS.Add("20 STD", "20 STD");
             this.di_CYCFS.Add("40 STD", "40 STD");
             this.di_CYCFS.Add("40HQ", "40HQ");
             this.di_CYCFS.Add("45HQ", "45HQ");
-            this.di_CYCFS.Add("AIR", "AIR");
         }
 
         /// <inheritdoc/>
@@ -54,7 +52,13 @@ namespace Sci.Production.Shipping
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataTable selectDt;
-                    string strSelectSqlCmd = $@"select [GB#]=ID,LoadingType=CYCFS from GMTBooking g WITH(NOLOCK) where g.shipPlanID = '{this.ShipPlanID}'";
+                    string strSelectSqlCmd = $@"
+select [GB#]=g.ID,LoadingType=g.CYCFS,b.BrandGroup,g.Forwarder,g.CutOffDate
+from GMTBooking g WITH(NOLOCK)
+inner join Brand b with(nolock) on b.ID = g.BrandID
+where g.shipPlanID = '{this.ShipPlanID}'
+and g.ShipModeID = 'Sea'
+and g.CYCFS = 'CY-CY'";
                     DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
                     Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "GB#,LoadingType", "20,10", this.CurrentData["ID"].ToString());
@@ -62,6 +66,9 @@ namespace Sci.Production.Shipping
                     if (result == DialogResult.Cancel) { return; }
                     this.CurrentData["ID"] = selectItem.GetSelectedString();
                     this.CurrentData["CYCFS"] = selectItem.GetSelecteds()[0]["LoadingType"];
+                    this.CurrentData["BrandGroup"] = selectItem.GetSelecteds()[0]["BrandGroup"];
+                    this.CurrentData["Forwarder"] = selectItem.GetSelecteds()[0]["Forwarder"];
+                    this.CurrentData["CutOffDate"] = selectItem.GetSelecteds()[0]["CutOffDate"];
                     this.CurrentData.EndEdit();
                 }
             };
@@ -73,12 +80,22 @@ namespace Sci.Production.Shipping
                     return;
                 }
 
-                string chkgbid = $@"select id,CYCFS from GMTBooking g WITH (NOLOCK) where g.shipPlanID = '{this.ShipPlanID}' and id = '{e.FormattedValue}'";
+                string chkgbid = $@"
+select g.id,g.CYCFS ,b.BrandGroup,g.Forwarder,g.CutOffDate
+from GMTBooking g WITH (NOLOCK) 
+inner join Brand b with(nolock) on b.ID = g.BrandID
+where g.shipPlanID = '{this.ShipPlanID}' and g.id = '{e.FormattedValue}'
+and g.ShipModeID = 'Sea'
+and g.CYCFS = 'CY-CY'
+";
                 DataRow dr;
                 if (MyUtility.Check.Seek(chkgbid,out dr))
                 {
                     this.CurrentData["ID"] = e.FormattedValue;
                     this.CurrentData["CYCFS"] = dr["CYCFS"];
+                    this.CurrentData["BrandGroup"] = dr["BrandGroup"];
+                    this.CurrentData["Forwarder"] = dr["Forwarder"];
+                    this.CurrentData["CutOffDate"] = dr["CutOffDate"];
                 }
                 else
                 {
@@ -90,9 +107,9 @@ namespace Sci.Production.Shipping
             };
 
             this.Helper.Controls.Grid.Generator(this.grid)
+            .ComboBox("Type", header: "Container Type", width: Widths.AnsiChars(20)).Get(out cbb_CYCFS)
             .Text("ID", header: "GB#", width: Widths.AnsiChars(20), settings: id)
             .Text("CYCFS", header: "Loading Type", iseditable: false)
-            .ComboBox("Type", header: "Container Type", width: Widths.AnsiChars(20)).Get(out cbb_CYCFS)
             .Text("CTNRNo", header: "Container#", width: Widths.AnsiChars(10))
             .Text("SealNo", header: "Seal#", width: Widths.AnsiChars(10))
             .Text("TruckNo", header: "Truck#/Traile#", width: Widths.AnsiChars(10))
@@ -121,6 +138,55 @@ namespace Sci.Production.Shipping
                 }
             }
 
+            #region 若相同Brand, Forwarder, Loading Type, Cut-Off Date才能放在同一個Container#
+            string inCTNRNo = "'" + string.Join("','", dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["CTNRNo"]))) + "'";
+            string sqlchk = $@"
+select distinct gc.CTNRNo,b.BrandGroup,g.Forwarder,g.CYCFS,g.CutOffDate
+from GMTBooking_CTNR gc with(nolock)
+inner join GMTBooking g with(nolock) on gc.id = g.id
+inner join Brand b with(nolock) on b.ID = g.BrandID
+where gc.CTNRNo in ({inCTNRNo})
+";
+           DataTable chkdt;
+           DualResult result =  DBProxy.Current.Select(null, sqlchk, out chkdt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            foreach (DataRow dr in chkdt.Rows)
+            {
+                foreach (DataRow drs in dt.Select($"CTNRNo = '{dr["CTNRNo"]}' "))
+                {
+                    if (!MyUtility.Convert.GetString(dr["BrandGroup"]).EqualString(MyUtility.Convert.GetString(drs["BrandGroup"])) ||
+                        !MyUtility.Convert.GetString(dr["Forwarder"]).EqualString(MyUtility.Convert.GetString(drs["Forwarder"])) ||
+                        !MyUtility.Convert.GetString(dr["CYCFS"]).EqualString(MyUtility.Convert.GetString(drs["CYCFS"])) ||
+                        !MyUtility.Convert.GetString(dr["CutOffDate"]).EqualString(MyUtility.Convert.GetString(drs["CutOffDate"]))
+                        )
+                    {
+                        MyUtility.Msg.WarningBox("GB# can be added to the same Container# only GBs with the same Brand、Forwarder、Loading Type and Cut-Off Date");
+                        return false;
+                    }
+                }
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                foreach (DataRow drs in dt.Select($"CTNRNo = '{dr["CTNRNo"]}' "))
+                {
+                    if (!MyUtility.Convert.GetString(dr["BrandGroup"]).EqualString(MyUtility.Convert.GetString(drs["BrandGroup"])) ||
+                        !MyUtility.Convert.GetString(dr["Forwarder"]).EqualString(MyUtility.Convert.GetString(drs["Forwarder"])) ||
+                        !MyUtility.Convert.GetString(dr["CYCFS"]).EqualString(MyUtility.Convert.GetString(drs["CYCFS"])) ||
+                        !MyUtility.Convert.GetString(dr["CutOffDate"]).EqualString(MyUtility.Convert.GetString(drs["CutOffDate"]))
+                        )
+                    {
+                        MyUtility.Msg.WarningBox("GB# can be added to the same Container# only GBs with the same Brand、Forwarder、Loading Type and Cut-Off Date");
+                        return false;
+                    }
+                }
+            }
+            #endregion
             return base.OnSaveBefore();
         }
 
@@ -129,10 +195,11 @@ namespace Sci.Production.Shipping
             base.OnRequired();
             DataTable datas;
             string sqlcmd = $@"
-            select gc.*,g.CYCFS
-            from GMTBooking_CTNR gc with(nolock)
-            inner join GMTBooking g with(nolock) on gc.id = g.id
-            where g.ShipPlanID ='{this.ShipPlanID}'
+select gc.*,g.CYCFS,b.BrandGroup,g.Forwarder,g.CutOffDate
+from GMTBooking_CTNR gc with(nolock)
+inner join GMTBooking g with(nolock) on gc.id = g.id
+inner join Brand b with(nolock) on b.ID = g.BrandID
+where g.ShipPlanID ='{this.ShipPlanID}'
             ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out datas);
             if (!result)

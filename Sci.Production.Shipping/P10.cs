@@ -119,13 +119,8 @@ order by g.ID", masterID);
             this.SumData();
             string sqlctnr = $@"
 declare @ShipPlanID varchar(25) = '{this.CurrentMaintain["id"]}'
-select concat('CFS=',(
-select ct=count(1)
-from GMTBooking_CTNR gc with(nolock)
-inner join GMTBooking g with(nolock) on gc.id = g.id
-where g.ShipPlanID =@ShipPlanID and type = 'CFS')
-,' ; '
-,'20 STD=',(
+select concat(
+'20 STD=',(
 select ct=count(1)
 from GMTBooking_CTNR gc with(nolock)
 inner join GMTBooking g with(nolock) on gc.id = g.id
@@ -148,12 +143,6 @@ select ct=count(1)
 from GMTBooking_CTNR gc with(nolock)
 inner join GMTBooking g with(nolock) on gc.id = g.id
 where g.ShipPlanID =@ShipPlanID and type = '45HQ')
-,' ; '
-,'AIR=',(
-select ct=count(1)
-from GMTBooking_CTNR gc with(nolock)
-inner join GMTBooking g with(nolock) on gc.id = g.id
-where g.ShipPlanID =@ShipPlanID and type = 'AIR')
 )
 ";
             this.displayTTLContainer.Text = MyUtility.GetValue.Lookup(sqlctnr);
@@ -171,30 +160,35 @@ where g.ShipPlanID =@ShipPlanID and type = 'AIR')
             {
                 this.numericBoxTTLCTN.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty));
                 this.numericBoxTTLQTY.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalShipQty)", string.Empty));
+                this.displayTTLCBM.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalCBM)", string.Empty));
+                this.displayTTLGW.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalGW)", string.Empty));
             }
             else
             {
                 this.numericBoxTTLCTN.Value = 0;
                 this.numericBoxTTLQTY.Value = 0;
+                this.displayTTLCBM.Text = "0";
+                this.displayTTLGW.Text = "0";
             }
 
             if (tmp_dt.Select("CYCFS in ('CFS-CFS','CFS-CY')").Count() > 0)
             {
-                this.displayTTLCBM.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY')"));
+                this.displayCFSCBM.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY')"));
             }
             else
             {
-                this.displayTTLCBM.Text = string.Empty;
+                this.displayCFSCBM.Text = string.Empty;
             }
 
             if (tmp_dt.Select("ShipModeID in('A/C','A/P','E/C','E/P')").Count() > 0)
             {
-                this.displayTTLGW.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P')"));
+                this.displayAIRGW.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P')"));
             }
             else
             {
-                this.displayTTLGW.Text = string.Empty;
+                this.displayAIRGW.Text = string.Empty;
             }
+
         }
 
         /// <inheritdoc/>
@@ -363,6 +357,8 @@ where g.ShipPlanID =@ShipPlanID and type = 'AIR')
                 MyUtility.Msg.WarningBox("Can not include  [A/C, A/P, E/C, E/P] and [SEA] in same ship plan!");
                 return false;
             }
+
+
 
             // GetID
             if (this.IsDetailInserting)
