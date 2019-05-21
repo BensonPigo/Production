@@ -120,6 +120,7 @@ with tmp1stData as (
     inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
     inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
     inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
+    left join Factory f WITH (NOLOCK) on o.FactoryID = f.id
     outer apply(
 		    select BrandID from orders o1 
 		    where o.CustPONo=o1.id
@@ -184,6 +185,11 @@ with tmp1stData as (
             if (!MyUtility.Check.Empty(this.style))
             {
                 sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", this.style));
+            }
+
+            if (this.chkType.Checked)
+            {
+                sqlCmd.Append($@" AND f.Type <>'S' ");
             }
 
             sqlCmd.Append(@"
