@@ -1,4 +1,4 @@
-IF NOT EXISTS(SELECT * FROM SYS.DATABASES WHERE NAME='FPS')
+ÔªøIF NOT EXISTS(SELECT * FROM SYS.DATABASES WHERE NAME='FPS')
 BEGIN 
  CREATE DATABASE FPS
 END
@@ -8,9 +8,9 @@ USE FPS
 GO
 
 -- =============================================
--- Description:	¬‡§J/ßÛ∑s∏ÍÆ∆
+-- Description:	ËΩâÂÖ•/Êõ¥Êñ∞Ë≥áÊñô
 -- =============================================
-Create PROCEDURE imp_finishingprocess
+CREATE PROCEDURE imp_finishingprocess
 
 	
 AS
@@ -118,7 +118,7 @@ BEGIN
 
 END
 
---´ÿ•ﬂtmpe table¶s©Ò≠n•˛≥°™∫∏ÍÆ∆
+--Âª∫Á´ãtmpe tableÂ≠òÊîæË¶ÅÂÖ®ÈÉ®ÁöÑË≥áÊñô
 DECLARE @tmpPackingList TABLE (
    ID VARCHAR(13),   
    ukey bigint IDENTITY(1,1)
@@ -142,7 +142,7 @@ set t.ReceiveDate = CONVERT(date, s.Time)
 from Production.dbo.PackingList_Detail t
 inner join #tmpTransferLocation s on t.SCICtnNo=s.SCICtnNo
 
--- •[§J@tmpPacking
+-- Âä†ÂÖ•@tmpPacking
 insert into @tmpPackingList
 select distinct t.ID
 from Production.dbo.PackingList_Detail t
@@ -159,7 +159,7 @@ select [TransferDate] = CONVERT(date, t.Time)
 from #tmpTransferLocation t
 inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 
--- •[§J@tmpOrder
+-- Âä†ÂÖ•@tmpOrder
 insert into @tmpOrder
 select distinct orderid
 from #tmpTransferLocation t
@@ -177,9 +177,10 @@ from #tmpTransferLocation t
 inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 
 --04. PackingList_Detail
-select max(Time) [MaxTime] ,ClogLocationId,Pallet,SCICtnNo
-into #tmp_LastLocation
-from 
+ select * 
+ ,[row] = ROW_NUMBER() over(partition by SCICtnNo order by time desc)
+ into #tmp_LastLocation
+ from 
 (
 	select ClogLocationId,Pallet,Time,SCICtnNo
 	from TransferLocation
@@ -188,34 +189,35 @@ from
 	select ClogLocationId,Pallet,Time,SCICtnNo
 	from MiniToPallet
 	where SCIUpdate=0 
-) a
- group by ClogLocationId,Pallet,SCICtnNo
+) a 
 
 update pd
 set pd.ClogLocationId = s.ClogLocationId
 ,pd.Pallet = s.Pallet
-,pd.EditLocationDate = s.MaxTime
+,pd.EditLocationDate = s.Time
 ,pd.EditLocationName = 'GenSong'
 from Production.dbo.PackingList_Detail as pd
 inner join #tmp_LastLocation s on pd.SCICtnNo = s.SCICtnNo
+where row=1
 
--- •[§J@tmpPacking
+-- Âä†ÂÖ•@tmpPacking
 insert into @tmpPackingList
 select distinct pd.ID
 from Production.dbo.PackingList_Detail as pd
 inner join #tmp_LastLocation s on pd.SCICtnNo = s.SCICtnNo
+where row=1
 
 -- TransferLocation
 update t
 set t.SCIUpdate=1
 from TransferLocation t
-where exists(select * from #tmp_LastLocation where SCICtnNo= t.SCICtnNo)
+where exists(select * from #tmp_LastLocation where SCICtnNo= t.SCICtnNo and row=1)
 
 -- MiniToPallet
 update t
 set t.SCIUpdate=1
 from MiniToPallet t
-where exists(select * from #tmp_LastLocation where SCICtnNo= t.SCICtnNo)
+where exists(select * from #tmp_LastLocation where SCICtnNo= t.SCICtnNo and row=1)
 
 --05 ClogReturn/CompleteClogReturn
 select * 
@@ -227,7 +229,7 @@ set t.CompleteTime = s.Time
 from Production.dbo.ClogReturn t
 inner join #tmpCompleteClogReturn s on t.ID=s.ID
 
--- •[§J@tmpOrder
+-- Âä†ÂÖ•@tmpOrder
 insert into @tmpOrder
 select distinct t.orderid
 from Production.dbo.ClogReturn t
@@ -290,7 +292,7 @@ set t.ScanQty = s.ScanQty
 from Production.dbo.PackingList_Detail t
 inner join #tmpCompleteSacnPack s on t.SCICtnNo=s.SCICtnNo
 
--- ∑sºW@tmpPacking
+-- Êñ∞Â¢û@tmpPacking
 insert into @tmpPackingList
 select distinct t.ID
 from Production.dbo.PackingList_Detail t
@@ -304,7 +306,7 @@ where exists(select * from #tmpCompleteSacnPack where t.ID = id)
 drop table #tmp_LastLocation,#tmpCompleteClogReturn,#tmpCompletePullout,#tmpCompleteSacnPack,#tmpCompleteTransferToCFA,#tmpTransferLocation
 
 
--- ∂]∞j∞È∞ı¶Êprocedure
+-- Ë∑ëËø¥ÂúàÂü∑Ë°åprocedure
 
 declare @TotalCount int , @Count int , @id varchar(13)
 set @TotalCount = (select count(*) from @tmpOrder)
