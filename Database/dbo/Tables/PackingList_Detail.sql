@@ -24,6 +24,7 @@
     [ScanQty]             SMALLINT       CONSTRAINT [DF_PackingList_Detail_ScanQty] DEFAULT ((0)) NULL,
     [ScanEditDate]        DATETIME       NULL,
     [Remark]              NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
+    [Ukey]                BIGINT         IDENTITY (1, 1) NOT NULL,
     [TransferCFADate]     DATE           NULL,
     [CFAReceiveDate]      DATE           NULL,
     [CFAReturnFtyDate]    DATE           NULL,
@@ -45,9 +46,13 @@
     [SCICtnNo]            VARCHAR (15)   CONSTRAINT [DF_PackingList_Detail_SCICtnNo] DEFAULT ('') NULL,
     [Pallet]              VARCHAR (10)   NULL,
     [NewGW]               NUMERIC (7, 3) NULL,
-    CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC),
+    CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC),
     CONSTRAINT [UK_PackingList_Detail] UNIQUE NONCLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
+
+
 
 
 
