@@ -164,6 +164,8 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 , [BrandID] = case 
 		when o.BrandID != 'SUBCON-I' then o.BrandID
 		when Order2.BrandID is not null then Order2.BrandID
+		when Order2.BrandID is null then (select top 1 BrandID from Style where id=o.StyleID 
+				and SeasonID=o.SeasonID and BrandID!='SUBCON-I')
 		else o.BrandID end
 , o.FactoryID
 ,o.POID , o.Category, o.CdCodeID 
