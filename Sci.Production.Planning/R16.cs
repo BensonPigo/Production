@@ -7,6 +7,7 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Drawing;
 
 namespace Sci.Production.Planning
 {
@@ -149,37 +150,57 @@ select o.FactoryID [Factory]
 	,o.KPILETA [Mtl LETA Reqd]
 	,IIF(o.MTLExport = 'OK',o.MTLETA,null) [Mtl LETA Act.]
 
-	,(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-		inner join dbo.fabric f on f.SCIRefno=p.SCIRefno 
-		inner join MtlType m on m.id = f.MtlTypeID  
-		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType = 'F' )) [Fabric receiving Reqd]
+	,[Fabric receiving Reqd]=
+		case when exists(select 1 from CriticalActivity where OrderID = o.id and DropDownListID = 'Fabric Receiving') then
+			(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Fabric Receiving')
+		else 
+			(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+			inner join dbo.fabric f on f.SCIRefno=p.SCIRefno 
+			inner join MtlType m on m.id = f.MtlTypeID  
+			where m.IssueType!='Packing' and p.id = o.POID and p.FabricType = 'F' )) 
+		end
 	, dbo.GetReveivingDate(o.POID,'Fabric') [Fabric receiving Act.]
-	,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+    ,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
 		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
 		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType = 'F' )) [Fabric receiving Skip]
 
-	,(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
-		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
-		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType!='F' )) [Accessory receiving Reqd]
+	,[Accessory receiving Reqd]=
+		case when  exists(select 1 from CriticalActivity where OrderID = o.id and DropDownListID = 'Accessory Receiving') then
+			(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Accessory Receiving')
+		else 
+			(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+			inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
+			inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
+			where m.IssueType!='Packing' and p.id = o.POID and p.FabricType!='F' )) 
+		end
 	, dbo.GetReveivingDate(o.POID,'Accessory') [Accessory receiving Act.]
-	,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+    ,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
 		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
 		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType!='F' )) [Accessory receiving Skip]
 
-	,(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
-		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
-		where m.IssueType='Packing' and p.id = o.POID )) [Packing material receiving Reqd]
+	,[Packing material receiving Reqd]=
+		case when  exists(select 1 from CriticalActivity where OrderID = o.id and DropDownListID = 'Packing Material Receiving') then
+			(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Packing Material Receiving')
+		else 
+			(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+			inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
+			inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
+			where m.IssueType='Packing' and p.id = o.POID )) 
+		end
 	, dbo.GetReveivingDate(o.POID,'Packing') [Packing material receiving Act.]
-	,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+    ,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
 		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
 		where m.IssueType='Packing' and p.id = o.POID )) [Packing material receiving Skip]
 
-	,(select min(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date>=dateadd(day,5,o.MTLETA) and Holiday=0) as [Material Inspection Reqd]
+	,[Material Inspection Reqd]=
+		case when  exists(select 1 from CriticalActivity where OrderID = o.id and DropDownListID = 'Material Inspection Result')  then
+			(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Material Inspection Result')
+		else 
+			(select min(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date>=dateadd(day,5,o.MTLETA) and Holiday=0)
+		end 
 	,(select max(inspectDate) from (
 		select max(f.PhysicalDate) inspectDate from dbo.FIR f WITH (NOLOCK) 
 		 where poid=o.POID and f.PhysicalEncode = 1
@@ -189,21 +210,58 @@ select o.FactoryID [Factory]
 		union all
 		select max(a.InspDate) from dbo.AIR a WITH (NOLOCK) where poid=o.POID and a.Status = 'Confirmed' ) t
 	  ) [Material Inspection Act.]
-	,(select max(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date<=dateadd(day,-5,o.SewInLine) and Holiday=0) [Cutting inline Reqd Complete]
+
+	,[Cutting inline Reqd Complete]=
+		case when  exists(select 1 from CriticalActivity where OrderID = o.id and DropDownListID = 'Cutting Inline Date (Est.)') then
+			(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Cutting Inline Date (Est.)')
+		else 
+			(select max(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date<=dateadd(day,-5,o.SewInLine) and Holiday=0)
+		end
 	,o.CutInLine [Cutting Inline Act.]
 	,o.CutOffLine [Cutting Offline Act.]
 	,o.SewInLine [Sewing Inline Act.]
 	,o.SewOffLine [Sewing Offline Act.]
-	,iif(s.NoNeedPPMeeting=1,(select max(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date<=dateadd(day,-1,o.Sewinline) and Holiday=0),null) as [PPMeeting Reqd Complete]
+
+	,[PPMeeting Reqd Complete]=
+		case when exists (select 1 from CriticalActivity where OrderID = o.id and DropDownListID = 'Factory PP Meeting') then
+			(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Factory PP Meeting')
+		else 
+			iif(s.NoNeedPPMeeting=1,
+				(select max(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date<=dateadd(day,-1,o.Sewinline) and Holiday=0),
+				null)
+		end
 	,iif(s.NoNeedPPMeeting=1,s.PPMeeting,null) as [PPMeeting Act. Complete]
 	,iif(s.NoNeedPPMeeting=1,'Y','') [PPMeeting Skip]
-	,x3.min_outputDate as [Wahsing Reqd Complete]
+
+	,[Wahsing Reqd Complete]=
+		case when  exists(select 1 from CriticalActivity where OrderID = o.id and DropDownListID = 'Wash Test Result Receiving')  then
+			(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Wash Test Result Receiving')
+		else 
+			x3.min_outputDate
+		end
 	,x3.max_garmentInspectDate as [Washing Act. Complete]
 	,iif(x3.max_garmentInspectDate is null,'Y','') as [Wahsing Skip]
-	,(select min(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date>=dateadd(day,1,o.SewOffLine) and Holiday=0) as [Carton Reqd Complete]
+
+	,[Carton Reqd Complete]=
+		case when  exists(select 1 from CriticalActivity where OrderID = o.id and DropDownListID = 'Carton Finished') then
+			(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Carton Finished')
+		else 
+			(select min(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date>=dateadd(day,1,o.SewOffLine) and Holiday=0)
+		end
 	,(select max(pd.ReceiveDate) from  dbo.PackingList_Detail pd  WITH (NOLOCK) where pd.OrderID =o.ID ) as [Carton Act. Complete]
 	,'' as [Carton Skip]-- 全面使用clog了，所以都是空白。
 	,iif(o.PulloutComplete=1,o.ActPulloutDate,null) as [Garment Act. Complete]
+
+	,[Fabric receiving Reqd CriticalActivity]=(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Fabric Receiving')
+	,[Accessory receiving Reqd CriticalActivity]=(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Accessory Receiving')
+	,[Packing material receiving Reqd CriticalActivity]=(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Packing Material Receiving')
+	,[Material Inspection Reqd CriticalActivity]=(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Material Inspection Result')
+	,[Cutting inline Reqd Complete CriticalActivity]=(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Cutting Inline Date (Est.)')
+	,[PPMeeting Reqd Complete CriticalActivity]=(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Factory PP Meeting')
+	,[Wahsing Reqd Complete CriticalActivity]=(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Wash Test Result Receiving')
+	,[Carton Reqd Complete CriticalActivity]=(select TargetDate from CriticalActivity where OrderID = o.id and DropDownListID = 'Carton Finished')
+
+
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 outer apply (select top 1 o1.SciDelivery, o.MTLExport, o.MTLETA, s.SampleApv  
@@ -567,6 +625,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Fabric receiving Reqd CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 54];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Reqd"])
                     && this.printData.Rows[i]["Accessory receiving Skip"].ToString().EqualString("Y") == false)
@@ -581,6 +644,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range = (Excel.Range)objSheet.Cells[i + 3, 58];
                         range.Interior.ColorIndex = 3;
                     }
+                }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Reqd CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 57];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
                 }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Reqd"])
@@ -597,6 +665,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Reqd CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 60];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Material Inspection Reqd"]))
                 {
@@ -611,6 +684,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Material Inspection Reqd CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 63];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Cutting inline Reqd Complete"]))
                 {
@@ -624,6 +702,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range = (Excel.Range)objSheet.Cells[i + 3, 66];
                         range.Interior.ColorIndex = 3;
                     }
+                }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Cutting inline Reqd Complete CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 65];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
                 }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Reqd Complete"])
@@ -640,6 +723,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Reqd Complete CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 70];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Wahsing Reqd Complete"])
                     && this.printData.Rows[i]["Wahsing Skip"].ToString().EqualString("Y") == false)
@@ -654,6 +742,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range = (Excel.Range)objSheet.Cells[i + 3, 74];
                         range.Interior.ColorIndex = 3;
                     }
+                }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Wahsing Reqd Complete CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 73];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
                 }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Carton Reqd Complete"])
@@ -670,7 +763,15 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Carton Reqd Complete CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 76];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
             }
+
+            // 刪除欄位
+            objSheet.get_Range("CB:CI").EntireColumn.Delete();
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R16");

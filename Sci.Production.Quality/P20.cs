@@ -194,7 +194,8 @@ select B.StyleID
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings GarmentDefectCodeIDCell = new DataGridViewGeneratorTextColumnSettings();
-
+            DataGridViewGeneratorNumericColumnSettings QtyCell = new DataGridViewGeneratorNumericColumnSettings();
+            
             #region MouseClick
             GarmentDefectCodeIDCell.CellMouseClick += (s, e) =>
             {
@@ -311,13 +312,36 @@ select B.StyleID
                     e.Cancel = true; return;
                 }
             };
+
+
+            QtyCell.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return                
+                //DataRow dr = this.CurrentDetailData;
+                int totalQty = 0;
+
+                for (int i = 0; i < this.detailgrid.Rows.Count; i++)
+                {
+                    totalQty += Convert.ToInt32(this.detailgrid.Rows[i].Cells["Qty"].EditedFormattedValue);
+                }
+                //foreach (DataGridViewRow item in this.detailgrid.Rows)
+                //{
+                //    //totalQty +=Convert.ToInt32(item["Qty"]);
+                //    DataRow row = ((DataRowView)item.DataBoundItem).Row;
+                //    totalQty += Convert.ToInt32(row["Qty"]);
+                //    row.EndEdit();
+                //}
+
+                this.CurrentMaintain["DefectQty"] = totalQty;
+            };
             #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("GarmentDefectTypeid", header: "Defect Type", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("GarmentDefectCodeID", header: "Defect Code", width: Widths.AnsiChars(5), settings: GarmentDefectCodeIDCell)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, integer_places: 5);
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, integer_places: 5, settings: QtyCell);
 
         }      
    
@@ -400,12 +424,13 @@ select B.StyleID
             }
 
             //5.當RFT.DefectQty大於RFT.InspQty則Show Message 並Return 不可存檔
-            if (Convert.ToDecimal(CurrentMaintain["DefectQty"]) > Convert.ToDecimal(CurrentMaintain["InspectQty"]))
-            {
-                
-                MyUtility.Msg.WarningBox("DefectQty can not exceed InspectQty !!", "Warning");
-                return false;
-            }
+            //2019/05/20 ISP20190590 拔掉
+            //if (Convert.ToDecimal(CurrentMaintain["DefectQty"]) > Convert.ToDecimal(CurrentMaintain["InspectQty"]))
+            //{
+
+            //    MyUtility.Msg.WarningBox("DefectQty can not exceed InspectQty !!", "Warning");
+            //    return false;
+            //}
             DataTable detaildt = (DataTable)detailgridbs.DataSource;
             for (int i = detaildt.Rows.Count - 1; i >=0; i--)
             {

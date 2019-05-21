@@ -17,6 +17,7 @@ namespace Sci.Production.Warehouse
     {
         DataRow dr_master;
         DataTable dt_detail;
+        bool IsReason06 = false;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
        // bool flag;
        // string poType;
@@ -27,6 +28,11 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             dr_master = master;
             dt_detail = detail;
+
+            if (dr_master["WhseReasonID"].ToString() == "00006")
+            {
+                IsReason06 = true;
+            }
         }
 
         //Find Now Button
@@ -64,10 +70,13 @@ select  selected = 0
         , ftyinventoryukey = c.ukey  
         , location = dbo.Getlocation(c.ukey)
         , balance = c.inqty-c.outqty + c.adjustqty 
+		,a.SystemNetQty
+		,a.LossQty
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join dbo.Orders on c.poid = orders.id
 inner join dbo.Factory on orders.FactoryID = factory.ID
+INNER JOIN Fabric f on a.SCIRefNo=f.SCIRefNo
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
     and factory.MDivisionID = '{1}'
 ", sp, Sci.Env.User.Keyword)); // 
@@ -79,6 +88,15 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 {
                     strSQLCmd.Append(string.Format(@" 
     and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq1.seq1, txtSeq1.seq2));
+                }
+
+                if (IsReason06)
+                {
+                    strSQLCmd.Append(" and f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD')  " + Environment.NewLine);
+                }
+                else
+                {
+                    strSQLCmd.Append(" and f.MtlTypeID not in ('EMB THREAD','SP THREAD','THREAD')  " + Environment.NewLine);
                 }
 
 
@@ -124,9 +142,28 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
+
+
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
-                        dr["qty"] = dr["balance"];
+                        if (IsReason06)
+                        {
+                            //a.如Stock Qty >= PO_Supp_Detail.SystemNetQty,則Issue Qty帶入PO_Supp_Detail.SystemNetQty
+                            //b.如Stock Qty >= PO_Supp_Detail.LossQty,則Issue Qty帶入PO_Supp_Detail.LossQty //PO_Supp_Detail.LossQty = 0時跳過此步驟
+                            //c.Issue Qty帶入Stock Qty
+                            if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["SystemNetQty"]))
+                            {
+                                dr["qty"] = dr["SystemNetQty"];
+                            }
+                            else if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["LossQty"]) && Convert.ToInt32(dr["LossQty"]) != 0)
+                            {
+                                dr["qty"] = dr["LossQty"];
+                            }
+                            else
+                                dr["qty"] = dr["balance"];
+                        }
+                        else
+                            dr["qty"] = dr["balance"];
                     }
                     else if (Convert.ToBoolean(dr["selected"]) == false)
                     {
