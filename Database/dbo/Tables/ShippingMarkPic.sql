@@ -3,8 +3,14 @@
     [Seq]           INT          CONSTRAINT [DF_ShippingMarkPic_Seq] DEFAULT ((1)) NOT NULL,
     [Side]          VARCHAR (5)  NOT NULL,
     [Ukey]          BIGINT       IDENTITY (1, 1) NOT NULL,
+    [AddDate]       DATETIME     NULL,
+    [AddName]       VARCHAR (10) CONSTRAINT [DF_ShippingMarkPic_AddName] DEFAULT ('') NOT NULL,
+    [EditDate]      DATETIME     NULL,
+    [EditName]      VARCHAR (10) CONSTRAINT [DF_ShippingMarkPic_EditName] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_ShippingMarkPic] PRIMARY KEY CLUSTERED ([PackingListID] ASC, [Seq] ASC, [Side] ASC)
 );
+
+
 
 
 GO

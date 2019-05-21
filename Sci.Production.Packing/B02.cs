@@ -95,60 +95,83 @@ namespace Sci.Production.Packing
 
         protected override bool ClickSaveBefore()
         {
-            // Upload_flag
-            if (this.Upload_flag)
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
-                // 如果是空的表示刪除
-                if (MyUtility.Check.Empty(this.displayFileName.Tag.ToString()))
-                {
-                    // 清掉存放路徑的檔案
-                    try
-                    {
-                        System.IO.File.Delete(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["FileName"]));
-                    }
-                    catch (System.IO.IOException exception)
-                    {
-                        MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
-                    }
-                }
-                else
-                {
-                    string local_path_file = this.displayFileName.Tag.ToString();
-                    string local_file_type = Path.GetExtension(local_path_file);
+                MyUtility.Msg.WarningBox("Brand can not empty!");
+                return false;
+            }
 
-                    this.GetFilenNme(local_path_file);
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CustCD"]))
+            {
+                MyUtility.Msg.WarningBox("CustCD can not empty!");
+                return false;
+            }
 
-                    try
-                    {
-                        string destination = Path.Combine(this.destination_path, this.Destination_fileName);
-                        System.IO.File.Copy(local_path_file, destination, true);
-                        this.CurrentMaintain["FileName"] = this.Destination_fileName.Trim();
-                    }
-                    catch (System.IO.IOException exception)
-                    {
-                        MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
-                    }
-                }
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CTNRefno"]))
+            {
+                MyUtility.Msg.WarningBox("CTNRefno can not empty!");
+                return false;
+            }
 
-                this.Upload_flag = false;
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Side"]))
+            {
+                MyUtility.Msg.WarningBox("Side can not empty!");
+                return false;
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["FileName"]).Length > 40)
+            {
+                MyUtility.Msg.WarningBox("The length of file name is 40 words, please rename file name and upload again!");
+                return false;
             }
 
             return base.ClickSaveBefore();
         }
 
+        protected override DualResult ClickSavePost()
+        {
+            // Upload_flag
+            if (this.Upload_flag)
+            {
+                string local_path_file = this.displayFileName.Tag.ToString();
+                string local_file_type = Path.GetExtension(local_path_file);
+
+                this.GetFilenNme(local_path_file);
+
+                try
+                {
+                    string destination = Path.Combine(this.destination_path, this.Destination_fileName);
+                    System.IO.File.Copy(local_path_file, destination, true);
+                    this.CurrentMaintain["FileName"] = this.Destination_fileName.Trim();
+                }
+                catch (System.IO.IOException exception)
+                {
+                    MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
+                    return new DualResult(false,exception);
+                }
+
+                this.Upload_flag = false;
+            }
+
+            return base.ClickSavePost();
+        }
+
         private void GetFilenNme(string from_path_file)
         {
             string local_file_type = Path.GetExtension(from_path_file);
-            string brandIDCustCD = MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]).Trim() + MyUtility.Convert.GetString(this.CurrentMaintain["CustCD"]).Trim();
-            string brandIDCustCDFileName = MyUtility.GetValue.Lookup($"select max(FileName) from ShippingMarkStamp with(nolock) where FileName like '{brandIDCustCD}%'");
-            int num = 1;
-            if (!MyUtility.Check.Empty(brandIDCustCDFileName))
+            string filename = Path.GetFileName(from_path_file);
+            this.Destination_fileName = Path.GetFileName(from_path_file);
+            if (this.Destination_fileName.Length > 40)
             {
-                num = MyUtility.Convert.GetInt(brandIDCustCDFileName.Substring(brandIDCustCDFileName.Length - 8, 3)) + 1; // 取檔案名末3碼數值, .html有5碼
+                MyUtility.Msg.WarningBox("The length of file name is 40 words, please rename file name and upload again!");
+                this.CurrentMaintain["FileName"] = string.Empty;
+                this.Destination_fileName = string.Empty;
+                this.displayFileName.Tag = string.Empty;
+                this.Upload_flag = false;
+                return;
             }
 
-            this.Destination_fileName = brandIDCustCD + "_" + num.ToString().PadLeft(3, '0') + local_file_type;
-            this.CurrentMaintain["FileName"] = this.Destination_fileName.Trim();
+            this.CurrentMaintain["FileName"] = this.Destination_fileName;
         }
     }
 }

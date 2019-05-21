@@ -579,7 +579,10 @@ order by SCICtnNo
                     return;
                 }
 
-                if (MyUtility.Check.Empty(dtexcel.Columns["Pack ID"]) || MyUtility.Check.Empty(dtexcel.Columns["SCI Ctn No."]) || MyUtility.Check.Empty(dtexcel.Columns["Shipping Mark Pic File"]))
+                if (MyUtility.Check.Empty(dtexcel.Columns["Pack ID"]) || MyUtility.Check.Empty(dtexcel.Columns["SCI Ctn No."]) ||
+                    MyUtility.Check.Empty(dtexcel.Columns["From Left"]) || MyUtility.Check.Empty(dtexcel.Columns["From Top"]) ||
+                    MyUtility.Check.Empty(dtexcel.Columns["Pic Length"]) || MyUtility.Check.Empty(dtexcel.Columns["Pic Width"]) ||
+                    MyUtility.Check.Empty(dtexcel.Columns["Shipping Mark Pic File"])|| MyUtility.Check.Empty(dtexcel.Columns["Is 2 Side"]))
                 {
                     MyUtility.Msg.WarningBox("excel file format error !!");
                     return;
@@ -614,7 +617,7 @@ order by SCICtnNo
                     FromTop = MyUtility.Convert.GetDecimal(a.First()["From Top"]),
                     PicLength = MyUtility.Convert.GetDecimal(a.First()["Pic Length"]),
                     PicWidth = MyUtility.Convert.GetDecimal(a.First()["Pic Width"]),
-                    Is2Side = MyUtility.Convert.GetString(a.First()["Is 2 Side (Y/N)"]).ToLower().EqualString("yes")
+                    Is2Side = MyUtility.Convert.GetString(a.First()["Is 2 Side"]).ToLower().EqualString("yes")
                 });
 
                 foreach (var item in excelist)

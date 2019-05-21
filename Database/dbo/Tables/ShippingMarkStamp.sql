@@ -7,9 +7,15 @@
     [FromTop]     NUMERIC (8, 2) CONSTRAINT [DF_ShippingMarkStamp_FromTop] DEFAULT ((0)) NOT NULL,
     [StampLength] NUMERIC (8, 2) CONSTRAINT [DF_ShippingMarkStamp_StampLength] DEFAULT ((0)) NOT NULL,
     [StampWidth]  NUMERIC (8, 2) CONSTRAINT [DF_ShippingMarkStamp_StampWidth] DEFAULT ((0)) NOT NULL,
-    [FileName]    VARCHAR (25)   CONSTRAINT [DF_ShippingMarkStamp_FileName] DEFAULT ('') NOT NULL,
+    [FileName]    VARCHAR (40)   CONSTRAINT [DF_ShippingMarkStamp_FileName] DEFAULT ('') NOT NULL,
+    [AddDate]     DATETIME       NULL,
+    [AddName]     VARCHAR (10)   CONSTRAINT [DF_ShippingMarkStamp_AddName] DEFAULT ('') NOT NULL,
+    [EditDate]    DATETIME       NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_ShippingMarkStamp_EditName] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_ShippingMarkStamp] PRIMARY KEY CLUSTERED ([BrandID] ASC, [CustCD] ASC, [CTNRefno] ASC, [Side] ASC)
 );
+
+
 
 
 GO
