@@ -264,6 +264,10 @@ drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
             }
+            else
+            {
+                MyUtility.Msg.ErrorBox(result.Messages.ToString());
+            }
 
             this.listControlBindingSource1.DataSource = this.gridData;
 
