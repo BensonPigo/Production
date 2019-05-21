@@ -111,7 +111,7 @@
             this.numAffectQty.DecimalPlaces = 2;
             this.numAffectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numAffectQty.Location = new System.Drawing.Point(385, 9);
-            this.numAffectQty.MaxBytes = 9;
+            this.numAffectQty.MaxBytes = 11;
             this.numAffectQty.Maximum = new decimal(new int[] {
             1215752191,
             23,
