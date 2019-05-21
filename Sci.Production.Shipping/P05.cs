@@ -1370,13 +1370,6 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
             return true;
         }
 
-        // Container/Truck
-        private void BtnContainerTruck_Click(object sender, EventArgs e)
-        {
-            Sci.Production.Shipping.P05_ContainerTruck callNextForm = new Sci.Production.Shipping.P05_ContainerTruck(this.IsSupportEdit, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
-            callNextForm.ShowDialog(this);
-        }
-
         // Import from packing list
         private void BtnImportfrompackinglist_Click(object sender, EventArgs e)
         {
