@@ -146,7 +146,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Numeric("qty", header: "Affect Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
+                .Numeric("qty", header: "Affect Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
                 .Text("unitid", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("amount", header: "Claim Amt", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                 .Numeric("addition", header: "Addition", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
