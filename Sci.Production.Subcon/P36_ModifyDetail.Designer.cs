@@ -112,6 +112,16 @@
             this.numAffectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numAffectQty.Location = new System.Drawing.Point(385, 9);
             this.numAffectQty.MaxBytes = 8;
+            this.numAffectQty.Maximum = new decimal(new int[] {
+            1215752191,
+            23,
+            0,
+            131072});
+            this.numAffectQty.Minimum = new decimal(new int[] {
+            1215752191,
+            23,
+            0,
+            -2147352576});
             this.numAffectQty.Name = "numAffectQty";
             this.numAffectQty.NullValue = new decimal(new int[] {
             0,
@@ -134,6 +144,16 @@
             this.numClaimAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numClaimAmt.Location = new System.Drawing.Point(88, 42);
             this.numClaimAmt.MaxBytes = 12;
+            this.numClaimAmt.Maximum = new decimal(new int[] {
+            -727379969,
+            232,
+            0,
+            131072});
+            this.numClaimAmt.Minimum = new decimal(new int[] {
+            -727379969,
+            232,
+            0,
+            -2147352576});
             this.numClaimAmt.Name = "numClaimAmt";
             this.numClaimAmt.NullValue = new decimal(new int[] {
             0,
@@ -164,6 +184,16 @@
             this.numAdditionCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numAdditionCharge.Location = new System.Drawing.Point(385, 42);
             this.numAdditionCharge.MaxBytes = 12;
+            this.numAdditionCharge.Maximum = new decimal(new int[] {
+            -727379969,
+            232,
+            0,
+            131072});
+            this.numAdditionCharge.Minimum = new decimal(new int[] {
+            -727379969,
+            232,
+            0,
+            -2147352576});
             this.numAdditionCharge.Name = "numAdditionCharge";
             this.numAdditionCharge.NullValue = new decimal(new int[] {
             0,
@@ -254,6 +284,7 @@
             this.Controls.Add(this.labelSPNo);
             this.DefaultControl = "txtSPNo";
             this.Name = "P36_ModifyDetail";
+            this.OnLineHelpID = "Sci.Win.Subs.Input6A";
             this.Text = "P36 Detail";
             this.WorkAlias = "Localdebit_detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
