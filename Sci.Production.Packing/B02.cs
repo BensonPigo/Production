@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -154,6 +155,24 @@ namespace Sci.Production.Packing
             }
 
             return base.ClickSavePost();
+        }
+
+        protected override DualResult ClickDelete()
+        {
+            string fileName = this.CurrentMaintain["FileName"].ToString();
+
+            // 清掉存放路徑的檔案
+            try
+            {
+                string destination = Path.Combine(this.destination_path, fileName);
+                System.IO.File.Delete(destination);
+            }
+            catch (System.IO.IOException exception)
+            {
+                MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
+            }
+
+            return base.ClickDelete();
         }
 
         private void GetFilenNme(string from_path_file)
