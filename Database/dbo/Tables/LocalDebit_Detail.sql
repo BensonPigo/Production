@@ -2,7 +2,7 @@
     [ID]           VARCHAR (13)    CONSTRAINT [DF_LocalDebit_Detail_ID] DEFAULT ('') NOT NULL,
     [Orderid]      VARCHAR (13)    CONSTRAINT [DF_LocalDebit_Detail_Orderid] DEFAULT ('') NOT NULL,
     [UnitID]       VARCHAR (8)     CONSTRAINT [DF_LocalDebit_Detail_UnitID] DEFAULT ('') NULL,
-    [Qty]          NUMERIC (8, 2)  CONSTRAINT [DF_LocalDebit_Detail_Qty] DEFAULT ((0)) NULL,
+    [Qty]          NUMERIC (11, 2) CONSTRAINT [DF_LocalDebit_Detail_Qty] DEFAULT ((0)) NULL,
     [Amount]       NUMERIC (12, 2) CONSTRAINT [DF_LocalDebit_Detail_Amount] DEFAULT ((0)) NULL,
     [Addition]     NUMERIC (12, 2) CONSTRAINT [DF_LocalDebit_Detail_Addition] DEFAULT ((0)) NULL,
     [Reasonid]     VARCHAR (5)     CONSTRAINT [DF_LocalDebit_Detail_Reasonid] DEFAULT ('') NULL,
@@ -16,6 +16,8 @@
     [EditDate]     DATETIME        NULL,
     CONSTRAINT [PK_LocalDebit_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Ukey] ASC, [TaipeiUkey] ASC)
 );
+
+
 
 
 
