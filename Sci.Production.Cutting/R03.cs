@@ -91,6 +91,7 @@ select
 	[Style#] = o.StyleID,
     [Switch to Workorder]=Iif(c.WorkType='1','Combination’',Iif(c.WorkType='2','By SP#’','')),
 	[Ref#] = wo.CutRef,
+	[Seq]=Concat (wo.Seq1, ' ', wo.Seq2),
 	[Cut#] = wo.Cutno,
     [SpreadingNoID]=wo.SpreadingNoID,
 	[Cut Cell] = wo.CutCellID,
@@ -106,12 +107,35 @@ select
 	[OrderQty]=noExcessQty.qty,
 	[ExcessQty]=ExcessQty.qty,
 	[Consumption] = wo.Cons,
+	[Spreading Time (mins)] = 
+	cast(round(isnull(
+		dbo.GetSpreadingTime(
+				f.WeaveTypeID,
+				wo.Refno,
+				iif(iif(isnull(fi.avgInQty,0)=0,1,round(iif(isnull(wo.CutRef,'')='',wo.Cons,sum(wo.Cons)over(partition by wo.CutRef,wo.MDivisionId))/fi.avgInQty,0))<1,1,
+                    iif(isnull(fi.avgInQty,0)=0,1,round(iif(isnull(wo.CutRef,'')='',wo.Cons,sum(wo.Cons)over(partition by wo.CutRef,wo.MDivisionId))/fi.avgInQty,0))
+                    ),
+				iif(isnull(wo.CutRef,'')='',wo.Layer,sum(wo.Layer)over(partition by wo.CutRef,wo.MDivisionId)),
+				iif(isnull(wo.CutRef,'')='',wo.Cons,sum(wo.Cons)over(partition by wo.CutRef,wo.MDivisionId)),
+				1
+			)/60.0,0),2)as float)
+	,
+	[Cutting Time (mins)]=cast(round(isnull(
+		dbo.GetCuttingTime(
+				round(dbo.GetActualPerimeter(iif(wo.ActCuttingPerimeter not like '%yd%','0',wo.ActCuttingPerimeter)),4),
+				wo.CutCellid,
+				iif(isnull(wo.CutRef,'')='',wo.Layer,sum(wo.Layer)over(partition by wo.CutRef,wo.MDivisionId)),
+				f.WeaveTypeID,
+				iif(isnull(wo.CutRef,'')='',wo.Cons,sum(wo.Cons)over(partition by wo.CutRef,wo.MDivisionId))
+			)/60.0,0),2)as float)
+	,--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
 	[Marker Length] = wo.MarkerLength,
 	wo.ActCuttingPerimeter
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
+left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = wo.Ukey)acc
 outer apply(
 	select MincoDate=(
@@ -193,6 +217,13 @@ outer apply(
 		for xml path('')
 		),1,1,'')
 )ExcessQty
+outer apply(
+	select avgInQty = avg(fi.InQty)
+	from PO_Supp_Detail psd with(nolock)
+	left join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
+	where psd.ID = wo.id and psd.SCIRefno = wo.SCIRefno
+	and fi.InQty is not null
+) as fi
 where 1=1
 
 ");
