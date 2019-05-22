@@ -37,7 +37,8 @@ namespace Sci.Production.Warehouse
 Select  a.FtyGroup
         ,b.id
         , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq --left(b.seq1+' ',3)+b.Seq2 as seq
-        , colorid = isnull(dbo.GetColorMultipleID(a.BrandID,b.colorid),'')
+        --, colorid = isnull(dbo.GetColorMultipleID(a.BrandID,b.colorid),'')
+		, [ColorID]= IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' ,b.SuppColor,dbo.GetColorMultipleID(a.BrandID,b.ColorID)) 
         , b.sizespec
         , c.suppid
         , a.sewinline
@@ -48,6 +49,7 @@ Select  a.FtyGroup
         , md.BLocation
 from orders a WITH (NOLOCK) 
      , po_supp_detail b WITH (NOLOCK) 
+left join fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 left join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
      , po_supp c WITH (NOLOCK) 
 where   b.refno = '{0}'
