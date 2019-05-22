@@ -296,9 +296,9 @@ select	MDivisionID,FactoryID,SewLine,CustPONo,ID,Junk,StyleID,Category,VasShas,
 		BuyerDelivery,carton.TtlCtnQty,carton.TtlRemainCtnQty,ScanQty,BalanceQty,POCompletion
 from #tmp t
 outer apply( select [TtlCtnQty] = sum(p.CTNQty),[TtlRemainCtnQty] = sum(iif(p.ScanEditDate is null or p.Lacking = 1,p.CTNQty,0))
-							from	PackingList_Detail p with (nolock)
-							where	exists(select 1 from PackingList_Detail pld with (nolock) where pld.OrderID = t.ID and pld.ID = p.ID)
-						 ) carton
+			 from PackingList_Detail p with (nolock)
+			 where p.OrderID = t.ID
+		  ) carton
 
 select 
 	o.CustPONo,o.id,pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,[CTN Barcode] = pld.ID+pld.CTNStartNo
