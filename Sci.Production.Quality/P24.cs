@@ -108,6 +108,7 @@ select distinct
 ,o.BuyerDelivery
 ,[Returnto] = '' 
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -495,8 +496,8 @@ and DisposeFromClog= 0
                         }
 
                         insertCmds.Add($@"
-insert into CFAReturn(ReturnDate,MDivisionID,OrderID,PackingListID,CTNStartNo,ReturnTo,AddName,AddDate)
-values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{dr["Returnto"].ToString()}','{Sci.Env.User.UserID}',GETDATE())
+insert into CFAReturn(ReturnDate,MDivisionID,OrderID,PackingListID,CTNStartNo,ReturnTo,AddName,AddDate,SCICtnNo)
+values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{dr["Returnto"].ToString()}','{Sci.Env.User.UserID}',GETDATE(),'{dr["SCICtnNo"].ToString()}')
 ");
                     }
                 }

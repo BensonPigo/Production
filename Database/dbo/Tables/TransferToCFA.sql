@@ -7,7 +7,8 @@
     [CTNStartNo]     VARCHAR (6)  DEFAULT ('') NOT NULL,
     [AddName]        VARCHAR (10) DEFAULT ('') NOT NULL,
     [AddDate]        DATETIME     NOT NULL,
-    [OrigloactionID] VARCHAR (10) CONSTRAINT [DF_TransferToCFA_OrigloactionID] DEFAULT ('') NULL,
+    [OrigloactionID] VARCHAR (10) CONSTRAINT [DF_TransferToCFA_OrigloactionID] DEFAULT ('') NULL, 
+    [SCICtnNo] VARCHAR(15) CONSTRAINT [DF_TransferToCFA_SCICtnNo] DEFAULT ('') NOT NULL, 
     PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

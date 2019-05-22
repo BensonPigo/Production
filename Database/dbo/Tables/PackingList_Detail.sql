@@ -44,6 +44,9 @@ CREATE TABLE [dbo].[PackingList_Detail] (
     [FtyReqReturnReason]  VARCHAR (5)    DEFAULT ('') NOT NULL,
     [DisposeFromClog]     BIT            CONSTRAINT [DF_PackingList_Detail_DisposeFromClog] DEFAULT ((0)) NULL,
     [SCICtnNo]            VARCHAR (15)   CONSTRAINT [DF_PackingList_Detail_SCICtnNo] DEFAULT ('') NULL,
+    [OrigID] VARCHAR(13) NOT NULL CONSTRAINT [DF_PackingList_Detail_OrigID] DEFAULT (''), 
+    [OrigOrderID] VARCHAR(13) NOT NULL CONSTRAINT [DF_PackingList_Detail_OrigOrderID] DEFAULT (''), 
+    [OrigCTNStartNo] VARCHAR(6) NOT NULL CONSTRAINT [DF_PackingList_Detail_OrigCTNStartNo] DEFAULT (''), 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC),
     CONSTRAINT [UK_PackingList_Detail] UNIQUE NONCLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );

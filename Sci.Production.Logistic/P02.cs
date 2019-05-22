@@ -153,7 +153,8 @@ from (
              , c.BuyerDelivery
              ,'' as ClogLocationId
              ,c.FtyGroup
-             ,'' as Remark 
+             ,'' as Remark
+             , b.SCICtnNo
       from PackingList a WITH (NOLOCK) 
            , PackingList_Detail b WITH (NOLOCK) 
            , Orders c WITH (NOLOCK) 
@@ -538,6 +539,7 @@ insert into ClogReceive (
     , ClogLocationId
     , AddDate
     , AddName
+    , SCICtnNo
 ) values (
     GETDATE()
     , '{0}'
@@ -547,13 +549,15 @@ insert into ClogReceive (
     , '{4}'
     , GETDATE()
     , '{5}'
+    , '{6}'
 );",
                     Env.User.Keyword,
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
                     MyUtility.Convert.GetString(dr["ClogLocationId"]),
-                    Sci.Env.User.UserID));
+                    Sci.Env.User.UserID,
+                    MyUtility.Convert.GetString(dr["SCICtnNo"])));
 
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(

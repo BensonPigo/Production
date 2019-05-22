@@ -6,7 +6,8 @@ CREATE TABLE [dbo].[ClogReturn] (
     [OrderID]       VARCHAR (13) CONSTRAINT [DF_ClogReturn_Detail_OrderId] DEFAULT ('') NOT NULL,
     [CTNStartNo]    VARCHAR (6)  CONSTRAINT [DF_ClogReturn_Detail_CTNStartNo] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME     NULL,
-    [OldID]         VARCHAR (13) CONSTRAINT [DF_ClogReturn_Detail_OldID] DEFAULT ('') NULL,
+    [OldID]         VARCHAR (13) CONSTRAINT [DF_ClogReturn_Detail_OldID] DEFAULT ('') NULL, 
+    [SCICtnNo] VARCHAR(15) CONSTRAINT [DF_ClogReturn_Detail_SCICtnNo] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_ClogReturn_Detail_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
