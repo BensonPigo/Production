@@ -28,6 +28,7 @@ namespace Sci.Production.Packing
         {
             this.InitializeComponent();
             this.destination_path = MyUtility.GetValue.Lookup("select ShippingMarkPath from System WITH (NOLOCK) ", null);
+            this.gridicon.Visible = false;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -219,6 +220,12 @@ order by pd.SCICtnNo
         {
             if (!this.EditMode)
             {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.destination_path))
+            {
+                MyUtility.Msg.WarningBox("ShippingMarkPath not set!");
                 return;
             }
 
@@ -498,13 +505,29 @@ order by SCICtnNo
 
         private void BtnDownload_Click(object sender, EventArgs e)
         {
-            DataTable print = this.DetailDatas.CopyToDataTable();
-
-            if (print.Rows.Count == 0)
+            if (((DataTable)this.detailgridbs.DataSource).Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found");
                 return;
             }
+
+            var detailList = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().GroupBy(s => s["SCICtnNo"], (ctn, a) => new
+            {
+                SCICtnNo = MyUtility.Convert.GetString(ctn),
+                OrderID = MyUtility.Convert.GetString(a.First()["OrderID"]),
+                CustPONO = MyUtility.Convert.GetString(a.First()["CustPONO"]),
+                CTNStartNo = MyUtility.Convert.GetString(a.First()["CTNStartNo"]),
+                CustCTN = MyUtility.Convert.GetString(a.First()["CustCTN"]),
+                Article = MyUtility.Convert.GetString(a.First()["Article"]),
+                Color = MyUtility.Convert.GetString(a.First()["Color"]),
+                SizeCode = MyUtility.Convert.GetString(a.First()["SizeCode"]),
+                FromLeft = MyUtility.Convert.GetDecimal(a.First()["FromLeft"]),
+                FromTop = MyUtility.Convert.GetDecimal(a.First()["FromTop"]),
+                PicLength = MyUtility.Convert.GetDecimal(a.First()["PicLength"]),
+                PicWidth = MyUtility.Convert.GetDecimal(a.First()["PicWidth"]),
+                Is2Side = MyUtility.Convert.GetBool(a.First()["Is2Side"]),
+                FileName = MyUtility.Convert.GetString(a.First()["FileName"]),
+            }).ToList();
 
             #region To Excel
             string excelName = "Packing_P24_Download";
@@ -512,23 +535,23 @@ order by SCICtnNo
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
 
             int rownum = 2;
-            foreach (DataRow dr in print.Rows)
+            foreach (var dr in detailList)
             {
-                worksheet.Cells[rownum, 1] = dr["OrderID"];
-                worksheet.Cells[rownum, 2] = dr["CustPONO"];
+                worksheet.Cells[rownum, 1] = dr.OrderID;
+                worksheet.Cells[rownum, 2] = dr.CustPONO;
                 worksheet.Cells[rownum, 3] = this.CurrentMaintain["PackingListID"];
-                worksheet.Cells[rownum, 4] = dr["CTNStartNo"];
-                worksheet.Cells[rownum, 5] = dr["CustCTN"];
-                worksheet.Cells[rownum, 6] = dr["SCICtnNo"];
-                worksheet.Cells[rownum, 7] = dr["Article"];
-                worksheet.Cells[rownum, 8] = dr["Color"];
-                worksheet.Cells[rownum, 9] = dr["SizeCode"];
-                worksheet.Cells[rownum, 10] = dr["FromLeft"];
-                worksheet.Cells[rownum, 11] = dr["FromTop"];
-                worksheet.Cells[rownum, 12] = dr["PicLength"];
-                worksheet.Cells[rownum, 13] = dr["PicWidth"];
-                worksheet.Cells[rownum, 14] = MyUtility.Convert.GetBool(dr["Is2Side"]) ? "Yes" : "No";
-                worksheet.Cells[rownum, 15] = dr["FileName"];
+                worksheet.Cells[rownum, 4] = dr.CTNStartNo;
+                worksheet.Cells[rownum, 5] = dr.CustCTN;
+                worksheet.Cells[rownum, 6] = dr.SCICtnNo;
+                worksheet.Cells[rownum, 7] = dr.Article;
+                worksheet.Cells[rownum, 8] = dr.Color;
+                worksheet.Cells[rownum, 9] = dr.SizeCode;
+                worksheet.Cells[rownum, 10] = dr.FromLeft;
+                worksheet.Cells[rownum, 11] = dr.FromTop;
+                worksheet.Cells[rownum, 12] = dr.PicLength;
+                worksheet.Cells[rownum, 13] = dr.PicWidth;
+                worksheet.Cells[rownum, 14] = MyUtility.Convert.GetBool(dr.Is2Side) ? "Yes" : "No";
+                worksheet.Cells[rownum, 15] = dr.FileName;
                 rownum++;
             }
 
@@ -562,6 +585,14 @@ order by SCICtnNo
             if (!this.EditMode)
             {
                 return;
+            }
+
+            if (MyUtility.Check.Empty(this.destination_path))
+            {
+                if (MyUtility.Msg.QuestionBox("ShippingMarkPath is not set. The file will not be uploaded ! Continue Import?") == DialogResult.No)
+                {
+                    return;
+                }
             }
 
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -630,15 +661,14 @@ order by SCICtnNo
                         dr["PicWidth"] = item.PicWidth;
                         dr["Is2Side"] = item.Is2Side;
 
-                        if (!MyUtility.Check.Empty(item.FileName))
+                        if (!MyUtility.Check.Empty(item.FileName) && !MyUtility.Check.Empty(this.destination_path))
                         {
                             dr["FileSourcePath"] = item.FileName;
                             dr["FileName"] = item.FileName;
                             dr["local_file_type"] = Path.GetExtension(MyUtility.Convert.GetString(item.FileName));
                             dr["FileAction"] = "Upload";
-
                         }
-                        else
+                        else if (MyUtility.Check.Empty(item.FileName))
                         {
                             dr["FileSourcePath"] = string.Empty;
                             dr["FileName"] = string.Empty;

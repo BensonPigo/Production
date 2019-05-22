@@ -26,6 +26,12 @@ namespace Sci.Production.Packing
             this.destination_path = MyUtility.GetValue.Lookup("select ShippingMarkPath from System WITH (NOLOCK) ", null);
         }
 
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            this.btnDownload.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["FileName"]);
+        }
+
         private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
@@ -68,7 +74,7 @@ namespace Sci.Production.Packing
                     }
                     catch (System.IO.IOException exception)
                     {
-                        MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
+                        MyUtility.Msg.ErrorBox("Error: Download file fail. Original error: " + exception.Message);
                     }
                 }
             }
@@ -76,6 +82,12 @@ namespace Sci.Production.Packing
 
         private void BtnUpload_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.destination_path))
+            {
+                MyUtility.Msg.WarningBox("ShippingMarkPath not set!");
+                return;
+            }
+
             // 呼叫File 選擇視窗
             OpenFileDialog file = new OpenFileDialog();
 
