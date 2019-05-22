@@ -158,35 +158,35 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
 
             if (tmp_dt.Rows.Count > 0)
             {
-                this.numericBoxTTLCTN.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty));
+                this.numericBoxTTLCTN.Value =  MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty));
                 this.numericBoxTTLQTY.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalShipQty)", string.Empty));
-                this.displayTTLCBM.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalCBM)", string.Empty));
-                this.displayTTLGW.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalGW)", string.Empty));
+                this.numericBoxTTLCBM.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", string.Empty)), 2);
+                this.numericBoxTTLGW.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", string.Empty)), 2);
             }
             else
             {
                 this.numericBoxTTLCTN.Value = 0;
                 this.numericBoxTTLQTY.Value = 0;
-                this.displayTTLCBM.Text = "0";
-                this.displayTTLGW.Text = "0";
+                this.numericBoxTTLCBM.Value = 0;
+                this.numericBoxTTLGW.Value = 0;
             }
 
             if (tmp_dt.Select("CYCFS in ('CFS-CFS','CFS-CY')").Count() > 0)
             {
-                this.displayCFSCBM.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY')"));
+                this.numericBoxCFSCBM.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY')")), 2);
             }
             else
             {
-                this.displayCFSCBM.Text = string.Empty;
+                this.numericBoxCFSCBM.Value = 0;
             }
 
             if (tmp_dt.Select("ShipModeID in('A/C','A/P','E/C','E/P')").Count() > 0)
             {
-                this.displayAIRGW.Text = MyUtility.Convert.GetString(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P')"));
+                this.numericBoxAIRGW.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P')")), 2);
             }
             else
             {
-                this.displayAIRGW.Text = string.Empty;
+                this.numericBoxAIRGW.Value = 0;
             }
 
         }
