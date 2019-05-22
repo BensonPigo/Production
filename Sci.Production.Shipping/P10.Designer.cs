@@ -152,15 +152,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(913, 524);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(907, 478);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(907, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -177,7 +177,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(913, 524);
+            this.browse.Size = new System.Drawing.Size(888, 524);
             // 
             // tabs
             // 
@@ -405,7 +405,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(516, 60);
+            this.label1.Location = new System.Drawing.Point(516, 118);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 23);
             this.label1.TabIndex = 71;
@@ -413,7 +413,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(516, 89);
+            this.label2.Location = new System.Drawing.Point(516, 147);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 23);
             this.label2.TabIndex = 72;
@@ -431,7 +431,7 @@
             // 
             this.displayCFSCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCFSCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCFSCBM.Location = new System.Drawing.Point(592, 60);
+            this.displayCFSCBM.Location = new System.Drawing.Point(592, 118);
             this.displayCFSCBM.Name = "displayCFSCBM";
             this.displayCFSCBM.Size = new System.Drawing.Size(109, 23);
             this.displayCFSCBM.TabIndex = 1;
@@ -440,7 +440,7 @@
             // 
             this.displayAIRGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayAIRGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayAIRGW.Location = new System.Drawing.Point(592, 89);
+            this.displayAIRGW.Location = new System.Drawing.Point(592, 147);
             this.displayAIRGW.Name = "displayAIRGW";
             this.displayAIRGW.Size = new System.Drawing.Size(109, 23);
             this.displayAIRGW.TabIndex = 2;
@@ -449,7 +449,7 @@
             // 
             this.displayTTLGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTTLGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTTLGW.Location = new System.Drawing.Point(592, 147);
+            this.displayTTLGW.Location = new System.Drawing.Point(592, 89);
             this.displayTTLGW.Name = "displayTTLGW";
             this.displayTTLGW.Size = new System.Drawing.Size(109, 23);
             this.displayTTLGW.TabIndex = 75;
@@ -458,14 +458,14 @@
             // 
             this.displayTTLCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTTLCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTTLCBM.Location = new System.Drawing.Point(592, 118);
+            this.displayTTLCBM.Location = new System.Drawing.Point(592, 60);
             this.displayTTLCBM.Name = "displayTTLCBM";
             this.displayTTLCBM.Size = new System.Drawing.Size(109, 23);
             this.displayTTLCBM.TabIndex = 74;
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(516, 147);
+            this.label4.Location = new System.Drawing.Point(516, 89);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(73, 23);
             this.label4.TabIndex = 77;
@@ -473,7 +473,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(516, 118);
+            this.label5.Location = new System.Drawing.Point(516, 60);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(73, 23);
             this.label5.TabIndex = 76;

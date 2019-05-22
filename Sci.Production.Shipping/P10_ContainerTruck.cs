@@ -27,7 +27,7 @@ namespace Sci.Production.Shipping
         /// <param name="keyvalue2">keyvalue2</param>
         /// <param name="keyvalue3">keyvalue3</param>
         /// <param name="shipPlanID">shipPlanID</param>
-        public P10_ContainerTruck(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3 , string shipPlanID)
+        public P10_ContainerTruck(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string shipPlanID)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.ShipPlanID = shipPlanID;
@@ -89,7 +89,7 @@ and g.ShipModeID = 'Sea'
 and g.CYCFS = 'CY-CY'
 ";
                 DataRow dr;
-                if (MyUtility.Check.Seek(chkgbid,out dr))
+                if (MyUtility.Check.Seek(chkgbid, out dr))
                 {
                     this.CurrentData["ID"] = e.FormattedValue;
                     this.CurrentData["CYCFS"] = dr["CYCFS"];
@@ -126,7 +126,7 @@ and g.CYCFS = 'CY-CY'
         protected override bool OnSaveBefore()
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
-            for (int i = dt.Rows.Count -1 ; i >= 0; i--)
+            for (int i = dt.Rows.Count - 1; i >= 0; i--)
             {
                 if (dt.Rows[i].RowState != DataRowState.Deleted &&
                     MyUtility.Check.Empty(dt.Rows[i]["TYPE"].ToString()) &&
@@ -139,16 +139,18 @@ and g.CYCFS = 'CY-CY'
             }
 
             #region 若相同Brand, Forwarder, Loading Type, Cut-Off Date才能放在同一個Container#
-            string inCTNRNo = "'" + string.Join("','", dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["CTNRNo"]))) + "'";
+            string inCTNRNo = "'" + string.Join("','", dt.AsEnumerable().Where(w =>w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetString(s["CTNRNo"]))) + "'";
+            string inPkey = "'" + string.Join("','", dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetString(s["id"]) + MyUtility.Convert.GetString(s["CTNRNo"]) + MyUtility.Convert.GetString(s["TruckNo"]))) + "'";
             string sqlchk = $@"
 select distinct gc.CTNRNo,b.BrandGroup,g.Forwarder,g.CYCFS,g.CutOffDate
 from GMTBooking_CTNR gc with(nolock)
 inner join GMTBooking g with(nolock) on gc.id = g.id
 inner join Brand b with(nolock) on b.ID = g.BrandID
 where gc.CTNRNo in ({inCTNRNo})
+and concat(gc.id, gc.CTNRNo,gc.TruckNo)not in ({inPkey})
 ";
-           DataTable chkdt;
-           DualResult result =  DBProxy.Current.Select(null, sqlchk, out chkdt);
+            DataTable chkdt;
+            DualResult result = DBProxy.Current.Select(null, sqlchk, out chkdt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -157,13 +159,12 @@ where gc.CTNRNo in ({inCTNRNo})
 
             foreach (DataRow dr in chkdt.Rows)
             {
-                foreach (DataRow drs in dt.Select($"CTNRNo = '{dr["CTNRNo"]}' "))
+                foreach (DataRow drs in dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(w["CTNRNo"]).EqualString(MyUtility.Convert.GetString(dr["CTNRNo"]))))
                 {
                     if (!MyUtility.Convert.GetString(dr["BrandGroup"]).EqualString(MyUtility.Convert.GetString(drs["BrandGroup"])) ||
                         !MyUtility.Convert.GetString(dr["Forwarder"]).EqualString(MyUtility.Convert.GetString(drs["Forwarder"])) ||
                         !MyUtility.Convert.GetString(dr["CYCFS"]).EqualString(MyUtility.Convert.GetString(drs["CYCFS"])) ||
-                        !MyUtility.Convert.GetString(dr["CutOffDate"]).EqualString(MyUtility.Convert.GetString(drs["CutOffDate"]))
-                        )
+                        !MyUtility.Convert.GetString(dr["CutOffDate"]).EqualString(MyUtility.Convert.GetString(drs["CutOffDate"])))
                     {
                         MyUtility.Msg.WarningBox("GB# can be added to the same Container# only GBs with the same Brand、Forwarder、Loading Type and Cut-Off Date");
                         return false;
@@ -171,9 +172,9 @@ where gc.CTNRNo in ({inCTNRNo})
                 }
             }
 
-            foreach (DataRow dr in dt.Rows)
+            foreach (DataRow dr in dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
             {
-                foreach (DataRow drs in dt.Select($"CTNRNo = '{dr["CTNRNo"]}' "))
+                foreach (DataRow drs in dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(w["CTNRNo"]).EqualString(MyUtility.Convert.GetString(dr["CTNRNo"]))))
                 {
                     if (!MyUtility.Convert.GetString(dr["BrandGroup"]).EqualString(MyUtility.Convert.GetString(drs["BrandGroup"])) ||
                         !MyUtility.Convert.GetString(dr["Forwarder"]).EqualString(MyUtility.Convert.GetString(drs["Forwarder"])) ||
