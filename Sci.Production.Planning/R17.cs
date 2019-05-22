@@ -103,7 +103,7 @@ SELECT
 ,I = convert(varchar(10),iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 111)
 ,J = Order_QS.ShipmodeID
 ,K = Cast(Order_QS.QTY as int)
-,L = CASE o.GMTComplete WHEN 'S' THEN Cast(isnull(Order_QS.QTY,0) as int)
+,L = CASE o.GMTComplete WHEN 'S' THEN IIF((SELECT DateDiff(Day,CAST( p.PulloutDate AS DATE), CAST(Order_QS.FtyKPI AS DATE))) >= 0, sum(Order_QS.Qty),0)
                         ELSE iif(Ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(Order_QS.QTY as int)), Cast(isnull(pd.Qty,0) as int)) END
 ,M = CASE o.GMTComplete WHEN 'S' THEN 0
                         ELSE iif(ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(Order_QS.QTY as int), 0), Cast(isnull(pd.FailQty,Order_QS.QTY) as int)) END
@@ -169,7 +169,7 @@ outer apply (
 	order by pd.pulloutdate ASC
 ) pd2
 -------End-------
-where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) ";
+where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) AND p.PulloutDate IS NOT NULL";
 
                 if (this.radioBulk.Checked)
                 {
@@ -198,6 +198,10 @@ where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Ju
                 {
                     strSQL += string.Format(" AND f.KpiCode = '{0}' ", this.txtFactory.Text);
                 }
+
+                strSQL += "GROUP BY  F.CountryID,F.KpiCode, o.FactoryID,o.ID,Order_QS.seq,o.BRANDID,Order_QS.BuyerDelivery,Order_QS.FtyKPI" + Environment.NewLine;
+                strSQL += ",Order_QS.ShipmodeID,b.OTDExtension,Ot.isDevSample,pd2.isFail,pd2.PulloutDate,p.PulloutDate,pd.Qty,pd.FailQty" + Environment.NewLine;
+                strSQL += ",op.PulloutDate, o.GMTComplete,Order_QS.ReasonID,o.Category,o.MRHandle,o.SMR,PO.POHandle,PO.POSMR,o.OrderTypeID,ot.isDevSample,o.MDivisionID,Order_QS.QTY,r.Name,rs.Name,c.Alias" + Environment.NewLine + Environment.NewLine;
 
                 strSQL += @"select * from (
 select * from #tmp 
