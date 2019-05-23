@@ -1034,28 +1034,29 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             #endregion 更新庫存數量  ftyinventory
 
             #region 更新 Po_Supp_Detail StockUnit
-            string sql_UpdatePO_Supp_Detail = @";
-alter table #Tmp alter column poid varchar(20)
-alter table #Tmp alter column seq1 varchar(3)
-alter table #Tmp alter column seq2 varchar(3)
-alter table #Tmp alter column StockUnit varchar(20)
+            //ISP20190607 StockUnit的更新一律在資料交換的imp_po進行，這邊不用了
+            //            string sql_UpdatePO_Supp_Detail = @";
+            //alter table #Tmp alter column poid varchar(20)
+            //alter table #Tmp alter column seq1 varchar(3)
+            //alter table #Tmp alter column seq2 varchar(3)
+            //alter table #Tmp alter column StockUnit varchar(20)
 
-select  distinct poid
-        , seq1
-        , seq2
-        , StockUnit 
-into #tmpD 
-from #Tmp
+            //select  distinct poid
+            //        , seq1
+            //        , seq2
+            //        --, StockUnit 
+            //into #tmpD 
+            //from #Tmp
 
-merge dbo.PO_Supp_Detail as target
-using #tmpD as src on   target.ID = src.poid 
-                        and target.seq1 = src.seq1 
-                        and target.seq2 =src.seq2 
-when matched then
-    update
-    set target.StockUnit = src.StockUnit;
-";
-            #endregion 
+            //merge dbo.PO_Supp_Detail as target
+            //using #tmpD as src on   target.ID = src.poid 
+            //                        and target.seq1 = src.seq1 
+            //                        and target.seq2 =src.seq2 
+            //when matched then
+            //    update
+            //    set target.StockUnit = src.StockUnit;
+            //";
+            #endregion
 
             #region Base on wkno 收料時，需回寫export
             sqlcmd4 = string.Format(@"
@@ -1131,13 +1132,13 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain
                     }
                     #endregion
 
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sql_UpdatePO_Supp_Detail, out resulttb, "#tmp", conn: sqlConn)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(result);
-                        return;
-                    }
+                    //if (!(result = MyUtility.Tool.ProcessWithDatatable
+                    //    ((DataTable)detailgridbs.DataSource, "", sql_UpdatePO_Supp_Detail, out resulttb, "#tmp", conn: sqlConn)))
+                    //{
+                    //    _transactionscope.Dispose();
+                    //    ShowErr(result);
+                    //    return;
+                    //}
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
