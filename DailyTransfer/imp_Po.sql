@@ -471,14 +471,10 @@ and InputQty <> 0
 ----------------------更新 StockUnit
 -------需更新的資料 => StockUnit in FtyInventory 
 -------比對欄位　　 => Poid, Seq1, Seq2
+-------ISP20190607 去除判斷 Exists FtyInventory
 update po
 set po.StockUnit = Production.dbo.GetStockUnitBySPSeq(po.ID, po.SEQ1, po.SEQ2)
 from Production.dbo.PO_Supp_Detail po With(NoLock)
-where  exists (select 1 
-                     from Production.dbo.FtyInventory fty With(NoLock) 
-                     where po.id = fty.POID
-                             and po.seq1 = fty.Seq1
-                             and po.seq2 = fty.Seq2)
 ------------------------------------------------------------------PO3 END
 
 ------Delete Po from Trade PO_Delete function
