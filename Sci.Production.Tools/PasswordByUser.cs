@@ -23,7 +23,6 @@ namespace Sci.Production.Tools
         private DataTable dtPass2 = null;
         private DataTable dtSystem = null;
         private DataTable dtFactory = null;
-        private DataTable dtIsMIS = null;
         private DualResult result = null;
         private string sqlCmd = "";
         private string destination_path;// 放圖檔的路徑
@@ -70,27 +69,10 @@ namespace Sci.Production.Tools
                     }
                 };
             }
-            
-            DBProxy.Current.Select(null, "SELECT ID FROM  Pass1 WITH (NOLOCK)  WHERE IsMIS=1", out dtIsMIS);
 
-            if (dtIsMIS.Rows.Count > 0)
-            {
-                List<string> MISList = new List<string>();
-                foreach (DataRow item in dtIsMIS.Rows)
-                {
-                    MISList.Add("'" + item["ID"].ToString() + "'");
+            this.DefaultFilter += "ISMIS=0";
 
-                }
-
-                string Filter = MISList.JoinToString(",");
-                if (MyUtility.Check.Empty(this.DefaultFilter))
-                    this.DefaultFilter = $"ID NOT IN ({Filter})";
-                else
-                    this.DefaultFilter += $"AND ID NOT IN ({Filter})";
-
-            }
-
-            Dictionary<string, string> codePageSource = new Dictionary<string, string>();
+          Dictionary<string, string> codePageSource = new Dictionary<string, string>();
             codePageSource.Add("950", "繁體中文");
             codePageSource.Add("0", "English");
             comboLanguage.DataSource = new System.Windows.Forms.BindingSource(codePageSource, null);
@@ -302,6 +284,7 @@ namespace Sci.Production.Tools
                 return;
             }
             this.listControlBindingSource1.DataSource = dtPass2;
+
         }
 
         private void btnSetPic_Click(object sender, EventArgs e)
@@ -365,5 +348,6 @@ namespace Sci.Production.Tools
 
             base.OnEditModeChanged();
         }
+        
     }
 }
