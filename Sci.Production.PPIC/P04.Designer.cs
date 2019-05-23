@@ -110,6 +110,8 @@
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
             this.txtcdcode = new Sci.Production.Class.txtcdcode();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayFabricType = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -127,6 +129,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayFabricType);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.displayStyleApprove2);
             this.detailcont.Controls.Add(this.comboGender);
             this.detailcont.Controls.Add(this.btnComboType);
@@ -254,6 +258,7 @@
             // 
             // pictureBox2
             // 
+            this.pictureBox2.Image = null;
             this.pictureBox2.Location = new System.Drawing.Point(458, 70);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(430, 429);
@@ -302,6 +307,7 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Image = null;
             this.pictureBox1.Location = new System.Drawing.Point(9, 71);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(430, 428);
@@ -569,6 +575,7 @@
             this.comboSizeUnit.IsSupportUnselect = true;
             this.comboSizeUnit.Location = new System.Drawing.Point(108, 223);
             this.comboSizeUnit.Name = "comboSizeUnit";
+            this.comboSizeUnit.OldText = "";
             this.comboSizeUnit.Size = new System.Drawing.Size(72, 24);
             this.comboSizeUnit.TabIndex = 19;
             // 
@@ -1038,6 +1045,7 @@
             this.comboGender.IsSupportUnselect = true;
             this.comboGender.Location = new System.Drawing.Point(108, 277);
             this.comboGender.Name = "comboGender";
+            this.comboGender.OldText = "";
             this.comboGender.Size = new System.Drawing.Size(121, 24);
             this.comboGender.TabIndex = 23;
             this.comboGender.Type = "Gender";
@@ -1081,6 +1089,24 @@
             this.txtcdcode.TabIndex = 9;
             this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(492, 196);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(85, 23);
+            this.label1.TabIndex = 72;
+            this.label1.Text = "Fabric Type";
+            // 
+            // displayFabricType
+            // 
+            this.displayFabricType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricType", true));
+            this.displayFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricType.Location = new System.Drawing.Point(580, 196);
+            this.displayFabricType.Name = "displayFabricType";
+            this.displayFabricType.Size = new System.Drawing.Size(111, 23);
+            this.displayFabricType.TabIndex = 73;
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(905, 569);
@@ -1090,6 +1116,7 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.Name = "P04";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "P04. Style Management";
             this.UniqueExpress = "Ukey";
             this.WorkAlias = "Style";
@@ -1194,5 +1221,7 @@
         private Win.UI.Button btnComboType;
         private Class.txtdropdownlist comboGender;
         private Win.UI.DisplayBox displayStyleApprove2;
+        private Win.UI.DisplayBox displayFabricType;
+        private Win.UI.Label label1;
     }
 }
