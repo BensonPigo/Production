@@ -79,7 +79,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 184);
+            this.masterpanel.Size = new System.Drawing.Size(953, 184);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -102,7 +102,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(892, 165);
+            this.detailpanel.Size = new System.Drawing.Size(953, 293);
             // 
             // gridicon
             // 
@@ -117,7 +117,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 165);
+            this.detailgridcont.Size = new System.Drawing.Size(953, 293);
             // 
             // detail2
             // 
@@ -133,16 +133,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(953, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(953, 477);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(953, 38);
             // 
             // browse
             // 
@@ -229,7 +229,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(953, 184);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -342,6 +342,7 @@
             this.txtwhseReason.TabIndex = 1;
             this.txtwhseReason.TextBox1Binding = "";
             this.txtwhseReason.Type = "IR";
+            this.txtwhseReason.Enter += new System.EventHandler(this.txtwhseReason_Enter);
             this.txtwhseReason.Validated += new System.EventHandler(this.txtwhseReason_Validated);
             // 
             // P13
