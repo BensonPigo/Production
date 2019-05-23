@@ -85,7 +85,7 @@ namespace Sci.Production.Planning
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+            string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD" };
             DualResult result = new DualResult(true);
             try
             {
@@ -122,7 +122,11 @@ SELECT
 ,W = dbo.getTPEPass1_ExtNo(PO.POSMR)
 ,X = o.OrderTypeID
 ,Y = iif(ot.isDevSample = 1, 'Y', '')
-,Z = c.alias
+,Z=sew.SewouptQty
+,AA=format(sew.SewLastDate,'yyyy/MM/dd')
+,AB=format(ctnr.CTNLastReceiveDate,'yyyy/MM/dd')
+,AC=iif(ps.ct>1,'Y','')
+,AD = c.alias
 ,o.MDivisionID
 into #tmp
 FROM Orders o WITH (NOLOCK)
@@ -168,6 +172,40 @@ outer apply (
 	and pd.OrderShipmodeSeq = Order_QS.Seq
 	order by pd.pulloutdate ASC
 ) pd2
+--sew
+outer apply(
+	select SewouptQty=sum(x.QaQty),SewLastDate=Min(SewLastDate)
+	from(
+		Select OrderID, Article, SizeCode, 
+			Min(QaQty) as QaQty,
+			Min(SewLastDate) as SewLastDate
+		From (
+			Select ComboType, OrderID, Article, SizeCode, QaQty = Sum(SewingOutput_Detail_Detail.QaQty), Max(OutputDate) as SewLastDate
+			From SewingOutput_Detail_Detail
+			inner join SewingOutput on SewingOutput_Detail_Detail.ID = SewingOutput.ID
+			Where SewingOutput_Detail_Detail.OrderID=o.id
+			Group by ComboType, OrderID, Article, SizeCode
+		) as sdd
+		Group by OrderID, Article, SizeCode
+	)x
+)sew
+--[CTNLastReceiveDate]
+outer apply(
+	SELECT [CTNLastReceiveDate]= Max(rcv.minreceivedate)
+	FROM (
+		SELECT [MinReceiveDate]=Min(CR.receivedate), cr.orderid, PD.ordershipmodeseq 
+		FROM Production.dbo.ClogReceive cr 
+		INNER JOIN Production.dbo.PackingList_Detail PD ON PD.id = CR.PackingListID AND PD.ctnstartno = CR.ctnstartno 
+		where O.localorder = 0 and O.id = cr.orderid and Order_QS.Seq=PD.ordershipmodeseq
+		GROUP BY cr.PackingListID, cr.ctnstartno, cr.orderid, PD.ordershipmodeseq
+	) rcv 
+	GROUP BY rcv.orderid,rcv.ordershipmodeseq 
+)ctnr
+outer apply(
+	select ct=count(distinct seq)
+	from Order_QtyShip oq
+	where oq.id = o.id
+)ps
 -------End-------
 where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) ";
 
@@ -199,12 +237,16 @@ where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Ju
                     strSQL += string.Format(" AND f.KpiCode = '{0}' ", this.txtFactory.Text);
                 }
 
-                strSQL += @"select * from (
-select * from #tmp 
-union all
-select A, B, C, D, E, F, G, H, I, J, K = 0, L = 0, M = K - (L +M), N = '', O, P = 0, Q, R, S, T, U, V, W, X, Y, Z, MDivisionID
-from #tmp where (L +M) < K and I < G) as result
+                strSQL += @"
+select * from (
+	select * from #tmp 
+	union all
+	select A, B, C, D, E, F, G, H, I, J, K = 0, L = 0, M = K - (L +M), N = '', O, P = 0, Q, R, S, T, U, V, W, X, Y, Z,AA,AB,AC,AD,MDivisionID
+	from #tmp where (L +M) < K and I < G
+) as result
 order by D,E,K desc
+ 
+ drop table #tmp
  ";
 
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtOrderDetail);
@@ -258,6 +300,10 @@ SELECT  '' AS A
 , '' AS X
 , '' AS Y
 , '' AS Z
+, '' AS AA
+, '' AS AB
+, '' AS AC
+, '' AS AD
 , '' AS MDivisionID
 FROM ORDERS
 WHERE 1 = 0 ";
@@ -487,16 +533,16 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     DataRow drData = this.gdtOrderDetail.Rows[intIndex];
 
                     #region Calc SDP Data
-                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["Z"].ToString()); // A
+                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["AD"].ToString()); // A
                     DataRow drSDP;
                     if (intIndex_SDP < 0)
                     {
                         drSDP = this.gdtSDP.NewRow();
                         drSDP["A"] = drData["B"].ToString();
-                        drSDP["B"] = drData["Z"].ToString(); // A
+                        drSDP["B"] = drData["AD"].ToString(); // A
                         drSDP["MDivisionID"] = drData["MDivisionID"].ToString(); // A
                         this.gdtSDP.Rows.Add(drSDP);
-                        lstSDP.Add(drData["B"].ToString() + "___" + drData["Z"].ToString()); // A
+                        lstSDP.Add(drData["B"].ToString() + "___" + drData["AD"].ToString()); // A
                     }
                     else
                     {
@@ -700,7 +746,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                 int preRowsStart = intRowsStart;
                 int rownum = intRowsStart; // 每筆資料匯入之位置
                 int intColumns = 7; // 匯入欄位數
-                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD" };
                 object[,] objArray = new object[1, intColumns]; // 每列匯入欄位區間
                 #region 將資料放入陣列並寫入Excel範例檔
 
@@ -816,7 +862,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "Sewing Qty", "Last sewing output date", "Last carton received date", "Partial shipment" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
