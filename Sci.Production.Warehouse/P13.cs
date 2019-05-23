@@ -762,16 +762,20 @@ Where a.id = '{0}'", masterID);
         {
             new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
         }
-        
 
         private void txtwhseReason_Validated(object sender, EventArgs e)
         {
-
-            if (this.detailgridbs.DataSource != null)
+            if (this.detailgridbs.DataSource != null && oldVal != txtwhseReason.TextBox1.Text)
             {
                 ((DataTable)this.detailgridbs.DataSource).Clear();
             }
+        }
 
+        string oldVal = "";
+        
+        private void txtwhseReason_Enter(object sender, EventArgs e)
+        {
+            oldVal = txtwhseReason.TextBox1.Text;
         }
     }
 }
