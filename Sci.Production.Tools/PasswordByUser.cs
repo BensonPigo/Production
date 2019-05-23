@@ -23,6 +23,7 @@ namespace Sci.Production.Tools
         private DataTable dtPass2 = null;
         private DataTable dtSystem = null;
         private DataTable dtFactory = null;
+        private DataTable dtIsMIS = null;
         private DualResult result = null;
         private string sqlCmd = "";
         private string destination_path;// 放圖檔的路徑
@@ -39,10 +40,10 @@ namespace Sci.Production.Tools
                 this.DefaultFilter = "ID = '" + Sci.Env.User.UserID + "'";
                 this.IsSupportNew = false;
                 this.IsSupportDelete = false;
-            }
+            } 
             else
             {
-                 this.editFactory.PopUp += (s, e) => 
+                this.editFactory.PopUp += (s, e) => 
                 {
                     DBProxy.Current.Select(null, "SELECT DISTINCT FtyGroup FROM Factory WHERE FtyGroup != '' and Junk = 0 ORDER BY FtyGroup", out dtFactory);
                     Sci.Win.Tools.SelectItem2 seleItem2 = new Sci.Win.Tools.SelectItem2(dtFactory, "FtyGroup", "Factory", "15", (this.editFactory.Text).Replace(" ", ""));
@@ -68,6 +69,25 @@ namespace Sci.Production.Tools
                         CurrentMaintain["Position"] = listSelect[0]["ID"].ToString();
                     }
                 };
+            }
+            
+            DBProxy.Current.Select(null, "SELECT ID FROM  Pass1 WITH (NOLOCK)  WHERE IsMIS=1", out dtIsMIS);
+
+            if (dtIsMIS.Rows.Count > 0)
+            {
+                List<string> MISList = new List<string>();
+                foreach (DataRow item in dtIsMIS.Rows)
+                {
+                    MISList.Add("'" + item["ID"].ToString() + "'");
+
+                }
+
+                string Filter = MISList.JoinToString(",");
+                if (MyUtility.Check.Empty(this.DefaultFilter))
+                    this.DefaultFilter = $"ID NOT IN ({Filter})";
+                else
+                    this.DefaultFilter += $"AND ID NOT IN ({Filter})";
+
             }
 
             Dictionary<string, string> codePageSource = new Dictionary<string, string>();
