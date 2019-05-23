@@ -2343,6 +2343,10 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Tables\TransferToTruck.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateOrdersCTN.sql" />
+    <Build Include="dbo\Stored Procedures\CreateOrderCTNData.sql" />
+    <Build Include="dbo\Stored Procedures\imp_ finishingprocess.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

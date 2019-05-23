@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[PackingList_Detail] (
+﻿CREATE TABLE [dbo].[PackingList_Detail] (
     [ID]                  VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_ID] DEFAULT ('') NOT NULL,
     [OrderID]             VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_OrderID] DEFAULT ('') NOT NULL,
     [OrderShipmodeSeq]    VARCHAR (2)    CONSTRAINT [DF_PackingList_Detail_OrderShipmodeSeq] DEFAULT ('') NOT NULL,
@@ -44,9 +44,17 @@ CREATE TABLE [dbo].[PackingList_Detail] (
     [FtyReqReturnReason]  VARCHAR (5)    DEFAULT ('') NOT NULL,
     [DisposeFromClog]     BIT            CONSTRAINT [DF_PackingList_Detail_DisposeFromClog] DEFAULT ((0)) NULL,
     [SCICtnNo]            VARCHAR (15)   CONSTRAINT [DF_PackingList_Detail_SCICtnNo] DEFAULT ('') NULL,
+    [Pallet]              VARCHAR (10)   NULL,
+    [NewGW]               NUMERIC (7, 3) NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC),
     CONSTRAINT [UK_PackingList_Detail] UNIQUE NONCLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
+
+
+
+
 
 
 GO
@@ -107,8 +115,7 @@ CREATE NONCLUSTERED INDEX [Index_OrderIDOrderShipmodeSeq]
     INCLUDE([RefNo]);
 GO
 
-CREATE NONCLUSTERED INDEX [IX_PackingList_Detail_OrgPK] 
-    ON PackingList_Detail ( ID,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode )
+
 Go
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'����CFA���', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'TransferCFADate';
 GO
