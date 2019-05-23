@@ -108,14 +108,14 @@ where Junk != 1", out dtFactory);
                 {
                     FirstWhere.Add(" and (b.Id LIKE 'TB%' and b.IssueDate >= @dateBundleScanFrom or b.Id LIKE 'TC%' and bd.ReceiveDate >= @dateBundleScanFrom)");
                     finalWhere.Add(" and (FarmOut.IssueDate >= @dateBundleScanFrom or FarmIn.ReceiveDate >= @dateBundleScanFrom)");
-                    listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", Convert.ToDateTime(this.dateBundleScan.DateBox1.Value)));
+                    listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", (this.dateBundleScan.DateBox1.Value)));
                 }
             
                 if (dateBundleScan.Value2.Empty() == false)
                 {
                     FirstWhere.Add(" and (b.Id LIKE 'TB%' and b.IssueDate <= @dateBundleScanTo or b.Id LIKE 'TC%' and bd.ReceiveDate <= @dateBundleScanTo)");
                     finalWhere.Add(" and (FarmOut.IssueDate <= @dateBundleScanTo or FarmIn.ReceiveDate <= @dateBundleScanTo)");
-                    listSqlPar.Add(new SqlParameter("@dateBundleScanTo", Convert.ToDateTime(this.dateBundleScan.DateBox2.Value)));
+                    listSqlPar.Add(new SqlParameter("@dateBundleScanTo", (this.dateBundleScan.DateBox2.Value.Value.AddDays(1).AddSeconds(-1))));
                 }
             }
             
@@ -137,7 +137,7 @@ where Junk != 1", out dtFactory);
             string sqlCmd = $@"
 set arithabort on
 
---筆記：Farm Out=BundleTrack.IssueDate   、   Farm In = BundleTrack_Detail.ReceiveDate
+--筆記：Farm Out=BundleTrack.AddDate   、   Farm In = BundleTrack_Detail.ReceiveDate
 
 --先找出該時間區段內所有的Farm Out，BundleNo、StartProcess
 SELECT DISTINCT bd.BundleNo ,b.StartProcess 
@@ -150,6 +150,7 @@ WHERE   1 = 1 {FirstWhere.JoinToString("\r\n")}
 
 SELECT distinct bd.BundleNo ,b.StartProcess ,
 		[IssueDate] = FIRST_VALUE(b.IssueDate) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc),
+		[AddDate] = FIRST_VALUE(b.AddDate) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc),
 		[EndSite] = FIRST_VALUE(b.EndSite) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc)
 INTO #FarmOutList
 FROM BundleTrack b
@@ -195,7 +196,7 @@ SELECT  base.BundleNo
 		,bd.Qty
 		,[SubProcess] =  s.Id
 		,b.Cdate
-		,[FarmOutDate]=FarmOut.IssueDate
+		,[FarmOutDate]=FarmOut.AddDate
 		,[FarmInDate]=FarmIn.ReceiveDate
 		,EstCut.EstCutDate
 		,EstCut.CuttingOutputDate
