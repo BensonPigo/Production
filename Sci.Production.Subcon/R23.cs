@@ -27,7 +27,7 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             comboFactory.Text = Sci.Env.User.Factory;
             txtMdivisionM.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboOrderType, 1, 1, "Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
+            MyUtility.Tool.SetupCombox(comboOrderType, 1, 1, ",Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
             comboOrderType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(comboRateType, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
             comboRateType.SelectedIndex = 0;
@@ -59,21 +59,24 @@ namespace Sci.Production.Subcon
             switch (ordertypeindex)
             {
                 case 0:
-                    ordertype = "('B')";
+                    ordertype = string.Empty;
                     break;
                 case 1:
-                    ordertype = "('S')";
+                    ordertype = "('B')";
                     break;
                 case 2:
-                    ordertype = "('M')";
+                    ordertype = "('S')";
                     break;
                 case 3:
-                    ordertype = "('B','S')";
+                    ordertype = "('M')";
                     break;
                 case 4:
                     ordertype = "('B','S')";
                     break;
                 case 5:
+                    ordertype = "('B','S')";
+                    break;
+                case 6:
                     ordertype = "('B','S','M')";
                     break;
             }
@@ -234,14 +237,16 @@ namespace Sci.Production.Subcon
                 sp_factory.Value = factory;
                 cmds.Add(sp_factory);
             }
-
-            if (ordertypeindex >= 4) //include Forecast 
+            if (!MyUtility.Check.Empty(ordertype))
             {
-                sqlFilter1.Add(string.Format(@"(O.category in {0} OR O.IsForecast =1)", ordertype));
-            }
-            else
-            {
-                sqlFilter1.Add(string.Format(@"O.category in {0} ", ordertype));
+                if (ordertypeindex >= 4) //include Forecast 
+                {
+                    sqlFilter1.Add(string.Format(@"(O.category in {0} OR O.IsForecast =1)", ordertype));
+                }
+                else
+                {
+                    sqlFilter1.Add(string.Format(@"O.category in {0} ", ordertype));
+                }
             }
 
             if (!MyUtility.Check.Empty(style))
@@ -255,7 +260,7 @@ namespace Sci.Production.Subcon
             sqlCmd.Append(string.Format(@"
 select  O.FactoryID
 		, s.Category
-		, O.POID
+		, opid=iif(o.id is null,s.OrderId,o.poid)
         , O.StyleID
 		, O.BrandID
 		, SMR = dbo.getTPEPass1(O.SMR)
@@ -281,13 +286,13 @@ from (
 			, Rate = sum(dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
 	from dbo.LocalPO LP
 	inner join dbo.LocalPO_Detail LPD on LP.Id = LPD.Id
-    inner join Orders O on lpd.OrderId = o.id
+    left join Orders O on lpd.OrderId = o.id
 	where 1 = 1
           {1}
 	group by LP.Category, LPD.OrderId, o.poid
 	having sum(LPD.Qty)>0
 ) s
-inner join Orders O on s.OrderId = O.ID
+left join Orders O on s.OrderId = O.ID
 outer apply(
 	select	 Order_Qty = sum(orders.Qty)
 			, Order_amt = sum(Orders.Qty * Price)
@@ -305,7 +310,7 @@ outer apply(
 where 1=1 {2} 
 group by O.FactoryID
 		, s.Category
-		, O.POID
+		, iif(o.id is null,s.OrderId,o.poid)
         , O.StyleID
 		, O.BrandID
         , O.SMR
