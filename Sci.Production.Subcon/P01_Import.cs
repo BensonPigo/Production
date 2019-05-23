@@ -286,16 +286,10 @@ outer apply (
 where f.IsProduceFty=1
 and o.PulloutComplete = 0
 and o.category  in ('B','S')
-");
+and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and sao.LocalSuppId = '{2}' and o.Junk=0
+and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))
+", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
 
-            strSQLCmd += string.Format(" and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and sao.LocalSuppId = '{2}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
-            if (poType == "O")
-            {
-                strSQLCmd += @"     and ((o.Category = 'B' and  (ot.InhouseOSP='O' and ot.price > 0)  and 
-                                                                    ((at.isArtwork = 1) or 
-                                                                    (at.isArtwork = 0 and ot.Price > 0))) 
-                                        or (o.category !='B'))";
-            }
             if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
             if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
             if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate >= '{0}' ", apvdate_b); }
@@ -355,13 +349,7 @@ and o.category  in ('B','S')
 ");
 
                 strSQLCmd += string.Format(" and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
-                if (poType == "O")
-                {
-                    strSQLCmd += @"     and ((o.Category = 'B' and  (ot.InhouseOSP='O' and ot.price > 0)  and 
-                                                                    ((at.isArtwork = 1) or 
-                                                                    (at.isArtwork = 0 and ot.Price > 0))) 
-                                        or (o.category !='B'))";
-                }
+
                 if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
                 if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
                 if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate >= '{0}' ", apvdate_b); }

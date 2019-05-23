@@ -549,7 +549,7 @@ inner join view_order_artworks v on v.id = Order_TmsCost.id
 inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey and vsa.Article = v.Article and vsa.ArtworkID = v.ArtworkID and
 														vsa.ArtworkName = v.ArtworkName and vsa.ArtworkTypeID = v.ArtworkTypeID and vsa.PatternCode = v.PatternCode and
 														vsa.PatternDesc = v.PatternDesc 
-inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
+inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0 and sao.LocalSuppID = order_tmscost.LocalSuppID
 inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 WHERE 	not exists(
 			select * 
@@ -559,30 +559,18 @@ WHERE 	not exists(
 				  and a.localsuppid = Order_TmsCost.localsuppid 
 				  and a.artworktypeid = Order_TmsCost.artworktypeid and 
 				  ap.OrderID = orders.ID) 
-	  	and orders.Finished=0                                                                 
+	  	AND orders.Finished=0                                                                 
 		AND orders.IsForecast = 0                                                             
 		AND orders.Junk = 0 
-		and factory.mdivisionid = '{1}'
-		and factory.IsProduceFty = 1
-		and Order_TmsCost.localsuppid !=''
-        and Orders.PulloutComplete = 0
+		AND factory.mdivisionid = '{1}'
+		AND factory.IsProduceFty = 1
+		AND Order_TmsCost.localsuppid !=''
+        AND Orders.PulloutComplete = 0
+        AND (orders.Category ='s' or (orders.Category='B' AND Order_TmsCost.Price > 0) AND Order_TmsCost.InhouseOSP = 'O')
 		", poType, Sci.Env.User.Keyword);
 
-            SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
-            switch (poType)
-            {
-                case "O":
-                    SqlCmd += $@" 
-		and (
-                orders.Category ='s' 
-                or (awt.IsArtwork=1 and v.Cost > 0 and orders.Category='B')
-        )";
-                    break;
-                case "I":
-                    SqlCmd += $@" 
-        and orders.Category in ('S','B') ";
-                    break;
-            }
+            
+
             if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
             if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
             if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate <= '{0}' ", apvdate_e); }
@@ -654,23 +642,11 @@ WHERE 	not exists(
 		and factory.IsProduceFty = 1
 		and Order_TmsCost.localsuppid !=''
         and Orders.PulloutComplete = 0
+        and orders.Category in ('S','B')
 		", poType, Sci.Env.User.Keyword);
 
                 SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
-                switch (poType)
-                {
-                    case "O":
-                        SqlCmd += $@" 
-		and (
-                orders.Category ='s' 
-                or (awt.IsArtwork=1 and v.Cost > 0 and orders.Category='B')
-        )";
-                        break;
-                    case "I":
-                        SqlCmd += $@" 
-        and orders.Category in ('S','B') ";
-                        break;
-                }
+
                 if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate <= '{0}' ", apvdate_e); }
