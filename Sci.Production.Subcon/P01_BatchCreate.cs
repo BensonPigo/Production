@@ -534,7 +534,7 @@ SELECT 	Selected = 0
 		, costStitch = v.qty
 		, stitch = v.qty
 		, unitprice = sao.Price
-		, qtygarment = order_tmscost.Qty 
+		, qtygarment = 1.0
 		, poqty = sum(v.poqty) 
 		, Order_TmsCost.ArtworkInLine
 		, Order_TmsCost.artworkoffline
