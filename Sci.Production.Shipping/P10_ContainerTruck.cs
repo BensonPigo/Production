@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -18,6 +19,7 @@ namespace Sci.Production.Shipping
     {
         private string ShipPlanID;
         private Dictionary<string, string> di_CYCFS = new Dictionary<string, string>();
+        Action reloadParant;
 
         /// <summary>
         /// P05_ContainerTruck
@@ -27,7 +29,7 @@ namespace Sci.Production.Shipping
         /// <param name="keyvalue2">keyvalue2</param>
         /// <param name="keyvalue3">keyvalue3</param>
         /// <param name="shipPlanID">shipPlanID</param>
-        public P10_ContainerTruck(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string shipPlanID)
+        public P10_ContainerTruck(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string shipPlanID, Action ReloadParant)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.ShipPlanID = shipPlanID;
@@ -36,6 +38,7 @@ namespace Sci.Production.Shipping
             this.di_CYCFS.Add("40 STD", "40 STD");
             this.di_CYCFS.Add("40HQ", "40HQ");
             this.di_CYCFS.Add("45HQ", "45HQ");
+            this.reloadParant = ReloadParant;
         }
 
         /// <inheritdoc/>
@@ -137,6 +140,19 @@ and g.CYCFS = 'CY-CY'
                     dt.Rows[i].Delete();
                 }
             }
+            #region 不同Container Type，Container #不得相同
+            var sCTNRNo = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new { CTNRNo = MyUtility.Convert.GetString(s["CTNRNo"]) }).Distinct().ToList();
+            foreach (var item in sCTNRNo)
+            {
+                if (dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(w["CTNRNo"]) == item.CTNRNo).
+                        Select(s => new { Type = MyUtility.Convert.GetString(s["Type"]) }).Distinct().Count() > 1)
+                {
+                    MyUtility.Msg.WarningBox("<Container#> can not be in different <Container Type>!");
+                    return false;
+                }
+            }
+
+            #endregion
 
             #region 若相同Brand, Forwarder, Loading Type, Cut-Off Date才能放在同一個Container#
             string inCTNRNo = "'" + string.Join("','", dt.AsEnumerable().Where(w =>w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetString(s["CTNRNo"]))) + "'";
@@ -189,6 +205,12 @@ and concat(gc.id, gc.CTNRNo,gc.TruckNo)not in ({inPkey})
             }
             #endregion
             return base.OnSaveBefore();
+        }
+
+        protected override void OnSaveAfter()
+        {
+            base.OnSaveAfter();
+            this.reloadParant();
         }
 
         protected override void OnRequired()

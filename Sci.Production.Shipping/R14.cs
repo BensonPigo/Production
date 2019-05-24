@@ -91,11 +91,14 @@ namespace Sci.Production.Shipping
             }
             if (!MyUtility.Check.Empty(this.PulloutDate1))
             {
-                where += $" ppd.PulloutDate >= '{((DateTime)this.PulloutDate1).ToString("yyyy/MM/dd")}' ";
-            }
-            if (!MyUtility.Check.Empty(this.PulloutDate2))
-            {
-                where += $" ppd.PulloutDate <=  '{((DateTime)this.PulloutDate2).ToString("yyyy/MM/dd")}' ";
+                where += $@" 
+ and exists (
+	select 1
+	from PackingList p with(nolock)
+	where p.ShipPlanID = s.ID and p.InvNo = g.ID
+	and p.PulloutDate between '{((DateTime)this.PulloutDate1).ToString("yyyy/MM/dd")}'and '{((DateTime)this.PulloutDate2).ToString("yyyy/MM/dd")}'
+)
+";
             }
             if (!MyUtility.Check.Empty(this.ETD1))
             {
@@ -147,11 +150,6 @@ outer apply(
 		where gc.id = g.ID
 	)a
 )gg
-outer apply(
-	select p.PulloutDate
-	from PackingList p with(nolock)
-	where p.ShipPlanID = s.ID and p.InvNo = g.ID
-)ppd
 where 1=1
 {where}
 order by g.BrandID,s.ID,g.ID,g.ShipModeID,g.CYCFS
