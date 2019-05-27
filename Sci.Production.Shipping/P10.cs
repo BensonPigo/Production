@@ -368,6 +368,11 @@ order by g.ID", masterID);
                             // 因為User會修改InspDate、InspStatus、PulloutDate三個欄位，這些欄會在Form上面，因此要把Form上面的PackingList、DB裡的PackingList比對
                             // packingListDt_new是最新的PackingList清單，packingListDt_on_Form是User修改過的PackingList清單
                             DataTable packingList_Merge = null;
+                            if (packingListDt_on_Form == null)
+                            {
+                                return new DualResult(false, $"<GB#>:{MyUtility.Convert.GetString(dr["ID"])} does not have <Packinglist#>");
+                            }
+
                             var rows1 = packingListDt_on_Form.AsEnumerable().Where(o => o["ID"].ToString() == pldatarow["ID"].ToString());
                             if (rows1.Any())
                             {
