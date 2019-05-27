@@ -30,6 +30,7 @@ namespace Sci.Production.Warehouse
         private string Supplier;
         private string M;
         private string Factorys;
+        private string MtlType;
         DataTable dataTable;
 
         public R25(ToolStripMenuItem menuitem)
@@ -41,7 +42,7 @@ namespace Sci.Production.Warehouse
 
         private void txtfactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = "select distinct FtyGroup from Factory WITH (NOLOCK) where Junk = 0 order by FtyGroup";
+            string sqlWhere = "select distinct ID from Factory WITH (NOLOCK) order by ID";
             Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.txtfactory.Text, null, null, null);
 
             DialogResult result = item.ShowDialog();
@@ -59,7 +60,7 @@ namespace Sci.Production.Warehouse
             string err_factory = "";
             foreach (string chk_str in str_multi)
             {
-                if (MyUtility.Check.Seek(chk_str, "Factory", "FtyGroup", "Production") == false)
+                if (MyUtility.Check.Seek(chk_str, "Factory", "ID", "Production") == false)
                 {
                     err_factory += "," + chk_str;
                 }
@@ -137,6 +138,8 @@ namespace Sci.Production.Warehouse
                 Factorys = string.Empty;
             }
 
+            MtlType = comboDropDownList1.SelectedValue.ToString();
+
             return base.ValidateInput();
         }
 
@@ -151,7 +154,7 @@ select
 	o.KPILETA,
 	 (SELECT MinSciDelivery FROM DBO.GetSCI(ed.Poid,o.Category)) as [Earliest SCI Delivery],
 	EarlyDays=DATEDIFF(day,e.WhseArrival,o.KPILETA),
-	o.FtyGroup,
+	o.FactoryID,
 	ed.PoID,
 	seq = ed.Seq1+' '+ed.Seq2,
 	ed.suppid,
@@ -163,7 +166,7 @@ select
 	o.ProjectID,
 	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
 				   when ed.FabricType = 'A' then 'Accessory' end,
-	ed.Qty,
+	isnull(ed.Qty,0)+isnull(ed.foc,0),
 	ed.UnitId,
 	o.BrandID,
 	Category = case when o.Category = 'B' then 'Bulk'
@@ -182,7 +185,7 @@ left join PO_Supp_Detail psd on psd.id = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.
 left join po on po.id = ed.PoID
 left join TPEPass1 on TPEPass1.id = po.POHandle
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
-where 1 = 1 and ed.PoType = 'G' and (ed.FabricType = 'F' or ed.FabricType = 'A')
+where 1 = 1 and ed.PoType = 'G' 
 
 ";
             if (!MyUtility.Check.Empty(KPIETA1))
@@ -233,9 +236,10 @@ where 1 = 1 and ed.PoType = 'G' and (ed.FabricType = 'F' or ed.FabricType = 'A')
 
             if (!MyUtility.Check.Empty(Factorys))
             {
-                strSql += $@" and o.FtyGroup in ({Factorys}) ";
+                strSql += $@" and o.FactoryID in ({Factorys}) ";
             }
 
+            strSql += $@" and ed.FabricType in ({MtlType})";
             #endregion 
             #region SQL Data Loading...
             DualResult result = DBProxy.Current.Select(null, strSql,  out dataTable);
@@ -255,8 +259,6 @@ where 1 = 1 and ed.PoType = 'G' and (ed.FabricType = 'F' or ed.FabricType = 'A')
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(dataTable, null, "Warehouse_R25.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
-                worksheet.Rows.AutoFit();
-                worksheet.Columns.AutoFit();
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R25");

@@ -39,10 +39,10 @@ namespace Sci.Production.Tools
                 this.DefaultFilter = "ID = '" + Sci.Env.User.UserID + "'";
                 this.IsSupportNew = false;
                 this.IsSupportDelete = false;
-            }
+            } 
             else
             {
-                 this.editFactory.PopUp += (s, e) => 
+                this.editFactory.PopUp += (s, e) => 
                 {
                     DBProxy.Current.Select(null, "SELECT DISTINCT FtyGroup FROM Factory WHERE FtyGroup != '' and Junk = 0 ORDER BY FtyGroup", out dtFactory);
                     Sci.Win.Tools.SelectItem2 seleItem2 = new Sci.Win.Tools.SelectItem2(dtFactory, "FtyGroup", "Factory", "15", (this.editFactory.Text).Replace(" ", ""));
@@ -70,7 +70,9 @@ namespace Sci.Production.Tools
                 };
             }
 
-            Dictionary<string, string> codePageSource = new Dictionary<string, string>();
+            this.DefaultFilter += "ISMIS=0";
+
+          Dictionary<string, string> codePageSource = new Dictionary<string, string>();
             codePageSource.Add("950", "繁體中文");
             codePageSource.Add("0", "English");
             comboLanguage.DataSource = new System.Windows.Forms.BindingSource(codePageSource, null);
@@ -282,6 +284,7 @@ namespace Sci.Production.Tools
                 return;
             }
             this.listControlBindingSource1.DataSource = dtPass2;
+
         }
 
         private void btnSetPic_Click(object sender, EventArgs e)
@@ -345,5 +348,6 @@ namespace Sci.Production.Tools
 
             base.OnEditModeChanged();
         }
+        
     }
 }

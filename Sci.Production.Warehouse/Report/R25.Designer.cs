@@ -51,6 +51,8 @@
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.comboMDivision1 = new Sci.Production.Class.comboMDivision(this.components);
             this.txtfactory = new Sci.Win.UI.TextBox();
+            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.label10 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -309,9 +311,32 @@
             this.txtfactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtfactory_PopUp);
             this.txtfactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtfactory_Validating);
             // 
+            // comboDropDownList1
+            // 
+            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList1.FormattingEnabled = true;
+            this.comboDropDownList1.IsSupportUnselect = true;
+            this.comboDropDownList1.Location = new System.Drawing.Point(123, 274);
+            this.comboDropDownList1.Name = "comboDropDownList1";
+            this.comboDropDownList1.OldText = "";
+            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
+            this.comboDropDownList1.TabIndex = 163;
+            this.comboDropDownList1.Type = "Pms_FabricType";
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(12, 275);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(108, 23);
+            this.label10.TabIndex = 164;
+            this.label10.Text = "Mtl Type";
+            // 
             // R25
             // 
-            this.ClientSize = new System.Drawing.Size(584, 302);
+            this.ClientSize = new System.Drawing.Size(584, 332);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.comboDropDownList1);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.txtsupplier1);
             this.Controls.Add(this.txtbrand1);
@@ -362,6 +387,8 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.comboDropDownList1, 0);
+            this.Controls.SetChildIndex(this.label10, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -390,5 +417,7 @@
         private Class.txtbrand txtbrand1;
         private Class.txtsupplier txtsupplier1;
         private Win.UI.TextBox txtfactory;
+        private Class.comboDropDownList comboDropDownList1;
+        private Win.UI.Label label10;
     }
 }

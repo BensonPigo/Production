@@ -262,9 +262,6 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }
             }
 
-            // Purchase Ctn
-            this.displayPurchaseCtn.Value = MyUtility.Check.Empty(this.CurrentMaintain["LocalPOID"]) ? string.Empty : "Y";
-
             // UnConfirm History按鈕變色
             if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "PackingList_History", "ID"))
             {

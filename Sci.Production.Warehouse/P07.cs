@@ -470,14 +470,21 @@ where   #tmp.poid = dbo.po_supp.id
                 {
                     if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
-                        string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue));
-                        if (category == "M")
+                        string sqlorders = string.Format("select category,FactoryID,OrderTypeID from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue);
+                        DataRow dr;
+                        if (MyUtility.Check.Seek(sqlorders, out dr))
                         {
-                            CurrentDetailData["stocktype"] = "I";
-                        }
-                        else
-                        {
-                            CurrentDetailData["stocktype"] = "B";
+                            if (MyUtility.Convert.GetString(dr["category"]) == "M")
+                            {
+                                CurrentDetailData["stocktype"] = "I";
+                            }
+                            else
+                            {
+                                CurrentDetailData["stocktype"] = "B";
+                            }
+
+                            CurrentDetailData["FactoryID"] = dr["FactoryID"];
+                            CurrentDetailData["OrderTypeID"] = dr["OrderTypeID"];
                         }
                     }
                     else
@@ -770,6 +777,8 @@ WHERE   StockType='{0}'
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype)   //12
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out Col_Location)    //13
             .Text("remark", header: "Remark")    //14
+            .Text("FactoryID", header: "Prod. Factory", iseditingreadonly: true)    //11
+            .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(15), iseditingreadonly: true)    //11
             ;     //
             cbb_Roll.MaxLength = 8;
             cbb_Dyelot.MaxLength = 8;
@@ -1409,7 +1418,10 @@ select  a.id
         , a.Location
         , a.remark
         , a.ukey
+        ,o.FactoryID
+        ,o.OrderTypeID
 from dbo.Receiving_Detail a WITH (NOLOCK) 
+left join orders o WITH (NOLOCK) on o.id = a.PoId
 Where a.id = '{0}'
 order by ukey", masterID);
 
@@ -1478,6 +1490,8 @@ select a.poid
         , '' as dyelot
         , '' as remark
         , '' as location
+        ,c.FactoryID
+        ,c.OrderTypeID
 from dbo.Export_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
                                                  and a.Seq1 = b.SEQ1    

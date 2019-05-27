@@ -43,6 +43,7 @@ namespace Sci.Production.Cutting
         public void gridSetup()
         {
             #region 右鍵事件
+            Ict.Win.UI.DataGridViewTextBoxColumn item;
             DataGridViewGeneratorTextColumnSettings Linecell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Cellcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings Qtycell = new DataGridViewGeneratorNumericColumnSettings();
@@ -54,9 +55,12 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorNumericColumnSettings partQtyCell2 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings subcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings chcutref = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings itemsetting = new DataGridViewGeneratorTextColumnSettings();
+
             DataGridViewGeneratorCheckBoxColumnSettings charticle = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings selectExcess = new DataGridViewGeneratorTextColumnSettings();
 
+            
             selectExcess.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1) return; //判斷是Header
@@ -302,18 +306,37 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             chcutref.CellValidating += (s, e) =>
             {
                 DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
-                if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1" ? true : false)) return;
-                int oldvalue = Convert.ToInt16(dr["sel"]);
-                int newvalue = Convert.ToInt16(e.FormattedValue);
-                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
-
-                foreach (DataRow row in ArticleAry)
+                if (ArticleSizeTb != null)
                 {
-                    row["Sel"] = newvalue;
+                    if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1" ? true : false)) return;
+                    int oldvalue = Convert.ToInt16(dr["sel"]);
+                    int newvalue = Convert.ToInt16(e.FormattedValue);
+                    DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
+
+                    foreach (DataRow row in ArticleAry)
+                    {
+                        row["Sel"] = newvalue;
+                    }
+                    dr["sel"] = newvalue;
+                    dr.EndEdit();
+                    gridArticleSize.Refresh();
                 }
-                dr["sel"] = newvalue;
-                dr.EndEdit();
-                gridArticleSize.Refresh();
+            };
+            itemsetting.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1) return; //判斷是Header
+                if (ArticleSizeTb != null)
+                {
+                    DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
+                    dr["item"] = e.FormattedValue;
+                    dr.EndEdit();
+                    DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
+                    foreach (DataRow row in ArticleAry)
+                    {
+                        row["item"] = dr["item"];
+                    }
+                    gridArticleSize.Refresh();
+                }
             };
             charticle.CellValidating += (s, e) =>
             {
@@ -381,9 +404,12 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
            .Text("Fabriccombo", header: "Fabric" + Environment.NewLine + "Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("FabricPanelCode", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
-           .Text("Item", header: "Item", width: Widths.AnsiChars(10), iseditingreadonly: true);
+           .Text("Item", header: "Item", width: Widths.AnsiChars(20), iseditingreadonly: false, settings: itemsetting).Get(out item)
+           ;
             gridCutRef.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridCutRef.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridCutRef.Columns["Item"].DefaultCellStyle.BackColor = Color.Pink;
+            item.MaxLength = 20;
 
             #endregion
             #region 右上一Grid
@@ -775,7 +801,7 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
 
 
             gridCutRef.DataSource = CutRefTb;
-            gridArticleSize.DataSource = ArticleSizeTb;
+            gridArticleSize.DataSource = ArticleSizeTb; // 右上
             gridQty.DataSource = qtyTb;
             gridAllPart.DataSource = allpartTb;
             gridCutpart.DataSource = patternTb;

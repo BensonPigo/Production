@@ -143,6 +143,16 @@ namespace Sci.Production.Packing
             {
                 where += $" and pl.FactoryID = '{this._factory}' ";
             }
+
+            if (this.chkFOC.Checked)
+            {
+                where += $@" and o.FOC = 0";
+            }
+
+            if (this.ChkLocalOrder.Checked)
+            {
+                where += $@" and o.LocalOrder = 0";
+            }
             #endregion
             string sqlcmd = $@"
 select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,
@@ -155,7 +165,7 @@ select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPON
 	TtlNw=sum(pld.NW),
 	TtlGW=sum(pld.GW),
 	TtlCBM=sum(cbm.CBM)*sum(pld.CTNQty),
-	PurchaseCTN= iif(isnull(pl.LocalPOID,'')='','N','Y'),
+	PurchaseCTN= iif(LocalPo.RequestID is null ,'N','Y'),
 	ClogCFMStatus=iif(count(pld.ID) = count(pld.ReceiveDate), 'Y','N'),
 	pl.EstCTNBooking,
 	pl.EstCTNArrive,
@@ -163,6 +173,11 @@ select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPON
 from PackingList_Detail pld
 inner join PackingList pl on pl.ID = pld.ID
 inner join  Orders o on o.id = pld.OrderID
+outer apply(
+	select RequestID from LocalPO_Detail ld with(nolock) 
+	inner join LocalPO l with(nolock) on l.id = ld.Id
+	where RequestID=pl.ID and l.status = 'Approved'
+)LocalPo
 outer apply(select CBM from LocalItem where Refno = pld.Refno) cbm
 where 1=1 and pld.DisposeFromClog= 0
 {where}
@@ -172,7 +187,8 @@ group by pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustP
 	pl.Status,o.Qty,iif(isnull(pl.LocalPOID,'')='','N','Y'),
 	pl.EstCTNBooking,
 	pl.EstCTNArrive,
-	pl.Remark
+	pl.Remark,
+	LocalPo.RequestID
 order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this._printData);
@@ -180,6 +196,7 @@ order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
             {
                 return Result.F(result.ToString());
             }
+
             return Result.True;
         }
 
@@ -197,7 +214,7 @@ order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
                 return false;
             }
             #endregion
-
+            this.SetCount(this._printData.Rows.Count);
             this.ShowWaitMessage("Excel Processing");
 
             #region To Excel

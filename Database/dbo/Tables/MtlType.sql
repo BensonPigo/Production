@@ -7,7 +7,7 @@
     [CheckZipper]     BIT            CONSTRAINT [DF_MtlType_CheckZipper] DEFAULT ((0)) NULL,
     [ProductionType]  VARCHAR (20)   CONSTRAINT [DF_MtlType_ProductionType] DEFAULT ('') NULL,
     [OutputUnit]      VARCHAR (1)    CONSTRAINT [DF_MtlType_OutputUnit] DEFAULT ('') NULL,
-    [IsExtensionUnit] BIT            CONSTRAINT [DF_MtlType_IsExtensionUnit] DEFAULT ((0)) NULL,
+    [IsExtensionUnit] BIT            CONSTRAINT [DF_MtlType_IsExtensionUnit] DEFAULT ((0)) NOT NULL,
     [IssueType]       VARCHAR (20)   CONSTRAINT [DF_MtlType_IssueType] DEFAULT ('') NULL,
     [IsTrimCardOther] BIT            NULL,
     [AddName]         VARCHAR (10)   CONSTRAINT [DF_MtlType_AddName] DEFAULT ('') NULL,

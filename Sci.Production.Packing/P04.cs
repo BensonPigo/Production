@@ -78,8 +78,19 @@ namespace Sci.Production.Packing
         {
             base.OnDetailEntered();
 
-            // Purchase Ctn
-            this.displayPurchaseCTN.Value = MyUtility.Check.Empty(this.CurrentMaintain["LocalPOID"]) ? string.Empty : "Y";
+            #region displayPurchaseCtn
+            string sqlcmdC = $@"select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id
+where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
+";
+            if (MyUtility.Check.Seek(sqlcmdC))
+            {
+                this.displayPurchaseCTN.Text = "Y";
+            }
+            else
+            {
+                this.displayPurchaseCTN.Text = "N";
+            }
+            #endregion
 
             this.labelConfirmed.Visible = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? false : true;
             DataRow dr;
