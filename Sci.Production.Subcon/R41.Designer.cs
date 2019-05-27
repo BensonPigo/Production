@@ -41,16 +41,18 @@
             this.txtCutRefStart = new System.Windows.Forms.TextBox();
             this.txtCutRefEnd = new System.Windows.Forms.TextBox();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
-            this.txtsubprocess = new Sci.Production.Class.txtsubprocess();
             this.lbBundleScanDate = new Sci.Win.UI.Label();
             this.dateBundleScanDate = new Sci.Win.UI.DateRange();
             this.lbEstCuttingDate = new Sci.Win.UI.Label();
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
-            this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
             this.dateBDelivery = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
+            this.txtsubprocess = new Sci.Production.Class.txtsubprocess();
+            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
+            this.dateSewInLine = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -95,7 +97,7 @@
             // 
             // labelSubProcess
             // 
-            this.labelSubProcess.Location = new System.Drawing.Point(27, 193);
+            this.labelSubProcess.Location = new System.Drawing.Point(27, 222);
             this.labelSubProcess.Name = "labelSubProcess";
             this.labelSubProcess.Size = new System.Drawing.Size(132, 23);
             this.labelSubProcess.TabIndex = 97;
@@ -103,7 +105,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(27, 222);
+            this.labelM.Location = new System.Drawing.Point(27, 251);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(132, 23);
             this.labelM.TabIndex = 98;
@@ -146,7 +148,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(162, 222);
+            this.comboM.Location = new System.Drawing.Point(162, 251);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(121, 24);
@@ -181,37 +183,11 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(27, 251);
+            this.labelFactory.Location = new System.Drawing.Point(27, 280);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(132, 23);
             this.labelFactory.TabIndex = 98;
             this.labelFactory.Text = "Factory";
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.FilteMDivision = false;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IssupportJunk = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(162, 251);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 107;
-            // 
-            // txtsubprocess
-            // 
-            this.txtsubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtsubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtsubprocess.IsSupportEditMode = false;
-            this.txtsubprocess.Location = new System.Drawing.Point(162, 193);
-            this.txtsubprocess.Name = "txtsubprocess";
-            this.txtsubprocess.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtsubprocess.ReadOnly = true;
-            this.txtsubprocess.Size = new System.Drawing.Size(280, 23);
-            this.txtsubprocess.TabIndex = 108;
             // 
             // lbBundleScanDate
             // 
@@ -275,24 +251,11 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(27, 278);
+            this.label1.Location = new System.Drawing.Point(27, 307);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(132, 23);
             this.label1.TabIndex = 113;
             this.label1.Text = "Process Location";
-            // 
-            // comboRFIDProcessLocation
-            // 
-            this.comboRFIDProcessLocation.BackColor = System.Drawing.Color.White;
-            this.comboRFIDProcessLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboRFIDProcessLocation.FormattingEnabled = true;
-            this.comboRFIDProcessLocation.IncludeJunk = true;
-            this.comboRFIDProcessLocation.IsSupportUnselect = true;
-            this.comboRFIDProcessLocation.Location = new System.Drawing.Point(162, 277);
-            this.comboRFIDProcessLocation.Name = "comboRFIDProcessLocation";
-            this.comboRFIDProcessLocation.OldText = "";
-            this.comboRFIDProcessLocation.Size = new System.Drawing.Size(121, 24);
-            this.comboRFIDProcessLocation.TabIndex = 114;
             // 
             // dateBDelivery
             // 
@@ -324,9 +287,80 @@
             this.label2.TabIndex = 115;
             this.label2.Text = "Buyer Delivery Date";
             // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(27, 193);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(132, 23);
+            this.label3.TabIndex = 118;
+            this.label3.Text = "Sewing Inline";
+            // 
+            // comboRFIDProcessLocation
+            // 
+            this.comboRFIDProcessLocation.BackColor = System.Drawing.Color.White;
+            this.comboRFIDProcessLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboRFIDProcessLocation.FormattingEnabled = true;
+            this.comboRFIDProcessLocation.IncludeJunk = true;
+            this.comboRFIDProcessLocation.IsSupportUnselect = true;
+            this.comboRFIDProcessLocation.Location = new System.Drawing.Point(162, 306);
+            this.comboRFIDProcessLocation.Name = "comboRFIDProcessLocation";
+            this.comboRFIDProcessLocation.OldText = "";
+            this.comboRFIDProcessLocation.Size = new System.Drawing.Size(121, 24);
+            this.comboRFIDProcessLocation.TabIndex = 114;
+            // 
+            // txtsubprocess
+            // 
+            this.txtsubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtsubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtsubprocess.IsSupportEditMode = false;
+            this.txtsubprocess.Location = new System.Drawing.Point(162, 222);
+            this.txtsubprocess.Name = "txtsubprocess";
+            this.txtsubprocess.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtsubprocess.ReadOnly = true;
+            this.txtsubprocess.Size = new System.Drawing.Size(280, 23);
+            this.txtsubprocess.TabIndex = 108;
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = false;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(162, 280);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.TabIndex = 107;
+            // 
+            // dateSewInLine
+            // 
+            // 
+            // 
+            // 
+            this.dateSewInLine.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewInLine.DateBox1.Name = "";
+            this.dateSewInLine.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewInLine.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewInLine.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewInLine.DateBox2.Name = "";
+            this.dateSewInLine.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewInLine.DateBox2.TabIndex = 1;
+            this.dateSewInLine.IsRequired = false;
+            this.dateSewInLine.Location = new System.Drawing.Point(162, 193);
+            this.dateSewInLine.Name = "dateSewInLine";
+            this.dateSewInLine.Size = new System.Drawing.Size(280, 23);
+            this.dateSewInLine.TabIndex = 119;
+            // 
             // R41
             // 
-            this.ClientSize = new System.Drawing.Size(563, 345);
+            this.ClientSize = new System.Drawing.Size(563, 363);
+            this.Controls.Add(this.dateSewInLine);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.dateBDelivery);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboRFIDProcessLocation);
@@ -379,6 +413,8 @@
             this.Controls.SetChildIndex(this.comboRFIDProcessLocation, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.dateBDelivery, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.dateSewInLine, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -408,5 +444,7 @@
         private Class.comboRFIDProcessLocation comboRFIDProcessLocation;
         private Win.UI.DateRange dateBDelivery;
         private Win.UI.Label label2;
+        private Win.UI.Label label3;
+        private Win.UI.DateRange dateSewInLine;
     }
 }
