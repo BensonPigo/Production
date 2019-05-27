@@ -470,14 +470,21 @@ where   #tmp.poid = dbo.po_supp.id
                 {
                     if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
-                        string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue));
-                        if (category == "M")
+                        string sqlorders = MyUtility.GetValue.Lookup(string.Format("select category,FactoryID,OrderTypeID from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue));
+                        DataRow dr;
+                        if (MyUtility.Check.Seek(sqlorders, out dr))
                         {
-                            CurrentDetailData["stocktype"] = "I";
-                        }
-                        else
-                        {
-                            CurrentDetailData["stocktype"] = "B";
+                            if (MyUtility.Convert.GetString(dr["category"]) == "M")
+                            {
+                                CurrentDetailData["stocktype"] = "I";
+                            }
+                            else
+                            {
+                                CurrentDetailData["stocktype"] = "B";
+                            }
+
+                            CurrentDetailData["FactoryID"] = dr["FactoryID"];
+                            CurrentDetailData["OrderTypeID"] = dr["OrderTypeID"];
                         }
                     }
                     else
@@ -1483,6 +1490,8 @@ select a.poid
         , '' as dyelot
         , '' as remark
         , '' as location
+        ,c.FactoryID
+        ,c.OrderTypeID
 from dbo.Export_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
                                                  and a.Seq1 = b.SEQ1    
