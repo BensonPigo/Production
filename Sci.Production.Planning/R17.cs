@@ -174,7 +174,7 @@ outer apply (
 ) pd2
 --sew
 outer apply(
-	select SewouptQty=sum(x.QaQty),SewLastDate=Min(SewLastDate)
+	select SewouptQty=sum(x.QaQty),SewLastDate=max(SewLastDate)
 	from(
 		Select OrderID, Article, SizeCode, 
 			Min(QaQty) as QaQty,
