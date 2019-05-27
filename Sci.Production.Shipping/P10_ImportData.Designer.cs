@@ -32,6 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.label1 = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
@@ -61,6 +62,7 @@
             this.panel8 = new Sci.Win.UI.Panel();
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnImportData = new Sci.Win.UI.Button();
+            this.comboContainerType = new Sci.Win.UI.ComboBox();
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -91,6 +93,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.comboContainerType);
+            this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.txtSPNo);
             this.panel3.Controls.Add(this.labelSPNo);
@@ -114,9 +118,17 @@
             this.panel3.Size = new System.Drawing.Size(779, 100);
             this.panel3.TabIndex = 2;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(468, 67);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 23);
+            this.label1.TabIndex = 17;
+            this.label1.Text = "Loading Type";
+            // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(681, 64);
+            this.btnQuery.Location = new System.Drawing.Point(688, 64);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 16;
@@ -135,7 +147,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(281, 67);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(41, 23);
@@ -163,7 +174,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(511, 37);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(48, 23);
@@ -178,13 +188,13 @@
             this.txtshipmode.IsSupportUnselect = true;
             this.txtshipmode.Location = new System.Drawing.Point(359, 35);
             this.txtshipmode.Name = "txtshipmode";
+            this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(85, 24);
             this.txtshipmode.TabIndex = 10;
             this.txtshipmode.UseFunction = "ORDER";
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Lines = 0;
             this.labelShipMode.Location = new System.Drawing.Point(281, 36);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(75, 23);
@@ -200,6 +210,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(481, 7);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -208,7 +232,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(383, 6);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(95, 23);
@@ -227,7 +250,6 @@
             // label4
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(178, 7);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(20, 23);
@@ -249,7 +271,6 @@
             // 
             // labelForwarder
             // 
-            this.labelForwarder.Lines = 0;
             this.labelForwarder.Location = new System.Drawing.Point(3, 67);
             this.labelForwarder.Name = "labelForwarder";
             this.labelForwarder.Size = new System.Drawing.Size(75, 23);
@@ -258,7 +279,6 @@
             // 
             // labelCutoffDate
             // 
-            this.labelCutoffDate.Lines = 0;
             this.labelCutoffDate.Location = new System.Drawing.Point(4, 37);
             this.labelCutoffDate.Name = "labelCutoffDate";
             this.labelCutoffDate.Size = new System.Drawing.Size(80, 23);
@@ -267,7 +287,6 @@
             // 
             // labelGB
             // 
-            this.labelGB.Lines = 0;
             this.labelGB.Location = new System.Drawing.Point(4, 7);
             this.labelGB.Name = "labelGB";
             this.labelGB.Size = new System.Drawing.Size(52, 23);
@@ -322,6 +341,7 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid2.ShowCellToolTips = false;
             this.grid2.Size = new System.Drawing.Size(779, 200);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
@@ -366,6 +386,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(779, 267);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
@@ -401,6 +422,18 @@
             this.btnImportData.UseVisualStyleBackColor = true;
             this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
+            // comboContainerType
+            // 
+            this.comboContainerType.BackColor = System.Drawing.Color.White;
+            this.comboContainerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboContainerType.FormattingEnabled = true;
+            this.comboContainerType.IsSupportUnselect = true;
+            this.comboContainerType.Location = new System.Drawing.Point(563, 66);
+            this.comboContainerType.Name = "comboContainerType";
+            this.comboContainerType.OldText = "";
+            this.comboContainerType.Size = new System.Drawing.Size(121, 24);
+            this.comboContainerType.TabIndex = 13;
+            // 
             // P10_ImportData
             // 
             this.AcceptButton = this.btnImportData;
@@ -411,8 +444,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P10_ImportData";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Import Data";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -463,5 +496,7 @@
         private Win.UI.Panel panel8;
         private Win.UI.Button btnCancel;
         private Win.UI.Button btnImportData;
+        private Win.UI.Label label1;
+        private Win.UI.ComboBox comboContainerType;
     }
 }
