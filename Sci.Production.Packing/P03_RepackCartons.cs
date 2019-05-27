@@ -257,7 +257,12 @@ namespace Sci.Production.Packing
 
         private void BtnUp_Click(object sender, EventArgs e)
         {
-            var listUp = this.dtNewPack.AsEnumerable().Where(s => s["selected"].ToString() == "Y").Select(s => s["CTNStartNo"]).ToList();
+            var listUp = this.dtNewPack.AsEnumerable().Where(s => s["selected"].ToString() == "Y")
+                             .Select(s => new
+                             {
+                                 OriCTNStartNo = s["CTNStartNo", DataRowVersion.Original],
+                                 NewCTNStartNo = s["CTNStartNo"]
+                             }).ToList();
 
             if (!listUp.Any())
             {
@@ -266,7 +271,7 @@ namespace Sci.Production.Packing
 
             foreach (var item in listUp)
             {
-                DataRow[] listUpRow = this.dtMiddleData.Select($"CTNStartNo = '{item}'");
+                DataRow[] listUpRow = this.dtMiddleData.Select($"CTNStartNo = '{item.OriCTNStartNo}'");
                 foreach (DataRow drUp in listUpRow)
                 {
                     drUp["selected"] = string.Empty;
@@ -274,7 +279,7 @@ namespace Sci.Production.Packing
                     this.dtMiddleData.Rows.Remove(drUp);
                 }
 
-                DataRow[] listRemoveNew = this.dtNewPack.Select($"CTNStartNo = '{item}'");
+                DataRow[] listRemoveNew = this.dtNewPack.Select($"CTNStartNo = '{item.NewCTNStartNo}'");
                 foreach (DataRow drRemoveNew in listRemoveNew)
                 {
                     this.dtNewPack.Rows.Remove(drRemoveNew);
@@ -390,13 +395,16 @@ where   oq.ID = '{0}'
 
         private void BtnUpdateNewCtn_Click(object sender, EventArgs e)
         {
-            decimal? ctnNo = this.numStartFromCtn.Value;
+            decimal? ctnNo = this.numStartFromCtn.Value - 1;
             foreach (DataRow dr in this.dtNewPack.Rows)
             {
+                if (dr["CTNQty"].ToString() == "1")
+                {
+                    ctnNo++;
+                }
+
                 dr["OrderShipmodeSeq"] = this.txtSeq.Text;
                 dr["CTNStartNo"] = ctnNo.ToString();
-
-                ctnNo++;
             }
         }
 

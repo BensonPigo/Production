@@ -2378,6 +2378,18 @@ and pd2.[SizeCode]			=pd.[SizeCode]
             return ctn_no;
         }
 
+        // 檢查OrderID+Seq不可以重複建立
+        public static bool P03CheckDouble_SpSeq(string orderid, string seq, string packID)
+        {
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", orderid, seq, packID)))
+            {
+                MyUtility.Msg.WarningBox("SP No:" + orderid + ", Seq:" + seq + " already exist in packing list, can't be create again!");
+                return false;
+            }
+
+            return true;
+        }
+
         public static bool P03SaveCheck(DataRow currentMaintain, DataTable detailDatas, Grid detailGrid = null)
         {
             DualResult result;
@@ -2432,6 +2444,14 @@ where CustCD.value != @CustCD
 
             foreach (DataRow dr in detailDatas.AsEnumerable().OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]))
             {
+                #region
+                bool isAlreadyCreated = !P03CheckDouble_SpSeq(dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), currentMaintain["ID"].ToString());
+                if (isAlreadyCreated)
+                {
+                    return false;
+                }
+                #endregion
+
                 #region 刪除表身SP No.或Qty為空白的資料
                 if (MyUtility.Check.Empty(dr["OrderID"]) || MyUtility.Check.Empty(dr["ShipQty"]))
                 {
