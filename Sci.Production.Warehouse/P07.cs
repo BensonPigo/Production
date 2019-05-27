@@ -470,7 +470,7 @@ where   #tmp.poid = dbo.po_supp.id
                 {
                     if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
-                        string sqlorders = MyUtility.GetValue.Lookup(string.Format("select category,FactoryID,OrderTypeID from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue));
+                        string sqlorders = string.Format("select category,FactoryID,OrderTypeID from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue);
                         DataRow dr;
                         if (MyUtility.Check.Seek(sqlorders, out dr))
                         {
