@@ -60,7 +60,7 @@
             this.masterpanel.Controls.Add(this.cmbSide);
             this.masterpanel.Controls.Add(this.numSeq);
             this.masterpanel.Controls.Add(this.txtPackingListID);
-            this.masterpanel.Size = new System.Drawing.Size(972, 92);
+            this.masterpanel.Size = new System.Drawing.Size(892, 92);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPackingListID, 0);
             this.masterpanel.Controls.SetChildIndex(this.numSeq, 0);
@@ -74,7 +74,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 92);
-            this.detailpanel.Size = new System.Drawing.Size(972, 257);
+            this.detailpanel.Size = new System.Drawing.Size(892, 257);
             // 
             // gridicon
             // 
@@ -82,7 +82,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(972, 257);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 257);
             // 
             // detail2
             // 
@@ -98,16 +98,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(972, 387);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(972, 349);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(972, 38);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -226,7 +226,7 @@
             this.KeyField2 = "ShippingMarkPicUkey";
             this.Name = "P24";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "P24";
+            this.Text = "P24. Shipping Mark Pic (for GenSong)";
             this.WorkAlias = "ShippingMarkPic";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();

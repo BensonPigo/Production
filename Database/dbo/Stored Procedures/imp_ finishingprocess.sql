@@ -270,7 +270,8 @@ select [TransferDate] = CONVERT(date, s.Time)
 ,[PackingListID] = pd.ID
 ,[CtnStartNo] = pd.CTNStartNo
 ,[TruckNo] = s.TruckNo
-,'SCIMIS',null
+,'SCIMIS'
+,s.Time
 from #tmpCompletePullout s
 inner join Production.dbo.PackingList_Detail pd on s.SCICtnNo=pd.SCICtnNo
 
