@@ -385,8 +385,9 @@ drop table #result
             using (var cm = cn.CreateCommand())
             {
                 cm.CommandText = sqlResult;
-                cm.CommandTimeout = 900;
+                cm.CommandTimeout = 1200;
                 var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
+                adp.SelectCommand.CommandTimeout = 1200; // 設定TSQL select record TimeOut
                 var cnt = 0;
                 var start = 0;
                 using (var ds = new DataSet())
