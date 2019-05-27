@@ -657,8 +657,12 @@ namespace Sci.Production.Planning
                             DataRow[] rows = dtFactory.Select(string.Format("Month = '{0}' and FactoryID = '{1}'", this.intYear.ToString() + mon.ToString("00"), factoryID));
                             wks.Cells[this.sheetStart, mon + 1].Value = (rows.Length > 0) ? rows[0]["Capacity"] : 0;
                         }
-
+                        
                         wks.Cells[this.sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), this.sheetStart);
+                        if (MyUtility.Convert.GetDecimal(dtFactory.Compute("Sum(Capacity)", $"FactoryID = '{factoryID}'")) == 0)
+                        {
+                            wks.Rows[$"{this.sheetStart}:{this.sheetStart}", System.Type.Missing].Hidden = true;
+                        }
 
                         DataRow[] tmprows = dtFactory.Select(string.Format("FactoryID = '{0}'", factoryID));
                         wks.Cells[this.sheetStart, 15].Value = tmprows.Length > 0 && tmprows[0]["Tms"] != DBNull.Value ? tmprows[0]["Tms"] : 0;
@@ -672,6 +676,15 @@ namespace Sci.Production.Planning
                     this.DrawBottomLine(wks, this.sheetStart, 1);
                     this.sheetStart += 1;
 
+                    lisSumFtyNonSis.Add(ftyStart.ToString() + "," + nonSisStart.ToString());
+
+                    // Shortage
+                    int shortageStart = this.sheetStart;
+                    DataTable dtByShortage = this.SafeGetDt(dt1, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
+                    this.SetTableToRow(wks, this.sheetStart, "Shortage", dtByShortage, "OrderShortage");
+                    this.DrawBottomLine(wks, this.sheetStart, 1);
+                    this.sheetStart += 1;
+
                     if (isSample)
                     {
                         continue;
@@ -679,7 +692,7 @@ namespace Sci.Production.Planning
 
                     // MDV total
                     mDVTotalIdx = this.sheetStart;
-                    this.SetFormulaToRow(wks, this.sheetStart, mDivisionID + " total", string.Format("=SUM({{0}}{0}:{{0}}{1})", ftyStart, nonSisStart));
+                    this.SetFormulaToRow(wks, this.sheetStart, mDivisionID + " total", string.Format("=SUM({{0}}{0}:{{0}}{1}) - {{0}}{2}", ftyStart, nonSisStart, shortageStart));
 
                     this.DrawBottomLine(wks, this.sheetStart, 1);
                     this.sheetStart += 1;
@@ -1027,6 +1040,13 @@ namespace Sci.Production.Planning
 
                         this.DrawBottomLine(wks, this.sheetStart, 4, 3, 17);
 
+                        if (MyUtility.Convert.GetDecimal(dt1.Compute("Sum(Capacity1)+Sum(Capacity2)", $"FactoryID = '{factoryID}'")) == 0 &&
+                            MyUtility.Convert.GetDecimal(dtFactory.Compute("Sum(Capacity1)+Sum(Capacity2)", $"FactoryID = '{factoryID}'")) == 0
+                            )
+                        {
+                            wks.Rows[$"{this.sheetStart - 2}:{this.sheetStart}", System.Type.Missing].Hidden = true;
+                        }
+
                         this.sheetStart += 1;
                     }
 
@@ -1267,7 +1287,7 @@ namespace Sci.Production.Planning
             }
         }
 
-        private void SetTableToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, DataTable dt)
+        private void SetTableToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, DataTable dt, string valueCol = "Capacity")
         {
             wks.Cells[sheetStart, 1].Value = cell1Str;
             for (int mon = 1; mon < 13; mon++)
@@ -1278,9 +1298,7 @@ namespace Sci.Production.Planning
                 {
                     for (int i = 0; i < rows.Length; i++)
                     {
-                        decimal decCapacity;
-                        decimal.TryParse(rows[i]["Capacity"].ToString(), out decCapacity);
-                        v += decCapacity;
+                        v += MyUtility.Convert.GetDecimal(rows[i][valueCol]);
                     }
                 }
 
@@ -1288,6 +1306,11 @@ namespace Sci.Production.Planning
             }
 
             wks.Cells[sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), sheetStart);
+        }
+
+        private void VisivleRow()
+        {
+
         }
 
         private void SetFormulaToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, string formula, EnuDrawColor color = EnuDrawColor.None)
