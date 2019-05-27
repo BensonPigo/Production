@@ -1147,7 +1147,7 @@ SET
       a.PriceRate	      =b.PriceRate	
       ,a.Round	      =b.Round	
       ,a.Description	      =b.Description	
-      ,a.ExtensionUnit	      =b.ExtensionUnit	
+      ,a.ExtensionUnit	      =isnull(b.ExtensionUnit,'')	
       ,a.Junk	      =b.TradeJunk	
       ,a.AddName	      =b.AddName	
       ,a.AddDate	      =b.AddDate	
@@ -1178,7 +1178,7 @@ select
       ,PriceRate
       ,Round
       ,Description
-      ,ExtensionUnit
+      ,isnull(ExtensionUnit,'')
       ,TradeJunk
       ,AddName
       ,AddDate

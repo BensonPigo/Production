@@ -3,7 +3,7 @@
     [PriceRate]     INT            CONSTRAINT [DF_Unit_PriceRate] DEFAULT ((0)) NULL,
     [Round]         TINYINT        CONSTRAINT [DF_Unit_Round] DEFAULT ((0)) NULL,
     [Description]   NVARCHAR (120) CONSTRAINT [DF_Unit_Description] DEFAULT ('') NULL,
-    [ExtensionUnit] VARCHAR (8)    CONSTRAINT [DF_Unit_ExtensionUnit] DEFAULT ('') NULL,
+    [ExtensionUnit] VARCHAR (8)    CONSTRAINT [DF_Unit_ExtensionUnit] DEFAULT ('') NOT NULL,
     [Junk]          BIT            CONSTRAINT [DF_Unit_Junk] DEFAULT ((0)) NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Unit_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
