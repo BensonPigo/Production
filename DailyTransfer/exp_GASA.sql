@@ -13,13 +13,30 @@ BEGIN
   DROP TABLE FirstDyelot
 END
 
-SELECT * 
+SELECT [Export_DetailUkey]
+      ,[InspectionReport]
+      ,[TestReport]
+      ,[ContinuityCard]
+      ,[T2InspYds]
+      ,[T2DefectPoint]
+      ,[T2Grade]
+      ,[EditName]
+      ,[EditDate]
+      ,[TestReportCheckClima]
 INTO SentReport
 FROM Production.dbo.SentReport
 WHERE EditDate < Convert(DATE,DATEADD(day,-30,GETDATE()))
 ;
 
-SELECT * 
+SELECT [TestDocFactoryGroup]
+      ,[Refno]
+      ,[SuppID]
+      ,[ColorID]
+      ,[SeasonSCIID]
+      ,[Period]
+      ,[FirstDyelot]
+      ,[EditName]
+      ,[EditDate]
 INTO FirstDyelot
 FROM Production.dbo.FirstDyelot
 WHERE EditDate < Convert(DATE,DATEADD(day,-30,GETDATE()))
