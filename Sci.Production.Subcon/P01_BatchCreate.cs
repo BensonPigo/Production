@@ -60,6 +60,11 @@ namespace Sci.Production.Subcon
         //Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
+            this.FindData(true);
+        }
+
+        private void FindData(bool showNoDataMsg)
+        {
             this.apvdate_b = null;
             this.apvdate_e = null;
             this.sciDelivery_b = null;
@@ -117,7 +122,7 @@ namespace Sci.Production.Subcon
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, SqlCmd, out dtArtwork))
             {
-                if (dtArtwork.Rows.Count == 0)
+                if (dtArtwork.Rows.Count == 0 && showNoDataMsg)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtArtwork;
             }
@@ -125,7 +130,6 @@ namespace Sci.Production.Subcon
             {
                 ShowErr(SqlCmd, result);
             }
-
         }
 
         protected override void OnFormLoaded()
@@ -495,6 +499,8 @@ namespace Sci.Production.Subcon
                     }
                     _transactionscope.Dispose();
                     _transactionscope = null;
+                    // Import 成功重新Query
+                    this.FindData(false);
                 }
             }
         }
@@ -544,15 +550,15 @@ SELECT 	Selected = 0
 FROM Order_TmsCost WITH (NOLOCK) 
 inner join Orders WITH (NOLOCK) on Order_TmsCost.id = Orders.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
+inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 inner join view_order_artworks v on v.id = Order_TmsCost.id 
 									and v.artworktypeid = Order_TmsCost.artworktypeid
 inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey and vsa.Article = v.Article and vsa.ArtworkID = v.ArtworkID and
 														vsa.ArtworkName = v.ArtworkName and vsa.ArtworkTypeID = v.ArtworkTypeID and vsa.PatternCode = v.PatternCode and
 														vsa.PatternDesc = v.PatternDesc 
-inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0 and sao.LocalSuppID = order_tmscost.LocalSuppID
-inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
+inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.LocalSuppID = order_tmscost.LocalSuppID  and sao.Price > 0  and sao.PriceApv = 'Y'
 WHERE 	not exists(
-			select * 
+			select 1
 			from artworkpo a WITH (NOLOCK) 
 			inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id 
 			where a.potype = '{0}' 
