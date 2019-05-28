@@ -380,7 +380,7 @@ drop table #result
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             int num = 200000;
-
+            
             using (var cn = new SqlConnection(Env.Cfg.GetConnection("", DBProxy.Current.DefaultModuleName).ConnectionString))
             using (var cm = cn.CreateCommand())
             {
@@ -396,8 +396,12 @@ drop table #result
                     {
                         System.Diagnostics.Debug.WriteLine("load {0} records", cnt);
 
-                        //do some jobs                       
-                        MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1+ start, false, null, objApp, wSheet: objSheets);
+                        //do some jobs        
+                        if (!MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1+ start, false, null, objApp, wSheet: objSheets))
+                        {
+                            return false;
+                        }               
+                        
                         
                         start += num;
 
