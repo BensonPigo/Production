@@ -578,6 +578,36 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 return;
             }
 
+            #region 檢查clog是否有收完CFA箱子
+            DataTable dtCfa;
+            DualResult resultCFA;
+            StringBuilder warningmsg = new StringBuilder();
+            string strSqlcmd =
+                   $@"
+SELECT  c.OrderID,c.ID as PackingListID,c.CTNStartNo 
+FROM Pullout a
+inner join PackingList b on a.ID=b.PulloutID
+inner join PackingList_Detail c on b.ID=c.ID
+where a.ID='{this.CurrentMaintain["id"]}' and a.Status='New'
+and c.CFAReturnClogDate is not null
+and c.ClogReceiveCFADate is null
+";
+            if (resultCFA = DBProxy.Current.Select(null, strSqlcmd, out dtCfa))
+            {
+                if (dtCfa.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dtCfa.Rows)
+                    {
+                        warningmsg.Append($@"SP#: {dr["OrderID"]}, Packing: {dr["PackingListID"]}
+, CTN#: {dr["CTNStartNo"]} is not in clog!" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox(warningmsg.ToString());
+                    return;
+                }
+            }
+            #endregion
+
             IList<string> updateCmds = new List<string>();
             updateCmds.Add(string.Format("update Pullout set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SendToTPE"]))
