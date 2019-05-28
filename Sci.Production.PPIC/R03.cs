@@ -256,7 +256,11 @@ with tmpOrders as (
             , o.BrandFTYCode
             , o.CPUFactor
             , o.ClogLastReceiveDate
-            , o.IsMixMarker
+			, [IsMixMarker]=  CASE WHEN o.IsMixMarker=0 THEN 'Is Single Marker'
+								WHEN o.IsMixMarker=1 THEN 'Is Mix  Marker'		
+								WHEN o.IsMixMarker=2 THEN ' Is Mix Marker - SCI'
+								ELSE ''
+							END
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','')"
             + seperCmd +
@@ -542,7 +546,11 @@ tmpFilterZone as (
             , o.BrandFTYCode
             , o.CPUFactor
             , o.ClogLastReceiveDate
-            , o.IsMixMarker
+			, [IsMixMarker]=  CASE WHEN o.IsMixMarker=0 THEN 'Is Single Marker'
+								WHEN o.IsMixMarker=1 THEN 'Is Mix  Marker'		
+								WHEN o.IsMixMarker=2 THEN ' Is Mix Marker - SCI'
+								ELSE ''
+							END
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','') "
             + seperCmd +
@@ -1620,7 +1628,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 objArray[intRowsStart, 115] = dr["SpecialMarkName"];
                 objArray[intRowsStart, 116] = dr["FTYRemark"];
                 objArray[intRowsStart, 117] = dr["SampleReasonName"];
-                objArray[intRowsStart, 118] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 118] = dr["IsMixMarker"];
                 objArray[intRowsStart, 119] = dr["CuttingSP"];
                 objArray[intRowsStart, 120] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 121] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
