@@ -226,6 +226,12 @@ order by rd.Seq1,rd.Seq2", masterID);
             }
 
             #endregion
+
+            if (!this.CheckRequestQty())
+            {
+                return false;
+            }
+
             int count = 0; // 紀錄表身筆數
             // 刪除表身Grid的Seq為空資料
             foreach (DataRow dr in this.DetailDatas)
@@ -541,6 +547,11 @@ group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POI
             base.ClickCheck();
             StringBuilder check = new StringBuilder();
             IList<string> updateCmds = new List<string>();
+            if (!this.CheckRequestQty())
+            {
+                return;
+            }
+
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
                 if (MyUtility.Check.Empty(dr["Responsibility"]) || MyUtility.Check.Empty(dr["ResponsibilityReason"]) || MyUtility.Check.Empty(dr["Suggested"]))
@@ -615,6 +626,11 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMain
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+            if (!this.CheckRequestQty())
+            {
+                return;
+            }
+
             DualResult result;
             string updateCmd = string.Format("update ReplacementReport set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
@@ -759,6 +775,25 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// 判斷表身Final Needed Qty是否為0
+        /// </summary>
+        /// <returns>bool</returns>
+        private bool CheckRequestQty()
+        {
+            this.detailgridbs.EndEdit();
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (MyUtility.Check.Empty(dr["TotalRequest"]))
+                {
+                    MyUtility.Msg.WarningBox("The final needed Qty cannot be 0!");
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
