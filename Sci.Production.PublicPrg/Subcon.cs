@@ -33,7 +33,16 @@ namespace Sci.Production.PublicPrg
         }
         #endregion
 
-        
+        public static bool CheckNeedPlanningP03Quote(string artworktypeID)
+        {
+            string sqlCheckNeedPlanningP03Quote = $@"
+select 1 from ArtworkType with (nolock) 
+            where ID = '{artworktypeID}' and 
+                        ((IsArtwork = 1 and IsPrice = 1) or (IsArtwork = 0 and UseArtwork = 1))";
+
+            return MyUtility.Check.Seek(sqlCheckNeedPlanningP03Quote);
+        }
+
     }
     
 }
