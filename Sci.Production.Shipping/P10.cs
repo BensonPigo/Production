@@ -357,13 +357,6 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
                 return false;
             }
 
-            DataTable tmp_dt = (DataTable)this.detailgridbs.DataSource;
-            if(tmp_dt.Select("ShipModeID in('A/C','A/P','E/C','E/P')").Count() > 0 && tmp_dt.Select("ShipModeID = 'SEA'").Count() > 0)
-            {
-                MyUtility.Msg.WarningBox("Can not include  [A/C, A/P, E/C, E/P] and [SEA] in same ship plan!");
-                return false;
-            }
-
             // GetID
             if (this.IsDetailInserting)
             {
