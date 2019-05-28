@@ -75,14 +75,14 @@ outer apply
 	select inline = min(ss.inline)
 	from SewingSchedule ss WITH (NOLOCK) 
 	inner join SewingSchedule_Detail ssd WITH (NOLOCK) on ss.ID = ssd.ID 
-	where ss.OrderID = o.id and ss.MDivisionID = o.MDivisionID and ssd.Article = oq.Article and oq.SizeCode = ssd.SizeCode and occ.Article = ssd.Article
+	where ss.OrderID = o.id and ss.MDivisionID = @MDivisionID and ssd.Article = oq.Article and oq.SizeCode = ssd.SizeCode and occ.Article = ssd.Article
 )s
 outer apply(
 	select ob.scirefno
 	from Order_BoF ob WITH (NOLOCK) 
 	where ob.Id = oe.id and ob.FabricCode = occ.FabricCode
 )sr
-where o.CuttingSP = @Cuttingid and o.MDivisionID = @MDivisionID and o.junk = 0
+where o.CuttingSP = @Cuttingid and o.junk = 0
 group by s.Inline,o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,oq.qty ,sr.SCIRefno
 order by InlineForOrderby,o.id
 --主要資料參數
