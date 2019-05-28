@@ -601,31 +601,33 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             {
                 updateCmds.Add(string.Format(
                     @"
-UPDATE orders 
-SET    actpulloutdate = (SELECT Max(p.pulloutdate) 
-FROM   pullout_detail pd, 
-    pullout p 
-WHERE  pd.orderid = orders.id 
-    AND pd.id = p.id 
-    AND (pd.status = 'C' or pd.ShipQty > 0)
-    AND p.status = 'Confirmed'), 
-pulloutcomplete = Iif((
-	SELECT Count(p.id)
-	FROM   pullout_detail pd, 
-			pullout p 
-	WHERE  pd.orderid = orders.id 
-			AND pd.id = p.id 
-			AND p.status = 'Confirmed' 
-			AND pd.status = 'C'
-) > 0, 1,iif((
-SELECT Count(p.id)
-	FROM   pullout_detail pd, 
-			pullout p 
-	WHERE  pd.orderid = orders.id 
-			AND pd.id = p.id 
-			AND p.status = 'Confirmed' 
-			AND pd.status = 'S')>0,1,0)
-)
+UPDATE orders SET
+	actpulloutdate = (
+		SELECT Max(p.pulloutdate)
+		FROM pullout_detail pd inner join pullout p on pd.id = p.id 
+		WHERE  pd.orderid = orders.id 
+		AND (pd.status = 'C' or pd.ShipQty > 0)
+		AND p.status = 'Confirmed'
+	)
+	,pulloutcomplete = 
+		case when (
+				SELECT Count(p.id)
+				FROM pullout_detail pd inner join pullout p on pd.id = p.id 
+				WHERE pd.orderid = orders.id 
+				AND p.status = 'Confirmed' 
+				AND pd.status = 'C'
+				) > 0
+			then 1
+			when(
+				SELECT Count(p.id)
+				FROM pullout_detail pd inner join pullout p on pd.id = p.id 
+				WHERE  pd.orderid = orders.id 
+				AND p.status = 'Confirmed' 
+				AND pd.status = 'S'
+				)>0
+			then 1
+			else 0
+			end
 WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
             }
 

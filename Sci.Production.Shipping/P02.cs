@@ -57,6 +57,7 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboFrom, 2, 1, "1,Factory,2,Brand");
             MyUtility.Tool.SetupCombox(this.comboTO, 2, 1, "1,SCI,2,Factory,3,Sullpier,4,Brand");
+            MyUtility.Tool.SetupCombox(this.cmbFreightBy, 2, 1, "3RD,Freight by 3rd Party,CUST,Freight Collect,FTY,Freight Pre-Paid by Fty,HAND,Hand Carry");
         }
 
         /// <inheritdoc/>
@@ -295,6 +296,11 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
         // Context Menu選擇Delete this Record
         private void MenuDelete()
         {
+            if (!this.CheckPullexists())
+            {
+                return;
+            }
+
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "1" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "2" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "3")
             {
                 Sci.Production.Shipping.P02_AddByPOItem callPOItemForm = new Sci.Production.Shipping.P02_AddByPOItem();
@@ -796,6 +802,21 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
+            string updateCmds = $"update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}'";
+            DualResult result = DBProxy.Current.Execute(null, updateCmds);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Junk data faile.\r\n" + result.ToString());
+                return result;
+            }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
@@ -1427,6 +1448,11 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 return;
             }
 
+            if (!this.CheckPullexists())
+            {
+                return;
+            }
+
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Junk > this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)
             {
@@ -1594,6 +1620,35 @@ When first applicant's team leader approval, anyone can not do any modification.
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, string.Empty, content.ToString(), false, false);
                 email.ShowDialog(this);
             }
+        }
+
+        private bool CheckPullexists()
+        {
+            #region 若該HC#下的Packing已經被拉到Pullout Report中且Pullout Status為confirm則不能刪除
+            string sqlchk = $@"
+select distinct p.ID
+from Pullout_Detail pd
+inner join PackingList pl on pl.id = pd.PackingListID
+inner join Pullout p on p.id = pd.id
+where p.status = 'confirmed'
+and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
+";
+            DataTable pkdt;
+            DualResult result = DBProxy.Current.Select(null, sqlchk, out pkdt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (pkdt.Rows.Count > 0)
+            {
+                string msg = "These PackingList# are existed in Pullout Report so it can't be delete!\r\nPackingList#: " + string.Join(Environment.NewLine + "PackingList#: ", pkdt.AsEnumerable().Select(row => row["ID"]).ToList());
+                MyUtility.Msg.WarningBox(msg);
+                return false;
+            }
+            return true;
+            #endregion
         }
     }
 }
