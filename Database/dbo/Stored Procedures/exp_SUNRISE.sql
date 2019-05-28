@@ -14,7 +14,7 @@ set @StartDate1 = cast(convert(nvarchar(10),@StartDate,112) + ' 00:00:00'  as da
 set @EndDate1 = cast(convert(nvarchar(10),dateadd(dd,1,@EndDate),112) + ' 00:00:00'  as datetime)
 begin try
 --抓出時間區間內SewingSchedule的orderID
-select distinct ss.OrderID,o.StyleID,o.SeasonID,o.BrandID,o.StyleUKey,o.Qty,o.AddName,o.SCIDelivery
+select distinct ss.OrderID,o.StyleID,o.SeasonID,o.BrandID,o.StyleUKey,o.Qty,o.AddName,o.SCIDelivery ,o.CustPONo
 into #SrcOrderID
 from dbo.SewingSchedule ss with (nolock)
 inner join orders o with (nolock) on  ss.OrderID = o.ID
@@ -78,7 +78,8 @@ select
 [CustName] = so.BrandID,
 [SAMTotal] = tMM.SAMTotal,
 [Insertor] = so.AddName,
-[DeliveryDate] = so.SCIDelivery
+[DeliveryDate] = so.SCIDelivery,
+[CustPONo] = so.CustPONo
 into #tMOM
 from #SrcOrderID so with (nolock)
 inner join Style_Location sl with (nolock) on sl.StyleUkey = so.StyleUkey
@@ -284,13 +285,41 @@ update T set	ProNoticeNo = S.ProNoticeNo,
 				DeliveryDate = S.DeliveryDate,
 				CmdType = iif(InterfaceTime is not null,'update',CmdType),
 				CmdTime = GetDate(),
-				InterfaceTime = null
+				InterfaceTime = null,
+				CustPoNo = S.CustPONo
 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T
 inner join #tMOM S on T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS
 
 --insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM(MONo,ProNoticeNo,Styleno,Qty ,CustName,SAMTotal,Insertor,DeliveryDate,CmdType,CmdTime,InterfaceTime)
-select S.MONo,S.ProNoticeNo,S.Styleno,S.Qty ,S.CustName,S.SAMTotal,S.Insertor,S.DeliveryDate,'insert',GetDate(),null from #tMOM S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM
+(
+	MONo
+	,ProNoticeNo
+	,Styleno
+	,Qty 
+	,CustName
+	,SAMTotal
+	,Insertor
+	,DeliveryDate
+	,CmdType
+	,CmdTime
+	,InterfaceTime
+	,CustPONo
+)
+select 
+	S.MONo
+	,S.ProNoticeNo
+	,S.Styleno
+	,S.Qty 
+	,S.CustName
+	,S.SAMTotal
+	,S.Insertor
+	,S.DeliveryDate
+	,'insert'
+	,GetDate()
+	,null 
+	,S.CustPONo
+from #tMOM S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS)
 
 --tSeqBase(基本工序表)
