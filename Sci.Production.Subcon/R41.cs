@@ -380,13 +380,14 @@ drop table #result
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             int num = 200000;
-
+            
             using (var cn = new SqlConnection(Env.Cfg.GetConnection("", DBProxy.Current.DefaultModuleName).ConnectionString))
             using (var cm = cn.CreateCommand())
             {
                 cm.CommandText = sqlResult;
-                cm.CommandTimeout = 900;
+                cm.CommandTimeout = 1200;
                 var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
+                adp.SelectCommand.CommandTimeout = 1200; // 設定TSQL select record TimeOut
                 var cnt = 0;
                 var start = 0;
                 using (var ds = new DataSet())
@@ -395,9 +396,12 @@ drop table #result
                     {
                         System.Diagnostics.Debug.WriteLine("load {0} records", cnt);
 
-                        //do some jobs                       
-                        MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1+ start, false, null, objApp, wSheet: objSheets);
-                        
+                        //do some jobs        
+                        if (MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1 + start, false, null, objApp, wSheet: objSheets) == false)
+                        {
+                            break;
+                        }  
+                                                
                         start += num;
 
                         //if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
@@ -414,9 +418,20 @@ drop table #result
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(objSheets);
+            if (objSheets != null)
+            {
+                Marshal.FinalReleaseComObject(objSheets);
+                objSheets = null;
+            }
+            if (objApp != null)
+            {
+                objApp.Quit();
+                Marshal.FinalReleaseComObject(objApp);
+                objApp = null;
+            }
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
 
             strExcelName.OpenFile();
             #endregion
