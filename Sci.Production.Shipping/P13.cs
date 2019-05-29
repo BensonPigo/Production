@@ -92,7 +92,7 @@ select
 	ChargeablePulloutQty = isnull(c.value,0),
 	FOCPulloutQty = isnull(c.value2,0),
 	FinishedFOCStockinQty =oxx.FOCQty,
-	CurrentFOCStock= oxx.FOCQty - isnull(c2.value,0)
+	CurrentFOCStock= o.FOCQty - isnull(c.value2,0)
 	
 from orders o with(nolock)
 outer apply(
@@ -105,15 +105,8 @@ outer apply(
 	group by pl.Type
 )c
 outer apply(
-	select AddDate=min(AddDate),FOCQty=sum(ox.FOCQty) from Order_Finish ox where ox.id = o.ID
+	select FOCQty=sum(ox.FOCQty) from Order_Finish ox where ox.id = o.ID
 )oxx
-outer apply(
-	select 
-		value = sum(pod.ShipQty)
-	from Pullout_Detail pod with(nolock)
-	inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
-	where pod.OrderID = o.id and pl.PulloutDate > oxx.AddDate
-)c2
 where o.Junk = 0
 and exists(select 1 from Order_Finish ox where ox.id = o.ID)
 and exists (
