@@ -1,0 +1,281 @@
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Text;
+using System.Transactions;
+using System.Windows.Forms;
+
+namespace Sci.Production.Shipping
+{
+    public partial class P05_BatchImportSO : Sci.Win.Subs.Base
+    {
+        public P05_BatchImportSO()
+        {
+            this.InitializeComponent();
+            DataTable shipperID;
+            DBProxy.Current.Select(null, "select '' as ShipperID union all SELECT DISTINCT [ShipperID]=Shipper FROM GMTBooking WITH (NOLOCK) ", out shipperID);
+            MyUtility.Tool.SetupCombox(this.comboShipper, 1, shipperID);
+            this.comboShipper.Text = Sci.Env.User.Keyword;
+
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+
+            DataGridViewGeneratorTextColumnSettings setTerminal = new DataGridViewGeneratorTextColumnSettings();
+            setTerminal.EditingMouseDown += (s, e) =>
+            {
+                if (this.grid.DataSource == null) return;
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow cuttentDr = this.grid.GetDataRow(e.RowIndex);
+
+                    DataTable dt;
+                    string sqlcmd = string.Empty;
+
+                    sqlcmd = $@"
+select 
+        fwd.WhseNo
+        ,fwd.address 
+        ,fwd.UKey
+from  ForwarderWhse fw 
+     ,ForwarderWhse_Detail fwd
+ where 
+        fw.ID = fwd.ID
+        and fw.BrandID = '{cuttentDr["BrandID"]}'
+        and fw.Forwarder = '{cuttentDr["Forwarder"]}'
+        and fw.ShipModeID = '{cuttentDr["ShipModeID"]}'
+ order by fwd.WhseNo
+";
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", string.Empty);
+
+                    DialogResult result1 = item.ShowDialog();
+                    if (result1 == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    IList<DataRow> dr = item.GetSelecteds();
+                    cuttentDr["ForwarderWhse_DetailUKey_ForShow"] = item.GetSelectedString();
+                    cuttentDr["ForwarderWhse_DetailUKey"] = dr[0]["Ukey"];
+                    cuttentDr.EndEdit();
+                }
+
+            };
+
+//            setTerminal.CellValidating += (s, e) =>
+//            {
+//                DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
+
+//                if (!MyUtility.Check.Empty(e.FormattedValue))
+//                {
+//                    DataTable dt;
+//                    string sqlCmd = $@"
+//select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
+//where fw.ID = fwd.ID
+//and fwd.whseno = '{e.FormattedValue}'
+//order by fwd.WhseNo";
+
+//                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+//                    if (result)
+//                    {
+//                        if (dt.Rows.Count >= 1)
+//                        {
+//                            e.FormattedValue = dt.Rows[0]["WhseNo"].ToString();
+//                            dr["ForwarderWhse_DetailUKey"] = dt.Rows[0]["Ukey"].ToString();
+//                        }
+//                        else
+//                        {
+//                            e.FormattedValue = string.Empty;
+//                            dr["ForwarderWhse_DetailUKey"] = 0;
+//                            MyUtility.Msg.WarningBox("Terminal/Whse# is not found!!");
+//                            e.Cancel = true;
+//                        }
+//                    }
+//                }
+//            };
+
+            this.grid.IsEditingReadOnly = false;
+            this.grid.DataSource = this.listControlBindingSource1;
+
+            this.Helper.Controls.Grid.Generator(this.grid)
+               .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+               .Text("ID", header: "Invoice No.", iseditingreadonly: true, width: Widths.AnsiChars(20))
+               .Text("Shipper", header: "Shipper", iseditingreadonly: true, width: Widths.AnsiChars(8))
+               .Text("BrandID", header: "Brand", iseditingreadonly: true, width: Widths.AnsiChars(15))
+               .Text("InvDate", header: "Invoice Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
+               .Text("SoNo", header: "S/O#", iseditingreadonly: false, width: Widths.AnsiChars(15))
+               .Text("ForwarderWhse_DetailUKey_ForShow", header: "Terminal/Whse#", iseditingreadonly: false, width: Widths.AnsiChars(6), settings: setTerminal)
+               .Date("CutOffDate", header: "Cut-Off Date", iseditingreadonly: false)
+               .Date("SOCFMDate", header: "S/O Cfm Date", iseditingreadonly: false)
+              ;
+
+            this.grid.Columns["Selected"].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+            this.QueryData();
+        }
+
+        private void BtnQuery_Click(object sender, EventArgs e)
+        {
+            this.QueryData();
+        }
+
+        private void BtnSave_Click(object sender, EventArgs e)
+        {
+            DataTable all = (DataTable)this.listControlBindingSource1.DataSource;
+
+            // 1.檢查勾選
+            #region
+            DataRow[] selected = all.Select("Selected = 1");
+
+            if (selected.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select one data first.");
+                return;
+            }
+            #endregion
+
+            // 2. 檢查 [S/O], [Terminal/Whse#], [Cut-Off Date], [S/O Cfm Date] 有一個為空則警示
+            #region
+
+            DataRow[] emptyRows = selected.CopyToDataTable().Select("SONo='' OR ForwarderWhse_DetailUKey=NULL OR ForwarderWhse_DetailUKey=0 OR CutOffDate IS NULL OR SOCFMDate IS NULL ");
+
+            if (emptyRows.Length > 0)
+            {
+                string msg = " Below [Invoice No.] needs to fill up [S/O], [Terminal/Whse#], [Cut-Off Date], [S/O Cfm Date]!" + Environment.NewLine;
+
+                foreach (DataRow item in emptyRows)
+                {
+                    msg += $"[Invoice No.]: {item["ID"]}" + Environment.NewLine;
+                }
+
+                MyUtility.Msg.WarningBox(msg);
+                return;
+            }
+            #endregion
+
+            // 3. 檢查沒問題，開始拼湊SQL
+            #region
+            StringBuilder sqlCmd = new StringBuilder();
+
+            foreach (DataRow item in selected)
+            {
+                // 3-1 修改GMTBooking
+                sqlCmd.Append($@"UPDATE GMTBooking SET SONo='{item["SONo"]}' , ForwarderWhse_DetailUKey ={item["ForwarderWhse_DetailUKey"]} , CutOffDate='{Convert.ToDateTime(item["CutOffDate"]).ToString("yyyy/MM/dd hh:mm:ss")}' , SOCFMDate='{Convert.ToDateTime(item["SOCFMDate"]).ToString("yyyy/MM/dd hh:mm:ss")}' WHERE ID = '{item["ID"]}' " + Environment.NewLine + Environment.NewLine);
+
+                // 3-2 P05_SOCFMDate.cs 35-50行做對應的更新
+                bool firstCFM = !MyUtility.Check.Seek($"SELECT ID FROM GMTBooking_History WITH (NOLOCK) WHERE ID = '{item["ID"]}' AND HisType = 'SOCFMDate'");
+
+                sqlCmd.Append($@"
+INSERT INTO GMTBooking_History (ID ,HisType ,OldValue ,NewValue ,AddName ,AddDate)
+VALUES (
+     '{item["ID"]}'
+    ,'SOCFMDate'
+    ,'{(firstCFM ? string.Empty : "CFM")}'
+    ,'Un CFM'
+    ,'{Sci.Env.User.UserID}'
+    ,GETDATE()
+)
+" + Environment.NewLine + Environment.NewLine);
+
+            }
+            #endregion
+
+            TransactionScope transactionScope = new TransactionScope();
+
+            try
+            {
+                DualResult result = DBProxy.Current.Execute(null, sqlCmd.ToString());
+
+                if (result)
+                {
+                    transactionScope.Complete();
+                    MyUtility.Msg.InfoBox("Success!");
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr("Commit transaction error.", ex);
+            }
+            finally
+            {
+                transactionScope.Dispose();
+                this.QueryData();
+            }
+
+        }
+
+        private void QueryData()
+        {
+
+            DataTable dt;
+            string sqlCmd = string.Empty;
+            Ict.DualResult result;
+
+            sqlCmd = $@"
+
+ SELECT 
+    [Selected]=0
+    ,g.ID
+    ,Shipper
+    ,g.BrandID
+    ,InvDate
+    ,[SONo]
+    ,ForwarderWhse_DetailUKey
+    ,[ForwarderWhse_DetailUKey_ForShow]=fwd.WhseNo
+    ,[CutOffDate]
+    ,[SOCFMDate]
+    ,g.Forwarder 
+    ,g.ShipModeID 
+FROM GMTBooking g
+LEFT JOIN ForwarderWhse_Detail fwd ON  g.ForwarderWhse_DetailUKey=fwd.UKey
+LEFT JOIN ForwarderWhse fw ON  fw.ID = fwd.ID
+WHERE 1=1 AND g.Status='New'
+" + Environment.NewLine;
+
+            if (!string.IsNullOrEmpty(this.comboShipper.Text))
+            {
+                sqlCmd += $"AND g.Shipper='{this.comboShipper.Text}'" + Environment.NewLine;
+            }
+
+            if (!string.IsNullOrEmpty(this.txtbrand.Text))
+            {
+                sqlCmd += $"AND g.BrandID='{this.txtbrand.Text}'" + Environment.NewLine;
+            }
+
+            if (!this.dateInvDate.Value1.Empty() && !this.dateInvDate.Value2.Empty())
+            {
+                sqlCmd += $"AND g.InvDate Between '{this.dateInvDate.Value1.Value.ToString("yyyy/MM/dd hh:mm:ss")}' AND '{this.dateInvDate.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd hh:mm:ss")}'" + Environment.NewLine;
+            }
+
+            sqlCmd += "ORDER BY g.ID" + Environment.NewLine;
+
+            this.ShowWaitMessage("Data Loading....");
+            if (result = DBProxy.Current.Select(null, sqlCmd, out dt))
+            {
+                if (dt.Rows.Count == 0)
+                {
+                    this.HideWaitMessage();
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
+
+            this.listControlBindingSource1.DataSource = dt;
+            this.HideWaitMessage();
+        }
+    }
+}

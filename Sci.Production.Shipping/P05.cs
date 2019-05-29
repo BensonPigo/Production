@@ -1803,5 +1803,10 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                 this.CurrentMaintain["SOCFMDate"] = upSOCFMDate;
             }
         }
+        private void btnBatchImportSO_Click_1(object sender, EventArgs e)
+        {
+            P05_BatchImportSO form = new P05_BatchImportSO();
+            form.ShowDialog();
+        }
     }
 }
