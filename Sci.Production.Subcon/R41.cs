@@ -397,26 +397,11 @@ drop table #result
                         System.Diagnostics.Debug.WriteLine("load {0} records", cnt);
 
                         //do some jobs        
-                        if (!MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1 + start, false, null, objApp, wSheet: objSheets))
+                        if (MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1 + start, false, null, objApp, wSheet: objSheets) == false)
                         {
-                            if (objSheets != null)
-                            {
-                                Marshal.FinalReleaseComObject(objSheets);
-                                objSheets = null;
-                            }
-                            if (objApp != null)
-                            {
-                                objApp.Quit();
-                                Marshal.FinalReleaseComObject(objApp);
-                                objApp = null;
-                            }
-
-                            GC.Collect();
-                            GC.WaitForPendingFinalizers();
-                            return false;
-                        }               
-                        
-                        
+                            break;
+                        }  
+                                                
                         start += num;
 
                         //if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
