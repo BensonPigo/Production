@@ -13,24 +13,20 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P12 : Sci.Win.Tems.QueryForm
+    public partial class P13 : Sci.Win.Tems.QueryForm
     {
-        public P12(ToolStripMenuItem menuitem)
+        public P13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.EditMode = true;
         }
 
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
@@ -44,6 +40,7 @@ namespace Sci.Production.Shipping
                 .Numeric("ChargeablePulloutQty", header: "Chargeable Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FOCPulloutQty", header: "FOC Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FinishedFOCStockinQty", header: "Finished FOC Stock-in Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("CurrentFOCStock", header: "Current FOC Stock", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 ;
         }
 
@@ -82,7 +79,6 @@ namespace Sci.Production.Shipping
             #endregion
             string sqlcmd = $@"
 select
-	selected = cast(0 as bit),
 	o.FactoryID,
 	o.BrandID,
 	o.BuyerDelivery,
@@ -95,7 +91,9 @@ select
 	o.FOCQty,
 	ChargeablePulloutQty = isnull(c.value,0),
 	FOCPulloutQty = isnull(c.value2,0),
-	FinishedFOCStockinQty =o.FOCQty - isnull(c.value2,0)
+	FinishedFOCStockinQty =oxx.FOCQty,
+	CurrentFOCStock= oxx.FOCQty - isnull(c2.value,0)
+	
 from orders o with(nolock)
 outer apply(
 	select 
@@ -106,8 +104,18 @@ outer apply(
 	where pod.OrderID = o.id
 	group by pl.Type
 )c
+outer apply(
+	select AddDate=min(AddDate),FOCQty=sum(ox.FOCQty) from Order_Finish ox where ox.id = o.ID
+)oxx
+outer apply(
+	select 
+		value = sum(pod.ShipQty)
+	from Pullout_Detail pod with(nolock)
+	inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
+	where pod.OrderID = o.id and pl.PulloutDate > oxx.AddDate
+)c2
 where o.Junk = 0
-and not exists(select 1 from Order_Finish ox where ox.id = o.ID)
+and exists(select 1 from Order_Finish ox where ox.id = o.ID)
 and exists (
 	select 1
 	from Order_QtyShip_Detail oqd WITH (NOLOCK) 
@@ -134,25 +142,6 @@ order by o.ID
             }
 
             this.listControlBindingSource1.DataSource = dt;
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            DataTable dt = ((DataTable)listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
-            string insertOrderFinished = $@"
-insert Order_Finish(ID,FOCQty,AddName,AddDate)
-select OrderID,FinishedFOCStockinQty,'{Sci.Env.User.UserID}',getdate()
-from #tmp
-";
-            DataTable odt;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, insertOrderFinished, out odt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            this.Find();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
