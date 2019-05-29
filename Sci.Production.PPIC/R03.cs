@@ -1056,10 +1056,11 @@ outer apply(
 	where i.OrderID = t.ID
 )i
 outer apply(
-	select value = sum(i.AdjustPulloutQty)
-	from InvAdjust i WITH (NOLOCK)
-	inner join PackingList pl WITH (NOLOCK) on pl.INVNo = i.GarmentInvoiceID
+	select value = sum(iq.DiffQty) 
+	from InvAdjust i WITH (NOLOCK) 
+	inner join InvAdjust_Qty iq WITH (NOLOCK) on i.ID = iq.ID
 	where i.OrderID = t.ID
+    and iq.Price = 0
 )i2
 order by t.ID;
 
