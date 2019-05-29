@@ -1,11 +1,13 @@
-﻿CREATE TABLE [dbo].[Order_Finish] (
+CREATE TABLE [dbo].[Order_Finish] (
     [UKey]    BIGINT       IDENTITY (1, 1) NOT NULL,
-    [OrderID] VARCHAR (13) NOT NULL,
+    [ID]      VARCHAR (13) NOT NULL,
     [FOCQty]  INT          NOT NULL,
     [AddName] VARCHAR (10) NULL,
     [AddDate] DATETIME     NULL,
     CONSTRAINT [PK_Order_Finish] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO
@@ -21,5 +23,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'FOC入庫�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_Finish', @level2type = N'COLUMN', @level2name = N'OrderID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_Finish', @level2type = N'COLUMN', @level2name = N'ID';
 

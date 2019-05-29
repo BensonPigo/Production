@@ -610,9 +610,10 @@ UPDATE orders SET
 		AND p.status = 'Confirmed'
 	)
 	,pulloutcomplete = 
-		case when (
+		case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) then pulloutcomplete
+			when(
 				SELECT Count(p.id)
-				FROM pullout_detail pd inner join pullout p on pd.id = p.id 
+				FROM pullout_detail pd inner join pullout p on pd.id = p.id
 				WHERE pd.orderid = orders.id 
 				AND p.status = 'Confirmed' 
 				AND pd.status = 'C'
@@ -700,7 +701,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
             foreach (DataRow dr in updateOrderData.Rows)
             {
                 sqlCmds.Add(string.Format(
-                    "update Orders set ActPulloutDate = {0}, PulloutComplete = 0 where ID = '{1}';",
+                    "update Orders set ActPulloutDate = {0}, PulloutComplete = case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) then pulloutcomplete else 0 end where ID = '{1}';",
                     MyUtility.Check.Empty(dr["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["PulloutDate"]).ToString("d") + "'",
                     MyUtility.Convert.GetString(dr["OrderID"])));
             }
