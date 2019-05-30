@@ -70,17 +70,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(436, 12);
-            this.print.TabIndex = 15;
+            this.print.TabIndex = 19;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(436, 48);
-            this.toexcel.TabIndex = 16;
+            this.toexcel.TabIndex = 20;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(436, 84);
-            this.close.TabIndex = 17;
+            this.close.TabIndex = 21;
             // 
             // labelSCIDelivery
             // 
@@ -313,7 +313,7 @@
             this.txtMdivision.Location = new System.Drawing.Point(115, 352);
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 12;
+            this.txtMdivision.TabIndex = 14;
             // 
             // labelM
             // 
@@ -331,7 +331,7 @@
             this.txtseason.Location = new System.Drawing.Point(115, 259);
             this.txtseason.Name = "txtseason";
             this.txtseason.Size = new System.Drawing.Size(80, 23);
-            this.txtseason.TabIndex = 9;
+            this.txtseason.TabIndex = 11;
             // 
             // comboFabricType
             // 
@@ -339,7 +339,7 @@
             this.comboFabricType.Location = new System.Drawing.Point(114, 409);
             this.comboFabricType.Name = "comboFabricType";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
-            this.comboFabricType.TabIndex = 13;
+            this.comboFabricType.TabIndex = 16;
             // 
             // labelCountry
             // 
@@ -355,7 +355,7 @@
             this.txtcountry.Location = new System.Drawing.Point(115, 290);
             this.txtcountry.Name = "txtcountry";
             this.txtcountry.Size = new System.Drawing.Size(232, 30);
-            this.txtcountry.TabIndex = 10;
+            this.txtcountry.TabIndex = 12;
             this.txtcountry.TextBox1Binding = "";
             // 
             // labelRefno
@@ -386,7 +386,7 @@
             this.txtstyle.Location = new System.Drawing.Point(114, 226);
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle.TabIndex = 8;
+            this.txtstyle.TabIndex = 10;
             this.txtstyle.tarBrand = null;
             this.txtstyle.tarSeason = null;
             // 
@@ -396,7 +396,7 @@
             this.txtsupplier.Location = new System.Drawing.Point(114, 321);
             this.txtsupplier.Name = "txtsupplier";
             this.txtsupplier.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier.TabIndex = 11;
+            this.txtsupplier.TabIndex = 13;
             this.txtsupplier.TextBox1Binding = "";
             // 
             // labelSupplier
@@ -420,7 +420,7 @@
             this.comboOrderBy.Name = "comboOrderBy";
             this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
-            this.comboOrderBy.TabIndex = 14;
+            this.comboOrderBy.TabIndex = 17;
             // 
             // labelOrderBy
             // 
@@ -449,7 +449,7 @@
             this.txtfactory.Location = new System.Drawing.Point(115, 380);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 139;
+            this.txtfactory.TabIndex = 15;
             // 
             // chkDWR
             // 
@@ -458,7 +458,7 @@
             this.chkDWR.Location = new System.Drawing.Point(12, 470);
             this.chkDWR.Name = "chkDWR";
             this.chkDWR.Size = new System.Drawing.Size(183, 21);
-            this.chkDWR.TabIndex = 140;
+            this.chkDWR.TabIndex = 18;
             this.chkDWR.Text = "Durable Water Repellent";
             this.chkDWR.UseVisualStyleBackColor = true;
             // 
@@ -481,7 +481,7 @@
             this.txtWKNo2.Location = new System.Drawing.Point(303, 196);
             this.txtWKNo2.Name = "txtWKNo2";
             this.txtWKNo2.Size = new System.Drawing.Size(164, 23);
-            this.txtWKNo2.TabIndex = 142;
+            this.txtWKNo2.TabIndex = 9;
             // 
             // txtWKNo1
             // 
@@ -490,7 +490,7 @@
             this.txtWKNo1.Location = new System.Drawing.Point(114, 196);
             this.txtWKNo1.Name = "txtWKNo1";
             this.txtWKNo1.Size = new System.Drawing.Size(164, 23);
-            this.txtWKNo1.TabIndex = 141;
+            this.txtWKNo1.TabIndex = 8;
             // 
             // label2
             // 
