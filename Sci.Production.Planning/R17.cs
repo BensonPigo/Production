@@ -510,7 +510,12 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     drSDP["C"] = (drSDP["C"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["C"].ToString()) : 0) + (drData["K"].ToString() != string.Empty ? Convert.ToDecimal(drData["K"].ToString()) : 0);
                     drSDP["D"] = (drSDP["D"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["D"].ToString()) : 0) + (drData["L"].ToString() != string.Empty ? Convert.ToDecimal(drData["L"].ToString()) : 0);
                     drSDP["E"] = (drSDP["E"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["E"].ToString()) : 0) + (drData["M"].ToString() != string.Empty ? Convert.ToDecimal(drData["M"].ToString()) : 0);
-                    drSDP["F"] = drSDP["C"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["D"].ToString()) / Convert.ToDecimal(drSDP["C"].ToString()) * 100;
+
+                    // SDP(%)
+                    // drSDP["F"] = drSDP["C"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["D"].ToString()) / Convert.ToDecimal(drSDP["C"].ToString()) * 100;
+                    drSDP["F"] = (Convert.ToDecimal(drSDP["D"].ToString()) + Convert.ToDecimal(drSDP["E"].ToString())) == 0 ? 
+                        0 : Convert.ToDecimal(drSDP["D"].ToString()) / (Convert.ToDecimal(drSDP["D"].ToString()) + Convert.ToDecimal(drSDP["E"].ToString())) * 100;
+
                     #endregion Calc SDP Data
 
                     #region Calc Fail Order List by SP Data
@@ -709,6 +714,8 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                 #region 將資料放入陣列並寫入Excel範例檔
 
                 #region 匯出SDP
+                List<string> MSummaryRow = new List<string>();
+
                 for (int i = 0; i < intRowsCount; i += 1)
                 {
                     DataRow dr = this.gdtSDP.Rows[i];
@@ -734,6 +741,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                         nextMdisvision = (string)this.gdtSDP.Rows[i + 1]["MdivisionID"];
                     }
 
+                    // 一個M的資料寫完，開始加總綠色那一列
                     if ((string)dr["MdivisionID"] != nextMdisvision)
                     {
                         objArray[0, 0] = string.Empty;
@@ -741,8 +749,15 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                         objArray[0, 2] = $"=SUM(C{mdivisionRowsStart}:C{rownum + i})";
                         objArray[0, 3] = $"=SUM(D{mdivisionRowsStart}:D{rownum + i})";
                         objArray[0, 4] = $"=SUM(E{mdivisionRowsStart}:E{rownum + i})";
+
+                        // 綠色列的位置記下來，最後在黃色列的公式寫入
+                        MSummaryRow.Add((rownum + i + 1).ToString());
+
                         rownum++;
-                        objArray[0, 5] = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + i);
+
+                        // objArray[0, 5] = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + i);
+                        objArray[0, 5] = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})*100", rownum + i);
+
                         objArray[0, 6] = (decimal)dr["F"] >= 97 ? "PASS" : "FAIL";
                         worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
                         worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Interior.Color = Color.FromArgb(204, 255, 204);
@@ -752,13 +767,22 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     }
                 }
 
+                // 黃色那一列的大總結
                 if (intRowsCount > 0)
                 {
                     worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount)].Value2 = "G. TTL.";
+                    worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount+2)].Value2 = "* SDP=On time Qty / (On time Qty+Delay Qty)";
                     worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("C{0}:C{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("D{0}:D{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("E{0}:E{1}", 2, rownum + intRowsCount - 1) + ")";
-                    worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
+
+                    worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=C" + MSummaryRow.JoinToString("+C");
+                    worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=D" + MSummaryRow.JoinToString("+D");
+                    worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=E" + MSummaryRow.JoinToString("+E");
+
+                    // worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
+                    worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})*100", rownum + intRowsCount);
+
                     worksheet.Cells[rownum + intRowsCount, 7] = $"=IF(F{rownum + intRowsCount}>=97,\"PASS\",\"FAIL\")";
                     worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = 1;
                     worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
