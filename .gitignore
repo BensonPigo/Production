@@ -50,6 +50,7 @@ Sci.Production.Centralized/obj
 Sci.Production.SubProcess/bin
 Sci.Production.SubProcess/obj
 .vs/Supercharger
+.vs/Production/v16
 Database/.vs
 Database/ProductionDB.dbmdl
 Database/bin/Debug/
