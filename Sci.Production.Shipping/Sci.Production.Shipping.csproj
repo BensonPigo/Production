@@ -161,6 +161,12 @@
     <Compile Include="P03_BatchUpload.Designer.cs">
       <DependentUpon>P03_BatchUpload.cs</DependentUpon>
     </Compile>
+    <Compile Include="P05_BatchImportSO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_BatchImportSO.Designer.cs">
+      <DependentUpon>P05_BatchImportSO.cs</DependentUpon>
+    </Compile>
     <Compile Include="P05_SOCFMDate.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -753,6 +759,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_BatchUpload.resx">
       <DependentUpon>P03_BatchUpload.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_BatchImportSO.resx">
+      <DependentUpon>P05_BatchImportSO.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05_SOCFMDate.resx">
       <DependentUpon>P05_SOCFMDate.cs</DependentUpon>
