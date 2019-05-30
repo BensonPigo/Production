@@ -1434,6 +1434,8 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                     allpartTb.Rows.Add(ndr);
                 }
             }
+
+            this.CopyGridCutRef(true, "");
         }
 
         private void gridArticleSize_SelectionChanged(object sender, EventArgs e)
@@ -1516,6 +1518,8 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
 
                     dr["TotalParts"] = npart;
                 }
+
+                this.CopyGridCutRef(false, copycutref);
             }
         }
 
@@ -1863,6 +1867,35 @@ values
         private void changeLabelBalanceValue()
         {
             this.labelBalanceValue.Text = ArticleSizeTb.Compute("sum(CutOutput)-sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+        }
+
+        private void CopyGridCutRef(bool isSame , string copyCutref = "")
+        {
+            DataRow selectDr = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
+            string cutref = selectDr["Cutref"].ToString();
+            string filter =string.Empty;
+            if (isSame)
+            {
+                filter += $"Cutref='{cutref}' and ukey<>{selectDr["ukey"]}";
+            }
+            else
+            {
+                filter += $"Cutref='{copyCutref}' ";
+            }
+            DataRow[] cutRefDr = CutRefTb.Select(filter);
+
+            foreach (DataRow dr in cutRefDr)
+            {
+                dr["item"] = selectDr["item"];
+
+                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
+                foreach (DataRow row in ArticleAry)
+                {
+                    row["item"] = dr["item"];
+                }
+            }
+            
+            gridArticleSize.Refresh();
         }
     }
 }
