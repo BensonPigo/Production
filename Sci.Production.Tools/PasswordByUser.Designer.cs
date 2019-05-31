@@ -75,10 +75,20 @@
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(993, 572);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.grid1);
             this.detailcont.Controls.Add(this.radioGroup1);
+            this.detailcont.Size = new System.Drawing.Size(993, 534);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 534);
+            this.detailbtm.Size = new System.Drawing.Size(993, 38);
             // 
             // browse
             // 
@@ -139,7 +149,7 @@
             this.radioGroup1.Controls.Add(this.labelID);
             this.radioGroup1.Location = new System.Drawing.Point(10, 3);
             this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(463, 494);
+            this.radioGroup1.Size = new System.Drawing.Size(463, 671);
             this.radioGroup1.TabIndex = 3;
             this.radioGroup1.TabStop = false;
             // 
@@ -298,6 +308,7 @@
             this.txtEMailAddr.Name = "txtEMailAddr";
             this.txtEMailAddr.Size = new System.Drawing.Size(362, 23);
             this.txtEMailAddr.TabIndex = 9;
+            this.txtEMailAddr.Validating += new System.ComponentModel.CancelEventHandler(this.txtEMailAddr_Validating);
             // 
             // editFactory
             // 
@@ -472,7 +483,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(418, 349);
+            this.grid1.Size = new System.Drawing.Size(514, 526);
             this.grid1.TabIndex = 15;
             this.grid1.TabStop = false;
             // 
@@ -484,6 +495,7 @@
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
             this.Name = "PasswordByUser";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "Password by User";
             this.WorkAlias = "Pass1";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
