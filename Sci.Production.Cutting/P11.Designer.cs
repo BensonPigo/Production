@@ -148,7 +148,7 @@
             this.radioGroup1.Controls.Add(this.radioWithcuto);
             this.radioGroup1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.radioGroup1.IsSupportEditMode = false;
-            this.radioGroup1.Location = new System.Drawing.Point(685, 3);
+            this.radioGroup1.Location = new System.Drawing.Point(739, 3);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(114, 43);
             this.radioGroup1.TabIndex = 14;
@@ -202,22 +202,22 @@
             // btnCopy_to_same_Cutref
             // 
             this.btnCopy_to_same_Cutref.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnCopy_to_same_Cutref.Location = new System.Drawing.Point(158, 9);
+            this.btnCopy_to_same_Cutref.Location = new System.Drawing.Point(102, 9);
             this.btnCopy_to_same_Cutref.Name = "btnCopy_to_same_Cutref";
-            this.btnCopy_to_same_Cutref.Size = new System.Drawing.Size(224, 30);
+            this.btnCopy_to_same_Cutref.Size = new System.Drawing.Size(295, 30);
             this.btnCopy_to_same_Cutref.TabIndex = 12;
-            this.btnCopy_to_same_Cutref.Text = "Copy Cutpart/Artwork to same CutRef#";
+            this.btnCopy_to_same_Cutref.Text = "Copy Item/Cutpart/Artwork to same CutRef#";
             this.btnCopy_to_same_Cutref.UseVisualStyleBackColor = true;
             this.btnCopy_to_same_Cutref.Click += new System.EventHandler(this.btnCopy_to_same_Cutref_Click);
             // 
             // btnCopy_to_other_Cutref
             // 
             this.btnCopy_to_other_Cutref.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnCopy_to_other_Cutref.Location = new System.Drawing.Point(383, 9);
+            this.btnCopy_to_other_Cutref.Location = new System.Drawing.Point(403, 9);
             this.btnCopy_to_other_Cutref.Name = "btnCopy_to_other_Cutref";
-            this.btnCopy_to_other_Cutref.Size = new System.Drawing.Size(219, 30);
+            this.btnCopy_to_other_Cutref.Size = new System.Drawing.Size(295, 30);
             this.btnCopy_to_other_Cutref.TabIndex = 13;
-            this.btnCopy_to_other_Cutref.Text = "Copy Cutpart/Artwork to other CutRef#";
+            this.btnCopy_to_other_Cutref.Text = "Copy Item/Cutpart/Artwork to other CutRef#";
             this.btnCopy_to_other_Cutref.UseVisualStyleBackColor = true;
             this.btnCopy_to_other_Cutref.Click += new System.EventHandler(this.btnCopy_to_other_Cutref_Click);
             // 
@@ -654,7 +654,7 @@
             // 
             this.labelGroup.BackColor = System.Drawing.Color.Transparent;
             this.labelGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelGroup.Location = new System.Drawing.Point(657, 13);
+            this.labelGroup.Location = new System.Drawing.Point(711, 13);
             this.labelGroup.Name = "labelGroup";
             this.labelGroup.Size = new System.Drawing.Size(35, 23);
             this.labelGroup.TabIndex = 17;
@@ -665,8 +665,10 @@
             // txtfactoryByM
             // 
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM.boolFtyGroupList = true;
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.IsProduceFty = false;
             this.txtfactoryByM.IssupportJunk = false;
             this.txtfactoryByM.Location = new System.Drawing.Point(396, 5);
             this.txtfactoryByM.Name = "txtfactoryByM";
@@ -908,6 +910,7 @@
             this.DefaultControlForEdit = "txtCutref";
             this.EditMode = true;
             this.Name = "P11";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P11.Batch Create Bundle Card";
             this.Controls.SetChildIndex(this.splitContainer5, 0);
             this.radioGroup1.ResumeLayout(false);
