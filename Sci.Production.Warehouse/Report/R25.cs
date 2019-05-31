@@ -155,6 +155,7 @@ select
 	 (SELECT MinSciDelivery FROM DBO.GetSCI(ed.Poid,o.Category)) as [Earliest SCI Delivery],
 	EarlyDays=DATEDIFF(day,e.WhseArrival,o.KPILETA),
 	o.FactoryID,
+    po.styleid,
 	ed.PoID,
 	seq = ed.Seq1+' '+ed.Seq2,
 	ed.suppid,
@@ -176,7 +177,8 @@ select
 					when o.Category = 'G' then 'Garment'
 					when o.Category = 'O' then 'Other'
 	end,
-	TPEPass1.Email
+	TPEPass1.Email,
+    PO.POSMR
 from Export e
 Inner join Export_Detail ed on e.ID = ed.ID
 inner join orders o on o.id = ed.poid
