@@ -110,13 +110,14 @@ and estcutdate = '{estcutdate}'";
                             line = MyUtility.GetValue.Lookup(string.Format("Select SewingLineid from Sewingschedule_Detail Where Orderid = '{0}' ", dr["orderid_b"]), null);
                         }
                         dr["Sewinglineid"] = line;
-                        
+
                         //SpreadingNoID可能是DBNULL或空字串，對User來說都一樣，因此放進OR
-                        DataRow[] griddray = gridTable.Select($@"
-                                                                cuttingid = '{dr["id"]}' 
-                                                                and cutcellid ='{dr["cutcellid"]}' 
-                                                                and SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='"+ dr["SpreadingNoID"].ToString()+ "'" )}
-                                                                ");
+                        string selwhere = $@"
+cuttingid = '{dr["id"]}' 
+and cutcellid ='{dr["cutcellid"]}' 
+and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='" + dr["SpreadingNoID"].ToString() + "'")})
+";
+                        DataRow[] griddray = gridTable.Select(selwhere);
 
                         if (griddray.Length == 0)
                         {
@@ -175,7 +176,10 @@ and estcutdate = '{estcutdate}'";
                             iu += string.Format(@"
 insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID,SpreadingNoID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}','{8}');
 ", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"], dr["SpreadingNoID"]);
-                            importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}'", dr["CuttingID"], dr["cutcellid"]));
+                            importay = detailTable.Select($@"id = '{dr["CuttingID"]}' 
+and cutcellid = '{dr["cutcellid"]}' 
+and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='" + dr["SpreadingNoID"].ToString() + "'")})");
+                                                                
                             importedIDs.Add(id);
                             if (importay.Length > 0)
                             {
@@ -206,11 +210,11 @@ insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,
                                 //265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
                                 iu += string.Format(@"
 update Workorder set CutplanID = '{0}' 
-where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}';
-" , id, dr["CuttingID"], dr["cutcellid"], keyWord, dateEstCutDate.Text);
-                                idnum++;
-                                id = id.Substring(0, id.Length - 4) + idnum.ToString().PadLeft(4,'0');
+where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}' and isnull(SpreadingNoID,'') = '{5}' ;
+", id, dr["CuttingID"], dr["cutcellid"], keyWord, dateEstCutDate.Text, dr["SpreadingNoID"]);
                             }
+                            idnum++;
+                            id = id.Substring(0, id.Length - 4) + idnum.ToString().PadLeft(4, '0');
                         }
                     }
                 }

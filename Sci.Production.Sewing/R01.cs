@@ -537,6 +537,17 @@ from GenTotal3"),
                         this._printData,
                         "OrderId,ComboType,QAQty,LastShift",
                         string.Format(@"
+	--準備台北資料(須排除這些)
+	select ps.ID
+	into #TPEtmp
+	from PO_Supp ps
+	inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+	inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
+	inner join MtlType ml on ml.id = fb.MtlTypeID
+	where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
+	and ml.isThread=1 
+	and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
+
 ;with tmpArtwork as (
 	Select  ID,
             [DecimalNumber] =case   when ProductionUnit = 'QTY' then 4
@@ -561,6 +572,8 @@ tmpAllSubprocess as (
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
           and o.LocalOrder <> 1
 		  and ot.Price > 0         
+		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+			  or ot.ArtworkTypeID <> 'SP_THREAD')
     group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType),ta.DecimalNumber
 )
 select ArtworkTypeID

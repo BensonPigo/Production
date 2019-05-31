@@ -431,6 +431,57 @@ where (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) < -d
 
             #endregion 檢查負數庫存
 
+            #region 檢查InQty - 轉倉數量 + 調整數量 < 轉出數量, 則不能unconfirmed
+            sqlcmd = string.Format(@"
+Select  d.topoid
+        , d.toseq1
+        , d.toseq2
+        , d.toRoll
+        , d.Qty
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , d.toDyelot
+from (
+		Select  topoid
+                , toseq1
+                , toseq2
+                , toRoll
+                , Qty = sum(Qty)
+                , toStocktype
+                , toDyelot
+		from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+		where   Id = '{0}' 
+                and Qty > 0
+		Group by topoid, toseq1, toseq2, toRoll, toStocktype, toDyelot
+) as d
+left join FtyInventory f WITH (NOLOCK) on   d.toPoId = f.PoId 
+                                            and d.toSeq1 = f.Seq1 
+                                            and d.toSeq2 = f.seq2 
+                                            and d.toStocktype = f.StockType 
+                                            and d.toRoll = f.Roll
+                                            and d.toDyelot = f.Dyelot
+where (isnull (f.InQty, 0) - d.Qty + isnull (f.AdjustQty, 0)) < isnull (f.OutQty, 0) 
+  ", CurrentMaintain["id"]);
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                ShowErr(sqlcmd, result2);
+                return;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    ids = "";
+                    foreach (DataRow tmp in datacheck.Rows)
+                    {
+                        ids += string.Format("Bulk SP#: {0} {1}-{2} already exceeded the release qty({3}), cann't be unconfirm!!" + Environment.NewLine
+                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["qty"]);
+                    }
+                    MyUtility.Msg.WarningBox(ids, "Warning");
+                    return;
+                }
+            }
+            #endregion
+
             #region -- 更新表頭狀態資料 --
 
             sqlupd3 = string.Format(@"

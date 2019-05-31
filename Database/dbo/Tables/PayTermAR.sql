@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[PayTermAR] (
-    [ID]              VARCHAR (5)   CONSTRAINT [DF_PayTermAR_ID] DEFAULT ('') NOT NULL,
+    [ID]              VARCHAR (10)   CONSTRAINT [DF_PayTermAR_ID] DEFAULT ('') NOT NULL,
     [Description]     NVARCHAR (40) CONSTRAINT [DF_PayTermAR_Description] DEFAULT ('') NULL,
     [Term]            VARCHAR (5)   CONSTRAINT [DF_PayTermAR_Term] DEFAULT ('') NULL,
     [BeforeAfter]     VARCHAR (1)   CONSTRAINT [DF_PayTermAR_BeforeAfter] DEFAULT ('') NULL,

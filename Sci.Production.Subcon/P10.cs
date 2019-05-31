@@ -372,7 +372,8 @@ where a.id='{0}'
         protected override void ClickConfirm()
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
-            String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
+            string sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
+            string sqlupfromAP = string.Empty;
             DualResult result, result2;
             DataTable datacheck;
 
@@ -417,7 +418,7 @@ where ap.status = 'New' and aa.Id ='{0}'",
                 {
                     ids += drchk[0].ToString() + ",";
                 }
-                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't Approve it", ids));
+                MyUtility.Msg.WarningBox(string.Format("These POID <{0}> already closed, can't Approve it", ids));
                 return;
             }
             #endregion
@@ -446,11 +447,41 @@ where ap.status = 'New' and aa.Id ='{0}'",
                 return;
             }
             #endregion
+            #region 檢查exact
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
+            if (str == null || string.IsNullOrWhiteSpace(str))
+            {
+                MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't approved!", CurrentMaintain["currencyID"]));
+                return;
+            }
+            #endregion
+
             #region 開始更新相關table資料
             sqlupd3 = string.Format("update artworkap set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
-            
+            #region 從PO更新price資訊(實體欄位) + 加總明細金額至表頭
+
+            sqlupfromAP = $@"
+update aad set
+	Price=apd.Price,
+	Stitch=apd.Stitch,
+	Farmin=apd.Farmin,
+	PatternCode=apd.PatternCode,
+	PatternDesc=apd.PatternDesc,
+    Amount = apd.Price*aad.ApQty
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where aad.id = '{this.CurrentMaintain["ID"]}'
+
+declare @exact int = (Select exact from Currency WITH (NOLOCK) where id = '{CurrentMaintain["currencyId"]}')
+declare @sumAmount numeric(14, 4) = (select sum(amount) from ArtworkAP_detail where id = '{this.CurrentMaintain["ID"]}')
+declare @Amount numeric(14, 4) = (select ROUND(@sumAmount, @exact))
+declare @Vat numeric(11, 2) = ROUND(@sumAmount * (select VatRate from ArtworkAP where id = '{this.CurrentMaintain["ID"]}') / 100,@exact)
+update ArtworkAP set amount = @Amount, vat = @Vat  where ID = '{this.CurrentMaintain["ID"]}';
+";
+            #endregion
+
             foreach (DataRow drchk in DetailDatas)
             {
                 sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.apqty) qty
@@ -487,7 +518,14 @@ where ap.status = 'New' and aa.Id ='{0}'",
                         ShowErr(sqlupd3, result);
                         return;
                     }
-
+                    
+                    if (!(result2 = DBProxy.Current.Execute(null, sqlupfromAP)))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result2);
+                        return;
+                    }
+                    
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                     {
                         _transactionscope.Dispose();
@@ -520,7 +558,7 @@ where ap.status = 'New' and aa.Id ='{0}'",
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
-            String sqlcmd, sqlupd2 = "", sqlupd3 = "",ids = "";
+            string sqlcmd, sqlupd2 = "", sqlupd3 = "",ids = "";
             DualResult result, result2;
             DataTable datacheck;
             #region 檢查po是否close了。
@@ -533,7 +571,7 @@ where ap.status = 'New' and aa.Id ='{0}'",
                 {
                     ids += drchk[0].ToString() + ",";
                 }
-                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't UnApprove it", ids));
+                MyUtility.Msg.WarningBox(string.Format("These POID <{0}> already closed, can't UnApprove it", ids));
                 return;
             }
             #endregion

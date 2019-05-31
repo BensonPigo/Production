@@ -470,14 +470,21 @@ where   #tmp.poid = dbo.po_supp.id
                 {
                     if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
-                        string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue));
-                        if (category == "M")
+                        string sqlorders = string.Format("select category,FactoryID,OrderTypeID from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue);
+                        DataRow dr;
+                        if (MyUtility.Check.Seek(sqlorders, out dr))
                         {
-                            CurrentDetailData["stocktype"] = "I";
-                        }
-                        else
-                        {
-                            CurrentDetailData["stocktype"] = "B";
+                            if (MyUtility.Convert.GetString(dr["category"]) == "M")
+                            {
+                                CurrentDetailData["stocktype"] = "I";
+                            }
+                            else
+                            {
+                                CurrentDetailData["stocktype"] = "B";
+                            }
+
+                            CurrentDetailData["FactoryID"] = dr["FactoryID"];
+                            CurrentDetailData["OrderTypeID"] = dr["OrderTypeID"];
                         }
                     }
                     else
@@ -606,7 +613,7 @@ Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["e
                         }
 
                         DataRow dr;
-                        if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
+                        if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd() +
                                 @"and p.seq1 ='{2}' and p.seq2 = '{3}' and left(p.seq1, 1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
 
@@ -770,6 +777,8 @@ WHERE   StockType='{0}'
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype)   //12
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out Col_Location)    //13
             .Text("remark", header: "Remark")    //14
+            .Text("FactoryID", header: "Prod. Factory", iseditingreadonly: true)    //11
+            .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(15), iseditingreadonly: true)    //11
             ;     //
             cbb_Roll.MaxLength = 8;
             cbb_Dyelot.MaxLength = 8;
@@ -1034,28 +1043,29 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             #endregion 更新庫存數量  ftyinventory
 
             #region 更新 Po_Supp_Detail StockUnit
-            string sql_UpdatePO_Supp_Detail = @";
-alter table #Tmp alter column poid varchar(20)
-alter table #Tmp alter column seq1 varchar(3)
-alter table #Tmp alter column seq2 varchar(3)
-alter table #Tmp alter column StockUnit varchar(20)
+            //ISP20190607 StockUnit的更新一律在資料交換的imp_po進行，這邊不用了
+            //            string sql_UpdatePO_Supp_Detail = @";
+            //alter table #Tmp alter column poid varchar(20)
+            //alter table #Tmp alter column seq1 varchar(3)
+            //alter table #Tmp alter column seq2 varchar(3)
+            //alter table #Tmp alter column StockUnit varchar(20)
 
-select  distinct poid
-        , seq1
-        , seq2
-        , StockUnit 
-into #tmpD 
-from #Tmp
+            //select  distinct poid
+            //        , seq1
+            //        , seq2
+            //        --, StockUnit 
+            //into #tmpD 
+            //from #Tmp
 
-merge dbo.PO_Supp_Detail as target
-using #tmpD as src on   target.ID = src.poid 
-                        and target.seq1 = src.seq1 
-                        and target.seq2 =src.seq2 
-when matched then
-    update
-    set target.StockUnit = src.StockUnit;
-";
-            #endregion 
+            //merge dbo.PO_Supp_Detail as target
+            //using #tmpD as src on   target.ID = src.poid 
+            //                        and target.seq1 = src.seq1 
+            //                        and target.seq2 =src.seq2 
+            //when matched then
+            //    update
+            //    set target.StockUnit = src.StockUnit;
+            //";
+            #endregion
 
             #region Base on wkno 收料時，需回寫export
             sqlcmd4 = string.Format(@"
@@ -1131,13 +1141,13 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain
                     }
                     #endregion
 
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sql_UpdatePO_Supp_Detail, out resulttb, "#tmp", conn: sqlConn)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(result);
-                        return;
-                    }
+                    //if (!(result = MyUtility.Tool.ProcessWithDatatable
+                    //    ((DataTable)detailgridbs.DataSource, "", sql_UpdatePO_Supp_Detail, out resulttb, "#tmp", conn: sqlConn)))
+                    //{
+                    //    _transactionscope.Dispose();
+                    //    ShowErr(result);
+                    //    return;
+                    //}
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
@@ -1408,7 +1418,10 @@ select  a.id
         , a.Location
         , a.remark
         , a.ukey
+        ,o.FactoryID
+        ,o.OrderTypeID
 from dbo.Receiving_Detail a WITH (NOLOCK) 
+left join orders o WITH (NOLOCK) on o.id = a.PoId
 Where a.id = '{0}'
 order by ukey", masterID);
 
@@ -1477,6 +1490,8 @@ select a.poid
         , '' as dyelot
         , '' as remark
         , '' as location
+        ,c.FactoryID
+        ,c.OrderTypeID
 from dbo.Export_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
                                                  and a.Seq1 = b.SEQ1    

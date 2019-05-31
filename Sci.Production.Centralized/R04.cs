@@ -40,8 +40,6 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, ",Bulk,Sample,Local Order,Garment,Mockup,Bulk+Sample,Bulk+Sample+Garment");
-            this.comboCategory.SelectedIndex = 0;
             this.comboM.Text = Sci.Env.User.Keyword;
         }
 
@@ -56,6 +54,7 @@ namespace Sci.Production.Centralized
             this.comboFactory.SetDefalutIndex(string.Empty);
             #endregion
 
+            this.comboCategory.SelectedIndex = 0;
             base.OnFormLoaded();
         }
 
@@ -64,7 +63,7 @@ namespace Sci.Production.Centralized
         {
             this.date1 = this.dateOoutputDate.Value1;
             this.date2 = this.dateOoutputDate.Value2;
-            this.category = this.comboCategory.Text;
+            this.category = this.comboCategory.SelectedValue.ToString();
             this.mDivision = this.comboM.Text;
             this.factory = this.comboFactory.Text;
             this.brand = this.txtbrand.Text;
@@ -102,6 +101,7 @@ into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+left join Factory f WITH (NOLOCK) on o.FactoryID = f.id
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 --left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType 
@@ -121,7 +121,10 @@ outer apply
 		for xml path('')
 	),1,1,'')
 )sr
-where 1=1 "));
+where 1=1 
+--排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
+and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))
+"));
 
             if (!MyUtility.Check.Empty(this.date1))
             {
@@ -151,6 +154,11 @@ where 1=1 "));
             if (this.where_reason)
             {
                 sqlCmd.Append(" and sd.SewingReasonID <>'' ");
+            }
+
+            if (this.chkType.Checked)
+            {
+                sqlCmd.Append(" and f.Type <> 'S' ");
             }
 
             sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty
@@ -211,32 +219,9 @@ left join #cl c on c.style = IIF(t.Category <> 'M',OrderStyle,MockupStyle) and c
 				and c.Shift = t.Shift and c.Team = t.Team and c.OrderId = t.OrderId and c.ComboType = t.ComboType and c.scOutputDate = t.OutputDate
 left join Factory f on t.FactoryID = f.ID
 where 1=1");
-            if (!MyUtility.Check.Empty(this.category) && this.category != "Mockup")
+            if (!MyUtility.Check.Empty(this.category))
             {
-                if (this.category == "Bulk")
-                {
-                    sqlCmd.Append(" and t.OrderCategory = 'B'");
-                }
-                else if (this.category == "Sample")
-                {
-                    sqlCmd.Append(" and t.OrderCategory = 'S'");
-                }
-                else if (this.category == "Garment")
-                {
-                    sqlCmd.Append(" and t.OrderCategory in ('G')");
-                }
-                else if (this.category == "Bulk+Sample")
-                {
-                    sqlCmd.Append(" and (t.OrderCategory = 'B' or t.OrderCategory = 'S')");
-                }
-                else if (this.category == "Bulk+Sample+Garment")
-                {
-                    sqlCmd.Append(" and t.OrderCategory in ('B', 'S', 'G')");
-                }
-                else
-                {
-                    sqlCmd.Append(" and t.LocalOrder = 1");
-                }
+                sqlCmd.Append($" and t.OrderCategory in ({this.category})");
             }
 
             if (!MyUtility.Check.Empty(this.brand))

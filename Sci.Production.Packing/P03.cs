@@ -262,9 +262,6 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }
             }
 
-            // Purchase Ctn
-            this.displayPurchaseCtn.Value = MyUtility.Check.Empty(this.CurrentMaintain["LocalPOID"]) ? string.Empty : "Y";
-
             // UnConfirm History按鈕變色
             if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "PackingList_History", "ID"))
             {
@@ -333,7 +330,19 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }
             }
             #endregion
-
+            #region displayPurchaseCtn
+            sqlcmdC = $@"select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id
+where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
+";
+            if (MyUtility.Check.Seek(sqlcmdC ))
+            {
+                this.displayPurchaseCtn.Text = "Y";
+            }
+            else
+            {
+                this.displayPurchaseCtn.Text = "N";
+            }
+            #endregion
             #region disClogCFMStatus
             sqlcmdC = $@"select iif(count(pd.ID) = count(pd.ReceiveDate), 'Y','N') [ClogCFMStatus]
                          from PackingList_Detail pd
@@ -1307,6 +1316,22 @@ into g
                 }
 
                 this.CurrentMaintain["ID"] = id;
+            }
+
+            // Get表身 SCICtnNo
+            if (this.IsDetailInserting)
+            {
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), "IsDetailInserting"))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), ""))
+                {
+                    return false;
+                }
             }
 
             // 表身重新計算後,再判斷CBM or GW 是不是0

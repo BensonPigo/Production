@@ -612,9 +612,11 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.boolFtyGroupList = true;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(373, 14);
             this.txtmfactory.Name = "txtmfactory";
@@ -625,8 +627,6 @@
             // 
             this.txtuserApproveName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
             this.txtuserApproveName.DisplayBox1Binding = "";
-            this.txtuserApproveName.TextBox1.ReadOnly = true;
-            this.txtuserApproveName.TextBox1.IsSupportEditMode = false;
             this.txtuserApproveName.Location = new System.Drawing.Point(107, 170);
             this.txtuserApproveName.Name = "txtuserApproveName";
             this.txtuserApproveName.Size = new System.Drawing.Size(300, 23);
@@ -667,6 +667,7 @@
             this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
             this.txtsubconSupplier.TabIndex = 0;
             this.txtsubconSupplier.TextBox1Binding = "";
+            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtsubconSupplier_Validating);
             // 
             // labelTotalPoQty
             // 
@@ -755,8 +756,6 @@
             // 
             this.txtuserLockName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LockName", true));
             this.txtuserLockName.DisplayBox1Binding = "";
-            this.txtuserLockName.TextBox1.ReadOnly = true;
-            this.txtuserLockName.TextBox1.IsSupportEditMode = false;
             this.txtuserLockName.Location = new System.Drawing.Point(107, 144);
             this.txtuserLockName.Name = "txtuserLockName";
             this.txtuserLockName.Size = new System.Drawing.Size(300, 23);
@@ -768,8 +767,6 @@
             // 
             this.txtuserCloseName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CloseName", true));
             this.txtuserCloseName.DisplayBox1Binding = "";
-            this.txtuserCloseName.TextBox1.ReadOnly = true;
-            this.txtuserCloseName.TextBox1.IsSupportEditMode = false;
             this.txtuserCloseName.Location = new System.Drawing.Point(107, 196);
             this.txtuserCloseName.Name = "txtuserCloseName";
             this.txtuserCloseName.Size = new System.Drawing.Size(300, 23);
@@ -820,6 +817,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P01. Sub-con Purchase Order";
             this.UnApvChkValue = "Approved";
             this.UncheckChkValue = "Locked";

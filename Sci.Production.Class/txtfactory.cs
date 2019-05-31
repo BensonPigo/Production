@@ -18,6 +18,7 @@ namespace Sci.Production.Class
         private bool _IssupportJunk = false;
         private bool _FilteMDivision = false;
         private bool _boolFtyGroupList = true;
+        private bool _IsProduceFty = false;
 
         [Description("是否要顯示 Junk 的資料")]
         public bool IssupportJunk
@@ -31,6 +32,13 @@ namespace Sci.Production.Class
         {
             get { return _FilteMDivision; }
             set { _FilteMDivision = value; }
+        }
+
+        [Description("是否只顯示 IsProduceFty 的資料")]
+        public bool IsProduceFty
+        {
+            get { return _IsProduceFty; }
+            set { _IsProduceFty = value; }
         }
 
         /// <summary>
@@ -63,6 +71,10 @@ namespace Sci.Production.Class
             if (!IssupportJunk)
             {
                 listFilte.Add("Junk = 0");
+            }
+            if (IsProduceFty)
+            {
+                listFilte.Add("IsProduceFty = 1");
             }
             if (FilteMDivision)
             {
@@ -109,6 +121,10 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
             if (!IssupportJunk)
             {
                 listFilte.Add("Junk = 0");
+            }
+            if (IsProduceFty)
+            {
+                listFilte.Add("IsProduceFty = 1");
             }
             if (FilteMDivision)
             {

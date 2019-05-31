@@ -23,6 +23,7 @@ namespace Sci.Production.Subcon
     public partial class P01 : Sci.Win.Tems.Input6
     {
         string artworkunit;
+        bool isNeedPlanningP03Quote = false;
         Form batchapprove;
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -41,10 +42,15 @@ namespace Sci.Production.Subcon
                 if (this.EditMode && this.txtsubconSupplier.TextBox1.Text != this.txtsubconSupplier.TextBox1.OldValue)
                 {
                     CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier.TextBox1.Text, "LocalSupp", "ID");
-                    ((DataTable)detailgridbs.DataSource).Rows.Clear();
-
                 }
             };
+
+            this.detailgrid.RowPostPaint += Detailgrid_RowPostPaint;
+        }
+
+        private void Detailgrid_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            this.DetalGridCellEditChange(e.RowIndex);
         }
 
         // 新增時預設資料
@@ -107,6 +113,23 @@ namespace Sci.Production.Subcon
             return base.ClickEditBefore();
         }
 
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            # region 如果採購單已建立 AP, 則Supplier欄位不可編輯
+            string chkp10exists = $@"
+select 1
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where  apd.id = '{CurrentMaintain["id"]}' 
+";
+            if (MyUtility.Check.Seek(chkp10exists))
+            {
+                txtsubconSupplier.TextBox1.ReadOnly = true;
+            }
+            #endregion
+        }
+
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
@@ -158,6 +181,27 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
                 txtmfactory.Focus();
                 return false;
+            }
+
+            bool isDetailHasUniPriceZeroData = this.DetailDatas.Any(s => MyUtility.Check.Empty(s["unitprice"]));
+            if (isDetailHasUniPriceZeroData)
+            {
+                MyUtility.Msg.WarningBox("Unit Price cannot be empty.");
+                return false;
+            }
+            #endregion
+
+            #region 如果採購單已建立 AP, 則Supplier更改失敗
+            string chkp10exists = $@"
+select 1
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where  apd.id = '{CurrentMaintain["id"]}' 
+";
+            if (MyUtility.Check.Seek(chkp10exists) && MyUtility.Convert.GetString(this.CurrentMaintain["localsuppid"]) != MyUtility.Convert.GetString(this.CurrentMaintain["localsuppid", DataRowVersion.Original]))
+            {
+                this.CurrentMaintain["localsuppid"] = this.CurrentMaintain["localsuppid", DataRowVersion.Original];
+                MyUtility.Msg.InfoBox("PO had already created AP, supplier cannot modify.");
             }
             #endregion
 
@@ -227,6 +271,10 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             base.OnDetailEntered();
             dateApproveDate.ReadOnly = true;
             ChangeDetailHeader();
+            #region 判斷Artwork 是否需要在 Planning B03 報價
+            this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.CurrentMaintain["artworktypeid"].ToString());
+            #endregion
+
             #region -- 加總明細金額，顯示於表頭 --
             if (!(CurrentMaintain == null))
             {
@@ -239,7 +287,6 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             }
             #endregion
             numTotal.Text = (Convert.ToDecimal(numVat.Text) + Convert.ToDecimal(numAmount.Text)).ToString();
-            txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
             btnIrrPriceReason.Enabled = !this.EditMode;
@@ -399,8 +446,6 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns["stitch"].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
-            //detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;  //Cutpart Name
-            detailgrid.Columns["unitprice"].DefaultCellStyle.BackColor = Color.Pink; //Unit Price
             detailgrid.Columns["qtygarment"].DefaultCellStyle.BackColor = Color.Pink; //Qty/GMT
             #endregion
         }
@@ -418,7 +463,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 ShowErr(sqlcmd, result);
                 return;
             }
-            
+
         }
 
         protected override void ClickUncheck()
@@ -433,7 +478,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             sqlcmd = string.Format("update artworkpo set Status='New', LockName='', LockDate=null, editname='{0}', editdate=GETDATE() " +
                             "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
-            if (!(result = DBProxy.Current.Execute(null, sqlcmd))) {
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
                 ShowErr(sqlcmd, result);
                 return;
             }
@@ -551,7 +597,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 txtartworktype_ftyArtworkType.Focus();
                 return;
             }
-            var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource, "P01");
+            var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource, "P01", this.isNeedPlanningP03Quote);
             frm.ShowDialog(this);
 
             DataTable dg = (DataTable)detailgridbs.DataSource;
@@ -617,6 +663,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();
             }
+            this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.txtartworktype_ftyArtworkType.Text);
             ChangeDetailHeader();
         }
 
@@ -688,17 +735,21 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
 
         private void btnBatchApprove_Click(object sender, EventArgs e)
         {
-            if (this.Perm.Confirm) {
-                if (batchapprove == null || batchapprove.IsDisposed) {
+            if (this.Perm.Confirm)
+            {
+                if (batchapprove == null || batchapprove.IsDisposed)
+                {
                     batchapprove = new Sci.Production.Subcon.P01_BatchApprove(reload);
                     batchapprove.Show();
                 }
-                else  {
+                else
+                {
                     batchapprove.Activate();
                 }
             }
-            else {
-                MyUtility.Msg.WarningBox("You don't have permission to confirm."); 
+            else
+            {
+                MyUtility.Msg.WarningBox("You don't have permission to confirm.");
             }
         }
 
@@ -707,23 +758,79 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             if (this.CurrentDataRow != null)
             {
                 string idIndex = string.Empty;
-                if (!MyUtility.Check.Empty(CurrentMaintain)) {
-                    if (!MyUtility.Check.Empty(CurrentMaintain["id"])) {
+                if (!MyUtility.Check.Empty(CurrentMaintain))
+                {
+                    if (!MyUtility.Check.Empty(CurrentMaintain["id"]))
+                    {
                         idIndex = MyUtility.Convert.GetString(CurrentMaintain["id"]);
                     }
                 }
                 this.ReloadDatas();
                 this.RenewData();
                 if (!MyUtility.Check.Empty(idIndex)) this.gridbs.Position = this.gridbs.Find("ID", idIndex);
-            } 
+            }
         }
 
         private void P01_FormClosing(object sender, FormClosingEventArgs e)
-        { 
+        {
             if (batchapprove != null)
             {
                 batchapprove.Dispose();
             }
+        }
+
+
+
+        private void DetalGridCellEditChange(int index)
+        {
+
+            #region 檢查Qty欄位是否可編輯
+            string spNo = this.detailgrid.GetDataRow(index)["orderid"].ToString();
+
+            if (!this.IsSampleOrder(spNo) && isNeedPlanningP03Quote)
+            {
+                this.detailgrid.Rows[index].Cells["unitprice"].ReadOnly = true;
+                this.detailgrid.Rows[index].Cells["unitprice"].Style.ForeColor = Color.Black;
+                this.detailgrid.Rows[index].Cells["unitprice"].Style.BackColor = Color.White; //Unit Price
+            }
+            else
+            {
+                this.detailgrid.Rows[index].Cells["unitprice"].ReadOnly = false;
+                this.detailgrid.Rows[index].Cells["unitprice"].Style.ForeColor = Color.Red;
+                this.detailgrid.Rows[index].Cells["unitprice"].Style.BackColor = Color.Pink; //Unit Price
+            }
+
+            #endregion
+        }
+
+        private void txtsubconSupplier_Validating(object sender, CancelEventArgs e)
+        {
+            #region supplier有調整需清空表身price
+            if (!isNeedPlanningP03Quote)
+            {
+                return;
+            }
+
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string spNo = dr["orderid"].ToString();
+                if (!this.IsSampleOrder(spNo))
+                {
+                    dr["unitprice"] = 0;
+                }
+            }
+
+            #endregion
+        }
+
+        private bool IsSampleOrder(string spNo)
+        {
+            string sqlCheckSampleOrder = $@"
+select 1
+from orders with (nolock)
+where id = '{spNo}' and Category = 'S'
+";
+            return MyUtility.Check.Seek(sqlCheckSampleOrder);
         }
     }
 

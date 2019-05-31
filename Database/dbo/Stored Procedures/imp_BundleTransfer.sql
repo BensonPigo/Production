@@ -38,13 +38,17 @@ BEGIN
 
 		declare @MaxSid bigint
 		select @MaxSid = max(Sid) from  #tmp
-
+		
 			--add BundleTransfer	
-			INSERT INTO BundleTransfer(Sid,RFIDReaderId,Type,SubProcessId,TagId,BundleNo,TransferDate,AddDate,LocationID,RFIDProcessLocationID)
-			SELECT RB.sid, RB.readerid, RR.type, RR.ProcessId, RB.tagid, RB.epcid, RB.transdate, GETDATE()
+			INSERT INTO BundleTransfer(Sid,RFIDReaderId,Type,SubProcessId,TagId,BundleNo,TransferDate,AddDate,LocationID,RFIDProcessLocationID,PanelNo,CutCellID)
+			SELECT RB.sid, RB.readerid, RR.type, RRS.ProcessID, RB.tagid, RB.epcid, RB.transdate, GETDATE()
 			,[LocationID]=isnull (RB.LocationID, ' + '''''' + '),isnull (RR.RFIDProcessLocationID, '''')
+			,PanelNo = isnull(RB.PanelNo,'''')
+			,CutCellID=isnull(RRp.CutCellID,'''')
 			FROM  #tmp  RB
 			left join RFIDReader RR on RB.readerid  collate Chinese_Taiwan_Stroke_CI_AS  =RR.Id
+			left join RFIDReader_Panel RRP on RRP.RFIDReaderID = RR.ID 	and isnull(RB.PanelNo,'''')  collate Chinese_Taiwan_Stroke_CI_AS = isnull(RRP.PanelNo,'''')
+			left join RFIDReader_SubProcess RRS on RRS.RFIDReaderID = RR.ID
 			
 			-- 先確認有哪些捆包號 + 工段 + Type，再到紀錄中找最新的資料
 			select *
@@ -52,31 +56,38 @@ BEGIN
 			from (
 				select distinct
 						tmp.EpcId
-						, rd.processId
+						, RRS.processId
 						, rd.Type
 						, rd.RFIDProcessLocationID
 				from #tmp tmp				
 				inner join RFIDReader rd on tmp.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = rd.Id
+				left join RFIDReader_SubProcess RRS on RRS.RFIDReaderID = rd.ID
+				where len(tmp.Epcid) <= 10
 			) disBundle
 			outer apply (
 				select top 1
 						BundleNo = tmp.EpcId
-						, SubProcessId = rd.processId
+						, SubProcessId = RRS.processId
 						, TransDate = tmp.TransDate
 						, AddDate = GetDate()
 						, rd.SewingLineID
 						, [LocationID] = isnull (tmp.LocationID, ' + '''''' + ')
+						, PanelNo=isnull(tmp.PanelNo,'''')
+						, CutCellID=isnull(RRP.CutCellID,'''')
 				from #tmp tmp
 				inner join RFIDReader rd on tmp.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = rd.Id
+				left join RFIDReader_Panel RRP on RRP.RFIDReaderID = rd.ID and isnull(tmp.PanelNo,'''')  collate Chinese_Taiwan_Stroke_CI_AS = isnull(RRP.PanelNo,'''')
+				left join RFIDReader_SubProcess RRS on RRS.RFIDReaderID = rd.ID
 				where 	disBundle.EpcId = tmp.EpcId
-						and disBundle.processId = rd.processId
+						and disBundle.processId = RRS.processId
 						and disBundle.Type = rd.Type
 				order by tmp.TransDate Desc
 			) getLastTrans '
 
 			--add update BundleInOut			
 			-- RFIDReader.Type=1
-		set @Cmd2 =	N' Merge Production.dbo.BundleInOut as t
+		set @Cmd2 =	N' 
+			Merge Production.dbo.BundleInOut as t
 			Using (
 				select *
 				from #disTmp
@@ -87,10 +98,11 @@ BEGIN
 				and s.type=1
 			when matched then 
 				update set
-				t.incoming = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID
+				t.incoming = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID,
+				t.PanelNo = s.PanelNo,t.CutCellID=s.CutCellID
 			when not matched by target and s.type=1 then
-				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID);
+				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID,PanelNo,CutCellID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo,s.CutCellID);
 
 			-- RFIDReader.Type=2
 			Merge Production.dbo.BundleInOut as t
@@ -104,10 +116,11 @@ BEGIN
 				and s.type=2 
 			when matched then 
 				update set
-				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID
+				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID,
+				t.PanelNo = s.PanelNo,t.CutCellID=s.CutCellID
 			when not matched by target and s.type=2 then
-				insert(BundleNo, SubProcessId, OutGoing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID);
+				insert(BundleNo, SubProcessId, OutGoing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID,PanelNo,CutCellID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo, s.CutCellID);
 
 			-- RFIDReader.Type=3
 			Merge Production.dbo.BundleInOut as t
@@ -121,10 +134,11 @@ BEGIN
 				and s.type=3
 			when matched then 
 				update set
-				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID
+				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID,
+				t.PanelNo = s.PanelNo,t.CutCellID = s.CutCellID
 			when not matched by target and s.type=3 then
-				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID);
+				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID,PanelNo,CutCellID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo, s.CutCellID);
 
 
 			Commit tran

@@ -27,7 +27,7 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             comboFactory.Text = Sci.Env.User.Factory;
             txtMdivisionM.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboOrderType, 1, 1, "Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
+            MyUtility.Tool.SetupCombox(comboOrderType, 1, 1, ",Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
             comboOrderType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(comboRateType, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
             comboRateType.SelectedIndex = 0;
@@ -59,21 +59,24 @@ namespace Sci.Production.Subcon
             switch (ordertypeindex)
             {
                 case 0:
-                    ordertype = "('B')";
+                    ordertype = string.Empty;
                     break;
                 case 1:
-                    ordertype = "('S')";
+                    ordertype = "('B')";
                     break;
                 case 2:
-                    ordertype = "('M')";
+                    ordertype = "('S')";
                     break;
                 case 3:
-                    ordertype = "('B','S')";
+                    ordertype = "('M')";
                     break;
                 case 4:
                     ordertype = "('B','S')";
                     break;
                 case 5:
+                    ordertype = "('B','S')";
+                    break;
+                case 6:
                     ordertype = "('B','S','M')";
                     break;
             }
@@ -119,7 +122,7 @@ namespace Sci.Production.Subcon
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
             List<string> sqlFilter1 = new List<string>();
-            List<string> sqlFilter2 = new List<string>();
+            //List<string> sqlFilter2 = new List<string>();
 
             #region -- 條件組合 --
             switch (statusindex)
@@ -234,27 +237,21 @@ namespace Sci.Production.Subcon
                 sp_factory.Value = factory;
                 cmds.Add(sp_factory);
             }
-            #endregion 
-
-            #region SQL Filter1
-            
-            if (!MyUtility.Check.Empty(artworktype))
+            if (!MyUtility.Check.Empty(ordertype))
             {
-                sqlFilter2.Add("s.Category = @artworktype");
-            }
-
-            if (ordertypeindex >= 4) //include Forecast 
-            {
-                sqlFilter2.Add(string.Format(@"(O.category in {0} OR O.IsForecast =1)", ordertype));
-            }
-            else
-            {
-                sqlFilter2.Add(string.Format(@"O.category in {0} ", ordertype));
+                if (ordertypeindex >= 4) //include Forecast 
+                {
+                    sqlFilter1.Add(string.Format(@"(O.category in {0} OR O.IsForecast =1)", ordertype));
+                }
+                else
+                {
+                    sqlFilter1.Add(string.Format(@"O.category in {0} ", ordertype));
+                }
             }
 
             if (!MyUtility.Check.Empty(style))
             {
-                sqlFilter2.Add("O.styleid = @style");
+                sqlFilter1.Add("O.styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
             }
@@ -263,52 +260,45 @@ namespace Sci.Production.Subcon
             sqlCmd.Append(string.Format(@"
 select  O.FactoryID
 		, s.Category
-		, O.POID
+		, opid=iif(o.id is null,s.OrderId,o.poid)
         , O.StyleID
 		, O.BrandID
 		, SMR = dbo.getTPEPass1(O.SMR)
 		, y.Order_Qty
-		, [Po_Qty] = sum (x.Po_Qty)
-		, [Po_amt] = ROUND(sum (x.Po_amt), 3)
-		, Po_price = round(sum (x.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) 
+		, [Po_Qty] = sum (s.Po_Qty)
+		, [Po_amt] = ROUND(sum (s.Po_amt), 3)
+		, Po_price = round(sum (s.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) 
 		, std_price = round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3) 
 		, percentage = case isnull (y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 0)
                           when 0 then null
-                          else round(round(sum (x.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) 
+                          else round(round(sum (s.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) 
                                            / round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3), 2) 
                        end
-        ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
+        ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' 
+								,''
+								,ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
 from (
-	select	distinct LP.Category
+	select	 LP.Category
 			, LPD.OrderId
+			, Price = sum(LPD.Price)
+			, Po_Qty = sum(LPD.Qty)
+			, Po_amt = sum(LPD.Qty * LPD.Price * dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
+			, Rate = sum(dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
 	from dbo.LocalPO LP
 	inner join dbo.LocalPO_Detail LPD on LP.Id = LPD.Id
     left join Orders O on lpd.OrderId = o.id
 	where 1 = 1
           {1}
+	group by LP.Category, LPD.OrderId, o.poid
+	having sum(LPD.Qty)>0
 ) s
 left join Orders O on s.OrderId = O.ID
-left join Order_TmsCost OTC on o.ID = OTC.ID and s.Category = OTC.ArtworkTypeID
 outer apply(
-	select	Price = sum(LPD.Price)
-			, Po_Qty = sum(LPD.Qty)
-			, Po_amt = sum(LPD.Qty * LPD.Price * dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
-			, Rate = sum(dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
-	from LocalPO LP
-	inner join LocalPO_Detail LPD on LP.Id = LPD.Id
-	where LP.Category = s.Category 
-          and LPD.OrderId = O.ID
-          {1}
-) x
-outer apply(
-	select	Orders.POID
-			, Order_Qty = sum(orders.Qty)
+	select	 Order_Qty = sum(orders.Qty)
 			, Order_amt = sum(Orders.Qty * Price)
 	from Orders
 	inner join Order_TmsCost OTC on OTC.ID = Orders.ID
-	where O.POID = POID
-          and ArtworkTypeID = s.Category
-	group by Orders.POID, ArtworkTypeID
+	where O.POID = POID and ArtworkTypeID = s.Category
 ) y
 outer apply(
 	SELECT [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
@@ -317,11 +307,10 @@ outer apply(
     LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
 	WHERE al.POId = o.POID AND al.Category=s.Category
 )IrregularPrice 
-
-where Po_qty > 0 {2} {3}
+where 1=1 {2} 
 group by O.FactoryID
 		, s.Category
-		, O.POID
+		, iif(o.id is null,s.OrderId,o.poid)
         , O.StyleID
 		, O.BrandID
         , O.SMR
@@ -329,14 +318,13 @@ group by O.FactoryID
         , y.order_amt
 		,IrregularPrice.Responsible
 		,IrregularPrice.Reason
-{4}
+{3}
 
 ", ratetype
  , ("and " + sqlFilter1.JoinToString(" and "))
- , ("and " + sqlFilter2.JoinToString(" and "))
  , chk_IrregularPriceReason.Checked ? " AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='') "
                                     : ""
- , chk_IrregularPriceReason.Checked ? " HAVING( round(sum (x.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) >  round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3) ) "
+ , chk_IrregularPriceReason.Checked ? " HAVING( round(sum (s.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) >  round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3) ) "
                                     : ""));
             #endregion
 

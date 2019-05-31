@@ -50,7 +50,8 @@ namespace Sci.Production.Class
         {
            // base.OnValidating(e);
             string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            //if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            if (!string.IsNullOrWhiteSpace(str) )
             {
                 if (!MyUtility.Check.Seek(Type + str, "WhseReason", "type+ID"))
                 {
@@ -68,6 +69,12 @@ namespace Sci.Production.Class
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
 
+
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                this.DisplayBox1.Text = "";
+                return;
+            }
             if (e.Cancel)
                 return;
             this.OnValidating(e);
@@ -97,6 +104,28 @@ namespace Sci.Production.Class
             this.DisplayBox1.Text = item.GetSelecteds()[0][1].ToString();
             this.Validate();
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+        }
+
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            string str = this.textBox1.Text;
+            if (!string.IsNullOrWhiteSpace(str) )
+            {
+                if (!MyUtility.Check.Seek(Type + str, "WhseReason", "type+ID"))
+                {
+                    this.DisplayBox1.Text = "";
+                    this.textBox1.Text = "";
+                    textBox1.Focus();
+                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
+                    this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                    return;
+                }
+                DataRow temp;
+                if (MyUtility.Check.Seek(string.Format("Select Description from WhseReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", str, Type), out temp))
+                    this.DisplayBox1.Text = temp[0].ToString();
+
+                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+            }
         }
     }
 }

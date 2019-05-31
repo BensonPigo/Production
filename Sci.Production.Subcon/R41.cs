@@ -18,7 +18,7 @@ namespace Sci.Production.Subcon
         DataTable printData;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
         string processLocation;
-        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2;
+        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2, dateBDelivery1, dateBDelivery2, dateSewInLine1, dateSewInLine2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -57,14 +57,20 @@ namespace Sci.Production.Subcon
             dateBundleScanDate2 = this.dateBundleScanDate.Value2;
             dateEstCutDate1 = this.dateEstCutDate.Value1;
             dateEstCutDate2 = this.dateEstCutDate.Value2;
+            dateBDelivery1 = this.dateBDelivery.Value1;
+            dateBDelivery2 = this.dateBDelivery.Value2;
+            dateSewInLine1 = this.dateSewInLine.Value1;
+            dateSewInLine2 = this.dateSewInLine.Value2;
             this.processLocation = this.comboRFIDProcessLocation.Text;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
                 MyUtility.Check.Empty(dateEstCutDate.Value1) && MyUtility.Check.Empty(dateEstCutDate.Value2) &&
                 MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
-                MyUtility.Check.Empty(dateBundleScanDate.Value1) && MyUtility.Check.Empty(dateBundleScanDate.Value2))
+                MyUtility.Check.Empty(dateBundleScanDate.Value1) && MyUtility.Check.Empty(dateBundleScanDate.Value2) &&
+                MyUtility.Check.Empty(dateSewInLine.Value1) && MyUtility.Check.Empty(dateSewInLine.Value2)
+                )
             {
-                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date] cannot all empty !!");
+                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date],[Sewing Inline] cannot all empty !!");
                 return false;
             }
             return base.ValidateInput();
@@ -136,14 +142,30 @@ namespace Sci.Production.Subcon
                 sqlWhere.Append(string.Format(@" and bio.RFIDProcessLocationID = '{0}'", this.processLocation));
             }
 
+            if (!MyUtility.Check.Empty(dateBDelivery1))
+            {
+                sqlWhere.Append(string.Format(@" and o.BuyerDelivery >= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateBDelivery2))
+            {
+                sqlWhere.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(dateSewInLine1))
+            {
+                sqlWhere.Append(string.Format(@" and o.SewInLine >= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateSewInLine2))
+            {
+                sqlWhere.Append(string.Format(@" and o.SewInLine <= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(dateEstCutDate1))
             {
-                sqlWhere.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
                 sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateEstCutDate2))
             {
-                sqlWhere.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
                 sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
             }
             #endregion
@@ -153,12 +175,11 @@ namespace Sci.Production.Subcon
             if (sqlWhereWorkOrder.Length > 0)
             {
                 sqlCmd += $@"
-select CutRef,MDivisionId,EstCutDate
+select distinct CutRef,MDivisionId
 into #tmp_Workorder
 from Workorder w
 where 1=1
-{sqlWhereWorkOrder}
-group by  CutRef,MDivisionId,EstCutDate
+{sqlWhereWorkOrder} and CutRef <> '' and EstCutDate is not null
 ";
             }
 
@@ -193,6 +214,8 @@ Select
     [Sub-process] = s.Id,
     bio.LocationID,
     b.Cdate,
+    o.BuyerDelivery,
+    o.SewInLine,
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
     [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
@@ -210,9 +233,11 @@ Select
 						else '' end,
 	s.InOutRule
 	,b.Item
+	,bio.PanelNo
+	,bio.CutCellID
 into #result
 from Bundle b WITH (NOLOCK) 
-inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
 outer apply(
     select s.ID,s.InOutRule,s.ArtworkTypeId
@@ -252,7 +277,7 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 ";
             if (sqlWhereWorkOrder.Length > 0)
             {
-                sqlCmd += " left join #tmp_Workorder w on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                sqlCmd += " inner join #tmp_Workorder w on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
             }
 
             sqlCmd += $@" where 1=1 {sqlWhere} ";
@@ -303,6 +328,8 @@ select
     r.[Sub-process],
     r.LocationID,
     r.Cdate,
+    r.[BuyerDelivery],
+    r.[SewInLine],
     r.[InComing],
     r.[Out (Time)],
     r.[POSupplier],
@@ -324,6 +351,8 @@ select
     gcd.EstCutDate,
     gcd.CuttingOutputDate
 	,r.Item
+	,r.PanelNo
+	,r.CutCellID
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
@@ -366,13 +395,14 @@ drop table #result
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             int num = 200000;
-
+            
             using (var cn = new SqlConnection(Env.Cfg.GetConnection("", DBProxy.Current.DefaultModuleName).ConnectionString))
             using (var cm = cn.CreateCommand())
             {
                 cm.CommandText = sqlResult;
-                cm.CommandTimeout = 900;
+                cm.CommandTimeout = 1200;
                 var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
+                adp.SelectCommand.CommandTimeout = 1200; // 設定TSQL select record TimeOut
                 var cnt = 0;
                 var start = 0;
                 using (var ds = new DataSet())
@@ -381,9 +411,12 @@ drop table #result
                     {
                         System.Diagnostics.Debug.WriteLine("load {0} records", cnt);
 
-                        //do some jobs                       
-                        MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1+ start, false, null, objApp, wSheet: objSheets);
-                        
+                        //do some jobs        
+                        if (MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1 + start, false, null, objApp, wSheet: objSheets) == false)
+                        {
+                            break;
+                        }  
+                                                
                         start += num;
 
                         //if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
@@ -400,9 +433,20 @@ drop table #result
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(objSheets);
+            if (objSheets != null)
+            {
+                Marshal.FinalReleaseComObject(objSheets);
+                objSheets = null;
+            }
+            if (objApp != null)
+            {
+                objApp.Quit();
+                Marshal.FinalReleaseComObject(objApp);
+                objApp = null;
+            }
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
 
             strExcelName.OpenFile();
             #endregion

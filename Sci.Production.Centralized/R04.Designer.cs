@@ -36,29 +36,31 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelCDCode = new Sci.Win.UI.Label();
             this.dateOoutputDate = new Sci.Win.UI.DateRange();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
             this.chk_Accumulate_output = new Sci.Win.UI.CheckBox();
             this.chk_Include_Artwork = new Sci.Win.UI.CheckBox();
             this.chkSewingReasonID = new Sci.Win.UI.CheckBox();
+            this.chkType = new Sci.Win.UI.CheckBox();
+            this.label11 = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Production.Class.comboCentralizedFactory(this.components);
             this.comboM = new Sci.Production.Class.comboCentralizedM(this.components);
             this.txtCDCode = new Sci.Production.Class.txtcdcode();
             this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(512, 12);
+            this.print.Location = new System.Drawing.Point(467, 12);
             this.print.TabIndex = 6;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(512, 48);
+            this.toexcel.Location = new System.Drawing.Point(467, 48);
             this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(512, 84);
+            this.close.Location = new System.Drawing.Point(467, 84);
             this.close.TabIndex = 8;
             // 
             // labelOoutputDate
@@ -71,7 +73,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(23, 48);
+            this.labelCategory.Location = new System.Drawing.Point(23, 43);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(88, 23);
             this.labelCategory.TabIndex = 95;
@@ -79,7 +81,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(23, 84);
+            this.labelM.Location = new System.Drawing.Point(23, 74);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(88, 23);
             this.labelM.TabIndex = 96;
@@ -87,7 +89,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(23, 120);
+            this.labelFactory.Location = new System.Drawing.Point(23, 104);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(88, 23);
             this.labelFactory.TabIndex = 97;
@@ -95,7 +97,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(23, 158);
+            this.labelBrand.Location = new System.Drawing.Point(23, 137);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(88, 23);
             this.labelBrand.TabIndex = 98;
@@ -103,7 +105,7 @@
             // 
             // labelCDCode
             // 
-            this.labelCDCode.Location = new System.Drawing.Point(23, 194);
+            this.labelCDCode.Location = new System.Drawing.Point(23, 168);
             this.labelCDCode.Name = "labelCDCode";
             this.labelCDCode.Size = new System.Drawing.Size(88, 23);
             this.labelCDCode.TabIndex = 99;
@@ -131,23 +133,11 @@
             this.dateOoutputDate.Size = new System.Drawing.Size(280, 23);
             this.dateOoutputDate.TabIndex = 0;
             // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(115, 48);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(170, 24);
-            this.comboCategory.TabIndex = 1;
-            // 
             // chk_Accumulate_output
             // 
             this.chk_Accumulate_output.AutoSize = true;
             this.chk_Accumulate_output.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_Accumulate_output.Location = new System.Drawing.Point(320, 196);
+            this.chk_Accumulate_output.Location = new System.Drawing.Point(235, 143);
             this.chk_Accumulate_output.Name = "chk_Accumulate_output";
             this.chk_Accumulate_output.Size = new System.Drawing.Size(193, 21);
             this.chk_Accumulate_output.TabIndex = 100;
@@ -160,7 +150,7 @@
             this.chk_Include_Artwork.Checked = true;
             this.chk_Include_Artwork.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk_Include_Artwork.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_Include_Artwork.Location = new System.Drawing.Point(320, 169);
+            this.chk_Include_Artwork.Location = new System.Drawing.Point(235, 116);
             this.chk_Include_Artwork.Name = "chk_Include_Artwork";
             this.chk_Include_Artwork.Size = new System.Drawing.Size(155, 21);
             this.chk_Include_Artwork.TabIndex = 101;
@@ -171,12 +161,34 @@
             // 
             this.chkSewingReasonID.AutoSize = true;
             this.chkSewingReasonID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkSewingReasonID.Location = new System.Drawing.Point(320, 223);
+            this.chkSewingReasonID.Location = new System.Drawing.Point(235, 170);
             this.chkSewingReasonID.Name = "chkSewingReasonID";
             this.chkSewingReasonID.Size = new System.Drawing.Size(267, 21);
             this.chkSewingReasonID.TabIndex = 102;
             this.chkSewingReasonID.Text = "Only show sewing reason is not empty";
             this.chkSewingReasonID.UseVisualStyleBackColor = true;
+            // 
+            // chkType
+            // 
+            this.chkType.AutoSize = true;
+            this.chkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkType.Location = new System.Drawing.Point(235, 89);
+            this.chkType.Name = "chkType";
+            this.chkType.Size = new System.Drawing.Size(172, 21);
+            this.chkType.TabIndex = 227;
+            this.chkType.Text = "Exclude sample factory";
+            this.chkType.UseVisualStyleBackColor = true;
+            // 
+            // label11
+            // 
+            this.label11.BackColor = System.Drawing.SystemColors.Control;
+            this.label11.Location = new System.Drawing.Point(23, 200);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(301, 23);
+            this.label11.TabIndex = 225;
+            this.label11.Text = "All subcon-out、non sister subcon-in excluded.";
+            this.label11.TextStyle.BorderColor = System.Drawing.Color.Transparent;
+            this.label11.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // comboFactory
             // 
@@ -184,7 +196,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(115, 120);
+            this.comboFactory.Location = new System.Drawing.Point(115, 104);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
@@ -196,7 +208,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(115, 84);
+            this.comboM.Location = new System.Drawing.Point(115, 74);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(80, 24);
@@ -206,23 +218,39 @@
             // 
             this.txtCDCode.BackColor = System.Drawing.Color.White;
             this.txtCDCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCDCode.Location = new System.Drawing.Point(115, 194);
+            this.txtCDCode.Location = new System.Drawing.Point(115, 168);
             this.txtCDCode.Name = "txtCDCode";
-            this.txtCDCode.Size = new System.Drawing.Size(54, 23);
+            this.txtCDCode.Size = new System.Drawing.Size(80, 23);
             this.txtCDCode.TabIndex = 5;
             // 
             // txtbrand
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(115, 158);
+            this.txtbrand.Location = new System.Drawing.Point(115, 137);
             this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(90, 23);
+            this.txtbrand.Size = new System.Drawing.Size(80, 23);
             this.txtbrand.TabIndex = 4;
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(115, 43);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
+            this.comboCategory.Size = new System.Drawing.Size(160, 24);
+            this.comboCategory.TabIndex = 228;
+            this.comboCategory.Type = "Pms_GMT_Simple";
             // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(604, 275);
+            this.ClientSize = new System.Drawing.Size(559, 256);
+            this.Controls.Add(this.comboCategory);
+            this.Controls.Add(this.chkType);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.chkSewingReasonID);
@@ -230,7 +258,6 @@
             this.Controls.Add(this.chk_Accumulate_output);
             this.Controls.Add(this.txtCDCode);
             this.Controls.Add(this.txtbrand);
-            this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.dateOoutputDate);
             this.Controls.Add(this.labelCDCode);
             this.Controls.Add(this.labelBrand);
@@ -242,10 +269,8 @@
             this.DefaultControlForEdit = "dateOoutputDate";
             this.IsSupportToPrint = false;
             this.Name = "R04";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R04. Centralized daily output list";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelOoutputDate, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
@@ -253,7 +278,6 @@
             this.Controls.SetChildIndex(this.labelBrand, 0);
             this.Controls.SetChildIndex(this.labelCDCode, 0);
             this.Controls.SetChildIndex(this.dateOoutputDate, 0);
-            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.txtCDCode, 0);
             this.Controls.SetChildIndex(this.chk_Accumulate_output, 0);
@@ -261,6 +285,12 @@
             this.Controls.SetChildIndex(this.chkSewingReasonID, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.label11, 0);
+            this.Controls.SetChildIndex(this.chkType, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -275,7 +305,6 @@
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelCDCode;
         private Win.UI.DateRange dateOoutputDate;
-        private Win.UI.ComboBox comboCategory;
         private Class.txtbrand txtbrand;
         private Class.txtcdcode txtCDCode;
         private Win.UI.CheckBox chk_Accumulate_output;
@@ -283,5 +312,8 @@
         private Win.UI.CheckBox chkSewingReasonID;
         private Class.comboCentralizedM comboM;
         private Class.comboCentralizedFactory comboFactory;
+        private Win.UI.CheckBox chkType;
+        private Win.UI.Label label11;
+        private Class.comboDropDownList comboCategory;
     }
 }

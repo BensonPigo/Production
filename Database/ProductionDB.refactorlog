@@ -371,4 +371,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="WorkorderUkeyRevisedMarkerOriginalUkey" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="bba6f80c-accc-40ab-8c2b-96ff1346fe90" ChangeDateTime="05/30/2019 06:58:38">
+    <Property Name="ElementName" Value="[dbo].[ShippingMarkPicture].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ShippingMarkPicture]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="BrandID" />
+  </Operation>
 </Operations>

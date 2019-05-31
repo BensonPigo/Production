@@ -220,6 +220,7 @@ SET ARITHABORT ON
 	F.POID,(F.SEQ1+'-'+F.SEQ2)SEQ,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
 	t.ExportId,t.InvNo,t.WhseArrival,
 	SUM(t.StockQty) AS StockQty1,
+	t.TotalRollsCalculated,
 	(SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))[MinSciDelivery],
 	(SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))[MinBuyerDelivery],
 	F.Refno,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,
@@ -264,7 +265,8 @@ SET ARITHABORT ON
 	[CFInspector] = cfd.Name,
     ps1.LocalMR
 from dbo.FIR F WITH (NOLOCK) 
-    inner join (select R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty
+    inner join (select R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty,
+				TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.id,rd.PoId,RD.seq1,RD.seq2,R.ExportId)
 			    from dbo.Receiving R WITH (NOLOCK) 
 			    inner join dbo.Receiving_Detail RD WITH (NOLOCK) on RD.Id = R.Id"
                 + RWhere+ @" 
@@ -334,6 +336,7 @@ LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCro
 ftp.TotalPoint,F.Odor,F.OdorDate,f.PhysicalInspector,f.WeightInspector
 ,f.ShadeboneInspector,f.ContinuityInspector,f.OdorInspector
 ,fl.CrockingInspector,fl.HeatInspector,fl.WashInspector,v.Name,cfd.Name
+,t.TotalRollsCalculated
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
 ";

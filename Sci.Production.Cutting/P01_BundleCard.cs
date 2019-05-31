@@ -14,23 +14,26 @@ namespace Sci.Production.Cutting
     public partial class P01_BundleCard : Sci.Win.Subs.Base
     {
         private string cutid;
-        public P01_BundleCard(string cID)
+        private string M;
+        public P01_BundleCard(string cID, string m)
         {
             InitializeComponent();
             cutid = cID;
+            M = m;
             requery();
             gridSetup();
             this.gridBundleCard.AutoResizeColumns();
         }
         private void requery()
         {
-            string sqlcmd = String.Format(@"
-                Select a.id,b.BundleNo,a.orderid,a.cdate,a.cutref,a.PatternPanel,a.cutno,b.sizecode,b.bundlegroup,b.Qty,b.PrintDate
-                from Bundle a WITH (NOLOCK)
-                inner join Bundle_Detail b WITH (NOLOCK) on a.id = b.Id
-                where a.POID = '{0}' 
-                order by b.BundleNo"
-            , cutid);
+            string sqlcmd = $@"
+Select a.id,b.BundleNo,a.orderid,a.cdate,a.cutref,a.PatternPanel,a.cutno,b.sizecode,b.bundlegroup,b.Qty,b.PrintDate
+from Bundle a WITH (NOLOCK)
+inner join Bundle_Detail b WITH (NOLOCK) on a.id = b.Id
+inner join Orders o WITH (NOLOCK) on a.Orderid = o.ID and a.MDivisionID = o.MDivisionID
+where a.POID = '{cutid}' and a.MDivisionID  = '{M}'
+order by b.BundleNo
+";
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
             gridBundleCard.DataSource = gridtb;

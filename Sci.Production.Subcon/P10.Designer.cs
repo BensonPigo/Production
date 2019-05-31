@@ -559,13 +559,15 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.boolFtyGroupList = true;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(331, 49);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 5;
-            this.txtmfactory.FilteMDivision = true;
             // 
             // txtpayterm_ftyTerms
             // 
@@ -653,6 +655,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P10";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P10. Sub-con Accounts Payable";
             this.UnApvChkValue = "Approved";
             this.UniqueExpress = "id";

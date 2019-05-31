@@ -26,5 +26,6 @@ namespace Sci.Production.Warehouse
         public string StockUnit { get; set; }
         public string SubStockQty { get; set; }
         public string Remark { get; set; }
+        public string BrandID { get; set; }
     }
 }

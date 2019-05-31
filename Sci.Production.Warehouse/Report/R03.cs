@@ -15,7 +15,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
-        string season, mdivision, orderby, spno1, spno2, fabrictype, refno1, refno2, style, country, supp, factory;
+        string season, mdivision, orderby, spno1, spno2, fabrictype, refno1, refno2, style, country, supp, factory, wkNo1, wkNo2;
         //string season, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp, factory;
         DateTime? sciDelivery1, sciDelivery2, suppDelivery1, suppDelivery2, eta1, eta2, ata1, ata2;
         DataTable printData;
@@ -39,9 +39,10 @@ namespace Sci.Production.Warehouse
                 MyUtility.Check.Empty(dateETA.Value1) && MyUtility.Check.Empty(dateFinalETA.Value2) &&
                 MyUtility.Check.Empty(dateFinalETA.Value1) && MyUtility.Check.Empty(dateETA.Value2) &&
                 (MyUtility.Check.Empty(txtSPNoStart.Text) && MyUtility.Check.Empty(txtSPNoEnd.Text)) &&
-                (MyUtility.Check.Empty(txtRefnoStart.Text) && MyUtility.Check.Empty(txtRefnoEnd.Text)))
+                (MyUtility.Check.Empty(txtRefnoStart.Text) && MyUtility.Check.Empty(txtRefnoEnd.Text)) &&
+                (MyUtility.Check.Empty(txtWKNo1.Text) && MyUtility.Check.Empty(txtWKNo2.Text)))
             {
-                MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < FinalETA >& < SP# > & < Refno > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < FinalETA >& < SP# > & < Refno > & < Wk# > can't be empty!!");
                 return false;
             }
             #region -- 擇一必輸的條件 --
@@ -57,6 +58,8 @@ namespace Sci.Production.Warehouse
             spno2 = txtSPNoEnd.Text;
             refno1 = txtRefnoStart.Text;
             refno2 = txtRefnoEnd.Text;
+            wkNo1 = txtWKNo1.Text;
+            wkNo2 = txtWKNo2.Text;
             #endregion
 
             country = txtcountry.TextBox1.Text;
@@ -99,6 +102,12 @@ namespace Sci.Production.Warehouse
             System.Data.SqlClient.SqlParameter sp_refno2 = new System.Data.SqlClient.SqlParameter();
             sp_refno2.ParameterName = "@refno2";
 
+            System.Data.SqlClient.SqlParameter sp_wkno1 = new System.Data.SqlClient.SqlParameter();
+            sp_wkno1.ParameterName = "@wkno1";
+
+            System.Data.SqlClient.SqlParameter sp_wkno2 = new System.Data.SqlClient.SqlParameter();
+            sp_wkno2.ParameterName = "@wkno2";
+
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion
@@ -107,6 +116,7 @@ namespace Sci.Production.Warehouse
             sqlCmd.Append(string.Format(@"
 select  F.MDivisionID
         ,O.FactoryID
+        ,[Wkno] = wk.wkno
         ,PS.id
         ,style = si.StyleID
         ,PSD.FinalETD
@@ -237,6 +247,14 @@ outer apply
 )ds3
 outer apply(select string=concat(iif(isnull(ds3.string,'')='','',ds3.string+CHAR(10)),IIF(IsNull(ds.ZipperName,'') = '','','Spec:'+ ds.ZipperName+Char(10)),RTrim(ds.Spec)))ds4
 outer apply(select string=replace(replace(replace(replace(ds4.string,char(13),char(10)),char(10)+char(10),char(10)),char(10)+char(10),char(10)),char(10)+char(10),char(10)))ds5
+outer apply(
+select wkno = stuff((
+	    select concat(char(10),ID)
+	    from Export_Detail with (nolock) 
+	    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	    for xml path('')
+	),1,1,'')
+)Wk
 where 1=1  
 "));
 
@@ -361,6 +379,31 @@ where 1=1
                 sp_refno2.Value = refno2 + "%";
                 cmds.Add(sp_refno2);
             }
+
+            // Wkno 塞選條件
+            if (!MyUtility.Check.Empty(wkNo1) && !MyUtility.Check.Empty(wkNo2))
+            {
+                //Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
+                sqlCmd.Append(" and wk.wkno between @wkno1 and @wkno2 ");
+                sp_wkno1.Value = wkNo1;
+                sp_wkno2.Value = wkNo2;
+                cmds.Add(sp_wkno1);
+                cmds.Add(sp_wkno2);
+            }
+            else if (!MyUtility.Check.Empty(wkNo1))
+            {
+                //只輸入 Refno1
+                sqlCmd.Append(" and wk.wkno like @wkno1");
+                sp_wkno1.Value = wkNo1 + "%";
+                cmds.Add(sp_wkno1);
+            }
+            else if (!MyUtility.Check.Empty(wkNo2))
+            {
+                //只輸入 Refno2
+                sqlCmd.Append(" and wk.wkno like @wkno2");
+                sp_wkno2.Value = wkNo2 + "%";
+                cmds.Add(sp_wkno2);
+            }
             int dwr = (chkDWR.Checked) ? 1 : 0;
 
             sqlCmd.Append($@" and fabric.DWR = {dwr}");
@@ -402,7 +445,7 @@ where 1=1
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
 
             //com.TransferArray_Limit = 200000;
-            com.ColumnsAutoFit = false;
+            com.ColumnsAutoFit = true;
             com.WriteTable(printData,2);
                         
             //Excel.Worksheet worksheet = objApp.Sheets[1];

@@ -183,10 +183,10 @@ into #tmp
 from Bundle b WITH (NOLOCK) 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
 left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-inner join #orders_tmp o WITH (NOLOCK) on o.Id = b.OrderId
+inner join #orders_tmp o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-
+where isnull(bio.RFIDProcessLocationID,'') = ''
 ------
 select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
 into #tmp2

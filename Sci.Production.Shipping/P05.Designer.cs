@@ -77,7 +77,6 @@
             this.label31 = new Sci.Win.UI.Label();
             this.btnAirPPList = new Sci.Win.UI.Button();
             this.btnExpenseData = new Sci.Win.UI.Button();
-            this.btnContainerTruck = new Sci.Win.UI.Button();
             this.btnCFM = new Sci.Win.UI.Button();
             this.btnH = new Sci.Win.UI.Button();
             this.btnImportfrompackinglist = new Sci.Win.UI.Button();
@@ -86,13 +85,6 @@
             this.comboContainerType = new Sci.Win.UI.ComboBox();
             this.txtTerminalWhse = new Sci.Win.UI.TextBox();
             this.txtCutoffDate = new Sci.Win.UI.TextBox();
-            this.txtSubconForwarder = new Sci.Production.Class.txtsubcon();
-            this.txtUserHandle = new Sci.Production.Class.txtuser();
-            this.txtShiptermShipmentTerm = new Sci.Production.Class.txtshipterm();
-            this.txtShipmodeShippingMode = new Sci.Production.Class.txtshipmode();
-            this.txtpaytermarPaymentTerm = new Sci.Production.Class.txtpaytermar();
-            this.txtCountryDestination = new Sci.Production.Class.txtcountry();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtfactoryShipper = new Sci.Win.UI.TextBox();
             this.btnAirPPStatus = new Sci.Win.UI.Button();
             this.chkNoExportCharge = new Sci.Win.UI.CheckBox();
@@ -104,6 +96,14 @@
             this.dateForward = new Sci.Win.UI.DateBox();
             this.labActFCRDate = new Sci.Win.UI.Label();
             this.dateActFCRDate = new Sci.Win.UI.DateBox();
+            this.txtSubconForwarder = new Sci.Production.Class.txtsubcon();
+            this.txtUserHandle = new Sci.Production.Class.txtuser();
+            this.txtShiptermShipmentTerm = new Sci.Production.Class.txtshipterm();
+            this.txtShipmodeShippingMode = new Sci.Production.Class.txtshipmode();
+            this.txtpaytermarPaymentTerm = new Sci.Production.Class.txtpaytermar();
+            this.txtCountryDestination = new Sci.Production.Class.txtcountry();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.btnBatchImportSO = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -129,8 +129,8 @@
             this.masterpanel.Controls.Add(this.chkNoExportCharge);
             this.masterpanel.Controls.Add(this.btnAirPPStatus);
             this.masterpanel.Controls.Add(this.btnImportfrompackinglist);
-            this.masterpanel.Controls.Add(this.dateActFCRDate);
             this.masterpanel.Controls.Add(this.dateForward);
+            this.masterpanel.Controls.Add(this.dateActFCRDate);
             this.masterpanel.Controls.Add(this.txtfactoryShipper);
             this.masterpanel.Controls.Add(this.txtCutoffDate);
             this.masterpanel.Controls.Add(this.txtTerminalWhse);
@@ -139,7 +139,6 @@
             this.masterpanel.Controls.Add(this.displayShipPlanNo);
             this.masterpanel.Controls.Add(this.btnH);
             this.masterpanel.Controls.Add(this.btnCFM);
-            this.masterpanel.Controls.Add(this.btnContainerTruck);
             this.masterpanel.Controls.Add(this.btnExpenseData);
             this.masterpanel.Controls.Add(this.btnAirPPList);
             this.masterpanel.Controls.Add(this.label31);
@@ -191,17 +190,17 @@
             this.masterpanel.Controls.Add(this.labelInvDate);
             this.masterpanel.Controls.Add(this.labelInvSerial);
             this.masterpanel.Controls.Add(this.labelInvoiceNo);
-            this.masterpanel.Controls.Add(this.dateETA);
+            this.masterpanel.Controls.Add(this.dateFCRDate);
             this.masterpanel.Controls.Add(this.dateSOCfmDate);
             this.masterpanel.Controls.Add(this.dateETD);
-            this.masterpanel.Controls.Add(this.dateFCRDate);
+            this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.dateInvDate);
             this.masterpanel.Size = new System.Drawing.Size(1000, 360);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateFCRDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETD, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateSOCfmDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateFCRDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelInvoiceNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelInvSerial, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelInvDate, 0);
@@ -253,7 +252,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label31, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAirPPList, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnExpenseData, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnContainerTruck, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCFM, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnH, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayShipPlanNo, 0);
@@ -263,8 +261,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtCutoffDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtfactoryShipper, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateForward, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateActFCRDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateForward, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportfrompackinglist, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAirPPStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkNoExportCharge, 0);
@@ -484,7 +482,7 @@
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayDescription.Location = new System.Drawing.Point(73, 247);
             this.displayDescription.Name = "displayDescription";
-            this.displayDescription.Size = new System.Drawing.Size(331, 23);
+            this.displayDescription.Size = new System.Drawing.Size(366, 23);
             this.displayDescription.TabIndex = 7;
             // 
             // txtRemark
@@ -731,7 +729,7 @@
             this.labelContainerType.Name = "labelContainerType";
             this.labelContainerType.Size = new System.Drawing.Size(126, 23);
             this.labelContainerType.TabIndex = 41;
-            this.labelContainerType.Text = "Container Type";
+            this.labelContainerType.Text = "Loading Type";
             // 
             // labelSONo
             // 
@@ -805,6 +803,7 @@
             this.txtSONo.Name = "txtSONo";
             this.txtSONo.Size = new System.Drawing.Size(164, 23);
             this.txtSONo.TabIndex = 13;
+            this.txtSONo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSONo_Validating);
             // 
             // dateSOCfmDate
             // 
@@ -867,7 +866,7 @@
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(860, 66);
+            this.btnExpenseData.Location = new System.Drawing.Point(860, 63);
             this.btnExpenseData.Name = "btnExpenseData";
             this.btnExpenseData.Size = new System.Drawing.Size(131, 30);
             this.btnExpenseData.TabIndex = 65;
@@ -875,20 +874,8 @@
             this.btnExpenseData.UseVisualStyleBackColor = true;
             this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click);
             // 
-            // btnContainerTruck
-            // 
-            this.btnContainerTruck.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnContainerTruck.Location = new System.Drawing.Point(860, 102);
-            this.btnContainerTruck.Name = "btnContainerTruck";
-            this.btnContainerTruck.Size = new System.Drawing.Size(131, 30);
-            this.btnContainerTruck.TabIndex = 66;
-            this.btnContainerTruck.Text = "Container/Truck";
-            this.btnContainerTruck.UseVisualStyleBackColor = true;
-            this.btnContainerTruck.Click += new System.EventHandler(this.BtnContainerTruck_Click);
-            // 
             // btnCFM
             // 
-            this.btnCFM.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnCFM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnCFM.Location = new System.Drawing.Point(766, 165);
             this.btnCFM.Name = "btnCFM";
@@ -914,7 +901,7 @@
             // 
             this.btnImportfrompackinglist.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportfrompackinglist.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnImportfrompackinglist.Location = new System.Drawing.Point(852, 210);
+            this.btnImportfrompackinglist.Location = new System.Drawing.Point(846, 129);
             this.btnImportfrompackinglist.Name = "btnImportfrompackinglist";
             this.btnImportfrompackinglist.Size = new System.Drawing.Size(145, 33);
             this.btnImportfrompackinglist.TabIndex = 19;
@@ -982,82 +969,6 @@
             this.txtCutoffDate.TabIndex = 15;
             this.txtCutoffDate.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCutoffDate_Validating);
             // 
-            // txtSubconForwarder
-            // 
-            this.txtSubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
-            this.txtSubconForwarder.DisplayBox1Binding = "";
-            this.txtSubconForwarder.IsIncludeJunk = false;
-            this.txtSubconForwarder.Location = new System.Drawing.Point(659, 31);
-            this.txtSubconForwarder.Name = "txtSubconForwarder";
-            this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
-            this.txtSubconForwarder.TabIndex = 11;
-            this.txtSubconForwarder.TextBox1Binding = "";
-            // 
-            // txtUserHandle
-            // 
-            this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
-            this.txtUserHandle.DisplayBox1Binding = "";
-            this.txtUserHandle.Location = new System.Drawing.Point(659, 4);
-            this.txtUserHandle.Name = "txtUserHandle";
-            this.txtUserHandle.Size = new System.Drawing.Size(302, 23);
-            this.txtUserHandle.TabIndex = 10;
-            this.txtUserHandle.TextBox1Binding = "";
-            // 
-            // txtShiptermShipmentTerm
-            // 
-            this.txtShiptermShipmentTerm.BackColor = System.Drawing.Color.White;
-            this.txtShiptermShipmentTerm.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ShipTermID", true));
-            this.txtShiptermShipmentTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShiptermShipmentTerm.Location = new System.Drawing.Point(404, 31);
-            this.txtShiptermShipmentTerm.Name = "txtShiptermShipmentTerm";
-            this.txtShiptermShipmentTerm.Size = new System.Drawing.Size(50, 23);
-            this.txtShiptermShipmentTerm.TabIndex = 9;
-            // 
-            // txtShipmodeShippingMode
-            // 
-            this.txtShipmodeShippingMode.BackColor = System.Drawing.Color.White;
-            this.txtShipmodeShippingMode.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
-            this.txtShipmodeShippingMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShipmodeShippingMode.FormattingEnabled = true;
-            this.txtShipmodeShippingMode.IsSupportUnselect = true;
-            this.txtShipmodeShippingMode.Location = new System.Drawing.Point(404, 4);
-            this.txtShipmodeShippingMode.Name = "txtShipmodeShippingMode";
-            this.txtShipmodeShippingMode.OldText = "";
-            this.txtShipmodeShippingMode.Size = new System.Drawing.Size(121, 24);
-            this.txtShipmodeShippingMode.TabIndex = 8;
-            this.txtShipmodeShippingMode.UseFunction = "ORDER";
-            // 
-            // txtpaytermarPaymentTerm
-            // 
-            this.txtpaytermarPaymentTerm.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARID", true));
-            this.txtpaytermarPaymentTerm.DisplayBox1Binding = "";
-            this.txtpaytermarPaymentTerm.Location = new System.Drawing.Point(92, 220);
-            this.txtpaytermarPaymentTerm.Name = "txtpaytermarPaymentTerm";
-            this.txtpaytermarPaymentTerm.Size = new System.Drawing.Size(311, 23);
-            this.txtpaytermarPaymentTerm.TabIndex = 7;
-            this.txtpaytermarPaymentTerm.TextBox1Binding = "";
-            // 
-            // txtCountryDestination
-            // 
-            this.txtCountryDestination.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
-            this.txtCountryDestination.DisplayBox1Binding = "";
-            this.txtCountryDestination.Location = new System.Drawing.Point(73, 193);
-            this.txtCountryDestination.Name = "txtCountryDestination";
-            this.txtCountryDestination.Size = new System.Drawing.Size(232, 22);
-            this.txtCountryDestination.TabIndex = 6;
-            this.txtCountryDestination.TextBox1Binding = "";
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(73, 112);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(84, 23);
-            this.txtbrand.TabIndex = 3;
-            this.txtbrand.Validated += new System.EventHandler(this.Txtbrand_Validated);
-            // 
             // txtfactoryShipper
             // 
             this.txtfactoryShipper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -1073,7 +984,7 @@
             // btnAirPPStatus
             // 
             this.btnAirPPStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAirPPStatus.Location = new System.Drawing.Point(860, 138);
+            this.btnAirPPStatus.Location = new System.Drawing.Point(861, 96);
             this.btnAirPPStatus.Name = "btnAirPPStatus";
             this.btnAirPPStatus.Size = new System.Drawing.Size(131, 30);
             this.btnAirPPStatus.TabIndex = 71;
@@ -1170,10 +1081,98 @@
             this.dateActFCRDate.TabIndex = 80;
             this.dateActFCRDate.Visible = false;
             // 
+            // txtSubconForwarder
+            // 
+            this.txtSubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
+            this.txtSubconForwarder.DisplayBox1Binding = "";
+            this.txtSubconForwarder.IsIncludeJunk = false;
+            this.txtSubconForwarder.Location = new System.Drawing.Point(659, 31);
+            this.txtSubconForwarder.Name = "txtSubconForwarder";
+            this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
+            this.txtSubconForwarder.TabIndex = 11;
+            this.txtSubconForwarder.TextBox1Binding = "";
+            // 
+            // txtUserHandle
+            // 
+            this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
+            this.txtUserHandle.DisplayBox1Binding = "";
+            this.txtUserHandle.Location = new System.Drawing.Point(659, 4);
+            this.txtUserHandle.Name = "txtUserHandle";
+            this.txtUserHandle.Size = new System.Drawing.Size(302, 23);
+            this.txtUserHandle.TabIndex = 10;
+            this.txtUserHandle.TextBox1Binding = "";
+            // 
+            // txtShiptermShipmentTerm
+            // 
+            this.txtShiptermShipmentTerm.BackColor = System.Drawing.Color.White;
+            this.txtShiptermShipmentTerm.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ShipTermID", true));
+            this.txtShiptermShipmentTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShiptermShipmentTerm.Location = new System.Drawing.Point(404, 31);
+            this.txtShiptermShipmentTerm.Name = "txtShiptermShipmentTerm";
+            this.txtShiptermShipmentTerm.Size = new System.Drawing.Size(50, 23);
+            this.txtShiptermShipmentTerm.TabIndex = 9;
+            // 
+            // txtShipmodeShippingMode
+            // 
+            this.txtShipmodeShippingMode.BackColor = System.Drawing.Color.White;
+            this.txtShipmodeShippingMode.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
+            this.txtShipmodeShippingMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShipmodeShippingMode.FormattingEnabled = true;
+            this.txtShipmodeShippingMode.IsSupportUnselect = true;
+            this.txtShipmodeShippingMode.Location = new System.Drawing.Point(404, 4);
+            this.txtShipmodeShippingMode.Name = "txtShipmodeShippingMode";
+            this.txtShipmodeShippingMode.OldText = "";
+            this.txtShipmodeShippingMode.Size = new System.Drawing.Size(121, 24);
+            this.txtShipmodeShippingMode.TabIndex = 8;
+            this.txtShipmodeShippingMode.UseFunction = "ORDER";
+            // 
+            // txtpaytermarPaymentTerm
+            // 
+            this.txtpaytermarPaymentTerm.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARID", true));
+            this.txtpaytermarPaymentTerm.DisplayBox1Binding = "";
+            this.txtpaytermarPaymentTerm.Location = new System.Drawing.Point(92, 220);
+            this.txtpaytermarPaymentTerm.Name = "txtpaytermarPaymentTerm";
+            this.txtpaytermarPaymentTerm.Size = new System.Drawing.Size(347, 23);
+            this.txtpaytermarPaymentTerm.TabIndex = 7;
+            this.txtpaytermarPaymentTerm.TextBox1Binding = "";
+            // 
+            // txtCountryDestination
+            // 
+            this.txtCountryDestination.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
+            this.txtCountryDestination.DisplayBox1Binding = "";
+            this.txtCountryDestination.Location = new System.Drawing.Point(73, 193);
+            this.txtCountryDestination.Name = "txtCountryDestination";
+            this.txtCountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtCountryDestination.TabIndex = 6;
+            this.txtCountryDestination.TextBox1Binding = "";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(73, 112);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(84, 23);
+            this.txtbrand.TabIndex = 3;
+            this.txtbrand.Validated += new System.EventHandler(this.Txtbrand_Validated);
+            // 
+            // btnBatchImportSO
+            // 
+            this.btnBatchImportSO.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchImportSO.Location = new System.Drawing.Point(831, 12);
+            this.btnBatchImportSO.Name = "btnBatchImportSO";
+            this.btnBatchImportSO.Size = new System.Drawing.Size(146, 30);
+            this.btnBatchImportSO.TabIndex = 5;
+            this.btnBatchImportSO.Text = "Batch Import S/O";
+            this.btnBatchImportSO.UseVisualStyleBackColor = true;
+            this.btnBatchImportSO.Click += new System.EventHandler(this.btnBatchImportSO_Click_1);
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 662);
+            this.Controls.Add(this.btnBatchImportSO);
             this.DefaultControl = "txtfactoryShipper";
             this.DefaultControlForEdit = "txtfactoryShipper";
             this.DefaultOrder = "ID";
@@ -1185,11 +1184,13 @@
             this.KeyField1 = "ID";
             this.KeyField2 = "INVNo";
             this.Name = "P05";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P05. Garment Booking";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "GMTBooking";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchImportSO, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -1264,7 +1265,6 @@
         private Win.UI.Button btnImportfrompackinglist;
         private Win.UI.Button btnH;
         private Win.UI.Button btnCFM;
-        private Win.UI.Button btnContainerTruck;
         private Win.UI.Button btnExpenseData;
         private Win.UI.Button btnAirPPList;
         private Win.UI.Label label31;
@@ -1287,5 +1287,6 @@
         private Win.UI.DateBox dateActFCRDate;
         private Win.UI.Label labForwardDate;
         private Win.UI.DateBox dateForward;
+        private Win.UI.Button btnBatchImportSO;
     }
 }

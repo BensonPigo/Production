@@ -62,7 +62,7 @@ namespace Sci.Production.Packing
                 .Text("Article", header: "Colorway", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(15))
                 .Numeric("QtyPerCTN", header: "Qty")
-                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(15))
+                .Text("Barcode", header: "Hangtag Barcode", width: Widths.AnsiChars(15))
                 .Numeric("ScanQty", header: "Scan Qty");
             this.Tab_Focus("CARTON");
 
@@ -332,7 +332,7 @@ namespace Sci.Production.Packing
 
             if (clearType.Equals("ALL"))
             {
-                string upd_sql = $@"update PackingList_Detail set ScanQty = 0,ScanEditDate = NULL 
+                string upd_sql = $@"update PackingList_Detail set ScanQty = 0,ScanEditDate = NULL , ActCTNWeight = 0
 where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Article = '{tmp[0]["Article"]}'";
                 result = DBProxy.Current.Execute(null, upd_sql);
                 this.LoadSelectCarton();
@@ -382,7 +382,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                                                               TtlQtyPerCTN = g.Sum(st => st.Field<int>("QtyPerCTN")),
                                                               PKseq = g.Max(st => st.Field<string>("PKseq")),
                                                               PassName = string.Join("/", g.Select(st => st.Field<string>("PassName").ToString()).Where(st => !string.IsNullOrEmpty(st)).ToArray()),
-                                                              ActCTNWeight = g.Sum(st => st.Field<decimal>("ActCTNWeight"))
+                                                              ActCTNWeight = g.Max(st => st.Field<decimal>("ActCTNWeight"))
                                                           }).OrderBy(s => s.ID).ThenBy(s => s.PKseq).ToList();
             string default_where = " 1 = 1 ";
 
@@ -597,6 +597,7 @@ set ScanQty = QtyPerCTN
 , ScanEditDate = GETDATE()
 , ScanName = '{Env.User.UserID}'   
 , Lacking = 0
+, ActCTNWeight = {this.numWeight.Value}
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 and Article = '{this.selecedPK.Article}'";
@@ -613,6 +614,7 @@ where pd.id = '{this.selecedPK.ID}'
 and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
 and pd.Article = '{this.selecedPK.Article}'
 ";
+
                     if (MyUtility.Check.Seek(sql, out drPassName))
                     {
                         passName = MyUtility.Convert.GetString(drPassName["PassName"]);
@@ -733,9 +735,6 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 if (!MyUtility.Check.Empty(this.selecedPK.ID) && !MyUtility.Check.Empty(this.selecedPK.CTNStartNo) && !MyUtility.Check.Empty(this.selecedPK.Article))
                 {
-                    string upd_sql = $@"update PackingList_Detail set ActCTNWeight = {this.numWeight.Text.Trim()}
-                                    where id = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'";
-
                     DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
                     foreach (DataRow dr in dt_scanDetailrow)
                     {
