@@ -7,6 +7,7 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Drawing;
 
 namespace Sci.Production.Planning
 {
@@ -108,37 +109,37 @@ select o.FactoryID [Factory]
 	,o.KPIEachConsApprove [Each cons. Approve Reqd.]
 	,o.EachConsApv  [Each cons. Approve Act.]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02') as [Sketch Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02') as [Sketch Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02' and ReasonID=''),'','Y') as [Sketch Skip]
+	,[Sketch Reqd.] = sp02.ProvideDate
+	,[Sketch Act.] = sp02.FtyLastDate
+	,[Sketch Skip] = iif((sp02.FtyLastDate is not null) or (sp02.ProvideDate is not null),'','Y') 
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03') as [AD/BOM/KIT Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03') as [AD/BOM/KIT Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03' and ReasonID=''),'','Y') as [AD/BOM/KIT Skip]
+	,[AD/BOM/KIT Reqd.] = sp03.ProvideDate
+	,[AD/BOM/KIT Act.] = sp03.FtyLastDate
+	,[AD/BOM/KIT Skip] = iif((sp03.FtyLastDate is not null) or (sp03.ProvideDate is not null),'','Y') 
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04') as [Sample Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04') as [Sample Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04' and ReasonID=''),'','Y') as [Sample Skip]
+	,[Sample Reqd.] = sp04.ProvideDate
+	,[Sample Act.] = sp04.FtyLastDate
+	,[Sample Skip] = iif((sp04.FtyLastDate is not null) or (sp04.ProvideDate is not null),'','Y') 
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05') as [Mockup (Printing) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05') as [Mockup (Printing) Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05' and ReasonID=''),'','Y') as [Mockup (Printing) Skip]
+	,[Mockup (Printing) Reqd.] = sp05.ProvideDate
+	,[Mockup (Printing) Act.] = sp05.FtyLastDate
+	,[Mockup (Printing) Skip] = iif((sp05.FtyLastDate is not null) or (sp05.ProvideDate is not null),'','Y') 
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06') as [Mockup (Embroidery) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06') as [Mockup (Embroidery) Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK)  where StyleUkey =o.StyleUkey and doc='06' and ReasonID=''),'','Y') as [Mockup (Embroidery) Skip]
+	,[Mockup (Embroidery) Reqd.] = sp06.ProvideDate
+	,[Mockup (Embroidery) Act.] = sp06.FtyLastDate
+	,[Mockup (Embroidery) Skip] = iif((sp06.FtyLastDate is not null) or (sp06.ProvideDate is not null),'','Y') 
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08') as [Mockup (Heat transfer) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08') as [Mockup (Heat transfer) Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08' and ReasonID=''),'','Y') as [Mockup (Heat transfer) Skip]
+	,[Mockup (Heat transfer) Reqd.] = sp08.ProvideDate
+	,[Mockup (Heat transfer) Act.] = sp08.FtyLastDate
+	,[Mockup (Heat transfer) Skip] = iif((sp08.FtyLastDate is not null) or (sp08.ProvideDate is not null),'','Y') 
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07') as [Mockup (Emboss/Deboss) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07') as [Mockup (Emboss/Deboss) Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07' and ReasonID=''),'','Y') as [Mockup (Emboss/Deboss) Skip]
+	,[Mockup (Emboss/Deboss) Reqd.] = sp07.ProvideDate
+	,[Mockup (Emboss/Deboss) Act.] = sp07.FtyLastDate
+	,[Mockup (Emboss/Deboss) Skip] = iif((sp07.FtyLastDate is not null) or (sp07.ProvideDate is not null),'','Y') 
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01') as [Trim card Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01') as [Trim card Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01' and ReasonID=''),'','Y') as [Trim card Skip]
+	,[Trim card Reqd.] = sp01.ProvideDate
+	,[Trim card Act.] = sp01.FtyLastDate
+	,[Trim card Skip] = iif((sp01.FtyLastDate is not null) or (sp01.ProvideDate is not null),'','Y') 
 
 
 	,o.KPIEachConsApprove [Bulk marker request Reqd]
@@ -149,37 +150,53 @@ select o.FactoryID [Factory]
 	,o.KPILETA [Mtl LETA Reqd]
 	,IIF(o.MTLExport = 'OK',o.MTLETA,null) [Mtl LETA Act.]
 
-	,(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-		inner join dbo.fabric f on f.SCIRefno=p.SCIRefno 
-		inner join MtlType m on m.id = f.MtlTypeID  
-		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType = 'F' )) [Fabric receiving Reqd]
+	,[Fabric receiving Reqd]=
+		case when FabricReceiving.OrderID is not null then FabricReceiving.TargetDate			
+		else 
+			(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+			inner join dbo.fabric f on f.SCIRefno=p.SCIRefno 
+			inner join MtlType m on m.id = f.MtlTypeID  
+			where m.IssueType!='Packing' and p.id = o.POID and p.FabricType = 'F' )) 
+		end
 	, dbo.GetReveivingDate(o.POID,'Fabric') [Fabric receiving Act.]
-	,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+    ,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
 		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
 		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType = 'F' )) [Fabric receiving Skip]
 
-	,(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
-		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
-		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType!='F' )) [Accessory receiving Reqd]
+	,[Accessory receiving Reqd]=
+		case when  AccessoryReceiving.OrderID is not null then AccessoryReceiving.TargetDate			
+		else 
+			(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+			inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
+			inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
+			where m.IssueType!='Packing' and p.id = o.POID and p.FabricType!='F' )) 
+		end
 	, dbo.GetReveivingDate(o.POID,'Accessory') [Accessory receiving Act.]
-	,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+    ,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
 		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
 		where m.IssueType!='Packing' and p.id = o.POID and p.FabricType!='F' )) [Accessory receiving Skip]
 
-	,(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
-		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
-		where m.IssueType='Packing' and p.id = o.POID )) [Packing material receiving Reqd]
+	,[Packing material receiving Reqd]=
+		case when  PackingMaterialReceiving.OrderID is not null then PackingMaterialReceiving.TargetDate			
+		else 
+			(select o.KPILETA where exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+			inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
+			inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
+			where m.IssueType='Packing' and p.id = o.POID )) 
+		end
 	, dbo.GetReveivingDate(o.POID,'Packing') [Packing material receiving Act.]
-	,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+    ,(select 'Y' where not exists (select * from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 		inner join dbo.fabric f WITH (NOLOCK) on f.SCIRefno=p.SCIRefno 
 		inner join MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID  
 		where m.IssueType='Packing' and p.id = o.POID )) [Packing material receiving Skip]
 
-	,(select min(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date>=dateadd(day,5,o.MTLETA) and Holiday=0) as [Material Inspection Reqd]
+	,[Material Inspection Reqd]=
+		case when  MaterialInspectionResult.OrderID is not null  then MaterialInspectionResult.TargetDate			
+		else 
+			(select min(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date>=dateadd(day,5,o.MTLETA) and Holiday=0)
+		end 
 	,(select max(inspectDate) from (
 		select max(f.PhysicalDate) inspectDate from dbo.FIR f WITH (NOLOCK) 
 		 where poid=o.POID and f.PhysicalEncode = 1
@@ -189,21 +206,51 @@ select o.FactoryID [Factory]
 		union all
 		select max(a.InspDate) from dbo.AIR a WITH (NOLOCK) where poid=o.POID and a.Status = 'Confirmed' ) t
 	  ) [Material Inspection Act.]
-	,(select max(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date<=dateadd(day,-5,o.SewInLine) and Holiday=0) [Cutting inline Reqd Complete]
+
+	,[Cutting inline Reqd Complete]=
+		case when  CuttingInlineDateEst.OrderID is not null then CuttingInlineDateEst.TargetDate			
+		else 
+			(select max(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date<=dateadd(day,-5,o.SewInLine) and Holiday=0)
+		end
 	,o.CutInLine [Cutting Inline Act.]
 	,o.CutOffLine [Cutting Offline Act.]
 	,o.SewInLine [Sewing Inline Act.]
 	,o.SewOffLine [Sewing Offline Act.]
-	,iif(s.NoNeedPPMeeting=1,(select max(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date<=dateadd(day,-1,o.Sewinline) and Holiday=0),null) as [PPMeeting Reqd Complete]
+
+	,[PPMeeting Reqd Complete]=
+		case when FactoryPPMeeting.OrderID is not null then FactoryPPMeeting.TargetDate
+		else 
+			iif(s.NoNeedPPMeeting=1,
+				(select max(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date<=dateadd(day,-1,o.Sewinline) and Holiday=0),
+				null)
+		end
 	,iif(s.NoNeedPPMeeting=1,s.PPMeeting,null) as [PPMeeting Act. Complete]
 	,iif(s.NoNeedPPMeeting=1,'Y','') [PPMeeting Skip]
-	,x3.min_outputDate as [Wahsing Reqd Complete]
+
+	,[Wahsing Reqd Complete]=
+		case when  WashTestResultReceiving.OrderID is not null  then WashTestResultReceiving.TargetDate			
+		else 
+			x3.min_outputDate
+		end
 	,x3.max_garmentInspectDate as [Washing Act. Complete]
 	,iif(x3.max_garmentInspectDate is null,'Y','') as [Wahsing Skip]
-	,(select min(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date>=dateadd(day,1,o.SewOffLine) and Holiday=0) as [Carton Reqd Complete]
+
+	,[Carton Reqd Complete]=
+		case when CartonFinished.OrderID is not null then CartonFinished.TargetDate
+		else 
+			(select min(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date>=dateadd(day,1,o.SewOffLine) and Holiday=0)
+		end
 	,(select max(pd.ReceiveDate) from  dbo.PackingList_Detail pd  WITH (NOLOCK) where pd.OrderID =o.ID ) as [Carton Act. Complete]
 	,'' as [Carton Skip]-- 全面使用clog了，所以都是空白。
 	,iif(o.PulloutComplete=1,o.ActPulloutDate,null) as [Garment Act. Complete]
+	,[Fabric receiving Reqd CriticalActivity] = FabricReceiving.TargetDate
+	,[Accessory receiving Reqd CriticalActivity] = AccessoryReceiving.TargetDate
+	,[Packing material receiving Reqd CriticalActivity] = PackingMaterialReceiving.TargetDate
+	,[Material Inspection Reqd CriticalActivity] = MaterialInspectionResult.TargetDate
+	,[Cutting inline Reqd Complete CriticalActivity] = CuttingInlineDateEst.TargetDate
+	,[PPMeeting Reqd Complete CriticalActivity] = FactoryPPMeeting.TargetDate
+	,[Wahsing Reqd Complete CriticalActivity] = WashTestResultReceiving.TargetDate
+	,[Carton Reqd Complete CriticalActivity] = CartonFinished.TargetDate
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 outer apply (select top 1 o1.SciDelivery, o.MTLExport, o.MTLETA, s.SampleApv  
@@ -219,6 +266,22 @@ outer apply (select max(gd.inspdate) max_garmentInspectDate, min(s.OutputDate) m
 outer apply (select ine=concat(ID,'-',REPLACE(Name,' ',''), iif(isnull(ExtNo,'')='','',' #'+ExtNo)) from TPEPass1 WITH (NOLOCK)WHERE ID=o.SMR )ne1
 outer apply (select ine=concat(ID,'-',REPLACE(Name,' ',''), iif(isnull(ExtNo,'')='','',' #'+ExtNo)) from TPEPass1 WITH (NOLOCK)WHERE ID=o.MRHandle )ne2
 outer apply (select ine=concat(ID,'-',REPLACE(Name,' ',''), iif(isnull(ExtNo,'')='','',' #'+ExtNo)) from TPEPass1 WITH (NOLOCK)WHERE ID=(SELECT POHandle FROM PO WHERE ID = o.POID) )ne3
+outer apply (select max(sp.ProvideDate) as ProvideDate,max(sp.FtyLastDate) as FtyLastDate from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01') sp01
+outer apply (select max(sp.ProvideDate) as ProvideDate,max(sp.FtyLastDate) as FtyLastDate from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02') sp02
+outer apply (select max(sp.ProvideDate) as ProvideDate,max(sp.FtyLastDate) as FtyLastDate from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03') sp03
+outer apply (select max(sp.ProvideDate) as ProvideDate,max(sp.FtyLastDate) as FtyLastDate from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04') sp04
+outer apply (select max(sp.ProvideDate) as ProvideDate,max(sp.FtyLastDate) as FtyLastDate from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05') sp05
+outer apply (select max(sp.ProvideDate) as ProvideDate,max(sp.FtyLastDate) as FtyLastDate from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06') sp06
+outer apply (select max(sp.ProvideDate) as ProvideDate,max(sp.FtyLastDate) as FtyLastDate from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07') sp07
+outer apply (select max(sp.ProvideDate) as ProvideDate,max(sp.FtyLastDate) as FtyLastDate from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08') sp08
+outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Fabric Receiving') FabricReceiving
+outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Accessory Receiving') AccessoryReceiving
+outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Packing Material Receiving') PackingMaterialReceiving
+outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Material Inspection Result') MaterialInspectionResult
+outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Cutting Inline Date (Est.)') CuttingInlineDateEst
+outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Factory PP Meeting') FactoryPPMeeting 
+outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Wash Test Result Receiving') WashTestResultReceiving 
+outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Carton Finished') CartonFinished 
 where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
 "));
 
@@ -567,6 +630,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Fabric receiving Reqd CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 54];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Reqd"])
                     && this.printData.Rows[i]["Accessory receiving Skip"].ToString().EqualString("Y") == false)
@@ -581,6 +649,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range = (Excel.Range)objSheet.Cells[i + 3, 58];
                         range.Interior.ColorIndex = 3;
                     }
+                }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Reqd CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 57];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
                 }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Reqd"])
@@ -597,6 +670,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Reqd CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 60];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Material Inspection Reqd"]))
                 {
@@ -611,6 +689,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Material Inspection Reqd CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 63];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Cutting inline Reqd Complete"]))
                 {
@@ -624,6 +707,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range = (Excel.Range)objSheet.Cells[i + 3, 66];
                         range.Interior.ColorIndex = 3;
                     }
+                }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Cutting inline Reqd Complete CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 65];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
                 }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Reqd Complete"])
@@ -640,6 +728,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Reqd Complete CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 70];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Wahsing Reqd Complete"])
                     && this.printData.Rows[i]["Wahsing Skip"].ToString().EqualString("Y") == false)
@@ -654,6 +747,11 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range = (Excel.Range)objSheet.Cells[i + 3, 74];
                         range.Interior.ColorIndex = 3;
                     }
+                }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Wahsing Reqd Complete CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 73];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
                 }
 
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Carton Reqd Complete"])
@@ -670,7 +768,15 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                         range.Interior.ColorIndex = 3;
                     }
                 }
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Carton Reqd Complete CriticalActivity"]))
+                {
+                    range = (Excel.Range)objSheet.Cells[i + 3, 76];
+                    range.Interior.Color = Color.FromArgb(255, 255, 0); // 背景顏色
+                }
             }
+
+            // 刪除欄位
+            objSheet.get_Range("CB:CI").EntireColumn.Delete();
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R16");

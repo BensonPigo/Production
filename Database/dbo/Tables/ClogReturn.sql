@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[ClogReturn] (
+﻿CREATE TABLE [dbo].[ClogReturn] (
     [ID]            BIGINT       IDENTITY (1, 1) NOT NULL,
     [ReturnDate]    DATE         NOT NULL,
     [MDivisionID]   VARCHAR (8)  CONSTRAINT [DF_ClogReturn_Detail_MDivisionID] DEFAULT ('') NOT NULL,
@@ -7,8 +7,12 @@ CREATE TABLE [dbo].[ClogReturn] (
     [CTNStartNo]    VARCHAR (6)  CONSTRAINT [DF_ClogReturn_Detail_CTNStartNo] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME     NULL,
     [OldID]         VARCHAR (13) CONSTRAINT [DF_ClogReturn_Detail_OldID] DEFAULT ('') NULL,
+    [AddName]       VARCHAR (10) NULL,
+    [CompleteTime]  DATETIME     NULL,
     CONSTRAINT [PK_ClogReturn_Detail_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

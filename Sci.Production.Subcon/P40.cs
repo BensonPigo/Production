@@ -249,7 +249,7 @@ select	LocationID = isnull (bio.LocationID, '')
 into #BasBundleInfo
 from Bundle b
 inner join Bundle_Detail bd on bd.ID = b.ID
-inner join Orders o on b.Orderid = o.ID
+inner join Orders o on b.Orderid = o.ID  and o.MDivisionID  = b.MDivisionID 
 outer apply (
 	select v = stuff ((	select distinct CONCAT ('+', bda.SubprocessId)
 						from Bundle_Detail_Art bda
@@ -260,8 +260,8 @@ outer apply (
 left join BundleInOut bio on bio.BundleNo = bd.BundleNo							 
 							 and bio.SubProcessId = 'Loading'
 							 and bio.InComing is not null
-
-where	1=1
+                             and isnull(bio.RFIDProcessLocationID,'') = ''
+where	1=1 
 {this.sqlWhere.JoinToString($"{Environment.NewLine}")}
 		
 
@@ -330,7 +330,7 @@ where	1=1
 		group by bbi.OrderID, bbi.FComb, bbi.Colorid, bbi.Pattern
 				, bbi.PtnDes, bbi.Size, bbi.Artwork
 	) DisBundleInfo
-	left join Orders o on DisBundleInfo.Orderid = o.ID
+	left join Orders o on DisBundleInfo.Orderid = o.ID 
 	outer apply (
 		select Qty = sum (oq.Qty)
 		from Order_Qty oq
@@ -538,7 +538,11 @@ drop table #BasBundleInfo
 
                 this.dtFormGrid = ds.Tables[0].AsEnumerable().CopyToDataTable();
                 this.dtExcel = ds.Tables[1].AsEnumerable().CopyToDataTable();
-                this.dtBundleGroupQty = ds.Tables[2].AsEnumerable().CopyToDataTable();
+                if (ds.Tables[2].Rows.Count > 0)
+                {
+                    this.dtBundleGroupQty = ds.Tables[2].AsEnumerable().CopyToDataTable();
+                }
+
                 this.listControlBindingSource1.DataSource = this.dtFormGrid;
             }
          
@@ -559,23 +563,25 @@ drop table #BasBundleInfo
 
         private void ShowBundleGroupDetailQty(DataRow drSelected)
         {
-            var resultBundleQtyDetail = this.dtBundleGroupQty.AsEnumerable()
-                                                                       .Where(src => src["OrderID"].Equals(drSelected["OrderID"]) &&
-                                                                                        src["FComb"].Equals(drSelected["FComb"]) &&
-                                                                                        src["Colorid"].Equals(drSelected["Colorid"]) &&
-                                                                                        src["Pattern"].Equals(drSelected["Pattern"]) &&
-                                                                                        src["PtnDes"].Equals(drSelected["PtnDes"]) &&
-                                                                                        src["Size"].Equals(drSelected["Size"]) &&
-                                                                                        src["Artwork"].Equals(drSelected["Artwork"]));
-            if (resultBundleQtyDetail.Any())
+            if (this.dtBundleGroupQty != null && this.dtBundleGroupQty.Rows.Count > 0)
             {
-                string msgIsPair = (int)drSelected["isPair"] > 0 ? "Cut-part is pair." : string.Empty;
-                DataTable dtResult = resultBundleQtyDetail.OrderByDescending(src => src["Qty"])
-                                                                       .ThenBy(src => src["BundleGroup"])
-                                                                       .CopyToDataTable();
-                MyUtility.Msg.ShowMsgGrid_LockScreen(dtResult, msg: msgIsPair, caption: "Group Detail Qty", shownColumns: "BundleGroup,Qty");
-            }
-            
+                var resultBundleQtyDetail = this.dtBundleGroupQty.AsEnumerable()
+                                                                           .Where(src => src["OrderID"].Equals(drSelected["OrderID"]) &&
+                                                                                            src["FComb"].Equals(drSelected["FComb"]) &&
+                                                                                            src["Colorid"].Equals(drSelected["Colorid"]) &&
+                                                                                            src["Pattern"].Equals(drSelected["Pattern"]) &&
+                                                                                            src["PtnDes"].Equals(drSelected["PtnDes"]) &&
+                                                                                            src["Size"].Equals(drSelected["Size"]) &&
+                                                                                            src["Artwork"].Equals(drSelected["Artwork"]));
+                if (resultBundleQtyDetail.Any())
+                {
+                    string msgIsPair = (int)drSelected["isPair"] > 0 ? "Cut-part is pair." : string.Empty;
+                    DataTable dtResult = resultBundleQtyDetail.OrderByDescending(src => src["Qty"])
+                                                                           .ThenBy(src => src["BundleGroup"])
+                                                                           .CopyToDataTable();
+                    MyUtility.Msg.ShowMsgGrid_LockScreen(dtResult, msg: msgIsPair, caption: "Group Detail Qty", shownColumns: "BundleGroup,Qty");
+                }
+            }            
         }
     }
 }

@@ -95,7 +95,7 @@ with tmp1stData as (
             , o.ProgramID
             , o.StyleID
             , o.SeasonID
-            , o.BrandID
+            , [BrandID] = iif(o.BrandID='SUBCON-I' and Order2.BrandID is not null,Order2.BrandID,o.BrandID)
             , o.MDivisionID
             , o.FactoryID
             , o.CdCodeID
@@ -120,8 +120,11 @@ with tmp1stData as (
     inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
     inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
     inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
---    left join Style_Location sl WITH (NOLOCK) on  sl.StyleUkey = s.Ukey 
---                                                  and sl.Location = sod.ComboType
+    left join Factory f WITH (NOLOCK) on o.FactoryID = f.id
+    outer apply(
+		    select BrandID from orders o1 
+		    where o.CustPONo=o1.id
+	)Order2
     where   1=1
             and so.Shift <> 'O'
             and o.Category in ({0})
@@ -182,6 +185,11 @@ with tmp1stData as (
             if (!MyUtility.Check.Empty(this.style))
             {
                 sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", this.style));
+            }
+
+            if (this.chkType.Checked)
+            {
+                sqlCmd.Append($@" AND f.Type <>'S' ");
             }
 
             sqlCmd.Append(@"

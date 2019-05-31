@@ -19,10 +19,10 @@ BEGIN
 	inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
 	inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
 	outer apply (
-		select value = iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', ff.UsageUnit 
-																			  , iif(mm.IsExtensionUnit > 0 , iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', ff.UsageUnit  
-																																								  , uu.ExtensionUnit) 
-																										   , ff.UsageUnit))  
+		select value = case when mm.IsExtensionUnit = 1 and uu.ExtensionUnit <> '' then uu.ExtensionUnit
+							when mm.OutputUnit = 1 then ff.UsageUnit
+							when mm.OutputUnit = 2 then p.POUnit 
+							else '' end
 	) StockUnit
 	where	p.id = @poid
 			and p.seq1 = @seq1

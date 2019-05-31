@@ -76,23 +76,35 @@ namespace Sci.Production.Warehouse
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Wk", Wk));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FTYID", FTYID));
    
-            string sql = @"select  
-			R.Roll,R.Dyelot,R.PoId,R.Seq1+'-'+R.Seq2 AS SEQ
-            ,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
-			  AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
-			  AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
-			  ,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]            
-			,R.ShipQty,R.pounit,R.StockQty,R.StockUnit,R.ShipQty - R.StockQty AS QtyVaniance
-            ,R.Weight,R.ActualWeight,R.ActualWeight - R.Weight AS Vaniance
-			,[SubQty]=sum(R.ShipQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-			,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
-			,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-			,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-            ,[SubVaniance]=sum(R.ActualWeight - R.Weight)OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )  
-            ,R.Remark		
-            from dbo.Receiving_Detail R WITH (NOLOCK) 
-            LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
-            where R.id = @ID ";
+            string sql = @"
+select  
+	R.Roll
+	,R.Dyelot
+	,R.PoId
+	,R.Seq1+'-'+R.Seq2 AS SEQ
+	,o.BrandID
+	,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2)  
+			AND (p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))  
+			AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+				,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]            
+	,R.ShipQty
+	,R.pounit
+	,R.StockQty
+	,R.StockUnit
+	,R.ShipQty - R.StockQty AS QtyVaniance
+	,R.Weight
+	,R.ActualWeight
+	,R.ActualWeight - R.Weight AS Vaniance
+	,[SubQty]=sum(R.ShipQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+	,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
+	,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+	,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+	,[SubVaniance]=sum(R.ActualWeight - R.Weight)OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )  
+	,R.Remark		
+from dbo.Receiving_Detail R WITH (NOLOCK) 
+LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
+left join orders o WITH (NOLOCK) on o.ID = r.PoId
+where R.id = @ID";
 
             if (!MyUtility.Check.Empty(txtSPNo.Text))
             {
@@ -113,6 +125,7 @@ namespace Sci.Production.Warehouse
                                     Dyelot = row1["dyelot"].ToString(),
                                     POID = row1["PoId"].ToString(),
                                     SEQ = row1["SEQ"].ToString(),
+                                    BrandID = row1["BrandID"].ToString(),
                                     Desc = row1["Desc"].ToString().TrimEnd(new char[] { '\n', '\r' }),
                                     ShipQty = row1["ShipQty"].ToString(),
                                     pounit = row1["pounit"].ToString(),
@@ -136,6 +149,7 @@ namespace Sci.Production.Warehouse
                                {
                                    POID = row1["PoId"].ToString(),
                                    SEQ = row1["SEQ"].ToString(),
+                                   BrandID = row1["BrandID"].ToString(),
                                    Roll = row1["Roll"].ToString(),
                                    Desc = row1["Desc"].ToString().TrimEnd(new char[] { '\n', '\r' }),
                                    ShipQty = row1["ShipQty"].ToString(),
@@ -216,12 +230,13 @@ namespace Sci.Production.Warehouse
                     objSheets.Cells[nRow, 2] = dr["Dyelot"].ToString();
                     objSheets.Cells[nRow, 3] = dr["PoId"].ToString();
                     objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
-                    objSheets.Cells[nRow, 5] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 6] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 7] = dr["ShipQty"].ToString() +" "+ dr["pounit"].ToString();
-                    objSheets.Cells[nRow, 8] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
-                    objSheets.Cells[nRow, 9] = dr["QtyVaniance"].ToString();
-                    objSheets.Cells[nRow, 10] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 5] = dr["BrandID"].ToString();
+                    objSheets.Cells[nRow, 6] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["ShipQty"].ToString() +" "+ dr["pounit"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
+                    objSheets.Cells[nRow, 10] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 11] = dr["Remark"].ToString();
                     nRow++;
                 }
 
@@ -252,12 +267,13 @@ namespace Sci.Production.Warehouse
                     objSheets.Cells[nRow, 2] = dr["Dyelot"].ToString();
                     objSheets.Cells[nRow, 3] = dr["PoId"].ToString();
                     objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
-                    objSheets.Cells[nRow, 5] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 6] = dr["ShipQty"].ToString() + " " + dr["pounit"].ToString();
-                    objSheets.Cells[nRow, 7] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 8] = dr["ActualWeight"].ToString();
-                    objSheets.Cells[nRow, 9] = dr["Vaniance"].ToString();
-                    objSheets.Cells[nRow, 10] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 5] = dr["BrandID"].ToString();
+                    objSheets.Cells[nRow, 6] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["ShipQty"].ToString() + " " + dr["pounit"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["ActualWeight"].ToString();
+                    objSheets.Cells[nRow, 10] = dr["Vaniance"].ToString();
+                    objSheets.Cells[nRow, 11] = dr["Remark"].ToString();
                     nRow++;
                 }
 

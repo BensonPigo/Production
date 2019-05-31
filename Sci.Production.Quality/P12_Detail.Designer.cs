@@ -718,7 +718,8 @@
             this.KeyField1 = "ID";
             this.KeyField2 = "ReportNo";
             this.Name = "P12_Detail";
-            this.Text = "Mockup - Oven Test";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
+            this.Text = "Mockup - Oven Test(Sample)";
             this.WorkAlias = "MockupOven_Detail_Detail";
             this.Controls.SetChildIndex(this.panelup, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);

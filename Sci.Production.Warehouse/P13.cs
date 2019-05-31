@@ -725,6 +725,11 @@ Where a.id = '{0}'", masterID);
         //Import
         private void btnImport_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["WhseReasonID"]))
+            {
+                MyUtility.Msg.WarningBox("Please choose reason first !!");
+                return;
+            }
             var frm = new Sci.Production.Warehouse.P13_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
@@ -756,6 +761,21 @@ Where a.id = '{0}'", masterID);
         private void btnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+        }
+
+        private void txtwhseReason_Validated(object sender, EventArgs e)
+        {
+            if (this.detailgridbs.DataSource != null && oldVal != txtwhseReason.TextBox1.Text)
+            {
+                ((DataTable)this.detailgridbs.DataSource).Clear();
+            }
+        }
+
+        string oldVal = "";
+        
+        private void txtwhseReason_Enter(object sender, EventArgs e)
+        {
+            oldVal = txtwhseReason.TextBox1.Text;
         }
     }
 }

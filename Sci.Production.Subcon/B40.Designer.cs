@@ -33,7 +33,6 @@
             this.labelSubprocess = new Sci.Win.UI.Label();
             this.labelStockType = new Sci.Win.UI.Label();
             this.txtID = new Sci.Win.UI.TextBox();
-            this.comboSubprocess = new Sci.Win.UI.ComboBox();
             this.comboStockType = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSewingLine = new Sci.Win.UI.TextBox();
@@ -47,6 +46,8 @@
             this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
             this.label4 = new Sci.Win.UI.Label();
             this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
+            this.btnSetPanelCutcell = new Sci.Win.UI.Button();
+            this.txtSubprocess = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -62,6 +63,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtSubprocess);
+            this.detailcont.Controls.Add(this.btnSetPanelCutcell);
             this.detailcont.Controls.Add(this.comboRFIDProcessLocation);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.comboMDivision);
@@ -70,7 +73,6 @@
             this.detailcont.Controls.Add(this.txtSewingLine);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.comboStockType);
-            this.detailcont.Controls.Add(this.comboSubprocess);
             this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.labelStockType);
             this.detailcont.Controls.Add(this.labelSubprocess);
@@ -140,19 +142,6 @@
             this.txtID.Size = new System.Drawing.Size(201, 23);
             this.txtID.TabIndex = 0;
             // 
-            // comboSubprocess
-            // 
-            this.comboSubprocess.BackColor = System.Drawing.Color.White;
-            this.comboSubprocess.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ProcessId", true));
-            this.comboSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboSubprocess.FormattingEnabled = true;
-            this.comboSubprocess.IsSupportUnselect = true;
-            this.comboSubprocess.Location = new System.Drawing.Point(135, 71);
-            this.comboSubprocess.Name = "comboSubprocess";
-            this.comboSubprocess.OldText = "";
-            this.comboSubprocess.Size = new System.Drawing.Size(121, 24);
-            this.comboSubprocess.TabIndex = 1;
-            // 
             // comboStockType
             // 
             this.comboStockType.BackColor = System.Drawing.Color.White;
@@ -202,6 +191,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.boolFtyGroupList = true;
             this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -286,6 +276,30 @@
             this.comboRFIDProcessLocation.Size = new System.Drawing.Size(121, 24);
             this.comboRFIDProcessLocation.TabIndex = 12;
             // 
+            // btnSetPanelCutcell
+            // 
+            this.btnSetPanelCutcell.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnSetPanelCutcell.Location = new System.Drawing.Point(749, 30);
+            this.btnSetPanelCutcell.Name = "btnSetPanelCutcell";
+            this.btnSetPanelCutcell.Size = new System.Drawing.Size(72, 55);
+            this.btnSetPanelCutcell.TabIndex = 13;
+            this.btnSetPanelCutcell.Text = "Panel Cut Cell";
+            this.btnSetPanelCutcell.UseVisualStyleBackColor = true;
+            this.btnSetPanelCutcell.Click += new System.EventHandler(this.btnSetPanelCutcell_Click);
+            // 
+            // txtSubprocess
+            // 
+            this.txtSubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSubprocess.IsSupportEditMode = false;
+            this.txtSubprocess.Location = new System.Drawing.Point(135, 71);
+            this.txtSubprocess.Name = "txtSubprocess";
+            this.txtSubprocess.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditMode;
+            this.txtSubprocess.ReadOnly = true;
+            this.txtSubprocess.Size = new System.Drawing.Size(250, 23);
+            this.txtSubprocess.TabIndex = 14;
+            this.txtSubprocess.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSubprocess_PopUp);
+            // 
             // B40
             // 
             this.ClientSize = new System.Drawing.Size(852, 457);
@@ -293,6 +307,7 @@
             this.DefaultControlForEdit = "comboSubprocess";
             this.IsSupportPrint = false;
             this.Name = "B40";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B40.RFID Reader setting";
             this.UniqueExpress = "ID";
             this.WorkAlias = "RFIDReader";
@@ -319,7 +334,6 @@
         private Win.UI.Label labelID;
         private Win.UI.TextBox txtID;
         private Win.UI.ComboBox comboStockType;
-        private Win.UI.ComboBox comboSubprocess;
         private Win.UI.TextBox txtSewingLine;
         private Win.UI.Label label1;
         private Win.UI.ContextMenuStrip contextMenuStrip1;
@@ -332,5 +346,7 @@
         private Class.comboMDivision comboMDivision;
         private Class.comboRFIDProcessLocation comboRFIDProcessLocation;
         private Win.UI.Label label4;
+        private Win.UI.Button btnSetPanelCutcell;
+        private Win.UI.TextBox txtSubprocess;
     }
 }

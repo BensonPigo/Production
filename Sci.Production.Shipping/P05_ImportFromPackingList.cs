@@ -273,7 +273,10 @@ from PackData pd");
 
                     foreach (DataRow currentRow in this.detailData.Rows)
                     {
-                        allPackID.Append("'" + MyUtility.Convert.GetString(currentRow["ID"]) + "',");
+                        if (currentRow.RowState!= DataRowState.Deleted)
+                        {
+                            allPackID.Append("'" + MyUtility.Convert.GetString(currentRow["ID"]) + "',");
+                        }
                     }
 
                     if (allPackID.Length > 0)

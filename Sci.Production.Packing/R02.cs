@@ -291,7 +291,14 @@ o.BuyerDelivery
 {having}
 order by o.CustPONo
 
-select * from #tmp
+select	MDivisionID,FactoryID,SewLine,CustPONo,ID,Junk,StyleID,Category,VasShas,
+		SeasonID,ProgramID,CdCodeID,Qty,Dest,SewInLine,SewOffLine,ShipModeList,SciDelivery,
+		BuyerDelivery,carton.TtlCtnQty,carton.TtlRemainCtnQty,ScanQty,BalanceQty,POCompletion
+from #tmp t
+outer apply( select [TtlCtnQty] = sum(p.CTNQty),[TtlRemainCtnQty] = sum(iif(p.ScanEditDate is null or p.Lacking = 1,p.CTNQty,0))
+			 from PackingList_Detail p with (nolock)
+			 where p.OrderID = t.ID
+		  ) carton
 
 select 
 	o.CustPONo,o.id,pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,[CTN Barcode] = pld.ID+pld.CTNStartNo
@@ -354,12 +361,12 @@ drop table #tmp
             worksheet.Cells[2, 14] = this._offdate1 + "~" + this._offdate2;
             worksheet.Cells[2, 17] = this._scanDate1 + "~" + this._scanDate2;
             worksheet.Cells[2, 20] = this._brand;
-            worksheet.Cells[2, 22] = this._mDivision;
-            worksheet.Cells[2, 24] = this._factory;
-            worksheet.Cells[2, 26] = this.cmbPOcompletion.Text;
+            worksheet.Cells[2, 24] = this._mDivision;
+            worksheet.Cells[2, 26] = this._factory;
+            worksheet.Cells[2, 28] = this.cmbPOcompletion.Text;
 
-              string strcategory = (this.chkBulk.Checked ? "Bulk," : string.Empty) + (this.chkSample.Checked ? "Sample," : string.Empty) + (this.chkGarment.Checked ? "Garment," : string.Empty);
-            worksheet.Cells[2, 28] = strcategory.Substring(0, strcategory.Length - 1);
+            string strcategory = (this.chkBulk.Checked ? "Bulk," : string.Empty) + (this.chkSample.Checked ? "Sample," : string.Empty) + (this.chkGarment.Checked ? "Garment," : string.Empty);
+            worksheet.Cells[2, 30] = strcategory.Substring(0, strcategory.Length - 1);
 
             MyUtility.Excel.CopyToXls(this._printData[0], string.Empty, $"{excelName}.xltx", 3, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             excelApp.DisplayAlerts = false;
@@ -376,15 +383,17 @@ drop table #tmp
             worksheet.Cells[4, 6] = this._factory;
             worksheet.Cells[4, 8] = this.cmbPOcompletion.Text;
             worksheet.Cells[4, 10] = strcategory.Substring(0, strcategory.Length - 1);
-            MyUtility.Excel.CopyToXls(this._printData[1], string.Empty, $"{excelName}.xltx", 5, false, null, excelApp, wSheet: excelApp.Sheets[2]); 
-            worksheet.Columns.AutoFit();
+            MyUtility.Excel.CopyToXls(this._printData[1], string.Empty, $"{excelName}.xltx", 5, false, null, excelApp, wSheet: excelApp.Sheets[2]);
             #region 釋放上面開啟過excel物件
             string strExcelName = Class.MicrosoftFile.GetName(excelName);
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excelApp.Quit();
-            if (excelApp != null) Marshal.FinalReleaseComObject(excelApp);
+            if (excelApp != null)
+            {
+                Marshal.FinalReleaseComObject(excelApp);
+            }
             #endregion
             this.HideWaitMessage();
             strExcelName.OpenFile();

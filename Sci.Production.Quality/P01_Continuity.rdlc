@@ -2,290 +2,771 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Body>
     <ReportItems>
-      <Textbox Name="Textbox120">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>BEGINNING</Value>
-                <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>0.03175cm</Top>
-        <Left>0.06326cm</Left>
-        <Height>1.96673cm</Height>
-        <Width>10.22109cm</Width>
+      <Tablix Name="Tablix2">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>9cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>9cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>9cm</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.37cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox18">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>END LEFT SIDE</Value>
+                              <Style>
+                                <FontSize>6pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox27">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>END CENTER</Value>
+                              <Style>
+                                <FontSize>6pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox19">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>END RIGHT SIDE</Value>
+                              <Style>
+                                <FontSize>6pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>4.85cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox44">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox44</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox43">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox43</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox42">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox42</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.37cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox20">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>MIDDLE LEFT SIDE</Value>
+                              <Style>
+                                <FontSize>6pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox22">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>MIDDLE CENTER</Value>
+                              <Style>
+                                <FontSize>6pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox21">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>MIDDLE RIGHT SIDE</Value>
+                              <Style>
+                                <FontSize>6pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>4.85cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox39">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox39</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox40">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox40</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox41">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox41</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.37cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox23">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>BEGINNING LEFT SIDE</Value>
+                              <Style>
+                                <FontSize>6pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox24">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>BEGINNING CENTER</Value>
+                              <Style>
+                                <FontSize>6pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox25">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>BEGINNING RIGHT SIDE</Value>
+                              <Style>
+                                <FontSize>6pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>4.85cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox38">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox38</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox37">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox37</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox36">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox36</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                          <Width>2pt</Width>
+                        </Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <Top>2.62506cm</Top>
+        <Left>0.3353cm</Left>
+        <Height>15.66cm</Height>
+        <Width>27cm</Width>
         <Style>
           <Border>
             <Style>Solid</Style>
+            <Width>3pt</Width>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
+          <FontSize>8pt</FontSize>
         </Style>
-      </Textbox>
-      <Textbox Name="Textbox121">
+      </Tablix>
+      <Textbox Name="Textbox56">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>RIGHT SIDE</Value>
+                <Value>Checked by:</Value>
                 <Style>
-                  <FontSize>16pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>0.03175cm</Top>
-        <Left>10.28435cm</Left>
-        <Height>0.74965cm</Height>
-        <Width>8.07382cm</Width>
+        <rd:DefaultName>Textbox55</rd:DefaultName>
+        <Top>18.35562cm</Top>
+        <Left>0.69741cm</Left>
+        <Height>0.37924cm</Height>
+        <Width>1.68502cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
-            <Style>Solid</Style>
+            <Style>None</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox122">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>GRADE</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>0.7814cm</Top>
-        <Left>10.28435cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+      <Line Name="Line1">
+        <Top>18.72604cm</Top>
+        <Left>1.82983cm</Left>
+        <Height>0cm</Height>
+        <Width>3.62479cm</Width>
         <ZIndex>2</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
         </Style>
-      </Textbox>
-      <Textbox Name="Textbox123">
+      </Line>
+      <Textbox Name="Textbox57">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
+                <Value>Approved by:</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>0.7814cm</Top>
-        <Left>14.16722cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox55</rd:DefaultName>
+        <Top>18.39089cm</Top>
+        <Left>18.42601cm</Left>
+        <Height>0.42334cm</Height>
+        <Width>1.85983cm</Width>
         <ZIndex>3</ZIndex>
         <Style>
           <Border>
-            <Style>Solid</Style>
+            <Style>None</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox124">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>1.38994cm</Top>
-        <Left>14.16722cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+      <Line Name="Line2">
+        <Top>18.76131cm</Top>
+        <Left>19.80954cm</Left>
+        <Height>0cm</Height>
+        <Width>3.8309cm</Width>
         <ZIndex>4</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
         </Style>
-      </Textbox>
-      <Textbox Name="Textbox125">
+      </Line>
+      <Textbox Name="Textbox58">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>ACCEPT / REJECT</Value>
-                <Style />
+                <Value>Fabric Incharge</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>1.38994cm</Top>
-        <Left>10.28435cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox55</rd:DefaultName>
+        <Top>18.32916cm</Top>
+        <Left>5.49885cm</Left>
+        <Height>0.39688cm</Height>
+        <Width>3.62479cm</Width>
         <ZIndex>5</ZIndex>
         <Style>
           <Border>
-            <Style>Solid</Style>
+            <Style>None</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox126">
+      <Textbox Name="Textbox59">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>BEGINNING</Value>
+                <Value>CW - QA Head</Value>
                 <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>1.99848cm</Top>
-        <Left>0.06328cm</Left>
-        <Height>1.96673cm</Height>
-        <Width>10.22109cm</Width>
+        <rd:DefaultName>Textbox55</rd:DefaultName>
+        <Top>18.39089cm</Top>
+        <Left>23.7009cm</Left>
+        <Height>0.37042cm</Height>
+        <Width>3.8309cm</Width>
         <ZIndex>6</ZIndex>
         <Style>
           <Border>
-            <Style>Solid</Style>
+            <Style>None</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox127">
+      <Textbox Name="Textbox61">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>CENTER</Value>
+                <Value>CONTINUITY</Value>
                 <Style>
-                  <FontSize>16pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <TextDecoration>Underline</TextDecoration>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -294,15 +775,15 @@
             </Style>
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>1.99848cm</Top>
-        <Left>10.28437cm</Left>
-        <Height>0.74965cm</Height>
-        <Width>8.07382cm</Width>
+        <rd:DefaultName>Textbox60</rd:DefaultName>
+        <Top>0.27026cm</Top>
+        <Left>0.25589cm</Left>
+        <Height>0.62619cm</Height>
+        <Width>26.947cm</Width>
         <ZIndex>7</ZIndex>
         <Style>
           <Border>
-            <Style>Solid</Style>
+            <Style>None</Style>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
@@ -311,812 +792,663 @@
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox128">
+      <Textbox Name="Textbox63">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>GRADE</Value>
-                <Style />
+                <Value>Factory</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>2.74813cm</Top>
-        <Left>10.28437cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>0.82388cm</Top>
+        <Left>0.28243cm</Left>
+        <Height>0.34cm</Height>
+        <Width>2.1cm</Width>
         <ZIndex>8</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox129">
+      <Textbox Name="Textbox64">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
+                <Value>=Parameters!FactoryID.Value</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>2.74813cm</Top>
-        <Left>14.16724cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>0.82388cm</Top>
+        <Left>2.38338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>7.3cm</Width>
         <ZIndex>9</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox130">
+      <Textbox Name="Textbox65">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
+                <Value>Fabric Supplier</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>3.35667cm</Top>
-        <Left>14.16724cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>0.82388cm</Top>
+        <Left>9.68338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>3cm</Width>
         <ZIndex>10</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox131">
+      <Textbox Name="Textbox66">
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>ACCEPT / REJECT</Value>
-                <Style />
+                <Value>=Parameters!FabricSupplier.Value</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>3.35667cm</Top>
-        <Left>10.28437cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>0.82805cm</Top>
+        <Left>12.68338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>7.3cm</Width>
         <ZIndex>11</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox132">
+      <Textbox Name="Textbox67">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>BEGINNING</Value>
+                <Value>Length</Value>
                 <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>3.96521cm</Top>
-        <Left>0.06329cm</Left>
-        <Height>1.96673cm</Height>
-        <Width>10.22109cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>0.82388cm</Top>
+        <Left>19.98338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>2.8cm</Width>
         <ZIndex>12</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox133">
+      <Textbox Name="Textbox68">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>LEFT SIDE</Value>
+                <Value />
                 <Style>
-                  <FontSize>16pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>3.96521cm</Top>
-        <Left>10.28438cm</Left>
-        <Height>0.74965cm</Height>
-        <Width>8.07382cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>0.82805cm</Top>
+        <Left>22.78338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>4.44155cm</Width>
         <ZIndex>13</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox134">
+      <Textbox Name="Textbox69">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>GRADE</Value>
-                <Style />
+                <Value>SP#</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>4.71486cm</Top>
-        <Left>10.28438cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.16805cm</Top>
+        <Left>0.28243cm</Left>
+        <Height>0.34cm</Height>
+        <Width>2.1cm</Width>
         <ZIndex>14</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox135">
+      <Textbox Name="Textbox70">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
+                <Value>=Parameters!POID.Value</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>4.71486cm</Top>
-        <Left>14.16725cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.16805cm</Top>
+        <Left>2.38243cm</Left>
+        <Height>0.34cm</Height>
+        <Width>7.3cm</Width>
         <ZIndex>15</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox136">
+      <Textbox Name="Textbox71">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
+                <Value>Invoic no.</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>5.3234cm</Top>
-        <Left>14.16725cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.16805cm</Top>
+        <Left>9.68338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>3cm</Width>
         <ZIndex>16</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox137">
+      <Textbox Name="Textbox72">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>ACCEPT / REJECT</Value>
-                <Style />
+                <Value>=Parameters!InvNo.Value</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>5.3234cm</Top>
-        <Left>10.28438cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.16805cm</Top>
+        <Left>12.68338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>7.3cm</Width>
         <ZIndex>17</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox138">
+      <Textbox Name="Textbox73">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>MIDDLE</Value>
+                <Value>Carton#</Value>
                 <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>5.93194cm</Top>
-        <Left>0.06323cm</Left>
-        <Height>1.96673cm</Height>
-        <Width>10.22109cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.16805cm</Top>
+        <Left>19.98338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>2.8cm</Width>
         <ZIndex>18</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox139">
+      <Textbox Name="Textbox74">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>RIGHT SIDE</Value>
+                <Value />
                 <Style>
-                  <FontSize>16pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>5.93194cm</Top>
-        <Left>10.28432cm</Left>
-        <Height>0.74965cm</Height>
-        <Width>8.07382cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.16798cm</Top>
+        <Left>22.78788cm</Left>
+        <Height>0.34cm</Height>
+        <Width>4.44155cm</Width>
         <ZIndex>19</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox140">
+      <Textbox Name="Textbox75">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>GRADE</Value>
-                <Style />
+                <Value>Style#</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>6.68159cm</Top>
-        <Left>10.28432cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.50805cm</Top>
+        <Left>0.28243cm</Left>
+        <Height>0.34cm</Height>
+        <Width>2.1cm</Width>
         <ZIndex>20</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox141">
+      <Textbox Name="Textbox76">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
+                <Value>=Parameters!StyleID.Value</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>6.68159cm</Top>
-        <Left>14.16719cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.50805cm</Top>
+        <Left>2.38243cm</Left>
+        <Height>0.34cm</Height>
+        <Width>7.3cm</Width>
         <ZIndex>21</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox142">
+      <Textbox Name="Textbox77">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
+                <Value>ETA</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>7.29013cm</Top>
-        <Left>14.16719cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.50805cm</Top>
+        <Left>9.68338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>3cm</Width>
         <ZIndex>22</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox143">
+      <Textbox Name="Textbox78">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>ACCEPT / REJECT</Value>
-                <Style />
+                <Value>=Parameters!ETA.Value</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>7.29013cm</Top>
-        <Left>10.28432cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.50805cm</Top>
+        <Left>12.68338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>7.3cm</Width>
         <ZIndex>23</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox144">
+      <Textbox Name="Textbox80">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>MIDDLE</Value>
+                <Value />
                 <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>7.89867cm</Top>
-        <Left>0.06325cm</Left>
-        <Height>1.96673cm</Height>
-        <Width>10.22109cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.50805cm</Top>
+        <Left>22.78788cm</Left>
+        <Height>0.34cm</Height>
+        <Width>4.44155cm</Width>
         <ZIndex>24</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox145">
+      <Textbox Name="Textbox81">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>CENTER</Value>
+                <Value>Color</Value>
                 <Style>
-                  <FontSize>16pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>7.89867cm</Top>
-        <Left>10.28434cm</Left>
-        <Height>0.74965cm</Height>
-        <Width>8.07382cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.84805cm</Top>
+        <Left>0.28243cm</Left>
+        <Height>0.34cm</Height>
+        <Width>2.1cm</Width>
         <ZIndex>25</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox146">
+      <Textbox Name="Textbox82">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>GRADE</Value>
-                <Style />
+                <Value>=Parameters!Color.Value</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>8.64832cm</Top>
-        <Left>10.28434cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.84805cm</Top>
+        <Left>2.38243cm</Left>
+        <Height>0.34cm</Height>
+        <Width>7.3cm</Width>
         <ZIndex>26</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox147">
+      <Textbox Name="Textbox83">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
+                <Value>Dyelot no.</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>8.64832cm</Top>
-        <Left>14.16721cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.84805cm</Top>
+        <Left>9.68338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>3cm</Width>
         <ZIndex>27</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox148">
+      <Textbox Name="Textbox84">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
@@ -1124,128 +1456,105 @@
             <TextRuns>
               <TextRun>
                 <Value />
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>8pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>9.25686cm</Top>
-        <Left>14.16721cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.84805cm</Top>
+        <Left>12.68338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>7.3cm</Width>
         <ZIndex>28</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox149">
+      <Textbox Name="Textbox87">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>ACCEPT / REJECT</Value>
-                <Style />
+                <Value>Fabric Desc.</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>9.25686cm</Top>
-        <Left>10.28434cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>2.18805cm</Top>
+        <Left>0.28243cm</Left>
+        <Height>0.34cm</Height>
+        <Width>2.1cm</Width>
         <ZIndex>29</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox150">
+      <Textbox Name="Textbox88">
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>MIDDLE</Value>
+                <Value>=Parameters!FabricDesc.Value</Value>
                 <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>9.8654cm</Top>
-        <Left>0.06326cm</Left>
-        <Height>1.96673cm</Height>
-        <Width>10.22109cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>2.18805cm</Top>
+        <Left>2.38338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>17.6cm</Width>
         <ZIndex>30</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox151">
+      <Textbox Name="Textbox62">
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>LEFT SIDE</Value>
+                <Value>=Parameters!FactoryNameEN.Value</Value>
                 <Style>
-                  <FontSize>16pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>8pt</FontSize>
+                  <TextDecoration>Underline</TextDecoration>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -1254,15 +1563,14 @@
             </Style>
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>9.8654cm</Top>
-        <Left>10.28435cm</Left>
-        <Height>0.74965cm</Height>
-        <Width>8.07382cm</Width>
+        <rd:DefaultName>Textbox60</rd:DefaultName>
+        <Left>0.25597cm</Left>
+        <Height>0.46742cm</Height>
+        <Width>26.947cm</Width>
         <ZIndex>31</ZIndex>
         <Style>
           <Border>
-            <Style>Solid</Style>
+            <Style>None</Style>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
@@ -1271,2026 +1579,149 @@
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox152">
+      <Textbox Name="Textbox79">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>GRADE</Value>
-                <Style />
+                <Value>Scale</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>10.61505cm</Top>
-        <Left>10.28435cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.50805cm</Top>
+        <Left>19.98338cm</Left>
+        <Height>0.34cm</Height>
+        <Width>2.8cm</Width>
         <ZIndex>32</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox153">
+      <Textbox Name="Textbox85">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
+                <Value>Remarks:</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>6pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
+            <Style />
           </Paragraph>
         </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>10.61505cm</Top>
-        <Left>14.16722cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
+        <rd:DefaultName>Textbox63</rd:DefaultName>
+        <Top>1.84805cm</Top>
+        <Left>19.97889cm</Left>
+        <Height>0.68cm</Height>
+        <Width>7.24605cm</Width>
         <ZIndex>33</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox154">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>11.22359cm</Top>
-        <Left>14.16722cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
-        <ZIndex>34</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox155">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>ACCEPT / REJECT</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>11.22359cm</Top>
-        <Left>10.28435cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
-        <ZIndex>35</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox156">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>END</Value>
-                <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>11.83213cm</Top>
-        <Left>0.06319cm</Left>
-        <Height>1.96673cm</Height>
-        <Width>10.22109cm</Width>
-        <ZIndex>36</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox157">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>RIGHT SIDE</Value>
-                <Style>
-                  <FontSize>16pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>11.83213cm</Top>
-        <Left>10.28428cm</Left>
-        <Height>0.74965cm</Height>
-        <Width>8.07382cm</Width>
-        <ZIndex>37</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox158">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>GRADE</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>12.58178cm</Top>
-        <Left>10.28428cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
-        <ZIndex>38</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox159">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>12.58178cm</Top>
-        <Left>14.16715cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
-        <ZIndex>39</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox160">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>13.19032cm</Top>
-        <Left>14.16715cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
-        <ZIndex>40</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox161">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>ACCEPT / REJECT</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>13.19032cm</Top>
-        <Left>10.28428cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
-        <ZIndex>41</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox162">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>END</Value>
-                <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>13.79886cm</Top>
-        <Left>0.06321cm</Left>
-        <Height>1.96673cm</Height>
-        <Width>10.22109cm</Width>
-        <ZIndex>42</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox163">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>CENTER</Value>
-                <Style>
-                  <FontSize>16pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>13.79886cm</Top>
-        <Left>10.2843cm</Left>
-        <Height>0.74965cm</Height>
-        <Width>8.07382cm</Width>
-        <ZIndex>43</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox164">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>GRADE</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>14.54851cm</Top>
-        <Left>10.2843cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
-        <ZIndex>44</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox165">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>14.54851cm</Top>
-        <Left>14.16717cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
-        <ZIndex>45</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox166">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>15.15705cm</Top>
-        <Left>14.16717cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
-        <ZIndex>46</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox167">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>ACCEPT / REJECT</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>15.15705cm</Top>
-        <Left>10.2843cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
-        <ZIndex>47</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox168">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>END</Value>
-                <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>15.76559cm</Top>
-        <Left>0.06322cm</Left>
-        <Height>1.96673cm</Height>
-        <Width>10.22109cm</Width>
-        <ZIndex>48</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox169">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>LEFT SIDE</Value>
-                <Style>
-                  <FontSize>16pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>15.76559cm</Top>
-        <Left>10.28431cm</Left>
-        <Height>0.74965cm</Height>
-        <Width>8.07382cm</Width>
-        <ZIndex>49</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox170">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>GRADE</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>16.51524cm</Top>
-        <Left>10.28431cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
-        <ZIndex>50</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox171">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>16.51524cm</Top>
-        <Left>14.16718cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
-        <ZIndex>51</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox172">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>17.12378cm</Top>
-        <Left>14.16718cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>4.19094cm</Width>
-        <ZIndex>52</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
-          <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </LeftBorder>
-          <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox173">
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>ACCEPT / REJECT</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox120</rd:DefaultName>
-        <Top>17.12378cm</Top>
-        <Left>10.28431cm</Left>
-        <Height>0.60854cm</Height>
-        <Width>3.88287cm</Width>
-        <ZIndex>53</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-          <VerticalAlign>Middle</VerticalAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>7.06157in</Height>
+    <Height>7.42457in</Height>
     <Style />
   </Body>
-  <Width>7.2836in</Width>
+  <Width>10.83929in</Width>
   <Page>
-    <PageHeader>
-      <Height>5.35162cm</Height>
-      <PrintOnFirstPage>true</PrintOnFirstPage>
-      <PrintOnLastPage>true</PrintOnLastPage>
-      <ReportItems>
-        <Textbox Name="Textbox61">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>CONTINUITY</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
-                    <TextDecoration>Underline</TextDecoration>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Center</TextAlign>
-              </Style>
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox60</rd:DefaultName>
-          <Top>0.86995cm</Top>
-          <Left>0.06326cm</Left>
-          <Height>0.79375cm</Height>
-          <Width>18.29492cm</Width>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <VerticalAlign>Middle</VerticalAlign>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox63">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Factory</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>1.76954cm</Top>
-          <Left>0.06324cm</Left>
-          <Height>0.6cm</Height>
-          <Width>2.18727cm</Width>
-          <ZIndex>1</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox64">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>=Parameters!FactoryID.Value</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>1.76954cm</Top>
-          <Left>2.25051cm</Left>
-          <Height>0.6cm</Height>
-          <Width>4.70486cm</Width>
-          <ZIndex>2</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox65">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Fabric Supplier</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>1.76954cm</Top>
-          <Left>6.95538cm</Left>
-          <Height>0.6cm</Height>
-          <Width>2.61466cm</Width>
-          <ZIndex>3</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox66">
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>=Parameters!FabricSupplier.Value</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>1.76954cm</Top>
-          <Left>9.57003cm</Left>
-          <Height>0.6cm</Height>
-          <Width>5.51625cm</Width>
-          <ZIndex>4</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox67">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Length</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>1.76954cm</Top>
-          <Left>15.08628cm</Left>
-          <Height>0.6cm</Height>
-          <Width>1.60924cm</Width>
-          <ZIndex>5</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox68">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value />
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>1.76954cm</Top>
-          <Left>16.69552cm</Left>
-          <Height>0.6cm</Height>
-          <Width>1.66266cm</Width>
-          <ZIndex>6</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox69">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>SP#</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.36954cm</Top>
-          <Left>0.06325cm</Left>
-          <Height>0.6cm</Height>
-          <Width>2.18727cm</Width>
-          <ZIndex>7</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox70">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>=Parameters!POID.Value</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.36954cm</Top>
-          <Left>2.25052cm</Left>
-          <Height>0.6cm</Height>
-          <Width>4.70486cm</Width>
-          <ZIndex>8</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox71">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Invoic no.</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.36954cm</Top>
-          <Left>6.95538cm</Left>
-          <Height>0.6cm</Height>
-          <Width>2.61466cm</Width>
-          <ZIndex>9</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox72">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>=Parameters!InvNo.Value</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.36954cm</Top>
-          <Left>9.57004cm</Left>
-          <Height>0.6cm</Height>
-          <Width>5.51625cm</Width>
-          <ZIndex>10</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox73">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Carton#</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.36954cm</Top>
-          <Left>15.08629cm</Left>
-          <Height>0.6cm</Height>
-          <Width>1.60924cm</Width>
-          <ZIndex>11</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox74">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value />
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.36954cm</Top>
-          <Left>16.69552cm</Left>
-          <Height>0.6cm</Height>
-          <Width>1.66265cm</Width>
-          <ZIndex>12</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox75">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Style#</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.96954cm</Top>
-          <Left>0.06325cm</Left>
-          <Height>0.6cm</Height>
-          <Width>2.18727cm</Width>
-          <ZIndex>13</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox76">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>=Parameters!StyleID.Value</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.96954cm</Top>
-          <Left>2.25052cm</Left>
-          <Height>0.6cm</Height>
-          <Width>4.70486cm</Width>
-          <ZIndex>14</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox77">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>ETA</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.96954cm</Top>
-          <Left>6.95538cm</Left>
-          <Height>0.6cm</Height>
-          <Width>2.61466cm</Width>
-          <ZIndex>15</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox78">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>=Parameters!ETA.Value</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.96954cm</Top>
-          <Left>9.57004cm</Left>
-          <Height>0.6cm</Height>
-          <Width>5.51625cm</Width>
-          <ZIndex>16</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox79">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value />
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.96954cm</Top>
-          <Left>15.08629cm</Left>
-          <Height>0.6cm</Height>
-          <Width>1.60924cm</Width>
-          <ZIndex>17</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox80">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value />
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>2.96954cm</Top>
-          <Left>16.69552cm</Left>
-          <Height>0.6cm</Height>
-          <Width>1.66265cm</Width>
-          <ZIndex>18</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox81">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Color</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>3.56954cm</Top>
-          <Left>0.06326cm</Left>
-          <Height>0.6cm</Height>
-          <Width>2.18727cm</Width>
-          <ZIndex>19</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox82">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>=Parameters!Color.Value</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>3.56954cm</Top>
-          <Left>2.25053cm</Left>
-          <Height>0.6cm</Height>
-          <Width>4.70486cm</Width>
-          <ZIndex>20</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox83">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Dyelot no.</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>3.56954cm</Top>
-          <Left>6.95539cm</Left>
-          <Height>0.6cm</Height>
-          <Width>2.61466cm</Width>
-          <ZIndex>21</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox84">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value />
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>3.56954cm</Top>
-          <Left>9.57005cm</Left>
-          <Height>0.6cm</Height>
-          <Width>5.51625cm</Width>
-          <ZIndex>22</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox85">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value />
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>3.56954cm</Top>
-          <Left>15.0863cm</Left>
-          <Height>0.6cm</Height>
-          <Width>1.60924cm</Width>
-          <ZIndex>23</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox86">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value />
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>3.56954cm</Top>
-          <Left>16.69553cm</Left>
-          <Height>0.6cm</Height>
-          <Width>1.66265cm</Width>
-          <ZIndex>24</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox87">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Fabric Desc.</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>4.16954cm</Top>
-          <Left>0.06326cm</Left>
-          <Height>1.00569cm</Height>
-          <Width>2.18727cm</Width>
-          <ZIndex>25</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox88">
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>=Parameters!FabricDesc.Value</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox63</rd:DefaultName>
-          <Top>4.16954cm</Top>
-          <Left>2.25053cm</Left>
-          <Height>1.00569cm</Height>
-          <Width>16.10764cm</Width>
-          <ZIndex>26</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox62">
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>=Parameters!FactoryNameEN.Value</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                    <FontSize>16pt</FontSize>
-                    <TextDecoration>Underline</TextDecoration>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Center</TextAlign>
-              </Style>
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox60</rd:DefaultName>
-          <Top>0.04093cm</Top>
-          <Left>0.06326cm</Left>
-          <Height>0.79375cm</Height>
-          <Width>18.29492cm</Width>
-          <ZIndex>27</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <VerticalAlign>Middle</VerticalAlign>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-      </ReportItems>
-      <Style>
-        <Border>
-          <Style>None</Style>
-        </Border>
-      </Style>
-    </PageHeader>
-    <PageFooter>
-      <Height>3.8541cm</Height>
-      <PrintOnFirstPage>true</PrintOnFirstPage>
-      <PrintOnLastPage>true</PrintOnLastPage>
-      <ReportItems>
-        <Textbox Name="Textbox55">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Comments:</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox55</rd:DefaultName>
-          <Top>0.03528cm</Top>
-          <Left>0.53128cm</Left>
-          <Height>0.68792cm</Height>
-          <Width>4.1275cm</Width>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox56">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Checked by:</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox55</rd:DefaultName>
-          <Top>1.94733cm</Top>
-          <Left>0.53128cm</Left>
-          <Height>0.68792cm</Height>
-          <Width>2.35479cm</Width>
-          <ZIndex>1</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Line Name="Line1">
-          <Top>2.68734cm</Top>
-          <Left>2.96016cm</Left>
-          <Height>0cm</Height>
-          <Width>3.62479cm</Width>
-          <ZIndex>2</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-          </Style>
-        </Line>
-        <Textbox Name="Textbox57">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Approved by:</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox55</rd:DefaultName>
-          <Top>1.96767cm</Top>
-          <Left>8.72066cm</Left>
-          <Height>0.68792cm</Height>
-          <Width>2.46062cm</Width>
-          <ZIndex>3</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Line Name="Line2">
-          <Top>2.73943cm</Top>
-          <Left>11.25538cm</Left>
-          <Height>0cm</Height>
-          <Width>3.8309cm</Width>
-          <ZIndex>4</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-            </Border>
-          </Style>
-        </Line>
-        <Textbox Name="Textbox58">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Fabric Incharge</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox55</rd:DefaultName>
-          <Top>2.75084cm</Top>
-          <Left>2.96016cm</Left>
-          <Height>0.68792cm</Height>
-          <Width>3.62479cm</Width>
-          <ZIndex>5</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox59">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>CW - QA Head</Value>
-                  <Style>
-                    <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox55</rd:DefaultName>
-          <Top>2.80293cm</Top>
-          <Left>11.25538cm</Left>
-          <Height>0.68792cm</Height>
-          <Width>3.8309cm</Width>
-          <ZIndex>6</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-      </ReportItems>
-      <Style>
-        <Border>
-          <Style>None</Style>
-        </Border>
-      </Style>
-    </PageFooter>
-    <PageHeight>29.7cm</PageHeight>
-    <PageWidth>21cm</PageWidth>
-    <LeftMargin>1.25cm</LeftMargin>
-    <RightMargin>1.25cm</RightMargin>
-    <TopMargin>1.25cm</TopMargin>
-    <BottomMargin>1.25cm</BottomMargin>
+    <PageHeight>21cm</PageHeight>
+    <PageWidth>29.7cm</PageWidth>
+    <InteractiveHeight>21cm</InteractiveHeight>
+    <InteractiveWidth>29.7cm</InteractiveWidth>
+    <LeftMargin>1cm</LeftMargin>
+    <RightMargin>0cm</RightMargin>
+    <TopMargin>0.6cm</TopMargin>
+    <BottomMargin>0.5cm</BottomMargin>
     <ColumnSpacing>0.13cm</ColumnSpacing>
     <Style />
   </Page>
   <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="SciProductionQuality">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>9dd9a2ea-5ca1-44b8-adfa-ce8b4871f5d5</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSetBinding">
+      <Query>
+        <DataSourceName>SciProductionQuality</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Color">
+          <DataField>Color</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ETA">
+          <DataField>ETA</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FabricDesc">
+          <DataField>FabricDesc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FabricSupplier">
+          <DataField>FabricSupplier</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FactoryID">
+          <DataField>FactoryID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FactoryNameEN">
+          <DataField>FactoryNameEN</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="InvNo">
+          <DataField>InvNo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="POID">
+          <DataField>POID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="StyleID">
+          <DataField>StyleID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Sci.Production.Quality</rd:DataSetName>
+        <rd:TableName>P01_Continuity_PrintData</rd:TableName>
+        <rd:ObjectDataSourceType>Sci.Production.Quality.P01_Continuity_PrintData, Sci.Production.Quality, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
   <ReportParameters>
     <ReportParameter Name="FactoryNameEN">
       <DataType>String</DataType>

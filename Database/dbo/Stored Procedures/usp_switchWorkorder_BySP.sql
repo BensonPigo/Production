@@ -75,14 +75,14 @@ outer apply
 	select inline = min(ss.inline)
 	from SewingSchedule ss WITH (NOLOCK) 
 	inner join SewingSchedule_Detail ssd WITH (NOLOCK) on ss.ID = ssd.ID 
-	where ss.OrderID = o.id and ss.MDivisionID = o.MDivisionID and ssd.Article = oq.Article and oq.SizeCode = ssd.SizeCode and occ.Article = ssd.Article
+	where ss.OrderID = o.id and ss.MDivisionID = @MDivisionID and ssd.Article = oq.Article and oq.SizeCode = ssd.SizeCode and occ.Article = ssd.Article
 )s
 outer apply(
 	select ob.scirefno
 	from Order_BoF ob WITH (NOLOCK) 
 	where ob.Id = oe.id and ob.FabricCode = occ.FabricCode
 )sr
-where o.CuttingSP = @Cuttingid and o.MDivisionID = @MDivisionID and o.junk = 0
+where o.CuttingSP = @Cuttingid and o.junk = 0
 group by s.Inline,o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,oq.qty ,sr.SCIRefno
 order by InlineForOrderby,o.id
 --主要資料參數
@@ -90,7 +90,7 @@ Declare @MixedSizeMarker varchar(2),@id varchar(13),@SizeCode varchar(8),@FirstS
 @Seq1 varchar(3),@Seq2 varchar(3),@MarkerName varchar(20),@MarkerLength varchar(15),@ConsPC numeric(6,4),@Refno varchar(20),@SCIRefno varchar(30),
 @MarkerNo varchar(10),@MarkerVersion varchar(3),@type int,@AddDate datetime,
 @MarkerDownloadID varchar(25),@FabricCombo varchar(2),@FabricCode varchar(3),@FabricPanelCode varchar(2),@Order_EachConsUkey bigint,
-@Orderqty int,@ThisMarkerColor_Layer int,@ThisMarkerColor_MaxLayer int,@rowid int,@FirstRatio int,@SizeRatio int, @tmpUkey int = 0, @tmpUkey2 int = 0,
+@Orderqty int,@ThisMarkerColor_Layer int,@ThisMarkerColor_MaxLayer int,@rowid int,@FirstRatio int,@SumRatio int,@SizeRatio int, @tmpUkey int = 0, @tmpUkey2 int = 0,
 @ActCuttingPerimeter nvarchar(15),@StraightLength varchar(15),@CurvedLength varchar(15)
 --主要資料迴圈
 DECLARE CURSOR_WorkOrder CURSOR FOR select * from #WorkOrderMix order by Rowid
@@ -103,8 +103,8 @@ Begin
 	into #tmpSQ
 	From Order_EachCons_SizeQty oes WITH(NOLOCK)left join Order_SizeCode os on oes.id = os.id and oes.SizeCode = os.SizeCode 
 	Where Order_EachConsUkey=@Order_EachConsUkey order by Qty desc,Seq
-
-	select top 1 @FirstSizeCode=SizeCode,@FirstRatio=qty from #tmpSQ order by Rowid
+	
+	select top 1 @FirstSizeCode=SizeCode,@FirstRatio=qty,@SumRatio=Sum(qty)over() from #tmpSQ order by Rowid
 	DECLARE Size CURSOR FOR select SizeCode,qty from #tmpSQ order by Rowid
 	OPEN Size
 	FETCH NEXT FROM Size INTO @SizeCode,@SizeRatio
@@ -330,7 +330,7 @@ Begin
 	Begin
 		select top 1 @orderid = orderid from #tmp_WorkOrder_Distribute 
 		where sizecode = @FirstSizeCode and Order_EachConsUkey = @Order_EachConsUkey and colorid = @colorid and newkey = @tmpUkey2 order by orderid
-		set @Cons = @FLayer * @FirstRatio * @ConsPC
+		set @Cons = @FLayer * @SumRatio * @ConsPC
 		Insert Into #tmp_Workorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,
 		Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength)
 		values(@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@orderid,@FLayer,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,

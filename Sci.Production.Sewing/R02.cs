@@ -893,6 +893,16 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
 		  and IsTtlTMS = 0
           and IsPrintToCMP=1
 
+	--準備台北資料(須排除這些)
+	select ps.ID
+	into #TPEtmp
+	from PO_Supp ps
+	inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+	inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
+	inner join MtlType ml on ml.id = fb.MtlTypeID
+	where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
+	and ml.isThread=1 
+	and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
     
     select ot.ArtworkTypeID
 		   , a.OrderId
@@ -906,18 +916,21 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
             --排除 subcon in non sister的數值
           and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInSisterFty <> 0 ))           
           and ot.Price > 0 		    
+		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+			  or ot.ArtworkTypeID <> 'SP_THREAD')
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
 
     --FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
+    -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
     update s set s.Price = 0
         from #tmpAllSubprocess s
         inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId
-        where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price < a.Price
+        where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
 
     update s set s.Price = 0
         from #tmpAllSubprocess s
         inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId
-        where s.ArtworkTypeID = 'AT (HAND)'  and s.Price < a.Price
+        where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
 
 select ArtworkTypeID = t1.ID
 	   , Price = isnull(sum(Round(t2.Price,t1.DecimalNumber)), 0)
@@ -950,6 +963,17 @@ order by t1.ID"),
                         this.SewOutPutData,
                         "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty,Program",
                         string.Format(@"
+--準備台北資料(須排除這些)
+select ps.ID
+into #TPEtmp
+from PO_Supp ps
+inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
+inner join MtlType ml on ml.id = fb.MtlTypeID
+where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
+and ml.isThread=1 
+and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
+
 ;with tmpArtwork as(
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
@@ -976,6 +1000,8 @@ tmpAllSubprocess as(
 --												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
 			and ot.Price > 0 		    
+		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+			  or ot.ArtworkTypeID <> 'SP_THREAD')
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.Program
 )
 select ArtworkTypeID = t1.ID
@@ -1010,6 +1036,17 @@ order by t1.ID"),
                         this.SewOutPutData,
                         "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty,SubconOutFty",
                         string.Format(@"
+--準備台北資料(須排除這些)
+select ps.ID
+into #TPEtmp
+from PO_Supp ps
+inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
+inner join MtlType ml on ml.id = fb.MtlTypeID
+where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
+and ml.isThread=1 
+and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
+
 ;with tmpArtwork as(
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
@@ -1036,6 +1073,8 @@ tmpAllSubprocess as(
 --												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
 			and ot.Price > 0 		    
+	and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+		or ot.ArtworkTypeID <> 'SP_THREAD')
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.SubconOutFty
 )
 select ArtworkTypeID = t1.ID

@@ -185,12 +185,14 @@
             this.ClientSize = new System.Drawing.Size(839, 457);
             this.DefaultControl = "txtDefectcode";
             this.DefaultControlForEdit = "editDescription";
+            this.DefaultOrder = "GarmentDefectTypeID,Seq";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.KeyPreview = true;
             this.Name = "B21";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B21. Defect Detail for RFT/CFA(Garment)       ";
             this.WorkAlias = "GarmentDefectCode";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();

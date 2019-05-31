@@ -47,7 +47,23 @@ if(	@M is null and @Factory is null or
 Begin
 	return
 end
+;
+DECLARE @TPEtmp TABLE
+(
+	ID varchar(13)
+)
+;
 
+insert into @TPEtmp
+select ps.ID
+from PO_Supp ps
+inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
+inner join MtlType ml on ml.id = fb.MtlTypeID
+where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
+and ml.isThread=1 
+and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
+;
 
 insert into @CMPDetail
 select   [OutputDate] = s.OutputDate
@@ -100,6 +116,8 @@ where	s.MDivisionID = isnull(@M, s.MDivisionID) and
 		((LastShift.Value = 'O' and o.LocalOrder <> 1) or (LastShift.Value <> 'O') ) 
           --排除 subcon in non sister的數值
         and ((LastShift.Value <> 'I') or ( LastShift.Value = 'I' and o.SubconInSisterFty <> 0 ))   
+		--將ArtworkType為'SP_THREAD'部分，排除掉是台北買線的部分。
+		AND (  (NOT EXISTS (SELECT 1 FROm @TPEtmp WHERE ID = o.ID )AND att.ID = 'SP_THREAD')   OR   att.ID <> 'SP_THREAD' ) 
 group by  s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
@@ -129,7 +147,7 @@ order by
 		, iif(s.Category = 'M','SEWING',att.ID)
 
 	delete @CMPDetail where ArtworkType is null
-	
+
 	return
 end
 

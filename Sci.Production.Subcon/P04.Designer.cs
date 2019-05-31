@@ -166,7 +166,6 @@
             this.btnImport.TabIndex = 5;
             this.btnImport.Text = "RFID Batch Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Visible = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // labelID
@@ -259,6 +258,7 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.boolFtyGroupList = true;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -306,6 +306,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P04";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P04. Bundles Farm In";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "FarmIn";

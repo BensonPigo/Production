@@ -14,7 +14,7 @@ set @StartDate1 = cast(convert(nvarchar(10),@StartDate,112) + ' 00:00:00'  as da
 set @EndDate1 = cast(convert(nvarchar(10),dateadd(dd,1,@EndDate),112) + ' 00:00:00'  as datetime)
 begin try
 --抓出時間區間內SewingSchedule的orderID
-select distinct ss.OrderID,o.StyleID,o.SeasonID,o.BrandID,o.StyleUKey,o.Qty,o.AddName,o.SCIDelivery
+select distinct ss.OrderID,o.StyleID,o.SeasonID,o.BrandID,o.StyleUKey,o.Qty,o.AddName,o.SCIDelivery ,o.CustPONo
 into #SrcOrderID
 from dbo.SewingSchedule ss with (nolock)
 inner join orders o with (nolock) on  ss.OrderID = o.ID
@@ -78,7 +78,8 @@ select
 [CustName] = so.BrandID,
 [SAMTotal] = tMM.SAMTotal,
 [Insertor] = so.AddName,
-[DeliveryDate] = so.SCIDelivery
+[DeliveryDate] = so.SCIDelivery,
+[CustPONo] = so.CustPONo
 into #tMOM
 from #SrcOrderID so with (nolock)
 inner join Style_Location sl with (nolock) on sl.StyleUkey = so.StyleUkey
@@ -117,7 +118,8 @@ select
 into #tRoute
 from #SrcOrderID so with (nolock)
 inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
-where lm.Status = 'Confirmed'
+where lm.Status = 'Confirmed' 
+	and 1=2 -- add by Roger 04.27
 
 --tRouteLine(加工方案與生產線關係表)
 select 
@@ -129,6 +131,7 @@ from #SrcOrderID so with (nolock)
 inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
 cross apply (select top 1 SewingLineID from SewingSchedule  with (nolock) where OrderID = so.OrderID and ISNUMERIC(SewingLineID) = 1 ) ss 
 where lm.Status = 'Confirmed'
+	and 1=2 -- add by Roger 04.27
 
 --tSeqAssign(加工方案-工序安排)
 ;with tSeqAssignTmp as
@@ -161,6 +164,7 @@ SeasonID,
 OriNO
 into #tSeqAssign
 from tSeqAssignTmp
+	where 1=2  -- add by Roger 04.27
 
 --如果原本tSeqAssign已傳至SunRise將guid更新回本次要傳的資料中
 select * into #tSeqAssignSunRise from [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign
@@ -180,6 +184,7 @@ from #tSeqAssign tsa
 inner join LineMapping lm with (nolock) on tsa.StyleUkey = lm.StyleUKey and tsa.BrandID = lm.BrandID and tsa.SeasonID = lm.SeasonID
 inner join LineMapping_Detail lmd with (nolock) on lm.ID = lmd.ID and lmd.No <> '' and lmd.OriNO = tsa.OriNO
 where tsa.bMerge = 0 and lm.Status = 'Confirmed' and ISNUMERIC(lmd.OriNO) = 1
+	and 1=2 -- add by Roger 04.27
 
 
 --同步資料至SUNRISE db
@@ -235,9 +240,10 @@ update T set CmdType = 'delete',
 			 InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD T
 where exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS ) and  
-not exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and
-T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and 
-T.SeqNo = S.SeqNo)
+  not exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and
+				T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and 
+				T.SeqNo = S.SeqNo)
+  and (T.CmdType <> 'delete' )  -- add by Roger 05.09
 
 --select * from #tMOSeqD where mono = '18052464GGS-B' and Version = '01' and SeqNo = '0620'
 
@@ -279,13 +285,41 @@ update T set	ProNoticeNo = S.ProNoticeNo,
 				DeliveryDate = S.DeliveryDate,
 				CmdType = iif(InterfaceTime is not null,'update',CmdType),
 				CmdTime = GetDate(),
-				InterfaceTime = null
+				InterfaceTime = null,
+				CustPoNo = S.CustPONo
 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T
 inner join #tMOM S on T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS
 
 --insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM(MONo,ProNoticeNo,Styleno,Qty ,CustName,SAMTotal,Insertor,DeliveryDate,CmdType,CmdTime,InterfaceTime)
-select S.MONo,S.ProNoticeNo,S.Styleno,S.Qty ,S.CustName,S.SAMTotal,S.Insertor,S.DeliveryDate,'insert',GetDate(),null from #tMOM S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM
+(
+	MONo
+	,ProNoticeNo
+	,Styleno
+	,Qty 
+	,CustName
+	,SAMTotal
+	,Insertor
+	,DeliveryDate
+	,CmdType
+	,CmdTime
+	,InterfaceTime
+	,CustPONo
+)
+select 
+	S.MONo
+	,S.ProNoticeNo
+	,S.Styleno
+	,S.Qty 
+	,S.CustName
+	,S.SAMTotal
+	,S.Insertor
+	,S.DeliveryDate
+	,'insert'
+	,GetDate()
+	,null 
+	,S.CustPONo
+from #tMOM S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS)
 
 --tSeqBase(基本工序表)

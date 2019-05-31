@@ -54,10 +54,6 @@
             this.numVat = new Sci.Win.UI.NumericBox();
             this.numAmount = new Sci.Win.UI.NumericBox();
             this.numTotal = new Sci.Win.UI.NumericBox();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
-            this.txtuserApprove = new Sci.Production.Class.txtuser();
-            this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
             this.dateDeliveryDate = new Sci.Win.UI.DateBox();
             this.label1 = new Sci.Win.UI.Label();
             this.btnBatchUpdateDellivery = new Sci.Win.UI.Button();
@@ -67,15 +63,19 @@
             this.label2 = new Sci.Win.UI.Label();
             this.numttlqty = new Sci.Win.UI.NumericBox();
             this.btnIrrPriceReason = new Sci.Win.UI.Button();
-            this.txtuserLock = new Sci.Production.Class.txtuser();
             this.displayLockDate = new Sci.Win.UI.DisplayBox();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.txtuserClose = new Sci.Production.Class.txtuser();
             this.displayCloseDate = new Sci.Win.UI.DisplayBox();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.btnBatchApprove = new System.Windows.Forms.Button();
+            this.txtuserClose = new Sci.Production.Class.txtuser();
+            this.txtuserLock = new Sci.Production.Class.txtuser();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
+            this.txtuserApprove = new Sci.Production.Class.txtuser();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtLocalPurchaseItem = new Sci.Production.Class.txtLocalPurchaseItem();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -93,6 +93,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtLocalPurchaseItem);
             this.masterpanel.Controls.Add(this.txtuserClose);
             this.masterpanel.Controls.Add(this.displayCloseDate);
             this.masterpanel.Controls.Add(this.label6);
@@ -114,7 +115,6 @@
             this.masterpanel.Controls.Add(this.numVatRate);
             this.masterpanel.Controls.Add(this.txtRemark);
             this.masterpanel.Controls.Add(this.displayApvDate);
-            this.masterpanel.Controls.Add(this.txtartworktype_ftyCategory);
             this.masterpanel.Controls.Add(this.displayCurrency);
             this.masterpanel.Controls.Add(this.txtsubconSupplier);
             this.masterpanel.Controls.Add(this.displayID);
@@ -156,7 +156,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsubconSupplier, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCurrency, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtartworktype_ftyCategory, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.numVatRate, 0);
@@ -179,6 +178,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCloseDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuserClose, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocalPurchaseItem, 0);
             // 
             // detailpanel
             // 
@@ -542,55 +542,6 @@
             0,
             0});
             // 
-            // txtmfactory
-            // 
-            this.txtmfactory.BackColor = System.Drawing.Color.White;
-            this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
-            this.txtmfactory.FilteMDivision = true;
-            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory.IssupportJunk = false;
-            this.txtmfactory.Location = new System.Drawing.Point(357, 13);
-            this.txtmfactory.Name = "txtmfactory";
-            this.txtmfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory.TabIndex = 4;
-            this.txtmfactory.TabStop = false;
-            // 
-            // txtuserApprove
-            // 
-            this.txtuserApprove.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
-            this.txtuserApprove.DisplayBox1Binding = "";
-            this.txtuserApprove.Enabled = false;
-            this.txtuserApprove.Location = new System.Drawing.Point(116, 183);
-            this.txtuserApprove.Name = "txtuserApprove";
-            this.txtuserApprove.Size = new System.Drawing.Size(300, 23);
-            this.txtuserApprove.TabIndex = 6;
-            this.txtuserApprove.TextBox1Binding = "";
-            // 
-            // txtartworktype_ftyCategory
-            // 
-            this.txtartworktype_ftyCategory.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyCategory.cClassify = "\'P\'";
-            this.txtartworktype_ftyCategory.cSubprocess = "";
-            this.txtartworktype_ftyCategory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "category", true));
-            this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(116, 66);
-            this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
-            this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(167, 23);
-            this.txtartworktype_ftyCategory.TabIndex = 1;
-            this.txtartworktype_ftyCategory.TextChanged += new System.EventHandler(this.txtartworktype_ftyCategory_TextChanged);
-            this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.txtartworktype_ftyCategory_Validated);
-            // 
-            // txtsubconSupplier
-            // 
-            this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
-            this.txtsubconSupplier.DisplayBox1Binding = "";
-            this.txtsubconSupplier.IsIncludeJunk = false;
-            this.txtsubconSupplier.Location = new System.Drawing.Point(117, 39);
-            this.txtsubconSupplier.Name = "txtsubconSupplier";
-            this.txtsubconSupplier.Size = new System.Drawing.Size(167, 23);
-            this.txtsubconSupplier.TabIndex = 0;
-            this.txtsubconSupplier.TextBox1Binding = "";
-            // 
             // dateDeliveryDate
             // 
             this.dateDeliveryDate.Location = new System.Drawing.Point(70, 12);
@@ -689,17 +640,6 @@
             this.btnIrrPriceReason.UseVisualStyleBackColor = true;
             this.btnIrrPriceReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click);
             // 
-            // txtuserLock
-            // 
-            this.txtuserLock.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LockName", true));
-            this.txtuserLock.DisplayBox1Binding = "";
-            this.txtuserLock.Enabled = false;
-            this.txtuserLock.Location = new System.Drawing.Point(116, 153);
-            this.txtuserLock.Name = "txtuserLock";
-            this.txtuserLock.Size = new System.Drawing.Size(300, 23);
-            this.txtuserLock.TabIndex = 50;
-            this.txtuserLock.TextBox1Binding = "";
-            // 
             // displayLockDate
             // 
             this.displayLockDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -724,17 +664,6 @@
             this.label5.Size = new System.Drawing.Size(105, 23);
             this.label5.TabIndex = 52;
             this.label5.Text = "Lock";
-            // 
-            // txtuserClose
-            // 
-            this.txtuserClose.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CloseName", true));
-            this.txtuserClose.DisplayBox1Binding = "";
-            this.txtuserClose.Enabled = false;
-            this.txtuserClose.Location = new System.Drawing.Point(117, 213);
-            this.txtuserClose.Name = "txtuserClose";
-            this.txtuserClose.Size = new System.Drawing.Size(300, 23);
-            this.txtuserClose.TabIndex = 54;
-            this.txtuserClose.TextBox1Binding = "";
             // 
             // displayCloseDate
             // 
@@ -772,6 +701,76 @@
             this.btnBatchApprove.UseVisualStyleBackColor = true;
             this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
             // 
+            // txtuserClose
+            // 
+            this.txtuserClose.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CloseName", true));
+            this.txtuserClose.DisplayBox1Binding = "";
+            this.txtuserClose.Enabled = false;
+            this.txtuserClose.Location = new System.Drawing.Point(117, 213);
+            this.txtuserClose.Name = "txtuserClose";
+            this.txtuserClose.Size = new System.Drawing.Size(300, 23);
+            this.txtuserClose.TabIndex = 54;
+            this.txtuserClose.TextBox1Binding = "";
+            // 
+            // txtuserLock
+            // 
+            this.txtuserLock.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LockName", true));
+            this.txtuserLock.DisplayBox1Binding = "";
+            this.txtuserLock.Enabled = false;
+            this.txtuserLock.Location = new System.Drawing.Point(116, 153);
+            this.txtuserLock.Name = "txtuserLock";
+            this.txtuserLock.Size = new System.Drawing.Size(300, 23);
+            this.txtuserLock.TabIndex = 50;
+            this.txtuserLock.TextBox1Binding = "";
+            // 
+            // txtmfactory
+            // 
+            this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.boolFtyGroupList = true;
+            this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory.FilteMDivision = true;
+            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
+            this.txtmfactory.Location = new System.Drawing.Point(357, 13);
+            this.txtmfactory.Name = "txtmfactory";
+            this.txtmfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory.TabIndex = 4;
+            this.txtmfactory.TabStop = false;
+            // 
+            // txtuserApprove
+            // 
+            this.txtuserApprove.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
+            this.txtuserApprove.DisplayBox1Binding = "";
+            this.txtuserApprove.Enabled = false;
+            this.txtuserApprove.Location = new System.Drawing.Point(116, 183);
+            this.txtuserApprove.Name = "txtuserApprove";
+            this.txtuserApprove.Size = new System.Drawing.Size(300, 23);
+            this.txtuserApprove.TabIndex = 6;
+            this.txtuserApprove.TextBox1Binding = "";
+            // 
+            // txtsubconSupplier
+            // 
+            this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
+            this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.Location = new System.Drawing.Point(117, 39);
+            this.txtsubconSupplier.Name = "txtsubconSupplier";
+            this.txtsubconSupplier.Size = new System.Drawing.Size(167, 23);
+            this.txtsubconSupplier.TabIndex = 0;
+            this.txtsubconSupplier.TextBox1Binding = "";
+            // 
+            // txtLocalPurchaseItem
+            // 
+            this.txtLocalPurchaseItem.BackColor = System.Drawing.Color.White;
+            this.txtLocalPurchaseItem.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "category", true));
+            this.txtLocalPurchaseItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocalPurchaseItem.Location = new System.Drawing.Point(117, 68);
+            this.txtLocalPurchaseItem.Name = "txtLocalPurchaseItem";
+            this.txtLocalPurchaseItem.Size = new System.Drawing.Size(164, 23);
+            this.txtLocalPurchaseItem.TabIndex = 58;
+            this.txtLocalPurchaseItem.TextChanged += new System.EventHandler(this.txtLocalPurchaseItem_TextChanged);
+            this.txtLocalPurchaseItem.Validated += new System.EventHandler(this.txtLocalPurchaseItem_Validated);
+            // 
             // P30
             // 
             this.ApvChkValue = "New";
@@ -794,6 +793,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P30";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P30. Local Purchase Order";
             this.UnApvChkValue = "Approved";
             this.UniqueExpress = "id";
@@ -842,7 +842,6 @@
         private Win.UI.NumericBox numVatRate;
         private Win.UI.TextBox txtRemark;
         private Win.UI.DisplayBox displayApvDate;
-        private Class.txtartworktype_fty txtartworktype_ftyCategory;
         private Win.UI.DisplayBox displayCurrency;
         private Win.UI.DateBox dateIssueDate;
         private Class.txtsubcon txtsubconSupplier;
@@ -872,5 +871,6 @@
         private Win.UI.Label label4;
         private Win.UI.Label label5;
         private System.Windows.Forms.Button btnBatchApprove;
+        private Class.txtLocalPurchaseItem txtLocalPurchaseItem;
     }
 }

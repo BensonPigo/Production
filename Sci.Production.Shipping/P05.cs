@@ -11,6 +11,7 @@ using Sci.Data;
 using System.Transactions;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -204,7 +205,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             #endregion
 
             #region S/O CFM按鈕權限
-            if (!this.EditMode)
+            if (!this.IsDetailInserting)
             {
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New")
                 {
@@ -223,6 +224,10 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 {
                     this.btnCFM.Text = "Un CFM";
                 }
+            }
+            else
+            {
+                this.btnCFM.Enabled = false;
             }
             #endregion
         }
@@ -497,7 +502,23 @@ where   pl.INVNo = '{0}'
         protected override bool ClickSaveBefore()
         {
             DualResult result;
-            #region 檢查必輸欄位
+            #region 檢查必輸欄位 
+            // [S/O#], [Terminal/Whse#], [Cut-Off Date]都輸入, 或是都不輸入
+            if ((!MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || !MyUtility.Check.Empty(this.txtTerminalWhse.Text) || !MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"])) &&
+                (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.txtTerminalWhse.Text) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
+                )
+            {
+                MyUtility.Msg.WarningBox("GB can't be saved due to S/O Info. (S/O#, Terminal/Whse#, Cut-Off Date/Time) are not complete");
+                return false;
+            }
+
+            // 當此三欄([S/O#], [Terminal/Whse#], [Cut-Off Date])皆有值，但[S/O Cfm Date]為空，保存時會跳出請示"GB can't be saved due to missing S/O Cfm Date"
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) && !MyUtility.Check.Empty(this.txtTerminalWhse.Text) && !MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]) && MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
+            {
+                MyUtility.Msg.WarningBox("GB can't be saved due to missing S/O Cfm Date");
+                return false;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["InvSerial"]))
             {
                 this.txtInvSerial.Focus();
@@ -599,6 +620,12 @@ order by fwd.WhseNo",
             }
 
             #endregion
+
+            // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
+            if (!this.CheckShipMode())
+            {
+                return false;
+            }
 
             #region 檢查Act FCR Date 不可晚於今日or早於一個月前
             if (!MyUtility.Check.Empty(CurrentMaintain["FBDate"]))
@@ -1116,11 +1143,22 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         // 檢查輸入的Cut-off Date是否正確
         private void TxtCutoffDate_Validating(object sender, CancelEventArgs e)
         {
+            string oldvalue = this.txtCutoffDate.OldValue;
+            if (this.txtCutoffDate.Text != this.txtCutoffDate.OldValue && !MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
+            {
+                if (!this.upSOCFMDate())
+                {
+                    this.txtCutoffDate.Text = oldvalue;
+                    return;
+                }
+            }
+
             if (this.txtCutoffDate.Text == "/  /     :  :")
             {
                 this.txtVslvoyFltNo.Focus();
                 this.txtCutoffDate.Text = string.Empty;
                 this.CurrentMaintain["CutoffDate"] = DBNull.Value;
+                this.CurrentMaintain.EndEdit();
                 return;
             }
 
@@ -1144,6 +1182,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                     return;
                 }
             }
+
         }
 
         // 檢查輸入的ETD是否正確
@@ -1239,119 +1278,6 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         // S/O Confirm/UnConfirm
         private void BtnCFM_Click(object sender, EventArgs e)
         {
-            //            if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
-            //            {
-            //                #region Confirm
-            //                if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
-            //                {
-            //                    MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
-            //                    return;
-            //                }
-
-            //                // 檢查表身的ShipMode與表頭的ShipMode如果不同就不可以Confirm
-            //                if (!this.CheckShipMode())
-            //                {
-            //                    return;
-            //                }
-
-            //                bool firstCFM = !MyUtility.Check.Seek(string.Format("select ID from GMTBooking_History WITH (NOLOCK) where ID = '{0}' and HisType = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "SOCFMDate"));
-            //                string insertCmd = string.Format(
-            //                    @"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
-            //values ('{0}','{1}','{2}','{3}','{4}',GETDATE())",
-            //                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-            //                    "SOCFMDate",
-            //                    firstCFM ? string.Empty : "CFM",
-            //                    "Un CFM",
-            //                    Sci.Env.User.UserID);
-
-            //                string updateCmd = string.Format(
-            //                    @"update GMTBooking set SOCFMDate = '{0}' where ID = '{1}';
-            //update PackingList set GMTBookingLock = 'Y' where INVNo = '{1}';",
-            //                    DateTime.Today.ToString("d"),
-            //                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-
-            //                using (TransactionScope transactionScope = new TransactionScope())
-            //                {
-            //                    try
-            //                    {
-            //                        DualResult result = DBProxy.Current.Execute(null, insertCmd);
-            //                        DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
-
-            //                        if (result && result2)
-            //                        {
-            //                            transactionScope.Complete();
-            //                        }
-            //                        else
-            //                        {
-            //                            transactionScope.Dispose();
-            //                            MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try");
-            //                            return;
-            //                        }
-            //                    }
-            //                    catch (Exception ex)
-            //                    {
-            //                        transactionScope.Dispose();
-            //                        this.ShowErr("Commit transaction error.", ex);
-            //                        return;
-            //                    }
-            //                }
-            //                #endregion
-            //            }
-            //            else
-            //            {
-            //                #region UnConfirm
-            //                if (MyUtility.GetValue.Lookup("Status", MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]), "ShipPlan", "ID") == "Confirmed")
-            //                {
-            //                    MyUtility.Msg.WarningBox("Ship Plan already confirmed, can't Un CFM!!");
-            //                    return;
-            //                }
-
-            //                Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("GMTBooking_SO", true);
-            //                DialogResult dResult = callReason.ShowDialog(this);
-            //                if (dResult == System.Windows.Forms.DialogResult.OK)
-            //                {
-            //                    string insertCmd = string.Format(
-            //                        @"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-            //values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
-            //                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-            //                        "SOCFMDate",
-            //                        "Un CFM",
-            //                        "CFM",
-            //                        callReason.ReturnReason,
-            //                        callReason.ReturnRemark,
-            //                        Sci.Env.User.UserID);
-
-            //                    string updateCmd = string.Format(@"update GMTBooking set SOCFMDate = null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-
-            //                    using (TransactionScope transactionScope = new TransactionScope())
-            //                    {
-            //                        try
-            //                        {
-            //                            DualResult result = DBProxy.Current.Execute(null, insertCmd);
-            //                            DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
-
-            //                            if (result && result2)
-            //                            {
-            //                                transactionScope.Complete();
-            //                            }
-            //                            else
-            //                            {
-            //                                transactionScope.Dispose();
-            //                                MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
-            //                                return;
-            //                            }
-            //                        }
-            //                        catch (Exception ex)
-            //                        {
-            //                            transactionScope.Dispose();
-            //                            this.ShowErr("Commit transaction error.", ex);
-            //                            return;
-            //                        }
-            //                    }
-            //                }
-            //                #endregion
-            //            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
                 if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
@@ -1371,70 +1297,68 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             }
             else
             {
-                #region UnConfirm
-                if (MyUtility.GetValue.Lookup("Status", MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]), "ShipPlan", "ID") == "Confirmed")
+                if (!this.upSOCFMDate())
                 {
-                    MyUtility.Msg.WarningBox("Ship Plan already confirmed, can't Un CFM!!");
                     return;
                 }
-
-                Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("GMTBooking_SO", true);
-                DialogResult dResult = callReason.ShowDialog(this);
-                if (dResult == System.Windows.Forms.DialogResult.OK)
-                {
-                    string insertCmd = string.Format(
-                        @"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
-                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                        "SOCFMDate",
-                        "Un CFM",
-                        "CFM",
-                        callReason.ReturnReason,
-                        callReason.ReturnRemark,
-                        Sci.Env.User.UserID);
-
-                    string updateCmd = string.Format(@"update GMTBooking set SOCFMDate = null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-
-                    using (TransactionScope transactionScope = new TransactionScope())
-                    {
-                        try
-                        {
-                            DualResult result = DBProxy.Current.Execute(null, insertCmd);
-                            DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
-
-                            if (result && result2)
-                            {
-                                transactionScope.Complete();
-                            }
-                            else
-                            {
-                                transactionScope.Dispose();
-                                MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
-                                return;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            transactionScope.Dispose();
-                            this.ShowErr("Commit transaction error.", ex);
-                            return;
-                        }
-                    }
-                }
-                #endregion
             }
 
+            this.reloadSOCFMDate();
             this.RenewData();
             this.OnDetailEntered();
         }
 
-        // 檢查表身的ShipMode與表頭的ShipMode要相同
+        // 檢查表身的ShipMode與表頭的ShipMode要相同 & ShipModeID 不存在Order_QtyShip 就return
         private bool CheckShipMode()
         {
             StringBuilder msg = new StringBuilder();
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Select(string.Format("ShipModeID <> '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
+
+            var dtShipMode = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
+            if (dtShipMode == null || dtShipMode.Count() == 0)
             {
-                msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["ShipModeID"])));
+                return true;
+            }
+
+            DualResult result;
+            DataTable dtCheckResult;
+            string strSql;
+            DataRow drPackingShipModeCheckResult;
+            foreach (DataRow dr in dtShipMode)
+            {
+                #region 檢查Packing List 的ship mode
+                strSql = $"select ShipModeID from PackingList with (nolock) where ID = '{dr["ID"]}' and ShipModeID <> '{this.CurrentMaintain["ShipModeID"].ToString()}'";
+                bool isPackListShipModeInconsistent = MyUtility.Check.Seek(strSql, out drPackingShipModeCheckResult);
+                if (isPackListShipModeInconsistent)
+                {
+                    msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(drPackingShipModeCheckResult["ShipModeID"])));
+                    continue;
+                }
+                #endregion
+
+                #region 檢查Order_QtyShip 的ship mode
+                strSql = $@"
+select distinct oq.ID,oq.Seq,oq.ShipmodeID
+from PackingList p  with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID=pd.ID
+inner join Order_QtyShip oq with (nolock) on oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+inner join Orders o with (nolock) on oq.ID = o.ID
+where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
+";
+                result = DBProxy.Current.Select(null, strSql, out dtCheckResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return result;
+                }
+
+                if (dtCheckResult.Rows.Count > 0)
+                {
+                    foreach (DataRow drError in dtCheckResult.Rows)
+                    {
+                        msg.Append($"Order ID:{drError["ID"]},   Seq{drError["Seq"]},   Shipping Mode:{drError["ShipmodeID"]}\r\n");
+                    }
+                }
+                #endregion
             }
 
             if (msg.Length > 0)
@@ -1444,13 +1368,6 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             }
 
             return true;
-        }
-
-        // Container/Truck
-        private void BtnContainerTruck_Click(object sender, EventArgs e)
-        {
-            Sci.Production.Shipping.P05_ContainerTruck callNextForm = new Sci.Production.Shipping.P05_ContainerTruck(this.IsSupportEdit, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
-            callNextForm.ShowDialog(this);
         }
 
         // Import from packing list
@@ -1494,6 +1411,12 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
         {
             base.ClickConfirm();
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CYCFS"]))
+            {
+                MyUtility.Msg.WarningBox("Please input <Loading  Type> first!");
+                return;
+            }
+
             // 還沒做S/O CFM的話，不可以Confrim
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
@@ -1508,7 +1431,8 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                 return;
             }
 
-            // 檢查表身的ShipMode與表頭的ShipMode如果不同就不可以Confirm
+            // 檢查表身的ShipMode與表頭的ShipMode如果不同 & ShipModeID 不存在Order_QtyShip
+            // 就不可以Confirm
             if (!this.CheckShipMode())
             {
                 return;
@@ -1743,6 +1667,16 @@ order by fwd.WhseNo",
 
         private void TxtTerminalWhse_Validating(object sender, CancelEventArgs e)
         {
+            string oldvalue = this.txtTerminalWhse.OldValue;
+            if (this.txtTerminalWhse.Text != this.txtTerminalWhse.OldValue && !MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
+            {
+                if (!this.upSOCFMDate())
+                {
+                    this.txtTerminalWhse.Text = oldvalue;
+                    return;
+                }
+            }
+
             if (MyUtility.Check.Empty(this.txtTerminalWhse.Text))
             {
                 this.txtTerminalWhse.Text = string.Empty;
@@ -1777,6 +1711,97 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
         private void MaskedTextBox1_Validated(object sender, EventArgs e)
         {
             MyUtility.Msg.InfoBox("validated");
+        }
+
+        private void txtSONo_Validating(object sender, CancelEventArgs e)
+        {
+            string oldvalue = this.txtSONo.OldValue;
+            if (this.txtSONo.Text != this.txtSONo.OldValue && !MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
+            {
+                if (!this.upSOCFMDate())
+                {
+                    this.txtSONo.Text = oldvalue;
+                    return;
+                }
+            }
+        }
+
+        private bool upSOCFMDate()
+        {
+            #region UnConfirm
+            if (MyUtility.GetValue.Lookup("Status", MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]), "ShipPlan", "ID") == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("Ship Plan already confirmed, can't Un CFM!!");
+                return false;
+            }
+
+            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("GMTBooking_SO", true);
+            DialogResult dResult = callReason.ShowDialog(this);
+            if (dResult == System.Windows.Forms.DialogResult.OK)
+            {
+                string insertCmd = string.Format(
+                    @"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
+values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
+                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                    "SOCFMDate",
+                    "Un CFM",
+                    "CFM",
+                    callReason.ReturnReason,
+                    callReason.ReturnRemark,
+                    Sci.Env.User.UserID);
+
+                string updateCmd = string.Format(@"update GMTBooking set SOCFMDate = null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+                using (TransactionScope transactionScope = new TransactionScope())
+                {
+                    try
+                    {
+                        DualResult result = DBProxy.Current.Execute(null, insertCmd);
+                        DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
+
+                        if (result && result2)
+                        {
+                            transactionScope.Complete();
+                        }
+                        else
+                        {
+                            transactionScope.Dispose();
+                            MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        transactionScope.Dispose();
+                        this.ShowErr("Commit transaction error.", ex);
+                        return false;
+                    }
+                }
+
+                this.reloadSOCFMDate();
+                this.OnDetailEntered();
+                return true;
+            }
+            else
+            {
+                this.OnDetailEntered();
+                return false;
+            }
+            #endregion
+        }
+
+        private void reloadSOCFMDate()
+        {
+            string sqlSOcfmDate = $@"select SOCFMDate  from GMTBooking where id = '{this.CurrentMaintain["ID"]}'";
+            string upSOCFMDate = MyUtility.GetValue.Lookup(sqlSOcfmDate);
+            if (MyUtility.Check.Empty(upSOCFMDate))
+            {
+                this.CurrentMaintain["SOCFMDate"] = DBNull.Value;
+            }
+            else
+            {
+                this.CurrentMaintain["SOCFMDate"] = upSOCFMDate;
+            }
         }
     }
 }

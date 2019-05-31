@@ -294,6 +294,7 @@ SET
       ,a.AddDate		      =b.AddDate
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
+      ,a.ProductionFamilyID		      =b.ProductionFamilyID
 from Production.dbo.CDCode as a inner join Trade_To_Pms.dbo.CDCode as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.CDCode(
@@ -306,6 +307,7 @@ INSERT INTO Production.dbo.CDCode(
       ,AddDate
       ,EditName
       ,EditDate
+	  ,ProductionFamilyID
 )
 select 
 		ID
@@ -317,6 +319,7 @@ select
       ,AddDate
       ,EditName
       ,EditDate
+	  ,ProductionFamilyID
 from Trade_To_Pms.dbo.CDCode as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.CDCode as a WITH (NOLOCK) where a.id = b.id)
 
@@ -413,7 +416,8 @@ SET
       ,a.AddDate	      =b.AddDate		
       ,a.EditName	      =b.EditName		
       ,a.EditDate	      =b.EditDate
-	  ,a.IsTrimCardOther = b.isTrimCardOther		
+	  ,a.IsTrimCardOther = b.isTrimCardOther	
+	  ,a.IsThread        = b.IsThread
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
 where b.EditDate > a.EditDate
@@ -434,6 +438,7 @@ SET
 	  ,a.IsTrimCardOther = b.isTrimCardOther
       --,a.EditName	      =b.EditName		
       --,a.EditDate	      =b.EditDate		
+	  ,a.IsThread        = b.IsThread
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
 where b.EditDate <= a.EditDate
@@ -453,6 +458,7 @@ ID
       ,EditName
       ,EditDate
 	  ,isTrimCardOther
+	  ,IsThread
 
 )
 select 
@@ -470,6 +476,7 @@ ID
       ,EditName
       ,EditDate
 	  ,isTrimCardOther
+	  ,IsThread
 
 from Trade_To_Pms.dbo.MtlType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.MtlType as a WITH (NOLOCK) where a.id = b.id)
@@ -509,6 +516,7 @@ SET
       ,a.EditName	      =b.EditName		
       ,a.EditDate	      =b.EditDate		
 	  ,a.IsPrintToCMP	  =b.IsPrintToCMP
+	  ,a.IsLocalPurchase = b.IsLocalPurchase
 from Production.dbo.ArtworkType as a inner join Trade_To_Pms.dbo.ArtworkType as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.ArtworkType(
@@ -533,6 +541,7 @@ INSERT INTO Production.dbo.ArtworkType(
       ,EditName
       ,EditDate
 	  ,IsPrintToCMP
+	  ,IsLocalPurchase
 )
 select 
        ID
@@ -556,6 +565,7 @@ select
       ,EditName
       ,EditDate
 	  ,IsPrintToCMP
+	  ,IsLocalPurchase
 from Trade_To_Pms.dbo.ArtworkType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ArtworkType as a WITH (NOLOCK) where a.id = b.id)
 -------------------------------Artworktype_Detail
@@ -1137,7 +1147,7 @@ SET
       a.PriceRate	      =b.PriceRate	
       ,a.Round	      =b.Round	
       ,a.Description	      =b.Description	
-      ,a.ExtensionUnit	      =b.ExtensionUnit	
+      ,a.ExtensionUnit	      =isnull(b.ExtensionUnit,'')	
       ,a.Junk	      =b.TradeJunk	
       ,a.AddName	      =b.AddName	
       ,a.AddDate	      =b.AddDate	
@@ -1168,7 +1178,7 @@ select
       ,PriceRate
       ,Round
       ,Description
-      ,ExtensionUnit
+      ,isnull(ExtensionUnit,'')
       ,TradeJunk
       ,AddName
       ,AddDate
@@ -3211,7 +3221,9 @@ SET
       ,a.FCRDate   =b.FCRDate 
 	  ,a.BLNo	   =b.BLNo
 	  ,a.BL2No	   =b.BL2No
-
+	  ,a.InvoiceApproveDate	   =b.InvoiceApproveDate
+	  ,a.DocumentRefNo	   =b.DocumentRefNo
+	  ,a.IntendDeliveryDate	   =b.IntendDeliveryDate
 from Production.dbo.GMTBooking as a inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
 where b.InvDate is not null
 END

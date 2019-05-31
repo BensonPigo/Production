@@ -46,6 +46,8 @@
             this.labelM = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.chkFOC = new Sci.Win.UI.CheckBox();
+            this.ChkLocalOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -240,9 +242,33 @@
             this.label2.TabIndex = 129;
             this.label2.Text = "Factory";
             // 
+            // chkFOC
+            // 
+            this.chkFOC.AutoSize = true;
+            this.chkFOC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkFOC.Location = new System.Drawing.Point(267, 142);
+            this.chkFOC.Name = "chkFOC";
+            this.chkFOC.Size = new System.Drawing.Size(108, 21);
+            this.chkFOC.TabIndex = 224;
+            this.chkFOC.Text = "Exclude FOC";
+            this.chkFOC.UseVisualStyleBackColor = true;
+            // 
+            // ChkLocalOrder
+            // 
+            this.ChkLocalOrder.AutoSize = true;
+            this.ChkLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ChkLocalOrder.Location = new System.Drawing.Point(267, 169);
+            this.ChkLocalOrder.Name = "ChkLocalOrder";
+            this.ChkLocalOrder.Size = new System.Drawing.Size(152, 21);
+            this.ChkLocalOrder.TabIndex = 225;
+            this.ChkLocalOrder.Text = "Exclude Local order";
+            this.ChkLocalOrder.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(506, 243);
+            this.Controls.Add(this.ChkLocalOrder);
+            this.Controls.Add(this.chkFOC);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtMdivision1);
@@ -262,6 +288,7 @@
             this.Controls.Add(this.txtSPNoStart);
             this.Controls.Add(this.labelSPNo);
             this.Name = "R03";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. Packing List Report";
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.txtSPNoStart, 0);
@@ -284,6 +311,8 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.chkFOC, 0);
+            this.Controls.SetChildIndex(this.ChkLocalOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -309,5 +338,7 @@
         private Win.UI.Label labelM;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.Label label2;
+        private Win.UI.CheckBox chkFOC;
+        private Win.UI.CheckBox ChkLocalOrder;
     }
 }

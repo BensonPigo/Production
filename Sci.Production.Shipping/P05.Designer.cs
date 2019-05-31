@@ -77,7 +77,6 @@
             this.label31 = new Sci.Win.UI.Label();
             this.btnAirPPList = new Sci.Win.UI.Button();
             this.btnExpenseData = new Sci.Win.UI.Button();
-            this.btnContainerTruck = new Sci.Win.UI.Button();
             this.btnCFM = new Sci.Win.UI.Button();
             this.btnH = new Sci.Win.UI.Button();
             this.btnImportfrompackinglist = new Sci.Win.UI.Button();
@@ -139,7 +138,6 @@
             this.masterpanel.Controls.Add(this.displayShipPlanNo);
             this.masterpanel.Controls.Add(this.btnH);
             this.masterpanel.Controls.Add(this.btnCFM);
-            this.masterpanel.Controls.Add(this.btnContainerTruck);
             this.masterpanel.Controls.Add(this.btnExpenseData);
             this.masterpanel.Controls.Add(this.btnAirPPList);
             this.masterpanel.Controls.Add(this.label31);
@@ -253,7 +251,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label31, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAirPPList, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnExpenseData, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnContainerTruck, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCFM, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnH, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayShipPlanNo, 0);
@@ -731,7 +728,7 @@
             this.labelContainerType.Name = "labelContainerType";
             this.labelContainerType.Size = new System.Drawing.Size(126, 23);
             this.labelContainerType.TabIndex = 41;
-            this.labelContainerType.Text = "Container Type";
+            this.labelContainerType.Text = "Loading Type";
             // 
             // labelSONo
             // 
@@ -805,6 +802,7 @@
             this.txtSONo.Name = "txtSONo";
             this.txtSONo.Size = new System.Drawing.Size(164, 23);
             this.txtSONo.TabIndex = 13;
+            this.txtSONo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSONo_Validating);
             // 
             // dateSOCfmDate
             // 
@@ -867,7 +865,7 @@
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(860, 66);
+            this.btnExpenseData.Location = new System.Drawing.Point(860, 63);
             this.btnExpenseData.Name = "btnExpenseData";
             this.btnExpenseData.Size = new System.Drawing.Size(131, 30);
             this.btnExpenseData.TabIndex = 65;
@@ -875,20 +873,8 @@
             this.btnExpenseData.UseVisualStyleBackColor = true;
             this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click);
             // 
-            // btnContainerTruck
-            // 
-            this.btnContainerTruck.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnContainerTruck.Location = new System.Drawing.Point(860, 102);
-            this.btnContainerTruck.Name = "btnContainerTruck";
-            this.btnContainerTruck.Size = new System.Drawing.Size(131, 30);
-            this.btnContainerTruck.TabIndex = 66;
-            this.btnContainerTruck.Text = "Container/Truck";
-            this.btnContainerTruck.UseVisualStyleBackColor = true;
-            this.btnContainerTruck.Click += new System.EventHandler(this.BtnContainerTruck_Click);
-            // 
             // btnCFM
             // 
-            this.btnCFM.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnCFM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnCFM.Location = new System.Drawing.Point(766, 165);
             this.btnCFM.Name = "btnCFM";
@@ -914,7 +900,7 @@
             // 
             this.btnImportfrompackinglist.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportfrompackinglist.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnImportfrompackinglist.Location = new System.Drawing.Point(852, 210);
+            this.btnImportfrompackinglist.Location = new System.Drawing.Point(846, 129);
             this.btnImportfrompackinglist.Name = "btnImportfrompackinglist";
             this.btnImportfrompackinglist.Size = new System.Drawing.Size(145, 33);
             this.btnImportfrompackinglist.TabIndex = 19;
@@ -1073,7 +1059,7 @@
             // btnAirPPStatus
             // 
             this.btnAirPPStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAirPPStatus.Location = new System.Drawing.Point(860, 138);
+            this.btnAirPPStatus.Location = new System.Drawing.Point(861, 96);
             this.btnAirPPStatus.Name = "btnAirPPStatus";
             this.btnAirPPStatus.Size = new System.Drawing.Size(131, 30);
             this.btnAirPPStatus.TabIndex = 71;
@@ -1185,6 +1171,7 @@
             this.KeyField1 = "ID";
             this.KeyField2 = "INVNo";
             this.Name = "P05";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P05. Garment Booking";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
@@ -1264,7 +1251,6 @@
         private Win.UI.Button btnImportfrompackinglist;
         private Win.UI.Button btnH;
         private Win.UI.Button btnCFM;
-        private Win.UI.Button btnContainerTruck;
         private Win.UI.Button btnExpenseData;
         private Win.UI.Button btnAirPPList;
         private Win.UI.Label label31;

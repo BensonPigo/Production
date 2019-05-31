@@ -2,18 +2,20 @@
     [Id]            VARCHAR (10) CONSTRAINT [DF_SubProcess_Id] DEFAULT ('') NOT NULL,
     [ArtworkTypeId] VARCHAR (20) CONSTRAINT [DF_SubProcess_ArtworkTypeId] DEFAULT ('') NOT NULL,
     [IsSelection]   BIT          CONSTRAINT [DF_SubProcess_IsSelection] DEFAULT ((0)) NULL,
-    [IsRFIDProcess]     BIT          CONSTRAINT [DF_SubProcess_IsProcess] DEFAULT ((0)) NULL,
-    [IsRFIDDefault]     BIT          CONSTRAINT [DF_SubProcess_IsDisplay] DEFAULT ((0)) NULL,
+    [IsRFIDProcess] BIT          CONSTRAINT [DF_SubProcess_IsProcess] DEFAULT ((0)) NULL,
+    [IsRFIDDefault] BIT          CONSTRAINT [DF_SubProcess_IsDisplay] DEFAULT ((0)) NULL,
     [ShowSeq]       VARCHAR (2)  CONSTRAINT [DF_SubProcess_ShowSeq] DEFAULT ('') NULL,
     [Junk]          BIT          CONSTRAINT [DF_SubProcess_Junk] DEFAULT ((0)) NULL,
     [AddName]       VARCHAR (10) CONSTRAINT [DF_SubProcess_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME     NULL,
     [EditName]      VARCHAR (10) CONSTRAINT [DF_SubProcess_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME     NULL,
-    [BCSDate] NUMERIC(2) NULL, 
-    [InOutRule] TINYINT NOT NULL DEFAULT 0, 
+    [BCSDate]       NUMERIC (2)  NULL,
+    [InOutRule]     TINYINT      DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO
@@ -65,4 +67,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '0-NotSetting、1-OnlyIn、2-OnlyOut、3-FromInToOut、4-FromOutToIn',@level0type = N'Schema',   @level0name = 'dbo',@level1type = N'Table',    @level1name = 'Subprocess',@level2type = N'Column',   @level2name = 'InOutRule'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = '0-NotSetting
+1-OnlyIn
+2-OnlyOut
+3-FromInToOut
+4-FromOutToIn', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubProcess', @level2type = N'COLUMN', @level2name = N'InOutRule';
+
+

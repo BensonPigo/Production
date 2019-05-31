@@ -12,8 +12,11 @@
     [EditName]             VARCHAR (10)    CONSTRAINT [DF_SentReport_EditName] DEFAULT ('') NOT NULL,
     [EditDate]             DATETIME        NULL,
     [TestReportCheckClima] BIT             CONSTRAINT [DF_SentReport_TestReportCheckClima] DEFAULT ((0)) NOT NULL,
+    [AWBNo]                VARCHAR (30)    CONSTRAINT [DF_SentReport_AWBNo] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_SentReport] PRIMARY KEY CLUSTERED ([Export_DetailUkey] ASC)
 );
+
+
 
 
 

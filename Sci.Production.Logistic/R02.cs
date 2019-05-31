@@ -25,6 +25,7 @@ namespace Sci.Production.Logistic
         private string mDivision;
         private string location1;
         private string location2;
+        private string Cancel;
         private DateTime? bdate1;
         private DateTime? bdate2;
         private DataTable printData;
@@ -39,6 +40,7 @@ namespace Sci.Production.Logistic
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboCancel.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
@@ -52,6 +54,7 @@ namespace Sci.Production.Logistic
             this.sp2 = this.txtSPNoEnd.Text;
             this.brand = this.txtbrand.Text;
             this.mDivision = this.comboM.Text;
+            this.Cancel = this.comboCancel.Text;
             this.location1 = this.txtcloglocationLocationStart.Text;
             this.location2 = this.txtcloglocationLocationEnd.Text;
             this.bdate1 = this.dateBuyerDelivery.Value1;
@@ -116,8 +119,14 @@ namespace Sci.Production.Logistic
                 sqlWHERE.Append(string.Format(" and pd.ClogLocationId <= '{0}'", this.location2));
             }
 
+            if (!MyUtility.Check.Empty(this.Cancel))
+            {
+                sqlWHERE.Append(string.Format(" and o.Junk = '{0}'", this.Cancel == "Y" ? 1 : 0));
+            }
+
             sqlcmd.Append(@"
-select a.MDivisionID,a.FactoryID,a.OrderID,a.PackingID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled,a.PulloutComplete,ActPulloutDate
+select a.MDivisionID,a.FactoryID,a.OrderID,a.PackingID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled
+,TTLQty,[QtyPerSize],a.PulloutComplete,ActPulloutDate
 from(
 select 
 p.MDivisionID
@@ -130,6 +139,8 @@ p.MDivisionID
 ,pd.ClogLocationId
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
+,[TTLQty] = pd.QtyPerCTN* pd.CTNQty
+,[QtyPerSize] = SizeCombo.combo
 ,pd.id,pd.Seq
 ,[PulloutComplete] = case when o.qty > isnull(s.ShipQty,0) then 'S'
 						               when o.qty <= isnull(s.ShipQty,0) then'Y'  end
@@ -137,8 +148,24 @@ p.MDivisionID
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
-outer apply(select ShipQty=sum(pod.ShipQty) from Pullout_Detail pod WITH (NOLOCK) where pod.id = po.id)s
+outer apply(
+	select ShipQty = sum(podd.ShipQty) 
+	from Pullout_Detail_Detail podd WITH (NOLOCK) 
+	inner join Order_Qty oq WITH (NOLOCK) on oq.id=podd.OrderID 
+	and podd.Article= oq.Article and podd.SizeCode=oq.SizeCode
+	where podd.OrderID = o.ID
+)s
+outer apply(
+	select combo = Stuff((
+	select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
+	from(
+		select distinct pp.SizeCode,pp.QtyPerCTN
+		from PackingList_Detail pp
+		where pp.ID=pd.ID and pp.CTNStartNo=pd.CTNStartNo
+	)s
+	for xml path('')
+	),1,1,'')
+) SizeCombo
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and o.PulloutComplete = 1
@@ -159,6 +186,8 @@ p.MDivisionID
 ,pd.ClogLocationId
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
+,[TTLQty] = pd.QtyPerCTN* pd.CTNQty
+,[QtyPerSize] = SizeCombo.combo
 ,pd.id,pd.Seq
 ,[PulloutComplete] = 'N'
 ,[ActPulloutDate] = o.ActPulloutDate
@@ -166,6 +195,17 @@ from PackingList p WITH (NOLOCK)
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
+outer apply(
+	select combo = Stuff((
+	select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
+	from(
+		select distinct pd.SizeCode,pd.QtyPerCTN
+		from PackingList_Detail pd1
+		where pd1.ID=pd.ID and pd1.CTNStartNo=pd.CTNStartNo
+	)s
+	for xml path('')
+	),1,1,'')
+) SizeCombo
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and (p.PulloutID = '' or po.Status = 'New')
@@ -220,7 +260,7 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
 
             // 填內容值
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 12];
+            object[,] objArray = new object[1, 14];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
@@ -235,11 +275,13 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
                 objArray[0, 9] = dr["Cancelled"];
                 if (this.Perm.Confirm)
                 {
-                    objArray[0, 10] = dr["PulloutComplete"];
-                    objArray[0, 11] = dr["ActPulloutDate"];
+                    objArray[0, 10] = dr["TTLQty"];
+                    objArray[0, 11] = dr["QtyPerSize"];
+                    objArray[0, 12] = dr["PulloutComplete"];
+                    objArray[0, 13] = dr["ActPulloutDate"];
                 }
 
-                worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -247,6 +289,8 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
             {
                 worksheet.Cells[5, 11] = string.Empty;
                 worksheet.Cells[5, 12] = string.Empty;
+                worksheet.Cells[5, 13] = string.Empty;
+                worksheet.Cells[5, 14] = string.Empty;
             }
 
             #region Save & Show Excel
