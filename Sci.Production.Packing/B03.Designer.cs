@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Packing
 {
-    partial class B02
+    partial class B03
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,6 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
@@ -42,12 +41,11 @@
             this.txtCTNRefno = new Sci.Win.UI.TextBox();
             this.numFromLeft = new Sci.Win.UI.NumericBox();
             this.numFromTop = new Sci.Win.UI.NumericBox();
-            this.numStampLength = new Sci.Win.UI.NumericBox();
-            this.numStampWidth = new Sci.Win.UI.NumericBox();
-            this.btnUpload = new Sci.Win.UI.Button();
-            this.btnDownload = new Sci.Win.UI.Button();
+            this.numPicLength = new Sci.Win.UI.NumericBox();
+            this.numPicWidth = new Sci.Win.UI.NumericBox();
             this.cmbSide = new Sci.Win.UI.ComboBox();
-            this.displayFileName = new Sci.Win.UI.DisplayBox();
+            this.lblSeq = new Sci.Win.UI.Label();
+            this.numSeq = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -56,14 +54,17 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(716, 293);
+            // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.displayFileName);
+            this.detailcont.Controls.Add(this.numSeq);
+            this.detailcont.Controls.Add(this.lblSeq);
             this.detailcont.Controls.Add(this.cmbSide);
-            this.detailcont.Controls.Add(this.btnDownload);
-            this.detailcont.Controls.Add(this.btnUpload);
-            this.detailcont.Controls.Add(this.numStampWidth);
-            this.detailcont.Controls.Add(this.numStampLength);
+            this.detailcont.Controls.Add(this.numPicWidth);
+            this.detailcont.Controls.Add(this.numPicLength);
             this.detailcont.Controls.Add(this.numFromTop);
             this.detailcont.Controls.Add(this.numFromLeft);
             this.detailcont.Controls.Add(this.txtCTNRefno);
@@ -73,11 +74,16 @@
             this.detailcont.Controls.Add(this.label8);
             this.detailcont.Controls.Add(this.label7);
             this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(716, 255);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 255);
+            this.detailbtm.Size = new System.Drawing.Size(716, 38);
             // 
             // browse
             // 
@@ -119,14 +125,6 @@
             this.label4.TabIndex = 3;
             this.label4.Text = "Side";
             // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(33, 197);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(102, 23);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "FileName";
-            // 
             // label6
             // 
             this.label6.Location = new System.Drawing.Point(341, 33);
@@ -149,7 +147,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(102, 23);
             this.label8.TabIndex = 7;
-            this.label8.Text = "StampLength";
+            this.label8.Text = "Pic Length";
             // 
             // label9
             // 
@@ -157,7 +155,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(102, 23);
             this.label9.TabIndex = 8;
-            this.label9.Text = "StampWidth";
+            this.label9.Text = "Pic Width";
             // 
             // txtbrand1
             // 
@@ -211,7 +209,7 @@
             0,
             0});
             this.numFromLeft.Size = new System.Drawing.Size(100, 23);
-            this.numFromLeft.TabIndex = 13;
+            this.numFromLeft.TabIndex = 14;
             this.numFromLeft.Value = new decimal(new int[] {
             0,
             0,
@@ -237,86 +235,64 @@
             0,
             0});
             this.numFromTop.Size = new System.Drawing.Size(100, 23);
-            this.numFromTop.TabIndex = 14;
+            this.numFromTop.TabIndex = 15;
             this.numFromTop.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numStampLength
+            // numPicLength
             // 
-            this.numStampLength.BackColor = System.Drawing.Color.White;
-            this.numStampLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StampLength", true));
-            this.numStampLength.DecimalPlaces = 2;
-            this.numStampLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numStampLength.Location = new System.Drawing.Point(446, 115);
-            this.numStampLength.Maximum = new decimal(new int[] {
+            this.numPicLength.BackColor = System.Drawing.Color.White;
+            this.numPicLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PicLength", true));
+            this.numPicLength.DecimalPlaces = 2;
+            this.numPicLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numPicLength.Location = new System.Drawing.Point(446, 115);
+            this.numPicLength.Maximum = new decimal(new int[] {
             99999999,
             0,
             0,
             131072});
-            this.numStampLength.Name = "numStampLength";
-            this.numStampLength.NullValue = new decimal(new int[] {
+            this.numPicLength.Name = "numPicLength";
+            this.numPicLength.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numStampLength.Size = new System.Drawing.Size(100, 23);
-            this.numStampLength.TabIndex = 15;
-            this.numStampLength.Value = new decimal(new int[] {
+            this.numPicLength.Size = new System.Drawing.Size(100, 23);
+            this.numPicLength.TabIndex = 16;
+            this.numPicLength.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numStampWidth
+            // numPicWidth
             // 
-            this.numStampWidth.BackColor = System.Drawing.Color.White;
-            this.numStampWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StampWidth", true));
-            this.numStampWidth.DecimalPlaces = 2;
-            this.numStampWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numStampWidth.Location = new System.Drawing.Point(446, 156);
-            this.numStampWidth.Maximum = new decimal(new int[] {
+            this.numPicWidth.BackColor = System.Drawing.Color.White;
+            this.numPicWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PicWidth", true));
+            this.numPicWidth.DecimalPlaces = 2;
+            this.numPicWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numPicWidth.Location = new System.Drawing.Point(446, 156);
+            this.numPicWidth.Maximum = new decimal(new int[] {
             99999999,
             0,
             0,
             131072});
-            this.numStampWidth.Name = "numStampWidth";
-            this.numStampWidth.NullValue = new decimal(new int[] {
+            this.numPicWidth.Name = "numPicWidth";
+            this.numPicWidth.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numStampWidth.Size = new System.Drawing.Size(100, 23);
-            this.numStampWidth.TabIndex = 16;
-            this.numStampWidth.Value = new decimal(new int[] {
+            this.numPicWidth.Size = new System.Drawing.Size(100, 23);
+            this.numPicWidth.TabIndex = 17;
+            this.numPicWidth.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            // 
-            // btnUpload
-            // 
-            this.btnUpload.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnUpload.Location = new System.Drawing.Point(466, 197);
-            this.btnUpload.Name = "btnUpload";
-            this.btnUpload.Size = new System.Drawing.Size(80, 30);
-            this.btnUpload.TabIndex = 18;
-            this.btnUpload.Text = "Upload";
-            this.btnUpload.UseVisualStyleBackColor = true;
-            this.btnUpload.Click += new System.EventHandler(this.BtnUpload_Click);
-            // 
-            // btnDownload
-            // 
-            this.btnDownload.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnDownload.Location = new System.Drawing.Point(568, 197);
-            this.btnDownload.Name = "btnDownload";
-            this.btnDownload.Size = new System.Drawing.Size(80, 30);
-            this.btnDownload.TabIndex = 19;
-            this.btnDownload.Text = "Download";
-            this.btnDownload.UseVisualStyleBackColor = true;
-            this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
             // 
             // cmbSide
             // 
@@ -338,17 +314,40 @@
             this.cmbSide.Size = new System.Drawing.Size(121, 24);
             this.cmbSide.TabIndex = 12;
             // 
-            // displayFileName
+            // lblSeq
             // 
-            this.displayFileName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayFileName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FileName", true));
-            this.displayFileName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFileName.Location = new System.Drawing.Point(138, 197);
-            this.displayFileName.Name = "displayFileName";
-            this.displayFileName.Size = new System.Drawing.Size(305, 23);
-            this.displayFileName.TabIndex = 20;
+            this.lblSeq.Location = new System.Drawing.Point(33, 199);
+            this.lblSeq.Name = "lblSeq";
+            this.lblSeq.Size = new System.Drawing.Size(102, 23);
+            this.lblSeq.TabIndex = 17;
+            this.lblSeq.Text = "Seq";
             // 
-            // B02
+            // numSeq
+            // 
+            this.numSeq.BackColor = System.Drawing.Color.White;
+            this.numSeq.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Seq", true));
+            this.numSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numSeq.Location = new System.Drawing.Point(138, 199);
+            this.numSeq.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.numSeq.Name = "numSeq";
+            this.numSeq.NullValue = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numSeq.Size = new System.Drawing.Size(100, 23);
+            this.numSeq.TabIndex = 13;
+            this.numSeq.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // B03
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -356,10 +355,10 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
-            this.Name = "B02";
+            this.Name = "B03";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B02. Shipping Mark HTML Setting (for GenSong)";
-            this.WorkAlias = "ShippingMarkStamp";
+            this.Text = "B03. Shipping Mark Pic Setting (for GenSong)";
+            this.WorkAlias = "ShippingMarkPicture";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -380,20 +379,18 @@
         private Win.UI.Label label8;
         private Win.UI.Label label7;
         private Win.UI.Label label6;
-        private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
-        private Win.UI.Button btnDownload;
-        private Win.UI.Button btnUpload;
-        private Win.UI.NumericBox numStampWidth;
-        private Win.UI.NumericBox numStampLength;
+        private Win.UI.NumericBox numPicWidth;
+        private Win.UI.NumericBox numPicLength;
         private Win.UI.NumericBox numFromTop;
         private Win.UI.NumericBox numFromLeft;
         private Win.UI.TextBox txtCTNRefno;
         private Class.txtcustcd txtcustcd1;
         private Class.txtbrand txtbrand1;
         private Win.UI.ComboBox cmbSide;
-        private Win.UI.DisplayBox displayFileName;
+        private Win.UI.NumericBox numSeq;
+        private Win.UI.Label lblSeq;
     }
 }
