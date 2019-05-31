@@ -12,7 +12,7 @@
     [Model]                VARCHAR (25)   CONSTRAINT [DF_Orders_Model] DEFAULT ('') NULL,
     [HsCode1]              VARCHAR (14)   CONSTRAINT [DF_Orders_HsCode1] DEFAULT ('') NULL,
     [HsCode2]              VARCHAR (14)   CONSTRAINT [DF_Orders_HsCode2] DEFAULT ('') NULL,
-    [PayTermARID]          VARCHAR (5)    CONSTRAINT [DF_Orders_PayTermARID] DEFAULT ('') NULL,
+    [PayTermARID]          VARCHAR (10)    CONSTRAINT [DF_Orders_PayTermARID] DEFAULT ('') NULL,
     [ShipTermID]           VARCHAR (5)    CONSTRAINT [DF_Orders_ShipTermID] DEFAULT ('') NULL,
     [ShipModeList]         VARCHAR (30)   CONSTRAINT [DF_Orders_ShipModeList] DEFAULT ('') NULL,
     [CdCodeID]             VARCHAR (6)    CONSTRAINT [DF_Orders_CdCodeID] DEFAULT ('') NULL,

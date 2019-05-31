@@ -195,7 +195,7 @@
             this.masterpanel.Controls.Add(this.dateETD);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(875, 360);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 360);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETD, 0);
@@ -276,7 +276,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 360);
-            this.detailpanel.Size = new System.Drawing.Size(875, 0);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 202);
             // 
             // gridicon
             // 
@@ -289,7 +289,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 202);
             // 
             // detail2
             // 
@@ -305,16 +305,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1000, 600);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1000, 562);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 562);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -482,7 +482,7 @@
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayDescription.Location = new System.Drawing.Point(73, 247);
             this.displayDescription.Name = "displayDescription";
-            this.displayDescription.Size = new System.Drawing.Size(331, 23);
+            this.displayDescription.Size = new System.Drawing.Size(366, 23);
             this.displayDescription.TabIndex = 7;
             // 
             // txtRemark
@@ -1132,7 +1132,7 @@
             this.txtpaytermarPaymentTerm.DisplayBox1Binding = "";
             this.txtpaytermarPaymentTerm.Location = new System.Drawing.Point(92, 220);
             this.txtpaytermarPaymentTerm.Name = "txtpaytermarPaymentTerm";
-            this.txtpaytermarPaymentTerm.Size = new System.Drawing.Size(311, 23);
+            this.txtpaytermarPaymentTerm.Size = new System.Drawing.Size(347, 23);
             this.txtpaytermarPaymentTerm.TabIndex = 7;
             this.txtpaytermarPaymentTerm.TextBox1Binding = "";
             // 
