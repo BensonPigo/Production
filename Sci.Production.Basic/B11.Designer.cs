@@ -118,7 +118,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(830, 576);
+            this.browse.Size = new System.Drawing.Size(830, 667);
             // 
             // tabs
             // 
@@ -409,7 +409,7 @@
             this.txtPaytermarSample.DisplayBox1Binding = "";
             this.txtPaytermarSample.Location = new System.Drawing.Point(147, 330);
             this.txtPaytermarSample.Name = "txtPaytermarSample";
-            this.txtPaytermarSample.Size = new System.Drawing.Size(311, 23);
+            this.txtPaytermarSample.Size = new System.Drawing.Size(336, 23);
             this.txtPaytermarSample.TabIndex = 9;
             this.txtPaytermarSample.TextBox1Binding = "";
             // 
@@ -419,7 +419,7 @@
             this.txtPaytermarBulk.DisplayBox1Binding = "";
             this.txtPaytermarBulk.Location = new System.Drawing.Point(147, 300);
             this.txtPaytermarBulk.Name = "txtPaytermarBulk";
-            this.txtPaytermarBulk.Size = new System.Drawing.Size(311, 23);
+            this.txtPaytermarBulk.Size = new System.Drawing.Size(336, 23);
             this.txtPaytermarBulk.TabIndex = 8;
             this.txtPaytermarBulk.TextBox1Binding = "";
             // 
@@ -463,6 +463,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B11";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B11. CustCD";
             this.UniqueExpress = "BrandID,ID";
             this.WorkAlias = "CustCD";
