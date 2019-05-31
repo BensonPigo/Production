@@ -949,6 +949,18 @@ VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETD
 
             strSQLCmd.Append($@"
 insert IssueLack_Detail
+(
+Id
+,FtyInventoryUkey
+,Qty
+,MDivisionID
+,POID
+,Seq1
+,Seq2
+,Roll
+,Dyelot
+,StockType
+)
 select  
         ID = '{tmpId}'
         , FtyInventoryukey = c.ukey
