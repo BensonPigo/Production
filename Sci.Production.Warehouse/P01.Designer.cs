@@ -178,7 +178,6 @@
             this.btnReCalculate = new Sci.Win.UI.Button();
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
             this.btnPFHistory = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
             this.displayIsMixMarker = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -196,7 +195,6 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayIsMixMarker);
-            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.btnPFHistory);
             this.detailcont.Controls.Add(this.btnExpectionFormRemark);
             this.detailcont.Controls.Add(this.btnReCalculate);
@@ -1572,7 +1570,7 @@
             // 
             this.dateEstPullout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
             this.dateEstPullout.IsSupportEditMode = false;
-            this.dateEstPullout.Location = new System.Drawing.Point(610, 333);
+            this.dateEstPullout.Location = new System.Drawing.Point(593, 355);
             this.dateEstPullout.Name = "dateEstPullout";
             this.dateEstPullout.ReadOnly = true;
             this.dateEstPullout.Size = new System.Drawing.Size(100, 21);
@@ -1580,7 +1578,7 @@
             // 
             // labelEstPullout
             // 
-            this.labelEstPullout.Location = new System.Drawing.Point(509, 334);
+            this.labelEstPullout.Location = new System.Drawing.Point(492, 356);
             this.labelEstPullout.Name = "labelEstPullout";
             this.labelEstPullout.Size = new System.Drawing.Size(98, 21);
             this.labelEstPullout.TabIndex = 160;
@@ -1590,7 +1588,7 @@
             // 
             this.displayActPullout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayActPullout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayActPullout.Location = new System.Drawing.Point(711, 417);
+            this.displayActPullout.Location = new System.Drawing.Point(694, 439);
             this.displayActPullout.Name = "displayActPullout";
             this.displayActPullout.Size = new System.Drawing.Size(27, 21);
             this.displayActPullout.TabIndex = 164;
@@ -1599,7 +1597,7 @@
             // 
             this.dateActPullout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActPulloutDate", true));
             this.dateActPullout.IsSupportEditMode = false;
-            this.dateActPullout.Location = new System.Drawing.Point(610, 417);
+            this.dateActPullout.Location = new System.Drawing.Point(593, 439);
             this.dateActPullout.Name = "dateActPullout";
             this.dateActPullout.ReadOnly = true;
             this.dateActPullout.Size = new System.Drawing.Size(100, 21);
@@ -1607,7 +1605,7 @@
             // 
             // labelActPullout
             // 
-            this.labelActPullout.Location = new System.Drawing.Point(509, 417);
+            this.labelActPullout.Location = new System.Drawing.Point(492, 439);
             this.labelActPullout.Name = "labelActPullout";
             this.labelActPullout.Size = new System.Drawing.Size(97, 21);
             this.labelActPullout.TabIndex = 162;
@@ -1617,7 +1615,7 @@
             // 
             this.dateEachConsApv.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EachConsApv", true));
             this.dateEachConsApv.IsSupportEditMode = false;
-            this.dateEachConsApv.Location = new System.Drawing.Point(610, 388);
+            this.dateEachConsApv.Location = new System.Drawing.Point(593, 410);
             this.dateEachConsApv.Name = "dateEachConsApv";
             this.dateEachConsApv.ReadOnly = true;
             this.dateEachConsApv.Size = new System.Drawing.Size(100, 21);
@@ -1625,7 +1623,7 @@
             // 
             // labelEachConsApv
             // 
-            this.labelEachConsApv.Location = new System.Drawing.Point(509, 390);
+            this.labelEachConsApv.Location = new System.Drawing.Point(492, 412);
             this.labelEachConsApv.Name = "labelEachConsApv";
             this.labelEachConsApv.Size = new System.Drawing.Size(97, 21);
             this.labelEachConsApv.TabIndex = 165;
@@ -1635,7 +1633,7 @@
             // 
             this.dateMNtoiceApv.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MnorderApv", true));
             this.dateMNtoiceApv.IsSupportEditMode = false;
-            this.dateMNtoiceApv.Location = new System.Drawing.Point(610, 363);
+            this.dateMNtoiceApv.Location = new System.Drawing.Point(593, 385);
             this.dateMNtoiceApv.Name = "dateMNtoiceApv";
             this.dateMNtoiceApv.ReadOnly = true;
             this.dateMNtoiceApv.Size = new System.Drawing.Size(100, 21);
@@ -1643,7 +1641,7 @@
             // 
             // labelMNtoiceApv
             // 
-            this.labelMNtoiceApv.Location = new System.Drawing.Point(509, 364);
+            this.labelMNtoiceApv.Location = new System.Drawing.Point(492, 386);
             this.labelMNtoiceApv.Name = "labelMNtoiceApv";
             this.labelMNtoiceApv.Size = new System.Drawing.Size(97, 21);
             this.labelMNtoiceApv.TabIndex = 169;
@@ -1843,20 +1841,12 @@
             this.btnPFHistory.UseVisualStyleBackColor = true;
             this.btnPFHistory.Click += new System.EventHandler(this.btnPFHistory_Click);
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(509, 443);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 21);
-            this.label1.TabIndex = 195;
-            this.label1.Text = "Is Mix Marker";
-            // 
             // displayIsMixMarker
             // 
             this.displayIsMixMarker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayIsMixMarker.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrderTypeID", true));
             this.displayIsMixMarker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayIsMixMarker.Location = new System.Drawing.Point(612, 444);
+            this.displayIsMixMarker.Location = new System.Drawing.Point(729, 415);
             this.displayIsMixMarker.Name = "displayIsMixMarker";
             this.displayIsMixMarker.Size = new System.Drawing.Size(126, 21);
             this.displayIsMixMarker.TabIndex = 196;
@@ -2042,6 +2032,5 @@
         private Win.UI.Button btnExpectionFormRemark;
         private Win.UI.Button btnPFHistory;
         private Win.UI.DisplayBox displayIsMixMarker;
-        private Win.UI.Label label1;
     }
 }

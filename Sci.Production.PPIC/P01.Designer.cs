@@ -296,7 +296,6 @@
             this.txtDevSample = new Sci.Win.UI.TextBox();
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
             this.displayIsMixMarker = new Sci.Win.UI.DisplayBox();
-            this.label3 = new Sci.Win.UI.Label();
             this.shapeContainer6 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -315,7 +314,6 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayIsMixMarker);
-            this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.btnExpectionFormRemark);
             this.detailcont.Controls.Add(this.txtDevSample);
             this.detailcont.Controls.Add(this.label2);
@@ -3314,18 +3312,10 @@
             this.displayIsMixMarker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayIsMixMarker.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrderTypeID", true));
             this.displayIsMixMarker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayIsMixMarker.Location = new System.Drawing.Point(793, 280);
+            this.displayIsMixMarker.Location = new System.Drawing.Point(707, 421);
             this.displayIsMixMarker.Name = "displayIsMixMarker";
             this.displayIsMixMarker.Size = new System.Drawing.Size(126, 21);
             this.displayIsMixMarker.TabIndex = 224;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(709, 278);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(81, 21);
-            this.label3.TabIndex = 223;
-            this.label3.Text = "Is Mix Marker";
             // 
             // shapeContainer6
             // 
@@ -3640,7 +3630,6 @@
         private Win.UI.Button btnPFHistory;
         private Win.UI.Button btnEConsMNFailed;
         private Win.UI.DisplayBox displayIsMixMarker;
-        private Win.UI.Label label3;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer6;
     }
 }
