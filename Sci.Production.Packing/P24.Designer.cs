@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.txtPackingListID = new Sci.Win.UI.TextBox();
-            this.numSeq = new Sci.Win.UI.NumericBox();
             this.cmbSide = new Sci.Win.UI.ComboBox();
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.btnDownload = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
+            this.comboSeq = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -52,29 +52,29 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboSeq);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.btnDownload);
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.cmbSide);
-            this.masterpanel.Controls.Add(this.numSeq);
             this.masterpanel.Controls.Add(this.txtPackingListID);
-            this.masterpanel.Size = new System.Drawing.Size(892, 92);
+            this.masterpanel.Size = new System.Drawing.Size(972, 92);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPackingListID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numSeq, 0);
             this.masterpanel.Controls.SetChildIndex(this.cmbSide, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnDownload, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboSeq, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 92);
-            this.detailpanel.Size = new System.Drawing.Size(892, 257);
+            this.detailpanel.Size = new System.Drawing.Size(972, 257);
             // 
             // gridicon
             // 
@@ -82,7 +82,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 257);
+            this.detailgridcont.Size = new System.Drawing.Size(972, 257);
             // 
             // detail2
             // 
@@ -98,16 +98,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(972, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(972, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Size = new System.Drawing.Size(972, 38);
             // 
             // browse
             // 
@@ -128,26 +128,6 @@
             this.txtPackingListID.TabIndex = 1;
             this.txtPackingListID.Validating += new System.ComponentModel.CancelEventHandler(this.txtPackingListID_Validating);
             // 
-            // numSeq
-            // 
-            this.numSeq.BackColor = System.Drawing.Color.White;
-            this.numSeq.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Seq", true));
-            this.numSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numSeq.Location = new System.Drawing.Point(352, 17);
-            this.numSeq.Name = "numSeq";
-            this.numSeq.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numSeq.Size = new System.Drawing.Size(121, 23);
-            this.numSeq.TabIndex = 2;
-            this.numSeq.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // cmbSide
             // 
             this.cmbSide.BackColor = System.Drawing.Color.White;
@@ -155,14 +135,7 @@
             this.cmbSide.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbSide.FormattingEnabled = true;
             this.cmbSide.IsSupportUnselect = true;
-            this.cmbSide.Items.AddRange(new object[] {
-            "Top",
-            "Down",
-            "Left",
-            "Right",
-            "Front",
-            "Back"});
-            this.cmbSide.Location = new System.Drawing.Point(590, 16);
+            this.cmbSide.Location = new System.Drawing.Point(352, 16);
             this.cmbSide.Name = "cmbSide";
             this.cmbSide.OldText = "";
             this.cmbSide.Size = new System.Drawing.Size(121, 24);
@@ -178,7 +151,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(247, 17);
+            this.label3.Location = new System.Drawing.Point(478, 16);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 23);
             this.label3.TabIndex = 25;
@@ -186,7 +159,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(485, 17);
+            this.label5.Location = new System.Drawing.Point(247, 17);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 23);
             this.label5.TabIndex = 26;
@@ -212,6 +185,19 @@
             this.btnImport.Text = "Import ShippingMark pic";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
+            // comboSeq
+            // 
+            this.comboSeq.BackColor = System.Drawing.Color.White;
+            this.comboSeq.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Seq", true));
+            this.comboSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSeq.FormattingEnabled = true;
+            this.comboSeq.IsSupportUnselect = true;
+            this.comboSeq.Location = new System.Drawing.Point(583, 16);
+            this.comboSeq.Name = "comboSeq";
+            this.comboSeq.OldText = "";
+            this.comboSeq.Size = new System.Drawing.Size(121, 24);
+            this.comboSeq.TabIndex = 29;
             // 
             // P24
             // 
@@ -249,8 +235,6 @@
         }
 
         #endregion
-
-        private Win.UI.NumericBox numSeq;
         private Win.UI.TextBox txtPackingListID;
         private Win.UI.ComboBox cmbSide;
         private Win.UI.Button btnImport;
@@ -258,5 +242,6 @@
         private Win.UI.Label label5;
         private Win.UI.Label label3;
         private Win.UI.Label label4;
+        private Win.UI.ComboBox comboSeq;
     }
 }
