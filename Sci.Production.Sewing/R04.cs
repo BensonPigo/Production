@@ -68,7 +68,13 @@ namespace Sci.Production.Sewing
 select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
 	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour,sd.QAQty,sd.InlineQty
 	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,''), CASE WHEN ot.IsDevSample =1 THEN 'Y' ELSE 'N' END AS IsDevSample
-	,OrderBrandID = isnull(o.BrandID,'')    ,OrderCdCodeID = isnull(o.CdCodeID,'')
+	,OrderBrandID = case 
+		when o.BrandID != 'SUBCON-I' then o.BrandID
+		when Order2.BrandID is not null then Order2.BrandID
+		when Order2.BrandID is null then (select top 1 BrandID from Style where id=o.StyleID 
+				and SeasonID=o.SeasonID and BrandID!='SUBCON-I')
+		else o.BrandID end    
+    ,OrderCdCodeID = isnull(o.CdCodeID,'')
 	,OrderProgram = isnull(o.ProgramID,'')  ,OrderCPU = isnull(o.CPU,0) ,OrderCPUFactor = isnull(o.CPUFactor,0) ,OrderStyle = isnull(o.StyleID,'') ,OrderSeason = isnull(o.SeasonID,'')
 	,MockupBrandID= isnull(mo.BrandID,'')   ,MockupCDCodeID= isnull(mo.MockupID,'')
 	,MockupProgram= isnull(mo.ProgramID,'') ,MockupCPU= isnull(mo.Cpu,0),MockupCPUFactor= isnull(mo.CPUFactor,0),MockupStyle= isnull(mo.StyleID,''),MockupSeason= isnull(mo.SeasonID,'')	
@@ -105,6 +111,10 @@ outer apply
 		for xml path('')
 	),1,1,'')
 )sr
+	outer apply(
+		select BrandID from orders o1 
+		where o.CustPONo=o1.id
+	)Order2
 where 1=1 "));
 
             if (!MyUtility.Check.Empty(this.date1))
@@ -430,7 +440,7 @@ EXEC sp_executesql @lastSql
             else
             {
                 start_column = 39;
-                objSheets.get_Range("AK:AL").EntireColumn.Delete();
+                objSheets.get_Range("AM:AN").EntireColumn.Delete();
             }
 
             for (int i = start_column; i < this.printData.Columns.Count; i++)
