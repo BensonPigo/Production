@@ -784,9 +784,15 @@ Where a.id = '{0}'", masterID);
 
         private void txtwhseReason_Validated(object sender, EventArgs e)
         {
-            if (this.detailgridbs.DataSource != null && oldVal != txtwhseReason.TextBox1.Text)
+            if (txtwhseReason.TextBox1.Text == "00006")
             {
-                ((DataTable)this.detailgridbs.DataSource).Clear();
+                this.detailgrid.Columns["NetQty"].Visible = true;
+                this.detailgrid.Columns["LossQty"].Visible = true;
+            }
+            else
+            {
+                this.detailgrid.Columns["NetQty"].Visible = false;
+                this.detailgrid.Columns["LossQty"].Visible = false;
             }
         }
 
@@ -795,6 +801,21 @@ Where a.id = '{0}'", masterID);
         private void txtwhseReason_Enter(object sender, EventArgs e)
         {
             oldVal = txtwhseReason.TextBox1.Text;
+        }
+        
+
+        private void txtwhseReason_Leave(object sender, EventArgs e)
+        {
+            if (txtwhseReason.TextBox1.Text == "00006")
+            {
+                this.detailgrid.Columns["NetQty"].Visible = true;
+                this.detailgrid.Columns["LossQty"].Visible = true;
+            }
+            else
+            {
+                this.detailgrid.Columns["NetQty"].Visible = false;
+                this.detailgrid.Columns["LossQty"].Visible = false;
+            }
         }
     }
 }
