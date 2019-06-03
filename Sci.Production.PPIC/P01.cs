@@ -134,6 +134,26 @@ namespace Sci.Production.PPIC
                 this.ControlButton();
             }
 
+
+            switch (this.CurrentMaintain["IsMixMarker"].ToString())
+            {
+                case "0":
+                    this.displayIsMixMarker.Text = "Is Single Marker";
+                    break;
+
+                case "1":
+                    this.displayIsMixMarker.Text = "Is Mix Marker";
+                    break;
+
+                case "2":
+                    this.displayIsMixMarker.Text = "Is Mix Marker - SCI";
+                    break;
+
+                default:
+                    this.displayIsMixMarker.Text = this.CurrentMaintain["IsMixMarker"].ToString();
+                    break;
+            }
+
             this.displaySampleReason2.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_reMakeSample' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["SampleReason"])));
             this.displayUpdateDeliveryReason.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["KPIChangeReason"])));
             this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["SpecialMark"])));
