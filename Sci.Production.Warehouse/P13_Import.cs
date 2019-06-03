@@ -183,11 +183,25 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //3
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
+                .Numeric("SystemNetQty", header: "Used Qty", iseditingreadonly: true)
+                .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true)
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //6
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //7
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); //8
 
             this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+
+
+            if (this.dr_master["whseReasonID"].ToString() == "00006")
+            {
+                this.grid1.Columns["SystemNetQty"].Visible = true;
+                this.grid1.Columns["LossQty"].Visible = true;
+            }
+            else
+            {
+                this.grid1.Columns["SystemNetQty"].Visible = false;
+                this.grid1.Columns["LossQty"].Visible = false;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

@@ -328,6 +328,18 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
             {
                 this.btnPrintFabricSticker.Enabled = false;
             }
+
+
+            if (this.CurrentMaintain["whseReasonID"].ToString() == "00006")
+            {
+                this.detailgrid.Columns["SystemNetQty"].Visible = true;
+                this.detailgrid.Columns["LossQty"].Visible = true;
+            }
+            else
+            {
+                this.detailgrid.Columns["SystemNetQty"].Visible = false;
+                this.detailgrid.Columns["LossQty"].Visible = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -348,11 +360,14 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)  //3
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
                 .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
+                .Numeric("SystemNetQty", header: "Used Qty", iseditingreadonly: true)    
+                .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true)    
                 .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
                 .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
             ;     //
             #endregion 欄位設定
+
         }
 
         //Confirm
@@ -703,12 +718,16 @@ select  o.FtyGroup
         , dbo.Getlocation(c.ukey) location
         , a.ukey
         , a.BarcodeNo
+		, p1.SystemNetQty
+		, p1.LossQty
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
 Where a.id = '{0}'", masterID);
+
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
