@@ -332,12 +332,12 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
 
             if (this.CurrentMaintain["whseReasonID"].ToString() == "00006")
             {
-                this.detailgrid.Columns["SystemNetQty"].Visible = true;
+                this.detailgrid.Columns["NetQty"].Visible = true;
                 this.detailgrid.Columns["LossQty"].Visible = true;
             }
             else
             {
-                this.detailgrid.Columns["SystemNetQty"].Visible = false;
+                this.detailgrid.Columns["NetQty"].Visible = false;
                 this.detailgrid.Columns["LossQty"].Visible = false;
             }
         }
@@ -360,7 +360,7 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)  //3
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
                 .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
-                .Numeric("SystemNetQty", header: "Used Qty", iseditingreadonly: true)    
+                .Numeric("NetQty", header: "Used Qty", iseditingreadonly: true)    
                 .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true)    
                 .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
                 .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7
@@ -718,7 +718,7 @@ select  o.FtyGroup
         , dbo.Getlocation(c.ukey) location
         , a.ukey
         , a.BarcodeNo
-		, p1.SystemNetQty
+		, p1.NetQty
 		, p1.LossQty
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
