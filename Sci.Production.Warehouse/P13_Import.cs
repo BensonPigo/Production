@@ -70,7 +70,7 @@ select  selected = 0
         , ftyinventoryukey = c.ukey  
         , location = dbo.Getlocation(c.ukey)
         , balance = c.inqty-c.outqty + c.adjustqty 
-		,a.SystemNetQty
+		,a.NetQty
 		,a.LossQty
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
@@ -148,12 +148,12 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                     {
                         if (IsReason06)
                         {
-                            //a.如Stock Qty >= PO_Supp_Detail.SystemNetQty,則Issue Qty帶入PO_Supp_Detail.SystemNetQty
+                            //a.如Stock Qty >= PO_Supp_Detail.NetQty,則Issue Qty帶入PO_Supp_Detail.NetQty
                             //b.如Stock Qty >= PO_Supp_Detail.LossQty,則Issue Qty帶入PO_Supp_Detail.LossQty //PO_Supp_Detail.LossQty = 0時跳過此步驟
                             //c.Issue Qty帶入Stock Qty
-                            if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["SystemNetQty"]))
+                            if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["NetQty"]))
                             {
-                                dr["qty"] = dr["SystemNetQty"];
+                                dr["qty"] = dr["NetQty"];
                             }
                             else if (Convert.ToInt32(dr["balance"]) >= Convert.ToInt32(dr["LossQty"]) && Convert.ToInt32(dr["LossQty"]) != 0)
                             {
@@ -183,7 +183,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //3
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
-                .Numeric("SystemNetQty", header: "Used Qty", iseditingreadonly: true)
+                .Numeric("NetQty", header: "Used Qty", iseditingreadonly: true)
                 .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true)
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //6
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //7
@@ -194,12 +194,12 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
 
             if (this.dr_master["whseReasonID"].ToString() == "00006")
             {
-                this.grid1.Columns["SystemNetQty"].Visible = true;
+                this.grid1.Columns["NetQty"].Visible = true;
                 this.grid1.Columns["LossQty"].Visible = true;
             }
             else
             {
-                this.grid1.Columns["SystemNetQty"].Visible = false;
+                this.grid1.Columns["NetQty"].Visible = false;
                 this.grid1.Columns["LossQty"].Visible = false;
             }
         }
