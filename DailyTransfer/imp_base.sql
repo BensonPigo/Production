@@ -3224,6 +3224,7 @@ SET
 	  ,a.InvoiceApproveDate	   =b.InvoiceApproveDate
 	  ,a.DocumentRefNo	   =b.DocumentRefNo
 	  ,a.IntendDeliveryDate	   =b.IntendDeliveryDate
+	  ,a.ActFCRDate	   =b.ActFCRDate
 from Production.dbo.GMTBooking as a inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
 where b.InvDate is not null
 END

@@ -49,3 +49,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'打樣日�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單價確認', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_Artwork_Quot', @level2type = N'COLUMN', @level2name = N'PriceApv';
 
+go
+CREATE NONCLUSTERED INDEX [IDX_Style_Artwork_Quot_Price_PriceApv] ON [dbo].[Style_Artwork_Quot]
+(
+	[Price] ASC,
+	[PriceApv] ASC
+)

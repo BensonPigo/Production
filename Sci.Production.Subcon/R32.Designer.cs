@@ -38,23 +38,25 @@
             this.label2 = new Sci.Win.UI.Label();
             this.dateBundleScan = new Sci.Win.UI.DateRange();
             this.txtsubprocess = new Sci.Production.Class.txtsubprocess();
+            this.labspno = new Sci.Win.UI.Label();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(495, 12);
-            this.print.TabIndex = 3;
+            this.print.TabIndex = 6;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(495, 48);
-            this.toexcel.TabIndex = 4;
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(495, 84);
-            this.close.TabIndex = 5;
+            this.close.TabIndex = 8;
             // 
             // dateFarmOutDate
             // 
@@ -88,7 +90,7 @@
             // 
             // labelSubProcess
             // 
-            this.labelSubProcess.Location = new System.Drawing.Point(9, 95);
+            this.labelSubProcess.Location = new System.Drawing.Point(9, 126);
             this.labelSubProcess.Name = "labelSubProcess";
             this.labelSubProcess.Size = new System.Drawing.Size(121, 23);
             this.labelSubProcess.TabIndex = 97;
@@ -100,15 +102,15 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(133, 125);
+            this.comboFactory.Location = new System.Drawing.Point(133, 156);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
-            this.comboFactory.TabIndex = 2;
+            this.comboFactory.TabIndex = 5;
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(9, 125);
+            this.labelFactory.Location = new System.Drawing.Point(9, 156);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(121, 23);
             this.labelFactory.TabIndex = 99;
@@ -142,7 +144,7 @@
             this.dateBundleCdate.Location = new System.Drawing.Point(133, 38);
             this.dateBundleCdate.Name = "dateBundleCdate";
             this.dateBundleCdate.Size = new System.Drawing.Size(280, 23);
-            this.dateBundleCdate.TabIndex = 101;
+            this.dateBundleCdate.TabIndex = 1;
             // 
             // label2
             // 
@@ -172,25 +174,44 @@
             this.dateBundleScan.Location = new System.Drawing.Point(133, 67);
             this.dateBundleScan.Name = "dateBundleScan";
             this.dateBundleScan.Size = new System.Drawing.Size(280, 23);
-            this.dateBundleScan.TabIndex = 103;
+            this.dateBundleScan.TabIndex = 2;
             // 
             // txtsubprocess
             // 
             this.txtsubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtsubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtsubprocess.IsSupportEditMode = false;
-            this.txtsubprocess.Location = new System.Drawing.Point(133, 95);
+            this.txtsubprocess.Location = new System.Drawing.Point(133, 126);
             this.txtsubprocess.Name = "txtsubprocess";
             this.txtsubprocess.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtsubprocess.ReadOnly = true;
             this.txtsubprocess.Size = new System.Drawing.Size(280, 23);
-            this.txtsubprocess.TabIndex = 109;
+            this.txtsubprocess.TabIndex = 4;
+            // 
+            // labspno
+            // 
+            this.labspno.Location = new System.Drawing.Point(9, 96);
+            this.labspno.Name = "labspno";
+            this.labspno.Size = new System.Drawing.Size(121, 23);
+            this.labspno.TabIndex = 110;
+            this.labspno.Text = "SP#";
+            // 
+            // txtSPNo
+            // 
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(133, 96);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(127, 23);
+            this.txtSPNo.TabIndex = 3;
             // 
             // R32
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(587, 181);
+            this.ClientSize = new System.Drawing.Size(587, 217);
+            this.Controls.Add(this.txtSPNo);
+            this.Controls.Add(this.labspno);
             this.Controls.Add(this.txtsubprocess);
             this.Controls.Add(this.dateBundleScan);
             this.Controls.Add(this.label2);
@@ -202,6 +223,7 @@
             this.Controls.Add(this.dateFarmOutDate);
             this.Controls.Add(this.labelFarmOutDate);
             this.Name = "R32";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R32. Farm out Bundle Tracking List";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
@@ -216,6 +238,8 @@
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.dateBundleScan, 0);
             this.Controls.SetChildIndex(this.txtsubprocess, 0);
+            this.Controls.SetChildIndex(this.labspno, 0);
+            this.Controls.SetChildIndex(this.txtSPNo, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -233,5 +257,7 @@
         private Win.UI.Label label2;
         private Win.UI.DateRange dateBundleScan;
         private Class.txtsubprocess txtsubprocess;
+        private Win.UI.Label labspno;
+        private Win.UI.TextBox txtSPNo;
     }
 }

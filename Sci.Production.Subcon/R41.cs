@@ -18,7 +18,7 @@ namespace Sci.Production.Subcon
         DataTable printData;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
         string processLocation;
-        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2, dateBDelivery1, dateBDelivery2;
+        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2, dateBDelivery1, dateBDelivery2, dateSewInLine1, dateSewInLine2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -59,14 +59,18 @@ namespace Sci.Production.Subcon
             dateEstCutDate2 = this.dateEstCutDate.Value2;
             dateBDelivery1 = this.dateBDelivery.Value1;
             dateBDelivery2 = this.dateBDelivery.Value2;
+            dateSewInLine1 = this.dateSewInLine.Value1;
+            dateSewInLine2 = this.dateSewInLine.Value2;
             this.processLocation = this.comboRFIDProcessLocation.Text;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
                 MyUtility.Check.Empty(dateEstCutDate.Value1) && MyUtility.Check.Empty(dateEstCutDate.Value2) &&
                 MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
-                MyUtility.Check.Empty(dateBundleScanDate.Value1) && MyUtility.Check.Empty(dateBundleScanDate.Value2))
+                MyUtility.Check.Empty(dateBundleScanDate.Value1) && MyUtility.Check.Empty(dateBundleScanDate.Value2) &&
+                MyUtility.Check.Empty(dateSewInLine.Value1) && MyUtility.Check.Empty(dateSewInLine.Value2)
+                )
             {
-                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date] cannot all empty !!");
+                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date],[Sewing Inline] cannot all empty !!");
                 return false;
             }
             return base.ValidateInput();
@@ -147,6 +151,15 @@ namespace Sci.Production.Subcon
                 sqlWhere.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery2).ToString("d")));
             }
 
+            if (!MyUtility.Check.Empty(dateSewInLine1))
+            {
+                sqlWhere.Append(string.Format(@" and o.SewInLine >= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateSewInLine2))
+            {
+                sqlWhere.Append(string.Format(@" and o.SewInLine <= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(dateEstCutDate1))
             {
                 sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
@@ -202,6 +215,7 @@ Select
     bio.LocationID,
     b.Cdate,
     o.BuyerDelivery,
+    o.SewInLine,
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
     [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
@@ -315,6 +329,7 @@ select
     r.LocationID,
     r.Cdate,
     r.[BuyerDelivery],
+    r.[SewInLine],
     r.[InComing],
     r.[Out (Time)],
     r.[POSupplier],

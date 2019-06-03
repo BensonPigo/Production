@@ -175,7 +175,6 @@ namespace Sci.Production.Subcon
                         FROM LocalPO a 
                         INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID
                         WHERE a.ID IN( '{IdList.JoinToString("','")}')
-                              and a.Mdivisionid = '{Sci.Env.User.Keyword}'
 
                         --計算採購價總合
                         SELECT   [Category] = t.ArtworkTypeID  
@@ -237,7 +236,6 @@ namespace Sci.Production.Subcon
 	                        SELECT stdPrice FROM #StdPriceTable WHERE OrderID=ld.OrderId AND Category = l.Category
                         )std
                         WHERE l.ID IN( '{IdList.JoinToString("','")}')
-                                and l.Mdivisionid = '{Sci.Env.User.Keyword}'
 
                         DROP TABLE #tmp_AllOrders, #StdPriceTable";
 
@@ -288,7 +286,6 @@ namespace Sci.Production.Subcon
                         INTO #LocalPOs
                         FROm LocalPO
                         WHERE Status ='Locked'
-                               and Mdivisionid = '{Sci.Env.User.Keyword}'
 
                         SELECT * FROM #LocalPOs
 
@@ -310,7 +307,6 @@ namespace Sci.Production.Subcon
                         LEFT JOIN Orders o On o.ID=lp.OrderId
                         WHERE     l.Status ='Locked'
                               AND lp.ID IN( SELECT ID FROM #LocalPOs)
-                              and l.Mdivisionid = '{Sci.Env.User.Keyword}'
 
                         DROP TABLE #LocalPOs";
             #endregion

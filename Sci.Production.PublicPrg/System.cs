@@ -8,6 +8,7 @@ using Sci.Data;
 using Sci;
 using Ict;
 using Ict.Win;
+using EASendMail;
 
 namespace Sci.Production.PublicPrg
 {
@@ -274,6 +275,33 @@ select Ukey = isnull((
             }
             #endregion
             OutTb = garmentListTb;
+        }
+        
+        // 測試mail是否真實存在
+        public static bool TestMail(string mailTo)
+        {
+            SmtpMail oMail = new SmtpMail("TryIt");
+            SmtpClient oSmtp = new SmtpClient();
+
+            // Set sender email address, please change it to yours
+            oMail.From = MyUtility.GetValue.Lookup("select Sendfrom from System", "Production");
+
+            // Set recipient email address, please change it to yours
+            oMail.To = mailTo;
+
+            // Do not set SMTP server address
+            SmtpServer oServer = new SmtpServer("");
+
+            try
+            {
+                oSmtp.TestRecipients(oServer, oMail);
+            }
+            catch (Exception ep)
+            {
+                MyUtility.Msg.ErrorBox("Invalid email address !!");
+                return false;
+            }
+            return true;
         }
     }
     
