@@ -272,9 +272,12 @@ order by pd.SCICtnNo
             }
 
             #region 檢查detail資料是否存在於ShippingMarkPicture的設定中
-            DataTable dtDetail = this.DetailDatas.CopyToDataTable();
-            DataTable dtCheckResult;
-            string sqlCheckDetail = $@"
+            var checkHasFileNameData = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["FileName"]));
+            if (checkHasFileNameData.Any())
+            {
+                DataTable dtHasFileNameDetail = checkHasFileNameData.CopyToDataTable();
+                DataTable dtCheckResult;
+                string sqlCheckDetail = $@"
 select distinct o.BrandID,o.CustCDID,t.Refno
 from #tmp t
 left join orders o with (nolock) on t.OrderID = o.ID
@@ -287,24 +290,25 @@ where not exists (select 1 from ShippingMarkPicture smp with (nolock)
 
 ";
 
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlCheckDetail, out dtCheckResult);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(dtHasFileNameDetail, string.Empty, sqlCheckDetail, out dtCheckResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
 
-            string errMsg = string.Empty;
-            foreach (DataRow dr in dtCheckResult.Rows)
-            {
-                errMsg += $"<Brand>:{dr["BrandID"]}  <CustCD>:{dr["CustCDID"]}  <CTNRefno>:{dr["Refno"]} {Environment.NewLine}" ;
-            }
+                string errMsg = string.Empty;
+                foreach (DataRow dr in dtCheckResult.Rows)
+                {
+                    errMsg += $"<Brand>:{dr["BrandID"]}  <CustCD>:{dr["CustCDID"]}  <CTNRefno>:{dr["Refno"]} {Environment.NewLine}";
+                }
 
-            if (errMsg.Length > 0)
-            {
-                errMsg = "Please go to [Packing B03] to complete setting!" + Environment.NewLine + errMsg;
-                MyUtility.Msg.WarningBox(errMsg);
-                return false;
+                if (errMsg.Length > 0)
+                {
+                    errMsg = "Please go to [Packing B03] to complete setting!" + Environment.NewLine + errMsg;
+                    MyUtility.Msg.WarningBox(errMsg);
+                    return false;
+                }
             }
             #endregion
 
@@ -503,7 +507,7 @@ order by SCICtnNo
             this.SetComboSeqAndSide();
 
             this.CurrentMaintain["PackingListID"] = this.txtPackingListID.Text;
-            this.CurrentMaintain["Seq"] = this.comboSeq.Text;
+            this.CurrentMaintain["Seq"] = MyUtility.Check.Empty(this.comboSeq.Text) ? "0" : this.comboSeq.Text;
             this.CurrentMaintain["Side"] = this.cmbSide.Text;
             #endregion
         }
@@ -796,7 +800,7 @@ order by SCICtnNo
                 return;
             }
 
-            string sqlGetShippingMarkPicture = $@"select Side,Seq from ShippingMarkPicture where BrandID = '{drOrder["BrandID"]}' and CustCD = '{drOrder["CustCDID"]}' order by Seq";
+            string sqlGetShippingMarkPicture = $@"select distinct Side,Seq from ShippingMarkPicture where BrandID = '{drOrder["BrandID"]}' and CustCD = '{drOrder["CustCDID"]}' order by Seq";
             DataTable dtSeqSideSource;
             result = DBProxy.Current.Select(null, sqlGetShippingMarkPicture, out dtSeqSideSource);
 
@@ -806,11 +810,11 @@ order by SCICtnNo
                 return;
             }
 
-            this.comboSeq.DataSource = dtSeqSideSource.Copy();
+            this.comboSeq.DataSource = dtSeqSideSource.AsEnumerable().Select(s => new { Seq = s["Seq"] }).Distinct().ToList();
             this.comboSeq.DisplayMember = "Seq";
             this.comboSeq.ValueMember = "Seq";
 
-            this.cmbSide.DataSource = dtSeqSideSource;
+            this.cmbSide.DataSource = dtSeqSideSource.AsEnumerable().Select(s => new { Side = s["Side"] }).Distinct().ToList();
             this.cmbSide.DisplayMember = "Side";
             this.cmbSide.ValueMember = "Side";
         }
