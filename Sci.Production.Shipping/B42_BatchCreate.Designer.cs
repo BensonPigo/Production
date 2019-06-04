@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(B42_BatchCreate));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
@@ -117,7 +118,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(692, 10);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(42, 23);
@@ -132,12 +132,12 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(601, 9);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(74, 24);
             this.comboCategory.TabIndex = 5;
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(537, 10);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(60, 23);
@@ -153,10 +153,11 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 3;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(349, 10);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(37, 23);
@@ -165,6 +166,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(103, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(125, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(103, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(102, 10);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -173,7 +188,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(4, 10);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(94, 23);
@@ -198,9 +212,9 @@
             // 
             // btnEmptyNLCodetoExcel
             // 
-            this.btnEmptyNLCodetoExcel.Location = new System.Drawing.Point(721, 7);
+            this.btnEmptyNLCodetoExcel.Location = new System.Drawing.Point(662, 7);
             this.btnEmptyNLCodetoExcel.Name = "btnEmptyNLCodetoExcel";
-            this.btnEmptyNLCodetoExcel.Size = new System.Drawing.Size(195, 30);
+            this.btnEmptyNLCodetoExcel.Size = new System.Drawing.Size(254, 30);
             this.btnEmptyNLCodetoExcel.TabIndex = 7;
             this.btnEmptyNLCodetoExcel.Text = "Empty Customs Code (to Excel)";
             this.btnEmptyNLCodetoExcel.UseVisualStyleBackColor = true;
@@ -209,7 +223,7 @@
             // btnClose
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(633, 7);
+            this.btnClose.Location = new System.Drawing.Point(576, 7);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 6;
@@ -218,7 +232,7 @@
             // 
             // btnCreate
             // 
-            this.btnCreate.Location = new System.Drawing.Point(547, 7);
+            this.btnCreate.Location = new System.Drawing.Point(490, 7);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(80, 30);
             this.btnCreate.TabIndex = 5;
@@ -228,36 +242,38 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = global::Sci.Production.Shipping.Properties.Resources.trffc15;
-            this.pictureBox2.Location = new System.Drawing.Point(477, 7);
+            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
+            this.pictureBox2.Location = new System.Drawing.Point(446, 7);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(22, 30);
             this.pictureBox2.TabIndex = 4;
             this.pictureBox2.TabStop = false;
+            this.pictureBox2.WaitOnLoad = true;
             this.pictureBox2.Click += new System.EventHandler(this.PictureBox2_Click);
             // 
             // dateCdate
             // 
-            this.dateCdate.Location = new System.Drawing.Point(372, 7);
+            this.dateCdate.Location = new System.Drawing.Point(341, 7);
             this.dateCdate.Name = "dateCdate";
             this.dateCdate.Size = new System.Drawing.Size(98, 23);
             this.dateCdate.TabIndex = 3;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::Sci.Production.Shipping.Properties.Resources.trffc15;
-            this.pictureBox1.Location = new System.Drawing.Point(341, 7);
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(310, 7);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(24, 30);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.WaitOnLoad = true;
             this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
             // 
             // txtVNContractID
             // 
             this.txtVNContractID.BackColor = System.Drawing.Color.White;
             this.txtVNContractID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtVNContractID.Location = new System.Drawing.Point(194, 7);
+            this.txtVNContractID.Location = new System.Drawing.Point(163, 7);
             this.txtVNContractID.Name = "txtVNContractID";
             this.txtVNContractID.Size = new System.Drawing.Size(140, 23);
             this.txtVNContractID.TabIndex = 1;
@@ -311,6 +327,7 @@
             this.gridBatchCreate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchCreate.RowTemplate.Height = 24;
             this.gridBatchCreate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBatchCreate.ShowCellToolTips = false;
             this.gridBatchCreate.Size = new System.Drawing.Size(918, 343);
             this.gridBatchCreate.TabIndex = 0;
             this.gridBatchCreate.TabStop = false;
