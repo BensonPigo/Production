@@ -64,7 +64,7 @@ from VNConsumption where 1=0";
             this.Helper.Controls.Grid.Generator(this.gridBatchImport)
                 .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("VNContractID", header: "Contract Id", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("ID", header: "ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("ID", header: "ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -148,6 +148,10 @@ from VNConsumption where 1=0";
                         {
                             remark += "Refno not found." + Environment.NewLine;
                         }
+                        else if (MyUtility.Check.Empty(drNLCode["NLCode"]))
+                        {
+                            remark += "NLCode is not maintained." + Environment.NewLine;
+                        }
                         else
                         {
                             newRow["NLCode"] = drNLCode["NLCode"];
@@ -194,6 +198,15 @@ from VNConsumption where 1=0";
             DualResult drResult;
             string datetime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             StringBuilder idu = new StringBuilder();
+
+            #region 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+            bool isVNConsumption_Detail_DetailHasDupData = !Prgs.CheckVNConsumption_Detail_Dup(drImportList, true);
+            if (isVNConsumption_Detail_DetailHasDupData)
+            {
+                return;
+            }
+            #endregion
+
             foreach (DataRow dr in drImportList)
             {
                 string customSP = MyUtility.Convert.GetString(dr["CustomSP"]);
@@ -240,7 +253,9 @@ StockQty = {stockQty}
 ,HSCode = '{hSCode}'
 ,UnitID = '{unitID}'
 ,UserCreate = 1
-where id = '{id}' and Refno = '{refno}';");
+where   id = '{id}' and 
+        Refno = '{refno}';
+");
 
                     idu.Append(string.Format(
                         @"update VNConsumption set EditName = '{0}',EditDate = '{1}' where CustomSP = '{2}' and VNContractID = '{3}' ;",
@@ -295,7 +310,7 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
                     if (!isExistsImportData)
                     {
                         idu.Append(string.Format(
-                            "delete VNConsumption_Detail_Detail where id = '{0}' and Refno ='{1}' and SCIRefno = '{2}' and NLCode = '{3}';",
+                            "delete VNConsumption_Detail_Detail where id = '{0}' and Refno ='{1}' and SCIRefno = '{2}' and NLCode = '{3}';" + Environment.NewLine,
                             dn["ID"].ToString(),
                             dn["Refno"].ToString(),
                             dn["SCIRefno"].ToString(),

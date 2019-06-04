@@ -9,6 +9,7 @@ using Sci;
 using Ict;
 using Ict.Win;
 using System.Data.SqlClient;
+using Sci.Win.UI;
 
 namespace Sci.Production.PublicPrg
 {
@@ -236,7 +237,7 @@ where ID = '{0}'", expressID);
 
             string fabricType = type;
 
-            
+
             if (fabricType == "F")
             {
                 sqlGetNLCode = $@"
@@ -319,5 +320,62 @@ where Ltrim(li.Refno) = @Refno";
         }
         #endregion
 
+        #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+        public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)
+        {
+            var listDupNLCodeData = checkList
+                                   .GroupBy(s => new { ID = s["ID"], NLCode = s["NLCode"], HSCode = s["HSCode"], UnitID = s["UnitID"] })
+                                   .GroupBy(y => new { y.Key.ID, y.Key.NLCode })
+                                   .Select(z => new { z.Key.ID, z.Key.NLCode, duplicateData = z.ToList() })
+                                   .Where(x => x.duplicateData.Count > 1) // 抓出ID,NLCode相同，但HSCode,UnitID不同的資料
+                                   // 回串原本的detail datatable抓出明細資料
+                                   .Join(checkList,
+                                            dupData => new { dupData.ID, dupData.NLCode },
+                                            drDetail => new { ID = drDetail["ID"], NLCode = drDetail["NLCode"] },
+                                            (dupData, drDetail) => new
+                                            {
+                                                dupData.ID,
+                                                dupData.NLCode,
+                                                Refno = drDetail["Refno"],
+                                                HSCode = drDetail["HSCode"],
+                                                UnitID = drDetail["UnitID"]
+                                            });
+
+
+            if (listDupNLCodeData.Any())
+            {
+                DataTable dtDuplicate = new DataTable();
+                if (isShowID)
+                {
+                    dtDuplicate.ColumnsStringAdd("ID");
+                }
+                dtDuplicate.ColumnsStringAdd("NLCode");
+                dtDuplicate.ColumnsStringAdd("Refno");
+                dtDuplicate.ColumnsStringAdd("HSCode");
+                dtDuplicate.ColumnsStringAdd("UnitID");
+
+                foreach (var item in listDupNLCodeData)
+                {
+                    DataRow newDr = dtDuplicate.NewRow();
+                    if (isShowID)
+                    {
+                        newDr["ID"] = item.ID;
+                    }
+                    newDr["NLCode"] = item.NLCode;
+                    newDr["Refno"] = item.Refno;
+                    newDr["HSCode"] = item.HSCode;
+                    newDr["UnitID"] = item.UnitID;
+
+                    dtDuplicate.Rows.Add(newDr);
+                }
+
+                MsgGridForm msgGridForm = new MsgGridForm(dtDuplicate);
+                msgGridForm.grid1.AutoResizeColumns();
+                msgGridForm.ShowDialog();
+                return false;
+            }
+            return true;
+        }
+        #endregion
     }
 }
