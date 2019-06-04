@@ -132,6 +132,7 @@ outer apply
 		where o.CustPONo=o1.id
 	)Order2
 where 1=1 
+and s.Shift <>'O'
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))
 "));
