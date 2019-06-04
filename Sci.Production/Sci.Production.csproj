@@ -1275,7 +1275,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Warehouse_P07_PackingListReveivingReport.xltx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Warehouse_P11.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
