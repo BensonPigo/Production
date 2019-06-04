@@ -137,6 +137,7 @@ group by t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons
 select distinct
     MDivisionid=isnull(t.MDivisionid,''),
 	FactoryID=isnull(w.FactoryID,''),
+    t.ActCutDate,
 	w.EstCutDate,
 	CutCellid=isnull(w.CutCellid,''),
 	SpreadingNoID=isnull(w.SpreadingNoID,''),
@@ -234,7 +235,7 @@ outer apply(
 	and cmd.WeaveTypeID = f.WeaveTypeID 
 )ActSpd
 
-select MDivisionID,FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,WeaveTypeID,FabricCombo,
+select MDivisionID,FactoryID,EstCutDate,ActCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,WeaveTypeID,FabricCombo,
 	MarkerLength,PerimeterYd,Layer,SizeCode,Cons,EXCESSqty,NoofRoll,DyeLot,NoofWindow,ActualSpeed,
 	[PreparationTime_min],
 	[ChangeoverTime_min],
@@ -308,6 +309,7 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
             if (printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
+                this.HideWaitMessage();
                 return false;
             }
             string excelName = "Cutting_R08";
@@ -396,7 +398,7 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
             worksheet.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden; // 隱藏第3頁sheet
             #endregion
             worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表   
-            worksheet.Columns.AutoFit();
+            //worksheet.Columns.AutoFit();
             #region 釋放上面開啟過excel物件
             string strExcelName = Class.MicrosoftFile.GetName(excelName);
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
