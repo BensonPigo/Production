@@ -206,7 +206,7 @@
             this.labelLine.Name = "labelLine";
             this.labelLine.Size = new System.Drawing.Size(52, 23);
             this.labelLine.TabIndex = 2;
-            this.labelLine.Text = "Line";
+            this.labelLine.Text = "Line#";
             // 
             // labelFactory
             // 
@@ -588,6 +588,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P02. Mockup daily output";
             this.UnApvChkValue = "Locked";
             this.UniqueExpress = "ID";

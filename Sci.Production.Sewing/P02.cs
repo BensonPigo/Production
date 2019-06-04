@@ -403,7 +403,7 @@ where   mo.Junk = 0
             if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
             {
                 this.txtsewinglineLine.Focus();
-                MyUtility.Msg.WarningBox("Line can't empty!!");
+                MyUtility.Msg.WarningBox("Line# can't empty!!");
                 return false;
             }
 
