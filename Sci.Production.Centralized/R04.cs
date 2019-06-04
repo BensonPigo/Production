@@ -122,6 +122,7 @@ outer apply
 	),1,1,'')
 )sr
 where 1=1 
+and s.Shift <>'O'
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))
 "));
