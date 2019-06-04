@@ -2393,6 +2393,8 @@ and pd2.[SizeCode]			=pd.[SizeCode]
         public static bool P03SaveCheck(DataRow currentMaintain, DataTable detailDatas, Grid detailGrid = null)
         {
             DualResult result;
+            var checkDetailListNoDeleted = detailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]);
+
             #region 檢查表頭的CustCD與表身所有SP的 Orders.custcdid是否相同
             DataTable dtCheckCustCD;
             List<SqlParameter> listCheckCustCDSqlParameter = new List<SqlParameter>();
@@ -2442,7 +2444,7 @@ where CustCD.value != @CustCD
                 return false;
             }
 
-            foreach (DataRow dr in detailDatas.AsEnumerable().OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]))
+            foreach (DataRow dr in checkDetailListNoDeleted)
             {
                 #region
                 bool isAlreadyCreated = !P03CheckDouble_SpSeq(dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), currentMaintain["ID"].ToString());
@@ -2603,7 +2605,7 @@ where oqd.Id = '{1}'
 
             StringBuilder chk_ship_err = new StringBuilder();
             StringBuilder chk_seq_null = new StringBuilder();
-            var check_chip_list = from r1 in detailDatas.AsEnumerable()
+            var check_chip_list = from r1 in checkDetailListNoDeleted
                                   group r1 by new
                                   {
                                       SP = r1.Field<string>("OrderID"),

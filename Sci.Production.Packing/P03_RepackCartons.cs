@@ -132,6 +132,10 @@ namespace Sci.Production.Packing
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("QtyPerCTN", header: "PC/Ctn", iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Qty", iseditingreadonly: true);
+
+            this.gridNewPack.Columns["OrderID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridNewPack.Columns["OrderShipmodeSeq"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridNewPack.Columns["CTNStartNo"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void GridOriPack_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
