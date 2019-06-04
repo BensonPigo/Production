@@ -708,15 +708,6 @@ inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
 inner join #cte t on sod.OrderID = t.OrderID 
 group by sod.OrderID 
 
-select o.SubProcessId, o.SP, o.Factory, [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)  
-into #tmp_Out
-from #tmpout o
-inner join #cte t on o.SP = t.OrderID and o.Factory = t.FactoryID
-
-select i.SubProcessId, i.SP, i.Factory, [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-into #tmp_In
-from #tmpin i
-inner join #cte t on i.SP = t.OrderID and i.Factory = t.FactoryID
 
 select SP,Factory,ct = sum(xxx.Accusubprocesqty)
 into #tmp_inoutcount
@@ -789,22 +780,22 @@ select t.MDivisionID
        ,EstCutDate.EstimatedCutDate
        , #cte2.first_cut_date
        , #cte2.cut_qty
-       , [RFID Cut Qty] = isnull (CutQty.AccuOutGo, 0)
-       , [RFID Loading Qty] = isnull (loading.AccuInCome,0)             
-       , [RFID Emb Farm In Qty] = isnull (Embin.AccuInCome, 0)
-       , [RFID Emb Farm Out Qty] = isnull (Embout.AccuOutGo, 0)
-       , [RFID Bond Farm In Qty] = isnull (Bondin.AccuInCome, 0)
-       , [RFID Bond Farm Out Qty] = isnull (Bondout.AccuOutGo, 0)
-       , [RFID Print Farm In Qty] = isnull (Printin.AccuInCome, 0)
-       , [RFID Print Farm Out Qty] = isnull (Printout.AccuOutGo, 0)
-       , [RFID AT Farm In Qty] = isnull (ATin.AccuInCome, 0)
-       , [RFID AT Farm Out Qty] = isnull (ATout.AccuOutGo, 0)
-       , [RFID Pad Print Farm In Qty] = isnull (PadPrintin.AccuInCome, 0)
-       , [RFID Pad Print Farm Out Qty] = isnull (PadPrintout.AccuOutGo, 0)
-       , [RFID Emboss Farm In Qty] = isnull (Embossin.AccuInCome, 0)
-       , [RFID Emboss Farm Out Qty] = isnull (Embossout.AccuOutGo, 0)
-       , [RFID HT Farm In Qty] = isnull (htin.AccuInCome, 0)
-       , [RFID HT Farm Out Qty] = isnull (htout.AccuOutGo, 0)
+       , [RFID Cut Qty] = SORTING.OutQtyBySet
+       , [RFID Loading Qty] = loading.InQtyBySet
+       , [RFID Emb Farm In Qty] = Emb.InQtyBySet
+       , [RFID Emb Farm Out Qty] = Emb.OutQtyBySet
+       , [RFID Bond Farm In Qty] = BO.InQtyBySet	
+       , [RFID Bond Farm Out Qty] = BO.OutQtyBySet
+       , [RFID Print Farm In Qty] = prt.InQtyBySet
+       , [RFID Print Farm Out Qty] = prt.OutQtyBySet
+       , [RFID AT Farm In Qty] = AT.InQtyBySet
+       , [RFID AT Farm Out Qty] = AT.OutQtyBySet
+       , [RFID Pad Print Farm In Qty] = PADPRT.InQtyBySet
+       , [RFID Pad Print Farm Out Qty] = PADPRT.OutQtyBySet
+       , [RFID Emboss Farm In Qty] = SUBCONEMB.InQtyBySet
+       , [RFID Emboss Farm Out Qty] =SUBCONEMB.OutQtyBySet
+       , [RFID HT Farm In Qty] = HT.InQtyBySet
+       , [RFID HT Farm Out Qty] = HT.OutQtyBySet
         , SubProcessStatus=
 			case when t.Junk = 1 then null
 				 when subprocessqty.chksubprocesqty = inoutcount.ct and inoutcount.ct >0 then 'Y'
@@ -879,22 +870,87 @@ outer apply (
           and t.KPIChangeReason != '' 
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
-left join #tmp_Out CutQty on CutQty.SP = t.OrderID and CutQty.Factory = t.FactoryID and CutQty.SubProcessId = 'SORTING'
-left join #tmp_In loading on loading.SP = t.OrderID and loading.Factory = t.FactoryID and loading.SubProcessId = 'loading'
-left join #tmp_In Embin on Embin.SP = t.OrderID and Embin.Factory = t.FactoryID and Embin.SubProcessId = 'Emb'
-left join #tmp_Out Embout on Embout.SP = t.OrderID and Embout.Factory = t.FactoryID and Embout.SubProcessId = 'Emb'
-left join #tmp_In Bondin on Bondin.SP = t.OrderID and Bondin.Factory = t.FactoryID and Bondin.SubProcessId = 'BO'
-left join #tmp_Out Bondout on Bondout.SP = t.OrderID and Bondout.Factory = t.FactoryID and Bondout.SubProcessId = 'BO'
-left join #tmp_In Printin on Printin.SP = t.OrderID and Printin.Factory = t.FactoryID and Printin.SubProcessId = 'PRT'
-left join #tmp_Out Printout on Printout.SP = t.OrderID and Printout.Factory = t.FactoryID and Printout.SubProcessId = 'PRT'
-left join #tmp_In ATin on ATin.SP = t.OrderID and ATin.Factory = t.FactoryID and ATin.SubProcessId = 'AT'
-left join #tmp_Out ATout on ATout.SP = t.OrderID and ATout.Factory = t.FactoryID and ATout.SubProcessId = 'AT'
-left join #tmp_In PadPrintin on PadPrintin.SP = t.OrderID and PadPrintin.Factory = t.FactoryID and PadPrintin.SubProcessId = 'PAD-PRT'
-left join #tmp_Out PadPrintout on PadPrintout.SP = t.OrderID and PadPrintout.Factory = t.FactoryID and PadPrintout.SubProcessId = 'PAD-PRT'
-left join #tmp_In Embossin on Embossin.SP = t.OrderID and Embossin.Factory = t.FactoryID and Embossin.SubProcessId = 'SUBCONEMB'
-left join #tmp_Out Embossout on Embossout.SP = t.OrderID and Embossout.Factory = t.FactoryID and Embossout.SubProcessId = 'SUBCONEMB'
-left join #tmp_In htin on htin.SP = t.OrderID and htin.Factory = t.FactoryID and htin.SubProcessId = 'HT'
-left join #tmp_Out htout on htout.SP = t.OrderID and htout.Factory = t.FactoryID and htout.SubProcessId = 'HT' 
+outer apply(
+	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
+	from(
+		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
+		from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, 1)	minPatternPanel
+		group by OrderID, SizeCode
+	) minArticle
+	group by OrderID
+)SORTING
+outer apply(
+	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
+	from(
+		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
+		from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, 1)	minPatternPanel
+		group by OrderID, SizeCode
+	) minArticle
+	group by OrderID
+)loading
+outer apply(
+	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
+	from(
+		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
+		from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, 1)	minPatternPanel
+		group by OrderID, SizeCode
+	) minArticle
+	group by OrderID
+)Emb
+outer apply(
+	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
+	from(
+		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
+		from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, 1)	minPatternPanel
+		group by OrderID, SizeCode
+	) minArticle
+	group by OrderID
+)BO
+outer apply(
+	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
+	from(
+		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
+		from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, 1)	minPatternPanel
+		group by OrderID, SizeCode
+	) minArticle
+	group by OrderID
+)PRT
+outer apply(
+	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
+	from(
+		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
+		from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, 1)	minPatternPanel
+		group by OrderID, SizeCode
+	) minArticle
+	group by OrderID
+)AT
+outer apply(
+	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
+	from(
+		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
+		from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, 1)	minPatternPanel
+		group by OrderID, SizeCode
+	) minArticle
+	group by OrderID
+)PADPRT
+outer apply(
+	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
+	from(
+		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
+		from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, 1)	minPatternPanel
+		group by OrderID, SizeCode
+	) minArticle
+	group by OrderID
+)SUBCONEMB
+outer apply(
+	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
+	from(
+		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
+		from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, 1)	minPatternPanel
+		group by OrderID, SizeCode
+	) minArticle
+	group by OrderID
+)HT
 left join #tmp_inoutcount inoutcount on inoutcount.SP = t.Orderid and inoutcount.Factory = t.FactoryID
 left join #tmp_subprocessqty subprocessqty on subprocessqty.SP = t.Orderid and subprocessqty.Factory = t.FactoryID
 outer apply(
@@ -1375,16 +1431,6 @@ inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
 inner join #cte t on sod.OrderID = t.OrderID 
 group by sod.OrderID 
 
-select o.SubProcessId, o.SP, o.Factory, o.Article, o.Size, [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)  
-into #tmp_Out
-from #tmpout o
-inner join #cte t on o.SP = t.OrderID and o.Factory = t.FactoryID and o.Article = t.Article and o.Size = t.SizeCode
-
-select i.SubProcessId, i.SP, i.Factory, i.Article, i.Size, [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-into #tmp_In
-from #tmpin i
-inner join #cte t on i.SP = t.OrderID and i.Factory = t.FactoryID and i.Article = t.Article and i.Size = t.SizeCode
-
 select SP,Factory,Article,Size,ct = sum(xxx.Accusubprocesqty)
 into #tmp_inoutcount
 from(
@@ -1457,22 +1503,22 @@ select t.MDivisionID
        ,EstCutDate.EstimatedCutDate
        , #cte2.first_cut_date
        , #cte2.cut_qty
-       , [RFID Cut Qty] = isnull (CutQty.AccuOutGo, 0)
-       , [RFID Loading Qty] = isnull (loading.AccuInCome,0)
-       , [RFID Emb Farm In Qty] = isnull (Embin.AccuInCome, 0)
-       , [RFID Emb Farm Out Qty] = isnull (Embout.AccuOutGo, 0)
-       , [RFID Bond Farm In Qty] = isnull (Bondin.AccuInCome, 0)		
-       , [RFID Bond Farm Out Qty] = isnull (Bondout.AccuOutGo, 0)
-       , [RFID Print Farm In Qty] = isnull (Printin.AccuInCome, 0)
-       , [RFID Print Farm Out Qty] = isnull (Printout.AccuOutGo, 0)
-       , [RFID AT Farm In Qty] = isnull (ATin.AccuInCome, 0)
-       , [RFID AT Farm Out Qty] = isnull (ATout.AccuOutGo, 0)
-       , [RFID Pad Print Farm In Qty] = isnull (PadPrintin.AccuInCome, 0)
-       , [RFID Pad Print Farm Out Qty] = isnull (PadPrintout.AccuOutGo, 0)
-       , [RFID Emboss Farm In Qty] = isnull (Embossin.AccuInCome, 0)
-       , [RFID Emboss Farm Out Qty] = isnull (Embossout.AccuOutGo, 0)
-       , [RFID HT Farm In Qty] = isnull (htin.AccuInCome, 0)
-       , [RFID HT Farm Out Qty] = isnull (htout.AccuOutGo, 0)
+       , [RFID Cut Qty] = SORTING.OutQtyBySet
+       , [RFID Loading Qty] = loading.InQtyBySet
+       , [RFID Emb Farm In Qty] = Emb.InQtyBySet
+       , [RFID Emb Farm Out Qty] = Emb.OutQtyBySet
+       , [RFID Bond Farm In Qty] = BO.InQtyBySet	
+       , [RFID Bond Farm Out Qty] = BO.OutQtyBySet
+       , [RFID Print Farm In Qty] = prt.InQtyBySet
+       , [RFID Print Farm Out Qty] = prt.OutQtyBySet
+       , [RFID AT Farm In Qty] = AT.InQtyBySet
+       , [RFID AT Farm Out Qty] = AT.OutQtyBySet
+       , [RFID Pad Print Farm In Qty] = PADPRT.InQtyBySet
+       , [RFID Pad Print Farm Out Qty] = PADPRT.OutQtyBySet
+       , [RFID Emboss Farm In Qty] = SUBCONEMB.InQtyBySet
+       , [RFID Emboss Farm Out Qty] =SUBCONEMB.OutQtyBySet
+       , [RFID HT Farm In Qty] = HT.InQtyBySet
+       , [RFID HT Farm Out Qty] = HT.OutQtyBySet
         , SubProcessStatus=
 			case when t.Junk = 1 then null
 				 when subprocessqty.chksubprocesqty = inoutcount.ct and inoutcount.ct >0 then 'Y'
@@ -1547,22 +1593,15 @@ outer apply (
           and t.KPIChangeReason != '' 
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
-left join #tmp_Out CutQty on CutQty.SP = t.OrderID and CutQty.Factory = t.FactoryID and CutQty.Article = t.Article and CutQty.Size = t.SizeCode and CutQty.SubProcessId = 'SORTING'
-left join #tmp_In loading on loading.SP = t.OrderID and loading.Factory = t.FactoryID and loading.Article = t.Article and loading.Size = t.SizeCode and loading.SubProcessId = 'loading'
-left join #tmp_In Embin on Embin.SP = t.OrderID and Embin.Factory = t.FactoryID and Embin.Article = t.Article and Embin.Size = t.SizeCode and Embin.SubProcessId = 'Emb'
-left join #tmp_Out Embout on Embout.SP = t.OrderID and Embout.Factory = t.FactoryID and Embout.Article = t.Article and Embout.Size = t.SizeCode and Embout.SubProcessId = 'Emb'
-left join #tmp_In Bondin on Bondin.SP = t.OrderID and Bondin.Factory = t.FactoryID and Bondin.Article = t.Article and Bondin.Size = t.SizeCode and Bondin.SubProcessId = 'BO'
-left join #tmp_Out Bondout on Bondout.SP = t.OrderID and Bondout.Factory = t.FactoryID and Bondout.Article = t.Article and Bondout.Size = t.SizeCode and Bondout.SubProcessId = 'BO'
-left join #tmp_In Printin on Printin.SP = t.OrderID and Printin.Factory = t.FactoryID and Printin.Article = t.Article and Printin.Size = t.SizeCode and Printin.SubProcessId = 'PRT'
-left join #tmp_Out Printout on Printout.SP = t.OrderID and Printout.Factory = t.FactoryID and Printout.Article = t.Article and Printout.Size = t.SizeCode and Printout.SubProcessId = 'PRT'
-left join #tmp_In ATin on ATin.SP = t.OrderID and ATin.Factory = t.FactoryID and ATin.Article = t.Article and ATin.Size = t.SizeCode and ATin.SubProcessId = 'AT'
-left join #tmp_Out ATout on ATout.SP = t.OrderID and ATout.Factory = t.FactoryID and ATout.Article = t.Article and ATout.Size = t.SizeCode and ATout.SubProcessId = 'AT'
-left join #tmp_In PadPrintin on PadPrintin.SP = t.OrderID and PadPrintin.Factory = t.FactoryID and PadPrintin.Article = t.Article and PadPrintin.Size = t.SizeCode and PadPrintin.SubProcessId = 'PAD-PRT'
-left join #tmp_Out PadPrintout on PadPrintout.SP = t.OrderID and PadPrintout.Factory = t.FactoryID and PadPrintout.Article = t.Article and PadPrintout.Size = t.SizeCode and PadPrintout.SubProcessId = 'PAD-PRT'
-left join #tmp_In Embossin on Embossin.SP = t.OrderID and Embossin.Factory = t.FactoryID and Embossin.Article = t.Article and Embossin.Size = t.SizeCode and Embossin.SubProcessId = 'SUBCONEMB'
-left join #tmp_Out Embossout on Embossout.SP = t.OrderID and Embossout.Factory = t.FactoryID and Embossout.Article = t.Article and Embossout.Size = t.SizeCode and Embossout.SubProcessId = 'SUBCONEMB'
-left join #tmp_In htin on htin.SP = t.OrderID and htin.Factory = t.FactoryID and htin.Article = t.Article and htin.Size = t.SizeCode and htin.SubProcessId = 'HT'
-left join #tmp_Out htout on htout.SP = t.OrderID and htout.Factory = t.FactoryID and htout.Article = t.Article and htout.Size = t.SizeCode and htout.SubProcessId = 'HT'
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SORTING
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)loading
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)Emb
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)BO
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)prt
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)AT
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)PADPRT
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SUBCONEMB
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)HT
 left join #tmp_inoutcount inoutcount on inoutcount.SP = t.OrderID and inoutcount.Factory = t.FactoryID and inoutcount.Article = t.Article and inoutcount.Size = t.SizeCode
 left join #tmp_subprocessqty subprocessqty on subprocessqty.SP = t.OrderID and subprocessqty.Factory = t.FactoryID and subprocessqty.Article = t.Article and subprocessqty.Size = t.SizeCode 
 outer apply(
@@ -1639,7 +1678,7 @@ outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NO
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
-            sqlCmd.Append(@";drop table #imp_LastSewnDate, #tmp_Out, #tmp_In, #tmp_inoutcount, #tmp_subprocessqty ,#cte2,#cte,#tmp,#tmp2,#tmp3,#tmp4,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpin,#tmpout");
+            sqlCmd.Append(@";drop table #imp_LastSewnDate, #tmp_inoutcount, #tmp_subprocessqty ,#cte2,#cte,#tmp,#tmp2,#tmp3,#tmp4,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpin,#tmpout");
             if (this.isArtwork)
             {
                 sqlCmd.Append(@";drop table #rawdata_tmscost,#tmscost_pvt");

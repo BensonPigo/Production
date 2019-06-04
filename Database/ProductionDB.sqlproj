@@ -2352,6 +2352,7 @@
     <Build Include="dbo\Tables\ShippingMarkPic.sql" />
     <Build Include="dbo\Views\View_Style_Artwork.sql" />
     <Build Include="dbo\Tables\ShippingMarkPicture.sql" />
+    <Build Include="dbo\Functions\QtyBySetPerSubprocess.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
