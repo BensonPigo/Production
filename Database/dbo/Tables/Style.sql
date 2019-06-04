@@ -60,6 +60,7 @@
     [Gender]              VARCHAR (10)   CONSTRAINT [DF_Style_Gender1] DEFAULT ('') NULL,
     [ThreadEditname]      VARCHAR (10)   NULL,
     [ThreadEditdate]      DATETIME       NULL,
+    [ThickFabric] BIT CONSTRAINT [DF_Style_ThickFabric] DEFAULT (0) NOT NULL, 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 

@@ -2352,6 +2352,15 @@
     <Build Include="dbo\Tables\ShippingMarkPic.sql" />
     <Build Include="dbo\Views\View_Style_Artwork.sql" />
     <Build Include="dbo\Tables\ShippingMarkPicture.sql" />
+    <Build Include="dbo\Tables\VNContractQtyAdjust_Detail_Detail.sql" />
+    <Build Include="dbo\Tables\VNImportDeclaration_Detail_Detail.sql" />
+    <Build Include="dbo\Functions\GetMaterialTypeDesc.sql" />
+    <Build Include="dbo\Stored Procedures\CreateVNConsumption_Detail.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo_Operation.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo_Detail.sql" />
+    <Build Include="dbo\Tables\Brand_ThreadCalculateRules.sql" />
+    <Build Include="dbo\Tables\MachineType_ThreadRatio_Regular.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
