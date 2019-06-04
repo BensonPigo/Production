@@ -54,6 +54,8 @@
             this.txtCustomerCode = new Sci.Win.UI.TextBox();
             this.dispHSCode = new Sci.Win.UI.DisplayBox();
             this.dispCustomerUnit = new Sci.Win.UI.DisplayBox();
+            this.numericBoxMiscRate = new Sci.Win.UI.NumericBox();
+            this.labMiscRate = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -68,6 +70,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numericBoxMiscRate);
+            this.detailcont.Controls.Add(this.labMiscRate);
             this.detailcont.Controls.Add(this.dispCustomerUnit);
             this.detailcont.Controls.Add(this.dispHSCode);
             this.detailcont.Controls.Add(this.txtCustomerCode);
@@ -103,11 +107,27 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(707, 335);
+            this.browse.Size = new System.Drawing.Size(758, 335);
             // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(766, 364);
+            // 
+            // createby
+            // 
+            this.createby.Visible = false;
+            // 
+            // editby
+            // 
+            this.editby.Visible = false;
+            // 
+            // lblcreateby
+            // 
+            this.lblcreateby.Visible = false;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Visible = false;
             // 
             // txtSubconSupplier
             // 
@@ -123,7 +143,7 @@
             // label17
             // 
             this.label17.BackColor = System.Drawing.Color.Transparent;
-            this.label17.Location = new System.Drawing.Point(513, 171);
+            this.label17.Location = new System.Drawing.Point(513, 189);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(16, 23);
             this.label17.TabIndex = 58;
@@ -136,7 +156,7 @@
             // label16
             // 
             this.label16.BackColor = System.Drawing.Color.Transparent;
-            this.label16.Location = new System.Drawing.Point(513, 139);
+            this.label16.Location = new System.Drawing.Point(513, 157);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(16, 23);
             this.label16.TabIndex = 57;
@@ -152,7 +172,7 @@
             this.numKGPcs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PcsKg", true));
             this.numKGPcs.DecimalPlaces = 4;
             this.numKGPcs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numKGPcs.Location = new System.Drawing.Point(434, 203);
+            this.numKGPcs.Location = new System.Drawing.Point(434, 221);
             this.numKGPcs.Name = "numKGPcs";
             this.numKGPcs.NullValue = new decimal(new int[] {
             0,
@@ -160,7 +180,7 @@
             0,
             0});
             this.numKGPcs.Size = new System.Drawing.Size(56, 23);
-            this.numKGPcs.TabIndex = 4;
+            this.numKGPcs.TabIndex = 5;
             this.numKGPcs.Value = new decimal(new int[] {
             0,
             0,
@@ -173,7 +193,7 @@
             this.numLengthPcs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PcsLength", true));
             this.numLengthPcs.DecimalPlaces = 4;
             this.numLengthPcs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numLengthPcs.Location = new System.Drawing.Point(434, 171);
+            this.numLengthPcs.Location = new System.Drawing.Point(434, 189);
             this.numLengthPcs.Name = "numLengthPcs";
             this.numLengthPcs.NullValue = new decimal(new int[] {
             0,
@@ -181,7 +201,7 @@
             0,
             0});
             this.numLengthPcs.Size = new System.Drawing.Size(76, 23);
-            this.numLengthPcs.TabIndex = 3;
+            this.numLengthPcs.TabIndex = 4;
             this.numLengthPcs.Value = new decimal(new int[] {
             0,
             0,
@@ -194,7 +214,7 @@
             this.numWidthPcs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PcsWidth", true));
             this.numWidthPcs.DecimalPlaces = 4;
             this.numWidthPcs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numWidthPcs.Location = new System.Drawing.Point(434, 139);
+            this.numWidthPcs.Location = new System.Drawing.Point(434, 157);
             this.numWidthPcs.Name = "numWidthPcs";
             this.numWidthPcs.NullValue = new decimal(new int[] {
             0,
@@ -202,7 +222,7 @@
             0,
             0});
             this.numWidthPcs.Size = new System.Drawing.Size(76, 23);
-            this.numWidthPcs.TabIndex = 2;
+            this.numWidthPcs.TabIndex = 3;
             this.numWidthPcs.Value = new decimal(new int[] {
             0,
             0,
@@ -211,7 +231,7 @@
             // 
             // labKG
             // 
-            this.labKG.Location = new System.Drawing.Point(354, 203);
+            this.labKG.Location = new System.Drawing.Point(354, 221);
             this.labKG.Name = "labKG";
             this.labKG.Size = new System.Drawing.Size(75, 23);
             this.labKG.TabIndex = 56;
@@ -253,7 +273,7 @@
             // 
             // labCustomsUnit
             // 
-            this.labCustomsUnit.Location = new System.Drawing.Point(44, 203);
+            this.labCustomsUnit.Location = new System.Drawing.Point(44, 221);
             this.labCustomsUnit.Name = "labCustomsUnit";
             this.labCustomsUnit.Size = new System.Drawing.Size(109, 23);
             this.labCustomsUnit.TabIndex = 45;
@@ -261,7 +281,7 @@
             // 
             // labHSCode
             // 
-            this.labHSCode.Location = new System.Drawing.Point(44, 171);
+            this.labHSCode.Location = new System.Drawing.Point(44, 189);
             this.labHSCode.Name = "labHSCode";
             this.labHSCode.Size = new System.Drawing.Size(109, 23);
             this.labHSCode.TabIndex = 44;
@@ -269,7 +289,7 @@
             // 
             // labCustomsCode
             // 
-            this.labCustomsCode.Location = new System.Drawing.Point(44, 139);
+            this.labCustomsCode.Location = new System.Drawing.Point(44, 157);
             this.labCustomsCode.Name = "labCustomsCode";
             this.labCustomsCode.Size = new System.Drawing.Size(109, 23);
             this.labCustomsCode.TabIndex = 43;
@@ -301,7 +321,7 @@
             // 
             // labWidth
             // 
-            this.labWidth.Location = new System.Drawing.Point(354, 139);
+            this.labWidth.Location = new System.Drawing.Point(354, 157);
             this.labWidth.Name = "labWidth";
             this.labWidth.Size = new System.Drawing.Size(75, 23);
             this.labWidth.TabIndex = 60;
@@ -309,7 +329,7 @@
             // 
             // labLength
             // 
-            this.labLength.Location = new System.Drawing.Point(354, 171);
+            this.labLength.Location = new System.Drawing.Point(354, 189);
             this.labLength.Name = "labLength";
             this.labLength.Size = new System.Drawing.Size(75, 23);
             this.labLength.TabIndex = 61;
@@ -332,7 +352,7 @@
             this.txtunit_fty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtunit_fty.Location = new System.Drawing.Point(157, 94);
             this.txtunit_fty.Name = "txtunit_fty";
-            this.txtunit_fty.Size = new System.Drawing.Size(66, 23);
+            this.txtunit_fty.Size = new System.Drawing.Size(100, 23);
             this.txtunit_fty.TabIndex = 0;
             // 
             // dispType
@@ -355,7 +375,7 @@
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.ReadOnly = true;
-            this.editDescription.Size = new System.Drawing.Size(241, 37);
+            this.editDescription.Size = new System.Drawing.Size(241, 57);
             this.editDescription.TabIndex = 65;
             // 
             // txtCustomerCode
@@ -363,10 +383,10 @@
             this.txtCustomerCode.BackColor = System.Drawing.Color.White;
             this.txtCustomerCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
             this.txtCustomerCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCustomerCode.Location = new System.Drawing.Point(157, 139);
+            this.txtCustomerCode.Location = new System.Drawing.Point(157, 157);
             this.txtCustomerCode.Name = "txtCustomerCode";
-            this.txtCustomerCode.Size = new System.Drawing.Size(60, 23);
-            this.txtCustomerCode.TabIndex = 1;
+            this.txtCustomerCode.Size = new System.Drawing.Size(100, 23);
+            this.txtCustomerCode.TabIndex = 2;
             this.txtCustomerCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCustomerCode_PopUp);
             this.txtCustomerCode.Validating += new System.ComponentModel.CancelEventHandler(this.txtCustomerCode_Validating);
             // 
@@ -375,9 +395,9 @@
             this.dispHSCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispHSCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HSCode", true));
             this.dispHSCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispHSCode.Location = new System.Drawing.Point(157, 171);
+            this.dispHSCode.Location = new System.Drawing.Point(157, 189);
             this.dispHSCode.Name = "dispHSCode";
-            this.dispHSCode.Size = new System.Drawing.Size(60, 23);
+            this.dispHSCode.Size = new System.Drawing.Size(100, 23);
             this.dispHSCode.TabIndex = 67;
             // 
             // dispCustomerUnit
@@ -385,10 +405,39 @@
             this.dispCustomerUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispCustomerUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustomsUnit", true));
             this.dispCustomerUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispCustomerUnit.Location = new System.Drawing.Point(157, 203);
+            this.dispCustomerUnit.Location = new System.Drawing.Point(157, 221);
             this.dispCustomerUnit.Name = "dispCustomerUnit";
             this.dispCustomerUnit.Size = new System.Drawing.Size(149, 23);
             this.dispCustomerUnit.TabIndex = 68;
+            // 
+            // numericBoxMiscRate
+            // 
+            this.numericBoxMiscRate.BackColor = System.Drawing.Color.White;
+            this.numericBoxMiscRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MiscRate", true));
+            this.numericBoxMiscRate.DecimalPlaces = 4;
+            this.numericBoxMiscRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBoxMiscRate.Location = new System.Drawing.Point(157, 125);
+            this.numericBoxMiscRate.Name = "numericBoxMiscRate";
+            this.numericBoxMiscRate.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBoxMiscRate.Size = new System.Drawing.Size(100, 23);
+            this.numericBoxMiscRate.TabIndex = 1;
+            this.numericBoxMiscRate.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // labMiscRate
+            // 
+            this.labMiscRate.Location = new System.Drawing.Point(44, 125);
+            this.labMiscRate.Name = "labMiscRate";
+            this.labMiscRate.Size = new System.Drawing.Size(109, 23);
+            this.labMiscRate.TabIndex = 70;
+            this.labMiscRate.Text = "Misc Rate";
             // 
             // B49
             // 
@@ -445,5 +494,7 @@
         private Win.UI.TextBox txtCustomerCode;
         private Win.UI.DisplayBox dispCustomerUnit;
         private Win.UI.DisplayBox dispHSCode;
+        private Win.UI.NumericBox numericBoxMiscRate;
+        private Win.UI.Label labMiscRate;
     }
 }

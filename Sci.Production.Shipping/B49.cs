@@ -102,6 +102,7 @@ and NLCode = '{0}'", this.txtCustomerCode.Text), out nLCodeDate))
             decimal pcslength = MyUtility.Check.Empty(this.CurrentMaintain["PcsLength"]) ? 0 : MyUtility.Convert.GetDecimal(this.CurrentMaintain["PcsLength"]);
             decimal pcsWidth = MyUtility.Check.Empty(this.CurrentMaintain["PcsWidth"]) ? 0 : MyUtility.Convert.GetDecimal(this.CurrentMaintain["PcsWidth"]);
             decimal pcsKG = MyUtility.Check.Empty(this.CurrentMaintain["PcsKg"]) ? 0 : MyUtility.Convert.GetDecimal(this.CurrentMaintain["PcsKg"]);
+            decimal miscRate = MyUtility.Check.Empty(this.CurrentMaintain["MiscRate"]) ? 0 : MyUtility.Convert.GetDecimal(this.CurrentMaintain["MiscRate"]);
 
             string strUpdate = $@"
 update Misc
@@ -112,7 +113,8 @@ set UsageUnit = '{this.CurrentMaintain["UsageUnit"]}'
 ,PcsLength = '{pcslength}'
 ,PcsWidth = '{pcsWidth}'
 ,PcsKg = '{pcsKG}'
-,NLCodeEditDate = '{DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")}'
+,MiscRate = {miscRate}
+,NLCodeEditDate = '{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")}'
 ,NLCodeEditName = '{Sci.Env.User.UserID}'
 where id='{this.CurrentMaintain["ID"]}'
 ";
