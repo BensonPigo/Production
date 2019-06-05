@@ -63,7 +63,8 @@ o.BuyerDelivery,
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
-pu.Status
+pu.Status,
+pd.SCICtnNo
 from  Orders o with (nolock)
 left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID
 left join PackingList p with (nolock) on p.id = pd.ID
@@ -117,7 +118,8 @@ o.BuyerDelivery,
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
-pu.Status
+pu.Status,
+pd.SCICtnNo
 from  Orders o with (nolock)
 left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID 
 left join PackingList p with (nolock) on p.id = pd.ID
@@ -218,7 +220,8 @@ o.BuyerDelivery,
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
-pu.Status
+pu.Status,
+pd.SCICtnNo
 from  (select * from PackingList_Detail with (nolock) where {keyWhere} and CTNQty = 1 and DisposeFromClog = 0) pd
 inner join Orders o with (nolock) on pd.OrderID = o.ID
 left join PackingList p with (nolock) on p.id = pd.ID
@@ -366,8 +369,8 @@ where	pd.CTNStartNo != '' and
                 updSql = $@"
 update PackingList_Detail set DRYReceiveDate = GETDATE() where ID = '{item["ID"]}' 
 and CTNStartNo = '{item["CTNStartNo"]}' and DisposeFromClog= 0;
-insert into DRYReceive(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStartNo, AddName, AddDate)
-            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}','{Env.User.UserID}',GETDATE());
+insert into DRYReceive(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStartNo, AddName, AddDate,SCICtnNo)
+            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{item["SCICtnNo"]}');
 ";
                 result = DBProxy.Current.Execute(null, updSql);
                 if (result == false)

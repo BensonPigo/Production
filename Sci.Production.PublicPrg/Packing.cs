@@ -10,6 +10,9 @@ using Sci;
 using Ict;
 using Ict.Win;
 using System.Runtime.InteropServices;
+using System.Data.SqlClient;
+using Sci.Win.UI;
+using System.Drawing;
 
 namespace Sci.Production.PublicPrg
 {
@@ -573,7 +576,7 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID
                                                     and oqd.SizeCode = a.SizeCode
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 where a.id = '{0}'
-order by a.Seq", packingListID);
+order by a.Seq ASC,a.CTNQty DESC", packingListID);
         }
         #endregion
 
@@ -2355,6 +2358,439 @@ and pd2.[SizeCode]			=pd.[SizeCode]
             }
 
             return true;
+        }
+        #endregion
+
+        #region P03 Save Check
+        private static StringBuilder Ctn_no_combine(string sP, string seq, DataTable detailDatas)
+        {
+            StringBuilder ctn_no = new StringBuilder();
+            var cnt_list = from r2 in detailDatas.AsEnumerable()
+                           where r2.Field<string>("OrderID") == sP &&
+                                  r2.Field<string>("OrderShipmodeSeq") == seq
+                           select new { cnt_no = r2.Field<string>("CTNStartNo") };
+            foreach (var cnt in cnt_list)
+            {
+                ctn_no.Append("," + cnt.cnt_no);
+            }
+
+            ctn_no.Remove(0, 1);
+            return ctn_no;
+        }
+
+        // 檢查OrderID+Seq不可以重複建立
+        public static bool P03CheckDouble_SpSeq(string orderid, string seq, string packID)
+        {
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", orderid, seq, packID)))
+            {
+                MyUtility.Msg.WarningBox("SP No:" + orderid + ", Seq:" + seq + " already exist in packing list, can't be create again!");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool P03SaveCheck(DataRow currentMaintain, DataTable detailDatas, Grid detailGrid = null)
+        {
+            DualResult result;
+            var checkDetailListNoDeleted = detailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]);
+
+            #region 檢查表頭的CustCD與表身所有SP的 Orders.custcdid是否相同
+            DataTable dtCheckCustCD;
+            List<SqlParameter> listCheckCustCDSqlParameter = new List<SqlParameter>();
+            listCheckCustCDSqlParameter.Add(new SqlParameter("@CustCD", currentMaintain["CustCDID"]));
+            string strCheckCustCD = @"
+select OrderID
+from #tmp
+outer apply (
+    select value = isnull (o.CustCDID, '')
+    from Orders o
+    where #tmp.OrderID = o.ID
+) CustCD
+where CustCD.value != @CustCD
+      or CustCD.value is null";
+
+            if (detailDatas.Rows.Count > 0)
+            {
+                result = MyUtility.Tool.ProcessWithDatatable(detailDatas, null, strCheckCustCD, out dtCheckCustCD, paramters: listCheckCustCDSqlParameter);
+                if (result == false)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return false;
+                }
+                else if (dtCheckCustCD != null && dtCheckCustCD.Rows.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox("CustCD are different, please check!");
+                    return false;
+                }
+            }
+
+            #endregion
+
+            // 刪除表身SP No.或Qty為空白的資料，表身的CTN#, Ref No., Color Way與Size不可以為空值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
+            int i = 0, ctnQty = 0, shipQty = 0, ttlShipQty = 0, needPackQty = 0, count = 0;
+            double nw = 0.0, gw = 0.0, nnw = 0.0, cbm = 0.0;
+            string filter = string.Empty, sqlCmd;
+            bool isNegativeBalQty = false;
+            DataTable needPackData, tmpPackData;
+            DualResult selectResult;
+            DataRow[] detailData;
+
+            // 準備needPackData的Schema
+            sqlCmd = "select OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty as Qty from PackingList_Detail WITH (NOLOCK) where ID = ''";
+            if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out needPackData)))
+            {
+                MyUtility.Msg.WarningBox("Query  schema fail!");
+                return false;
+            }
+
+            foreach (DataRow dr in checkDetailListNoDeleted)
+            {
+                #region
+                bool isAlreadyCreated = !P03CheckDouble_SpSeq(dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), currentMaintain["ID"].ToString());
+                if (isAlreadyCreated)
+                {
+                    return false;
+                }
+                #endregion
+
+                #region 刪除表身SP No.或Qty為空白的資料
+                if (MyUtility.Check.Empty(dr["OrderID"]) || MyUtility.Check.Empty(dr["ShipQty"]))
+                {
+                    dr.Delete();
+                    continue;
+                }
+                #endregion
+
+                #region 表身的CTN#, Ref No., Color Way與Size不可以為空值
+                if (MyUtility.Check.Empty(dr["CTNStartNo"]))
+                {
+                    MyUtility.Msg.WarningBox("< CTN# >  can't empty!");
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(dr["RefNo"]))
+                {
+                    MyUtility.Msg.WarningBox("< Ref No. >  can't empty!");
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(dr["Article"]))
+                {
+                    MyUtility.Msg.WarningBox("< ColorWay >  can't empty!");
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(dr["SizeCode"]))
+                {
+                    MyUtility.Msg.WarningBox("< Size >  can't empty!");
+                    return false;
+                }
+                #endregion
+
+                #region 填入Seq欄位值
+                i = i + 1;
+                dr["Seq"] = Convert.ToString(i).PadLeft(6, '0');
+                #endregion
+
+                #region 計算CTNQty, ShipQty, NW, GW, NNW, CBM
+                ctnQty = ctnQty + MyUtility.Convert.GetInt(dr["CTNQty"]);
+                shipQty = shipQty + MyUtility.Convert.GetInt(dr["ShipQty"]);
+                nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
+                gw = MyUtility.Math.Round(gw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
+                nnw = MyUtility.Math.Round(nnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
+                if (MyUtility.Check.Empty(dr["CTNQty"]) || MyUtility.Convert.GetInt(dr["CTNQty"]) > 0)
+                {
+                    // ISP20181015 CBM抓到小數點後4位
+                    cbm = cbm + (MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo")) * MyUtility.Convert.GetInt(dr["CTNQty"]));
+                }
+
+                #endregion
+
+                #region 重算表身Grid的Bal. Qty
+
+                // 目前還有多少衣服尚未裝箱
+                // needPackQty = 0;
+                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                detailData = needPackData.Select(filter);
+                if (detailData.Length <= 0)
+                {
+                    // 撈取此SP+Seq尚未裝箱的數量
+                    sqlCmd = string.Format(
+                        @"
+
+select OrderID = oqd.Id
+	   , OrderShipmodeSeq = oqd.Seq
+	   , oqd.Article
+	   , oqd.SizeCode
+	   , Qty = (oqd.Qty - isnull(AccuShipQty.value, 0) - isnull(InvAdjustDiffQty.value, 0))
+from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+outer apply (
+	select value = sum(pld.ShipQty)
+	from PackingList pl With (NoLock)
+	inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
+	where pl.Status = 'Confirmed'
+		  and pl.ID != '{0}'
+		  and pld.OrderID = oqd.Id 
+		  and pld.OrderShipmodeSeq = oqd.Seq
+		  and pld.Article = oqd.Article
+		  and pld.SizeCode = oqd.SizeCode		  
+) AccuShipQty
+outer apply (
+	select value = sum (iaq.DiffQty)
+	from InvAdjust ia WITH (NOLOCK)
+	inner join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID 
+											 
+	where ia.OrderID = oqd.ID 
+		  and ia.OrderShipmodeSeq = oqd.Seq
+		  and iaq.Article = oqd.Article 
+		  and iaq.SizeCode = oqd.SizeCode
+) InvAdjustDiffQty
+where oqd.Id = '{1}'
+	  and oqd.Seq = '{2}'",
+                        currentMaintain["ID"].ToString(),
+                        dr["OrderID"].ToString(),
+                        dr["OrderShipmodeSeq"].ToString());
+                    if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
+                    {
+                        MyUtility.Msg.WarningBox("Query pack qty fail!");
+                        return false;
+                    }
+                    else
+                    {
+                        foreach (DataRow tpd in tmpPackData.Rows)
+                        {
+                            tpd.AcceptChanges();
+                            tpd.SetAdded();
+                            needPackData.ImportRow(tpd);
+                        }
+                    }
+                }
+
+                needPackQty = 0;
+                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
+                detailData = needPackData.Select(filter);
+                if (detailData.Length > 0)
+                {
+                    needPackQty = MyUtility.Convert.GetInt(detailData[0]["Qty"].ToString());
+                }
+
+                // 加總表身特定Article/SizeCode的Ship Qty數量
+                detailData = detailDatas.Select(filter);
+                ttlShipQty = 0;
+                if (detailData.Length != 0)
+                {
+                    foreach (DataRow dDr in detailData)
+                    {
+                        ttlShipQty = ttlShipQty + MyUtility.Convert.GetInt(dDr["ShipQty"].ToString());
+                    }
+                }
+
+                dr["BalanceQty"] = needPackQty - ttlShipQty;
+                if (needPackQty - ttlShipQty < 0)
+                {
+                    isNegativeBalQty = true;
+                    if (detailGrid != null)
+                    {
+                        detailGrid.Rows[count].DefaultCellStyle.BackColor = Color.Pink;
+                    }
+                    
+                }
+                #endregion
+
+                count = count + 1;
+            }
+
+            #region ship mode 有變更時 check Order_QtyShip
+
+            StringBuilder chk_ship_err = new StringBuilder();
+            StringBuilder chk_seq_null = new StringBuilder();
+            var check_chip_list = from r1 in checkDetailListNoDeleted
+                                  group r1 by new
+                                  {
+                                      SP = r1.Field<string>("OrderID"),
+                                      Seq = r1.Field<string>("OrderShipmodeSeq")
+                                  }
+
+into g
+                                  select new
+                                  {
+                                      SP = g.Key.SP,
+                                      Seq = g.Key.Seq
+                                  };
+            foreach (var chk_item in check_chip_list)
+            {
+                if (MyUtility.Check.Empty(chk_item.Seq))
+                {
+                    chk_seq_null.Append("<SP> " + chk_item.SP + " <CTN#> [" + Ctn_no_combine(chk_item.SP, chk_item.Seq, detailDatas) + "]  \r\n");
+                }
+            }
+
+            if (chk_seq_null.Length > 0)
+            {
+                chk_seq_null.Insert(0, " Seq can not empty , please check again:  \r\n");
+
+                MyUtility.Msg.WarningBox(chk_seq_null.ToString());
+                return false;
+            }
+
+            #endregion
+
+            if (detailDatas.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Detail cannot be empty");
+                return false;
+            }
+
+            // 檢查Refno是否有改變，若有改變提醒使用者通知採購團隊紙箱號碼改變。
+            DataView dataView = detailDatas.DefaultView;
+            DataTable dataTableDistinct = dataView.ToTable(true, "OrderID", "RefNo");
+            StringBuilder warningmsg = new StringBuilder();
+            warningmsg.Append("Please inform Purchase Team that the Carton Ref No. has been changed.");
+
+            foreach (DataRow dt in dataTableDistinct.Rows)
+            {
+                if (!MyUtility.Check.Seek(string.Format("select * from LocalPO_Detail where OrderId='{0}'", dt["OrderID"].ToString())))
+                {
+                    continue;
+                }
+
+                if (!MyUtility.Check.Seek(string.Format("select * from LocalPO_Detail where OrderId='{0}' and Refno='{1}'", dt["OrderID"].ToString(), dt["RefNo"].ToString())))
+                {
+                    warningmsg.Append(Environment.NewLine + string.Format("SP#：<{0}>, RefNo：<{1}>.", dt["OrderID"].ToString(), dt["RefNo"].ToString()));
+                }
+            }
+
+            if (warningmsg.ToString() != "Please inform Purchase Team that the Carton Ref No. has been changed.")
+            {
+                MyUtility.Msg.InfoBox(warningmsg.ToString());
+            }
+
+            // CTNQty, ShipQty, NW, GW, NNW, CBM
+            currentMaintain["CTNQty"] = ctnQty;
+            currentMaintain["ShipQty"] = shipQty;
+            currentMaintain["NW"] = nw;
+            currentMaintain["GW"] = gw;
+            currentMaintain["NNW"] = nnw;
+            currentMaintain["CBM"] = cbm;
+
+            if (isNegativeBalQty)
+            {
+                MyUtility.Msg.WarningBox("Quantity entered is greater than order quantity!!");
+                return false;
+            }
+            
+            // 表身重新計算後,再判斷CBM or GW 是不是0
+            if (MyUtility.Check.Empty(currentMaintain["CBM"]) || MyUtility.Check.Empty(currentMaintain["GW"]))
+            {
+                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static DualResult P03_UpdateGMT(DataRow currentMaintain)
+        {
+            DualResult result = new DualResult(true);
+            if (!MyUtility.Check.Empty(currentMaintain["INVNo"]))
+            {
+                string sqlCmd = string.Format(
+                    @"select isnull(sum(ShipQty),0) as ShipQty,isnull(sum(CTNQty),0) as CTNQty,isnull(sum(NW),0) as NW,isnull(sum(GW),0) as GW,isnull(sum(NNW),0) as NNW,isnull(sum(CBM),0) as CBM
+from PackingList WITH (NOLOCK) 
+where INVNo = '{0}'
+and ID != '{1}'",
+                    currentMaintain["INVNo"].ToString(),
+                    currentMaintain["ID"].ToString());
+
+                DataTable summaryData;
+                if (result = DBProxy.Current.Select(null, sqlCmd, out summaryData))
+                {
+                    string updateCmd = @"update GMTBooking
+set TotalShipQty = @ttlShipQty, TotalCTNQty = @ttlCTNQty, TotalNW = @ttlNW, TotalNNW = @ttlNNW, TotalGW = @ttlGW, TotalCBM = @ttlCBM
+where ID = @INVNo";
+                    #region 準備sql參數資料
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                    sp1.ParameterName = "@ttlShipQty";
+                    sp1.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["ShipQty"]) + MyUtility.Convert.GetInt(currentMaintain["ShipQty"]);
+
+                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                    sp2.ParameterName = "@ttlCTNQty";
+                    sp2.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["CTNQty"]) + MyUtility.Convert.GetInt(currentMaintain["CTNQty"]);
+
+                    System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+                    sp3.ParameterName = "@ttlNW";
+                    sp3.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(currentMaintain["NW"]), 2);
+
+                    System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+                    sp4.ParameterName = "@ttlNNW";
+                    sp4.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(currentMaintain["NNW"]), 2);
+
+                    System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
+                    sp5.ParameterName = "@ttlGW";
+                    // ISP20181015 GW抓到小數點後3位
+                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(currentMaintain["GW"]), 3);
+
+                    System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
+                    sp6.ParameterName = "@ttlCBM";
+                    // ISP20181015 CBM抓到小數點後4位
+                    sp6.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(currentMaintain["CBM"]);
+
+                    System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
+                    sp7.ParameterName = "@INVNo";
+                    sp7.Value = currentMaintain["INVNo"].ToString();
+
+                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    cmds.Add(sp1);
+                    cmds.Add(sp2);
+                    cmds.Add(sp3);
+                    cmds.Add(sp4);
+                    cmds.Add(sp5);
+                    cmds.Add(sp6);
+                    cmds.Add(sp7);
+                    #endregion
+
+                    result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
+                    if (!result)
+                    {
+                        DualResult failResult = new DualResult(false, "Update Garment Booking fail!\r\n" + result.ToString());
+                        return failResult;
+                    }
+                }
+                else
+                {
+                    DualResult failResult = new DualResult(false, "Select PackingList fail!!\r\n" + result.ToString());
+                    return failResult;
+                }
+            }
+            return result;
+        }
+
+        public static DualResult P03_UpdateOthers(DataRow currentMaintain)
+        {
+            DataTable orderData;
+            string sqlCmd = string.Format("select distinct OrderID from PackingList_Detail WITH (NOLOCK) where ID = '{0}'", currentMaintain["ID"].ToString());
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out orderData);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "select order list fail!\r\n" + result.ToString());
+                return failResult;
+            }
+
+            result = Prgs.UpdateOrdersCTN(orderData);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Update Orders CTN fail!\r\n" + result.ToString());
+                return failResult;
+            }
+
+            if (!Prgs.CreateOrderCTNData(currentMaintain["ID"].ToString()))
+            {
+                DualResult failResult = new DualResult(false, "Create Order_CTN fail!\r\n" + result.ToString());
+                return failResult;
+            }
+
+            return result;
         }
         #endregion
     }

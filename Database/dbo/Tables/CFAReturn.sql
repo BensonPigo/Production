@@ -8,7 +8,8 @@
     [CTNStartNo] VARCHAR(6) NOT NULL DEFAULT (''), 
     [ReturnTo] VARCHAR(7) NOT NULL DEFAULT (''), 
     [AddName] VARCHAR(10) NOT NULL DEFAULT (''), 
-    [AddDate] DATETIME NOT NULL
+    [AddDate] DATETIME NOT NULL, 
+    [SCICtnNo] VARCHAR(15) CONSTRAINT [DF_CFAReturn_SCICtnNo] DEFAULT ('') NOT NULL
 )
 
 GO

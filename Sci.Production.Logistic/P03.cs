@@ -153,6 +153,7 @@ select ID
         , Remark 
         ,TransferCFADate
         ,CFAReturnClogDate
+        ,SCICtnNo
         , rn = ROW_NUMBER() over (order by PackingListID, OrderID, (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
         , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))	
 from (
@@ -175,6 +176,7 @@ from (
             , '' as Remark 
             , b.TransferCFADate 
             , b.CFAReturnClogDate 
+            , b.SCICtnNo
     from PackingList a WITH (NOLOCK) 
          , PackingList_Detail b WITH (NOLOCK) 
          , Orders c WITH (NOLOCK) 
@@ -614,13 +616,14 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             foreach (DataRow dr in selectedData)
             {
                 insertCmds.Add(string.Format(
-                    @"insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName)
-values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}');",
+                    @"insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo)
+values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}','{5}');",
                     Sci.Env.User.Keyword,
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
-                    Sci.Env.User.UserID));
+                    Sci.Env.User.UserID,
+                    MyUtility.Convert.GetString(dr["SCICtnNo"])));
 
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(
