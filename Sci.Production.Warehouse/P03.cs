@@ -704,7 +704,7 @@ from(
 		                                    ) tmp for xml path(''))
                                     ,1,1,'')
                     , [From_Program] = 'P03'
-                    , OSS.GarmentSize
+                    , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -712,13 +712,6 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            outer apply(SELECT top 1 oBOA.SizeItem FROM Order_BOA oBOA WITH (NOLOCK) WHERE a.ID = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
-                        ) LIST
-            outer apply (select [GarmentSize] = Stuff((select concat( ',',LOSS.SizeCode) 
-            					from Order_SizeSpec LOSS WITH (NOLOCK)
-            					LEFT JOIN Order_SizeCode LOSC WITH (NOLOCK) ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
-            					where LOSS.Id = a.ID AND LOSS.SizeItem = LIST.SizeItem AND LOSS.SizeSpec = a.SizeSpec ORDER BY LOSC.Seq ASC FOR XML PATH('')),1,1,'') 
-                        ) OSS
             
 --很重要要看到,修正欄位要上下一起改
             union
@@ -799,7 +792,7 @@ from(
 		                                     ) tmp for xml path(''))
                                             ,1,1,'')
                     , [From_Program] = 'P03'
-                    , OSS.GarmentSize
+                    , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -807,13 +800,6 @@ from(
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
-        outer apply(SELECT top 1 oBOA.SizeItem FROM Order_BOA oBOA WITH (NOLOCK) WHERE a.ID = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
-                        ) LIST
-            outer apply (select [GarmentSize] = Stuff((select concat( ',',LOSS.SizeCode) 
-            					from Order_SizeSpec LOSS WITH (NOLOCK)
-            					LEFT JOIN Order_SizeCode LOSC WITH (NOLOCK) ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
-            					where LOSS.Id = a.ID AND LOSS.SizeItem = LIST.SizeItem AND LOSS.SizeSpec = a.SizeSpec ORDER BY LOSC.Seq ASC FOR XML PATH('')),1,1,'') 
-                        ) OSS
         where   1=1 
                 AND a.id IS NOT NULL  
                ) as xxx

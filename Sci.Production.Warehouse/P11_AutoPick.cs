@@ -258,6 +258,7 @@ select	distinct p.id as [poid]
                                     when p.Seq1 like '7_' then p.OutputSeq1
                                     else p.Seq1
                                  end
+		, [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(p.id ,p.SEQ1 ,p.SEQ2)
 into #tmpPO_supp_detail
 from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
 inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
@@ -315,6 +316,7 @@ from (
             , b.MTLTYPEID
             , checkOrderListEmpty = checkOrderListEmpty.value
             , Orderlist_chk = psdo.Orderid
+			, b.GarmentSize
     from #tmpPO_supp_detail b
     left join (
          select distinct tmpB.id
@@ -595,6 +597,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
                  .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("GarmentSize", header: "Garment\r\nSize", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
                  .Numeric("qty", header: "Pick Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: ns2)
                  .Text("Output", header: "Output", width: Widths.AnsiChars(10), settings: ns)
