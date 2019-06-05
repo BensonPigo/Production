@@ -234,11 +234,10 @@ where sd.ID = '{0}'",
 	where SewingOutput_DetailUKey = '{0}'
 	and not exists (select 1 from Order_Qty WITH (NOLOCK) where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
 )
-select  a.ID,a.SewingOutput_DetailUkey,a.OrderId,a.ComboType,a.Article,a.SizeCode
-	,OrderQty.OrderQty
-	,a.AccumQty
-	, [Variance] = OrderQty.OrderQty-a.AccumQty
-	, [BalQty] = OrderQty.OrderQty-a.AccumQty-a.QAQty
+select  a.*
+	,OrderQty.OrderQtyUpperlimit
+	, [Variance] = a.OrderQty-a.AccumQty
+	, [BalQty] = a.OrderQty-a.AccumQty-a.QAQty
 	, [Seq] = isnull(os.Seq,0)
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
@@ -251,7 +250,7 @@ outer apply(
 	and oq.SizeCode=os.SizeCode and oq.Article=a.Article and ot.id=o.id
 	and o.LocalOrder<>1
 )b
-outer apply(select OrderQty=iif(b.value is not null,round(cast(a.OrderQty as decimal)*1.05,0),a.OrderQty))OrderQty
+outer apply(select OrderQtyUpperlimit=iif(b.value is not null,round(cast(a.OrderQty as decimal)*1.05,0),a.OrderQty))OrderQty
 order by a.OrderId,os.Seq",
                 masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
