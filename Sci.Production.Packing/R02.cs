@@ -130,7 +130,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateScanDate.Value2))
             {
-                this._scanDate2 = Convert.ToDateTime(this.dateScanDate.Value2).ToString("d");
+                this._scanDate2 = this.dateScanDate.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd hh:mm:ss");
             }
             else
             {
