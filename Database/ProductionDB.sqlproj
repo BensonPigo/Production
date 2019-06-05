@@ -2361,6 +2361,7 @@
     <Build Include="dbo\Tables\Brand_ThreadCalculateRules.sql" />
     <Build Include="dbo\Tables\MachineType_ThreadRatio_Regular.sql" />
     <Build Include="dbo\Tables\Style_ThreadColorCombo.sql" />
+    <Build Include="dbo\Stored Procedures\exp_finishingprocess.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
