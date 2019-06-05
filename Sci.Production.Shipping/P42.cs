@@ -197,26 +197,20 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
 
         private void BRT(DataRow dr, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
         {
-            if ((!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"])) ||
-                (MyUtility.Convert.GetString(dr["FabricType"]).EqualString("L") && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"])))
+            string type = MyUtility.Convert.GetString(dr["FabricType"]);
+            bool isNeedInputBrand = !MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]);
+            bool isNoNeedInputBrand = (type.EqualString("L") || type.EqualString("Misc")) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]);
+
+            if (isNeedInputBrand ||
+                isNoNeedInputBrand)
             {
-                string type = MyUtility.Convert.GetString(dr["FabricType"]);
-                string nlCode = string.Empty;
-                if (type.EqualString("A") || type.EqualString("F"))
+                if (type.EqualString("Misc") || type.EqualString("L"))
                 {
-                    nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{dr["Refno"]}'");
-                }
-                else if (type.EqualString("L"))
-                {
-                    nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where ltrim(refno) = '{dr["Refno"]}'");
                     dr["BrandID"] = string.Empty;
                 }
 
-                StringBuilder errNLCode = new StringBuilder();
-                string chkVNContract_Detail = $@"
-select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{nlCode}'";
-                DataRow seekData;
-                if (!MyUtility.Check.Seek(chkVNContract_Detail, out seekData))
+                DataRow seekData = this.GetNLCodeInfo(dr["Refno"].ToString(), type);
+                if (seekData == null)
                 {
                     dr["HSCode"] = string.Empty;
                     dr["NLCode"] = string.Empty;
@@ -226,7 +220,7 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
                 }
                 else
                 {
-                    dr["NLCode"] = nlCode;
+                    dr["NLCode"] = seekData["NLCode"];
                     dr["HSCode"] = seekData["HSCode"];
                     dr["UnitID"] = seekData["UnitID"];
                 }
@@ -314,7 +308,7 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
             #region
             foreach (DataRow dr in this.DetailDatas)
             {
-                if (MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Convert.GetString(dr["FabricType"]).EqualString("L"))
+                if (MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Convert.GetString(dr["FabricType"]).EqualString("L") && !MyUtility.Convert.GetString(dr["FabricType"]).EqualString("Misc"))
                 {
                     MyUtility.Msg.WarningBox("Brand cannot be empty!");
                     return false;
@@ -551,20 +545,8 @@ order by vaqd.NLCode
                 DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
                 string type = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C"));
                 newRow["Refno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
-                string nlCode = string.Empty;
-                if (type.EqualString("A") || type.EqualString("F"))
-                {
-                    nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{newRow["Refno"]}'");
-                }
-                else if (type.EqualString("L"))
-                {
-                    nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where ltrim(refno) = '{newRow["Refno"]}'");
-                }
-
-                string chkVNContract_Detail = $@"
-select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{nlCode}'";
-
-                if (!MyUtility.Check.Seek(chkVNContract_Detail, out seekData))
+                seekData = this.GetNLCodeInfo(newRow["Refno"].ToString(), type);
+                if (seekData == null)
                 {
                     errNLCode.Append(string.Format("Customs Code: {0}\r\n", MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"))));
                     continue;
@@ -573,7 +555,7 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
                 {
                     newRow["BrandID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
                     newRow["FabricType"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
-                    newRow["NLCode"] = nlCode;
+                    newRow["NLCode"] = seekData["NLCode"];
                     newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "N");
                     newRow["HSCode"] = seekData["HSCode"];
                     newRow["UnitID"] = seekData["UnitID"];
@@ -805,6 +787,36 @@ drop table #tmp
             }
 
             excel.Visible = true;
+        }
+
+        private DataRow GetNLCodeInfo(string refno, string fabricType)
+        {
+            string nlCode = string.Empty;
+            if (fabricType.EqualString("A") || fabricType.EqualString("F"))
+            {
+                nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{refno}'");
+            }
+            else if (fabricType.EqualString("L"))
+            {
+                nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where ltrim(refno) = '{refno}'");
+            }
+            else if (fabricType.EqualString("Misc"))
+            {
+                nlCode = MyUtility.GetValue.Lookup($"select NLCode from SciMachine_Misc with(nolock) where ltrim(ID) = '{refno}'");
+            }
+
+            StringBuilder errNLCode = new StringBuilder();
+            string chkVNContract_Detail = $@"
+select NLCode,HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{nlCode}'";
+            DataRow seekData;
+            if (MyUtility.Check.Seek(chkVNContract_Detail, out seekData))
+            {
+                return seekData;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

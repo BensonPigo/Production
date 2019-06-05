@@ -307,6 +307,23 @@ outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom =
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = 'M') M2UnitRate
 where Ltrim(li.Refno) = @Refno";
             }
+            else if (fabricType == "Misc")
+            {
+                sqlGetNLCode = $@"
+Declare @StockQty numeric(12,4) = @inputStockQty
+select  Misc.NLCode,
+        [StockUnit] = Misc.UsageUnit,
+        [SCIRefno] = @Refno,
+        [FabricBrandID] = '',
+        [HSCode] =Misc.HSCode,
+        [UnitID] = Misc.CustomsUnit,
+        [FabricType] = 'Misc',
+        [LocalItem] = 1,
+        [Qty] = [dbo].getVNUnitTransfer('MISC',Misc.UsageUnit,isnull(Misc.CustomsUnit,''),@StockQty,Misc.PcsWidth,Misc.PcsWidth,Misc.PcsLength,Misc.PcsKg,Misc.MiscRate,0,Misc.ID)
+from  SciMachine_Misc Misc with (nolock) 
+where Ltrim(Misc.ID)  = @Refno";
+            }
+
             bool isNLCodeExists = MyUtility.Check.Seek(sqlGetNLCode, parGetNLCode, out drNLCode);
             if (isNLCodeExists)
             {

@@ -574,6 +574,7 @@ left join (
             ,vdd.Refno
             ,[MaterialType] = iif(vdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vdd.FabricType))
             ,[Description] = case when vdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vdd.Refno)
+                                  when vdd.FabricType = 'Misc' then (select Description from SciMachine_Misc with (nolock) where ID = vdd.Refno)
                                   else (select Description from Fabric with (nolock) where SCIRefno = vdd.SCIRefno) end
             ,[CustomsUnit] = vdd.UnitID
             ,[StockQty] = (ol_rate.value/100*sdd.QAQty)* (vdd.StockQty * (1+vd.Waste))
@@ -694,8 +695,9 @@ select
 ,[SP#] = tpq.ID
 ,[Refno] = vdd.Refno
 ,[MaterialType] = iif(vdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vdd.FabricType))
-,[Description] = case when vdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vdd.Refno)
-                                  else (select Description from Fabric with (nolock) where SCIRefno = vdd.SCIRefno) end
+,[Description] = case   when vdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vdd.Refno)
+                        when vdd.FabricType = 'Misc' then (select Description from SciMachine_Misc with (nolock) where ID = vdd.Refno)
+                        else (select Description from Fabric with (nolock) where SCIRefno = vdd.SCIRefno) end
 ,[Custom SP#] = tc.CustomSP
 ,[Article] = tpq.Article
 ,[SizeCode] = tpq.SizeCode
@@ -746,8 +748,9 @@ select
  [SP#] = vdd.OrderId
 ,[Refno] = vcdd.Refno
 ,[MaterialType] = iif(vcdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vcdd.FabricType))
-,[Description] = case when vcdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vcdd.Refno)
-                                  else (select Description from Fabric with (nolock) where SCIRefno = vcdd.SCIRefno) end
+,[Description] =    case when vcdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vcdd.Refno)
+                    when vcdd.FabricType = 'Misc' then (select Description from SciMachine_Misc with (nolock) where ID = vcdd.Refno)
+                    else (select Description from Fabric with (nolock) where SCIRefno = vcdd.SCIRefno) end
 ,[CustomSP] = vdd.customsp
 ,[Article] = vdd.Article
 ,[SizeCode] = vdd.SizeCode

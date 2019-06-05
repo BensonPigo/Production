@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[VNContractQtyAdjust_Detail_Detail] (
     [ID]         BIGINT          NOT NULL,
-    [Refno]      VARCHAR (20)    NOT NULL,
-    [FabricType] VARCHAR (1)     NULL,
+    [Refno]      VARCHAR (23)    NOT NULL,
+    [FabricType] VARCHAR (4)     NULL,
     [NLCode]     VARCHAR (5)     NOT NULL,
     [BrandID]    VARCHAR (8)     NOT NULL,
     [Qty]        NUMERIC (14, 3) NULL,

@@ -136,7 +136,7 @@ from VNConsumption where 1=0";
 
                     DataRow drNLCode;
 
-                    if (type != "F" && type != "A" && type != "L")
+                    if (type != "F" && type != "A" && type != "L" && type != "Misc")
                     {
                         remark += "Type is wrong." + Environment.NewLine;
                     }
