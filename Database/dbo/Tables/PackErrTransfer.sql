@@ -7,7 +7,8 @@
     [CTNStartNo]     VARCHAR (6)  CONSTRAINT [DF_PackErrTransfer_CTNStartNo] DEFAULT ('') NULL,
     [AddName]        VARCHAR (10) CONSTRAINT [DF_PackErrTransfer_AddName] DEFAULT ('') NULL,
     [AddDate]        DATETIME     NULL,
-    [PackingErrorID] VARCHAR (8)  CONSTRAINT [DF_PackErrTransfer_PackingErrorID] DEFAULT ('') NULL,
+    [PackingErrorID] VARCHAR (8)  CONSTRAINT [DF_PackErrTransfer_PackingErrorID] DEFAULT ('') NULL, 
+    [SCICtnNo] VARCHAR(15) CONSTRAINT [DF_PackErrTransfer_SCICtnNo] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_PackErrTransfer] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
