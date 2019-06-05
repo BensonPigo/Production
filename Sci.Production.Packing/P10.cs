@@ -79,6 +79,7 @@ select	ID
 		, Customize1
 		, Alias
 		, BuyerDelivery 
+        , SCICtnNo
 from (
     Select  Distinct ID = ''
             , selected = 1
@@ -93,6 +94,7 @@ from (
             , d.Alias
             , c.BuyerDelivery 
             , orderByCTNStartNo = TRY_CONVERT(int, CTNStartNo)
+            , b.SCICtnNo
     from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
     where b.OrderId = c.Id 
     and a.Id = b.Id 
@@ -509,6 +511,7 @@ where   a.ID = '{0}'",
                 }
             }
         }
+
         // Save
         private void BtnSave_Click(object sender, EventArgs e)
         {
@@ -535,13 +538,14 @@ where   a.ID = '{0}'",
             foreach (DataRow dr in selectedData)
             {
                 insertCmds.Add(string.Format(
-                    @"insert into TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName)
-values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}');",
+                    @"insert into TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo)
+values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}','{5}');",
                     Sci.Env.User.Keyword,
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
-                    Sci.Env.User.UserID));
+                    Sci.Env.User.UserID,
+                    MyUtility.Convert.GetString(dr["SCICtnNo"])));
 
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(

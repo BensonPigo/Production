@@ -36,6 +36,9 @@ namespace Sci.Production.Sewing
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Text("ReceivedBy", header: "Received By", width: Widths.Auto(), iseditingreadonly: false)
             .DateTime("AddDate", header: "Receive Time", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false)
             ;
         }
 
@@ -55,13 +58,13 @@ namespace Sci.Production.Sewing
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 packid = this.txtPackID.Text;
-                sqlwhere += $@" and dr.PackingListID = @packid ";
+                sqlwhere += $@" and  (pd.ID = @packid or  pd.OrigID = @packid) ";
             }
 
             if (!MyUtility.Check.Empty(this.txtsp.Text))
             {
                 sp = this.txtsp.Text;
-                sqlwhere += $@" and dr.OrderID  = @sp ";
+                sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
             string sqlcmd = $@"
@@ -72,9 +75,9 @@ declare @sp nvarchar(20) = '{sp}'
 
 select 
 	dr.ReceiveDate
-	,dr.PackingListID
-	,dr.CTNStartNo
-	,dr.OrderID
+	,[PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
+	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
+	,[OrderID] = iif(pd.OrigOrderID = '',pd.OrderID, pd.OrigOrderID)
 	,o.CustPONo
 	,o.StyleID
 	,o.BrandID
@@ -83,9 +86,13 @@ select
 	,o.SciDelivery
 	,ReceivedBy = dbo.getPass1(dr.AddName)
     ,dr.AddDate
+    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+    , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+    , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
 from DRYReceive dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
+left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = dr.SCICtnNo 
 where 1=1
 {sqlwhere}
 ";

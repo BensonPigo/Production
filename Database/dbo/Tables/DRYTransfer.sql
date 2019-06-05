@@ -7,7 +7,8 @@
     [CTNStartNo]    VARCHAR (6)  DEFAULT ('') NOT NULL,
     [TransferTo]    VARCHAR (11) DEFAULT ('') NOT NULL,
     [AddName]       VARCHAR (10) DEFAULT ('') NOT NULL,
-    [AddDate]       DATETIME     NOT NULL,
+    [AddDate]       DATETIME     NOT NULL, 
+    [SCICtnNo] VARCHAR(15) CONSTRAINT [DF_DRYTransfer_SCICtnNo] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_DRYTransfer] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

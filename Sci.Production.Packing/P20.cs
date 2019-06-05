@@ -43,7 +43,8 @@ pd.DRYReceiveDate,
 pd.PackErrTransferDate,
 pu.Status,
 [MainSP] = pd.OrderID,
-[ErrorType] = pt.PackingErrorID+'-'+ pe.Description
+[ErrorType] = pt.PackingErrorID+'-'+ pe.Description,
+pd.SCICtnNo 
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
@@ -242,8 +243,8 @@ update PackingList_Detail
 set PackErrTransferDate = null 
 where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}' and DisposeFromClog= 0;
 
-insert into PackErrCFM(CFMDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate)
-                    values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE())
+insert into PackErrCFM(CFMDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,SCICtnNo)
+                    values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{dr["SCICtnNo"]}')
 ";
                         updateResult = DBProxy.Current.Execute(null, saveSql);
                         if (!updateResult)

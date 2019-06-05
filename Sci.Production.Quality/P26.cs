@@ -40,7 +40,10 @@ namespace Sci.Production.Quality
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Date("SciDelivery", header: "SCI Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("ReceivedBy", header: "Received By", width: Widths.AnsiChars(15), iseditingreadonly: true);
+                 .Text("ReceivedBy", header: "Received By", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+                 .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
+                 .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -101,7 +104,7 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                listSQLFilter.Add("and c.orderid = @OrderID");
+                listSQLFilter.Add("and (pd.OrderID = @OrderID or pd.OrigOrderID = @OrderID) ");
             }
 
             if (!MyUtility.Check.Empty(this.txtReturnTo.Text))
@@ -111,7 +114,7 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                listSQLFilter.Add("and c.PackingListID= @PackID");
+                listSQLFilter.Add("and (pd.ID = @PackID or  pd.OrigID = @PackID) ");
             }
             #endregion
 
@@ -122,9 +125,9 @@ namespace Sci.Production.Quality
             string strCmd = $@"
 select c.ReturnTo
 ,c.ReturnDate
-,c.PackingListID
-,c.CTNStartNo
-,c.OrderID
+,[PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
+,[CTNStartNo] = iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
+,[OrderID] = iif(pd.OrigOrderID = '',pd.OrderID, pd.OrigOrderID)
 ,o.CustPONo
 ,o.Styleid
 ,o.Brandid
@@ -133,9 +136,13 @@ select c.ReturnTo
 ,o.SciDelivery
 ,[ReceivedBy] = dbo.getPass1(c.AddName)
 ,c.ID
+, [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+, [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+, [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
 from cfareturn c
 left join Orders o on o.id=c.orderid
 left join Country ct WITH (NOLOCK) on ct.id=o.dest
+left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = c.SCICtnNo 
 where 1=1
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 ";
