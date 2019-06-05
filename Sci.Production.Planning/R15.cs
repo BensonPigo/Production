@@ -609,97 +609,6 @@ left join #tmp_first_cut_date f on t.OrderID = f.OrderID
 left join #tmp_SEWOUTPUT s on t.OrderID = s.OrderID 
 
 drop table #tmp_first_cut_date,#tmp_SEWOUTPUT
------------------------------------------------------------------------------------------------------------------------------------------------------------
-------------↓計算累計成衣件數
------準備兩個累積
-Select DISTINCT 
-    [Cut Ref#] = b.CutRef,
-    [M] = b.MDivisionid,
-    [Factory] = o.FtyGroup,
-    [SP] = b.Orderid, 
-	b.article, 
-    [Comb] = b.PatternPanel,
-	b.FabricPanelCode
-	,b.ID 
-into #tmp_Orders
-from Bundle b WITH (NOLOCK)  
-inner join orders o WITH (NOLOCK) on o.Id = b.OrderId  and o.MDivisionID  = b.MDivisionID 
-inner join Order_EachCons oe WITH (NOLOCK) on oe.id = o.poid and oe.FabricPanelCode = b.FabricPanelCode
-inner join Order_BOF bof WITH (NOLOCK) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
-where 1=1
-and o.ID in (select distinct orderid from #cte) 
-and bof.kind != 0 
-
-Select DISTINCT
-    [Bundleno] = bd.BundleNo,
-    b.[Cut Ref#] ,
-    b.[M], 
-	b.[Factory],
-    b.[SP],
-    SubProcessId = s.Id,
-	b.article,
-    [Size] = bd.SizeCode,
-    b.[Comb] ,
-	b.FabricPanelCode,
-    bd.PatternCode,
-    bd.Qty,
-    bio.InComing,
-    bio.OutGoing 
-into #tmp
-from #tmp_Orders b WITH (NOLOCK)  
-inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
-left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-where 1=1 and isnull(bio.RFIDProcessLocationID,'') = ''
-
-drop table #tmp_Orders
------------------------------------------------------------------------------------------------------------------------------------------------------------
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
-into #tmp2
-from #tmp
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmp3
-from #tmp2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmp4
-from #tmp3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
-into #tmpin
-from #tmp4
-group by [M],[Factory],[SP],[Subprocessid]
-------
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,Qty = iif(OutGoing is null ,0,Qty)
-into #tmpout1
-from #tmp
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
-into #tmpout2
-from #tmpout1
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmpout3
-from #tmpout2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmpout4
-from #tmpout3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
-into #tmpout
-from #tmpout4
-group by [M],[Factory],[SP],[Subprocessid]
------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 select sod.OrderID ,Max(so.OutputDate) LastSewnDate
 into #imp_LastSewnDate
@@ -708,41 +617,6 @@ inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
 inner join #cte t on sod.OrderID = t.OrderID 
 group by sod.OrderID 
 
-
-select SP,Factory,ct = sum(xxx.Accusubprocesqty)
-into #tmp_inoutcount
-from(
-	select #tmpout.SP, #tmpout.Factory,[Accusubprocesqty] = iif(#tmpin.AccuQty > 0, 1, 0)+
-								iif(#tmpout.AccuQty > 0, 1, 0)
-	from #tmpin,#tmpout
-	inner join #cte t on #tmpout.SP = t.OrderID and #tmpout.Factory = t.FactoryID
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
-	and #tmpout.SP = t.OrderID 
-	and #tmpout.Factory = t.FactoryID
-	and #tmpout.SubProcessId = #tmpin.SubProcessId
-)xxx
-group by SP,Factory
-
-
-select SP,Factory,chksubprocesqty = sum(xxx.Accusubprocesqty)
-into #tmp_subprocessqty
-from(
-	select #tmpout.SP, #tmpout.Factory,[Accusubprocesqty] = iif(iif(#tmpin.AccuQty > t.Qty, t.Qty, #tmpin.AccuQty)>=t.Qty,1,0)+
-								iif(iif(#tmpout.AccuQty > t.Qty, t.Qty, #tmpout.AccuQty)>=t.Qty,1,0)
-	from #tmpin,#tmpout
-	inner join #cte t on #tmpout.SP = t.OrderID and #tmpout.Factory = t.FactoryID
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
-	and #tmpout.SP = t.OrderID 
-	and #tmpout.Factory = t.FactoryID
-	and #tmpout.SubProcessId = #tmpin.SubProcessId
-)xxx
-group by SP,Factory
------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------↑計算累計成衣件數
 select t.MDivisionID
        , t.FactoryID
        , t.SewLine
@@ -798,7 +672,15 @@ select t.MDivisionID
        , [RFID HT Farm Out Qty] = HT.OutQtyBySet
         , SubProcessStatus=
 			case when t.Junk = 1 then null
-				 when subprocessqty.chksubprocesqty = inoutcount.ct and inoutcount.ct >0 then 'Y'
+				 when SORTINGStatus.v = 1 and loadingStatus.v = 1 --判斷有做加工段的數量=訂單qty,則為1,全部為1才為Y
+					and Emb_i.v = 1 and Emb_o.v = 1
+					and BO_i.v = 1 and BO_o.v = 1
+					and prt_i.v = 1 and prt_o.v = 1
+					and AT_i.v = 1 and AT_o.v = 1
+					and PADPRT_i.v = 1 and PADPRT_o.v = 1
+					and SUBCONEMB_i.v = 1 and SUBCONEMB_o.v = 1
+					and HT_i.v = 1 and HT_o.v = 1
+				 then 'Y'
 			end
        , #cte2.EMBROIDERY_qty
        , #cte2.BONDING_qty
@@ -874,7 +756,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, 1)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, default)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -883,7 +765,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, 1)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, default)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -892,7 +774,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, 1)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, default)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -901,7 +783,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, 1)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, default)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -910,7 +792,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, 1)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, default)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -919,7 +801,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, 1)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, default)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -928,7 +810,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, 1)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, default)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -937,7 +819,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, 1)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, default)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -946,13 +828,27 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, 1)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, default)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
 )HT
-left join #tmp_inoutcount inoutcount on inoutcount.SP = t.Orderid and inoutcount.Factory = t.FactoryID
-left join #tmp_subprocessqty subprocessqty on subprocessqty.SP = t.Orderid and subprocessqty.Factory = t.FactoryID
+outer apply(select v = case when SORTING.OutQtyBySet is null or SORTING.OutQtyBySet >= t.Qty then 1 else 0 end)SORTINGStatus--null即不用判斷此加工段 標記1, 數量=訂單數 標記1
+outer apply(select v = case when loading.InQtyBySet is null or loading.InQtyBySet >= t.Qty then 1 else 0 end)loadingStatus
+outer apply(select v = case when Emb.InQtyBySet is null or Emb.InQtyBySet >= t.Qty then 1 else 0 end)Emb_i
+outer apply(select v = case when Emb.OutQtyBySet is null or Emb.OutQtyBySet >= t.Qty then 1 else 0 end)Emb_o
+outer apply(select v = case when BO.InQtyBySet is null or BO.InQtyBySet >= t.Qty then 1 else 0 end)BO_i
+outer apply(select v = case when BO.OutQtyBySet is null or BO.OutQtyBySet >= t.Qty then 1 else 0 end)BO_o
+outer apply(select v = case when prt.InQtyBySet is null or prt.InQtyBySet >= t.Qty then 1 else 0 end)prt_i
+outer apply(select v = case when prt.OutQtyBySet is null or prt.OutQtyBySet >= t.Qty then 1 else 0 end)prt_o
+outer apply(select v = case when AT.InQtyBySet is null or AT.InQtyBySet >= t.Qty then 1 else 0 end)AT_i
+outer apply(select v = case when AT.OutQtyBySet is null or AT.OutQtyBySet >= t.Qty then 1 else 0 end)AT_o
+outer apply(select v = case when PADPRT.InQtyBySet is null or PADPRT.InQtyBySet >= t.Qty then 1 else 0 end)PADPRT_i
+outer apply(select v = case when PADPRT.OutQtyBySet is null or PADPRT.OutQtyBySet >= t.Qty then 1 else 0 end)PADPRT_o
+outer apply(select v = case when SUBCONEMB.InQtyBySet is null or SUBCONEMB.InQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_i
+outer apply(select v = case when SUBCONEMB.OutQtyBySet is null or SUBCONEMB.OutQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_o
+outer apply(select v = case when HT.InQtyBySet is null or HT.InQtyBySet >= t.Qty then 1 else 0 end)HT_i
+outer apply(select v = case when HT.OutQtyBySet is null or HT.OutQtyBySet >= t.Qty then 1 else 0 end)HT_o
 outer apply(
 	select StandardOutput =stuff((
 		  select distinct concat(',',ComboType,':',StandardOutput)
@@ -1330,99 +1226,6 @@ left join #tmp_first_cut_date f on f.OrderId = t.OrderID and f.Article = t.Artic
 left join #tmp_SEWOUTPUT s on s.OrderId = t.OrderID and s.Article = t.Article and s.SizeCode = t.SizeCode 
 
 drop table #tmp_first_cut_date, #tmp_SEWOUTPUT
------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------↓計算累計成衣件數
----準備兩個累積 
-Select DISTINCT 
-    [Cut Ref#] = b.CutRef,
-    [M] = b.MDivisionid,
-    [Factory] = o.FtyGroup,
-    [SP] = b.Orderid, 
-	b.article, 
-    [Comb] = b.PatternPanel,
-	b.FabricPanelCode
-	,b.ID 
-into #tmp_Orders
-from Bundle b WITH (NOLOCK)  
-inner join orders o WITH (NOLOCK) on o.Id = b.OrderId  and o.MDivisionID  = b.MDivisionID 
-inner join Order_EachCons oe WITH (NOLOCK) on oe.id = o.poid and oe.FabricPanelCode = b.FabricPanelCode
-inner join Order_BOF bof WITH (NOLOCK) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
-where 1=1
-and o.ID in (select distinct orderid from #cte) 
-and bof.kind != 0 
-
-Select DISTINCT
-    [Bundleno] = bd.BundleNo,
-    b.[Cut Ref#] ,
-    b.[M], 
-	b.[Factory],
-    b.[SP],
-    SubProcessId = s.Id,
-	b.article,
-    [Size] = bd.SizeCode,
-    b.[Comb] ,
-	b.FabricPanelCode,
-    bd.PatternCode,
-    bd.Qty,
-    bio.InComing,
-    bio.OutGoing 
-into #tmp
-from #tmp_Orders b WITH (NOLOCK)  
-inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
-left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-where 1=1 and isnull(bio.RFIDProcessLocationID,'') = ''
-
-drop table #tmp_Orders
------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
-into #tmp2
-from #tmp
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmp3
-from #tmp2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmp4
-from #tmp3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = sum(accuQty)
-into #tmpin
-from #tmp4
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-------
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,Qty = iif(OutGoing is null ,0,Qty)
-into #tmpout1
-from #tmp
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
-into #tmpout2
-from #tmpout1
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmpout3
-from #tmpout2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmpout4
-from #tmpout3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = sum(accuQty)
-into #tmpout
-from #tmpout4
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 select sod.OrderID ,Max(so.OutputDate) LastSewnDate
 into #imp_LastSewnDate
@@ -1431,45 +1234,6 @@ inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
 inner join #cte t on sod.OrderID = t.OrderID 
 group by sod.OrderID 
 
-select SP,Factory,Article,Size,ct = sum(xxx.Accusubprocesqty)
-into #tmp_inoutcount
-from(
-	select #tmpout.SP, #tmpout.Factory,#tmpout.Article,#tmpout.Size
-			,[Accusubprocesqty] = iif(#tmpin.AccuQty > 0, 1, 0)+
-									iif(#tmpout.AccuQty > 0, 1, 0)
-	from #tmpin,#tmpout
-	inner join #cte t on #tmpout.SP = t.OrderID and #tmpout.Factory = t.FactoryID and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
-	and #tmpout.SP = t.OrderID 
-	and #tmpout.Factory = t.FactoryID
-	and #tmpout.SubProcessId = #tmpin.SubProcessId
-	and #tmpin.Article = t.Article and #tmpin.Size = t.SizeCode
-	and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
-)xxx
-group by SP,Factory,Article,Size
-	 
-select SP,Factory,Article,Size,chksubprocesqty = sum(xxx.Accusubprocesqty)
-into #tmp_subprocessqty
-from(
-	select #tmpout.SP, #tmpout.Factory,#tmpout.Article,#tmpout.Size
-		,[Accusubprocesqty] = iif(iif(#tmpin.AccuQty > t.Qty, t.Qty, #tmpin.AccuQty)>=t.Qty,1,0)+
-								iif(iif(#tmpout.AccuQty > t.Qty, t.Qty, #tmpout.AccuQty)>=t.Qty,1,0)
-	from #tmpin,#tmpout
-	inner join #cte t on #tmpout.SP = t.OrderID and #tmpout.Factory = t.FactoryID and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
-	and #tmpout.SP = t.OrderID 
-	and #tmpout.Factory = t.FactoryID
-	and #tmpout.SubProcessId = #tmpin.SubProcessId
-	and #tmpin.Article = t.Article and #tmpin.Size = t.SizeCode
-	and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
-)xxx
-group by SP,Factory,Article,Size
------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------↑計算累計成衣件數
 select t.MDivisionID
        , t.FactoryID
        , SewingSchedule.SewingLineID
@@ -1521,7 +1285,15 @@ select t.MDivisionID
        , [RFID HT Farm Out Qty] = HT.OutQtyBySet
         , SubProcessStatus=
 			case when t.Junk = 1 then null
-				 when subprocessqty.chksubprocesqty = inoutcount.ct and inoutcount.ct >0 then 'Y'
+				 when SORTINGStatus.v = 1 and loadingStatus.v = 1 --判斷有做加工段的數量=訂單qty,則為1,全部為1才為Y
+					and Emb_i.v = 1 and Emb_o.v = 1
+					and BO_i.v = 1 and BO_o.v = 1
+					and prt_i.v = 1 and prt_o.v = 1
+					and AT_i.v = 1 and AT_o.v = 1
+					and PADPRT_i.v = 1 and PADPRT_o.v = 1
+					and SUBCONEMB_i.v = 1 and SUBCONEMB_o.v = 1
+					and HT_i.v = 1 and HT_o.v = 1
+				 then 'Y'
 			end
        , #cte2.EMBROIDERY_qty
        , #cte2.BONDING_qty
@@ -1593,17 +1365,31 @@ outer apply (
           and t.KPIChangeReason != '' 
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SORTING
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)loading
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)Emb
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)BO
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)prt
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)AT
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)PADPRT
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SUBCONEMB
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, 1)y where y.Article = t.Article and y.SizeCode = t.SizeCode)HT
-left join #tmp_inoutcount inoutcount on inoutcount.SP = t.OrderID and inoutcount.Factory = t.FactoryID and inoutcount.Article = t.Article and inoutcount.Size = t.SizeCode
-left join #tmp_subprocessqty subprocessqty on subprocessqty.SP = t.OrderID and subprocessqty.Factory = t.FactoryID and subprocessqty.Article = t.Article and subprocessqty.Size = t.SizeCode 
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SORTING
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)loading
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)Emb
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)BO
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)prt
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)AT
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)PADPRT
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SUBCONEMB
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)HT
+outer apply(select v = case when SORTING.OutQtyBySet is null or SORTING.OutQtyBySet >= t.Qty then 1 else 0 end)SORTINGStatus--null即不用判斷此加工段 標記1, 數量=訂單數 標記1
+outer apply(select v = case when loading.InQtyBySet is null or loading.InQtyBySet >= t.Qty then 1 else 0 end)loadingStatus
+outer apply(select v = case when Emb.InQtyBySet is null or Emb.InQtyBySet >= t.Qty then 1 else 0 end)Emb_i
+outer apply(select v = case when Emb.OutQtyBySet is null or Emb.OutQtyBySet >= t.Qty then 1 else 0 end)Emb_o
+outer apply(select v = case when BO.InQtyBySet is null or BO.InQtyBySet >= t.Qty then 1 else 0 end)BO_i
+outer apply(select v = case when BO.OutQtyBySet is null or BO.OutQtyBySet >= t.Qty then 1 else 0 end)BO_o
+outer apply(select v = case when prt.InQtyBySet is null or prt.InQtyBySet >= t.Qty then 1 else 0 end)prt_i
+outer apply(select v = case when prt.OutQtyBySet is null or prt.OutQtyBySet >= t.Qty then 1 else 0 end)prt_o
+outer apply(select v = case when AT.InQtyBySet is null or AT.InQtyBySet >= t.Qty then 1 else 0 end)AT_i
+outer apply(select v = case when AT.OutQtyBySet is null or AT.OutQtyBySet >= t.Qty then 1 else 0 end)AT_o
+outer apply(select v = case when PADPRT.InQtyBySet is null or PADPRT.InQtyBySet >= t.Qty then 1 else 0 end)PADPRT_i
+outer apply(select v = case when PADPRT.OutQtyBySet is null or PADPRT.OutQtyBySet >= t.Qty then 1 else 0 end)PADPRT_o
+outer apply(select v = case when SUBCONEMB.InQtyBySet is null or SUBCONEMB.InQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_i
+outer apply(select v = case when SUBCONEMB.OutQtyBySet is null or SUBCONEMB.OutQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_o
+outer apply(select v = case when HT.InQtyBySet is null or HT.InQtyBySet >= t.Qty then 1 else 0 end)HT_i
+outer apply(select v = case when HT.OutQtyBySet is null or HT.OutQtyBySet >= t.Qty then 1 else 0 end)HT_o
 outer apply(
 	select SewingLineID =stuff((
 		  select distinct concat(',',ssd.SewingLineID)
