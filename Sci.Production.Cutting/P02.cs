@@ -2336,7 +2336,8 @@ END";
 
                     //與該筆相同 FabricCombo、Cut# 的資料
                     List<DataRow> SameDatas = DetailDatas.Where(o => 
-                                                                    o["CutNo"].ToString() == item["CutNo"].ToString() 
+                                                                    o["CutRef"].ToString() == string.Empty
+                                                                    && o["CutNo"].ToString() == item["CutNo"].ToString()
                                                                     && o["FabricCombo"].ToString() == item["FabricCombo"].ToString() 
                                                                     && o["Ukey"].ToString() != item["Ukey"].ToString()).ToList();
 
