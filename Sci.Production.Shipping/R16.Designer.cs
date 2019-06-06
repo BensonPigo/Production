@@ -37,16 +37,16 @@
             this.labFactory = new Sci.Win.UI.Label();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
-            this.txtbuyer = new Sci.Production.Class.txtbuyer();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtShipper = new Ict.Win.UI.TextBox();
             this.labCustCD = new Sci.Win.UI.Label();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
             this.labDestination = new Sci.Win.UI.Label();
-            this.txtcountry = new Sci.Production.Class.txtcountry();
+            this.comboshipmode = new Sci.Production.Class.txtshipmode();
             this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtcountry = new Sci.Production.Class.txtcountry();
+            this.txtcustcd = new Sci.Production.Class.txtcustcd();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbuyer = new Sci.Production.Class.txtbuyer();
+            this.txtShipper = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -142,46 +142,6 @@
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerDelivery.TabIndex = 0;
             // 
-            // txtbuyer
-            // 
-            this.txtbuyer.BackColor = System.Drawing.Color.White;
-            this.txtbuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbuyer.Location = new System.Drawing.Point(158, 48);
-            this.txtbuyer.Name = "txtbuyer";
-            this.txtbuyer.Size = new System.Drawing.Size(125, 23);
-            this.txtbuyer.TabIndex = 1;
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(158, 81);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(125, 23);
-            this.txtbrand.TabIndex = 2;
-            // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IsProduceFty = false;
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(158, 114);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(125, 23);
-            this.txtfactory.TabIndex = 3;
-            // 
-            // txtShipper
-            // 
-            this.txtShipper.BackColor = System.Drawing.Color.White;
-            this.txtShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShipper.Location = new System.Drawing.Point(158, 147);
-            this.txtShipper.Name = "txtShipper";
-            this.txtShipper.Size = new System.Drawing.Size(125, 23);
-            this.txtShipper.TabIndex = 4;
-            // 
             // labCustCD
             // 
             this.labCustCD.Location = new System.Drawing.Point(49, 182);
@@ -189,16 +149,6 @@
             this.labCustCD.Size = new System.Drawing.Size(101, 23);
             this.labCustCD.TabIndex = 141;
             this.labCustCD.Text = "Cust CD";
-            // 
-            // txtcustcd
-            // 
-            this.txtcustcd.BackColor = System.Drawing.Color.White;
-            this.txtcustcd.BrandObjectName = null;
-            this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd.Location = new System.Drawing.Point(158, 182);
-            this.txtcustcd.Name = "txtcustcd";
-            this.txtcustcd.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd.TabIndex = 5;
             // 
             // labDestination
             // 
@@ -208,14 +158,18 @@
             this.labDestination.TabIndex = 143;
             this.labDestination.Text = "Destination";
             // 
-            // txtcountry
+            // comboshipmode
             // 
-            this.txtcountry.DisplayBox1Binding = "";
-            this.txtcountry.Location = new System.Drawing.Point(158, 218);
-            this.txtcountry.Name = "txtcountry";
-            this.txtcountry.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry.TabIndex = 6;
-            this.txtcountry.TextBox1Binding = "";
+            this.comboshipmode.BackColor = System.Drawing.Color.White;
+            this.comboshipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboshipmode.FormattingEnabled = true;
+            this.comboshipmode.IsSupportUnselect = true;
+            this.comboshipmode.Location = new System.Drawing.Point(158, 296);
+            this.comboshipmode.Name = "comboshipmode";
+            this.comboshipmode.OldText = "";
+            this.comboshipmode.Size = new System.Drawing.Size(121, 24);
+            this.comboshipmode.TabIndex = 8;
+            this.comboshipmode.UseFunction = null;
             // 
             // comboCategory
             // 
@@ -230,29 +184,77 @@
             this.comboCategory.TabIndex = 7;
             this.comboCategory.Type = "Pms_GMT_Simple";
             // 
-            // txtshipmode
+            // txtcountry
             // 
-            this.txtshipmode.BackColor = System.Drawing.Color.White;
-            this.txtshipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode.FormattingEnabled = true;
-            this.txtshipmode.IsSupportUnselect = true;
-            this.txtshipmode.Location = new System.Drawing.Point(158, 296);
-            this.txtshipmode.Name = "txtshipmode";
-            this.txtshipmode.OldText = "";
-            this.txtshipmode.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode.TabIndex = 8;
-            this.txtshipmode.UseFunction = null;
+            this.txtcountry.DisplayBox1Binding = "";
+            this.txtcountry.Location = new System.Drawing.Point(158, 218);
+            this.txtcountry.Name = "txtcountry";
+            this.txtcountry.Size = new System.Drawing.Size(232, 22);
+            this.txtcountry.TabIndex = 6;
+            this.txtcountry.TextBox1Binding = "";
+            // 
+            // txtcustcd
+            // 
+            this.txtcustcd.BackColor = System.Drawing.Color.White;
+            this.txtcustcd.BrandObjectName = null;
+            this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcustcd.Location = new System.Drawing.Point(158, 182);
+            this.txtcustcd.Name = "txtcustcd";
+            this.txtcustcd.Size = new System.Drawing.Size(125, 23);
+            this.txtcustcd.TabIndex = 5;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(158, 114);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(125, 23);
+            this.txtfactory.TabIndex = 3;
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(158, 81);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(125, 23);
+            this.txtbrand.TabIndex = 2;
+            // 
+            // txtbuyer
+            // 
+            this.txtbuyer.BackColor = System.Drawing.Color.White;
+            this.txtbuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbuyer.Location = new System.Drawing.Point(158, 48);
+            this.txtbuyer.Name = "txtbuyer";
+            this.txtbuyer.Size = new System.Drawing.Size(125, 23);
+            this.txtbuyer.TabIndex = 1;
+            // 
+            // txtShipper
+            // 
+            this.txtShipper.BackColor = System.Drawing.Color.White;
+            this.txtShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShipper.Location = new System.Drawing.Point(158, 147);
+            this.txtShipper.Name = "txtShipper";
+            this.txtShipper.Size = new System.Drawing.Size(125, 23);
+            this.txtShipper.TabIndex = 144;
+            this.txtShipper.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtShipper_PopUp);
+            this.txtShipper.Validating += new System.ComponentModel.CancelEventHandler(this.TxtShipper_Validating);
             // 
             // R16
             // 
             this.ClientSize = new System.Drawing.Size(627, 364);
-            this.Controls.Add(this.txtshipmode);
+            this.Controls.Add(this.txtShipper);
+            this.Controls.Add(this.comboshipmode);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.txtcountry);
             this.Controls.Add(this.labDestination);
             this.Controls.Add(this.txtcustcd);
             this.Controls.Add(this.labCustCD);
-            this.Controls.Add(this.txtShipper);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.txtbuyer);
@@ -281,13 +283,13 @@
             this.Controls.SetChildIndex(this.txtbuyer, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
-            this.Controls.SetChildIndex(this.txtShipper, 0);
             this.Controls.SetChildIndex(this.labCustCD, 0);
             this.Controls.SetChildIndex(this.txtcustcd, 0);
             this.Controls.SetChildIndex(this.labDestination, 0);
             this.Controls.SetChildIndex(this.txtcountry, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
-            this.Controls.SetChildIndex(this.txtshipmode, 0);
+            this.Controls.SetChildIndex(this.comboshipmode, 0);
+            this.Controls.SetChildIndex(this.txtShipper, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -306,12 +308,12 @@
         private Class.txtbuyer txtbuyer;
         private Class.txtbrand txtbrand;
         private Class.txtfactory txtfactory;
-        private Ict.Win.UI.TextBox txtShipper;
         private Win.UI.Label labCustCD;
         private Class.txtcustcd txtcustcd;
         private Win.UI.Label labDestination;
         private Class.txtcountry txtcountry;
         private Class.comboDropDownList comboCategory;
-        private Class.txtshipmode txtshipmode;
+        private Class.txtshipmode comboshipmode;
+        private Win.UI.TextBox txtShipper;
     }
 }
