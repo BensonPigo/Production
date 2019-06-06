@@ -108,6 +108,7 @@ outer apply(
 )c
 where o.Junk = 0
 and not exists(select 1 from Order_Finish ox where ox.id = o.ID)
+and o.FOCQty > isnull(c.value2,0)
 and exists (
 	select 1
 	from Order_QtyShip_Detail oqd WITH (NOLOCK) 

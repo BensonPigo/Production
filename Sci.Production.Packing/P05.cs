@@ -916,7 +916,7 @@ where oqd.Id = '{0}'
 
             if (!MyUtility.Check.Empty(msg.ToString()))
             {
-                MyUtility.Msg.WarningBox("Below records are in packing FOC already, please check again" + Environment.NewLine + msg.ToString());
+                MyUtility.Msg.WarningBox("Below issue SP# [Qty] must be morre than 0!" + Environment.NewLine + msg.ToString());
                 return false;
             }
 
