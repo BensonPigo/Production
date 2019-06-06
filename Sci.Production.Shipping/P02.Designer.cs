@@ -95,6 +95,8 @@
             this.txtCountryDestination = new Sci.Production.Class.txtcountry();
             this.txtUserManager = new Sci.Production.Class.txtuser();
             this.txtUserHandle = new Sci.Production.Class.txtuser();
+            this.cmbFreightBy = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -111,6 +113,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.cmbFreightBy);
             this.masterpanel.Controls.Add(this.displaySendtoSCI);
             this.masterpanel.Controls.Add(this.labelSendtoSCI);
             this.masterpanel.Controls.Add(this.displayStatupdate);
@@ -144,8 +148,8 @@
             this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.txtPort);
             this.masterpanel.Controls.Add(this.txtCountryDestination);
-            this.masterpanel.Controls.Add(this.txtUserManager);
             this.masterpanel.Controls.Add(this.txtUserHandle);
+            this.masterpanel.Controls.Add(this.txtUserManager);
             this.masterpanel.Controls.Add(this.labelPort);
             this.masterpanel.Controls.Add(this.labelDestination);
             this.masterpanel.Controls.Add(this.labelManager);
@@ -166,7 +170,7 @@
             this.masterpanel.Controls.Add(this.dateETD);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(998, 290);
+            this.masterpanel.Size = new System.Drawing.Size(998, 316);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
@@ -188,8 +192,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelManager, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPort, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtUserHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtUserManager, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtUserHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCountryDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPort, 0);
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
@@ -223,24 +227,26 @@
             this.masterpanel.Controls.SetChildIndex(this.displayStatupdate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSendtoSCI, 0);
             this.masterpanel.Controls.SetChildIndex(this.displaySendtoSCI, 0);
+            this.masterpanel.Controls.SetChildIndex(this.cmbFreightBy, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 290);
-            this.detailpanel.Size = new System.Drawing.Size(998, 252);
+            this.detailpanel.Location = new System.Drawing.Point(0, 316);
+            this.detailpanel.Size = new System.Drawing.Size(998, 226);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(883, 255);
+            this.gridicon.Location = new System.Drawing.Point(883, 281);
             // 
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(3400, 8);
+            this.refresh.Location = new System.Drawing.Point(3824, 8);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(998, 252);
+            this.detailgridcont.Size = new System.Drawing.Size(998, 226);
             // 
             // detail2
             // 
@@ -360,6 +366,7 @@
             this.comboFrom.IsSupportUnselect = true;
             this.comboFrom.Location = new System.Drawing.Point(59, 30);
             this.comboFrom.Name = "comboFrom";
+            this.comboFrom.OldText = "";
             this.comboFrom.Size = new System.Drawing.Size(80, 24);
             this.comboFrom.TabIndex = 0;
             this.comboFrom.SelectionChangeCommitted += new System.EventHandler(this.ComboFrom_SelectionChangeCommitted);
@@ -373,6 +380,7 @@
             this.comboTO.IsSupportUnselect = true;
             this.comboTO.Location = new System.Drawing.Point(59, 57);
             this.comboTO.Name = "comboTO";
+            this.comboTO.OldText = "";
             this.comboTO.Size = new System.Drawing.Size(80, 24);
             this.comboTO.TabIndex = 2;
             this.comboTO.SelectionChangeCommitted += new System.EventHandler(this.ComboTO_SelectionChangeCommitted);
@@ -524,7 +532,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(998, 290);
+            this.shapeContainer1.Size = new System.Drawing.Size(998, 316);
             this.shapeContainer1.TabIndex = 24;
             this.shapeContainer1.TabStop = false;
             // 
@@ -845,7 +853,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(431, 179);
+            this.labelRemark.Location = new System.Drawing.Point(431, 207);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(80, 23);
             this.labelRemark.TabIndex = 50;
@@ -856,7 +864,7 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(515, 179);
+            this.editRemark.Location = new System.Drawing.Point(515, 207);
             this.editRemark.MaxLength = 100;
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
@@ -865,7 +873,7 @@
             // 
             // labelStatupdate
             // 
-            this.labelStatupdate.Location = new System.Drawing.Point(431, 234);
+            this.labelStatupdate.Location = new System.Drawing.Point(431, 262);
             this.labelStatupdate.Name = "labelStatupdate";
             this.labelStatupdate.Size = new System.Drawing.Size(80, 23);
             this.labelStatupdate.TabIndex = 52;
@@ -875,14 +883,14 @@
             // 
             this.displayStatupdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayStatupdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayStatupdate.Location = new System.Drawing.Point(515, 234);
+            this.displayStatupdate.Location = new System.Drawing.Point(515, 262);
             this.displayStatupdate.Name = "displayStatupdate";
             this.displayStatupdate.Size = new System.Drawing.Size(170, 23);
             this.displayStatupdate.TabIndex = 53;
             // 
             // labelSendtoSCI
             // 
-            this.labelSendtoSCI.Location = new System.Drawing.Point(431, 261);
+            this.labelSendtoSCI.Location = new System.Drawing.Point(431, 289);
             this.labelSendtoSCI.Name = "labelSendtoSCI";
             this.labelSendtoSCI.Size = new System.Drawing.Size(80, 23);
             this.labelSendtoSCI.TabIndex = 54;
@@ -892,7 +900,7 @@
             // 
             this.displaySendtoSCI.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySendtoSCI.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySendtoSCI.Location = new System.Drawing.Point(515, 261);
+            this.displaySendtoSCI.Location = new System.Drawing.Point(515, 289);
             this.displaySendtoSCI.Name = "displaySendtoSCI";
             this.displaySendtoSCI.Size = new System.Drawing.Size(170, 23);
             this.displaySendtoSCI.TabIndex = 55;
@@ -1024,6 +1032,27 @@
             this.txtUserHandle.TabIndex = 4;
             this.txtUserHandle.TextBox1Binding = "";
             // 
+            // cmbFreightBy
+            // 
+            this.cmbFreightBy.BackColor = System.Drawing.Color.White;
+            this.cmbFreightBy.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "FreightBy", true));
+            this.cmbFreightBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbFreightBy.FormattingEnabled = true;
+            this.cmbFreightBy.IsSupportUnselect = true;
+            this.cmbFreightBy.Location = new System.Drawing.Point(515, 179);
+            this.cmbFreightBy.Name = "cmbFreightBy";
+            this.cmbFreightBy.OldText = "";
+            this.cmbFreightBy.Size = new System.Drawing.Size(170, 24);
+            this.cmbFreightBy.TabIndex = 56;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(431, 180);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(80, 23);
+            this.label1.TabIndex = 57;
+            this.label1.Text = "Freight By";
+            // 
             // P02
             // 
             this.ApvChkValue = "Sent";
@@ -1044,6 +1073,7 @@
             this.JunkChkValue = "New";
             this.KeyField1 = "ID";
             this.Name = "P02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input2";
             this.RecallChkValue = "Sent";
             this.SendChkValue = "New";
             this.Text = "P02. International Express";
@@ -1139,5 +1169,7 @@
         private Win.UI.Label labelPayDate;
         private Win.UI.EditBox editDescription;
         private Win.UI.Label labelDescription;
+        private Win.UI.ComboBox cmbFreightBy;
+        private Win.UI.Label label1;
     }
 }

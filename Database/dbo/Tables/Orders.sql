@@ -139,7 +139,7 @@
     [CPUFactor]            NUMERIC (3, 1) NULL,
     [SizeUnit]             VARCHAR (8)    CONSTRAINT [DF_Orders_SizeUnit] DEFAULT ('') NULL,
     [CuttingSP]            VARCHAR (13)   CONSTRAINT [DF_Orders_CuttingSP] DEFAULT ('') NULL,
-    [IsMixMarker]          BIT            CONSTRAINT [DF_Orders_IsMixMarker] DEFAULT ((0)) NULL,
+    [IsMixMarker]          INT            CONSTRAINT [DF_Orders_IsMixMarker] DEFAULT ((0)) NULL,
     [EachConsSource]       VARCHAR (1)    NULL,
     [KPIEachConsApprove]   DATE           NULL,
     [KPICmpq]              DATE           NULL,
@@ -152,6 +152,8 @@
     [ForecastSampleGroup]  VARCHAR (1)    CONSTRAINT [DF_Orders_ForecastSampleGroup] DEFAULT ('') NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

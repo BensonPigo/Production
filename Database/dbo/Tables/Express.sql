@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Express] (
+CREATE TABLE [dbo].[Express] (
     [ID]               VARCHAR (13)   CONSTRAINT [DF_Express_ID] DEFAULT ('') NOT NULL,
     [MDivisionID]      VARCHAR (8)    CONSTRAINT [DF_Express_MDivisionID] DEFAULT ('') NULL,
     [ShipMark]         VARCHAR (10)   CONSTRAINT [DF_Express_ShipMark] DEFAULT ('') NULL,
@@ -33,8 +33,11 @@
     [AddDate]          DATETIME       NULL,
     [EditName]         VARCHAR (10)   CONSTRAINT [DF_Express_EditName] DEFAULT ('') NULL,
     [EditDate]         DATETIME       NULL,
+    [FreightBy]        VARCHAR (4)    NULL,
     CONSTRAINT [PK_Express] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -184,5 +187,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturi
 
 
 GO
-
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'HC歸屬(3RD,FTY,CUST,HAND)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'FreightBy';
 
