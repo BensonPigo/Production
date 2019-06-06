@@ -671,7 +671,16 @@ select t.MDivisionID
        , [RFID HT Farm In Qty] = HT.InQtyBySet
        , [RFID HT Farm Out Qty] = HT.OutQtyBySet
         , SubProcessStatus=
-			case when t.Junk = 1 then null
+			case when t.Junk = 1 then null 
+                 when SORTING.OutQtyBySet is null and loading.InQtyBySet is null 
+                    and Emb.InQtyBySet is null and Emb.OutQtyBySet is null
+                    and BO.InQtyBySet is null and BO.OutQtyBySet  is null 
+                    and prt.InQtyBySet  is null and prt.OutQtyBySet  is null 
+                    and AT.InQtyBySet  is null and AT.OutQtyBySet  is null 
+                    and PADPRT.InQtyBySet is null and PADPRT.OutQtyBySet is null
+                    and SUBCONEMB.InQtyBySet is null and SUBCONEMB.OutQtyBySet is null
+                    and HT.InQtyBySet is null and HT.OutQtyBySet is null                
+                then null
 				 when SORTINGStatus.v = 1 and loadingStatus.v = 1 --判斷有做加工段的數量=訂單qty,則為1,全部為1才為Y
 					and Emb_i.v = 1 and Emb_o.v = 1
 					and BO_i.v = 1 and BO_o.v = 1
@@ -1285,6 +1294,15 @@ select t.MDivisionID
        , [RFID HT Farm Out Qty] = HT.OutQtyBySet
         , SubProcessStatus=
 			case when t.Junk = 1 then null
+                 when SORTING.OutQtyBySet is null and loading.InQtyBySet is null 
+                    and Emb.InQtyBySet is null and Emb.OutQtyBySet is null
+                    and BO.InQtyBySet is null and BO.OutQtyBySet  is null 
+                    and prt.InQtyBySet  is null and prt.OutQtyBySet  is null 
+                    and AT.InQtyBySet  is null and AT.OutQtyBySet  is null 
+                    and PADPRT.InQtyBySet is null and PADPRT.OutQtyBySet is null
+                    and SUBCONEMB.InQtyBySet is null and SUBCONEMB.OutQtyBySet is null
+                    and HT.InQtyBySet is null and HT.OutQtyBySet is null                
+                then null
 				 when SORTINGStatus.v = 1 and loadingStatus.v = 1 --判斷有做加工段的數量=訂單qty,則為1,全部為1才為Y
 					and Emb_i.v = 1 and Emb_o.v = 1
 					and BO_i.v = 1 and BO_o.v = 1
