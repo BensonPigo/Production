@@ -3305,7 +3305,7 @@ when not matched by source then
 ------MachineType_ThreadRatio_Regular---------------
 Merge Production.dbo.MachineType_ThreadRatio_Regular as t
 Using (select a.* from Trade_To_Pms.dbo.MachineType_ThreadRatio_Regular a ) as s
-on t.ID=s.ID and t.SEQ = s.SEQ
+on t.ID=s.ID and t.SEQ = s.SEQ and t.UseRatioRule = s.UseRatioRule
 when matched then 
 	update set	t.UseRatio	   = s.UseRatio	 
 when not matched by target then
