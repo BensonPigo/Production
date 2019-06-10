@@ -97,7 +97,7 @@ namespace Sci.Production.Sewing
                         return;
                     }
 
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["OrderQtyUpperlimit"]) - MyUtility.Convert.GetDecimal(dr["AccumQty"]))
+                    if (MyUtility.Convert.GetInt(e.FormattedValue) > MyUtility.Convert.GetInt(dr["Variance"]))
                     {
                         MyUtility.Msg.WarningBox("< QA Q'ty > can't exceed < Variance >");
                         dr["QAQty"] = 0;
