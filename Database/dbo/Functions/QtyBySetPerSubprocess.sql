@@ -390,7 +390,10 @@ BEGIN
 			, cbs.Sizecode
 			, QtyBySet = cbs.QtyBySet
 			, QtyBySubprocess = cbs.QtyBySubprocess
-			, InQtyBySet = sub.InQty
+			, InQtyBySet = case when @IsMorethenOrderQty = 1 then sub.InQty
+							when sub.InQty>oq.qty then oq.qty
+							else sub.InQty
+							end
 			, OutQtyBySet = case when @IsMorethenOrderQty = 1 then sub.OutQty
 							when sub.OutQty>oq.qty then oq.qty
 							else sub.OutQty
