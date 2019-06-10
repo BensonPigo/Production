@@ -776,7 +776,9 @@ WHERE   StockType='{0}'
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //11
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype)   //12
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out Col_Location)    //13
-            .Text("remark", header: "Remark")    //14
+            .Text("remark", header: "Remark")
+            .Text("RefNo", header: "Ref#")
+            .Text("ColorID", header: "Color")    
             .Text("FactoryID", header: "Prod. Factory", iseditingreadonly: true)    //11
             .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(15), iseditingreadonly: true)    //11
             ;     //
@@ -1405,6 +1407,8 @@ select  a.id
         , a.Poid + concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as PoidSeq
         , a.Poid + Ltrim(Rtrim(a.seq1)) as PoidSeq1
         , (select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
+        , [RefNo]=p.RefNo
+		, [ColorID]=Color.Value
         , a.shipqty
         , a.Weight
         , a.ActualWeight
@@ -1422,6 +1426,15 @@ select  a.id
         ,o.OrderTypeID
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 left join orders o WITH (NOLOCK) on o.id = a.PoId
+LEFT JOIN PO_Supp_Detail p  WITH (NOLOCK) ON p.ID=a.PoId AND p.SEQ1=a.Seq1 AND p.SEQ2 = a.Seq2
+LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
+		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 END
+)Color
+
 Where a.id = '{0}'
 order by ukey", masterID);
 

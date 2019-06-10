@@ -72,6 +72,7 @@ select  selected = 0
         , balance = c.inqty-c.outqty + c.adjustqty 
 		,a.NetQty
 		,a.LossQty
+        , [FabricTypeName] = (select name from DropDownList where Type='FabricType_Condition' and a.FabricType = id)
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join dbo.Orders on c.poid = orders.id
@@ -99,6 +100,10 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                     strSQLCmd.Append(" and f.MtlTypeID not in ('EMB THREAD','SP THREAD','THREAD')  " + Environment.NewLine);
                 }
 
+                if (string.Compare(this.comboFabricType.SelectedValue.ToString(), "ALL") != 0)
+                {
+                    strSQLCmd.Append($@" and a.FabricType='{this.comboFabricType.SelectedValue}'");
+                }
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
@@ -180,6 +185,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("location", header: "Bulk Location", iseditingreadonly: true)      //2
+                .Text("FabricTypeName", header: "Fabric Type", iseditingreadonly: true)      //3
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //3
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5

@@ -20,17 +20,64 @@ namespace Sci.Production.Class
     public partial class txtsubcon : Sci.Win.UI._UserControl
     {
         private bool isIncludeJunk;
+        private bool IsSubcon;
+        private bool IsShipping;
+        private bool IsMisc;
         public txtsubcon()
         {
             InitializeComponent();
         }
-        
-        [Category("Custom Properties")]
+
+        #region 篩選條件
         public bool IsIncludeJunk
         {
-            set { this.isIncludeJunk = value; }
-            get { return this.isIncludeJunk; }
+            set
+            {
+                this.isIncludeJunk = value;
+            }
+            get
+            {
+                return this.isIncludeJunk;
+            }
         }
+
+        public bool isSubcon
+        {
+            set
+            {
+                this.IsSubcon = value;
+            }
+            get
+            {
+                return this.IsSubcon;
+            }
+        }
+
+        public bool isShipping
+        {
+            set
+            {
+                this.IsShipping = value;
+            }
+            get
+            {
+                return this.IsShipping;
+            }
+        }
+
+        public bool isMisc
+        {
+            set
+            {
+                this.IsMisc = value;
+            }
+            get
+            {
+                return this.IsMisc;
+            }
+        }
+        #endregion
+        
 
         public Sci.Win.UI.TextBox TextBox1
         {
@@ -68,6 +115,21 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(textValue))
             {
                 string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
+
+                if (IsSubcon)
+                {
+                    Sql += " and IsSubcon = 1 ";
+                }
+
+                if (IsShipping)
+                {
+                    Sql += " and IsShipping = 1 ";
+                }
+
+                if (IsMisc)
+                {
+                    Sql += " and IsMisc = 1 ";
+                }
                 if (!MyUtility.Check.Seek(Sql, "Production"))
                 {
                     this.textBox1.Text = "";
@@ -96,30 +158,6 @@ namespace Sci.Production.Class
         
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            //string textValue = this.textBox1.Text.Trim(); 
-            //if (textValue == "")
-            //{
-            //    this.textBox1.Text = "";
-            //    this.displayBox1.Text = "";
-            //    e.Cancel = true; ;
-            //    return;
-            //}
-            //Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base) this.FindForm();
-            //if (myForm.EditMode == false)
-            //{
-            //    this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
-            //}
-            //if (!this.IsIncludeJunk)
-            //{
-            //    textValue = this.textBox1.Text;
-            //    string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
-            //    string lookupresult = MyUtility.GetValue.Lookup(Sql, "Production");
-            //    if (lookupresult == "True")
-            //    {
-            //        this.displayBox1.Text = "";
-            //        return;
-            //    }
-            //}
             this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
         }
 
@@ -128,11 +166,28 @@ namespace Sci.Production.Class
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base) this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly==true) return;
             string selectCommand;
-            selectCommand = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) order by ID";
+            selectCommand = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) where 1=1 ";
             if (!IsIncludeJunk)
             {
-                selectCommand = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 order by ID";
+                selectCommand += " and Junk =  0 ";
             }
+
+            if (IsShipping)
+            {
+                selectCommand += " and IsShipping = 1 ";
+            }
+
+            if (IsSubcon)
+            {
+                selectCommand += " and IsSubcon = 1 ";
+            }
+
+            if (IsMisc)
+            {
+                selectCommand += " and IsMisc = 1 ";
+            }
+
+            selectCommand += " Order by ID";
             DataTable tbSelect;
             DBProxy.Current.Select("Production", selectCommand, out tbSelect);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name");

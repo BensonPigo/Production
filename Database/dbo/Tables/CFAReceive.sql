@@ -7,7 +7,8 @@
     [PackingListID] VARCHAR(13) NULL DEFAULT (''), 
     [CTNStartNo] VARCHAR(6) NULL DEFAULT (''), 
     [AddName] VARCHAR(10) NULL DEFAULT (''), 
-    [AddDate] DATETIME NULL
+    [AddDate] DATETIME NULL, 
+    [SCICtnNo] VARCHAR(15) CONSTRAINT [DF_CFAReceive_SCICtnNo] DEFAULT ('') NOT NULL
 )
 
 GO

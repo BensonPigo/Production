@@ -46,6 +46,7 @@
             this.cmbSide = new Sci.Win.UI.ComboBox();
             this.lblSeq = new Sci.Win.UI.Label();
             this.numSeq = new Sci.Win.UI.NumericBox();
+            this.chkIs2Side = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIs2Side);
             this.detailcont.Controls.Add(this.numSeq);
             this.detailcont.Controls.Add(this.lblSeq);
             this.detailcont.Controls.Add(this.cmbSide);
@@ -98,7 +100,7 @@
             this.label1.Location = new System.Drawing.Point(33, 33);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 23);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 10;
             this.label1.Text = "Brand";
             // 
             // label2
@@ -106,7 +108,7 @@
             this.label2.Location = new System.Drawing.Point(33, 74);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(102, 23);
-            this.label2.TabIndex = 1;
+            this.label2.TabIndex = 11;
             this.label2.Text = "Cust CD";
             // 
             // label3
@@ -114,7 +116,7 @@
             this.label3.Location = new System.Drawing.Point(33, 115);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 23);
-            this.label3.TabIndex = 2;
+            this.label3.TabIndex = 12;
             this.label3.Text = "CTN Refno";
             // 
             // label4
@@ -122,7 +124,7 @@
             this.label4.Location = new System.Drawing.Point(33, 156);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(102, 23);
-            this.label4.TabIndex = 3;
+            this.label4.TabIndex = 13;
             this.label4.Text = "Side";
             // 
             // label6
@@ -130,7 +132,7 @@
             this.label6.Location = new System.Drawing.Point(341, 33);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(102, 23);
-            this.label6.TabIndex = 5;
+            this.label6.TabIndex = 15;
             this.label6.Text = "FromLeft";
             // 
             // label7
@@ -138,7 +140,7 @@
             this.label7.Location = new System.Drawing.Point(341, 74);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(102, 23);
-            this.label7.TabIndex = 6;
+            this.label7.TabIndex = 16;
             this.label7.Text = "FromTop";
             // 
             // label8
@@ -146,7 +148,7 @@
             this.label8.Location = new System.Drawing.Point(341, 115);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(102, 23);
-            this.label8.TabIndex = 7;
+            this.label8.TabIndex = 17;
             this.label8.Text = "Pic Length";
             // 
             // label9
@@ -154,7 +156,7 @@
             this.label9.Location = new System.Drawing.Point(341, 156);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(102, 23);
-            this.label9.TabIndex = 8;
+            this.label9.TabIndex = 18;
             this.label9.Text = "Pic Width";
             // 
             // txtbrand1
@@ -164,8 +166,8 @@
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand1.Location = new System.Drawing.Point(138, 33);
             this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 9;
+            this.txtbrand1.Size = new System.Drawing.Size(125, 23);
+            this.txtbrand1.TabIndex = 0;
             // 
             // txtcustcd1
             // 
@@ -176,7 +178,7 @@
             this.txtcustcd1.Location = new System.Drawing.Point(138, 74);
             this.txtcustcd1.Name = "txtcustcd1";
             this.txtcustcd1.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd1.TabIndex = 10;
+            this.txtcustcd1.TabIndex = 1;
             // 
             // txtCTNRefno
             // 
@@ -185,8 +187,8 @@
             this.txtCTNRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCTNRefno.Location = new System.Drawing.Point(138, 115);
             this.txtCTNRefno.Name = "txtCTNRefno";
-            this.txtCTNRefno.Size = new System.Drawing.Size(100, 23);
-            this.txtCTNRefno.TabIndex = 11;
+            this.txtCTNRefno.Size = new System.Drawing.Size(125, 23);
+            this.txtCTNRefno.TabIndex = 2;
             this.txtCTNRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCTNRefno_PopUp);
             this.txtCTNRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCTNRefno_Validating);
             // 
@@ -209,7 +211,7 @@
             0,
             0});
             this.numFromLeft.Size = new System.Drawing.Size(100, 23);
-            this.numFromLeft.TabIndex = 14;
+            this.numFromLeft.TabIndex = 5;
             this.numFromLeft.Value = new decimal(new int[] {
             0,
             0,
@@ -235,7 +237,7 @@
             0,
             0});
             this.numFromTop.Size = new System.Drawing.Size(100, 23);
-            this.numFromTop.TabIndex = 15;
+            this.numFromTop.TabIndex = 6;
             this.numFromTop.Value = new decimal(new int[] {
             0,
             0,
@@ -261,7 +263,7 @@
             0,
             0});
             this.numPicLength.Size = new System.Drawing.Size(100, 23);
-            this.numPicLength.TabIndex = 16;
+            this.numPicLength.TabIndex = 7;
             this.numPicLength.Value = new decimal(new int[] {
             0,
             0,
@@ -287,7 +289,7 @@
             0,
             0});
             this.numPicWidth.Size = new System.Drawing.Size(100, 23);
-            this.numPicWidth.TabIndex = 17;
+            this.numPicWidth.TabIndex = 8;
             this.numPicWidth.Value = new decimal(new int[] {
             0,
             0,
@@ -311,15 +313,15 @@
             this.cmbSide.Location = new System.Drawing.Point(138, 156);
             this.cmbSide.Name = "cmbSide";
             this.cmbSide.OldText = "";
-            this.cmbSide.Size = new System.Drawing.Size(121, 24);
-            this.cmbSide.TabIndex = 12;
+            this.cmbSide.Size = new System.Drawing.Size(125, 24);
+            this.cmbSide.TabIndex = 3;
             // 
             // lblSeq
             // 
             this.lblSeq.Location = new System.Drawing.Point(33, 199);
             this.lblSeq.Name = "lblSeq";
             this.lblSeq.Size = new System.Drawing.Size(102, 23);
-            this.lblSeq.TabIndex = 17;
+            this.lblSeq.TabIndex = 14;
             this.lblSeq.Text = "Seq";
             // 
             // numSeq
@@ -339,13 +341,26 @@
             0,
             0,
             0});
-            this.numSeq.Size = new System.Drawing.Size(100, 23);
-            this.numSeq.TabIndex = 13;
+            this.numSeq.Size = new System.Drawing.Size(125, 23);
+            this.numSeq.TabIndex = 4;
             this.numSeq.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
+            // 
+            // chkIs2Side
+            // 
+            this.chkIs2Side.AutoSize = true;
+            this.chkIs2Side.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Is2Side", true));
+            this.chkIs2Side.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.chkIs2Side.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIs2Side.Location = new System.Drawing.Point(341, 198);
+            this.chkIs2Side.Name = "chkIs2Side";
+            this.chkIs2Side.Size = new System.Drawing.Size(90, 24);
+            this.chkIs2Side.TabIndex = 9;
+            this.chkIs2Side.Text = "Is 2 Side";
+            this.chkIs2Side.UseVisualStyleBackColor = true;
             // 
             // B03
             // 
@@ -392,5 +407,6 @@
         private Win.UI.ComboBox cmbSide;
         private Win.UI.NumericBox numSeq;
         private Win.UI.Label lblSeq;
+        private Win.UI.CheckBox chkIs2Side;
     }
 }

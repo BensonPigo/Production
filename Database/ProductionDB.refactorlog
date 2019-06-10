@@ -378,4 +378,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="BrandID" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c05073a5-9a8b-4662-987e-b272104609f8" ChangeDateTime="05/24/2019 07:31:16">
+    <Property Name="ElementName" Value="[dbo].[Brand].[UseRatioRule]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Brand]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UseRatioRule_Thick" />
+  </Operation>
 </Operations>

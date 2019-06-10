@@ -693,6 +693,9 @@
             this.txtSubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
             this.txtSubconSupplier.DisplayBox1Binding = "";
             this.txtSubconSupplier.IsIncludeJunk = false;
+            this.txtSubconSupplier.isMisc = false;
+            this.txtSubconSupplier.isShipping = true;
+            this.txtSubconSupplier.isSubcon = false;
             this.txtSubconSupplier.Location = new System.Drawing.Point(64, 64);
             this.txtSubconSupplier.Name = "txtSubconSupplier";
             this.txtSubconSupplier.Size = new System.Drawing.Size(170, 23);
@@ -778,6 +781,7 @@
             this.IsSupportCopy = false;
             this.KeyField1 = "ID";
             this.Name = "P08";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P08. Account Payment - Shipping";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ShippingAP";

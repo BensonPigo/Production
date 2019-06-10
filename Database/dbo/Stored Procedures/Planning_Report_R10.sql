@@ -1,7 +1,9 @@
-﻿CREATE PROCEDURE [dbo].[Planning_Report_R10]
-	@ReportType int = 1 --1:整個月 2:半個月 --3:Production status 2017.01.04 Serena電話確認後，表示不用做了
+﻿
+
+CREATE PROCEDURE [dbo].[Planning_Report_R10]
+	@ReportType int = 1 --1:整個月 2:半個月	--3:Production status 不做
 	,@BrandID varchar(20)
-	,@ArtWorkType varchar(20) --= 'CPU'
+	,@ArtWorkType varchar(20) --= 'SEWING'
 	,@isSCIDelivery bit = 1
 	,@Year int = 2017
 	,@Month int = 1
@@ -51,12 +53,10 @@ BEGIN
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1  And Factory.Junk = 0 And Artworktype.ReportDropdown = 1 
 	And Artworktype.ID = @ArtWorkType
-	And (factory.MDivisionID = @M or @M = '') And (factory.ID = @Fty or @Fty = '') and Factory.IsProduceFty = 1
+	And (factory.MDivisionID = @M or @M = '') And (factory.ID = @Fty or @Fty = '')
 
-	select orders.id,orders.FactoryID,orders.CPU,orders.OrderTypeID,orders.ProgramID,orders.Qty,orders.Category,
-			orders.BrandID,orders.BuyerDelivery,orders.SciDelivery,CpuRate
-	into #Orders From orders with (nolock)
-	inner join Factory f on orders.FactoryID = f.ID and f.IsProduceFty = 1
+	select id,FactoryID,CPU,OrderTypeID,ProgramID,Qty,Category,BrandID,BuyerDelivery,SciDelivery,CpuRate,GMTComplete
+	into #Orders From orders 
 	outer apply (select CpuRate from GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O') ) gcRate
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
@@ -84,6 +84,7 @@ BEGIN
 	,Order_TmsCost.ArtworktypeID
 	,Orders.Qty as OrderQty
 	,Round((cCPU * Orders.Qty * CpuRate),0) as OrderCapacity
+	,Round((cCPU * iif(Orders.GMTComplete = 'S', Orders.Qty - GetPulloutData.Qty, 0) * CpuRate),0) as OrderShortage
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,OrderDate ,FactorySort
 	into #tmpOrder1 from #Orders Orders
@@ -93,10 +94,9 @@ BEGIN
 	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Order_TmsCost.Qty, Order_TmsCost.Tms / 60 )) as cTms) amt
 	outer apply (select iif(@CalArtWorkType = 'CPU', Orders.CPU, cTms) as cCPU) ccpu
 	outer apply (select iif(@isSCIDelivery = 0, Orders.BuyerDelivery, Orders.SCIDelivery) as OrderDate) odd	
-	--outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),OrderDate),'yyyyMM') as Date1) odd1	
-	--outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
 	outer apply (select dbo.GetHalfMonWithYear(OrderDate,@isSCIDelivery) as Date2) odd2	
+	outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = Orders.id) GetPulloutData
 
 	select sd.ID,OrderId,SUM(QAQty*sl.Rate/100) as QAQty 
 	into #sew2 
@@ -192,7 +192,7 @@ BEGIN
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,FactorySort
 	into #tmpForecast1 from Orders
-	inner join Factory on Orders.FactoryID = Factory.ID and Factory.IsProduceFty = 1
+	left join Factory on Factory.ID = Orders.FactoryID
 	left join Style on Style.Ukey = Orders.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
@@ -216,16 +216,16 @@ BEGIN
 		,FactoryID varchar(10)
 		,OrderYYMM varchar(10)
 		,OrderLoadingCPU numeric(14,2)
-		--,OrderAccCPU numeric(14,2)
+		,OrderShortage numeric(14,2)
 		,MaxOutputDate date
 		,MinOutPutDate date
 		,FactorySort varchar(3)
 	)
-
+	
 	insert into @tmpFinal
 	Select CountryID, MDivisionID, FactoryID, #tmpOrder2.OrderYYMM
 	,sum(OrderCapacity) as OrderLoadingCPU
-	--,SUM(Round(cCPU * CPURate * QAQty ,2)) as OrderAccCPU
+	,sum(OrderShortage) as OrderShortage
 	,Max(OutPutDate) as MaxOutputDate, Min(OutPutDate) as MinOutPutDate
 	,FactorySort
 	From #tmpOrder2 Group by CountryID,MDivisionID,FactoryID,#tmpOrder2.OrderYYMM,FactorySort
@@ -233,7 +233,7 @@ BEGIN
 	insert into @tmpFinal
 	Select CountryID, MDivisionID, FactoryID, #tmpForecast1.OrderYYMM
 	,sum(ForecastCapacity) as OrderLoadingCPU
-	--,0 as OrderAccCPU	
+	,0 as OrderShortage
 	,null as MaxOutputDate, null as MinOutPutDate
 	,FactorySort
 	From #tmpForecast1 Group by CountryID,MDivisionID,FactoryID,#tmpForecast1.OrderYYMM,FactorySort
@@ -241,14 +241,21 @@ BEGIN
 	insert into @tmpFinal
 	Select CountryID, MDivisionID, FactoryID, #tmpFactoryOrder2.OrderYYMM
 	,sum(FactoryOrderCapacity) as OrderLoadingCPU
-	--,SUM(Round(cCPU * CPURate * QAQty ,2)) as OrderAccCPU
+	,0 as OrderShortage
 	,Max(OutPutDate) as MaxOutputDate, Min(OutPutDate) as MinOutPutDate
 	,FactorySort
 	From #tmpFactoryOrder2 Group by CountryID,MDivisionID,FactoryID,#tmpFactoryOrder2.OrderYYMM,FactorySort
 
-	select CountryID, MDivisionID, FactoryID, OrderYYMM, sum(OrderLoadingCPU) as OrderLoadingCPU--, sum(OrderAccCPU) as OrderAccCPU
-	, Max(MaxOutputDate) as MaxOutputDate, Min(MinOutPutDate) as MinOutPutDate
-	,FactorySort
+	select 
+		CountryID
+		, MDivisionID
+		, FactoryID
+		, OrderYYMM
+		, sum(OrderLoadingCPU) as OrderLoadingCPU
+		, sum(OrderShortage) as OrderShortage
+		, Max(MaxOutputDate) as MaxOutputDate
+		, Min(MinOutPutDate) as MinOutPutDate
+		,FactorySort
 	into #tmpFinal from @tmpFinal 
 	group by CountryID,MDivisionID,FactoryID,OrderYYMM,FactorySort
 
@@ -264,15 +271,23 @@ BEGIN
 		group by CountryID, CountryName, MDivisionID,#tmpFactory.OrderYYMM
 	
 		--(C)By Factory
-		select a.CountryID, a.MDivisionID, a.FactoryID,a.OrderYYMM as Month, a.Capacity , c.Tms from (
-			select CountryID, MDivisionID, FactoryID, OrderYYMM,sum(Capacity) as Capacity from (
-				select CountryID, MDivisionID, FactoryID, OrderYYMM, OrderCapacity as Capacity from #tmpOrder1 union all
-				select CountryID, MDivisionID, FactoryID, OrderYYMM, ForecastCapacity from #tmpForecast1 
+		select 
+			a.CountryID, a.MDivisionID, a.FactoryID, a.OrderYYMM as Month, Factory.CountryID + '-' + Country.Alias as CountryName,
+			a.Capacity, c.Tms, a.FtyTmsCapa, a.OrderShortage
+		from (
+			select CountryID, MDivisionID, FactoryID, OrderYYMM,sum(Capacity) as Capacity, sum(FtyTmsCapa) as FtyTmsCapa, sum(OrderShortage) as OrderShortage from (
+				select CountryID, MDivisionID, FactoryID, OrderYYMM, OrderCapacity as Capacity, 0 as FtyTmsCapa, OrderShortage from #tmpOrder1 union all
+				select CountryID, MDivisionID, FactoryID, OrderYYMM, ForecastCapacity, 0, 0 from #tmpForecast1 union all
+				select CountryID, MDivisionID, FactoryID, OrderYYMM, 0, Capacity as FtyTmsCapa, 0 from #tmpFactory 
 			) c group by CountryID, MDivisionID, FactoryID, OrderYYMM			
 		) a
+		inner join Factory on a.FactoryID = Factory.ID
+		inner join Country on Factory.CountryID = Country.ID
 		left join (
-			select ID,ArtworkTypeID,SUM(Tms) as Tms 
-			from Factory_Tms where YEAR = @Year and ArtworkTypeID = @ArtWorkType
+			select ID, ArtworkTypeID, SUM(cc.Capacity) as Tms 
+			from Factory_Tms 
+			outer apply (select iif(@CalArtWorkType = 'CPU', Round(Factory_Tms.TMS * 3600 / @mStandardTMS ,0), Factory_Tms.TMS) as Capacity) cc
+			where YEAR = @Year and ArtworkTypeID = @ArtWorkType			
 			GROUP BY ID,ArtworkTypeID
 		) c on a.FactoryID = c.ID
 		
@@ -283,7 +298,7 @@ BEGIN
 		--For Forecast shared
 		select CountryID, MDivisionID, FactoryID, OrderYYMM as Month, sum(ForecastCapacity) as Capacity from #tmpForecast1 group by CountryID,MDivisionID,FactoryID,OrderYYMM
 		
-		--For Output, 及Output後面的Max日期
+		--For Output, ��Output�᭱��Max���
 		select CountryID, MDivisionID, FactoryID, max(format(SewingYYMM_Ori,'yyyy/MM/dd')) as SewingYYMM, OrderYYMM as Month, sum(Capacity) as Capacity from (
 			Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, OrderYYMM, SewCapacity as Capacity from #tmpOrder2
 			union ALL Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, SewingYYMM, SewCapacity as Capacity from #tmpFactoryOrder2
@@ -294,9 +309,9 @@ BEGIN
 	End
 	else if(@ReportType = 2)
 	Begin
-	--Report2 : 每半個月，區間為設定的年月往後推半年----------------------------------------------------------------------------------------------------------------------------------
+	--Report2 : �C�b�Ӥ�A�϶����]�w���~�멹����b�~----------------------------------------------------------------------------------------------------------------------------------
 		
-		----By 所有 CountryID, MDisision, FactoryID
+		----By �Ҧ� CountryID, MDisision, FactoryID
 		----select CountryID,MDivisionID,FactoryID,FactorySort from #tmpFinal group by CountryID,MDivisionID,FactoryID,FactorySort
 		----order by FactorySort
 		--select CountryID,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID, Factory.ID as FactoryID, Factory.FactorySort from Factory 
@@ -309,7 +324,7 @@ BEGIN
 		select CountryID,MDivisionID,FactoryID,FactorySort from #tmpFinal group by CountryID,MDivisionID,FactoryID,FactorySort
 		order by FactorySort
 
-		--(K) By Factory 最細的上下半月Capacity
+		--(K) By Factory �̲Ӫ��W�U�b��Capacity
 		select CountryID, CountryName, MDivisionID, FactoryID, OrderYYMM as Month, sum(HalfCapacity1) as Capacity1, sum(HalfCapacity2) as Capacity2
 		from #tmpFactory 
 		group by CountryID,CountryName,MDivisionID,FactoryID,OrderYYMM

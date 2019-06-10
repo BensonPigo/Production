@@ -42,6 +42,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.labFabricType = new Sci.Win.UI.Label();
+            this.comboFabricType = new Sci.Production.Class.comboDropDownList(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -77,10 +79,10 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(302, 15);
+            this.btnFindNow.Location = new System.Drawing.Point(869, 15);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
-            this.btnFindNow.TabIndex = 2;
+            this.btnFindNow.TabIndex = 3;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
             this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
@@ -96,11 +98,10 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 19);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
-            this.labelSPNo.TabIndex = 0;
+            this.labelSPNo.TabIndex = 4;
             this.labelSPNo.Text = "SP#";
             // 
             // groupBox2
@@ -127,7 +128,6 @@
             // 
             // labelTotal
             // 
-            this.labelTotal.Lines = 0;
             this.labelTotal.Location = new System.Drawing.Point(439, 22);
             this.labelTotal.Name = "labelTotal";
             this.labelTotal.Size = new System.Drawing.Size(95, 23);
@@ -136,6 +136,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboFabricType);
+            this.groupBox1.Controls.Add(this.labFabricType);
             this.groupBox1.Controls.Add(this.txtSeq1);
             this.groupBox1.Controls.Add(this.btnFindNow);
             this.groupBox1.Controls.Add(this.txtSPNo);
@@ -186,9 +188,31 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(1008, 419);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
+            // 
+            // labFabricType
+            // 
+            this.labFabricType.Location = new System.Drawing.Point(306, 19);
+            this.labFabricType.Name = "labFabricType";
+            this.labFabricType.Size = new System.Drawing.Size(95, 23);
+            this.labFabricType.TabIndex = 5;
+            this.labFabricType.Text = "Fabric Type";
+            // 
+            // comboFabricType
+            // 
+            this.comboFabricType.BackColor = System.Drawing.Color.White;
+            this.comboFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFabricType.FormattingEnabled = true;
+            this.comboFabricType.IsSupportUnselect = true;
+            this.comboFabricType.Location = new System.Drawing.Point(404, 18);
+            this.comboFabricType.Name = "comboFabricType";
+            this.comboFabricType.OldText = "";
+            this.comboFabricType.Size = new System.Drawing.Size(110, 24);
+            this.comboFabricType.TabIndex = 2;
+            this.comboFabricType.Type = "FabricType_Condition";
             // 
             // P13_Import
             // 
@@ -197,6 +221,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P13_Import";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P13. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -224,5 +249,7 @@
         private Win.UI.DisplayBox displayTotal;
         private Win.UI.Label labelTotal;
         private Class.txtSeq txtSeq1;
+        private Win.UI.Label labFabricType;
+        private Class.comboDropDownList comboFabricType;
     }
 }

@@ -49,7 +49,10 @@ namespace Sci.Production.Logistic
             .Text("Dest", header: "Destination", width: Widths.Auto(), iseditable: false)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditable: false)
-            .Text("AddName", header: "Received By", width: Widths.Auto(), iseditable: false);
+            .Text("AddName", header: "Received By", width: Widths.Auto(), iseditable: false)
+            .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -105,6 +108,9 @@ select  1 as selected
         , SCIDelivery
         , AddName
         , rn = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+        , RepackPackID
+        , RepackOrderID
+        , RepackCtnStartNo
 from (
     select  cr.ReceiveDate
             , cr.PackingListID
@@ -117,7 +123,11 @@ from (
             , o.BuyerDelivery
             , o.SciDelivery
             , AddName = dbo.getPass1(cr.AddName)
-    from ClogReceiveCFA cr WITH (NOLOCK) 
+            , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+            , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+            , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+    from PackingList_Detail pd WITH (NOLOCK) 
+    inner join ClogReceiveCFA cr WITH (NOLOCK) on  pd.SCICtnNo = cr.SCICtnNo 
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     where   cr.MDivisionID = '{0}'
@@ -141,14 +151,14 @@ from (
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(this.txtPackID.Text)));
+            and (pd.ID = '{0}' or  pd.OrigID = '{0}')", MyUtility.Convert.GetString(this.txtPackID.Text)));
             }
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.OrderID = '{0}'", MyUtility.Convert.GetString(this.txtSPNo.Text)));
+            and (pd.OrderID = '{0}' or pd.OrigOrderID = '{0}')", MyUtility.Convert.GetString(this.txtSPNo.Text)));
             }
 
             sqlCmd.Append(@"
