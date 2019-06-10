@@ -235,12 +235,22 @@ where sd.ID = '{0}'",
 	and not exists (select 1 from Order_Qty WITH (NOLOCK) where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
 )
 select  a.*
-        , [Variance] = a.OrderQty-a.AccumQty
-        , [BalQty] = a.OrderQty-a.AccumQty-a.QAQty
-        , [Seq] = isnull(os.Seq,0)
+	,OrderQty.OrderQtyUpperlimit
+	, [Variance] = a.OrderQty-a.AccumQty
+	, [BalQty] = a.OrderQty-a.AccumQty-a.QAQty
+	, [Seq] = isnull(os.Seq,0)
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
+outer apply(
+	select value=1
+	from Order_TmsCost ot with(nolock)
+	inner join Order_Qty oq WITH (NOLOCK) on ot.id = oq.ID
+	where ot.ArtworkTypeID = 'Garment Dye' and ot.Price > 0
+	and oq.SizeCode=os.SizeCode and oq.Article=a.Article and ot.id=o.id
+	and o.LocalOrder<>1
+)b
+outer apply(select OrderQtyUpperlimit=iif(b.value is not null,round(cast(a.OrderQty as decimal)*1.05,0),a.OrderQty))OrderQty
 order by a.OrderId,os.Seq",
                 masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
