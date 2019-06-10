@@ -298,7 +298,7 @@ select Ukey = isnull((
             }
             catch (Exception ep)
             {
-                MyUtility.Msg.ErrorBox("Invalid email address !!");
+                MyUtility.Msg.ErrorBox("Invalid email address !!\r\n" + ep.Message);
                 return false;
             }
             return true;
