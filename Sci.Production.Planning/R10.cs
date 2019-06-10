@@ -368,7 +368,7 @@ namespace Sci.Production.Planning
                 }
                 #endregion
 
-                #region --Prouction Status Excel第一個頁籤SQL
+                #region --Production Status Excel第一個頁籤SQL
                 this.cmd = string.Format(
                     @"
                             -- 先撈出工廠的Capacity
@@ -517,7 +517,7 @@ namespace Sci.Production.Planning
                     this.s += this.o + Environment.NewLine;
                 }
 
-                #region --Prouction Status Excel第二個頁籤SQL
+                #region --Production Statuss Excel第二個頁籤SQL
                 this.cmd2 = string.Format(
                     @"
                             --	撈出各工廠每天的平均工時 

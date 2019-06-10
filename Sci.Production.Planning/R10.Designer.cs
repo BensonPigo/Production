@@ -109,7 +109,7 @@
             this.radioProductionStatus.Size = new System.Drawing.Size(130, 21);
             this.radioProductionStatus.TabIndex = 18;
             this.radioProductionStatus.TabStop = true;
-            this.radioProductionStatus.Text = "Prouction Status";
+            this.radioProductionStatus.Text = "Production Status";
             this.radioProductionStatus.UseVisualStyleBackColor = true;
             this.radioProductionStatus.CheckedChanged += new System.EventHandler(this.RadioProductionStatus_CheckedChanged);
             // 
@@ -288,7 +288,7 @@
             this.radioSemimonthlyReport.Size = new System.Drawing.Size(153, 21);
             this.radioSemimonthlyReport.TabIndex = 1;
             this.radioSemimonthlyReport.TabStop = true;
-            this.radioSemimonthlyReport.Text = "Semimonthly Report";
+            this.radioSemimonthlyReport.Text = "Semi-monthly Report";
             this.radioSemimonthlyReport.UseVisualStyleBackColor = true;
             this.radioSemimonthlyReport.CheckedChanged += new System.EventHandler(this.RadioSemimonthlyReport_CheckedChanged);
             // 
