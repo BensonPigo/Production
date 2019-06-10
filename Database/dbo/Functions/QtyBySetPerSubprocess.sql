@@ -147,7 +147,7 @@ BEGIN
 			, bun.Article
 			, bun.Sizecode
 	from Bundle bun
-	inner join Orders os on  bun.MDivisionID = os.MDivisionID and bun.Orderid = os.ID
+	inner join Orders os on bun.Orderid = os.ID and  bun.MDivisionID = os.MDivisionID
 	where bun.Orderid = @OrderID
 	
 	-- Step 2. --
@@ -163,8 +163,8 @@ BEGIN
 			select	top 1
 					bunD.ID
 					, bunD.BundleGroup
-			from Bundle_Detail bunD
-			inner join Bundle bun on bunD.Id = bun.ID
+			from Bundle bun
+			inner join Bundle_Detail bunD on bunD.Id = bun.ID
 			where bun.Orderid = st1.Orderid
 				  and bun.PatternPanel = st1.PatternPanel
 				  and bun.FabricPanelCode = st1.FabricPanelCode

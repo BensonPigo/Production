@@ -916,7 +916,7 @@ outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NO
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
-            sqlCmd.Append(@" ;DROP TABLE #imp_LastSewnDate, #tmp_Out, #tmp_In, #tmp_inoutcount, #tmp_subprocessqty, #cte2, #cte,#tmp,#tmp2,#tmp3,#tmp4,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpin,#tmpout");
+            sqlCmd.Append(@" ;DROP TABLE #imp_LastSewnDate,#cte,#cte2");
             if (this.isArtwork)
             {
                 sqlCmd.Append(@" ;drop table #rawdata_tmscost,#tmscost_pvt");
