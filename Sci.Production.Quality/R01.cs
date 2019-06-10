@@ -226,11 +226,11 @@ SET ARITHABORT ON
     INTO #balanceTmp
 from Receiving_Detail rd
 INNER JOIN Receiving r on RD.Id = R.Id 
-inner join FIR fir on fir.ReceivingID = rd.id AND FIR.POID=rd.poid AND  FIR.seq1 = rd.seq1 and FIR.seq2 = rd.Seq2
+inner join FIR f on f.ReceivingID = rd.id AND f.POID=rd.poid AND  f.seq1 = rd.seq1 and f.seq2 = rd.Seq2
 inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2 AND fit.StockType=rd.StockType and fit.Roll=rd.Roll and fit.Dyelot=rd.Dyelot
     where 1=1
     {RWhere.Replace("where","AND")}
-    {sqlWhere.Replace("where", "AND")}
+    {sqlWhere.Replace("where", "AND").Replace("SP.", "f.").Replace("P.","f.")}
     GROUP BY rd.poid,rd.seq1,rd.seq2,RD.ID
 
     select  
@@ -257,7 +257,7 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
 	--F.PhysicalInspector,
 	F.PhysicalDate,
 	fta.ActualYds,
-    ROUND( CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT) ,3),
+    ROUND(iif(SUM(t.StockQty) = 0,0,CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT)) ,3),
 	ftp.TotalPoint,
 	F.Weight,
 	[WeightInspector] = (select name from Pass1 where id = f.WeightInspector),
