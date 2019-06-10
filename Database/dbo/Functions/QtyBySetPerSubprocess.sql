@@ -398,7 +398,7 @@ BEGIN
 			, InQtyByPcs
 			, OutQtyByPcs
 	from @CutpartBySet cbs
-	left join Order_Qty oq on oq.id = cbs.OrderID and oq.SizeCode = cbs.SizeCode
+	left join Order_Qty oq on oq.id = cbs.OrderID and oq.SizeCode = cbs.SizeCode and oq.Article = cbs.Article
 	left join @FinalQtyBySet sub on cbs.Orderid = sub.Orderid and cbs.Sizecode = sub.SizeCode and cbs.Article = sub.Article
 	outer apply (
 		select	InQtyByPcs = sum (isnull (bunIO.OriInQty, 0))
