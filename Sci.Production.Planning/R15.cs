@@ -765,7 +765,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, default)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, default ,0)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -774,7 +774,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, default)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, default ,0)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -783,7 +783,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, default)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, default ,0)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -792,7 +792,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, default)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, default ,0)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -801,7 +801,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, default)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, default ,0)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -810,7 +810,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, default)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, default ,0)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -819,7 +819,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, default)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, default ,0)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -828,7 +828,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, default)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, default ,0)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -837,7 +837,7 @@ outer apply(
 	select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
 	from(
 		select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-		from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, default)	minPatternPanel
+		from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, default ,0)	minPatternPanel
 		group by OrderID, SizeCode
 	) minArticle
 	group by OrderID
@@ -1383,15 +1383,15 @@ outer apply (
           and t.KPIChangeReason != '' 
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SORTING
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)loading
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)Emb
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)BO
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)prt
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)AT
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)PADPRT
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SUBCONEMB
-outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, default)y where y.Article = t.Article and y.SizeCode = t.SizeCode)HT
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SORTING', 1, default, default, default, default, default, 0)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SORTING
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'loading', 1, default, default, default, default, default, 0)y where y.Article = t.Article and y.SizeCode = t.SizeCode)loading
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'Emb', 0, default, default, default, default, default, 0)y where y.Article = t.Article and y.SizeCode = t.SizeCode)Emb
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'BO', 0, default, default, default, default, default, 0)y where y.Article = t.Article and y.SizeCode = t.SizeCode)BO
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PRT', 0, default, default, default, default, default, 0)y where y.Article = t.Article and y.SizeCode = t.SizeCode)prt
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'AT', 0, default, default, default, default, default, 0)y where y.Article = t.Article and y.SizeCode = t.SizeCode)AT
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'PAD-PRT', 0, default, default, default, default, default, 0)y where y.Article = t.Article and y.SizeCode = t.SizeCode)PADPRT
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'SUBCONEMB', 0, default, default, default, default, default, 0)y where y.Article = t.Article and y.SizeCode = t.SizeCode)SUBCONEMB
+outer apply(select * from QtyBySetPerSubprocess(t.OrderID, 'HT', 0, default, default, default, default, default, 0)y where y.Article = t.Article and y.SizeCode = t.SizeCode)HT
 outer apply(select v = case when SORTING.OutQtyBySet is null or SORTING.OutQtyBySet >= t.Qty then 1 else 0 end)SORTINGStatus--null即不用判斷此加工段 標記1, 數量=訂單數 標記1
 outer apply(select v = case when loading.InQtyBySet is null or loading.InQtyBySet >= t.Qty then 1 else 0 end)loadingStatus
 outer apply(select v = case when Emb.InQtyBySet is null or Emb.InQtyBySet >= t.Qty then 1 else 0 end)Emb_i

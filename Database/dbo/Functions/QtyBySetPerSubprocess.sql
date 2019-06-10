@@ -1,5 +1,4 @@
 ﻿
-
 CREATE FUNCTION [dbo].[QtyBySetPerSubprocess]
 (
 	/*
@@ -20,6 +19,8 @@ CREATE FUNCTION [dbo].[QtyBySetPerSubprocess]
 		篩選裁片完成加工段的結束日
 	 * @IsNeedCombinBundleGroup
 		是否要依照 BundleGroup 算成衣件數
+	 * @IsMorethenOrderQty
+		回傳Qty值是否超過訂單數, (生產有可能超過)
 	 */
 	@OrderID varchar (13)
 	, @SubprocessID varchar (10)
@@ -29,6 +30,7 @@ CREATE FUNCTION [dbo].[QtyBySetPerSubprocess]
 	, @OutStartDate datetime = null
 	, @OutEndDate datetime = null
 	, @IsNeedCombinBundleGroup bit = 0
+	, @IsMorethenOrderQty bit = 1
 )
 RETURNS 
 @QtyBySetPerSubprocess TABLE 
@@ -389,10 +391,14 @@ BEGIN
 			, QtyBySet = cbs.QtyBySet
 			, QtyBySubprocess = cbs.QtyBySubprocess
 			, InQtyBySet = sub.InQty
-			, OutQtyBySet = sub.OutQty
+			, OutQtyBySet = case when @IsMorethenOrderQty = 1 then sub.OutQty
+							when sub.OutQty>oq.qty then oq.qty
+							else sub.OutQty
+							end
 			, InQtyByPcs
 			, OutQtyByPcs
 	from @CutpartBySet cbs
+	left join Order_Qty oq on oq.id = cbs.OrderID and oq.SizeCode = cbs.SizeCode
 	left join @FinalQtyBySet sub on cbs.Orderid = sub.Orderid and cbs.Sizecode = sub.SizeCode and cbs.Article = sub.Article
 	outer apply (
 		select	InQtyByPcs = sum (isnull (bunIO.OriInQty, 0))
@@ -400,6 +406,5 @@ BEGIN
 		from @BundleInOutQty bunIO
 		where cbs.OrderID = bunIO.OrderID and cbs.Sizecode = bunIO.Size and cbs.Article = bunIO.Article
 	) IOQtyPerPcs
-
 	RETURN ;
 END
