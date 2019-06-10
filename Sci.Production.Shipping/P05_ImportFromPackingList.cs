@@ -323,7 +323,7 @@ and a.OrderID = b.OrderID", allPackID.ToString().Substring(0, allPackID.Length -
 
                     foreach (DataRow currentRow in dr)
                     {
-                        DataRow[] findrow = this.detailData.Select(string.Format("OrderID = '{0}'", MyUtility.Convert.GetString(currentRow["ID"])));
+                        DataRow[] findrow = this.detailData.Select(string.Format("ID = '{0}'", MyUtility.Convert.GetString(currentRow["ID"])));
                         if (findrow.Length == 0)
                         {
                             currentRow.AcceptChanges();
