@@ -351,15 +351,16 @@ namespace Sci.Production.Tools
 
         private void txtEMailAddr_Validating(object sender, CancelEventArgs e)
         {
-            if (!this.EditMode || MyUtility.Check.Empty(this.txtEMailAddr.Text))
-            {
-                return;
-            }
-            if (!PublicPrg.Prgs.TestMail(this.txtEMailAddr.Text))
-            {
-                e.Cancel = true;
-                return;
-            }
+            //20190610先不要驗證, 太久了
+            //if (!this.EditMode || MyUtility.Check.Empty(this.txtEMailAddr.Text))
+            //{
+            //    return;
+            //}
+            //if (!PublicPrg.Prgs.TestMail(this.txtEMailAddr.Text))
+            //{
+            //    e.Cancel = true;
+            //    return;
+            //}
         }
     }
 }
