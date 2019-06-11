@@ -45,6 +45,10 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtSpStart = new Sci.Win.UI.TextBox();
+            this.txtSPEnd = new Sci.Win.UI.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -63,13 +67,17 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(864, 0);
+            this.panel2.Location = new System.Drawing.Point(934, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(5, 458);
             this.panel2.TabIndex = 2;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label2);
+            this.panel3.Controls.Add(this.txtSPEnd);
+            this.panel3.Controls.Add(this.txtSpStart);
+            this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.dateDelivery);
             this.panel3.Controls.Add(this.labelDelivery);
@@ -80,12 +88,12 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(859, 76);
+            this.panel3.Size = new System.Drawing.Size(929, 76);
             this.panel3.TabIndex = 3;
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(745, 9);
+            this.btnQuery.Location = new System.Drawing.Point(834, 9);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 6;
@@ -180,7 +188,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 416);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(859, 42);
+            this.panel4.Size = new System.Drawing.Size(929, 42);
             this.panel4.TabIndex = 4;
             // 
             // btnClose
@@ -209,7 +217,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 76);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(859, 340);
+            this.panel5.Size = new System.Drawing.Size(929, 340);
             this.panel5.TabIndex = 5;
             // 
             // gridImport
@@ -234,13 +242,48 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(859, 340);
+            this.gridImport.Size = new System.Drawing.Size(929, 340);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(538, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 23);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "SP#";
+            // 
+            // txtSpStart
+            // 
+            this.txtSpStart.BackColor = System.Drawing.Color.White;
+            this.txtSpStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpStart.Location = new System.Drawing.Point(585, 13);
+            this.txtSpStart.Name = "txtSpStart";
+            this.txtSpStart.Size = new System.Drawing.Size(100, 23);
+            this.txtSpStart.TabIndex = 8;
+            // 
+            // txtSPEnd
+            // 
+            this.txtSPEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPEnd.Location = new System.Drawing.Point(713, 13);
+            this.txtSPEnd.Name = "txtSPEnd";
+            this.txtSPEnd.Size = new System.Drawing.Size(100, 23);
+            this.txtSPEnd.TabIndex = 9;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(691, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(16, 17);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "~";
+            // 
             // P05_ImportFromPackingList
             // 
-            this.ClientSize = new System.Drawing.Size(869, 458);
+            this.ClientSize = new System.Drawing.Size(939, 458);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -248,6 +291,7 @@
             this.Controls.Add(this.panel1);
             this.EditMode = true;
             this.Name = "P05_ImportFromPackingList";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "Import from Packing List";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
@@ -282,6 +326,9 @@
         private Class.txtmultifactory txtmultifactoryFactory;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnImport;
-
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtSPEnd;
+        private Win.UI.TextBox txtSpStart;
+        private System.Windows.Forms.Label label2;
     }
 }
