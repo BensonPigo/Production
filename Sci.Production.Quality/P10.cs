@@ -517,17 +517,16 @@ values (@ID,@NO,'Appearance of garment after wash',9)
                 if (dt.Select(where).Count()>0)
                 {
                     DataRow DetailRow = dt.Select(where)[0];
-
-                    if (DetailRow["Result"].ToString()=="Fail")
-                        DetailRow["Result"] = "F";
-
-                    if (DetailRow["Result"].ToString() == "Pass")
-                        DetailRow["Result"] = "P";
-
                     CurrentMaintain["Result"] = DetailRow["Result"];
                     CurrentMaintain["Inspdate"] = DetailRow["Inspdate"];
                     CurrentMaintain["Remark"] = DetailRow["remark"];
+                }
 
+                if (string.IsNullOrEmpty(CurrentMaintain["AddDate"].ToString()) && dt.Select("NO='1'").Count() > 0)
+                {
+                    DataRow DetailRow = dt.Select(where)[0];
+                    CurrentMaintain["AddDate"] = DetailRow["AddDate"];
+                    CurrentMaintain["AddName"] = DetailRow["AddName"];
                 }
             }
             else
