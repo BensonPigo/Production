@@ -49,8 +49,8 @@ namespace Sci.Production.Shipping
             Ict.Win.DataGridViewGeneratorTextColumnSettings id = new DataGridViewGeneratorTextColumnSettings();
 
             // 限制最大字數，避免寫入DB錯誤
-            DataGridViewGeneratorTextColumnSettings CTNRNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 10};
-            DataGridViewGeneratorTextColumnSettings SealNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 10 };
+            DataGridViewGeneratorTextColumnSettings CTNRNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20};
+            DataGridViewGeneratorTextColumnSettings SealNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 15 };
             DataGridViewGeneratorTextColumnSettings TruckNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
 
             id.EditingMouseDown += (s, e) =>
@@ -118,9 +118,9 @@ and g.CYCFS = 'CY-CY'
             .ComboBox("Type", header: "Container Type", width: Widths.AnsiChars(20)).Get(out cbb_CYCFS)
             .Text("ID", header: "GB#", width: Widths.AnsiChars(20), settings: id)
             .Text("CYCFS", header: "Loading Type", iseditable: false)
-            .Text("CTNRNo", header: "Container#", width: Widths.AnsiChars(10), settings: CTNRNo)
-            .Text("SealNo", header: "Seal#", width: Widths.AnsiChars(10), settings: SealNo)
-            .Text("TruckNo", header: "Truck#/Traile#", width: Widths.AnsiChars(10), settings: TruckNo)
+            .Text("CTNRNo", header: "Container#", width: Widths.AnsiChars(20), settings: CTNRNo)
+            .Text("SealNo", header: "Seal#", width: Widths.AnsiChars(15), settings: SealNo)
+            .Text("TruckNo", header: "Truck#/Traile#", width: Widths.AnsiChars(20), settings: TruckNo)
             .Text("AddBy", header: "Add by", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Text("EditBy", header: "Edit by", width: Widths.AnsiChars(30), iseditingreadonly: true);
 
