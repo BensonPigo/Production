@@ -135,8 +135,10 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                      where 1=1
                        and SewingOutputID = '{0}'
                        and UnLockDate is null", this.CurrentMaintain["ID"]);
-                if (DBProxy.Current.Select(null, sql, null, out dt)) {
-                    if (!MyUtility.Check.Empty(dt) || dt.Rows.Count > 0) {
+                if (DBProxy.Current.Select(null, sql, null, out dt))
+                {
+                    if (!MyUtility.Check.Empty(dt) || dt.Rows.Count > 0)
+                    {
                         this.btnRequestUnlock.Enabled = MyUtility.Convert.GetInt(dt.Rows[0]["cnt"]) > 0 ? false : true;
                     }
                 }
@@ -169,7 +171,7 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                     }
                 }
 
-          
+
             }
         }
 
@@ -234,24 +236,13 @@ where sd.ID = '{0}'",
 	where SewingOutput_DetailUKey = '{0}'
 	and not exists (select 1 from Order_Qty WITH (NOLOCK) where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
 )
-select  a.ID,a.SewingOutput_DetailUkey,a.OrderId,a.ComboType,a.Article,a.SizeCode
-	,OrderQty.OrderQty
-	,a.AccumQty
-	, [Variance] = OrderQty.OrderQty-a.AccumQty
-	, [BalQty] = OrderQty.OrderQty-a.AccumQty-a.QAQty
-	, [Seq] = isnull(os.Seq,0)
+select  a.*
+        , [Variance] = a.OrderQty-a.AccumQty
+        , [BalQty] = a.OrderQty-a.AccumQty-a.QAQty
+        , [Seq] = isnull(os.Seq,0)
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
-outer apply(
-	select value=1
-	from Order_TmsCost ot with(nolock)
-	inner join Order_Qty oq WITH (NOLOCK) on ot.id = oq.ID
-	where ot.ArtworkTypeID = 'Garment Dye' and ot.Price > 0
-	and oq.SizeCode=os.SizeCode and oq.Article=a.Article and ot.id=o.id
-	and o.LocalOrder<>1
-)b
-outer apply(select OrderQty=iif(b.value is not null,round(cast(a.OrderQty as decimal)*1.05,0),a.OrderQty))OrderQty
 order by a.OrderId,os.Seq",
                 masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
@@ -385,21 +376,21 @@ where   o.FtyGroup = @factoryid
                                 return;
                             }
 
-                        // 當該SP#已被Junk時，跳出確認訊息
-                        if (MyUtility.Check.Seek(string.Format("select ID from orders WITH (NOLOCK) where ID = '{0}' and junk=1", MyUtility.Convert.GetString(e.FormattedValue))))
-                        {
-                           // 問是否要繼續，確定才繼續往下做
-                           DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# has been canceled already,\r\n\r\nDo you want to continue?", "Warning", MessageBoxButtons.YesNo);
-                           if (buttonResult == System.Windows.Forms.DialogResult.No)
-                           {
-                              dr["OrderID"] = string.Empty;
-                              e.Cancel = true;
-                              return;
-                           }
-                        }
+                            // 當該SP#已被Junk時，跳出確認訊息
+                            if (MyUtility.Check.Seek(string.Format("select ID from orders WITH (NOLOCK) where ID = '{0}' and junk=1", MyUtility.Convert.GetString(e.FormattedValue))))
+                            {
+                                // 問是否要繼續，確定才繼續往下做
+                                DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# has been canceled already,\r\n\r\nDo you want to continue?", "Warning", MessageBoxButtons.YesNo);
+                                if (buttonResult == System.Windows.Forms.DialogResult.No)
+                                {
+                                    dr["OrderID"] = string.Empty;
+                                    e.Cancel = true;
+                                    return;
+                                }
+                            }
 
-                        // 當該SP#+Line不屬於排程時，跳出確認訊息
-                        if (!MyUtility.Check.Seek(string.Format("select ID from SewingSchedule WITH (NOLOCK) where OrderID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", MyUtility.Convert.GetString(e.FormattedValue), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]))))
+                            // 當該SP#+Line不屬於排程時，跳出確認訊息
+                            if (!MyUtility.Check.Seek(string.Format("select ID from SewingSchedule WITH (NOLOCK) where OrderID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", MyUtility.Convert.GetString(e.FormattedValue), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]))))
                             {
                                 // 問是否要繼續，確定才繼續往下做
                                 DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# dosen't belong to this line, please inform scheduler.\r\n\r\nDo you want to continue?", "Warning", MessageBoxButtons.YesNo);
@@ -697,7 +688,7 @@ where   o.FtyGroup = @factoryid
             };
             #endregion
 
-         Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
+            Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
             Ict.Win.UI.DataGridViewTextBoxColumn textArticleSetting;
             Ict.Win.UI.DataGridViewNumericBoxColumn numInLineQtySetting;
             Ict.Win.UI.DataGridViewNumericBoxColumn numWorkHourSetting;
@@ -1207,21 +1198,21 @@ order by a.OrderId,os.Seq",
             #endregion
 
             #region 檢查資料是否已存在
-            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}' and SubconOutFty = '{6}' and SubConOutContractNumber ='{7}' and Category = 'O'", Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]), MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]),MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))))
-                {
-                    MyUtility.Msg.WarningBox(string.Format(
-                        "Date:{0}, Line:{1}, Shift:{2}, Team:{3},SubconOutFty:{4},SubConOutContractNumber:{5} already exist, can't save!!",
-                        Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["Team"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))
-                        );
-                        
-                    return false;
-                }
+            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}' and SubconOutFty = '{6}' and SubConOutContractNumber ='{7}' and Category = 'O'", Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]), MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))))
+            {
+                MyUtility.Msg.WarningBox(string.Format(
+                    "Date:{0}, Line:{1}, Shift:{2}, Team:{3},SubconOutFty:{4},SubConOutContractNumber:{5} already exist, can't save!!",
+                    Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["Team"]),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))
+                    );
+
+                return false;
+            }
             #endregion
 
             #region 先撈出所有SP的SewingSchedule資料
@@ -1297,7 +1288,7 @@ where (OrderID <> '' or OrderID is not null)
                 {
                     dr.Delete();
 
-                   // if (dr.RowState == DataRowState.Deleted) { continue; }
+                    // if (dr.RowState == DataRowState.Deleted) { continue; }
                     continue;
                 }
 
@@ -1307,7 +1298,7 @@ where (OrderID <> '' or OrderID is not null)
                     return false;
                 }
 
-               // 回寫表頭TMS
+                // 回寫表頭TMS
                 if (gridQaQty == 0)
                 {
                     gridTms = 0;
