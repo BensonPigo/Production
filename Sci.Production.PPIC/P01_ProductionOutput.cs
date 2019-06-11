@@ -295,80 +295,11 @@ order by oa.Seq,os.Seq", string.Format("o.ID = '{0}'", MyUtility.Convert.GetStri
 
             sqlCmd = string.Format(
                 @"
-declare @SP varchar(20) = '{0}';
-select o.MDivisionID, o.FactoryID, OrderID = O.ID, Oq.Qty, oq.Article,oq.SizeCode      
-into #cte 
-from dbo.Orders o WITH (NOLOCK) 
-left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
-where o.id =@SP
-
-----------↓計算累計成衣件數
----準備兩個累積
-Select DISTINCT
-    [Bundleno] = bd.BundleNo,
-    [Cut Ref#] = b.CutRef,
-    [M] = b.MDivisionid,
-    [Factory] = o.FtyGroup,
-    [SP] = b.Orderid,
-    SubProcessId = s.Id,
-	b.article,
-    [Size] = bd.SizeCode,
-    [Comb] = b.PatternPanel,
-	b.FabricPanelCode,
-    bd.PatternCode,
-    bd.Qty,
-    bio.InComing,
-    bio.OutGoing
-into #tmp
-from Bundle b WITH (NOLOCK) 
-inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
-inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
-left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-inner join Order_EachCons oe WITH (NOLOCK) on oe.id = o.poid and oe.FabricPanelCode = b.FabricPanelCode
-inner join Order_BOF bof WITH (NOLOCK) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
-where 1=1 
-and isnull(bio.RFIDProcessLocationID,'') = ''
-and b.Orderid in (select distinct orderid from #cte)
-and bof.kind != 0
---order by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode
-------
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
-into #tmp2
-from #tmp
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmp3
-from #tmp2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmp4
-from #tmp3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = sum(accuQty)
-into #tmpin
-from #tmp4
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-------
-----------↑計算累計成衣件數
-
-select *
-from #cte t 
-outer apply (
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #tmpin 
-	where #tmpin.SP = t.OrderID 
-	      and #tmpin.Factory = t.FactoryID
-          and #tmpin.SubProcessId = 'loading'
-		  and #tmpin.Article = t.Article and #tmpin.Size = t.SizeCode
-) loading
-
-drop table #cte, #tmp,#tmp2,#tmp3,#tmp4,#tmpin
+select oq.ID,oq.SizeCode,oq.Qty,AccuInCome=a.InQtyBySet
+from Order_Qty oq 
+left join dbo.[QtyBySetPerSubprocess]('{0}','Loading',1,default,default,default,default,1,default)a
+on oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
+where oq.id = '{0}'
 ", MyUtility.Convert.GetString(this.masterData["ID"]));
 
             DataTable loadingoutput;
