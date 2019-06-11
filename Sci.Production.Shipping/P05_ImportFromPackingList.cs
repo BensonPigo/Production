@@ -175,6 +175,17 @@ with IniBulkPack as (
             and BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.dateDelivery.Value2).ToString("d")));
             }
 
+
+            if (!MyUtility.Check.Empty(this.txtSpStart.Text))
+            {
+                sqlCmd.Append($"AND OrderID >='{this.txtSpStart.Text}'");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSPEnd.Text))
+            {
+                sqlCmd.Append($"AND OrderID <='{this.txtSPEnd.Text}'");
+            }
+
             sqlCmd.Append(@"
 ), PackData as (
     select  Selected
