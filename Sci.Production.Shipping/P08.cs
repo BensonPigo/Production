@@ -341,7 +341,7 @@ where sd.ID = '{0}'", masterID);
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("ShipExpenseID", header: "Code", width: Widths.AnsiChars(10), settings: this.code).Get(out this.col_code)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
-                .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(6), decimal_places: 4, settings: this.qty).Get(out this.col_qty)
+                .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(8), decimal_places: 4, maximum: 9999999, settings: this.qty).Get(out this.col_qty)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(9), iseditingreadonly: true, decimal_places: 4, minimum: -9999999999, settings: this.price)
