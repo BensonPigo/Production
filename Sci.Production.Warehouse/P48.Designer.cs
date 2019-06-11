@@ -32,6 +32,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtdropdownlistFabricType = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.labCategory = new Sci.Win.UI.Label();
             this.txtSPNo2 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -50,8 +52,8 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtdropdownlistFabricType = new Sci.Production.Class.comboDropDownList(this.components);
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -95,6 +97,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtfactory);
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtdropdownlistFabricType);
             this.groupBox1.Controls.Add(this.comboCategory);
             this.groupBox1.Controls.Add(this.labCategory);
@@ -114,6 +118,32 @@
             this.groupBox1.Size = new System.Drawing.Size(953, 89);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
+            // 
+            // txtdropdownlistFabricType
+            // 
+            this.txtdropdownlistFabricType.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlistFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlistFabricType.FormattingEnabled = true;
+            this.txtdropdownlistFabricType.IsSupportUnselect = true;
+            this.txtdropdownlistFabricType.Location = new System.Drawing.Point(675, 20);
+            this.txtdropdownlistFabricType.Name = "txtdropdownlistFabricType";
+            this.txtdropdownlistFabricType.OldText = "";
+            this.txtdropdownlistFabricType.Size = new System.Drawing.Size(143, 24);
+            this.txtdropdownlistFabricType.TabIndex = 3;
+            this.txtdropdownlistFabricType.Type = "FabricType_Condition";
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(675, 50);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
+            this.comboCategory.Size = new System.Drawing.Size(143, 24);
+            this.comboCategory.TabIndex = 5;
+            this.comboCategory.Type = "Pms_MtlCategory";
             // 
             // labCategory
             // 
@@ -293,31 +323,26 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
-            // comboCategory
+            // label2
             // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(675, 50);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(143, 24);
-            this.comboCategory.TabIndex = 5;
-            this.comboCategory.Type = "Pms_MtlCategory";
+            this.label2.Location = new System.Drawing.Point(359, 51);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(69, 23);
+            this.label2.TabIndex = 112;
+            this.label2.Text = "Factory";
             // 
-            // txtdropdownlistFabricType
+            // txtfactory
             // 
-            this.txtdropdownlistFabricType.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlistFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlistFabricType.FormattingEnabled = true;
-            this.txtdropdownlistFabricType.IsSupportUnselect = true;
-            this.txtdropdownlistFabricType.Location = new System.Drawing.Point(675, 20);
-            this.txtdropdownlistFabricType.Name = "txtdropdownlistFabricType";
-            this.txtdropdownlistFabricType.OldText = "";
-            this.txtdropdownlistFabricType.Size = new System.Drawing.Size(143, 24);
-            this.txtdropdownlistFabricType.TabIndex = 3;
-            this.txtdropdownlistFabricType.Type = "FabricType_Condition";
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(431, 51);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 113;
             // 
             // P48
             // 
@@ -367,5 +392,7 @@
         private Win.UI.Label labCategory;
         private Class.comboDropDownList comboCategory;
         private Class.comboDropDownList txtdropdownlistFabricType;
+        private Class.txtfactory txtfactory;
+        private Win.UI.Label label2;
     }
 }

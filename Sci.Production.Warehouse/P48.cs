@@ -31,6 +31,7 @@ namespace Sci.Production.Warehouse
             StringBuilder strSQLCmd = new StringBuilder();
             string sp1 = this.txtSPNo1.Text.TrimEnd();
             string sp2 = this.txtSPNo2.Text.TrimEnd();
+            string factory = this.txtfactory.Text.TrimEnd();
             string refno = this.txtRef.Text.TrimEnd();
             string location = this.txtLocation.Text.TrimEnd();
             string fabrictype = txtdropdownlistFabricType.SelectedValue.ToString();
@@ -73,6 +74,8 @@ select  0 as selected
 										when 'M' then 'Material'
 										when 'S' then 'Sample'
 										when 'T' then 'SMTL' end
+		,o.OrderTypeID
+		,o.BrandID
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'O'
 inner join dbo.factory f WITH (NOLOCK) on a.FactoryID=f.id
@@ -98,6 +101,11 @@ Where   c.lock = 0
                 {
                     strSQLCmd.Append(string.Format(@" 
         and a.refno = '{0}' ", refno));
+                }
+
+                if (!MyUtility.Check.Empty(factory))
+                {
+                    strSQLCmd.Append($"AND o.FtyGroup='{factory}'");
                 }
 
                 if (!MyUtility.Check.Empty(location))
@@ -250,6 +258,8 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6))
+                .Text("OrderTypeID", header: "Order Type", iseditingreadonly: true, width: Widths.AnsiChars(13))
+                .Text("BrandID", header: "Brand", iseditingreadonly: true, width: Widths.AnsiChars(7))
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20))
