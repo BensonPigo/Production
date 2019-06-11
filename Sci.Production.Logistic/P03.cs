@@ -293,7 +293,7 @@ TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo'
 ,0 as rn
 ,0 as rn1
 , c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark, b.TransferCFADate ,b.CFAReturnClogDate  ,b.CustCTN
-,[FtyGroup]=a.FactoryID ,b.FtyReqReturnDate
+,[FtyGroup]=a.FactoryID ,b.FtyReqReturnDate,b.SCICtnNo
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -339,6 +339,7 @@ pd.OrderID
 ,pd.ClogLocationId,p.MDivisionID
 ,pd.TransferCFADate ,pd.CFAReturnClogDate 
 ,p.FactoryID
+,pd.SCICtnNo
 from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0",
                                     dr["PackingListID"].ToString(),
@@ -372,6 +373,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromC
                                     }
 
                                     dr["OrderID"] = seekData["OrderID"];
+                                    dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["ClogLocationId"] = seekData["ClogLocationId"];
                                     dr["ReceiveDate"] = seekData["ReceiveDate"];
                                     dr["TransferCFADate"] = seekData["TransferCFADate"];
@@ -404,7 +406,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromC
                                     dr["CustCTN"] = sl[1];
                                     sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
-,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID
+,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID,pd.SCICtnNo
 from PackingList_Detail pd WITH (NOLOCK)  
 inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0";
@@ -439,6 +441,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         string packinglistid = seekData["id"].ToString().Trim();
                                         string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                         dr["OrderID"] = seekData["OrderID"];
+                                        dr["SCICtnNo"] = seekData["SCICtnNo"];
                                         dr["ClogLocationId"] = seekData["ClogLocationId"];
                                         dr["ReceiveDate"] = seekData["ReceiveDate"];
                                         dr["TransferCFADate"] = seekData["TransferCFADate"];
@@ -486,7 +489,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                 dr["CustCTN"] = sl[1];
                                 string sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
-,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID
+,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID,pd.SCICtnNo
 from PackingList_Detail pd WITH (NOLOCK)  
 inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0";
@@ -521,6 +524,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     string packinglistid = seekData["id"].ToString().Trim();
                                     string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                     dr["OrderID"] = seekData["OrderID"];
+                                    dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["ClogLocationId"] = seekData["ClogLocationId"];
                                     dr["ReceiveDate"] = seekData["ReceiveDate"];
                                     dr["TransferCFADate"] = seekData["TransferCFADate"];
