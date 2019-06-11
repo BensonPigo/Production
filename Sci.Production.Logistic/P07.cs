@@ -188,7 +188,7 @@ order by p2.ID,p2.CTNStartNo";
                 string selectCommand = @"
 Select distinct '' as CFANeedInsp, 1 as selected, b.Id, b.OrderID, b.CTNStartNo,
 c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias,
-c.BuyerDelivery , b.ClogLocationId , b.remark, b.CustCTN
+c.BuyerDelivery , b.ClogLocationId , b.remark, b.CustCTN,b.SCICtnNo
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) 
 , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                 DataTable selectDataTable;
@@ -241,6 +241,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.ClogLocationId
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -275,6 +276,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["ID"] = seekData["ID"].ToString().Trim();
                                     dr["CTNStartNo"] = seekData["CTNStartNo"];
                                     dr["OrderID"] = seekData["OrderID"];
+                                    dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["CustPONo"] = seekData["CustPONo"];
                                     dr["StyleID"] = seekData["StyleID"];
                                     dr["SeasonID"] = seekData["SeasonID"];
@@ -303,6 +305,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.ClogLocationId
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -336,6 +339,7 @@ order by p2.ID,p2.CTNStartNo
                                         dr["ID"] = seekData["ID"].ToString().Trim();
                                         dr["CTNStartNo"] = seekData["CTNStartNo"];
                                         dr["OrderID"] = seekData["OrderID"];
+                                        dr["SCICtnNo"] = seekData["SCICtnNo"];
                                         dr["CustPONo"] = seekData["CustPONo"];
                                         dr["StyleID"] = seekData["StyleID"];
                                         dr["SeasonID"] = seekData["SeasonID"];
@@ -370,6 +374,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.ClogLocationId
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -403,6 +408,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["ID"] = seekData["ID"].ToString().Trim();
                                     dr["CTNStartNo"] = seekData["CTNStartNo"];
                                     dr["OrderID"] = seekData["OrderID"];
+                                    dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["CustPONo"] = seekData["CustPONo"];
                                     dr["StyleID"] = seekData["StyleID"];
                                     dr["SeasonID"] = seekData["SeasonID"];
