@@ -45,6 +45,24 @@ BEGIN
 	SET @NNW = (select isnull(NNW,0) from #Chk_CBM_GW)
 	SET @CBM = (select isnull(CBM,0) from #Chk_CBM_GW)
 
+	--判斷是否存在Order_Qty
+	IF EXISTS(
+		select a.id, a.Article, a.SizeCode
+		from order_qty a
+		inner join 
+		(
+			select OrderID
+			from PackingList_Detail
+			where id = @ID
+			group by OrderID
+		) c on a.ID = c.OrderID
+		left join PackingList_Detail b on a.ID = b.OrderID and a.Article = b.Article and a.SizeCode = b.SizeCode
+		where b.ID is null
+	)
+	BEGIN
+		SET @msg += N'There is no [ColorWay] and [Size] in SP#.'			
+	END
+
 	-- 表身重新計算後,再判斷CBM or GW 是不是0
 	IF NOT EXISTS(SELECT * FROM #Chk_CBM_GW where cbm >0 and GW > 0)
 	BEGIN
