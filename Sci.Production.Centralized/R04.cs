@@ -87,8 +87,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
 	,OrderBrandID = case 
 		when o.BrandID != 'SUBCON-I' then o.BrandID
 		when Order2.BrandID is not null then Order2.BrandID
-		when Order2.BrandID is null then (select top 1 BrandID from Style where id=o.StyleID 
-				and SeasonID=o.SeasonID and BrandID!='SUBCON-I')
+		when StyleBrand.BrandID is not null then StyleBrand.BrandID
 		else o.BrandID end  
     ,OrderCdCodeID = isnull(o.CdCodeID,'')
 	,OrderProgram = isnull(o.ProgramID,'')  ,OrderCPU = isnull(o.CPU,0) ,OrderCPUFactor = isnull(o.CPUFactor,0) ,OrderStyle = isnull(o.StyleID,'') ,OrderSeason = isnull(o.SeasonID,'')
@@ -127,10 +126,9 @@ outer apply
 		for xml path('')
 	),1,1,'')
 )sr
-	outer apply(
-		select BrandID from orders o1 
-		where o.CustPONo=o1.id
-	)Order2
+outer apply( select BrandID from orders o1 where o.CustPONo = o1.id) Order2
+outer apply( select top 1 BrandID from Style where id = o.StyleID 
+    and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
 where 1=1 
 and s.Shift <>'O'
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
