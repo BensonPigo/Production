@@ -103,8 +103,9 @@ SELECT
 ,I = convert(varchar(10),iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 111)
 ,J = Order_QS.ShipmodeID
 ,K = Cast(Order_QS.QTY as int)
-,L = CASE o.GMTComplete WHEN 'S' THEN IIF((SELECT DateDiff(Day,CAST( p.PulloutDate AS DATE), CAST(Order_QS.FtyKPI AS DATE))) >= 0, sum(Order_QS.Qty),0)
-                        ELSE iif(Ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(Order_QS.QTY as int)), Cast(isnull(pd.Qty,0) as int)) END
+--,L = CASE o.GMTComplete WHEN 'S' THEN IIF((SELECT DateDiff(Day,CAST( p.PulloutDate AS DATE), CAST(Order_QS.FtyKPI AS DATE))) >= 0, sum(Order_QS.Qty),0)
+--                        ELSE iif(Ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(Order_QS.QTY as int)), Cast(isnull(pd.Qty,0) as int)) END
+,L = iif(Ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(Order_QS.QTY as int)), Cast(isnull(pd.Qty,0) as int))
 ,M = CASE o.GMTComplete WHEN 'S' THEN 0
                         ELSE iif(ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(Order_QS.QTY as int), 0), Cast(isnull(pd.FailQty,Order_QS.QTY) as int)) END
 ,N = iif(ot.isDevSample = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 20))
@@ -207,7 +208,7 @@ outer apply(
 	where oq.id = o.id
 )ps
 -------End-------
-where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) AND p.PulloutDate IS NOT NULL";
+where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) ";
 
                 if (this.radioBulk.Checked)
                 {
@@ -242,10 +243,11 @@ where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Ju
                 strSQL += ",op.PulloutDate, o.GMTComplete,Order_QS.ReasonID,o.Category,o.MRHandle,o.SMR,PO.POHandle,PO.POSMR,o.OrderTypeID,ot.isDevSample,o.MDivisionID,Order_QS.QTY,r.Name,rs.Name,c.Alias" + Environment.NewLine + Environment.NewLine;
 
                 strSQL += @"select * from (
-select * from #tmp 
-union all
-select A, B, C, D, E, F, G, H, I, J, K = 0, L = 0, M = K - (L +M), N = '', O, P = 0, Q, R, S, T, U, V, W, X, Y, Z,AA,AB,AC,AD,MDivisionID
-from #tmp where (L +M) < K and I < G) as result
+    select * from #tmp 
+    --union all
+    --select A, B, C, D, E, F, G, H, I, J, K = 0, L = 0, M = K - (L +M), N = '', O, P = 0, Q, R, S, T, U, V, W, X, Y, Z,AA,AB,AC,AD,MDivisionID
+    --from #tmp where (L +M) < K and I < G
+) as result
 order by D,E,K desc
  
  drop table #tmp
