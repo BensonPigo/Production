@@ -69,9 +69,9 @@ namespace Sci.Production.Warehouse
 	,[Adjust Qty] = round(fi.AdjustQty,2)
 	,[Balance Qty] = round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2)
 	,[Location] = f.MtlLocationID
-    ,[MCHandle] =isnull(iif(dbo.getPass1(o.MCHandle) = '', dbo.getTPEPass1(o.MCHandle), dbo.getPass1(o.MCHandle)) ,'')
-	,[POHandle] =iif(dbo.getPass1(p.POHandle) = '', dbo.getTPEPass1(p.POHandle), dbo.getPass1(p.POHandle)) 
-	,[POSMR] =iif(dbo.getPass1(p.POSMR) = '', dbo.getTPEPass1(p.POSMR), dbo.getPass1(p.POSMR)) 
+    ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
+	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
+	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
     ";
 
         string sqlcolumn_sum = @"select
@@ -121,9 +121,9 @@ namespace Sci.Production.Warehouse
 	,[Scrap Qty] = round(mpd.LObQty ,2)
 	,[Bulk Location] = mpd.ALocation
 	,[Inventory Location] = mpd.BLocation
-    ,[MCHandle] =isnull(iif(dbo.getPass1(o.MCHandle) = '', dbo.getTPEPass1(o.MCHandle), dbo.getPass1(o.MCHandle)) ,'')
-	,[POHandle] =iif(dbo.getPass1(p.POHandle) = '', dbo.getTPEPass1(p.POHandle), dbo.getPass1(p.POHandle)) 
-	,[POSMR] =iif(dbo.getPass1(p.POSMR) = '', dbo.getTPEPass1(p.POSMR), dbo.getPass1(p.POSMR)) 
+    ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
+	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
+	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
     ";
 
         string sql_yyyy = @"select distinct left(CONVERT(CHAR(8),o.SciDelivery, 112),4) as SciYYYY";
