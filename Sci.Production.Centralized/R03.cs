@@ -164,8 +164,7 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 , [BrandID] = case 
 		when o.BrandID != 'SUBCON-I' then o.BrandID
 		when Order2.BrandID is not null then Order2.BrandID
-		when Order2.BrandID is null then (select top 1 BrandID from Style where id=o.StyleID 
-				and SeasonID=o.SeasonID and BrandID!='SUBCON-I')
+		when StyleBrand.BrandID is not null then StyleBrand.BrandID
 		else o.BrandID end
 , o.FactoryID
 ,o.POID , o.Category, o.CdCodeID 
@@ -188,17 +187,16 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 ,ActManPower= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
 ,c.ProductionFamilyID
 into #stmp
- from Orders o WITH (NOLOCK) 
+from Orders o WITH (NOLOCK) 
     inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
     inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID and so.Shift <> 'O'  
     inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
     inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
 	inner join Factory f WITH (NOLOCK) on o.FactoryID=f.id
     inner join Brand b WITH (NOLOCK) on o.BrandID=b.ID
-	outer apply(
-		select BrandID from orders o1 
-		where o.CustPONo=o1.id
-	)Order2
+outer apply( select BrandID from orders o1 where o.CustPONo = o1.id) Order2
+outer apply( select top 1 BrandID from Style where id = o.StyleID 
+    and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
 Where 1=1
 
 and f.IsProduceFty = '1'
