@@ -537,7 +537,7 @@ PackQty as (
 )
 select  a.*
         , b.Description
-        , oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty
+        , isnull(oqd.Qty,0)-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty
         , o.StyleID
         , o.CustPONo
         , o.SeasonID

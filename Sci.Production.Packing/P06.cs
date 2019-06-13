@@ -100,6 +100,8 @@ and pd.ID = '{this.CurrentMaintain["ID"]}'
             {
                 this.btnCartonSummary.ForeColor = Color.Black;
             }
+
+            this.Color_Change();
         }
 
         /// <summary>
@@ -403,7 +405,6 @@ order by os.Seq",
             };
 
             #endregion
-
         }
 
         /// <summary>
@@ -996,6 +997,26 @@ and p.ID = pl.PulloutID",
         {
             Sci.Production.Packing.P03_CartonSummary callNextForm = new Sci.Production.Packing.P03_CartonSummary(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
+        }
+
+        private void Color_Change()
+        {
+            if (this.detailgrid.Rows.Count > 0 || !MyUtility.Check.Empty(this.detailgrid))
+            {
+                for (int index = 0; index < this.detailgrid.Rows.Count; index++)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(index);
+                    if (this.detailgrid.Rows.Count <= index || index < 0)
+                    {
+                        return;
+                    }
+
+                    if (MyUtility.Convert.GetDecimal(dr["BalanceQty"]) < 0)
+                    {
+                        this.detailgrid.Rows[index].Cells[7].Style.BackColor = Color.Red;
+                    }
+                }
+            }
         }
     }
 }
