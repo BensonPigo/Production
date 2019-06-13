@@ -8,7 +8,7 @@ CREATE function [dbo].[GetBOFExpend]
 RETURNS @Tmp_BofExpend table ( ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOFUkey BigInt
 	 , ColorID VarChar(6), SuppColor NVarChar(Max)
 	 , OrderQty Numeric(10,4), Price Numeric(9,4), UsageQty Numeric(9,2), UsageUnit VarChar(8)
-	 , Width Numeric(4,1), SysUsageQty Numeric(9,2), QTFabricPanelCode NVarchar(100), Remark NVarchar(60), OrderList NVarchar(max), ColorDesc varchar(90)
+	 , Width Numeric(5,2), SysUsageQty Numeric(9,2), QTFabricPanelCode NVarchar(100), Remark NVarchar(60), OrderList NVarchar(max), ColorDesc varchar(90)
 	 , Special VarChar(Max)
 	 , Primary Key (ExpendUKey)
 	 , Index Idx_ID NonClustered (ID, Order_BOFUkey, ColorID) -- table index
@@ -51,7 +51,7 @@ begin
 	Declare @Price Numeric(9,4);
 	Declare @UsageQty Numeric(9,2);
 	Declare @UsageUnit Varchar(8);
-	Declare @Width Numeric(4,1);
+	Declare @Width Numeric(5,2);
 	Declare @SysUsageQty Numeric(9,2);
 	Declare @QTFabricPanelCode NVarchar(100);
 	Declare @Remark NVarchar(60);
