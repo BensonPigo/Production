@@ -676,7 +676,7 @@ namespace Sci.Production.Planning
                     this.DrawBottomLine(wks, this.sheetStart, 1);
                     this.sheetStart += 1;
 
-                    lisSumFtyNonSis.Add(ftyStart.ToString() + "," + nonSisStart.ToString());
+                    //lisSumFtyNonSis.Add(ftyStart.ToString() + "," + nonSisStart.ToString());
 
                     // Shortage
                     int shortageStart = this.sheetStart;
