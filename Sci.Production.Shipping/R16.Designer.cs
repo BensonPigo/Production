@@ -167,7 +167,7 @@
             this.comboshipmode.Location = new System.Drawing.Point(158, 296);
             this.comboshipmode.Name = "comboshipmode";
             this.comboshipmode.OldText = "";
-            this.comboshipmode.Size = new System.Drawing.Size(121, 24);
+            this.comboshipmode.Size = new System.Drawing.Size(170, 24);
             this.comboshipmode.TabIndex = 8;
             this.comboshipmode.UseFunction = null;
             // 
@@ -180,7 +180,7 @@
             this.comboCategory.Location = new System.Drawing.Point(158, 257);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(121, 24);
+            this.comboCategory.Size = new System.Drawing.Size(170, 24);
             this.comboCategory.TabIndex = 7;
             this.comboCategory.Type = "Pms_GMT_Simple";
             // 

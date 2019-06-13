@@ -68,11 +68,12 @@ select oq.BuyerDelivery
 from Orders o
 left join Order_QtyShip oq on o.ID=oq.Id
 left join Brand b on b.id=o.BrandID
-inner join (
+left join (
 	select distinct p.id,p.remark ,pd.OrderID,pd.OrderShipmodeSeq
 	from PackingList p
 	inner join PackingList_Detail pd on p.ID=pd.ID
-	where (p.INVNo ='' or p.INVNo is null)) p on p.OrderID=oq.Id and p.OrderShipmodeSeq=oq.Seq
+	where (p.INVNo ='' or p.INVNo is null)
+) p on p.OrderID=oq.Id and p.OrderShipmodeSeq=oq.Seq
 outer apply(
 	Select ShipperID 
 	from FtyShipper_Detail  
