@@ -1,4 +1,17 @@
-﻿
+﻿USE [Production]
+GO
+
+/****** Object:  StoredProcedure [dbo].[Planning_Report_R10]    Script Date: 2019/06/13 下午 03:41:40 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
 
 CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月	--3:Production status 不做
@@ -262,8 +275,12 @@ BEGIN
 	if(@ReportType = 1)
 	Begin
 	--Report1 : 每個月區間為某一整年----------------------------------------------------------------------------------------------------------------------------------
-		select CountryID,MDivisionID,FactoryID,FactorySort from #tmpFinal group by CountryID,MDivisionID,FactoryID,FactorySort
-		order by FactorySort
+		select t.CountryID,t.MDivisionID,t.FactoryID,t.FactorySort
+		from #tmpFinal t
+		INNER JOIN Factory f ON t.FactoryID=f.ID AND f.KPICode IN (SELECT ID FROm Factory WHERE MDivisionID=@M)
+		group by t.CountryID,t.MDivisionID,FactoryID,t.FactorySort
+		order by t.FactorySort
+
 
 
 		--(A)+(B)By MDivisionID
@@ -320,9 +337,11 @@ BEGIN
 		----and ( Type = 'B' and Factory.ID in (select ft.FactoryID from #tmpFactory ft))
 		--order by FactorySort
 
-		
-		select CountryID,MDivisionID,FactoryID,FactorySort from #tmpFinal group by CountryID,MDivisionID,FactoryID,FactorySort
-		order by FactorySort
+		select t.CountryID,t.MDivisionID,t.FactoryID,t.FactorySort
+		from #tmpFinal t
+		INNER JOIN Factory f ON t.FactoryID=f.ID AND f.KPICode IN (SELECT ID FROm Factory WHERE MDivisionID=@M)
+		group by t.CountryID,t.MDivisionID,FactoryID,t.FactorySort
+		order by t.FactorySort
 
 		--(K) By Factory �̲Ӫ��W�U�b��Capacity
 		select CountryID, CountryName, MDivisionID, FactoryID, OrderYYMM as Month, sum(HalfCapacity1) as Capacity1, sum(HalfCapacity2) as Capacity2
@@ -379,3 +398,6 @@ drop table #sew_FtyOrder
 		
 
 END
+GO
+
+
