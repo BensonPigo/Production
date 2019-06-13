@@ -213,8 +213,8 @@ from VNConsumption where 1=0";
                 string vnContractID = MyUtility.Convert.GetString(dr["VNContractID"]);
                 string id = MyUtility.Convert.GetString(dr["ID"]);
                 string nLCode = MyUtility.Convert.GetString(dr["NLCode"]);
-                string sCIRefno = MyUtility.Convert.GetString(dr["SCIRefno"]);
-                string refno = MyUtility.Convert.GetString(dr["Refno"]);
+                string sCIRefno = MyUtility.Convert.GetString(dr["SCIRefno"]).Replace("'", "''");
+                string refno = MyUtility.Convert.GetString(dr["Refno"]).Replace("'", "''");
                 string localItem = dr["Type"].Equals("L") ? "1" : "0";
                 string fabricBrandID = MyUtility.Convert.GetString(dr["FabricBrandID"]);
                 string fabricType = MyUtility.Convert.GetString(dr["Type"]);
@@ -295,7 +295,7 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
                 foreach (DataRow dn in dtVNConsumption_Detail_Detail.Rows)
                 {
                     // fix Data 不刪除
-                    bool isFixData = MyUtility.Check.Seek($"select 1 from VNFixedDeclareItem where Refno = '{dn["Refno"].ToString()}'");
+                    bool isFixData = MyUtility.Check.Seek($"select 1 from VNFixedDeclareItem where Refno = '{dn["Refno"].ToString().Replace("'", "''")}'");
                     if (MyUtility.Check.Empty(dn["SCIRefno"]) && isFixData)
                     {
                         continue;
@@ -312,8 +312,8 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
                         idu.Append(string.Format(
                             "delete VNConsumption_Detail_Detail where id = '{0}' and Refno ='{1}' and SCIRefno = '{2}' and NLCode = '{3}';" + Environment.NewLine,
                             dn["ID"].ToString(),
-                            dn["Refno"].ToString(),
-                            dn["SCIRefno"].ToString(),
+                            dn["Refno"].ToString().Replace("'", "''"),
+                            dn["SCIRefno"].ToString().Replace("'", "''"),
                             dn["NLCode"].ToString()));
                     }
                 }
