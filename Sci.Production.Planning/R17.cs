@@ -97,7 +97,7 @@ INTO #tmp FROM
 
 		SELECT
 		 CountryID = F.CountryID
-		,KpiGroup = F.KPICode
+		,KPICode = F.KPICode
 		,FactoryID = o.FactoryID
 		,OrderID = o.ID
 		,Seq = Order_QS.seq
@@ -243,7 +243,7 @@ and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '')
 
                 if (this.txtFactory.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND f.KpiGroup = '{0}' ", this.txtFactory.Text);
+                    strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
                 }
                 
                 strSQL += @"
@@ -252,7 +252,7 @@ and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '')
 
 		SELECT 
 		  CountryID = F.CountryID
-		 ,KpiGroup = F.KPICode
+		 ,KPICode = F.KPICode
 		,FactoryID = o.FactoryID
 		,OrderID = o.ID
 		,Seq = Order_QS.seq
@@ -389,7 +389,7 @@ and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '')
 
                 if (this.txtFactory.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND f.KpiGroup = '{0}' ", this.txtFactory.Text);
+                    strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
                 }
 
                 strSQL += $@"
@@ -399,7 +399,7 @@ and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '')
 
 SELECT t.*
 FROM #tmp t
-INNER JOIN Factory f ON t.KpiGroup=f.id
+INNER JOIN Factory f ON t.KPICode=f.id
 
 DROP TABLE #tmp
 
@@ -432,7 +432,7 @@ DROP TABLE #tmp
                 #region Fail Order List by SP
                 strSQL = @" 
 SELECT  '' AS CountryID
-, '' AS KpiGroup
+, '' AS KPICode
 , '' AS FactoryID
 , '' AS OrderID
 , '' AS Seq
@@ -509,7 +509,7 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.
 
                 if (this.txtFactory.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND f.KpiGroup = '{0}' ", this.txtFactory.Text);
+                    strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
                 }
 
                 if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtOrder_QtyShip)))
@@ -557,7 +557,7 @@ and pd.ShipQty> 0  and (o.Junk is null or o.Junk = 0)
 
                 if (this.txtFactory.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND f.KpiGroup = '{0}' ", this.txtFactory.Text);
+                    strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
                 }
 
                 if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtPullout_Detail)))
@@ -603,7 +603,7 @@ and p.ShipQty> 0  and (o.Junk is null or o.Junk = 0)
 
                 if (this.txtFactory.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND f.KpiGroup = '{0}' ", this.txtFactory.Text);
+                    strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
                 }
 
                 strSQL += " GROUP BY o.ID ";
@@ -654,7 +654,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                 if (this.txtFactory.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND f.KpiGroup = '{0}' ", this.txtFactory.Text);
+                    strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
                 }
 
                 strSQL += "  order by TH_Order.AddDate desc ";
@@ -690,16 +690,16 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     DataRow drData = this.gdtOrderDetail.Rows[intIndex];
 
                     #region Calc SDP Data
-                    int intIndex_SDP = lstSDP.IndexOf(drData["KpiGroup"].ToString() + "___" + drData["Alias"].ToString()); // A
+                    int intIndex_SDP = lstSDP.IndexOf(drData["KPICode"].ToString() + "___" + drData["Alias"].ToString()); // A
                     DataRow drSDP;
                     if (intIndex_SDP < 0)
                     {
                         drSDP = this.gdtSDP.NewRow();
-                        drSDP["Country"] = drData["KpiGroup"].ToString();
+                        drSDP["Country"] = drData["KPICode"].ToString();
                         drSDP["Factory"] = drData["Alias"].ToString(); // A
                         drSDP["MDivisionID"] = drData["MDivisionID"].ToString(); // A
                         this.gdtSDP.Rows.Add(drSDP);
-                        lstSDP.Add(drData["KpiGroup"].ToString() + "___" + drData["Alias"].ToString()); // A
+                        lstSDP.Add(drData["KPICode"].ToString() + "___" + drData["Alias"].ToString()); // A
                     }
                     else
                     {
@@ -807,7 +807,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                     strSQL = $@" 
 SELECT Alias = c.alias 
-     , KpiGroup =  f.KPICode
+     , KPICode =  f.KPICode
      , FactoryID = o.FactoryID
      , OrderID = o.ID
      , Seq = Order_QS.Seq
@@ -917,7 +917,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                 
 
                 Db_ExcelColumn.Add("A", "CountryID");
-                Db_ExcelColumn.Add("B", "KpiGroup");
+                Db_ExcelColumn.Add("B", "KPICode");
                 Db_ExcelColumn.Add("C", "FactoryID");
                 Db_ExcelColumn.Add("D", "OrderID");
                 Db_ExcelColumn.Add("E", "Seq");
@@ -950,7 +950,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
 
 
                 Db_ExcelColumn2.Add("A", "Alias");
-                Db_ExcelColumn2.Add("B", "KpiGroup");
+                Db_ExcelColumn2.Add("B", "KPICode");
                 Db_ExcelColumn2.Add("C", "FactoryID");
                 Db_ExcelColumn2.Add("D", "OrderID");
                 Db_ExcelColumn2.Add("E", "Seq");
@@ -1186,7 +1186,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                                         select new
                                         {
                                             CountryID = data.Field<string>("CountryID"),
-                                            KpiGroup = data.Field<string>("KpiGroup"),
+                                            KPICode = data.Field<string>("KPICode"),
                                             FactoryID = data.Field<string>("FactoryID"),
                                             OrderID = data.Field<string>("OrderID"),
                                             Seq = data.Field<string>("Seq"),
@@ -1228,7 +1228,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                         {
                             i++;
                             objArray_1[0, 0] = dr.CountryID;
-                            objArray_1[0, 1] = dr.KpiGroup;
+                            objArray_1[0, 1] = dr.KPICode;
                             objArray_1[0, 2] = dr.FactoryID;
                             objArray_1[0, 3] = dr.OrderID;
                             objArray_1[0, 4] = dr.Seq;
