@@ -403,7 +403,7 @@ where s.junk=1
 --05. 轉出區間 [Production].[dbo]. [ClogReturn].AddDate=今天
 MERGE ClogReturn AS T
 USING(
-	SELECT distinct c.ID,pd.SCICtnNo,c.ReturnDate,c.OrderID,c.PackingListID
+	SELECT distinct c.ID,c.SCICtnNo,c.ReturnDate,c.OrderID,c.PackingListID
 	,[CustCTN] = iif(pd.CustCTN ='' or pd.CustCTN is null,pd.SCICtnNo,pd.CustCTN)
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
