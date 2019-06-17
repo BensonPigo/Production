@@ -2329,6 +2329,31 @@ END";
                     MyUtility.Msg.WarningBox("Fab_Panel Code cannot be empty.");
                     return false;
                 }
+                else if (MyUtility.Check.Empty(item["CutRef"].ToString()) && !MyUtility.Check.Empty(item["CutNo"].ToString())) //尚未設定 CutRef# 且 Cut# 不為空
+                {
+
+                    this.detailgrid.SelectRowTo(index);
+
+                    //與該筆相同 FabricCombo、Cut# 的資料
+                    List<DataRow> SameDatas = DetailDatas.Where(o => 
+                                                                    o["CutRef"].ToString() == string.Empty
+                                                                    && o["CutNo"].ToString() == item["CutNo"].ToString()
+                                                                    && o["FabricCombo"].ToString() == item["FabricCombo"].ToString() 
+                                                                    && o["Ukey"].ToString() != item["Ukey"].ToString()).ToList();
+
+                    if (SameDatas.Count > 0)
+                    {
+                        foreach (var SigngleData in SameDatas)
+                        {
+                            // Mark Name 與 Marker No 需完全一致
+                            if (SigngleData["MarkerName"].ToString() != item["MarkerName"].ToString() || SigngleData["MarkerNo"].ToString() != item["MarkerNo"].ToString())
+                            {
+                                MyUtility.Msg.WarningBox("In the same fabric combo, different 'Marker Name' and 'Marker No' cannot cut in one time which means cannot set the same cut#.");
+                                return false;
+                            }
+                        }
+                    }
+                }
                 index++;
             }
 

@@ -195,7 +195,7 @@ group by s.scOutputDate,s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.Orde
 --↑計算累計天數
 select t.*,IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,
 f.Type as FtyType,f.CountryID as FtyCountry
-,CumulateDate=c.cumulate
+,CumulateDate = isnull(c.cumulate,1)
 into #tmp1stFilter
 from #tmpSewingGroup t
 left join #cl c on c.style = IIF(t.Category <> 'M',OrderStyle,MockupStyle) and c.SewingLineID = t.SewingLineID and c.FactoryID = t.FactoryID 
