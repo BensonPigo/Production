@@ -59,17 +59,17 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(471, 12);
-            this.print.TabIndex = 6;
+            this.print.TabIndex = 12;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(471, 48);
-            this.toexcel.TabIndex = 7;
+            this.toexcel.TabIndex = 13;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(471, 84);
-            this.close.TabIndex = 8;
+            this.close.TabIndex = 14;
             // 
             // labelCutRefNo
             // 
@@ -140,7 +140,7 @@
             this.dateBundleCDate.Location = new System.Drawing.Point(162, 106);
             this.dateBundleCDate.Name = "dateBundleCDate";
             this.dateBundleCDate.Size = new System.Drawing.Size(280, 23);
-            this.dateBundleCDate.TabIndex = 3;
+            this.dateBundleCDate.TabIndex = 4;
             // 
             // comboM
             // 
@@ -152,7 +152,7 @@
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(121, 24);
-            this.comboM.TabIndex = 5;
+            this.comboM.TabIndex = 9;
             // 
             // label6
             // 
@@ -217,7 +217,7 @@
             this.dateBundleScanDate.Location = new System.Drawing.Point(162, 135);
             this.dateBundleScanDate.Name = "dateBundleScanDate";
             this.dateBundleScanDate.Size = new System.Drawing.Size(280, 23);
-            this.dateBundleScanDate.TabIndex = 110;
+            this.dateBundleScanDate.TabIndex = 5;
             // 
             // lbEstCuttingDate
             // 
@@ -247,7 +247,7 @@
             this.dateEstCutDate.Location = new System.Drawing.Point(162, 77);
             this.dateEstCutDate.Name = "dateEstCutDate";
             this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateEstCutDate.TabIndex = 112;
+            this.dateEstCutDate.TabIndex = 3;
             // 
             // label1
             // 
@@ -277,7 +277,7 @@
             this.dateBDelivery.Location = new System.Drawing.Point(162, 164);
             this.dateBDelivery.Name = "dateBDelivery";
             this.dateBDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateBDelivery.TabIndex = 116;
+            this.dateBDelivery.TabIndex = 6;
             // 
             // label2
             // 
@@ -306,7 +306,7 @@
             this.comboRFIDProcessLocation.Name = "comboRFIDProcessLocation";
             this.comboRFIDProcessLocation.OldText = "";
             this.comboRFIDProcessLocation.Size = new System.Drawing.Size(121, 24);
-            this.comboRFIDProcessLocation.TabIndex = 114;
+            this.comboRFIDProcessLocation.TabIndex = 11;
             // 
             // txtsubprocess
             // 
@@ -318,7 +318,7 @@
             this.txtsubprocess.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtsubprocess.ReadOnly = true;
             this.txtsubprocess.Size = new System.Drawing.Size(280, 23);
-            this.txtsubprocess.TabIndex = 108;
+            this.txtsubprocess.TabIndex = 8;
             // 
             // comboFactory
             // 
@@ -332,7 +332,7 @@
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 107;
+            this.comboFactory.TabIndex = 10;
             // 
             // dateSewInLine
             // 
@@ -354,7 +354,7 @@
             this.dateSewInLine.Location = new System.Drawing.Point(162, 193);
             this.dateSewInLine.Name = "dateSewInLine";
             this.dateSewInLine.Size = new System.Drawing.Size(280, 23);
-            this.dateSewInLine.TabIndex = 119;
+            this.dateSewInLine.TabIndex = 7;
             // 
             // R41
             // 
