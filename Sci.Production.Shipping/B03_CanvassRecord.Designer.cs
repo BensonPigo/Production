@@ -142,7 +142,7 @@
             // 
             this.numPrice4.BackColor = System.Drawing.Color.White;
             this.numPrice4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "price4", true));
-            this.numPrice4.DecimalPlaces = 4;
+            this.numPrice4.DecimalPlaces = 5;
             this.numPrice4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numPrice4.Location = new System.Drawing.Point(425, 137);
             this.numPrice4.Maximum = new decimal(new int[] {
@@ -174,7 +174,7 @@
             // 
             this.numPrice3.BackColor = System.Drawing.Color.White;
             this.numPrice3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "price3", true));
-            this.numPrice3.DecimalPlaces = 4;
+            this.numPrice3.DecimalPlaces = 5;
             this.numPrice3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numPrice3.Location = new System.Drawing.Point(425, 107);
             this.numPrice3.Maximum = new decimal(new int[] {
@@ -206,7 +206,7 @@
             // 
             this.numPrice2.BackColor = System.Drawing.Color.White;
             this.numPrice2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "price2", true));
-            this.numPrice2.DecimalPlaces = 4;
+            this.numPrice2.DecimalPlaces = 5;
             this.numPrice2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numPrice2.Location = new System.Drawing.Point(425, 78);
             this.numPrice2.Maximum = new decimal(new int[] {
@@ -238,7 +238,7 @@
             // 
             this.numPrice1.BackColor = System.Drawing.Color.White;
             this.numPrice1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "price1", true));
-            this.numPrice1.DecimalPlaces = 4;
+            this.numPrice1.DecimalPlaces = 5;
             this.numPrice1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numPrice1.Location = new System.Drawing.Point(425, 47);
             this.numPrice1.Maximum = new decimal(new int[] {
@@ -543,6 +543,7 @@
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
             this.Name = "B03_CanvassRecord";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "Canvass record";
             this.WorkAlias = "ShipExpense_CanVass";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
