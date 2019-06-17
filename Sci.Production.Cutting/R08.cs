@@ -313,7 +313,7 @@ outer apply(
 		select distinct concat(',',wd.SizeCode)
 		from WorkOrder w2 with(nolock)
 		inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
-		where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
+		where wd.WorkOrderUkey=t.Ukey
 		For XML path('')
 	),1,1,'')
 )size
@@ -324,7 +324,7 @@ outer apply
 		Select concat(', ' , wd.sizecode, '/ ', wd.qty)
 		From WorkOrder w2 with(nolock)
 		inner join WorkOrder_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderUkey = w2.Ukey
-		Where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
+		where wd.WorkOrderUkey=t.Ukey
 		For XML path('')
 	),1,1,'')
 )SizeCode
