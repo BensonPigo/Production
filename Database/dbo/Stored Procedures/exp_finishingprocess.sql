@@ -422,7 +422,7 @@ VALUES(s.id, s.SCICtnNo, s.ReturnDate, s.OrderID, s.PackingListID, s.CustCTN,
 --06. 轉出區間 [Production].[dbo].[TransferToCFA].AddDate =今天
 MERGE TransferToCFA AS T
 USING(
-	SELECT distinct t.ID, pd.SCICtnNo, t.TransferDate, t.OrderID, t.PackingListID
+	SELECT distinct t.ID, t.SCICtnNo, t.TransferDate, t.OrderID, t.PackingListID
 	,[CustCTN] = iif(pd.CustCTN ='' or pd.CustCTN is null,pd.SCICtnNo,pd.CustCTN)
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
