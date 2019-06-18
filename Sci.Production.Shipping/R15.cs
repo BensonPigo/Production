@@ -114,7 +114,7 @@ where 1=1");
 
             if (!this.dateApproveDate.Value1.Empty() && !this.dateApproveDate.Value2.Empty())
             {
-                sqlcmd.Append($@" and CONVERT(date,sc.EditDate) between '{Convert.ToDateTime(this.dateApproveDate1).ToString("d")}' and '{Convert.ToDateTime(this.dateApproveDate2).ToString("d")}'");
+                sqlcmd.Append($@" and CONVERT(date,sc.EditDate) between '{Convert.ToDateTime(this.dateApproveDate1).ToString("d")}' and '{Convert.ToDateTime(this.dateApproveDate2).ToString("d")}' and sc.Status='Confirmed'");
             }
 
             if (!MyUtility.Check.Empty(this.strBrand))
@@ -132,6 +132,7 @@ where 1=1");
                 sqlcmd.Append(" and s.junk = 0");
             }
 
+            sqlcmd.Append(" order by sc.ID, sc.AddDate");
             #endregion
             DualResult result;
             if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd.ToString(), out this.dtPrintTable)))
