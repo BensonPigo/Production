@@ -496,7 +496,8 @@ order by os.Seq", dr["OrderID"].ToString(),
                 }
                 #endregion
             };
-            Color_Change();
+
+            this.Color_Change();
         }
 
         // 清空Order相關欄位值
@@ -1421,6 +1422,11 @@ where InvA.OrderID = '{0}'
                     else
                     {
                         this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.White;
+                    }
+
+                    if (MyUtility.Convert.GetDecimal(dr["BalanceQty"]) < 0)
+                    {
+                        this.detailgrid.Rows[index].Cells[15].Style.BackColor = Color.Red;
                     }
                 }
             }

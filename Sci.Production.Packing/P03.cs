@@ -909,7 +909,7 @@ order by os.Seq",
                 #endregion
             };
 
-            Color_Change();
+            this.Color_Change();
         }
 
         /// <summary>
@@ -2043,6 +2043,11 @@ inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
                     else
                     {
                         this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.White;
+                    }
+
+                    if (MyUtility.Convert.GetDecimal(dr["BalanceQty"]) < 0)
+                    {
+                        this.detailgrid.Rows[index].Cells[16].Style.BackColor = Color.Red;
                     }
                 }
             }
