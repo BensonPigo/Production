@@ -235,6 +235,7 @@ Select
 	,b.Item
 	,bio.PanelNo
 	,bio.CutCellID
+	,[SpreadingNo] = iif(wk.SpreadingNo='','', substring(wk.SpreadingNo,0,len(wk.SpreadingNo)))
 into #result
 from Bundle b WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
@@ -274,6 +275,16 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = o.POID FOR XML PATH('')),1,1,'')  
                     else '' end
 ) PoSuppFromPOID
+outer apply(
+	 select SpreadingNo = stuff((
+		    Select distinct concat(wo.SpreadingNoID,',')
+		    from WorkOrder wo WITH (NOLOCK) 
+		    where   wo.CutRef = b.CutRef 
+                    and wo.ID = b.POID
+                    and wo.MDivisionID = b.MDivisionID
+		    for xml path('')
+	    ),1,1,'')
+)wk
 ";
             if (sqlWhereWorkOrder.Length > 0)
             {
@@ -292,7 +303,7 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 			[EstCutDate] = MAX(w.EstCutDate),
 			[CuttingOutputDate] = MAX(co.cDate)
 	from #result r
-	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.MDivisionId = r.M
+	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.MDivisionId = r.M and w.id = r.[Master SP#]
 	left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
 	left join CuttingOutput co  with (nolock) on co.ID = cod.ID
     where r.[Cut Ref#] <> ''
@@ -353,6 +364,7 @@ select
 	,r.Item
 	,r.PanelNo
 	,r.CutCellID
+    ,r.SpreadingNo
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
