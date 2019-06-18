@@ -284,7 +284,7 @@ outer apply (
         where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= oa.PatternCode
 ) IssueQty
 where f.IsProduceFty=1
-and o.PulloutComplete = 0
+--and o.PulloutComplete = 0
 and o.category  in ('B','S')
 and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and sao.LocalSuppId = '{2}' and o.Junk=0
 and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))
@@ -341,7 +341,7 @@ outer apply (
 where   1=1 
 and f.IsProduceFty=1
 and o.category  in ('B','S')
-and o.PulloutComplete = 0
+--and o.PulloutComplete = 0
 ";
 
             strSQLCmd += string.Format(" and o.MDivisionID='{0}' and ot.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
