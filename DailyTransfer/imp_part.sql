@@ -483,6 +483,24 @@ update t
 		insert	(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty)
 			values(s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty);
 
+------------------PartPO_Detail_TPEAP----------------------
+	Merge	Machine.[dbo].[PartPO_Detail_TPEAP] as t
+	using	(select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty) 
+				from Machine.[dbo].[PartPO_Detail] a
+				inner join Trade_To_PMS.dbo.MmsAP b on a.ID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
+				group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price
+				) as s
+	on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
+	when matched then 
+		update	set	t.TPEPOID = s.TPEPOID,
+					t.APDATE = s.APDATE,
+					t.VoucherID = s.VoucherID,
+					t.Price = s.Price,
+					t.Qty = s.Qty
+	when not matched by target then
+		insert	(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty)
+			values(s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty);
+
 	--------------Partunit-------------------------------
 		Merge [Machine].[dbo].[MMSUnit] as t
 	using [Trade_To_Pms].[dbo].[MmsUnit] as s
