@@ -157,13 +157,14 @@ outer apply(
 )s
 outer apply(
 	select combo = Stuff((
-	select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
-	from(
-		select distinct pp.SizeCode,pp.QtyPerCTN
-		from PackingList_Detail pp
-		where pp.ID=pd.ID and pp.CTNStartNo=pd.CTNStartNo
-	)s
-	for xml path('')
+	    select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
+	    from(
+		    select distinct pp.SizeCode,pp.QtyPerCTN
+		    from PackingList_Detail pp
+		    where pp.ID=pd.ID and pp.CTNStartNo=pd.CTNStartNo
+            and pp.CTNQty > 0
+	    )s
+	    for xml path('')
 	),1,1,'')
 ) SizeCombo
 where pd.CTNQty > 0
@@ -197,13 +198,14 @@ inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
 outer apply(
 	select combo = Stuff((
-	select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
-	from(
-		select distinct pd.SizeCode,pd.QtyPerCTN
-		from PackingList_Detail pd1
-		where pd1.ID=pd.ID and pd1.CTNStartNo=pd.CTNStartNo
-	)s
-	for xml path('')
+	    select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
+	    from(
+		    select distinct pd1.SizeCode,pd1.QtyPerCTN
+		    from PackingList_Detail pd1
+		    where pd1.ID=pd.ID and pd1.CTNStartNo=pd.CTNStartNo
+            and pd1.CTNQty > 0
+	    )s
+	    for xml path('')
 	),1,1,'')
 ) SizeCombo
 where pd.CTNQty > 0
