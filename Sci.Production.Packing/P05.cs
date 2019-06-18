@@ -1028,13 +1028,6 @@ where oqd.Id = '{0}'
         {
             base.ClickConfirm();
 
-            // Pull-out date不可為空
-            if (MyUtility.Check.Empty(this.CurrentMaintain["PulloutDate"]))
-            {
-                MyUtility.Msg.WarningBox("Pull-out date can't empty!!");
-                return;
-            }
-
             // 檢查累計Pullout數不可超過訂單數量
             if (!Prgs.CheckPulloutQtyWithOrderQty(this.CurrentMaintain["ID"].ToString()))
             {
