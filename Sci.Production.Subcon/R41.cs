@@ -279,7 +279,9 @@ outer apply(
 	 select SpreadingNo = stuff((
 		    Select distinct concat(wo.SpreadingNoID,',')
 		    from WorkOrder wo WITH (NOLOCK) 
-		    where wo.CutRef=b.CutRef and wo.ID=b.POID
+		    where   wo.CutRef = b.CutRef 
+                    and wo.ID = b.POID
+                    and wo.MDivisionID = b.MDivisionID
 		    for xml path('')
 	    ),1,1,'')
 )wk
