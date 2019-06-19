@@ -133,7 +133,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(102, 23);
             this.label6.TabIndex = 15;
-            this.label6.Text = "FromLeft";
+            this.label6.Text = "From Left";
             // 
             // label7
             // 
@@ -141,7 +141,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(102, 23);
             this.label7.TabIndex = 16;
-            this.label7.Text = "FromTop";
+            this.label7.Text = "From Top";
             // 
             // label8
             // 
