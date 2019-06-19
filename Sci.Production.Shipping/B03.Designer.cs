@@ -195,7 +195,7 @@
             // 
             this.numPrice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numPrice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Price", true));
-            this.numPrice.DecimalPlaces = 4;
+            this.numPrice.DecimalPlaces = 5;
             this.numPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numPrice.IsSupportEditMode = false;
             this.numPrice.Location = new System.Drawing.Point(161, 222);
