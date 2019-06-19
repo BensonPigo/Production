@@ -91,8 +91,8 @@ select
 	o.FOCQty,
 	ChargeablePulloutQty = isnull(c.value,0),
 	FOCPulloutQty = isnull(c.value2,0),
-	FinishedFOCStockinQty =oxx.FOCQty,
-	CurrentFOCStock= oxx.FOCQty - c2.value
+	FinishedFOCStockinQty =isnull(oxx.FOCQty,0),
+	CurrentFOCStock= isnull(oxx.FOCQty,0) - isnull(c2.value,0)
 	
 from orders o with(nolock)
 outer apply(
