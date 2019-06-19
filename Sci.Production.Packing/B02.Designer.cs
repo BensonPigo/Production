@@ -56,6 +56,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(716, 293);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayFileName);
@@ -78,6 +82,12 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(716, 255);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 255);
+            this.detailbtm.Size = new System.Drawing.Size(716, 38);
             // 
             // browse
             // 
@@ -166,7 +176,7 @@
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand1.Location = new System.Drawing.Point(138, 33);
             this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.Size = new System.Drawing.Size(125, 23);
             this.txtbrand1.TabIndex = 9;
             // 
             // txtcustcd1
