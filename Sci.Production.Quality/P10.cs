@@ -313,8 +313,9 @@ where sd.id='{0}' order by sd.No
                 CurrentDetailData["ReportNo"] = tmpId;
                 ReportNoCount++;
 
-            }
-
+            } 
+            CurrentDetailData["Result"] = "";
+            CurrentDetailData["Remark"] = "";
         }
 
         protected override bool ClickSaveBefore()
