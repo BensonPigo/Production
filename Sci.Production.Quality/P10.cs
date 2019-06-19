@@ -173,8 +173,8 @@ where sd.id='{0}' order by sd.No
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
 
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
-            ResultCombo.Add("P", "Pass");
-            ResultCombo.Add("F", "Fail");
+            ResultCombo.Add("Pass", "Pass");
+            ResultCombo.Add("Fail", "Fail");
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
