@@ -173,8 +173,8 @@ where sd.id='{0}' order by sd.No
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
 
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
-            ResultCombo.Add("P", "Pass");
-            ResultCombo.Add("F", "Fail");
+            ResultCombo.Add("Pass", "Pass");
+            ResultCombo.Add("Fail", "Fail");
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
@@ -313,8 +313,9 @@ where sd.id='{0}' order by sd.No
                 CurrentDetailData["ReportNo"] = tmpId;
                 ReportNoCount++;
 
-            }
-
+            } 
+            CurrentDetailData["Result"] = "";
+            CurrentDetailData["Remark"] = "";
         }
 
         protected override bool ClickSaveBefore()
@@ -517,17 +518,16 @@ values (@ID,@NO,'Appearance of garment after wash',9)
                 if (dt.Select(where).Count()>0)
                 {
                     DataRow DetailRow = dt.Select(where)[0];
-
-                    if (DetailRow["Result"].ToString()=="Fail")
-                        DetailRow["Result"] = "F";
-
-                    if (DetailRow["Result"].ToString() == "Pass")
-                        DetailRow["Result"] = "P";
-
                     CurrentMaintain["Result"] = DetailRow["Result"];
                     CurrentMaintain["Inspdate"] = DetailRow["Inspdate"];
                     CurrentMaintain["Remark"] = DetailRow["remark"];
+                }
 
+                if (string.IsNullOrEmpty(CurrentMaintain["AddDate"].ToString()) && dt.Select("NO='1'").Count() > 0)
+                {
+                    DataRow DetailRow = dt.Select(where)[0];
+                    CurrentMaintain["AddDate"] = DetailRow["AddDate"];
+                    CurrentMaintain["AddName"] = DetailRow["AddName"];
                 }
             }
             else

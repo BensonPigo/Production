@@ -5,16 +5,16 @@
     [StyleID] VARCHAR(15) NOT NULL, 
     [SeasonID] VARCHAR(10) NOT NULL, 
     [Article] VARCHAR(8) NOT NULL, 
-	[Result] VARCHAR(5) CONSTRAINT [DF_SampleGarmentTest_Result] DEFAULT ('') NULL, 
+	[Result] VARCHAR(5) CONSTRAINT [DF_SampleGarmentTest_Result] DEFAULT ('') NOT NULL, 
     [ReceivedDate] DATETIME NULL, 
     [ReleasedDate] DATETIME NULL, 
     [Deadline] DATETIME NULL, 
     [InspDate] DATE NULL, 
-    [Remark] NVARCHAR(MAX) CONSTRAINT [DF_SampleGarmentTest_Remark] DEFAULT ('') NULL, 
+    [Remark] NVARCHAR(MAX) CONSTRAINT [DF_SampleGarmentTest_Remark] DEFAULT ('') NOT NULL, 
     [EditDate] DATETIME NULL, 
-    [EditName] VARCHAR(10) CONSTRAINT [DF_SampleGarmentTest_EditName] DEFAULT ('') NULL,  
+    [EditName] VARCHAR(10) CONSTRAINT [DF_SampleGarmentTest_EditName] DEFAULT ('') NOT NULL,  
     [AddDate] DATETIME NULL, 
-    [AddName] VARCHAR(10) CONSTRAINT [DF_SampleGarmentTest_AddName] DEFAULT ('') NULL, 
+    [AddName] VARCHAR(10) CONSTRAINT [DF_SampleGarmentTest_AddName] DEFAULT ('') NOT NULL, 
 	CONSTRAINT [PK_SampleGarmentTest] PRIMARY KEY CLUSTERED ([BrandID],[StyleID],[SeasonID],[Article] ASC)
 )
 
