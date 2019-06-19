@@ -24,6 +24,8 @@ namespace Sci.Production.Warehouse
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
+	,[OrderType] = o.OrderTypeID
+	,[WeaveType] = d.WeaveTypeID
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
@@ -67,12 +69,17 @@ namespace Sci.Production.Warehouse
 	,[Adjust Qty] = round(fi.AdjustQty,2)
 	,[Balance Qty] = round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2)
 	,[Location] = f.MtlLocationID
+    ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
+	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
+	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
     ";
 
         string sqlcolumn_sum = @"select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
+	,[OrderType] = o.OrderTypeID
+	,[WeaveType] = d.WeaveTypeID
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
@@ -114,6 +121,9 @@ namespace Sci.Production.Warehouse
 	,[Scrap Qty] = round(mpd.LObQty ,2)
 	,[Bulk Location] = mpd.ALocation
 	,[Inventory Location] = mpd.BLocation
+    ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
+	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
+	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
     ";
 
         string sql_yyyy = @"select distinct left(CONVERT(CHAR(8),o.SciDelivery, 112),4) as SciYYYY";
@@ -198,7 +208,8 @@ namespace Sci.Production.Warehouse
                 #region 主要sql Detail
                 sqlcmd.Append(@" 
 from Orders o with (nolock)
-inner join PO_Supp_Detail psd with (nolock) on psd.id = o.id
+inner join PO p with (nolock) on o.id = p.id
+inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 outer apply
 (
@@ -212,7 +223,7 @@ outer apply
 )f
 outer apply
 (
-	select Description 
+	select Description ,WeaveTypeID
 	from Fabric f with (nolock)
 	where f.SCIRefno = psd.SCIRefno
 )d
@@ -225,11 +236,12 @@ where 1=1
                 #region 主要sql summary
                 sqlcmd.Append(@"
 from Orders o with (nolock)
-inner join PO_Supp_Detail psd with (nolock) on psd.id = o.id
+inner join PO p with (nolock) on o.id = p.id
+inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
 left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
 outer apply
 (
-	select Description 
+	select Description ,WeaveTypeID
 	from Fabric f with (nolock)
 	where f.SCIRefno = psd.SCIRefno
 )d
