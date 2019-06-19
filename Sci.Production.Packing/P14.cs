@@ -137,7 +137,9 @@ from (
     left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = t.SCICtnNo 
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
                                                     and oq.Seq = pd.OrderShipmodeSeq
-    where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    where t.MDivisionID = '{0}' 
+    and pd.TransferDate is not null 
+    ", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateTimePicker1.Text))
             {
