@@ -116,8 +116,8 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             //	 FROM cte a left join WorkHour b WITH (NOLOCK) on convert(date,a.inline) = b.date and a.sewinglineid = b.SewingLineID and a.FactoryID=b.FactoryID 
             //	 group by a.orderid,a.sewinglineid,a.ComboType,a.INLINE,b.Hours
             //	 having isnull(b.hours,0) > 0) tmp
-
-            DBProxy.Current.Select(null,sqlcmd,out DataTable dt);
+            DataTable dt;
+            DBProxy.Current.Select(null,sqlcmd,out dt);
             //return int.Parse(dt.Rows[0][0].ToString());
             if (dt == null || dt.Rows.Count == 0 || dt.Rows[0].Table == null || dt.Rows[0].Table.Rows.Count == 0 || dt.Rows[0][0].Empty())
             {

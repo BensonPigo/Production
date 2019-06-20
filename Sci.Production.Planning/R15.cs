@@ -55,7 +55,8 @@ namespace Sci.Production.Planning
             this.dateBuyerDelivery.Select();
             this.dateBuyerDelivery.Value1 = DateTime.Now;
             this.dateBuyerDelivery.Value2 = DateTime.Now.AddDays(30);
-            DBProxy.Current.Select(null, "select sby = 'SP#' union all select sby = 'Acticle / Size'", out DataTable dt);
+            DataTable dt;
+            DBProxy.Current.Select(null, "select sby = 'SP#' union all select sby = 'Acticle / Size'", out dt);
             MyUtility.Tool.SetupCombox(this.comboBox1, 1, dt);
             this.comboBox1.SelectedIndex = 0;
         }
@@ -134,10 +135,8 @@ namespace Sci.Production.Planning
         /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            _ = new List<System.Data.SqlClient.SqlParameter>();
-            _ = new StringBuilder();
-            StringBuilder sqlCmd;
-            IList<System.Data.SqlClient.SqlParameter> cmds;
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            StringBuilder sqlCmd = new StringBuilder();
             if (this.sbyindex == 0)
             {
                 sqlCmd = this.SummaryBySP(out cmds);
