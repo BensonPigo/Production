@@ -848,12 +848,13 @@ outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NO
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
-            sqlCmd.Append(@" ;DROP TABLE #imp_LastSewnDate,#cte,#cte2");
-            if (this.isArtwork)
-            {
-                sqlCmd.Append(@" ;drop table #rawdata_tmscost,#tmscost_pvt");
-            }
-            #endregion
+            sqlCmd.Append(@"
+declare @sql nvarchar(max)
+select @sql = isnull(@sql+';', '') + 'drop table ' + quotename(name)
+from tempdb..sysobjects
+where name like '#%'
+exec (@sql)
+");
 
             return sqlCmd;
         }
@@ -1417,11 +1418,14 @@ outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NO
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode", this.orderby));
-            sqlCmd.Append(@";drop table #imp_LastSewnDate");
-            if (this.isArtwork)
-            {
-                sqlCmd.Append(@";drop table #rawdata_tmscost,#tmscost_pvt");
-            }
+
+            sqlCmd.Append(@"
+declare @sql nvarchar(max)
+select @sql = isnull(@sql+';', '') + 'drop table ' + quotename(name)
+from tempdb..sysobjects
+where name like '#%'
+exec (@sql)
+");
             #endregion
 
             return sqlCmd;
