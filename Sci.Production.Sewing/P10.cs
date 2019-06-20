@@ -36,11 +36,17 @@ namespace Sci.Production.Sewing
 
             // 12分鐘  比照排程執行時間
             DBProxy.Current.DefaultTimeout = 7200;
+            this.ShowWaitMessage("Update processing....");
             DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            this.HideWaitMessage();
+
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
+            }else
+            {
+                MyUtility.Msg.InfoBox("Updated successfully.");
             }
         }
     }

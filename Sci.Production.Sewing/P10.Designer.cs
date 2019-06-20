@@ -46,7 +46,7 @@
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Location = new System.Drawing.Point(284, 21);
+            this.btnUpdate.Location = new System.Drawing.Point(348, 21);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(80, 30);
             this.btnUpdate.TabIndex = 5;
@@ -64,7 +64,7 @@
             // 
             // P10
             // 
-            this.ClientSize = new System.Drawing.Size(376, 63);
+            this.ClientSize = new System.Drawing.Size(440, 63);
             this.Controls.Add(this.dateBoxUpdateDate);
             this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.label1);
