@@ -102,7 +102,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "P05_UnconfirmHistory";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
-            this.Text = "P05_UnconfirmHistory";
+            this.Text = "P05.Unconfirm History";
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
