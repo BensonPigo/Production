@@ -855,6 +855,7 @@ from tempdb..sysobjects
 where name like '#%'
 exec (@sql)
 ");
+            #endregion
 
             return sqlCmd;
         }
@@ -1426,6 +1427,11 @@ from tempdb..sysobjects
 where name like '#%'
 exec (@sql)
 ");
+            //if (this.isArtwork)
+            //{
+            //    sqlCmd.Append(@";drop table #rawdata_tmscost,#tmscost_pvt");
+            //}
+
             #endregion
 
             return sqlCmd;
