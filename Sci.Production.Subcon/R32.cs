@@ -45,9 +45,10 @@ where Junk != 1", out dtFactory);
             #region 判斷必輸條件
             if (!this.dateFarmOutDate.HasValue &&
                 !this.dateBundleCdate.HasValue &&
-                !this.dateBundleScan.HasValue)
+                !this.dateBundleScan.HasValue &&
+                string.IsNullOrEmpty(this.txtSPNo.Text))
             {
-                MyUtility.Msg.InfoBox("[Farm Out Date],[Bundle CDate],[Bundle Scan Date] please input at least one");
+                MyUtility.Msg.InfoBox("[Farm Out Date],[Bundle CDate],[Bundle Scan Date],[SP#] please input at least one");
                 return false;
             }
             #endregion
@@ -136,6 +137,7 @@ where Junk != 1", out dtFactory);
 
             if (!MyUtility.Check.Empty(this.spNo))
             {
+                FirstWhere.Add($@" and bd.orderid = '{spNo}'");
                 finalWhere.Add($@" and o.ID = '{spNo}'");
             }
 
