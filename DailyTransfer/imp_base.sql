@@ -426,28 +426,7 @@ SET
 	  ,a.IsThread        = b.IsThread
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
-where b.EditDate > a.EditDate
-
-UPDATE a
-SET  
-       --a.ID	      =b.ID		
-      a.FullName	      =b.FullName		
-      ,a.Type	      =b.Type		
-      ,a.Junk	      =b.Junk		
-      ,a.IrregularCost	      =b.IrregularCost		
-      ,a.CheckZipper	      =b.CheckZipper		
-      ,a.ProductionType	      =b.ProductionType		
-      ,a.OutputUnit	      =b.OutputUnit		
-      ,a.IsExtensionUnit	      =b.IsExtensionUnit		
-      ,a.AddName	      =b.AddName		
-      ,a.AddDate	      =b.AddDate
-	  ,a.IsTrimCardOther = b.isTrimCardOther
-      --,a.EditName	      =b.EditName		
-      --,a.EditDate	      =b.EditDate		
-	  ,a.IsThread        = b.IsThread
-
-from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
-where b.EditDate <= a.EditDate
+where b.EditDate between dateadd(d,-7,getdate()) and getdate()
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.MtlType(
 ID
