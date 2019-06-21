@@ -96,6 +96,12 @@ namespace Sci.Production.Logistic
         // Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.dateReturnDate.Value1) && MyUtility.Check.Empty(this.dateReturnDate.Value2))
+            {
+                MyUtility.Msg.WarningBox("Please input <Return Date> first!");
+                return;
+            }
+
             this.ShowWaitMessage("Data Loading...");
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(
@@ -121,12 +127,14 @@ from (
             , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
             , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
     from PackingList_Detail pd  WITH (NOLOCK) 
-    inner join  ClogReturn cr WITH (NOLOCK) on  pd.SCICtnNo = cr.SCICtnNo 
+    inner join  ClogReturn cr WITH (NOLOCK) on pd.ID = cr.PackingListID and pd.CTNStartNo = cr.CTNStartNo 
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
                                                 and oq.Seq = pd.OrderShipmodeSeq
-    where   cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    where cr.MDivisionID = '{0}'
+    --and pd.ReturnDate is not null 
+    ", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateReturnDate.Value1))
             {
