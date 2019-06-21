@@ -35,11 +35,11 @@
             this.chkAllPartOnly = new Sci.Win.UI.CheckBox();
             this.comboSubPorcess = new Sci.Win.UI.ComboBox();
             this.comboComplete = new Sci.Win.UI.ComboBox();
-            this.txtLineNo = new Sci.Win.UI.TextBox();
+            this.txtSewingLineID = new Sci.Win.UI.TextBox();
             this.txtCutCell = new Sci.Win.UI.TextBox();
-            this.txtFactory = new Sci.Production.Class.txtscifactory();
+            this.txtFactory = new Sci.Production.Class.txtfactory();
             this.txtSPNo = new Sci.Win.UI.TextBox();
-            this.estCutDate = new Sci.Win.UI.DateBox();
+            this.txtEstCutDate = new Sci.Win.UI.DateBox();
             this.label7 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
@@ -63,11 +63,11 @@
             this.panel1.Controls.Add(this.chkAllPartOnly);
             this.panel1.Controls.Add(this.comboSubPorcess);
             this.panel1.Controls.Add(this.comboComplete);
-            this.panel1.Controls.Add(this.txtLineNo);
+            this.panel1.Controls.Add(this.txtSewingLineID);
             this.panel1.Controls.Add(this.txtCutCell);
             this.panel1.Controls.Add(this.txtFactory);
             this.panel1.Controls.Add(this.txtSPNo);
-            this.panel1.Controls.Add(this.estCutDate);
+            this.panel1.Controls.Add(this.txtEstCutDate);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label5);
@@ -89,6 +89,7 @@
             this.btnQuery.TabIndex = 10;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // chkExtendAllParts
             // 
@@ -136,14 +137,14 @@
             this.comboComplete.Size = new System.Drawing.Size(76, 24);
             this.comboComplete.TabIndex = 6;
             // 
-            // txtLineNo
+            // txtSewingLineID
             // 
-            this.txtLineNo.BackColor = System.Drawing.Color.White;
-            this.txtLineNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLineNo.Location = new System.Drawing.Point(388, 42);
-            this.txtLineNo.Name = "txtLineNo";
-            this.txtLineNo.Size = new System.Drawing.Size(76, 23);
-            this.txtLineNo.TabIndex = 5;
+            this.txtSewingLineID.BackColor = System.Drawing.Color.White;
+            this.txtSewingLineID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSewingLineID.Location = new System.Drawing.Point(388, 42);
+            this.txtSewingLineID.Name = "txtSewingLineID";
+            this.txtSewingLineID.Size = new System.Drawing.Size(76, 23);
+            this.txtSewingLineID.TabIndex = 5;
             // 
             // txtCutCell
             // 
@@ -157,7 +158,11 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.boolFtyGroupList = true;
+            this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsProduceFty = false;
+            this.txtFactory.IssupportJunk = false;
             this.txtFactory.Location = new System.Drawing.Point(114, 75);
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(66, 23);
@@ -172,12 +177,12 @@
             this.txtSPNo.Size = new System.Drawing.Size(100, 23);
             this.txtSPNo.TabIndex = 2;
             // 
-            // estCutDate
+            // txtEstCutDate
             // 
-            this.estCutDate.Location = new System.Drawing.Point(113, 9);
-            this.estCutDate.Name = "estCutDate";
-            this.estCutDate.Size = new System.Drawing.Size(130, 23);
-            this.estCutDate.TabIndex = 1;
+            this.txtEstCutDate.Location = new System.Drawing.Point(113, 9);
+            this.txtEstCutDate.Name = "txtEstCutDate";
+            this.txtEstCutDate.Size = new System.Drawing.Size(130, 23);
+            this.txtEstCutDate.TabIndex = 1;
             // 
             // label7
             // 
@@ -314,11 +319,11 @@
         private Win.UI.Label label7;
         private Win.UI.ComboBox comboSubPorcess;
         private Win.UI.ComboBox comboComplete;
-        private Win.UI.TextBox txtLineNo;
+        private Win.UI.TextBox txtSewingLineID;
         private Win.UI.TextBox txtCutCell;
-        private Class.txtscifactory txtFactory;
+        private Class.txtfactory txtFactory;
         private Win.UI.TextBox txtSPNo;
-        private Win.UI.DateBox estCutDate;
+        private Win.UI.DateBox txtEstCutDate;
         private Win.UI.CheckBox chkExtendAllParts;
         private Win.UI.CheckBox chkAllPartOnly;
         private Win.UI.Button btnQuery;
