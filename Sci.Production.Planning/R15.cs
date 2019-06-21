@@ -473,8 +473,8 @@ select aa.orderid
        , price_tms = iif(cc.IsTMS=1,bb.tms,bb.price)  
 into #rawdata_tmscost
 from #cte aa 
-inner join dbo.Order_TmsCost bb on bb.id = aa.orderid
-inner join dbo.ArtworkType cc on cc.id = bb.ArtworkTypeID
+inner join dbo.Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.orderid
+inner join dbo.ArtworkType cc WITH (NOLOCK)  on cc.id = bb.ArtworkTypeID
 where IsTMS =1 or IsPrice = 1
                 ");
 
@@ -494,7 +494,9 @@ where IsTMS =1 or IsPrice = 1
             #endregion
 
             #region SummaryBy SP#
-            sqlCmd.Append(string.Format(@"
+            string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT" };
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true);
+            sqlCmd.Append($@"
 
 -- 依撈出來的order資料(cte)去找各製程的WIP
 SELECT X.OrderId
@@ -550,7 +552,7 @@ select t.OrderID
                                            , v.Article
                                            , v.ArtworkID
                                            , v.PatternCode 
-                                   from dbo.View_Order_Artworks v 
+                                   from dbo.View_Order_Artworks v  WITH (NOLOCK) 
                                    where v.ID=t.OrderID
                                 ) c on c.ArtworkTypeID = a.ArtworkTypeId 
                                        and c.PatternCode = b.PatternCode 
@@ -570,7 +572,7 @@ select t.OrderID
                                 select distinct v.ArtworkTypeID
                                        , v.ArtworkID
                                        , v.PatternCode 
-                                from dbo.View_Order_Artworks v 
+                                from dbo.View_Order_Artworks v  WITH (NOLOCK) 
                                 where v.ID = t.OrderID
                            ) c on c.ArtworkTypeID = a.ArtworkTypeId 
                                   and c.PatternCode = b.PatternCode 
@@ -590,7 +592,7 @@ select t.OrderID
                                 select distinct v.ArtworkTypeID
                                        , v.ArtworkID
                                        , v.PatternCode 
-                                from dbo.View_Order_Artworks v 
+                                from dbo.View_Order_Artworks v  WITH (NOLOCK) 
                                 where v.ID=t.OrderID
                            ) c on c.ArtworkTypeID = a.ArtworkTypeId 
                                   and c.PatternCode = b.PatternCode 
@@ -609,97 +611,6 @@ left join #tmp_first_cut_date f on t.OrderID = f.OrderID
 left join #tmp_SEWOUTPUT s on t.OrderID = s.OrderID 
 
 drop table #tmp_first_cut_date,#tmp_SEWOUTPUT
------------------------------------------------------------------------------------------------------------------------------------------------------------
-------------↓計算累計成衣件數
------準備兩個累積
-Select DISTINCT 
-    [Cut Ref#] = b.CutRef,
-    [M] = b.MDivisionid,
-    [Factory] = o.FtyGroup,
-    [SP] = b.Orderid, 
-	b.article, 
-    [Comb] = b.PatternPanel,
-	b.FabricPanelCode
-	,b.ID 
-into #tmp_Orders
-from Bundle b WITH (NOLOCK)  
-inner join orders o WITH (NOLOCK) on o.Id = b.OrderId  and o.MDivisionID  = b.MDivisionID 
-inner join Order_EachCons oe WITH (NOLOCK) on oe.id = o.poid and oe.FabricPanelCode = b.FabricPanelCode
-inner join Order_BOF bof WITH (NOLOCK) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
-where 1=1
-and o.ID in (select distinct orderid from #cte) 
-and bof.kind != 0 
-
-Select DISTINCT
-    [Bundleno] = bd.BundleNo,
-    b.[Cut Ref#] ,
-    b.[M], 
-	b.[Factory],
-    b.[SP],
-    SubProcessId = s.Id,
-	b.article,
-    [Size] = bd.SizeCode,
-    b.[Comb] ,
-	b.FabricPanelCode,
-    bd.PatternCode,
-    bd.Qty,
-    bio.InComing,
-    bio.OutGoing 
-into #tmp
-from #tmp_Orders b WITH (NOLOCK)  
-inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
-left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-where 1=1 and isnull(bio.RFIDProcessLocationID,'') = ''
-
-drop table #tmp_Orders
------------------------------------------------------------------------------------------------------------------------------------------------------------
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
-into #tmp2
-from #tmp
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmp3
-from #tmp2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmp4
-from #tmp3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
-into #tmpin
-from #tmp4
-group by [M],[Factory],[SP],[Subprocessid]
-------
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,Qty = iif(OutGoing is null ,0,Qty)
-into #tmpout1
-from #tmp
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
-into #tmpout2
-from #tmpout1
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmpout3
-from #tmpout2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmpout4
-from #tmpout3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
-into #tmpout
-from #tmpout4
-group by [M],[Factory],[SP],[Subprocessid]
------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 select sod.OrderID ,Max(so.OutputDate) LastSewnDate
 into #imp_LastSewnDate
@@ -708,50 +619,8 @@ inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
 inner join #cte t on sod.OrderID = t.OrderID 
 group by sod.OrderID 
 
-select o.SubProcessId, o.SP, o.Factory, [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)  
-into #tmp_Out
-from #tmpout o
-inner join #cte t on o.SP = t.OrderID and o.Factory = t.FactoryID
+{qtyBySetPerSubprocess}
 
-select i.SubProcessId, i.SP, i.Factory, [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-into #tmp_In
-from #tmpin i
-inner join #cte t on i.SP = t.OrderID and i.Factory = t.FactoryID
-
-select SP,Factory,ct = sum(xxx.Accusubprocesqty)
-into #tmp_inoutcount
-from(
-	select #tmpout.SP, #tmpout.Factory,[Accusubprocesqty] = iif(#tmpin.AccuQty > 0, 1, 0)+
-								iif(#tmpout.AccuQty > 0, 1, 0)
-	from #tmpin,#tmpout
-	inner join #cte t on #tmpout.SP = t.OrderID and #tmpout.Factory = t.FactoryID
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
-	and #tmpout.SP = t.OrderID 
-	and #tmpout.Factory = t.FactoryID
-	and #tmpout.SubProcessId = #tmpin.SubProcessId
-)xxx
-group by SP,Factory
-
-
-select SP,Factory,chksubprocesqty = sum(xxx.Accusubprocesqty)
-into #tmp_subprocessqty
-from(
-	select #tmpout.SP, #tmpout.Factory,[Accusubprocesqty] = iif(iif(#tmpin.AccuQty > t.Qty, t.Qty, #tmpin.AccuQty)>=t.Qty,1,0)+
-								iif(iif(#tmpout.AccuQty > t.Qty, t.Qty, #tmpout.AccuQty)>=t.Qty,1,0)
-	from #tmpin,#tmpout
-	inner join #cte t on #tmpout.SP = t.OrderID and #tmpout.Factory = t.FactoryID
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
-	and #tmpout.SP = t.OrderID 
-	and #tmpout.Factory = t.FactoryID
-	and #tmpout.SubProcessId = #tmpin.SubProcessId
-)xxx
-group by SP,Factory
------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------↑計算累計成衣件數
 select t.MDivisionID
        , t.FactoryID
        , t.SewLine
@@ -789,25 +658,42 @@ select t.MDivisionID
        ,EstCutDate.EstimatedCutDate
        , #cte2.first_cut_date
        , #cte2.cut_qty
-       , [RFID Cut Qty] = isnull (CutQty.AccuOutGo, 0)
-       , [RFID Loading Qty] = isnull (loading.AccuInCome,0)             
-       , [RFID Emb Farm In Qty] = isnull (Embin.AccuInCome, 0)
-       , [RFID Emb Farm Out Qty] = isnull (Embout.AccuOutGo, 0)
-       , [RFID Bond Farm In Qty] = isnull (Bondin.AccuInCome, 0)
-       , [RFID Bond Farm Out Qty] = isnull (Bondout.AccuOutGo, 0)
-       , [RFID Print Farm In Qty] = isnull (Printin.AccuInCome, 0)
-       , [RFID Print Farm Out Qty] = isnull (Printout.AccuOutGo, 0)
-       , [RFID AT Farm In Qty] = isnull (ATin.AccuInCome, 0)
-       , [RFID AT Farm Out Qty] = isnull (ATout.AccuOutGo, 0)
-       , [RFID Pad Print Farm In Qty] = isnull (PadPrintin.AccuInCome, 0)
-       , [RFID Pad Print Farm Out Qty] = isnull (PadPrintout.AccuOutGo, 0)
-       , [RFID Emboss Farm In Qty] = isnull (Embossin.AccuInCome, 0)
-       , [RFID Emboss Farm Out Qty] = isnull (Embossout.AccuOutGo, 0)
-       , [RFID HT Farm In Qty] = isnull (htin.AccuInCome, 0)
-       , [RFID HT Farm Out Qty] = isnull (htout.AccuOutGo, 0)
+       , [RFID Cut Qty] = #SORTING.OutQtyBySet
+       , [RFID Loading Qty] = #loading.InQtyBySet
+       , [RFID Emb Farm In Qty] = #Emb.InQtyBySet
+       , [RFID Emb Farm Out Qty] = #Emb.OutQtyBySet
+       , [RFID Bond Farm In Qty] = #BO.InQtyBySet	
+       , [RFID Bond Farm Out Qty] = #BO.OutQtyBySet
+       , [RFID Print Farm In Qty] = #prt.InQtyBySet
+       , [RFID Print Farm Out Qty] = #prt.OutQtyBySet
+       , [RFID AT Farm In Qty] = #AT.InQtyBySet
+       , [RFID AT Farm Out Qty] = #AT.OutQtyBySet
+       , [RFID Pad Print Farm In Qty] = #PADPRT.InQtyBySet
+       , [RFID Pad Print Farm Out Qty] = #PADPRT.OutQtyBySet
+       , [RFID Emboss Farm In Qty] = #SUBCONEMB.InQtyBySet
+       , [RFID Emboss Farm Out Qty] =#SUBCONEMB.OutQtyBySet
+       , [RFID HT Farm In Qty] = #HT.InQtyBySet
+       , [RFID HT Farm Out Qty] = #HT.OutQtyBySet
         , SubProcessStatus=
-			case when t.Junk = 1 then null
-				 when subprocessqty.chksubprocesqty = inoutcount.ct and inoutcount.ct >0 then 'Y'
+			case when t.Junk = 1 then null 
+                 when #SORTING.OutQtyBySet is null and #loading.InQtyBySet is null 
+                    and #Emb.InQtyBySet is null and #Emb.OutQtyBySet is null
+                    and #BO.InQtyBySet is null and #BO.OutQtyBySet  is null 
+                    and #prt.InQtyBySet  is null and #prt.OutQtyBySet  is null 
+                    and #AT.InQtyBySet  is null and #AT.OutQtyBySet  is null 
+                    and #PADPRT.InQtyBySet is null and #PADPRT.OutQtyBySet is null
+                    and #SUBCONEMB.InQtyBySet is null and #SUBCONEMB.OutQtyBySet is null
+                    and #HT.InQtyBySet is null and #HT.OutQtyBySet is null                
+                then null
+				 when SORTINGStatus.v = 1 and loadingStatus.v = 1 --判斷有做加工段的數量=訂單qty,則為1,全部為1才為Y
+					and Emb_i.v = 1 and Emb_o.v = 1
+					and BO_i.v = 1 and BO_o.v = 1
+					and prt_i.v = 1 and prt_o.v = 1
+					and AT_i.v = 1 and AT_o.v = 1
+					and PADPRT_i.v = 1 and PADPRT_o.v = 1
+					and SUBCONEMB_i.v = 1 and SUBCONEMB_o.v = 1
+					and HT_i.v = 1 and HT_o.v = 1
+				 then 'Y'
 			end
        , #cte2.EMBROIDERY_qty
        , #cte2.BONDING_qty
@@ -853,7 +739,7 @@ select t.MDivisionID
        , t.SampleReason
        , [TMS] = (select s.StdTms * t.CPU 
                   from System s WITH (NOLOCK)) 
-"));
+");
             if (this.isArtwork)
             {
                 sqlCmd.Append(string.Format(@",{0} ", this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 1)));
@@ -873,34 +759,41 @@ left join #imp_LastSewnDate l on t.OrderID = l.OrderID"));
             sqlCmd.Append(@"
 outer apply ( 
     select KPIChangeReason = ID + '-' + Name   
-    from Reason 
+    from Reason  WITH (NOLOCK) 
     where ReasonTypeID = 'Order_BuyerDelivery' 
           and ID = t.KPIChangeReason 
           and t.KPIChangeReason != '' 
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
-left join #tmp_Out CutQty on CutQty.SP = t.OrderID and CutQty.Factory = t.FactoryID and CutQty.SubProcessId = 'SORTING'
-left join #tmp_In loading on loading.SP = t.OrderID and loading.Factory = t.FactoryID and loading.SubProcessId = 'loading'
-left join #tmp_In Embin on Embin.SP = t.OrderID and Embin.Factory = t.FactoryID and Embin.SubProcessId = 'Emb'
-left join #tmp_Out Embout on Embout.SP = t.OrderID and Embout.Factory = t.FactoryID and Embout.SubProcessId = 'Emb'
-left join #tmp_In Bondin on Bondin.SP = t.OrderID and Bondin.Factory = t.FactoryID and Bondin.SubProcessId = 'BO'
-left join #tmp_Out Bondout on Bondout.SP = t.OrderID and Bondout.Factory = t.FactoryID and Bondout.SubProcessId = 'BO'
-left join #tmp_In Printin on Printin.SP = t.OrderID and Printin.Factory = t.FactoryID and Printin.SubProcessId = 'PRT'
-left join #tmp_Out Printout on Printout.SP = t.OrderID and Printout.Factory = t.FactoryID and Printout.SubProcessId = 'PRT'
-left join #tmp_In ATin on ATin.SP = t.OrderID and ATin.Factory = t.FactoryID and ATin.SubProcessId = 'AT'
-left join #tmp_Out ATout on ATout.SP = t.OrderID and ATout.Factory = t.FactoryID and ATout.SubProcessId = 'AT'
-left join #tmp_In PadPrintin on PadPrintin.SP = t.OrderID and PadPrintin.Factory = t.FactoryID and PadPrintin.SubProcessId = 'PAD-PRT'
-left join #tmp_Out PadPrintout on PadPrintout.SP = t.OrderID and PadPrintout.Factory = t.FactoryID and PadPrintout.SubProcessId = 'PAD-PRT'
-left join #tmp_In Embossin on Embossin.SP = t.OrderID and Embossin.Factory = t.FactoryID and Embossin.SubProcessId = 'SUBCONEMB'
-left join #tmp_Out Embossout on Embossout.SP = t.OrderID and Embossout.Factory = t.FactoryID and Embossout.SubProcessId = 'SUBCONEMB'
-left join #tmp_In htin on htin.SP = t.OrderID and htin.Factory = t.FactoryID and htin.SubProcessId = 'HT'
-left join #tmp_Out htout on htout.SP = t.OrderID and htout.Factory = t.FactoryID and htout.SubProcessId = 'HT' 
-left join #tmp_inoutcount inoutcount on inoutcount.SP = t.Orderid and inoutcount.Factory = t.FactoryID
-left join #tmp_subprocessqty subprocessqty on subprocessqty.SP = t.Orderid and subprocessqty.Factory = t.FactoryID
+left join #Sorting on #Sorting.OrderID = t.OrderID
+left join #Loading on #Loading.OrderID = t.OrderID
+left join #Emb on #Emb.OrderID = t.OrderID
+left join #BO on #BO.OrderID = t.OrderID
+left join #PRT on #PRT.OrderID = t.OrderID
+left join #AT on #AT.OrderID = t.OrderID
+left join #PADPRT on #PADPRT.OrderID = t.OrderID
+left join #SUBCONEMB on #SUBCONEMB.OrderID = t.OrderID
+left join #HT on #HT.OrderID = t.OrderID
+outer apply(select v = case when #SORTING.OutQtyBySet is null or #SORTING.OutQtyBySet >= t.Qty then 1 else 0 end)SORTINGStatus--null即不用判斷此加工段 標記1, 數量=訂單數 標記1
+outer apply(select v = case when #loading.InQtyBySet is null or #loading.InQtyBySet >= t.Qty then 1 else 0 end)loadingStatus
+outer apply(select v = case when #Emb.InQtyBySet is null or #Emb.InQtyBySet >= t.Qty then 1 else 0 end)Emb_i
+outer apply(select v = case when #Emb.OutQtyBySet is null or #Emb.OutQtyBySet >= t.Qty then 1 else 0 end)Emb_o
+outer apply(select v = case when #BO.InQtyBySet is null or #BO.InQtyBySet >= t.Qty then 1 else 0 end)BO_i
+outer apply(select v = case when #BO.OutQtyBySet is null or #BO.OutQtyBySet >= t.Qty then 1 else 0 end)BO_o
+outer apply(select v = case when #prt.InQtyBySet is null or #prt.InQtyBySet >= t.Qty then 1 else 0 end)prt_i
+outer apply(select v = case when #prt.OutQtyBySet is null or #prt.OutQtyBySet >= t.Qty then 1 else 0 end)prt_o
+outer apply(select v = case when #AT.InQtyBySet is null or #AT.InQtyBySet >= t.Qty then 1 else 0 end)AT_i
+outer apply(select v = case when #AT.OutQtyBySet is null or #AT.OutQtyBySet >= t.Qty then 1 else 0 end)AT_o
+outer apply(select v = case when #PADPRT.InQtyBySet is null or #PADPRT.InQtyBySet >= t.Qty then 1 else 0 end)PADPRT_i
+outer apply(select v = case when #PADPRT.OutQtyBySet is null or #PADPRT.OutQtyBySet >= t.Qty then 1 else 0 end)PADPRT_o
+outer apply(select v = case when #SUBCONEMB.InQtyBySet is null or #SUBCONEMB.InQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_i
+outer apply(select v = case when #SUBCONEMB.OutQtyBySet is null or #SUBCONEMB.OutQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_o
+outer apply(select v = case when #HT.InQtyBySet is null or #HT.InQtyBySet >= t.Qty then 1 else 0 end)HT_i
+outer apply(select v = case when #HT.OutQtyBySet is null or #HT.OutQtyBySet >= t.Qty then 1 else 0 end)HT_o
 outer apply(
 	select StandardOutput =stuff((
 		  select distinct concat(',',ComboType,':',StandardOutput)
-		  from [SewingSchedule]
+		  from [SewingSchedule] WITH (NOLOCK) 
 		  where orderid = t.OrderID 
 		  for xml path('')
 	  ),1,1,'')
@@ -910,7 +803,7 @@ outer apply(
 		select concat('+',ArtworkTypeID)
 		from(
 			select distinct v.ArtworkTypeID
-			from dbo.View_Order_Artworks v 
+			from dbo.View_Order_Artworks v  WITH (NOLOCK) 
 			where v.ID=t.OrderID
 		)tmpartwork
 		for xml path('')
@@ -955,11 +848,13 @@ outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NO
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
-            sqlCmd.Append(@" ;DROP TABLE #imp_LastSewnDate, #tmp_Out, #tmp_In, #tmp_inoutcount, #tmp_subprocessqty, #cte2, #cte,#tmp,#tmp2,#tmp3,#tmp4,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpin,#tmpout");
-            if (this.isArtwork)
-            {
-                sqlCmd.Append(@" ;drop table #rawdata_tmscost,#tmscost_pvt");
-            }
+            sqlCmd.Append(@"
+declare @sql nvarchar(max)
+select @sql = isnull(@sql+';', '') + 'drop table ' + quotename(name)
+from tempdb..sysobjects
+where name like '#%'
+exec (@sql)
+");
             #endregion
 
             return sqlCmd;
@@ -1133,8 +1028,8 @@ select aa.orderid
        , price_tms = iif(cc.IsTMS=1,bb.tms,bb.price)  
 into #rawdata_tmscost
 from #cte aa 
-inner join dbo.Order_TmsCost bb on bb.id = aa.orderid
-inner join dbo.ArtworkType cc on cc.id = bb.ArtworkTypeID
+inner join dbo.Order_TmsCost bb  WITH (NOLOCK) on bb.id = aa.orderid
+inner join dbo.ArtworkType cc  WITH (NOLOCK) on cc.id = bb.ArtworkTypeID
 where IsTMS =1 or IsPrice = 1
                 ");
 
@@ -1152,9 +1047,10 @@ pivot
                     this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 1)));
             }
             #endregion
-
+            string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT" };
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: false);
             #region SummaryBy Acticle/Size
-            sqlCmd.Append(@"
+            sqlCmd.Append($@"
 -- 依撈出來的order資料(cte)去找各製程的WIP
 SELECT OrderId,Article,SizeCode
 		, firstSewingDate = min(X.OutputDate) 
@@ -1215,7 +1111,7 @@ select t.OrderID,t.Article,t.SizeCode
 										   , v.SizeCode
                                            , v.ArtworkID
                                            , v.PatternCode 
-                                   from dbo.View_Order_Artworks v 
+                                   from dbo.View_Order_Artworks v  WITH (NOLOCK) 
                                    where v.ID=t.OrderID and v.Article = t.Article and v.SizeCode = t.SizeCode
                                 ) c on c.ArtworkTypeID = a.ArtworkTypeId 
                                        and c.PatternCode = b.PatternCode 
@@ -1235,7 +1131,7 @@ select t.OrderID,t.Article,t.SizeCode
                                 select distinct v.ArtworkTypeID, v.Article, v.SizeCode
                                        , v.ArtworkID
                                        , v.PatternCode 
-                                from dbo.View_Order_Artworks v 
+                                from dbo.View_Order_Artworks v  WITH (NOLOCK) 
                                 where v.ID=t.OrderID and v.Article = t.Article and v.SizeCode = t.SizeCode
                            ) c on c.ArtworkTypeID = a.ArtworkTypeId 
                                   and c.PatternCode = b.PatternCode 
@@ -1255,7 +1151,7 @@ select t.OrderID,t.Article,t.SizeCode
                                 select distinct v.ArtworkTypeID, v.Article, v.SizeCode
                                        , v.ArtworkID
                                        , v.PatternCode 
-                                from dbo.View_Order_Artworks v 
+                                from dbo.View_Order_Artworks v  WITH (NOLOCK) 
                                 where v.ID=t.OrderID and v.Article = t.Article and v.SizeCode = t.SizeCode
                            ) c on c.ArtworkTypeID = a.ArtworkTypeId 
                                   and c.PatternCode = b.PatternCode 
@@ -1274,99 +1170,6 @@ left join #tmp_first_cut_date f on f.OrderId = t.OrderID and f.Article = t.Artic
 left join #tmp_SEWOUTPUT s on s.OrderId = t.OrderID and s.Article = t.Article and s.SizeCode = t.SizeCode 
 
 drop table #tmp_first_cut_date, #tmp_SEWOUTPUT
------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------↓計算累計成衣件數
----準備兩個累積 
-Select DISTINCT 
-    [Cut Ref#] = b.CutRef,
-    [M] = b.MDivisionid,
-    [Factory] = o.FtyGroup,
-    [SP] = b.Orderid, 
-	b.article, 
-    [Comb] = b.PatternPanel,
-	b.FabricPanelCode
-	,b.ID 
-into #tmp_Orders
-from Bundle b WITH (NOLOCK)  
-inner join orders o WITH (NOLOCK) on o.Id = b.OrderId  and o.MDivisionID  = b.MDivisionID 
-inner join Order_EachCons oe WITH (NOLOCK) on oe.id = o.poid and oe.FabricPanelCode = b.FabricPanelCode
-inner join Order_BOF bof WITH (NOLOCK) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
-where 1=1
-and o.ID in (select distinct orderid from #cte) 
-and bof.kind != 0 
-
-Select DISTINCT
-    [Bundleno] = bd.BundleNo,
-    b.[Cut Ref#] ,
-    b.[M], 
-	b.[Factory],
-    b.[SP],
-    SubProcessId = s.Id,
-	b.article,
-    [Size] = bd.SizeCode,
-    b.[Comb] ,
-	b.FabricPanelCode,
-    bd.PatternCode,
-    bd.Qty,
-    bio.InComing,
-    bio.OutGoing 
-into #tmp
-from #tmp_Orders b WITH (NOLOCK)  
-inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
-left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-where 1=1 and isnull(bio.RFIDProcessLocationID,'') = ''
-
-drop table #tmp_Orders
------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
-into #tmp2
-from #tmp
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmp3
-from #tmp2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmp4
-from #tmp3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = sum(accuQty)
-into #tmpin
-from #tmp4
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-------
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,Qty = iif(OutGoing is null ,0,Qty)
-into #tmpout1
-from #tmp
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
-into #tmpout2
-from #tmpout1
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmpout3
-from #tmpout2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmpout4
-from #tmpout3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = sum(accuQty)
-into #tmpout
-from #tmpout4
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 select sod.OrderID ,Max(so.OutputDate) LastSewnDate
 into #imp_LastSewnDate
@@ -1375,55 +1178,8 @@ inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
 inner join #cte t on sod.OrderID = t.OrderID 
 group by sod.OrderID 
 
-select o.SubProcessId, o.SP, o.Factory, o.Article, o.Size, [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)  
-into #tmp_Out
-from #tmpout o
-inner join #cte t on o.SP = t.OrderID and o.Factory = t.FactoryID and o.Article = t.Article and o.Size = t.SizeCode
+{qtyBySetPerSubprocess}
 
-select i.SubProcessId, i.SP, i.Factory, i.Article, i.Size, [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-into #tmp_In
-from #tmpin i
-inner join #cte t on i.SP = t.OrderID and i.Factory = t.FactoryID and i.Article = t.Article and i.Size = t.SizeCode
-
-select SP,Factory,Article,Size,ct = sum(xxx.Accusubprocesqty)
-into #tmp_inoutcount
-from(
-	select #tmpout.SP, #tmpout.Factory,#tmpout.Article,#tmpout.Size
-			,[Accusubprocesqty] = iif(#tmpin.AccuQty > 0, 1, 0)+
-									iif(#tmpout.AccuQty > 0, 1, 0)
-	from #tmpin,#tmpout
-	inner join #cte t on #tmpout.SP = t.OrderID and #tmpout.Factory = t.FactoryID and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
-	and #tmpout.SP = t.OrderID 
-	and #tmpout.Factory = t.FactoryID
-	and #tmpout.SubProcessId = #tmpin.SubProcessId
-	and #tmpin.Article = t.Article and #tmpin.Size = t.SizeCode
-	and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
-)xxx
-group by SP,Factory,Article,Size
-	 
-select SP,Factory,Article,Size,chksubprocesqty = sum(xxx.Accusubprocesqty)
-into #tmp_subprocessqty
-from(
-	select #tmpout.SP, #tmpout.Factory,#tmpout.Article,#tmpout.Size
-		,[Accusubprocesqty] = iif(iif(#tmpin.AccuQty > t.Qty, t.Qty, #tmpin.AccuQty)>=t.Qty,1,0)+
-								iif(iif(#tmpout.AccuQty > t.Qty, t.Qty, #tmpout.AccuQty)>=t.Qty,1,0)
-	from #tmpin,#tmpout
-	inner join #cte t on #tmpout.SP = t.OrderID and #tmpout.Factory = t.FactoryID and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
-	and #tmpout.SP = t.OrderID 
-	and #tmpout.Factory = t.FactoryID
-	and #tmpout.SubProcessId = #tmpin.SubProcessId
-	and #tmpin.Article = t.Article and #tmpin.Size = t.SizeCode
-	and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
-)xxx
-group by SP,Factory,Article,Size
------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------↑計算累計成衣件數
 select t.MDivisionID
        , t.FactoryID
        , SewingSchedule.SewingLineID
@@ -1457,25 +1213,42 @@ select t.MDivisionID
        ,EstCutDate.EstimatedCutDate
        , #cte2.first_cut_date
        , #cte2.cut_qty
-       , [RFID Cut Qty] = isnull (CutQty.AccuOutGo, 0)
-       , [RFID Loading Qty] = isnull (loading.AccuInCome,0)
-       , [RFID Emb Farm In Qty] = isnull (Embin.AccuInCome, 0)
-       , [RFID Emb Farm Out Qty] = isnull (Embout.AccuOutGo, 0)
-       , [RFID Bond Farm In Qty] = isnull (Bondin.AccuInCome, 0)		
-       , [RFID Bond Farm Out Qty] = isnull (Bondout.AccuOutGo, 0)
-       , [RFID Print Farm In Qty] = isnull (Printin.AccuInCome, 0)
-       , [RFID Print Farm Out Qty] = isnull (Printout.AccuOutGo, 0)
-       , [RFID AT Farm In Qty] = isnull (ATin.AccuInCome, 0)
-       , [RFID AT Farm Out Qty] = isnull (ATout.AccuOutGo, 0)
-       , [RFID Pad Print Farm In Qty] = isnull (PadPrintin.AccuInCome, 0)
-       , [RFID Pad Print Farm Out Qty] = isnull (PadPrintout.AccuOutGo, 0)
-       , [RFID Emboss Farm In Qty] = isnull (Embossin.AccuInCome, 0)
-       , [RFID Emboss Farm Out Qty] = isnull (Embossout.AccuOutGo, 0)
-       , [RFID HT Farm In Qty] = isnull (htin.AccuInCome, 0)
-       , [RFID HT Farm Out Qty] = isnull (htout.AccuOutGo, 0)
+       , [RFID Cut Qty] = SORTING.OutQtyBySet
+       , [RFID Loading Qty] = loading.InQtyBySet
+       , [RFID Emb Farm In Qty] = Emb.InQtyBySet
+       , [RFID Emb Farm Out Qty] = Emb.OutQtyBySet
+       , [RFID Bond Farm In Qty] = BO.InQtyBySet	
+       , [RFID Bond Farm Out Qty] = BO.OutQtyBySet
+       , [RFID Print Farm In Qty] = prt.InQtyBySet
+       , [RFID Print Farm Out Qty] = prt.OutQtyBySet
+       , [RFID AT Farm In Qty] = AT.InQtyBySet
+       , [RFID AT Farm Out Qty] = AT.OutQtyBySet
+       , [RFID Pad Print Farm In Qty] = PADPRT.InQtyBySet
+       , [RFID Pad Print Farm Out Qty] = PADPRT.OutQtyBySet
+       , [RFID Emboss Farm In Qty] = SUBCONEMB.InQtyBySet
+       , [RFID Emboss Farm Out Qty] =SUBCONEMB.OutQtyBySet
+       , [RFID HT Farm In Qty] = HT.InQtyBySet
+       , [RFID HT Farm Out Qty] = HT.OutQtyBySet
         , SubProcessStatus=
 			case when t.Junk = 1 then null
-				 when subprocessqty.chksubprocesqty = inoutcount.ct and inoutcount.ct >0 then 'Y'
+                 when SORTING.OutQtyBySet is null and loading.InQtyBySet is null 
+                    and Emb.InQtyBySet is null and Emb.OutQtyBySet is null
+                    and BO.InQtyBySet is null and BO.OutQtyBySet  is null 
+                    and prt.InQtyBySet  is null and prt.OutQtyBySet  is null 
+                    and AT.InQtyBySet  is null and AT.OutQtyBySet  is null 
+                    and PADPRT.InQtyBySet is null and PADPRT.OutQtyBySet is null
+                    and SUBCONEMB.InQtyBySet is null and SUBCONEMB.OutQtyBySet is null
+                    and HT.InQtyBySet is null and HT.OutQtyBySet is null                
+                then null
+				 when SORTINGStatus.v = 1 and loadingStatus.v = 1 --判斷有做加工段的數量=訂單qty,則為1,全部為1才為Y
+					and Emb_i.v = 1 and Emb_o.v = 1
+					and BO_i.v = 1 and BO_o.v = 1
+					and prt_i.v = 1 and prt_o.v = 1
+					and AT_i.v = 1 and AT_o.v = 1
+					and PADPRT_i.v = 1 and PADPRT_o.v = 1
+					and SUBCONEMB_i.v = 1 and SUBCONEMB_o.v = 1
+					and HT_i.v = 1 and HT_o.v = 1
+				 then 'Y'
 			end
        , #cte2.EMBROIDERY_qty
        , #cte2.BONDING_qty
@@ -1541,50 +1314,57 @@ left join #imp_LastSewnDate l on t.OrderID = l.OrderID"));
             sqlCmd.Append(@"
 outer apply ( 
     select KPIChangeReason = ID + '-' + Name   
-    from Reason 
+    from Reason  WITH (NOLOCK) 
     where ReasonTypeID = 'Order_BuyerDelivery' 
           and ID = t.KPIChangeReason 
           and t.KPIChangeReason != '' 
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
-left join #tmp_Out CutQty on CutQty.SP = t.OrderID and CutQty.Factory = t.FactoryID and CutQty.Article = t.Article and CutQty.Size = t.SizeCode and CutQty.SubProcessId = 'SORTING'
-left join #tmp_In loading on loading.SP = t.OrderID and loading.Factory = t.FactoryID and loading.Article = t.Article and loading.Size = t.SizeCode and loading.SubProcessId = 'loading'
-left join #tmp_In Embin on Embin.SP = t.OrderID and Embin.Factory = t.FactoryID and Embin.Article = t.Article and Embin.Size = t.SizeCode and Embin.SubProcessId = 'Emb'
-left join #tmp_Out Embout on Embout.SP = t.OrderID and Embout.Factory = t.FactoryID and Embout.Article = t.Article and Embout.Size = t.SizeCode and Embout.SubProcessId = 'Emb'
-left join #tmp_In Bondin on Bondin.SP = t.OrderID and Bondin.Factory = t.FactoryID and Bondin.Article = t.Article and Bondin.Size = t.SizeCode and Bondin.SubProcessId = 'BO'
-left join #tmp_Out Bondout on Bondout.SP = t.OrderID and Bondout.Factory = t.FactoryID and Bondout.Article = t.Article and Bondout.Size = t.SizeCode and Bondout.SubProcessId = 'BO'
-left join #tmp_In Printin on Printin.SP = t.OrderID and Printin.Factory = t.FactoryID and Printin.Article = t.Article and Printin.Size = t.SizeCode and Printin.SubProcessId = 'PRT'
-left join #tmp_Out Printout on Printout.SP = t.OrderID and Printout.Factory = t.FactoryID and Printout.Article = t.Article and Printout.Size = t.SizeCode and Printout.SubProcessId = 'PRT'
-left join #tmp_In ATin on ATin.SP = t.OrderID and ATin.Factory = t.FactoryID and ATin.Article = t.Article and ATin.Size = t.SizeCode and ATin.SubProcessId = 'AT'
-left join #tmp_Out ATout on ATout.SP = t.OrderID and ATout.Factory = t.FactoryID and ATout.Article = t.Article and ATout.Size = t.SizeCode and ATout.SubProcessId = 'AT'
-left join #tmp_In PadPrintin on PadPrintin.SP = t.OrderID and PadPrintin.Factory = t.FactoryID and PadPrintin.Article = t.Article and PadPrintin.Size = t.SizeCode and PadPrintin.SubProcessId = 'PAD-PRT'
-left join #tmp_Out PadPrintout on PadPrintout.SP = t.OrderID and PadPrintout.Factory = t.FactoryID and PadPrintout.Article = t.Article and PadPrintout.Size = t.SizeCode and PadPrintout.SubProcessId = 'PAD-PRT'
-left join #tmp_In Embossin on Embossin.SP = t.OrderID and Embossin.Factory = t.FactoryID and Embossin.Article = t.Article and Embossin.Size = t.SizeCode and Embossin.SubProcessId = 'SUBCONEMB'
-left join #tmp_Out Embossout on Embossout.SP = t.OrderID and Embossout.Factory = t.FactoryID and Embossout.Article = t.Article and Embossout.Size = t.SizeCode and Embossout.SubProcessId = 'SUBCONEMB'
-left join #tmp_In htin on htin.SP = t.OrderID and htin.Factory = t.FactoryID and htin.Article = t.Article and htin.Size = t.SizeCode and htin.SubProcessId = 'HT'
-left join #tmp_Out htout on htout.SP = t.OrderID and htout.Factory = t.FactoryID and htout.Article = t.Article and htout.Size = t.SizeCode and htout.SubProcessId = 'HT'
-left join #tmp_inoutcount inoutcount on inoutcount.SP = t.OrderID and inoutcount.Factory = t.FactoryID and inoutcount.Article = t.Article and inoutcount.Size = t.SizeCode
-left join #tmp_subprocessqty subprocessqty on subprocessqty.SP = t.OrderID and subprocessqty.Factory = t.FactoryID and subprocessqty.Article = t.Article and subprocessqty.Size = t.SizeCode 
+left join #QtyBySetPerSubprocessSorting Sorting on Sorting.OrderID = t.OrderID and Sorting.Article = t.Article and Sorting.Sizecode = t.SizeCode
+left join #QtyBySetPerSubprocessLoading Loading on Loading.OrderID = t.OrderID and Loading.Article = t.Article and Loading.Sizecode = t.SizeCode
+left join #QtyBySetPerSubprocessEmb Emb on Emb.OrderID = t.OrderID and Emb.Article = t.Article and Emb.Sizecode = t.SizeCode
+left join #QtyBySetPerSubprocessBO BO on BO.OrderID = t.OrderID and BO.Article = t.Article and BO.Sizecode = t.SizeCode
+left join #QtyBySetPerSubprocessPRT PRT on PRT.OrderID = t.OrderID and PRT.Article = t.Article and PRT.Sizecode = t.SizeCode
+left join #QtyBySetPerSubprocessAT AT on AT.OrderID = t.OrderID and AT.Article = t.Article and AT.Sizecode = t.SizeCode
+left join #QtyBySetPerSubprocessPADPRT PADPRT on PADPRT.OrderID = t.OrderID and PADPRT.Article = t.Article and PADPRT.Sizecode = t.SizeCode
+left join #QtyBySetPerSubprocessSUBCONEMB SUBCONEMB on SUBCONEMB.OrderID = t.OrderID and SUBCONEMB.Article = t.Article and SUBCONEMB.Sizecode = t.SizeCode
+left join #QtyBySetPerSubprocessHT HT on HT.OrderID = t.OrderID and HT.Article = t.Article and HT.Sizecode = t.SizeCode
+outer apply(select v = case when SORTING.OutQtyBySet is null or SORTING.OutQtyBySet >= t.Qty then 1 else 0 end)SORTINGStatus--null即不用判斷此加工段 標記1, 數量=訂單數 標記1
+outer apply(select v = case when loading.InQtyBySet is null or loading.InQtyBySet >= t.Qty then 1 else 0 end)loadingStatus
+outer apply(select v = case when Emb.InQtyBySet is null or Emb.InQtyBySet >= t.Qty then 1 else 0 end)Emb_i
+outer apply(select v = case when Emb.OutQtyBySet is null or Emb.OutQtyBySet >= t.Qty then 1 else 0 end)Emb_o
+outer apply(select v = case when BO.InQtyBySet is null or BO.InQtyBySet >= t.Qty then 1 else 0 end)BO_i
+outer apply(select v = case when BO.OutQtyBySet is null or BO.OutQtyBySet >= t.Qty then 1 else 0 end)BO_o
+outer apply(select v = case when prt.InQtyBySet is null or prt.InQtyBySet >= t.Qty then 1 else 0 end)prt_i
+outer apply(select v = case when prt.OutQtyBySet is null or prt.OutQtyBySet >= t.Qty then 1 else 0 end)prt_o
+outer apply(select v = case when AT.InQtyBySet is null or AT.InQtyBySet >= t.Qty then 1 else 0 end)AT_i
+outer apply(select v = case when AT.OutQtyBySet is null or AT.OutQtyBySet >= t.Qty then 1 else 0 end)AT_o
+outer apply(select v = case when PADPRT.InQtyBySet is null or PADPRT.InQtyBySet >= t.Qty then 1 else 0 end)PADPRT_i
+outer apply(select v = case when PADPRT.OutQtyBySet is null or PADPRT.OutQtyBySet >= t.Qty then 1 else 0 end)PADPRT_o
+outer apply(select v = case when SUBCONEMB.InQtyBySet is null or SUBCONEMB.InQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_i
+outer apply(select v = case when SUBCONEMB.OutQtyBySet is null or SUBCONEMB.OutQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_o
+outer apply(select v = case when HT.InQtyBySet is null or HT.InQtyBySet >= t.Qty then 1 else 0 end)HT_i
+outer apply(select v = case when HT.OutQtyBySet is null or HT.OutQtyBySet >= t.Qty then 1 else 0 end)HT_o
 outer apply(
 	select SewingLineID =stuff((
 		  select distinct concat(',',ssd.SewingLineID)
-		  from [SewingSchedule] ss
-		  inner join SewingSchedule_Detail ssd on ssd.id = ss.id
+		  from [SewingSchedule] ss WITH (NOLOCK) 
+		  inner join SewingSchedule_Detail ssd  WITH (NOLOCK) on ssd.id = ss.id
 		  where ssd.orderid = t.OrderID and ssd.Article = t.Article and ssd.SizeCode = t.SizeCode
 		  for xml path('')
 	  ),1,1,'')
 )SewingSchedule
 outer apply(
 	select Inline = MIN(ss.Inline),Offline = max(SS.Offline)
-	from [SewingSchedule] ss
-	inner join SewingSchedule_Detail ssd on ssd.id = ss.id
+	from [SewingSchedule] ss WITH (NOLOCK) 
+	inner join SewingSchedule_Detail ssd  WITH (NOLOCK) on ssd.id = ss.id
 	where ssd.orderid = t.OrderID and ssd.Article = t.Article and ssd.SizeCode = t.SizeCode
 )SewingSchedule2
 outer apply(
 	select StandardOutput =stuff((
 		  select distinct concat(',',ssd.ComboType,':',StandardOutput)
-		  from [SewingSchedule] ss
-		  inner join SewingSchedule_Detail ssd on ssd.id = ss.id
+		  from [SewingSchedule] ss WITH (NOLOCK) 
+		  inner join SewingSchedule_Detail ssd  WITH (NOLOCK) on ssd.id = ss.id
 		  where ssd.orderid = t.OrderID and ssd.Article = t.Article and ssd.SizeCode = t.SizeCode
 		  for xml path('')
 	  ),1,1,'')
@@ -1594,7 +1374,7 @@ outer apply(
 		select concat('+',ArtworkTypeID)
 		from(
 			select distinct v.ArtworkTypeID
-			from dbo.View_Order_Artworks v 
+			from dbo.View_Order_Artworks v  WITH (NOLOCK) 
 			where v.ID=t.OrderID and v.Article = t.Article and v.SizeCode = t.SizeCode
 		)tmpartwork
 		for xml path('')
@@ -1638,12 +1418,20 @@ outer apply(
 outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
 ");
 
-            sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
-            sqlCmd.Append(@";drop table #imp_LastSewnDate, #tmp_Out, #tmp_In, #tmp_inoutcount, #tmp_subprocessqty ,#cte2,#cte,#tmp,#tmp2,#tmp3,#tmp4,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpin,#tmpout");
-            if (this.isArtwork)
-            {
-                sqlCmd.Append(@";drop table #rawdata_tmscost,#tmscost_pvt");
-            }
+            sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode", this.orderby));
+
+            sqlCmd.Append(@"
+declare @sql nvarchar(max)
+select @sql = isnull(@sql+';', '') + 'drop table ' + quotename(name)
+from tempdb..sysobjects
+where name like '#%'
+exec (@sql)
+");
+            //if (this.isArtwork)
+            //{
+            //    sqlCmd.Append(@";drop table #rawdata_tmscost,#tmscost_pvt");
+            //}
+
             #endregion
 
             return sqlCmd;
