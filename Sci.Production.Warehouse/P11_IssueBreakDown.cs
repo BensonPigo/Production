@@ -91,7 +91,7 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             gridIssueBreakDown.AutoGenerateColumns = true;
 
             DtModifyIssueBDown.ColumnsBooleanAdd("Selected", defaultValue: true);
-            // 設定Columns 位置
+            //設定Columns 位置
             DtModifyIssueBDown.Columns["Selected"].SetOrdinal(0);
 
             gridIssueBreakDownBS.DataSource = DtModifyIssueBDown;
@@ -108,6 +108,9 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
                 gridIssueBreakDown.Columns[2].ReadOnly = true;
                 gridIssueBreakDown.Columns[2].Frozen = true;
             }
+
+            gridIssueBreakDown.Columns["Selected"].HeaderText = "";
+            gridIssueBreakDown.Columns["Selected"].Width = 25;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -125,6 +128,37 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             }
             this.Dispose();
             return;
+        }
+
+        /// <summary>
+        /// Header自動勾選
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GridIssueBreakDown_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (DtModifyIssueBDown == null) return;
+
+            // 自動勾選Select
+            if (MouseButtons.Left == e.Button && 0 == e.ColumnIndex)
+            {
+                DataTable dt = (DataTable)gridIssueBreakDownBS.DataSource;
+                DataRow[] drCheck = dt.Select("Selected = 0 ");
+                if (drCheck.Length > 0)
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        dr["Selected"] = 1;
+                    }
+                }
+                else
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        dr["Selected"] = 0;
+                    }
+                }
+            }
         }
 
         private void gridIssueBreakDown_CellValidated(object sender, DataGridViewCellEventArgs e)
