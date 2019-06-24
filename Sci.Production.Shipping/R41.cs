@@ -81,31 +81,64 @@ namespace Sci.Production.Shipping
             DualResult result, failResult;
             if (this.type == "Import" || this.type == string.Empty)
             {
-                result = this.QueryImport(sqlCondition.ToString());
-                if (!result)
+                if (this.rdSummary.Checked)
                 {
-                    failResult = new DualResult(false, "Query import data fail\r\n" + result.ToString());
-                    return failResult;
+                    result = this.QueryImport(sqlCondition.ToString());
+                    if (!result)
+                    {
+                        return new DualResult(false, "Query import data fail\r\n" + result.ToString());
+                    }
+                }
+
+                if (this.rdDetail.Checked)
+                {
+                    result = this.QueryImportDetail(sqlCondition.ToString());
+                    if (!result)
+                    {
+                        return new DualResult(false, "Query import data fail\r\n" + result.ToString());
+                    }
                 }
             }
 
             if (this.type == "Export" || this.type == string.Empty)
             {
-                result = this.QueryExport(sqlCondition.ToString());
-                if (!result)
+                if (this.rdSummary.Checked)
                 {
-                    failResult = new DualResult(false, "Query export data fail\r\n" + result.ToString());
-                    return failResult;
+                    result = this.QueryExport(sqlCondition.ToString());
+                    if (!result)
+                    {
+                        return new DualResult(false, "Query import data fail\r\n" + result.ToString());
+                    }
+                }
+
+                if (this.rdDetail.Checked)
+                {
+                    result = this.QueryExportDetail(sqlCondition.ToString());
+                    if (!result)
+                    {
+                        return new DualResult(false, "Query import data fail\r\n" + result.ToString());
+                    }
                 }
             }
 
             if (this.type == "Adjust" || this.type == string.Empty)
             {
-                result = this.QueryAdjust(sqlCondition.ToString());
-                if (!result)
+                if (this.rdSummary.Checked)
                 {
-                    failResult = new DualResult(false, "Query adjust data fail\r\n" + result.ToString());
-                    return failResult;
+                    result = this.QueryAdjust(sqlCondition.ToString());
+                    if (!result)
+                    {
+                        return new DualResult(false, "Query import data fail\r\n" + result.ToString());
+                    }
+                }
+
+                if (this.rdDetail.Checked)
+                {
+                    result = this.QueryAdjustDetail(sqlCondition.ToString());
+                    if (!result)
+                    {
+                        return new DualResult(false, "Query import data fail\r\n" + result.ToString());
+                    }
                 }
             }
 
@@ -139,10 +172,22 @@ namespace Sci.Production.Shipping
                  && this.printImport != null
                  && this.printImport.Rows.Count > 0)
             {
-                result = MyUtility.Excel.CopyToXls(this.printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import"), xltfile: "Shipping_R41_Import.xltx", headerRow: 1, showSaveMsg: false);
-                if (!result)
+                if (this.rdSummary.Checked)
                 {
-                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    result = MyUtility.Excel.CopyToXls(this.printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import"), xltfile: "Shipping_R41_Import.xltx", headerRow: 1, showSaveMsg: false);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
+                }
+
+                if (this.rdDetail.Checked)
+                {
+                    result = MyUtility.Excel.CopyToXls(this.printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import_Detail"), xltfile: "Shipping_R41_Import_Detail.xltx", headerRow: 1, showSaveMsg: false);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
                 }
             }
 
@@ -150,10 +195,22 @@ namespace Sci.Production.Shipping
                  && this.printExport != null
                  && this.printExport.Rows.Count > 0)
             {
-                result = MyUtility.Excel.CopyToXls(this.printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export"), xltfile: "Shipping_R41_Export.xltx", headerRow: 1, showSaveMsg: false);
-                if (!result)
+                if (this.rdSummary.Checked)
                 {
-                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    result = MyUtility.Excel.CopyToXls(this.printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export"), xltfile: "Shipping_R41_Export.xltx", headerRow: 1, showSaveMsg: false);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
+                }
+
+                if (this.rdDetail.Checked)
+                {
+                    result = MyUtility.Excel.CopyToXls(this.printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export_Detail"), xltfile: "Shipping_R41_Export_Detail.xltx", headerRow: 1, showSaveMsg: false);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
                 }
             }
 
@@ -161,10 +218,22 @@ namespace Sci.Production.Shipping
                  && this.printAdjust != null
                  && this.printAdjust.Rows.Count > 0)
             {
-                result = MyUtility.Excel.CopyToXls(this.printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust"), xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1, showSaveMsg: false);
-                if (!result)
+                if (this.rdSummary.Checked)
                 {
-                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust"), xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1, showSaveMsg: false);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
+                }
+
+                if (this.rdDetail.Checked)
+                {
+                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust_Detail"), xltfile: "Shipping_R41_Adjust_Detail.xltx", headerRow: 1, showSaveMsg: false);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
                 }
             }
 
@@ -213,6 +282,72 @@ order by v.ID", sqlCondition);
 from VNContractQtyAdjust v WITH (NOLOCK) 
 inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID =vd.ID
 left join VNContract_Detail cd WITH (NOLOCK) on cd.ID = v.VNContractID and cd.NLCode = vd.NLCode
+where 1=1  {0} and v.Status = 'Confirmed'
+order by v.CDate", sqlCondition);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printAdjust);
+            return result;
+        }
+
+        // 查詢ImportDetail資料
+        private Ict.DualResult QueryImportDetail(string sqlCondition)
+        {
+            string sqlCmd = string.Format(
+                @"
+select v.ID,v.CDate,vdd.BrandID,vdd.Refno,
+	FabricType= case when vdd.FabricType = 'F' then 'Fabric'
+					 when vdd.FabricType = 'A' then 'Accessory' 
+					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where ltrim(l.RefNo) = vdd.Refno)
+					 end ,
+	v.VNContractID,v.DeclareNo,
+	BLWK=IIF(v.BLNo='',v.WKNo,v.BLNo),vdd.NLCode,vd.HSCode,vdd.Qty,vd.UnitID,vd.Remark
+from VNImportDeclaration v WITH (NOLOCK) 
+inner join VNImportDeclaration_Detail vd WITH (NOLOCK) on v.ID = vd.ID
+inner join VNImportDeclaration_Detail_Detail vdd WITH (NOLOCK) on v.ID = vdd.ID and vd.NLCode = vdd.NLCode
+where 1=1 {0} and v.Status = 'Confirmed'
+order by v.ID", sqlCondition);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printImport);
+            return result;
+        }
+
+        // 查詢ExportDetail資料
+        private Ict.DualResult QueryExportDetail(string sqlCondition)
+        {
+            string sqlCmd = string.Format(
+                @"
+select v.ID,v.CDate,vdd.RefNo,
+	FabricType= iif(vdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vdd.FabricType)),
+	v.VNContractID,v.DeclareNo,v.InvNo,ed.StyleID,ed.SeasonID,ed.BrandID,ed.ExportQty,
+	isnull(vd.NLCode,'') as NLCode,isnull(vd.HSCode,'') as HSCode,isnull(vdd.Qty,0) as Usage,
+	isnull(vd.UnitID,'') as UnitID,isnull(vd.Waste,0) as Waste,
+	Round(ed.ExportQty*isnull(vdd.Qty,0)*(1+isnull(vd.Waste,0)),3) as Total,
+	IIF(v.Status = 'Junked','Y','') as Cancel
+from VNExportDeclaration v WITH (NOLOCK) 
+inner join VNExportDeclaration_Detail ed WITH (NOLOCK) on v.ID = ed.ID
+left join VNConsumption c WITH (NOLOCK) on c.VNContractID = v.VNContractID and c.CustomSP = ed.CustomSP
+left join VNConsumption_Detail vd WITH (NOLOCK) on c.ID = vd.ID
+left join VNConsumption_Detail_Detail vdd WITH (NOLOCK) on vdd.id = c.id and vdd.NLCode = vd.NLCode
+left join VNContract_Detail vcd WITH (NOLOCK) on vcd.ID = v.VNContractID and vcd.NLCode = vd.NLCode
+outer apply (select Category from LocalItem l with(nolock) where ltrim(l.RefNo) = vdd.Refno) li
+where 1=1 {0} and (v.Status = 'Confirmed' or v.Status = 'Junked')
+order by v.ID", sqlCondition);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printExport);
+            return result;
+        }
+
+        // 查詢AdjustDetail資料
+        private Ict.DualResult QueryAdjustDetail(string sqlCondition)
+        {
+            string sqlCmd = string.Format(
+                @"
+select v.CDate,v.VNContractID,vdd.BrandID,Reason =concat(v.ReasonID,'-',sr.Description),vdd.Refno,
+	FabricType= iif(vdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vdd.FabricType)),
+	v.DeclareNo,vdd.NLCode,isnull(cd.HSCode,'') as HSCode,vdd.Qty,isnull(cd.UnitID,'') as UnitID,v.Remark
+from VNContractQtyAdjust v WITH (NOLOCK) 
+inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID =vd.ID
+inner join VNContractQtyAdjust_Detail_Detail vdd WITH (NOLOCK) on v.ID = vdd.ID and vd.NLCode = vdd.NLCode
+left join VNContract_Detail cd WITH (NOLOCK) on cd.ID = v.VNContractID and cd.NLCode = vd.NLCode
+left join ShippingReason sr WITH (NOLOCK) on sr.id = v.ReasonID and type = 'AQ'
+outer apply (select Category from LocalItem l with(nolock) where ltrim(l.RefNo) = vdd.Refno) li
 where 1=1  {0} and v.Status = 'Confirmed'
 order by v.CDate", sqlCondition);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printAdjust);

@@ -8,6 +8,8 @@ using Sci.Data;
 using Sci;
 using Ict;
 using Ict.Win;
+using System.Data.SqlClient;
+using Sci.Win.UI;
 
 namespace Sci.Production.PublicPrg
 {
@@ -216,6 +218,181 @@ CLOSE cursor_ttlAmount", shippingAPID, Sci.Env.User.UserID);
 CTNQty = (select COUNT(distinct CTNNo) from Express_Detail where ID = '{0}')
 where ID = '{0}'", expressID);
 
+        }
+        #endregion
+
+        #region GetNLCodeDataByRefno
+        public static DataRow GetNLCodeDataByRefno(string refno, string stockQty, string brandID, string type, string sciRefno = "", string nlCode = "")
+        {
+            string sqlGetNLCode = string.Empty;
+            string whereSciRefno = MyUtility.Check.Empty(sciRefno) ? string.Empty : " and f.SciRefno = @SciRefno";
+            string whereNLCode = MyUtility.Check.Empty(nlCode) ? string.Empty : " and f.NLCode = @NLCode";
+            DataRow drNLCode = null;
+            string inputStockQty = MyUtility.Check.Empty(stockQty) ? "0" : stockQty;
+            List<SqlParameter> parGetNLCode = new List<SqlParameter>() {    new SqlParameter("@Refno", refno),
+                                                                            new SqlParameter("@inputStockQty", stockQty),
+                                                                            new SqlParameter("@BrandID", brandID),
+                                                                            new SqlParameter("@SciRefno", sciRefno),
+                                                                            new SqlParameter("@NLCode", nlCode)};
+
+            string fabricType = type;
+
+
+            if (fabricType == "F")
+            {
+                sqlGetNLCode = $@"
+Declare @StockQty numeric(12,4) = @inputStockQty
+select  top 1
+        NLCode ,
+        [StockUnit] = 'YDS',
+        [SCIRefno] = f.SCIRefno,
+        [FabricBrandID] = f.BrandID,
+        [HSCode] = f.HSCode,
+        [UnitID] = f.CustomsUnit,
+        [FabricType] = 'F',
+        [LocalItem] = 0,
+        [Qty] = [dbo].getVNUnitTransfer('F','YDS',f.CustomsUnit,@StockQty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value),default)
+from Fabric f with (nolock)
+inner join Brand b with (nolock) on b.ID = @BrandID 
+inner join Brand b2 with (nolock) on b2.BrandGroup = b.BrandGroup and f.BrandID = b2.ID 
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit) Rate
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
+ where f.Refno = @Refno and f.Type = 'F' and f.Junk = 0 {whereSciRefno} {whereNLCode}
+order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
+";
+            }
+            else if (fabricType == "A")
+            {
+                sqlGetNLCode = $@"
+Declare @StockQty numeric(12,4) = @inputStockQty
+select  NLCode ,
+        [StockUnit] = f.UsageUnit,
+        [SCIRefno] = f.SCIRefno,
+        [FabricBrandID] = f.BrandID,
+        [HSCode] = f.HSCode,
+        [UnitID] = f.CustomsUnit,
+        [FabricType] = 'A',
+        [LocalItem] = 0,
+        [Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,@StockQty,0,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value),default)
+from Fabric f with (nolock)
+inner join Brand b with (nolock) on b.ID = @BrandID 
+inner join Brand b2 with (nolock) on b2.BrandGroup = b.BrandGroup and f.BrandID = b2.ID 
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = f.CustomsUnit) Rate
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
+ where f.Refno = @Refno and f.Type = 'A' and f.Junk = 0 {whereSciRefno} {whereNLCode}
+order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
+";
+            }
+            else if (fabricType == "L")
+            {
+                sqlGetNLCode = $@"
+Declare @StockQty numeric(12,4) = @inputStockQty
+select  li.NLCode,
+        [StockUnit] = li.UnitID,
+        [SCIRefno] = @Refno,
+        [FabricBrandID] = '',
+        [HSCode] =li.HSCode,
+        [UnitID] = li.CustomsUnit,
+        [FabricType] = 'L',
+        [LocalItem] = 1,
+        [Qty] = [dbo].getVNUnitTransfer(li.Category,li.UnitID,isnull(li.CustomsUnit,''),@StockQty,0,li.PcsWidth,li.PcsLength,li.PcsKg,IIF(li.CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(li.CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value),li.Refno)
+from LocalItem li with (nolock) 
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = li.CustomsUnit) Rate
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = 'M') M2Rate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = li.CustomsUnit) UnitRate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = 'M') M2UnitRate
+where Ltrim(li.Refno) = @Refno";
+            }
+            else if (fabricType == "Misc")
+            {
+                sqlGetNLCode = $@"
+Declare @StockQty numeric(12,4) = @inputStockQty
+select  Misc.NLCode,
+        [StockUnit] = Misc.UsageUnit,
+        [SCIRefno] = @Refno,
+        [FabricBrandID] = '',
+        [HSCode] =Misc.HSCode,
+        [UnitID] = Misc.CustomsUnit,
+        [FabricType] = 'Misc',
+        [LocalItem] = 1,
+        [Qty] = [dbo].getVNUnitTransfer('MISC',Misc.UsageUnit,isnull(Misc.CustomsUnit,''),@StockQty,Misc.PcsWidth,Misc.PcsWidth,Misc.PcsLength,Misc.PcsKg,Misc.MiscRate,0,Misc.ID)
+from  SciMachine_Misc Misc with (nolock) 
+where Ltrim(Misc.ID)  = @Refno";
+            }
+
+            bool isNLCodeExists = MyUtility.Check.Seek(sqlGetNLCode, parGetNLCode, out drNLCode);
+            if (isNLCodeExists)
+            {
+                return drNLCode;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        #endregion
+
+        #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+        public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)
+        {
+            var listDupNLCodeData = checkList
+                                   .GroupBy(s => new { ID = s["ID"], NLCode = s["NLCode"], HSCode = s["HSCode"], UnitID = s["UnitID"] })
+                                   .GroupBy(y => new { y.Key.ID, y.Key.NLCode })
+                                   .Select(z => new { z.Key.ID, z.Key.NLCode, duplicateData = z.ToList() })
+                                   .Where(x => x.duplicateData.Count > 1) // 抓出ID,NLCode相同，但HSCode,UnitID不同的資料
+                                   // 回串原本的detail datatable抓出明細資料
+                                   .Join(checkList,
+                                            dupData => new { dupData.ID, dupData.NLCode },
+                                            drDetail => new { ID = drDetail["ID"], NLCode = drDetail["NLCode"] },
+                                            (dupData, drDetail) => new
+                                            {
+                                                dupData.ID,
+                                                dupData.NLCode,
+                                                Refno = drDetail["Refno"],
+                                                HSCode = drDetail["HSCode"],
+                                                UnitID = drDetail["UnitID"]
+                                            });
+
+
+            if (listDupNLCodeData.Any())
+            {
+                DataTable dtDuplicate = new DataTable();
+                if (isShowID)
+                {
+                    dtDuplicate.ColumnsStringAdd("ID");
+                }
+                dtDuplicate.ColumnsStringAdd("NLCode");
+                dtDuplicate.ColumnsStringAdd("Refno");
+                dtDuplicate.ColumnsStringAdd("HSCode");
+                dtDuplicate.ColumnsStringAdd("UnitID");
+
+                foreach (var item in listDupNLCodeData)
+                {
+                    DataRow newDr = dtDuplicate.NewRow();
+                    if (isShowID)
+                    {
+                        newDr["ID"] = item.ID;
+                    }
+                    newDr["NLCode"] = item.NLCode;
+                    newDr["Refno"] = item.Refno;
+                    newDr["HSCode"] = item.HSCode;
+                    newDr["UnitID"] = item.UnitID;
+
+                    dtDuplicate.Rows.Add(newDr);
+                }
+
+                MsgGridForm msgGridForm = new MsgGridForm(dtDuplicate);
+                msgGridForm.Text = "The following data has different HSCode or Unit data from NLcode.";
+                msgGridForm.grid1.AutoResizeColumns();
+                msgGridForm.ShowDialog();
+                return false;
+            }
+            return true;
         }
         #endregion
     }
