@@ -137,7 +137,6 @@ where Junk != 1", out dtFactory);
 
             if (!MyUtility.Check.Empty(this.spNo))
             {
-                FirstWhere.Add($@" and bd.orderid = '{spNo}'");
                 finalWhere.Add($@" and o.ID = '{spNo}'");
             }
 
