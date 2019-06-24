@@ -34,7 +34,8 @@ Select MixedSizeMarker,	oe.id,	[FactoryID] = @FactoryID,	[MDivisionid] = @MDivis
 	[AddName] = @username,	[AddDate]=GETDATE(),	oe.MarkerDownloadID,	oe.FabricCombo,	oe.FabricCode,	oe.FabricPanelCode,
 	[Order_EachConsUkey] = oe.Ukey,
 	-----------------------------
-	oec.Orderqty,	[ThisMarkerColor_Layer] = oec.Layer,
+	[Orderqty]=SUM(oec.Orderqty),	[ThisMarkerColor_Layer] = SUM(oec.Layer),
+	-----------------------------
 	[ThisMarkerColor_MaxLayer]=iif(isnull(L.CuttingLayer,0)=0,100,L.CuttingLayer)
 	,IDENTITY(int,1,1) as Rowid ,
 	oe.ActCuttingPerimeter,oe.StraightLength,oe.CurvedLength
@@ -60,6 +61,12 @@ outer apply
 )s2
 outer apply(select top 1 A=0 from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=oe.Ukey)hasforArticle--排序用,有ForArticle排前
 Where oe.id = @Cuttingid and oe.CuttingPiece = 0--測試用--and colorid = 'BLK'and FabricCombo = 'FA'and MarkerName = 'MAB9'
+GROUP BY MixedSizeMarker,oe.id,	s.Seq1,
+	s.SEQ2,s2.seq1,s2.seq2,
+	oec.ColorID,	oe.MarkerName,	oe.MarkerLength,	oe.ConsPC,	
+	f.Refno,	ob.SCIRefno,	oe.MarkerNo,	oe.MarkerVersion,
+	oe.MarkerDownloadID,	oe.FabricCombo,	oe.FabricCode,	oe.FabricPanelCode,oe.Ukey,L.CuttingLayer
+	,oe.ActCuttingPerimeter,oe.StraightLength,oe.CurvedLength,hasforArticle.A
 order by isnull(hasforArticle.A,1),MixedSizeMarker desc,MarkerName
 --準備inline和qty分配資料
 select Inline = Min(s.Inline),[orderid] = o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,[Size_orderqty] = oq.qty,IDENTITY(int,1,1) as identRowid
