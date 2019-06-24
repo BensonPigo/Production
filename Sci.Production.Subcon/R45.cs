@@ -182,7 +182,7 @@ OUTER APPLY(
 		)
 	)M
 )SubProcess
-WHERE o.MDivisionID='{Sci.Env.User.Keyword}' 
+WHERE 1=1
 ");
 
             result = DBProxy.Current.Select(null, sqlCmd.Append(sqlWhere).ToString(), out printData);
