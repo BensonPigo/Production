@@ -31,37 +31,35 @@ namespace Sci.Production.Subcon
       {
          #region SQL Command
          string sqlcmd = string.Format(@"
-select 
-[Style]= S.ID 
-,[Season]= S.SeasonID  
-,[Brand]= S.BrandID
-,[CutpartID]= SA.PatternCode 
-,[CutpartName]= SA.PatternDesc
-,S.Description
-,OA.Article
-,SA.Price
-,[FirstinlineDate]= MIN(O.SewInLine)
-,SA.AddDate
-,SA.AddName
-,SA.EditDate
-,SA.EditName
-from Style_Artwork SA 
-inner join style S on( SA.StyleUkey = S.Ukey)
-left join Orders O on (O.StyleUkey = SA.StyleUkey)
-left join ArtworkPO_Detail APD on (APD.OrderID = O.ID)
-left join ArtworkPO AP on (AP.ID = APD.ID)
-inner join dbo.View_Order_Artworks OA on OA.ID=o.ID and OA.PatternCode=APD.PatternCode 
-and OA.ArtworkID=APD.ArtworkId and OA.ArtworkTypeID=APD.ArtworkTypeID
-Where AP.POType='O' and APD.ArtworkTypeID='PRINTING' 
-And  AP.LocalSuppID = (select top 1 PrintingSuppID from System)
+select	[Style]= S.ID 
+		, [Season]= S.SeasonID  
+		, [Brand]= S.BrandID
+		, [CutpartID]= vSA.PatternCode 
+		, [CutpartName]= vSA.PatternDesc
+		, S.Description
+		, vSA.Article
+		, Price = vSA.Cost
+		, [FirstinlineDate] = (
+								select MIN(O.SewInLine)
+								from orders o
+								where vsa.StyleUkey = o.StyleUkey
+									  and o.Category in ('B', 'S')
+									  and o.SewInLine is not null
+								)
+		,SA.AddDate
+		,SA.AddName
+		,SA.EditDate
+		,SA.EditName
+from dbo.View_style_Artwork vSA 
+inner join Style_Artwork SA on vSA.StyleArtworkUkey = SA.Ukey
+inner join style S on vSA.StyleUkey = S.Ukey
+Where	vSA.ArtworkTypeID = 'Printing'
 ");
          if (!MyUtility.Check.Empty(SeasonID))
          {
             sqlcmd += (string.Format("  And S.SeasonID= '{0}'", SeasonID));
          }
 
-         sqlcmd += @"group by  S.ID,S.SeasonID,S.BrandID,SA.PatternCode,SA.PatternDesc,S.Description,
-                                      OA.Article,SA.Price,SA.AddDate,SA.AddName,SA.EditDate,SA.EditName";
          #endregion
          DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
          DualResult result;
@@ -90,7 +88,6 @@ And  AP.LocalSuppID = (select top 1 PrintingSuppID from System)
          MyUtility.Excel.CopyToXls(printData, "", "Subcon_R52.xltx", 2, showExcel: false, excelApp: objApp);
          Excel.Worksheet worksheet = objApp.Sheets[1];
          worksheet.Cells[1, 2] = SeasonID;
-         worksheet.Cells[1, 6] = MyUtility.GetValue.Lookup("SELECT TOP 1 PrintingSuppID FROM [Production].[dbo].SYSTEM");
          worksheet.Columns.AutoFit();
          #endregion
          #region Save & Show Excel
