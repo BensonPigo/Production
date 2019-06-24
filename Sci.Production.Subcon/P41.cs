@@ -70,7 +70,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             .Text("Sewinglineid", header: "Inline Line#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("PatternPanel", header: "Comb", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Cutpart", header: "Cutpart", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("CutpartName", header: "Cutpart Name", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("CutpartName", header: "Cutpart Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("SubProcessID", header: "Artwork", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("BundleGroup", header: "Group#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("Qty", header: "Allocated Qty", width: Widths.AnsiChars(6))
@@ -147,6 +147,9 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             {
                 sqlWhere.Append($"AND bd.PatternCode ='ALLPARTS' " + Environment.NewLine);
             }
+            
+
+            sqlWhere.Append($"ORDER BY b.Colorid,bd.SizeCode,b.PatternPanel,bd.BundleNo");
 
             //「Extend All Parts」勾選則true
             string IsExtendAllParts = this.chkExtendAllParts.Checked ? "true" : "false";
@@ -156,7 +159,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
 
             sqlCmd.Append($@"
 
-SELECT 
+SELECT DISTINCT
 bd.BundleNo
 ,b.Orderid
 ,b.POID
@@ -173,7 +176,7 @@ bd.BundleNo
 ,b.PatternPanel
 
 ,[Cutpart]= bd.Patterncode
-,[CutpartName]= CASE WHEN '{IsExtendAllParts}'='true' THEN  bdap.PatternDesc
+,[CutpartName]= CASE WHEN '{IsExtendAllParts}'='true'  AND  bd.Patterncode ='ALLPARTS' THEN  bdap.PatternDesc
 				ELSE bd.PatternDesc  
 				END --basic from 「Extend All Parts」 is checked or not
 
@@ -188,9 +191,11 @@ bd.BundleNo
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
 INNER JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID
-LEFT JOIN Orders O ON o.ID=b.Orderid
-LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId=''
+INNER JOIN Orders O ON o.ID=b.Orderid
 LEFT JOIN Workorder w ON W.Refno=b.CutRef AND w.ID=b.POID
+LEFT JOIN BundleInOut ReceiveQtySorting ON ReceiveQtySorting.BundleNo=bd.BundleNo AND ReceiveQtySorting.RFIDProcessLocationID ='' AND ReceiveQtySorting.SubProcessId='Sorting'
+LEFT JOIN BundleInOut ReceiveQtyLoading ON ReceiveQtyLoading.BundleNo=bd.BundleNo AND ReceiveQtyLoading.RFIDProcessLocationID ='' AND ReceiveQtyLoading.SubProcessId='Loading'
+LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='{SubProcess}'
 OUTER APPLY(
 	SELECT [SubProcessID]=LEFT(SubProcessID,LEN(SubProcessID)-1)  
 	FROM
@@ -206,17 +211,7 @@ OUTER APPLY(
 		)
 	)M
 )SubProcess
-OUTER APPLY (
-	SELECT OutGoing
-	FROM BundleInOut bio
-	WHERE bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='Sorting'
-)ReceiveQtySorting
-OUTER APPLY (
-	SELECT InComing
-	FROM BundleInOut bio
-	WHERE bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='Loading'
-)ReceiveQtyLoading
-WHERE 1=1
+WHERE o.MDivisionID='{Sci.Env.User.Keyword}' AND ( SubProcess.SubProcessID LIKE '%{SubProcess}%' OR bd.Patterncode='ALLPARTS')
 
 ");
 
@@ -226,6 +221,11 @@ WHERE 1=1
             {
                 MyUtility.Msg.WarningBox("DB Error");
                 return;
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found !!");
             }
 
             this.listControlBindingSource1.DataSource = dt;
@@ -241,7 +241,10 @@ WHERE 1=1
                 return;
             }
 
+            this.ShowWaitMessage("Excel Processing...");
             Query();
+
+            this.HideWaitMessage();
         }
     }
 }

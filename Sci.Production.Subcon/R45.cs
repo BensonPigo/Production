@@ -12,6 +12,7 @@ using Sci.Win;
 using System.Data.SqlClient;
 using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
@@ -92,6 +93,10 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
                     }
 
 
+                    
+
+                    sqlWhere.Append($"ORDER BY b.Colorid,bd.SizeCode,b.PatternPanel,bd.BundleNo");
+
                     //「Extend All Parts」勾選則true
                     IsExtendAllParts = this.chkExtendAllParts.Checked ? "true" : "false";
 
@@ -118,13 +123,13 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
 
             sqlCmd.Append($@"
 
-SELECT
+SELECT DISTINCT
 bd.BundleGroup
 ,b.Colorid
 ,bd.SizeCode
 ,b.PatternPanel
 ,[Cutpart]= bd.Patterncode
-,[CutpartName]= CASE WHEN '{IsExtendAllParts}'='true' THEN  bdap.PatternDesc
+,[CutpartName]= CASE WHEN '{IsExtendAllParts}'='true'  AND  bd.Patterncode ='ALLPARTS' THEN  bdap.PatternDesc
 				ELSE bd.PatternDesc  
 				END --basic from 「Extend All Parts」 is checked or not
 ,[SubProcessID]= SubProcess.SubProcessID
@@ -145,9 +150,9 @@ bd.BundleGroup
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
 INNER JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID
-LEFT JOIN Orders O ON o.ID=b.Orderid
-LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId=''
+INNER JOIN Orders O ON o.ID=b.Orderid
 LEFT JOIN Workorder w ON W.Refno=b.CutRef AND w.ID=b.POID
+LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='{SubProcess}'
 OUTER APPLY(
 	SELECT [SubProcessID]=LEFT(SubProcessID,LEN(SubProcessID)-1)  
 	FROM
@@ -163,7 +168,7 @@ OUTER APPLY(
 		)
 	)M
 )SubProcess
-WHERE 1=1
+WHERE o.MDivisionID='{Sci.Env.User.Keyword}' AND ( SubProcess.SubProcessID LIKE '%{SubProcess}%' OR bd.Patterncode='ALLPARTS')
 ");
 
             result = DBProxy.Current.Select(null, sqlCmd.Append(sqlWhere).ToString(), out printData);
@@ -201,7 +206,7 @@ WHERE 1=1
             foreach (DataRow dr in GroupByList.Rows)
             {
                 DataTable tmp = printData.Select($"Orderid='{dr["Orderid"].ToString()}' AND CutRef='{dr["CutRef"].ToString()}'").CopyToDataTable();
-
+                
                 DataList.Add(tmp);
             }
 
@@ -209,7 +214,7 @@ WHERE 1=1
             #endregion
 
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Suncon_R45.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R45.xltx"); //預先開啟excel app
 
             for (int i = 0; i < DataList.Count; i++)
             {
@@ -233,30 +238,40 @@ WHERE 1=1
                 // 取得工作表
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1]; 
                 //將datatable copy to excel
-                MyUtility.Excel.CopyToXls(DataList[i], null, "Subcon_R45.xltx", headerRow: 9, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);
+                MyUtility.Excel.CopyToXls(DataList[i], null, "Subcon_R45.xltx", headerRow: 8, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);
 
-                objSheets.Name = DataList[i].Rows[0]["Orderid"].ToString() + " " + DataList[i].Rows[0]["CutRef"].ToString();
+                objSheets.Name = DataList[i].Rows[0]["Orderid"].ToString() + "-" + DataList[i].Rows[0]["CutRef"].ToString();
 
                 //上方欄位 固定值
 
                 //Exported Date 
-                objSheets.Cells[2, 11] = DataList[i].Rows[0]["ExportedDate"].ToString();
+                objSheets.Cells[2, 11] =Convert.ToDateTime( DataList[i].Rows[0]["ExportedDate"]).ToShortDateString();
                 // Factory
                 objSheets.Cells[3, 2] = DataList[i].Rows[0]["FactoryID"].ToString();
                 //SP# 
                 objSheets.Cells[4, 2] = DataList[i].Rows[0]["Orderid"].ToString();
-                //Style
-                objSheets.Cells[4, 7] = DataList[i].Rows[0]["StyleID"].ToString();
-                //CutRef
-                objSheets.Cells[5, 2] = DataList[i].Rows[0]["CutRef"].ToString();
                 //Inline Line#
-                objSheets.Cells[5, 7] = DataList[i].Rows[0]["Sewinglineid"].ToString();
+                objSheets.Cells[4, 7] = DataList[i].Rows[0]["Sewinglineid"].ToString();
+                //Style
+                objSheets.Cells[5, 2] = DataList[i].Rows[0]["StyleID"].ToString();
                 //SubProcess
-                objSheets.Cells[6, 2] = DataList[i].Rows[0]["SubProcess"].ToString();
+                objSheets.Cells[5, 7] = DataList[i].Rows[0]["SubProcess"].ToString();
+                //CutRef
+                objSheets.Cells[6, 2] = DataList[i].Rows[0]["CutRef"].ToString();
 
                 if (this.comboSubPorcess.Text != "Loading")
                 {
+                    //解除合併儲存格
+                    Excel.Range range = objSheets.get_Range((Excel.Range)objSheets.Cells[1, 1], (Excel.Range)objSheets.Cells[1, 14]);
+                    range.UnMerge();
                     objSheets.Columns["N"].Clear();
+                    objSheets.Columns["O"].Clear();
+                    objSheets.Columns["P"].Clear();
+                    objSheets.Columns["Q"].Clear();
+                    objSheets.Columns["R"].Clear();
+
+                    Excel.Range range2 = objSheets.get_Range((Excel.Range)objSheets.Cells[1, 1], (Excel.Range)objSheets.Cells[1, 12]);
+                    range.Merge();
                 }
 
 
@@ -275,6 +290,8 @@ WHERE 1=1
             #endregion
 
             strExcelName.OpenFile();
+
+            this.HideWaitMessage();
 
 
             return true;
