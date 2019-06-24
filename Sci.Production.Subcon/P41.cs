@@ -116,7 +116,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
 
             if (!string.IsNullOrEmpty(this.txtFactory.Text))
             {
-                sqlWhere.Append($"AND o.FactoryID='{this.txtFactory.Text}'" + Environment.NewLine);
+                sqlWhere.Append($"AND o.FtyGroup='{this.txtFactory.Text}'" + Environment.NewLine);
             }
 
             if (!string.IsNullOrEmpty(this.txtCutCell.Text))
@@ -200,7 +200,7 @@ OUTER APPLY(
 			SELECT  SubProcessID + ' + '
 			FROM Bundle_Detail_Art bda
 			WHERE bda.ID=bd.Id AND bda.Bundleno=bd.BundleNo
-			AND EXISTS( SELECT 1 FROM SubProcess s WHERE s.Id=bda.SubprocessId AND s.IsRFIDDefault=1)
+			AND EXISTS( SELECT 1 FROM SubProcess s WHERE s.Id=bda.SubprocessId AND s.IsRFIDDefault=0)
 			AND bda.SubProcessID='{SubProcess}'  --篩選條件
 			FOR XML PATH('')
 		)
