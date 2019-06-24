@@ -71,7 +71,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             .Text("PatternPanel", header: "Comb", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Cutpart", header: "Cutpart", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("CutpartName", header: "Cutpart Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
-            .Text("SubProcessID", header: "Artwork", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("SubProcessID", header: "Artwork", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Text("BundleGroup", header: "Group#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("Qty", header: "Allocated Qty", width: Widths.AnsiChars(6))
             .Text("ReceiveQtySorting", header: "Receive Qty Sorting", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -147,7 +147,11 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             {
                 sqlWhere.Append($"AND bd.PatternCode ='ALLPARTS' " + Environment.NewLine);
             }
-            
+
+            if (!string.IsNullOrEmpty(this.comboSubPorcess.Text))
+            {
+                sqlWhere.Append($"AND SubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%'" + Environment.NewLine);
+            }
 
             sqlWhere.Append($"ORDER BY b.Colorid,bd.SizeCode,b.PatternPanel,bd.BundleNo");
 
@@ -192,7 +196,7 @@ FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
 INNER JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID
 INNER JOIN Orders O ON o.ID=b.Orderid
-LEFT JOIN Workorder w ON W.Refno=b.CutRef AND w.ID=b.POID
+LEFT JOIN Workorder w ON W.CutRef=b.CutRef AND w.ID=b.POID
 LEFT JOIN BundleInOut ReceiveQtySorting ON ReceiveQtySorting.BundleNo=bd.BundleNo AND ReceiveQtySorting.RFIDProcessLocationID ='' AND ReceiveQtySorting.SubProcessId='Sorting'
 LEFT JOIN BundleInOut ReceiveQtyLoading ON ReceiveQtyLoading.BundleNo=bd.BundleNo AND ReceiveQtyLoading.RFIDProcessLocationID ='' AND ReceiveQtyLoading.SubProcessId='Loading'
 LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='{SubProcess}'
@@ -202,16 +206,22 @@ OUTER APPLY(
 	(
 		SELECT [SubProcessID]=
 		(
-			SELECT  SubProcessID + ' + '
-			FROM Bundle_Detail_Art bda
-			WHERE bda.ID=bd.Id AND bda.Bundleno=bd.BundleNo
-			AND EXISTS( SELECT 1 FROM SubProcess s WHERE s.Id=bda.SubprocessId AND s.IsRFIDDefault=0)
-			AND bda.SubProcessID='{SubProcess}'  --篩選條件
+			SELECT ID+ ' + '
+			FROM SubProcess s
+			WHERE EXISTS
+			(
+				SELECT 1 FROM Bundle_Detail_Art bda
+				WHERE  bda.BundleNo = bd.BundleNo 
+				AND bda.ID = b.ID   
+				AND bda.SubProcessID = s.ID
+			)
+			OR 
+			s.IsRFIDDefault = 1
 			FOR XML PATH('')
 		)
 	)M
 )SubProcess
-WHERE o.MDivisionID='{Sci.Env.User.Keyword}' AND ( SubProcess.SubProcessID LIKE '%{SubProcess}%' OR bd.Patterncode='ALLPARTS')
+WHERE o.MDivisionID='{Sci.Env.User.Keyword}' 
 
 ");
 
@@ -243,6 +253,37 @@ WHERE o.MDivisionID='{Sci.Env.User.Keyword}' AND ( SubProcess.SubProcessID LIKE 
 
             this.ShowWaitMessage("Excel Processing...");
             Query();
+
+
+            this.grid.Columns["XXXRFIDIn"].HeaderText = this.comboSubPorcess.Text + " RFID In";
+            this.grid.Columns["XXXRFIDOut"].HeaderText = this.comboSubPorcess.Text + " RFID Out";
+
+            //Helper.Controls.Grid.Generator(this.grid)
+            //.Text("BundleNo", header: "Bundle No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("Orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("POID", header: "Master SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("FactoryID", header: "Factory", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("Category", header: "Category", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("ProgramID", header: "Program", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("SeasonID", header: "Season", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("Colorid", header: "Color", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("Article", header: "Article", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("SizeCode", header: "Size", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("CutCellID", header: "Cut Cell", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("Sewinglineid", header: "Inline Line#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("PatternPanel", header: "Comb", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("Cutpart", header: "Cutpart", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("CutpartName", header: "Cutpart Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            //.Text("SubProcessID", header: "Artwork", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            //.Text("BundleGroup", header: "Group#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Numeric("Qty", header: "Allocated Qty", width: Widths.AnsiChars(6))
+            //.Text("ReceiveQtySorting", header: "Receive Qty Sorting", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("ReceiveQtyLoading", header: "Receive Qty Sorting", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("XXXRFIDIn", header: this.comboSubPorcess.Text+" RFID In", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //.Text("XXXRFIDOut", header: this.comboSubPorcess.Text + " RFID Out", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            ////.Text("", header: "Fab. Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            //;
 
             this.HideWaitMessage();
         }

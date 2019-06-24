@@ -93,7 +93,12 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
                     }
 
 
-                    
+                    if (!string.IsNullOrEmpty(this.comboSubPorcess.Text))
+                    {
+                        sqlWhere.Append($"AND SubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%'" + Environment.NewLine);
+                    }
+
+
 
                     sqlWhere.Append($"ORDER BY b.Colorid,bd.SizeCode,b.PatternPanel,bd.BundleNo");
 
@@ -137,6 +142,9 @@ bd.BundleGroup
 ,bd.Parts
 ,bd.Qty
 ,bd.BundleNo
+,[ActualAcc.ReceivedQty]=''
+,[Remartks]=''
+,[WaterbeetleConfirmation]=''
 
 -----Excel上方資訊
 ,[ExportedDate]=GETDATE()
@@ -151,7 +159,7 @@ FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
 INNER JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID
 INNER JOIN Orders O ON o.ID=b.Orderid
-LEFT JOIN Workorder w ON W.Refno=b.CutRef AND w.ID=b.POID
+LEFT JOIN Workorder w ON W.CutRef=b.CutRef AND w.ID=b.POID
 LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='{SubProcess}'
 OUTER APPLY(
 	SELECT [SubProcessID]=LEFT(SubProcessID,LEN(SubProcessID)-1)  
@@ -159,16 +167,22 @@ OUTER APPLY(
 	(
 		SELECT [SubProcessID]=
 		(
-			SELECT  SubProcessID + ' + '
-			FROM Bundle_Detail_Art bda
-			WHERE bda.ID=bd.Id AND bda.Bundleno=bd.BundleNo
-			AND EXISTS( SELECT 1 FROM SubProcess s WHERE s.Id=bda.SubprocessId AND s.IsRFIDDefault=0)
-			AND bda.SubProcessID='{SubProcess}'  --篩選條件
+			SELECT ID+ ' + '
+			FROM SubProcess s
+			WHERE EXISTS
+			(
+				SELECT 1 FROM Bundle_Detail_Art bda
+				WHERE  bda.BundleNo = bd.BundleNo 
+				AND bda.ID = b.ID   
+				AND bda.SubProcessID = s.ID
+			)
+			OR 
+			s.IsRFIDDefault = 1
 			FOR XML PATH('')
 		)
 	)M
 )SubProcess
-WHERE o.MDivisionID='{Sci.Env.User.Keyword}' AND ( SubProcess.SubProcessID LIKE '%{SubProcess}%' OR bd.Patterncode='ALLPARTS')
+WHERE o.MDivisionID='{Sci.Env.User.Keyword}' 
 ");
 
             result = DBProxy.Current.Select(null, sqlCmd.Append(sqlWhere).ToString(), out printData);
@@ -259,20 +273,33 @@ WHERE o.MDivisionID='{Sci.Env.User.Keyword}' AND ( SubProcess.SubProcessID LIKE 
                 //CutRef
                 objSheets.Cells[6, 2] = DataList[i].Rows[0]["CutRef"].ToString();
 
-                if (this.comboSubPorcess.Text != "Loading")
+                if (this.comboSubPorcess.Text.ToUpper() != "LOADING")
                 {
                     //解除合併儲存格
                     Excel.Range range = objSheets.get_Range((Excel.Range)objSheets.Cells[1, 1], (Excel.Range)objSheets.Cells[1, 14]);
                     range.UnMerge();
+                    // 如果是LOADING，這一欄不顯示
                     objSheets.Columns["N"].Clear();
-                    objSheets.Columns["O"].Clear();
-                    objSheets.Columns["P"].Clear();
-                    objSheets.Columns["Q"].Clear();
-                    objSheets.Columns["R"].Clear();
 
                     Excel.Range range2 = objSheets.get_Range((Excel.Range)objSheets.Cells[1, 1], (Excel.Range)objSheets.Cells[1, 12]);
                     range.Merge();
                 }
+
+                //增加寬度
+                Excel.Range range3 = objSheets.get_Range("B8");
+                Excel.Range range4 = objSheets.get_Range("C8");
+                range3.Columns.ColumnWidth = 8;
+                range4.Columns.ColumnWidth = 8;
+
+                //多於資訊清除
+                objSheets.Columns["O"].Clear();
+                objSheets.Columns["P"].Clear();
+                objSheets.Columns["Q"].Clear();
+                objSheets.Columns["R"].Clear();
+                objSheets.Columns["S"].Clear();
+                objSheets.Columns["T"].Clear();
+                objSheets.Columns["U"].Clear();
+
 
 
                 Marshal.ReleaseComObject(objSheets); //釋放sheet      
