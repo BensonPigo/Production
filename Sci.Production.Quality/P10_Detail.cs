@@ -188,8 +188,8 @@ namespace Sci.Production.Quality
 
             //Result 選單
             Dictionary<string, string> ResultPF = new Dictionary<string, string>();
-            ResultPF.Add("P", "Pass");
-            ResultPF.Add("F", "Fail");
+            ResultPF.Add("Pass", "Pass");
+            ResultPF.Add("Fail", "Fail");
             comboResult.DataSource = new BindingSource(ResultPF, null);
             comboResult.ValueMember = "Key";
             comboResult.DisplayMember = "Value";
@@ -647,7 +647,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             worksheet.Cells[13, 8] = txtFibreComposition.Text;
 
             #region 最下面 Signature
-            if (MyUtility.Convert.GetString(dr["Result"]).EqualString("P"))
+            if (MyUtility.Convert.GetString(dr["Result"]).EqualString("Pass"))
             {
                 worksheet.Cells[73, 4] = "V";
             }

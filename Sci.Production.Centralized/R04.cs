@@ -102,6 +102,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=sr.SewingReasonDesc
 	,sd.Remark
+    ,o.SciDelivery
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -179,6 +180,7 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
 	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
 	,Rate,StdTMS,InspectQty,RejectQty
     ,BuyerDelivery
+    ,SciDelivery
     ,OrderQty
     ,SubconOutFty
     ,SubConOutContractNumber
@@ -324,6 +326,7 @@ select * from(
         ,t.OrderId
         ,CustPONo
         ,t.BuyerDelivery
+        ,t.SciDelivery
         ,t.OrderQty
 		,Brand = IIF(t.Category=''M'',MockupBrandID,OrderBrandID)
 		,Category = IIF(t.OrderCategory=''M'',''Mockup'',IIF(LocalOrder = 1,''Local Order'',IIF(t.OrderCategory=''B'',''Bulk'',IIF(t.OrderCategory=''S'',''Sample'',IIF(t.OrderCategory=''G'',''Garment'','''')))))
@@ -463,11 +466,11 @@ EXEC sp_executesql @lastSql
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
             {
-                start_column = 41;
+                start_column = 42;
             }
             else
             {
-                start_column = 39;
+                start_column = 40;
                 objSheets.get_Range("AM:AN").EntireColumn.Delete();
             }
 

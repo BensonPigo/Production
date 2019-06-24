@@ -56,6 +56,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(716, 293);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayFileName);
@@ -78,6 +82,12 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(716, 255);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 255);
+            this.detailbtm.Size = new System.Drawing.Size(716, 38);
             // 
             // browse
             // 
@@ -125,7 +135,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 23);
             this.label5.TabIndex = 4;
-            this.label5.Text = "FileName";
+            this.label5.Text = "File Name";
             // 
             // label6
             // 
@@ -133,7 +143,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(102, 23);
             this.label6.TabIndex = 5;
-            this.label6.Text = "FromLeft";
+            this.label6.Text = "From Left";
             // 
             // label7
             // 
@@ -141,7 +151,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(102, 23);
             this.label7.TabIndex = 6;
-            this.label7.Text = "FromTop";
+            this.label7.Text = "From Top";
             // 
             // label8
             // 
@@ -149,7 +159,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(102, 23);
             this.label8.TabIndex = 7;
-            this.label8.Text = "StampLength";
+            this.label8.Text = "Stamp Length";
             // 
             // label9
             // 
@@ -157,7 +167,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(102, 23);
             this.label9.TabIndex = 8;
-            this.label9.Text = "StampWidth";
+            this.label9.Text = "Stamp Width";
             // 
             // txtbrand1
             // 
@@ -166,7 +176,7 @@
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand1.Location = new System.Drawing.Point(138, 33);
             this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.Size = new System.Drawing.Size(125, 23);
             this.txtbrand1.TabIndex = 9;
             // 
             // txtcustcd1

@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.numWorkHourDay = new Sci.Win.UI.NumericBox();
+            this.label8 = new Sci.Win.UI.Label();
             this.numSpeed = new Sci.Win.UI.NumericBox();
             this.label7 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
@@ -49,23 +51,24 @@
             this.labelM = new Sci.Win.UI.Label();
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
-            this.label8 = new Sci.Win.UI.Label();
-            this.numWorkHourDay = new Sci.Win.UI.NumericBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(442, 12);
+            this.print.TabIndex = 0;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(442, 48);
+            this.toexcel.TabIndex = 1;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(442, 84);
+            this.close.TabIndex = 2;
             // 
             // panel1
             // 
@@ -96,6 +99,33 @@
             this.panel1.Size = new System.Drawing.Size(410, 274);
             this.panel1.TabIndex = 94;
             // 
+            // numWorkHourDay
+            // 
+            this.numWorkHourDay.BackColor = System.Drawing.Color.White;
+            this.numWorkHourDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numWorkHourDay.Location = new System.Drawing.Point(185, 244);
+            this.numWorkHourDay.Name = "numWorkHourDay";
+            this.numWorkHourDay.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numWorkHourDay.Size = new System.Drawing.Size(53, 23);
+            this.numWorkHourDay.TabIndex = 10;
+            this.numWorkHourDay.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(13, 244);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(166, 23);
+            this.label8.TabIndex = 121;
+            this.label8.Text = "Work Hour/Day";
+            // 
             // numSpeed
             // 
             this.numSpeed.BackColor = System.Drawing.Color.White;
@@ -108,7 +138,7 @@
             0,
             0});
             this.numSpeed.Size = new System.Drawing.Size(53, 23);
-            this.numSpeed.TabIndex = 120;
+            this.numSpeed.TabIndex = 9;
             this.numSpeed.Value = new decimal(new int[] {
             5,
             0,
@@ -150,18 +180,20 @@
             this.dateActCutDate.Location = new System.Drawing.Point(112, 99);
             this.dateActCutDate.Name = "dateActCutDate";
             this.dateActCutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateActCutDate.TabIndex = 117;
+            this.dateActCutDate.TabIndex = 3;
             // 
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.boolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
             this.txtfactory1.IssupportJunk = false;
             this.txtfactory1.Location = new System.Drawing.Point(112, 41);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 116;
+            this.txtfactory1.TabIndex = 1;
             // 
             // txtMdivision1
             // 
@@ -170,27 +202,29 @@
             this.txtMdivision1.Location = new System.Drawing.Point(112, 12);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 115;
+            this.txtMdivision1.TabIndex = 0;
             // 
             // txtSpreadingNo2
             // 
             this.txtSpreadingNo2.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo2.IncludeJunk = true;
             this.txtSpreadingNo2.Location = new System.Drawing.Point(185, 128);
             this.txtSpreadingNo2.MDivision = "";
             this.txtSpreadingNo2.Name = "txtSpreadingNo2";
             this.txtSpreadingNo2.Size = new System.Drawing.Size(45, 23);
-            this.txtSpreadingNo2.TabIndex = 114;
+            this.txtSpreadingNo2.TabIndex = 5;
             // 
             // txtSpreadingNo1
             // 
             this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo1.IncludeJunk = true;
             this.txtSpreadingNo1.Location = new System.Drawing.Point(112, 128);
             this.txtSpreadingNo1.MDivision = "";
             this.txtSpreadingNo1.Name = "txtSpreadingNo1";
             this.txtSpreadingNo1.Size = new System.Drawing.Size(45, 23);
-            this.txtSpreadingNo1.TabIndex = 113;
+            this.txtSpreadingNo1.TabIndex = 4;
             // 
             // txtCell2
             // 
@@ -200,7 +234,7 @@
             this.txtCell2.MDivisionID = "";
             this.txtCell2.Name = "txtCell2";
             this.txtCell2.Size = new System.Drawing.Size(30, 23);
-            this.txtCell2.TabIndex = 112;
+            this.txtCell2.TabIndex = 7;
             // 
             // txtCell1
             // 
@@ -210,7 +244,7 @@
             this.txtCell1.MDivisionID = "";
             this.txtCell1.Name = "txtCell1";
             this.txtCell1.Size = new System.Drawing.Size(30, 23);
-            this.txtCell1.TabIndex = 111;
+            this.txtCell1.TabIndex = 6;
             // 
             // label5
             // 
@@ -237,7 +271,7 @@
             this.txtCuttingSp.Location = new System.Drawing.Point(112, 186);
             this.txtCuttingSp.Name = "txtCuttingSp";
             this.txtCuttingSp.Size = new System.Drawing.Size(126, 23);
-            this.txtCuttingSp.TabIndex = 106;
+            this.txtCuttingSp.TabIndex = 8;
             // 
             // label3
             // 
@@ -306,34 +340,7 @@
             this.dateEstCutDate.Location = new System.Drawing.Point(112, 70);
             this.dateEstCutDate.Name = "dateEstCutDate";
             this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateEstCutDate.TabIndex = 0;
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(13, 244);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(166, 23);
-            this.label8.TabIndex = 121;
-            this.label8.Text = "Work Hour/Day";
-            // 
-            // numWorkHourDay
-            // 
-            this.numWorkHourDay.BackColor = System.Drawing.Color.White;
-            this.numWorkHourDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numWorkHourDay.Location = new System.Drawing.Point(185, 244);
-            this.numWorkHourDay.Name = "numWorkHourDay";
-            this.numWorkHourDay.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numWorkHourDay.Size = new System.Drawing.Size(53, 23);
-            this.numWorkHourDay.TabIndex = 122;
-            this.numWorkHourDay.Value = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
+            this.dateEstCutDate.TabIndex = 2;
             // 
             // R08
             // 
@@ -343,6 +350,7 @@
             this.Controls.Add(this.panel1);
             this.IsSupportPrint = false;
             this.Name = "R08";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R08.Actual Cutting Output Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);

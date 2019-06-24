@@ -179,6 +179,12 @@
     <Compile Include="P05_SOCFMDate.Designer.cs">
       <DependentUpon>P05_SOCFMDate.cs</DependentUpon>
     </Compile>
+    <Compile Include="P05_UnconfirmHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_UnconfirmHistory.Designer.cs">
+      <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="P11_BatchApprove.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -708,6 +714,12 @@
     <Compile Include="R14.Designer.cs">
       <DependentUpon>R14.cs</DependentUpon>
     </Compile>
+    <Compile Include="R15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R15.Designer.cs">
+      <DependentUpon>R15.cs</DependentUpon>
+    </Compile>
     <Compile Include="R16.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -780,6 +792,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05_SOCFMDate.resx">
       <DependentUpon>P05_SOCFMDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_UnconfirmHistory.resx">
+      <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P11_BatchApprove.resx">
       <DependentUpon>P11_BatchApprove.cs</DependentUpon>
@@ -1052,6 +1067,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R14.resx">
       <DependentUpon>R14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R15.resx">
+      <DependentUpon>R15.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R16.resx">
       <DependentUpon>R16.cs</DependentUpon>

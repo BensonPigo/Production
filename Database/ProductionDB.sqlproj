@@ -2363,6 +2363,7 @@
     <Build Include="dbo\Tables\Style_ThreadColorCombo.sql" />
     <Build Include="dbo\Functions\GetGarmentSizeByOrderIDSeq.sql" />
     <Build Include="dbo\Stored Procedures\exp_finishingprocess.sql" />
+    <Build Include="dbo\Functions\getPassEmail.sql" />
     <Build Include="dbo\Functions\QtyBySetPerSubprocess.sql" />
   </ItemGroup>
   <ItemGroup>
