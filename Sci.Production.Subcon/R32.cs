@@ -177,7 +177,7 @@ WHERE   b.Id LIKE 'TC%'
 		
 
 --取最大IssueDate和ReceiveDate用Outer apply排序做
-SELECT  base.BundleNo
+SELECT  isnull(base.BundleNo,bd.BundleNo) BundleNo
 		,[EXCESS] = iif(b.IsEXCESS = 0,'','Y')
 		,b.CutRef
 		,b.Orderid
@@ -210,9 +210,9 @@ SELECT  base.BundleNo
 		,EstCut.CuttingOutputDate
 		,[Subcon] = FarmOut.EndSite + '-' + ls.Abb 
 		, '' remark 
-FROM #Base base
-LEFT JOIN Bundle_Detail bd ON bd.BundleNo=base.BundleNo
-LEFT JOIN Bundle b ON b.ID =bd.Id
+from Bundle b
+LEFT JOIN Bundle_Detail bd ON b.ID = bd.Id
+LEFT JOIN #Base base ON bd.BundleNo=base.BundleNo
 LEFT JOIN Orders o ON o.ID=b.Orderid
 OUTER APPLY(
 	SELECT	[EstCutDate] = MAX(w.EstCutDate),
@@ -240,8 +240,8 @@ outer apply(
 		    for xml path('')
 	    ),1,1,'')
 ) as sub
-left join #FarmOutList  FarmOut on FarmOut.BundleNo=base.BundleNo AND FarmOut.StartProcess= s.Id 
-left join #FarmInList  FarmIn on FarmIn.BundleNo=base.BundleNo AND FarmIn.StartProcess= s.Id
+left join #FarmOutList  FarmOut on FarmOut.BundleNo=isnull(base.BundleNo,bd.BundleNo) AND FarmOut.StartProcess= s.Id 
+left join #FarmInList  FarmIn on FarmIn.BundleNo=isnull(base.BundleNo,bd.BundleNo) AND FarmIn.StartProcess= s.Id
 left join LocalSupp ls on ls.id=FarmOut.EndSite
 WHERE 1=1 {finalWhere.JoinToString("\r\n")}
 
