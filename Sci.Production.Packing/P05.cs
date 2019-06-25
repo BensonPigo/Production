@@ -504,7 +504,11 @@ where InvA.OrderID = '{0}'
                 .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(8), settings: this.size).Get(out this.col_Size)
                 .Numeric("Qty", header: "Order Qty", iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Qty", settings: this.balance).Get(out this.col_qty)
-                .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true);
+                .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true)
+                .Text("CustCDID", header: "Cust CD", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Dest", header: "Dest", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("OrderTypeID", header: "Order Type", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                ;
         }
 
         /// <summary>

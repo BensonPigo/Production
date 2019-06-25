@@ -57,7 +57,7 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboFrom, 2, 1, "1,Factory,2,Brand");
             MyUtility.Tool.SetupCombox(this.comboTO, 2, 1, "1,SCI,2,Factory,3,Sullpier,4,Brand");
-            MyUtility.Tool.SetupCombox(this.cmbFreightBy, 2, 1, "3RD,Freight by 3rd Party,CUST,Freight Collect,FTY,Freight Pre-Paid by Fty,HAND,Hand Carry");
+            MyUtility.Tool.SetupCombox(this.cmbPayer, 2, 1, "3RD,Freight Collect by 3rd Party,CUST,Freight Collect by Customer,FTY,Freight Pre-Paid by Fty,HAND,Hand Carry");
         }
 
         /// <inheritdoc/>
@@ -807,15 +807,6 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
-            string updateCmds = $"update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}'";
-            DualResult result = DBProxy.Current.Execute(null, updateCmds);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("Junk data faile.\r\n" + result.ToString());
-                return result;
-            }
-
             return base.ClickSavePost();
         }
 
@@ -1532,7 +1523,11 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 return;
             }
 
-            string updateCmd = string.Format("update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
+            updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}'";
+
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -1647,6 +1642,7 @@ and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
                 MyUtility.Msg.WarningBox(msg);
                 return false;
             }
+
             return true;
             #endregion
         }

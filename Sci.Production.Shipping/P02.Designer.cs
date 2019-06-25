@@ -95,7 +95,7 @@
             this.txtCountryDestination = new Sci.Production.Class.txtcountry();
             this.txtUserManager = new Sci.Production.Class.txtuser();
             this.txtUserHandle = new Sci.Production.Class.txtuser();
-            this.cmbFreightBy = new Sci.Win.UI.ComboBox();
+            this.cmbPayer = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -114,7 +114,7 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.cmbFreightBy);
+            this.masterpanel.Controls.Add(this.cmbPayer);
             this.masterpanel.Controls.Add(this.displaySendtoSCI);
             this.masterpanel.Controls.Add(this.labelSendtoSCI);
             this.masterpanel.Controls.Add(this.displayStatupdate);
@@ -170,7 +170,7 @@
             this.masterpanel.Controls.Add(this.dateETD);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(875, 316);
+            this.masterpanel.Size = new System.Drawing.Size(998, 316);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
@@ -227,13 +227,13 @@
             this.masterpanel.Controls.SetChildIndex(this.displayStatupdate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSendtoSCI, 0);
             this.masterpanel.Controls.SetChildIndex(this.displaySendtoSCI, 0);
-            this.masterpanel.Controls.SetChildIndex(this.cmbFreightBy, 0);
+            this.masterpanel.Controls.SetChildIndex(this.cmbPayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 316);
-            this.detailpanel.Size = new System.Drawing.Size(875, 0);
+            this.detailpanel.Size = new System.Drawing.Size(998, 226);
             // 
             // gridicon
             // 
@@ -242,11 +242,11 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(3824, 8);
+            this.refresh.Location = new System.Drawing.Point(3877, 8);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
+            this.detailgridcont.Size = new System.Drawing.Size(998, 226);
             // 
             // detail2
             // 
@@ -262,11 +262,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(998, 668);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 261);
+            this.detailcont.Size = new System.Drawing.Size(998, 542);
             // 
             // detailbtm
             // 
@@ -279,8 +279,8 @@
             this.detailbtm.Controls.Add(this.editDescription);
             this.detailbtm.Controls.Add(this.labelDescription);
             this.detailbtm.Controls.Add(this.datePayDate);
-            this.detailbtm.Location = new System.Drawing.Point(0, 261);
-            this.detailbtm.Size = new System.Drawing.Size(892, 126);
+            this.detailbtm.Location = new System.Drawing.Point(0, 542);
+            this.detailbtm.Size = new System.Drawing.Size(998, 126);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -532,7 +532,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(875, 316);
+            this.shapeContainer1.Size = new System.Drawing.Size(998, 316);
             this.shapeContainer1.TabIndex = 24;
             this.shapeContainer1.TabStop = false;
             // 
@@ -1032,18 +1032,18 @@
             this.txtUserHandle.TabIndex = 4;
             this.txtUserHandle.TextBox1Binding = "";
             // 
-            // cmbFreightBy
+            // cmbPayer
             // 
-            this.cmbFreightBy.BackColor = System.Drawing.Color.White;
-            this.cmbFreightBy.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "FreightBy", true));
-            this.cmbFreightBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbFreightBy.FormattingEnabled = true;
-            this.cmbFreightBy.IsSupportUnselect = true;
-            this.cmbFreightBy.Location = new System.Drawing.Point(515, 179);
-            this.cmbFreightBy.Name = "cmbFreightBy";
-            this.cmbFreightBy.OldText = "";
-            this.cmbFreightBy.Size = new System.Drawing.Size(170, 24);
-            this.cmbFreightBy.TabIndex = 56;
+            this.cmbPayer.BackColor = System.Drawing.Color.White;
+            this.cmbPayer.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "FreightBy", true));
+            this.cmbPayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbPayer.FormattingEnabled = true;
+            this.cmbPayer.IsSupportUnselect = true;
+            this.cmbPayer.Location = new System.Drawing.Point(515, 179);
+            this.cmbPayer.Name = "cmbPayer";
+            this.cmbPayer.OldText = "";
+            this.cmbPayer.Size = new System.Drawing.Size(170, 24);
+            this.cmbPayer.TabIndex = 56;
             // 
             // label1
             // 
@@ -1051,7 +1051,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(80, 23);
             this.label1.TabIndex = 57;
-            this.label1.Text = "Freight By";
+            this.label1.Text = "Payer";
             // 
             // P02
             // 
@@ -1169,7 +1169,7 @@
         private Win.UI.Label labelPayDate;
         private Win.UI.EditBox editDescription;
         private Win.UI.Label labelDescription;
-        private Win.UI.ComboBox cmbFreightBy;
+        private Win.UI.ComboBox cmbPayer;
         private Win.UI.Label label1;
     }
 }
