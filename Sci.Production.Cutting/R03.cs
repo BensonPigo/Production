@@ -130,7 +130,8 @@ select
 			)/60.0,0),2)as float)
 	,--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
 	[Marker Length] = wo.MarkerLength,
-	wo.ActCuttingPerimeter
+	wo.ActCuttingPerimeter,
+    o.BuyerDelivery
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
