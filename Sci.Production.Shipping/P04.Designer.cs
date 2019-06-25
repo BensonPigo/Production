@@ -833,6 +833,7 @@
             this.comboShippMode.OldText = "";
             this.comboShippMode.Size = new System.Drawing.Size(121, 24);
             this.comboShippMode.TabIndex = 50;
+            this.comboShippMode.SelectedValueChanged += new System.EventHandler(this.ComboShippMode_SelectedValueChanged);
             // 
             // chkNoCharge
             // 

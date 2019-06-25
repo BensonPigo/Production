@@ -396,5 +396,32 @@ where ed.ID = '{0}'", masterID);
                 this.txtSisFtyWK.ReadOnly = true;
             }
         }
+
+        // ComboShippMode
+        private void ComboShippMode_SelectedValueChanged(object sender, EventArgs e)
+        {
+            ComboBox comboShippMode = (ComboBox)sender;
+            if (this.EditMode &&
+                   !string.IsNullOrEmpty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])) &&
+                   comboShippMode.SelectedIndex > 0)
+            {
+                string shippMode = comboShippMode.SelectedValue.ToString();
+                string sql = string.Format(
+                      @"select count(*) cnt 
+                            from ShareExpense WITH (NOLOCK) 
+                            where (InvNo = '{0}' or WKNO = '{0}')
+                            and ShipModeID <> '{1}'",
+                      MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                      shippMode);
+
+                bool bolChagne = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sql)) > 0;
+                if (bolChagne)
+                {
+                    MyUtility.Msg.WarningBox("Can’t revise < Shipping Mode > because share expense shipping mode is different.");
+                    comboShippMode.SelectedIndex = -1;
+                    return;
+                }
+            }
+        }
     }
 }
