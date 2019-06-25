@@ -54,7 +54,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
         {
 
             sqlWhere.Clear();
-            if (string.IsNullOrEmpty(this.txtMdivision.Text) && string.IsNullOrEmpty(this.txtFactory.Text))
+            if (string.IsNullOrEmpty(this.txtMdivision.Text) || string.IsNullOrEmpty(this.txtFactory.Text))
             {
                 MyUtility.Msg.InfoBox("M and Factory cannnot be empty");
                 return false;
