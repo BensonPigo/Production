@@ -102,10 +102,12 @@ Select  a.MDivisionID
 	        ,a.Category
 	        ,b.LocalPoId
 	        ,b.OrderId
+			,c.BrandID
 	        ,b.Refno
 	        ,dbo.getItemDesc(a.Category,b.Refno) Description
 	        ,b.ThreadColorID
 	        ,b.UnitID
+			,[TmsCost] = ot.Price
 	        ,b.Price
 	        ,b.Qty
             ,b.price*b.qty amount
@@ -118,7 +120,8 @@ inner join LocalAP_Detail b WITH (NOLOCK) on b.id=a.id
 left join Orders c WITH (NOLOCK) on b.OrderId=c.ID
 left join localsupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
 left join localpo e WITH (NOLOCK) on b.LocalPoId=e.Id    
-left join Currency cy WITH (NOLOCK) on a.CurrencyID = cy.id                                         
+left join Currency cy WITH (NOLOCK) on a.CurrencyID = cy.id   
+left join Order_TmsCost ot WITH (NOLOCK) on ot.ID=c.id and ot.ArtworkTypeID=a.Category     
 outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 outer apply (
     (select name = concat(name, ' Ext.', ExtNo)
