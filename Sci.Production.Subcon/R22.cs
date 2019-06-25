@@ -104,6 +104,7 @@ Select  a.MDivisionID
 	        ,b.OrderId
 			,c.BrandID
 	        ,b.Refno
+            ,[IsCarton] = iif(li.IsCarton =1 ,'Y','N')
 	        ,dbo.getItemDesc(a.Category,b.Refno) Description
 	        ,b.ThreadColorID
 	        ,b.UnitID
@@ -122,6 +123,7 @@ left join localsupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
 left join localpo e WITH (NOLOCK) on b.LocalPoId=e.Id    
 left join Currency cy WITH (NOLOCK) on a.CurrencyID = cy.id   
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID=c.id and ot.ArtworkTypeID=a.Category     
+left join LocalItem li WITH (NOLOCK) on li.RefNo=b.Refno
 outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 outer apply (
     (select name = concat(name, ' Ext.', ExtNo)

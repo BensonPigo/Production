@@ -272,6 +272,7 @@ select DISTINCT c.FactoryID
 	        ,[Supp] = a.LocalSuppID+'-'+d.Abb 
 	        ,b.Delivery
 	        ,b.Refno
+            ,[IsCarton] = iif(li.IsCarton = 1 ,'Y','N')
 	        ,b.ThreadColorID + ' - ' + ThreadColor.Description		
 			,[PRConfirmedDate]=CASE WHEN a.Category = 'CARTON' 
 									THEN (SELECT TOP 1 p.ApvToPurchaseDate 
@@ -298,9 +299,11 @@ select DISTINCT c.FactoryID
 	        ,b.Remark
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
-inner join orders c WITH (NOLOCK) on c.ID = b.POID
+left join orders c WITH (NOLOCK) on c.ID = b.POID
 left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID 
-left join ThreadColor on b.ThreadColorID = ThreadColor.ID" + sqlWhere);
+left join ThreadColor on b.ThreadColorID = ThreadColor.ID
+left join LocalItem li WITH (NOLOCK) on li.RefNo=b.Refno
+" + sqlWhere);
                 result = DBProxy.Current.Select("", sqlcd, lis, out dtt);
                 if (!result)
                 { return result; }
@@ -329,7 +332,7 @@ select  [LocalPOID] = a.id
 into #tmp
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
-inner join orders c WITH (NOLOCK) on c.id=b.poid
+left join orders c WITH (NOLOCK) on c.id=b.poid
 left join ThreadColor on b.ThreadColorID = ThreadColor.ID
 " + sqlWhere + @"
 group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID + ' - ' + ThreadColor.Description, a.IssueDate, a.Category, b.UnitId "
@@ -403,7 +406,7 @@ select  e.NameEN [Title1]
         into #temp  
 from dbo.localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on b.id=a.Id
-inner join orders c WITH (NOLOCK) on c.id=b.POID
+left join orders c WITH (NOLOCK) on c.id=b.POID
 left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
 left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 " + sqlWhere + " " + all, lis, out dt);
@@ -467,7 +470,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                                              from orders c WITH (NOLOCK) 
                                              inner join (select distinct OrderId from localpo a WITH (NOLOCK) 
                                              inner join localpo_detail b WITH (NOLOCK) on a.id = b.id
-                                             inner join Orders c WITH (NOLOCK) on c.id=b.poid  " + sqlWhere + @") m  on m.OrderId = c.poid 
+                                             left join Orders c WITH (NOLOCK) on c.id=b.poid  " + sqlWhere + @") m  on m.OrderId = c.poid 
                                              inner join country co WITH (NOLOCK) on co.id = c.dest"
                                              );
                 result = DBProxy.Current.Select("", scmd, lis, out shm);
