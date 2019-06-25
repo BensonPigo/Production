@@ -95,8 +95,9 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
 
                     if (!string.IsNullOrEmpty(this.comboSubPorcess.Text))
                     {
-                        sqlWhere.Append($"AND SubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%'" + Environment.NewLine);
+                        sqlWhere.Append($"AND ( DefaultSubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%' OR SubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%' )" + Environment.NewLine);
                     }
+
 
 
 
@@ -176,12 +177,24 @@ OUTER APPLY(
 				AND bda.ID = b.ID   
 				AND bda.SubProcessID = s.ID
 			)
-			OR 
-			s.IsRFIDDefault = 1
 			FOR XML PATH('')
 		)
 	)M
 )SubProcess
+OUTER APPLY(
+	SELECT [SubProcessID]=LEFT(SubProcessID,LEN(SubProcessID)-1)  
+	FROM
+	(
+		SELECT [SubProcessID]=
+		(
+			SELECT ID+ ' + '
+			FROM SubProcess s
+			WHERE 
+			s.IsRFIDDefault = 1
+			FOR XML PATH('')
+		)
+	)M
+)DefaultSubProcess
 WHERE 1=1
 ");
 

@@ -75,7 +75,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             .Text("BundleGroup", header: "Group#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("Qty", header: "Allocated Qty", width: Widths.AnsiChars(6))
             .Text("ReceiveQtySorting", header: "Receive Qty Sorting", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("ReceiveQtyLoading", header: "Receive Qty Sorting", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("ReceiveQtyLoading", header: "Receive Qty Loading", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("XXXRFIDIn", header: "RFID In", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("XXXRFIDOut", header: "RFID Out", width: Widths.AnsiChars(13), iseditingreadonly: true)            
             //.Text("", header: "Fab. Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -150,7 +150,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
 
             if (!string.IsNullOrEmpty(this.comboSubPorcess.Text))
             {
-                sqlWhere.Append($"AND SubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%'" + Environment.NewLine);
+                sqlWhere.Append($"AND ( DefaultSubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%' OR SubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%' )" + Environment.NewLine);
             }
 
             sqlWhere.Append($"ORDER BY b.Colorid,bd.SizeCode,b.PatternPanel,bd.BundleNo");
@@ -185,12 +185,13 @@ bd.BundleNo
 				END --basic from 「Extend All Parts」 is checked or not
 
 ,[SubProcessID]= SubProcess.SubProcessID
+,[DefaultSubProcess]=DefaultSubProcess.SubProcessID
 ,bd.BundleGroup
 ,bd.Qty
 ,[ReceiveQtySorting]= IIF(ReceiveQtySorting.OutGoing != '' OR ReceiveQtySorting.OutGoing IS NOT NULL , 'Complete' ,'Not Complete')
 ,[ReceiveQtyLoading]= IIF(ReceiveQtyLoading.InComing != '' OR ReceiveQtyLoading.InComing IS NOT NULL , 'Complete' ,'Not Complete')
-,[XXXRFIDIn]=bio.OutGoing
-,[XXXRFIDOut]=bio.InComing
+,[XXXRFIDIn]=bio.InComing
+,[XXXRFIDOut]=bio.OutGoing
 
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
@@ -215,12 +216,24 @@ OUTER APPLY(
 				AND bda.ID = b.ID   
 				AND bda.SubProcessID = s.ID
 			)
-			OR 
-			s.IsRFIDDefault = 1
 			FOR XML PATH('')
 		)
 	)M
 )SubProcess
+OUTER APPLY(
+	SELECT [SubProcessID]=LEFT(SubProcessID,LEN(SubProcessID)-1)  
+	FROM
+	(
+		SELECT [SubProcessID]=
+		(
+			SELECT ID+ ' + '
+			FROM SubProcess s
+			WHERE 
+			s.IsRFIDDefault = 1
+			FOR XML PATH('')
+		)
+	)M
+)DefaultSubProcess
 WHERE o.MDivisionID='{Sci.Env.User.Keyword}' 
 
 ");
