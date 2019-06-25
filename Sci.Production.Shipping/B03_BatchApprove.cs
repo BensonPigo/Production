@@ -47,10 +47,10 @@ namespace Sci.Production.Shipping
                 .Text("AccountIDN", header: "Account No", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("sLocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("Price", header: "Price", width: Widths.AnsiChars(7), decimal_places: 5, iseditingreadonly: true)
                 .Text("sNewSupp", header: "New Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("NewCurrency", header: "New Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("NewPrice", header: "New Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("NewPrice", header: "New Price", width: Widths.AnsiChars(7), decimal_places: 5, iseditingreadonly: true)
                 ;
 
             this.Helper.Controls.Grid.Generator(this.grid2)
@@ -58,7 +58,7 @@ namespace Sci.Production.Shipping
                 .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SuppAbb", header: "Supp Abb", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("Price", header: "Price", width: Widths.AnsiChars(7), decimal_places: 5, iseditingreadonly: true)
                 .Date("QuotDate", header: "QuotDate", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 ;
 
