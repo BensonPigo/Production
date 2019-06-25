@@ -270,6 +270,17 @@ WHERE 1=1
                 objSheets.Name = DataList[i].Rows[0]["Orderid"].ToString() + "-" + DataList[i].Rows[0]["CutRef"].ToString();
 
                 //上方欄位 固定值
+                
+                List<string> Lines = new List<string>();
+
+                for (int x = 0;  x <= DataList[i].DefaultView.ToTable(true, new string[] { "Sewinglineid" }).Rows.Count-1;  x++)
+                {
+                    string Line = DataList[i].DefaultView.ToTable(true, new string[] { "Sewinglineid" }).Select()[x]["Sewinglineid"].ToString();
+                    if (!Lines.Contains(Line))
+                    {
+                        Lines.Add(Line);
+                    }
+                }
 
                 //Exported Date 
                 objSheets.Cells[2, 11] =Convert.ToDateTime( DataList[i].Rows[0]["ExportedDate"]).ToShortDateString();
@@ -278,7 +289,7 @@ WHERE 1=1
                 //SP# 
                 objSheets.Cells[4, 2] = DataList[i].Rows[0]["Orderid"].ToString();
                 //Inline Line#
-                objSheets.Cells[4, 7] = DataList[i].Rows[0]["Sewinglineid"].ToString();
+                objSheets.Cells[4, 7] = string.Join(",",Lines);// DataList[i].Rows[0]["Sewinglineid"].ToString();
                 //Style
                 objSheets.Cells[5, 2] = DataList[i].Rows[0]["StyleID"].ToString();
                 //SubProcess
