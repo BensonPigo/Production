@@ -35,6 +35,7 @@ namespace Sci.Production.Packing
             .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: false)
+            .Numeric("ShipQty", header: "CTN Qty", iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
@@ -44,6 +45,8 @@ namespace Sci.Production.Packing
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Text("TransferredBy", header: "Transferred By", width: Widths.Auto(), iseditingreadonly: false)
+            .Date("CFMDate", header: "Confirm Date", iseditingreadonly: true)
+            .Text("ConfirmedBy", header: "Confirmed By", width: Widths.Auto(), iseditingreadonly: true)
             .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
             .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
             .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false)
@@ -96,15 +99,19 @@ select
 	,o.BuyerDelivery
 	,o.SciDelivery
 	,[TransferredBy] = dbo.getPass1(pe.AddName)
+    ,pt.CFMDate
+    ,[ConfirmedBy] = dbo.getPass1(pe.AddName)
     ,[ErrorType] = pe.PackingErrorID+'-'+perr.Description
     , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
     , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
     , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+    , pd.ShipQty
 from PackErrTransfer pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
 left join PackingError perr with (nolock) on pe.PackingErrorID = perr.ID
 left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = pe.SCICtnNo 
+left join PackErrCFM pt with(nolock) on pt.PackingListID=pe.PackingListID
 and perr.Type='TP'
 where 1=1
 {sqlwhere}

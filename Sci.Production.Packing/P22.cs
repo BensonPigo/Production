@@ -35,11 +35,12 @@ namespace Sci.Production.Packing
             .Date("CFMDate", header: "Confirm Date", iseditingreadonly: true)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: false)
+            .Numeric("ShipQty", header: "CTN Qty", iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditingreadonly: false)
-             .Text("ErrorType", header: "ErrorType", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("ErrorType", header: "ErrorType", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: false)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
@@ -49,7 +50,6 @@ namespace Sci.Production.Packing
             .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false)
             ;
             this.grid1.AutoResizeColumns();
-
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -102,6 +102,7 @@ select
     , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
     , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
     , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+    , pd.ShipQty
 from PackErrCFM pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
