@@ -355,8 +355,8 @@ USING(
 		from  Production.dbo.LocalItem l
 		where l.RefNo=pd.RefNo
 	) LocalItem
-	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate)
-	and (convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate)
+	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate
+	or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate)
 ) as S
 on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode
 WHEN MATCHED THEN
