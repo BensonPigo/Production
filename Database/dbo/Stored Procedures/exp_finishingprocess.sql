@@ -342,6 +342,7 @@ USING(
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
+	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
 	OUTER APPLY(
 		SELECT fp2.id
 		FROM FPS.dbo.PackingList fp1
@@ -355,6 +356,7 @@ USING(
 		where l.RefNo=pd.RefNo
 	) LocalItem
 	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate)
+	and (convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate)
 ) as S
 on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode
 WHEN MATCHED THEN
