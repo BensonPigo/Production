@@ -263,10 +263,10 @@ select  Selected = 0
         , Stitch = oa.qty 
         , oa.PatternDesc
         , qtygarment = 1
-        , Cost = iif(at.isArtwork = 1,vsa.Cost,sao.Price)
-        , unitprice = sao.Price
-        , price = sao.Price
-        , amount = iif((sum(q.qty)-IssueQty.IssueQty) < 0 ,0 ,(sum(q.qty)-IssueQty.IssueQty) *  sao.Price )
+        , Cost = cost.value
+        , unitprice = unitprice.value
+        , price = unitprice.value
+        , amount = iif((sum(q.qty)-isnull(IssueQty.IssueQty,0)) < 0 ,0 ,(sum(q.qty)-isnull(IssueQty.IssueQty,0)) *  unitprice.value )
         , Style = o.StyleID
 from  orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
@@ -278,11 +278,19 @@ inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and vsa.Art
 inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
+left join LocalSupp ls with (nolock) on ls.id = ot.LocalSuppID
 outer apply (
         select IssueQty = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD, ArtworkPO A
         where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= oa.PatternCode
 ) IssueQty
+outer apply (select value = iif(ls.IsSintexSubcon = 1 and (at.isArtwork = 1 or at.useArtwork = 1), oa.Cost ,sao.Price))unitprice
+outer apply (select value = 
+        case when ls.IsSintexSubcon = 1 and (at.isArtwork = 1 or at.useArtwork = 1) then oa.Cost
+             when at.isArtwork = 1 then vsa.Cost
+             else sao.Price
+             end
+)cost
 where f.IsProduceFty=1
 --and o.PulloutComplete = 0
 and o.category  in ('B','S')
@@ -298,7 +306,7 @@ and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !
             if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
-            strSQLCmd += " group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc,IssueQty.IssueQty, o.StyleID, o.StyleID,iif(at.isArtwork = 1,vsa.Cost,sao.Price),sao.Price";
+            strSQLCmd += " group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc,IssueQty.IssueQty, o.StyleID, o.StyleID,cost.value,unitprice.value";
 
             return strSQLCmd;
         }

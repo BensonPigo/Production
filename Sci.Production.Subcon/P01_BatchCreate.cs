@@ -536,10 +536,10 @@ SELECT 	Selected = 0
 		, v.PatternCode
 		, v.PatternDesc
 		, LocalSuppID = rtrim(order_tmscost.LocalSuppID) 
-		, [Cost] = iif(awt.isArtwork = 1,vsa.Cost,sao.Price)
+        , [Cost] = cost.value
 		, costStitch = v.qty
 		, stitch = v.qty
-		, unitprice = sao.Price
+		, unitprice = unitprice.value
 		, qtygarment = 1.0
 		, poqty = sum(v.poqty) 
 		, Order_TmsCost.ArtworkInLine
@@ -557,6 +557,15 @@ inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey and vs
 														vsa.ArtworkName = v.ArtworkName and vsa.ArtworkTypeID = v.ArtworkTypeID and vsa.PatternCode = v.PatternCode and
 														vsa.PatternDesc = v.PatternDesc 
 inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.LocalSuppID = order_tmscost.LocalSuppID  and sao.Price > 0  and sao.PriceApv = 'Y'
+left join LocalSupp ls with (nolock) on ls.id = order_tmscost.LocalSuppID
+outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), v.Cost,sao.Price))unitprice
+outer apply (
+    select value = 
+        case when ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1) then v.Cost
+             when awt.isArtwork = 1 then vsa.Cost
+             else sao.Price
+             end
+)cost
 WHERE 	not exists(
 			select 1
 			from artworkpo a WITH (NOLOCK) 
@@ -588,7 +597,7 @@ group by 	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.S
 			, Orders.OrderTypeId, Orders.SciDelivery, Order_TmsCost.ArtworkTypeID
 			, order_tmscost.LocalSuppID, order_tmscost.Qty, Order_TmsCost.ArtworkInLine
 			, Order_TmsCost.artworkoffline, Orders.SewInLine, Order_TmsCost.ApvDate
-			, V.ArtworkID, V.PatternCode, V.PatternDesc,   iif(awt.isArtwork = 1,vsa.Cost,sao.Price), V.ArtworkTypeID, v.qty,sao.Price";
+			, V.ArtworkID, V.PatternCode, V.PatternDesc, cost.value, V.ArtworkTypeID, v.qty,unitprice.value";
 
             return SqlCmd;
         }
