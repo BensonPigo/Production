@@ -66,6 +66,7 @@ where Junk != 1", out dtFactory);
             #region SQL first where
             List<string> FirstWhere = new List<string>();
             List<string> finalWhere = new List<string>();
+            string joinTmpBase = "LEFT JOIN #Base base ON bd.BundleNo=base.BundleNo";
 
             if (this.dateFarmOutDate.HasValue)
             {
@@ -83,6 +84,8 @@ where Junk != 1", out dtFactory);
                     finalWhere.Add(" and FarmOut.IssueDate <= @dateFarmOutDateTo");
                     listSqlPar.Add(new SqlParameter("@dateFarmOutDateTo", Convert.ToDateTime(this.dateFarmOutDate.DateBox2.Value)));
                 }
+
+                joinTmpBase = joinTmpBase.Replace("LEFT", "inner");
             }
 
             if (this.dateBundleCdate.HasValue)
@@ -120,6 +123,8 @@ where Junk != 1", out dtFactory);
                     finalWhere.Add(" and (FarmOut.IssueDate <= @dateBundleScanTo or FarmIn.ReceiveDate <= @dateBundleScanTo)");
                     listSqlPar.Add(new SqlParameter("@dateBundleScanTo", (this.dateBundleScan.DateBox2.Value.Value.AddDays(1).AddSeconds(-1))));
                 }
+
+                joinTmpBase = joinTmpBase.Replace("LEFT", "inner");
             }
             
             #endregion 
@@ -137,6 +142,7 @@ where Junk != 1", out dtFactory);
 
             if (!MyUtility.Check.Empty(this.spNo))
             {
+                FirstWhere.Add($@" and bd.orderid = '{spNo}'");
                 finalWhere.Add($@" and o.ID = '{spNo}'");
             }
 
@@ -211,9 +217,9 @@ SELECT  isnull(base.BundleNo,bd.BundleNo) BundleNo
 		,[Subcon] = FarmOut.EndSite + '-' + ls.Abb 
 		, '' remark 
 from Bundle b
-LEFT JOIN Bundle_Detail bd ON b.ID = bd.Id
-LEFT JOIN #Base base ON bd.BundleNo=base.BundleNo
 LEFT JOIN Orders o ON o.ID=b.Orderid
+inner JOIN Bundle_Detail bd ON b.ID = bd.Id
+{joinTmpBase}
 OUTER APPLY(
 	SELECT	[EstCutDate] = MAX(w.EstCutDate),
 			[CuttingOutputDate] = MAX(co.cDate)
