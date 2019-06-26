@@ -410,9 +410,9 @@
             // 
             this.labelOrderQty.Location = new System.Drawing.Point(5, 70);
             this.labelOrderQty.Name = "labelOrderQty";
-            this.labelOrderQty.Size = new System.Drawing.Size(62, 18);
+            this.labelOrderQty.Size = new System.Drawing.Size(89, 18);
             this.labelOrderQty.TabIndex = 22;
-            this.labelOrderQty.Text = "Order Q\'ty";
+            this.labelOrderQty.Text = "ShipMode Q\'ty";
             // 
             // labelAirQty
             // 
@@ -458,7 +458,7 @@
             this.numOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numOrderQty.IsSupportEditMode = false;
-            this.numOrderQty.Location = new System.Drawing.Point(69, 69);
+            this.numOrderQty.Location = new System.Drawing.Point(97, 69);
             this.numOrderQty.Name = "numOrderQty";
             this.numOrderQty.NullValue = new decimal(new int[] {
             0,
