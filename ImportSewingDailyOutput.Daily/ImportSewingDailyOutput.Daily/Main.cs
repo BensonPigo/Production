@@ -23,16 +23,15 @@ namespace ImportSewingDailyOutput.Daily
 {
     public partial class Main : Sci.Win.Tems.Base
     {
-        bool isAuto = false;
         DataRow mailTo;
         TransferPms transferPMS = new TransferPms();
         StringBuilder sqlmsg = new StringBuilder();
-        //上正式區改成False
+        bool IsAuto = Convert.ToBoolean(ConfigurationManager.AppSettings["IsAuto"]);
         bool isTestJobLog = Convert.ToBoolean(ConfigurationManager.AppSettings["IsTestJobLog"]);
+        bool AnotherDat = Convert.ToBoolean(ConfigurationManager.AppSettings["UseAnotherDate"]);
+
         bool issucess = true;
         string tpeMisMail = string.Empty;
-
-        bool AnotherDat = Convert.ToBoolean(ConfigurationManager.AppSettings["UseAnotherDate"]);
         string OutputDate = "GETDATE()";
 
 
@@ -48,7 +47,7 @@ namespace ImportSewingDailyOutput.Daily
             
             transferPMS.fromSystem = "PBIReportData";
 
-            if (isAuto)
+            if (IsAuto)
             {
                 ClickExport();
                 this.Close();
