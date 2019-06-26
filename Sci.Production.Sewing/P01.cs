@@ -2095,7 +2095,11 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                     callReason.ReturnRemark,
                     Sci.Env.User.UserID);
 
-                string updateCmd = string.Format(@"update SewingOutput set LockDate = null, Status = 'New' where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                string updateCmd = $@"
+update SewingOutput 
+set LockDate = null, Status = 'New' 
+, EditDate = GetDate(), EditName = '{Sci.Env.User.UserID}'
+where ID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'";
 
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
