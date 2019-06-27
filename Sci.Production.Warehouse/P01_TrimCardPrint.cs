@@ -218,27 +218,130 @@ where o.Id='{0}'
             else if (radioThread.Checked)
             {
                 #region Thread
-                sql = string.Format(@"
+                /*
+                 Article 請加上 union all
+                判斷[註1]  不用+ Ori(Ori的SQL語法就是sql的那一串)
+                a. 無資料, 不回傳任何結果 + Ori
+                b. 其中一筆Article = null ,回傳[註2]  + Ori
+                c. 全部資料不為null,回傳[註1] +  Ori
+
+                 */
+                DataTable dt1;
+                string sqlCmd_1 = $@"
+SELECT OBA.Article 
+FROM ORDER_BOA OB
+INNER join Fabric f on f.SCIRefno = ob.SCIRefno
+LEFT JOIN Order_BOA_Article OBA ON OBA.order_BOAUkey = OB.Ukey
+WHERE OB.ID ='{POID}' and f.MtltypeId like '%thread%'
+";
+
+                result = DBProxy.Current.Select(null, sqlCmd_1, out dt1);
+                if (!result) return result;
+
+                if (dt1.Rows.Count==0)
+                {
+                    //Ori長這樣
+                    sql = string.Format(@"
 select distinct B.Article
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.ID = a.orderid
 left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
-where o.iD = '{0}' 
-	  and article<>''", POID);
-                result = DBProxy.Current.Select(null, sql, out dtPrint2);
-                if (!result) return result;
+where o.iD = '{0}' and article<>''  ", POID);
+                    result = DBProxy.Current.Select(null, sql, out dtPrint2);
+                    if (!result) return result;
+                }
+                else
+                {
+                    int nullCount = dt1.AsEnumerable().Where(o => o["Article"] == DBNull.Value).Count();
 
-                sql = string.Format(@"
-select B.Article
-	   , A.ThreadColorID
-from Orders o WITH (NOLOCK) 
-inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
-inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
-left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
-where o.ID = '{0}' 
-	  and article<>''
-group by article, threadcolorid", POID);
+                    if (nullCount> 0 )
+                    {
+                        string sqlCmd_2 = $@"
+SELECT * FROM (
+    -- Ori
+    select distinct B.Article
+    from Orders o WITH (NOLOCK) 
+    inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+    inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.ID = a.orderid
+    left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
+    where o.iD = '{POID}'   and article<>''  
+
+    UNION --註2
+    select Article from Order_Article 
+    where id = '{POID}' 
+) a
+ORDER BY Article ASC
+";
+                        result = DBProxy.Current.Select(null, sqlCmd_2, out dtPrint2);
+                        if (!result) return result;
+                    }
+                    else
+                    {
+                        string sqlCmd_3 = $@"
+SELECT * FROM (
+    -- Ori 
+    select distinct B.Article
+    from Orders o WITH (NOLOCK) 
+    inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+    inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.ID = a.orderid
+    left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
+    where o.iD = '{POID}'  and article<>''  
+
+    UNION --註1
+    SELECT OBA.Article 
+    FROM ORDER_BOA OB
+    INNER join Fabric f on f.SCIRefno = ob.SCIRefno
+    LEFT JOIN Order_BOA_Article OBA ON OBA.order_BOAUkey = OB.Ukey
+    WHERE OB.ID = '{POID}' and f.MtltypeId like '%thread%' 
+) a
+ORDER BY Article ASC
+";
+                        result = DBProxy.Current.Select(null, sqlCmd_3, out dtPrint2);
+                        if (!result) return result;
+                    }
+
+                }
+
+                sql = $@"
+
+SELECT * FROM
+(
+	select 
+	  B.Article
+	, A.ThreadColorID
+	from Orders o WITH (NOLOCK) 
+	inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+	inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
+	left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
+	where o.ID = '{POID}' and article<>''
+	group by article, threadcolorid
+
+	UNION  --加上當地採購
+	SELECT DISTINCT 
+	[Artuicle] = IIF(BOA_Article.Article IS NULL 
+					,Order_Article.Article
+					,BOA_Article.Article 
+					)				
+
+	,[ThreadColorID]=PSD.SuppColor 
+	FROM PO_Supp_Detail PSD
+	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
+	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
+	OUTER APPLY(
+		SELECT oba.Article FROM Order_BOA ob
+		LEFT join Order_BOA_Article oba on oba.Order_BoAUkey = ob.Ukey
+		WHERE ob.id =psd.ID and ob.SCIRefno = psd.SCIRefno and ob.seq=psd.SEQ1
+	)BOA_Article
+	OUTER APPLY(
+		SELECT Article 
+		FROM Order_Article 
+		WHERE id =psd.ID
+	)Order_Article
+	WHERE PSD.ID ='{POID}' and f.MtltypeId like '%thread%' AND PSD.Junk=0 AND boa.Ukey IS NOT NULL
+)A
+ORDER BY ThreadColorID ASC
+";
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
                 #endregion
