@@ -56,6 +56,7 @@
             this.chkIsShipping = new Sci.Win.UI.CheckBox();
             this.chkisSubcon = new Sci.Win.UI.CheckBox();
             this.chkisMisc = new Sci.Win.UI.CheckBox();
+            this.chkIsSintexSubcon = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -70,6 +71,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsSintexSubcon);
             this.detailcont.Controls.Add(this.chkisMisc);
             this.detailcont.Controls.Add(this.chkisSubcon);
             this.detailcont.Controls.Add(this.chkIsShipping);
@@ -275,7 +277,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(495, 15);
+            this.checkJunk.Location = new System.Drawing.Point(587, 15);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 1;
@@ -287,7 +289,7 @@
             this.checkUseSBTS.AutoSize = true;
             this.checkUseSBTS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UseSBTS", true));
             this.checkUseSBTS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkUseSBTS.Location = new System.Drawing.Point(495, 42);
+            this.checkUseSBTS.Location = new System.Drawing.Point(587, 42);
             this.checkUseSBTS.Name = "checkUseSBTS";
             this.checkUseSBTS.Size = new System.Drawing.Size(92, 21);
             this.checkUseSBTS.TabIndex = 3;
@@ -299,7 +301,7 @@
             this.checkIsFactory.AutoSize = true;
             this.checkIsFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsFactory", true));
             this.checkIsFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIsFactory.Location = new System.Drawing.Point(495, 69);
+            this.checkIsFactory.Location = new System.Drawing.Point(587, 69);
             this.checkIsFactory.Name = "checkIsFactory";
             this.checkIsFactory.Size = new System.Drawing.Size(88, 21);
             this.checkIsFactory.TabIndex = 5;
@@ -310,7 +312,7 @@
             // 
             this.btnAccountingChartNo.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccountingChartNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccountingChartNo.Location = new System.Drawing.Point(606, 15);
+            this.btnAccountingChartNo.Location = new System.Drawing.Point(698, 15);
             this.btnAccountingChartNo.Name = "btnAccountingChartNo";
             this.btnAccountingChartNo.Size = new System.Drawing.Size(163, 30);
             this.btnAccountingChartNo.TabIndex = 13;
@@ -322,7 +324,7 @@
             // 
             this.btnBankDetail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnBankDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBankDetail.Location = new System.Drawing.Point(606, 52);
+            this.btnBankDetail.Location = new System.Drawing.Point(698, 52);
             this.btnBankDetail.Name = "btnBankDetail";
             this.btnBankDetail.Size = new System.Drawing.Size(163, 30);
             this.btnBankDetail.TabIndex = 14;
@@ -386,7 +388,7 @@
             this.chkIsShipping.AutoSize = true;
             this.chkIsShipping.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsShipping", true));
             this.chkIsShipping.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIsShipping.Location = new System.Drawing.Point(495, 96);
+            this.chkIsShipping.Location = new System.Drawing.Point(587, 96);
             this.chkIsShipping.Name = "chkIsShipping";
             this.chkIsShipping.Size = new System.Drawing.Size(152, 21);
             this.chkIsShipping.TabIndex = 15;
@@ -398,7 +400,7 @@
             this.chkisSubcon.AutoSize = true;
             this.chkisSubcon.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSubcon", true));
             this.chkisSubcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkisSubcon.Location = new System.Drawing.Point(495, 123);
+            this.chkisSubcon.Location = new System.Drawing.Point(587, 123);
             this.chkisSubcon.Name = "chkisSubcon";
             this.chkisSubcon.Size = new System.Drawing.Size(145, 21);
             this.chkisSubcon.TabIndex = 16;
@@ -410,12 +412,24 @@
             this.chkisMisc.AutoSize = true;
             this.chkisMisc.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsMisc", true));
             this.chkisMisc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkisMisc.Location = new System.Drawing.Point(495, 150);
+            this.chkisMisc.Location = new System.Drawing.Point(587, 150);
             this.chkisMisc.Name = "chkisMisc";
             this.chkisMisc.Size = new System.Drawing.Size(186, 21);
             this.chkisMisc.TabIndex = 17;
             this.chkisMisc.Text = "Is Miscellaneous Supplier";
             this.chkisMisc.UseVisualStyleBackColor = true;
+            // 
+            // chkIsSintexSubcon
+            // 
+            this.chkIsSintexSubcon.AutoSize = true;
+            this.chkIsSintexSubcon.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSintexSubcon", true));
+            this.chkIsSintexSubcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsSintexSubcon.Location = new System.Drawing.Point(587, 177);
+            this.chkIsSintexSubcon.Name = "chkIsSintexSubcon";
+            this.chkIsSintexSubcon.Size = new System.Drawing.Size(131, 21);
+            this.chkIsSintexSubcon.TabIndex = 18;
+            this.chkIsSintexSubcon.Text = "Is Sintex Subcon";
+            this.chkIsSintexSubcon.UseVisualStyleBackColor = true;
             // 
             // B04
             // 
@@ -477,5 +491,6 @@
         private Win.UI.CheckBox chkisMisc;
         private Win.UI.CheckBox chkisSubcon;
         private Win.UI.CheckBox chkIsShipping;
+        private Win.UI.CheckBox chkIsSintexSubcon;
     }
 }
