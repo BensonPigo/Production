@@ -8,6 +8,7 @@ using Sci.Data;
 using Sci;
 using Ict;
 using Ict.Win;
+using EASendMail;
 
 namespace Sci.Production.PublicPrg
 {
@@ -184,10 +185,8 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
             OutTb = null;
             string patidsql;
-            if (MyUtility.Check.Empty(cutref))
-            {
-                patidsql = String.Format(
-                            @"
+            patidsql = String.Format(
+                        @"
 SELECT ukey
 FROM [Production].[dbo].[Pattern] a WITH (NOLOCK) 
 outer apply(
@@ -204,28 +203,7 @@ outer apply(
 WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
 AND a.EDITdATE = iif(b.EditDate is null,c.EditDate,b.EditDate)
              ", Styleyukey);
-            }
-            else
-            {
-                patidsql = String.Format(
-                            @"
-select Ukey = isnull((
-	select top 1 Ukey 
-	from Pattern p WITH (NOLOCK)
-	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
-	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-	and Status = 'Completed' and s.PhaseID = 'bulk'
-	order by ActFinDate Desc
-),
-(
-	select top 1 Ukey 
-	from Pattern p WITH (NOLOCK)
-	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-	and Status = 'Completed'
-	order by ActFinDate Desc
-))
-                            ", cutref, OrderID);
-            }
+
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion
             DataTable headertb;
@@ -274,6 +252,33 @@ select Ukey = isnull((
             }
             #endregion
             OutTb = garmentListTb;
+        }
+        
+        // 測試mail是否真實存在
+        public static bool TestMail(string mailTo)
+        {
+            SmtpMail oMail = new SmtpMail("TryIt");
+            SmtpClient oSmtp = new SmtpClient();
+
+            // Set sender email address, please change it to yours
+            oMail.From = MyUtility.GetValue.Lookup("select Sendfrom from System", "Production");
+
+            // Set recipient email address, please change it to yours
+            oMail.To = mailTo;
+
+            // Do not set SMTP server address
+            SmtpServer oServer = new SmtpServer("");
+
+            try
+            {
+                oSmtp.TestRecipients(oServer, oMail);
+            }
+            catch (Exception ep)
+            {
+                MyUtility.Msg.ErrorBox("Invalid email address !!\r\n" + ep.Message);
+                return false;
+            }
+            return true;
         }
     }
     

@@ -61,7 +61,10 @@ namespace Sci.Production.Packing
                 .DateTime("AddDate", header: "Create Date", iseditable: false)
                 .Date("ReceiveDate", header: "CLOG CFM", iseditable: false)
                 .Date("ReturnDate", header: "Return Date", iseditable: false)
-                .Text("AddName", header: "AddName", width: Widths.AnsiChars(15), iseditable: false);
+                .Text("AddName", header: "AddName", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -110,11 +113,11 @@ from (
     select  1 as selected
             , t.TransferDate
             , t.TransferSlipNo
-            , t.PackingListID
-            , t.OrderID
-            , t.CTNStartNo
+            , [PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
+            , [OrderID] = iif(pd.OrigOrderID = '',pd.OrderID, pd.OrigOrderID)
+            , [CTNStartNo] = iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
             , pd.Id
-            , [CTN#]=pd.CTNStartNo
+            , [CTN#]= iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
             , isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1
             , isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest
             , isnull(o.FactoryID,'') as FactoryID
@@ -125,16 +128,18 @@ from (
 			, pd.ReturnDate
 			, AddName = (select concat(id,'-',Name) from pass1 where id = t.AddName)
             , pd.SizeCode
+            , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+            , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+            , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
     from TransferToClog t WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
-    left join PackingList_Detail pd WITH (NOLOCK) on  pd.ID = t.PackingListID 
-                                                        and pd.OrderID = t.OrderID 
-                                                        and pd.CTNStartNo = t.CTNStartNo 
-                                                        and pd.CTNQty > 0
+    left join PackingList_Detail pd WITH (NOLOCK) on  pd.ID = t.PackingListID and pd.CTNStartNo = t.CTNStartNo
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
                                                     and oq.Seq = pd.OrderShipmodeSeq
-    where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    where t.MDivisionID = '{0}' 
+    --and pd.TransferDate is not null 
+    ", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateTimePicker1.Text))
             {
@@ -148,12 +153,12 @@ from (
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and t.PackingListID = '{0}'", MyUtility.Convert.GetString(this.txtPackID.Text)));
+                sqlCmd.Append(string.Format(" and (pd.ID = '{0}' or  pd.OrigID = '{0}')", MyUtility.Convert.GetString(this.txtPackID.Text)));
             }
 
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
-                sqlCmd.Append(string.Format(" and t.OrderID = '{0}'", MyUtility.Convert.GetString(this.txtSP.Text)));
+                sqlCmd.Append(string.Format(" and (pd.OrderID = '{0}' or pd.OrigOrderID = '{0}')", MyUtility.Convert.GetString(this.txtSP.Text)));
             }
 
             if (!MyUtility.Check.Empty(this.txtfactory.Text))

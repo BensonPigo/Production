@@ -89,6 +89,7 @@
             this.btnBatchConf = new Sci.Win.UI.Button();
             this.lbDuring = new Sci.Win.UI.Label();
             this.cbDuring = new Sci.Win.UI.ComboBox();
+            this.btnRepackCartons = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -106,6 +107,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnRepackCartons);
             this.masterpanel.Controls.Add(this.disClogCFMStatus);
             this.masterpanel.Controls.Add(this.lbClogCFMStatus);
             this.masterpanel.Controls.Add(this.checkCancelledOrder);
@@ -222,6 +224,7 @@
             this.masterpanel.Controls.SetChildIndex(this.checkCancelledOrder, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbClogCFMStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.disClogCFMStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnRepackCartons, 0);
             // 
             // detailpanel
             // 
@@ -583,7 +586,7 @@
             // btnRecalculateWeight
             // 
             this.btnRecalculateWeight.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnRecalculateWeight.Location = new System.Drawing.Point(815, 60);
+            this.btnRecalculateWeight.Location = new System.Drawing.Point(815, 59);
             this.btnRecalculateWeight.Name = "btnRecalculateWeight";
             this.btnRecalculateWeight.Size = new System.Drawing.Size(179, 30);
             this.btnRecalculateWeight.TabIndex = 49;
@@ -594,7 +597,7 @@
             // btnUnConfirmHistory
             // 
             this.btnUnConfirmHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUnConfirmHistory.Location = new System.Drawing.Point(815, 92);
+            this.btnUnConfirmHistory.Location = new System.Drawing.Point(815, 90);
             this.btnUnConfirmHistory.Name = "btnUnConfirmHistory";
             this.btnUnConfirmHistory.Size = new System.Drawing.Size(179, 30);
             this.btnUnConfirmHistory.TabIndex = 50;
@@ -679,7 +682,7 @@
             // btnDownload
             // 
             this.btnDownload.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnDownload.Location = new System.Drawing.Point(815, 188);
+            this.btnDownload.Location = new System.Drawing.Point(815, 183);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(179, 30);
             this.btnDownload.TabIndex = 59;
@@ -690,7 +693,7 @@
             // btnImportFromExcel
             // 
             this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnImportFromExcel.Location = new System.Drawing.Point(815, 220);
+            this.btnImportFromExcel.Location = new System.Drawing.Point(815, 214);
             this.btnImportFromExcel.Name = "btnImportFromExcel";
             this.btnImportFromExcel.Size = new System.Drawing.Size(179, 30);
             this.btnImportFromExcel.TabIndex = 60;
@@ -798,7 +801,7 @@
             // btnUpdateBarcode
             // 
             this.btnUpdateBarcode.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUpdateBarcode.Location = new System.Drawing.Point(815, 124);
+            this.btnUpdateBarcode.Location = new System.Drawing.Point(815, 121);
             this.btnUpdateBarcode.Name = "btnUpdateBarcode";
             this.btnUpdateBarcode.Size = new System.Drawing.Size(179, 30);
             this.btnUpdateBarcode.TabIndex = 63;
@@ -843,7 +846,7 @@
             // btnUPCSticker
             // 
             this.btnUPCSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUPCSticker.Location = new System.Drawing.Point(815, 156);
+            this.btnUPCSticker.Location = new System.Drawing.Point(815, 152);
             this.btnUPCSticker.Name = "btnUPCSticker";
             this.btnUPCSticker.Size = new System.Drawing.Size(179, 30);
             this.btnUPCSticker.TabIndex = 67;
@@ -920,6 +923,17 @@
             this.cbDuring.TabIndex = 4;
             this.cbDuring.SelectedIndexChanged += new System.EventHandler(this.CbDuring_SelectedIndexChanged);
             // 
+            // btnRepackCartons
+            // 
+            this.btnRepackCartons.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnRepackCartons.Location = new System.Drawing.Point(815, 245);
+            this.btnRepackCartons.Name = "btnRepackCartons";
+            this.btnRepackCartons.Size = new System.Drawing.Size(179, 30);
+            this.btnRepackCartons.TabIndex = 71;
+            this.btnRepackCartons.Text = "Repack Cartons";
+            this.btnRepackCartons.UseVisualStyleBackColor = true;
+            this.btnRepackCartons.Click += new System.EventHandler(this.BtnRepackCartons_Click);
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
@@ -932,6 +946,7 @@
             this.ExpressQuery = true;
             this.GridAlias = "PackingList_Detail";
             this.GridNew = 0;
+            this.GridUniqueKey = "ID,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
@@ -1028,5 +1043,6 @@
         private Win.UI.Button btnBatchConf;
         private Win.UI.ComboBox cbDuring;
         private Win.UI.Label lbDuring;
+        private Win.UI.Button btnRepackCartons;
     }
 }

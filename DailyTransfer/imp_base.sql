@@ -56,6 +56,8 @@ SET
       ,a. EditDate	      = b. EditDate
 	  ,a. LossSampleAccessory = b.LossSampleAccessory
 	  ,a. OTDExtension = b.OTDExtension
+	  ,a. UseRatioRule = b.UseRatioRule
+	  ,a. UseRatioRule_Thick = b.UseRatioRule_Thick
 from Production.dbo.Brand as a inner join Trade_To_Pms.dbo.Brand as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Brand
@@ -96,6 +98,8 @@ INSERT INTO Production.dbo.Brand
       ,EditDate
 	  ,LossSampleAccessory
 	  ,OTDExtension
+	  ,UseRatioRule
+	  ,UseRatioRule_Thick
 )
 SELECT ID
       ,NameCH
@@ -133,6 +137,8 @@ SELECT ID
       ,EditDate
 	  ,LossSampleAccessory
 	  ,OTDExtension
+	  ,UseRatioRule
+	  ,UseRatioRule_Thick
 from Trade_To_Pms.dbo.Brand as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Brand as a WITH (NOLOCK) where a.id = b.id)
 
@@ -420,28 +426,7 @@ SET
 	  ,a.IsThread        = b.IsThread
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
-where b.EditDate > a.EditDate
-
-UPDATE a
-SET  
-       --a.ID	      =b.ID		
-      a.FullName	      =b.FullName		
-      ,a.Type	      =b.Type		
-      ,a.Junk	      =b.Junk		
-      ,a.IrregularCost	      =b.IrregularCost		
-      ,a.CheckZipper	      =b.CheckZipper		
-      ,a.ProductionType	      =b.ProductionType		
-      ,a.OutputUnit	      =b.OutputUnit		
-      ,a.IsExtensionUnit	      =b.IsExtensionUnit		
-      ,a.AddName	      =b.AddName		
-      ,a.AddDate	      =b.AddDate
-	  ,a.IsTrimCardOther = b.isTrimCardOther
-      --,a.EditName	      =b.EditName		
-      --,a.EditDate	      =b.EditDate		
-	  ,a.IsThread        = b.IsThread
-
-from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
-where b.EditDate <= a.EditDate
+where b.EditDate between dateadd(d,-7,getdate()) and getdate()
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.MtlType(
 ID
@@ -3224,9 +3209,9 @@ SET
 	  ,a.InvoiceApproveDate	   =b.InvoiceApproveDate
 	  ,a.DocumentRefNo	   =b.DocumentRefNo
 	  ,a.IntendDeliveryDate	   =b.IntendDeliveryDate
+	  ,a.ActFCRDate	   =b.ActFCRDate
 from Production.dbo.GMTBooking as a inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
 where b.InvDate is not null
-END
 
 --------SeasonSCI---------------
 truncate table SeasonSCI
@@ -3251,3 +3236,71 @@ when not matched by target then
 	  values (tsr.CountryID, tsr.ArtWorkID, tsr.CostTypeID, tsr.BeginDate, tsr.EndDate, tsr.IsJunk, tsr.AddDate, tsr.AddName, tsr.EditDate,tsr.EditName)
 when not matched by source then 
       delete;
+
+------Brand_ThreadCalculateRules---------------
+Merge Production.dbo.Brand_ThreadCalculateRules as t
+Using (select a.* from Trade_To_Pms.dbo.Brand_ThreadCalculateRules a ) as s
+on t.ID=s.ID and t.FabricType = s.FabricType
+when matched then 
+	update set	t.UseRatioRule	= s.UseRatioRule,
+				t.UseRatioRule_Thick	= s.UseRatioRule_Thick
+when not matched by target then
+	insert (ID,
+			FabricType,
+			UseRatioRule,
+			UseRatioRule_Thick
+			) 
+		values (s.ID,
+				s.FabricType,
+				s.UseRatioRule,
+				s.UseRatioRule_Thick	)
+when not matched by source then 
+	delete;
+
+------MachineType_ThreadRatio---------------
+Merge Production.dbo.MachineType_ThreadRatio as t
+Using (select a.* from Trade_To_Pms.dbo.MachineType_ThreadRatio a ) as s
+on t.ID=s.ID and t.SEQ = s.SEQ
+when matched then 
+	update set	t.ThreadLocation	   = s.ThreadLocation	 ,
+				t.UseRatio			   = s.UseRatio			 ,
+				t.Allowance			   = s.Allowance
+when not matched by target then
+	insert (ID				 ,
+			SEQ				 ,
+			ThreadLocation	 ,
+			UseRatio			 ,
+			Allowance
+			) 
+		values (s.ID				 ,
+				s.SEQ				 ,
+				s.ThreadLocation	 ,
+				s.UseRatio			 ,
+				s.Allowance	)
+when not matched by source then 
+	delete;
+
+
+------MachineType_ThreadRatio_Regular---------------
+Merge Production.dbo.MachineType_ThreadRatio_Regular as t
+Using (select a.* from Trade_To_Pms.dbo.MachineType_ThreadRatio_Regular a ) as s
+on t.ID=s.ID and t.SEQ = s.SEQ and t.UseRatioRule = s.UseRatioRule
+when matched then 
+	update set	t.UseRatio	   = s.UseRatio	 
+when not matched by target then
+	insert (ID				,
+			Seq				,
+			UseRatioRule	,
+			UseRatio
+			) 
+		values (s.ID				,
+				s.Seq				,
+				s.UseRatioRule	,
+				s.UseRatio)
+when not matched by source then 
+	delete;	
+
+
+END
+
+

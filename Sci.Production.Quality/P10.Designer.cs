@@ -84,7 +84,7 @@
             this.masterpanel.Controls.Add(this.dateBoxDeadline);
             this.masterpanel.Controls.Add(this.dateBoxReceivedDate);
             this.masterpanel.Controls.Add(this.dateBoxReleasedDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 136);
+            this.masterpanel.Size = new System.Drawing.Size(956, 136);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBoxReleasedDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBoxReceivedDate, 0);
@@ -110,16 +110,16 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 136);
-            this.detailpanel.Size = new System.Drawing.Size(892, 213);
+            this.detailpanel.Size = new System.Drawing.Size(956, 213);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.gridicon.Location = new System.Drawing.Point(886, 100);
+            this.gridicon.Location = new System.Drawing.Point(833, 101);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 213);
+            this.detailgridcont.Size = new System.Drawing.Size(956, 213);
             // 
             // detail2
             // 
@@ -135,16 +135,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(956, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(956, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Size = new System.Drawing.Size(956, 38);
             // 
             // browse
             // 
@@ -224,7 +224,7 @@
             this.labelReleasedDate.Name = "labelReleasedDate";
             this.labelReleasedDate.Size = new System.Drawing.Size(101, 23);
             this.labelReleasedDate.TabIndex = 9;
-            this.labelReleasedDate.Text = "Released Date";
+            this.labelReleasedDate.Text = "Send Date";
             // 
             // labelLastResult
             // 
@@ -345,6 +345,7 @@
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P10";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P10.Sample Order Garment Wash";
             this.WorkAlias = "SampleGarmentTest";
             this.Controls.SetChildIndex(this.tabs, 0);

@@ -57,16 +57,15 @@ namespace Sci.Production.Cutting
             //ArticleGroup
             string patidsql;
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
-            if (MyUtility.Check.Empty(maindr["cutref"]))
-            {
-                patidsql = String.Format(
-                            @"
+
+            patidsql = String.Format(
+                        @"
 SELECT ukey
 FROM [Production].[dbo].[Pattern] a WITH (NOLOCK) 
 outer apply(
 	SELECT EditDate = MAX(p.EditDate)
 	from pattern p WITH (NOLOCK) 
-	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
+	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id 
 	where styleukey = '{0}' and Status = 'Completed' and s.PhaseID = 'Bulk'
 )b
 outer apply(
@@ -77,28 +76,7 @@ outer apply(
 WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
 AND a.EDITdATE = iif(b.EditDate is null,c.EditDate,b.EditDate)
              ", Styleyukey);
-            }
-            else
-            {
-                patidsql = String.Format(
-                            @"
-select Ukey = isnull((
-	select top 1 Ukey 
-	from Pattern p WITH (NOLOCK)
-	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
-	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-	and Status = 'Completed' and s.PhaseID = 'bulk'
-	order by ActFinDate Desc
-),
-(
-	select top 1 Ukey 
-	from Pattern p WITH (NOLOCK)
-	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-	and Status = 'Completed'
-	order by ActFinDate Desc
-))
-                            ", maindr["cutref"].ToString(), maindatarow["poid"].ToString());
-            }
+
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             string headercodesql = string.Format(@"
 Select distinct ArticleGroup 

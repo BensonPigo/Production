@@ -155,17 +155,35 @@
     <Compile Include="B05.Designer.cs">
       <DependentUpon>B05.cs</DependentUpon>
     </Compile>
+    <Compile Include="B49.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B49.Designer.cs">
+      <DependentUpon>B49.cs</DependentUpon>
+    </Compile>
     <Compile Include="P03_BatchUpload.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P03_BatchUpload.Designer.cs">
       <DependentUpon>P03_BatchUpload.cs</DependentUpon>
     </Compile>
+    <Compile Include="P05_BatchImportSO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_BatchImportSO.Designer.cs">
+      <DependentUpon>P05_BatchImportSO.cs</DependentUpon>
+    </Compile>
     <Compile Include="P05_SOCFMDate.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P05_SOCFMDate.Designer.cs">
       <DependentUpon>P05_SOCFMDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_UnconfirmHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_UnconfirmHistory.Designer.cs">
+      <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="P11_BatchApprove.cs">
       <SubType>Form</SubType>
@@ -696,6 +714,18 @@
     <Compile Include="R14.Designer.cs">
       <DependentUpon>R14.cs</DependentUpon>
     </Compile>
+    <Compile Include="R15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R15.Designer.cs">
+      <DependentUpon>R15.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R16.designer.cs">
+      <DependentUpon>R16.cs</DependentUpon>
+    </Compile>
     <Compile Include="R40.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -751,11 +781,20 @@
     <EmbeddedResource Include="B05.resx">
       <DependentUpon>B05.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B49.resx">
+      <DependentUpon>B49.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P03_BatchUpload.resx">
       <DependentUpon>P03_BatchUpload.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P05_BatchImportSO.resx">
+      <DependentUpon>P05_BatchImportSO.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P05_SOCFMDate.resx">
       <DependentUpon>P05_SOCFMDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_UnconfirmHistory.resx">
+      <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P11_BatchApprove.resx">
       <DependentUpon>P11_BatchApprove.cs</DependentUpon>
@@ -1028,6 +1067,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R14.resx">
       <DependentUpon>R14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R15.resx">
+      <DependentUpon>R15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R16.resx">
+      <DependentUpon>R16.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R40.resx">
       <DependentUpon>R40.cs</DependentUpon>

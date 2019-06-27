@@ -881,25 +881,27 @@ order by ID ", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format
             }
             #endregion
 
-            DataSet allData;
+            DataTable[] allData;
 
-            if (!SQL.Selects(string.Empty, sqlCmd.ToString(), out allData))
+            DBProxy.Current.DefaultTimeout = 1500;  //加長時間為15分鐘，避免timeout
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out allData);
+            if (!result)
             {
-                DualResult failResult = new DualResult(false, "Query data fail");
+                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
 
-            this.Summary = allData.Tables[0];
+            this.Summary = allData[0];
 
             if (!this.liguidationonly)
             {
-                this.OnRoadMaterial = allData.Tables[1];
-                this.WHDetail = allData.Tables[2];
-                this.WIPDetail = allData.Tables[3];
-                this.ProdDetail = allData.Tables[4];
-                this.OnRoadProduction = allData.Tables[5];
-                this.ScrapDetail = allData.Tables[6];
-                this.Outstanding = allData.Tables[7];
+                this.OnRoadMaterial = allData[1];
+                this.WHDetail = allData[2];
+                this.WIPDetail = allData[3];
+                this.ProdDetail = allData[4];
+                this.OnRoadProduction = allData[5];
+                this.ScrapDetail = allData[6];
+                this.Outstanding = allData[7];
             }
 
             return Result.True;

@@ -1,0 +1,526 @@
+﻿
+-- =============================================
+-- Description:	轉出FPS資料
+-- =============================================
+CREATE PROCEDURE [dbo].[exp_finishingprocess]
+
+	
+AS
+IF OBJECT_ID(N'Orders') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[Orders](
+	[id]				[varchar](13) NOT NULL,
+	[BrandID]			[varchar](8) NULL,
+	[ProgramID]			[varchar](12) NULL,
+	[StyleID]			[varchar](15) NULL,
+	[SeasonID]			[varchar](10) NULL,
+	[ProjectID]			[varchar](5) NULL,
+	[Category]			[varchar](1) NULL,
+	[OrderTypeID]		[varchar](20) NULL,
+	[Dest]				[varchar](2) NULL,
+	[CustCDID]			[varchar](16) NULL,
+	[StyleUnit]			[varchar](8) NULL,
+	[SetQty]			[int] NOT NULL,
+	[Location]			[varchar](7) NULL,
+	[PulloutComplete]	[bit] NULL,
+	[Junk]				[bit] NULL DEFAULT ((0)),
+	[CmdTime]			[datetime] NOT NULL,
+	[SunriseUpdated]	[bit] NOT NULL DEFAULT ((0)),
+	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
+ CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+END
+
+IF OBJECT_ID(N'Order_QtyShip') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[Order_QtyShip](
+	[id]				[varchar](13) NOT NULL,
+	[Seq]				[varchar](2) NOT NULL,
+	[ShipmodeID]		[varchar](10) NULL,
+	[BuyerDelivery]		[date] NULL,
+	[Qty]				[int] NULL,
+	[EstPulloutDate]	[date] NULL,
+	[ReadyDate]			[date] NULL,
+	[CmdTime]			[datetime] NOT NULL,
+	[SunriseUpdated]	[bit] NOT NULL DEFAULT ((0)),
+	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
+ CONSTRAINT [PK_Order_QtyShip] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC,
+	[Seq] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+END
+
+IF OBJECT_ID(N'PackingList_Detail') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[PackingList_Detail](
+	[ID]				[varchar](13) NOT NULL,
+	[SCICtnNo]			[varchar](15) NOT NULL,
+	[CustCTN]			[varchar](30) NOT NULL,
+	[PulloutDate]		[date] NULL,
+	[OrderID]			[varchar](13) NOT NULL,
+	[OrderShipmodeSeq]	[varchar](2) NOT NULL,
+	[Article]			[varchar](8) NOT NULL,
+	[SizeCode]			[varchar](8) NOT NULL,
+	[ShipQty]			[int] NULL,
+	[Barcode]			[varchar](30) NULL,
+	[GW]				[numeric](7, 3) NULL,
+	[CtnRefno]			[varchar](21) NULL,
+	[CtnLength]			[numeric](8, 4) NULL,
+	[CtnWidth]			[numeric](8, 4) NULL,
+	[CtnHeight]			[numeric](8, 4) NULL,
+	[CtnUnit]			[varchar](8) NULL,
+	[Junk]				[bit] NULL DEFAULT ((0)),
+	[CmdTime]			[datetime] NOT NULL,
+	[SunriseUpdated]	[bit] NOT NULL DEFAULT ((0)),
+	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
+ CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED 
+(
+	[SCICtnNo] ASC,
+	[Article] ASC,
+	[SizeCode] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+END	
+
+IF OBJECT_ID(N'PackingList') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[PackingList](
+	[id]		[varchar](13) NOT NULL,
+	[AddDate]	[datetime] NOT NULL,
+	[EditDate]	[datetime] NULL,
+	[CmdTime]	[datetime] NOT NULL,
+	[junk]		[bit] NULL DEFAULT ((0)),
+ CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+
+IF OBJECT_ID(N'ClogReturn') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[ClogReturn](
+	[ID]			 [bigint] NOT NULL,
+	[SCICtnNo]		 [varchar](15) NOT NULL,
+	[ReturnDate]	 [date] NOT NULL,
+	[OrderID]		 [varchar](13) NOT NULL,
+	[PackingListID]  [varchar](13) NOT NULL,
+	[CustCTN]		 [varchar](30) NULL,
+	[CmdTime]		 [datetime] NOT NULL,
+	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
+	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0)),
+	 CONSTRAINT [PK_ClogReturn] PRIMARY KEY CLUSTERED 
+	(
+		[ID] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+END
+
+IF OBJECT_ID(N'TransferToCFA') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[TransferToCFA](
+	[ID]			 [bigint] NOT NULL,
+	[SCICtnNo]		 [varchar](15) NOT NULL,
+	[TransferDate]	 [date] NOT NULL,
+	[OrderID]		 [varchar](13) NOT NULL,
+	[PackingListID]  [varchar](13) NOT NULL,
+	[CustCTN]		 [varchar](30) NULL,
+	[CmdTime]		 [datetime] NOT NULL,
+	[SunriseUpdated] [int] NOT NULL DEFAULT ((0)),
+	[GenSongUpdated] [int] NOT NULL DEFAULT ((0)),
+ CONSTRAINT [PK_TransferToCFA] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+
+IF OBJECT_ID(N'ShippingMark') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[ShippingMark](
+	[ID]			 [bigint] IDENTITY(1,1) NOT NULL,
+	[BrandID]		 [varchar](8) NOT NULL,
+	[CustCD]		 [varchar](16) NOT NULL,
+	[CTNRefno]		 [varchar](21) NOT NULL,
+	[Side]			 [varchar](5) NOT NULL,
+	[Seq]			 [int] NOT NULL,
+	[Category]		 [varchar](4) NOT NULL,
+	[FromLeft]		 [numeric](8,2) NOT NULL,
+	[FromTop]		 [numeric](8,2) NOT NULL,
+	[Length]		 [numeric](8,2) NOT NULL,
+	[Width]			 [numeric](8,2) NOT NULL,
+	[Is2Side]		 [bit] NOT NULL,
+	[FileName]		 [varchar](25) NULL,
+	[CmdTime]		 [dateTime] NOT NULL,
+	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
+	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0)),
+ CONSTRAINT [PK_ShippingMark] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC,	
+	[BrandID] ASC,	
+	[CustCD] ASC,	
+	[CTNRefno] ASC,	
+	[Side] ASC,
+	[Seq] ASC,
+	[Category] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+	EXECUTE sp_addextendedproperty N'MS_Description', N'ID', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'ID'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'客戶名稱', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'BrandID'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'出貨地點', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'CustCD'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'紙箱料號', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'CTNRefno'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'貼碼面, 上下左右前後', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Side'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'序號', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Seq'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'類別, 噴碼/貼碼(HTML/PIC)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Category'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'離左邊的位置(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FromLeft'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'離上面的位置(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FromTop'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'噴碼/貼碼長(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Length'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'噴碼/貼碼寬(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Width'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'是否轉角貼, (0,1)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Is2Side'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'HTML檔名', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FileName'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'CmdTime'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'Sunrise是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'SunriseUpdated'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'GenSongUpdated'
+END
+
+IF OBJECT_ID(N'ShippingMarkPic_Detail') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[ShippingMarkPic_Detail](
+	[SCICtnNo]  	 [varchar](15) NOT NULL,
+	[Side]			 [varchar](5) NOT NULL,
+	[Seq]			 [int] NOT NULL,
+	[FilePath]		 [varchar](80) NULL,
+	[FileName]		 [varchar](30) NULL,
+	[CmdTime]		 [dateTime] NOT NULL,
+	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
+	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0))
+ CONSTRAINT [PK_ShippingMarkPic_Detail] PRIMARY KEY CLUSTERED 
+(
+	[SCICtnNo] ASC,	
+	[Side] ASC,
+	[Seq] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI箱號', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'SCICtnNo'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'貼碼面, 上下左右前後', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'Side'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'序號', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'Seq'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'圖檔位置', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'FilePath'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'圖檔名稱', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'FileName'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'CmdTime'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'Sunrise是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'SunriseUpdated'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'GenSongUpdated'
+END
+
+declare @cDate date = CONVERT(date,GETDATE());
+declare @yestarDay date =CONVERT(Date, dateAdd(day,-1,GetDate()));
+--declare @cDate date = CONVERT(date, DATEADD(DAY,-10, GETDATE()));-- for test
+--declare @yestarDay date =CONVERT(Date, dateAdd(day,-11,GetDate()));-- for test
+
+--01. 轉出區間 [Production].[dbo].[Orders].AddDate or EditDate= 昨天
+MERGE Orders AS T
+USING(
+	SELECT id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
+	,[SetQty] = (select count(1) cnt from Production.dbo.Style_Location where o.StyleUkey=StyleUkey)
+	,[Location] = sl.Location , o.PulloutComplete, o.Junk,[CmdTime] = GETDATE()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.Orders o
+	outer apply(	
+	select Location = STUFF((
+		select distinct CONCAT(',',Location) 
+		from Production.dbo.Style_Location oa WITH (NOLOCK)
+		where StyleUkey=o.StyleUkey
+		for xml path('')
+	),1,1,'')) SL
+	where (convert(date,AddDate) = @yestarDay or convert(date,EditDate) = @yestarDay)
+) as S
+on T.ID = S.ID
+WHEN MATCHED THEN
+UPDATE SET
+	t.ID = s.id,
+	t.BrandID = s.BrandID,
+	t.ProgramID = s.ProgramID,
+	t.StyleID = s.StyleID,
+	t.SeasonID = s.SeasonID,
+	t.ProjectID = s.ProjectID,
+	t.Category = s.Category,
+	t.OrderTypeID = s.OrderTypeID,
+	t.Dest = s.Dest,
+	t.CustCDID = s.CustCDID,
+	t.StyleUnit = s.StyleUnit,
+	t.SetQty = s.SetQty,
+	t.Location = s.Location,
+	t.PulloutComplete = s.PulloutComplete,
+	t.Junk = s.Junk,
+	t.CmdTime = GetDate(),
+	t.SunriseUpdated = s.SunriseUpdated,
+	t.GenSongUpdated = s.GenSongUpdated
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(  id,   BrandID,   ProgramID,   StyleID,   SeasonID,   ProjectID,   Category,   OrderTypeID
+	,  Dest,   CustCDID,   StyleUnit,   SetQty,   Location,   PulloutComplete,   Junk
+	,  CmdTime,   SunriseUpdated,   GenSongUpdated) 
+VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Category, s.OrderTypeID
+	,s.Dest, s.CustCDID, s.StyleUnit, s.SetQty, s.Location, s.PulloutComplete, s.Junk
+	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated)	;
+
+--02. 轉出區間 [Production].[dbo].[Order_QtyShip].AddDate or EditDate= 昨天
+MERGE Order_QtyShip AS T
+USING(
+	SELECT id, Seq, ShipmodeID, BuyerDelivery, Qty, EstPulloutDate
+	,ReadyDate,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.Order_QtyShip o
+	where (convert(date,AddDate) = @yestarDay or convert(date,EditDate) = @yestarDay)
+) as S
+on T.ID = S.ID and T.SEQ = S.SEQ
+WHEN MATCHED THEN
+UPDATE SET
+	t.ID = s.id,
+	t.Seq = s.Seq,
+	t.ShipmodeID = s.ShipmodeID,
+	t.BuyerDelivery = s.BuyerDelivery,
+	t.Qty = s.Qty,
+	t.EstPulloutDate = s.EstPulloutDate,
+	t.ReadyDate = s.ReadyDate,
+	t.CmdTime = s.CmdTime,
+	t.SunriseUpdated = s.SunriseUpdated,
+	t.GenSongUpdated = s.GenSongUpdated
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(  id,   Seq,   ShipmodeID,   BuyerDelivery,   Qty,   EstPulloutDate,   ReadyDate,
+	     SunriseUpdated,   GenSongUpdated,   CmdTime ) 
+VALUES(s.id, s.Seq, s.ShipmodeID, s.BuyerDelivery, s.Qty, s.EstPulloutDate, s.ReadyDate,
+	   s.SunriseUpdated, s.GenSongUpdated, s.CmdTime)	;
+
+--03. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
+MERGE PackingList AS T
+USING(
+	SELECT p.ID, p.AddDate, p.EditDate
+	,[Junk] = 0
+	,[CmdTime] = GetDate()
+	FROM Production.dbo.PackingList p
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+) as S
+on T.ID = S.ID
+WHEN MATCHED THEN
+UPDATE SET
+	t.ID = s.id,
+	t.AddDate = s.AddDate,
+	t.EditDate = s.EditDate,
+	t.junk = s.junk,
+	t.CmdTime = s.CmdTime
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(  id,   AddDate,   EditDate,   CmdTime,   junk) 
+VALUES(s.id, s.AddDate, s.EditDate, s.CmdTime, s.junk)	;
+
+-- [FPS].[dbo].[PackingList] 近期3個月的ID存在於Production.dbo.PackingList
+--則Junk=0, 反之為1
+update t
+set t.junk = iif(s.ID is null, 1,0)
+from PackingList t
+left join Production.dbo.PackingList s
+on t.id=s.ID
+where ( CONVERT(date, t.AddDate) > CONVERT(date, DATEADD(MONTH,-3, GETDATE()))
+	or (CONVERT(date, t.EditDate) > CONVERT(date, DATEADD(MONTH,-3, GETDATE()))))
+
+--04. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
+MERGE PackingList_Detail AS T
+USING(
+	SELECT pd.ID, pd.SCICtnNo, pd.CustCTN, p.PulloutDate, pd.OrderID, pd.OrderShipmodeSeq
+	,pd.Article, pd.SizeCode, pd.ShipQty, pd.Barcode, pd.GW, [CtnRefno] = pd.RefNo
+	,LocalItem.CtnLength, LocalItem.CtnWidth, LocalItem.CtnHeight
+	,LocalItem.CtnUnit
+	,[Junk] = iif(fpsPacking.ID is not null,1,0)
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.PackingList p
+	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
+	OUTER APPLY(
+		SELECT fp2.id
+		FROM FPS.dbo.PackingList fp1
+		inner join FPS.dbo.PackingList_Detail fp2 on fp1.id=fp2.id
+		where fp1.id = p.id
+		and fp1.junk=1 and fp2.SunriseUpdated = 0 and fp2.GenSongUpdated = 0
+	) fpsPacking
+	outer apply(
+		select * 
+		from  Production.dbo.LocalItem l
+		where l.RefNo=pd.RefNo
+	) LocalItem
+	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate)
+) as S
+on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode
+WHEN MATCHED THEN
+UPDATE SET
+	t.ID = s.id,
+	t.SCICtnNo = s.SCICtnNo,
+	t.CustCTN = iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN),
+	t.PulloutDate = s.PulloutDate,
+	t.OrderID = s.OrderID,
+	t.OrderShipmodeSeq = s.OrderShipmodeSeq,
+	t.Article = s.Article,
+	t.SizeCode = s.SizeCode,
+	t.ShipQty = s.ShipQty,
+	t.Barcode = s.Barcode,
+	t.GW = s.GW,
+	t.CtnRefno = s.CtnRefno,
+	t.CtnLength = s.CtnLength,
+	t.CtnWidth = s.CtnWidth,
+	t.CtnHeight = s.CtnHeight,
+	t.CtnUnit = s.CtnUnit,
+	t.junk = s.junk,
+	t.CmdTime = s.CmdTime,
+	t.SunriseUpdated = s.SunriseUpdated,
+	t.GenSongUpdated = s.GenSongUpdated
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(  ID, SCICtnNo
+, CustCTN
+,  PulloutDate,  OrderID, OrderShipmodeSeq, Article, SizeCode
+		, ShipQty, Barcode, GW, CtnRefno, CtnLength, CtnWidth, CtnHeight, CtnUnit
+	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated) 
+VALUES(s.ID, s.SCICtnNo, 
+iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
+, s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
+		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
+	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated)	;
+
+-- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
+update t
+set t.Junk= 1
+,t.SunriseUpdated = 0
+,t.GenSongUpdated = 0
+from PackingList_Detail t 
+inner join PackingList s on t.ID=s.id
+where s.junk=1
+
+--05. 轉出區間 [Production].[dbo]. [ClogReturn].AddDate=今天
+MERGE ClogReturn AS T
+USING(
+	SELECT distinct c.ID,c.SCICtnNo,c.ReturnDate,c.OrderID,c.PackingListID
+	,[CustCTN] = iif(pd.CustCTN ='' or pd.CustCTN is null,pd.SCICtnNo,pd.CustCTN)
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.ClogReturn c
+	left join Production.dbo.PackingList_Detail pd on c.PackingListID=pd.ID
+	and c.CTNStartNo=pd.CTNStartNo
+	where convert(date,AddDate) = @cDate
+) as S
+on T.ID = S.ID
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(  id,   SCICtnNo,   ReturnDate,   OrderID,   PackingListID,   CustCTN,
+		  CmdTime,   SunriseUpdated,   GenSongUpdated) 
+VALUES(s.id, s.SCICtnNo, s.ReturnDate, s.OrderID, s.PackingListID, s.CustCTN,
+		s.CmdTime, s.SunriseUpdated, s.GenSongUpdated)	;
+
+--06. 轉出區間 [Production].[dbo].[TransferToCFA].AddDate =今天
+MERGE TransferToCFA AS T
+USING(
+	SELECT distinct t.ID, t.SCICtnNo, t.TransferDate, t.OrderID, t.PackingListID
+	,[CustCTN] = iif(pd.CustCTN ='' or pd.CustCTN is null,pd.SCICtnNo,pd.CustCTN)
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.TransferToCFA t
+	left join Production.dbo.PackingList_Detail pd on t.PackingListID=pd.ID
+	and t.CTNStartNo=pd.CTNStartNo
+	where convert(date,AddDate) = @cDate
+) as S
+on T.ID = S.ID
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(  id,   SCICtnNo,   TransferDate,   OrderID,   PackingListID,   CustCTN,
+		  CmdTime,   SunriseUpdated,   GenSongUpdated) 
+VALUES(s.id, s.SCICtnNo, s.TransferDate, s.OrderID, s.PackingListID, s.CustCTN,
+		s.CmdTime, s.SunriseUpdated, s.GenSongUpdated);
+
+--07. 轉出區間 當AddDate or EditDate =今天
+MERGE ShippingMark AS T
+USING(
+	SELECT 
+	BrandID,CustCD,CTNRefno,Side
+	,[Seq]=1,[Category] = 'HTML'
+	,FromLeft,FromTop,[Length] = StampLength,[Width] = StampWidth
+	,[Is2Side] = 0 ,FileName
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.ShippingMarkStamp 
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+) as S
+on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq
+WHEN MATCHED THEN
+UPDATE SET
+	t.FromLeft = s.FromLeft,
+	t.FromTop = s.FromTop,
+	t.Length = s.Length,
+	t.Width = s.Width,
+	t.Is2Side = s.Is2Side,
+	t.FileName = s.FileName,
+	t.CmdTime = s.CmdTime,
+	t.SunriseUpdated = 0,
+	t.GenSongUpdated = 0
+WHEN NOT MATCHED BY TARGET THEN
+INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
+		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated])
+Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
+		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
+
+--08. 轉出區間 當AddDate or EditDate =今天
+MERGE ShippingMark AS T
+USING(
+	SELECT 
+	BrandID,CustCD,CTNRefno,Side
+	,Seq,[Category] = 'PIC'
+	,FromLeft,FromTop,[Length] = PicLength,[Width] = PicWidth
+	,[Is2Side] = Is2Side ,[FileName]=''
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.ShippingMarkpicture 
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+) as S
+on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq
+WHEN MATCHED THEN
+UPDATE SET
+	t.FromLeft = s.FromLeft,
+	t.FromTop = s.FromTop,
+	t.Length = s.Length,
+	t.Width = s.Width,
+	t.Is2Side = s.Is2Side,
+	t.FileName = s.FileName,
+	t.CmdTime = s.CmdTime,
+	t.SunriseUpdated = 0,
+	t.GenSongUpdated = 0
+WHEN NOT MATCHED BY TARGET THEN
+INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
+		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated])
+Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
+		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
+
+--09. 轉出區間 當AddDate or EditDate =今天
+MERGE ShippingMarkPic_Detail AS T
+USING(
+	SELECT 
+	s1.SCICtnNo,s2.Side,s2.Seq
+	,[FilePath] = (select ShippingMarkPath from Production.dbo.System)
+	,s1.FileName	
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.ShippingMarkPic_Detail s1
+	inner join Production.dbo.ShippingMarkPic s2 on s2.ukey = s1.ShippingMarkPicUkey
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+) as S
+on t.SCICtnNo = s.SCICtnNo and t.Side=s.Side and t.Seq=s.Seq
+WHEN MATCHED THEN
+UPDATE SET
+	t.FilePath = s.FilePath,
+	t.FileName = s.FileName,
+	t.CmdTime = s.CmdTime,
+	t.SunriseUpdated = 0,
+	t.GenSongUpdated = 0
+WHEN NOT MATCHED BY TARGET THEN
+INSERT([SCICtnNo],[Side],[Seq],[FilePath],[FileName],[CmdTime],[SunriseUpdated],[GenSongUpdated])
+VALUES(s.[SCICtnNo],s.[Side],s.[Seq],s.[FilePath],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);

@@ -445,7 +445,7 @@ where 1=1
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
 
             //com.TransferArray_Limit = 200000;
-            com.ColumnsAutoFit = false;
+            com.ColumnsAutoFit = true;
             com.WriteTable(printData,2);
                         
             //Excel.Worksheet worksheet = objApp.Sheets[1];

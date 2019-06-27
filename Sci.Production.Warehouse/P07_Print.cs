@@ -82,6 +82,9 @@ select
 	,R.Dyelot
 	,R.PoId
 	,R.Seq1+'-'+R.Seq2 AS SEQ
+	,[RefNo]=p.RefNo
+	, [ColorID]=Color.Value 
+	,f.WeaveTypeID
 	,o.BrandID
 	,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2)  
 			AND (p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))  
@@ -91,19 +94,27 @@ select
 	,R.pounit
 	,R.StockQty
 	,R.StockUnit
-	,R.ShipQty - R.StockQty AS QtyVaniance
+	,r.ActualQty
+	,[QtyVaniance]=R.ShipQty-R.ActualQty
 	,R.Weight
 	,R.ActualWeight
-	,R.ActualWeight - R.Weight AS Vaniance
+	,[Vaniance]=R.ActualWeight - R.Weight 
 	,[SubQty]=sum(R.ShipQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 	,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
 	,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 	,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-	,[SubVaniance]=sum(R.ActualWeight - R.Weight)OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )  
+	,[SubVaniance]=R.ShipQty - R.ActualQty
 	,R.Remark		
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
 left join orders o WITH (NOLOCK) on o.ID = r.PoId
+LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
+		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 END
+)Color
 where R.id = @ID";
 
             if (!MyUtility.Check.Empty(txtSPNo.Text))
@@ -223,20 +234,24 @@ where R.id = @ID";
                 objSheets.Cells[3, 1] = Date2;
                 objSheets.Cells[4, 1] = "ETA:" + ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + Invoice + "   From FTY ID:" + FTYID;
-                objSheets.Cells[5, 7] = "WK#:" + Wk;              
+                objSheets.Cells[5, 11] = "WK#:" + Wk;              
                 foreach (DataRow dr in dt.Rows)
                 {
                     objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
                     objSheets.Cells[nRow, 2] = dr["Dyelot"].ToString();
                     objSheets.Cells[nRow, 3] = dr["PoId"].ToString();
                     objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
-                    objSheets.Cells[nRow, 5] = dr["BrandID"].ToString();
-                    objSheets.Cells[nRow, 6] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 7] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 8] = dr["ShipQty"].ToString() +" "+ dr["pounit"].ToString();
-                    objSheets.Cells[nRow, 9] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
-                    objSheets.Cells[nRow, 10] = dr["QtyVaniance"].ToString();
-                    objSheets.Cells[nRow, 11] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 5] = dr["Refno"].ToString();
+                    objSheets.Cells[nRow, 6] = dr["ColorID"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["WeaveTypeID"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["BrandID"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 10] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 11] = dr["ShipQty"].ToString()+" " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 12] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 13] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
+                    objSheets.Cells[nRow, 14] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 15] = dr["Remark"].ToString();
                     nRow++;
                 }
 
@@ -260,20 +275,23 @@ where R.id = @ID";
                 objSheets.Cells[3, 1] = Date1;
                 objSheets.Cells[4, 1] = "ETA:" + ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + Invoice + "   From FTY ID:" + FTYID;
-                objSheets.Cells[5, 6] = "WK#:" + Wk;
+                objSheets.Cells[5, 10] = "WK#:" + Wk;
                 foreach (DataRow dr in dt.Rows)
                 {
                     objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
                     objSheets.Cells[nRow, 2] = dr["Dyelot"].ToString();
                     objSheets.Cells[nRow, 3] = dr["PoId"].ToString();
                     objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
-                    objSheets.Cells[nRow, 5] = dr["BrandID"].ToString();
-                    objSheets.Cells[nRow, 6] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 7] = dr["ShipQty"].ToString() + " " + dr["pounit"].ToString();
-                    objSheets.Cells[nRow, 8] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 9] = dr["ActualWeight"].ToString();
-                    objSheets.Cells[nRow, 10] = dr["Vaniance"].ToString();
-                    objSheets.Cells[nRow, 11] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 5] = dr["RefNo"].ToString();
+                    objSheets.Cells[nRow, 6] = dr["BrandID"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["ShipQty"].ToString() + " " + dr["pounit"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["ActualQty"].ToString() + " " + dr["pounit"].ToString();
+                    objSheets.Cells[nRow, 10] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
+                    objSheets.Cells[nRow, 11] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 12] = dr["ActualWeight"].ToString();
+                    objSheets.Cells[nRow, 13] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 14] = dr["Remark"].ToString();
                     nRow++;
                 }
 

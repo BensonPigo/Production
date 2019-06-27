@@ -1394,7 +1394,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]
         private void ChangeQuotationAVG()
         {
             string strSqlCmd = $@"
-select [QuotationAVG] = ISNULL(iIf(sum(a.GW)=0 , 0, convert(float, ROUND(sum(a.ActualAmount) / sum(a.GW) ,2))),0)
+select [QuotationAVG] = ISNULL(iIf(sum(a.CW)=0 , 0, convert(float, ROUND(sum(a.ActualAmount) / sum(a.CW) ,2))),0)
 from AirPP a
 left join orders o on a.OrderID = o.ID
 where DATEPART(YEAR,a.CDate) = DATEPART(year, DATEADD(year,-1,getdate()))

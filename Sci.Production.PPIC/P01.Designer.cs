@@ -273,7 +273,6 @@
             this.labelCuttingCombo = new Sci.Win.UI.Label();
             this.editCuttingCombo = new Sci.Win.UI.EditBox();
             this.btnCuttingCombo = new Sci.Win.UI.Button();
-            this.checkIsMixMarker = new Sci.Win.UI.CheckBox();
             this.displayBuyMonth = new Sci.Win.UI.DisplayBox();
             this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
@@ -296,6 +295,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtDevSample = new Sci.Win.UI.TextBox();
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
+            this.displayIsMixMarker = new Sci.Win.UI.DisplayBox();
+            this.shapeContainer6 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -305,8 +306,14 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 24);
+            this.detail.Size = new System.Drawing.Size(1000, 661);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayIsMixMarker);
             this.detailcont.Controls.Add(this.btnExpectionFormRemark);
             this.detailcont.Controls.Add(this.txtDevSample);
             this.detailcont.Controls.Add(this.label2);
@@ -318,7 +325,6 @@
             this.detailcont.Controls.Add(this.displayOrderCombo);
             this.detailcont.Controls.Add(this.txtmfactory);
             this.detailcont.Controls.Add(this.displayBuyMonth);
-            this.detailcont.Controls.Add(this.checkIsMixMarker);
             this.detailcont.Controls.Add(this.btnCuttingCombo);
             this.detailcont.Controls.Add(this.editCuttingCombo);
             this.detailcont.Controls.Add(this.labelCuttingCombo);
@@ -444,12 +450,12 @@
             this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Size = new System.Drawing.Size(897, 395);
+            this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 395);
-            this.detailbtm.Size = new System.Drawing.Size(897, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 661);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
             // 
@@ -603,10 +609,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1711,7 +1717,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -2180,7 +2186,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
+            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3079,20 +3085,6 @@
             this.btnCuttingCombo.UseVisualStyleBackColor = true;
             this.btnCuttingCombo.Click += new System.EventHandler(this.BtnCuttingCombo_Click);
             // 
-            // checkIsMixMarker
-            // 
-            this.checkIsMixMarker.AutoSize = true;
-            this.checkIsMixMarker.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsMixMarker", true));
-            this.checkIsMixMarker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkIsMixMarker.IsSupportEditMode = false;
-            this.checkIsMixMarker.Location = new System.Drawing.Point(707, 416);
-            this.checkIsMixMarker.Name = "checkIsMixMarker";
-            this.checkIsMixMarker.ReadOnly = true;
-            this.checkIsMixMarker.Size = new System.Drawing.Size(100, 19);
-            this.checkIsMixMarker.TabIndex = 26;
-            this.checkIsMixMarker.Text = "Is Mix Marker";
-            this.checkIsMixMarker.UseVisualStyleBackColor = true;
-            // 
             // displayBuyMonth
             // 
             this.displayBuyMonth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -3106,9 +3098,11 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.boolFtyGroupList = true;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(285, 197);
             this.txtmfactory.Name = "txtmfactory";
@@ -3234,10 +3228,6 @@
             this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer4.Name = "shapeContainer4";
-            this.shapeContainer4.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4,
-            this.lineShape2,
-            this.lineShape1});
             this.shapeContainer4.Size = new System.Drawing.Size(1000, 660);
             this.shapeContainer4.TabIndex = 45;
             this.shapeContainer4.TabStop = false;
@@ -3317,6 +3307,29 @@
             this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
             this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
             // 
+            // displayIsMixMarker
+            // 
+            this.displayIsMixMarker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayIsMixMarker.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrderTypeID", true));
+            this.displayIsMixMarker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayIsMixMarker.Location = new System.Drawing.Point(707, 421);
+            this.displayIsMixMarker.Name = "displayIsMixMarker";
+            this.displayIsMixMarker.Size = new System.Drawing.Size(126, 21);
+            this.displayIsMixMarker.TabIndex = 224;
+            // 
+            // shapeContainer6
+            // 
+            this.shapeContainer6.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer6.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer6.Name = "shapeContainer1";
+            this.shapeContainer6.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape4,
+            this.lineShape2,
+            this.lineShape1});
+            this.shapeContainer6.Size = new System.Drawing.Size(1000, 660);
+            this.shapeContainer6.TabIndex = 45;
+            this.shapeContainer6.TabStop = false;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3328,6 +3341,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "P01. PPIC Master List";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Orders";
@@ -3485,7 +3499,6 @@
         private Win.UI.Label labelDetailsPOSMR;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape5;
-        private Win.UI.CheckBox checkIsMixMarker;
         private Win.UI.Button btnCuttingCombo;
         private Win.UI.EditBox editCuttingCombo;
         private Win.UI.Label labelCuttingCombo;
@@ -3616,5 +3629,7 @@
         private Win.UI.Button btnExpectionFormRemark;
         private Win.UI.Button btnPFHistory;
         private Win.UI.Button btnEConsMNFailed;
+        private Win.UI.DisplayBox displayIsMixMarker;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer6;
     }
 }

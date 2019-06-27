@@ -155,6 +155,7 @@ select
 	 (SELECT MinSciDelivery FROM DBO.GetSCI(ed.Poid,o.Category)) as [Earliest SCI Delivery],
 	EarlyDays=DATEDIFF(day,e.WhseArrival,o.KPILETA),
 	o.FactoryID,
+    po.styleid,
 	ed.PoID,
 	seq = ed.Seq1+' '+ed.Seq2,
 	ed.suppid,
@@ -176,14 +177,16 @@ select
 					when o.Category = 'G' then 'Garment'
 					when o.Category = 'O' then 'Other'
 	end,
-	TPEPass1.Email
+	TEPPOHandle.Email,
+    TEPPOSMR.Email
 from Export e
 Inner join Export_Detail ed on e.ID = ed.ID
 inner join orders o on o.id = ed.poid
 left join supp on supp.id = ed.suppid
 left join PO_Supp_Detail psd on psd.id = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join po on po.id = ed.PoID
-left join TPEPass1 on TPEPass1.id = po.POHandle
+left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
+left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
 where 1 = 1 and ed.PoType = 'G' 
 

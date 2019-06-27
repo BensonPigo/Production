@@ -110,7 +110,7 @@ where se.WKNo = '{0}' and se.junk=0", this.id);
                 bool checkResult = true;
                 for (int i = 0; i <= this.gridExpenseData.Rows.Count-1; i++)
                 {
-                    string DebitNote = this.gridExpenseData.Rows[i].Cells[4].Value.ToString();
+                    string DebitNote = this.gridExpenseData.Rows[i].Cells[5].Value.ToString();
                     if (MyUtility.Check.Empty(DebitNote))
                     {
                         continue;

@@ -44,6 +44,9 @@ namespace Sci.Production.Packing
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Text("TransferredBy", header: "Transferred By", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false)
             ;
         }
 
@@ -66,13 +69,13 @@ namespace Sci.Production.Packing
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 packid = this.txtPackID.Text;
-                sqlwhere += $@" and pe.PackingListID = @packid ";
+                sqlwhere += $@" and (pd.ID = @packid or  pd.OrigID = @packid) ";
             }
 
             if (!MyUtility.Check.Empty(this.txtsp.Text))
             {
                 sp = this.txtsp.Text;
-                sqlwhere += $@" and pe.OrderID  = @sp ";
+                sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
             string sqlcmd = $@"
@@ -83,9 +86,9 @@ declare @sp nvarchar(20) = '{sp}'
 
 select 
 	pe.TransferDate
-	,pe.PackingListID
-	,pe.CTNStartNo
-	,pe.OrderID
+	,[PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
+	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
+	,[OrderID] = iif(pd.OrigOrderID = '',pd.OrderID, pd.OrigOrderID)
 	,o.CustPONo
 	,o.StyleID
 	,o.BrandID
@@ -94,14 +97,18 @@ select
 	,o.SciDelivery
 	,[TransferredBy] = dbo.getPass1(pe.AddName)
     ,[ErrorType] = pe.PackingErrorID+'-'+perr.Description
+    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+    , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+    , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
 from PackErrTransfer pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
 left join PackingError perr with (nolock) on pe.PackingErrorID = perr.ID
+left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = pe.SCICtnNo 
 and perr.Type='TP'
 where 1=1
 {sqlwhere}
-order by pe.PackingListID,pe.CTNStartNo,pe.TransferDate
+order by iif(pd.OrigID = '',pd.ID, pd.OrigID),iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo),pe.TransferDate
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);

@@ -19,6 +19,7 @@ namespace Sci.Production.Subcon
     {
         string subProcess;
         string factory;
+        string spNo;
         DataTable printData;
 
         public R32(ToolStripMenuItem menuitem)
@@ -53,6 +54,7 @@ where Junk != 1", out dtFactory);
 
             this.factory = this.comboFactory.Text;
             this.subProcess = this.txtsubprocess.Text;
+            this.spNo = this.txtSPNo.Text;
             
             return true;
         }
@@ -130,6 +132,11 @@ where Junk != 1", out dtFactory);
             if (!MyUtility.Check.Empty(this.subProcess))
             {
                 finalWhere.Add($@" and (s.id in ('{subProcess.Replace(",", "','")}') or '{subProcess}'='')");
+            }
+
+            if (!MyUtility.Check.Empty(this.spNo))
+            {
+                finalWhere.Add($@" and o.ID = '{spNo}'");
             }
 
             #endregion

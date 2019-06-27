@@ -142,6 +142,7 @@ and o.MDivisionID = '{0}'
 and o.PulloutComplete = 0
 and o.Finished = 0
 and o.Qty > 0
+AND o.Junk=0
 and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}')
 and o.Category in ({2})",
             Sci.Env.User.Keyword,
@@ -149,7 +150,13 @@ and o.Category in ({2})",
             category));
 
             sqlCmd.Append(@"
+
 select distinct id,seq into #tmpIDSeq from  #tmpClocationids
+
+SELECT distinct t.id ,t.seq  ,oqd.article
+INTO #Order_QtyShip_Detail
+FROM #tmpIDSeq t
+LEFT JOIN Order_QtyShip_Detail oqD WITH (NOLOCK)  ON  t.id = oqD.id and t.seq = oqD.seq
 
 select *
 into #tmp1
@@ -169,15 +176,21 @@ outer apply(
 outer apply(  
 	select ColorWay = stuff((
 		select concat(', ', b.Article) 
-		from  (
-        select distinct oqd.article
-        from Order_QtyShip_Detail oqD
-		where t.id = oqD.id
-		and t.seq = oqD.seq
-        ) b
+		from  #Order_QtyShip_Detail b
+		where b.id = t.id and b.seq = t.seq
 		FOR XML PATH('')
 	),1,2,'') 
 )as oqD   
+
+select ed.Seq1, ed.POID ,
+	max(ed.FormXReceived) as maxR,	
+	min(ed.FormXReceived) as minR,
+	count(*) as count_All,
+	count(ed.FormXReceived) as count_NoNull
+INTO #MtlFormA
+from #tmpIDSeq a 
+LEFT JOIN Export_Detail ed WITH (NOLOCK) ON ed.POID = a.Id
+GROUP BY Seq1, ed.POID 
 
 select distinct
     o.FactoryID,o.BrandID,o.SewLine,o.Id,o.StyleID,o.CustPONo,o.CustCDID,o.Customize2,o.DoxType,oq.Qty,c.Alias,o.SewOffLine
@@ -231,16 +244,8 @@ outer apply(
 outer apply(
 	select MtlFormA = stuff((
 		select concat('; ',s.Seq1,'-',iif( maxR is null ,  '  /  /    ' , format(iif(s.count_All = s.count_NoNull, s.minR, s.maxR),  'yyyy/MM/dd')))
-		from (
-			select ed.Seq1,
-				max(ed.FormXReceived) as maxR,	
-				min(ed.FormXReceived) as minR,
-				count(*) as count_All,
-				count(ed.FormXReceived) as count_NoNull
-			from Export_Detail ed WITH (NOLOCK) 
-			where ed.PoID = oq.Id
-			GROUP BY Seq1
-		) as s
+		from #MtlFormA s
+		WHERE s.PoID=oq.Id
 		order by Seq1
 		for xml path('')
 	),1,2,'')
@@ -253,7 +258,7 @@ select FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo,CustCDID,Customize2,DoxTy
 from #tmp1 a inner join #tmp2 b on a.Id = b.ID and a.Seq = b.Seq
 order by FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo
 
-drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2
+drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2,#Order_QtyShip_Detail,#MtlFormA
 ");
             #endregion
 

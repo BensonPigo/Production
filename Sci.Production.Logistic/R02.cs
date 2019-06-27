@@ -139,7 +139,7 @@ p.MDivisionID
 ,pd.ClogLocationId
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
-,[TTLQty] = pd.QtyPerCTN* pd.CTNQty
+,[TTLQty] = TTL.Qty
 ,[QtyPerSize] = SizeCombo.combo
 ,pd.id,pd.Seq
 ,[PulloutComplete] = case when o.qty > isnull(s.ShipQty,0) then 'S'
@@ -157,15 +157,21 @@ outer apply(
 )s
 outer apply(
 	select combo = Stuff((
-	select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
-	from(
-		select distinct pp.SizeCode,pp.QtyPerCTN
-		from PackingList_Detail pp
-		where pp.ID=pd.ID and pp.CTNStartNo=pd.CTNStartNo
-	)s
-	for xml path('')
+	    select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
+	    from(
+		    select distinct pp.SizeCode,pp.QtyPerCTN
+		    from PackingList_Detail pp
+		    where pp.ID=pd.ID and pp.CTNStartNo=pd.CTNStartNo
+	    )s
+	    for xml path('')
 	),1,1,'')
 ) SizeCombo
+outer apply(
+	select Qty = 
+	sum(pp.QtyPerCTN * iif(pp.CTNQty=0,1,pp.CTNQty)) 
+	from PackingList_Detail pp
+	where pp.ID= pd.ID and pp.CTNStartNo=pd.CTNStartNo
+) TTL
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and o.PulloutComplete = 1
@@ -186,7 +192,7 @@ p.MDivisionID
 ,pd.ClogLocationId
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
-,[TTLQty] = pd.QtyPerCTN* pd.CTNQty
+,[TTLQty] = TTL.Qty
 ,[QtyPerSize] = SizeCombo.combo
 ,pd.id,pd.Seq
 ,[PulloutComplete] = 'N'
@@ -197,15 +203,21 @@ inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
 outer apply(
 	select combo = Stuff((
-	select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
-	from(
-		select distinct pd.SizeCode,pd.QtyPerCTN
-		from PackingList_Detail pd1
-		where pd1.ID=pd.ID and pd1.CTNStartNo=pd.CTNStartNo
-	)s
-	for xml path('')
+	    select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
+	    from(
+		    select distinct pd1.SizeCode,pd1.QtyPerCTN
+		    from PackingList_Detail pd1
+		    where pd1.ID=pd.ID and pd1.CTNStartNo=pd.CTNStartNo
+	     )s
+	    for xml path('')
 	),1,1,'')
 ) SizeCombo
+outer apply(
+	select Qty = 
+	sum(pp.QtyPerCTN * iif(pp.CTNQty=0,1,pp.CTNQty)) 
+	from PackingList_Detail pp
+	where pp.ID= pd.ID and pp.CTNStartNo=pd.CTNStartNo
+) TTL
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and (p.PulloutID = '' or po.Status = 'New')

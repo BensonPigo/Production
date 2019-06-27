@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[InventoryRefno] (
     [ID]              BIGINT          DEFAULT ((0)) NOT NULL,
     [Refno]           VARCHAR (20)    DEFAULT ('') NOT NULL,
-    [Width]           NUMERIC (5, 1)  DEFAULT ((0)) NULL,
+    [Width]           NUMERIC (5, 2)  DEFAULT ((0)) NULL,
     [ColorID]         VARCHAR (70)    DEFAULT ('') NULL,
     [SizeSpec]        VARCHAR (8)     DEFAULT ('') NULL,
     [SizeUnit]        VARCHAR (8)     DEFAULT ('') NULL,

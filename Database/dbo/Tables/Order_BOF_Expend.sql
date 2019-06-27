@@ -7,7 +7,7 @@
     [Price]             NUMERIC (16, 4) CONSTRAINT [DF_Order_BOF_Expend_Price] DEFAULT ((0)) NULL,
     [UsageQty]          NUMERIC (9, 2)  CONSTRAINT [DF_Order_BOF_Expend_UsageQty] DEFAULT ((0)) NULL,
     [UsageUnit]         VARCHAR (8)     CONSTRAINT [DF_Order_BOF_Expend_UsageUnit] DEFAULT ('') NULL,
-    [Width]             NUMERIC (4, 1)  CONSTRAINT [DF_Order_BOF_Expend_Width] DEFAULT ((0)) NULL,
+    [Width]             NUMERIC (5, 2)  CONSTRAINT [DF_Order_BOF_Expend_Width] DEFAULT ((0)) NULL,
     [SysUsageQty]       NUMERIC (9, 2)  CONSTRAINT [DF_Order_BOF_Expend_SysUsageQty] DEFAULT ((0)) NULL,
     [QTFabricPanelCode] NVARCHAR (100)  CONSTRAINT [DF_Order_BOF_Expend_QTFabricPanelCode] DEFAULT ('') NULL,
     [Remark]            NVARCHAR (60)   CONSTRAINT [DF_Order_BOF_Expend_Remark] DEFAULT ('') NULL,

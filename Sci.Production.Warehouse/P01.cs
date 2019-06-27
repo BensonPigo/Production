@@ -93,6 +93,7 @@ namespace Sci.Production.Warehouse
 
         protected override void OnDetailEntered()
         {
+
             base.OnDetailEntered();
             if (!EditMode)
             {
@@ -221,6 +222,26 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             btnOrderRemark.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
             this.btnPFHistory.ForeColor = MyUtility.Check.Seek($@"select id from Order_PFHis with(nolock) where id = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
+
+            switch (this.CurrentMaintain["IsMixMarker"].ToString())
+            {
+                case "0":
+                    this.displayIsMixMarker.Text = "Is Single Marker";
+                    break;
+
+                case "1":
+                    this.displayIsMixMarker.Text = "Is Mix Marker";
+                    break;
+
+                case "2":
+                    this.displayIsMixMarker.Text = "Is Mix Marker - SCI";
+                    break;
+
+                default:
+                    this.displayIsMixMarker.Text = this.CurrentMaintain["IsMixMarker"].ToString();
+                    break;
+            }
+
         }
 
         protected override void ClickNewAfter()

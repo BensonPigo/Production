@@ -542,6 +542,8 @@ where InvA.OrderID = '{0}'
             #region ComputeOrderQty
             this.ComputeOrderQty();
             #endregion
+
+            this.Color_Change();
         }
 
         /// <summary>
@@ -1213,6 +1215,26 @@ from (
                 for (int i = 0; i < this.detailgrid.ColumnCount; i++)
                 {
                     this.detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
+                }
+            }
+        }
+
+        private void Color_Change()
+        {
+            if (this.detailgrid.Rows.Count > 0 || !MyUtility.Check.Empty(this.detailgrid))
+            {
+                for (int index = 0; index < this.detailgrid.Rows.Count; index++)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(index);
+                    if (this.detailgrid.Rows.Count <= index || index < 0)
+                    {
+                        return;
+                    }
+
+                    if (MyUtility.Convert.GetDecimal(dr["BalanceQty"]) < 0)
+                    {
+                        this.detailgrid.Rows[index].Cells[11].Style.BackColor = Color.Red;
+                    }
                 }
             }
         }

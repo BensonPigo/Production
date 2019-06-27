@@ -48,6 +48,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EASendMail">
+      <HintPath>..\_Dll\EASendMail.dll</HintPath>
+    </Reference>
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
     </Reference>
@@ -109,6 +112,7 @@
     <Reference Include="System.Core">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms">
       <Private>True</Private>

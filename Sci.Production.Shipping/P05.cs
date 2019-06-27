@@ -1626,13 +1626,83 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
                 return;
             }
 
-            string updateCmd = string.Format("update GMTBooking set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
-            DualResult result = DBProxy.Current.Execute(null, updateCmd);
-            if (!result)
+            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("GMTBooking_UnCFM", true);
+            DialogResult dResult = callReason.ShowDialog(this);
+            if (dResult == System.Windows.Forms.DialogResult.OK)
             {
-                MyUtility.Msg.WarningBox("UnConfirm fail !\r\n" + result.ToString());
+                if (callReason.ReturnReason == string.Empty)
+                {
+                    MyUtility.Msg.WarningBox("Reason can not be empty."); return;
+                }
+                else
+                { 
+
+                    string insertCmd = string.Format(
+                        @"insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
+                    values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                        "Status",
+                        "Locked",
+                        "New",
+                        callReason.ReturnReason,
+                        callReason.ReturnRemark,
+                        Sci.Env.User.UserID);
+
+                    string insert = $@"
+    INSERT INTO GMTBooking_History  ([ID],[HisType],[OldValue],[NewValue],[ReasonID],[Remark],[AddName],[AddDate])
+         VALUES
+               (    '{this.CurrentMaintain["ID"]}'
+                   ,'GBUnCFM'
+                   ,'CFM'
+                   ,'Un CFM'
+                   ,'{callReason.ReturnReason}'
+                   ,'{callReason.ReturnRemark}'
+                   ,'{Sci.Env.User.UserID}'
+                   ,GETDATE()
+                )
+
+    ";
+                    string updateCmd = string.Format("update GMTBooking set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+                    using (TransactionScope transactionScope = new TransactionScope())
+                    {
+                        try
+                        {
+                            DualResult result2 = DBProxy.Current.Execute(null, insert);
+                            DualResult result3 = DBProxy.Current.Execute(null, updateCmd);
+
+                            if (result2 && result3)
+                            {
+                                transactionScope.Complete();
+                            }
+                            else
+                            {
+                                transactionScope.Dispose();
+                                MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                                return;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            transactionScope.Dispose();
+                            this.ShowErr("Commit transaction error.", ex);
+                            return;
+                        }
+                    }
+                }
             }
+            else
+            {
+                return;
+            }
+
+
+            //DualResult result = DBProxy.Current.Execute(null, updateCmd);
+            //if (!result)
+            //{
+            //    MyUtility.Msg.WarningBox("UnConfirm fail !\r\n" + result.ToString());
+            //}
         }
 
         // Terminal/Whse#
@@ -1802,6 +1872,18 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             {
                 this.CurrentMaintain["SOCFMDate"] = upSOCFMDate;
             }
+        }
+
+        private void btnBatchImportSO_Click_1(object sender, EventArgs e)
+        {
+            P05_BatchImportSO form = new P05_BatchImportSO();
+            form.ShowDialog();
+        }
+
+        private void btnUnCfmHis_Click(object sender, EventArgs e)
+        {
+            Production.Shipping.P05_UnconfirmHistory dialog = new P05_UnconfirmHistory(this.CurrentMaintain["ID"].ToString());
+            dialog.ShowDialog(this);
         }
     }
 }

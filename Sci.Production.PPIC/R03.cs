@@ -24,6 +24,8 @@ namespace Sci.Production.PPIC
         private string mDivision;
         private string factory;
         private string subProcess;
+        private string sp1;
+        private string sp2;
         private bool bulk;
         private bool sample;
         private bool material;
@@ -131,6 +133,8 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             this.planDate2 = this.datePlanDate.Value2;
             this.orderCfm1 = this.dateOrderCfmDate.Value1;
             this.orderCfm2 = this.dateOrderCfmDate.Value2;
+            this.sp1 = this.txtSp1.Text;
+            this.sp2 = this.txtSp2.Text;
             this.style = this.txtstyle.Text.Trim();
             this.Article = this.txtArticle.Text.Trim();
             this.season = this.txtseason.Text.Trim();
@@ -256,7 +260,11 @@ with tmpOrders as (
             , o.BrandFTYCode
             , o.CPUFactor
             , o.ClogLastReceiveDate
-            , o.IsMixMarker
+			, [IsMixMarker]=  CASE WHEN o.IsMixMarker=0 THEN 'Is Single Marker'
+								WHEN o.IsMixMarker=1 THEN 'Is Mix  Marker'		
+								WHEN o.IsMixMarker=2 THEN ' Is Mix Marker - SCI'
+								ELSE ''
+							END
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','')"
             + seperCmd +
@@ -334,6 +342,16 @@ with tmpOrders as (
             if (!MyUtility.Check.Empty(this.orderCfm2))
             {
                 sqlCmd.Append(string.Format(" and o.CFMDate <= '{0}'", Convert.ToDateTime(this.orderCfm2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sp1))
+            {
+                sqlCmd.Append(string.Format(" and o.id >= '{0}'", this.sp1));
+            }
+
+            if (!MyUtility.Check.Empty(this.sp2))
+            {
+                sqlCmd.Append(string.Format(" and o.id <= '{0}'", this.sp2));
             }
 
             if (!MyUtility.Check.Empty(this.style))
@@ -542,7 +560,11 @@ tmpFilterZone as (
             , o.BrandFTYCode
             , o.CPUFactor
             , o.ClogLastReceiveDate
-            , o.IsMixMarker
+			, [IsMixMarker]=  CASE WHEN o.IsMixMarker=0 THEN 'Is Single Marker'
+								WHEN o.IsMixMarker=1 THEN 'Is Mix  Marker'		
+								WHEN o.IsMixMarker=2 THEN ' Is Mix Marker - SCI'
+								ELSE ''
+							END
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','') "
             + seperCmd +
@@ -1620,7 +1642,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 objArray[intRowsStart, 115] = dr["SpecialMarkName"];
                 objArray[intRowsStart, 116] = dr["FTYRemark"];
                 objArray[intRowsStart, 117] = dr["SampleReasonName"];
-                objArray[intRowsStart, 118] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 118] = dr["IsMixMarker"];
                 objArray[intRowsStart, 119] = dr["CuttingSP"];
                 objArray[intRowsStart, 120] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 121] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;

@@ -21,7 +21,6 @@ namespace Sci.Production.Packing
     public partial class P24 : Sci.Win.Tems.Input6
     {
         private string destination_path; // 放的路徑
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         public P24(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -44,17 +43,13 @@ select distinct
 	pd.Article,
 	pd.Color,
 	pd.SizeCode,
-	sd.FromLeft,
-	sd.FromTop,
-	sd.PicLength,
-	sd.PicWidth,
-	sd.Is2Side,
 	sd.FileName,
     FileNameOri=sd.FileName,
     local_file_type='',
     FileSourcePath='',
     FileAction='',
-    sd.ShippingMarkPicUkey
+    sd.ShippingMarkPicUkey,
+    pd.RefNo
 from ShippingMarkPic_Detail sd with(nolock)
 inner join ShippingMarkPic s with(nolock) on sd.ShippingMarkPicUkey = s.Ukey
 inner join PackingList_Detail pd with(nolock) on pd.ID = s.PackingListID and pd.SCICtnNo = sd.SCICtnNo
@@ -77,14 +72,10 @@ order by pd.SCICtnNo
             .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("CustCTN", header: "Cust #", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SCICtnNo", header: "SCI Ctn No.", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("FromLeft", header: "FromLeft", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: fromLeft)
-            .Numeric("FromTop", header: "FromTop", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)
-            .Numeric("PicLength", header: "PicLength", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)
-            .Numeric("PicWidth", header: "PicWidth", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)
-            .CheckBox("Is2Side", header: "Is2Side", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
             .Text("FileName", header: "Shipping Mark File Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Button("Upload", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnUpload)
             .Button("Delete", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnDelete)
@@ -125,6 +116,8 @@ order by pd.SCICtnNo
         {
             base.OnDetailEntered();
             this.ChangCell();
+            this.SetComboSeqAndSide();
+            this.mtbs.ResetBindings(false);
         }
 
         private void ChangCell()
@@ -137,47 +130,27 @@ order by pd.SCICtnNo
                     dr.Cells[9] = new DataGridViewTextBoxCell();
                     dr.Cells[10] = new DataGridViewTextBoxCell();
                     dr.Cells[11] = new DataGridViewTextBoxCell();
-                    dr.Cells[12] = new DataGridViewTextBoxCell();
-                    dr.Cells[13] = new DataGridViewTextBoxCell();
-                    dr.Cells[14] = new DataGridViewTextBoxCell();
-                    dr.Cells[15] = new DataGridViewTextBoxCell();
 
                     dr.Cells[8].Style.ForeColor = Color.White;
                     dr.Cells[9].Style.ForeColor = Color.White;
                     dr.Cells[10].Style.ForeColor = Color.White;
                     dr.Cells[11].Style.ForeColor = Color.White;
-                    dr.Cells[12].Style.ForeColor = Color.White;
-                    dr.Cells[13].Style.ForeColor = Color.White;
-                    dr.Cells[14].Style.ForeColor = Color.White;
-                    dr.Cells[15].Style.ForeColor = Color.White;
 
                     dr.Cells[8].Style.SelectionForeColor = Color.White;
                     dr.Cells[9].Style.SelectionForeColor = Color.White;
                     dr.Cells[10].Style.SelectionForeColor = Color.White;
                     dr.Cells[11].Style.SelectionForeColor = Color.White;
-                    dr.Cells[12].Style.SelectionForeColor = Color.White;
-                    dr.Cells[13].Style.SelectionForeColor = Color.White;
-                    dr.Cells[14].Style.SelectionForeColor = Color.White;
-                    dr.Cells[15].Style.SelectionForeColor = Color.White;
 
                     dr.Cells[8].Style.SelectionBackColor = Color.White;
                     dr.Cells[9].Style.SelectionBackColor = Color.White;
                     dr.Cells[10].Style.SelectionBackColor = Color.White;
                     dr.Cells[11].Style.SelectionBackColor = Color.White;
-                    dr.Cells[12].Style.SelectionBackColor = Color.White;
-                    dr.Cells[13].Style.SelectionBackColor = Color.White;
-                    dr.Cells[14].Style.SelectionBackColor = Color.White;
-                    dr.Cells[15].Style.SelectionBackColor = Color.White;
 
                     dr.Cells[8].ReadOnly = true;
                     dr.Cells[8].ReadOnly = true;
                     dr.Cells[9].ReadOnly = true;
                     dr.Cells[10].ReadOnly = true;
                     dr.Cells[11].ReadOnly = true;
-                    dr.Cells[12].ReadOnly = true;
-                    dr.Cells[13].ReadOnly = true;
-                    dr.Cells[14].ReadOnly = true;
-                    dr.Cells[15].ReadOnly = true;
                 }
             }
         }
@@ -284,7 +257,7 @@ order by pd.SCICtnNo
         {
             base.ClickEditAfter();
             this.txtPackingListID.ReadOnly = true;
-            this.numSeq.ReadOnly = true;
+            this.comboSeq.ReadOnly = true;
             this.cmbSide.ReadOnly = true;
         }
 
@@ -297,6 +270,47 @@ order by pd.SCICtnNo
                 MyUtility.Msg.WarningBox("Packing No. , Seq , Side can not empty!");
                 return false;
             }
+
+            #region 檢查detail資料是否存在於ShippingMarkPicture的設定中
+            var checkHasFileNameData = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["FileName"]));
+            if (checkHasFileNameData.Any())
+            {
+                DataTable dtHasFileNameDetail = checkHasFileNameData.CopyToDataTable();
+                DataTable dtCheckResult;
+                string sqlCheckDetail = $@"
+select distinct o.BrandID,o.CustCDID,t.Refno
+from #tmp t
+left join orders o with (nolock) on t.OrderID = o.ID
+where not exists (select 1 from ShippingMarkPicture smp with (nolock) 
+                            where   smp.BrandID = o.BrandID and
+                                    smp.CustCD = o.CustCDID and
+                                    smp.CTNRefno = t.Refno and
+                                    smp.Side = '{this.CurrentMaintain["Side"]}' and
+                                    smp.Seq = '{this.CurrentMaintain["Seq"]}')
+
+";
+
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(dtHasFileNameDetail, string.Empty, sqlCheckDetail, out dtCheckResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                string errMsg = string.Empty;
+                foreach (DataRow dr in dtCheckResult.Rows)
+                {
+                    errMsg += $"<Brand>:{dr["BrandID"]}  <CustCD>:{dr["CustCDID"]}  <CTNRefno>:{dr["Refno"]} {Environment.NewLine}";
+                }
+
+                if (errMsg.Length > 0)
+                {
+                    errMsg = "Please go to [Packing B03] to complete setting!" + Environment.NewLine + errMsg;
+                    MyUtility.Msg.WarningBox(errMsg);
+                    return false;
+                }
+            }
+            #endregion
 
             return base.ClickSaveBefore();
         }
@@ -312,12 +326,7 @@ order by pd.SCICtnNo
                 FileSourcePath = MyUtility.Convert.GetString(a.First()["FileSourcePath"]),
                 local_file_type = MyUtility.Convert.GetString(a.First()["local_file_type"]),
                 FileNameOri = MyUtility.Convert.GetString(a.First()["FileNameOri"]),
-                FileAction = MyUtility.Convert.GetString(a.First()["FileAction"]),
-                FromLeft = MyUtility.Convert.GetDecimal(a.First()["FromLeft"]),
-                FromTop = MyUtility.Convert.GetDecimal(a.First()["FromTop"]),
-                PicLength = MyUtility.Convert.GetDecimal(a.First()["PicLength"]),
-                PicWidth = MyUtility.Convert.GetDecimal(a.First()["PicWidth"]),
-                Is2Side = MyUtility.Convert.GetBool(a.First()["Is2Side"])
+                FileAction = MyUtility.Convert.GetString(a.First()["FileAction"])
             }).ToList();
             #endregion
 
@@ -393,15 +402,10 @@ merge ShippingMarkPic_Detail t
 using #tmp s
 on t.ShippingMarkPicUkey = s.ShippingMarkPicUkey and t.SCICtnNo = s.SCICtnNo
 when matched then update set 
-	t.FileName = s.FileName,
-	t.FromLeft = s.FromLeft,
-	t.FromTop = s.FromTop,
-	t.PicLength = s.PicLength,
-	t.PicWidth = s.PicWidth,
-	t.Is2Side = s.Is2Side
+	t.FileName = s.FileName
 when not matched by target then 	
-	insert(ShippingMarkPicUkey,SCICtnNo,FileName,FromLeft,FromTop,PicLength,PicWidth,Is2Side)
-	values(s.ShippingMarkPicUkey,s.SCICtnNo,s.FileName,s.FromLeft,s.FromTop,s.PicLength,s.PicWidth,s.Is2Side)
+	insert(ShippingMarkPicUkey,SCICtnNo,FileName)
+	values(s.ShippingMarkPicUkey,s.SCICtnNo,s.FileName)
 when not matched by source and t.ShippingMarkPicUkey in (select ShippingMarkPicUkey from #tmp) then 
 	delete
 ;
@@ -469,11 +473,7 @@ select
 	pd.Article,
 	pd.Color,
 	pd.SizeCode,
-	FromLeft=0.0,
-	FromTop=0.0,
-	PicLength=0.0,
-	PicWidth=0.0,
-	Is2Side=cast(0 as bit),
+    pd.Refno,
     FileName='',
     FileNameOri='',
     local_file_type='',
@@ -501,10 +501,24 @@ order by SCICtnNo
 
             this.detailgridbs.DataSource = ddt;
             this.ChangCell();
+
+            #region 帶出Side  & Seq選單
+
+            this.SetComboSeqAndSide();
+
+            this.CurrentMaintain["PackingListID"] = this.txtPackingListID.Text;
+            this.CurrentMaintain["Seq"] = MyUtility.Check.Empty(this.comboSeq.Text) ? "0" : this.comboSeq.Text;
+            this.CurrentMaintain["Side"] = this.cmbSide.Text;
+            #endregion
         }
 
         private void BtnDownload_Click(object sender, EventArgs e)
         {
+            if (this.detailgridbs.DataSource == null)
+            {
+                return;
+            }
+
             if (((DataTable)this.detailgridbs.DataSource).Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found");
@@ -521,12 +535,7 @@ order by SCICtnNo
                 Article = MyUtility.Convert.GetString(a.First()["Article"]),
                 Color = MyUtility.Convert.GetString(a.First()["Color"]),
                 SizeCode = MyUtility.Convert.GetString(a.First()["SizeCode"]),
-                FromLeft = MyUtility.Convert.GetDecimal(a.First()["FromLeft"]),
-                FromTop = MyUtility.Convert.GetDecimal(a.First()["FromTop"]),
-                PicLength = MyUtility.Convert.GetDecimal(a.First()["PicLength"]),
-                PicWidth = MyUtility.Convert.GetDecimal(a.First()["PicWidth"]),
-                Is2Side = MyUtility.Convert.GetBool(a.First()["Is2Side"]),
-                FileName = MyUtility.Convert.GetString(a.First()["FileName"]),
+                FileName = MyUtility.Convert.GetString(a.First()["FileName"])
             }).ToList();
 
             #region To Excel
@@ -546,12 +555,7 @@ order by SCICtnNo
                 worksheet.Cells[rownum, 7] = dr.Article;
                 worksheet.Cells[rownum, 8] = dr.Color;
                 worksheet.Cells[rownum, 9] = dr.SizeCode;
-                worksheet.Cells[rownum, 10] = dr.FromLeft;
-                worksheet.Cells[rownum, 11] = dr.FromTop;
-                worksheet.Cells[rownum, 12] = dr.PicLength;
-                worksheet.Cells[rownum, 13] = dr.PicWidth;
-                worksheet.Cells[rownum, 14] = MyUtility.Convert.GetBool(dr.Is2Side) ? "Yes" : "No";
-                worksheet.Cells[rownum, 15] = dr.FileName;
+                worksheet.Cells[rownum, 10] = dr.FileName;
                 rownum++;
             }
 
@@ -611,9 +615,7 @@ order by SCICtnNo
                 }
 
                 if (MyUtility.Check.Empty(dtexcel.Columns["Pack ID"]) || MyUtility.Check.Empty(dtexcel.Columns["SCI Ctn No."]) ||
-                    MyUtility.Check.Empty(dtexcel.Columns["From Left"]) || MyUtility.Check.Empty(dtexcel.Columns["From Top"]) ||
-                    MyUtility.Check.Empty(dtexcel.Columns["Pic Length"]) || MyUtility.Check.Empty(dtexcel.Columns["Pic Width"]) ||
-                    MyUtility.Check.Empty(dtexcel.Columns["Shipping Mark Pic File"])|| MyUtility.Check.Empty(dtexcel.Columns["Is 2 Side"]))
+                    MyUtility.Check.Empty(dtexcel.Columns["Shipping Mark Pic File"]))
                 {
                     MyUtility.Msg.WarningBox("excel file format error !!");
                     return;
@@ -642,25 +644,13 @@ order by SCICtnNo
                 var excelist = dtexcel.AsEnumerable().GroupBy(s => s["SCI Ctn No."], (ctn, a) => new
                 {
                     SCICtnNo = ctn,
-                    FileName = a.First()["Shipping Mark Pic File"],
-
-                    FromLeft = MyUtility.Convert.GetDecimal(a.First()["From Left"]),
-                    FromTop = MyUtility.Convert.GetDecimal(a.First()["From Top"]),
-                    PicLength = MyUtility.Convert.GetDecimal(a.First()["Pic Length"]),
-                    PicWidth = MyUtility.Convert.GetDecimal(a.First()["Pic Width"]),
-                    Is2Side = MyUtility.Convert.GetString(a.First()["Is 2 Side"]).ToLower().EqualString("yes")
+                    FileName = a.First()["Shipping Mark Pic File"]
                 });
 
                 foreach (var item in excelist)
                 {
                     foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Select($"SCICtnNo='{item.SCICtnNo}'"))
                     {
-                        dr["FromLeft"] = item.FromLeft;
-                        dr["FromTop"] = item.FromTop;
-                        dr["PicLength"] = item.PicLength;
-                        dr["PicWidth"] = item.PicWidth;
-                        dr["Is2Side"] = item.Is2Side;
-
                         if (!MyUtility.Check.Empty(item.FileName) && !MyUtility.Check.Empty(this.destination_path))
                         {
                             dr["FileSourcePath"] = item.FileName;
@@ -702,7 +692,7 @@ order by SCICtnNo
                 object[,] objValue = xlsRange.Value2 as object[,];
 
                 // Array[][] to DataTable
-                long lngColumnCount = objValue.GetLongLength(1);
+                long lngColumnCount = 10;
                 long lngRowCount = objValue.GetLongLength(0);
                 DataTable dtExcel = new DataTable();
                 for (int j = 1; j <= lngColumnCount; j++)
@@ -787,6 +777,46 @@ order by SCICtnNo
             {
                 return t;
             }
+        }
+
+        private void SetComboSeqAndSide()
+        {
+            if (this.detailgrid == null)
+            {
+                return;
+            }
+
+            DualResult result;
+            string firstDetailSP = string.Empty;
+            DataRow drOrder = null;
+            if (this.detailgrid.Rows.Count > 0)
+            {
+                firstDetailSP = this.detailgrid.Rows[0].Cells["OrderID"].Value.ToString();
+                MyUtility.Check.Seek($"select BrandID,CustCDID from orders with (nolock) where ID = '{firstDetailSP}'", out drOrder);
+            }
+
+            if (drOrder == null)
+            {
+                return;
+            }
+
+            string sqlGetShippingMarkPicture = $@"select distinct Side,Seq from ShippingMarkPicture where BrandID = '{drOrder["BrandID"]}' and CustCD = '{drOrder["CustCDID"]}' order by Seq";
+            DataTable dtSeqSideSource;
+            result = DBProxy.Current.Select(null, sqlGetShippingMarkPicture, out dtSeqSideSource);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboSeq.DataSource = dtSeqSideSource.AsEnumerable().Select(s => new { Seq = s["Seq"] }).Distinct().ToList();
+            this.comboSeq.DisplayMember = "Seq";
+            this.comboSeq.ValueMember = "Seq";
+
+            this.cmbSide.DataSource = dtSeqSideSource.AsEnumerable().Select(s => new { Side = s["Side"] }).Distinct().ToList();
+            this.cmbSide.DisplayMember = "Side";
+            this.cmbSide.ValueMember = "Side";
         }
     }
 }

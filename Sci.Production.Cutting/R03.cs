@@ -228,26 +228,6 @@ where 1=1
 
 ");
             #region Append畫面上的條件
-            if (!MyUtility.Check.Empty(WorkOrder))
-            {
-                sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", WorkOrder));
-            }
-
-            if (!MyUtility.Check.Empty(factory))
-            {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
-            }
-
-            if (!MyUtility.Check.Empty(Est_CutDate1))
-            {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ",Convert.ToDateTime(Est_CutDate1).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(Est_CutDate2))
-            {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
-            }
-
             if (!MyUtility.Check.Empty(CuttingSP1))
             {
                 sqlCmd.Append(string.Format(" and wo.ID >= '{0}'", CuttingSP1));
@@ -258,34 +238,44 @@ where 1=1
                 sqlCmd.Append(string.Format(" and wo.ID <= '{0}'", CuttingSP2));
             }
 
+            if (!MyUtility.Check.Empty(Est_CutDate1))
+            {
+                sqlCmd.Append(string.Format(" and wo.EstCutDate >= cast('{0}' as date) ", Convert.ToDateTime(Est_CutDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(Est_CutDate2))
+            {
+                sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(BuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(BuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}' ", Convert.ToDateTime(BuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= cast('{0}' as date) ", Convert.ToDateTime(BuyerDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(SCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery >= '{0}'", Convert.ToDateTime(SCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery >= cast('{0}' as date) ", Convert.ToDateTime(SCIDelivery1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(SCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery <= '{0}' ", Convert.ToDateTime(SCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery <= cast('{0}' as date)", Convert.ToDateTime(SCIDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(SewingInline1))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine >= '{0}'", Convert.ToDateTime(SewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(SewingInline1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(SewingInline2))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine <= '{0}' ", Convert.ToDateTime(SewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(SewingInline2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(Style))
@@ -295,32 +285,42 @@ where 1=1
 
             if (!MyUtility.Check.Empty(EarliestBuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= '{0}'", Convert.ToDateTime(EarliestBuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= cast('{0}' as date)", Convert.ToDateTime(EarliestBuyerDelivery1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(EarliestBuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= '{0}' ", Convert.ToDateTime(EarliestBuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= cast('{0}' as date) ", Convert.ToDateTime(EarliestBuyerDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(EarliestSCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= '{0}'", Convert.ToDateTime(EarliestSCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= cast('{0}' as date)", Convert.ToDateTime(EarliestSCIDelivery1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(EarliestSCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= '{0}' ", Convert.ToDateTime(EarliestSCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= cast('{0}' as date) ", Convert.ToDateTime(EarliestSCIDelivery2).ToString("d")));
             }
             
             if (!MyUtility.Check.Empty(EarliestSewingInline1))
             {
-                sqlCmd.Append(string.Format(@" and c.SewInLine >= '{0}' ", Convert.ToDateTime(EarliestSewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and c.SewInLine >= cast('{0}' as date) ", Convert.ToDateTime(EarliestSewingInline1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(EarliestSewingInline2))
             {
-                sqlCmd.Append(string.Format(" and c.SewInLine <= '{0}' ", Convert.ToDateTime(EarliestSewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(" and c.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(EarliestSewingInline2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(WorkOrder))
+            {
+                sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", WorkOrder));
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
             }
             #endregion
             sqlCmd.Append(@"
@@ -378,6 +378,7 @@ exec (@exT)
 
 drop table #tmp,#tmpL");
 
+            DBProxy.Current.DefaultTimeout = 900; 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
             {

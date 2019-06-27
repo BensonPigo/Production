@@ -46,9 +46,11 @@
     [SCICtnNo]            VARCHAR (15)   CONSTRAINT [DF_PackingList_Detail_SCICtnNo] DEFAULT ('') NULL,
     [Pallet]              VARCHAR (10)   NULL,
     [NewGW]               NUMERIC (7, 3) NULL,
-    CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC),
-    CONSTRAINT [UK_PackingList_Detail] UNIQUE NONCLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
-);
+    [OrigID] VARCHAR(13) NOT NULL CONSTRAINT [DF_PackingList_Detail_OrigID] DEFAULT (''), 
+    [OrigOrderID] VARCHAR(13) NOT NULL CONSTRAINT [DF_PackingList_Detail_OrigOrderID] DEFAULT (''), 
+    [OrigCTNStartNo] VARCHAR(6) NOT NULL CONSTRAINT [DF_PackingList_Detail_OrigCTNStartNo] DEFAULT (''), 
+    CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+	);
 
 
 

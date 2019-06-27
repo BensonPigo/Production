@@ -53,6 +53,10 @@
             this.txtCurrency = new Sci.Production.Class.txtcurrency();
             this.txtCountryNationality = new Sci.Production.Class.txtcountry();
             this.numWHoldingTerm = new Sci.Win.UI.NumericBox();
+            this.chkIsShipping = new Sci.Win.UI.CheckBox();
+            this.chkisSubcon = new Sci.Win.UI.CheckBox();
+            this.chkisMisc = new Sci.Win.UI.CheckBox();
+            this.chkIsSintexSubcon = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -63,10 +67,14 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(824, 395);
+            this.detail.Size = new System.Drawing.Size(893, 407);
             // 
             // detailcont
-            //
+            // 
+            this.detailcont.Controls.Add(this.chkIsSintexSubcon);
+            this.detailcont.Controls.Add(this.chkisMisc);
+            this.detailcont.Controls.Add(this.chkisSubcon);
+            this.detailcont.Controls.Add(this.chkIsShipping);
             this.detailcont.Controls.Add(this.numWHoldingTerm);
             this.detailcont.Controls.Add(this.btnBankDetail);
             this.detailcont.Controls.Add(this.btnAccountingChartNo);
@@ -92,20 +100,21 @@
             this.detailcont.Controls.Add(this.labelNationality);
             this.detailcont.Controls.Add(this.labelAbbreviation);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(824, 357);
+            this.detailcont.Size = new System.Drawing.Size(893, 369);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(824, 38);
-            //  
+            this.detailbtm.Location = new System.Drawing.Point(0, 369);
+            this.detailbtm.Size = new System.Drawing.Size(893, 38);
+            // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(824, 395);
+            this.browse.Size = new System.Drawing.Size(893, 407);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(832, 424);
+            this.tabs.Size = new System.Drawing.Size(901, 436);
             // 
             // createby
             // 
@@ -123,7 +132,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(28, 15);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(125, 23);
@@ -132,7 +140,6 @@
             // 
             // labelAbbreviation
             // 
-            this.labelAbbreviation.Lines = 0;
             this.labelAbbreviation.Location = new System.Drawing.Point(28, 42);
             this.labelAbbreviation.Name = "labelAbbreviation";
             this.labelAbbreviation.Size = new System.Drawing.Size(125, 23);
@@ -141,7 +148,6 @@
             // 
             // labelNationality
             // 
-            this.labelNationality.Lines = 0;
             this.labelNationality.Location = new System.Drawing.Point(28, 69);
             this.labelNationality.Name = "labelNationality";
             this.labelNationality.Size = new System.Drawing.Size(125, 23);
@@ -150,7 +156,6 @@
             // 
             // labelCompany
             // 
-            this.labelCompany.Lines = 0;
             this.labelCompany.Location = new System.Drawing.Point(28, 96);
             this.labelCompany.Name = "labelCompany";
             this.labelCompany.Size = new System.Drawing.Size(125, 23);
@@ -159,7 +164,6 @@
             // 
             // labelTel
             // 
-            this.labelTel.Lines = 0;
             this.labelTel.Location = new System.Drawing.Point(28, 123);
             this.labelTel.Name = "labelTel";
             this.labelTel.Size = new System.Drawing.Size(125, 23);
@@ -168,7 +172,6 @@
             // 
             // labelFax
             // 
-            this.labelFax.Lines = 0;
             this.labelFax.Location = new System.Drawing.Point(28, 150);
             this.labelFax.Name = "labelFax";
             this.labelFax.Size = new System.Drawing.Size(125, 23);
@@ -177,7 +180,6 @@
             // 
             // labelAddress
             // 
-            this.labelAddress.Lines = 0;
             this.labelAddress.Location = new System.Drawing.Point(28, 177);
             this.labelAddress.Name = "labelAddress";
             this.labelAddress.Size = new System.Drawing.Size(125, 23);
@@ -186,7 +188,6 @@
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Lines = 0;
             this.labelCurrency.Location = new System.Drawing.Point(28, 263);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(125, 23);
@@ -195,7 +196,6 @@
             // 
             // labelPaymentTerm
             // 
-            this.labelPaymentTerm.Lines = 0;
             this.labelPaymentTerm.Location = new System.Drawing.Point(28, 290);
             this.labelPaymentTerm.Name = "labelPaymentTerm";
             this.labelPaymentTerm.Size = new System.Drawing.Size(125, 23);
@@ -204,7 +204,6 @@
             // 
             // labelWHoldingRate
             // 
-            this.labelWHoldingRate.Lines = 0;
             this.labelWHoldingRate.Location = new System.Drawing.Point(28, 317);
             this.labelWHoldingRate.Name = "labelWHoldingRate";
             this.labelWHoldingRate.Size = new System.Drawing.Size(125, 23);
@@ -278,7 +277,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(478, 15);
+            this.checkJunk.Location = new System.Drawing.Point(587, 15);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 1;
@@ -290,7 +289,7 @@
             this.checkUseSBTS.AutoSize = true;
             this.checkUseSBTS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UseSBTS", true));
             this.checkUseSBTS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkUseSBTS.Location = new System.Drawing.Point(478, 42);
+            this.checkUseSBTS.Location = new System.Drawing.Point(587, 42);
             this.checkUseSBTS.Name = "checkUseSBTS";
             this.checkUseSBTS.Size = new System.Drawing.Size(92, 21);
             this.checkUseSBTS.TabIndex = 3;
@@ -302,7 +301,7 @@
             this.checkIsFactory.AutoSize = true;
             this.checkIsFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsFactory", true));
             this.checkIsFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIsFactory.Location = new System.Drawing.Point(478, 69);
+            this.checkIsFactory.Location = new System.Drawing.Point(587, 69);
             this.checkIsFactory.Name = "checkIsFactory";
             this.checkIsFactory.Size = new System.Drawing.Size(88, 21);
             this.checkIsFactory.TabIndex = 5;
@@ -313,7 +312,7 @@
             // 
             this.btnAccountingChartNo.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccountingChartNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccountingChartNo.Location = new System.Drawing.Point(589, 15);
+            this.btnAccountingChartNo.Location = new System.Drawing.Point(698, 15);
             this.btnAccountingChartNo.Name = "btnAccountingChartNo";
             this.btnAccountingChartNo.Size = new System.Drawing.Size(163, 30);
             this.btnAccountingChartNo.TabIndex = 13;
@@ -325,7 +324,7 @@
             // 
             this.btnBankDetail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnBankDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBankDetail.Location = new System.Drawing.Point(589, 52);
+            this.btnBankDetail.Location = new System.Drawing.Point(698, 52);
             this.btnBankDetail.Name = "btnBankDetail";
             this.btnBankDetail.Size = new System.Drawing.Size(163, 30);
             this.btnBankDetail.TabIndex = 14;
@@ -384,6 +383,54 @@
             0,
             0});
             // 
+            // chkIsShipping
+            // 
+            this.chkIsShipping.AutoSize = true;
+            this.chkIsShipping.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsShipping", true));
+            this.chkIsShipping.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsShipping.Location = new System.Drawing.Point(587, 96);
+            this.chkIsShipping.Name = "chkIsShipping";
+            this.chkIsShipping.Size = new System.Drawing.Size(152, 21);
+            this.chkIsShipping.TabIndex = 15;
+            this.chkIsShipping.Text = "Is Shipping Supplier";
+            this.chkIsShipping.UseVisualStyleBackColor = true;
+            // 
+            // chkisSubcon
+            // 
+            this.chkisSubcon.AutoSize = true;
+            this.chkisSubcon.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSubcon", true));
+            this.chkisSubcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkisSubcon.Location = new System.Drawing.Point(587, 123);
+            this.chkisSubcon.Name = "chkisSubcon";
+            this.chkisSubcon.Size = new System.Drawing.Size(145, 21);
+            this.chkisSubcon.TabIndex = 16;
+            this.chkisSubcon.Text = "Is Subcon Supplier";
+            this.chkisSubcon.UseVisualStyleBackColor = true;
+            // 
+            // chkisMisc
+            // 
+            this.chkisMisc.AutoSize = true;
+            this.chkisMisc.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsMisc", true));
+            this.chkisMisc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkisMisc.Location = new System.Drawing.Point(587, 150);
+            this.chkisMisc.Name = "chkisMisc";
+            this.chkisMisc.Size = new System.Drawing.Size(186, 21);
+            this.chkisMisc.TabIndex = 17;
+            this.chkisMisc.Text = "Is Miscellaneous Supplier";
+            this.chkisMisc.UseVisualStyleBackColor = true;
+            // 
+            // chkIsSintexSubcon
+            // 
+            this.chkIsSintexSubcon.AutoSize = true;
+            this.chkIsSintexSubcon.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSintexSubcon", true));
+            this.chkIsSintexSubcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsSintexSubcon.Location = new System.Drawing.Point(587, 177);
+            this.chkIsSintexSubcon.Name = "chkIsSintexSubcon";
+            this.chkIsSintexSubcon.Size = new System.Drawing.Size(131, 21);
+            this.chkIsSintexSubcon.TabIndex = 18;
+            this.chkIsSintexSubcon.Text = "Is Sintex Subcon";
+            this.chkIsSintexSubcon.UseVisualStyleBackColor = true;
+            // 
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(901, 469);
@@ -396,6 +443,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B04";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B04. Supplier/Sub Con (Local)";
             this.UniqueExpress = "ID";
             this.WorkAlias = "LocalSupp";
@@ -440,5 +488,9 @@
         private Win.UI.CheckBox checkUseSBTS;
         private Win.UI.CheckBox checkJunk;
         private Win.UI.NumericBox numWHoldingTerm;
+        private Win.UI.CheckBox chkisMisc;
+        private Win.UI.CheckBox chkisSubcon;
+        private Win.UI.CheckBox chkIsShipping;
+        private Win.UI.CheckBox chkIsSintexSubcon;
     }
 }

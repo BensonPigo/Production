@@ -823,10 +823,9 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
             DataTable garmentListTb;
             #region 輸出GarmentTb
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
-            if (MyUtility.Check.Empty(cutref))
-            {
-                patidsql = String.Format(
-                            @"
+
+            patidsql = String.Format(
+            @"
 SELECT ukey
 FROM [Production].[dbo].[Pattern] a WITH (NOLOCK) 
 outer apply(
@@ -843,28 +842,7 @@ outer apply(
 WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
 AND a.EDITdATE = iif(b.EditDate is null,c.EditDate,b.EditDate)
              ", Styleyukey);
-            }
-            else
-            {
-                patidsql = String.Format(
-                            @"
-select Ukey = isnull((
-	select top 1 Ukey 
-	from Pattern p WITH (NOLOCK)
-	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
-	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-	and Status = 'Completed' and s.PhaseID = 'bulk'
-	order by ActFinDate Desc
-),
-(
-	select top 1 Ukey 
-	from Pattern p WITH (NOLOCK)
-	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-	and Status = 'Completed'
-	order by ActFinDate Desc
-))
-                            ", cutref, poid);
-            }
+
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             string headercodesql = string.Format(@"
 Select distinct ArticleGroup 
@@ -1434,6 +1412,8 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                     allpartTb.Rows.Add(ndr);
                 }
             }
+
+            this.CopyGridCutRef(true, "");
         }
 
         private void gridArticleSize_SelectionChanged(object sender, EventArgs e)
@@ -1516,6 +1496,8 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
 
                     dr["TotalParts"] = npart;
                 }
+
+                this.CopyGridCutRef(false, copycutref);
             }
         }
 
@@ -1863,6 +1845,35 @@ values
         private void changeLabelBalanceValue()
         {
             this.labelBalanceValue.Text = ArticleSizeTb.Compute("sum(CutOutput)-sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+        }
+
+        private void CopyGridCutRef(bool isSame , string copyCutref = "")
+        {
+            DataRow selectDr = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
+            string cutref = selectDr["Cutref"].ToString();
+            string filter =string.Empty;
+            if (isSame)
+            {
+                filter += $"Cutref='{cutref}' and ukey<>{selectDr["ukey"]}";
+            }
+            else
+            {
+                filter += $"Cutref='{copyCutref}' ";
+            }
+            DataRow[] cutRefDr = CutRefTb.Select(filter);
+
+            foreach (DataRow dr in cutRefDr)
+            {
+                dr["item"] = selectDr["item"];
+
+                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
+                foreach (DataRow row in ArticleAry)
+                {
+                    row["item"] = dr["item"];
+                }
+            }
+            
+            gridArticleSize.Refresh();
         }
     }
 }

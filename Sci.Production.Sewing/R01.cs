@@ -277,7 +277,7 @@ select t.*
                      ELSE t.Shift END
 	   , FtyType = f.Type
 	   , FtyCountry = f.CountryID
-	   , CumulateDate = c.cumulate
+	   , CumulateDate = isnull(c.cumulate,1)
 into #tmp1stFilter
 from #tmpSewingGroup t
 left join #cl c on c.style = IIF(t.Category <> 'M', OrderStyle, MockupStyle) 

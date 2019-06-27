@@ -8,7 +8,7 @@
     [Dest]                     VARCHAR (2)     CONSTRAINT [DF_GMTBooking_Dest] DEFAULT ('') NOT NULL,
     [ShipModeID]               VARCHAR (10)    CONSTRAINT [DF_GMTBooking_ShipModeID] DEFAULT ('') NOT NULL,
     [ShipTermID]               VARCHAR (5)     CONSTRAINT [DF_GMTBooking_ShipTermID] DEFAULT ('') NOT NULL,
-    [PayTermARID]              VARCHAR (5)     CONSTRAINT [DF_GMTBooking_PayTermARID] DEFAULT ('') NOT NULL,
+    [PayTermARID]              VARCHAR (10)     CONSTRAINT [DF_GMTBooking_PayTermARID] DEFAULT ('') NOT NULL,
     [Forwarder]                VARCHAR (6)     CONSTRAINT [DF_GMTBooking_Forwarder] DEFAULT ('') NOT NULL,
     [FCRDate]                  DATE            NULL,
     [Vessel]                   VARCHAR (60)    CONSTRAINT [DF_GMTBooking_Vessel] DEFAULT ('') NULL,

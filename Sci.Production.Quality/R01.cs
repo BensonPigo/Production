@@ -214,13 +214,38 @@ namespace Sci.Production.Quality
             }
             #region --撈ListExcel資料--
 
-            cmd = string.Format(@"
+            cmd = string.Format($@"
 SET ARITHABORT ON
+
+    select 
+    [BalanceQty]=sum(fit.inqty - fit.outqty + fit.adjustqty) 
+    ,rd.poid
+    ,rd.seq1
+    ,rd.seq2
+    ,RD.ID
+    INTO #balanceTmp
+from Receiving_Detail rd
+INNER JOIN Receiving r on RD.Id = R.Id 
+inner join FIR f on f.ReceivingID = rd.id AND f.POID=rd.poid AND  f.seq1 = rd.seq1 and f.seq2 = rd.Seq2
+inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2 AND fit.StockType=rd.StockType and fit.Roll=rd.Roll and fit.Dyelot=rd.Dyelot
+    where 1=1
+    {RWhere.Replace("where","AND")}
+    {sqlWhere.Replace("where", "AND").Replace("SP.", "f.").Replace("P.","f.")}
+    GROUP BY rd.poid,rd.seq1,rd.seq2,RD.ID
+
     select  
-	F.POID,(F.SEQ1+'-'+F.SEQ2)SEQ,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
-	t.ExportId,t.InvNo,t.WhseArrival,
-	SUM(t.StockQty) AS StockQty1,
-	t.TotalRollsCalculated,
+	F.POID
+	,(F.SEQ1+'-'+F.SEQ2)SEQ
+	,O.factoryid
+	,O.BrandID
+	,O.StyleID
+	,O.SeasonID
+	,t.ExportId
+	,t.InvNo
+	,t.WhseArrival
+	,SUM(t.StockQty) AS StockQty1
+	,[BalanceQty]=IIF(BalanceQty.BalanceQty=0,NULL,BalanceQty.BalanceQty)
+	,t.TotalRollsCalculated,
 	(SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))[MinSciDelivery],
 	(SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))[MinBuyerDelivery],
 	F.Refno,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,
@@ -232,7 +257,7 @@ SET ARITHABORT ON
 	--F.PhysicalInspector,
 	F.PhysicalDate,
 	fta.ActualYds,
-    ROUND( CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT) ,3),
+    ROUND(iif(SUM(t.StockQty) = 0,0,CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT)) ,3),
 	ftp.TotalPoint,
 	F.Weight,
 	[WeightInspector] = (select name from Pass1 where id = f.WeightInspector),
@@ -278,6 +303,7 @@ from dbo.FIR F WITH (NOLOCK)
     inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
     inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
     inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
+	LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
     OUTER APPLY(SELECT * FROM  Fabric C WITH (NOLOCK) WHERE C.SCIRefno = F.SCIRefno)C
 OUTER APPLY(
 		SELECT * FROM  FIR_Laboratory L WITH (NOLOCK) WHERE 1=1		
@@ -323,6 +349,14 @@ outer apply(select  CrockingInspector = (select name from Pass1 where id = Crock
 	,WashInspector = (select name from Pass1 where id = WashInspector)
 	from FIR_Laboratory where Id=f.ID
 )FL
+--OUTER APPLY(
+--	 select [BalanceQty]=sum(fit.inqty) - sum(fit.outqty) + sum(fit.adjustqty) 
+--	 from Receiving_Detail rd
+--	 inner join FIR fir on fir.ReceivingID = rd.id
+--	 inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2
+--	 where FIt.StockType IN('B','I') AND rd.poid = f.POID and rd.seq1 = f.seq1 and rd.seq2 =f.seq2 AND RD.ID = f.ReceivingID
+--)BalanceQty
+
 " + sqlWhere) + @" 
 GROUP BY 
 F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
@@ -337,6 +371,8 @@ ftp.TotalPoint,F.Odor,F.OdorDate,f.PhysicalInspector,f.WeightInspector
 ,f.ShadeboneInspector,f.ContinuityInspector,f.OdorInspector
 ,fl.CrockingInspector,fl.HeatInspector,fl.WashInspector,v.Name,cfd.Name
 ,t.TotalRollsCalculated
+,BalanceQty.BalanceQty
+
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
 ";
