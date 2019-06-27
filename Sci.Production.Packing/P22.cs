@@ -35,7 +35,7 @@ namespace Sci.Production.Packing
             .Date("CFMDate", header: "Confirm Date", iseditingreadonly: true)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: false)
-            .Numeric("ShipQty", header: "CTN Qty", iseditingreadonly: true)
+            .Numeric("ShipQty", header: "Pack Qty", iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)

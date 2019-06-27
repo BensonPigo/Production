@@ -77,7 +77,7 @@ and pe.Type='TP'
            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
            .Text("ID", header: "Pack ID", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
-           .Numeric("ShipQty", header: "CTN Qty", iseditingreadonly: true)
+           .Numeric("ShipQty", header: "Pack Qty", iseditingreadonly: true)
            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)

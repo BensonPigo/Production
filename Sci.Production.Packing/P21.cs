@@ -35,7 +35,7 @@ namespace Sci.Production.Packing
             .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: false)
-            .Numeric("ShipQty", header: "CTN Qty", iseditingreadonly: true)
+            .Numeric("ShipQty", header: "Pack Qty", iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
@@ -100,7 +100,7 @@ select
 	,o.SciDelivery
 	,[TransferredBy] = dbo.getPass1(pe.AddName)
     ,pt.CFMDate
-    ,[ConfirmedBy] = dbo.getPass1(pe.AddName)
+    ,[ConfirmedBy] = dbo.getPass1(pt.AddName)
     ,[ErrorType] = pe.PackingErrorID+'-'+perr.Description
     , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
     , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
