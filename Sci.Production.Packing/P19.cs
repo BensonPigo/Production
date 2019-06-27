@@ -47,7 +47,7 @@ pu.Status,
 [ErrorID]='',
 [ErrorType] = '',
 pd.SCICtnNo,
-pd.ShipQty
+ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
