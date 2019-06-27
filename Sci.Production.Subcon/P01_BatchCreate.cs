@@ -536,10 +536,10 @@ SELECT 	Selected = 0
 		, v.PatternCode
 		, v.PatternDesc
 		, LocalSuppID = rtrim(order_tmscost.LocalSuppID) 
-        , [Cost] = cost.value
+        , [Cost] = isnull(cost.value,0)
 		, costStitch = v.qty
 		, stitch = v.qty
-		, unitprice = unitprice.value
+		, unitprice = isnull(unitprice.value,0)
 		, qtygarment = 1.0
 		, poqty = sum(v.poqty) 
 		, Order_TmsCost.ArtworkInLine
@@ -553,10 +553,10 @@ inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 inner join view_order_artworks v on v.id = Order_TmsCost.id 
 									and v.artworktypeid = Order_TmsCost.artworktypeid
-inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey and vsa.Article = v.Article and vsa.ArtworkID = v.ArtworkID and
+left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey and vsa.Article = v.Article and vsa.ArtworkID = v.ArtworkID and
 														vsa.ArtworkName = v.ArtworkName and vsa.ArtworkTypeID = v.ArtworkTypeID and vsa.PatternCode = v.PatternCode and
 														vsa.PatternDesc = v.PatternDesc 
-inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.LocalSuppID = order_tmscost.LocalSuppID  and sao.Price > 0  and sao.PriceApv = 'Y'
+left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.LocalSuppID = order_tmscost.LocalSuppID  and sao.Price > 0  and sao.PriceApv = 'Y'
 left join LocalSupp ls with (nolock) on ls.id = order_tmscost.LocalSuppID
 outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), v.Cost,sao.Price))unitprice
 outer apply (
@@ -582,6 +582,9 @@ WHERE 	not exists(
 		AND Order_TmsCost.localsuppid !=''
         --AND Orders.PulloutComplete = 0
         AND (orders.Category ='s' or (orders.Category='B' AND Order_TmsCost.Price > 0) AND Order_TmsCost.InhouseOSP = 'O')
+		--↓(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1)), ISP20190803增加IsSintexSubcon狀況
+		--↓或是sao.Ukey is not null, 原本存在 View_Style_Artwork, Style_Artwork_Quot
+		and ((ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1)) or sao.Ukey is not null)
 		", poType, Sci.Env.User.Keyword);
 
             if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }

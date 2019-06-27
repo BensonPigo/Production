@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
@@ -21,6 +22,7 @@ namespace Sci.Production.Subcon
         string poType;
         protected DataTable dtArtwork;
         bool isNeedPlanningP03Quote = false;
+        bool IsSintexSubcon = false;
         string apvdate_b, apvdate_e, sciDelivery_b, sciDelivery_e, Inline_b, Inline_e, sp_b, sp_e;
 
         public P01_Import(DataRow master, DataTable detail, string fuc, bool isNeedPlanningP03Quote = false)
@@ -43,6 +45,7 @@ namespace Sci.Production.Subcon
             this.Text += string.Format(" : {0}", dr_artworkpo["artworktypeid"].ToString());
 
             this.isNeedPlanningP03Quote = isNeedPlanningP03Quote;
+            this.IsSintexSubcon = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select IsSintexSubcon from LocalSupp with (nolock) where ID = '{master["localsuppid"]}'"));
             this.gridBatchImport.RowPostPaint += GridBatchImport_RowPostPaint;
         }
 
@@ -86,7 +89,14 @@ namespace Sci.Production.Subcon
             string strSQLCmd = string.Empty;
             if (isNeedPlanningP03Quote)
             {
-                strSQLCmd = this.QuoteFromPlanningP03();
+                if (this.IsSintexSubcon && Prgs.CheckIsArtworkorUseArtwork(MyUtility.Convert.GetString(this.dr_artworkpo["artworktypeid"])))
+                {
+                    strSQLCmd = this.QuoteIsSintexSubcon();
+                }
+                else
+                {
+                    strSQLCmd = this.QuoteFromPlanningP03();
+                }
             }
             else
             {
@@ -263,10 +273,10 @@ select  Selected = 0
         , Stitch = oa.qty 
         , oa.PatternDesc
         , qtygarment = 1
-        , Cost = cost.value
-        , unitprice = unitprice.value
-        , price = unitprice.value
-        , amount = iif((sum(q.qty)-isnull(IssueQty.IssueQty,0)) < 0 ,0 ,(sum(q.qty)-isnull(IssueQty.IssueQty,0)) *  unitprice.value )
+        , Cost = iif(at.isArtwork = 1,vsa.Cost,sao.Price)
+        , unitprice = sao.Price
+        , price = sao.Price
+        , amount = iif((sum(q.qty)-IssueQty.IssueQty) < 0 ,0 ,(sum(q.qty)-IssueQty.IssueQty) *  sao.Price )
         , Style = o.StyleID
 from  orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
@@ -278,19 +288,11 @@ inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and vsa.Art
 inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
-left join LocalSupp ls with (nolock) on ls.id = ot.LocalSuppID
 outer apply (
         select IssueQty = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD, ArtworkPO A
         where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= oa.PatternCode
 ) IssueQty
-outer apply (select value = iif(ls.IsSintexSubcon = 1 and (at.isArtwork = 1 or at.useArtwork = 1), oa.Cost ,sao.Price))unitprice
-outer apply (select value = 
-        case when ls.IsSintexSubcon = 1 and (at.isArtwork = 1 or at.useArtwork = 1) then oa.Cost
-             when at.isArtwork = 1 then vsa.Cost
-             else sao.Price
-             end
-)cost
 where f.IsProduceFty=1
 --and o.PulloutComplete = 0
 and o.category  in ('B','S')
@@ -306,7 +308,7 @@ and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !
             if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
-            strSQLCmd += " group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc,IssueQty.IssueQty, o.StyleID, o.StyleID,cost.value,unitprice.value";
+            strSQLCmd += " group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc,IssueQty.IssueQty, o.StyleID, o.StyleID,iif(at.isArtwork = 1,vsa.Cost,sao.Price),sao.Price";
 
             return strSQLCmd;
         }
@@ -369,6 +371,62 @@ and o.category  in ('B','S')
             if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
+
+            return strSQLCmd;
+        }
+
+        private string QuoteIsSintexSubcon()
+        {
+            string strSQLCmd = string.Empty;
+            strSQLCmd = string.Format(@"
+select  Selected = 0
+        , ot.LocalSuppId
+        , id = ''
+        , orderid = q.id
+        , OrderQty = sum(q.qty)  
+        , IssueQty.IssueQty 
+        , poqty = iif(sum(q.qty)-IssueQty.IssueQty < 0, 0, sum(q.qty)-IssueQty.IssueQty)
+        , oa.ArtworkTypeID
+        , oa.ArtworkID
+        , oa.PatternCode
+        , o.SewInLIne
+        , o.SciDelivery
+        , coststitch = oa.qty
+        , Stitch = oa.qty 
+        , oa.PatternDesc
+        , qtygarment = 1
+        , Cost = oa.Cost
+        , unitprice = oa.Cost
+        , price = oa.Cost
+        , amount = iif((sum(q.qty)-isnull(IssueQty.IssueQty,0)) < 0 ,0 ,(sum(q.qty)-isnull(IssueQty.IssueQty,0)) *  isnull(oa.Cost,0) )
+        , Style = o.StyleID
+from  orders o WITH (NOLOCK) 
+inner join order_qty q WITH (NOLOCK) on q.id = o.ID
+inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
+left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
+inner join factory f WITH (NOLOCK) on o.factoryid=f.id
+left join LocalSupp ls with (nolock) on ls.id = ot.LocalSuppID
+outer apply (
+        select IssueQty = ISNULL(sum(PoQty),0)
+        from ArtworkPO_Detail AD, ArtworkPO A
+        where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= oa.PatternCode
+) IssueQty
+where f.IsProduceFty=1
+and o.category  in ('B','S')
+and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and ot.LocalSuppId = '{2}' and o.Junk=0
+and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))
+", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
+
+            if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
+            if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
+            if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate >= '{0}' ", apvdate_b); }
+            if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ApvDate <= '{0}' ", apvdate_e); }
+            if (!(dateInlineDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ArtworkInLine <= '{0}' ", Inline_b); }
+            if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
+            if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+
+            strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc,IssueQty.IssueQty, o.StyleID, o.StyleID,oa.Cost";
 
             return strSQLCmd;
         }
