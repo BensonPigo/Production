@@ -96,12 +96,14 @@ where Junk != 1", out dtFactory);
                 if (this.dateBundleCdate.Value1.Empty() == false)
                 {
                     FirstWhere.Add(" and bud.Cdate >= @dateBundleCdateFrom");
+                    finalWhere.Add(" and b.Cdate >= @dateBundleCdateFrom");
                     listSqlPar.Add(new SqlParameter("@dateBundleCdateFrom", Convert.ToDateTime(this.dateBundleCdate.DateBox1.Value)));
                 }
 
                 if (this.dateBundleCdate.Value2.Empty() == false)
                 {
                     FirstWhere.Add(" and bud.Cdate <= @dateBundleCdateTo");
+                    finalWhere.Add(" and b.Cdate <= @dateBundleCdateTo");
                     listSqlPar.Add(new SqlParameter("@dateBundleCdateTo", Convert.ToDateTime(this.dateBundleCdate.DateBox2.Value)));
                 }
 
