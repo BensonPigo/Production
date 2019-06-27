@@ -502,7 +502,7 @@ where	pd.CTNStartNo <> ''
             }
         }
 
-        private void PicUpdate_Click(object sender, EventArgs e)
+        private void picUpdate_Click(object sender, EventArgs e)
         {
             this.gridPackErrTransfer.EndEdit();
             this.gridPackErrTransfer.ValidateControl();
