@@ -45,9 +45,10 @@ where Junk != 1", out dtFactory);
             #region 判斷必輸條件
             if (!this.dateFarmOutDate.HasValue &&
                 !this.dateBundleCdate.HasValue &&
-                !this.dateBundleScan.HasValue)
+                !this.dateBundleScan.HasValue &&
+                string.IsNullOrEmpty(this.txtSPNo.Text))
             {
-                MyUtility.Msg.InfoBox("[Farm Out Date],[Bundle CDate],[Bundle Scan Date] please input at least one");
+                MyUtility.Msg.InfoBox("[Farm Out Date],[Bundle CDate],[Bundle Scan Date],[SP#] please input at least one");
                 return false;
             }
             #endregion
@@ -65,6 +66,7 @@ where Junk != 1", out dtFactory);
             #region SQL first where
             List<string> FirstWhere = new List<string>();
             List<string> finalWhere = new List<string>();
+            string joinTmpBase = "LEFT JOIN #Base base ON bd.BundleNo=base.BundleNo";
 
             if (this.dateFarmOutDate.HasValue)
             {
@@ -82,6 +84,8 @@ where Junk != 1", out dtFactory);
                     finalWhere.Add(" and FarmOut.IssueDate <= @dateFarmOutDateTo");
                     listSqlPar.Add(new SqlParameter("@dateFarmOutDateTo", Convert.ToDateTime(this.dateFarmOutDate.DateBox2.Value)));
                 }
+
+                joinTmpBase = joinTmpBase.Replace("LEFT", "inner");
             }
 
             if (this.dateBundleCdate.HasValue)
@@ -92,12 +96,14 @@ where Junk != 1", out dtFactory);
                 if (this.dateBundleCdate.Value1.Empty() == false)
                 {
                     FirstWhere.Add(" and bud.Cdate >= @dateBundleCdateFrom");
+                    finalWhere.Add(" and b.Cdate >= @dateBundleCdateFrom");
                     listSqlPar.Add(new SqlParameter("@dateBundleCdateFrom", Convert.ToDateTime(this.dateBundleCdate.DateBox1.Value)));
                 }
 
                 if (this.dateBundleCdate.Value2.Empty() == false)
                 {
                     FirstWhere.Add(" and bud.Cdate <= @dateBundleCdateTo");
+                    finalWhere.Add(" and b.Cdate <= @dateBundleCdateTo");
                     listSqlPar.Add(new SqlParameter("@dateBundleCdateTo", Convert.ToDateTime(this.dateBundleCdate.DateBox2.Value)));
                 }
 
@@ -119,6 +125,8 @@ where Junk != 1", out dtFactory);
                     finalWhere.Add(" and (FarmOut.IssueDate <= @dateBundleScanTo or FarmIn.ReceiveDate <= @dateBundleScanTo)");
                     listSqlPar.Add(new SqlParameter("@dateBundleScanTo", (this.dateBundleScan.DateBox2.Value.Value.AddDays(1).AddSeconds(-1))));
                 }
+
+                joinTmpBase = joinTmpBase.Replace("LEFT", "inner");
             }
             
             #endregion 
@@ -136,6 +144,7 @@ where Junk != 1", out dtFactory);
 
             if (!MyUtility.Check.Empty(this.spNo))
             {
+                FirstWhere.Add($@" and bd.orderid = '{spNo}'");
                 finalWhere.Add($@" and o.ID = '{spNo}'");
             }
 
@@ -176,7 +185,7 @@ WHERE   b.Id LIKE 'TC%'
 		
 
 --取最大IssueDate和ReceiveDate用Outer apply排序做
-SELECT  base.BundleNo
+SELECT  isnull(base.BundleNo,bd.BundleNo) BundleNo
 		,[EXCESS] = iif(b.IsEXCESS = 0,'','Y')
 		,b.CutRef
 		,b.Orderid
@@ -209,10 +218,10 @@ SELECT  base.BundleNo
 		,EstCut.CuttingOutputDate
 		,[Subcon] = FarmOut.EndSite + '-' + ls.Abb 
 		, '' remark 
-FROM #Base base
-LEFT JOIN Bundle_Detail bd ON bd.BundleNo=base.BundleNo
-LEFT JOIN Bundle b ON b.ID =bd.Id
+from Bundle b
 LEFT JOIN Orders o ON o.ID=b.Orderid
+inner JOIN Bundle_Detail bd ON b.ID = bd.Id
+{joinTmpBase}
 OUTER APPLY(
 	SELECT	[EstCutDate] = MAX(w.EstCutDate),
 			[CuttingOutputDate] = MAX(co.cDate)
@@ -239,8 +248,8 @@ outer apply(
 		    for xml path('')
 	    ),1,1,'')
 ) as sub
-left join #FarmOutList  FarmOut on FarmOut.BundleNo=base.BundleNo AND FarmOut.StartProcess= s.Id 
-left join #FarmInList  FarmIn on FarmIn.BundleNo=base.BundleNo AND FarmIn.StartProcess= s.Id
+left join #FarmOutList  FarmOut on FarmOut.BundleNo=isnull(base.BundleNo,bd.BundleNo) AND FarmOut.StartProcess= s.Id 
+left join #FarmInList  FarmIn on FarmIn.BundleNo=isnull(base.BundleNo,bd.BundleNo) AND FarmIn.StartProcess= s.Id
 left join LocalSupp ls on ls.id=FarmOut.EndSite
 WHERE 1=1 {finalWhere.JoinToString("\r\n")}
 
