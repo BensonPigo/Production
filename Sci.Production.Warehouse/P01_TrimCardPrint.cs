@@ -340,6 +340,7 @@ SELECT * FROM
 	)Order_Article
 	WHERE PSD.ID ='{POID}' and f.MtltypeId like '%thread%' AND PSD.Junk=0 AND boa.Ukey IS NOT NULL
 )A
+WHERE ThreadColorID <> '' AND ThreadColorID IS NOT NULL
 ORDER BY ThreadColorID ASC
 ";
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
