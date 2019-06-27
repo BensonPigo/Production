@@ -43,6 +43,14 @@ select 1 from ArtworkType with (nolock)
             return MyUtility.Check.Seek(sqlCheckNeedPlanningP03Quote);
         }
 
+        public static bool CheckIsArtworkorUseArtwork(string artworktypeID)
+        {
+            string sqlCheckIsArtworkorUseArtwork = $@"
+select 1 from ArtworkType with (nolock) 
+            where ID = '{artworktypeID}' and (IsArtwork = 1 or UseArtwork = 1)";
+
+            return MyUtility.Check.Seek(sqlCheckIsArtworkorUseArtwork);
+        }
     }
     
 }
