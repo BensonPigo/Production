@@ -97,7 +97,7 @@ select  operation = case a.type
         ,bulkSP = iif((a.type='2' or a.type='6') , a.seq70poid+'-'+a.seq70seq1+'-'+a.seq70seq2 
                                                  , a.InventoryPOID+'-'+a.InventorySeq1+'-'+a.InventorySeq2) 
 		,[OrderType]=orders.OrderTypeID
-		,[FabricType]=a.FabricType
+		,[FabricType]=FabricType.Name
         ,bulkProjectID = (select ProjectID 
                           from dbo.orders WITH (NOLOCK) 
                           where id = iif((a.type='2' or a.type='6') , a.seq70poid    
@@ -153,6 +153,11 @@ inner join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 =
 inner join Orders orders on d.id = orders.id
 inner join Factory factory on orders.FactoryID = factory.id
 left join MDivisionPoDetail e WITH (NOLOCK) on e.POID = A.InventoryPOID AND E.SEQ1 = A.InventorySeq1 AND E.Seq2 = A.InventorySeq2
+Outer APPLY(
+    SELECT Name
+    FROM DropDownList
+    WHERE Type='Pms_FabricType' AND REPLACE(ID,'''','') = a.FabricType
+)FabricType 
 OUTER APPLY(
 	SELECT Name
 	FROM DropDownList
