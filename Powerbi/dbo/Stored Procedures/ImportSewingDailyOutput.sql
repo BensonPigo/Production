@@ -218,6 +218,7 @@ USING #Final s --被參考的表
    AND t.Shift=s.Shift 
    AND t.orderid=s.orderid 
    AND t.ComboType=s.ComboType  
+   AND t.OutputDate = s.OutputDate
 
 WHEN MATCHED THEN   
     UPDATE SET 
