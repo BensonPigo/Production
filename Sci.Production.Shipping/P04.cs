@@ -92,6 +92,7 @@ where ed.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            string sqlCmd = string.Empty;
             #region 存檔不可為空判斷
 
             // Type = 3 (Transfer out) Arrive Port Date and Dox Rcv Date 可以為空
@@ -207,7 +208,7 @@ where ed.ID = '{0}'", masterID);
                     return false;
                 }
 
-                string sqlCmd = string.Format("select ID from FtyExport WITH (NOLOCK) where BLNo = '{0}' and ID != '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                sqlCmd = string.Format("select ID from FtyExport WITH (NOLOCK) where BLNo = '{0}' and ID != '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
                     this.txtBLAWBNo.Focus();
@@ -232,6 +233,23 @@ where ed.ID = '{0}'", masterID);
                     nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NetKg"]), 2);
                     gw = MyUtility.Math.Round(gw + MyUtility.Convert.GetDouble(dr["WeightKg"]), 2);
                 }
+            }
+
+            // 檢查已存在ShareExpense資料是否[Shipping Mode]是否不同
+            sqlCmd = string.Format(
+                  @"select count(*) cnt 
+                            from ShareExpense WITH (NOLOCK) 
+                            where (InvNo = '{0}' or WKNO = '{0}')
+                            and ShipModeID <> '{1}'",
+                  MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                  this.comboShippMode.SelectedValue.ToString());
+
+            bool bolChagne = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd)) > 0;
+            if (bolChagne)
+            {
+                MyUtility.Msg.WarningBox("Can not revise < Shipping Mode > because share expense shipping mode is different.");
+                this.comboShippMode.SelectedIndex = -1;
+                return false;
             }
 
             this.CurrentMaintain["NetKg"] = nw;
@@ -394,33 +412,6 @@ where ed.ID = '{0}'", masterID);
             else
             {
                 this.txtSisFtyWK.ReadOnly = true;
-            }
-        }
-
-        // ComboShippMode
-        private void ComboShippMode_SelectedValueChanged(object sender, EventArgs e)
-        {
-            ComboBox comboShippMode = (ComboBox)sender;
-            if (this.EditMode &&
-                   !string.IsNullOrEmpty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])) &&
-                   comboShippMode.SelectedIndex > 0)
-            {
-                string shippMode = comboShippMode.SelectedValue.ToString();
-                string sql = string.Format(
-                      @"select count(*) cnt 
-                            from ShareExpense WITH (NOLOCK) 
-                            where (InvNo = '{0}' or WKNO = '{0}')
-                            and ShipModeID <> '{1}'",
-                      MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                      shippMode);
-
-                bool bolChagne = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sql)) > 0;
-                if (bolChagne)
-                {
-                    MyUtility.Msg.WarningBox("Can’t revise < Shipping Mode > because share expense shipping mode is different.");
-                    comboShippMode.SelectedIndex = -1;
-                    return;
-                }
             }
         }
     }
