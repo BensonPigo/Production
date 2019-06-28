@@ -135,11 +135,11 @@ DEALLOCATE ServerNameList
         {
             String subject = "";
             String desc = "";
-
+            string strDate = DateTime.Now.AddDays(-1).ToString("yyyy/MM/dd");
 
             if (this.AnotherDat)
             {
-                this.OutputDate =  ConfigurationManager.AppSettings["OutputDate_AnotherDate"].ToString() ;
+                strDate =  ConfigurationManager.AppSettings["OutputDate_AnotherDate"].ToString() ;
             }
 
             #region 組合 Desc
@@ -148,8 +148,8 @@ DEALLOCATE ServerNameList
                 issucess = false;
             }
 
-            desc = $@"Import SewingOutPut failed. Check there information first.
-Transfer date:{this.OutputDate }
+            desc = $@"Import SewingOutPut failed. Check these information first.
+Transfer date:{ strDate }
 Instance: PMSDB\POWERBI
 Stored Procedure: [PBIReportData].ImportSewingDailyOutput
 ";
