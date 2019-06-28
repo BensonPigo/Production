@@ -273,7 +273,7 @@ from(
 	from localap ap WITH (NOLOCK) 
 	inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
 	inner join orders o with (nolock) on apd.OrderID = o.ID	
-	left join LocalItem li with (nolock) on li.RefNo=ap.Category
+	left join LocalItem li with (nolock) on li.RefNo=apd.Refno
 	where 1=1
 	AND AP.Status = 'Approved'
 )a 

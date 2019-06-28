@@ -117,7 +117,7 @@ select  lr.FactoryId [Factory]
         ,lrd.OrderId [SP]
         ,lrd.Category [Category]
         ,lrd.Refno [Refno]
-        ,[IsCarton] = iif(li.IsCarton = 1 ,'Y','N')
+        ,[IsCarton] = iif(li.IsCarton = 1 ,'Y','')
         ,[Description]=dbo.getItemDesc(lrd.Category,lrd.Refno)
         ,lrd.ThreadColorID [Color_Shade]
         ,c.UnitId [Unit]

@@ -104,7 +104,7 @@ Select  a.MDivisionID
 	        ,b.OrderId
 			,c.BrandID
 	        ,b.Refno
-            ,[IsCarton] = iif(li.IsCarton =1 ,'Y','N')
+            ,[IsCarton] = iif(li.IsCarton =1 ,'Y','')
 	        ,dbo.getItemDesc(a.Category,b.Refno) Description
 	        ,b.ThreadColorID
 	        ,b.UnitID

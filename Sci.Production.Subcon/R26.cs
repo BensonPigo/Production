@@ -272,7 +272,7 @@ select DISTINCT c.FactoryID
 	        ,[Supp] = a.LocalSuppID+'-'+d.Abb 
 	        ,b.Delivery
 	        ,b.Refno
-            ,[IsCarton] = iif(li.IsCarton = 1 ,'Y','N')
+            ,[IsCarton] = iif(li.IsCarton = 1 ,'Y','')
 	        ,b.ThreadColorID + ' - ' + ThreadColor.Description		
 			,[PRConfirmedDate]=CASE WHEN a.Category = 'CARTON' 
 									THEN (SELECT TOP 1 p.ApvToPurchaseDate 
