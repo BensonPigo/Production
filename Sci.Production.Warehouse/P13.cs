@@ -360,8 +360,8 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)  //3
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
                 .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
-                .Numeric("NetQty", header: "Used Qty", iseditingreadonly: true)    
-                .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true)    
+                .Numeric("NetQty", header: "Used Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)    
+                .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)    
                 .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
                 .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
