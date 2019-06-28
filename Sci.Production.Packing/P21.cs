@@ -87,7 +87,7 @@ declare @dateTransferDate2 date = '{dateTransferDate2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 
-select 
+select distinct
 	pe.TransferDate
 	,[PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
 	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
@@ -109,9 +109,9 @@ select
 from PackErrTransfer pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-left join PackingError perr with (nolock) on pe.PackingErrorID = perr.ID
+left join PackingError perr with (nolock) on pe.PackingErrorID = perr.ID and perr.Type='TP'
 left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = pe.SCICtnNo 
-left join PackErrCFM pt with(nolock) on pt.PackingListID=pe.PackingListID
+left join PackErrCFM pt with(nolock) on pt.PackingListID=pe.PackingListID and pt.CTNStartNo = pe.CTNStartNo
 and perr.Type='TP'
 where 1=1
 {sqlwhere}
