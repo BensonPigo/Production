@@ -32,6 +32,12 @@ namespace Sci.Production.Shipping
             this.EditMode = true;
         }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.comboCategory.SelectedIndex = 4;
+        }
+
         protected override bool ValidateInput()
         {
             this.dateBuyerDelivery1 = this.dateBuyerDelivery.Value1;
@@ -68,7 +74,7 @@ select oq.BuyerDelivery
 from Orders o
 left join Order_QtyShip oq on o.ID=oq.Id
 left join Brand b on b.id=o.BrandID
-left join (
+inner join (
 	select distinct p.id,p.remark ,pd.OrderID,pd.OrderShipmodeSeq
 	from PackingList p
 	inner join PackingList_Detail pd on p.ID=pd.ID
