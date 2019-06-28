@@ -55,6 +55,9 @@ Database/.vs
 Database/ProductionDB.dbmdl
 Database/bin/Debug/
 Database/obj/Debug/
+Powerbi/Powerbi.dbmdl
+Powerbi/bin/Debug/
+Powerbi/obj/Debug/
 Production.Daily/bin/
 Production.Daily/obj/
 Sci.Production.SubProcess/bin/
