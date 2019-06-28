@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -93,6 +94,7 @@ where ed.ID = '{0}'", masterID);
         protected override bool ClickSaveBefore()
         {
             string sqlCmd = string.Empty;
+            DataTable _dataTable = new DataTable();
             #region 存檔不可為空判斷
 
             // Type = 3 (Transfer out) Arrive Port Date and Dox Rcv Date 可以為空
@@ -237,19 +239,21 @@ where ed.ID = '{0}'", masterID);
 
             // 檢查已存在ShareExpense資料是否[Shipping Mode]是否不同
             sqlCmd = string.Format(
-                  @"select count(*) cnt 
+                  @"select distinct ShipModeID
                             from ShareExpense WITH (NOLOCK) 
                             where (InvNo = '{0}' or WKNO = '{0}')
-                            and ShipModeID <> '{1}'",
-                  MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                  this.comboShippMode.SelectedValue.ToString());
-
-            bool bolChagne = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd)) > 0;
-            if (bolChagne)
+                            and len(ShipModeID) > 0",
+                  MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            DBProxy.Current.Select(null, sqlCmd, out _dataTable);
+            if (_dataTable.Rows.Count > 0)
             {
-                MyUtility.Msg.WarningBox("Can not revise < Shipping Mode > because share expense shipping mode is different.");
-                this.comboShippMode.SelectedIndex = -1;
-                return false;
+                bool bolHasValue = _dataTable.AsEnumerable().Where(x => x["ShipModeID"].Equals(this.comboShippMode.SelectedValue.ToString())).ToList().Count() > 0;
+                if (!bolHasValue)
+                {
+                    MyUtility.Msg.WarningBox("Can not revise < Shipping Mode > because share expense shipping mode is different.");
+                    this.comboShippMode.SelectedIndex = -1;
+                    return false;
+                }
             }
 
             this.CurrentMaintain["NetKg"] = nw;
