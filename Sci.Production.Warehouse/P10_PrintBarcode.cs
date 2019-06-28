@@ -140,7 +140,11 @@ where isd.Id >= '{issueIdFrom}' and isd.Id <= '{issueIdTo}'";
             frm.MdiParent = MdiParent;
             // frm.DirectPrint = true;
             frm.ShowDialog();
-
+            // 關閉視窗
+            if (frm.DialogResult == DialogResult.Cancel)
+            {
+                this.Close();
+            }
             return true;
         }
     }
