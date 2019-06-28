@@ -956,13 +956,16 @@ where s.Type = 'EXPORT'");
             string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + i + 1);
             var first6105 = this.accnoData.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Accno"]).Substring(0, 4).EqualString("6105")).GroupBy(t => 1).Select(s => new { rn = s.Min(m => MyUtility.Convert.GetInt(m["rn"])) }).ToList();
             string first6105Column = string.Empty;
-            if (this.accnoData.Select("Accno like '5912%'").Count() > 0)
+            if (first6105.Count > 0)
             {
-                first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn + 1);
-            }
-            else
-            {
-                first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn);
+                if (this.accnoData.Select("Accno like '5912%'").Count() > 0)
+                {
+                    first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn + 1);
+                }
+                else
+                {
+                    first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn);
+                }
             }
 
             string sumCol5912 = string.Empty;
