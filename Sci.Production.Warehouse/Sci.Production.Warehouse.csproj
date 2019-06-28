@@ -232,6 +232,12 @@
       <DependentUpon>P07_Sticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P07_Sticker_Data.cs" />
+    <Compile Include="P10_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_Print.Designer.cs">
+      <DependentUpon>P10_Print.cs</DependentUpon>
+    </Compile>
     <Compile Include="P10_PrintBarcode.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -240,6 +246,13 @@
     </Compile>
     <Compile Include="P10_PrintBarcodeData.cs" />
     <Compile Include="P10_PrintData.cs" />
+    <Compile Include="P10_RelaxationSticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_RelaxationSticker.Designer.cs">
+      <DependentUpon>P10_RelaxationSticker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P10_RelaxationSticker_Data.cs" />
     <Compile Include="P11_IssueBreakDown.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1176,9 +1189,15 @@
       <DependentUpon>P10_Detail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_Print.rdlc" />
+    <EmbeddedResource Include="P10_Print.resx">
+      <DependentUpon>P10_Print.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P10_PrintBarcode.rdlc" />
     <EmbeddedResource Include="P10_PrintBarcode.resx">
       <DependentUpon>P10_PrintBarcode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_RelaxationSticker.resx">
+      <DependentUpon>P10_RelaxationSticker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P11_IssueBreakDown.resx">
       <DependentUpon>P11_IssueBreakDown.cs</DependentUpon>
@@ -1769,7 +1788,9 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="P10_RelaxationSticker_Print.rdlc" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
+    <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />
     <None Include="Properties\DataSources\P11_Print.datasource" />
     <None Include="Properties\DataSources\P11_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
