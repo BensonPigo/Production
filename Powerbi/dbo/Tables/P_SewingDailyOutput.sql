@@ -43,6 +43,7 @@
     [Rate]                    NUMERIC (10, 2) CONSTRAINT [DF__P_SewingDa__Rate__70499252] DEFAULT ((0)) NULL,
     [Remark]                  NVARCHAR (1000) CONSTRAINT [DF__P_SewingD__Remar__713DB68B] DEFAULT ('') NULL,
     [SewingReasonDesc]        NVARCHAR (1000) CONSTRAINT [DF__P_SewingD__Sewin__7231DAC4] DEFAULT ('') NULL,
+    [SciDelivery] DATE NULL, 
     CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED ([Ukey] ASC, [MDivisionID] ASC)
 );
 
@@ -222,3 +223,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturi
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SewingOutput_Detail_Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'Ukey';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'飛雁交期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_SewingDailyOutput',
+    @level2type = N'COLUMN',
+    @level2name = N'SciDelivery'

@@ -265,6 +265,7 @@ WHEN MATCHED THEN
 		,t.Rate = s.Rate
 		,t.Remark = s.Remark
 		,t.SewingReasonDesc = s.SewingReasonDesc
+		,t.SciDelivery = s.SciDelivery
 WHEN NOT MATCHED THEN
     INSERT VALUES (
 			s.MDivisionID
@@ -310,6 +311,7 @@ WHEN NOT MATCHED THEN
            ,s.Rate
            ,s.Remark
            ,s.SewingReasonDesc
+		   ,s.SciDelivery
 		  );
 '
 
