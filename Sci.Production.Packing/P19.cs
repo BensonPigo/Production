@@ -46,7 +46,8 @@ pu.Status,
 [MainSP] = pd.OrderID,
 [ErrorID]='',
 [ErrorType] = '',
-pd.SCICtnNo
+pd.SCICtnNo,
+ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
@@ -96,6 +97,7 @@ where Type='TP' and Junk=0";
            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
            .Text("ID", header: "Pack ID", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+           .Numeric("ShipQty", header: "Pack Qty", iseditingreadonly: true)
            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)

@@ -142,7 +142,12 @@ order by NewRowNo";
                 // 開啟 report view
                 var frm = new Sci.Win.Subs.ReportView(report);
                 frm.MdiParent = MdiParent;
-                frm.Show();
+                frm.ShowDialog();
+                // 關閉視窗
+                if (frm.DialogResult == DialogResult.Cancel)
+                {
+                    this.Close();
+                }                
                 #endregion
             }
             else

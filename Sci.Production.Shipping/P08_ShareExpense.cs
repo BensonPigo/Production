@@ -392,7 +392,8 @@ SELECT * FROM FTY
                                 (dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
                                     dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
                                     dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
-                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0))
+                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0) &&
+                                    !dtExp.Rows[i]["FtyWK"].ToString().EqualString("1"))
                                 {
                                     MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
                                     return;
@@ -460,7 +461,8 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                                 (dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
                                     dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
                                     dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
-                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0))
+                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0) &&
+                                    !dtImp.Rows[i]["FtyWK"].ToString().EqualString("1"))
                                 {
                                     MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
                                     return;
@@ -885,13 +887,28 @@ from PackingList pl
 	inner join PackingList_Detail pld on pl.id=pld.ID
 	 where INVNo='{dr["InvNo"]}'
 	 and pld.OrderID=AirPP.OrderID)";
+                        bool bolAirPPExistsINVNo = MyUtility.Check.Seek(strSqlcmd);
 
-                        if (!MyUtility.Check.Seek(strSqlcmd) &&
+                        // 判斷FtyWK
+                        strSqlcmd = string.Format("select Type from FtyExport WITH (NOLOCK) where id='{0}'", exportID);
+                        string ftyExportType = MyUtility.GetValue.Lookup(strSqlcmd);
+                        bool bolFtyWK = false;
+                        if (MyUtility.Convert.GetString(this.apData["Type"]).Equals("EXPORT") && ftyExportType.Equals("3"))
+                        {
+                            bolFtyWK = true;
+                        }
+                        else if (MyUtility.Convert.GetString(this.apData["Type"]).Equals("IMPORT") && !ftyExportType.Equals("3"))
+                        {
+                            bolFtyWK = true;
+                        }
+
+                        if (!bolAirPPExistsINVNo &&
                             (dr["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
                              dr["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
                              dr["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
                              (accNo.Substring(0, 4).CompareTo("6105") == 0 ||
-                              accNo.Substring(0, 4).CompareTo("5912") == 0))
+                              accNo.Substring(0, 4).CompareTo("5912") == 0) &&
+                              !bolFtyWK)
                         {
                             noAirpp = true;
                         }

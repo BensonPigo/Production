@@ -333,7 +333,7 @@ select  Selected = 0
         , coststitch = 1
         , Stitch = 1 
         , PatternDesc = ot.ArtworkTypeID
-        , qtygarment = isnull (ot.Qty, 1)
+        , qtygarment = IIF(ot.Qty IS NULL OR ot.Qty = 0 ,1 ,ot.Qty) --isnull (ot.Qty, 1)
         , Cost = ot.Price
         , unitprice = ot.Price
         , price = ot.Price * isnull (ot.Qty, 1)

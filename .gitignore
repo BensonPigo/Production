@@ -51,10 +51,15 @@ Sci.Production.SubProcess/bin
 Sci.Production.SubProcess/obj
 .vs/Supercharger
 .vs/Production/v16
+.vs/Production/v15
+ImportSewingDailyOutput.Daily/.vs/ImportSewingDailyOutput.Daily/v15
 Database/.vs
 Database/ProductionDB.dbmdl
 Database/bin/Debug/
 Database/obj/Debug/
+Powerbi/Powerbi.dbmdl
+Powerbi/bin/Debug/
+Powerbi/obj/Debug/
 Production.Daily/bin/
 Production.Daily/obj/
 Sci.Production.SubProcess/bin/
@@ -90,3 +95,5 @@ PMSUploadDataToAPS.Daily/bin/Debug/Ict.Win.App.dll
 SNPAutoTransferToSewingOutput.Daily/bin/Debug/
 SNPAutoTransferToSewingOutput.Daily/obj/
 obj/Debug
+ImportSewingDailyOutput.Daily/ImportSewingDailyOutput.Daily/bin
+ImportSewingDailyOutput.Daily/ImportSewingDailyOutput.Daily/obj

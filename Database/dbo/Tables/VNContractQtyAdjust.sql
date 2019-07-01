@@ -9,6 +9,10 @@
     [AddDate]      DATETIME      NULL,
     [EditName]     VARCHAR (10)  CONSTRAINT [DF_VNContractQtyAdjust_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME      NULL,
+    [ReasonID]     VARCHAR (5)   NULL,
+    [WKNo]         VARCHAR (13)  NULL,
     CONSTRAINT [PK_VNContractQtyAdjust] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 

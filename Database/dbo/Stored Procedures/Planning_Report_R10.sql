@@ -221,7 +221,7 @@ BEGIN
 	AND @HasForecast = 1
 	AND Orders.IsForecast = 1
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')  and localorder = 0
-	
+	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	--
 	declare @tmpFinal table (
 		CountryID varchar(2)
