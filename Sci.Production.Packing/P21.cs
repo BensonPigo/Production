@@ -35,6 +35,7 @@ namespace Sci.Production.Packing
             .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: false)
+            .Numeric("ShipQty", header: "Pack Qty", iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
@@ -44,6 +45,8 @@ namespace Sci.Production.Packing
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Text("TransferredBy", header: "Transferred By", width: Widths.Auto(), iseditingreadonly: false)
+            .Date("CFMDate", header: "Confirm Date", iseditingreadonly: true)
+            .Text("ConfirmedBy", header: "Confirmed By", width: Widths.Auto(), iseditingreadonly: true)
             .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
             .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
             .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false)
@@ -84,7 +87,7 @@ declare @dateTransferDate2 date = '{dateTransferDate2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 
-select 
+select distinct
 	pe.TransferDate
 	,[PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
 	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
@@ -96,16 +99,24 @@ select
 	,o.BuyerDelivery
 	,o.SciDelivery
 	,[TransferredBy] = dbo.getPass1(pe.AddName)
+    ,x.CFMDate
+    ,[ConfirmedBy] = dbo.getPass1(x.AddName)
     ,[ErrorType] = pe.PackingErrorID+'-'+perr.Description
-    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
-    , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
-    , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+    ,[RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+    ,[RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+    ,[RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+    , ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
 from PackErrTransfer pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-left join PackingError perr with (nolock) on pe.PackingErrorID = perr.ID
+left join PackingError perr with (nolock) on pe.PackingErrorID = perr.ID and perr.Type='TP'
 left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = pe.SCICtnNo 
-and perr.Type='TP'
+outer apply(
+	select top 1 CFMDate,AddName
+	from PackErrCFM pt with(nolock)
+	where pt.PackingListID=pe.PackingListID and pt.CTNStartNo = pe.CTNStartNo  and pe.MDivisionID=pt.MDivisionID and pt.AddDate>pe.AddDate
+	order by pt.AddDate
+)x
 where 1=1
 {sqlwhere}
 order by iif(pd.OrigID = '',pd.ID, pd.OrigID),iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo),pe.TransferDate
