@@ -9,7 +9,8 @@ Begin
 Declare @ReturnValue Numeric(15,4)
 	Set @ReturnValue = 0;
 	Set @StrValue = LTrim(RTrim(@StrValue));	--將文字前後的空白都去掉
-	
+	Set @StrValue = replace(@StrValue,char(10),' ');	--將文字換行符號改為空白
+
 	Declare @SymbolCount Int;	--符號個數
 	Declare @IsError Bit;		--是否有誤
 	Set @SymbolCount = 0;
