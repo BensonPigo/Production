@@ -28,6 +28,15 @@ BEGIN
 		FROM DBO.Fabric A WITH (NOLOCK) INNER JOIN DBO.MtlType B WITH (NOLOCK) ON A.MtlTypeID = B.ID 
 		INNER JOIN DBO.Fabric_Supp C WITH (NOLOCK) ON A.SCIRefno = C.SCIRefno 
 		WHERE A.SCIRefno=@scirefno;
+
+		if(isnull(@tmpunit,'') = '')
+		begin
+			select top 1 @tmpunit = psd.POUnit,@isExt = m.IsExtensionUnit
+			from PO_Supp_Detail psd with (nolock)
+			inner join Fabric f with (nolock) on psd.SCIRefno = f.SCIRefno
+			inner join MtlType m with (nolock) on f.MtlTypeID = m.ID
+			where psd.SCIRefno = @scirefno;
+		end
 	end
 	else
 	begin
