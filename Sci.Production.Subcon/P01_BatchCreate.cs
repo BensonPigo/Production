@@ -295,7 +295,9 @@ namespace Sci.Production.Subcon
                                               } into m
                                               select new
                                               {
-                                                  amount = m.Sum(n => n.Field<int?>("poqty") * n.Field<decimal?>("unitprice") * n.Field<decimal?>("qtygarment"))
+                                                  amount = m.Sum(n => n.Field<int?>("poqty") * n.Field<decimal?>("unitprice") * 
+                                                                            (n.Field<decimal?>("qtygarment") == 0 || n.Field<decimal?>("qtygarment") == null ? 1: n.Field<decimal?>("qtygarment"))
+                                                                )
                                               });
                                 foreach (var q3 in query3)
                                 {
@@ -322,7 +324,7 @@ namespace Sci.Production.Subcon
                                              t7 = row.Field<int>("stitch"),
                                              t8 = row.Field<decimal>("cost"),
                                              t9 = row.Field<decimal>("unitprice"),
-                                             t10 = row.Field<decimal>("QtyGarment"),
+                                             t10 = (row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment")),
                                          } into m
                                          select new
                                          {
@@ -629,7 +631,7 @@ SELECT 	Selected = 0
 		, costStitch = 1 
 		, stitch = 1 
 		, unitprice = Order_TmsCost.Price
-		, qtygarment = isnull(order_tmscost.Qty,1)
+		, qtygarment = IIF(order_tmscost.Qty IS NULL OR order_tmscost.Qty=0 ,1 ,order_tmscost.Qty)--  isnull(order_tmscost.Qty,1)
 		, poqty = sum(v.Qty) 
 		, Order_TmsCost.ArtworkInLine
 		, Order_TmsCost.artworkoffline
