@@ -148,7 +148,7 @@ DEALLOCATE ServerNameList
                 issucess = false;
             }
 
-            desc = $@"Import SewingOutPut failed. Check these information first.
+            desc = $@"Please check below information.
 Transfer date:{ strDate }
 Instance: PMSDB\POWERBI
 Stored Procedure: [PBIReportData].ImportSewingDailyOutput
