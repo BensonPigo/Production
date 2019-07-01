@@ -515,13 +515,13 @@ from #Accno
 if exists(select Accno from #AccnoNo where Accno like '5912%')
 begin
 insert into #AccnoNo
-select '5912-Total DISBURZ FOR SCI ADM EXPZ',max(rn)+1 from #AccnoNo 
+select '5912-Total',max(rn)+1 from #AccnoNo 
 end 
 
 if exists(select Accno from #AccnoNo where Accno like '6105%')
 begin
 insert into #AccnoNo
-select '6105-Total Air Prepaid Expense Factory',max(rn)+1 from #AccnoNo 
+select '6105-Total',max(rn)+1 from #AccnoNo 
 end 
 
 select Accno,rn
@@ -782,13 +782,13 @@ from #Accno
 if exists(select Accno from #AccnoNo where Accno like '5912%')
 begin
 insert into #AccnoNo
-select '5912-Total DISBURZ FOR SCI ADM EXPZ',max(rn)+1 from #AccnoNo 
+select '5912-Total',max(rn)+1 from #AccnoNo 
 end 
 
 if exists(select Accno from #AccnoNo where Accno like '6105%')
 begin
 insert into #AccnoNo
-select '6105-Total Air Prepaid Expense Factory',max(rn)+1 from #AccnoNo 
+select '6105-Total',max(rn)+1 from #AccnoNo 
 end 
 
 select Accno,rn
@@ -1012,7 +1012,7 @@ where s.Type = 'EXPORT'");
                         {
                             for (int t = 1; t <= counts; t++)
                             {
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[23 + t].ColumnName).EqualString("5912-Total DISBURZ FOR SCI ADM EXPZ"))
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[23 + t].ColumnName).EqualString("5912-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
                                     {
@@ -1022,7 +1022,7 @@ where s.Type = 'EXPORT'");
 
                                     objArray[0, 24 + t] = $"=SUM(Y{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
-                                else if (MyUtility.Convert.GetString(dr.Table.Columns[23 + t].ColumnName).EqualString("6105-Total Air Prepaid Expense Factory"))
+                                else if (MyUtility.Convert.GetString(dr.Table.Columns[23 + t].ColumnName).EqualString("6105-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol6105))
                                     {
@@ -1060,7 +1060,7 @@ where s.Type = 'EXPORT'");
                         {
                             for (int c = 1; c <= counts; c++)
                             {
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[27 + c].ColumnName).EqualString("5912-Total DISBURZ FOR SCI ADM EXPZ"))
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[27 + c].ColumnName).EqualString("5912-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
                                     {
@@ -1070,7 +1070,7 @@ where s.Type = 'EXPORT'");
 
                                     objArray[0, 28 + c] = $"=SUM(AC{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
-                                else if (MyUtility.Convert.GetString(dr.Table.Columns[27 + c].ColumnName).EqualString("6105-Total Air Prepaid Expense Factory"))
+                                else if (MyUtility.Convert.GetString(dr.Table.Columns[27 + c].ColumnName).EqualString("6105-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol6105))
                                     {
