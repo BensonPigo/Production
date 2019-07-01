@@ -6,7 +6,8 @@
 CREATE FUNCTION [dbo].[getStockUnit]
 (
 	-- Add the parameters for the function here
-	@scirefno varchar(30),@suppid varchar(6)
+	@scirefno varchar(30),
+	@suppid varchar(6) = ''
 )
 RETURNS varchar(8)
 AS
@@ -20,11 +21,31 @@ BEGIN
 	set @stockunit = '';
 
 	-- Add the T-SQL statements to compute the return value here
-	SELECT @tmpunit=CASE B.OutputUnit WHEN 1 THEN A.UsageUnit WHEN 2 THEN C.POUnit END
-	, @isExt = b.IsExtensionUnit
-	FROM DBO.Fabric A WITH (NOLOCK) INNER JOIN DBO.MtlType B WITH (NOLOCK) ON A.MtlTypeID = B.ID 
-	INNER JOIN DBO.Fabric_Supp C WITH (NOLOCK) ON A.SCIRefno = C.SCIRefno 
-	WHERE A.SCIRefno=@scirefno AND C.SuppID = @suppid;
+	if(@suppid = '')
+	begin
+		SELECT @tmpunit=CASE B.OutputUnit WHEN 1 THEN A.UsageUnit WHEN 2 THEN C.POUnit END
+		, @isExt = b.IsExtensionUnit
+		FROM DBO.Fabric A WITH (NOLOCK) INNER JOIN DBO.MtlType B WITH (NOLOCK) ON A.MtlTypeID = B.ID 
+		INNER JOIN DBO.Fabric_Supp C WITH (NOLOCK) ON A.SCIRefno = C.SCIRefno 
+		WHERE A.SCIRefno=@scirefno;
+
+		if(isnull(@tmpunit,'') = '')
+		begin
+			select top 1 @tmpunit = psd.POUnit,@isExt = m.IsExtensionUnit
+			from PO_Supp_Detail psd with (nolock)
+			inner join Fabric f with (nolock) on psd.SCIRefno = f.SCIRefno
+			inner join MtlType m with (nolock) on f.MtlTypeID = m.ID
+			where psd.SCIRefno = @scirefno;
+		end
+	end
+	else
+	begin
+		SELECT @tmpunit=CASE B.OutputUnit WHEN 1 THEN A.UsageUnit WHEN 2 THEN C.POUnit END
+		, @isExt = b.IsExtensionUnit
+		FROM DBO.Fabric A WITH (NOLOCK) INNER JOIN DBO.MtlType B WITH (NOLOCK) ON A.MtlTypeID = B.ID 
+		INNER JOIN DBO.Fabric_Supp C WITH (NOLOCK) ON A.SCIRefno = C.SCIRefno 
+		WHERE A.SCIRefno=@scirefno AND C.SuppID = @suppid;
+	end
 
 	if @isExt = '1'
 	begin
