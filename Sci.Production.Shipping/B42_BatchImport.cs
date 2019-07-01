@@ -164,6 +164,7 @@ from VNConsumption where 1=0";
                             newRow["UnitID"] = drNLCode["UnitID"];
                             newRow["StockUnit"] = drNLCode["StockUnit"];
                             newRow["FabricBrandID"] = drNLCode["FabricBrandID"];
+                            newRow["UsageUnit"] = drNLCode["UsageUnit"];
                         }
                     }
                 }
