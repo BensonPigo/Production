@@ -94,7 +94,7 @@ order by psd.Refno,isd.POID,isd.Roll
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelName);
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
                 #region 插入需要row數量
-                for (int i = 1; i <= dtExcel.Rows.Count; i++)
+                for (int i = 1; i < dtExcel.Rows.Count; i++)
                 {
                     worksheet.Rows[7 + i, Type.Missing].Insert(Excel.XlDirection.xlDown);
                 }
@@ -125,13 +125,17 @@ order by psd.Refno,isd.POID,isd.Roll
                 return false;
             }
 
-            if (this.radioTransferSlip.Checked)
+            if (this.radioFabricSticker.Checked || this.radioTransferSlip.Checked)
             {
                 if (string.Compare(drPrint["Status"].ToString(), "Confirmed", true) != 0)
                 {
                     MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                     return false;
                 }
+            }
+
+            if (this.radioTransferSlip.Checked)
+            {
 
                 string sqlcmd = $@"update Issue set  PrintName = '{Env.User.UserID}' , PrintDate = GETDATE()
                                 where id = '{drPrint["id"]}'";
@@ -336,12 +340,6 @@ where t.id= @ID";
                 this.print.Enabled = true;
                 this.toexcel.Enabled = false;
             }
-
-            if (string.Compare(drPrint["Status"].ToString(), "Confirmed", true) != 0)
-            {
-                this.radioFabricSticker.Enabled = false;
-            }
-
         }
     }
 }
