@@ -1070,10 +1070,25 @@ where {0}", sqlWhere);
                     }
                 }
 
-                if ((MyUtility.Convert.GetString(dr["Type"]) == "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2" && MyUtility.Check.Empty(dr["M2UnitRate"])) ||
-                    (MyUtility.Convert.GetString(dr["Type"]) == "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M2" && MyUtility.Check.Empty(dr["UnitRate"])) ||
-                    (MyUtility.Convert.GetString(dr["Type"]) == "A" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M" && dr["PcsLength"].ToString().EqualDecimal(0)) ||
-                    (MyUtility.Convert.GetString(dr["Type"]) == "A" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2" && MyUtility.Convert.GetString(dr["OriUnit"]).ToUpper() != "M" && MyUtility.Check.Empty(dr["UnitRate"]) && dr["PcsLength"].ToString().EqualDecimal(0)))
+                if (MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) &&
+                        (
+                            (MyUtility.Convert.GetString(dr["Type"]) == "F"
+                                && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2"
+                                && MyUtility.Check.Empty(dr["M2UnitRate"])) ||
+                            (MyUtility.Convert.GetString(dr["Type"]) == "F"
+                                && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M2"
+                                && MyUtility.Check.Empty(dr["UnitRate"])) ||
+                            (MyUtility.Convert.GetString(dr["Type"]) == "A"
+                                && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M"
+                                && dr["PcsLength"].ToString().EqualDecimal(0)
+                                && MyUtility.Check.Empty(dr["UnitRate"])) ||
+                            (MyUtility.Convert.GetString(dr["Type"]) == "A"
+                                && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2"
+                                && MyUtility.Convert.GetString(dr["OriUnit"]).ToUpper() != "M"
+                                && MyUtility.Check.Empty(dr["UnitRate"])
+                                && dr["PcsLength"].ToString().EqualDecimal(0))
+                        )
+                    )
                 {
                     DataRow[] findrow = this.UnitNotFound.Select(string.Format("OriUnit = '{0}' and CustomsUnit = '{1}'", MyUtility.Convert.GetString(dr["OriUnit"]), MyUtility.Convert.GetString(dr["CustomsUnit"])));
                     if (findrow.Length == 0)
