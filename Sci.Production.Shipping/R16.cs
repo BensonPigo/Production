@@ -72,14 +72,14 @@ select oq.BuyerDelivery
 ,[Destination] = (select id+'-'+Alias from Country where Id=o.Dest)
 ,p.Remark
 from Orders o
-left join Order_QtyShip oq on o.ID=oq.Id
+inner join Order_QtyShip oq on o.ID=oq.Id
 left join Brand b on b.id=o.BrandID
-inner join (
-	select distinct p.id,p.remark ,pd.OrderID,pd.OrderShipmodeSeq
+outer apply (
+	select distinct p.ID,p.Remark,p.INVNo
 	from PackingList p
-	inner join PackingList_Detail pd on p.ID=pd.ID
-	where (p.INVNo ='' or p.INVNo is null)
-) p on p.OrderID=oq.Id and p.OrderShipmodeSeq=oq.Seq
+	inner join PackingList_Detail pd on p.ID=pd.ID	
+	where pd.OrderID=oq.Id and pd.OrderShipmodeSeq=oq.Seq
+) p 
 outer apply(
 	Select ShipperID 
 	from FtyShipper_Detail  
@@ -98,6 +98,7 @@ outer apply(
 	where pd.OrderID=oq.Id and pd.OrderShipmodeSeq=oq.Seq
 )L
 where o.localOrder = 0
+and (p.INVNo ='' or p.INVNo is null)
 and not exists(
 	select 1 
 	from Order_QtyShip_Detail oq2
