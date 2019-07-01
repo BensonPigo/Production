@@ -43,7 +43,7 @@ pd.DRYReceiveDate,
 pd.PackErrTransferDate,
 pu.Status,
 [MainSP] = pd.OrderID,
-[ErrorType] = pt.PackingErrorID+'-'+ pe.Description,
+[ErrorType] = x.PackingErrorID+'-'+ pe.Description,
 pd.SCICtnNo ,
 ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
 from PackingList_Detail pd with (nolock)
@@ -51,10 +51,8 @@ inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
 left join Country c with (nolock) on c.ID = o.Dest
 left join Pullout pu with (nolock) on pu.ID = p.PulloutID
-left join PackErrTransfer pt with (nolock) on pd.id=pt.PackingListID
-and pt.OrderID=pd.OrderID and pt.CTNStartNo=pd.CTNStartNo
-left join PackingError pe with (nolock) on pt.PackingErrorID=pe.ID
-and pe.Type='TP'
+outer apply(select top 1 pt.* from PackErrTransfer pt with (nolock) where pd.id=pt.PackingListID and pt.OrderID=pd.OrderID and pt.CTNStartNo=pd.CTNStartNo order by pt.AddDate desc)x
+left join PackingError pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='TP' 
  ";
 
         /// <summary>

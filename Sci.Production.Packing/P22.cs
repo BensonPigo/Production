@@ -98,7 +98,7 @@ select distinct
 	,o.BuyerDelivery
 	,o.SciDelivery
 	,[ConfirmedBy] = dbo.getPass1(pe.AddName)
-	,[ErrorType] = pt.PackingErrorID+'-'+pr.Description
+	,[ErrorType] = x.PackingErrorID+'-'+pr.Description
     , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
     , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
     , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
@@ -106,9 +106,13 @@ select distinct
 from PackErrCFM pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-left join PackErrTransfer pt with(nolock) on pt.PackingListID=pe.PackingListID and pe.CTNStartNo = pt.CTNStartNo
-and pe.OrderID=pt.OrderID and pt.CTNStartNo=pe.CTNStartNo and pe.MDivisionID=pt.MDivisionID
-left join PackingError pr with(nolock) on pr.ID=pt.PackingErrorID and pr.Type='TP'
+outer apply(
+	select top 1 PackingErrorID
+	from PackErrTransfer pt with(nolock)
+	where pt.PackingListID=pe.PackingListID and pe.CTNStartNo = pt.CTNStartNo and pe.OrderID=pt.OrderID and pe.MDivisionID=pt.MDivisionID and pt.AddDate<pe.AddDate
+	order by pt.AddDate desc
+)x
+left join PackingError pr with(nolock) on pr.ID=x.PackingErrorID and pr.Type='TP'
 left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = pe.SCICtnNo 
 where 1=1
 {sqlwhere}
