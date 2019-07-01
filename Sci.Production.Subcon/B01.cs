@@ -234,7 +234,14 @@ namespace Sci.Production.Subcon
         //改變artworktype時，控制可輸入的欄位
         private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
         {
-            
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["category"]).EqualString("Carton"))
+            {
+                this.chkIsCarton.Enabled = true;
+            }
+            else
+            {
+                this.chkIsCarton.Enabled = false;
+            }
         }
 
         private void W_H_L_Validated(object sender, EventArgs e)
@@ -300,11 +307,14 @@ namespace Sci.Production.Subcon
             if (MyUtility.Convert.GetString(this.CurrentMaintain["category"]).EqualString("Carton"))
             {
                 this.btnSetCardboardPads.Visible = true;
+                this.chkIsCarton.Enabled = true;
             }
             else
             {
                 this.btnSetCardboardPads.Visible = false;
+                this.chkIsCarton.Enabled = false;
             }
+
         }
 
         private void btnPaymentHistory_Click(object sender, EventArgs e)
