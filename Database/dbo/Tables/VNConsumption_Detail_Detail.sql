@@ -16,6 +16,8 @@
 	[UserCreate] BIT             CONSTRAINT [DF_VNConsumption_Detail_Detail_UserCreate] DEFAULT ((0)) NULL,
 	[HSCode]     VARCHAR (11)    CONSTRAINT [DF_VNConsumption_Detail_Detail_HSCode] DEFAULT ('') NULL,
 	[UnitID]     VARCHAR (8)     CONSTRAINT [DF_VNConsumption_Detail_Detail_UnitID] DEFAULT ('') NULL,
+	[UsageQty] NUMERIC(12, 4) CONSTRAINT [DF_VNConsumption_Detail_Detail_UsageQty] DEFAULT ((0)) NOT NULL, 
+	[UsageUnit] VARCHAR(8) CONSTRAINT [DF_VNConsumption_Detail_Detail_UsageUnit] DEFAULT (('')) NOT NULL,
     CONSTRAINT [PK_VNConsumption_Detail_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 

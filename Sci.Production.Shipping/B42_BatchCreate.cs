@@ -304,11 +304,15 @@ select  StyleID
         , StyleUKey
         , Description
         , IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type
-        , ([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),iif(Qty=0.000,0.000,IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)),default)/Qty) as NewQty
-		, [StockUnit] = UsageUnit
-		, [StockQty] = markerYDS/Qty
+        , ([dbo].getVNUnitTransfer(Type,StockUnit.val,CustomsUnit,StockQty.val,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),iif(Qty=0.000,0.000,IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)),default)/Qty) as NewQty
+		, [StockUnit] = StockUnit.val
+		, [StockQty] = StockQty.val/Qty
+        , [UsageUnit] = UsageUnit
+		, [UsageQty] = markerYDS/Qty
 into #tmpBOFNewQty
 from #tmpBOFRateData
+outer apply(select [val] = dbo.getStockUnit(SCIRefno, default)) as StockUnit
+outer apply(select [val] = dbo.getUnitRate(UsageUnit,StockUnit.val) * markerYDS) as StockQty
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
@@ -334,11 +338,13 @@ select  StyleID
 		, StockUnit
 		, [StockQty] = sum(isnull(StockQty,0))
         , [FabricType] = 'F' 
+        , UsageUnit
+		, [UsageQty] = sum(isnull(UsageQty,0))
 into #tmpBOFData
 from #tmpBOFNewQty
 group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article
          , GMTQty, SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit
-         , StyleCPU, StyleUKey, Description, Type, StockUnit
+         , StyleCPU, StyleUKey, Description, Type, StockUnit, UsageUnit
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  t.*
@@ -412,12 +418,15 @@ select  StyleID
         , StyleUKey
         , Description
         , IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type
-        , [dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,SizeSpec,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),default) as NewQty
-		, [StockUnit] = UsageUnit
-		, [StockQty] = SizeSpec
+        , [dbo].getVNUnitTransfer(Type, StockUnit.val,CustomsUnit,StockQty.val,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),default) as NewQty
+        , [StockUnit] = StockUnit.val
+		, [StockQty] = StockQty.val
+        , [UsageUnit] = UsageUnit
+		, [UsageQty] = SizeSpec
 into #tmpBOANewQty
 from #tmpBOAPrepareData
-
+outer apply(select [val] = dbo.getStockUnit(SCIRefno,default)) as StockUnit
+outer apply(select [val] = dbo.getUnitRate(UsageUnit,StockUnit.val) * SizeSpec) as StockQty
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
         , SeasonID
@@ -442,11 +451,13 @@ select  StyleID
 		, StockUnit
 		, [StockQty] = sum(isnull(StockQty,0))
         , [FabricType] = 'A'
+        , UsageUnit
+		, [UsageQty] = sum(isnull(UsageQty,0))
 into #tmpBOAData
 from #tmpBOANewQty
 group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article
          , GMTQty, SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit
-         , StyleCPU, StyleUKey, Description, Type, StockUnit
+         , StyleCPU, StyleUKey, Description, Type, StockUnit, UsageUnit
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  t.*
@@ -553,9 +564,10 @@ select  StyleID
         , [dbo].getVNUnitTransfer(Category,UnitId,CustomsUnit,Qty,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),Refno) as NewQty
 		, [StockUnit] = UnitId
 		, [StockQty] = Qty
+        , [UsageUnit] = UnitId
+		, [UsageQty] = Qty
 into #tmpLocalNewQty
 from #tmpPrepareRate
-
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
         , SeasonID
@@ -580,11 +592,13 @@ select  StyleID
 		, StockUnit
 		, [StockQty] = sum(isnull(StockQty,0))
         , [FabricType] = 'L' 
+        , UsageUnit
+        , [UsageQty] = sum(isnull(UsageQty,0)) 
 into #tmpLocalData
 from #tmpLocalNewQty
 group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article, GMTQty
          , SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit ,StyleCPU 
-         , StyleUKey, Description, Type, SuppID, StockUnit
+         , StyleUKey, Description, Type, SuppID, StockUnit, UsageUnit
 ----Get Thread Data---------------------------------------------------------------------------------------------------------------------------------
 select 
 	t.OrderBrandID,
@@ -657,19 +671,23 @@ select  t.StyleID,
         th.NLCode,
         th.HSCode,
         th.CustomsUnit,
-        [Qty] = [dbo].getVNUnitTransfer(th.Type,th.UsageUnit,th.CustomsUnit,th.StockQty,0,th.PcsWidth,th.PcsLength,th.PcsKg,th.RateValue,th.UnitRate,default),
+        [Qty] = [dbo].getVNUnitTransfer(th.Type,StockUnit.val,th.CustomsUnit,StockQty.val,0,th.PcsWidth,th.PcsLength,th.PcsKg,th.RateValue,th.UnitRate,default),
         0 as LocalItem,
         t.StyleCPU,
         t.StyleUKey,
         th.Description,
         th.Type,
         '' as SuppID,
-        [StockUnit] = th.UsageUnit,
-        [StockQty] = th.StockQty,
-        [FabricType] = 'A'
+        [StockUnit] = StockUnit.val,
+        [StockQty] = StockQty.val,
+        [FabricType] = 'A',
+        [UsageUnit] = th.UsageUnit,
+		[UsageQty] = th.StockQty
 into #tmpThreadData
 from #tmpAllStyle t
 inner join #tmpThread th on t.StyleUkey = th.StyleUkey
+outer apply(select [val] = dbo.getStockUnit(th.SCIRefNo,default)) as StockUnit
+outer apply(select [val] = dbo.getUnitRate(th.UsageUnit,StockUnit.val) * th.StockQty) as StockQty
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  t.StyleID
         , t.SeasonID
@@ -713,6 +731,8 @@ select  StyleID
 		, StockUnit
 		, [StockQty] = 0
         , FabricType
+        , [UsageUnit] = StockUnit
+		, [UsageQty] = 0
 into #tmpFinalFixDeclare
 from #tmpFixDeclare
 where   TissuePaper = 0 
@@ -739,6 +759,8 @@ select  StyleID
 		, StockUnit
 		, StockQty
         , FabricType
+        , UsageUnit
+        , UsageQty
 into #tlast
 from (
     select  StyleID
@@ -764,6 +786,8 @@ from (
 			, StockUnit
 			, StockQty
             , FabricType
+            , UsageUnit
+            , UsageQty
     from #tmpFinalFixDeclare
     union
     select  StyleID
@@ -789,6 +813,8 @@ from (
 			, StockUnit
 			, [StockQty] = sum(StockQty)
             , FabricType
+            , UsageUnit
+            , [UsageQty] = sum(UsageQty)
     from (
         select * 
         from #tmpBOFData
@@ -807,7 +833,7 @@ from (
     ) a
     group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article
              , GMTQty, SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit
-             , LocalItem, StyleCPU, StyleUKey,Description,Type,SuppID,StockUnit, FabricType
+             , LocalItem, StyleCPU, StyleUKey,Description,Type,SuppID,StockUnit, FabricType, UsageUnit
 )x
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1496,10 +1522,10 @@ Insert into VNConsumption_Article (
                                         @"
 Insert into VNConsumption_Detail_Detail (
 	ID 			, NLCode 	, SCIRefno 	, RefNo 	, Qty, SystemQty
-	, LocalItem , UserCreate, StockQty  , StockUnit ,HSCode, UnitID, FabricBrandID, FabricType
+	, LocalItem , UserCreate, StockQty  , StockUnit ,HSCode, UnitID, FabricBrandID, FabricType, UsageQty, UsageUnit  
 ) Values (
 	'{0}' 		, '{1}' 	, '{2}' 	, '{3}' 	, {4}, {4}
-	,{5}        , 0, {6}  , '{7}', '{8}', '{9}', '{10}', '{11}'
+	,{5}        , 0, {6}  , '{7}', '{8}', '{9}', '{10}', '{11}',{12},'{13}'
 );",
                                         newID,
                                         MyUtility.Convert.GetString(selectedData[i]["NLCode"]),
@@ -1512,7 +1538,9 @@ Insert into VNConsumption_Detail_Detail (
                                         MyUtility.Convert.GetString(selectedDetailData[j]["HSCode"]),
                                         MyUtility.Convert.GetString(selectedDetailData[j]["CustomsUnit"]),
                                         MyUtility.Convert.GetString(selectedDetailData[j]["BrandID"]),
-                                        MyUtility.Convert.GetString(selectedDetailData[j]["FabricType"])
+                                        MyUtility.Convert.GetString(selectedDetailData[j]["FabricType"]),
+                                        MyUtility.Convert.GetString(selectedDetailData[j]["UsageQty"]),
+                                        MyUtility.Convert.GetString(selectedDetailData[j]["UsageUnit"])
                                         ));
                                 }
                             }

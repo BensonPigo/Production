@@ -125,7 +125,7 @@ where vdd.ID = '{0}'
         private bool GetCustomRefnoInfo(DataRow drDetail, string refno, string nlCode)
         {
             DataRow drNLCode;
-            drNLCode = Prgs.GetNLCodeDataByRefno(refno, drDetail["StockQty"].ToString(), this.CurrentMaintain["BrandID"].ToString(), drDetail["FabricType"].ToString(), nlCode: nlCode);
+            drNLCode = Prgs.GetNLCodeDataByRefno(refno, drDetail["UsageQty"].ToString(), this.CurrentMaintain["BrandID"].ToString(), drDetail["FabricType"].ToString(), nlCode: nlCode);
 
             if (drNLCode == null)
             {
@@ -135,6 +135,8 @@ where vdd.ID = '{0}'
             {
                 drDetail["NLCode"] = drNLCode["NLCode"];
                 drDetail["StockUnit"] = drNLCode["StockUnit"];
+                drDetail["UsageUnit"] = drNLCode["UsageUnit"];
+                drDetail["StockQty"] = drNLCode["StockQty"];
                 drDetail["SCIRefno"] = drNLCode["SCIRefno"];
                 drDetail["FabricBrandID"] = drNLCode["FabricBrandID"];
                 drDetail["HSCode"] = drNLCode["HSCode"];
@@ -288,8 +290,8 @@ where vdd.ID = '{0}'
             };
             #endregion
             #region Stock Qty
-            DataGridViewGeneratorNumericColumnSettings stockQtyCol = new DataGridViewGeneratorNumericColumnSettings();
-            stockQtyCol.CellEditable += (s, e) =>
+            DataGridViewGeneratorNumericColumnSettings usageQtyCol = new DataGridViewGeneratorNumericColumnSettings();
+            usageQtyCol.CellEditable += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
 
@@ -301,7 +303,7 @@ where vdd.ID = '{0}'
                 }
             };
 
-            stockQtyCol.CellValidating += (s, e) =>
+            usageQtyCol.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -309,7 +311,7 @@ where vdd.ID = '{0}'
                 }
 
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                string oldvalue = MyUtility.Convert.GetString(dr["StockQty"]);
+                string oldvalue = MyUtility.Convert.GetString(dr["UsageQty"]);
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
                 if (oldvalue == newvalue)
                 {
@@ -325,7 +327,9 @@ where vdd.ID = '{0}'
                 else
                 {
                     dr["Qty"] = drNLCode["Qty"];
-                    dr["StockQty"] = newvalue;
+                    dr["StockUnit"] = drNLCode["StockUnit"];
+                    dr["StockQty"] = drNLCode["StockQty"];
+                    dr["UsageQty"] = newvalue;
                 }
 
             };
@@ -338,9 +342,9 @@ where vdd.ID = '{0}'
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlCodeCol)
                 .ComboBox("FabricType", header: "Type", width: Widths.AnsiChars(3), settings: typeCol)
                 .Text("RefNo", header: "Ref No", width: Widths.AnsiChars(20), settings: refnoCol)
-                .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("UnitID", header: "Customs Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("SystemQty", header: "System Qty", decimal_places: 6, width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out systemQtyColumn)
-                .Numeric("StockQty", header: "Stock Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: stockQtyCol).Get(out qtyColumn)
+                .Numeric("UsageQty", header: " Act. Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: usageQtyCol).Get(out qtyColumn)
                 .Numeric("Qty", header: "Customs Qty", decimal_places: 6, width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out qtyColumn)
                 .Numeric("Waste", header: "Waste", decimal_places: 6, iseditingreadonly: true)
                 .CheckBox("UserCreate", header: "Create by user", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);

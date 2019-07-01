@@ -222,15 +222,15 @@ where ID = '{0}'", expressID);
         #endregion
 
         #region GetNLCodeDataByRefno
-        public static DataRow GetNLCodeDataByRefno(string refno, string stockQty, string brandID, string type, string sciRefno = "", string nlCode = "")
+        public static DataRow GetNLCodeDataByRefno(string refno, string usageQty, string brandID, string type, string sciRefno = "", string nlCode = "")
         {
             string sqlGetNLCode = string.Empty;
             string whereSciRefno = MyUtility.Check.Empty(sciRefno) ? string.Empty : " and f.SciRefno = @SciRefno";
             string whereNLCode = MyUtility.Check.Empty(nlCode) ? string.Empty : " and f.NLCode = @NLCode";
             DataRow drNLCode = null;
-            string inputStockQty = MyUtility.Check.Empty(stockQty) ? "0" : stockQty;
+            string inputUsageQty = MyUtility.Check.Empty(usageQty) ? "0" : usageQty;
             List<SqlParameter> parGetNLCode = new List<SqlParameter>() {    new SqlParameter("@Refno", refno),
-                                                                            new SqlParameter("@inputStockQty", stockQty),
+                                                                            new SqlParameter("@inputUsageQty", usageQty),
                                                                             new SqlParameter("@BrandID", brandID),
                                                                             new SqlParameter("@SciRefno", sciRefno),
                                                                             new SqlParameter("@NLCode", nlCode)};
@@ -241,17 +241,19 @@ where ID = '{0}'", expressID);
             if (fabricType == "F")
             {
                 sqlGetNLCode = $@"
-Declare @StockQty numeric(12,4) = @inputStockQty
+Declare @UsageQty numeric(12,4) = @inputUsageQty
 select  top 1
         NLCode ,
-        [StockUnit] = 'YDS',
+        [StockUnit] = StockUnit.val,
         [SCIRefno] = f.SCIRefno,
         [FabricBrandID] = f.BrandID,
         [HSCode] = f.HSCode,
         [UnitID] = f.CustomsUnit,
         [FabricType] = 'F',
         [LocalItem] = 0,
-        [Qty] = [dbo].getVNUnitTransfer('F','YDS',f.CustomsUnit,@StockQty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value),default)
+        [Qty] = [dbo].getVNUnitTransfer('F',StockUnit.val,f.CustomsUnit,StockQty.val,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value),default),
+        [UsageUnit] = 'YDS',
+		[StockQty] = StockQty.val
 from Fabric f with (nolock)
 inner join Brand b with (nolock) on b.ID = @BrandID 
 inner join Brand b2 with (nolock) on b2.BrandGroup = b.BrandGroup and f.BrandID = b2.ID 
@@ -259,6 +261,8 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'Y
 outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
+outer apply(select [val] = dbo.getStockUnit(f.SCIRefNo,default)) as StockUnit
+outer apply(select [val] = dbo.getUnitRate('YDS',StockUnit.val) * @UsageQty) as StockQty
  where f.Refno = @Refno and f.Type = 'F' and f.Junk = 0 {whereSciRefno} {whereNLCode}
 order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
 ";
@@ -266,16 +270,18 @@ order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
             else if (fabricType == "A")
             {
                 sqlGetNLCode = $@"
-Declare @StockQty numeric(12,4) = @inputStockQty
+Declare @UsageQty numeric(12,4) = @inputUsageQty
 select  NLCode ,
-        [StockUnit] = f.UsageUnit,
+        [StockUnit] = StockUnit.val,
         [SCIRefno] = f.SCIRefno,
         [FabricBrandID] = f.BrandID,
         [HSCode] = f.HSCode,
         [UnitID] = f.CustomsUnit,
         [FabricType] = 'A',
         [LocalItem] = 0,
-        [Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,@StockQty,0,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value),default)
+        [Qty] = [dbo].getVNUnitTransfer(f.Type,StockUnit.val,f.CustomsUnit,StockQty.val,0,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value),default),
+        [UsageUnit] = f.UsageUnit,
+		[StockQty] = StockQty.val
 from Fabric f with (nolock)
 inner join Brand b with (nolock) on b.ID = @BrandID 
 inner join Brand b2 with (nolock) on b2.BrandGroup = b.BrandGroup and f.BrandID = b2.ID 
@@ -283,6 +289,8 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.
 outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
+outer apply(select [val] = dbo.getStockUnit(f.SCIRefNo,default)) as StockUnit
+outer apply(select [val] = dbo.getUnitRate(f.UsageUnit,StockUnit.val) * @UsageQty) as StockQty
  where f.Refno = @Refno and f.Type = 'A' and f.Junk = 0 {whereSciRefno} {whereNLCode}
 order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
 ";
@@ -290,7 +298,7 @@ order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
             else if (fabricType == "L")
             {
                 sqlGetNLCode = $@"
-Declare @StockQty numeric(12,4) = @inputStockQty
+Declare @UsageQty numeric(12,4) = @inputUsageQty
 select  li.NLCode,
         [StockUnit] = li.UnitID,
         [SCIRefno] = @Refno,
@@ -299,7 +307,9 @@ select  li.NLCode,
         [UnitID] = li.CustomsUnit,
         [FabricType] = 'L',
         [LocalItem] = 1,
-        [Qty] = [dbo].getVNUnitTransfer(li.Category,li.UnitID,isnull(li.CustomsUnit,''),@StockQty,0,li.PcsWidth,li.PcsLength,li.PcsKg,IIF(li.CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(li.CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value),li.Refno)
+        [Qty] = [dbo].getVNUnitTransfer(li.Category,li.UnitID,isnull(li.CustomsUnit,''),@UsageQty,0,li.PcsWidth,li.PcsLength,li.PcsKg,IIF(li.CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(li.CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value),li.Refno),
+        [UsageUnit] = li.UnitID,
+		[StockQty] = @UsageQty
 from LocalItem li with (nolock) 
 outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = li.CustomsUnit) Rate
 outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = 'M') M2Rate
@@ -310,7 +320,7 @@ where Ltrim(li.Refno) = @Refno";
             else if (fabricType == "Misc")
             {
                 sqlGetNLCode = $@"
-Declare @StockQty numeric(12,4) = @inputStockQty
+Declare @UsageQty numeric(12,4) = @inputUsageQty
 select  Misc.NLCode,
         [StockUnit] = Misc.UsageUnit,
         [SCIRefno] = @Refno,
@@ -319,7 +329,9 @@ select  Misc.NLCode,
         [UnitID] = Misc.CustomsUnit,
         [FabricType] = 'Misc',
         [LocalItem] = 1,
-        [Qty] = [dbo].getVNUnitTransfer('MISC',Misc.UsageUnit,isnull(Misc.CustomsUnit,''),@StockQty,Misc.PcsWidth,Misc.PcsWidth,Misc.PcsLength,Misc.PcsKg,Misc.MiscRate,0,Misc.ID)
+        [Qty] = [dbo].getVNUnitTransfer('MISC',Misc.UsageUnit,isnull(Misc.CustomsUnit,''),@UsageQty,Misc.PcsWidth,Misc.PcsWidth,Misc.PcsLength,Misc.PcsKg,Misc.MiscRate,0,Misc.ID),
+        [UsageUnit] = Misc.UsageUnit,
+		[StockQty] = @UsageQty
 from  SciMachine_Misc Misc with (nolock) 
 where Ltrim(Misc.ID)  = @Refno";
             }

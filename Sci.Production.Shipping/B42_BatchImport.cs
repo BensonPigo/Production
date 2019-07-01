@@ -56,7 +56,9 @@ select  CustomSP,
         [HSCode]='',
         [UnitID]='',
         Remark='' ,
-        checks=0 
+        checks=0 ,
+        [UsageQty]=0.0000,
+        [UsageUnit]=''
 from VNConsumption where 1=0";
 
             DBProxy.Current.Select(null, sqlBatchImportColumn, out this.dtBatchImport);
@@ -119,7 +121,7 @@ from VNConsumption where 1=0";
                 DataRow newRow = this.dtBatchImport.NewRow();
                 string refno = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"));
                 string type = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"));
-                string stockQty = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N"));
+                string usageQty = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N"));
                 string customSP = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C"));
                 string contractID = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C"));
                 string remark = string.Empty;
@@ -142,7 +144,7 @@ from VNConsumption where 1=0";
                     }
                     else
                     {
-                        drNLCode = Prgs.GetNLCodeDataByRefno(refno, stockQty, drc["BrandID"].ToString(), type);
+                        drNLCode = Prgs.GetNLCodeDataByRefno(refno, usageQty, drc["BrandID"].ToString(), type);
 
                         if (drNLCode == null)
                         {
@@ -156,6 +158,7 @@ from VNConsumption where 1=0";
                         {
                             newRow["NLCode"] = drNLCode["NLCode"];
                             newRow["Qty"] = drNLCode["Qty"];
+                            newRow["StockQty"] = drNLCode["StockQty"];
                             newRow["SCIRefno"] = drNLCode["SCIRefno"];
                             newRow["HSCode"] = drNLCode["HSCode"];
                             newRow["UnitID"] = drNLCode["UnitID"];
@@ -174,7 +177,7 @@ from VNConsumption where 1=0";
                 newRow["VNContractID"] = contractID.ToString().Trim();
                 newRow["Type"] = type;
                 newRow["Refno"] = refno;
-                newRow["StockQty"] = stockQty;
+                newRow["UsageQty"] = usageQty;
                 newRow["checks"] = 0;
 
                 this.dtBatchImport.Rows.Add(newRow);
@@ -223,6 +226,8 @@ from VNConsumption where 1=0";
                 string stockUnit = MyUtility.Convert.GetString(dr["StockUnit"]);
                 string hSCode = MyUtility.Convert.GetString(dr["HSCode"]);
                 string unitID = MyUtility.Convert.GetString(dr["UnitID"]);
+                string usageQty = MyUtility.Convert.GetString(dr["UsageQty"]);
+                string usageUnit = MyUtility.Convert.GetString(dr["UsageUnit"]);
 
                 string chk = $@"
 select 1    from VNConsumption v 
@@ -234,8 +239,8 @@ select 1    from VNConsumption v
                 {
                     idu.Append(
                         $@"
-insert into VNConsumption_Detail_Detail(ID,NLCode,SCIRefno,Refno,Qty,LocalItem,FabricBrandID,FabricType,SystemQty,UserCreate,StockQty,StockUnit,HSCode,UnitID)
-                values('{id}','{nLCode}','{sCIRefno}','{refno}',{qty},{localItem},'{fabricBrandID}','{fabricType}',0,1,{stockQty},'{stockUnit}','{hSCode}','{unitID}');");
+insert into VNConsumption_Detail_Detail(ID,NLCode,SCIRefno,Refno,Qty,LocalItem,FabricBrandID,FabricType,SystemQty,UserCreate,StockQty,StockUnit,HSCode,UnitID, UsageQty, UsageUnit)
+                values('{id}','{nLCode}','{sCIRefno}','{refno}',{qty},{localItem},'{fabricBrandID}','{fabricType}',0,1,{stockQty},'{stockUnit}','{hSCode}','{unitID}',{usageQty},'{usageUnit}');");
 
                     dr["checkS"] = 1;
                 }
@@ -253,6 +258,8 @@ StockQty = {stockQty}
 ,HSCode = '{hSCode}'
 ,UnitID = '{unitID}'
 ,UserCreate = 1
+,UsageQty = {usageQty}
+,UsageUnit = '{usageUnit}'
 where   id = '{id}' and 
         Refno = '{refno}';
 ");
