@@ -813,6 +813,12 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                             continue;
                         }
 
+                        if (dr["BLNo"].ToString().IndexOf("'") > -1 || dr["WKNo"].ToString().IndexOf("'") > -1 || dr["InvNo"].ToString().IndexOf("'") > -1)
+                        {
+                            MyUtility.Msg.WarningBox("Can not save! Because value includes ' word in <BL/MAWB No.>, <FCR/BL/HAWB> or <WK#/Fty WK#>.");
+                            return;
+                        }
+
                         // 檢查重複值
                         DataRow[] findrow = null;
 
