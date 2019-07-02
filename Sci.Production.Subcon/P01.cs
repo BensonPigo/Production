@@ -95,6 +95,19 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox(string.Format("Some SP# already have Farm In/Out data!!!"), "Warning");
                 return false;
             }
+
+            string chkP10exists = $@"
+select 1
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where  apd.id = '{CurrentMaintain["id"]}' 
+";
+            if (MyUtility.Check.Seek(chkP10exists))
+            {
+                MyUtility.Msg.WarningBox("Some SP# exist P10");
+                return false;
+            }
+
             return base.ClickDeleteBefore();
         }
 
