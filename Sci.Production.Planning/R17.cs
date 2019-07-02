@@ -89,321 +89,270 @@ namespace Sci.Production.Planning
             try
             {
                 #region Order Detail
-                string strSQL = @" 
+                string strSQL = @"
+SELECT
+	 CountryID = F.CountryID
+	,KPICode = F.KPICode
+	,FactoryID = o.FactoryID
+	,OrderID = o.ID
+	,Seq = Order_QS.seq
+	,BrandID = o.BrandID
+	,Order_QS.BuyerDelivery
+	,Order_QS.FtyKPI 
+	,Order_QS.ShipmodeID
+	,b.OTDExtension 
+	,DeliveryByShipmode = Order_QS.ShipmodeID
+	,OrderQty = Cast(Order_QS.QTY as int)										
+	,Shipmode = Order_QS.ShipmodeID
+	,GMTComplete = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
+							WHEN 'S' THEN 'S' ELSE '' END
+	,Order_QS.ReasonID
+	,ReasonName = case o.Category when 'B' then r.Name
+	  when 'S' then rs.Name
+	  else '' end
+	,o.MRHandle
+	,o.SMR
+	,PO.POHandle
+	,PO.POSMR
+	,o.OrderTypeID
+	,ot.isDevSample				
+	,c.alias
+	,o.MDivisionID 
+	,o.localorder
+into #tmp_main
+FROM Orders o WITH (NOLOCK)
+LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
+LEFT JOIN Factory f ON o.FACTORYID = f.ID --AND  o.FactoryID = f.KPICode
+LEFT JOIN Country c ON F.COUNTRYID = c.ID 
+inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
+LEFT JOIN PO ON o.POID = PO.ID
+LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
+LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and rs.ReasonTypeID = 'Order_BuyerDelivery_sample'
+LEFT JOIN Brand b on o.BrandID = b.ID
+where o.Junk = 0  
+and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') ";
+
+                if (this.radioBulk.Checked)
+                {
+                    strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
+                }
+                else if (this.radioSample.Checked)
+                {
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
+                }
+                else
+                {
+                    strSQL += " AND o.Category = 'G'";
+                }
+
+                if (this.dateFactoryKPIDate.Value1 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.dateFactoryKPIDate.Value2 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.txtFactory.Text != string.Empty)
+                {
+                    strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
+                }
+
+                strSQL += @"
+select COUNT(op.pulloutdate) PulloutDate ,op.OrderID,op.OrderShipmodeSeq
+into #tmp_Pullout_Detail
+from Pullout_Detail op 
+inner join #tmp_main t on  op.OrderID = t.OrderID and op.OrderShipmodeSeq = t.Seq 
+group by op.OrderID,op.OrderShipmodeSeq
+	
+Select 
+	Qty = Sum(rA.Qty),
+	FailQty = Sum(rB.Qty),
+	pd.OrderID,
+	pd.OrderShipmodeSeq
+into #tmp_Pullout_Detail_pd
+From Pullout_Detail pd
+inner join #tmp_main t on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
+Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), pd.shipqty, 0)) rA --On Time
+Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), pd.shipqty, 0)) rB --Fail
+group by pd.OrderID, pd.OrderShipmodeSeq
+
+select max(p.PulloutDate)PulloutDate ,pd.OrderID,pd.OrderShipmodeSeq
+into #tmp_Pullout_Detail_p
+from Pullout_Detail pd 
+inner join #tmp_main t on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
+INNER JOIN Pullout p ON p.Id=pd.id AND p.PulloutDate=pd.PulloutDate 
+where pd.OrderID = t.OrderID and pd.OrderShipmodeSeq =  t.Seq  
+group by pd.OrderID,pd.OrderShipmodeSeq
+
+select *
+into #tmp_Pullout_Detail_pd2
+from 
+(
+	Select iif(pd.PulloutDate > iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 1, 0) isFail
+		,pd.PulloutDate
+		,pd.OrderID,pd.OrderShipmodeSeq
+		,ROW_NUMBER() over(PARTITION BY pd.OrderID,pd.OrderShipmodeSeq order by pd.pulloutdate ASC) r_id
+	From Pullout_Detail pd
+	inner join #tmp_main t on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
+)a
+where a.r_id = 1
+
+select SewouptQty=sum(x.QaQty),SewLastDate=format(max(SewLastDate),'yyyy/MM/dd'), OrderID
+into #tmp_SewingOutput
+from(
+	Select OrderID, Article, SizeCode, 
+		Min(QaQty) as QaQty,
+		Min(SewLastDate) as SewLastDate
+	From (
+		Select ComboType, t.OrderID, Article, SizeCode, QaQty = Sum(SewingOutput_Detail_Detail.QaQty), Max(OutputDate) as SewLastDate
+		From SewingOutput_Detail_Detail
+		inner join (select distinct OrderID from #tmp_main) t on SewingOutput_Detail_Detail.OrderID= t.OrderID
+		inner join SewingOutput on SewingOutput_Detail_Detail.ID = SewingOutput.ID 
+		Group by ComboType, t.OrderID, Article, SizeCode
+	) as sdd
+	Group by OrderID, Article, SizeCode
+)x
+group by OrderID
+
+SELECT [CTNLastReceiveDate]= format(Max(rcv.minreceivedate),'yyyy/MM/dd') , rcv.orderid,rcv.ordershipmodeseq 
+into #tmp_ClogReceive
+FROM (
+	SELECT [MinReceiveDate]=Min(CR.receivedate), cr.orderid, PD.ordershipmodeseq 
+	FROM Production.dbo.ClogReceive cr 
+	inner join #tmp_main t2 on t2.OrderID = cr.orderid and t2.localorder = 0 
+	INNER JOIN Production.dbo.PackingList_Detail PD ON PD.id = CR.PackingListID AND PD.ctnstartno = CR.ctnstartno  and t2.Seq=PD.ordershipmodeseq
+	GROUP BY cr.PackingListID, cr.ctnstartno, cr.orderid, PD.ordershipmodeseq
+) rcv 
+GROUP BY rcv.orderid,rcv.ordershipmodeseq 
+
+
 SELECT  * 
 INTO #tmp FROM 
 ( 
-		
-
-		SELECT
-		 CountryID = F.CountryID
-		,KPICode = F.KPICode
-		,FactoryID = o.FactoryID
-		,OrderID = o.ID
-		,Seq = Order_QS.seq
-		,BrandID = o.BrandID
-		,BuyerDelivery = convert(varchar(10),Order_QS.BuyerDelivery,111)--G
-		,FtyKPI= convert(varchar(10),Order_QS.FtyKPI,111)
-		,Extension = convert(varchar(10),iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 111)--I
-		,DeliveryByShipmode = Order_QS.ShipmodeID
-		,OrderQty = Cast(Order_QS.QTY as int)
-						
-		,OnTimeQty = iif(Ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(Order_QS.QTY as int)), Cast(isnull(pd.Qty,0) as int))
-		,FailQty = CASE  WHEN o.GMTComplete='S' AND pd2.PulloutDate IS NULL  THEN 0
-								ELSE iif(ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(Order_QS.QTY as int), 0), Cast(isnull(pd.FailQty,Order_QS.QTY) as int)) END
-		,pullOutDate = iif(isnull(ot.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 20))
-		,Shipmode = Order_QS.ShipmodeID
+SELECT
+		 t.CountryID
+		,t.KPICode
+		,t.FactoryID
+		,t.OrderID 
+		,t.seq
+		,t.BrandID
+		,BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)--G
+		,FtyKPI= convert(varchar(10),t.FtyKPI,111)
+		,Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 111)--I
+		,DeliveryByShipmode = t.ShipmodeID
+		,t.OrderQty 
+		,OnTimeQty = iif(t.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(t.OrderQty as int)), Cast(isnull(pd.Qty,0) as int))
+		,FailQty = CASE  WHEN t.GMTComplete='S' AND pd2.PulloutDate IS NULL  THEN 0
+								ELSE iif(t.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(t.OrderQty as int), 0), Cast(isnull(pd.FailQty,t.OrderQty) as int)) END
+		,pullOutDate = iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 20))
+		,Shipmode = t.ShipmodeID
 		,P = Cast(isnull(op.PulloutDate,0) as int)  --未出貨,出貨次數=0
-		,GMTComplete = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
-								WHEN 'S' THEN 'S' ELSE '' END
-		,ReasonID = Order_QS.ReasonID
-		,ReasonName = case o.Category when 'B' then r.Name
-		  when 'S' then rs.Name
-		  else '' end
-		,MR = dbo.getTPEPass1_ExtNo(o.MRHandle)
-		,SMR = dbo.getTPEPass1_ExtNo(o.SMR)
-		,POHandle = dbo.getTPEPass1_ExtNo(PO.POHandle)
-		,POSMR = dbo.getTPEPass1_ExtNo(PO.POSMR)
-		,OrderTypeID = o.OrderTypeID
-		,isDevSample = iif(ot.isDevSample = 1, 'Y', '')
-		,SewouptQty=sew.SewouptQty
-		,SewLastDate=format(sew.SewLastDate,'yyyy/MM/dd')
-		,CTNLastReceiveDate=format(ctnr.CTNLastReceiveDate,'yyyy/MM/dd')
+		,t.GMTComplete 
+		,t.ReasonID
+		,t.ReasonName   
+		,MR = dbo.getTPEPass1_ExtNo(t.MRHandle)
+		,SMR = dbo.getTPEPass1_ExtNo(t.SMR)
+		,POHandle = dbo.getTPEPass1_ExtNo(t.POHandle)
+		,POSMR = dbo.getTPEPass1_ExtNo(t.POSMR)
+		,OrderTypeID = t.OrderTypeID
+		,isDevSample = iif(t.isDevSample = 1, 'Y', '')
+		,sew.SewouptQty
+		,sew.SewLastDate
+		,ctnr.CTNLastReceiveDate
 		,Order_QtyShipCount=iif(ps.ct>1,'Y','')
-		,Alias = c.alias
-		,o.MDivisionID
+		,t.Alias 
+		,t.MDivisionID
+from #tmp_main t
+--出貨次數--
+left join #tmp_Pullout_Detail op on op.OrderID = t.OrderID and op.OrderShipmodeSeq = t.Seq 
+------------
+-----isDevSample=0-----
+left join  #tmp_Pullout_Detail_pd pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq 
+left join  #tmp_Pullout_Detail_p p on p.OrderID = t.OrderID and p.OrderShipmodeSeq = t.Seq 
+---------End-------
+-------isDevSample=1-----
+left join #tmp_Pullout_Detail_pd2 pd2 on pd2.OrderID = t.OrderID and pd2.OrderShipmodeSeq = t.Seq 
+-------sew
+left join #tmp_SewingOutput sew on sew.OrderId = t.OrderID
+----[CTNLastReceiveDate]
+left join #tmp_ClogReceive ctnr on ctnr.orderid = t.OrderID and ctnr.ordershipmodeseq = t.Seq
+outer apply(
+	select ct=count(distinct seq)
+	from Order_QtyShip oq
+	where oq.id = t.OrderID
+)ps
+where t.OrderQty > 0 
+-----End-------
 
-		FROM Orders o WITH (NOLOCK)
-		LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
-		LEFT JOIN Factory f ON o.FACTORYID = f.ID --AND  o.FactoryID = f.KPICode
-		LEFT JOIN Country c ON F.COUNTRYID = c.ID 
-		inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
-		LEFT JOIN PO ON o.POID = PO.ID
-		LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
-		LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and rs.ReasonTypeID = 'Order_BuyerDelivery_sample'
-		LEFT JOIN Brand b on o.BrandID = b.ID
-		--出貨次數--
-		outer apply (
-			select COUNT(op.pulloutdate) PulloutDate 
-			from Pullout_Detail op 
-			where op.OrderID = o.id 
-			and op.OrderShipmodeSeq = Order_QS.Seq
-		) op 
-		------------
-		-----isDevSample=0-----
-		outer apply (
-			Select 
-				Qty = Sum(rA.Qty),
-				FailQty = Sum(rB.Qty) 
-			From Pullout_Detail pd
-			Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), pd.shipqty, 0)) rA --On Time
-			Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), pd.shipqty, 0)) rB --Fail
-			where pd.OrderID = o.ID 
-			and pd.OrderShipmodeSeq = Order_QS.Seq
-		) pd
-		outer apply (
-			select top 1 p.PulloutDate
-			from Pullout_Detail pd 
-			INNER JOIN Pullout p ON p.Id=pd.id AND p.PulloutDate=pd.PulloutDate
-			where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
-			Order by p.PulloutDate desc
-		) p
-		-------End-------
-		-----isDevSample=1-----
-		outer apply (
-			Select top 1 iif(pd.PulloutDate > iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 1, 0) isFail, pd.PulloutDate
-			From Pullout_Detail pd
-			where pd.OrderID = o.ID 
-			and pd.OrderShipmodeSeq = Order_QS.Seq
-			order by pd.pulloutdate ASC
-		) pd2
-		-----sew
-		outer apply(
-			select SewouptQty=sum(x.QaQty),SewLastDate=max(SewLastDate)
-			from(
-				Select OrderID, Article, SizeCode, 
-					Min(QaQty) as QaQty,
-					Min(SewLastDate) as SewLastDate
-				From (
-					Select ComboType, OrderID, Article, SizeCode, QaQty = Sum(SewingOutput_Detail_Detail.QaQty), Max(OutputDate) as SewLastDate
-					From SewingOutput_Detail_Detail
-					inner join SewingOutput on SewingOutput_Detail_Detail.ID = SewingOutput.ID
-					Where SewingOutput_Detail_Detail.OrderID=o.id
-					Group by ComboType, OrderID, Article, SizeCode
-				) as sdd
-				Group by OrderID, Article, SizeCode
-			)x
-		)sew
-		--[CTNLastReceiveDate]
-		outer apply(
-			SELECT [CTNLastReceiveDate]= Max(rcv.minreceivedate)
-			FROM (
-				SELECT [MinReceiveDate]=Min(CR.receivedate), cr.orderid, PD.ordershipmodeseq 
-				FROM Production.dbo.ClogReceive cr 
-				INNER JOIN Production.dbo.PackingList_Detail PD ON PD.id = CR.PackingListID AND PD.ctnstartno = CR.ctnstartno 
-				where O.localorder = 0 and O.id = cr.orderid and Order_QS.Seq=PD.ordershipmodeseq
-				GROUP BY cr.PackingListID, cr.ctnstartno, cr.orderid, PD.ordershipmodeseq
-			) rcv 
-			GROUP BY rcv.orderid,rcv.ordershipmodeseq 
-		)ctnr
-		outer apply(
-			select ct=count(distinct seq)
-			from Order_QtyShip oq
-			where oq.id = o.id
-		)ps
-		-------End-------
+UNION ALL ----------------------------------------------------
+SELECT 
+	CountryID = t.CountryID
+    ,KPICode = t.KPICode
+    ,FactoryID = t.FactoryID
+    ,t.OrderID  
+    ,t.Seq 
+    ,t.BrandID  
+    , BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)
+    , FtyKPI = convert(varchar(10),t.FtyKPI,111)
+    , Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 111)
+    , DeliveryByShipmode = t.ShipmodeID
+    , OrderQty = 0
+    , OnTimeQty =  0
+    , FailQty = Cast(isnull(t.OrderQty - (pd.Qty + pd.FailQty),0) as int) --未出貨Qty
+    , pullOutDate = null
+    , Shipmode = t.ShipModeID
+    ,P =0 --未出貨,出貨次數=0
+    ,t.GMTComplete 
+    ,t.ReasonID 
+    ,t.ReasonName 
+    ,MR = dbo.getTPEPass1_ExtNo(t.MRHandle)
+    ,SMR = dbo.getTPEPass1_ExtNo(t.SMR)
+    ,POHandle = dbo.getTPEPass1_ExtNo(t.POHandle)
+    ,POSMR = dbo.getTPEPass1_ExtNo(t.POSMR)
+    ,t.OrderTypeID  
+    ,isDevSample = iif(t.isDevSample = 1, 'Y', '')
+    ,SewouptQty=sew.SewouptQty
+    ,sew.SewLastDate
+    ,ctnr.CTNLastReceiveDate
+    ,Order_QtyShipCount=iif(ps.ct>1,'Y','')
+    ,t.Alias
+    ,t.MDivisionID
+From #tmp_main t 
+--是否有分批出貨
+outer apply (
+	select isPartial = iif (count(distinct oqs.Seq) > 1 ,'Y','')
+	from Order_QtyShip oqs
+	where oqs.Id = t.OrderID
+) getPartial
 
-where o.Junk = 0 
-and Order_QS.Qty > 0 
-and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') 
-";
-
-                if (this.radioBulk.Checked)
-                {
-                    strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
-                }
-                else if (this.radioSample.Checked)
-                {
-                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
-                }
-                else
-                {
-                    strSQL += " AND o.Category = 'G'";
-                }
-
-                if (this.dateFactoryKPIDate.Value1 != null)
-                {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                }
-
-                if (this.dateFactoryKPIDate.Value2 != null)
-                {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                }
-
-                if (this.txtFactory.Text != string.Empty)
-                {
-                    strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
-                }
-                
-                strSQL += @"
-		UNION ALL ----------------------------------------------------
-
-
-		SELECT 
-		  CountryID = F.CountryID
-		 ,KPICode = F.KPICode
-		,FactoryID = o.FactoryID
-		,OrderID = o.ID
-		,Seq = Order_QS.seq
-		,BrandID = o.BrandID
-		, BuyerDelivery = convert(varchar(10),Order_QS.BuyerDelivery,111)
-		, FtyKPI = convert(varchar(10),Order_QS.FtyKPI,111)
-		, Extension = convert(varchar(10),iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 111)
-		, DeliveryByShipmode = Order_QS.ShipmodeID
-		, OrderQty = 0
-		, OnTimeQty =  0
-		, FailQty = Cast(isnull(Order_QS.QTY - (pd.Qty + pd.FailQty),0) as int) --未出貨Qty
-		, pullOutDate = null
-		, Shipmode = Order_QS.ShipModeID
-		,P =0 --未出貨,出貨次數=0
-		,GMTComplete = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
-								WHEN 'S' THEN 'S' ELSE '' END
-		,ReasonID = Order_QS.ReasonID
-		,ReasonName = case o.Category when 'B' then r.Name
-		  when 'S' then rs.Name
-		  else '' end
-		,MR = dbo.getTPEPass1_ExtNo(o.MRHandle)
-		,SMR = dbo.getTPEPass1_ExtNo(o.SMR)
-		,POHandle = dbo.getTPEPass1_ExtNo(PO.POHandle)
-		,POSMR = dbo.getTPEPass1_ExtNo(PO.POSMR)
-		,OrderTypeID = o.OrderTypeID
-		,isDevSample = iif(ot.isDevSample = 1, 'Y', '')
-		,SewouptQty=sew.SewouptQty
-		,SewLastDate=format(sew.SewLastDate,'yyyy/MM/dd')
-		,CTNLastReceiveDate=format(ctnr.CTNLastReceiveDate,'yyyy/MM/dd')
-		,Order_QtyShipCount=iif(ps.ct>1,'Y','')
-		,Alias = c.alias
-		,o.MDivisionID
-		From Orders o WITH (NOLOCK)
-		Left join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
-		Left join Factory f ON o.FACTORYID = f.ID --AND  o.FactoryID = f.KPICode
-		Left join Country c ON F.COUNTRYID = c.ID 
-		Inner Join Order_QtyShip Order_QS on Order_QS.id = o.id
-		Left join PO ON o.POID = PO.ID
-		Left join Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
-		Left join Reason rs on rs.id = Order_QS.ReasonID and rs.ReasonTypeID = 'Order_BuyerDelivery_sample'
-		Left join Brand b on o.BrandID = b.ID
-
-		--是否有分批出貨
-		outer apply (
-			select isPartial = iif (count(distinct oqs.Seq) > 1 ,'Y','')
-			from Order_QtyShip oqs
-			where oqs.Id = o.ID
-		) getPartial
-
-		outer apply (
-			Select 
-				Qty = Sum(rA.Qty),
-				FailQty = Sum(rB.Qty) 
-			From Pullout_Detail pd
-			Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), pd.shipqty, 0)) rA --On Time
-			Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), pd.shipqty, 0)) rB --Fail
-			where pd.OrderID = o.ID 
-			and pd.OrderShipmodeSeq = Order_QS.Seq
-		) pd
-		outer apply (
-			select top 1 p.PulloutDate
-			from Pullout_Detail pd 
-			INNER JOIN Pullout p ON p.Id=pd.id AND p.PulloutDate=pd.PulloutDate
-			where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
-			Order by p.PulloutDate desc
-		) p
-
-		----sew
-		outer apply(
-			select SewouptQty=sum(x.QaQty),SewLastDate=max(SewLastDate)
-			from(
-				Select OrderID, Article, SizeCode, 
-					Min(QaQty) as QaQty,
-					Min(SewLastDate) as SewLastDate
-				From (
-					Select ComboType, OrderID, Article, SizeCode, QaQty = Sum(SewingOutput_Detail_Detail.QaQty), Max(OutputDate) as SewLastDate
-					From SewingOutput_Detail_Detail
-					inner join SewingOutput on SewingOutput_Detail_Detail.ID = SewingOutput.ID
-					Where SewingOutput_Detail_Detail.OrderID=o.id
-					Group by ComboType, OrderID, Article, SizeCode
-				) as sdd
-				Group by OrderID, Article, SizeCode
-			)x
-		)sew
-		--[CTNLastReceiveDate]
-		outer apply(
-			SELECT [CTNLastReceiveDate]= Max(rcv.minreceivedate)
-			FROM (
-				SELECT [MinReceiveDate]=Min(CR.receivedate), cr.orderid, PD.ordershipmodeseq 
-				FROM Production.dbo.ClogReceive cr 
-				INNER JOIN Production.dbo.PackingList_Detail PD ON PD.id = CR.PackingListID AND PD.ctnstartno = CR.ctnstartno 
-				where O.localorder = 0 and O.id = cr.orderid and Order_QS.Seq=PD.ordershipmodeseq
-				GROUP BY cr.PackingListID, cr.ctnstartno, cr.orderid, PD.ordershipmodeseq
-			) rcv 
-			GROUP BY rcv.orderid,rcv.ordershipmodeseq 
-		)ctnr
-		outer apply(
-			select ct=count(distinct seq)
-			from Order_QtyShip oq
-			where oq.id = o.id
-		)ps
-		-------End-------
-        where o.Junk = 0 
-        and o.GMTComplete != 'S' 
-        and Order_QS.QTY - (pd.Qty + pd.FailQty) > 0
-        and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') 
-        and isnull(ot.isDevSample,0) = 0 --isDevSample = 0 才需要看這邊的規則是否Fail
- 
-
- ";
-
-                if (this.radioBulk.Checked)
-                {
-                    strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
-                }
-                else if (this.radioSample.Checked)
-                {
-                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
-                }
-                else
-                {
-                    strSQL += " AND o.Category = 'G'";
-                }
-
-                if (this.dateFactoryKPIDate.Value1 != null)
-                {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                }
-
-                if (this.dateFactoryKPIDate.Value2 != null)
-                {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                }
-
-                if (this.txtFactory.Text != string.Empty)
-                {
-                    strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
-                }
-
-                strSQL += $@"
-
-)QQ
+-----isDevSample=0-----
+left join  #tmp_Pullout_Detail_pd pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq 
+left join  #tmp_Pullout_Detail_p p on p.OrderID = t.OrderID and p.OrderShipmodeSeq = t.Seq 
+---------End------- 
+-------sew
+left join #tmp_SewingOutput sew on sew.OrderId = t.OrderID
+----[CTNLastReceiveDate]
+left join #tmp_ClogReceive ctnr on ctnr.orderid = t.OrderID and ctnr.ordershipmodeseq = t.Seq
+outer apply(
+	select ct=count(distinct seq)
+	from Order_QtyShip oq
+	where oq.id = t.OrderID
+)ps
+-------End-------
+where t.GMTComplete != 'S' 
+and t.OrderQty - (pd.Qty + pd.FailQty) > 0 
+and isnull(t.isDevSample,0) = 0 --isDevSample = 0 才需要看這邊的規則是否Fail
+)a
 
 
 SELECT t.*
 FROM #tmp t
 INNER JOIN Factory f ON t.KPICode=f.id
 
-DROP TABLE #tmp
-
-
+drop table #tmp_Pullout_Detail_p,#tmp_Pullout_Detail_pd,#tmp_Pullout_Detail_pd2,#tmp_Pullout_Detail,#tmp_SewingOutput,#tmp_ClogReceive,#tmp,#tmp_main
 ";
 
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtOrderDetail);
