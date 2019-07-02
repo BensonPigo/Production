@@ -236,7 +236,7 @@ where id = '{0}'", Env.User.Factory), null);
                 // Summary By = SP# 則刪除欄位Size
                 if (this.type == "SP#")
                 {
-                    worksheet.get_Range("G:G").EntireColumn.Delete();
+                    worksheet.get_Range("H:H").EntireColumn.Delete();
                 }
 
                 #region Save & Show Excel
