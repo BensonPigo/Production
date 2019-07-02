@@ -929,7 +929,7 @@ where s.Type = 'EXPORT'");
                 this.printData.Columns.RemoveAt(2);
             }
 
-            int allColumn = this.reportType == 1 ? 25 : 29;
+            int allColumn = this.reportType == 1 ? 23 : 27;
             int i = 0;
             int counts = 0;
             string accnoL1 = "5912"; // Z欄 5912-2222 Airfreight
@@ -1000,12 +1000,12 @@ where s.Type = 'EXPORT'");
                     {
                         objArray[0, 17] = MyUtility.Check.Empty(dr[17]) ? 0 : dr[17];
                         objArray[0, 18] = MyUtility.Check.Empty(dr[18]) ? 0 : dr[18];
-                        objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
-                        objArray[0, 20] = $"=S{intRowsStart}+T{intRowsStart}";
-                        objArray[0, 21] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
-                        objArray[0, 22] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
-                        objArray[0, 23] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
-                        objArray[0, 24] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
+                        // objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
+                        // objArray[0, 20] = $"=S{intRowsStart}+T{intRowsStart}";
+                        objArray[0, 19] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
+                        objArray[0, 20] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
+                        objArray[0, 21] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
+                        objArray[0, 22] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
 
                         // 多增加的AccountID, 必須要動態的填入欄位值!
                         if (counts > 0)
@@ -1016,25 +1016,25 @@ where s.Type = 'EXPORT'");
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
                                     {
-                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(24 + t);
-                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(25 + t);
+                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(22 + t);
+                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
                                     }
 
-                                    objArray[0, 24 + t] = $"=SUM(Y{intRowsStart}:{sumCol5912}{intRowsStart})";
+                                    objArray[0, 22 + t] = $"=SUM(W{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
                                 else if (MyUtility.Convert.GetString(dr.Table.Columns[23 + t].ColumnName).EqualString("6105-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol6105))
                                     {
-                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(24 + t);
-                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(25 + t);
+                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(22 + t);
+                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
                                     }
 
-                                    objArray[0, 24 + t] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
+                                    objArray[0, 22 + t] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
                                 }
                                 else
                                 {
-                                    objArray[0, 24 + t] = MyUtility.Check.Empty(dr[23 + t]) ? 0 : dr[23 + t];
+                                    objArray[0, 22 + t] = MyUtility.Check.Empty(dr[23 + t]) ? 0 : dr[23 + t];
                                 }
                             }
                         }
@@ -1048,12 +1048,12 @@ where s.Type = 'EXPORT'");
                         objArray[0, 20] = dr[20];
                         objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
                         objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
-                        objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
-                        objArray[0, 24] = $"=W{intRowsStart}+X{intRowsStart}";
-                        objArray[0, 25] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
-                        objArray[0, 26] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
-                        objArray[0, 27] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
-                        objArray[0, 28] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
+                        //objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
+                        //objArray[0, 24] = $"=W{intRowsStart}+X{intRowsStart}";
+                        objArray[0, 23] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
+                        objArray[0, 24] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
+                        objArray[0, 25] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
+                        objArray[0, 26] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
 
                         // 多增加的AccountID, 必須要動態的填入欄位值!
                         if (counts > 0)
@@ -1064,25 +1064,25 @@ where s.Type = 'EXPORT'");
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
                                     {
-                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(28 + c);
-                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(29 + c);
+                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(26 + c);
+                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(27 + c);
                                     }
 
-                                    objArray[0, 28 + c] = $"=SUM(AC{intRowsStart}:{sumCol5912}{intRowsStart})";
+                                    objArray[0, 26 + c] = $"=SUM(AA{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
                                 else if (MyUtility.Convert.GetString(dr.Table.Columns[27 + c].ColumnName).EqualString("6105-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol6105))
                                     {
-                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(28 + c);
-                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(29 + c);
+                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(26 + c);
+                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(27 + c);
                                     }
 
-                                    objArray[0, 28 + c] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
+                                    objArray[0, 26 + c] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
                                 }
                                 else
                                 {
-                                    objArray[0, 28 + c] = MyUtility.Check.Empty(dr[27 + c]) ? 0 : dr[27 + c];
+                                    objArray[0, 26 + c] = MyUtility.Check.Empty(dr[27 + c]) ? 0 : dr[27 + c];
                                 }
                             }
                         }
@@ -1098,7 +1098,7 @@ where s.Type = 'EXPORT'");
                     {
                         sc2 = $"-{sumCol6105TTL}{intRowsStart}";
                     }
-                    objArray[0, allColumn + this.accnoData.Rows.Count] = string.Format("=SUM({2}{0}:{1}{0}) - {3}{0}  {4} {5}", intRowsStart, excelSumCol, this.reportType == 1 ? "R" : "V", this.reportType == 1 ? "U" : "Y", sc1, sc2);
+                    objArray[0, allColumn + this.accnoData.Rows.Count] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, this.reportType == 1 ? "R" : "V", sc1, sc2);
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }
