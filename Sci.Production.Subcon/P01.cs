@@ -104,7 +104,7 @@ where  apd.id = '{CurrentMaintain["id"]}'
 ";
             if (MyUtility.Check.Seek(chkP10exists))
             {
-                MyUtility.Msg.WarningBox("Some SP# exist P10");
+                MyUtility.Msg.WarningBox("Some SP# already have Subcon AP data.");
                 return false;
             }
 
