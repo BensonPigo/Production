@@ -238,9 +238,11 @@ WHERE OB.ID ='{POID}' and f.MtltypeId like '%thread%'
                 result = DBProxy.Current.Select(null, sqlCmd_1, out dt1);
                 if (!result) return result;
 
+                //dtPrint2的來源會不同，說明參考ISP20190826、ISP20190872
+
                 if (dt1.Rows.Count==0)
                 {
-                    //Ori長這樣
+                    //dtPrint2最一開始來源長這樣
                     sql = string.Format(@"
 select distinct B.Article
 from Orders o WITH (NOLOCK) 
@@ -341,6 +343,19 @@ SELECT * FROM
 	WHERE PSD.ID ='{POID}' and f.MtltypeId like '%thread%' AND PSD.Junk=0 AND boa.Ukey IS NOT NULL
 )A
 WHERE ThreadColorID <> '' AND ThreadColorID IS NOT NULL
+
+UNION 
+
+ select 
+ B.Article
+ , B.ColorID AS ThreadColorID
+ from Orders o WITH (NOLOCK) 
+ inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+ inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
+ left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
+ where o.ID = '{POID}' and article<>''
+ group by B.Article, B.ColorID
+
 ORDER BY ThreadColorID ASC
 ";
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
