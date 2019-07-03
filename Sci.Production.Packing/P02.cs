@@ -1539,10 +1539,6 @@ END
 CLOSE cursor_temppackinglist
 DEALLOCATE cursor_temppackinglist
 
-UPDATE PackingList_Detail 
-SET CTNEndNo = CTNStartNo
-WHERE ID = @id
-
 IF @@ERROR <> 0
 	ROLLBACK TRANSACTION
 ELSE
