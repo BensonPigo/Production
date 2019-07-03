@@ -132,7 +132,8 @@ select
 	[Marker Length] = wo.MarkerLength,
 	wo.ActCuttingPerimeter,
     o.BuyerDelivery,
-	patternUKey=pattern.UKey,wo.FabricPanelCode
+	patternUKey=p.PatternUkey,
+    wo.FabricPanelCode
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -226,24 +227,7 @@ outer apply(
 	where psd.ID = wo.id and psd.SCIRefno = wo.SCIRefno
 	and fi.InQty is not null
 ) as fi
-
-outer apply(
-	SELECT EditDate = MAX(p.EditDate)
-	from pattern p WITH (NOLOCK) 
-	inner join smnotice_detail s WITH (NOLOCK) on s.id=p.id 
-	where styleukey = o.StyleUkey and p.Status = 'Completed' and s.PhaseID = 'Bulk'
-)patternEditDateA
-outer apply(
-	SELECT EditDate = MAX(p.EditDate)
-	from pattern p WITH (NOLOCK) 
-	where styleukey = o.StyleUkey and Status = 'Completed' 
-)patternEditDateB
-outer apply(
-	SELECT ukey
-	FROM Pattern a WITH (NOLOCK) 
-	WHERE STYLEUKEY = o.StyleUkey and Status = 'Completed' 
-	AND a.EDITdATE = iif(patternEditDateA.EditDate is null,patternEditDateB.EditDate,patternEditDateA.EditDate)
-)pattern
+outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',wo.MarkerNo,o.StyleUkey)p)p
 
 where 1=1
 
