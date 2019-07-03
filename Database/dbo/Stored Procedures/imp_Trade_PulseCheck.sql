@@ -147,6 +147,7 @@ Begin
 		where s.OutputDate >= cast(''' + cast(@firstDay as varchar) + ''' as date)
 		and s.OutputDate <= cast(''' + cast(@lastDay as varchar) + ''' as date)
 		and (o.CateGory != ''G'' or s.Category=''M'') 
+		and f.type <> ''S''
 		and s.MDivisionID = iif(''' + @MDivisionID + ''' ='''', s.MDivisionID, ''' + @MDivisionID + ''')
 		'
 
@@ -241,6 +242,22 @@ drop table #tmpSewingDetail,#tmpSewingGroup,#tmp1stFilter
   
 
 --運算
+select [TotalManHour] = sum(ManHour)
+	, MDivisionID 
+into #tmp_ManHour
+from 
+(
+	select OutputDate
+		   , StdTMS
+		   , QAQty = Sum(QAQty)
+		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
+		   , MDivisionID
+	from #tmp
+	where LastShift <> 'O'
+	group by OutputDate, StdTMS, MDivisionID
+)a
+group by MDivisionID
+
 --SQL By Date
 select [TotalManpower] = sum(ManPower)
 	, MDivisionID 

@@ -23,7 +23,7 @@ BEGIN
 		inner join [PMS\pmsdb\PH1].[Production].dbo.Orders o With(nolock) on ol.OrderId = o.ID
 		where ol.OrderId =@OrderId and ol.Location = @ComboType and o.MDivisionID = @MDivisionID 
 	end
-	else if @MDivisionID = 'PH2'
+	else if @MDivisionID = 'PM3'
 	begin
 		select @styleunit = b.styleunit 
 		from [PMS\pmsdb\PH2].[Production].dbo.orders a WITH (NOLOCK) 
