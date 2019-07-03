@@ -504,7 +504,7 @@ from (
 select distinct a.*
 into #Accno 
 from (
-select AccountID as Accno from #temp4 where AccountID not in ('61022001','61022002','59122222','61022003','61022004','61022005','59121111')
+select AccountID as Accno from #temp4 where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
 and AccountID <> ''
 ) a
 
@@ -536,7 +536,7 @@ order by SUBSTRING(Accno,1,4),rn
                     }
 
                     StringBuilder allAccno = new StringBuilder();
-                    allAccno.Append("[61022001],[61022002],[59122222],[61022003],[61022004],[61022005],[59121111]");
+                    allAccno.Append("[61022001],[61022002],[61022003],[61022004],[61022005],[59121111]");
                     foreach (DataRow dr in this.accnoData.Rows)
                     {
                         allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
@@ -772,7 +772,7 @@ where s.Type = 'EXPORT'");
 select distinct a.* 
 into #Accno 
 from (
-select Accountid as Accno from tmpMaterialData where AccountID not in ('61012001','61012002','59122222','61012003','61012004','61012005','59121111')
+select Accountid as Accno from tmpMaterialData where AccountID not in ('61012001','61012002','61012003','61012004','61012005','59121111')
 and AccountID <> ''
 ) a
 select Accno=cast(Accno as nvarchar(100)) ,rn=ROW_NUMBER() over (order by Accno)
@@ -802,7 +802,7 @@ order by SUBSTRING(Accno,1,4),rn"));
                     }
 
                     StringBuilder allAccno = new StringBuilder();
-                    allAccno.Append("[61012001],[61012002],[59122222],[61012003],[61012004],[61012005],[59121111]");
+                    allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005],[59121111]");
                     foreach (DataRow dr in this.accnoData.Rows)
                     {
                         allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
@@ -1002,17 +1002,17 @@ where s.Type = 'EXPORT'");
                         objArray[0, 18] = MyUtility.Check.Empty(dr[18]) ? 0 : dr[18];
                         // objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
                         // objArray[0, 20] = $"=S{intRowsStart}+T{intRowsStart}";
-                        objArray[0, 19] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
-                        objArray[0, 20] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
-                        objArray[0, 21] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
-                        objArray[0, 22] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
+                        objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
+                        objArray[0, 20] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
+                        objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
+                        objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
 
                         // 多增加的AccountID, 必須要動態的填入欄位值!
                         if (counts > 0)
                         {
                             for (int t = 1; t <= counts; t++)
                             {
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[23 + t].ColumnName).EqualString("5912-Total"))
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("5912-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
                                     {
@@ -1022,7 +1022,7 @@ where s.Type = 'EXPORT'");
 
                                     objArray[0, 22 + t] = $"=SUM(W{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
-                                else if (MyUtility.Convert.GetString(dr.Table.Columns[23 + t].ColumnName).EqualString("6105-Total"))
+                                else if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("6105-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol6105))
                                     {
@@ -1034,7 +1034,7 @@ where s.Type = 'EXPORT'");
                                 }
                                 else
                                 {
-                                    objArray[0, 22 + t] = MyUtility.Check.Empty(dr[23 + t]) ? 0 : dr[23 + t];
+                                    objArray[0, 22 + t] = MyUtility.Check.Empty(dr[22 + t]) ? 0 : dr[22 + t];
                                 }
                             }
                         }
@@ -1050,17 +1050,17 @@ where s.Type = 'EXPORT'");
                         objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
                         //objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
                         //objArray[0, 24] = $"=W{intRowsStart}+X{intRowsStart}";
-                        objArray[0, 23] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
-                        objArray[0, 24] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
-                        objArray[0, 25] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
-                        objArray[0, 26] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
+                        objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
+                        objArray[0, 24] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
+                        objArray[0, 25] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
+                        objArray[0, 26] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
 
                         // 多增加的AccountID, 必須要動態的填入欄位值!
                         if (counts > 0)
                         {
                             for (int c = 1; c <= counts; c++)
                             {
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[27 + c].ColumnName).EqualString("5912-Total"))
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[26 + c].ColumnName).EqualString("5912-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
                                     {
@@ -1070,7 +1070,7 @@ where s.Type = 'EXPORT'");
 
                                     objArray[0, 26 + c] = $"=SUM(AA{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
-                                else if (MyUtility.Convert.GetString(dr.Table.Columns[27 + c].ColumnName).EqualString("6105-Total"))
+                                else if (MyUtility.Convert.GetString(dr.Table.Columns[26 + c].ColumnName).EqualString("6105-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol6105))
                                     {
@@ -1082,7 +1082,7 @@ where s.Type = 'EXPORT'");
                                 }
                                 else
                                 {
-                                    objArray[0, 26 + c] = MyUtility.Check.Empty(dr[27 + c]) ? 0 : dr[27 + c];
+                                    objArray[0, 26 + c] = MyUtility.Check.Empty(dr[26 + c]) ? 0 : dr[26 + c];
                                 }
                             }
                         }
