@@ -82,7 +82,7 @@ select  s.OutputDate
 		, [MockupCPUFactor] = isnull(mo.CPUFactor,0)
 		, [OrderStyle] = isnull(o.StyleID,'')
 		, [MockupStyle] = isnull(mo.StyleID,'')
-        , [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100
+        , [Rate] = isnull(dbo.[GetOrderLocation_Rate_ByLinked](o.id ,sd.ComboType, o.MDivisionID),100)/100
 		, System.StdTMS
         , o.SubconInSisterFty
         , [SubconOutFty] = iif(sf.id is null,'Other',s.SubconOutFty)
@@ -132,7 +132,7 @@ Begin
 				, [MockupCPUFactor] = isnull(mo.CPUFactor,0)
 				, [OrderStyle] = isnull(o.StyleID,'''')
 				, [MockupStyle] = isnull(mo.StyleID,'''')
-				, [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100
+				, [Rate] = isnull(dbo.[GetOrderLocation_Rate_ByLinked](o.id ,sd.ComboType, o.MDivisionID),100)/100
 				, System.StdTMS
 				, o.SubconInSisterFty
 				, [SubconOutFty] = iif(sf.id is null,''Other'',s.SubconOutFty)
