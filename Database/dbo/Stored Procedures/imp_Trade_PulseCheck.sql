@@ -398,7 +398,7 @@ DECLARE CURSOR_ CURSOR FOR
 select a.MDivisionID
 	,[Performed] = cast(c.[Total CPU Included Subcon-In] - isnull(d.[Subcon-Out Total CPU(sister)],0) as decimal(18,6))
 	,e.[Working Days]
-	,a.[Avg Working Hours]
+	,[Avg Working Hours] =cast(f.TotalManHour / b.TotalManpower as decimal(18,6))
 	,a.[PPH]
 	,a.[Efficiency]
 	,[Direct Manpower] = cast(b.TotalManpower / e.[Working Days] as decimal(18,6))
@@ -407,6 +407,7 @@ left join #tmp_TotalManpower b on a.MDivisionID = b.MDivisionID
 left join #tmp_cpuFactor c on a.MDivisionID =c.MDivisionID
 left join #tmp_SubconCPU_sister d on a.MDivisionID = d.MDivisionID
 left join #tmp_WorkingDays e on a.MDivisionID = e.MDivisionID
+left join #tmp_ManHour f on a.MDivisionID = f.MDivisionID
 
 
 declare @_MDivisionID as varchar(8)
