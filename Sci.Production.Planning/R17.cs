@@ -351,6 +351,7 @@ and isnull(t.isDevSample,0) = 0 --isDevSample = 0 才需要看這邊的規則是
 SELECT t.*
 FROM #tmp t
 INNER JOIN Factory f ON t.KPICode=f.id
+ORDER BY  t.OrderID, t.seq, t.KpiCode
 
 drop table #tmp_Pullout_Detail_p,#tmp_Pullout_Detail_pd,#tmp_Pullout_Detail_pd2,#tmp_Pullout_Detail,#tmp_SewingOutput,#tmp_ClogReceive,#tmp,#tmp_main
 ";
@@ -674,18 +675,12 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                         DataRow drSP = this.gdtSP.NewRow();
                         drSP.ItemArray = drData.ItemArray;
                         poid = drData["OrderID"].ToString();
-                        foreach (var i in groupQty)
+                        foreach (var i in groupQty.AsEnumerable().Where(x => x.sumFailQty > 0 && x.PoID == poid))
                         {
-                            if (i.sumFailQty > 0)
-                            {
-                                if (i.PoID == drData["OrderID"].ToString())
-                                {
-                                    drSP["OrderQty"] = i.sumOrderQty;
-                                    drSP["OnTimeQty"] = i.sumPullQty;
-                                    drSP["FailQty"] = i.sumFailQty;
-                                    drSP["P"] = i.sumP;
-                                }
-                            }
+                            drSP["OrderQty"] = i.sumOrderQty;
+                            drSP["OnTimeQty"] = i.sumPullQty;
+                            drSP["FailQty"] = i.sumFailQty;
+                            drSP["P"] = i.sumP;
                         }
 
                         this.gdtSP.Rows.Add(drSP);
