@@ -701,7 +701,7 @@ order by aLine.SewingLineID, aLine.Team");
 	group by StdTMS
 ),
 tmpTtlManPower as (
-	select ManPower = Sum(Manpower)
+	/*select ManPower = Sum(Manpower)  算法更改，用下面的，舊的保留
 	from (
 		select OutputDate
 			   , FactoryID
@@ -715,7 +715,41 @@ tmpTtlManPower as (
               and LastShift <> 'I'
 		      or (LastShift = 'I' and SubconInSisterFty = 1)
 		group by OutputDate, FactoryID, SewingLineID, LastShift, Team
+	) a*/
+
+	select ManPower = Sum(a.Manpower)  - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
+	from (
+		select OutputDate
+				, FactoryID
+				, SewingLineID
+				, LastShift
+				, Team
+				, ManPower = Max(ActManPower)
+		from #tmp
+		where LastShift <> 'O'
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team 
 	) a
+	outer apply
+	(
+		select ManPower
+		from (
+			select OutputDate
+					, FactoryID
+					, SewingLineID
+					, LastShift
+					, Team
+					, ManPower = Max(ActManPower)
+					,SubconInSisterFty
+			from #tmp
+			where LastShift <> 'O'
+			group by OutputDate, FactoryID, SewingLineID, LastShift, Team,SubconInSisterFty
+		) m2
+		where  (m2.LastShift = 'I' and m2.SubconInSisterFty = 1)
+				and m2.Team = a.Team 
+				and m2.SewingLineID = a.SewingLineID	
+				and a.OutputDate = m2.OutputDate
+				and m2.FactoryID = a.FactoryID	
+	) d
 )
 select q.QAQty
 	   , q.TotalCPU
