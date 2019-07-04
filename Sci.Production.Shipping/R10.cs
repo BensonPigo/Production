@@ -126,13 +126,14 @@ s.BLNo,
 se.CurrencyID,
 p.OrderID,p.ID as packingID
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
 inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder 
-where s.Type = 'EXPORT'");
+where s.Type = 'EXPORT'
+");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
                             sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
@@ -199,12 +200,13 @@ s.BLNo,
 se.CurrencyID,
 p.OrderID,p.ID as packingID
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 inner join [FinanceEN].dbo.AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
-where s.Type = 'EXPORT'");
+where s.Type = 'EXPORT'
+");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
                             sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
@@ -263,14 +265,15 @@ g.CustCDID,g.Dest,g.ShipModeID,p.ID as packingid, p.PulloutID,p.PulloutDate,
 g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
 s.BLNo,se.CurrencyID
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
 inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 inner join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID=oq.Id and oq.Seq = pd.OrderShipmodeSeq
 inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
-where s.Type = 'EXPORT'");
+where s.Type = 'EXPORT'
+");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
                             sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
@@ -337,13 +340,14 @@ o.CustCDID,o.Dest,p.ShipModeID,p.ID as packingid, p.PulloutID,p.PulloutDate,
 '' as Forwarder,
 s.BLNo,se.CurrencyID
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
 inner join [FinanceEN].dbo.AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
-where s.Type = 'EXPORT'");
+where s.Type = 'EXPORT'
+");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
                             sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
@@ -433,7 +437,7 @@ Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID
 select a.*,b.AccountID,b.Amount 
 into #temp4
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID");
+inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID and b.Junk = 0");
                     }
                     else
                     {
@@ -486,13 +490,13 @@ from (
 	select a.*,b.AccountID
 	,[Amount] = iif(c.TotalCBM is null or c.TotalCBM=0,0, convert(float, round(b.Amount * A.CBM/C.TotalCBM,2) ))
 	from #temp3 a
-	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
+	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID and b.Junk = 0
 	LEFT JOIN #tmpTotoalCBM C ON A.ID=C.ID
 	union all
 	select a.*,b.AccountID
 	,[Amount] = iif(c.TotalGW is null or c.TotalGW=0,0, convert(float, round(b.Amount * A.gw/C.TotalGW,2) ))
 	from #temp3 a
-	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
+	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID and b.Junk = 0
 	LEFT JOIN #tmpTotoalGW C ON A.ID=C.ID
 ) a");
                     }
@@ -541,7 +545,7 @@ pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipMod
 p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
 s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
 inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
@@ -549,7 +553,8 @@ left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 left join [FinanceEN].dbo.AccountNo a WITH (NOLOCK)  on a.ID = se.AccountID
-where s.Type = 'EXPORT'");
+where s.Type = 'EXPORT'
+");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
                         sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
@@ -613,13 +618,14 @@ pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipMod
 p.GW,p.CBM,'' as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
 s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 left join [FinanceEN].dbo.AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
-where s.Type = 'EXPORT'");
+where s.Type = 'EXPORT'
+");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
                         sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
@@ -685,10 +691,11 @@ select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Cat
 0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),
 se.Amount
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
-where s.Type = 'EXPORT'");
+where s.Type = 'EXPORT'
+");
                         #endregion
                     }
                     else
@@ -701,7 +708,7 @@ select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Cat
 0 as ShipQty,0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,
 se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),se.Amount
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 where s.Type = 'EXPORT'");
@@ -780,7 +787,7 @@ FOR AccountID IN ({0})) a", allAccno.ToString()));
 0 as ShipQty,0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,
 se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
