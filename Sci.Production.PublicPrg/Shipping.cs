@@ -257,12 +257,12 @@ select  top 1
 from Fabric f with (nolock)
 inner join Brand b with (nolock) on b.ID = @BrandID 
 inner join Brand b2 with (nolock) on b2.BrandGroup = b.BrandGroup and f.BrandID = b2.ID 
-outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit) Rate
-outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
-outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
-outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
 outer apply(select [val] = dbo.getStockUnit(f.SCIRefNo,default)) as StockUnit
 outer apply(select [val] = dbo.getUnitRate('YDS',StockUnit.val) * @UsageQty) as StockQty
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = f.CustomsUnit) Rate
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = 'M') M2Rate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = f.CustomsUnit) UnitRate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = 'M') M2UnitRate
  where f.Refno = @Refno and f.Type = 'F' and f.Junk = 0 {whereSciRefno} {whereNLCode}
 order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
 ";
@@ -285,12 +285,12 @@ select  NLCode ,
 from Fabric f with (nolock)
 inner join Brand b with (nolock) on b.ID = @BrandID 
 inner join Brand b2 with (nolock) on b2.BrandGroup = b.BrandGroup and f.BrandID = b2.ID 
-outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = f.CustomsUnit) Rate
-outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
-outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
-outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
 outer apply(select [val] = dbo.getStockUnit(f.SCIRefNo,default)) as StockUnit
 outer apply(select [val] = dbo.getUnitRate(f.UsageUnit,StockUnit.val) * @UsageQty) as StockQty
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = f.CustomsUnit) Rate
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = 'M') M2Rate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = f.CustomsUnit) UnitRate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = 'M') M2UnitRate
  where f.Refno = @Refno and f.Type = 'A' and f.Junk = 0 {whereSciRefno} {whereNLCode}
 order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
 ";
@@ -559,13 +559,18 @@ select  t.StyleID
         , f.PcsLength
         , f.PcsKg
         , f.Description
-        , isnull((select RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit),1) as RateValue
-        , (select RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') as M2RateValue
-        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit),0) as UnitRate
-        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M'),0) as M2UnitRate
+        , isnull((select RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = f.CustomsUnit),1) as RateValue
+        , (select RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = 'M') as M2RateValue
+        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = f.CustomsUnit),0) as UnitRate
+        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = 'M'),0) as M2UnitRate
+		, [UsageQty] = t.markerYDS/t.Qty
+        , [StockUnit] = StockUnit.val
+		, [StockQty] = StockQty.val
 into #tmpBOFRateData
 from #tmpFabricCode t
 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = t.SCIRefno
+outer apply(select [val] = dbo.getStockUnit(f.SCIRefno, default)) as StockUnit
+outer apply(select [val] = dbo.getUnitRate('YDS',StockUnit.val) * t.markerYDS) as StockQty
 where   (t.SuppIDBulk <> 'FTY' or t.SuppIDBulk <> 'FTY-C')
         and f.NoDeclare = 0
 
@@ -587,15 +592,13 @@ select  StyleID
         , StyleUKey
         , Description
         , IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type
-        , ([dbo].getVNUnitTransfer(Type,StockUnit.val,CustomsUnit,StockQty.val,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),iif(Qty=0.000,0.000,IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)),default)/Qty) as NewQty
-		, [StockUnit] = StockUnit.val
-		, [StockQty] = StockQty.val/Qty
-        , [UsageUnit] = UsageUnit
-		, [UsageQty] = markerYDS/Qty
+        , ([dbo].getVNUnitTransfer(Type,StockUnit,CustomsUnit,StockQty,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),iif(Qty=0.000,0.000,IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)),default)/Qty) as NewQty
+		, StockUnit
+		, [StockQty] = StockQty / Qty
+        , UsageUnit
+		, UsageQty
 into #tmpBOFNewQty
 from #tmpBOFRateData
-outer apply(select [val] = dbo.getStockUnit(SCIRefno, default)) as StockUnit
-outer apply(select [val] = dbo.getUnitRate(UsageUnit,StockUnit.val) * markerYDS) as StockQty
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
@@ -665,12 +668,14 @@ where   sb.IsCustCD <> 2
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  t.*
-        , IIF(t.BomTypeCalculate = 1, isnull(dbo.GetDigitalValue(s.SizeSpec),0)
-				                    , ConsPC) as SizeSpec
-        , isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.UsageUnit and TO_U = t.CustomsUnit),1) as RateValue
-        , (select RateValue from dbo.View_Unitrate where FROM_U = t.UsageUnit and TO_U = 'M') as M2RateValue
-        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = t.CustomsUnit),'') as UnitRate
-        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = 'M'),'') as M2UnitRate
+        , [SizeSpec] = SizeSpec.val
+        , isnull((select RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = t.CustomsUnit),1) as RateValue
+        , (select RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = 'M') as M2RateValue
+        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = t.CustomsUnit),'') as UnitRate
+        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = 'M'),'') as M2UnitRate
+        , [StockUnit] = StockUnit.val
+		, [StockQty] = StockQty.val
+        , [UsageQty] = SizeSpec.val
 into #tmpBOAPrepareData
 from #tmpBOA t
 outer apply(
@@ -680,6 +685,9 @@ outer apply(
             and SizeItem = t.SizeItem 
             and SizeCode = t.SizeCode 
 )S
+outer apply(select [val] = IIF(t.BomTypeCalculate = 1, isnull(dbo.GetDigitalValue(s.SizeSpec),0), ConsPC)) as SizeSpec
+outer apply(select [val] = dbo.getStockUnit(t.SCIRefno,default)) as StockUnit
+outer apply(select [val] = dbo.getUnitRate(t.UsageUnit,StockUnit.val) * SizeSpec.val) as StockQty
 where   (t.BomTypeArticle = 0 and t.BomTypeColor = 0) 
         or ((t.BomTypeArticle = 1 or t.BomTypeColor = 1) and t.ColorID is not null)
 
@@ -701,15 +709,13 @@ select  StyleID
         , StyleUKey
         , Description
         , IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type
-        , [dbo].getVNUnitTransfer(Type, StockUnit.val,CustomsUnit,StockQty.val,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),default) as NewQty
-        , [StockUnit] = StockUnit.val
-		, [StockQty] = StockQty.val
-        , [UsageUnit] = UsageUnit
-		, [UsageQty] = SizeSpec
+        , [dbo].getVNUnitTransfer(Type, StockUnit,CustomsUnit,StockQty,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),default) as NewQty
+        , StockUnit
+		, StockQty
+        , UsageUnit
+		, UsageQty
 into #tmpBOANewQty
 from #tmpBOAPrepareData
-outer apply(select [val] = dbo.getStockUnit(SCIRefno,default)) as StockUnit
-outer apply(select [val] = dbo.getUnitRate(UsageUnit,StockUnit.val) * SizeSpec) as StockQty
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
         , SeasonID
