@@ -636,6 +636,7 @@ namespace Sci.Production.Planning
                 this.SetColumnToBack(dtMDVList, "MDivisionID", "Sample");
                 this.SetColumnToBack(dtMDVList, "MDivisionID", string.Empty);
                 bool isSample = false;
+                int shortageStart = 0;
                 for (int idxMDV = 0; idxMDV < dtMDVList.Rows.Count; idxMDV++)
                 {
                     lisBold.Add(this.sheetStart.ToString());
@@ -686,7 +687,7 @@ namespace Sci.Production.Planning
                     //lisSumFtyNonSis.Add(ftyStart.ToString() + "," + nonSisStart.ToString());
 
                     // Shortage
-                    int shortageStart = this.sheetStart;
+                    shortageStart = this.sheetStart;
                     DataTable dtByShortage = this.SafeGetDt(dt1, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
                     this.SetTableToRow(wks, this.sheetStart, "Shortage", dtByShortage, "OrderShortage");
                     this.DrawBottomLine(wks, this.sheetStart, 1);
@@ -755,7 +756,7 @@ namespace Sci.Production.Planning
                 string sumFtyStr = "=";
                 foreach (string str in lisSumFtyNonSis)
                 {
-                    sumFtyStr += string.Format("+SUM({{0}}{0}:{{0}}{1})", str.Split(',')[0], str.Split(',')[1]);
+                    sumFtyStr += string.Format("+SUM({{0}}{0}:{{0}}{1})- {{0}}{2}", str.Split(',')[0], str.Split(',')[1], shortageStart);
                 }
 
                 this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Grand TTL", countryID), sumFtyStr);
