@@ -154,6 +154,10 @@ from VNConsumption where 1=0";
                         {
                             remark += "NLCode is not maintained." + Environment.NewLine;
                         }
+                        else if (MyUtility.Check.Empty(drNLCode["StockUnit"]))
+                        {
+                            remark += "StockUnit is not found." + Environment.NewLine;
+                        }
                         else
                         {
                             newRow["NLCode"] = drNLCode["NLCode"];
