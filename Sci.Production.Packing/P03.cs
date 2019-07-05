@@ -1092,6 +1092,12 @@ order by os.Seq",
             // 檢查表身的ShipMode與表頭的ShipMode如果不同就不可以SAVE，存檔後提醒
             this.CheckShipMode("save");
 
+            string upd_sql = $@"
+UPDATE PackingList_Detail
+SET CTNEndNo = CTNStartNo
+WHERE ID =  '{this.CurrentMaintain["ID"]}'";
+            DualResult upd_result = DBProxy.Current.Execute(null, upd_sql);
+
             return Result.True;
         }
 
