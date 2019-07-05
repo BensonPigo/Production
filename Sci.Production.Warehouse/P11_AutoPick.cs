@@ -239,7 +239,7 @@ select	distinct p.id as [poid]
         , p.SCIRefno
         , dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
 	    , p.ColorID
-		, SizeSpec = ISNULL (iif (f.BomTypeCalculate = 1, os.SizeSpec, p.SizeSpec), '')
+		, SizeSpec = dbo.getSizeSpecTrans(ISNULL (iif (f.BomTypeCalculate = 1, os.SizeSpec, p.SizeSpec), ''),p.SizeUnit)
         , PoSizeSpec = p.SizeSpec
         , p.Spec
         , p.Special

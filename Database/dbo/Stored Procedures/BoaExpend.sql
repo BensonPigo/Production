@@ -342,7 +342,7 @@ Begin
 				, IIF(@BoaBomTypePo = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.CustPONo, '') as BomCustPONo
 				, IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.SizeSeq, '') as SizeSeq
 				, IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.SizeCode, '') as SizeCode
-				, IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, IsNull(tmpOrder_SizeSpec_OrderCombo.SizeSpec, tmpOrder_SizeSpec.SizeSpec), '') as SizeSpec
+				, IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, dbo.getSizeSpecTrans(IsNull(tmpOrder_SizeSpec_OrderCombo.SizeSpec, tmpOrder_SizeSpec.SizeSpec), ''), @UsageUnit) as SizeSpec
 				, IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, @tmpSizeUnit, '') as SizeUnit
 				, Qty as OrderQty
 				, (Qty * IIF(IsNull(@SizeItem, '') = '', 1, IsNull(IsNull(tmpOrder_SizeSpec_OrderCombo.SizeSpec_Cal, tmpOrder_SizeSpec.SizeSpec_Cal), IIF(@BomTypeCalculate = 1, 0, 1))) * @BoaConsPC) as UsageQty
