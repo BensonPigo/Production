@@ -2584,12 +2584,6 @@ on t.type=s.type and t.id=s.id
 			delete;
   
 		--Fabric_Supp
-		--Fabric_Supp 無多欄位
-		----------------------刪除主TABLE多的資料
-		Delete Production.dbo.Fabric_Supp
-		from Production.dbo.Fabric_Supp as a left join Trade_To_Pms.dbo.Fabric_Supp as b
-		on a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno
-		where b.SuppID is null
 		---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 		UPDATE a
 		SET  
