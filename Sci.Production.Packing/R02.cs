@@ -301,7 +301,9 @@ outer apply( select [TtlCtnQty] = sum(p.CTNQty),[TtlRemainCtnQty] = sum(iif(p.Sc
 		  ) carton
 
 select 
-	o.CustPONo,o.id,pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,[CTN Barcode] = pld.ID+pld.CTNStartNo
+    o.SewLine,o.BuyerDelivery,
+	o.CustPONo,o.id,o.StyleID,
+    pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,[CTN Barcode] = pld.ID+pld.CTNStartNo
     ,[Barcode] = isnull(c7.Barcode,'')
     ,[PC/CTN] = pld.QtyPerCTN
 	,[Scanned Qty] = pld.ScanQty
