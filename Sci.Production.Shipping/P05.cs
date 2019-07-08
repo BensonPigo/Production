@@ -83,6 +83,7 @@ select  p.GMTBookingLock
                                 where pd.ID = p.id
                                 group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
                             ) a 
+							order by a.OrderID
                             for xml path('')
                           ), 1, 1, '') 
         , OrderShipmodeSeq = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
@@ -164,7 +165,31 @@ select  p.GMTBookingLock
                                 and pd.ReceiveDate is not null)
         , p.InspDate
         , p.ShipModeID
+        , P.pulloutid
+        , OrderQty = STUFF ((select CONCAT (',', cast (a.Qty as nvarchar)) 
+                            from (
+                                select distinct o.id,o.Qty
+                                from PackingList_Detail pd WITH (NOLOCK) 
+                                inner join orders o with(nolock) on o.id= pd.orderid
+                                where pd.ID = p.id
+                            ) a 
+							order by a.id
+                            for xml path('')
+                          ), 1, 1, '') 
+         , SewingOutputQty = STUFF ((select CONCAT (',', cast (sum(sod.qaqty) as nvarchar)) 
+                            from (
+                                select pd.OrderID
+                                from PackingList_Detail pd WITH (NOLOCK) 
+                                where pd.ID = p.id
+                                group by pd.OrderID
+                            ) a 
+                            inner join SewingOutput_Detail_Detail sod with(nolock) on sod.orderid= a.orderid
+							group by sod.OrderId
+							order by sod.OrderId
+                            for xml path('')
+                          ), 1, 1, '')         , Pullout.sendtotpe
 from PackingList p WITH (NOLOCK) 
+left join Pullout WITH (NOLOCK) on Pullout.id=p.Pulloutid
 where {0}", this.masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -260,8 +285,11 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("PONo", header: "PO No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
-                .Date("SDPDate", header: "SDP Date", iseditingreadonly: true)
+                .Text("OrderQty", header: "Order Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SewingOutputQty", header: "Prod. Output Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("PulloutID", header: "Pullout ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("PulloutDate", header: "Pull out Date", iseditingreadonly: true)
+                .Date("SendToTPE", header: "Send to SCI", iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Q'ty", iseditingreadonly: true, settings: this.shipqty)
                 .Numeric("CTNQty", header: "CTN Q'ty", iseditingreadonly: true)
                 .Numeric("GW", header: "G.W.", decimal_places: 3, iseditingreadonly: true)
