@@ -270,8 +270,9 @@ SELECT * FROM (
     where o.iD = '{POID}'   and article<>''  
 
     UNION --註2
-    select Article from Order_Article 
-    where id = '{POID}' 
+    select distinct Article from Order_Article oa
+	inner join Orders allOrder With (NoLock) on oa.id = allOrder.id
+    where allOrder.poid = '{POID}' 
 ) a
 ORDER BY Article ASC
 ";
