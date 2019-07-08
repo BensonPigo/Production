@@ -112,12 +112,12 @@ namespace SendSewingDailyOutputList
                 if (MyUtility.Check.Empty(excelFile))
                 {
                     Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
-                    mail.ShowDialog();
+                    mail.Show();
                 }
                 else
                 {
                     Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, excelFile, desc, true, true);
-                    mail.ShowDialog();
+                    mail.Show();
                 }
 
             }
