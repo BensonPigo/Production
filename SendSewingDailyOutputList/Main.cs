@@ -127,12 +127,7 @@ namespace SendSewingDailyOutputList
         #region 執行SendMail
         private void ClickExport()
         {
-            this.ShowWaitMessage("Data Loading...");
-
             DualResult result = execSewingDailyOutput();
-
-            this.HideWaitMessage();
-
             mymailTo(result.ToSimpleString());
 
             if (!result)
@@ -194,7 +189,6 @@ Result : {res}
                 if (!result)
                 {
                     issucess = false;
-                    return result;
                 }
 
                 #region 產生Excel
@@ -211,7 +205,10 @@ Result : {res}
                 objSheets.get_Range("A1", r + "1").AutoFilter(1);
                 objApp.Visible = false;
 
-                MyUtility.Excel.CopyToXls(dt, "", "Sewing_R04_SewingDailyOutputList.xltx", 1, false, null, objApp);
+                if (dt.Rows.Count != 0)
+                {
+                    MyUtility.Excel.CopyToXls(dt, "", "Sewing_R04_SewingDailyOutputList.xltx", 1, false, null, objApp);
+                }
                 excelFile = GetName("Sewing daily output list -");
                 objApp.ActiveWorkbook.SaveAs(excelFile);
                 objApp.Quit();
