@@ -1355,6 +1355,7 @@
             this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.panel1);
             this.Name = "P10_Detail";
+            this.OnLineHelpID = "Sci.Win.Forms.Base";
             this.Text = "P10_Detail";
             this.Load += new System.EventHandler(this.P10_Detail_Load);
             this.tabControl1.ResumeLayout(false);

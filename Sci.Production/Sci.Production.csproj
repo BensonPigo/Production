@@ -750,7 +750,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Quality_P10_SampleGarmentWash.xltx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Quality_P11_Detail_Report.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1047,7 +1047,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_R14_Summary.xltx">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_R40_AlreadySewingOutput.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
