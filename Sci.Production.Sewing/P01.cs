@@ -13,6 +13,8 @@ using System.Transactions;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
 using System.Runtime.InteropServices;
+using Sci.Production.Class;
+using System.IO;
 
 namespace Sci.Production.Sewing
 {
@@ -3342,7 +3344,10 @@ order by ArtworkTypeID"),
 
             excel.Visible = false;
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Daily CMP Report");
+            string strExcelName = Path.Combine(Sci.Env.Cfg.ReportTempDir,
+                                "Daily CMP Report"
+                               + DateTime.Now.ToString("_yyyyMMdd_HHmmssfff")
+                               + "(" + Sci.Env.User.Factory + ").xlsx");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
