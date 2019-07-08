@@ -66,6 +66,7 @@ Begin
 			where s.StyleUkey = @Style
 				and sd.PhaseID = 'Bulk'
 				and p.Status='Completed'
+				and SUBSTRING(p.PatternNo,len(p.PatternNo),1) = 'N'
 			order by p.EditDate desc)
 	End
 	
@@ -78,6 +79,7 @@ Begin
 			inner join Pattern p with(nolock)on p.id = sd.id
 			where s.StyleUkey = @Style
 				and p.Status='Completed'
+				and SUBSTRING(p.PatternNo,len(p.PatternNo),1) = 'N'
 			order by p.EditDate desc)
 	End
 
