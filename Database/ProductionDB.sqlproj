@@ -2367,6 +2367,7 @@
     <Build Include="dbo\Functions\QtyBySetPerSubprocess.sql" />
     <Build Include="dbo\Stored Procedures\imp_Trade_PulseCheck.sql" />
     <Build Include="dbo\Functions\GetOrderLocation_Rate_ByLinked.sql" />
+    <Build Include="dbo\Tables\GarmentTest_Detail_Apperance.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

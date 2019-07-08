@@ -78,9 +78,10 @@ where 1=1
 and s.Shift <>''O''
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))
-and (s.OutputDate = CAST(DATEADD(day,-1,'''+@SewingoutputDate+''') AS date) --By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty
-OR cast(s.EditDate as date) = CAST(DATEADD(day,-1, '''+@SewingoutputDate+''' )AS date))
+and (s.OutputDate = CAST(DATEADD(day,-1,'''+@SewingoutputDate+''') AS date) OR cast(s.EditDate as date) = CAST(DATEADD(day,-1, '''+@SewingoutputDate+''' )AS date)) 
 -- AND CAST('''+@SewingoutputDate+'''  AS date)
+and f.Type != ''S''
+
 
 select distinct ID,OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionID,OrderId,ComboType
 	,ActManPower = Sum(ActManPower)over(partition by id,OrderId,ComboType)
@@ -197,8 +198,8 @@ select * INTO #Final from(
 		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty,Diff = t.QAQty-InlineQty
 		,rate
-        ,t.Remark
-        ,t.SewingReasonDesc
+        ,isnull(t.Remark,'''')Remark		
+        ,isnull(t.SewingReasonDesc,'''')SewingReasonDesc
 		 
     from #tmp1stFilter t )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
