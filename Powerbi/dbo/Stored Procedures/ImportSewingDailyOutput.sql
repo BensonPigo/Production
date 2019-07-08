@@ -198,8 +198,8 @@ select * INTO #Final from(
 		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty,Diff = t.QAQty-InlineQty
 		,rate
-        ,t.Remark
-        ,t.SewingReasonDesc
+        ,isnull(t.Remark,'''')Remark		
+        ,isnull(t.SewingReasonDesc,'''')SewingReasonDesc
 		 
     from #tmp1stFilter t )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
