@@ -958,12 +958,12 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
     -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
     update s set s.Price = 0
         from #tmpAllSubprocess s
-        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId
+        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
         where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
 
     update s set s.Price = 0
         from #tmpAllSubprocess s
-        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId
+        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
         where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
 
 select ArtworkTypeID = t1.ID
