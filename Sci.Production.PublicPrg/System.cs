@@ -185,24 +185,8 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
             OutTb = null;
             string patidsql;
-            patidsql = String.Format(
-                        @"
-SELECT ukey
-FROM [Production].[dbo].[Pattern] a WITH (NOLOCK) 
-outer apply(
-	SELECT EditDate = MAX(p.EditDate)
-	from pattern p WITH (NOLOCK) 
-	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
-	where styleukey = '{0}' and Status = 'Completed' and s.PhaseID = 'Bulk'
-)b
-outer apply(
-	SELECT EditDate = MAX(p.EditDate)
-	from pattern p WITH (NOLOCK) 
-	where styleukey = '{0}' and Status = 'Completed' 
-)c
-WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
-AND a.EDITdATE = iif(b.EditDate is null,c.EditDate,b.EditDate)
-             ", Styleyukey);
+
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{OrderID}','{cutref}','',{Styleyukey})s";
 
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion
