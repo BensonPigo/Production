@@ -363,7 +363,6 @@ where lapd.id = '{0}'"
                         return;
                     }
                     CurrentDetailData["Qty"] = e.FormattedValue;
-                    CurrentDetailData["amount"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(CurrentDetailData["price"]);
                     CurrentDetailData.EndEdit();
                 }
             };
