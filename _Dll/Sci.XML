@@ -2704,193 +2704,198 @@
         </member>
         <member name="T:Sci.Properties.Resources">
             <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
+              用於查詢當地語系化字串等的強類型資源類別。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.ResourceManager">
             <summary>
-              Returns the cached ResourceManager instance used by this class.
+              傳回這個類別使用的快取的 ResourceManager 執行個體。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.Culture">
             <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
+              覆寫目前執行緒的 CurrentUICulture 屬性，對象是所有
+              使用這個強類型資源類別的資源查閱。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.APPEND">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.checkbox_no">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.checkbox_yes">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.CHECKED">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.DELETE">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.HAMMER">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.INSERT">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.LABELS">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+            </summary>
+        </member>
+        <member name="P:Sci.Properties.Resources.Logo2">
+            <summary>
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.preloader">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.UNCHECKED">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZBACK">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZcheck">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZCLIP">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZCLOSE">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZCONFIRM">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZCOPY">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZDELETE">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZEDIT">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZEND">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZjunk">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZLOCATE">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZLUCK">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZNEW">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZNEXT">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZPRINT">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZRECALL">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZreceive">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZreturn">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZSAVE">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZSEND">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZTOP">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZuncheck">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZUNCONFIRM">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZUNDO">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.WZUNLOCK">
             <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
         <member name="T:Sci.Result">
@@ -10107,6 +10112,11 @@
             </summary>
             <returns>result of process.</returns>
         </member>
+        <member name="M:Sci.Win.Tems.Input7.ClickClip">
+            <summary>
+            On ClickClip method.(夾檔作業)
+            </summary>
+        </member>
         <member name="M:Sci.Win.Tems.Input7.ClickSave">
             <summary>
             Do save data to database when save button is pressed.
@@ -10144,6 +10154,19 @@
             override NeedUserClosingConfirm method.
             </summary>
             <returns>true or false.</returns>
+        </member>
+        <member name="M:Sci.Win.Tems.Input7.ClickClip_EnsureCanEdit">
+            <summary>
+            控制夾檔畫面的使用權限 , 回傳true 代表user可以新增/刪除夾檔
+            </summary>
+            <returns>bool</returns>
+        </member>
+        <member name="M:Sci.Win.Tems.Input7.ClipCheck(System.String@)">
+            <summary>
+            夾檔前檢查
+            </summary>
+            <param name="uniqueID">uniqueID</param>
+            <returns>DualResult</returns>
         </member>
         <member name="F:Sci.Win.Tems.Input7.components">
             <summary>
@@ -11935,6 +11958,11 @@
             PrintForm subage.
             </summary>
         </member>
+        <member name="F:Sci.Win.Tems.PrintForm.ReportTypeChanged">
+            <summary>
+            提供User 自行寫 Code 的地方
+            </summary>
+        </member>
         <member name="T:Sci.Win.Tems.PrintForm.ReportCreatedEventArgs">
             <summary>
             Class of report create EventArgs
@@ -12716,6 +12744,37 @@
             修改這個方法的內容。
             </summary>
         </member>
+        <member name="T:Sci.Win.Tools.CustomizeView">
+            <summary>
+            CustomizeView
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeView.#ctor(Sci.Win.StandardReport)">
+            <summary>
+            CustomizeView
+            </summary>
+            <param name="source">source</param>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeView.OnFormLoaded">
+            <inheritdoc/>
+        </member>
+        <member name="F:Sci.Win.Tools.CustomizeView.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeView.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeView.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
         <member name="T:Sci.Win.Tools.OneDateSelection">
             <summary>
             Data of one date class.
@@ -13102,6 +13161,11 @@
             Property of IsSendNow.
             </summary>
         </member>
+        <member name="P:Sci.Win.Tools.MailTo.NeedPersonSign">
+            <summary>
+            Property of IsSendNow.
+            </summary>
+        </member>
         <member name="P:Sci.Win.Tools.MailTo.IsNoShowMessage">
             <summary>
              Property of IsNoShowMessage.
@@ -13177,6 +13241,34 @@
             <param name="issendnow">Flag of send now.</param>
             <param name="isshowmessage">Flag of show message.</param>
         </member>
+        <member name="M:Sci.Win.Tools.MailTo.#ctor(System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.IList{System.String},System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Constructor of MailTo with parameters.
+            </summary>
+            <param name="from">From of mail.</param>
+            <param name="to">To of mail.</param>
+            <param name="cc">CC of mail.</param>
+            <param name="subject">Subject of mail.</param>
+            <param name="attachmentList">attachment of mail.</param>
+            <param name="description">description of mail.</param>
+            <param name="issendnow">Flag of send now.</param>
+            <param name="isshowmessage">Flag of show message.</param>
+            <param name="personal_Sign">Flag of has PersonSign.</param>
+        </member>
+        <member name="M:Sci.Win.Tools.MailTo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Constructor of MailTo with parameters.
+            </summary>
+            <param name="from">From of mail.</param>
+            <param name="to">To of mail.</param>
+            <param name="cc">CC of mail.</param>
+            <param name="subject">Subject of mail.</param>
+            <param name="attachment">attachment of mail.</param>
+            <param name="description">description of mail.</param>
+            <param name="issendnow">Flag of send now.</param>
+            <param name="isshowmessage">Flag of show message.</param>
+            <param name="personal_Sign">Flag of has PersonSign.</param>
+        </member>
         <member name="M:Sci.Win.Tools.MailTo.OnFormLoaded">
             <summary>
             On form loaded method.
@@ -13227,6 +13319,15 @@
             </summary>
             <param name="text">mail address string.</param>
             <returns>mail address list.</returns>
+        </member>
+        <member name="M:Sci.Win.Tools.MailTo.ImgResource(System.Net.Mail.AlternateView)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.Win.Tools.MailTo.PersonalSign">
+            <summary>
+            取得簽名檔
+            </summary>
+            <returns>簽名檔</returns>
         </member>
         <member name="F:Sci.Win.Tools.MailTo.components">
             <summary>
