@@ -74,11 +74,12 @@ namespace Sci.Production.Warehouse
             sbSQLCmd.Append(string.Format(@"
 select  0 as selected 
         , '' id
+		, r.ExportId
         , c.PoId
         , c.Seq1
         , c.Seq2
         , concat(Ltrim(Rtrim(c.seq1)), ' ', c.Seq2) as seq
-        , export.FabricType
+        , [FabricType]= (SELECT Name FROM DropDownList WHERE Type='FabricType_Condition' AND ID = export.FabricType )
         , rd.stockunit
         , dbo.getmtldesc(c.POID,c.seq1,c.seq2,2,0) Description
         , c.Roll
@@ -92,6 +93,7 @@ select  0 as selected
 from ftyinventory c WITH (NOLOCK) 
 left join Receiving_Detail rd WITH (NOLOCK) on c.POID=rd.PoId
     and c.Seq1=rd.Seq1 and c.Seq2=rd.Seq2 and c.Roll=rd.Roll and c.Dyelot=rd.Dyelot
+INNER JOIN Receiving r ON r.ID = rd.ID
 LEFT JOIN Orders o ON o.id =c.poid
 outer apply(
 	select top 1 ed.FabricType,f.MDivisionID 
@@ -121,6 +123,16 @@ and ( export.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
                 sp_seq1.Value = txtSeq1.seq1;
                 sp_seq2.Value = txtSeq1.seq2;
 
+            }
+
+            if (!MyUtility.Check.Empty(this.txtWKno.Text))
+            {
+                sbSQLCmd.Append($" AND r.ExportId = '{this.txtWKno.Text}'");
+            }
+
+            if (this.comboFabric.SelectedValue.ToString().ToUpper() != "ALL")
+            {
+                sbSQLCmd.Append($" AND export.FabricType= '{this.comboFabric.SelectedValue.ToString() }' ");
             }
 
             Ict.DualResult result;
@@ -201,9 +213,12 @@ and ( export.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             this.gridImport.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+                .Text("ExportId", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(18)) //3
+                .Text("PoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(18)) //3
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(10)) //2
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //3
+                .Text("FabricType", header: "Fabric Type", iseditingreadonly: true, width: Widths.AnsiChars(8)) //3
                 .EditText("Description", header: "Description", iseditingreadonly: true) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
                 .Numeric("stockqty", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //6
