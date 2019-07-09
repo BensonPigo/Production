@@ -2369,6 +2369,10 @@
     <Build Include="dbo\Functions\GetOrderLocation_Rate_ByLinked.sql" />
     <Build Include="dbo\Tables\GarmentTest_Detail_Apperance.sql" />
     <Build Include="dbo\Functions\GetPatternUkey.sql" />
+    <Build Include="dbo\Tables\StandardReport_Detail.sql" />
+    <Build Include="dbo\Tables\StandardReport.sql" />
+    <Build Include="dbo\Tables\CustomizedReport_Detail.sql" />
+    <Build Include="dbo\Tables\CustomizedReport.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
