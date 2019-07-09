@@ -873,6 +873,7 @@ where 1=1
                 scope.Complete();
             }
 
+            Sci.Production.Sewing.P01.SendMail();
             MyUtility.Msg.InfoBox("Lock data successfully!");
         }
 

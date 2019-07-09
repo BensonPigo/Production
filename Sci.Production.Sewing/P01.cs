@@ -36,10 +36,6 @@ namespace Sci.Production.Sewing
         private decimal? oldManHour;
         private string loginFactory;
         private DateTime? dateYesterday;
-        private DataTable printData;
-        private DataTable _ttlData;
-        private DataTable _subprocessData;
-        private List<APIData> dataMode = new List<APIData>();
 
         /// <summary>
         /// P01
@@ -2515,54 +2511,51 @@ where 1=1
                 scope.Complete();
             }
 
-            this.SendMail();
-            MyUtility.Msg.InfoBox("Lock data successfully!");
+            SendMail();
         }
 
         /// <summary>
         /// ClickSend 自動寄信給Planning Team , Team3
         /// </summary>
-        public void SendMail()
+        public static void SendMail()
         {
+            DataTable printData;
+            DataTable ttlData = null;
+            DataTable subprocessData = null;
+            List<APIData> dataMode = new List<APIData>();
+            DateTime? dateMaxOutputDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup(@"
+select max(OutputDate) 
+from SewingOutput 
+where OutputDate != convert(date,GETDATE())"));
+
             #region 判斷Sewing.P01+P02 是否Locked
 
-            DataTable dt;
             DualResult result;
-            string errMsg = string.Empty;
+            DataRow drData;
             string sql =
             $@"select OutputDate
-	                ,FactoryID
-	                ,SewingLineID
-	                ,Team
-	                ,Shift
-	                ,SubconOutFty 
-	                ,SubConOutContractNumber 
+	                ,FactoryID	                
+                    ,Category
                 from SewingOutput
                 where 1=1
-                    and OutputDate = cast('{DateTime.Now.AddDays(-1).ToString("d")}' as date)
+                    and OutputDate = '{Convert.ToDateTime(dateMaxOutputDate).ToString("d")}'
                     and Status in('','NEW')
                     and FactoryID = '{Sci.Env.User.Factory}'
             ";
-            result = DBProxy.Current.Select(null, sql, out dt);
-            if (!result)
+            if (MyUtility.Check.Seek(sql, out drData))
             {
-                MyUtility.Msg.WarningBox("Query data fail\r\n" + result.ToString());
+                if (string.Compare(drData["Category"].ToString(), "M") == 0)
+                {
+                    MyUtility.Msg.WarningBox($@"<OutputDate>: {Convert.ToDateTime(dateMaxOutputDate).ToString("d")} does not daily lock in Sewing P02");
+                }
+                else if (string.Compare(drData["Category"].ToString(), "O") == 0)
+                {
+                    MyUtility.Msg.WarningBox($@"<OutputDate>: {Convert.ToDateTime(dateMaxOutputDate).ToString("d")} does not daily lock in Sewing P01");
+                }
+
                 return;
             }
 
-            foreach (DataRow dr in dt.Rows)
-            {
-                errMsg += MyUtility.Check.Empty(errMsg) ? "Please lock data first! \r\n" : "\r\n";
-                errMsg += string.Format(
-                    "Date:{0},Factory: {1}, Line#: {2}, Team:{3}, Shift:{4}, SubconOut-Fty:{5}, SubconOut_Contract#:{6}.",
-                    Convert.ToDateTime(dr["OutputDate"].ToString()).ToString("d"), dr["FactoryID"], dr["SewingLineID"], dr["Team"], dr["Shift"], dr["SubconOutFty"], dr["SubConOutContractNumber"]);
-            }
-
-            if (!MyUtility.Check.Empty(errMsg))
-            {
-                MyUtility.Msg.WarningBox(errMsg);
-                return;
-            }
             #endregion
 
             #region 撈R01 SQL
@@ -2620,8 +2613,8 @@ outer apply(
 where s.OutputDate = '{0}'
 	  and s.FactoryID = '{1}'
       and (o.CateGory != 'G' or s.Category='M')  ",
-                Convert.ToDateTime(this.dateYesterday).ToString("d"),
-                this.loginFactory));
+                Convert.ToDateTime(dateMaxOutputDate).ToString("d"),
+                Sci.Env.User.Factory));
 
             sqlCmd.Append(@"
 select OutputDate
@@ -2794,7 +2787,7 @@ where 1 =1");
 
             sqlCmd.Append(@" order by LastShift,Team,SewingLineID,OrderId");
             #endregion
-            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -2802,12 +2795,12 @@ where 1 =1");
             }
 
             #region 整理Total資料
-            if (this.printData.Rows.Count > 0)
+            if (printData.Rows.Count > 0)
             {
                 try
                 {
                     DualResult resultTotal = MyUtility.Tool.ProcessWithDatatable(
-                        this.printData,
+                        printData,
                         "Shift,Team,SewingLineID,ActManPower,TMS,QAQty,RFT,LastShift",
                         string.Format(@"
 ;with SubMaxActManpower as (
@@ -2969,7 +2962,7 @@ select Type = 'Grand'
 	   , RFT
 	   , ActManPower 
 from GenTotal3"),
-                        out this._ttlData);
+                        out ttlData);
 
                     if (resultTotal == false)
                     {
@@ -2985,12 +2978,12 @@ from GenTotal3"),
             #endregion
 
             #region 整理Subprocess資料
-            if (this.printData.Rows.Count > 0)
+            if (printData.Rows.Count > 0)
             {
                 try
                 {
                     DualResult resultSubprocess = MyUtility.Tool.ProcessWithDatatable(
-                        this.printData,
+                        printData,
                         "OrderId,ComboType,QAQty,LastShift",
                         string.Format(@"
 	--準備台北資料(須排除這些)
@@ -3039,7 +3032,7 @@ from tmpAllSubprocess t
 left join ArtworkType att WITH (NOLOCK) on att.id = t.ArtworkTypeID
 group by ArtworkTypeID,att.ProductionUnit
 order by ArtworkTypeID"),
-                        out this._subprocessData);
+                        out subprocessData);
 
                     if (resultSubprocess == false)
                     {
@@ -3054,16 +3047,10 @@ order by ArtworkTypeID"),
             }
             #endregion
 
-            string _factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", this.loginFactory));
+            string factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory));
             #endregion
 
             #region ToExcel
-
-            if (this.printData.Rows.Count <= 0)
-            {
-                MyUtility.Msg.WarningBox("Data not found!");
-                return;
-            }
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
@@ -3074,20 +3061,20 @@ order by ArtworkTypeID"),
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            worksheet.Cells[1, 1] = _factoryName;
-            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", this.loginFactory, Convert.ToDateTime(this.dateYesterday).ToString("MM/dd"), "(Included Subcon-IN)");
+            worksheet.Cells[1, 1] = factoryName;
+            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", Sci.Env.User.Factory, Convert.ToDateTime(dateMaxOutputDate).ToString("MM/dd"), "(Included Subcon-IN)");
 
             object[,] objArray = new object[1, 19];
             string[] subTtlRowInOut = new string[8];
             string[] subTtlRowExOut = new string[8];
             string[] subTtlRowExInOut = new string[8];
 
-            string shift = MyUtility.Convert.GetString(this.printData.Rows[0]["Shift"]);
-            string team = MyUtility.Convert.GetString(this.printData.Rows[0]["Team"]);
+            string shift = MyUtility.Convert.GetString(printData.Rows[0]["Shift"]);
+            string team = MyUtility.Convert.GetString(printData.Rows[0]["Team"]);
             int insertRow = 5, startRow = 5, ttlShift = 1, subRows = 0;
             worksheet.Cells[3, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
             DataRow[] selectRow;
-            foreach (DataRow dr in this.printData.Rows)
+            foreach (DataRow dr in printData.Rows)
             {
                 if (shift != MyUtility.Convert.GetString(dr["Shift"]) || team != MyUtility.Convert.GetString(dr["Team"]))
                 {
@@ -3101,9 +3088,9 @@ order by ArtworkTypeID"),
                     }
 
                     // 填入Sub Total資料
-                    if (this._ttlData != null)
+                    if (ttlData != null)
                     {
-                        selectRow = this._ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
+                        selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
                         if (selectRow.Length > 0)
                         {
                             worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
@@ -3182,9 +3169,9 @@ order by ArtworkTypeID"),
             }
 
             // 填入Sub Total資料
-            if (this._ttlData != null)
+            if (ttlData != null)
             {
-                selectRow = this._ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
+                selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
                 if (selectRow.Length > 0)
                 {
                     worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
@@ -3226,9 +3213,9 @@ order by ArtworkTypeID"),
 
             // 填Grand Total資料
             string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff;
-            if (this._ttlData != null)
+            if (ttlData != null)
             {
-                selectRow = this._ttlData.Select("Type = 'Grand'");
+                selectRow = ttlData.Select("Type = 'Grand'");
                 if (selectRow.Length > 0)
                 {
                     for (int i = 0; i < selectRow.Length; i++)
@@ -3317,12 +3304,12 @@ order by ArtworkTypeID"),
             }
             else
             {
-                this.dataMode = new List<APIData>();
-                GetApiData.GetAPIData(string.Empty, this.loginFactory, (DateTime)this.dateYesterday, (DateTime)this.dateYesterday, out this.dataMode);
-                if (this.dataMode != null)
+                dataMode = new List<APIData>();
+                GetApiData.GetAPIData(string.Empty, Sci.Env.User.Factory, (DateTime)DateTime.Now.AddDays(-1), (DateTime)DateTime.Now.AddDays(-1), out dataMode);
+                if (dataMode != null)
                 {
-                    worksheet.Cells[insertRow, 5] = this.dataMode[0].SewTtlManpower;
-                    worksheet.Cells[insertRow, 7] = this.dataMode[0].SewTtlManhours;
+                    worksheet.Cells[insertRow, 5] = dataMode[0].SewTtlManpower;
+                    worksheet.Cells[insertRow, 7] = dataMode[0].SewTtlManhours;
                 }
 
                 insertRow++;
@@ -3330,7 +3317,7 @@ order by ArtworkTypeID"),
             #endregion
 
             insertRow = insertRow + 2;
-            foreach (DataRow dr in this._subprocessData.Rows)
+            foreach (DataRow dr in subprocessData.Rows)
             {
                 worksheet.Cells[insertRow, 3] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["rs"]));
                 worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString(dr["Price"]);
@@ -3364,13 +3351,13 @@ order by ArtworkTypeID"),
                 {
                     string desc = $@"
 Hi all,
-    Output date: {DateTime.Now.ToString("yyyy/MM/dd")} Factory: {this.loginFactory} data is already daily lock, the attachment file is system generate from Sewing R01(Daily CMP Report).
+    Output date: {DateTime.Now.ToString("yyyy/MM/dd")} Factory: {Sci.Env.User.Factory} data is already daily lock, the attachment file is system generate from Sewing R01(Daily CMP Report).
     This message is automatically sent, please do not reply directly!
       
 ";
                     if (MyUtility.Check.Seek("select * from mailto where id='021'", out drMail))
                     {
-                        string subject = drMail["Subject"].ToString() + $@"{DateTime.Now.ToString("yyyy/MM/dd")} ({this.loginFactory})";
+                        string subject = drMail["Subject"].ToString() + $@"{DateTime.Now.ToString("yyyy/MM/dd")} ({Sci.Env.User.Factory})";
                         Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(dr["SendFrom"].ToString(), drMail["ToAddress"].ToString(), drMail["ccAddress"].ToString(), subject, strExcelName, desc, true, true);
                         mail.ShowDialog();
                     }
@@ -3378,6 +3365,8 @@ Hi all,
             }
 
             #endregion
+
+            MyUtility.Msg.InfoBox("Lock data successfully!");
         }
     }
 }
