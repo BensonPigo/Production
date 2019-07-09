@@ -254,6 +254,18 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
         }
 
         /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("This record status is <Confirmed>, can't be edited!", "Warning");
+                return false;
+            }
+
+            return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")

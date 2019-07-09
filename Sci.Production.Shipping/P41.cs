@@ -219,6 +219,11 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
                 MyUtility.Msg.WarningBox("This record already junked, can't edit!!");
                 return false;
             }
+            else if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("This record status is <Confirmed>, can't be edited!", "Warning");
+                return false;
+            }
 
             return base.ClickEditBefore();
         }
