@@ -49,8 +49,8 @@ BEGIN
 	, Factory.CPU
 	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS.TMS 
 	,Capacity
-	,Round(Capacity * fw.HalfMonth1 / (fw.HalfMonth1 + fw.HalfMonth2),0) as HalfCapacity1
-	,Round(Capacity * fw.HalfMonth2 / (fw.HalfMonth1 + fw.HalfMonth2),0) as HalfCapacity2
+	,Round(Capacity * fw.HalfMonth1 / (fw.HalfMonth1 + fw.HalfMonth2),10) as HalfCapacity1
+	,Round(Capacity * fw.HalfMonth2 / (fw.HalfMonth1 + fw.HalfMonth2),10) as HalfCapacity2
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,Factory.FactorySort
 	into #tmpFactory From Factory
@@ -96,8 +96,8 @@ BEGIN
 	,Orders.CPU, cTms, cCPU
 	,Order_TmsCost.ArtworktypeID
 	,Orders.Qty as OrderQty
-	,Round((cCPU * Orders.Qty * CpuRate),0) as OrderCapacity
-	,Round((cCPU * iif(Orders.GMTComplete = 'S', Orders.Qty - GetPulloutData.Qty, 0) * CpuRate),0) as OrderShortage
+	,Round((cCPU * Orders.Qty * CpuRate),10) as OrderCapacity
+	,Round((cCPU * iif(Orders.GMTComplete = 'S', Orders.Qty - GetPulloutData.Qty, 10) * CpuRate),0) as OrderShortage
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,OrderDate ,FactorySort
 	into #tmpOrder1 from #Orders Orders
@@ -128,7 +128,7 @@ BEGIN
 	Select #tmpOrder1.*, SewingOutput.QAQty, Sewingoutput.OutputDate	
 	,iif(@ReportType = 1, Date1, Date2) as SewingYYMM
 	,Sewingoutput.OutputDate as SewingYYMM_Ori
-	,Round((cCPU * SewingOutput.QAQty * #tmpOrder1.CPURate),0) as SewCapacity
+	,Round((cCPU * SewingOutput.QAQty * #tmpOrder1.CPURate),10) as SewCapacity
 	into #tmpOrder2 from #tmpOrder1
 	left join #sew_Order SewingOutput on SewingOutput.OrderId = #tmpOrder1.ID
 	--outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
@@ -156,7 +156,7 @@ BEGIN
 	,Style_TmsCost.TMS as ArtworkTypeTMS 
 	,FactoryOrder.Qty as OrderQty
 	,CPURate
-	,Round((cCPU * FactoryOrder.Qty * CPURate),0) as FactoryOrderCapacity
+	,Round((cCPU * FactoryOrder.Qty * CPURate),10) as FactoryOrderCapacity
 	,FactoryOrder.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,FactorySort
@@ -184,7 +184,7 @@ BEGIN
 	Select #tmpFactoryOrder1.*, SewingOutput.QAQty, /*Sewingoutput_Detail.InlineQty,*/ Sewingoutput.OutputDate
 	,iif(@ReportType = 1, Date1, Date2) as SewingYYMM
 	,Sewingoutput.OutputDate as SewingYYMM_Ori
-	,Round((cCPU * SewingOutput.QAQty * CpuRate),0) as SewCapacity
+	,Round((cCPU * SewingOutput.QAQty * CpuRate),10) as SewCapacity
 	into #tmpFactoryOrder2 From #tmpFactoryOrder1	
 	left join #sew_FtyOrder SewingOutput on SewingOutput.OrderId = #tmpFactoryOrder1.ID
 	outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
@@ -200,7 +200,7 @@ BEGIN
 	,Orders.Qty as ForecastQty
 	,Style_TmsCost.ArtworkTypeID
 	,CpuRate
-	,Round((cCPU * Orders.Qty * CpuRate),0) as ForecastCapacity
+	,Round((cCPU * Orders.Qty * CpuRate),10) as ForecastCapacity
 	,Orders.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,FactorySort
