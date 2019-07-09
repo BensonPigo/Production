@@ -52,7 +52,7 @@ namespace Sci.Production.Shipping
             .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Numeric("Amount", header: "Expense", decimal_places: 2, iseditingreadonly: true)
             .Text("ShippingAPID", header: "A/P No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("DebitID", header: "Debit Note", width: Widths.AnsiChars(15))
+            .Text("DebitID", header: "SD/ICR/DB #", width: Widths.AnsiChars(15))
             ;
             this.Query();
         }
@@ -115,7 +115,7 @@ where se.WKNo = '{0}' and se.junk=0", this.id);
                     {
                         continue;
                     }
-                    if (DebitNote.Length != 13 || !DebitNote.StartsWith("SD") )
+                    if (DebitNote.Length != 13 || !(DebitNote.StartsWith("SD") || DebitNote.StartsWith("IC") || DebitNote.StartsWith("DB")))
                     {
                         checkResult = false;
                     }
