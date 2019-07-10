@@ -78,13 +78,6 @@ namespace Sci.Production.Planning
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.txtM.Text))
-            {
-                MyUtility.Msg.WarningBox("<M> Can't be empty!!");
-                this.txtM.Focus();
-                return false;
-            }
-
             if (this.radioSemimonthlyReport.Checked)
             {
                 if (this.numMonth.Text == string.Empty)
