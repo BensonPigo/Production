@@ -174,9 +174,28 @@ WHERE   StockType='{0}'
                 if (gridRel.Columns[e.ColumnIndex].Name == col_chk2.Name)
                 {
                     DataRow dr = gridRel.GetDataRow(e.RowIndex);
-                    if(Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0){
+                    if (Convert.ToBoolean(dr["selected"]) == true)
+                    {   
+                        if (MyUtility.Check.Seek($@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{dr["tostocktype"]}'
+        and junk != '1'
+        and  id ='{dr["fromlocation"]}'
+"))
+                        {
+                            dr["tolocation"] = dr["fromlocation"];
+                        }
+                    }
+
+                    if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+                    {
                         dr["qty"] = dr["balanceQty"];
-                    }else if(Convert.ToBoolean(dr["selected"]) == false){
+                    }                    
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
                         dr["qty"] = 0;
                     }
                     dr.EndEdit();
@@ -554,6 +573,18 @@ drop table #tmp");
                         {
                             findrow[0]["qty"] = dr2["qty"];
                             findrow[0]["selected"] = true;
+                            if (MyUtility.Check.Seek($@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{findrow[0]["tostocktype"]}'
+        and junk != '1'
+        and  id ='{findrow[0]["fromlocation"]}'
+"))
+                            {
+                                findrow[0]["tolocation"] = findrow[0]["fromlocation"];
+                            }
                         }
                     }
                     var tempchildrows = dr.GetChildRows("rel1");
