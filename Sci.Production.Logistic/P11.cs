@@ -150,6 +150,13 @@ where cdd.ID = '{masterID}'
                 this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "GD", "ClogGarmentDispose", DateTime.Now);
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ClogReasonID"]))
+            {
+                MyUtility.Msg.WarningBox("< Reason > can't be empty!");
+                this.txtClogReason.TextBox1.Focus();
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -204,6 +211,7 @@ where c.Status = 'Confirmed' and c.ID <> '{this.CurrentMaintain["ID"]}'";
 update ClogGarmentDispose set Status = 'Confirmed' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
 
 update pd set pd.DisposeFromClog = 1
+, pd.DisposeDate = Getdate()
 from PackingList_Detail pd
 where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
 ";
@@ -255,6 +263,7 @@ where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartN
 update ClogGarmentDispose set Status = 'New' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
 
 update pd set pd.DisposeFromClog = 0
+,pd.DisposeDate = null
 from PackingList_Detail pd
 where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
 ";

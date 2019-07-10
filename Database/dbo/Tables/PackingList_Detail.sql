@@ -46,11 +46,15 @@
     [SCICtnNo]            VARCHAR (15)   CONSTRAINT [DF_PackingList_Detail_SCICtnNo] DEFAULT ('') NULL,
     [Pallet]              VARCHAR (10)   NULL,
     [NewGW]               NUMERIC (7, 3) NULL,
-    [OrigID] VARCHAR(13) NOT NULL CONSTRAINT [DF_PackingList_Detail_OrigID] DEFAULT (''), 
-    [OrigOrderID] VARCHAR(13) NOT NULL CONSTRAINT [DF_PackingList_Detail_OrigOrderID] DEFAULT (''), 
-    [OrigCTNStartNo] VARCHAR(6) NOT NULL CONSTRAINT [DF_PackingList_Detail_OrigCTNStartNo] DEFAULT (''), 
-    CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
-	);
+    [OrigID]              VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_OrigID] DEFAULT ('') NOT NULL,
+    [OrigOrderID]         VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_OrigOrderID] DEFAULT ('') NOT NULL,
+    [OrigCTNStartNo]      VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_OrigCTNStartNo] DEFAULT ('') NOT NULL,
+    [DisposeDate]         DATE           NULL,
+    CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC),
+    CONSTRAINT [UK_PackingList_Detail] UNIQUE NONCLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
+);
+
+
 
 
 
@@ -166,4 +170,9 @@ GO
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�n�D�h�c��]', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'FtyReqReturnReason';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_PackingList_Detail_OrgPK]
+    ON [dbo].[PackingList_Detail]([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC);
 

@@ -138,6 +138,12 @@
     <Compile Include="txtcdcode.Designer.cs">
       <DependentUpon>txtcdcode.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtClogReason.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtClogReason.designer.cs">
+      <DependentUpon>txtClogReason.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtShippingReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -552,6 +558,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PictureSubPage.resx">
       <DependentUpon>PictureSubPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtClogReason.resx">
+      <DependentUpon>txtClogReason.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtcountry.resx">
       <DependentUpon>txtcountry.cs</DependentUpon>
