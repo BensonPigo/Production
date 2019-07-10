@@ -277,7 +277,7 @@ BEGIN
 	--Report1 : 每個月區間為某一整年----------------------------------------------------------------------------------------------------------------------------------
 		select t.CountryID,t.MDivisionID,t.FactoryID,t.FactorySort
 		from #tmpFinal t
-		INNER JOIN Factory f ON t.FactoryID=f.ID AND f.KPICode IN (SELECT ID FROm Factory WHERE MDivisionID=@M)
+		INNER JOIN Factory f ON t.FactoryID=f.ID AND f.KPICode IN (SELECT ID FROm Factory WHERE MDivisionID=@M or @M = '')
 		group by t.CountryID,t.MDivisionID,FactoryID,t.FactorySort
 		order by t.FactorySort
 
@@ -339,7 +339,7 @@ BEGIN
 
 		select t.CountryID,t.MDivisionID,t.FactoryID,t.FactorySort
 		from #tmpFinal t
-		INNER JOIN Factory f ON t.FactoryID=f.ID AND f.KPICode IN (SELECT ID FROm Factory WHERE MDivisionID=@M)
+		INNER JOIN Factory f ON t.FactoryID=f.ID AND f.KPICode IN (SELECT ID FROm Factory WHERE MDivisionID=@M or @M = '')
 		group by t.CountryID,t.MDivisionID,FactoryID,t.FactorySort
 		order by t.FactorySort
 
