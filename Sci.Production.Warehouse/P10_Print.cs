@@ -100,12 +100,10 @@ order by psd.Refno,isd.POID,isd.Roll
                 }
                 #endregion
                 MyUtility.Excel.CopyToXls(dtExcel, "", excelName, 7, false, null, excelApp, wSheet: excelApp.Sheets[1]);
-                
-                worksheet.Columns[7].ColumnWidth = 80;
-                worksheet.Columns[11].ColumnWidth = 10;
-                worksheet.Columns[12].ColumnWidth = 10;
-                worksheet.Columns[13].ColumnWidth = 20;
+
+                worksheet.Columns[7].ColumnWidth = 21;           
                 excelApp.Cells.EntireRow.AutoFit();
+                worksheet.Rows[6].RowHeight = 25;
 
                 #region Save Excel
                 string excelFile = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P10_FabricsRelaxationLogsheet");
