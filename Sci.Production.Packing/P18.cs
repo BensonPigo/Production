@@ -24,7 +24,8 @@ namespace Sci.Production.Packing
         private SelectCartonDetail selecedPK;
         private P09_IDX_CTRL IDX;
         private bool UseAutoScanPack = false;
-
+        private string PackingListID = string.Empty;
+        private string CTNStarNo = string.Empty;
         /// <summary>
         /// P18
         /// </summary>
@@ -72,6 +73,8 @@ namespace Sci.Production.Packing
         private void TxtScanCartonSP_Validating(object sender, CancelEventArgs e)
         {
             DualResult result;
+            this.PackingListID = string.Empty;
+            this.CTNStarNo = string.Empty;
 
             if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
             {
@@ -97,6 +100,9 @@ namespace Sci.Production.Packing
                 }
             }
 
+            this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
+            this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
             this.ClearAll("SCAN");
             #region 檢查是否有資料，三個角度
@@ -106,7 +112,7 @@ namespace Sci.Production.Packing
             // 3.=Orders.CustPoNo
             string[] aLLwhere = new string[]
             {
-                $" and  (pd.ID + pd.CTNStartNo) = '{this.txtScanCartonSP.Text}'",
+                $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
                 $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
                 $@" and pd.CustCTN = '{this.txtScanCartonSP.Text}'"
@@ -195,8 +201,7 @@ namespace Sci.Production.Packing
                     {
                         dr["barcode"] = DBNull.Value;
                     }
-
-                    DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{this.txtScanCartonSP.Text}'");
+                    DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'  ");
                 }
 
                 DualResult result_load = this.LoadScanDetail(0);
@@ -283,7 +288,7 @@ namespace Sci.Production.Packing
                     seledr["barcode"] = DBNull.Value;
                 }
 
-                DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{MyUtility.Convert.GetString(dr.ID) + MyUtility.Convert.GetString(dr.CTNStartNo)}'");
+                DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' ");
             }
 
             this.scanDetailBS.DataSource = dr_scanDetail.OrderBy(s => s["Article"]).ThenBy(s => s["Seq"]).CopyToDataTable();
