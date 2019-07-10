@@ -131,7 +131,9 @@ select
 	,--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
 	[Marker Length] = wo.MarkerLength,
 	wo.ActCuttingPerimeter,
-    o.BuyerDelivery
+    o.BuyerDelivery,
+	patternUKey=p.PatternUkey,
+    wo.FabricPanelCode
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -225,6 +227,8 @@ outer apply(
 	where psd.ID = wo.id and psd.SCIRefno = wo.SCIRefno
 	and fi.InQty is not null
 ) as fi
+outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',wo.MarkerNo,o.StyleUkey)p)p
+
 where 1=1
 
 ");
@@ -325,7 +329,32 @@ where 1=1
             }
             #endregion
             sqlCmd.Append(@"
-select * from #tmp order by [M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Cut#]
+select 
+[M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
+,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
+,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
+,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,BuyerDelivery
+from #tmp t
+--因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
+outer apply(
+	select Artwork=stuff((
+	select distinct concat('+',s.data)
+	from(
+		select distinct pg.Annotation
+		from Pattern_GL_LectraCode pgl
+		inner join Pattern_GL pg on pgl.PatternUKEY = pg.PatternUKEY
+									and pgl.seq = pg.SEQ
+									and pg.Annotation is not null
+									and pg.Annotation!=''
+		where pgl.PatternUKEY = t.patternUKey and pgl.FabricPanelCode = t.FabricPanelCode
+	)a
+	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(a.Annotation,'+'))s
+	where exists(select 1 from SubProcess where id = s.data)
+	for xml path(''))
+	,1,1,'')
+)Artwork
+
+order by [M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Cut#]
 -----------------------------------------------------------------------
 select M,Factory,Brand
 	,[# of Layer]=case when Layers between 1 and 5 then '1~5'
