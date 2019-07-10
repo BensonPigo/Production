@@ -49,6 +49,9 @@ namespace Sci.Production.Warehouse
 	,[Seq1] = psd.SEQ1
 	,[Seq2] = psd.SEQ2
 	,[Material Type] = psd.FabricType
+    ,[stock sp]=psd.StockPOID
+    ,[StockSeq1]=psd.StockSeq1
+    ,[StockSeq2]=psd.StockSeq2
 	,[Refno] = psd.Refno
 	,[SCI Refno] = psd.SCIRefno
 	,[Description] = d.Description
@@ -103,6 +106,9 @@ namespace Sci.Production.Warehouse
 	,[Seq1] = psd.SEQ1
 	,[Seq2] = psd.SEQ2
 	,[Material Type] = psd.FabricType
+    ,[stock sp]=psd.StockPOID
+    ,[StockSeq1]=psd.StockSeq1
+    ,[StockSeq2]=psd.StockSeq2
 	,[Refno] = psd.Refno
 	,[SCI Refno] = psd.SCIRefno
     ,[Description] = d.Description
