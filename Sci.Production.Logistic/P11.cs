@@ -145,16 +145,16 @@ where cdd.ID = '{masterID}'
         protected override bool ClickSaveBefore()
         {
             bool isNewSave = MyUtility.Check.Empty(this.CurrentMaintain["ID"]);
-            if (isNewSave)
-            {
-                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "GD", "ClogGarmentDispose", DateTime.Now);
-            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["ClogReasonID"]))
             {
                 MyUtility.Msg.WarningBox("< Reason > can't be empty!");
                 this.txtClogReason.TextBox1.Focus();
                 return false;
+            }
+
+            if (isNewSave)
+            {
+                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "GD", "ClogGarmentDispose", DateTime.Now);
             }
 
             return base.ClickSaveBefore();
