@@ -21,6 +21,7 @@ namespace Sci.Production.Quality
         DateTime? DateEstStart, DateEstEnd;
         string spStrat, spEnd, Season, Brand, RefNo, Category, Supp;
         string MaterialType, Factory;
+        int reportType;
         List<SqlParameter> lis;
         DataTable dt; string cmd;
 
@@ -81,6 +82,7 @@ namespace Sci.Production.Quality
             Supp = txtsupplier.Text;
             MaterialType = comboMaterialType.Text;
             Factory = comboFactory.Text;
+            reportType = rdbtnbyWK.Checked ? 1 : 2;
             lis = new List<SqlParameter>();
             string sqlWhere = "", RWhere = "", OWhere = "";
             List<string> sqlWheres = new List<string>();
@@ -185,8 +187,12 @@ namespace Sci.Production.Quality
                 OWhere = " AND " + OWhere;
             }
             #region --撈ListExcel資料--
-
-            cmd = string.Format(@"
+            string byRoll = string.Empty;
+            if (this.reportType == 2)
+            {
+                byRoll = ",Roll,Dyelot";
+            }
+            cmd = $@"
             select 
             Est.inspection
             ,[First].cutinline
@@ -196,6 +202,7 @@ namespace Sci.Production.Quality
 	        datediff(day,getdate(),[First].cutinline))
             ,t.PoId
             ,t.seq1+'-'+t.seq2 [Seq]
+            {byRoll}
             ,O.FactoryID
             ,O.BrandId
             , case PSD.fabrictype
@@ -215,11 +222,11 @@ namespace Sci.Production.Quality
             ,PS.SuppID
             ,Weave.WeaveTypeID
             ,t.id [ReceivingID]
-            from (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2,sum(stockqty) stockqty
+            from (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2{byRoll},sum(stockqty) stockqty
 			             from dbo.Receiving r WITH (NOLOCK) 
 			            inner join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.Id = r.Id 
-			            where r.type='A'" + RWhere+ @"
-			            group by r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2) t
+			            where r.type='A'" + RWhere+ $@"
+			            group by r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2{byRoll}) t
             inner join (select distinct id,Category,KPILETA from dbo.Orders o WITH (NOLOCK) 
 			            where 1=1
 			           " + OWhere+ @" ) x on x.id = T.POID
@@ -237,7 +244,7 @@ namespace Sci.Production.Quality
             end  inspection)  Est
             outer apply((select min(orders.CutInLine)cutinline from dbo.orders WITH (NOLOCK) where orders.poid= t.PoId))[First] 
             outer apply(select o.factoryid,o.BrandId,o.StyleID,o.SeasonId from dbo.orders o WITH (NOLOCK) where o.id = t.PoId)O
-            outer apply(select f.WeaveTypeID from dbo.Fabric f WITH (NOLOCK) where f.scirefno = psd.SCIRefno)Weave" + sqlWhere);
+            outer apply(select f.WeaveTypeID from dbo.Fabric f WITH (NOLOCK) where f.scirefno = psd.SCIRefno)Weave" + sqlWhere;
             #endregion
             return base.ValidateInput();
         }
@@ -269,8 +276,17 @@ namespace Sci.Production.Quality
                 dr["description"] = dr["description"].ToString().Trim();
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R07.xltx");
-            MyUtility.Excel.CopyToXls(dt, "", "Quality_R07.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
+            string excelName = string.Empty;
+            if (this.reportType == 1)
+            {
+                excelName = "Quality_R07";
+            }
+            else if (this.reportType == 2)
+            {
+                excelName = "Quality_R07_byRoll";
+            }
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            MyUtility.Excel.CopyToXls(dt, "", $"{excelName}.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             string d1 = (MyUtility.Check.Empty(DateArrStart)) ? "" : Convert.ToDateTime(DateArrStart).ToString("yyyy/MM/dd");
             string d2 = (MyUtility.Check.Empty(DateArrEnd)) ? "" : Convert.ToDateTime(DateArrEnd).ToString("yyyy/MM/dd");
@@ -298,7 +314,7 @@ namespace Sci.Production.Quality
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R07");
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelName);
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
