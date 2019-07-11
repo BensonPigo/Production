@@ -100,12 +100,23 @@ order by psd.Refno,isd.POID,isd.Roll
                 }
                 #endregion
                 MyUtility.Excel.CopyToXls(dtExcel, "", excelName, 7, false, null, excelApp, wSheet: excelApp.Sheets[1]);
-                
-                worksheet.Columns[7].ColumnWidth = 80;
-                worksheet.Columns[11].ColumnWidth = 10;
-                worksheet.Columns[12].ColumnWidth = 10;
-                worksheet.Columns[13].ColumnWidth = 20;
+                // 固定寬度,避免格式資料跑掉
+                worksheet.Columns[1].ColumnWidth = 6;
+                worksheet.Columns[2].ColumnWidth = 7;
+                worksheet.Columns[3].ColumnWidth = 8;
+                worksheet.Columns[4].ColumnWidth = 9;
+                worksheet.Columns[5].ColumnWidth = 5;
+                worksheet.Columns[6].ColumnWidth = 7;
+                worksheet.Columns[7].ColumnWidth = 44;
+                worksheet.Columns[8].ColumnWidth = 6;
+                worksheet.Columns[9].ColumnWidth = 6;
+                worksheet.Columns[10].ColumnWidth = 9;
+                worksheet.Columns[11].ColumnWidth = 6;
+                worksheet.Columns[12].ColumnWidth = 7;
+                worksheet.Columns[12].ColumnWidth = 8;
                 excelApp.Cells.EntireRow.AutoFit();
+                
+                worksheet.Rows[6].RowHeight = 25;
 
                 #region Save Excel
                 string excelFile = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P10_FabricsRelaxationLogsheet");
