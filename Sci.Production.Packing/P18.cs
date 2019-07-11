@@ -100,8 +100,11 @@ namespace Sci.Production.Packing
                 }
             }
 
-            this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
-            this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+            if (this.txtScanCartonSP.Text.Length > 13)
+            {
+                this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+            }
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
             this.ClearAll("SCAN");
@@ -112,7 +115,7 @@ namespace Sci.Production.Packing
             // 3.=Orders.CustPoNo
             string[] aLLwhere = new string[]
             {
-                $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'",
+                this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
                 $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
                 $@" and pd.CustCTN = '{this.txtScanCartonSP.Text}'"
