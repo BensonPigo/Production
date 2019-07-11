@@ -2374,6 +2374,7 @@
     <Build Include="dbo\Functions\getROF.sql" />
     <Build Include="dbo\Functions\getDecimal.sql" />
     <Build Include="dbo\Functions\getSizeSpecTrans.sql" />
+    <Build Include="dbo\Tables\ClogReason.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
