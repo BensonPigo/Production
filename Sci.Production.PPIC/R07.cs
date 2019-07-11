@@ -163,10 +163,9 @@ order by h.FactoryID,h.SewingLineID,h.date
 ------------------------------------------------------------------------------------------------
 DECLARE cursor_sewingschedule CURSOR FOR
 select distinct c.FactoryID,c.SewingLineID,c.date
-	,StyleID = iif(c.Holiday = 1,'Holiday', cs.StyleID)
+	,StyleID = isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),'')
 	,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
 from #c c left join #ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
-where iif(c.Holiday = 1,'Holiday', cs.StyleID) is not null
 order by c.FactoryID,c.SewingLineID,c.date
 
 --建立tmpe table存放最後要列印的資料
@@ -238,7 +237,7 @@ END
 CLOSE cursor_sewingschedule
 DEALLOCATE cursor_sewingschedule
 
-select * from @tempPintData
+select * from @tempPintData where StyleID<>''
 
 drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle",
                 this._startDate.ToString("d"),
