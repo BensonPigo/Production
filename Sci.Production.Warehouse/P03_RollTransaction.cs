@@ -461,7 +461,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                            outQty = m.Sum(w => w.Field<decimal>("outqty")),
                            AdjustQty = m.Sum(i => i.Field<decimal>("AdjustQty")),
                            balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty")),
-                           DTM = m.Sum(w => w.Field<decimal>("inqty")) / numArrivedQtyBySeq.Value * useQty
+                           DTM = numArrivedQtyBySeq.Value == 0 ? 0 : m.Sum(w => w.Field<decimal>("inqty")) / numArrivedQtyBySeq.Value * useQty
                        };
 
             dtSummary.Rows.Clear();
