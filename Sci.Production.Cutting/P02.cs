@@ -2315,10 +2315,9 @@ END";
             gridValid();
 
             int index = 0;
-            DataTable Dg = ((DataTable)detailgridbs.DataSource);
             foreach(DataRow row in DetailDatas.Where(x => MyUtility.Check.Empty(x["MarkerNo"].ToString())))
             { 
-                index = Dg.Rows.IndexOf(row);
+                index = DetailDatas.IndexOf(row);
                 this.detailgrid.SelectRowTo(index);
                 MyUtility.Msg.WarningBox("Marker No cannot be empty.");
                 return false;
@@ -2326,7 +2325,7 @@ END";
 
             foreach (DataRow row in DetailDatas.Where(x => MyUtility.Check.Empty(x["FabricPanelCode"].ToString())))
             {
-                index = Dg.Rows.IndexOf(row);
+                index = DetailDatas.IndexOf(row);
                 this.detailgrid.SelectRowTo(index);
                 MyUtility.Msg.WarningBox("Fab_Panel Code cannot be empty.");
                 return false;
@@ -2348,7 +2347,7 @@ END";
                                                ).ToList();
                     if (SigngleData.Count > 0)
                     {
-                        index = Dg.Rows.IndexOf(row);
+                        index = DetailDatas.IndexOf(row);
                         this.detailgrid.SelectRowTo(index);
                         MyUtility.Msg.WarningBox("In the same fabric combo, different 'Marker Name' and 'Marker No' cannot cut in one time which means cannot set the same cut#.");
                         return false;
