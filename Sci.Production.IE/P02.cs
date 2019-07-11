@@ -320,8 +320,22 @@ order by OutputDate
                         cmds.Add(sp1);
                         cmds.Add(sp2);
 
-                        string insertCmd = @"insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
-select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'N' or UseFor = 'A') and BrandID = (select BrandID from Orders where ID = @orderid) and Junk = 0";
+                        string insertCmd = @"
+insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
+select @id,DaysBefore,BaseOn,ID from ChgOverCheckList 
+where   (UseFor = 'N' or UseFor = 'A') 
+        and (
+            BrandID = (
+                select BrandID 
+                from Orders 
+                where ID = @orderid
+            ) 
+            or 
+            BrandID is null
+            or
+            BrandID = ''
+        )
+        and Junk = 0";
                         DualResult result = DBProxy.Current.Execute(null, insertCmd, cmds);
                         if (!result)
                         {
@@ -352,8 +366,22 @@ select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'N' or Use
                         cmds.Add(sp1);
                         cmds.Add(sp2);
 
-                        string insertCmd = @"insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
-select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'R' or UseFor = 'A') and BrandID = (select BrandID from Orders where ID = @orderid) and Junk = 0";
+                        string insertCmd = @"
+insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
+select @id,DaysBefore,BaseOn,ID from ChgOverCheckList 
+where   (UseFor = 'R' or UseFor = 'A') 
+        and (
+            BrandID = (
+                select BrandID 
+                from Orders 
+                where ID = @orderid
+            ) 
+            or 
+            BrandID is null
+            or
+            BrandID = ''
+        )
+        and Junk = 0";
                         DualResult result = DBProxy.Current.Execute(null, insertCmd, cmds);
                         if (!result)
                         {
