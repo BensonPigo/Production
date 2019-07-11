@@ -46,16 +46,17 @@
             this.textBox1.Size = new System.Drawing.Size(70, 22);
             this.textBox1.TabIndex = 2;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.textBox1.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
-            // txtwhseReason
+            // txtClogReason
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.displayBox1);
             this.Controls.Add(this.textBox1);
-            this.Name = "txtwhseReason";
+            this.Name = "txtClogReason";
             this.Size = new System.Drawing.Size(386, 27);
             this.ResumeLayout(false);
             this.PerformLayout();

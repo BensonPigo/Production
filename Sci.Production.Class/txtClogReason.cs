@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Ict;
 
 namespace Sci.Production.Class
 {
@@ -62,6 +63,7 @@ namespace Sci.Production.Class
                     this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
+
                 DataRow temp;
                 if (MyUtility.Check.Seek(string.Format("Select Description from ClogReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", str, Type), out temp))
                     this.DisplayBox1.Text = temp[0].ToString();
@@ -69,15 +71,15 @@ namespace Sci.Production.Class
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
 
-
             if (string.IsNullOrWhiteSpace(str))
             {
                 this.DisplayBox1.Text = "";
                 return;
             }
             if (e.Cancel)
-                return;
-            this.OnValidating(e);
+            { return; }
+              
+            this.ValidateControl();
         }
 
         private void textBox1_Validated(object sender, EventArgs e)
@@ -117,6 +119,13 @@ namespace Sci.Production.Class
 
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
+        }
+
+        private void TextBox1_TextChanged(object sender, EventArgs e)
+        {
+            this.displayBox1.Text = MyUtility.GetValue.Lookup($@"
+Select Description from ClogReason WITH (NOLOCK) where ID='{this.textBox1.Text}' and Type='{Type}'");
+
         }
     }
 }
