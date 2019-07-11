@@ -103,13 +103,13 @@ order by psd.Refno,isd.POID,isd.Roll
                 // 固定寬度,避免格式資料跑掉
                 worksheet.Columns[1].ColumnWidth = 6;
                 worksheet.Columns[2].ColumnWidth = 7;
-                worksheet.Columns[3].ColumnWidth = 9;
-                worksheet.Columns[4].ColumnWidth = 10;
+                worksheet.Columns[3].ColumnWidth = 8;
+                worksheet.Columns[4].ColumnWidth = 9;
                 worksheet.Columns[5].ColumnWidth = 5;
                 worksheet.Columns[6].ColumnWidth = 7;
                 worksheet.Columns[7].ColumnWidth = 44;
                 worksheet.Columns[8].ColumnWidth = 6;
-                worksheet.Columns[9].ColumnWidth = 7;
+                worksheet.Columns[9].ColumnWidth = 6;
                 worksheet.Columns[10].ColumnWidth = 9;
                 worksheet.Columns[11].ColumnWidth = 6;
                 worksheet.Columns[12].ColumnWidth = 7;
