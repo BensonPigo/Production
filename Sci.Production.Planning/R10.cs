@@ -418,7 +418,7 @@ namespace Sci.Production.Planning
                 
                             Select a.*, DATENAME(weekday,a. MaxOutputDate) as DateName,
                                    IIF(a.CountDay=0,0,round(a.LoadCPU/a.CountDay,0)) as DailyCPU,
-                                   IIF(AccuHours* MonthHours=0,0,round(a.LoadCPU/AccuHours* MonthHours,0)) as AccuLoad
+                                   IIF(AccuHours* MonthHours=0,0,round(a.LoadCPU/AccuHours* MonthHours,10)) as AccuLoad
                             into  #printdata
                             From (Select t.*, 
                                         isnull((select sum(AVGHours) 
