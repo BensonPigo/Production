@@ -2488,7 +2488,7 @@ UPDATE  s
 SET s.LockDate = CONVERT(date, GETDATE()) , s.Status='Send'
 , s.editname='{Sci.Env.User.UserID}', s.editdate=getdate()
 FROM SewingOutput s
-INNER JOIN SewingOutput_Detail sd ON s.ID = s.ID
+INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
 INNER JOIN Orders o ON o.ID = sd.OrderId
 where 1=1
     and s.OutputDate < = CAST (GETDATE() AS DATE) 
@@ -2519,7 +2519,7 @@ where 1=1
         /// </summary>
         public static void SendMail()
         {
-            DataTable printData;
+            DataTable dtR01;
             DataTable ttlData = null;
             DataTable subprocessData = null;
             List<APIData> dataMode = new List<APIData>();
@@ -2557,6 +2557,8 @@ where OutputDate != convert(date,GETDATE())"));
             }
 
             #endregion
+
+            #region 產生R01 報表
 
             #region 撈R01 SQL
             StringBuilder sqlCmd = new StringBuilder();
@@ -2787,7 +2789,7 @@ where 1 =1");
 
             sqlCmd.Append(@" order by LastShift,Team,SewingLineID,OrderId");
             #endregion
-            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out dtR01);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -2795,12 +2797,12 @@ where 1 =1");
             }
 
             #region 整理Total資料
-            if (printData.Rows.Count > 0)
+            if (dtR01.Rows.Count > 0)
             {
                 try
                 {
                     DualResult resultTotal = MyUtility.Tool.ProcessWithDatatable(
-                        printData,
+                        dtR01,
                         "Shift,Team,SewingLineID,ActManPower,TMS,QAQty,RFT,LastShift",
                         string.Format(@"
 ;with SubMaxActManpower as (
@@ -2978,12 +2980,12 @@ from GenTotal3"),
             #endregion
 
             #region 整理Subprocess資料
-            if (printData.Rows.Count > 0)
+            if (dtR01.Rows.Count > 0)
             {
                 try
                 {
                     DualResult resultSubprocess = MyUtility.Tool.ProcessWithDatatable(
-                        printData,
+                        dtR01,
                         "OrderId,ComboType,QAQty,LastShift",
                         string.Format(@"
 	--準備台北資料(須排除這些)
@@ -3069,12 +3071,12 @@ order by ArtworkTypeID"),
             string[] subTtlRowExOut = new string[8];
             string[] subTtlRowExInOut = new string[8];
 
-            string shift = MyUtility.Convert.GetString(printData.Rows[0]["Shift"]);
-            string team = MyUtility.Convert.GetString(printData.Rows[0]["Team"]);
+            string shift = MyUtility.Convert.GetString(dtR01.Rows[0]["Shift"]);
+            string team = MyUtility.Convert.GetString(dtR01.Rows[0]["Team"]);
             int insertRow = 5, startRow = 5, ttlShift = 1, subRows = 0;
             worksheet.Cells[3, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
             DataRow[] selectRow;
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in dtR01.Rows)
             {
                 if (shift != MyUtility.Convert.GetString(dr["Shift"]) || team != MyUtility.Convert.GetString(dr["Team"]))
                 {
@@ -3331,11 +3333,11 @@ order by ArtworkTypeID"),
 
             excel.Visible = false;
             #region Save & Show Excel
-            string strExcelName = Path.Combine(Sci.Env.Cfg.ReportTempDir,
+            string excelFileR01 = Path.Combine(Sci.Env.Cfg.ReportTempDir,
                                 "Daily CMP Report"
                                + DateTime.Now.ToString("_yyyyMMdd_HHmmssfff")
                                + "(" + Sci.Env.User.Factory + ").xlsx");
-            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.ActiveWorkbook.SaveAs(excelFileR01);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
             Marshal.ReleaseComObject(worksheet);
@@ -3343,22 +3345,62 @@ order by ArtworkTypeID"),
 
             #endregion
 
+            #endregion
+
+            #region 產生R04 報表
+            DataTable dtR04;
+            string sqlcmd = $"exec [dbo].[Send_SewingDailyOutput] '{Sci.Env.User.Factory}'";
+            result = DBProxy.Current.Select("", sqlcmd, out dtR04);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                return;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R04_SewingDailyOutputList.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得
+            objSheets.get_Range("AM:AN").EntireColumn.Delete();
+            for (int i = 40; i < dtR04.Columns.Count; i++)
+            {
+                objSheets.Cells[1, i + 1] = dtR04.Columns[i].ColumnName;
+            }
+
+            string r = MyUtility.Excel.ConvertNumericToExcelColumn(dtR04.Columns.Count);
+            objSheets.get_Range("A1", r + "1").Cells.Interior.Color = Color.LightGreen;
+            objSheets.get_Range("A1", r + "1").AutoFilter(1);
+            objApp.Visible = false;
+
+            if (dtR04.Rows.Count != 0)
+            {
+                MyUtility.Excel.CopyToXls(dtR04, "", "Sewing_R04_SewingDailyOutputList.xltx", 1, false, null, objApp);
+            }
+
+            string excelFileR04 = Sci.Production.Class.MicrosoftFile.GetName("Sewing daily output list -");
+            objApp.ActiveWorkbook.SaveAs(excelFileR04);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+            #endregion
+
             #region SendMail
-            if (!MyUtility.Check.Empty(strExcelName))
+            if (!MyUtility.Check.Empty(excelFileR01) && !MyUtility.Check.Empty(excelFileR04))
             {
                 DataRow dr, drMail;
                 if (MyUtility.Check.Seek("select * from system", out dr))
                 {
                     string desc = $@"
 Hi all,
-    Output date: {DateTime.Now.ToString("yyyy/MM/dd")} Factory: {Sci.Env.User.Factory} data is already daily lock, the attachment file is system generate from Sewing R01(Daily CMP Report).
-    This message is automatically sent, please do not reply directly!
+     Output date: {DateTime.Now.ToString("yyyy/MM/dd")} Factory: {Sci.Env.User.Factory} sewing output data is already daily lock, these attachments are system generated from Sewing R01(Daily CMP Report) and Sewing R04(Sewing Daily Output List). This mail is automatically sent, please do not reply directly.
       
 ";
-                    if (MyUtility.Check.Seek("select * from mailto where id='021'", out drMail))
+                    if (MyUtility.Check.Seek("select * from mailto where id='020'", out drMail))
                     {
+                        List<string> attachFiles = new List<string>();
+                        attachFiles.Add(excelFileR01);
+                        attachFiles.Add(excelFileR04);
+
                         string subject = drMail["Subject"].ToString() + $@"{DateTime.Now.ToString("yyyy/MM/dd")} ({Sci.Env.User.Factory})";
-                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(dr["SendFrom"].ToString(), drMail["ToAddress"].ToString(), drMail["ccAddress"].ToString(), subject, strExcelName, desc, true, true);
+                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(dr["SendFrom"].ToString(), drMail["ToAddress"].ToString(), drMail["ccAddress"].ToString(), subject, desc, attachFiles, true, true);
                         mail.ShowDialog();
                     }
                 }
