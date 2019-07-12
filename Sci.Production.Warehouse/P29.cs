@@ -188,6 +188,10 @@ WHERE   StockType='{dr["tostocktype"]}'
                         {
                             dr["tolocation"] = dr["fromlocation"];
                         }
+                        else
+                        {
+                            dr["tolocation"] = string.Empty;
+                        }
                     }
 
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
@@ -584,6 +588,10 @@ WHERE   StockType='{findrow[0]["tostocktype"]}'
 "))
                             {
                                 findrow[0]["tolocation"] = findrow[0]["fromlocation"];
+                            }
+                            else
+                            {
+                                findrow[0]["tolocation"] = string.Empty;
                             }
                         }
                     }

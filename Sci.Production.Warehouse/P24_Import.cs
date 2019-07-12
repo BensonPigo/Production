@@ -187,12 +187,16 @@ SELECT  id
         , Description
         , StockType 
 FROM    DBO.MtlLocation WITH (NOLOCK) 
-WHERE   StockType='{dr["tostocktype"]}'
+WHERE   StockType='{dr["toStocktype"]}'
         and junk != '1'
         and  id ='{dr["fromlocation"]}'
 "))
                         {
                             dr["tolocation"] = dr["fromlocation"];
+                        }
+                        else
+                        {
+                            dr["tolocation"] = string.Empty;
                         }
                     }
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
