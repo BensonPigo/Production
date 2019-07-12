@@ -80,7 +80,7 @@ select distinct
 	GMTBookingID=g.ID,
 	pl.ShipPlanID,
 	pl.PulloutID,
-	oq.Qty,
+	qty=isnull(oq.Qty,0),
 	ShipQty=sum(pld.ShipQty)over(partition by pld.id,pld.OrderID,pld.OrderShipmodeSeq),
 	Order_QtyShip_ShipmodeID=oq.ShipmodeID,
 	GMTBooking_ShipModeID=g.ShipModeID,
@@ -94,6 +94,33 @@ left join Order_QtyShip oq with(nolock) on pld.OrderID=oq.id and pld.OrderShipmo
 left join GMTBooking g with(nolock) on g.id = pl.INVNo
 where 1=1
 {where}
+ 
+ 
+select 
+	o.ID,
+	oq.Seq
+into #DistinctSeq
+from PackingList_Detail pld with(nolock)
+inner join PackingList pl with(nolock) on pld.id=pl.id and pl.Type in('B','S')
+inner join orders o with(nolock) on pld.OrderID=o.id
+inner join Order_QtyShip oq with(nolock) on pld.OrderID=oq.id
+where 1=1
+{where}
+union
+select 
+	pld.OrderID,
+	pld.OrderShipmodeSeq
+from PackingList_Detail pld with(nolock)
+inner join PackingList pl with(nolock) on pld.id=pl.id and pl.Type in('B','S')
+inner join orders o with(nolock) on pld.OrderID=o.id
+where 1=1
+{where}
+ 
+select d.ID,d.Seq
+into #diffSeq
+from #DistinctSeq d
+where not exists(select 1 from #tmp t where d.ID=t.ID and d.Seq=t.Seq)
+
 
 select distinct
 	o.FactoryID,
@@ -111,30 +138,49 @@ select distinct
 	GMTBooking_ShipModeID=g.ShipModeID,
 	PackingCreateBy =(select concat(pass1.id,'-',pass1.name ) from pass1 with(nolock) where pass1.id = pl.AddName),
 	GBHandle =(select concat(pass1.id,'-',pass1.name ) from pass1 with(nolock) where pass1.id = g.Handle)
-	
-into #tmp2
-from Order_QtyShip oq with(nolock)
+into #diffSeqData
+from #diffSeq d
+inner join Order_QtyShip oq with(nolock) on oq.id = d.ID and oq.Seq = d.Seq
 inner join orders o with(nolock) on oq.ID=o.id
 left join PackingList_Detail pld with(nolock) on pld.OrderID=oq.id and pld.OrderShipmodeSeq = oq.Seq
 left join PackingList pl with(nolock) on pld.id=pl.id and pl.Type in('B','S')
 left join GMTBooking g with(nolock) on g.id = pl.INVNo
-where 1=1 
-{where}
+
+union all
+
+select distinct
+	o.FactoryID,
+	o.ID,
+	 pld.OrderShipmodeSeq,
+	o.BrandID,
+	o.CustPONo,
+	PackingListID=pl.ID,
+	GMTBookingID=g.ID,
+	pl.ShipPlanID,
+	pl.PulloutID,
+	qty=0,
+	ShipQty=sum(pld.ShipQty)over(partition by pld.id,pld.OrderID,pld.OrderShipmodeSeq),
+	Order_QtyShip_ShipmodeID='',
+	GMTBooking_ShipModeID=g.ShipModeID,
+	PackingCreateBy =(select concat(pass1.id,'-',pass1.name ) from pass1 with(nolock) where pass1.id = pl.AddName),
+	GBHandle =(select concat(pass1.id,'-',pass1.name ) from pass1 with(nolock) where pass1.id = g.Handle)
+from #diffSeq d
+inner join PackingList_Detail pld with(nolock) on pld.OrderID = d.ID and pld.OrderShipmodeSeq = d.Seq
+inner join PackingList pl with(nolock) on pld.id=pl.id and pl.Type in('B','S')
+inner join orders o with(nolock) on pld.OrderID=o.id
+left join GMTBooking g with(nolock) on g.id = pl.INVNo
+
 
 select *
 from #tmp t
 where Qty<> t.ShipQty or t.Qty is null
 
-union all
-
-select *
-from #tmp2 t
-where Qty<> t.ShipQty or 
-t.ShipQty is null
+union
+select*
+from #diffSeqData
 order by FactoryID, ID, Seq
 
-drop table #tmp
-drop table #tmp2
+drop table #tmp,#DistinctSeq,#diffSeq,#diffSeqData
 ";
 
             return DBProxy.Current.Select(null, sqlcmd, out this.PrintTable);
