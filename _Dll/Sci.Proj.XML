@@ -1373,6 +1373,62 @@
             <param name="img">目標圖片</param>
             <returns> return image with gray mask </returns>
         </member>
+        <member name="M:Sci.Utility.Excel.ExcelExtensionse.GetRanges(Microsoft.Office.Interop.Excel.Worksheet,System.String)">
+            <summary>
+            用RangeName去取Excel.Range物件，等同於WorkSheet.Range["RangeName"]
+            </summary>
+            <inheritdoc />
+        </member>
+        <member name="M:Sci.Utility.Excel.ExcelExtensionse.GetRanges(Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Sci.Utility.Excel.ExcelPrgs.SelectExcelHeader(System.String,System.Int32,System.Int32,System.Collections.Generic.Dictionary{System.String,System.Type})">
+            <summary>
+            把Excel的一個WorkSheet變成一個DataTable
+            </summary>
+            <param name="fileName">如果不指定檔名，會開對話視窗去選</param>
+            <param name="sheetNum">如果不指定SheetIndex會取第一個</param>
+            <param name="captionIndex">如果不指定標題列位置，預設第一列</param>
+            <param name="columnTypes">如果有指定，則遇到特定的標題，就會用特定的型態來給DataColumn用，未指定或找不到的，一律用string為預設</param>
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.Utility.Excel.ExcelPrgs.SelectExcelHeader(System.String,System.String,System.Int32,System.Collections.Generic.Dictionary{System.String,System.Type})">
+            <summary>
+            把Excel的一個WorkSheet變成一個DataTable
+            </summary>
+            <param name="fileName">如果不指定檔名，會開對話視窗去選</param>
+            <param name="sheetName">如果不指定SheetIndex會取第一個</param>
+            <param name="captionIndex">如果不指定標題列位置，預設第一列</param>
+            <param name="columnTypes">如果有指定，則遇到特定的標題，就會用特定的型態來給DataColumn用，未指定或找不到的，一律用string為預設</param>
+            <inheritdoc/>
+        </member>
+        <member name="T:Sci.Utility.Excel.ExcelPrgs.SelectExcelAgents">
+            <inheritdoc />
+        </member>
+        <member name="P:Sci.Utility.Excel.ExcelPrgs.SelectExcelAgents.FileName">
+            <inheritdoc />
+        </member>
+        <member name="P:Sci.Utility.Excel.ExcelPrgs.SelectExcelAgents.SheetName">
+            <inheritdoc />
+        </member>
+        <member name="P:Sci.Utility.Excel.ExcelPrgs.SelectExcelAgents.SheetNumber">
+            <inheritdoc />
+        </member>
+        <member name="P:Sci.Utility.Excel.ExcelPrgs.SelectExcelAgents.CaptionIndex">
+            <inheritdoc />
+        </member>
+        <member name="P:Sci.Utility.Excel.ExcelPrgs.SelectExcelAgents.ColumnTypes">
+            <inheritdoc />
+        </member>
+        <member name="P:Sci.Utility.Excel.ExcelPrgs.SelectExcelAgents.AutoTrimColumnName">
+            <inheritdoc />
+        </member>
+        <member name="M:Sci.Utility.Excel.ExcelPrgs.SelectExcelAgents.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:Sci.Utility.Excel.ExcelPrgs.SelectExcelAgents.Load">
+            <inheritdoc />
+        </member>
         <member name="T:Sci.Utility.Excel.MyExcelPrg">
             <summary>
             made by Edward for excel process
@@ -2571,6 +2627,33 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="T:Sci.Win.UI.ImportFromExcel">
+            <summary>
+            ImportFromExcel
+            </summary>
+        </member>
+        <member name="M:Sci.Win.UI.ImportFromExcel.#ctor">
+            <summary>
+            ImportFromExcel
+            </summary>
+        </member>
+        <member name="F:Sci.Win.UI.ImportFromExcel.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Sci.Win.UI.ImportFromExcel.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Sci.Win.UI.ImportFromExcel.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
         <member name="F:Sci.Win.UI.MsgFlowView.components">
             <summary>
             Required designer variable.
@@ -2727,6 +2810,40 @@
             <summary>
             此為設計工具支援所需的方法 - 請勿使用程式碼編輯器
             修改這個方法的內容。
+            </summary>
+        </member>
+        <member name="T:Sci.Win.UI.StdReportSetting">
+            <summary>
+            StdReportSetting
+            </summary>
+        </member>
+        <member name="M:Sci.Win.UI.StdReportSetting.#ctor(System.Windows.Forms.ToolStripMenuItem)">
+            <summary>
+            StdReportSetting
+            </summary>
+            <param name="menuitem">menuitem</param>
+        </member>
+        <member name="M:Sci.Win.UI.StdReportSetting.OnGridSetup">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.Win.UI.StdReportSetting.OnDetailGridSetup">
+            <inheritdoc/>
+        </member>
+        <member name="F:Sci.Win.UI.StdReportSetting.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Sci.Win.UI.StdReportSetting.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Sci.Win.UI.StdReportSetting.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
             </summary>
         </member>
         <member name="F:Sci.Win.UI.StdScreenSetting.components">
