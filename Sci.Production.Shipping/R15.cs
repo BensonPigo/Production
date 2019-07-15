@@ -54,6 +54,7 @@ sc.ID
 ,s.Junk
 ,sc.AddDate
 ,[ApproveDate] = case when sc.Status='Confirmed' then sc.EditDate else null end
+,[ApproveBy] = case when sc.Status='Confirmed' then sc.EditName + '-' + (select name from pass1 where id = sc.EditName) else null end
 ,[Supplier_old] = case when old.ChooseSupp =1 then old.LocalSuppID1
 					   when old.ChooseSupp =2 then old.LocalSuppID2
 					   when old.ChooseSupp =3 then old.LocalSuppID3

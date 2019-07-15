@@ -596,24 +596,32 @@ order by seq";
                 IsNewData = true;
 
             //ISP20190838 第二項 只有第一列跟第三列可以修改,且背景顏色改為粉色
-            for (int i = 0; i <= this.gridAppearance.Rows.Count - 1; i++)
-            {
-                //由於程式修改，新寫的資料筆數會少一筆，因此要跟著變INDEX  //ISP20190838
-                if (!IsNewData)
-                {
-                    if (i == 0 || i == 3)
-                    {
-                        gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.White;
-                    }
-                }
-                else
-                {
-                    if (i == 0 || i == 2)
-                    {
-                        gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.White;
-                    }
-                }
-            }
+            //for (int i = 0; i <= this.gridAppearance.Rows.Count - 1; i++)
+            //{
+            //    //由於程式修改，新寫的資料筆數會少一筆，因此要跟著變INDEX  //ISP20190838
+            //    if (!IsNewData)
+            //    {
+            //        if (i == 0 || i == 3)
+            //        {
+            //            gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
+            //        }
+            //        else
+            //        {
+            //            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (i == 0 || i == 2)
+            //        {
+            //            gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
+            //        }
+            //        else
+            //        {
+            //            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
+            //        }
+            //    }
+            //}
 
         }
 
@@ -683,12 +691,20 @@ order by seq";
                         {
                             gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
                         }
+                        else
+                        {
+                            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
+                        }
                     }
                     else
                     {
                         if (i == 0 || i == 2)
                         {
                             gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
+                        }
+                        else
+                        {
+                            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
                         }
                     }
 

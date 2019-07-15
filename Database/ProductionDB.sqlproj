@@ -2369,6 +2369,12 @@
     <Build Include="dbo\Functions\GetOrderLocation_Rate_ByLinked.sql" />
     <Build Include="dbo\Tables\GarmentTest_Detail_Apperance.sql" />
     <Build Include="dbo\Functions\GetPatternUkey.sql" />
+    <Build Include="dbo\Functions\getGCD.sql" />
+    <Build Include="dbo\Functions\getFractional.sql" />
+    <Build Include="dbo\Functions\getROF.sql" />
+    <Build Include="dbo\Functions\getDecimal.sql" />
+    <Build Include="dbo\Functions\getSizeSpecTrans.sql" />
+    <Build Include="dbo\Tables\ClogReason.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

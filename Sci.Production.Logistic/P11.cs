@@ -115,16 +115,16 @@ where cdd.ID = '{masterID}'
         {
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("CTNStartNO", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Article", header: "ColorWay", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("Size", header: "Size", width: Widths.AnsiChars(18), iseditingreadonly: true)
-            .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(18), iseditingreadonly: true)
-            .CellClogLocation("ClogLocationID", header: "Location", width: Widths.AnsiChars(10), iseditingreadonly: true);
+            .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("CTNStartNO", header: "CTN#", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("Article", header: "ColorWay", width: Widths.AnsiChars(9), iseditingreadonly: true)
+            .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Size", header: "Size", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .CellClogLocation("ClogLocationID", header: "Location", width: Widths.AnsiChars(8), iseditingreadonly: true);
 
             #endregion 欄位設定
         }
@@ -145,6 +145,13 @@ where cdd.ID = '{masterID}'
         protected override bool ClickSaveBefore()
         {
             bool isNewSave = MyUtility.Check.Empty(this.CurrentMaintain["ID"]);
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ClogReasonID"]))
+            {
+                MyUtility.Msg.WarningBox("< Reason > can't be empty!");
+                this.txtClogReason.TextBox1.Focus();
+                return false;
+            }
+
             if (isNewSave)
             {
                 this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "GD", "ClogGarmentDispose", DateTime.Now);
@@ -204,6 +211,7 @@ where c.Status = 'Confirmed' and c.ID <> '{this.CurrentMaintain["ID"]}'";
 update ClogGarmentDispose set Status = 'Confirmed' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
 
 update pd set pd.DisposeFromClog = 1
+, pd.DisposeDate = Getdate()
 from PackingList_Detail pd
 where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
 ";
@@ -255,6 +263,7 @@ where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartN
 update ClogGarmentDispose set Status = 'New' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
 
 update pd set pd.DisposeFromClog = 0
+,pd.DisposeDate = null
 from PackingList_Detail pd
 where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
 ";

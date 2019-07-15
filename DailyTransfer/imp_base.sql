@@ -3117,6 +3117,43 @@ when not matched by target then
 when not matched by source then 
 	delete;	
 
+--------ClogReason---------------
+
+Merge Production.dbo.ClogReason as t
+Using Trade_To_Pms.dbo.ClogReason as s
+on t.Type=s.Type and t.ID=s.ID
+when matched then
+	update set
+	t.Description= s.Description,
+	t.Remark= s.Remark,
+	t.Junk= s.Junk,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate
+when not matched by target then
+	insert(Type
+	,ID
+	,Description
+	,Remark
+	,Junk
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	)
+	values(s.Type,
+	s.ID,
+	s.Description,
+	s.Remark,
+	s.Junk,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate)
+when not matched by source then 
+	delete;	
+
 --------ThreadAllowanceScale---------------
 
 Merge Production.dbo.ThreadAllowanceScale as t

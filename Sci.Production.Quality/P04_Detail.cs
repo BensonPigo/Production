@@ -592,12 +592,20 @@ where id = {Deatilrow["ID"]} and No = {Deatilrow["NO"]}
                         {
                             gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
                         }
+                        else
+                        {
+                            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
+                        }
                     }
                     else
                     {
                         if (i == 0 || i == 2)
                         {
                             gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
+                        }
+                        else
+                        {
+                            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
                         }
                     }
 
@@ -779,7 +787,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 //大約21個字換行
                 int widhthBase = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Type"]).Length / 20;
 
-                worksheet.get_Range("61:61", Type.Missing).RowHeight = 19 * widhthBase;
+                worksheet.get_Range("61:61", Type.Missing).RowHeight = widhthBase == 0 ? 28 : 28 * widhthBase;
 
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash1"]);
                 if (tmpAR.EqualString("Accepted"))
@@ -865,7 +873,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 //大約21個字換行
                 int widhthBase2 = dtApperance.Select("seq=4")[0]["Type"].ToString().Length / 20;
 
-                worksheet.get_Range("64:64", Type.Missing).RowHeight = 19 * widhthBase2;
+                worksheet.get_Range("64:64", Type.Missing).RowHeight = widhthBase2 == 0 ? 28 : 28 * widhthBase2;
 
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash1"]);
                 if (tmpAR.EqualString("Accepted"))
@@ -1268,7 +1276,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 //大約21個字換行
                 int widhthBase = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Type"]).ToString().Length / 20;
 
-                worksheet.get_Range("61:61", Type.Missing).RowHeight = 19 * widhthBase;
+                worksheet.get_Range("61:61", Type.Missing).RowHeight = widhthBase == 0 ? 28 : 28 * widhthBase;
 
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash1"]);
                 if (tmpAR.EqualString("Accepted"))
@@ -1334,7 +1342,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 //大約21個字換行
                 int widhthBase2 = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Type"]).ToString().Length / 20;
 
-                worksheet.get_Range("63:63", Type.Missing).RowHeight = 19 * widhthBase2;
+                worksheet.get_Range("63:63", Type.Missing).RowHeight = widhthBase2 == 0 ? 28 : 28 * widhthBase2;
 
                 if ((
                         worksheet.get_Range("61:61", Type.Missing).RowHeight
