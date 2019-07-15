@@ -19,7 +19,7 @@ namespace Sci.Production.Warehouse
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable dtScrap;
+        protected DataTable dtScrap = new DataTable();
 
         public P24_Import(DataRow master, DataTable detail)
         {
@@ -180,6 +180,25 @@ Where   1=1
                 if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
                     DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    if (Convert.ToBoolean(dr["selected"]) == true)
+                    {
+                        if (MyUtility.Check.Seek($@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{dr["toStocktype"]}'
+        and junk != '1'
+        and  id ='{dr["fromlocation"]}'
+"))
+                        {
+                            dr["tolocation"] = dr["fromlocation"];
+                        }
+                        else
+                        {
+                            dr["tolocation"] = string.Empty;
+                        }
+                    }
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];

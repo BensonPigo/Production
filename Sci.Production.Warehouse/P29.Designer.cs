@@ -32,6 +32,12 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtStockSP2 = new Sci.Win.UI.TextBox();
+            this.txtStockSP1 = new Sci.Win.UI.TextBox();
+            this.lbStockSP = new Sci.Win.UI.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtIssueSP2 = new Sci.Win.UI.TextBox();
             this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
@@ -56,12 +62,6 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
-            this.txtIssueSP2 = new Sci.Win.UI.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lbStockSP = new Sci.Win.UI.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtStockSP2 = new Sci.Win.UI.TextBox();
-            this.txtStockSP1 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -104,11 +104,66 @@
             this.panel1.Size = new System.Drawing.Size(1078, 107);
             this.panel1.TabIndex = 1;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(210, 44);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(16, 17);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "~";
+            // 
+            // txtStockSP2
+            // 
+            this.txtStockSP2.BackColor = System.Drawing.Color.White;
+            this.txtStockSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStockSP2.Location = new System.Drawing.Point(232, 40);
+            this.txtStockSP2.Name = "txtStockSP2";
+            this.txtStockSP2.Size = new System.Drawing.Size(117, 23);
+            this.txtStockSP2.TabIndex = 6;
+            // 
+            // txtStockSP1
+            // 
+            this.txtStockSP1.BackColor = System.Drawing.Color.White;
+            this.txtStockSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStockSP1.Location = new System.Drawing.Point(87, 41);
+            this.txtStockSP1.Name = "txtStockSP1";
+            this.txtStockSP1.Size = new System.Drawing.Size(117, 23);
+            this.txtStockSP1.TabIndex = 5;
+            // 
+            // lbStockSP
+            // 
+            this.lbStockSP.Location = new System.Drawing.Point(9, 41);
+            this.lbStockSP.Name = "lbStockSP";
+            this.lbStockSP.Size = new System.Drawing.Size(75, 23);
+            this.lbStockSP.TabIndex = 18;
+            this.lbStockSP.Text = "Stock SP#";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(210, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(16, 17);
+            this.label1.TabIndex = 17;
+            this.label1.Text = "~";
+            // 
+            // txtIssueSP2
+            // 
+            this.txtIssueSP2.BackColor = System.Drawing.Color.White;
+            this.txtIssueSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtIssueSP2.Location = new System.Drawing.Point(232, 8);
+            this.txtIssueSP2.Name = "txtIssueSP2";
+            this.txtIssueSP2.Size = new System.Drawing.Size(117, 23);
+            this.txtIssueSP2.TabIndex = 2;
+            // 
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.boolFtyGroupList = true;
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(87, 75);
             this.txtmfactory.Name = "txtmfactory";
@@ -408,59 +463,6 @@
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
             // 
-            // txtIssueSP2
-            // 
-            this.txtIssueSP2.BackColor = System.Drawing.Color.White;
-            this.txtIssueSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtIssueSP2.Location = new System.Drawing.Point(232, 8);
-            this.txtIssueSP2.Name = "txtIssueSP2";
-            this.txtIssueSP2.Size = new System.Drawing.Size(117, 23);
-            this.txtIssueSP2.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(210, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(16, 17);
-            this.label1.TabIndex = 17;
-            this.label1.Text = "~";
-            // 
-            // lbStockSP
-            // 
-            this.lbStockSP.Location = new System.Drawing.Point(9, 41);
-            this.lbStockSP.Name = "lbStockSP";
-            this.lbStockSP.Size = new System.Drawing.Size(75, 23);
-            this.lbStockSP.TabIndex = 18;
-            this.lbStockSP.Text = "Stock SP#";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(210, 44);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(16, 17);
-            this.label2.TabIndex = 21;
-            this.label2.Text = "~";
-            // 
-            // txtStockSP2
-            // 
-            this.txtStockSP2.BackColor = System.Drawing.Color.White;
-            this.txtStockSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStockSP2.Location = new System.Drawing.Point(232, 40);
-            this.txtStockSP2.Name = "txtStockSP2";
-            this.txtStockSP2.Size = new System.Drawing.Size(117, 23);
-            this.txtStockSP2.TabIndex = 6;
-            // 
-            // txtStockSP1
-            // 
-            this.txtStockSP1.BackColor = System.Drawing.Color.White;
-            this.txtStockSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStockSP1.Location = new System.Drawing.Point(87, 41);
-            this.txtStockSP1.Name = "txtStockSP1";
-            this.txtStockSP1.Size = new System.Drawing.Size(117, 23);
-            this.txtStockSP1.TabIndex = 5;
-            // 
             // P29
             // 
             this.ClientSize = new System.Drawing.Size(1078, 601);
@@ -471,6 +473,7 @@
             this.DefaultControlForEdit = "txtIssueSP";
             this.EditMode = true;
             this.Name = "P29";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P29. Batch Create Inventory to Bulk";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
