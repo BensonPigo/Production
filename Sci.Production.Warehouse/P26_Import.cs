@@ -47,25 +47,29 @@ namespace Sci.Production.Warehouse
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSPNo.Text.TrimEnd();
             String refno = this.txtRef.Text.TrimEnd();
-            String locationid = this.txtLocation.Text.TrimEnd();
+            String color = this.txtColor.Text.TrimEnd();
+            String roll = this.txtRoll.Text.TrimEnd();
             String dyelot = this.txtDyelot.Text.TrimEnd();
             String transid = this.txtTransactionID.Text.TrimEnd();
+            String wk = this.txtWk.Text.TrimEnd();
+            String locationid = this.txtLocation.Text.TrimEnd();
             String MaterialType = this.cmbMaterialType.SelectedValue.ToString();
             String StockType = this.comboStockType.SelectedValue.ToString();
-            switch (radioPanel1.Value)
+            //SP#, Transaction ID, Ref#,Location#,WK#不可同時為空
+            bool sql1 = false;
+            if (MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(locationid) && MyUtility.Check.Empty(refno) && MyUtility.Check.Empty(wk))
             {
-                case "1":
-                    if (MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(locationid) && MyUtility.Check.Empty(refno))
-                    {
-                        MyUtility.Msg.WarningBox("< SP# > or < Ref# > or < Location > can't be empty!!");
-                        txtSPNo.Focus();
-                        return;
-                    }                        
-                    else
-                    {
-                        // 建立可以符合回傳的Cursor
-                        strSQLCmd.Append(string.Format(@"
+                MyUtility.Msg.WarningBox("< SP# >, < Transaction ID# >, < Ref# >, < Location >, <WK#> can't all empty!!");
+                return;
+            }
+
+            if (!MyUtility.Check.Empty(sp) || !MyUtility.Check.Empty(locationid) || !MyUtility.Check.Empty(refno) || !MyUtility.Check.Empty(wk))
+            {
+                sql1 = true;
+                // 建立可以符合回傳的Cursor
+                strSQLCmd.Append(string.Format(@"
 select  distinct 0 as selected
+        , r.exportID
         , a.Poid
         , a.seq1
         , a.seq2
@@ -73,11 +77,12 @@ select  distinct 0 as selected
         , a.Roll
         , a.Dyelot
         , a.InQty - a.OutQty + a.AdjustQty qty
-        , a.Ukey ftyinventoryukey
+        , a.Ukey
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
         , dbo.Getlocation(a.ukey) fromlocation
         , '' tolocation
         , '' id
+		, a.Ukey ftyinventoryukey
         , p1.refno
         , p1.colorid
         , p1.sizespec
@@ -88,68 +93,84 @@ left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 inner join dbo.Factory f on f.ID=p1.factoryID 
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
+left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
 where    f.MDivisionID='{0}' 
-", Sci.Env.User.Keyword)); // 
-                        
-                        //if (BalanceQty.Checked)
-                        //{
-                        //    strSQLCmd.Append("AND a.InQty - a.OutQty + a.AdjustQty > 0 ");
-                        //}
+", Sci.Env.User.Keyword));
 
-                        if (!MyUtility.Check.Empty(sp))
-                        {
-                            strSQLCmd.Append(string.Format(@" 
+                if (!MyUtility.Check.Empty(sp))
+                {
+                    strSQLCmd.Append(string.Format(@" 
         and a.poid='{0}' ", sp));
-                        }
-                        if (!txtSeq.checkSeq1Empty() && txtSeq.checkSeq2Empty())
-                        {
-                            strSQLCmd.Append(string.Format(@" 
+                }
+                if (!txtSeq.checkSeq1Empty() && txtSeq.checkSeq2Empty())
+                {
+                    strSQLCmd.Append(string.Format(@" 
         and a.seq1 = '{0}'", txtSeq.seq1));
-                        }else if (!txtSeq.checkEmpty(showErrMsg: false))
-                        {
-                            strSQLCmd.Append(string.Format(@" 
+                }
+                else if (!txtSeq.checkEmpty(showErrMsg: false))
+                {
+                    strSQLCmd.Append(string.Format(@" 
         and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq.seq1, txtSeq.seq2));
-                        }
-                        if (!MyUtility.Check.Empty(refno))
-                        {
-                            strSQLCmd.Append(string.Format(@" 
+                }
+                if (!MyUtility.Check.Empty(refno))
+                {
+                    strSQLCmd.Append(string.Format(@" 
         and (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 )='{0}'", refno));
-                        }
-                        if (!MyUtility.Check.Empty(locationid))
-                        {
-                            strSQLCmd.Append(string.Format(@" 
+                }
+                if (!MyUtility.Check.Empty(locationid))
+                {
+                    strSQLCmd.Append(string.Format(@" 
         and b.MtlLocationID = '{0}' ", locationid));
-                        }
-                        if (!MyUtility.Check.Empty(dyelot))
-                        {
-                            strSQLCmd.Append(string.Format(@" 
+                }
+                if (!MyUtility.Check.Empty(dyelot))
+                {
+                    strSQLCmd.Append(string.Format(@" 
         and a.dyelot='{0}' ", dyelot));
-                        }
-                        if (!MyUtility.Check.Empty(MaterialType))
-                        {
-                            strSQLCmd.Append(string.Format(@" 
+                }
+                if (!MyUtility.Check.Empty(MaterialType))
+                {
+                    strSQLCmd.Append(string.Format(@" 
         and p1.FabricType='{0}' ", MaterialType));
-                        }
-                        if (!MyUtility.Check.Empty(StockType))
-                        {
-                            strSQLCmd.Append(string.Format(@" 
+                }
+                if (!MyUtility.Check.Empty(StockType))
+                {
+                    strSQLCmd.Append(string.Format(@" 
         and a.StockType = {0} ", StockType));
-                        }
-                    }
+                }
+                if (!MyUtility.Check.Empty(wk))
+                {
+                    strSQLCmd.Append(string.Format(@" 
+        and r.ExportId='{0}'", wk));
+                }
+                if (!MyUtility.Check.Empty(color))
+                {
+                    strSQLCmd.Append(string.Format(@" 
+        and p1.ColorID='{0}'", color));
+                }
+                if (!MyUtility.Check.Empty(roll))
+                {
+                    strSQLCmd.Append(string.Format(@" 
+        and a.Roll='{0}'", roll));
+                }
 
-                    strSQLCmd.Append(@" 
-group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.AdjustQty, a.Ukey, p1.refno, p1.colorid, p1.sizespec, a.StockType");
-                    break;
+                strSQLCmd.Append(@" 
+group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.AdjustQty, a.Ukey, p1.refno, p1.colorid, p1.sizespec, a.StockType, r.exportID");
+            }
+            //    break;
 
-                case "2":
-                    if (string.IsNullOrWhiteSpace(transid))
-                    {
-                        MyUtility.Msg.WarningBox("< Transaction ID# > can't be empty!!");
-                        txtTransactionID.Focus();
-                        return;
-                    }
-                    strSQLCmd.Append(string.Format(@"
+            //case "2":
+            if (!MyUtility.Check.Empty(transid))
+            {
+                if (sql1)
+                {
+                    strSQLCmd.Append(" union ");
+
+                }
+                strSQLCmd.Append(string.Format(@"
+select*
+from(
 select  0 as selected
+        , r1.exportID
         , a.Poid
         , a.seq1
         , a.seq2
@@ -165,6 +186,7 @@ select  0 as selected
         , a.ukey as ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
         , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+		,sizespec=''
         , r2.Ukey Receiving_Detail_ukey
         , a.StockType
 from dbo.Receiving r1 WITH (NOLOCK) 
@@ -178,6 +200,7 @@ where
         {1}
 union all
 select  0 as selected
+        , r.exportID
         , a.Poid
         , a.seq1
         , a.seq2
@@ -193,12 +216,14 @@ select  0 as selected
         , a.ukey ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
         , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+		,sizespec=''
         , rd.Ukey Receiving_Detail_ukey
         , a.StockType
 from dbo.SubTransfer r1 WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.fromftyinventoryukey
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
+left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
 where  
         r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed'
@@ -207,6 +232,7 @@ where
         {1}
 union all
 select  0 as selected
+        , r.exportID
         , a.Poid
         , a.seq1
         , a.seq2
@@ -222,12 +248,14 @@ select  0 as selected
         , a.ukey ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
         , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+		,sizespec=''
         , rd.Ukey Receiving_Detail_ukey
         , a.StockType
 from dbo.Issue r1 WITH (NOLOCK) 
 inner join dbo.Issue_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
+left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
 where   
         r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed' 
@@ -236,6 +264,7 @@ where
         {1}
 union all
 select  0 as selected
+        , r.exportID
         , a.Poid
         , a.seq1
         , a.seq2
@@ -251,12 +280,14 @@ select  0 as selected
         , a.ukey ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
         , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+		,sizespec=''
         , rd.Ukey Receiving_Detail_ukey
         , a.StockType
 from dbo.ReturnReceipt r1 WITH (NOLOCK) 
 inner join dbo.ReturnReceipt_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
+left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
 where   
         r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed' 
@@ -265,6 +296,7 @@ where
         {1}
 union
 select  0 as selected
+        , r.exportID
         , a.Poid
         , a.seq1
         , a.seq2
@@ -280,22 +312,25 @@ select  0 as selected
         , a.ukey ftyinventoryukey 
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
         , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+		,sizespec=''
         , rd.Ukey Receiving_Detail_ukey
         , a.StockType
 from dbo.TransferIn r1 WITH (NOLOCK) 
 inner join dbo.TransferIn_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
+left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
 where  
         r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
         and r1.id = '{0}' 
-        {1} ", 
-        transid,
-        MyUtility.Check.Empty(StockType) ? string.Empty : $"and a.StockType = {StockType}",
-        Sci.Env.User.Keyword
-        )); // 
-                    break;
+        {1} 
+)ul
+",
+    transid,
+    MyUtility.Check.Empty(StockType) ? string.Empty : $"and a.StockType = {StockType}",
+    Sci.Env.User.Keyword
+    ));
             }
 
             // 增加 order by FtyInventory.POID, FtyInventory.Seq1, FtyInventory.Seq2,Receiving_Detail.Ukey,FtyInventory.StockType
@@ -452,6 +487,7 @@ stocktype = '{e.FormattedValue}'
             this.gridImport.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+                .Text("exportID", header: "WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
                 .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
                 .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: true)    //3
@@ -550,36 +586,36 @@ stocktype = '{e.FormattedValue}'
 
         }
 
-        private void radioPanel1_ValueChanged(object sender, EventArgs e)
-        {
-            Sci.Win.UI.RadioPanel rdoG = (Sci.Win.UI.RadioPanel)sender;
-            switch (rdoG.Value)
-            {
-                case "1":
-                    txtSPNo.ReadOnly = false;
-                    txtSeq.txtSeq_ReadOnly(false);
-                    txtRef.ReadOnly = false;
-                    txtLocation.ReadOnly = false;
-                    txtDyelot.ReadOnly = false;
-                    txtTransactionID.ReadOnly = true;
-                    txtTransactionID.Text = "";
-                    break;
-                case "2":
-                    txtSPNo.ReadOnly = true;
-                    txtSeq.txtSeq_ReadOnly(true);
-                    txtRef.ReadOnly = true;
-                    txtLocation.ReadOnly = true;
-                    txtDyelot.ReadOnly = true;
-                    txtSPNo.Text = "";
-                    txtSeq.seq1 = "";
-                    txtSeq.seq2 = "";
-                    txtRef.Text = "";
-                    txtLocation.Text = "";
-                    txtDyelot.Text = "";
-                    txtTransactionID.ReadOnly = false;
-                    break;
-            }
-        }
+        //private void radioPanel1_ValueChanged(object sender, EventArgs e)
+        //{
+        //    Sci.Win.UI.RadioPanel rdoG = (Sci.Win.UI.RadioPanel)sender;
+        //    switch (rdoG.Value)
+        //    {
+        //        case "1":
+        //            txtSPNo.ReadOnly = false;
+        //            txtSeq.txtSeq_ReadOnly(false);
+        //            txtRef.ReadOnly = false;
+        //            txtLocation.ReadOnly = false;
+        //            txtDyelot.ReadOnly = false;
+        //            txtTransactionID.ReadOnly = true;
+        //            txtTransactionID.Text = "";
+        //            break;
+        //        case "2":
+        //            txtSPNo.ReadOnly = true;
+        //            txtSeq.txtSeq_ReadOnly(true);
+        //            txtRef.ReadOnly = true;
+        //            txtLocation.ReadOnly = true;
+        //            txtDyelot.ReadOnly = true;
+        //            txtSPNo.Text = "";
+        //            txtSeq.seq1 = "";
+        //            txtSeq.seq2 = "";
+        //            txtRef.Text = "";
+        //            txtLocation.Text = "";
+        //            txtDyelot.Text = "";
+        //            txtTransactionID.ReadOnly = false;
+        //            break;
+        //    }
+        //}
 
         private void btnUpdateAllLocation_Click(object sender, EventArgs e)
         {
@@ -597,29 +633,29 @@ stocktype = '{e.FormattedValue}'
             }
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            bool re = base.ProcessCmdKey(ref msg, keyData);
-            if (radioTransactionID.Focused && radioTransactionID.Checked == true)
-            {
-                if (keyData == Keys.Tab || keyData == Keys.Enter)
-                {
-                    txtTransactionID.Select();
-                    return true;
-                }
-            }
+        //protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        //{
+        //    bool re = base.ProcessCmdKey(ref msg, keyData);
+        //    if (radioTransactionID.Focused && radioTransactionID.Checked == true)
+        //    {
+        //        if (keyData == Keys.Tab || keyData == Keys.Enter)
+        //        {
+        //            txtTransactionID.Select();
+        //            return true;
+        //        }
+        //    }
 
-            if (txtTransactionID.Focused)
-            {
-                if(keyData == Keys.Tab || keyData == Keys.Enter)
-                {
-                    txtTransactionID.TabStop = false;
-                    btnQuery.Select();
-                    return true;
-                }
-            }
-            return re;
-        }
+        //    if (txtTransactionID.Focused)
+        //    {
+        //        if(keyData == Keys.Tab || keyData == Keys.Enter)
+        //        {
+        //            txtTransactionID.TabStop = false;
+        //            btnQuery.Select();
+        //            return true;
+        //        }
+        //    }
+        //    return re;
+        //}
 
         //動態顯示列表資料
         private void BalanceQty_CheckedChanged(object sender, EventArgs e)
