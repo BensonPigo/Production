@@ -1785,7 +1785,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             worksheet.Range[string.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(191, 191, 191); // 底色
             worksheet.Range[string.Format("A{0}:{1}{2}", maxRow < tRow ? 2 : (maxRow / tRow * tRow) + 3 , excelColEng, maxRow + 2)].Value2 = objArray;
             this.Subtrue = 0;
-
+            this.CreateCustomizedExcel(ref worksheet);
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(maxRow);
 

@@ -91,6 +91,16 @@
             this.close.Location = new System.Drawing.Point(502, 84);
             this.close.TabIndex = 31;
             // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(456, 120);
+            this.buttonCustomized.Visible = true;
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(475, 156);
+            this.checkUseCustomized.Visible = true;
+            // 
             // labelBuyerDelivery
             // 
             this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 11);
@@ -660,10 +670,13 @@
             this.Controls.Add(this.labelBuyerDelivery);
             this.DefaultControl = "dateBuyerDelivery";
             this.DefaultControlForEdit = "dateBuyerDelivery";
+            this.IsSupportCustomized = true;
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. PPIC master list report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
