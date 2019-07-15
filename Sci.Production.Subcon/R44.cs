@@ -274,20 +274,13 @@ Begin
 	where #cur_bdltrack2.Orderid = @OrderID
 	order by cdate2
 	
-	;with qa as (
-		select	OrderID = @OrderID
-				, qdate = @StartInLine
+	while @StartInLine <= @EndDate
+	begin
+		insert into #CBDate
+		select @OrderID, @StartInLine
 
-		union all
-		select	OrderID = @OrderID
-				, DATEADD(day, 1, qdate)
-		from qa 
-		where	qdate < @EndDate
-	) 
-	insert into #CBDate
-	select OrderID, qdate
-	from qa
-	Option (maxrecursion 365);
+		set @StartInLine =  DATEADD(day, 1, @StartInLine) 
+	end 
 
 /*
 *	Fetch 指向 #tsp 下一筆資料
