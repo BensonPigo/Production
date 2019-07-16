@@ -2893,6 +2893,11 @@
               查詢類型 System.Drawing.Bitmap 的當地語系化資源。
             </summary>
         </member>
+        <member name="P:Sci.Properties.Resources.WZUnJunk">
+            <summary>
+              查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+            </summary>
+        </member>
         <member name="P:Sci.Properties.Resources.WZUNLOCK">
             <summary>
               查詢類型 System.Drawing.Bitmap 的當地語系化資源。
@@ -7759,6 +7764,11 @@
             Property of IsSupportJunk.
             </summary>
         </member>
+        <member name="P:Sci.Win.Tems.Base.IsSupportUnJunk">
+            <summary>
+            Property of IsSupportJunk.
+            </summary>
+        </member>
         <member name="P:Sci.Win.Tems.Base.TransactionScopeTimeoutSeconds">
             <summary>
             Save/ Delete 中使用的TransactionScope timeout 的時間(seconds)
@@ -8234,6 +8244,11 @@
             internal used.
             </summary>
         </member>
+        <member name="M:Sci.Win.Tems.Base.DoUnJunk">
+            <summary>
+            internal used.
+            </summary>
+        </member>
         <member name="M:Sci.Win.Tems.Base.OnInternalJunkBefore">
             <summary>
             internal used.
@@ -8241,6 +8256,17 @@
             <returns>true or false.</returns>
         </member>
         <member name="M:Sci.Win.Tems.Base.ClickJunk">
+            <summary>
+            Junk toolbar icon click event method.
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tems.Base.OnInternalUnJunkBefore">
+            <summary>
+            internal used.
+            </summary>
+            <returns>true or false.</returns>
+        </member>
+        <member name="M:Sci.Win.Tems.Base.ClickUnJunk">
             <summary>
             Junk toolbar icon click event method.
             </summary>
@@ -17813,6 +17839,11 @@
             </summary>
         </member>
         <member name="F:Sci.Win.UI.Toolbar.junk">
+            <summary>
+            Toolbar button of check, uncheck, close, unclose, receive, rtn, junk.
+            </summary>
+        </member>
+        <member name="F:Sci.Win.UI.Toolbar.unjunk">
             <summary>
             Toolbar button of check, uncheck, close, unclose, receive, rtn, junk.
             </summary>
