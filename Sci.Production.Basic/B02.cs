@@ -70,5 +70,15 @@ namespace Sci.Production.Basic
             base.ClickEditAfter();
             this.txtUserPOApproved.TextBox1.Select();
         }
+
+        // 取Pic Files Path 路徑
+        private void BtnPicFilesPath_Click(object sender, EventArgs e)
+        {
+            string dir = this.GetDir();
+            if (!MyUtility.Check.Empty(dir))
+            {
+                this.txtPicFilesPath.Text = dir;
+            }
+        }
     }
 }

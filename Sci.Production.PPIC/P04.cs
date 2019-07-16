@@ -29,7 +29,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.destination_path = MyUtility.GetValue.Lookup("select PicPath from System WITH (NOLOCK) ", null);
+            this.destination_path = MyUtility.GetValue.Lookup("select StyleSketch from System WITH (NOLOCK) ", null);
         }
 
         /// <inheritdoc/>
@@ -43,6 +43,7 @@ namespace Sci.Production.PPIC
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
             this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["SpecialMark"])));
             this.txttpeuserSMR.DisplayBox1Binding = MyUtility.Convert.GetString(this.CurrentMaintain["Phase"]) == "1" ? MyUtility.Convert.GetString(this.CurrentMaintain["SampleSMR"]) : MyUtility.Convert.GetString(this.CurrentMaintain["BulkSMR"]);
             this.txttpeuserHandle.DisplayBox1Binding = MyUtility.Convert.GetString(this.CurrentMaintain["Phase"]) == "1" ? MyUtility.Convert.GetString(this.CurrentMaintain["SampleMRHandle"]) : MyUtility.Convert.GetString(this.CurrentMaintain["BulkMRHandle"]);
@@ -122,6 +123,25 @@ namespace Sci.Production.PPIC
             }
         }
 
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            #region 開關Attach & Delete功能
+            if (!MyUtility.Check.Empty(CurrentMaintain))
+            {
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["LocalStyle"]))
+                {
+                    this.toolbar.cmdAttach.Enabled = true;
+                    this.toolbar.cmdDelete.Enabled = true;
+                }
+                else
+                {
+                    this.toolbar.cmdAttach.Enabled = false;
+                    this.toolbar.cmdDelete.Enabled = false;
+                }
+            }
+            #endregion
+        }
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
