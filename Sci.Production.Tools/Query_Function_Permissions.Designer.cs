@@ -274,7 +274,7 @@
             // 
             this.chkDelete.AutoSize = true;
             this.chkDelete.ForeColor = System.Drawing.Color.Red;
-            this.chkDelete.Location = new System.Drawing.Point(156, 5);
+            this.chkDelete.Location = new System.Drawing.Point(156, 7);
             this.chkDelete.Name = "chkDelete";
             this.chkDelete.Size = new System.Drawing.Size(68, 21);
             this.chkDelete.TabIndex = 2;

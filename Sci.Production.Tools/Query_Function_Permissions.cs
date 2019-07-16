@@ -189,36 +189,36 @@ select [UserID] = p1.ID
 ,p1.Factory
 ,[Module] = ISNULL(M2.MenuName,M.MenuName)
 ,[Function] = IIF(M.MenuName IS NOT NULL,MD.BarPrompt,MD2.BarPrompt) 
-,[New] =   case when MD.CanNew=0 then 'N/A'
-			when MD.CanNew=1 and p2.CanNew=1 then 'Y' else '' end
-,[Edit] =  case when MD.CanEdit=0 then 'N/A'
-			when MD.CanEdit=1 and p2.CanEdit=1 then 'Y' else '' end
-,[Delete] = case when MD.CanDelete=0 then 'N/A'
-			when MD.CanDelete=1 and p2.CanDelete=1 then 'Y' else '' end
-,[Print] = case when MD.CanPrint=0 then 'N/A'
-			when MD.CanPrint=1 and p2.CanPrint=1 then 'Y' else '' end
-,[Confirm] = case when MD.CanConfirm=0 then 'N/A'
-			when MD.CanConfirm=1 and p2.CanConfirm=1 then 'Y' else '' end
-,[UnConfirm] = case when MD.CanUnConfirm=0 then 'N/A'
-			when MD.CanUnConfirm=1 and p2.CanUnConfirm=1 then 'Y' else '' end
-,[Send] = case when MD.CanSend=0 then 'N/A'
-			when MD.CanSend=1 and p2.CanSend=1 then 'Y' else '' end
-,[Recall] = case when MD.CanRecall=0 then 'N/A'
-			when MD.CanRecall=1 and p2.CanRecall=1 then 'Y' else '' end
-,[UnCheck] = case when MD.CanUnCheck=0 then 'N/A'
-			when MD.CanUnCheck=1 and p2.CanUnCheck=1 then 'Y' else '' end
-,[Check] = case when MD.CanCheck=0 then 'N/A'
-			when MD.CanCheck=1 and p2.CanCheck=1 then 'Y' else '' end
-,[Close] = case when MD.CanClose=0 then 'N/A'
-			when MD.CanClose=1 and p2.CanClose=1 then 'Y' else '' end
-,[UnClose] = case when MD.CanUnClose=0 then 'N/A'
-			when MD.CanUnClose=1 and p2.CanUnClose=1 then 'Y' else '' end
-,[Receive] = case when MD.CanReceive=0 then 'N/A'
-			when MD.CanReceive=1 and p2.CanReceive=1 then 'Y' else '' end
-,[Return] = case when MD.CanReturn=0 then 'N/A'
-			when MD.CanReturn=1 and p2.CanReturn=1 then 'Y' else '' end
-,[Junk] = case when MD.CanJunk=0 then 'N/A'
-			when MD.CanJunk=1 and p2.CanJunk=1 then 'Y' else '' end
+,[New] =   case when MD.CanNew=0 then ''
+			when MD.CanNew=1 and p2.CanNew=1 then 'Y' else 'N' end
+,[Edit] =  case when MD.CanEdit=0 then ''
+			when MD.CanEdit=1 and p2.CanEdit=1 then 'Y' else 'N' end
+,[Delete] = case when MD.CanDelete=0 then ''
+			when MD.CanDelete=1 and p2.CanDelete=1 then 'Y' else 'N' end
+,[Print] = case when MD.CanPrint=0 then ''
+			when MD.CanPrint=1 and p2.CanPrint=1 then 'Y' else 'N' end
+,[Confirm] = case when MD.CanConfirm=0 then ''
+			when MD.CanConfirm=1 and p2.CanConfirm=1 then 'Y' else 'N' end
+,[UnConfirm] = case when MD.CanUnConfirm=0 then ''
+			when MD.CanUnConfirm=1 and p2.CanUnConfirm=1 then 'Y' else 'N' end
+,[Send] = case when MD.CanSend=0 then ''
+			when MD.CanSend=1 and p2.CanSend=1 then 'Y' else 'N' end
+,[Recall] = case when MD.CanRecall=0 then ''
+			when MD.CanRecall=1 and p2.CanRecall=1 then 'Y' else 'N' end
+,[UnCheck] = case when MD.CanUnCheck=0 then ''
+			when MD.CanUnCheck=1 and p2.CanUnCheck=1 then 'Y' else 'N' end
+,[Check] = case when MD.CanCheck=0 then ''
+			when MD.CanCheck=1 and p2.CanCheck=1 then 'Y' else 'N' end
+,[Close] = case when MD.CanClose=0 then ''
+			when MD.CanClose=1 and p2.CanClose=1 then 'Y' else 'N' end
+,[UnClose] = case when MD.CanUnClose=0 then ''
+			when MD.CanUnClose=1 and p2.CanUnClose=1 then 'Y' else 'N' end
+,[Receive] = case when MD.CanReceive=0 then ''
+			when MD.CanReceive=1 and p2.CanReceive=1 then 'Y' else 'N' end
+,[Return] = case when MD.CanReturn=0 then ''
+			when MD.CanReturn=1 and p2.CanReturn=1 then 'Y' else 'N' end
+,[Junk] = case when MD.CanJunk=0 then ''
+			when MD.CanJunk=1 and p2.CanJunk=1 then 'Y' else 'N' end
 from Pass1 p1
 inner join Pass2 p2 on p1.FKPass0=p2.FKPass0
 LEFT JOIN MenuDetail MD ON MD.PKey = P2.FKMenu
@@ -226,6 +226,7 @@ LEFT JOIN Menu M ON MD.UKey = M.PKey
 LEFT JOIN MenuDetail MD2 ON M.MenuName = MD2.BarPrompt
 LEFT JOIN Menu M2 ON MD2.UKey = M2.PKey
 where p2.Used ='Y' and( p1.Resign >= GETDATE() or p1.Resign  is null)
+and m.MenuNo not in ('1400','1500')
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 {strSQLPerm}
 ORDER BY p1.id,[Module], [Function]
@@ -280,7 +281,7 @@ ORDER BY p1.id,[Module], [Function]
         {
             string sqlcmd = string.Format(@"
 select MenuName from Menu
-where IsSubMenu = 0
+where IsSubMenu = 0 and MenuNo not in ('1400','1500')
 order by PKey
 ");
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd,  "15", this.txtModule.Text, false, ",");
@@ -296,7 +297,8 @@ order by PKey
             {
                 if (MyUtility.Check.Seek($@"
 select MenuName from Menu WITH (NOLOCK)
-where IsSubMenu = 0  and MenuName = '{strModul}'") == false)
+where IsSubMenu = 0 and MenuNo not in ('1400','1500') 
+and MenuName = '{strModul}'") == false)
                 {
                     this.txtModule.Text = "";
                     e.Cancel = true;
@@ -310,16 +312,27 @@ where IsSubMenu = 0  and MenuName = '{strModul}'") == false)
         {
             string sqlcmd = string.Empty;
             sqlcmd = string.Format(@"
-select IIF(M.MenuName IS NOT NULL,MD.BarPrompt,MD2.BarPrompt) AS [Function] 
-, ISNULL(M2.MenuName,M.MenuName) AS [Module]
- from  MenuDetail MD 
-LEFT JOIN Menu M ON MD.UKey = M.PKey
-LEFT JOIN MenuDetail MD2 ON M.MenuName = MD2.BarPrompt
-LEFT JOIN Menu M2 ON MD2.UKey = M2.PKey
-where (MD.BarPrompt!='' or MD2.BarPrompt !='')
-order by m.Pkey, MD2.Pkey
+select BarPrompt,R_MenuName
+from (
+	Select ISNULL(p.RootNo,m.MenuNo) as R_MenuNo
+		, ISNULL(p.RootName,m.MenuName) as R_MenuName
+		, md.BarPrompt
+	from dbo.Menu as m
+	outer apply(
+		select p.MenuName as RootName 
+			,p.MenuNo as RootNo
+			,pd.BarNo
+		from dbo.MenuDetail as pd 
+		left join dbo.Menu as p on p.PKey = pd.UKey
+		where pd.BarPrompt = m.MenuName
+	) as p
+	left join MenuDetail md on m.PKey=md.UKey
+	where md.ObjectCode=0
+) as s
+where s.R_MenuNo not in ('1400','1500')
+order by s.R_MenuNo,s.BarPrompt
 ");
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "35,15", this.txtFunction.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "40,15", this.txtFunction.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.txtFunction.Text = item.GetSelectedString();
@@ -331,13 +344,27 @@ order by m.Pkey, MD2.Pkey
             if (!string.IsNullOrWhiteSpace(strFunction) && strFunction != this.txtModule.OldValue)
             {
                 if (MyUtility.Check.Seek($@"
-select 1
- from  MenuDetail MD 
-LEFT JOIN Menu M ON MD.UKey = M.PKey
-LEFT JOIN MenuDetail MD2 ON M.MenuName = MD2.BarPrompt
-LEFT JOIN Menu M2 ON MD2.UKey = M2.PKey
-where (MD.BarPrompt!='' or MD2.BarPrompt !='')
-and IIF(M.MenuName IS NOT NULL,MD.BarPrompt,MD2.BarPrompt)= '{strFunction}'") == false)
+select BarPrompt,R_MenuName
+from (
+	Select ISNULL(p.RootNo,m.MenuNo) as R_MenuNo
+		, ISNULL(p.RootName,m.MenuName) as R_MenuName
+		, md.BarPrompt
+	from dbo.Menu as m
+	outer apply(
+		select p.MenuName as RootName 
+			,p.MenuNo as RootNo
+			,pd.BarNo
+		from dbo.MenuDetail as pd 
+		left join dbo.Menu as p on p.PKey = pd.UKey
+		where pd.BarPrompt = m.MenuName
+	) as p
+	left join MenuDetail md on m.PKey=md.UKey
+	where md.ObjectCode=0
+) as s
+where s.R_MenuNo not in ('1400','1500')
+and BarPrompt = '{strFunction}'
+order by s.R_MenuNo,s.BarPrompt
+") == false)
                 {
                     this.txtFunction.Text = "";
                     e.Cancel = true;
