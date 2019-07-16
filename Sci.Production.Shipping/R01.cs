@@ -28,6 +28,9 @@ namespace Sci.Production.Shipping
         private DateTime? invdate2;
         private DateTime? etd1;
         private DateTime? etd2;
+        private DateTime? FCRDate;
+        private DateTime? CutOffDate;
+        private DateTime? SOCFMDate;
         private DataTable printData;
 
         /// <summary>
@@ -68,6 +71,12 @@ namespace Sci.Production.Shipping
             this.etd1 = this.dateETD.Value1;
             this.etd2 = this.dateETD.Value2;
 
+
+            this.FCRDate = this.txtFcrDate.Value;
+            this.CutOffDate = this.txtCutOffDate.Value;
+            this.SOCFMDate = this.txtCrmDate.Value;
+
+
             return base.ValidateInput();
         }
 
@@ -104,9 +113,18 @@ g.ID
 ,g.AddDate
 ,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
 ,g.Remark
+,[PulloutComplete]=PulloutComplete.Result
 from GMTBooking g WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
+OUTER APPLY(
+	SELECT [Result]=IIF( COUNT(po.ID)=0, 'True' ,'False')
+	FROM PackingList pl
+	INNER JOIN Pullout po ON pl.PulloutID=po.ID
+	WHERE INVNo=g.ID
+	AND po.Status <> 'Confirmed'
+	AND po.Status <> 'Locked'
+)PulloutComplete
 where 1=1"));
             }
             else
@@ -168,6 +186,21 @@ where pl.ID<>'' and 1=1
                 if (!MyUtility.Check.Empty(this.etd2))
                 {
                     sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.FCRDate))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.FCRDate = '{0}' ", Convert.ToDateTime(this.FCRDate).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.CutOffDate))
+                {
+                    sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) = '{0}' ", Convert.ToDateTime(this.CutOffDate).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.SOCFMDate))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.SOCFMDate = '{0}' ", Convert.ToDateTime(this.SOCFMDate).ToString("d")));
                 }
 
                 if (this.status == "Confirmed")
@@ -342,6 +375,26 @@ where pl.ID<>'' and 1=1 "));
                 sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
             }
 
+
+            if (!MyUtility.Check.Empty(this.FCRDate))
+            {
+                sqlCmd.Append(string.Format(" and g.FCRDate = '{0}' ", Convert.ToDateTime(this.FCRDate).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.FCRDate = '{0}' ", Convert.ToDateTime(this.FCRDate).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.CutOffDate))
+            {
+                sqlCmd.Append(string.Format(" and CAST( g.CutOffDate AS DATE) = '{0}' ", Convert.ToDateTime(this.CutOffDate).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) = '{0}' ", Convert.ToDateTime(this.CutOffDate).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.SOCFMDate))
+            {
+                sqlCmd.Append(string.Format(" and g.SOCFMDate = '{0}' ", Convert.ToDateTime(this.SOCFMDate).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.SOCFMDate = '{0}' ", Convert.ToDateTime(this.SOCFMDate).ToString("d")));
+            }
+
+
             if (this.status == "Confirmed")
             {
                 sqlCmd.Append(" and g.Status = 'Confirmed'");
@@ -393,7 +446,7 @@ where pl.ID<>'' and 1=1 "));
             if (this.reportType == "1")
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 25];
+                object[,] objArray = new object[1, 26];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -421,7 +474,8 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 22] = dr["AddDate"];
                     objArray[0, 23] = dr["ConfirmDate"];
                     objArray[0, 24] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 25] = dr["PulloutComplete"].ToString();
+                    worksheet.Range[string.Format("A{0}:Z{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
