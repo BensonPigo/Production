@@ -5,7 +5,8 @@
 -- Description:	Sewing.P01 Send按鈕執行後將Sewing.R01、R04 report資料給Planning team、Team 3。
 -- =============================================
 CREATE PROCEDURE [dbo].[Send_SewingDailyOutput] 
-	@Factory varchar(13)
+	@Factory varchar(13),
+	@MaxOutputDate date
 AS
 BEGIN
 	--根據條件撈基本資料
@@ -57,7 +58,7 @@ outer apply
 )sr
 outer apply( select BrandID from orders o1 where o.CustPONo=o1.id )Order2
 outer apply( select top 1 BrandID from Style where id=o.StyleID and SeasonID=o.SeasonID and BrandID!='SUBCON-I' )StyleBrand
-where 1=1  and s.OutputDate = convert(date, GetDate()-1) 
+where 1=1  and s.OutputDate = @MaxOutputDate
 and s.FactoryID=@Factory
 and f.Type != 'S'
 --By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty
