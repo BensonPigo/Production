@@ -44,6 +44,7 @@ namespace Sci.Production.Tools
         Ict.Win.UI.DataGridViewCheckBoxColumn ckReceive = null;
         Ict.Win.UI.DataGridViewCheckBoxColumn ckReturn = null;
         Ict.Win.UI.DataGridViewCheckBoxColumn ckJunk = null;
+        Ict.Win.UI.DataGridViewCheckBoxColumn ckUnJunk = null;
 
         public AuthorityByPosition(ToolStripMenuItem menuitem) : base(menuitem)
         {
@@ -162,7 +163,8 @@ namespace Sci.Production.Tools
                 .CheckBox("CanUnClose", header: "UnClose", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckUnClose)
                 .CheckBox("CanReceive", header: "Receive", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckReceive)
                 .CheckBox("CanReturn", header: "Return", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckReturn)
-                .CheckBox("CanJunk", header: "Junk", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckJunk);
+                .CheckBox("CanJunk", header: "Junk", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckJunk)
+                .CheckBox("CanUnJunk", header: "UnJunk", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckUnJunk);
 
             for (int i = 0; i < this.detailgrid.ColumnCount; i++)
             {
@@ -548,6 +550,7 @@ namespace Sci.Production.Tools
                 detailgrid.Rows[index].Cells[ckReceive.Index].ReadOnly = (drs.Length > 0) ? !((bool)drs[0]["CanReceive"]) : true;
                 detailgrid.Rows[index].Cells[ckReturn.Index].ReadOnly = (drs.Length > 0) ? !((bool)drs[0]["CanReturn"]) : true;
                 detailgrid.Rows[index].Cells[ckJunk.Index].ReadOnly = (drs.Length > 0) ? !((bool)drs[0]["CanJunk"]) : true;
+                detailgrid.Rows[index].Cells[ckUnJunk.Index].ReadOnly = (drs.Length > 0) ? !((bool)drs[0]["CanUnJunk"]) : true;
                 index = index + 1;
             }
         }
