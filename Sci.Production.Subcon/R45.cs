@@ -129,14 +129,14 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
 
             sqlCmd.Append($@"
 
-SELECT {(this.chkExtendAllParts.Checked ? "DISTINCT" : "")}
+SELECT
 bd.BundleGroup
 ,b.Colorid
 ,bd.SizeCode
 ,b.PatternPanel
 ,[Cutpart]= bd.Patterncode
 ,[CutpartName]= {(this.chkExtendAllParts.Checked ?
-                    "CASE WHEN 'true'='true'  AND  bd.Patterncode ='ALLPARTS' THEN  bdap.PatternDesc ELSE bd.PatternDesc  END --basic from 「Extend All Parts」 is checked or not"
+                    "bdap.PatternDesc  --basic from 「Extend All Parts」 is checked or not"
                     :
                     "bd.PatternDesc")}
 ,[SubProcessID]= SubProcess.SubProcessID
@@ -159,7 +159,7 @@ bd.BundleGroup
 
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
-{(this.chkExtendAllParts.Checked ? "LEFT JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID" : "")}
+{(this.chkExtendAllParts.Checked ? "LEFT JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID AND bd.Patterncode ='ALLPARTS'" : "")}
 INNER JOIN Orders O ON o.ID=b.Orderid
 LEFT JOIN Workorder w ON W.CutRef=b.CutRef AND w.ID=b.POID
 LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='{SubProcess}'
