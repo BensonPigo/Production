@@ -73,7 +73,7 @@ namespace Sci.Production.Shipping
 select distinct
 	o.FactoryID,
 	o.ID,
-	oq.Seq,
+	seq=pld.OrderShipmodeSeq,
 	o.BrandID,
 	o.CustPONo,
 	PackingListID=pl.ID,
