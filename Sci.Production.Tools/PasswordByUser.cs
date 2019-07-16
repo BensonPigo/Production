@@ -142,7 +142,8 @@ namespace Sci.Production.Tools
                 .CheckBox("CanUnClose", header: "UnClose", width: Widths.AnsiChars(1), trueValue: true, falseValue: false)
                 .CheckBox("CanReceive", header: "UnReceive", width: Widths.AnsiChars(1), trueValue: true, falseValue: false)
                 .CheckBox("CanReturn", header: "Return", width: Widths.AnsiChars(1), trueValue: true, falseValue: false)
-                .CheckBox("CanJunk", header: "Junk", width: Widths.AnsiChars(1), trueValue: true, falseValue: false);
+                .CheckBox("CanJunk", header: "Junk", width: Widths.AnsiChars(1), trueValue: true, falseValue: false)
+                .CheckBox("CanUnJunk", header: "UnJunk", width: Widths.AnsiChars(1), trueValue: true, falseValue: false);
 
             this.listControlBindingSource1.DataSource = dtPass2;
             this.grid1.DataSource = this.listControlBindingSource1;
