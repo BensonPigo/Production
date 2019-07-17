@@ -139,7 +139,9 @@ FROM
 
 )a
 
-SELECt pd.OrderShipmodeSeq 
+SELECt 
+[PackID]=pd.ID
+, pd.OrderShipmodeSeq 
 , pd.OrigID
 , pd.OrigOrderID 
 , pd.OrigCTNStartNo 
@@ -203,7 +205,7 @@ select  1 as selected
         , RepackCtnStartNo
 from (
     select  t.ReceiveDate
-            , [PackingListID] = iif(t.OrigID = '',t.ID, t.OrigID)
+            , [PackingListID] = iif(t.OrigID = '',t.PackID, t.OrigID)
             , [OrderID] = iif(t.OrigOrderID = '',t.OrderID, t.OrigOrderID)
             , oq.Seq
             , [CTNStartNo] = iif(t.OrigCTNStartNo = '',t.CTNStartNo, t.OrigCTNStartNo)
