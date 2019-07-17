@@ -136,7 +136,7 @@ bd.BundleGroup
 ,b.PatternPanel
 ,[Cutpart]= bd.Patterncode
 ,[CutpartName]= {(this.chkExtendAllParts.Checked ?
-                    "bdap.PatternDesc  --basic from 「Extend All Parts」 is checked or not"
+                    "CASE WHEN bd.Patterncode = 'ALLPARTS' THEN bdap.PatternDesc ELSE bd.PatternDesc END --basic from 「Extend All Parts」 is checked or not"
                     :
                     "bd.PatternDesc")}
 ,[SubProcessID]= SubProcess.SubProcessID
