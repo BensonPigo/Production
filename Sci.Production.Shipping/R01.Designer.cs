@@ -51,9 +51,9 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.txtFcrDate = new Sci.Win.UI.DateBox();
-            this.txtCutOffDate = new Sci.Win.UI.DateBox();
-            this.txtCrmDate = new Sci.Win.UI.DateBox();
+            this.dateFCR = new Sci.Win.UI.DateRange();
+            this.dateCutoff = new Sci.Win.UI.DateRange();
+            this.dateConfirm = new Sci.Win.UI.DateRange();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -316,33 +316,78 @@
             this.label3.TabIndex = 114;
             this.label3.Text = "S/O Confirm Date";
             // 
-            // txtFcrDate
+            // dateFCR
             // 
-            this.txtFcrDate.Location = new System.Drawing.Point(135, 157);
-            this.txtFcrDate.Name = "txtFcrDate";
-            this.txtFcrDate.Size = new System.Drawing.Size(130, 23);
-            this.txtFcrDate.TabIndex = 5;
             // 
-            // txtCutOffDate
             // 
-            this.txtCutOffDate.Location = new System.Drawing.Point(135, 194);
-            this.txtCutOffDate.Name = "txtCutOffDate";
-            this.txtCutOffDate.Size = new System.Drawing.Size(130, 23);
-            this.txtCutOffDate.TabIndex = 6;
             // 
-            // txtCrmDate
+            this.dateFCR.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateFCR.DateBox1.Name = "";
+            this.dateFCR.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateFCR.DateBox1.TabIndex = 0;
             // 
-            this.txtCrmDate.Location = new System.Drawing.Point(134, 229);
-            this.txtCrmDate.Name = "txtCrmDate";
-            this.txtCrmDate.Size = new System.Drawing.Size(130, 23);
-            this.txtCrmDate.TabIndex = 7;
+            // 
+            // 
+            this.dateFCR.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateFCR.DateBox2.Name = "";
+            this.dateFCR.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateFCR.DateBox2.TabIndex = 1;
+            this.dateFCR.IsRequired = false;
+            this.dateFCR.Location = new System.Drawing.Point(135, 157);
+            this.dateFCR.Name = "dateFCR";
+            this.dateFCR.Size = new System.Drawing.Size(280, 23);
+            this.dateFCR.TabIndex = 115;
+            // 
+            // dateCutoff
+            // 
+            // 
+            // 
+            // 
+            this.dateCutoff.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateCutoff.DateBox1.Name = "";
+            this.dateCutoff.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateCutoff.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateCutoff.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateCutoff.DateBox2.Name = "";
+            this.dateCutoff.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateCutoff.DateBox2.TabIndex = 1;
+            this.dateCutoff.IsRequired = false;
+            this.dateCutoff.Location = new System.Drawing.Point(134, 194);
+            this.dateCutoff.Name = "dateCutoff";
+            this.dateCutoff.Size = new System.Drawing.Size(280, 23);
+            this.dateCutoff.TabIndex = 116;
+            // 
+            // dateConfirm
+            // 
+            // 
+            // 
+            // 
+            this.dateConfirm.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateConfirm.DateBox1.Name = "";
+            this.dateConfirm.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateConfirm.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateConfirm.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateConfirm.DateBox2.Name = "";
+            this.dateConfirm.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateConfirm.DateBox2.TabIndex = 1;
+            this.dateConfirm.IsRequired = false;
+            this.dateConfirm.Location = new System.Drawing.Point(134, 229);
+            this.dateConfirm.Name = "dateConfirm";
+            this.dateConfirm.Size = new System.Drawing.Size(280, 23);
+            this.dateConfirm.TabIndex = 117;
             // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(522, 468);
-            this.Controls.Add(this.txtCrmDate);
-            this.Controls.Add(this.txtCutOffDate);
-            this.Controls.Add(this.txtFcrDate);
+            this.Controls.Add(this.dateConfirm);
+            this.Controls.Add(this.dateCutoff);
+            this.Controls.Add(this.dateFCR);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -389,14 +434,14 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.txtFcrDate, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.txtCutOffDate, 0);
-            this.Controls.SetChildIndex(this.txtCrmDate, 0);
+            this.Controls.SetChildIndex(this.dateFCR, 0);
+            this.Controls.SetChildIndex(this.dateCutoff, 0);
+            this.Controls.SetChildIndex(this.dateConfirm, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -429,8 +474,8 @@
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.Label label3;
-        private Win.UI.DateBox txtFcrDate;
-        private Win.UI.DateBox txtCutOffDate;
-        private Win.UI.DateBox txtCrmDate;
+        private Win.UI.DateRange dateFCR;
+        private Win.UI.DateRange dateCutoff;
+        private Win.UI.DateRange dateConfirm;
     }
 }
