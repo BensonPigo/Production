@@ -111,7 +111,7 @@ order by M desc");
                                                   ,b.SeasonId [Season]
                                                   ,b.BulkMR [DevMR]
                                                   ,b.SampleMR [BulkMR]
-                                                  ,b.Supplier [Supplier]
+                                                  ,b.SuppID [Supplier]
                                                   ,b.FactoryID [Factory]
                                                   ,b.Refno [Shell]
                                                   ,b.SalesName [Sales_Org_Name]

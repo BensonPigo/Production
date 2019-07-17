@@ -2375,6 +2375,14 @@
     <Build Include="dbo\Functions\getDecimal.sql" />
     <Build Include="dbo\Functions\getSizeSpecTrans.sql" />
     <Build Include="dbo\Tables\ClogReason.sql" />
+    <Build Include="dbo\Tables\ADIDASComplain_History.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ADIDASComplain_Detail_History.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
