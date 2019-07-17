@@ -187,9 +187,9 @@ namespace Sci.Production.Cutting
 SELECT distinct WO.ukey
     into #QueryTarUkey
     FROM BundleInOut BIO WITH (NOLOCK) 
-    left join Bundle_Detail BD WITH (NOLOCK)  on BD.BundleNo = BIO.BundleNo
-    left join Bundle B WITH (NOLOCK)  on BD.Id = B.ID
-    left join workorder WO WITH (NOLOCK)  on WO.cutref=B.cutref and WO.cutno=B.cutno and WO.fabricCombo=B.patternPanel and WO.MDivisionID  = b.MDivisionID 
+    inner join Bundle_Detail BD WITH (NOLOCK)  on BD.BundleNo = BIO.BundleNo
+    inner join Bundle B WITH (NOLOCK)  on BD.Id = B.ID and B.cutref <> ''
+    inner join workorder WO WITH (NOLOCK)  on WO.cutref=B.cutref and WO.ID=B.POID and WO.MDivisionID  = b.MDivisionID 
     where BIO.subprocessid='SORTING' 
     and isnull(bio.RFIDProcessLocationID,'') = '' {2}
 
