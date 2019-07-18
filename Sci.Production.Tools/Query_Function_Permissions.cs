@@ -312,7 +312,7 @@ and MenuName = '{strModul}'") == false)
         {
             string sqlcmd = string.Empty;
             sqlcmd = string.Format(@"
-select BarPrompt,R_MenuName
+select BarPrompt as [Function], R_MenuName as Module
 from (
 	Select ISNULL(p.RootNo,m.MenuNo) as R_MenuNo
 		, ISNULL(p.RootName,m.MenuName) as R_MenuName
