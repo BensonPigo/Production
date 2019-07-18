@@ -2047,7 +2047,7 @@ Where a.id = '{SubTransfer_ID}'";
             int nCount = 0;
             int drcount = result.Count;
             IList<string> cListBarcodeNo;
-            cListBarcodeNo = GetBatchID("", "Issue_Detail", default(DateTime), 3, "BarcodeNo", batchNumber: drcount, sequenceMode: 2,sequenceLength: 4, ignoreSeq: 3);
+            cListBarcodeNo = GetBatchID("", "Issue_Detail", default(DateTime), 3, "BarcodeNo", batchNumber: drcount, sequenceMode: 2,sequenceLength: 4, ignoreSeq: 3, orderByCol: "Ukey");
             try
             {
                 foreach (DataRow dr in result)
@@ -2060,7 +2060,7 @@ Where a.id = '{SubTransfer_ID}'";
                     if (MyUtility.Check.Empty(dr["BarcodeNo"]))
                     {
                         string keyWord = MyUtility.GetValue.Lookup($"select FtyGroup from orders where id = '{dr["POID"]}'");
-                         dr["BarcodeNo"] = keyWord + cListBarcodeNo[nCount];
+                        dr["BarcodeNo"] = keyWord + cListBarcodeNo[nCount];
                         nCount++;
                     }
                 }
@@ -2073,7 +2073,7 @@ Where a.id = '{SubTransfer_ID}'";
             return new DualResult(true);
         }
 
-        public static List<string> GetBatchID(string keyWord, string tableName, DateTime refDate = default(DateTime), int format = 2, string checkColumn = "ID", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0, int batchNumber = 1,int ignoreSeq = 0)
+        public static List<string> GetBatchID(string keyWord, string tableName, DateTime refDate = default(DateTime), int format = 2, string checkColumn = "ID", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0, int batchNumber = 1,int ignoreSeq = 0,string orderByCol = "")
         {
             List<string> IDList = new List<string>();
 
@@ -2132,7 +2132,10 @@ Where a.id = '{SubTransfer_ID}'";
             else
                 return IDList;
 
-            string sqlCmd = string.Format("SELECT TOP 1 {0} FROM {1} WHERE {2} LIKE '%{3}%' ORDER BY SUBSTRING({4},{5},{6}) DESC", checkColumn, tableName, checkColumn, keyWord.Trim(), checkColumn, ignoreSeq + 1, columnTypeLength);
+            string orderBy = MyUtility.Check.Empty(orderByCol) ? $"SUBSTRING({checkColumn},{ignoreSeq + 1},{columnTypeLength})" : orderByCol;
+            string sqlCmd = $@" SELECT TOP 1 {checkColumn} into #tmp FROM {tableName} with (nolock) ORDER BY {orderBy} DESC
+                SELECT {checkColumn} from #tmp where {checkColumn} like '%{keyWord.Trim()}%'";
+
 
             if (result = DBProxy.Current.Select(connectionName, sqlCmd, out dtID))
             {
