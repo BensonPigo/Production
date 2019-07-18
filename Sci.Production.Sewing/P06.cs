@@ -193,14 +193,34 @@ where	pd.CTNStartNo != '' and
 
         private PackDataResult GetPackData(string PackNo, bool fromCustCTN = false)
         {
+
             string keyWhere = string.Empty;
+            string PackingListID = string.Empty;
+            string CTNStarNo = string.Empty;
+
+
+            if (PackNo.Length > 13)
+            {
+                PackingListID = PackNo.Substring(0, 13);
+                CTNStarNo = PackNo.Substring(13, PackNo.Length - 13);
+            }
+
             if (fromCustCTN == true)
             {
                 keyWhere = $"CustCTN = '{PackNo}'";
             }
             else
             {
-                keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
+                //keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
+
+                if (PackNo.Length > 13)
+                {
+                    keyWhere = $" ID = '{PackingListID}' AND CTNStartNo ='{CTNStarNo}' ";
+                }
+                else
+                {
+                    keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
+                }
             }
 
             PackDataResult packDataResult = new PackDataResult();
