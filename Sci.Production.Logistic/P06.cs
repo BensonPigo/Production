@@ -111,9 +111,9 @@ select  1 as selected
         , rn = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
 from (
     select  cr.ReturnDate
-            , [PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
-            , [OrderID] = iif(pd.OrigOrderID = '',pd.OrderID, pd.OrigOrderID)
-            , [CTNStartNo] = iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
+            , [PackingListID] = cr.PackingListID  --iif(pd.OrigID = '',cr.PackingListID, pd.OrigID)
+            , [OrderID] =cr.OrderID   --iif(pd.OrigOrderID = '',pd.OrderID, pd.OrigOrderID)
+            , [CTNStartNo] = cr.CTNStartNo   --iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
             , isnull (o.StyleID, '') as StyleID
             , isnull (o.BrandID, '') as BrandID
             , isnull (o.Customize1, '') as Customize1
@@ -123,15 +123,17 @@ from (
             , oq.BuyerDelivery
             , cr.AddDate
 			, AddName = (select concat(id,'-',Name) from pass1 where id = cr.AddName)
+
             , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
             , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
             , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
-    from PackingList_Detail pd  WITH (NOLOCK) 
-    inner join  ClogReturn cr WITH (NOLOCK) on pd.ID = cr.PackingListID and pd.CTNStartNo = cr.CTNStartNo 
+
+    from  ClogReturn cr WITH (NOLOCK) 
+    left join  PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID and pd.CTNStartNo = cr.CTNStartNo 
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
-    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
-                                                and oq.Seq = pd.OrderShipmodeSeq
+    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+
     where cr.MDivisionID = '{0}'
     --and pd.ReturnDate is not null 
     ", Sci.Env.User.Keyword));
@@ -154,14 +156,14 @@ from (
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and (pd.ID = '{0}' or  pd.OrigID = '{0}')", MyUtility.Convert.GetString(this.txtPackID.Text)));
+            and (cr.PackingListID = '{0}' or  pd.OrigID = '{0}')", MyUtility.Convert.GetString(this.txtPackID.Text)));
             }
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and (pd.OrderID = '{0}' or pd.OrigOrderID = '{0}')", MyUtility.Convert.GetString(this.txtSPNo.Text)));
+            and (cr.OrderID = '{0}' or pd.OrigOrderID = '{0}')", MyUtility.Convert.GetString(this.txtSPNo.Text)));
             }
 
             sqlCmd.Append(@"
