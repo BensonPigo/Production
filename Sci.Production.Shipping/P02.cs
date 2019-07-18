@@ -511,7 +511,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                 }
             }
 
-            string sqlsupp = $@"select id,Abb from LocalSupp with(nolock) where Junk = 0 and id ='{this.CurrentMaintain["ByFtyCarrier"]}' ";
+            string sqlsupp = $@"select Abb from LocalSupp with(nolock) where Junk = 0 and id ='{this.CurrentMaintain["ByFtyCarrier"]}' ";
             this.disSuppabb.Value = MyUtility.GetValue.Lookup(sqlsupp);
 
             this.CarrierbyEnable();
