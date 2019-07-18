@@ -11,7 +11,7 @@
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_ADIDASComplain_History_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME      NULL,
     [TPEApvName] VARCHAR(10) CONSTRAINT [DF_ADIDASComplain_History_TPEApvName] DEFAULT ('') NOT NULL, 
-    [TPEApvDate] DATETIME NULL, 
+    [TPEApvDate] DATETIME NOT NULL, 
     [FtyApvName] VARCHAR(10) CONSTRAINT [DF_ADIDASComplain_History_FtyApvName] DEFAULT ('') NOT NULL, 
     [FtyApvDate] DATETIME NULL, 
     CONSTRAINT [PK_ADIDASComplain_History] PRIMARY KEY CLUSTERED ([ID],[Version] ASC)

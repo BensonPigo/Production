@@ -55,7 +55,7 @@ namespace Sci.Production.Quality
             #region 取得過去版本資料
             string whereVersion = this.isShowHistory ? $" and Version < {this.CurrentMaintain["Version"]}" : string.Empty;
             string sqlGetLastADIDASComplain = $@"
-select AGCCode 
+select AGCCode, FactoryName 
     from ADIDASComplain_History 
     where   ID = '{this.CurrentMaintain["ID"].ToString()}' and 
             version = (select max(version) from ADIDASComplain_History 
@@ -76,7 +76,8 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
                 this.ShowErr(result);
             }
             this.panelHistoryHint.Visible = hasOldData;
-
+            this.displayAGCCode.BackColor = displayDefaultBack;
+            this.displayFactoryName.BackColor = displayDefaultBack;
             if (hasOldData)
             {
                 this.btnHistory.Enabled = true;
@@ -255,6 +256,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
             {
                 this.detailgrid.Columns["SuppID"].DefaultCellStyle.BackColor = Color.Pink;
                 this.detailgrid.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
+                this.detailgrid.Columns["IsEM"].DefaultCellStyle.BackColor = Color.Pink;
             }
         }
 
@@ -302,12 +304,11 @@ order by ps.SuppID
             if (this.lastADIDASComplain["AGCCode"].ToString() != this.CurrentMaintain["AGCCode"].ToString())
             {
                 this.displayAGCCode.BackColor = orange;
-                this.displayFactoryName.BackColor = orange;
             }
-            else
+
+            if (this.lastADIDASComplain["FactoryName"].ToString() != this.CurrentMaintain["FactoryName"].ToString())
             {
-                this.displayAGCCode.BackColor = displayDefaultBack;
-                this.displayFactoryName.BackColor = displayDefaultBack;
+                this.displayFactoryName.BackColor = orange;
             }
 
             var lastADIDASComplain_Detail_qry = this.lastADIDASComplain_Detail.AsEnumerable();
