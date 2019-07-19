@@ -290,7 +290,7 @@
             // 
             // label7
             // 
-            this.label7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(249)))), ((int)(((byte)(69)))));
+            this.label7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(198)))), ((int)(((byte)(10)))));
             this.label7.Location = new System.Drawing.Point(5, 5);
             this.label7.Name = "label7";
             this.label7.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -307,7 +307,7 @@
             this.label6.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.label6.Size = new System.Drawing.Size(443, 23);
             this.label6.TabIndex = 0;
-            this.label6.Text = "Taipei has changed data, please check the yellow background data";
+            this.label6.Text = "Taipei has modified data, Please check highlight data";
             this.label6.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // P40

@@ -20,7 +20,7 @@ namespace Sci.Production.Quality
         protected DataRow lastADIDASComplain;
         protected DataTable lastADIDASComplain_Detail;
         protected bool isShowHistory = false;
-        protected Color yellow = Color.FromArgb(252, 249, 69);
+        protected Color yellow = Color.FromArgb(255, 198, 10);
         protected Color displayDefaultBack = Color.FromArgb(183, 227, 255);
 
         private string[] compareColumns = { "SalesID", "SalesName", "Article", "ArticleName",
