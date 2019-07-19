@@ -280,9 +280,11 @@
             // 
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkJunk.IsSupportEditMode = false;
             this.checkJunk.Location = new System.Drawing.Point(587, 15);
             this.checkJunk.Name = "checkJunk";
+            this.checkJunk.ReadOnly = true;
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 1;
             this.checkJunk.Text = "Junk";
@@ -464,7 +466,9 @@
             this.ExpressQuery = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportJunk = true;
             this.IsSupportPrint = false;
+            this.IsSupportUnJunk = true;
             this.Name = "B04";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B04. Supplier/Sub Con (Local)";

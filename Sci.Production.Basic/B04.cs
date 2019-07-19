@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +14,7 @@ namespace Sci.Production.Basic
     /// </summary>
     public partial class B04 : Sci.Win.Tems.Input1
     {
+        private bool Junk;
         /// <summary>
         /// B04
         /// </summary>
@@ -49,6 +51,8 @@ namespace Sci.Production.Basic
             {
                 this.btnBankDetail.ForeColor = Color.Black;
             }
+
+            this.JunkSwitch();
         }
 
         /// <summary>
@@ -174,6 +178,52 @@ namespace Sci.Production.Basic
                 }
                 this.ReloadDatas();
             };
+        }
+
+        /// /// <inheritdoc/>
+        protected override void ClickJunk()
+        {
+            base.ClickJunk();
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Junk=1,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            MyUtility.Msg.InfoBox("Success!");
+            this.RenewData();
+        }
+
+        protected override void ClickUnJunk()
+        {
+            base.ClickUnJunk();
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Junk=0,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            MyUtility.Msg.InfoBox("Success!");
+            this.RenewData();
+        }
+
+        /// <summary>
+        /// 判斷junk欄位、異動Toolbar
+        /// </summary>
+        private void JunkSwitch()
+        {
+            if (this.EditMode || this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            this.Junk = Convert.ToBoolean(this.CurrentMaintain["Junk"]);
+            if (this.Junk)
+            {
+                this.toolbar.cmdUnJunk.Enabled = true;
+                this.toolbar.cmdJunk.Enabled = false;
+            }
+            else
+            {
+                this.toolbar.cmdJunk.Enabled = true;
+                this.toolbar.cmdUnJunk.Enabled = false;
+            }
+        }
+
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            this.JunkSwitch();
         }
     }
 }
