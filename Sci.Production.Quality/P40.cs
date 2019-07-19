@@ -43,24 +43,6 @@ namespace Sci.Production.Quality
         {
             base.OnDetailEntered();
 
-            string tpeApvDate = MyUtility.Check.Empty(this.CurrentMaintain["TPEApvDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["TPEApvDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
-            string ftyApvDate = MyUtility.Check.Empty(this.CurrentMaintain["FtyApvDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["FtyApvDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
-
-            string tpeApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["TPEApvName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["TPEApvName"]}'");
-            string ftyApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["FtyApvName"]}' + '-' + Name + ' ' + '{ftyApvDate}' from Pass1 where ID = '{this.CurrentMaintain["FtyApvName"]}'");
-            if (MyUtility.Check.Empty(tpeApv))
-            {
-                tpeApv = $"{this.CurrentMaintain["TPEApvName"]} {tpeApvDate}";
-            }
-
-            if (MyUtility.Check.Empty(ftyApv))
-            {
-                ftyApv = $"{this.CurrentMaintain["FtyApvName"]} {ftyApvDate}";
-            }
-
-            this.displayTPEApv.Text = tpeApv;
-            this.displayFtyApv.Text = ftyApv;
-
             #region 取得過去版本資料
             string whereVersion = this.isShowHistory ? $" and Version < {this.CurrentMaintain["Version"]}" : string.Empty;
             string sqlGetLastADIDASComplain = $@"
@@ -100,6 +82,45 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
                 this.btnHistory.ForeColor = Color.Black;
             }
             #endregion
+        }
+
+        protected override void SetDetailEditByAndCreateBy(DataRow data)
+        {
+            if (null == data) return;
+
+            string tpeApvDate = MyUtility.Check.Empty(this.CurrentMaintain["TPEApvDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["TPEApvDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
+            string ftyApvDate = MyUtility.Check.Empty(this.CurrentMaintain["FtyApvDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["FtyApvDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
+            string addDate = MyUtility.Check.Empty(this.CurrentMaintain["AddDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["AddDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
+            string editDate = MyUtility.Check.Empty(this.CurrentMaintain["EditDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
+
+            string tpeApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["TPEApvName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["TPEApvName"]}'");
+            string addBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["AddName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["AddName"]}'");
+            string editBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["EditName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["EditName"]}'");
+            string ftyApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["FtyApvName"]}' + '-' + Name + ' ' + '{ftyApvDate}' from Pass1 where ID = '{this.CurrentMaintain["FtyApvName"]}'");
+            if (MyUtility.Check.Empty(tpeApv))
+            {
+                tpeApv = $"{this.CurrentMaintain["TPEApvName"]} {tpeApvDate}";
+            }
+
+            if (MyUtility.Check.Empty(addBy))
+            {
+                tpeApv = $"{this.CurrentMaintain["AddName"]} {addDate}";
+            }
+
+            if (MyUtility.Check.Empty(editBy))
+            {
+                tpeApv = $"{this.CurrentMaintain["EditName"]} {editDate}";
+            }
+
+            if (MyUtility.Check.Empty(ftyApv))
+            {
+                ftyApv = $"{this.CurrentMaintain["FtyApvName"]} {ftyApvDate}";
+            }
+
+            this.displayTPEApv.Text = tpeApv;
+            this.displayFtyApv.Text = ftyApv;
+            this.createby.Text = addBy;
+            this.editby.Text = editBy;
         }
 
         protected override void ClickConfirm()
