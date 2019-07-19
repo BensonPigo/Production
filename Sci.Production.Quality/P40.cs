@@ -48,6 +48,15 @@ namespace Sci.Production.Quality
 
             string tpeApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["TPEApvName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["TPEApvName"]}'");
             string ftyApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["FtyApvName"]}' + '-' + Name + ' ' + '{ftyApvDate}' from Pass1 where ID = '{this.CurrentMaintain["FtyApvName"]}'");
+            if (MyUtility.Check.Empty(tpeApv))
+            {
+                tpeApv = $"{this.CurrentMaintain["TPEApvName"]} {tpeApvDate}";
+            }
+
+            if (MyUtility.Check.Empty(ftyApv))
+            {
+                ftyApv = $"{this.CurrentMaintain["FtyApvName"]} {ftyApvDate}";
+            }
 
             this.displayTPEApv.Text = tpeApv;
             this.displayFtyApv.Text = ftyApv;
