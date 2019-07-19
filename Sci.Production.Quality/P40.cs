@@ -20,7 +20,7 @@ namespace Sci.Production.Quality
         protected DataRow lastADIDASComplain;
         protected DataTable lastADIDASComplain_Detail;
         protected bool isShowHistory = false;
-        protected Color orange = Color.FromArgb(255, 127, 39);
+        protected Color yellow = Color.FromArgb(252, 249, 69);
         protected Color displayDefaultBack = Color.FromArgb(183, 227, 255);
 
         private string[] compareColumns = { "SalesID", "SalesName", "Article", "ArticleName",
@@ -333,12 +333,12 @@ order by ps.SuppID
         {
             if (this.lastADIDASComplain["AGCCode"].ToString() != this.CurrentMaintain["AGCCode"].ToString())
             {
-                this.displayAGCCode.BackColor = orange;
+                this.displayAGCCode.BackColor = yellow;
             }
 
             if (this.lastADIDASComplain["FactoryName"].ToString() != this.CurrentMaintain["FactoryName"].ToString())
             {
-                this.displayFactoryName.BackColor = orange;
+                this.displayFactoryName.BackColor = yellow;
             }
 
             var lastADIDASComplain_Detail_qry = this.lastADIDASComplain_Detail.AsEnumerable();
@@ -363,13 +363,13 @@ order by ps.SuppID
                     switch (colName)
                     {
                         case "DefectMainID":
-                            curGridRow.Cells["MainDefect"].Style.BackColor = orange;
+                            curGridRow.Cells["MainDefect"].Style.BackColor = yellow;
                             break;
                         case "DefectSubID":
-                            curGridRow.Cells["SubDefect"].Style.BackColor = orange;
+                            curGridRow.Cells["SubDefect"].Style.BackColor = yellow;
                             break;
                         default:
-                            curGridRow.Cells[colName].Style.BackColor = orange;
+                            curGridRow.Cells[colName].Style.BackColor = yellow;
                             break;
                     }
                 }

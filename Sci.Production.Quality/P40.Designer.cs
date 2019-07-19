@@ -290,7 +290,7 @@
             // 
             // label7
             // 
-            this.label7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(127)))), ((int)(((byte)(39)))));
+            this.label7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(249)))), ((int)(((byte)(69)))));
             this.label7.Location = new System.Drawing.Point(5, 5);
             this.label7.Name = "label7";
             this.label7.RectStyle.BorderColor = System.Drawing.Color.Black;
