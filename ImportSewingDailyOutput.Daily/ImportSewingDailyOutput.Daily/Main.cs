@@ -135,7 +135,7 @@ DEALLOCATE ServerNameList
         {
             String subject = "";
             String desc = "";
-            string strDate = DateTime.Now.AddDays(-1).ToString("yyyy/MM/dd");
+            string strDate = DateTime.Now.AddDays(-2).ToString("yyyy/MM/dd");
 
             if (this.AnotherDat)
             {
