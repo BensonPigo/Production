@@ -975,6 +975,7 @@ where s.Type = 'EXPORT'");
                 }
             }
 
+            string sumCol5912start = string.Empty;
             string sumCol5912 = string.Empty;
             string sumCol6105 = string.Empty;
             string sumCol5912TTL = string.Empty;
@@ -1019,6 +1020,14 @@ where s.Type = 'EXPORT'");
                         {
                             for (int t = 1; t <= counts; t++)
                             {
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).Contains("5912"))
+                                {
+                                    if (MyUtility.Check.Empty(sumCol5912start))
+                                    {
+                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
+                                    }
+                                }
+
                                 if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("5912-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
@@ -1027,7 +1036,7 @@ where s.Type = 'EXPORT'");
                                         sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
                                     }
 
-                                    objArray[0, 22 + t] = $"=SUM(W{intRowsStart}:{sumCol5912}{intRowsStart})";
+                                    objArray[0, 22 + t] = $"=W{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
                                 else if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("6105-Total"))
                                 {
@@ -1055,8 +1064,6 @@ where s.Type = 'EXPORT'");
                         objArray[0, 20] = dr[20];
                         objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
                         objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
-                        //objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
-                        //objArray[0, 24] = $"=W{intRowsStart}+X{intRowsStart}";
                         objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
                         objArray[0, 24] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
                         objArray[0, 25] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
@@ -1067,6 +1074,14 @@ where s.Type = 'EXPORT'");
                         {
                             for (int c = 1; c <= counts; c++)
                             {
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[26 + c].ColumnName).Contains("5912"))
+                                {
+                                    if (MyUtility.Check.Empty(sumCol5912start))
+                                    {
+                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(27 + c);
+                                    }
+                                }
+
                                 if (MyUtility.Convert.GetString(dr.Table.Columns[26 + c].ColumnName).EqualString("5912-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
@@ -1075,7 +1090,7 @@ where s.Type = 'EXPORT'");
                                         sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(27 + c);
                                     }
 
-                                    objArray[0, 26 + c] = $"=SUM(AA{intRowsStart}:{sumCol5912}{intRowsStart})";
+                                    objArray[0, 26 + c] = $"=AA{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
                                 else if (MyUtility.Convert.GetString(dr.Table.Columns[26 + c].ColumnName).EqualString("6105-Total"))
                                 {
