@@ -850,7 +850,7 @@ set s.LockDate = CONVERT(date, GETDATE()) , s.Status='Send'
 , s.editname='{Sci.Env.User.UserID}' 
 , s.editdate=getdate()
 FROM SewingOutput s
-INNER JOIN SewingOutput_Detail sd ON s.ID = s.ID
+INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
 INNER JOIN MockupOrder mo ON mo.ID = sd.OrderId
 where 1=1
     and s.OutputDate < = CAST (GETDATE() AS DATE) 
@@ -873,7 +873,7 @@ where 1=1
                 scope.Complete();
             }
 
-            MyUtility.Msg.InfoBox("Lock data successfully!");
+            Sci.Production.Sewing.P01.SendMail();
         }
 
         protected override void ClickRecall()

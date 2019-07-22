@@ -97,7 +97,7 @@ BEGIN
 	,Order_TmsCost.ArtworktypeID
 	,Orders.Qty as OrderQty
 	,Round((cCPU * Orders.Qty * CpuRate),10) as OrderCapacity
-	,Round((cCPU * iif(Orders.GMTComplete = 'S', Orders.Qty - GetPulloutData.Qty, 10) * CpuRate),0) as OrderShortage
+	,Round((cCPU * iif(Orders.GMTComplete = 'S', Orders.Qty - GetPulloutData.Qty, 0) * CpuRate),0) as OrderShortage
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,OrderDate ,FactorySort
 	into #tmpOrder1 from #Orders Orders

@@ -794,7 +794,7 @@ drop table #tmp
             string nlCode = string.Empty;
             if (fabricType.EqualString("A") || fabricType.EqualString("F"))
             {
-                nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{refno}'");
+                nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{refno}' and Type='{fabricType}' ");
             }
             else if (fabricType.EqualString("L"))
             {

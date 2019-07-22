@@ -1223,18 +1223,6 @@ where f.Junk = 0",
                 return failResult;
             }
 
-            if (this.factory != string.Empty)
-            {
-                foreach (DataRow dr in this.vphData.Rows)
-                {
-                    if (dr["ActiveManpower"].Empty())
-                    {
-                        failResult = new DualResult(false, string.Format("{0} has not been set ActiveManpower", dr["id"].ToString()));
-                        return failResult;
-                    }
-                }
-            }
-
             return Result.True;
         }
 
