@@ -73,7 +73,19 @@ select  selected = 0
 		,a.NetQty
 		,a.LossQty
         , [FabricTypeName] = (select name from DropDownList where Type='FabricType_Condition' and a.FabricType = id)
+        , [Article] = case  when a.Seq1 like 'T%' then Stuff((Select distinct concat( ',',tcd.Article) 
+			                                                         From dbo.Orders as o 
+			                                                         Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+			                                                         Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+			                                                         Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey 
+			                                                         where	o.POID = a.ID and
+			                                                         		tcd.SuppId = p.SuppId and
+			                                                         		tcd.SCIRefNo   = a.SCIRefNo	and
+			                                                         		tcd.ColorID	   = a.ColorID
+			                                                         FOR XML PATH('')),1,1,'') 
+                            else '' end
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+inner join dbo.PO_Supp p with (nolock) on a.ID = p.ID and a.Seq1 = p.Seq1
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join dbo.Orders on c.poid = orders.id
 inner join dbo.Factory on orders.FactoryID = factory.ID
@@ -189,6 +201,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //3
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
+                .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
                 .Numeric("NetQty", header: "Used Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //6
@@ -202,11 +215,13 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
             {
                 this.grid1.Columns["NetQty"].Visible = true;
                 this.grid1.Columns["LossQty"].Visible = true;
+                this.grid1.Columns["Article"].Visible = true;
             }
             else
             {
                 this.grid1.Columns["NetQty"].Visible = false;
                 this.grid1.Columns["LossQty"].Visible = false;
+                this.grid1.Columns["Article"].Visible = false;
             }
         }
 

@@ -378,7 +378,8 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //5
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33))  //8
-            .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6))  //7            
+            .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6))  //7  
+            .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
             .Text("ColorID", header: "Color", iseditingreadonly: true,width:Widths.AnsiChars(6))  //9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2))  //10
             .EditText("GarmentSize", header: "Garment\r\nSize", iseditingreadonly: true, width: Widths.AnsiChars(2))  //8
@@ -511,6 +512,28 @@ from LocalPO_Detail with(nolock)
 where OrderID like @id
 Group by OrderID,RefNo,ThreadColorID,UnitID
 
+Select distinct [ID] = PO.POID
+, tcd.SuppId --Mapping PO_Supp
+, tcd.SCIRefNo, tcd.ColorID, tcd.Article --Mapping PO_Supp_Detail
+into #ArticleForThread_Detail
+From #tmpOrder PO
+Inner Join dbo.Orders as o On o.ID = po.POID 
+Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+
+select distinct
+ID,SuppId,SCIRefNo,ColorID,
+[Article] = Stuff((select distinct concat( ',',Article)   
+								from #ArticleForThread_Detail 
+								where	ID		   = a.ID		and
+										SuppId	   = a.SuppId	and
+										SCIRefNo   = a.SCIRefNo	and
+										ColorID	   = a.ColorID	
+								FOR XML PATH('')),1,1,'') 
+into #ArticleForThread
+from #ArticleForThread_Detail a
+
 ;WITH QA AS (
 	Select  c.InvNo InvNo
             ,a.POID POID
@@ -616,8 +639,9 @@ from(
             , Preshrink
             , Remark
             , OrderIdList
-             , From_Program
-            ,GarmentSize
+            , From_Program
+            , GarmentSize
+			, Article
     from (
         select  *
                 , -len(description) as len_D 
@@ -705,6 +729,7 @@ from(
                                     ,1,1,'')
                     , [From_Program] = 'P03'
                     , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
+					, [Article] = aft.Article
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -712,7 +737,11 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            
+            left join #ArticleForThread aft on	aft.ID = m.POID		and
+												aft.SuppId	   = b.SuppId	and
+												aft.SCIRefNo   = a.SCIRefNo	and
+												aft.ColorID	   = a.ColorID	and
+												a.SEQ1 like 'T%' 
 --很重要要看到,修正欄位要上下一起改
             union
 
@@ -793,6 +822,7 @@ from(
                                             ,1,1,'')
                     , [From_Program] = 'P03'
                     , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
+					, [Article] = aft.Article
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -800,6 +830,11 @@ from(
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
+		left join #ArticleForThread aft on	aft.ID = m.POID		and
+									aft.SuppId	   = b.SuppId	and
+									aft.SCIRefNo   = a.SCIRefNo	and
+									aft.ColorID	   = a.ColorID	and
+									a.SEQ1 like 'T%' 
         where   1=1 
                 AND a.id IS NOT NULL  
                ) as xxx
@@ -857,12 +892,13 @@ select ROW_NUMBER_D = 1
        , [OrderIdList] = l.OrderID
        , [From_Program] = 'P04'
        , [GarmentSize] = ''
+	   , [Article] = ''
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo
 left join LocalSupp c on b.LocalSuppid=c.ID
 
-drop table #tmpOrder,#tmpLocalPO_Detail
+drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThread
             ";
             #endregion
             #region -- 準備sql參數資料 --
