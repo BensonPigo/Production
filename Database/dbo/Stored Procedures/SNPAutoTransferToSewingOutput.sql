@@ -1,4 +1,4 @@
-USE [Production]
+﻿USE [Production]
 GO
 
 /****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 2019/04/15 �U�� 04:35:47 ******/
@@ -155,8 +155,17 @@ BEGIN
 					,[InlineQty]
 			INTO #tmp_Into_SewingOutput_Detail_Detail_1
 			FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t
+			outer apply(
+				select value=1, o.DyeingLoss
+				from Order_TmsCost ot with(nolock)
+				inner join Order_Qty oq WITH (NOLOCK) on ot.id = oq.ID
+				inner join orders o WITH (NOLOCK) on o.id = ot.id
+				where ot.ArtworkTypeID = 'Garment Dye' and ot.Price > 0
+				and oq.SizeCode=t.SizeCode and oq.Article=t.Article and o.id=t.OrderId
+				and o.LocalOrder<>1
+			)b
 			OUTER APPLY(
-				SELECT [Qty]=ISNULL([Qty],0)
+                SELECT [Qty]=iif(b.value is not null,round(cast(ISNULL([Qty],0) as decimal) * (1+ isnull(b.DyeingLoss,0)/100),0),Order_Qty.Qty)
 				FROM Order_Qty 
 				WHERE ID=t.OrderId AND Article=t.Article AND SizeCode=t.SizeCode
 			)Order_Qty
