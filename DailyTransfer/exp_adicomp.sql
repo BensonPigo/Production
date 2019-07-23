@@ -27,6 +27,7 @@ declare @FtyApvDate  date = getdate() - 7
 
 SELECT
 	ID
+	,TPEApvDate
 	,FtyApvName
 	,FtyApvDate
 	into ADIDASComplain
