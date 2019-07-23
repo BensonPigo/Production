@@ -150,6 +150,7 @@
     [DRYCTN]               INT            CONSTRAINT [DF_Orders_DRYCTN] DEFAULT ((0)) NOT NULL,
     [PackErrCTN]           INT            CONSTRAINT [DF_Orders_PackErrCTN] DEFAULT ((0)) NULL,
     [ForecastSampleGroup]  VARCHAR (1)    CONSTRAINT [DF_Orders_ForecastSampleGroup] DEFAULT ('') NULL,
+    [DyeingLoss] NUMERIC(3) NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
