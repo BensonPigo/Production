@@ -76,45 +76,52 @@ namespace Sci.Production.PPIC
             {
                 sql_Exclude_holiday = $@"
 --針對ReadyDate最後一天判斷若是星期天或是假日的話就往後延
-WHILE @addDate <= 100 
-BEGIN  
-	update w set WorkDate = DATEADD(DAY,1,WorkDate)
-		from #WorkDate w
-		where ReadyDate = @ReadyDateTo and 
-			  (exists(select 1 from Holiday h where w.Factory = h.FactoryID and w.WorkDate = h.HolidayDate) or datepart(WEEKDAY,w.WorkDate)  = 1)	
-	IF(@@ROWCOUNT = 0 )
-	Begin
-		break
-	End
-	set @addDate = @addDate +1
-END  
-
+WHILE @GAPfrequency <= @GAP 
+BEGIN 
+    update #WorkDate set WorkDate = DATEADD(DAY,1,WorkDate)
+    WHILE @addDate <= 100 
+    BEGIN  
+    	update w set WorkDate = DATEADD(DAY,1,WorkDate)
+    		from #WorkDate w
+    		where (exists(select 1 from Holiday h where w.Factory = h.FactoryID and w.WorkDate = h.HolidayDate) or datepart(WEEKDAY,w.WorkDate)  = 1)	
+    	IF(@@ROWCOUNT = 0 )
+    	Begin
+    		break
+    	End
+    	set @addDate = @addDate +1
+    END  
+    set @GAPfrequency = @GAPfrequency +1
+END
 --刪掉星期天
-delete #WorkDate where datepart(WEEKDAY,WorkDate) = 1 or datepart(WEEKDAY,ReadyDate) = 1
+delete #WorkDate where datepart(WEEKDAY,ReadyDate) = 1
 
 --刪掉各工廠對應的假日
 delete w
 from #WorkDate  w
-inner join Holiday h on w.Factory = h.FactoryID and (w.WorkDate = h.HolidayDate or w.ReadyDate = h.HolidayDate)";
+inner join Holiday h on w.Factory = h.FactoryID and w.ReadyDate = h.HolidayDate";
             }
             else
             {
                 sql_Exclude_holiday = $@"
 --針對ReadyDate最後一天判斷若是星期天的話就往後延
-WHILE @addDate <= 100 
-BEGIN  
-	update w set WorkDate = DATEADD(DAY,1,WorkDate)
-		from #WorkDate w
-		where ReadyDate = @ReadyDateTo and datepart(WEEKDAY,w.WorkDate)  = 1
-	IF(@@ROWCOUNT = 0 )
-	Begin
-		break
-	End
-	set @addDate = @addDate +1
+WHILE @GAPfrequency <= @GAP 
+BEGIN 
+    update #WorkDate set WorkDate = DATEADD(DAY,1,WorkDate)
+    WHILE @addDate <= 100 
+    BEGIN  
+    	update w set WorkDate = DATEADD(DAY,1,WorkDate)
+    		from #WorkDate w
+    		where datepart(WEEKDAY,w.WorkDate)  = 1
+    	IF(@@ROWCOUNT = 0 )
+    	Begin
+    		break
+    	End
+    	set @addDate = @addDate +1
+    END  
+    set @GAPfrequency = @GAPfrequency +1
 END  
-
 --刪掉星期天
-delete #WorkDate where datepart(WEEKDAY,WorkDate) = 1 or datepart(WEEKDAY,ReadyDate) = 1 ";
+delete #WorkDate where datepart(WEEKDAY,ReadyDate) = 1 ";
             }
             #endregion
 
@@ -122,6 +129,7 @@ delete #WorkDate where datepart(WEEKDAY,WorkDate) = 1 or datepart(WEEKDAY,ReadyD
             this.tsql = $@"
 declare @time time = '{(this.txtTime.Text.Equals(":") ? "00:00:00" : this.txtTime.Text)}'
 declare @GAP int = @inputGAP
+declare @GAPfrequency int = 1
 declare @ReadyDateFrom date = @inputReadyDateFrom
 declare @ReadyDateTo date = @inputReadyDateTo
 declare @addDate int = 0
@@ -133,9 +141,8 @@ inner join Factory on 1 = 1 {where2}
 WHERE s.type = 'P'
 AND DATEADD(DAY,number,@ReadyDateFrom) <= @ReadyDateTo
 
-update #WorkDate set WorkDate = DATEADD(DAY,@GAP,WorkDate)
-
 {sql_Exclude_holiday}
+
 
 --抓出條件時間內對應的orders資料
 --依照指定的Ready Date+條件GAP天數去抓去Orders.SewOffLIne在那天生產結束的訂單，且Buyer Delivery date >= Ready Date的訂單，若該Ready Date星期日、特殊假日(Holiday)不需計算，星期日、特殊假日(Holiday)都要避開，例如Ready date是 7/28 GAP是1，但隔天是週日(7/29)，所以抓取orders.SewOffLIne時間點是7/30。
