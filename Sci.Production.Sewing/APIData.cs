@@ -20,6 +20,8 @@ namespace Sci.Production.Sewing
 
         public decimal SewTtlManhours { get; set; }
 
+        public int Holiday { get; set; }
+
         public string yyyyMM { get; set; }
 
         public List<APIData> results;
