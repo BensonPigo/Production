@@ -117,6 +117,7 @@ select  lr.FactoryId [Factory]
         ,lrd.OrderId [SP]
         ,lrd.Category [Category]
         ,lrd.Refno [Refno]
+        ,[IsCarton] = iif(li.IsCarton = 1 ,'Y','')
         ,[Description]=dbo.getItemDesc(lrd.Category,lrd.Refno)
         ,lrd.ThreadColorID [Color_Shade]
         ,c.UnitId [Unit]
@@ -128,7 +129,9 @@ select  lr.FactoryId [Factory]
 from dbo.LocalReceiving lr WITH (NOLOCK) 
 left join dbo.LocalSupp LS on lr.LocalSuppID = LS.ID
 left join dbo.LocalReceiving_Detail lrd WITH (NOLOCK) on  lr.id=lrd.Id
-left join dbo.LocalPO_Detail c WITH (NOLOCK) on lrd.LocalPo_detailukey=c.Ukey  " + sqlWhere + " " + order);
+left join dbo.LocalPO_Detail c WITH (NOLOCK) on lrd.LocalPo_detailukey=c.Ukey  
+left join dbo.LocalItem li WITH (NOLOCK) on li.RefNo=lrd.Refno
+" + sqlWhere + " " + order);
             result = DBProxy.Current.Select("", sqlcmd,lis, out dtt);
         
             return result; //base.OnAsyncDataLoad(e);
@@ -142,6 +145,8 @@ left join dbo.LocalPO_Detail c WITH (NOLOCK) on lrd.LocalPo_detailukey=c.Ukey  "
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
+            SetCount(dtt.Rows.Count);
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R25.xltx");
             MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R25.xltx", 3, showExcel: false, showSaveMsg: false, excelApp : objApp);
 

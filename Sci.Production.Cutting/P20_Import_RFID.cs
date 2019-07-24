@@ -161,10 +161,44 @@ namespace Sci.Production.Cutting
             string rfidDate2 = dateRFID.Value2.ToString();
             string spno = this.txtSP.Text;
             string factory = txtfactory1.Text;
+            StringBuilder woUkeyCondition = new StringBuilder();
             string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["Workorderukey"].ToString() : "") + "'"));
             if (MyUtility.Check.Empty(condition)) condition = @"''";
 
+            if (!MyUtility.Check.Empty(rfidDate1))
+            {
+                woUkeyCondition.Append(string.Format(@" and BIO.AddDate >='{0}' ", Convert.ToDateTime(rfidDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(rfidDate2))
+            {
+                woUkeyCondition.Append(string.Format(@" and BIO.AddDate <='{0}'", Convert.ToDateTime(rfidDate2).ToString("d") + " 23:59:59"));
+            }
+            if (!MyUtility.Check.Empty(spno))
+            {
+                woUkeyCondition.Append(string.Format(@" and B.orderid='{0}'", spno));
+            }
+            if (!MyUtility.Check.Empty(factory))
+            {
+                woUkeyCondition.Append(string.Format(@" and WO.factoryid='{0}'", factory));
+            }
+
             sqlcmd.Append(string.Format(@"
+
+SELECT distinct WO.ukey
+    into #QueryTarUkey
+    FROM BundleInOut BIO WITH (NOLOCK) 
+    inner join Bundle_Detail BD WITH (NOLOCK)  on BD.BundleNo = BIO.BundleNo
+    inner join Bundle B WITH (NOLOCK)  on BD.Id = B.ID and B.cutref <> ''
+    inner join workorder WO WITH (NOLOCK)  on WO.cutref=B.cutref and WO.ID=B.POID and WO.MDivisionID  = b.MDivisionID 
+    where BIO.subprocessid='SORTING' 
+    and isnull(bio.RFIDProcessLocationID,'') = '' {2}
+
+select b.WorkOrderUkey,AccuCuttingLayer = sum(b.Layer) 
+	into #AccuCuttingLayer
+	from cuttingoutput_Detail b WITH (NOLOCK) 
+	inner join  #QueryTarUkey a on a.ukey = b.WorkOrderUkey 
+	group by b.WorkOrderUkey
+
 select 0 as sel,
 	WO.*,
 	Cuttingid = WO.id,
@@ -187,38 +221,18 @@ select 0 as sel,
 	LackingLayers = 0,
     SRQ.SizeRatioQty
 from WorkOrder WO WITH (NOLOCK) 
-outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = wo.Ukey)acc
-outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = wo.Ukey)SRQ
+left join #AccuCuttingLayer acc on wo.Ukey = acc.WorkOrderUkey
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b WITH (NOLOCK)  where b.WorkOrderUkey = wo.Ukey)SRQ
 where mDivisionid = '{0}' 
 and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''
 and WO.ukey not in ( {1} )   
-and WO.Ukey in ( SELECT distinct WO.ukey
-FROM BundleInOut BIO
-left join Bundle_Detail BD on BD.BundleNo = BIO.BundleNo
-left join Bundle B on BD.Id = B.ID
-left join workorder WO on WO.cutref=B.cutref and WO.cutno=B.cutno and WO.fabricCombo=B.patternPanel and WO.MDivisionID  = b.MDivisionID 
-where BIO.subprocessid='SORTING' 
-and isnull(bio.RFIDProcessLocationID,'') = ''
- ", keyWord, condition));
+and exists (select 1 from #QueryTarUkey where Ukey = WO.Ukey)
 
-            if (!MyUtility.Check.Empty(rfidDate1))
-            {
-                sqlcmd.Append(string.Format(@" and BIO.AddDate >='{0}' ", Convert.ToDateTime(rfidDate1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(rfidDate2))
-            {
-                sqlcmd.Append(string.Format(@" and BIO.AddDate <='{0}'", Convert.ToDateTime(rfidDate2).ToString("d") + " 23:59:59"));
-            }
-            if (!MyUtility.Check.Empty(spno))
-            {
-                sqlcmd.Append(string.Format(@" and B.orderid='{0}'", spno));
-            }
-            if (!MyUtility.Check.Empty(factory))
-            {
-                sqlcmd.Append(string.Format(@" and WO.factoryid='{0}'", factory));
-            }
-            sqlcmd.Append(" )");
+Drop table #QueryTarUkey,#AccuCuttingLayer
+ ", keyWord, condition, woUkeyCondition.ToString()));
+
+          
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd.ToString(), out detailTable);
             if (dResult)
             {

@@ -330,6 +330,25 @@ WHERE   StockType='{0}'
                 DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
                 if (grid_ftyDetail.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
+                    if (Convert.ToBoolean(dr["Selected"]) == true)
+                    {
+                        if (MyUtility.Check.Seek($@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{dr["toStocktype"]}'
+        and junk != '1'
+        and  id ='{dr["location"]}'
+"))
+                        {
+                            dr["tolocation"] = dr["location"];
+                        }
+                        else
+                        {
+                            dr["tolocation"] = string.Empty;
+                        }
+                    }
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         if (dr.GetParentRow("rel1") != null && !dr["balanceqty"].EqualDecimal(0))

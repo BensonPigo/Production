@@ -785,6 +785,7 @@ order by os.Seq",
                 .Date("ReceiveDate", header: "CLOG CFM", iseditingreadonly: true)
                 .Text("ClogLocationId", header: "Location No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("ReturnDate", header: "Return Date", iseditingreadonly: true)
+                .Date("DisposeDate", header: "Dispose Date", iseditingreadonly: true)
                 .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("CustCTN", header: "Cust CTN#", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
@@ -1091,6 +1092,12 @@ order by os.Seq",
 
             // 檢查表身的ShipMode與表頭的ShipMode如果不同就不可以SAVE，存檔後提醒
             this.CheckShipMode("save");
+
+            string upd_sql = $@"
+UPDATE PackingList_Detail
+SET CTNEndNo = CTNStartNo
+WHERE ID =  '{this.CurrentMaintain["ID"]}'";
+            DualResult upd_result = DBProxy.Current.Execute(null, upd_sql);
 
             return Result.True;
         }
@@ -2036,7 +2043,7 @@ inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
                         return;
                     }
 
-                    if (!MyUtility.Check.Empty(dr["DisposeFromClog"]))
+                    if (!MyUtility.Check.Empty(dr["DisposeFromClog"]) || !MyUtility.Check.Empty(dr["DisposeDate"]))
                     {
                         this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                     }

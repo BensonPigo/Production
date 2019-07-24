@@ -23,8 +23,7 @@ CREATE FUNCTION [dbo].[QtyBySetPerSubprocess]
 		回傳Qty值是否超過訂單數, (生產有可能超過)
 	 */
 	@OrderID varchar (13)
-	, @SubprocessID varchar (10)
-	, @IsSpectialReader bit = 0
+	, @SubprocessID varchar (300)
 	, @InStartDate datetime = null
 	, @InEndDate datetime = null
 	, @OutStartDate datetime = null
@@ -66,7 +65,9 @@ RETURNS
 	InQtyBySet int,
 	OutQtyBySet int,
 	InQtyByPcs int,
-	OutQtyByPcs int
+	OutQtyByPcs int,
+	FinishedQtyBySet int,
+	SubprocessId varchar(10)
 )
 AS
 BEGIN
@@ -81,6 +82,7 @@ BEGIN
 
 	declare @QtyBySetPerCutpart Table(
 		OrderID varchar(13),
+		SubprocessId varchar(10),
 		POID varchar(13),
 		PatternPanel varchar(2),
 		FabricPanelCode varchar(2),
@@ -94,14 +96,31 @@ BEGIN
 
 	declare @CutpartBySet Table(
 		OrderID varchar(13),
+		SubprocessId varchar(10),
 		Article varchar(8),
 		SizeCode varchar(100),
 		QtyBySet int,
 		QtyBySubprocess int
 	)
 
+	declare @BundleInOutDetail Table(
+		OrderID varchar(13),
+		SubprocessId varchar(10),
+		InOutRule tinyint,
+		BundleGroup int,
+		Size varchar(100),
+		Article varchar(8),
+		PatternPanel varchar(2),
+		FabricPanelCode varchar(2),
+		PatternCode varchar(20),
+		InComing datetime,
+		OutGoing datetime,
+		Qty int
+	)
+
 	declare @BundleInOutQty Table(
 		OrderID varchar(13),
+		SubprocessId varchar(10),
 		BundleGroup int,
 		Size varchar(100),
 		Article varchar(8),
@@ -112,16 +131,31 @@ BEGIN
 		OutQty int,
 		OriInQty int,
 		OriOutQty int,
+		FinishedQty int,
 		num int
 	)
 
 	declare @FinalQtyBySet Table(
 		OrderID varchar(13),
+		SubprocessId varchar(10),
 		Article varchar(8),
 		SizeCode varchar(100),
 		InQty int,
-		OutQty int
+		OutQty int,
+		FinishQty int
 	)
+
+	declare @SubProcess Table(
+		SubprocessId varchar(10),
+		IsRFIDDefault bit,
+		InOutRule tinyint
+	)
+
+	--拆分傳入的subprocess
+	insert into @SubProcess
+	select b.Id,b.IsRFIDDefault,b.InOutRule
+	from dbo.SplitString(@SubprocessID,',') a
+	inner join SubProcess b with (nolock) on a.Data = b.Id
 
 	/*
 	 * 1.	尋找指定訂單 Fabric Combo + Fabric Panel Code
@@ -152,9 +186,19 @@ BEGIN
 	
 	-- Step 2. --
 	insert into @QtyBySetPerCutpart
-	select	*
-			, num = count (1) over (partition by OrderID, PatternPanel, FabricPanelCode, Article, Sizecode)
+	select	st1.OrderID,
+			sub.SubprocessId,
+			st1.POID,
+			st1.PatternPanel,
+			st1.FabricPanelCode,
+			st1.Article,
+			st1.SizeCode,
+			CutpartCount.PatternCode,
+			CutpartCount.QtyBySet,
+			CutpartCount.QtyBySubprocess,
+			num = count (1) over (partition by OrderID, PatternPanel, FabricPanelCode, Article, Sizecode)
 	from @AllOrders st1
+	cross join @SubProcess sub
 	outer apply (
 		select	bunD.Patterncode
 				, QtyBySet = count (1)
@@ -178,7 +222,7 @@ BEGIN
 						where exists (select 1								  
 									  from Bundle_Detail_Art BunDArt
 									  where BunDArt.Bundleno = bunD.BundleNo
-											and BunDArt.SubprocessId = @SubprocessID))
+											and BunDArt.SubprocessId = sub.SubprocessId))
 		) QtyBySubprocess
 		group by bunD.Patterncode
 	) CutpartCount
@@ -186,17 +230,33 @@ BEGIN
 	-- Step 3. --
 	insert into @CutpartBySet
 	select	st2.Orderid
+			, st2.SubprocessId
 			, st2.Article
 			, st2.Sizecode
 			, QtyBySet = sum (st2.QtyBySet)
 			, QtyBySubprocess = sum (st2.QtyBySubProcess)
 	from @QtyBySetPerCutpart st2
-	group by st2.Orderid, st2.Article, st2.Sizecode
+	group by st2.Orderid, st2.SubprocessId, st2.Article, st2.Sizecode
 
 	-- Query by Set per Subprocess--
 	/*
 	 * 計算成衣件數 by 外加工
 	 * 1.	找出時間區間內指定訂單中裁片的進出資訊
+			各個 SubProcess 完成與否應該要參照 SubProces.InOutRule 的設定
+			Only In - 有 InComing 的紀錄就算完成
+			Only Out - 有 OutGoing 的紀錄就算完成
+			其他狀態 - 必須要有 InComing & OutGoing 才算完成
+			
+			因此請協助調整 SQL Function (QtyBySetPerSubprocess)
+			回傳的資料表新增一個欄位
+			FinishedQtyBySet
+			InOutRule
+			0-NotSetting
+			1-OnlyIn
+			2-OnlyOut
+			3-FromInToOut
+			4-FromOutToIn
+
 	 * 2.	成衣件數判斷
 			a.	需判斷 BundleGroup
 				a.1	加總 OrderID, Size, PatternPanel, FabricPanelCode, Article 每個部位的數量
@@ -217,72 +277,55 @@ BEGIN
 					Size
 	 *	3.	最終算出每張訂單目前可完成的成衣件數
 	 */
+	 
 	-- Step 1. --	
-	insert into @BundleInOutQty
-	select	st0.Orderid
-			, BundleGroup = RFID.BundleGroup
-			, Size = Size.v
+
+	 insert into @BundleInOutDetail
+	 select	st0.Orderid
+			, sub.SubprocessId
+			, sub.InOutRule
+			, bunD.BundleGroup
+			, os.SizeCode
 			, st0.Article
 			, st0.PatternPanel
 			, st0.FabricPanelCode
 			, st0.PatternCode
-			, InQty = sum (isnull (RFID.InQty, 0))
-			, OutQty = sum (isnull (RFID.OutQty, 0))
-			, OriInQty = sum (isnull (RFID.InQty, 0))
-			, OriOutQty = sum (isnull (RFID.OutQty, 0))
-			, num = count (1) over (partition by st0.Orderid, Size.v, PatternPanel, FabricPanelCode, RFID.BundleGroup)
+			, bunIO.InComing
+			, bunIO.OutGoing
+			, bunD.Qty / iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
 	from @QtyBySetPerCutpart st0
-	outer apply (
-		Select	v = OSize.SizeCode
-		from Order_SizeCode OSize
-		where st0.POID = OSize.Id and st0.Sizecode = OSize.SizeCode
-	) Size
-	outer apply (
-		select	InQty = sum(bunD.Qty) / iif (@IsSpectialReader = 1, st0.QtyBySet
-																  , st0.QtyBySubprocess)
-				, OutQty = 0
-				, bunD.BundleGroup
-				, Size = bunD.SizeCode
-		from BundleInOut bunIO
-		inner join Bundle_Detail bunD on bunIO.BundleNo = bunD.BundleNo
-		inner join Bundle bun on bunD.Id = bun.ID
-		where bun.Orderid = st0.Orderid
-				and bun.Sizecode = Size.v
-				and bun.PatternPanel = st0.PatternPanel
-				and bun.FabricPanelCode = st0.FabricPanelCode
-				and bunD.Patterncode = st0.Patterncode
-				and bun.Article = st0.Article
-				and bunIO.SubProcessId = @SubprocessID
-				and bunIO.InComing is not null
-				and isnull(bunIO.RFIDProcessLocationID,'') = ''
-				and (@InStartDate is null or @InStartDate <= bunIo.InComing)
-				and (@InEndDate is null or bunIO.InComing <= @InEndDate)
-		group by bunD.BundleGroup, bunD.SizeCode
+	inner join @SubProcess sub on st0.SubprocessId = sub.SubprocessId
+	left join Order_SizeCode os with (nolock) on os.ID = st0.POID and os.SizeCode = st0.SizeCode
+	left join Bundle bun with (nolock)  on bun.Orderid = st0.Orderid and 
+							bun.PatternPanel = st0.PatternPanel and
+							bun.FabricPanelCode = st0.FabricPanelCode and
+							bun.Article = st0.Article and
+							bun.Sizecode = os.SizeCode
+	left join Bundle_Detail bunD with (nolock)  on bunD.Id = bun.id and bunD.Patterncode = st0.Patterncode
+	left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = sub.SubprocessId and isnull(bunIO.RFIDProcessLocationID,'') = ''
+	where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
 
-		union all
-		select	InQty = 0
-				,OutQty = sum (bunD.Qty) / iif (@IsSpectialReader = 1, st0.QtyBySet
-																	 , st0.QtyBySubprocess)
-				, bunD.BundleGroup
-				, Size = bunD.SizeCode
-		from BundleInOut bunIO		
-		inner join Bundle_Detail bunD on bunIO.BundleNo = bunD.BundleNo
-		inner join Bundle bun on bunD.Id = bun.ID
-		where bun.Orderid = st0.Orderid
-				and bun.Sizecode = Size.v
-				and bun.PatternPanel = st0.PatternPanel
-				and bun.FabricPanelCode = st0.FabricPanelCode
-				and bunD.Patterncode = st0.Patterncode
-				and bun.Article = st0.Article
-				and bunIO.SubProcessId = @SubprocessID
-				and bunIO.OutGoing is not null
-				and isnull(bunIO.RFIDProcessLocationID,'') = ''
-				and (@OutStartDate is null or @OutStartDate <= bunIO.OutGoing)
-				and (@OutEndDate is null or bunIO.OutGoing <= @OutEndDate)
-		group by bunD.BundleGroup, bunD.SizeCode
-	) RFID
-	where (@IsSpectialReader = 1 or st0.QtyBySubprocess != 0)
-	group by st0.OrderID, RFID.BundleGroup, Size.v, st0.PatternPanel, st0.FabricPanelCode, st0.Article, st0.PatternCode, st0.num
+	insert into @BundleInOutQty
+	select	Orderid
+			, SubprocessId
+			, BundleGroup
+			, Size
+			, Article
+			, PatternPanel
+			, FabricPanelCode
+			, PatternCode
+			, InQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0))
+			, OutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0))
+			, OriInQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0))
+			, OriOutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0))
+			, FinishedQty = case	when InOutRule = 1 then sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0))
+									when InOutRule = 2 then sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0))
+									else sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate) and
+										  InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate)
+										  ,Qty,0)) end
+			, num = count (1) over (partition by Orderid, Size, PatternPanel, FabricPanelCode, BundleGroup)
+	from @BundleInOutDetail 
+	group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode
 
 	-- 篩選 BundleGroup Step.1 --
 	if (@IsNeedCombinBundleGroup = 1)
@@ -292,6 +335,7 @@ BEGIN
 			, bunInOut.OutQty = 0
 		from @BundleInOutQty bunInOut
 		inner join @QtyBySetPerCutpart bas on bunInOut.OrderID = bas.OrderID
+											  and bunInOut.SubprocessId = bas.SubprocessId
 											  and bunInOut.PatternPanel = bas.PatternPanel
 											  and bunInOut.FabricPanelCode = bas.FabricPanelCode
 											  and bunInOut.Article = bas.Article
@@ -304,27 +348,34 @@ BEGIN
 	begin
 		insert into @FinalQtyBySet
 		select	OrderID
+				, SubprocessId
 				, Article
 				, Size
 				, InQty = min (InQty)
 				, OutQty = min (OutQty)
+				, FinishedQty = min (FinishedQty)
 		from (
 			select	OrderID
+					, SubprocessId
 					, Size
 					, Article
 					, PatternPanel
 					, InQty = min (InQty)
 					, OutQty = min (OutQty)
+					, FinishedQty = min (FinishedQty)
 			from (
 				select	OrderID
+						, SubprocessId
 						, Size
 						, Article
 						, PatternPanel
 						, FabricPanelCode
 						, InQty = sum (InQty)
 						, OutQty = sum (OutQty)
+						, FinishedQty = sum (FinishedQty)
 				from (
 					select	OrderID
+							, SubprocessId
 							, Size
 							, Article
 							, PatternPanel
@@ -332,40 +383,48 @@ BEGIN
 							, BundleGroup
 							, InQty = min (InQty)
 							, OutQty = min (OutQty)
+							, FinishedQty = min (FinishedQty)
 					from @BundleInOutQty
-					group by OrderID, Size, Article, PatternPanel, FabricPanelCode, BundleGroup
+					group by OrderID, SubprocessId, Size, Article, PatternPanel, FabricPanelCode, BundleGroup
 				) minGroupCutpart							
-				group by OrderID, Size, Article, PatternPanel, FabricPanelCode
+				group by OrderID, SubprocessId, Size, Article, PatternPanel, FabricPanelCode
 			) sumGroup
-			group by OrderID, Size, Article, PatternPanel
+			group by OrderID, SubprocessId, Size, Article, PatternPanel
 		) minFabricPanelCode
-		group by OrderID, Size, Article
+		group by OrderID, SubprocessId, Size, Article
 	end
 	else
 	begin
 		insert into @FinalQtyBySet
 		select	OrderID
+				, SubprocessId
 				, Article
 				, Size
 				, InQty = min (InQty)
 				, OutQty = min (OutQty)
+				, FinishedQty = min (FinishedQty)
 		from (
 			select	OrderID
+					, SubprocessId
 					, Size
 					, Article
 					, PatternPanel
 					, InQty = min (InQty)
 					, OutQty = min (OutQty)
+					, FinishedQty = min (FinishedQty)
 			from (
 				select	OrderID
+						, SubprocessId
 						, Size
 						, Article
 						, PatternPanel
 						, FabricPanelCode
 						, InQty = min (InQty)
 						, OutQty = min (OutQty)
+						, FinishedQty = min (FinishedQty)
 				from (
 					select	OrderID
+							, SubprocessId
 							, Size
 							, PatternPanel
 							, FabricPanelCode
@@ -373,14 +432,15 @@ BEGIN
 							, PatternCode
 							, InQty = sum (InQty)
 							, OutQty = sum (OutQty)
+							, FinishedQty = sum (FinishedQty)
 					from @BundleInOutQty
-					group by OrderID, Size, Article, PatternPanel, FabricPanelCode, PatternCode
+					group by OrderID, SubprocessId, Size, Article, PatternPanel, FabricPanelCode, PatternCode
 				) sumbas
-				group by OrderID, Size, Article, PatternPanel, FabricPanelCode
+				group by OrderID, SubprocessId, Size, Article, PatternPanel, FabricPanelCode
 			) minCutpart
-			group by OrderID, Size, Article, PatternPanel
+			group by OrderID, SubprocessId, Size, Article, PatternPanel
 		) minFabricPanelCode
-		group by OrderID, Size, Article
+		group by OrderID, SubprocessId, Size, Article
 	end
 	
 	-- Result Data --
@@ -400,14 +460,20 @@ BEGIN
 							end
 			, InQtyByPcs
 			, OutQtyByPcs
+			, FinishedQtyBySet = case when @IsMorethenOrderQty = 1 then sub.FinishQty
+							when sub.FinishQty>oq.qty then oq.qty
+							else sub.FinishQty
+							end
+			, sub.SubprocessId
 	from @CutpartBySet cbs
 	left join Order_Qty oq on oq.id = cbs.OrderID and oq.SizeCode = cbs.SizeCode and oq.Article = cbs.Article
-	left join @FinalQtyBySet sub on cbs.Orderid = sub.Orderid and cbs.Sizecode = sub.SizeCode and cbs.Article = sub.Article
+	left join @FinalQtyBySet sub on cbs.Orderid = sub.Orderid and cbs.Sizecode = sub.SizeCode and cbs.Article = sub.Article and cbs.SubprocessId = sub.SubprocessId
 	outer apply (
 		select	InQtyByPcs = sum (isnull (bunIO.OriInQty, 0))
 				, OutQtyByPcs = sum (isnull (bunIO.OriOutQty, 0))
 		from @BundleInOutQty bunIO
-		where cbs.OrderID = bunIO.OrderID and cbs.Sizecode = bunIO.Size and cbs.Article = bunIO.Article
+		where cbs.OrderID = bunIO.OrderID and cbs.Sizecode = bunIO.Size and cbs.Article = bunIO.Article and bunIO.SubprocessId = sub.SubprocessId
 	) IOQtyPerPcs
 	RETURN ;
 END
+

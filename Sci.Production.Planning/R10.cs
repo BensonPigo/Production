@@ -78,13 +78,6 @@ namespace Sci.Production.Planning
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.txtM.Text))
-            {
-                MyUtility.Msg.WarningBox("<M> Can't be empty!!");
-                this.txtM.Focus();
-                return false;
-            }
-
             if (this.radioSemimonthlyReport.Checked)
             {
                 if (this.numMonth.Text == string.Empty)
@@ -418,7 +411,7 @@ namespace Sci.Production.Planning
                 
                             Select a.*, DATENAME(weekday,a. MaxOutputDate) as DateName,
                                    IIF(a.CountDay=0,0,round(a.LoadCPU/a.CountDay,0)) as DailyCPU,
-                                   IIF(AccuHours* MonthHours=0,0,round(a.LoadCPU/AccuHours* MonthHours,0)) as AccuLoad
+                                   IIF(AccuHours* MonthHours=0,0,round(a.LoadCPU/AccuHours* MonthHours,10)) as AccuLoad
                             into  #printdata
                             From (Select t.*, 
                                         isnull((select sum(AVGHours) 
@@ -636,6 +629,7 @@ namespace Sci.Production.Planning
                 this.SetColumnToBack(dtMDVList, "MDivisionID", "Sample");
                 this.SetColumnToBack(dtMDVList, "MDivisionID", string.Empty);
                 bool isSample = false;
+                int shortageStart = 0;
                 for (int idxMDV = 0; idxMDV < dtMDVList.Rows.Count; idxMDV++)
                 {
                     lisBold.Add(this.sheetStart.ToString());
@@ -686,7 +680,7 @@ namespace Sci.Production.Planning
                     //lisSumFtyNonSis.Add(ftyStart.ToString() + "," + nonSisStart.ToString());
 
                     // Shortage
-                    int shortageStart = this.sheetStart;
+                    shortageStart = this.sheetStart;
                     DataTable dtByShortage = this.SafeGetDt(dt1, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
                     this.SetTableToRow(wks, this.sheetStart, "Shortage", dtByShortage, "OrderShortage");
                     this.DrawBottomLine(wks, this.sheetStart, 1);
@@ -755,7 +749,7 @@ namespace Sci.Production.Planning
                 string sumFtyStr = "=";
                 foreach (string str in lisSumFtyNonSis)
                 {
-                    sumFtyStr += string.Format("+SUM({{0}}{0}:{{0}}{1})", str.Split(',')[0], str.Split(',')[1]);
+                    sumFtyStr += string.Format("+SUM({{0}}{0}:{{0}}{1})- {{0}}{2}", str.Split(',')[0], str.Split(',')[1], shortageStart);
                 }
 
                 this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Grand TTL", countryID), sumFtyStr);

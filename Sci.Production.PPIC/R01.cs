@@ -153,6 +153,8 @@ namespace Sci.Production.PPIC
                 this.printData.Columns.Remove("VasShas");
                 this.printData.Columns.Remove("ShipModeList");
                 this.printData.Columns.Remove("Alias");
+                this.printData.Columns.Remove("CRDDate");
+                this.printData.Columns.Remove("CustPONo");
 
                 Excel.Application objApp = null;
                 Excel.Worksheet worksheet = null;
@@ -234,7 +236,7 @@ where id = '{0}'", Env.User.Factory), null);
                 // Summary By = SP# 則刪除欄位Size
                 if (this.type == "SP#")
                 {
-                    worksheet.get_Range("G:G").EntireColumn.Delete();
+                    worksheet.get_Range("H:H").EntireColumn.Delete();
                 }
 
                 #region Save & Show Excel
@@ -310,6 +312,7 @@ select  s.SewingLineID
             , s.MDivisionID
             , o.FactoryID
             , s.OrderID
+            , o.CustPONo
             , s.ComboType
             , ( select CONCAT(Article,',') 
                 from (  select distinct Article 
@@ -347,11 +350,12 @@ select  s.SewingLineID
             , o.KPILETA
             , o.MTLETA
             , o.MTLExport
-            ,O.CutInLine
+            , O.CutInLine
             , s.Inline
             , s.Offline
             , o.SciDelivery
             , o.BuyerDelivery
+			, o.CRDDate
             , o.CPU * o.CPUFactor * ( isnull(isnull(ol_rate.value,sl_rate.value), 100) / 100) as CPU
             , IIF(o.VasShas=1, 'Y', '') as VasShas
             , o.ShipModeList,isnull(c.Alias, '') as Alias 
@@ -372,7 +376,6 @@ select  s.SewingLineID
     where 1=1
 ");
             #endregion
-
             #region where條件
             if (!MyUtility.Check.Empty(this.mDivision))
             {
@@ -519,6 +522,7 @@ select  SewingLineID
         , MDivisionID
         , FactoryID
         , OrderID
+		, CustPONo
         , ComboType
         , IIF(Article = '', '', SUBSTRING(Article, 1, LEN(Article) - 1)) as Article
         , SizeCode
@@ -543,6 +547,7 @@ select  SewingLineID
         , Offline
         , SciDelivery
         , BuyerDelivery
+		, CRDDate
         , CPU
         , VasShas
         , ShipModeList
@@ -586,6 +591,7 @@ select  s.SewingLineID
             , s.MDivisionID
             , o.FactoryID
             , s.OrderID
+			, o.CustPONo
             , s.ComboType 
             , sd.Article
 			, sd.SizeCode
@@ -602,6 +608,7 @@ select  s.SewingLineID
             , s.Offline
             , o.SciDelivery
             , o.BuyerDelivery 
+			, o.CRDDate
             , IIF(o.VasShas=1, 'Y', '') as VasShas
             , o.ShipModeList,isnull(c.Alias, '') as Alias 
             , isnull((  select CONCAT(Remark, ', ') 
@@ -815,6 +822,7 @@ select  SewingLineID
         , MDivisionID
         , FactoryID
         , OrderID
+		, CustPONo
         , ComboType, Article 
         , SizeCode
         , CdCodeID
@@ -838,6 +846,7 @@ select  SewingLineID
         , Offline
         , SciDelivery
         , BuyerDelivery
+		, CRDDate
         , t.CPU * t.CPUFactor * ( isnull(isnull(t.ol_rate,t.sl_rate), 100) / 100) as CPU
         , VasShas
         , ShipModeList

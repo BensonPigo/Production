@@ -76,45 +76,52 @@ namespace Sci.Production.PPIC
             {
                 sql_Exclude_holiday = $@"
 --針對ReadyDate最後一天判斷若是星期天或是假日的話就往後延
-WHILE @addDate <= 100 
-BEGIN  
-	update w set WorkDate = DATEADD(DAY,1,WorkDate)
-		from #WorkDate w
-		where ReadyDate = @ReadyDateTo and 
-			  (exists(select 1 from Holiday h where w.Factory = h.FactoryID and w.WorkDate = h.HolidayDate) or datepart(WEEKDAY,w.WorkDate)  = 1)	
-	IF(@@ROWCOUNT = 0 )
-	Begin
-		break
-	End
-	set @addDate = @addDate +1
-END  
-
+WHILE @GAPfrequency <= @GAP 
+BEGIN 
+    update #WorkDate set WorkDate = DATEADD(DAY,1,WorkDate)
+    WHILE @addDate <= 100 
+    BEGIN  
+    	update w set WorkDate = DATEADD(DAY,1,WorkDate)
+    		from #WorkDate w
+    		where (exists(select 1 from Holiday h where w.Factory = h.FactoryID and w.WorkDate = h.HolidayDate) or datepart(WEEKDAY,w.WorkDate)  = 1)	
+    	IF(@@ROWCOUNT = 0 )
+    	Begin
+    		break
+    	End
+    	set @addDate = @addDate +1
+    END  
+    set @GAPfrequency = @GAPfrequency +1
+END
 --刪掉星期天
-delete #WorkDate where datepart(WEEKDAY,WorkDate) = 1 or datepart(WEEKDAY,ReadyDate) = 1
+delete #WorkDate where datepart(WEEKDAY,ReadyDate) = 1
 
 --刪掉各工廠對應的假日
 delete w
 from #WorkDate  w
-inner join Holiday h on w.Factory = h.FactoryID and (w.WorkDate = h.HolidayDate or w.ReadyDate = h.HolidayDate)";
+inner join Holiday h on w.Factory = h.FactoryID and w.ReadyDate = h.HolidayDate";
             }
             else
             {
                 sql_Exclude_holiday = $@"
 --針對ReadyDate最後一天判斷若是星期天的話就往後延
-WHILE @addDate <= 100 
-BEGIN  
-	update w set WorkDate = DATEADD(DAY,1,WorkDate)
-		from #WorkDate w
-		where ReadyDate = @ReadyDateTo and datepart(WEEKDAY,w.WorkDate)  = 1
-	IF(@@ROWCOUNT = 0 )
-	Begin
-		break
-	End
-	set @addDate = @addDate +1
+WHILE @GAPfrequency <= @GAP 
+BEGIN 
+    update #WorkDate set WorkDate = DATEADD(DAY,1,WorkDate)
+    WHILE @addDate <= 100 
+    BEGIN  
+    	update w set WorkDate = DATEADD(DAY,1,WorkDate)
+    		from #WorkDate w
+    		where datepart(WEEKDAY,w.WorkDate)  = 1
+    	IF(@@ROWCOUNT = 0 )
+    	Begin
+    		break
+    	End
+    	set @addDate = @addDate +1
+    END  
+    set @GAPfrequency = @GAPfrequency +1
 END  
-
 --刪掉星期天
-delete #WorkDate where datepart(WEEKDAY,WorkDate) = 1 or datepart(WEEKDAY,ReadyDate) = 1 ";
+delete #WorkDate where datepart(WEEKDAY,ReadyDate) = 1 ";
             }
             #endregion
 
@@ -122,6 +129,7 @@ delete #WorkDate where datepart(WEEKDAY,WorkDate) = 1 or datepart(WEEKDAY,ReadyD
             this.tsql = $@"
 declare @time time = '{(this.txtTime.Text.Equals(":") ? "00:00:00" : this.txtTime.Text)}'
 declare @GAP int = @inputGAP
+declare @GAPfrequency int = 1
 declare @ReadyDateFrom date = @inputReadyDateFrom
 declare @ReadyDateTo date = @inputReadyDateTo
 declare @addDate int = 0
@@ -133,9 +141,8 @@ inner join Factory on 1 = 1 {where2}
 WHERE s.type = 'P'
 AND DATEADD(DAY,number,@ReadyDateFrom) <= @ReadyDateTo
 
-update #WorkDate set WorkDate = DATEADD(DAY,@GAP,WorkDate)
-
 {sql_Exclude_holiday}
+
 
 --抓出條件時間內對應的orders資料
 --依照指定的Ready Date+條件GAP天數去抓去Orders.SewOffLIne在那天生產結束的訂單，且Buyer Delivery date >= Ready Date的訂單，若該Ready Date星期日、特殊假日(Holiday)不需計算，星期日、特殊假日(Holiday)都要避開，例如Ready date是 7/28 GAP是1，但隔天是週日(7/29)，所以抓取orders.SewOffLIne時間點是7/30。
@@ -160,105 +167,31 @@ inner join #WorkDate w on w.Factory = o.FtyGroup and w.WorkDate = o.BuyerDeliver
 where o.SewOffLine > o.BuyerDelivery
 ) as a 
 where Category = 'B' and Junk = 0 {where1}
---select ID,FtyGroup,SewOffLine,BuyerDelivery from #orders_tmp order by SewOffLine
 
 --抓取subprocess in
-Select DISTINCT
-    [Bundleno] = bd.BundleNo,
-    [Cut Ref#] = b.CutRef,
-    [M] = b.MDivisionid,
-    [Factory] = o.FtyGroup,
-    [SP] = b.Orderid,
-    SubProcessId = s.Id,
-	b.article,
-    [Size] = bd.SizeCode,
-    [Comb] = b.PatternPanel,
-	b.FabricPanelCode,
-    bd.PatternCode,
-    bd.Qty,
-    bio.InComing,
-    bio.OutGoing,
-    o.WorkTime 
-into #tmp
-from Bundle b WITH (NOLOCK) 
-inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-inner join #orders_tmp o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
-inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
-left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-where isnull(bio.RFIDProcessLocationID,'') = ''
-------
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
-into #tmp2
-from #tmp where InComing <= WorkTime
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmp3
-from #tmp2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmp4
-from #tmp3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
-into #tmpin
-from #tmp4
-group by [M],[Factory],[SP],[Subprocessid]
+select	[M] = o.MDivisionID,
+		[Factory] = o.FtyGroup,
+		[SP] = o.ID,
+		[SubProcessID] = subporcessQty.SubprocessId,
+		[FinishedQtyBySet] = subporcessQty.FinishedQtyBySet
+into #tmpInOut
+from #orders_tmp o
+outer apply ( select SubprocessId
+					,[FinishedQtyBySet] = SUM(FinishedQtyBySet)  
+					from dbo.QtyBySetPerSubprocess(o.ID,'Emb,BO,PRT,AT,PAD-PRT,SUBCONEMB,HT,Loading,SORTING',null,o.WorkTime,null,o.WorkTime,1,1) group by SubprocessId) subporcessQty
 
 select *
-into #tmpin2
+into #tmpInOutFin
 from 
-(select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
-from #tmp4 
-group by [M],[Factory],[SP],[Subprocessid] 
+(select [M],[Factory],[SP],[Subprocessid],FinishedQtyBySet
+from #tmpInOut 
 ) as a
 pivot
 	(
-	  sum(accuQty)
+	  sum(FinishedQtyBySet)
 	  for Subprocessid in ( [AT],[BO],[Emb],[HT],[PAD-PRT],[PRT])
 	)as pvt
 
---抓取subprocess output
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,Qty = iif(OutGoing is null ,0,Qty)
-into #tmpout1
-from #tmp
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
-into #tmpout2
-from #tmpout1
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmpout3
-from #tmpout2
-group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-
-select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-into #tmpout4
-from #tmpout3
-group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-
-select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
-into #tmpout
-from #tmpout4
-group by [M],[Factory],[SP],[Subprocessid]
-
-select *
-into #tmpoutFin
-from 
-(select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
-from #tmpout4 
-group by [M],[Factory],[SP],[Subprocessid] 
-) as a
-pivot
-	(
-	  sum(accuQty)
-	  for Subprocessid in ( [AT],[BO],[Emb],[HT],[PAD-PRT],[PRT])
-	)as pvt
 -----------cutting完成成衣件數-------------------------------------------------------------------------------------------------------------------------
 --先找所有部位
 Select distinct sp = o.ID,wd.SizeCode,wd.article,occ.PatternPanel,o.MDivisionID
@@ -319,17 +252,17 @@ select	o.MDivisionID,
                           ) tt on tt.ComboType = sl.Location
                           where sl.StyleUkey = o.StyleUkey) ,
 		[BalanceQty] = '=INDIRECT({"\""}I{"\""} & ROW()) - INDIRECT({"\""}J{"\""} & ROW())',
-        [CuttingStatus] = iif(cuttingQty.value  >= o.Qty,'Y',''),
+        [CuttingStatus] = iif(cuttingQty.value >= o.Qty, 'Y', ''),
 		o.SewInLine,
 		o.SewOffLine,
 		o.FtyCTN,
         [SewingLineID] = SewingSchedule.SewingLineID,
-		[AT] = isnull(SubProcess.AT,iif(SubProcessOut.AT is not null,0,null)),
-		[BONDING] = isnull(SubProcess.BO,iif(SubProcessOut.BO is not null,0,null)),
-		[EMBRO] = isnull(SubProcess.Emb,iif(SubProcessOut.Emb is not null,0,null)),
-		[HT] = isnull(SubProcess.HT,iif(SubProcessOut.HT is not null,0,null)),
-		[PAD-PRT] = isnull(SubProcess.[PAD-PRT],iif(SubProcessOut.[PAD-PRT] is not null,0,null)),
-		[PRINTING] = isnull(SubProcess.PRT,iif(SubProcessOut.PRT is not null,0,null)),
+		[AT] = SubProcess.AT,
+		[BONDING] = SubProcess.BO,
+		[EMBRO] = SubProcess.Emb,
+		[HT] = SubProcess.HT,
+		[PAD-PRT] = SubProcess.[PAD-PRT],
+		[PRINTING] = SubProcess.PRT,
 		[SubCon] = ls.abb,
 		[ReadyDate] = o.OriReadyDate,
 		[LoadingStatus] = iif(LoadingQty.value >= o.Qty,'Y',''),
@@ -338,47 +271,42 @@ into #detailResult
 from #orders_tmp o 
 left join Country c with (Nolock) on c.id= o.Dest
 left join Order_TmsCost otc with (nolock) on o.id = otc.id and ArtworkTypeID = 'Printing'
-left join Localsupp ls with (nolock) on otc.LocalSuppID=ls.id
-left join #tmpin2 SubProcess with (Nolock) on SubProcess.SP = o.ID
-left join #tmpoutFin SubProcessOut with (Nolock) on SubProcessOut.SP = o.ID
+left join Localsupp ls with (nolock) on otc.LocalSuppID= ls.id
+left join #tmpInOutFin SubProcess with (Nolock) on SubProcess.SP = o.ID
 outer apply(
-    select SewingLineID = stuff((
-          select distinct concat('/', ss.SewingLineID)
-          from[SewingSchedule] ss with(nolock)
-          where ss.orderid = o.ID 
+select SewingLineID = stuff((
+select distinct concat('/', ss.SewingLineID)
+from[SewingSchedule] ss with(nolock)
+where ss.orderid = o.ID 
 		  for xml path('')
-      ),1,1,'')
+),1,1,'')
 ) SewingSchedule
 outer apply(
-    select[value] = sum(accuQty) from #tmpout4 where SP = o.ID
+    select[value] = FinishedQtyBySet from #tmpInOut where SP = o.ID and SubProcessID = 'Loading'
 ) LoadingQty
 outer apply(
-    select ct = count(1) * 2
-    from #tmpout
-	where #tmpout.SP = o.ID 
-	and #tmpout.Factory = o.FtyGroup
-	and #tmpout.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT')
+    select ct = count(1)
+    from #tmpInOut
+	where SP = o.ID
+    and Factory = o.FtyGroup and FinishedQtyBySet is not null
+    and SubProcessId in ('Emb','BO','PRT','AT','PAD-PRT','HT','Loading')
 )inoutcount
 outer apply(
     select chksubprocesqty = sum(xxx.Accusubprocesqty)
     from(
-        select[Accusubprocesqty] = iif(iif(#tmpin.AccuQty > o.Qty, o.Qty, #tmpin.AccuQty)>=o.Qty,1,0)+
-									iif(iif(#tmpout.AccuQty > o.Qty, o.Qty, #tmpout.AccuQty)>=o.Qty,1,0)
-		from #tmpin,#tmpout
-		where #tmpin.SP = o.ID 
-		and #tmpin.Factory = o.FtyGroup
-		and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
-		and #tmpout.SP = o.ID 
-	    and #tmpout.Factory = o.FtyGroup
-		and #tmpout.SubProcessId = #tmpin.SubProcessId
+        select[Accusubprocesqty] = iif(FinishedQtyBySet >= o.Qty, 1, 0)
+        from #tmpInOut
+		where SP = o.ID
+        and Factory = o.FtyGroup
+        and SubProcessId in ('Emb','BO','PRT','AT','PAD-PRT','HT','Loading')
 	)xxx
 )subprocessqty
 outer apply(
-	select value = cutqty
-	from #tmpc3 where sp = o.ID
+    select value = cutqty
+    from #tmpc3 where sp = o.ID
 ) cuttingQty
 
-select	FtyGroup,
+select  FtyGroup,
 		BuyerDelivery,
 	    SciDelivery,
 		ID,
@@ -404,7 +332,7 @@ select	FtyGroup,
 		[ReadyDate],
 		[LoadingStatus],
 		[Ready]
-from #detailResult
+        from #detailResult
 
 --sheet2 SUMMARY
 select MDivisionID, FtyGroup,[SpCnt] = count(*)
@@ -445,9 +373,8 @@ where[EMBRO] is not null
 group by FtyGroup
 
 drop table #pOffline,#tmpP,#tmpc2,#tmpc3,#tmpc,#tmpc0
-drop table #tmp2,#tmp3,#tmp4,#tmpin2,#tmpin,#tmpoutFin
-drop table #tmp,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpout,#WorkDate,#orders_tmp
-drop table #detailResult	   
+drop table #tmpInOut,#tmpInOutFin,#WorkDate,#orders_tmp
+drop table #detailResult
 ";
             #endregion
             return base.ValidateInput();

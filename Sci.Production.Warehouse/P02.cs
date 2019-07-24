@@ -156,6 +156,7 @@ select  FactoryID = iif(ed.potype='M'
         , PoidSeq = rtrim(ed.PoID)+(Ltrim(Rtrim(ed.Seq1)) + ' ' + ed.Seq2)
         , Preshrink = iif(f.Preshrink = 1, 'V' ,'')
         , ed.Carton
+		, o.OrderTypeID
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
@@ -203,6 +204,7 @@ where ed.ID = '{0}'", masterID);
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("FactoryID", header: "Prod. Factory", width: Widths.AnsiChars(7))
+                .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(13))
                 .Text("ProjectID", header: "Project Name", width: Widths.AnsiChars(5))
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("Carton", header: "Carton#", width: Widths.AnsiChars(8),iseditingreadonly: true , settings: ts)

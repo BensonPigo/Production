@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[T_AnnualSalesReport] (
+    [Source]        VARCHAR (8)      NULL,
+    [ID]            VARCHAR (13)     NULL,
+    [BrandID]       VARCHAR (8)      NULL,
+    [StyleID]       VARCHAR (15)     NULL,
+    [SeasonID]      VARCHAR (10)     NULL,
+    [FactoryID]     VARCHAR (8)      NULL,
+    [BuyerDelivery] DATE             NULL,
+    [SCIDelivery]   DATE             NULL,
+    [CPU]           NUMERIC (8, 3)   NULL,
+    [TotalCPU]      NUMERIC (19, 4)  NULL,
+    [Qty]           NUMERIC (6)      NULL,
+    [FOCQty]        NUMERIC (6)      NULL,
+    [CurrencyID]    VARCHAR (4)      NULL,
+    [USDUnitPrice]  NUMERIC (30, 12) NULL,
+    [USDAmount]     NUMERIC (38, 6)  NULL,
+    [CDCodeID]      VARCHAR (6)      NULL,
+    [Category]      VARCHAR (6)      NULL,
+    [SMR]           NVARCHAR (58)    NULL,
+    [MR]            NVARCHAR (58)    NULL,
+    [POHandle]      NVARCHAR (58)    NULL,
+    [Region]        VARCHAR (2)      NULL,
+    [MDivisionID]   VARCHAR (8)      NULL,
+    [ProgramID]     VARCHAR (12)     NULL,
+    [StyleUkey]     BIGINT           NULL,
+    [COO]           NVARCHAR (30)    NULL
+);
+

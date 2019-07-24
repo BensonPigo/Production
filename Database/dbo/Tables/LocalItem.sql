@@ -34,6 +34,7 @@
     [NLCodeEditName] VARCHAR (10)    CONSTRAINT [DF_LocalItem_NLCodeEditName] DEFAULT ('') NULL,
     [NLCodeEditDate] DATETIME        NULL,
     [ArtTkt ] VARCHAR(20) NULL DEFAULT (''), 
+    [IsCarton] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED ([RefNo] ASC)
 );
 
@@ -149,3 +150,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalItem', @level2type = N'COLUMN', @level2name = N'AccountID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'確認該物料為純紙箱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalItem',
+    @level2type = N'COLUMN',
+    @level2name = N'IsCarton'

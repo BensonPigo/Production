@@ -701,7 +701,7 @@ order by aLine.SewingLineID, aLine.Team");
 	group by StdTMS
 ),
 tmpTtlManPower as (
-	select ManPower = Sum(Manpower)
+	/*select ManPower = Sum(Manpower)  算法更改，用下面的，舊的保留
 	from (
 		select OutputDate
 			   , FactoryID
@@ -715,7 +715,41 @@ tmpTtlManPower as (
               and LastShift <> 'I'
 		      or (LastShift = 'I' and SubconInSisterFty = 1)
 		group by OutputDate, FactoryID, SewingLineID, LastShift, Team
+	) a*/
+
+	select ManPower = Sum(a.Manpower)  - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
+	from (
+		select OutputDate
+				, FactoryID
+				, SewingLineID
+				, LastShift
+				, Team
+				, ManPower = Max(ActManPower)
+		from #tmp
+		where LastShift <> 'O'
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team 
 	) a
+	outer apply
+	(
+		select ManPower
+		from (
+			select OutputDate
+					, FactoryID
+					, SewingLineID
+					, LastShift
+					, Team
+					, ManPower = Max(ActManPower)
+					,SubconInSisterFty
+			from #tmp
+			where LastShift <> 'O'
+			group by OutputDate, FactoryID, SewingLineID, LastShift, Team,SubconInSisterFty
+		) m2
+		where  (m2.LastShift = 'I' and m2.SubconInSisterFty = 1)
+				and m2.Team = a.Team 
+				and m2.SewingLineID = a.SewingLineID	
+				and a.OutputDate = m2.OutputDate
+				and m2.FactoryID = a.FactoryID	
+	) d
 )
 select q.QAQty
 	   , q.TotalCPU
@@ -924,12 +958,12 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
     -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
     update s set s.Price = 0
         from #tmpAllSubprocess s
-        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId
+        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
         where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
 
     update s set s.Price = 0
         from #tmpAllSubprocess s
-        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId
+        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
         where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
 
 select ArtworkTypeID = t1.ID
@@ -1187,18 +1221,6 @@ where f.Junk = 0",
             {
                 failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
                 return failResult;
-            }
-
-            if (this.factory != string.Empty)
-            {
-                foreach (DataRow dr in this.vphData.Rows)
-                {
-                    if (dr["ActiveManpower"].Empty())
-                    {
-                        failResult = new DualResult(false, string.Format("{0} has not been set ActiveManpower", dr["id"].ToString()));
-                        return failResult;
-                    }
-                }
             }
 
             return Result.True;

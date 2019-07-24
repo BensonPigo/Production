@@ -28,6 +28,12 @@ namespace Sci.Production.Shipping
         private DateTime? invdate2;
         private DateTime? etd1;
         private DateTime? etd2;
+        private DateTime? FCRDate1;
+        private DateTime? CutOffDate1;
+        private DateTime? SOCFMDate1;
+        private DateTime? FCRDate2;
+        private DateTime? CutOffDate2;
+        private DateTime? SOCFMDate2;
         private DataTable printData;
 
         /// <summary>
@@ -68,6 +74,17 @@ namespace Sci.Production.Shipping
             this.etd1 = this.dateETD.Value1;
             this.etd2 = this.dateETD.Value2;
 
+
+            this.FCRDate1 = this.dateFCR.Value1;
+            this.CutOffDate1 = this.dateCutoff.Value1;
+            this.SOCFMDate1 = this.dateConfirm.Value1;
+
+            this.FCRDate2 = this.dateFCR.Value2;
+            this.CutOffDate2 = this.dateCutoff.Value2;
+            this.SOCFMDate2 = this.dateConfirm.Value2;
+
+
+
             return base.ValidateInput();
         }
 
@@ -104,9 +121,31 @@ g.ID
 ,g.AddDate
 ,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
 ,g.Remark
+,[PulloutComplete]=IIF(PulloutIdCount.Value = PulloutIdConfirmLockCount.Value AND PulloutIdCount.Value > 0 ,'True' ,'False')
+
 from GMTBooking g WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
+OUTER APPLY(
+	SELECT [Value]=Count(ID)
+	 FROM
+	 (
+		SELECT DISTINCT po.iD
+		FROM PackingList pl
+		INNER JOIN Pullout po ON pl.PulloutID=po.ID
+		WHERE INVNo=g.ID
+	) a
+)PulloutIdCount
+OUTER APPLY(
+	SELECT [Value]=Count(ID)
+	 FROM
+	 (
+		SELECT DISTINCT po.iD
+		FROM PackingList pl
+		INNER JOIN Pullout po ON pl.PulloutID=po.ID
+		WHERE INVNo=g.ID AND  (po.Status = 'Confirmed' OR po.Status = 'Locked')
+	) a
+)PulloutIdConfirmLockCount
 where 1=1"));
             }
             else
@@ -168,6 +207,36 @@ where pl.ID<>'' and 1=1
                 if (!MyUtility.Check.Empty(this.etd2))
                 {
                     sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.FCRDate1))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.FCRDate2))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.FCRDate2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.CutOffDate1))
+                {
+                    sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) >= '{0}' ", Convert.ToDateTime(this.CutOffDate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.CutOffDate2))
+                {
+                    sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) <= '{0}' ", Convert.ToDateTime(this.CutOffDate2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.SOCFMDate1))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.SOCFMDate >= '{0}' ", Convert.ToDateTime(this.SOCFMDate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.SOCFMDate2))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.SOCFMDate <= '{0}' ", Convert.ToDateTime(this.SOCFMDate2).ToString("d")));
                 }
 
                 if (this.status == "Confirmed")
@@ -342,6 +411,43 @@ where pl.ID<>'' and 1=1 "));
                 sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
             }
 
+
+            if (!MyUtility.Check.Empty(this.FCRDate1))
+            {
+                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.FCRDate2))
+            {
+                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.FCRDate2).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.FCRDate2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.CutOffDate1))
+            {
+                sqlCmd.Append(string.Format(" and CAST( g.CutOffDate AS DATE) >= '{0}' ", Convert.ToDateTime(this.CutOffDate1).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) >= '{0}' ", Convert.ToDateTime(this.CutOffDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.CutOffDate2))
+            {
+                sqlCmd.Append(string.Format(" and CAST( g.CutOffDate AS DATE) <= '{0}' ", Convert.ToDateTime(this.CutOffDate2).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) <= '{0}' ", Convert.ToDateTime(this.CutOffDate2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.SOCFMDate1))
+            {
+                sqlCmd.Append(string.Format(" and g.SOCFMDate >= '{0}' ", Convert.ToDateTime(this.SOCFMDate1).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.SOCFMDate >= '{0}' ", Convert.ToDateTime(this.SOCFMDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.SOCFMDate2))
+            {
+                sqlCmd.Append(string.Format(" and g.SOCFMDate <= '{0}' ", Convert.ToDateTime(this.SOCFMDate2).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.SOCFMDate <= '{0}' ", Convert.ToDateTime(this.SOCFMDate2).ToString("d")));
+            }
+
             if (this.status == "Confirmed")
             {
                 sqlCmd.Append(" and g.Status = 'Confirmed'");
@@ -393,7 +499,7 @@ where pl.ID<>'' and 1=1 "));
             if (this.reportType == "1")
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 25];
+                object[,] objArray = new object[1, 26];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -421,7 +527,8 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 22] = dr["AddDate"];
                     objArray[0, 23] = dr["ConfirmDate"];
                     objArray[0, 24] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 25] = dr["PulloutComplete"].ToString();
+                    worksheet.Range[string.Format("A{0}:Z{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }

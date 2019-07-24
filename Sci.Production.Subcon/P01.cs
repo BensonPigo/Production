@@ -95,6 +95,19 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox(string.Format("Some SP# already have Farm In/Out data!!!"), "Warning");
                 return false;
             }
+
+            string chkP10exists = $@"
+select 1
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where  apd.id = '{CurrentMaintain["id"]}' 
+";
+            if (MyUtility.Check.Seek(chkP10exists))
+            {
+                MyUtility.Msg.WarningBox("Some SP# already have Subcon AP data.");
+                return false;
+            }
+
             return base.ClickDeleteBefore();
         }
 
@@ -254,11 +267,31 @@ where  apd.id = '{CurrentMaintain["id"]}'
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = string.Format(@"
-select  *
-        , Price = unitprice * qtygarment
-        , Style = o.styleid
-        , sewinline = o.sewinline
-        , scidelivery = o.scidelivery
+select 
+		 a.[ID]
+		,[OrderID]
+		,[ArtworkId]
+		,[PatternCode]
+		,[PatternDesc]
+		,[CostStitch]
+		,[Stitch]
+		,[UnitPrice]
+		,[Cost]
+		,[QtyGarment]=IIF([QtyGarment] IS NULL OR [QtyGarment]=0,1,[QtyGarment])
+		,[Price]
+		,[Amount]
+		,[Farmout]
+		,[Farmin]
+		,[ApQty]
+		,[PoQty]
+		,[Ukey]
+		,[ArtworkTypeID]
+		,[ExceedQty]
+		,o.*
+		, Price = unitprice * qtygarment
+		, Style = o.styleid
+		, sewinline = o.sewinline
+		, scidelivery = o.scidelivery
 from dbo.ArtworkPO_Detail a
 left join dbo.Orders o on a.OrderID = o.id
 where a.id = '{0}'  ORDER BY a.OrderID ", masterID);

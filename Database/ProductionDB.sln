@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.438
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ProductionDB", "ProductionDB.sqlproj", "{C49ACBBA-9650-48F0-8B2D-DE8D798C7F43}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Powerbi", "..\Powerbi\Powerbi.sqlproj", "{7713883D-8812-42EA-A24B-FE367559D6CC}"
+EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -19,8 +19,21 @@ Global
 		{C49ACBBA-9650-48F0-8B2D-DE8D798C7F43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C49ACBBA-9650-48F0-8B2D-DE8D798C7F43}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C49ACBBA-9650-48F0-8B2D-DE8D798C7F43}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{7713883D-8812-42EA-A24B-FE367559D6CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7713883D-8812-42EA-A24B-FE367559D6CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7713883D-8812-42EA-A24B-FE367559D6CC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7713883D-8812-42EA-A24B-FE367559D6CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7713883D-8812-42EA-A24B-FE367559D6CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7713883D-8812-42EA-A24B-FE367559D6CC}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CA89F1A0-DFB5-4B58-8317-C9ED6D884962}
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal

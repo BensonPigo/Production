@@ -5,15 +5,11 @@ using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
@@ -25,6 +21,7 @@ namespace Sci.Production.Quality
         private string style = "";
         private string season = "";
         private string brand = "";
+        private bool IsNewData = true;
 
         public P10_Detail(bool editmode, DataRow masterrow, DataRow deatilrow)
         {
@@ -56,10 +53,10 @@ namespace Sci.Production.Quality
                     MyUtility.Msg.WarningBox("<BeforeWash> can not be empty or 0 !!");
                     dr["BeforeWash"] = dr["BeforeWash"];
                 }
-                else if(MyUtility.Check.Empty(e.FormattedValue))
+                else if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     dr["BeforeWash"] = dr["BeforeWash"];
-                }   
+                }
                 else
                 {
                     Double BeforeWashNum = Convert.ToDouble(e.FormattedValue);
@@ -81,7 +78,7 @@ namespace Sci.Production.Quality
                         Double AfterWash3Num = Convert.ToDouble(dr["AfterWash3"]);
                         dr["Shrinkage3"] = (AfterWash3Num - BeforeWashNum) / BeforeWashNum * 100;
                     }
-                    
+
                 }
             };
 
@@ -195,6 +192,7 @@ namespace Sci.Production.Quality
             comboResult.DisplayMember = "Value";
 
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ArtworkCell = new DataGridViewGeneratorTextColumnSettings();
 
             DataGridViewGeneratorTextColumnSettings TextColumnSetting = new DataGridViewGeneratorTextColumnSettings();
 
@@ -206,12 +204,206 @@ namespace Sci.Production.Quality
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
 
+
+            ArtworkCell.CellMouseClick += (s, eve) =>
+            {
+                if (!IsNewData)
+                { if (eve.RowIndex == -1 || (eve.RowIndex != 0 && eve.RowIndex != 3)) return; }
+                else
+                { if (eve.RowIndex == -1 || (eve.RowIndex != 0 && eve.RowIndex != 2)) return; }
+
+                if (this.EditMode == false) return;
+
+                //第一列跟第三列開啟的Type不一樣
+
+                if (eve.Button == System.Windows.Forms.MouseButtons.Right && eve.RowIndex==0 )
+                {
+                    DataRow dr = gridAppearance.GetDataRow(eve.RowIndex);
+
+                    string sql = "select ID, Name  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabSubProcess' order by Seq";
+
+                    string defaultSelected = string.Empty; // dr["Type"].ToString().Replace(" / ", ",");
+                    string[] SelectedNames = dr["Type"].ToString().Replace("/", ",").Split(',');
+                    List<string> tmpList = new List<string>();
+
+                    foreach (var Name in SelectedNames)
+                    {
+                        string ID = MyUtility.GetValue.Lookup($"select TOP 1 ID  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabSubProcess' AND Name LIKE '{Name.Trim()}%' ");
+                        tmpList.Add(ID);
+                    }
+                    defaultSelected = tmpList.JoinToString(",");
+
+                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    string insertString = string.Empty;
+                    string[] SelectedIDs = item.GetSelectedString().ToString().Split(',');
+                    List<string> tmpList2 = new List<string>();
+
+
+                    foreach (var ID in SelectedIDs)
+                    {
+                        string Name = MyUtility.GetValue.Lookup($"select TOP 1 Name  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabSubProcess' AND ID = '{ID.Trim()}' ");
+                        tmpList2.Add(Name);
+                    }
+                    insertString = tmpList2.JoinToString(" / ");
+
+                    dr["Type"] = insertString;
+
+                    dr.EndEdit();
+                }
+
+
+                if (eve.Button == System.Windows.Forms.MouseButtons.Right && ( (!IsNewData && eve.RowIndex==3) || (IsNewData && eve.RowIndex == 2) ))
+                {
+                    DataRow dr = gridAppearance.GetDataRow(eve.RowIndex);
+
+                    string sql = "select ID, Name  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabAccessory' order by Seq";
+
+                    string defaultSelected = string.Empty; // dr["Type"].ToString().Replace(" / ", ",");
+                    string[] SelectedNames = dr["Type"].ToString().Replace("/", ",").Split(',');
+                    List<string> tmpList = new List<string>();
+
+                    foreach (var Name in SelectedNames)
+                    {
+                        string ID = MyUtility.GetValue.Lookup($"select TOP 1 ID  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabAccessory' AND Name = '{Name.Trim()}' ");
+                        tmpList.Add(ID);
+                    }
+                    defaultSelected = tmpList.JoinToString(",");
+
+                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected.ToString(), null, null, null);
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    string insertString = string.Empty;
+                    string[] SelectedIDs = item.GetSelectedString().ToString().Split(',');
+                    List<string> tmpList2 = new List<string>();
+
+                    foreach (var ID in SelectedIDs)
+                    {
+                        string Name = MyUtility.GetValue.Lookup($"select TOP 1 Name  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabAccessory' AND ID = '{ID.Trim()}' ");
+                        tmpList2.Add(Name);
+                    }
+                    insertString = tmpList2.JoinToString(" / ");
+
+                    dr["Type"] = insertString;
+
+                    dr.EndEdit();
+                }
+            };
+
+            ArtworkCell.EditingMouseDown += (s, eve) =>
+            {
+                if (!IsNewData)
+                { if (eve.RowIndex == -1 || (eve.RowIndex != 0 && eve.RowIndex != 3)) return; }
+                else
+                { if (eve.RowIndex == -1 || (eve.RowIndex != 0 && eve.RowIndex != 2)) return; }
+
+                if (this.EditMode == false) return;
+
+                //第一列跟第三列開啟的Type不一樣
+
+                if (eve.Button == System.Windows.Forms.MouseButtons.Right && eve.RowIndex == 0)
+                {
+
+                    DataRow dr = gridAppearance.GetDataRow(eve.RowIndex);
+
+                    string sql = "select ID, Name  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabSubProcess' order by Seq";
+
+                    string defaultSelected = string.Empty; // dr["Type"].ToString().Replace(" / ", ",");
+                    string[] SelectedNames = dr["Type"].ToString().Replace("/", ",").Split(',');
+                    List<string> tmpList = new List<string>();
+
+                    foreach (var Name in SelectedNames)
+                    {
+                        string ID = MyUtility.GetValue.Lookup($"select TOP 1 ID  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabSubProcess' AND Name LIKE '{Name.Trim()}%' ");
+                        tmpList.Add(ID);
+                    }
+                    defaultSelected = tmpList.JoinToString(",");
+
+                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+
+                    string insertString = string.Empty;
+                    string[] SelectedIDs = item.GetSelectedString().ToString().Split(',');
+                    List<string> tmpList2 = new List<string>();
+
+
+                    foreach (var ID in SelectedIDs)
+                    {
+                        string Name = MyUtility.GetValue.Lookup($"select TOP 1 Name  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabSubProcess' AND ID = '{ID.Trim()}' ");
+                        tmpList2.Add(Name);
+                    }
+                    insertString = tmpList2.JoinToString(" / ");
+
+                    dr["Type"] = insertString;
+
+                    dr.EndEdit();
+                }
+
+
+                if (eve.Button == System.Windows.Forms.MouseButtons.Right && ((!IsNewData && eve.RowIndex == 3) || (IsNewData && eve.RowIndex == 2)))
+                {
+                    DataRow dr = gridAppearance.GetDataRow(eve.RowIndex);
+
+                    string sql = "select ID, Name  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabAccessory' order by Seq";
+
+                    string defaultSelected = string.Empty; // dr["Type"].ToString().Replace(" / ", ",");
+                    string[] SelectedNames = dr["Type"].ToString().Replace("/", ",").Split(',');
+                    List<string> tmpList = new List<string>();
+
+                    foreach (var Name in SelectedNames)
+                    {
+                        string ID = MyUtility.GetValue.Lookup($"select TOP 1 ID  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabAccessory' AND Name = '{Name.Trim()}' ");
+                        tmpList.Add(ID);
+                    }
+                    defaultSelected = tmpList.JoinToString(",");
+
+                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected.ToString(), null, null, null);
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    string insertString = string.Empty;
+                    string[] SelectedIDs = item.GetSelectedString().ToString().Split(',');
+                    List<string> tmpList2 = new List<string>();
+                    
+                    foreach (var ID in SelectedIDs)
+                    {
+                        string Name = MyUtility.GetValue.Lookup($"select TOP 1 Name  from DropDownList WITH (NOLOCK) where Type = 'Pms_LabAccessory' AND ID = '{ID.Trim()}' ");
+                        tmpList2.Add(Name);
+                    }
+                    insertString = tmpList2.JoinToString(" / ");
+
+                    dr["Type"] = insertString;
+
+                    dr.EndEdit();
+                }
+            };
+
+
             //預設選取的時候會全部變成大寫，關掉這個設定。
-            TextColumnSetting.CharacterCasing= CharacterCasing.Normal;
+            TextColumnSetting.CharacterCasing = CharacterCasing.Normal;
             TextColumnSetting.MaxLength = 500;
+            
+            ArtworkCell.MaxLength = 200;
 
             Helper.Controls.Grid.Generator(this.gridAppearance)
-            .Text("Type", header: "After Wash Appearance Check list", width: Widths.AnsiChars(40), iseditingreadonly: false, settings: TextColumnSetting)
+            .Text("Type", header: "After Wash Appearance Check list", width: Widths.AnsiChars(40), iseditingreadonly: true, settings: ArtworkCell)
             .ComboBox("Wash1", header: "Wash1", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .ComboBox("Wash2", header: "Wash2", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .ComboBox("Wash3", header: "Wash3", width: Widths.AnsiChars(10), settings: ResultComboCell)
@@ -221,13 +413,11 @@ namespace Sci.Production.Quality
             tab1Load();
             tab2Load();
             tab3Load();
-           
+
             tabControl1.SelectedIndex = 1;
             tabControl1.SelectedIndex = 2;
             tabControl1.SelectedIndex = 0;
         }
-
-
 
         private void btnenable()
         {
@@ -243,7 +433,7 @@ namespace Sci.Production.Quality
             numTwisTingTop.ReadOnly = true;
             numTwisTingBottom.ReadOnly = true;
             numTwisTingInner.ReadOnly = true;
-            numTwisTingOuter.ReadOnly = true; 
+            numTwisTingOuter.ReadOnly = true;
         }
 
         #region tab載入
@@ -254,7 +444,7 @@ namespace Sci.Production.Quality
             txtStyle.Text = MyUtility.Convert.GetString(MasterRow["StyleID"]);
             style = MyUtility.Convert.GetString(MasterRow["StyleID"]);
             txtSeason.Text = MyUtility.Convert.GetString(MasterRow["SeasonID"]);
-            season = MyUtility.Convert.GetString(MasterRow["SeasonID"]); 
+            season = MyUtility.Convert.GetString(MasterRow["SeasonID"]);
             txtBrand.Text = MyUtility.Convert.GetString(MasterRow["BrandID"]);
             brand = MyUtility.Convert.GetString(MasterRow["BrandID"]);
 
@@ -265,7 +455,7 @@ namespace Sci.Production.Quality
             string sqlShrinkage = $@"select * from[SampleGarmentTest_Detail] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} ";
             DataTable tmp;
             DBProxy.Current.Select(null, sqlShrinkage, out tmp);
-            if (tmp.Rows.Count==0)
+            if (tmp.Rows.Count == 0)
             {
                 this.Close();
                 MyUtility.Msg.WarningBox("No Detail data Be Saved!!");
@@ -285,11 +475,11 @@ and st.Article = '{MasterRow["Article"]}'
 ";
             txtSize.Text = MyUtility.Convert.GetString(dr["SizeCode"]);
             txtColour.Text = MyUtility.Check.Empty(dr["Colour"]) ? MyUtility.GetValue.Lookup(strSqlcmd) : MyUtility.Convert.GetString(dr["Colour"]);
-            
+
 
             txtReportDate.Value = MyUtility.Convert.GetDate(dr["ReportDate"]);
             comboResult.Text = MyUtility.Convert.GetString(dr["Result"]);
-            
+
             txtRemark.Text = MyUtility.Convert.GetString(dr["Remark"]);
 
             //如果三個都沒選，預設選第一個
@@ -298,7 +488,7 @@ and st.Article = '{MasterRow["Article"]}'
             {
                 rdbtnLine.Checked = true;
             }
-            
+
 
             rdbtnTumble.Checked = MyUtility.Convert.GetBool(dr["TumbleDry"]);
             rdbtnHand.Checked = MyUtility.Convert.GetBool(dr["HandWash"]);
@@ -376,7 +566,7 @@ order by LocationOrder ,seq";
             numOuterS2.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select S2 from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='OUTER'"));
             numOuterL.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(L) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='OUTER'"));
             //numTwisTingOuter.Value = numOuterL.Value.Empty() ? 0 : (((numOuterS1.Value + numOuterS2.Value) / 2) / numOuterL.Value) * 100;
-            numTwisTingOuter.Value  = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(Twisting) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='OUTER'"));
+            numTwisTingOuter.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(Twisting) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='OUTER'"));
 
             numBottomS1.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select S1 from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='BOTTOM'"));
             numBottomL.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select L   from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='BOTTOM'"));
@@ -390,11 +580,49 @@ order by LocationOrder ,seq";
         {
             gridAppearance.IsEditingReadOnly = false;
 
-            string sqlApperance = $@"select * from[SampleGarmentTest_Detail_Appearance] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} order by seq";
+            string sqlApperance = $@"
+SELECT * 
+FROM SampleGarmentTest_Detail_Appearance 
+where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} 
+order by seq";
 
             DBProxy.Current.Select(null, sqlApperance, out dtApperance);
             listControlBindingSource2.DataSource = null;
             listControlBindingSource2.DataSource = dtApperance;
+
+            if (dtApperance.Rows.Count == 9)
+                IsNewData = false;
+            else
+                IsNewData = true;
+
+            //ISP20190838 第二項 只有第一列跟第三列可以修改,且背景顏色改為粉色
+            //for (int i = 0; i <= this.gridAppearance.Rows.Count - 1; i++)
+            //{
+            //    //由於程式修改，新寫的資料筆數會少一筆，因此要跟著變INDEX  //ISP20190838
+            //    if (!IsNewData)
+            //    {
+            //        if (i == 0 || i == 3)
+            //        {
+            //            gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
+            //        }
+            //        else
+            //        {
+            //            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (i == 0 || i == 2)
+            //        {
+            //            gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
+            //        }
+            //        else
+            //        {
+            //            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
+            //        }
+            //    }
+            //}
+
         }
 
         #endregion
@@ -453,6 +681,34 @@ order by LocationOrder ,seq";
 
                 ////Seq=4的Row全部都可以編輯
                 //gridAppearance.Rows[3].DefaultCellStyle.ForeColor = Color.Red;
+
+                for (int i = 0; i <= this.gridAppearance.Rows.Count - 1; i++)
+                {
+                    //由於程式修改，新寫的資料筆數會少一筆，因此要跟著變INDEX  //ISP20190838
+                    if (!IsNewData)
+                    {
+                        if (i == 0 || i == 3)
+                        {
+                            gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
+                        }
+                        else
+                        {
+                            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
+                        }
+                    }
+                    else
+                    {
+                        if (i == 0 || i == 2)
+                        {
+                            gridAppearance.Rows[i].Cells["Type"].Style.BackColor = Color.Pink;
+                        }
+                        else
+                        {
+                            gridAppearance.Rows[i].Cells["Type"].Style.ForeColor = Color.Black;
+                        }
+                    }
+
+                }
 
                 btnEncode.Enabled = false;
                 btnAmend.Enabled = false;
@@ -526,6 +782,8 @@ update [SampleGarmentTest_Detail_Twisting] set S1={numBottomS1.Value},L={numBott
 
         private void tab3ApperanceSave()
         {
+            DataTable gridAppearance = (DataTable)listControlBindingSource2.DataSource;
+
             string savetab2Apperance = $@"
   merge [SampleGarmentTest_Detail_Appearance] t
   using #tmp s
@@ -539,9 +797,10 @@ update [SampleGarmentTest_Detail_Twisting] set S1={numBottomS1.Value},L={numBott
     t.[Comment]	= s.[Comment]
 	;
 
-select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} order by seq";
+select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} order by seq
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(gridAppearance, string.Empty, savetab2Apperance, out dtApperance);
 
-            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource2.DataSource, string.Empty, savetab2Apperance, out dtApperance);
             if (!result)
             {
                 ShowErr(result);
@@ -597,7 +856,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             DBProxy.Current.Select(null, sqlShrinkage, out tmp);
             DataRow dr = tmp.Rows[0];
 
-            DateTime? dateSend =MyUtility.Convert.GetDate(dr["SendDate"]);
+            DateTime? dateSend = MyUtility.Convert.GetDate(dr["SendDate"]);
 
 
             //Submit Date
@@ -610,11 +869,12 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             worksheet.Cells[4, 9] = MyUtility.Convert.GetString(dr["ReportNo"]);
             //Brand
             worksheet.Cells[4, 11] = MyUtility.Convert.GetString(MasterRow["BrandID"]);
-            
+
             //Working No
             worksheet.Cells[6, 4] = MyUtility.Convert.GetString(MasterRow["StyleID"]);
 
-            //PO Number 不寫
+            //PO Number 
+            worksheet.Cells[6, 8] = "SAMPLE";
 
             //Colour
             worksheet.Cells[6, 10] = MyUtility.Convert.GetString(dr["Colour"]);
@@ -622,7 +882,8 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             //Article No
             worksheet.Cells[7, 4] = MyUtility.Convert.GetString(MasterRow["Article"]);
 
-            //Quantity 不寫
+            //Quantity  沒有ArrivedQty欄位 因此為空
+            worksheet.Cells[7, 8] = "";
 
             //Size
             worksheet.Cells[7, 10] = MyUtility.Convert.GetString(dr["SizeCode"]);
@@ -630,8 +891,10 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             //Style Name
             worksheet.Cells[8, 4] = MyUtility.GetValue.Lookup($"select StyleName from Style with(nolock) where id = '{MasterRow["Styleid"]}' and seasonid = '{MasterRow["seasonid"]}' and brandid = '{MasterRow["brandid"]}'");
 
-            //Delivery Date 不寫
+            //Delivery Date
+            worksheet.Cells[8, 8] = "";
             //Customer No 不寫
+            worksheet.Cells[8, 10] = "SAMPLE";
 
             //Line Dry
             worksheet.Cells[11, 4] = rdbtnLine.Checked ? "V" : string.Empty;
@@ -646,544 +909,1127 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             //Fibre Composition
             worksheet.Cells[13, 8] = txtFibreComposition.Text;
 
-            #region 最下面 Signature
-            if (MyUtility.Convert.GetString(dr["Result"]).EqualString("Pass"))
-            {
-                worksheet.Cells[73, 4] = "V";
-            }
-            else
-            {
-                worksheet.Cells[73, 6] = "V";
-            }
 
-            #region 插入圖片與Technician名字
-            string sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
-                                    from Technician t WITH (NOLOCK)
-                                    inner join pass1 p WITH (NOLOCK) on t.ID = p.ID  
-                                    outer apply (select PicPath from system) s 
-                                    where t.ID = '{Deatilrow["Technician"]}'";
-            DataRow drTechnicianInfo;
-            string technicianName = string.Empty;
-            string picSource = string.Empty;
-            Image img = null;
-            Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[12, 2];
+            /*開始塞PDF，注意！！！！！！！！！！！！！！！！！！！！！！！！有新舊資料區分，最簡單的方式寫if else
+             
+            新舊資料差異：新資料沒有Seq = 9 ，只到8，所以新資料 69行不見，下面的往上推
+             */
 
-            if (MyUtility.Check.Seek(sql_cmd, out drTechnicianInfo))
-            {
-                technicianName = drTechnicianInfo["name"].ToString();
-                picSource = drTechnicianInfo["SignaturePic"].ToString();
-            }
-            //Name
-            worksheet.Cells[74, 9] = technicianName;
+            #region 舊資料
 
-            //插入圖檔
-            if (!MyUtility.Check.Empty(picSource))
+            if (!IsNewData)
             {
-                if (File.Exists(picSource))
+
+
+                #region 最下面 Signature
+                if (MyUtility.Convert.GetString(dr["Result"]).EqualString("Pass"))
                 {
-                    img = Image.FromFile(picSource);
-                    Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[72, 9];
-
-                    worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
+                    worksheet.Cells[73, 4] = "V";
                 }
-            }
-            #endregion
+                else
+                {
+                    worksheet.Cells[73, 6] = "V";
+                }
 
-            #endregion
+                #region 插入圖片與Technician名字
+                string sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
+                                        from Technician t WITH (NOLOCK)
+                                        inner join pass1 p WITH (NOLOCK) on t.ID = p.ID  
+                                        outer apply (select PicPath from system) s 
+                                        where t.ID = '{Deatilrow["Technician"]}'";
+                DataRow drTechnicianInfo;
+                string technicianName = string.Empty;
+                string picSource = string.Empty;
+                Image img = null;
+                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[12, 2];
 
-            #region After Wash Appearance Check list
-            string tmpAR;
+                if (MyUtility.Check.Seek(sql_cmd, out drTechnicianInfo))
+                {
+                    technicianName = drTechnicianInfo["name"].ToString();
+                    picSource = drTechnicianInfo["SignaturePic"].ToString();
+                }
+                //Name
+                worksheet.Cells[74, 9] = technicianName;
 
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash1"]);
+                //插入圖檔
+                if (!MyUtility.Check.Empty(picSource))
+                {
+                    if (File.Exists(picSource))
+                    {
+                        img = Image.FromFile(picSource);
+                        Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[72, 9];
+
+                        worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
+                    }
+                }
+                #endregion
+
+                #endregion
+
+                #region After Wash Appearance Check list
+                string tmpAR;
+
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash1"]);
+
+                worksheet.Cells[61, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Type"]);
+                            
+                //大約21個字換行
+                int widhthBase = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Type"]).Length / 20;
+
+                worksheet.get_Range("61:61", Type.Missing).RowHeight = 19 * widhthBase;
+
             
-            worksheet.Cells[61, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Type"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[61, 4] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[61, 5] = "V";
-            else
-                worksheet.Cells[61, 4] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash2"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[61, 6] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[61, 7] = "V";
-            else
-                worksheet.Cells[61, 6] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash3"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[61, 8] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[61, 9] = "V";
-            else
-                worksheet.Cells[61, 8] = tmpAR;
-            string strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Comment"]);
-            rowHeight(worksheet, 61, strComment);
-            worksheet.Cells[61, 10] = strComment;
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 5] = "V";
+                else
+                    worksheet.Cells[61, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 7] = "V";
+                else
+                    worksheet.Cells[61, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 9] = "V";
+                else
+                    worksheet.Cells[61, 8] = tmpAR;
+                string strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Comment"]);
+                rowHeight(worksheet, 61, strComment);
+                worksheet.Cells[61, 10] = strComment;
 
-            //
-            worksheet.Cells[62, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Type"]);
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash1"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[62, 4] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[62, 5] = "V";
-            else
-                worksheet.Cells[62, 4] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash2"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[62, 6] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[62, 7] = "V";
-            else
-                worksheet.Cells[62, 6] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash3"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[62, 8] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[62, 9] = "V";
-            else
-                worksheet.Cells[62, 8] = tmpAR;
+                //
+                worksheet.Cells[62, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 5] = "V";
+                else
+                    worksheet.Cells[62, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 7] = "V";
+                else
+                    worksheet.Cells[62, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 9] = "V";
+                else
+                    worksheet.Cells[62, 8] = tmpAR;
 
-            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Comment"]);
-            rowHeight(worksheet, 62, strComment);
-            worksheet.Cells[62, 10] = strComment;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Comment"]);
+                rowHeight(worksheet, 62, strComment);
+                worksheet.Cells[62, 10] = strComment;
 
-            //
-            worksheet.Cells[63, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Type"]);
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash1"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[63, 4] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[63, 5] = "V";
-            else
-                worksheet.Cells[63, 4] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash2"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[63, 6] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[63, 7] = "V";
-            else
-                worksheet.Cells[63, 6] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash3"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[63, 8] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[63, 9] = "V";
-            else
-                worksheet.Cells[63, 8] = tmpAR;
-            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Comment"]);
-            rowHeight(worksheet, 63, strComment);
-            worksheet.Cells[63, 10] = strComment;
+                //
+                worksheet.Cells[63, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 5] = "V";
+                else
+                    worksheet.Cells[63, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 7] = "V";
+                else
+                    worksheet.Cells[63, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 9] = "V";
+                else
+                    worksheet.Cells[63, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Comment"]);
+                rowHeight(worksheet, 63, strComment);
+                worksheet.Cells[63, 10] = strComment;
+            
+                worksheet.Cells[64, 3] = dtApperance.Select("seq=4")[0]["Type"].ToString(); // type;
+                
+                //大約21個字換行
+                int widhthBase2 = dtApperance.Select("seq=4")[0]["Type"].ToString().Length / 20;
 
-            //
-            worksheet.Cells[64, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["Type"]);
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash1"]);
-            string type= MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["type"]);
-            worksheet.Cells[64, 3] = type;
+                worksheet.get_Range("64:64", Type.Missing).RowHeight = 19 * widhthBase2;
 
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[64, 4] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[64, 5] = "V";
-            else
-                worksheet.Cells[64, 4] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash2"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[64, 6] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[64, 7] = "V";
-            else
-                worksheet.Cells[64, 6] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash3"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[64, 8] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[64, 9] = "V";
-            else
-                worksheet.Cells[64, 8] = tmpAR;
-            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["Comment"]);
-            rowHeight(worksheet, 64, strComment);
-            worksheet.Cells[64, 10] = strComment;
 
-            //
-            worksheet.Cells[65, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Type"]);
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash1"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[65, 4] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[65, 5] = "V";
-            else
-                worksheet.Cells[65, 4] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash2"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[65, 6] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[65, 7] = "V";
-            else
-                worksheet.Cells[65, 6] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash3"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[65, 8] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[65, 9] = "V";
-            else
-                worksheet.Cells[65, 8] = tmpAR;
-            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Comment"]);
-            rowHeight(worksheet, 65, strComment);
-            worksheet.Cells[65, 10] = strComment;
-
-            //
-            worksheet.Cells[66, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Type"]);
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash1"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[66, 4] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[66, 5] = "V";
-            else
-                worksheet.Cells[66, 4] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash2"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[66, 6] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[66, 7] = "V";
-            else
-                worksheet.Cells[66, 6] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash3"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[66, 8] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[66, 9] = "V";
-            else
-                worksheet.Cells[66, 8] = tmpAR;
-            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Comment"]);
-            rowHeight(worksheet, 66, strComment);
-            worksheet.Cells[66, 10] = strComment;
-
-            //
-            worksheet.Cells[67, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Type"]);
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash1"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[67, 4] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[67, 5] = "V";
-            else
-                worksheet.Cells[67, 4] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash2"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[67, 6] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[67, 7] = "V";
-            else
-                worksheet.Cells[67, 6] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash3"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[67, 8] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[67, 9] = "V";
-            else
-                worksheet.Cells[67, 8] = tmpAR;
-            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Comment"]);
-            rowHeight(worksheet, 67, strComment);
-            worksheet.Cells[67, 10] = strComment;
-
-            //
-            worksheet.Cells[68, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Type"]);
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash1"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[68, 4] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[68, 5] = "V";
-            else
-                worksheet.Cells[68, 4] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash2"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[68, 6] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[68, 7] = "V";
-            else
-                worksheet.Cells[68, 6] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash3"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[68, 8] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[68, 9] = "V";
-            else
-                worksheet.Cells[68, 8] = tmpAR;
-            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Comment"]);
-            rowHeight(worksheet, 68, strComment);
-            worksheet.Cells[68, 10] = strComment;
-
-            //
-            worksheet.Cells[69, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["Type"]);
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash1"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[69, 4] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[69, 5] = "V";
-            else
-                worksheet.Cells[69, 4] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash2"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[69, 6] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[69, 7] = "V";
-            else
-                worksheet.Cells[69, 6] = tmpAR;
-            tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash3"]);
-            if (tmpAR.EqualString("Accepted"))
-                worksheet.Cells[69, 8] = "V";
-            else if (tmpAR.EqualString("Rejected"))
-                worksheet.Cells[69, 9] = "V";
-            else
-                worksheet.Cells[69, 8] = tmpAR;
-            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["Comment"]);
-            rowHeight(worksheet, 69, strComment);
-            worksheet.Cells[69, 10] = strComment;
-            #endregion
-
-            #region Streched Neck Opening is OK according to size spec?
-            if ((bool)dr["Neck"])
-            {
-                worksheet.Cells[40, 9] = "V";
-            }
-            else
-            {
-                worksheet.Cells[40, 11] = "V";
-            }
-            #endregion
-
-            #region %
-            if (dtShrinkage.Select("Location = 'BOTTOM'").Length > 0)
-            {
-                worksheet.Cells[56, 4] = numTwisTingBottom.Text + "%";
-                worksheet.Cells[56, 7] = numBottomS1.Value;
-                worksheet.Cells[56, 9] = numBottomL.Value;
-            }
-            else
-            {
-                Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A56:A57", Type.Missing).EntireRow;
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                Marshal.ReleaseComObject(rng);
-            }
-
-            if (dtShrinkage.Select("Location = 'OUTER'").Length > 0)
-            {
-
-                worksheet.Cells[54, 4] = numTwisTingOuter.Text + "%";
-                worksheet.Cells[54, 7] = numOuterS1.Value;
-                worksheet.Cells[54, 9] = numOuterS2.Value;
-                worksheet.Cells[54, 11] = numOuterL.Value;
-            }
-            else
-            {
-                Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A54:A55", Type.Missing).EntireRow;
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                Marshal.ReleaseComObject(rng);
-            }
-
-            if (dtShrinkage.Select("Location = 'INNER'").Length > 0)
-            {
-                worksheet.Cells[52, 4] = numTwisTingInner.Text + "%";
-                worksheet.Cells[52, 7] = numInnerS1.Value;
-                worksheet.Cells[52, 9] = numInnerS2.Value;
-                worksheet.Cells[52, 11] = numInnerL.Value;
-            }
-            else
-            {
-                Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A52:A53", Type.Missing).EntireRow;
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                Marshal.ReleaseComObject(rng);
-            }
-
-            if (dtShrinkage.Select("Location = 'TOP'").Length > 0)
-            {
-                worksheet.Cells[50, 4] = numTwisTingTop.Text + "%";
-                worksheet.Cells[50, 7] = numTopS1.Value;
-                worksheet.Cells[50, 9] = numTopS2.Value;
-                worksheet.Cells[50, 11] = numTopL.Value;
-            }
-            else
-            {
-                Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A50:A51", Type.Missing).EntireRow;
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                Marshal.ReleaseComObject(rng);
-            }
-            #endregion
-
-            #region Shrinkage
-            //先BOTTOM
-            if (dtShrinkage.Select("Location = 'BOTTOM'").Length > 0)
-            {
-                for (int i = 4; i < dtShrinkage.Columns.Count-1; i++)
+                if ((
+                        worksheet.get_Range("61:61", Type.Missing).RowHeight
+                        + worksheet.get_Range("62:62", Type.Missing).RowHeight
+                        + worksheet.get_Range("63:63", Type.Missing).RowHeight
+                        + worksheet.get_Range("64:64", Type.Missing).RowHeight
+                    ) < 81)
                 {
-                    worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Waistband (relax)'", i + 1);
+                    worksheet.get_Range("61:61", Type.Missing).RowHeight = worksheet.get_Range("61:61", Type.Missing).RowHeight > 28 ? worksheet.get_Range("61:61", Type.Missing).RowHeight : 28;
+                    worksheet.get_Range("62:62", Type.Missing).RowHeight = 28;
+                    worksheet.get_Range("63:63", Type.Missing).RowHeight = 28;
+                    worksheet.get_Range("64:64", Type.Missing).RowHeight = worksheet.get_Range("64:64", Type.Missing).RowHeight > 28 ? worksheet.get_Range("64:64", Type.Missing).RowHeight : 28;
+                }
+
+
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 5] = "V";
+                else
+                    worksheet.Cells[64, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 7] = "V";
+                else
+                    worksheet.Cells[64, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 9] = "V";
+                else
+                    worksheet.Cells[64, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["Comment"]);
+                rowHeight(worksheet, 64, strComment);
+                worksheet.Cells[64, 10] = strComment;
+
+                //
+                worksheet.Cells[65, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 5] = "V";
+                else
+                    worksheet.Cells[65, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 7] = "V";
+                else
+                    worksheet.Cells[65, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 9] = "V";
+                else
+                    worksheet.Cells[65, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Comment"]);
+                rowHeight(worksheet, 65, strComment);
+                worksheet.Cells[65, 10] = strComment;
+
+                //
+                worksheet.Cells[66, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 5] = "V";
+                else
+                    worksheet.Cells[66, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 7] = "V";
+                else
+                    worksheet.Cells[66, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 9] = "V";
+                else
+                    worksheet.Cells[66, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Comment"]);
+                rowHeight(worksheet, 66, strComment);
+                worksheet.Cells[66, 10] = strComment;
+
+                //
+                worksheet.Cells[67, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 5] = "V";
+                else
+                    worksheet.Cells[67, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 7] = "V";
+                else
+                    worksheet.Cells[67, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 9] = "V";
+                else
+                    worksheet.Cells[67, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Comment"]);
+                rowHeight(worksheet, 67, strComment);
+                worksheet.Cells[67, 10] = strComment;
+
+                //
+                worksheet.Cells[68, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 5] = "V";
+                else
+                    worksheet.Cells[68, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 7] = "V";
+                else
+                    worksheet.Cells[68, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 9] = "V";
+                else
+                    worksheet.Cells[68, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Comment"]);
+                rowHeight(worksheet, 68, strComment);
+                worksheet.Cells[68, 10] = strComment;
+
+                //
+                worksheet.Cells[69, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[69, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[69, 5] = "V";
+                else
+                    worksheet.Cells[69, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[69, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[69, 7] = "V";
+                else
+                    worksheet.Cells[69, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[69, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[69, 9] = "V";
+                else
+                    worksheet.Cells[69, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["Comment"]);
+                rowHeight(worksheet, 69, strComment);
+                worksheet.Cells[69, 10] = strComment;
+                #endregion
+
+                #region Streched Neck Opening is OK according to size spec?
+                if ((bool)dr["Neck"])
+                {
+                    worksheet.Cells[40, 9] = "V";
+                }
+                else
+                {
+                    worksheet.Cells[40, 11] = "V";
+                }
+                #endregion
+
+                #region %
+                if (dtShrinkage.Select("Location = 'BOTTOM'").Length > 0)
+                {
+                    worksheet.Cells[56, 4] = numTwisTingBottom.Text + "%";
+                    worksheet.Cells[56, 7] = numBottomS1.Value;
+                    worksheet.Cells[56, 9] = numBottomL.Value;
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A56:A57", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'OUTER'").Length > 0)
+                {
+
+                    worksheet.Cells[54, 4] = numTwisTingOuter.Text + "%";
+                    worksheet.Cells[54, 7] = numOuterS1.Value;
+                    worksheet.Cells[54, 9] = numOuterS2.Value;
+                    worksheet.Cells[54, 11] = numOuterL.Value;
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A54:A55", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'INNER'").Length > 0)
+                {
+                    worksheet.Cells[52, 4] = numTwisTingInner.Text + "%";
+                    worksheet.Cells[52, 7] = numInnerS1.Value;
+                    worksheet.Cells[52, 9] = numInnerS2.Value;
+                    worksheet.Cells[52, 11] = numInnerL.Value;
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A52:A53", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'TOP'").Length > 0)
+                {
+                    worksheet.Cells[50, 4] = numTwisTingTop.Text + "%";
+                    worksheet.Cells[50, 7] = numTopS1.Value;
+                    worksheet.Cells[50, 9] = numTopS2.Value;
+                    worksheet.Cells[50, 11] = numTopL.Value;
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A50:A51", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+                #endregion
+
+                #region Shrinkage
+                //先BOTTOM
+                if (dtShrinkage.Select("Location = 'BOTTOM'").Length > 0)
+                {
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Waistband (relax)'", i + 1);
                         //dtShrinkage.Select("Location = 'BOTTOM'and type ='Waistband (relax)'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[45, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Hip Width'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[45, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Hip Width'", i + 1);
                         //dtShrinkage.Select("Location = 'BOTTOM'and type ='Hip Width'")[0][i + 1];
-                      
-                        
-                }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[46, i] =  addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Thigh Width'", i + 1);
+
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[46, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Thigh Width'", i + 1);
                         //dtShrinkage.Select("Location = 'BOTTOM'and type ='Thigh Width'")[0][i + 1];
-                       
-                   
-                }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[47, i] =    addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Side Seam'", i + 1);
+
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[47, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Side Seam'", i + 1);
                         //dtShrinkage.Select("Location = 'BOTTOM'and type ='Side Seam'")[0][i + 1];
-                       
-                      
-                }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[48, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Leg Opening'", i + 1);
+
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[48, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Leg Opening'", i + 1);
                         //dtShrinkage.Select("Location = 'BOTTOM'and type ='Leg Opening'")[0][i+1];
-                      
-                       
-                }
-            }
-            else
-            {
-                Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A42:A49", Type.Missing).EntireRow;
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                Marshal.ReleaseComObject(rng);
-            }
 
-            if (dtShrinkage.Select("Location = 'OUTER'").Length > 0)
-            {
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+
+                    }
+                }
+                else
                 {
-                    worksheet.Cells[34, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Chest Width'", i + 1);
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A42:A49", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'OUTER'").Length > 0)
+                {
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[34, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Chest Width'", i + 1);
                         //dtShrinkage.Select("Location = 'OUTER'and type ='Chest Width'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[35, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Width'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[35, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Width'", i + 1);
                         //dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Width'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[36, i] =  addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Length'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[36, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Length'", i + 1);
                         //dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Length'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[37, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Back Length'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[37, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Back Length'", i + 1);
                         //dtShrinkage.Select("Location = 'OUTER'and type ='Back Length'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[38, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Hem Opening'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[38, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Hem Opening'", i + 1);
                         //dtShrinkage.Select("Location = 'OUTER'and type ='Hem Opening'")[0][i + 1];
+                    }
                 }
-            }
-            else
-            {
-                Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A32:A39", Type.Missing).EntireRow;
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                Marshal.ReleaseComObject(rng);
-            }
-
-            if (dtShrinkage.Select("Location = 'INNER'").Length > 0)
-            {
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                else
                 {
-                    worksheet.Cells[26, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Chest Width'", i + 1);
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A32:A39", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'INNER'").Length > 0)
+                {
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[26, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Chest Width'", i + 1);
                         //dtShrinkage.Select("Location = 'INNER'and type ='Chest Width'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[27, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Sleeve Width'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[27, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Sleeve Width'", i + 1);
                         //dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Width'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[28, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Sleeve Length'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[28, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Sleeve Length'", i + 1);
                         //dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Length'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[29, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Back Length'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[29, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Back Length'", i + 1);
                         //dtShrinkage.Select("Location = 'INNER'and type ='Back Length'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[30, i] =  addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Hem Opening'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[30, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Hem Opening'", i + 1);
                         //dtShrinkage.Select("Location = 'INNER'and type ='Hem Opening'")[0][i + 1];
+                    }
                 }
-            }
-            else
-            {
-                Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A24:A31", Type.Missing).EntireRow;
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                Marshal.ReleaseComObject(rng);
-            }
-
-            if (dtShrinkage.Select("Location = 'TOP'").Length > 0)
-            {
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                else
                 {
-                    worksheet.Cells[18, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Chest Width'", i + 1);
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A24:A31", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'TOP'").Length > 0)
+                {
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[18, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Chest Width'", i + 1);
                         //dtShrinkage.Select("Location = 'TOP'and type ='Chest Width'")[0][i+1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[19, i] =  addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Sleeve Width'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[19, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Sleeve Width'", i + 1);
                         //dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Width'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[20, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Sleeve Length'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[20, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Sleeve Length'", i + 1);
                         //dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Length'")[0][i + 1];
-                }
+                    }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
-                {
-                    worksheet.Cells[21, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Back Length'", i + 1);
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[21, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Back Length'", i + 1);
                         //dtShrinkage.Select("Location = 'TOP'and type ='Back Length'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[22, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Hem Opening'", i + 1);
+                        //dtShrinkage.Select("Location = 'TOP'and type ='Hem Opening'")[0][i + 1];
+                    }
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A16:A23", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+                    #endregion
+
+            }
+            #endregion
+
+
+            #region 新資料
+            if (IsNewData)
+            {
+                worksheet.get_Range("62:62", Type.Missing).Delete();
+
+                #region 最下面 Signature
+                if (MyUtility.Convert.GetString(dr["Result"]).EqualString("Pass"))
+                {
+                    worksheet.Cells[72, 4] = "V";
+                }
+                else
+                {
+                    worksheet.Cells[72, 6] = "V";
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                #region 插入圖片與Technician名字
+                string sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
+                                        from Technician t WITH (NOLOCK)
+                                        inner join pass1 p WITH (NOLOCK) on t.ID = p.ID  
+                                        outer apply (select PicPath from system) s 
+                                        where t.ID = '{Deatilrow["Technician"]}'";
+                DataRow drTechnicianInfo;
+                string technicianName = string.Empty;
+                string picSource = string.Empty;
+                Image img = null;
+                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[12, 2];
+
+                if (MyUtility.Check.Seek(sql_cmd, out drTechnicianInfo))
                 {
-                    worksheet.Cells[22, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Hem Opening'", i + 1);
-                        //dtShrinkage.Select("Location = 'TOP'and type ='Hem Opening'")[0][i + 1];
+                    technicianName = drTechnicianInfo["name"].ToString();
+                    picSource = drTechnicianInfo["SignaturePic"].ToString();
                 }
+                //Name
+                worksheet.Cells[73, 9] = technicianName;
+
+                //插入圖檔
+                if (!MyUtility.Check.Empty(picSource))
+                {
+                    if (File.Exists(picSource))
+                    {
+                        img = Image.FromFile(picSource);
+                        Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[71, 9];
+
+                        worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
+                    }
+                }
+                #endregion
+
+                #endregion
+
+                #region After Wash Appearance Check list
+                string tmpAR;
+
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash1"]);
+
+                worksheet.Cells[61, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Type"]).ToString();
+               
+                //大約21個字換行
+                int widhthBase = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Type"]).ToString().Length / 20;
+
+                worksheet.get_Range("61:61", Type.Missing).RowHeight = 19 * widhthBase;
+                
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 5] = "V";
+                else
+                    worksheet.Cells[61, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 7] = "V";
+                else
+                    worksheet.Cells[61, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 9] = "V";
+                else
+                    worksheet.Cells[61, 8] = tmpAR;
+                string strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Comment"]);
+                rowHeight(worksheet, 61, strComment);
+                worksheet.Cells[61, 10] = strComment;
+
+                //
+                worksheet.Cells[62, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 5] = "V";
+                else
+                    worksheet.Cells[62, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 7] = "V";
+                else
+                    worksheet.Cells[62, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 9] = "V";
+                else
+                    worksheet.Cells[62, 8] = tmpAR;
+
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Comment"]);
+                rowHeight(worksheet, 62, strComment);
+                worksheet.Cells[62, 10] = strComment;
+
+                //
+                worksheet.Cells[63, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Type"]).ToString(); // type;
+
+                //大約21個字換行
+                int widhthBase2 = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Type"]).ToString().Length / 20;
+
+                worksheet.get_Range("63:63", Type.Missing).RowHeight = 19 * widhthBase2;
+
+                if ((
+                        worksheet.get_Range("61:61", Type.Missing).RowHeight 
+                        + worksheet.get_Range("62:62", Type.Missing).RowHeight 
+                        + worksheet.get_Range("63:63", Type.Missing).RowHeight
+                    ) < 81)
+                {
+                    worksheet.get_Range("61:61", Type.Missing).RowHeight = worksheet.get_Range("61:61", Type.Missing).RowHeight > 28 ? worksheet.get_Range("61:61", Type.Missing).RowHeight : 28;
+                    worksheet.get_Range("62:62", Type.Missing).RowHeight = 28;
+                    worksheet.get_Range("63:63", Type.Missing).RowHeight = worksheet.get_Range("63:63", Type.Missing).RowHeight > 28 ? worksheet.get_Range("63:63", Type.Missing).RowHeight : 28;
+                }
+
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 5] = "V";
+                else
+                    worksheet.Cells[63, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 7] = "V";
+                else
+                    worksheet.Cells[63, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 9] = "V";
+                else
+                    worksheet.Cells[63, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Comment"]);
+                rowHeight(worksheet, 63, strComment);
+                worksheet.Cells[63, 10] = strComment;
+
+                //
+                worksheet.Cells[64, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["Type"]); ;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 5] = "V";
+                else
+                    worksheet.Cells[64, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 7] = "V";
+                else
+                    worksheet.Cells[64, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 9] = "V";
+                else
+                    worksheet.Cells[64, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["Comment"]);
+                rowHeight(worksheet, 64, strComment);
+                worksheet.Cells[64, 10] = strComment;
+
+                //
+                worksheet.Cells[65, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 5] = "V";
+                else
+                    worksheet.Cells[65, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 7] = "V";
+                else
+                    worksheet.Cells[65, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 9] = "V";
+                else
+                    worksheet.Cells[65, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Comment"]);
+                rowHeight(worksheet, 65, strComment);
+                worksheet.Cells[65, 10] = strComment;
+
+                //
+                worksheet.Cells[66, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 5] = "V";
+                else
+                    worksheet.Cells[66, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 7] = "V";
+                else
+                    worksheet.Cells[66, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 9] = "V";
+                else
+                    worksheet.Cells[66, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Comment"]);
+                rowHeight(worksheet, 66, strComment);
+                worksheet.Cells[66, 10] = strComment;
+
+                //
+                worksheet.Cells[67, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 5] = "V";
+                else
+                    worksheet.Cells[67, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 7] = "V";
+                else
+                    worksheet.Cells[67, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 9] = "V";
+                else
+                    worksheet.Cells[67, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Comment"]);
+                rowHeight(worksheet, 67, strComment);
+                worksheet.Cells[67, 10] = strComment;
+
+                //
+                worksheet.Cells[68, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Type"]);
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash1"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 4] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 5] = "V";
+                else
+                    worksheet.Cells[68, 4] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash2"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 6] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 7] = "V";
+                else
+                    worksheet.Cells[68, 6] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash3"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 8] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 9] = "V";
+                else
+                    worksheet.Cells[68, 8] = tmpAR;
+                strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Comment"]);
+                rowHeight(worksheet, 68, strComment);
+                worksheet.Cells[68, 10] = strComment;
+                
+                #endregion
+
+                #region Streched Neck Opening is OK according to size spec?
+                if ((bool)dr["Neck"])
+                {
+                    worksheet.Cells[40, 9] = "V";
+                }
+                else
+                {
+                    worksheet.Cells[40, 11] = "V";
+                }
+                #endregion
+
+                #region %
+                if (dtShrinkage.Select("Location = 'BOTTOM'").Length > 0)
+                {
+                    worksheet.Cells[56, 4] = numTwisTingBottom.Text + "%";
+                    worksheet.Cells[56, 7] = numBottomS1.Value;
+                    worksheet.Cells[56, 9] = numBottomL.Value;
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A56:A57", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'OUTER'").Length > 0)
+                {
+
+                    worksheet.Cells[54, 4] = numTwisTingOuter.Text + "%";
+                    worksheet.Cells[54, 7] = numOuterS1.Value;
+                    worksheet.Cells[54, 9] = numOuterS2.Value;
+                    worksheet.Cells[54, 11] = numOuterL.Value;
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A54:A55", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'INNER'").Length > 0)
+                {
+                    worksheet.Cells[52, 4] = numTwisTingInner.Text + "%";
+                    worksheet.Cells[52, 7] = numInnerS1.Value;
+                    worksheet.Cells[52, 9] = numInnerS2.Value;
+                    worksheet.Cells[52, 11] = numInnerL.Value;
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A52:A53", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'TOP'").Length > 0)
+                {
+                    worksheet.Cells[50, 4] = numTwisTingTop.Text + "%";
+                    worksheet.Cells[50, 7] = numTopS1.Value;
+                    worksheet.Cells[50, 9] = numTopS2.Value;
+                    worksheet.Cells[50, 11] = numTopL.Value;
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A50:A51", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+                #endregion
+
+                #region Shrinkage
+                //先BOTTOM
+                if (dtShrinkage.Select("Location = 'BOTTOM'").Length > 0)
+                {
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Waistband (relax)'", i + 1);
+                        //dtShrinkage.Select("Location = 'BOTTOM'and type ='Waistband (relax)'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[45, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Hip Width'", i + 1);
+                        //dtShrinkage.Select("Location = 'BOTTOM'and type ='Hip Width'")[0][i + 1];
+
+
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[46, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Thigh Width'", i + 1);
+                        //dtShrinkage.Select("Location = 'BOTTOM'and type ='Thigh Width'")[0][i + 1];
+
+
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[47, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Side Seam'", i + 1);
+                        //dtShrinkage.Select("Location = 'BOTTOM'and type ='Side Seam'")[0][i + 1];
+
+
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[48, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM'and type ='Leg Opening'", i + 1);
+                        //dtShrinkage.Select("Location = 'BOTTOM'and type ='Leg Opening'")[0][i+1];
+
+
+                    }
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A42:A49", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'OUTER'").Length > 0)
+                {
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[34, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Chest Width'", i + 1);
+                        //dtShrinkage.Select("Location = 'OUTER'and type ='Chest Width'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[35, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Width'", i + 1);
+                        //dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Width'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[36, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Length'", i + 1);
+                        //dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Length'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[37, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Back Length'", i + 1);
+                        //dtShrinkage.Select("Location = 'OUTER'and type ='Back Length'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[38, i] = addShrinkageUnit(dtShrinkage, @"Location = 'OUTER'and type ='Hem Opening'", i + 1);
+                        //dtShrinkage.Select("Location = 'OUTER'and type ='Hem Opening'")[0][i + 1];
+                    }
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A32:A39", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'INNER'").Length > 0)
+                {
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[26, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Chest Width'", i + 1);
+                        //dtShrinkage.Select("Location = 'INNER'and type ='Chest Width'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[27, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Sleeve Width'", i + 1);
+                        //dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Width'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[28, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Sleeve Length'", i + 1);
+                        //dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Length'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[29, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Back Length'", i + 1);
+                        //dtShrinkage.Select("Location = 'INNER'and type ='Back Length'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[30, i] = addShrinkageUnit(dtShrinkage, @"Location = 'INNER'and type ='Hem Opening'", i + 1);
+                        //dtShrinkage.Select("Location = 'INNER'and type ='Hem Opening'")[0][i + 1];
+                    }
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A24:A31", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+
+                if (dtShrinkage.Select("Location = 'TOP'").Length > 0)
+                {
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[18, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Chest Width'", i + 1);
+                        //dtShrinkage.Select("Location = 'TOP'and type ='Chest Width'")[0][i+1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[19, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Sleeve Width'", i + 1);
+                        //dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Width'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[20, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Sleeve Length'", i + 1);
+                        //dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Length'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[21, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Back Length'", i + 1);
+                        //dtShrinkage.Select("Location = 'TOP'and type ='Back Length'")[0][i + 1];
+                    }
+
+                    for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
+                    {
+                        worksheet.Cells[22, i] = addShrinkageUnit(dtShrinkage, @"Location = 'TOP'and type ='Hem Opening'", i + 1);
+                        //dtShrinkage.Select("Location = 'TOP'and type ='Hem Opening'")[0][i + 1];
+                    }
+                }
+                else
+                {
+                    Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A16:A23", Type.Missing).EntireRow;
+                    rng.Select();
+                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
+                }
+                #endregion
+
             }
-            else
-            {
-                Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A16:A23", Type.Missing).EntireRow;
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                Marshal.ReleaseComObject(rng);
-            }
+
             #endregion
 
             #region Save & Show Excel
@@ -1256,7 +2102,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
         /// <param name="strFilter"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        private string addShrinkageUnit(DataTable dt , string strFilter,int count)
+        private string addShrinkageUnit(DataTable dt, string strFilter, int count)
         {
             string strValie = dt.Select(strFilter)[0][count].ToString();
             if (((string.Compare(dt.Columns[count].ColumnName, "Shrinkage1", true) == 0) ||

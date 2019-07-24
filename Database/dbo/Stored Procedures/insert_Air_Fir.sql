@@ -175,12 +175,9 @@ WHEN NOT matched BY target THEN
          s.seq1, 
          s.seq2, 
          s.inspdeadline, 
-         s.skewnessoptionid) 
-WHEN NOT matched BY source AND t.id IN (SELECT deid FROM @tempFir WHERE id IS 
-NULL) THEN 
-  DELETE; 
+         s.skewnessoptionid) ; 
 
-
+delete dbo.fir_laboratory where id in  (SELECT deID FROM @tempFir WHERE id IS NULL)
 
 ---- Air
 
@@ -221,11 +218,9 @@ select * from dbo.air where id in (select id from @tempAir )
 on t.id=s.id
 when not matched by target then 
 insert (id,poid,seq1,seq2,InspDeadline)
-values(s.id,s.poid,s.seq1,s.seq2,s.InspDeadline)
-when not matched by source and t.id in (select deID from @tempAir where id is null)  then
-delete ;
+values(s.id,s.poid,s.seq1,s.seq2,s.InspDeadline);
 
-
+delete dbo.AIR_Laboratory where id in  (select deID from @tempAir where id is null)
 
 --------------FIR_Shadebone 
 RAISERROR('insert_Air_Fir - Starts',0,0)

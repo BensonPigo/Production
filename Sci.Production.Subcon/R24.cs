@@ -260,6 +260,7 @@ select isnull(sum(a.ap_amt),0.00) ap_amt
 	,a.Category
 	,a.FactoryId
 	,a.OrderId
+	,isnull(sum(a.CartonQty),0) CartonQty
 into  #tmp_localap
 from(
 	select 
@@ -268,9 +269,11 @@ from(
 			,ap.Category
 			,ap.FactoryId
 			,o.POID as OrderId 
+			,[CartonQty] = iif(li.IsCarton=1,apd.Qty,0)
 	from localap ap WITH (NOLOCK) 
 	inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
 	inner join orders o with (nolock) on apd.OrderID = o.ID	
+	left join LocalItem li with (nolock) on li.RefNo=apd.Refno
 	where 1=1
 	AND AP.Status = 'Approved'
 )a 
@@ -291,6 +294,7 @@ group by  bb.ArtworkTypeID,t.poid
 
 -- #tmp_final 
 select distinct t.FactoryID
+	,aa.MDivisionID
     ,t.artworktypeid
     ,aa.POID
     ,aa.StyleID
@@ -298,9 +302,9 @@ select distinct t.FactoryID
     ,aa.BrandID 
     ,dbo.getTPEPass1((select SMR from orders o  WITH (NOLOCK) where o.id = aa.poid)) smr  
 	,os.os
-    ,x.ap_qty
+    ,x.ap_qty	
+	,[CartonQty] = x.CartonQty
     ,x.ap_amt
-
     ,[ap_price]=IIF(totalSamePoidQty.value IS NULL OR totalSamePoidQty.value=0   ,NULL                       ,round(x.ap_amt / totalSamePoidQty.value,3))
     ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  ,NULL											 ,round(y.order_amt/y.order_qty,3) )    
     ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL	 ,round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty),2)  )

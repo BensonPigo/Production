@@ -219,7 +219,6 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
                 MyUtility.Msg.WarningBox("This record already junked, can't edit!!");
                 return false;
             }
-
             return base.ClickEditBefore();
         }
 

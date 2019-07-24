@@ -56,6 +56,9 @@
             this.labelEstCuttingDate = new Sci.Win.UI.Label();
             this.labelSewingInLineDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.rdbtnbyWK = new Sci.Win.UI.RadioButton();
+            this.rdbtnbyRoll = new Sci.Win.UI.RadioButton();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,12 +66,17 @@
             // 
             this.labelArriveWHDate.Location = new System.Drawing.Point(14, 18);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
+            this.labelArriveWHDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelArriveWHDate.Size = new System.Drawing.Size(135, 23);
             this.labelArriveWHDate.TabIndex = 95;
             this.labelArriveWHDate.Text = "Arrive W/H Date";
+            this.labelArriveWHDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.rdbtnbyRoll);
+            this.panel1.Controls.Add(this.rdbtnbyWK);
+            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.comboFactory);
             this.panel1.Controls.Add(this.comboMaterialType);
@@ -97,7 +105,7 @@
             this.panel1.Controls.Add(this.labelArriveWHDate);
             this.panel1.Location = new System.Drawing.Point(14, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(499, 478);
+            this.panel1.Size = new System.Drawing.Size(499, 516);
             this.panel1.TabIndex = 96;
             // 
             // comboCategory
@@ -108,8 +116,9 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(161, 320);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(185, 24);
-            this.comboCategory.TabIndex = 121;
+            this.comboCategory.TabIndex = 117;
             this.comboCategory.Type = "Pms_MtlCategory";
             // 
             // comboFactory
@@ -120,6 +129,7 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(161, 440);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(142, 24);
             this.comboFactory.TabIndex = 120;
             // 
@@ -131,6 +141,7 @@
             this.comboMaterialType.IsSupportUnselect = true;
             this.comboMaterialType.Location = new System.Drawing.Point(161, 401);
             this.comboMaterialType.Name = "comboMaterialType";
+            this.comboMaterialType.OldText = "";
             this.comboMaterialType.Size = new System.Drawing.Size(142, 24);
             this.comboMaterialType.TabIndex = 119;
             // 
@@ -347,39 +358,80 @@
             // 
             this.labelSP.Location = new System.Drawing.Point(14, 166);
             this.labelSP.Name = "labelSP";
+            this.labelSP.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSP.Size = new System.Drawing.Size(135, 23);
             this.labelSP.TabIndex = 99;
             this.labelSP.Text = "SP#";
+            this.labelSP.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelEstCuttingDate
             // 
             this.labelEstCuttingDate.Location = new System.Drawing.Point(14, 127);
             this.labelEstCuttingDate.Name = "labelEstCuttingDate";
+            this.labelEstCuttingDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelEstCuttingDate.Size = new System.Drawing.Size(135, 23);
             this.labelEstCuttingDate.TabIndex = 98;
             this.labelEstCuttingDate.Text = "Est. Cutting Date";
+            this.labelEstCuttingDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelSewingInLineDate
             // 
             this.labelSewingInLineDate.Location = new System.Drawing.Point(14, 89);
             this.labelSewingInLineDate.Name = "labelSewingInLineDate";
+            this.labelSewingInLineDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSewingInLineDate.Size = new System.Drawing.Size(135, 23);
             this.labelSewingInLineDate.TabIndex = 97;
             this.labelSewingInLineDate.Text = "Sewing in-line Date";
+            this.labelSewingInLineDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelSCIDelivery
             // 
             this.labelSCIDelivery.Location = new System.Drawing.Point(14, 52);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSCIDelivery.Size = new System.Drawing.Size(135, 23);
             this.labelSCIDelivery.TabIndex = 96;
             this.labelSCIDelivery.Text = "SCI Delivery";
+            this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(14, 479);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(135, 23);
+            this.label1.TabIndex = 122;
+            this.label1.Text = "Report Type";
+            // 
+            // rdbtnbyWK
+            // 
+            this.rdbtnbyWK.AutoSize = true;
+            this.rdbtnbyWK.Checked = true;
+            this.rdbtnbyWK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtnbyWK.Location = new System.Drawing.Point(161, 481);
+            this.rdbtnbyWK.Name = "rdbtnbyWK";
+            this.rdbtnbyWK.Size = new System.Drawing.Size(75, 21);
+            this.rdbtnbyWK.TabIndex = 121;
+            this.rdbtnbyWK.TabStop = true;
+            this.rdbtnbyWK.Text = "by WK#";
+            this.rdbtnbyWK.UseVisualStyleBackColor = true;
+            // 
+            // rdbtnbyRoll
+            // 
+            this.rdbtnbyRoll.AutoSize = true;
+            this.rdbtnbyRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtnbyRoll.Location = new System.Drawing.Point(242, 481);
+            this.rdbtnbyRoll.Name = "rdbtnbyRoll";
+            this.rdbtnbyRoll.Size = new System.Drawing.Size(69, 21);
+            this.rdbtnbyRoll.TabIndex = 122;
+            this.rdbtnbyRoll.Text = "by Roll";
+            this.rdbtnbyRoll.UseVisualStyleBackColor = true;
             // 
             // R07
             // 
-            this.ClientSize = new System.Drawing.Size(627, 528);
+            this.ClientSize = new System.Drawing.Size(627, 562);
             this.Controls.Add(this.panel1);
             this.Name = "R07";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R07.Urgent Inspection Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
@@ -421,5 +473,8 @@
         private Class.txtsupplier txtsupplier;
         private Win.UI.ComboBox comboFactory;
         private Class.comboDropDownList comboCategory;
+        private Win.UI.RadioButton rdbtnbyRoll;
+        private Win.UI.RadioButton rdbtnbyWK;
+        private Win.UI.Label label1;
     }
 }

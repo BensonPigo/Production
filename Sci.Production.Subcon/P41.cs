@@ -150,20 +150,20 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
 
             if (!string.IsNullOrEmpty(this.comboSubPorcess.Text))
             {
-                sqlWhere.Append($"AND ( DefaultSubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%' OR SubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%' )" + Environment.NewLine);
+                sqlWhere.Append($"AND ( DefaultSubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%' OR HasSubProcess.Value > 0 )" + Environment.NewLine);
             }
 
             sqlWhere.Append($"ORDER BY b.Colorid,bd.SizeCode,b.PatternPanel,bd.BundleNo");
 
             //「Extend All Parts」勾選則true
-            string IsExtendAllParts = this.chkExtendAllParts.Checked ? "true" : "false";
+            //string IsExtendAllParts = this.chkExtendAllParts.Checked ? "true" : "false";
 
             string SubProcess = this.comboSubPorcess.Text;
             #endregion
 
             sqlCmd.Append($@"
 
-SELECT DISTINCT
+SELECT
 bd.BundleNo
 ,b.Orderid
 ,b.POID
@@ -180,9 +180,10 @@ bd.BundleNo
 ,b.PatternPanel
 
 ,[Cutpart]= bd.Patterncode
-,[CutpartName]= CASE WHEN '{IsExtendAllParts}'='true'  AND  bd.Patterncode ='ALLPARTS' THEN  bdap.PatternDesc
-				ELSE bd.PatternDesc  
-				END --basic from 「Extend All Parts」 is checked or not
+,[CutpartName]= {(this.chkExtendAllParts.Checked ?
+                    "CASE WHEN bd.Patterncode = 'ALLPARTS' THEN bdap.PatternDesc ELSE bd.PatternDesc END --basic from 「Extend All Parts」 is checked or not"
+                    :
+                    "bd.PatternDesc")}
 
 ,[SubProcessID]= SubProcess.SubProcessID
 ,[DefaultSubProcess]=DefaultSubProcess.SubProcessID
@@ -195,13 +196,23 @@ bd.BundleNo
 
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
-INNER JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID
+{(this.chkExtendAllParts.Checked ? "LEFT JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID AND bd.Patterncode ='ALLPARTS'" : "")}
 INNER JOIN Orders O ON o.ID=b.Orderid
 LEFT JOIN Workorder w ON W.CutRef=b.CutRef AND w.ID=b.POID
 LEFT JOIN BundleInOut ReceiveQtySorting ON ReceiveQtySorting.BundleNo=bd.BundleNo AND ReceiveQtySorting.RFIDProcessLocationID ='' AND ReceiveQtySorting.SubProcessId='Sorting'
 LEFT JOIN BundleInOut ReceiveQtyLoading ON ReceiveQtyLoading.BundleNo=bd.BundleNo AND ReceiveQtyLoading.RFIDProcessLocationID ='' AND ReceiveQtyLoading.SubProcessId='Loading'
 LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='{SubProcess}'
 OUTER APPLY(
+	--用來判斷，該Bundle ID、Bundle No，是否包含User選定的SubProcess
+	SELECT [Value]=IIF( COUNT(bda.SubProcessID) > 0 , 1 ,0 )
+	FROM Bundle_Detail_Art bda
+	WHERE  bda.BundleNo = bd.BundleNo 
+	AND bda.ID = b.ID   
+	AND bda.SubProcessID ='{SubProcess}'
+)HasSubProcess
+
+OUTER APPLY(
+    --顯示該Bundle ID、Bundle No，所有的SubProcess
 	SELECT [SubProcessID]=LEFT(SubProcessID,LEN(SubProcessID)-1)  
 	FROM
 	(
@@ -220,7 +231,9 @@ OUTER APPLY(
 		)
 	)M
 )SubProcess
+
 OUTER APPLY(
+	--每個Bundle都會有的SubProcess
 	SELECT [SubProcessID]=LEFT(SubProcessID,LEN(SubProcessID)-1)  
 	FROM
 	(

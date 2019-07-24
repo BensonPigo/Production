@@ -63,8 +63,9 @@ BEGIN
 				left join order_colorcombo oc
 				 ON oa.article = oc.article 
                  AND oc.patternpanel = ''FA'' 
-                 AND oc.id = o.poid 
+                 AND oc.id = o.poid 	
          WHERE  o.poid = '''+@PoID+N'''
+		        and o.Junk != 1
 	), 
     subtotal AS (
 		SELECT	''''       AS ID, 

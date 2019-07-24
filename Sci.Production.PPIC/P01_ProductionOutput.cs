@@ -297,7 +297,7 @@ order by oa.Seq,os.Seq", string.Format("o.ID = '{0}'", MyUtility.Convert.GetStri
                 @"
 select oq.ID,oq.SizeCode,oq.Qty,AccuInCome=a.InQtyBySet,oq.Article,oq.SizeCode
 from Order_Qty oq 
-left join dbo.[QtyBySetPerSubprocess]('{0}','Loading',1,default,default,default,default,1,default)a
+left join dbo.[QtyBySetPerSubprocess]('{0}','Loading',default,default,default,default,1,default)a
 on oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
 where oq.id = '{0}'
 ", MyUtility.Convert.GetString(this.masterData["ID"]));

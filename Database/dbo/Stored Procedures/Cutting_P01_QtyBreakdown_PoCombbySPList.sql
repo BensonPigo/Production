@@ -48,7 +48,7 @@ BEGIN
 				[OrderNo] = o.customize1, 
                 [PONo] = o.custpono, 
                 [CustCD] = o.custcdid,                 
-                oq.qty 				
+                Qty = iif (o.Junk = 1, 0, oq.qty)
          FROM   orders o WITH (nolock) 
                 INNER JOIN order_qty oq WITH (nolock) 
                         ON o.id = oq.id 

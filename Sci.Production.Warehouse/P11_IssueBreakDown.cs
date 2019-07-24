@@ -89,13 +89,28 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             if (gridQtyBreakDown.ColumnCount > 1) gridQtyBreakDown.Columns[1].Frozen = true;
 
             gridIssueBreakDown.AutoGenerateColumns = true;
+
+            DtModifyIssueBDown.ColumnsBooleanAdd("Selected", defaultValue: true);
+            //設定Columns 位置
+            DtModifyIssueBDown.Columns["Selected"].SetOrdinal(0);
+
             gridIssueBreakDownBS.DataSource = DtModifyIssueBDown;
             gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
             gridIssueBreakDown.IsEditingReadOnly = false;
-            if (gridIssueBreakDown.ColumnCount > 0) gridIssueBreakDown.Columns[0].ReadOnly = true;
-            if (gridIssueBreakDown.ColumnCount > 1) gridIssueBreakDown.Columns[1].ReadOnly = true;
-            if (gridIssueBreakDown.ColumnCount > 1) gridIssueBreakDown.Columns[1].Frozen = true;
+            if (gridIssueBreakDown.ColumnCount > 0)
+            {
+                gridIssueBreakDown.Columns[1].ReadOnly = true;
+            }
 
+            if (gridIssueBreakDown.ColumnCount > 1)
+            {
+                gridIssueBreakDown.Columns[1].ReadOnly = true;
+                gridIssueBreakDown.Columns[2].ReadOnly = true;
+                gridIssueBreakDown.Columns[2].Frozen = true;
+            }
+
+            gridIssueBreakDown.Columns["Selected"].HeaderText = "";
+            gridIssueBreakDown.Columns["Selected"].Width = 25;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -113,6 +128,37 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             }
             this.Dispose();
             return;
+        }
+
+        /// <summary>
+        /// Header自動勾選
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GridIssueBreakDown_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (DtModifyIssueBDown == null) return;
+
+            // 自動勾選Select
+            if (MouseButtons.Left == e.Button && 0 == e.ColumnIndex)
+            {
+                DataTable dt = (DataTable)gridIssueBreakDownBS.DataSource;
+                DataRow[] drCheck = dt.Select("Selected = 0 ");
+                if (drCheck.Length > 0)
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        dr["Selected"] = 1;
+                    }
+                }
+                else
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        dr["Selected"] = 0;
+                    }
+                }
+            }
         }
 
         private void gridIssueBreakDown_CellValidated(object sender, DataGridViewCellEventArgs e)
@@ -138,11 +184,27 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
         private void btnSet_Click(object sender, EventArgs e)
         {
             if (dtQtyBreakDown == null || DtModifyIssueBDown == null) return;
-            ((DataTable)gridIssueBreakDownBS.DataSource).Rows.Clear();
+            
+            DataTable dtCopy = ((DataTable)gridIssueBreakDownBS.DataSource).Copy();
+            DataTable dt = (DataTable)gridIssueBreakDownBS.DataSource;
+            dt.Rows.Clear();
+            if (!MyUtility.Check.Empty(dtCopy.Select("Selected = 0")))
+            {
+                // 將Select未勾選的結構匯入
+                DataTable dtUnSelect = dtCopy.Select("Selected = 0").CopyToDataTable();
+                dt.Merge(dtUnSelect);
+            }
+            
             foreach (DataRow tmprow in dtQtyBreakDown.Rows)
             {
-                ((DataTable)gridIssueBreakDownBS.DataSource).ImportRow(tmprow);
+                // 新增Select欄位, 有勾選才需要匯入Qty
+                DataRow[] findrow = dtCopy.Select($@"Selected = 1 and OrderID = '{tmprow["OrderID"]}' and Article = '{tmprow["Article"]}'");
+                if (findrow.Length > 0)
+                {
+                    dt.ImportRow(tmprow);
+                }
             }
+            dt.DefaultView.Sort = "OrderID,Article";
         }
     }
 }

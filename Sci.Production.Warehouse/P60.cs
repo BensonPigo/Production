@@ -72,16 +72,18 @@ namespace Sci.Production.Warehouse
         }
 
         // edit前檢查
-        protected override bool ClickEditBefore()
+        protected override void ClickEditAfter()
         {
-            //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
-            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (CurrentMaintain["status"].ToString().ToUpper() == "CONFIRMED")
+            base.ClickEditAfter();
+            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
-                MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
-                return false;
+                this.dateIssueDate.ReadOnly = true;
+                this.txtsubconLocalSupplier.TextBox1.ReadOnly = true;
+                this.editRemark.ReadOnly = true;
+                this.btnDelete.Enabled = false;
+                this.btnImport.Enabled = false;
+                this.gridicon.Enabled = false;
             }
-            return base.ClickEditBefore();
         }
 
         // save前檢查 & 取id
@@ -146,7 +148,14 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-
+            if (this.CurrentMaintain["Status"].Equals("Confirmed"))
+            {
+                this.detailgrid.IsEditingReadOnly = true;
+            }
+            else
+            {
+                this.detailgrid.IsEditingReadOnly = false;
+            }
             #region Status Label
 
             label25.Text = CurrentMaintain["status"].ToString();

@@ -2584,12 +2584,6 @@ on t.type=s.type and t.id=s.id
 			delete;
   
 		--Fabric_Supp
-		--Fabric_Supp 無多欄位
-		----------------------刪除主TABLE多的資料
-		Delete Production.dbo.Fabric_Supp
-		from Production.dbo.Fabric_Supp as a left join Trade_To_Pms.dbo.Fabric_Supp as b
-		on a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno
-		where b.SuppID is null
 		---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 		UPDATE a
 		SET  
@@ -3120,6 +3114,43 @@ when not matched by target then
 	s.EditName,
 	s.EditDate,
 	s.No)
+when not matched by source then 
+	delete;	
+
+--------ClogReason---------------
+
+Merge Production.dbo.ClogReason as t
+Using Trade_To_Pms.dbo.ClogReason as s
+on t.Type=s.Type and t.ID=s.ID
+when matched then
+	update set
+	t.Description= s.Description,
+	t.Remark= s.Remark,
+	t.Junk= s.Junk,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate
+when not matched by target then
+	insert(Type
+	,ID
+	,Description
+	,Remark
+	,Junk
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	)
+	values(s.Type,
+	s.ID,
+	s.Description,
+	s.Remark,
+	s.Junk,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate)
 when not matched by source then 
 	delete;	
 
