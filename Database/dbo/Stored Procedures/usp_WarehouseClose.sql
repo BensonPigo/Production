@@ -113,8 +113,16 @@ BEGIN
 			,'O'	[ToStock]
 			,[Dyelot]
 			,(InQty - OutQty + AdjustQty) [Qty]
+			,[ToLocation]=( 
+							SELECT TOP 1 ID 
+							FROM MtlLocation 
+							WHERE ID = dbo.Getlocation(sd.Ukey) AND (StockType='B'  OR StockType='O' ) 
+							GROUP BY ID 
+							HAVING Count(StockType)=2
+						  )
 			FROM DBO.FtyInventory sd WITH (NOLOCK)
-			WHERE sd.poid = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0;
+			WHERE sd.poid = @poid and stocktype='B'-- and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 
+					and lock=0;
 
 		-- 更新庫存 MDivisionPoDetail & FtyInventory
 		Select sd.POID,sd.seq1,sd.Seq2,sum(ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0)) ScrapQty into #tmpScrap
