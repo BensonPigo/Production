@@ -224,12 +224,13 @@
             this.Grid2New = 0;
             this.GridAlias = "LocationTrans_detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll,Dyelot";
+            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll,Dyelot,StockType";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P26";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P26. Material Location Update";
             this.UniqueExpress = "id";
             this.WorkAlias = "LocationTrans";
