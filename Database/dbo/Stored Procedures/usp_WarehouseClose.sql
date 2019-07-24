@@ -93,7 +93,7 @@ BEGIN
            ,[FromDyelot]           
 		   ,[ToMDivisionID]    ,[ToFactoryID]						,[ToPOID]					,[ToSeq1]
            ,[ToSeq2]           ,[ToRoll]							,[ToStockType]				,[ToDyelot]
-           ,[Qty])
+           ,[Qty]			   ,[ToLocation])
 		 SELECT [POID]
 			,Ukey
 			,'' [FromMDivisionID] 
