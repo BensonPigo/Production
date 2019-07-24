@@ -121,7 +121,7 @@ BEGIN
 							HAVING Count(StockType)=2
 						  )
 			FROM DBO.FtyInventory sd WITH (NOLOCK)
-			WHERE sd.poid = @poid and stocktype='B'-- and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 
+			WHERE sd.poid = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 
 					and lock=0;
 
 		-- 更新庫存 MDivisionPoDetail & FtyInventory
