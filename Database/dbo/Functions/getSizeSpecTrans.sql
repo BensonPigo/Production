@@ -15,7 +15,7 @@ BEGIN
 	set @val = LTRIM(RTRIM(@val))
 	declare @rtnVal as varchar(500)
 
-	if @SizeUnit = 'INCH'
+	if @SizeUnit = 'INCH' and @val not like'%[a-zA-Z]%' 
 	begin
 		if CHARINDEX('/', @val) > 0
 		begin  
@@ -26,7 +26,7 @@ BEGIN
 			set @val = dbo.getFractional(@val)
 		end 	 
 	end
-	else if @SizeUnit = 'CM'
+	else if @SizeUnit = 'CM' and @val not like'%[a-zA-Z]%' 
 	begin
 		if CHARINDEX('/', @val) > 0
 		begin  
