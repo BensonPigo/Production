@@ -15,6 +15,7 @@ using Sci.Win.Tools;
 using System.Linq;
 using Sci.Utility;
 using Sci.Win.Tems;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.Cutting
 {
@@ -36,7 +37,7 @@ namespace Sci.Production.Cutting
         Ict.Win.UI.DataGridViewTextBoxColumn col_seq2;
         Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
         Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_cutno;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_cutno;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_layer;
         Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
         Ict.Win.UI.DataGridViewTextBoxColumn col_cutref;
@@ -474,6 +475,14 @@ where WorkOrderUkey={0}", masterID);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
+            DataGridViewGeneratorTextColumnSettings cutno = new DataGridViewGeneratorTextColumnSettings();
+            cutno.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                Regex NumberPattern = new Regex("^[0-9]{1,3}$");
+                if (!NumberPattern.IsMatch(e.FormattedValue.ToString())) { dr["Cutno"] = DBNull.Value; }
+            };
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
             EstCutDate.CellValidating += (s, e) =>
             {
@@ -528,7 +537,7 @@ where WorkOrderUkey={0}", masterID);
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6)).Get(out col_cutref)
-                .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3).Get(out col_cutno)
+                .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(5), settings: cutno).Get(out col_cutno)
                 .Text("MarkerName", header: "Marker\r\nName", width: Widths.AnsiChars(5)).Get(out col_Markername)
                 .Text("Fabriccombo", header: "Fabric\r\nCombo", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("FabricPanelCode", header: "Fab_Panel\r\nCode", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -616,8 +625,8 @@ where WorkOrderUkey={0}", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
-                else ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
 
             };
             col_cutno.CellFormatting += (s, e) =>
@@ -634,7 +643,8 @@ where WorkOrderUkey={0}", masterID);
                     e.CellStyle.BackColor = Color.Pink;
                     e.CellStyle.ForeColor = Color.Red;
                 }
-            };
+            }; 
+
             #endregion
             #region markname
             col_Markername.EditingControlShowing += (s, e) =>
@@ -1798,7 +1808,7 @@ where WorkOrderUkey={0}", masterID);
             grid.ValidateControl();
             #region 變更先將同d,Cutref, FabricPanelCode, CutNo, MarkerName, estcutdate 且有cutref,Cuno無cutplanid 的cutref值找出來Group by→cutref 會相同
             string cmdsql = string.Format(@"
-            SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, isnull(CutNo,0) as cutno,
+            SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, CutNo,
             isnull(MarkerName,'') as MarkerName, estcutdate
             FROM Workorder WITH (NOLOCK) 
             WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
@@ -1853,7 +1863,7 @@ Begin Transaction [Trans_Name] -- Trans_Name
                     DataRow newdr = cutreftb.NewRow();
                     newdr["MarkerName"] = dr["MarkerName"] == null ? string.Empty : dr["MarkerName"];
                     newdr["FabricCombo"] = dr["FabricCombo"] == null ? string.Empty : dr["FabricCombo"];
-                    newdr["Cutno"] = dr["Cutno"] == null ? 0 : dr["Cutno"];
+                    newdr["Cutno"] = dr["Cutno"];
                     newdr["estcutdate"] = dr["estcutdate"] == null ? string.Empty : dr["estcutdate"];
                     newdr["cutref"] = maxref;
                     cutreftb.Rows.Add(newdr);
