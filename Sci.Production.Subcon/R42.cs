@@ -80,7 +80,7 @@ namespace Sci.Production.Subcon
             #region sqlcmd
             this.sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-Select distinct
+Select
             [Bundle#] = bt.BundleNo,
             [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
             [Cut Ref#] = b.CutRef,
