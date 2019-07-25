@@ -110,7 +110,7 @@ FETCH NEXT FROM ServerNameList INTO @ServerName
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	--SELECT @ServerName
-	EXEC ImportSewingDailyOutput @OutputDate,@ServerName
+	EXEC P_ImportSewingDailyOutput @OutputDate,@ServerName
 FETCH NEXT FROM ServerNameList INTO @ServerName
 END
 CLOSE ServerNameList
@@ -151,7 +151,7 @@ DEALLOCATE ServerNameList
             desc = $@"Please check below information.
 Transfer date:{ strDate }
 Instance: PMSDB\POWERBI
-Stored Procedure: [PBIReportData].ImportSewingDailyOutput
+Stored Procedure: [PBIReportData].P_ImportSewingDailyOutput
 ";
             #endregion
 
