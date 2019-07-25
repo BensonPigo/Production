@@ -122,7 +122,7 @@ where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
 select w.Hours, w.Date, style = IIF(t.Category <> ''M'',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.SewingReasonDesc
 into #wtmp
 from #tmpSewingGroup t
-inner join  ['+@ServerName+'].Production.dbo.WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate and isnull(w.Hours,0) != 0
+inner join  ['+@ServerName+'].Production.dbo.WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate and isnull(w.Holiday,0) = 0
 --
 select s.scOutputDate,cumulate = IIF(Count(1)=0, 1, Count(1)over(partition by s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType order by s.scOutputDate)),
 s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
