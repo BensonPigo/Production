@@ -171,8 +171,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             }
 
             seperCmdkpi = this.seperate ? "oq.FtyKPI" : "o.FtyKPI";
-            seperCmdkpi2 = this.seperate ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.POID=oq.Id
-and oq.BuyerDelivery = o.BuyerDelivery" : string.Empty;
+            seperCmdkpi2 = this.seperate ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.POID=oq.Id" : string.Empty;
             sqlCmd.Append(@"
 with tmpOrders as (
     select DISTINCT o.ID
@@ -279,14 +278,29 @@ with tmpOrders as (
     )I
 	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id)a
     where  1=1 ");
-            if (!MyUtility.Check.Empty(this.buyerDlv1))
+            if (this.seperate)
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
-            }
+                if (!MyUtility.Check.Empty(this.buyerDlv1))
+                {
+                    sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
+                }
 
-            if (!MyUtility.Check.Empty(this.buyerDlv2))
+                if (!MyUtility.Check.Empty(this.buyerDlv2))
+                {
+                    sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
+                }
+            }
+            else
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
+                if (!MyUtility.Check.Empty(this.buyerDlv1))
+                {
+                    sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.buyerDlv2))
+                {
+                    sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
+                }
             }
 
             if (!MyUtility.Check.Empty(this.sciDlv1))
