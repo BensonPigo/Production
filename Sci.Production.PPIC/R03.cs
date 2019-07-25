@@ -171,7 +171,8 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             }
 
             seperCmdkpi = this.seperate ? "oq.FtyKPI" : "o.FtyKPI";
-            seperCmdkpi2 = this.seperate ? " left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id" : string.Empty;
+            seperCmdkpi2 = this.seperate ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.POID=oq.Id
+and oq.BuyerDelivery = o.BuyerDelivery" : string.Empty;
             sqlCmd.Append(@"
 with tmpOrders as (
     select DISTINCT o.ID
