@@ -91,6 +91,7 @@ select  o.FactoryID
         , s.StyleName
         , o.CustPONo
         , o.Customize1
+		, o.Junk
         , oq.BuyerDelivery
         , oq.ShipmodeID
 		, oq.Seq
@@ -234,7 +235,20 @@ from #tmp t left join ClogReturn cr on cr.OrderID = t.ID
 group by t.ID
 
 select 
-	t.FactoryID,t.MCHandle,t.SewLine,t.ID,t.BrandID,t.StyleID,t.StyleName,t.CustPONo,t.Customize1,t.SciDelivery,t.BuyerDelivery,t.ShipmodeID,t.Location
+     t.FactoryID
+    ,t.MCHandle
+    ,t.SewLine
+    ,t.ID
+    ,t.BrandID
+    ,t.StyleID
+    ,t.StyleName
+    ,t.CustPONo
+    ,t.Customize1
+    ,t.SciDelivery
+    ,[Junk]= IIF(t.Junk=1,'Y','')
+    ,t.BuyerDelivery
+    ,t.ShipmodeID
+    ,t.Location
 	,t.TotalCTN,DRYCTN=isnull(t.DRYCTN,0),PackErrCTN = isnull(t.PackErrCTN,0),ClogCTN=isnull(t.ClogCTN,0),CfaCTN=isnull(t.CfaCTN,0),t2.RetCtnBySP
 	,[Bal Ctn by SP#]=isnull(t.TotalCTN,0)-isnull(t.ClogCTN,0) -isnull(t.DRYCTN,0) -isnull(t.CfaCTN,0) - isnull(t.PackErrCTN,0)
 	,[% by SP#]=iif(isnull(t.TtlGMTQty,0)=0,0,Round(1-((t.TtlGMTQty-isnull(t.TtlClogGMTQty,0))/t.TtlGMTQty),2)*100)
