@@ -145,6 +145,7 @@ select  operation = case a.type
         ,b.SizeSpec
         ,Qty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, a.Qty), 2)
         ,a.UnitID
+        ,e.BLocation
         ,reason = a.ReasonID +'-'+(select ReasonEN from InvtransReason WITH (NOLOCK) where id = a.ReasonID) 
         ,handle = dbo.getTPEPass1((select PoHandle from Inventory WITH (NOLOCK) where Inventory.Ukey = a.InventoryUkey and Inventory.POID=d.ID and Inventory.Seq1=d.SEQ1 and Inventory.Seq2=d.SEQ2 and Inventory.MDivisionID=Factory.MDivisionID and (Inventory.FactoryID=orders.FactoryID or Inventory.FactoryID=a.TransferFactory ) and Inventory.UnitID=d.POUnit and Inventory.ProjectID=orders.ProjectID and Inventory.InventoryRefnoID=a.InventoryRefnoId)) 
 from dbo.invtrans a WITH (NOLOCK) 
