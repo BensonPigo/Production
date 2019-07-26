@@ -282,7 +282,7 @@ BEGIN
 									,[StartHour]=StartHour
 									,[EndHour]=EndHour
 							FROM #workhour_Detail_Fty
-							WHERE DayOfWeekindex=(DATEPART(WEEKDAY, @workdate)-1) AND TemplateID=@templateid
+							WHERE DayOfWeekindex=(DATEPART(WEEKDAY, @workdate)-1) AND TemplateID=@templateid AND FactoryID = @factoryid
 							;
 						END
 					ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
@@ -411,7 +411,7 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 					,[StartHour] 
 					,[EndHour]
 					FROM #workhour_Detail_line
-					WHERE SewingLineID=@sewinglineid AND TemplateID=@templateid AND DayOfWeekIndex=(DATEPART(WEEKDAY, @workdate)-1)
+					WHERE SewingLineID=@sewinglineid AND TemplateID=@templateid AND DayOfWeekIndex=(DATEPART(WEEKDAY, @workdate)-1) AND FactoryID = @factoryid
 					;
 
 				END
@@ -450,15 +450,16 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	execute (@cmd)
 		
 	--取得特殊班表時間的詳細資料(詳細到上班時間為幾點到幾點)
-	CREATE TABLE #workhour_Detail_special(SewingLineID varchar(50),SpecialType int ,SpecialDate Date,StartHour Float,EndHour Float);
+	CREATE TABLE #workhour_Detail_special(SewingLineID varchar(50),FactoryID varchar(8),SpecialType int ,SpecialDate Date,StartHour Float,EndHour Float);
 	
 	SET @cmd = '
 	INSERT INTO #workhour_Detail_special
-	SELECT  [SewingLineID]=f.Name
-	,s.SpecialType
-	, s.SpecialDate 
-	,s.STARTHOUR
-	,s.ENDHOUR   
+	SELECT   [SewingLineID]=fa.CODE
+			,[FactoryID]=f.NAME
+			,s.SpecialType
+			, s.SpecialDate 
+			,s.STARTHOUR
+			,s.ENDHOUR   
 	FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.SpecialCalendar s
 	INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f ON s.facilityID = f.ID
 	INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa ON f.FactoryID = fa.ID
@@ -517,7 +518,7 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 					,[StartHour]=STARTHOUR 
 					,[EndHour]=ENDHOUR
 			FROM #workhour_Detail_special
-			WHERE SewingLineID = @sewinglineid AND SpecialType =@specialtype AND SpecialDate =  CAST( @workdate AS DATE) ;
+			WHERE SewingLineID = @sewinglineid AND SpecialType =@specialtype AND SpecialDate =  CAST( @workdate AS DATE) AND FactoryID = @factoryid;
 		END 
 
 		FETCH NEXT FROM cursor_apsspecialtime INTO @sewinglineid,@specialtype,@workdate,@apsworkhour
@@ -711,6 +712,7 @@ where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.Ap
 					SET @maxeff = @maxeff*@apseff
 
 				delete from #LnEff 
+				delete from #LnCurveTemplate
 
 				SET @apseff = null
 				--是否有設定動態效率
@@ -864,7 +866,7 @@ Order by fe.BeginDate Desc'
 						select @apseff = Eff from #DynamicEff
 						
 						--取得生產計劃(ProductionEvent) 是設定哪一個學習曲線樣板(LnCurveTemplateID)--
-				
+						SET @LnCurveTemplateID = null
 						SET @cmd = '
 						INSERT INTO #LnCurveTemplate
 						SELECT TOP 1  L.LNCURVETEMPLATEID
@@ -879,6 +881,7 @@ Order by fe.BeginDate Desc'
 							SET @maxeff = @maxeff*@apseff
 
 						delete from #DynamicEff
+						delete from #LnCurveTemplate
 						
 						IF @gsd = 0
 						set @set = 0
