@@ -69,7 +69,6 @@
             this.labelFTPPassword = new Sci.Win.UI.Label();
             this.txtFTPPassword = new Sci.Win.UI.TextBox();
             this.labelSketchFilesPath = new Sci.Win.UI.Label();
-            this.labelClipFilesPath = new Sci.Win.UI.Label();
             this.txtSketchFilesPath = new Sci.Win.UI.TextBox();
             this.txtCilpFilesPath = new Sci.Win.UI.TextBox();
             this.btnMailTo = new Sci.Win.UI.Button();
@@ -91,6 +90,10 @@
             this.txtUserPOApproved = new Sci.Production.Class.txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.labelClipFilesPath = new Sci.Win.UI.Label();
+            this.btnPicFilesPath = new Sci.Win.UI.Button();
+            this.txtPicFilesPath = new Sci.Win.UI.TextBox();
+            this.labPicFilesPath = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -552,19 +555,11 @@
             this.labelSketchFilesPath.TabIndex = 42;
             this.labelSketchFilesPath.Text = "Sketch Files Path ";
             // 
-            // labelClipFilesPath
-            // 
-            this.labelClipFilesPath.Location = new System.Drawing.Point(17, 417);
-            this.labelClipFilesPath.Name = "labelClipFilesPath";
-            this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
-            this.labelClipFilesPath.TabIndex = 43;
-            this.labelClipFilesPath.Text = "Clip Files Path";
-            // 
             // txtSketchFilesPath
             // 
             this.txtSketchFilesPath.BackColor = System.Drawing.Color.White;
             this.txtSketchFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtSketchFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
+            this.txtSketchFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleSketch", true));
             this.txtSketchFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSketchFilesPath.Location = new System.Drawing.Point(133, 388);
             this.txtSketchFilesPath.Name = "txtSketchFilesPath";
@@ -577,7 +572,7 @@
             this.txtCilpFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtCilpFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ClipPath", true));
             this.txtCilpFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCilpFilesPath.Location = new System.Drawing.Point(133, 417);
+            this.txtCilpFilesPath.Location = new System.Drawing.Point(133, 442);
             this.txtCilpFilesPath.Name = "txtCilpFilesPath";
             this.txtCilpFilesPath.Size = new System.Drawing.Size(506, 23);
             this.txtCilpFilesPath.TabIndex = 24;
@@ -607,7 +602,7 @@
             // btnCilpFilesPath
             // 
             this.btnCilpFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCilpFilesPath.Location = new System.Drawing.Point(642, 417);
+            this.btnCilpFilesPath.Location = new System.Drawing.Point(642, 442);
             this.btnCilpFilesPath.Name = "btnCilpFilesPath";
             this.btnCilpFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnCilpFilesPath.TabIndex = 25;
@@ -620,18 +615,18 @@
             this.lineShape9.BorderColor = System.Drawing.Color.DarkGray;
             this.lineShape9.Name = "lineShape9";
             this.lineShape9.X1 = 726;
-            this.lineShape9.X2 = 726;
+            this.lineShape9.X2 = 727;
             this.lineShape9.Y1 = 7;
-            this.lineShape9.Y2 = 416;
+            this.lineShape9.Y2 = 470;
             // 
             // lineShape8
             // 
             this.lineShape8.BorderColor = System.Drawing.Color.DarkGray;
             this.lineShape8.Name = "lineShape8";
             this.lineShape8.X1 = 8;
-            this.lineShape8.X2 = 8;
+            this.lineShape8.X2 = 7;
             this.lineShape8.Y1 = 7;
-            this.lineShape8.Y2 = 416;
+            this.lineShape8.Y2 = 471;
             // 
             // lineShape7
             // 
@@ -639,8 +634,8 @@
             this.lineShape7.Name = "lineShape7";
             this.lineShape7.X1 = 8;
             this.lineShape7.X2 = 726;
-            this.lineShape7.Y1 = 446;
-            this.lineShape7.Y2 = 446;
+            this.lineShape7.Y1 = 471;
+            this.lineShape7.Y2 = 471;
             // 
             // lineShape6
             // 
@@ -698,6 +693,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnPicFilesPath);
+            this.panel1.Controls.Add(this.txtPicFilesPath);
+            this.panel1.Controls.Add(this.labPicFilesPath);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.numQCMachineDelayTime);
             this.panel1.Controls.Add(this.lbQCMachineDelayTime);
@@ -752,7 +750,7 @@
             this.panel1.Controls.Add(this.shapeContainer2);
             this.panel1.Location = new System.Drawing.Point(10, 38);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(737, 454);
+            this.panel1.Size = new System.Drawing.Size(737, 484);
             this.panel1.TabIndex = 50;
             // 
             // label2
@@ -792,7 +790,7 @@
             0,
             0,
             0,
-            65536});
+            0});
             // 
             // lbQCMachineDelayTime
             // 
@@ -828,7 +826,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(737, 454);
+            this.shapeContainer2.Size = new System.Drawing.Size(737, 484);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
@@ -841,14 +839,53 @@
             this.lineShape10.Y1 = 227;
             this.lineShape10.Y2 = 227;
             // 
+            // labelClipFilesPath
+            // 
+            this.labelClipFilesPath.Location = new System.Drawing.Point(17, 442);
+            this.labelClipFilesPath.Name = "labelClipFilesPath";
+            this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labelClipFilesPath.TabIndex = 43;
+            this.labelClipFilesPath.Text = "Clip Files Path";
+            // 
+            // btnPicFilesPath
+            // 
+            this.btnPicFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnPicFilesPath.Location = new System.Drawing.Point(642, 415);
+            this.btnPicFilesPath.Name = "btnPicFilesPath";
+            this.btnPicFilesPath.Size = new System.Drawing.Size(30, 25);
+            this.btnPicFilesPath.TabIndex = 48;
+            this.btnPicFilesPath.Text = "...";
+            this.btnPicFilesPath.UseVisualStyleBackColor = true;
+            this.btnPicFilesPath.Click += new System.EventHandler(this.BtnPicFilesPath_Click);
+            // 
+            // txtPicFilesPath
+            // 
+            this.txtPicFilesPath.BackColor = System.Drawing.Color.White;
+            this.txtPicFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtPicFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
+            this.txtPicFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPicFilesPath.Location = new System.Drawing.Point(133, 415);
+            this.txtPicFilesPath.Name = "txtPicFilesPath";
+            this.txtPicFilesPath.Size = new System.Drawing.Size(506, 23);
+            this.txtPicFilesPath.TabIndex = 47;
+            // 
+            // labPicFilesPath
+            // 
+            this.labPicFilesPath.Location = new System.Drawing.Point(17, 415);
+            this.labPicFilesPath.Name = "labPicFilesPath";
+            this.labPicFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labPicFilesPath.TabIndex = 49;
+            this.labPicFilesPath.Text = "Pic Files Path";
+            // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(759, 504);
+            this.ClientSize = new System.Drawing.Size(759, 534);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "numSample";
             this.DefaultControlForEdit = "numSample";
             this.IsSupportPrint = false;
             this.Name = "B02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input7";
             this.Text = "B02. System Parameter";
             this.WorkAlias = "System";
             this.Controls.SetChildIndex(this.panel1, 0);
@@ -906,7 +943,6 @@
         private Win.UI.Label labelFTPPassword;
         private Win.UI.TextBox txtFTPPassword;
         private Win.UI.Label labelSketchFilesPath;
-        private Win.UI.Label labelClipFilesPath;
         private Win.UI.TextBox txtSketchFilesPath;
         private Win.UI.TextBox txtCilpFilesPath;
         private Win.UI.Button btnMailTo;
@@ -927,5 +963,9 @@
         private Win.UI.NumericUpDown numQCMachineDelayTime;
         private Win.UI.Label lbQCMachineDelayTime;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape10;
+        private Win.UI.Button btnPicFilesPath;
+        private Win.UI.TextBox txtPicFilesPath;
+        private Win.UI.Label labPicFilesPath;
+        private Win.UI.Label labelClipFilesPath;
     }
 }
