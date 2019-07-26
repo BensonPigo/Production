@@ -1005,13 +1005,13 @@ select
 	Sewer,
 	[AlloQty] = sum(AlloQty)
 	into #APSList
-from SewingSchedule  WITH (NOLOCK) 
+from SewingSchedule ss  WITH (NOLOCK) 
 where exists( 
 select 1 
 from SewingSchedule s
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-where	APSNo = s.APSNo
+where	ss.APSNo = s.APSNo
 		{sqlWhere.ToString()}
 )
 group by	APSNo ,
