@@ -116,7 +116,7 @@ BEGIN
 			,[ToLocation]=( 
 							SELECT TOP 1 ID 
 							FROM MtlLocation 
-							WHERE ID = dbo.Getlocation(sd.Ukey) AND (StockType='B'  OR StockType='O' ) 
+							WHERE ID = dbo.Getlocation(sd.Ukey) AND (StockType='B'  OR StockType='O' ) AND Junk=0
 							GROUP BY ID 
 							HAVING Count(StockType)=2
 						  )
