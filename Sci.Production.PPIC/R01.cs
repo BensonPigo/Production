@@ -162,6 +162,14 @@ namespace Sci.Production.PPIC
 
                 worksheet = objApp.Sheets[1];
 
+                worksheet.Columns[6].ColumnWidth = 40;
+                worksheet.Columns[8].ColumnWidth = 40;
+                worksheet.Columns[10].ColumnWidth = 40;
+                worksheet.Columns[14].ColumnWidth = 40;
+                worksheet.Columns[18].ColumnWidth = 40;
+                worksheet.Columns[29].ColumnWidth = 40;
+                worksheet.Columns[31].ColumnWidth = 40;
+
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
@@ -1274,8 +1282,8 @@ apm.AlloQty,
 apm.CPU,
 [DayWorkHour] = DayWorkHour.val,
 [HourOutput] = iif(DayWorkHour.val = 0,0,floor(StdOutput.val / DayWorkHour.val)),
-apm.OriEff,
-apf.LearnCurveEff,
+[OriEff] = apm.OriEff / 100.0,
+[LearnCurveEff] = apf.LearnCurveEff / 100.0,
 apm.Inline,
 apm.Offline,
 apm.PFRemark,
