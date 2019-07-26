@@ -15,7 +15,7 @@ BEGIN
 	BEGIN
 
 	--撈APS上SewingLine資料
-	SET @cmd = 'DECLARE cursor_sewingline CURSOR FOR SELECT Facility.GroupName, SUBSTRING(Facility.NAME,1,2) as Name, Facility.Description, Facility.Workernumber 
+	SET @cmd = 'DECLARE cursor_sewingline CURSOR FOR SELECT Facility.GroupName, SUBSTRING(Facility.NAME,1,2) as Name, Facility.Description, Facility.Workernumber , Facility.STATE
 	FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility WHERE Factory.CODE = '''+ @factoryid + ''' and Facility.FactoryId = Factory.Id'
 	
 	Begin Try
@@ -29,28 +29,30 @@ BEGIN
 			@sewinglineid varchar(2),
 			@description nvarchar(500),
 			@sewer numeric(24,10),
-			@set numeric(24,10)
+			@set numeric(24,10),
+			@STATE bit
 	OPEN cursor_sewingline
-	FETCH NEXT FROM cursor_sewingline INTO @sewingcell,@sewinglineid,@description,@sewer
+	FETCH NEXT FROM cursor_sewingline INTO @sewingcell,@sewinglineid,@description,@sewer,@STATE
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		declare @tmpcell varchar(2),
 				@tmpdesc nvarchar(500),
-				@tmpsewer int
+				@tmpsewer int,
+				@Junk bit
 		set @tmpcell = null
-		select @tmpcell = SewingCell,@tmpdesc = Description, @tmpsewer = Sewer from SewingLine where ID = @sewinglineid and FactoryID = @factoryid
+		select @tmpcell = SewingCell,@tmpdesc = Description, @tmpsewer = Sewer,@Junk=Junk from SewingLine where ID = @sewinglineid and FactoryID = @factoryid
 		IF @tmpcell is not null
 			BEGIN
 				--當資料已存在PMS且值有改變就更新
-				IF isnull(@tmpcell,'') <> isnull(@sewingcell,'') or isnull(@tmpdesc,'') <> isnull(@description,'') or isnull(@tmpsewer,'') <> isnull(@sewer,'')
-					update SewingLine set SewingCell = isnull(@sewingcell,''), Description = isnull(@description,''), Sewer = isnull(@sewer,0), EditName = @login, EditDate = GETDATE() where ID = @sewinglineid and FactoryID = @factoryid;
+				IF isnull(@tmpcell,'') <> isnull(@sewingcell,'') or isnull(@tmpdesc,'') <> isnull(@description,'') or isnull(@tmpsewer,'') <> isnull(@sewer,'') or isnull(@Junk,0) <> isnull(@STATE,0)
+					update SewingLine set SewingCell = isnull(@sewingcell,''), Description = isnull(@description,''), Sewer = isnull(@sewer,0), EditName = @login, EditDate = GETDATE(),Junk =@STATE  where ID = @sewinglineid and FactoryID = @factoryid;
 			END
 		ELSE
 			BEGIN
 				--當資料不存在PMS就新增資料
-				insert into SewingLine(ID,Description,FactoryID,SewingCell,Sewer,AddName,AddDate) values (@sewinglineid,isnull(@description,''),@factoryid,isnull(@sewingcell,''),isnull(@sewer,0),@login, GETDATE());
+				insert into SewingLine(ID,Description,FactoryID,SewingCell,Sewer,AddName,AddDate,Junk) values (@sewinglineid,isnull(@description,''),@factoryid,isnull(@sewingcell,''),isnull(@sewer,0),@login, GETDATE(),@STATE);
 			END
-		FETCH NEXT FROM cursor_sewingline INTO @sewingcell,@sewinglineid,@description,@sewer
+		FETCH NEXT FROM cursor_sewingline INTO @sewingcell,@sewinglineid,@description,@sewer,@STATE
 	END
 	CLOSE cursor_sewingline
 	DEALLOCATE cursor_sewingline
@@ -193,13 +195,36 @@ BEGIN
 	group by TemplateID,DayOfWeekIndex
 	order by TemplateID,DayOfWeekIndex'
 	execute (@cmd)
+	
+	--取得工廠日曆的詳細資料(詳細到上班時間為幾點到幾點)
+	CREATE TABLE #workhour_Detail_Fty(SewingLineID varchar(50),FactoryID varchar(8),StartHour Float,EndHour Float ,TemplateID int ,DayOfWeekIndex int);
+
+	SET @cmd = '
+		INSERT INTO #workhour_Detail_Fty
+		SELECT DISTINCT 
+				[SewingLineID]=''''
+				,[FactoryID]=f.NAME
+				,c.STARTHOUR
+				,c.ENDHOUR
+				,w.TEMPLATEID
+				,c.DAYOFWEEKINDEX
+		FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.WorkCalendarApply w 
+		INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f ON  f.ID=w.TARGETID
+		INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa ON fa.FactoryID = f.ID
+		INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.CALENDARTEMPLATEDETAIL c ON c.TEMPLATEID=w.TEMPLATEID
+		WHERE  w.TargetType = 0 and f.Code =  '''+ @factoryid + '''
+		ORDER BY w.TEMPLATEID,c.DAYOFWEEKINDEX
+		'
+	execute (@cmd)
 
 	DECLARE cursor_sewingline CURSOR FOR select ID from SewingLine where FactoryID = @factoryid order by ID
 
 	declare @workdate date,
 			@apsworkhour numeric(24,10),
 			@foundworkhour numeric(24,10),
-			@templateid int
+			@templateid int,
+			@found_Detail_StartHour numeric(24,10),
+			@found_Detail_EndHour numeric(24,10)
 
 	OPEN cursor_sewingline
 	FETCH NEXT FROM cursor_sewingline INTO @sewinglineid
@@ -214,28 +239,61 @@ BEGIN
 			SET @templateid = null
 			--找工廠日曆的工時
 			SET @templateid = (select TOP (1) TEMPLATEID from #tmpFtyTemplate where Name = @sewinglineid and EnableDate <= @workdate order by EnableDate desc)
+
 			IF @templateid is not null
 				BEGIN
 					select @apsworkhour = WorkHour from #tmpFtyCalendar where TemplateID = @templateid and DayOfWeekindex = (DATEPART(WEEKDAY, @workdate)-1)
 					IF @apsworkhour is not null
 						BEGIN
 							SET @foundworkhour = null
+
 							select @foundworkhour = Hours from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+
+							--檢查是否有已存在的資料
+							SET @found_Detail_StartHour = null
+							SET @found_Detail_EndHour = null
+
+							select TOP 1 @found_Detail_StartHour = StartHour , @found_Detail_EndHour = EndHour 
+							from [Workhour_Detail] 
+							where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = CAST( @workdate AS DATE)
+
+							--寫入WorkHour
 							IF @foundworkhour is null
 								insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
 								values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
 							ELSE
-								BEGIN
-									IF @foundworkhour <> @apsworkhour
-										update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-								END
+							BEGIN
+								IF @foundworkhour <> @apsworkhour
+									update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+							END
+
+							--寫入Workhour_Detail (新增 / 更新都在這裡進行)
+
+							--有的話先刪除
+							IF @found_Detail_StartHour IS NOT NULL AND @found_Detail_EndHour IS NOT NULL
+							BEGIN
+								DELETE FROM [Workhour_Detail] WHERE SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = CAST( @workdate AS DATE)
+							END
+
+							INSERT INTO [dbo].[Workhour_Detail]([SewingLineID],[FactoryID],[Date],[StartHour],[EndHour])
+							SELECT   [SewingLineID]=@sewinglineid
+									,[FactoryID]=@factoryid
+									,[Date]=CAST( @workdate AS DATE) 
+									,[StartHour]=StartHour
+									,[EndHour]=EndHour
+							FROM #workhour_Detail_Fty
+							WHERE DayOfWeekindex=(DATEPART(WEEKDAY, @workdate)-1) AND TemplateID=@templateid
+							;
 						END
 					ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
 						BEGIN
 							SET @foundworkhour = null
 							select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
 							IF @foundworkhour is not null
+							BEGIN
 								update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+								DELETE FROM [Workhour_Detail] WHERE SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = CAST( @workdate AS DATE)
+							END						
 						END
 				END
 			ELSE  --檢查PMS是否有這筆資料，若有就把workhour改成0
@@ -243,7 +301,10 @@ BEGIN
 					SET @foundworkhour = null
 					select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
 					IF @foundworkhour is not null
+					BEGIN
 						update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+						DELETE FROM [Workhour_Detail] WHERE SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = CAST( @workdate AS DATE)
+					END
 				END
 				
 			UPDATE WorkHour set Hours = 0 WHERE  SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate AND HOLIDAY = 1
@@ -273,6 +334,28 @@ group by E.Code, D.Name, A.TEMPLATEID, A.ENABLEDATE, C.DAYOFWEEKINDEX
 order by E.Code, D.Name,A.ENABLEDATE desc'
 	execute (@cmd)
 
+		--取得生產線日曆的詳細資料(詳細到上班時間為幾點到幾點)
+	CREATE TABLE #workhour_Detail_line(SewingLineID varchar(50),FactoryID varchar(8),StartHour Float,EndHour Float ,TemplateID int ,DayOfWeekIndex int);
+
+	SET @cmd = '
+		INSERT INTO #workhour_Detail_line
+		SELECT DISTINCT 
+		[SewingLineID]=fa.NAME
+		,[FactoryID]=f.NAME
+		,c.STARTHOUR
+		,c.ENDHOUR
+		,w.TEMPLATEID
+		,c.DAYOFWEEKINDEX
+		FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.WorkCalendarApply w 
+		INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.CALENDARTEMPLATE cc ON cc.ID = w.TEMPLATEID
+		INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.CALENDARTEMPLATEDETAIL c ON cc.ID=c.TEMPLATEID
+		INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa ON fa.ID = w.TARGETID
+		INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f ON  f.ID=fa.FACTORYID
+		WHERE  w.TargetType =1 and f.Code = '''+ @factoryid + '''
+		ORDER BY fa.NAME,TEMPLATEID,DAYOFWEEKINDEX
+		'
+	execute (@cmd)
+
 	DECLARE cursor_sewingline CURSOR FOR select distinct NAME from #tmpProdTemplate
 
 	OPEN cursor_sewingline
@@ -285,29 +368,63 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 		BEGIN
 			SET @workdate = DATEADD(DAY,1,@workdate)
 			SET @apsworkhour = null
-			--找工廠日曆的工時
-			select TOP(1) @apsworkhour = WorkHour from #tmpProdTemplate 
+			--找產線日曆的工時
+			select TOP(1) @apsworkhour = WorkHour  ,@templateid=TEMPLATEID
+			from #tmpProdTemplate 
 			where Name = @sewinglineid and EnableDate <= @workdate and DayOfWeekindex = (DATEPART(WEEKDAY, @workdate)-1) order by EnableDate desc
-				IF @apsworkhour is not null
+
+			IF @apsworkhour is not null
+				BEGIN
+					SET @foundworkhour = null
+					select @foundworkhour = Hours from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+
+					--檢查是否有已存在的資料
+					SET @found_Detail_StartHour = null
+					SET @found_Detail_EndHour = null
+
+					select @found_Detail_StartHour = StartHour , 
+							@found_Detail_EndHour = EndHour 
+					from [Workhour_Detail] where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date  =CAST( @workdate AS DATE)
+
+					--寫入WorkHour
+					IF @foundworkhour is null
+						insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
+						values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
+					ELSE
 					BEGIN
-						SET @foundworkhour = null
-						select @foundworkhour = Hours from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-						IF @foundworkhour is null
-							insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
-							values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
-						ELSE
-							BEGIN
-								IF @foundworkhour <> @apsworkhour
-									update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-							END
+						IF @foundworkhour <> @apsworkhour
+							update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 					END
-				ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
+
+					--寫入Workhour_Detail (新增 / 更新都在這裡進行)
+
+					--有的話先刪除
+					IF @found_Detail_StartHour IS NOT NULL AND @found_Detail_EndHour IS NOT NULL
 					BEGIN
-						SET @foundworkhour = null
-						select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
-						IF @foundworkhour is not null
-							update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+						DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = CAST( @workdate AS DATE)
 					END
+
+					INSERT INTO [dbo].[Workhour_Detail]([SewingLineID],[FactoryID],[Date],[StartHour],[EndHour])
+					SELECT [SewingLineID]=SewingLineID 
+					,[FactoryID]=@factoryid 
+					,[Date]=CAST( @workdate AS DATE) 
+					,[StartHour] 
+					,[EndHour]
+					FROM #workhour_Detail_line
+					WHERE SewingLineID=@sewinglineid AND TemplateID=@templateid AND DayOfWeekIndex=(DATEPART(WEEKDAY, @workdate)-1)
+					;
+
+				END
+			ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
+				BEGIN
+					SET @foundworkhour = null
+					select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
+					IF @foundworkhour is not null
+					BEGIN
+						update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+						DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = CAST( @workdate AS DATE)
+					END
+				END
 					
 			UPDATE WorkHour set Hours = 0 WHERE  SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate AND HOLIDAY = 1
 			set @_i = @_i+1
@@ -331,6 +448,24 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	and s.SpecialDate >= CONVERT(DATE,GETDATE())
 	group by f.Name,s.SpecialType, s.SpecialDate'
 	execute (@cmd)
+		
+	--取得特殊班表時間的詳細資料(詳細到上班時間為幾點到幾點)
+	CREATE TABLE #workhour_Detail_special(SewingLineID varchar(50),SpecialType int ,SpecialDate Date,StartHour Float,EndHour Float);
+	
+	SET @cmd = '
+	INSERT INTO #workhour_Detail_special
+	SELECT  [SewingLineID]=f.Name
+	,s.SpecialType
+	, s.SpecialDate 
+	,s.STARTHOUR
+	,s.ENDHOUR   
+	FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.SpecialCalendar s
+	INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f ON s.facilityID = f.ID
+	INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa ON f.FactoryID = fa.ID
+	WHERE fa.Code ='''+ @factoryid + '''
+		  and s.SpecialDate >= CONVERT(DATE,GETDATE())
+'
+	execute (@cmd)
 
 	declare @specialtype int
 
@@ -341,6 +476,15 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 		SET @foundworkhour = null
 		select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate
 
+		--檢查是否有已存在的資料
+		SET @found_Detail_StartHour = null
+		SET @found_Detail_EndHour = null
+
+		select @found_Detail_StartHour = StartHour , 
+				@found_Detail_EndHour = EndHour 
+		from [Workhour_Detail] where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = CAST( @workdate AS DATE) 
+
+		--寫入WorkHour
 		IF @foundworkhour is null
 			BEGIN
 				IF @specialtype = 1
@@ -357,6 +501,25 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 						update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 				END
 			END
+
+		--寫入Workhour_Detail (新增 / 更新都在這裡進行)
+		IF @found_Detail_StartHour IS NOT NULL AND @found_Detail_EndHour IS NOT NULL AND  @specialtype = 1		
+		BEGIN
+			DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid AND Date =  CAST( @workdate AS DATE) 
+		END
+		
+		IF @specialtype = 1
+		BEGIN
+			INSERT INTO [dbo].[Workhour_Detail]([SewingLineID],[FactoryID],[Date],[StartHour],[EndHour])
+			SELECT [SewingLineID]=SewingLineID 
+					,[FactoryID]=@factoryid
+					,[Date]= CAST( @workdate AS DATE) 
+					,[StartHour]=STARTHOUR 
+					,[EndHour]=ENDHOUR
+			FROM #workhour_Detail_special
+			WHERE SewingLineID = @sewinglineid AND SpecialType =@specialtype AND SpecialDate =  CAST( @workdate AS DATE) ;
+		END 
+
 		FETCH NEXT FROM cursor_apsspecialtime INTO @sewinglineid,@specialtype,@workdate,@apsworkhour
 	END
 	CLOSE cursor_apsspecialtime
@@ -477,11 +640,14 @@ where fa.FACTORYID = f.ID
 			@apseff numeric(24,10),
 			@article varchar(8),
 			@sizecode varchar(8),
-			@detailalloqty int
+			@detailalloqty int,
+			@LnCurveTemplateID int,
+			@orieff numeric(5,2);
 
 
 	CREATE TABLE #ProdEff (Efficiency numeric(24,10))
 	CREATE TABLE #LnEff (lnEff numeric(24,10))
+	CREATE TABLE #LnCurveTemplate (LnCurveTemplateID int)
 	CREATE TABLE #DynamicEff (BeginDate datetime,Eff numeric(24,10))
 
 	OPEN cursor_sewingschedule
@@ -515,6 +681,9 @@ where fa.FACTORYID = f.ID
 
 				delete from #ProdEff 
 
+				--學習曲線(Learning Curve)算進來之前先記錄下來，用於寫入SewingSchedul.Orieff
+				SET @orieff=CONVERT(numeric(5,2),isnull(@maxeff*100,0))
+
 				SET @apseff = null
 				--否有設定LearningCurve
 				SET @cmd = 'insert into #LnEff 
@@ -525,6 +694,18 @@ From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l
 where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
 				execute (@cmd)
 				select @apseff = isnull((lnEff/100),0) from #LnEff
+
+				--取得生產計劃(ProductionEvent) 是設定哪一個學習曲線樣板(LnCurveTemplateID)--
+				
+				SET @cmd = '
+				INSERT INTO #LnCurveTemplate
+				SELECT TOP 1  L.LNCURVETEMPLATEID
+				FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply L
+				INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail LD ON L.ID=LD.ApplyID
+				WHERE LD.ProductionEventID='+CONVERT(varchar(max),@apsno) + '
+				'
+				execute (@cmd)
+				select @LnCurveTemplateID = LNCURVETEMPLATEID from #LnCurveTemplate
 
 				IF @apseff is not null and @apseff <> 0
 					SET @maxeff = @maxeff*@apseff
@@ -573,7 +754,10 @@ where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid 
 						,APSNo
 						,OrderFinished
 						,AddName
-						,AddDate)
+						,AddDate
+						,LearnCurveID
+						,OriEff
+						)
 						values (
 						@orderid
 						,@combotype
@@ -592,7 +776,10 @@ where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid 
 						,@apsno
 						,(select Finished from Orders where ID = @orderid)
 						,@login
-						,@editdate);
+						,@editdate
+						,@LnCurveTemplateID
+						,@orieff
+						);
 
 						--取最新的ID
 						select @sewingscheduleid = ID from SewingSchedule where FactoryID = @factoryid and OrderID = @orderid and ComboType = @combotype and APSNo = @apsno
@@ -643,6 +830,10 @@ where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid 
 
 						delete from #ProdEff 
 
+						
+						--學習曲線(Learning Curve)算進來之前先記錄下來，用於寫入SewingSchedul.Orieff
+						SET @orieff=CONVERT(numeric(5,2),isnull(@maxeff*100,0))
+
 						SET @apseff = null
 						--否有設定LearningCurve
 						SET @cmd = 'insert into #LnEff 
@@ -672,6 +863,18 @@ Order by fe.BeginDate Desc'
 						execute (@cmd)
 						select @apseff = Eff from #DynamicEff
 						
+						--取得生產計劃(ProductionEvent) 是設定哪一個學習曲線樣板(LnCurveTemplateID)--
+				
+						SET @cmd = '
+						INSERT INTO #LnCurveTemplate
+						SELECT TOP 1  L.LNCURVETEMPLATEID
+						FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply L
+						INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail LD ON L.ID=LD.ApplyID
+						WHERE LD.ProductionEventID='+CONVERT(varchar(max),@apsno) + '
+						'
+						execute (@cmd)
+						select @LnCurveTemplateID = LNCURVETEMPLATEID from #LnCurveTemplate
+
 						IF @apseff is not null and @apseff <>0
 							SET @maxeff = @maxeff*@apseff
 
@@ -688,6 +891,8 @@ Order by fe.BeginDate Desc'
 								set SewingLineID = @sewinglineid, AlloQty = isnull(@alloqty,0), Inline = @inline, Offline = @offline, Sewer = isnull(@sewer,0), 
 									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(@set,0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
 									WorkHour = CONVERT(numeric(8,3),isnull(@duration,0)), EditName = @login, EditDate = @editdate
+									,LearnCurveID = @LnCurveTemplateID
+									,OriEff = @orieff
 								where ID = @sewingscheduleid;
 
 								--更新SewingSchedule_Detail
