@@ -121,6 +121,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(897, 507);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayStyleApprove2);
@@ -194,10 +198,12 @@
             this.detailcont.Controls.Add(this.txttpeuserHandle);
             this.detailcont.Controls.Add(this.txttpeuserSMR);
             this.detailcont.Controls.Add(this.txtcdcode);
+            this.detailcont.Size = new System.Drawing.Size(897, 469);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 469);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -1085,11 +1091,8 @@
             this.DefaultControl = "txtStyleNo";
             this.DefaultControlForEdit = "txtuserLocalMR";
             this.DefaultOrder = "ID,SeasonID";
-            this.IsDeleteOnBrowse = false;
-            this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportNew = false;
             this.Name = "P04";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "P04. Style Management";
