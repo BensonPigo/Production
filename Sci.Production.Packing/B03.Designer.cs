@@ -91,7 +91,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(716, 293);
+            this.browse.Size = new System.Drawing.Size(716, 318);
             // 
             // tabs
             // 
@@ -373,7 +373,7 @@
             this.chkIsRotate.Location = new System.Drawing.Point(341, 228);
             this.chkIsRotate.Name = "chkIsRotate";
             this.chkIsRotate.Size = new System.Drawing.Size(94, 24);
-            this.chkIsRotate.TabIndex = 19;
+            this.chkIsRotate.TabIndex = 10;
             this.chkIsRotate.Text = "Is Rotate";
             this.chkIsRotate.UseVisualStyleBackColor = true;
             // 
