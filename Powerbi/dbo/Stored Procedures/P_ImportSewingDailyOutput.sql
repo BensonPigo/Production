@@ -78,8 +78,8 @@ where 1=1
 and s.Shift <>''O''
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))
-and (s.OutputDate between CAST(DATEADD(day,-9,'''+@SewingoutputDate+''') AS date) and  CAST(DATEADD(day,-2,'''+@SewingoutputDate+''') AS date) 
-	OR cast(s.EditDate as date) between CAST(DATEADD(day,-9,'''+@SewingoutputDate+''') AS date) and  CAST(DATEADD(day,-2,'''+@SewingoutputDate+''') AS date) )
+and (s.OutputDate between CAST(DATEADD(day,-30,'''+@SewingoutputDate+''') AS date) and  CAST(DATEADD(day,-2,'''+@SewingoutputDate+''') AS date) 
+	OR cast(s.EditDate as date) between CAST(DATEADD(day,-30,'''+@SewingoutputDate+''') AS date) and  CAST(DATEADD(day,-2,'''+@SewingoutputDate+''') AS date) )
 -- AND CAST('''+@SewingoutputDate+'''  AS date)
 and f.Type != ''S''
 
@@ -315,6 +315,21 @@ WHEN NOT MATCHED THEN
            ,s.SewingReasonDesc
 		   ,s.SciDelivery
 		  );
+
+delete t
+from P_SewingDailyOutput t 
+where t.OutputDate between CAST(DATEADD(day,-30,'''+@SewingoutputDate+''') AS date) and  CAST(DATEADD(day,-2,'''+@SewingoutputDate+''') AS date) 
+and exists (select OrderID from #Final f where t.FactoryID=f.FactoryID  AND t.MDivisionID=f.MDivisionID ) 
+and not exists (
+select OrderID from #Final s 
+	where t.FactoryID=s.FactoryID  
+	AND t.MDivisionID=s.MDivisionID 
+	AND t.SewingLineID=s.SewingLineID 
+	AND t.Team=s.Team 
+	AND t.Shift=s.Shift 
+	AND t.orderid=s.orderid 
+	AND t.ComboType=s.ComboType 
+	AND t.OutputDate = s.OutputDate);
 '
 
 SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3
