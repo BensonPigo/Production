@@ -15,7 +15,9 @@ BEGIN
 
     DECLARE @StartDate as Date 
 	DECLARE @HolidayB as int = 0, @HolidayE as int = 1 
+	DECLARE @DiffDateCh as int 
 
+	set @DiffDateCh = @DiffDate
 	select @StartDate = dateadd(d, @DiffDate * -1, @EndDate) 
 
 	if (@FactoryID = '' or @FactoryID is null)
@@ -26,7 +28,7 @@ BEGIN
 
 			;WITH WorkDays
 			AS(
-				SELECT @startDate AS WorkDay, @DiffDate AS DiffDays
+				SELECT @startDate AS WorkDay, @DiffDateCh AS DiffDays
 				UNION ALL
 				SELECT DATEADD(dd, 1, WorkDay),DiffDays -1
 				FROM WorkDays wd
@@ -40,6 +42,9 @@ BEGIN
 			)
 			select @HolidayE =  cntHoliday
 			from cntHoliday  
+
+			set @DiffDateCh = @DiffDate + @HolidayE
+			select @StartDate = dateadd(d, @DiffDateCh * -1, @EndDate) 
 		end  
 	end
 	else
@@ -50,7 +55,7 @@ BEGIN
 
 			;WITH WorkDays
 			AS(
-				SELECT @startDate AS WorkDay, @DiffDate AS DiffDays
+				SELECT @startDate AS WorkDay, @DiffDateCh AS DiffDays
 				UNION ALL
 				SELECT DATEADD(dd, 1, WorkDay),DiffDays -1
 				FROM WorkDays wd
@@ -64,8 +69,11 @@ BEGIN
 			)
 			select @HolidayE =  cntHoliday
 			from cntHoliday  
+
+			set @DiffDateCh = @DiffDate + @HolidayE 
+			select @StartDate = dateadd(d, @DiffDateCh * -1, @EndDate) 
 		end  
 	end
 	
-	return dateadd(d, (@HolidayE + @DiffDate) * -1, @EndDate)
+	return dateadd(d, @DiffDateCh * -1, @EndDate)
 END
