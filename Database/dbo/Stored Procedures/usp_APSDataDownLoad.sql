@@ -504,7 +504,7 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 			END
 
 		--寫入Workhour_Detail (新增 / 更新都在這裡進行)
-		IF @found_Detail_StartHour IS NOT NULL AND @found_Detail_EndHour IS NOT NULL AND  @specialtype = 1		
+		IF @found_Detail_StartHour IS NOT NULL AND @found_Detail_EndHour IS NOT NULL
 		BEGIN
 			DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid AND Date =  CAST( @workdate AS DATE) AND FactoryID = @factoryid
 		END
