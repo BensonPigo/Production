@@ -480,7 +480,7 @@ where WorkOrderUkey={0}", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                Regex NumberPattern = new Regex("^[0-9]{1,3}$");
+                Regex NumberPattern = new Regex("^[0-9]{1,6}$");
                 if (!NumberPattern.IsMatch(e.FormattedValue.ToString())) { dr["Cutno"] = DBNull.Value; }
             };
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
@@ -2032,6 +2032,7 @@ END";
             newRow["SCIRefno"] = OldRow["SCIRefno"];
             newRow["FabricCombo"] = OldRow["FabricCombo"];
             newRow["FabricPanelCode"] = OldRow["FabricPanelCode"];
+            newRow["Cutno"] = DBNull.Value;
             if (isAdditionalrevisedmarker) newRow["isbyAdditionalRevisedMarker"] = 2;
             else newRow["isbyAdditionalRevisedMarker"] = 0;
 
@@ -2363,7 +2364,7 @@ END";
                         return false;
                     } 
                 } 
-            } 
+            }
 
             var query = DetailDatas.Where(x => x.RowState != DataRowState.Deleted &&
                                     (MyUtility.Check.Empty(x["MarkerName"]) ||
