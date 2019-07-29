@@ -341,7 +341,7 @@ order by no
 
             // 插圖 Picture1
             intRowsStart++;
-            string destination_path = MyUtility.GetValue.Lookup("select PicPath from System WITH (NOLOCK) ", null);
+            string destination_path = MyUtility.GetValue.Lookup("select StyleSketch from System WITH (NOLOCK) ", null);
             string picture12 = string.Format("select Picture1, Picture2 from Style where id = '{0}' and BrandID = '{1}' and SeasonID = '{2}'", style, brand, season);
             DataRow pdr;
             MyUtility.Check.Seek(picture12, out pdr);
