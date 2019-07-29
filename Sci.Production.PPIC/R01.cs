@@ -1008,7 +1008,7 @@ select
 	[OfflineDate] = Cast(Offline as date),
 	Inline,
 	Offline,
-	OriEff,
+	[OriEff] = isnull(OriEff,MaxEff),
 	LearnCurveID,
 	Sewer,
 	[AlloQty] = sum(AlloQty)
@@ -1028,7 +1028,7 @@ group by	APSNo ,
 			FactoryID,
 			Inline,
 			Offline,
-			OriEff,
+			isnull(OriEff,MaxEff),
 			LearnCurveID,
 			Sewer
 
@@ -1231,6 +1231,13 @@ outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from #A
 
 
 --展開計畫日期資料
+select wkd.SewingLineID,wkd.FactoryID,wkd.Date,[StartHour] = min(wkd.StartHour),[EndHour] = max(wkd.EndHour)
+into #Workhour_Detail
+from #APSList al
+inner join #WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
+inner join Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and wkd.SewingLineID = al.SewingLineID and wkd.Date = wd.WorkDate
+group by wkd.SewingLineID,wkd.FactoryID,wkd.Date
+
 select 
 al.APSNo,
 al.LearnCurveID,
@@ -1241,7 +1248,7 @@ wd.WorkDate,
 into #APSExtendWorkDate
 from #APSList al
 inner join #WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
-inner join Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and wkd.SewingLineID = al.SewingLineID and wkd.Date = wd.WorkDate
+inner join #Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and wkd.SewingLineID = al.SewingLineID and wkd.Date = wd.WorkDate
 
 --取得LearnCurve Efficiency by Work Date
 select 
@@ -1250,7 +1257,7 @@ awd.SewingStart,
 awd.SewingEnd,
 apo.SewingOutput,
 [WorkingTime] = iif(DATEDIFF(ss,awd.SewingStart,awd.SewingEnd) < 0,0,DATEDIFF(ss,awd.SewingStart,awd.SewingEnd)),
-[LearnCurveEff] = ISNULL(lcd.Efficiency,LastEff.val)
+[LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100))
 into #APSExtendWorkDateFin
 from #APSExtendWorkDate awd
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
@@ -1302,6 +1309,7 @@ inner join #APSSewingTime apt on apm.APSNo = apt.APSNo
 inner join #APSExtendWorkDateFin apf on apt.APSNo = apf.APSNo
 outer apply(select [val] = floor(cast(apf.WorkingTime as float) /cast( apt.TotalSewingTime as float) * cast(apm.Sewer as float) * cast(apm.OriEff as float) /100.0 * cast(apf.LearnCurveEff as float) / 100.0)) StdOutput
 outer apply(select [val] = apf.WorkingTime / 3600) DayWorkHour
+order by apm.APSNo,apf.SewingStart
 
 drop table	#APSList,#APSMain,#APSSewingTime,#APSExtendWorkDateFin,#APSOrderQty,#APSCuttingOutput,#APSPackingQty,#APSSewingOutput,
 			#tmpOrderArtwork,#APSListArticle,#APSColumnGroup,#WorkDate,#APSExtendWorkDate
