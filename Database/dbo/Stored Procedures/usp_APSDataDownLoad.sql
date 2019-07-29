@@ -401,7 +401,7 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 					--有的話先刪除
 					IF @found_Detail_StartHour IS NOT NULL AND @found_Detail_EndHour IS NOT NULL
 					BEGIN
-						DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = CAST( @workdate AS DATE)
+						DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid AND Date =  CAST( @workdate AS DATE) AND FactoryID = @factoryid
 					END
 
 					INSERT INTO [dbo].[Workhour_Detail]([SewingLineID],[FactoryID],[Date],[StartHour],[EndHour])
@@ -422,7 +422,7 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 					IF @foundworkhour is not null
 					BEGIN
 						update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-						DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = CAST( @workdate AS DATE)
+						DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid AND Date =  CAST( @workdate AS DATE) AND FactoryID = @factoryid
 					END
 				END
 					
@@ -454,8 +454,8 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	
 	SET @cmd = '
 	INSERT INTO #workhour_Detail_special
-	SELECT   [SewingLineID]=fa.CODE
-			,[FactoryID]=f.NAME
+	SELECT   [SewingLineID]=f.NAME
+			,[FactoryID]=fa.CODE
 			,s.SpecialType
 			, s.SpecialDate 
 			,s.STARTHOUR
@@ -506,7 +506,7 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 		--寫入Workhour_Detail (新增 / 更新都在這裡進行)
 		IF @found_Detail_StartHour IS NOT NULL AND @found_Detail_EndHour IS NOT NULL AND  @specialtype = 1		
 		BEGIN
-			DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid AND Date =  CAST( @workdate AS DATE) 
+			DELETE FROM [Workhour_Detail]  WHERE SewingLineID = @sewinglineid AND Date =  CAST( @workdate AS DATE) AND FactoryID = @factoryid
 		END
 		
 		IF @specialtype = 1
