@@ -1075,8 +1075,8 @@ so.OutputDate,
 into #APSSewingOutput
 from #APSList aps
 inner join SewingSchedule s with (nolock) on aps.APSNo = s.APSNo
-inner join SewingOutput_Detail sod with (nolock) on s.OrderID = sod.OrderID
-inner join SewingOutput so with (nolock) on so.ID = sod.ID
+inner join SewingOutput_Detail sod with (nolock) on s.OrderID = sod.OrderID and s.ComboType = sod.ComboType
+inner join SewingOutput so with (nolock) on so.ID = sod.ID and s.SewingLineID = so.SewingLineID
 group by	aps.APSNo,
 			so.OutputDate
 
@@ -1297,7 +1297,7 @@ select
 awd.APSNo,
 awd.SewingStart,
 awd.SewingEnd,
-apo.SewingOutput,
+[SewingOutput] = isnull(apo.SewingOutput,0),
 awd.WorkingTime,
 [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100))
 into #APSExtendWorkDateFin
