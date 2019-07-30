@@ -803,7 +803,7 @@ Insert into VNConsumption_Article (
 
                         for (int i = 0; i < selectedData.Length; i++)
                         {
-                            DataRow[] selectedDetailData = this.AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
+                            DataRow[] selectedDetailData = this.AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'  and Category = '{4}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(selectedData[i]["NLCode"]), MyUtility.Convert.GetString(dr["Category"])));
                             #region 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
                             bool isVNConsumption_Detail_DetailHasDupData = !Prgs.CheckVNConsumption_Detail_Dup(selectedDetailData, false);
                             if (isVNConsumption_Detail_DetailHasDupData)
