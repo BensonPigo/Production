@@ -873,7 +873,10 @@ where 1=1
                 scope.Complete();
             }
 
-            Sci.Production.Sewing.P01.SendMail();
+            if (MyUtility.Check.Seek($@"select 1 from Factory where type !='S' and id = '{Sci.Env.User.Factory}'"))
+            {
+                Sci.Production.Sewing.P01.SendMail();
+            }
         }
 
         protected override void ClickRecall()
