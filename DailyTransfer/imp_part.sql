@@ -470,7 +470,7 @@ update t
 					t.APDATE = s.APDATE,
 					t.VoucherID = s.VoucherID,
 					t.Price = s.Price,
-					t.Qty = s.Qty
+					t.Qty = s.Qty,
 					t.ExportID = s.ExportID
 	when not matched by target then
 		insert	(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty,ExportID)
