@@ -1008,6 +1008,8 @@ select
 	[OfflineDate] = Cast(Offline as date),
 	Inline,
 	Offline,
+    [InlineHour] = DATEDIFF(ss,Cast(Inline as date),Inline) / 3600.0	  ,
+    [OfflineHour] = DATEDIFF(ss,Cast(Offline as date),Offline) / 3600.0	  ,
 	[OriEff] = isnull(OriEff,MaxEff),
 	LearnCurveID,
 	Sewer,
@@ -1231,24 +1233,64 @@ outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from #A
 
 
 --展開計畫日期資料
-select wkd.SewingLineID,wkd.FactoryID,wkd.Date,[StartHour] = min(wkd.StartHour),[EndHour] = max(wkd.EndHour)
-into #Workhour_Detail
+select  al.APSNo,
+        al.LearnCurveID,
+        wkd.SewingLineID,
+        wkd.FactoryID,
+        [WorkDate] = cast( wkd.Date as datetime),
+		al.inline,
+		al.Offline,
+		al.inlineDate,
+		al.OfflineDate,
+        [StartHour] = cast(wkd.StartHour as float),
+        [EndHour] = cast(wkd.EndHour as float),
+        al.InlineHour,
+        al.OfflineHour
+into #Workhour_step1
 from #APSList al
 inner join #WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
-inner join Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and wkd.SewingLineID = al.SewingLineID and wkd.Date = wd.WorkDate
-group by wkd.SewingLineID,wkd.FactoryID,wkd.Date
+inner join Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and 
+                                                wkd.SewingLineID = al.SewingLineID and 
+                                                wkd.Date = wd.WorkDate
+
+--刪除每個計畫inline,offline當天超過時間的班表                                                
+delete #Workhour_step1 where WorkDate = InlineDate and EndHour <= InlineHour
+delete #Workhour_step1 where WorkDate = OfflineDate and StartHour >= Offline
+
+--排出每天班表順序
+select  APSNo,
+        LearnCurveID,
+        SewingLineID,
+        FactoryID,
+        WorkDate,
+		inline,
+		Offline,
+		inlineDate,
+		OfflineDate,
+        StartHour,
+        EndHour,
+        InlineHour,
+        OfflineHour,
+		[StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate ORDER BY StartHour),
+		[EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate ORDER BY EndHour desc)
+into #Workhour_step2
+from #Workhour_step1	
+
+--依照班表順序，將inline,offline當天StartHour與EndHour update與inline,offline相同
+update #Workhour_step2 set StartHour = InlineHour where WorkDate = InlineDate and StartHourSort = 1
+update #Workhour_step2 set EndHour = OfflineHour where WorkDate = OfflineDate and EndHourSort = 1
 
 select 
-al.APSNo,
-al.LearnCurveID,
-[SewingStart] = iif(al.InlineDate = wd.WorkDate, al.Inline, DATEADD(mi, wkd.StartHour * 60,   wd.WorkDate) ),
-[SewingEnd] = iif(al.OfflineDate = wd.WorkDate, al.Offline, DATEADD(mi, wkd.EndHour * 60,   wd.WorkDate) ),
-wd.WorkDate,
-[WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY al.APSNo ORDER BY wd.WorkDate)
+APSNo,
+LearnCurveID,
+[SewingStart] = DATEADD(mi, min(StartHour) * 60,   WorkDate),
+[SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
+WorkDate,
+[WorkingTime] = sum(EndHour - StartHour),
+[WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo ORDER BY WorkDate)
 into #APSExtendWorkDate
-from #APSList al
-inner join #WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
-inner join #Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and wkd.SewingLineID = al.SewingLineID and wkd.Date = wd.WorkDate
+from #Workhour_step2 
+group by APSNo,LearnCurveID,WorkDate
 
 --取得LearnCurve Efficiency by Work Date
 select 
@@ -1312,7 +1354,7 @@ outer apply(select [val] = apf.WorkingTime / 3600) DayWorkHour
 order by apm.APSNo,apf.SewingStart
 
 drop table	#APSList,#APSMain,#APSSewingTime,#APSExtendWorkDateFin,#APSOrderQty,#APSCuttingOutput,#APSPackingQty,#APSSewingOutput,
-			#tmpOrderArtwork,#APSListArticle,#APSColumnGroup,#WorkDate,#APSExtendWorkDate
+			#tmpOrderArtwork,#APSListArticle,#APSColumnGroup,#WorkDate,#APSExtendWorkDate,#Workhour_step1,#Workhour_step2
 ");
             #endregion
 
