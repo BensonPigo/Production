@@ -526,7 +526,9 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	CLOSE cursor_apsspecialtime
 	DEALLOCATE cursor_apsspecialtime
 	END
-
+	
+	DELETE a FROM [Workhour_Detail] a
+	WHERE EXISTS( SELECT 1 FROM WorkHour WHERE Holiday=1 AND SewingLineID = a.SewingLineID AND Date =  a.Date AND FactoryID = a.FactoryID )
 
 	--[LearnCurve][LearnCurve_Detail]
 	BEGIN
