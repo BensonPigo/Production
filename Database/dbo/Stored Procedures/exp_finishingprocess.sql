@@ -162,6 +162,8 @@ BEGIN
 	[CmdTime]		 [dateTime] NOT NULL,
 	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
 	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0)),
+	IsRotate		 [bit] NOT NULL DEFAULT ((0)),
+	FilePath		 [varchar](80) NOT NULL DEFAULT (('')),
  CONSTRAINT [PK_ShippingMark] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC,	
@@ -481,6 +483,8 @@ USING(
 	,[Is2Side] = Is2Side ,[FileName]=''
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	,[IsRotate]
+	,[FilePath] = (select TOP 1 ShippingMarkPath from Production.dbo.System)
 	FROM Production.dbo.ShippingMarkpicture 
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
@@ -495,12 +499,14 @@ UPDATE SET
 	t.FileName = s.FileName,
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = 0,
-	t.GenSongUpdated = 0
+	t.GenSongUpdated = 0,
+	t.IsRotate = s.IsRotate,
+	t.FilePath = s.FilePath
 WHEN NOT MATCHED BY TARGET THEN
 INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
-		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated])
+		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[IsRotate] ,[FilePath])
 Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
-		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
+		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[IsRotate] ,s.[FilePath]);
 
 --09. 轉出區間 當AddDate or EditDate =今天
 MERGE ShippingMarkPic_Detail AS T

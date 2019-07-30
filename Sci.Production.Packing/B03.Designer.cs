@@ -47,6 +47,7 @@
             this.lblSeq = new Sci.Win.UI.Label();
             this.numSeq = new Sci.Win.UI.NumericBox();
             this.chkIs2Side = new Sci.Win.UI.CheckBox();
+            this.chkIsRotate = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -57,10 +58,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(716, 293);
+            this.detail.Size = new System.Drawing.Size(716, 318);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsRotate);
             this.detailcont.Controls.Add(this.chkIs2Side);
             this.detailcont.Controls.Add(this.numSeq);
             this.detailcont.Controls.Add(this.lblSeq);
@@ -80,20 +82,20 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(716, 255);
+            this.detailcont.Size = new System.Drawing.Size(716, 280);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 255);
+            this.detailbtm.Location = new System.Drawing.Point(0, 280);
             this.detailbtm.Size = new System.Drawing.Size(716, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(716, 293);
+            this.browse.Size = new System.Drawing.Size(716, 318);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(724, 322);
+            this.tabs.Size = new System.Drawing.Size(724, 347);
             // 
             // label1
             // 
@@ -362,11 +364,24 @@
             this.chkIs2Side.Text = "Is 2 Side";
             this.chkIs2Side.UseVisualStyleBackColor = true;
             // 
+            // chkIsRotate
+            // 
+            this.chkIsRotate.AutoSize = true;
+            this.chkIsRotate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsRotate", true));
+            this.chkIsRotate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.chkIsRotate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsRotate.Location = new System.Drawing.Point(341, 228);
+            this.chkIsRotate.Name = "chkIsRotate";
+            this.chkIsRotate.Size = new System.Drawing.Size(94, 24);
+            this.chkIsRotate.TabIndex = 10;
+            this.chkIsRotate.Text = "Is Rotate";
+            this.chkIsRotate.UseVisualStyleBackColor = true;
+            // 
             // B03
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(724, 355);
+            this.ClientSize = new System.Drawing.Size(724, 380);
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
@@ -408,5 +423,6 @@
         private Win.UI.NumericBox numSeq;
         private Win.UI.Label lblSeq;
         private Win.UI.CheckBox chkIs2Side;
+        private Win.UI.CheckBox chkIsRotate;
     }
 }
