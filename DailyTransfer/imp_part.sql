@@ -459,10 +459,10 @@ update t
 
 ------------------MachinePO_Detail_TPEAP----------------------
 	Merge	Machine.[dbo].[MachinePO_Detail_TPEAP] as t
-	using	(select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty) 
+	using	(select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty), b.ExportID
 				from Machine.[dbo].[MachinePO_Detail] a
 				inner join Trade_To_PMS.dbo.MmsAP b on a.ID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
-				group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price
+				group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price, b.ExportID
 				) as s
 	on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
 	when matched then 
@@ -471,9 +471,10 @@ update t
 					t.VoucherID = s.VoucherID,
 					t.Price = s.Price,
 					t.Qty = s.Qty
+					t.ExportID = s.ExportID
 	when not matched by target then
-		insert	(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty)
-			values(s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty);
+		insert	(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty,ExportID)
+			values(s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty,s.ExportID);
 
 ------------------MiscPO_Detail_TPEAP----------------------
 	Merge	Machine.[dbo].[MiscPO_Detail_TPEAP] as t
