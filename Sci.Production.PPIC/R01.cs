@@ -1255,7 +1255,7 @@ inner join Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and
 
 --刪除每個計畫inline,offline當天超過時間的班表                                                
 delete #Workhour_step1 where WorkDate = InlineDate and EndHour <= InlineHour
-delete #Workhour_step1 where WorkDate = OfflineDate and StartHour >= Offline
+delete #Workhour_step1 where WorkDate = OfflineDate and StartHour >= OfflineHour
 
 --排出每天班表順序
 select  APSNo,
@@ -1286,7 +1286,7 @@ LearnCurveID,
 [SewingStart] = DATEADD(mi, min(StartHour) * 60,   WorkDate),
 [SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
 WorkDate,
-[WorkingTime] = sum(EndHour - StartHour),
+[WorkingTime] = sum(EndHour - StartHour)  * 3600.0,
 [WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo ORDER BY WorkDate)
 into #APSExtendWorkDate
 from #Workhour_step2 
@@ -1298,7 +1298,7 @@ awd.APSNo,
 awd.SewingStart,
 awd.SewingEnd,
 apo.SewingOutput,
-[WorkingTime] = iif(DATEDIFF(ss,awd.SewingStart,awd.SewingEnd) < 0,0,DATEDIFF(ss,awd.SewingStart,awd.SewingEnd)),
+awd.WorkingTime,
 [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100))
 into #APSExtendWorkDateFin
 from #APSExtendWorkDate awd
@@ -1350,7 +1350,7 @@ from #APSMain apm
 inner join #APSSewingTime apt on apm.APSNo = apt.APSNo
 inner join #APSExtendWorkDateFin apf on apt.APSNo = apf.APSNo
 outer apply(select [val] = floor(cast(apf.WorkingTime as float) /cast( apt.TotalSewingTime as float) * cast(apm.Sewer as float) * cast(apm.OriEff as float) /100.0 * cast(apf.LearnCurveEff as float) / 100.0)) StdOutput
-outer apply(select [val] = apf.WorkingTime / 3600) DayWorkHour
+outer apply(select [val] = apf.WorkingTime / 3600.0) DayWorkHour
 order by apm.APSNo,apf.SewingStart
 
 drop table	#APSList,#APSMain,#APSSewingTime,#APSExtendWorkDateFin,#APSOrderQty,#APSCuttingOutput,#APSPackingQty,#APSSewingOutput,
