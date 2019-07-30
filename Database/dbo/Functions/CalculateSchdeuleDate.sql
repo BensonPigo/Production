@@ -14,7 +14,7 @@ BEGIN
 	end 
 
     DECLARE @StartDate as Date 
-	DECLARE @HolidayB as int = 0, @HolidayE as int = 1 
+	DECLARE @HolidayB as int = 1, @HolidayE as int = 0
 	DECLARE @DiffDateCh as int 
 
 	set @DiffDateCh = @DiffDate
