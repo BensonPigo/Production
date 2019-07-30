@@ -1243,6 +1243,18 @@ and ID = @id ";
         {
             string fromTag = this.NametoTag(this.comboFrom.Text);
             string toTag = this.NametoTag(this.comboTO.Text);
+            if (MyUtility.Check.Empty(this.txtFrom.Text))
+            {
+                MyUtility.Msg.WarningBox($"Please select < From {this.comboFrom.Text} >");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtTO.Text))
+            {
+                MyUtility.Msg.WarningBox($"Please select < To {this.comboTO.Text} >");
+                return;
+            }
+
             string fromCountry = this.ConverToCountry(this.comboFrom.Text, this.txtFrom.Text);
             string toCountry = this.ConverToCountry(this.comboTO.Text, this.txtTO.Text);
             string sqlCmd = $@"
