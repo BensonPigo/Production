@@ -1209,17 +1209,17 @@ OrderMax.MTLETA,
 [ArtworkType] = ArtworkType.val,
 OrderMax.InspDate,
 [Remarks] = Remarks.val,
-aco.CuttingOutput,
-apo.ScannedQty,
-apo.ClogQty,
+[CuttingOutput] = isnull(aco.CuttingOutput,0),
+[ScannedQty] = isnull(apo.ScannedQty,0),
+[ClogQty] = isnull(apo.ClogQty,0),
 al.MDivisionID,
 al.FactoryID,
 al.Sewer
 into #APSMain
 from #APSList al
-inner join #APSCuttingOutput aco on al.APSNo = aco.APSNo
-inner join #APSOrderQty aoo on al.APSNo = aoo.APSNo
-inner join #APSPackingQty apo on al.APSNo = apo.APSNo
+left join #APSCuttingOutput aco on al.APSNo = aco.APSNo
+left join #APSOrderQty aoo on al.APSNo = aoo.APSNo
+left join #APSPackingQty apo on al.APSNo = apo.APSNo
 outer apply (SELECT val =  Stuff((select distinct concat( ',',CustPONo)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CustPO
 outer apply (SELECT val =  Stuff((select distinct concat( ',',SP)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as SP
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Colorway)   from #APSListArticle where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Colorway
