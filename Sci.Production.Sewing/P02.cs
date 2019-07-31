@@ -780,7 +780,7 @@ WHERE ID = 'SCIMIS'
 ");
 
                 #region 填寫Mail需要的資料
-                string ccAddress = string.Empty;
+                string ccAddress = "planning@sportscity.com.tw;team3@sportscity.com.tw";
                 string subject = "Unlock Sewing(Mockup)";
                 string od = string.Empty;
 
@@ -805,7 +805,7 @@ Remark : {callReason.ReturnRemark}
 
                 // 塞進MailTo物件
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
-
+                email.EditMode = false;
                 email.ShowDialog(this);
 
                 if (email.DialogResult == DialogResult.OK)

@@ -2403,7 +2403,7 @@ FOR XML PATH('')
 
 ");
 
-                string ccAddress = string.Empty;
+                string ccAddress = "planning@sportscity.com.tw;team3@sportscity.com.tw";
                 string subject = "Request Unlock Sewing";
 
                 string od = string.Empty;
@@ -2423,7 +2423,9 @@ Reason : {MyUtility.GetValue.Lookup($@"select name from Reason where ReasonTypeI
 Remark : {callReason.ReturnRemark}
 ";
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
+                email.EditMode = false;
                 email.ShowDialog(this);
+
                 if (email.DialogResult == DialogResult.OK)
                 {
                     this.btnRequestUnlock.Enabled = false;
