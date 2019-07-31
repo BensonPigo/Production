@@ -322,7 +322,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             numTotal.Text = (Convert.ToDecimal(numVat.Text) + Convert.ToDecimal(numAmount.Text)).ToString();
             txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
-            btnIrrPriceReason.Enabled = !this.EditMode;
+            //btnIrrPriceReason.Enabled = !this.EditMode;  //ISP20190976
             //btnIrprice.Enabled = !this.EditMode;
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();

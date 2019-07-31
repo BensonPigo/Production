@@ -138,10 +138,16 @@ namespace Sci.Production.Subcon
 
             if (this.EditMode)
             {
+                DataTable ModifyTable = (DataTable)listControlBindingSource1.DataSource;
+
+                if (ModifyTable.Select("SubconReasonID=''").Count() > 0)
+                {
+                    MyUtility.Msg.WarningBox("Reason can not be empty.");
+                    return;
+                }
                 gridgridIrregularPrice.IsEditingReadOnly = true;
 
                 StringBuilder sql = new StringBuilder();
-                DataTable ModifyTable = (DataTable)listControlBindingSource1.DataSource;
                 //ModifyTable 去掉 OriginDT_FromDB，剩下的不是新增就是修改
                 var Insert_Or_Update = ModifyTable.AsEnumerable().Except(OriginDT_FromDB.AsEnumerable(), DataRowComparer.Default).Where(o => o.Field<string>("SubconReasonID").Trim() != "");
 
@@ -369,9 +375,15 @@ SELECT  ap.ID
 		,Orders.POID
 		,[OID]=apd.OrderId
 		,ap.currencyid  --維護時檢查用，所以先註解留著
-		,apd.Price
-		,apd.PoQty
-		,apd.PoQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) PO_amt
+		--,apd.PoQty
+		--,apd.PoQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) PO_amt
+
+		-- 已關單代表不會再使用這一張採購單進行「外發」，但是已經外發（arm Out）的數量後續還是會建立請款，因此已關單的要計算的是已實際外發的數量
+		,[Qty]=IIF(ap.Status!='Closed',apd.PoQty ,apd.Farmout)
+		,[PO_amt]= IIF(ap.Status!='Closed'
+						,apd.PoQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) 
+						,apd.Farmout * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) )
+
 		,dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) rate
 INTO #total_PO
 FROM ArtworkPO ap WITH (NOLOCK) 
@@ -388,8 +400,15 @@ WHERE  EXiSTS  (
 SELECT   LPD.POID
 		,LP.currencyid
 		, [Price]=LPd.Price  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購單價
-		, LPD.Qty localap_qty  --採購數量
-		, [LocalPo_amt]=LPD.Price* LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
+
+		--, LPD.Qty localap_qty  --採購數量
+		--, [LocalPo_amt]=LPD.Price* LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
+		-- 已關單代表不會再使用這一張採購單進行「收料」，但是已經收料（In Qty ）的數量後續還是會建立請款，因此已關單的要計算的是已實際收料的數量
+		, [Qty]=IIF(LP.Status!='Closed',LPD.Qty ,LPD.InQty)  --數量
+		, [LocalPo_amt]=IIF(LP.Status!='Closed'
+							, LPD.Price * LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
+							,LPD.Price * LPD.InQty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate))
+
 		, dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) rate
 INTO #Embroidery_List
 FROM LocalPO LP
@@ -438,7 +457,8 @@ outer apply(--繡花成本，根據POID，作分組加總
 
 GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,t.POID ,Standard.order_amt ,Standard.order_qty ,po.Po_Amt ,Standard.order_qty ,Embroidery.LocalPo_amt
 
-DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO ,#Embroidery_List
+DROP TABLE #tmp_AllOrders --,#BePurchased 
+,#total_PO ,#Embroidery_List
 
 
 " + Environment.NewLine);

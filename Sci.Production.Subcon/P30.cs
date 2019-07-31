@@ -212,6 +212,14 @@ namespace Sci.Production.Subcon
                 row.Delete();
             }
 
+
+            //當沒有需求來源時（Request ID 為空），『必須』在表身填入 Reason  才允許存檔。
+            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("RequestID='' AND ReasonID=''"))
+            {
+                MyUtility.Msg.InfoBox("< Reason ID > can't be empty when < Request ID > is empty.");
+                return false;
+            }
+
             if (DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
@@ -709,7 +717,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtLocalPurchaseItem.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
-            btnIrrPriceReason.Enabled = !this.EditMode;
+            //btnIrrPriceReason.Enabled = !this.EditMode;  //ISP20190976
 
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
@@ -739,11 +747,31 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             if (Has_Irregular_Price)
                 this.btnIrrPriceReason.ForeColor = Color.Red;
-            
+
             #endregion
+
 
             detailDt.AcceptChanges();
             calttlqty();
+
+            //根據Request ID有無資料，決定Reason ID的背景顏色、可否編輯
+            for (int i = 0; i <= detailgrid.Rows.Count - 1; i++)
+            {
+
+                DataRow row = ((DataRowView)detailgrid.Rows[i].DataBoundItem).Row;
+
+                //RequestID 為空才可編輯
+                if (string.IsNullOrEmpty(row["Requestid"].ToString()))
+                {
+                    detailgrid.Rows[i].Cells["ReasonID"].ReadOnly = false;
+                    detailgrid.Rows[i].Cells["ReasonID"].Style.BackColor = Color.Pink;
+                }
+                else
+                {
+                    detailgrid.Rows[i].Cells["ReasonID"].ReadOnly = true;
+                    detailgrid.Rows[i].Cells["ReasonID"].Style.BackColor = Color.White;
+                }
+            }
         }
 
         protected override void OnDetailDetached()
@@ -1037,6 +1065,58 @@ where refno = '{0}'
                 DialogResult result = frm.ShowDialog(this);
             };
 
+            #region ReasonID 欄位事件
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ReasonIDSetting = new DataGridViewGeneratorTextColumnSettings();
+
+            ReasonIDSetting.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;
+                DataRow drr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    CurrentDetailData["ReasonID"] = e.FormattedValue;
+                    CurrentDetailData["Reason"] = "";
+                    CurrentDetailData.EndEdit();
+                    return;
+                }
+
+                bool IsExists = MyUtility.Check.Seek($@"SELECT * FROM SubconReason WHERE ID ='{e.FormattedValue}' AND Type = 'WR'");
+
+                if (IsExists)
+                {
+                    string reason = MyUtility.GetValue.Lookup($@"SELECT Reason FROM SubconReason WHERE ID ='{e.FormattedValue}' AND Type = 'WR'");
+                    CurrentDetailData["ReasonID"] = e.FormattedValue;
+                    CurrentDetailData["Reason"] = reason;
+                    CurrentDetailData.EndEdit();
+
+                }
+                else
+                {
+                    CurrentDetailData["Reason"] = "";
+                    MyUtility.Msg.ErrorBox("< Reason ID :" + e.FormattedValue + " > not found!!!");
+                    return;
+                }
+            };
+            ReasonIDSetting.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
+                        (@"SELECT ID ,Reason FROM SubconReason  WITH (NOLOCK) where JUNK=0 AND Type = 'WR' order by ID", "10,45", null);
+                    item.Size = new System.Drawing.Size(630, 535);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+
+                    IList<DataRow> SelectedRow = item.GetSelecteds();
+                    CurrentDetailData["ReasonID"] = SelectedRow[0][0];
+                    CurrentDetailData["Reason"] = SelectedRow[0][1];
+
+                    CurrentDetailData.EndEdit();
+                }
+            };
+            #endregion
+
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -1059,9 +1139,13 @@ where refno = '{0}'
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns2) //16
             .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns3) //17
             .Text("remark", header: "Remark", width: Widths.AnsiChars(25)) //18
+            .Text("ReasonID", header: "Reason ID", width: Widths.AnsiChars(8), settings: ReasonIDSetting) //18
+            .Text("Reason", header: "Reason", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(6), iseditingreadonly: true) //19
             ;
             #endregion
+
+
             #region 可編輯欄位變色
             detailgrid.Columns["orderid"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["refno"].DefaultCellStyle.BackColor = Color.Pink;
@@ -1069,6 +1153,7 @@ where refno = '{0}'
             detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["delivery"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["remark"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["ReasonID"].DefaultCellStyle.BackColor = Color.Pink;
 
             #endregion
             this.detailgrid.RowEnter += detailgrid_RowEnter;
@@ -1493,9 +1578,11 @@ where id='{e.Master["ID"].ToString()}' ");
 
             this.DetailSelectCommand = $@"
 select [Selected] = 0,[Amount]= isnull(loc2.Price*loc2.Qty,0),[std_price]=isnull(std.std_price,0),*,o.factoryid,o.sewinline,loc.description
+,sr.Reason
 from localpo_detail loc2 WITH (NOLOCK) 
 left join orders o WITH (NOLOCK) on loc2.orderid = o.id
 left join localitem loc WITH (NOLOCK) on loc.refno = loc2.refno 
+LEFT JOIN SubconReason sr WITH (NOLOCK) on sr.ID = loc2.ReasonID AND sr.Type = 'WR'
 outer apply(
 	select [std_price]=round(sum(a.qty*b.Price)/iif(isnull(sum(a.qty),0)=0,1,isnull(sum(a.qty),0)),3) 
 	from orders a WITH (NOLOCK) 

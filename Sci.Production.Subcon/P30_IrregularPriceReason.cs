@@ -139,10 +139,17 @@ namespace Sci.Production.Subcon
 
             if (this.EditMode)
             {
+                DataTable ModifyTable = (DataTable)listControlBindingSource1.DataSource;
+
+                if (ModifyTable.Select("SubconReasonID=''").Count() > 0)
+                {
+                    MyUtility.Msg.WarningBox("Reason can not be empty.");
+                    return;
+                }
+
                 gridgridIrregularPrice.IsEditingReadOnly = true;
 
                 StringBuilder sql = new StringBuilder();
-                DataTable ModifyTable = (DataTable)listControlBindingSource1.DataSource;
                 //ModifyTable 去掉 OriginDT_FromDB，剩下的不是新增就是修改
                 var Insert_Or_Update = ModifyTable.AsEnumerable().Except(OriginDT_FromDB.AsEnumerable(), DataRowComparer.Default).Where(o => o.Field<string>("SubconReasonID").Trim() != "");
 
@@ -386,7 +393,10 @@ SELECT  ap.ID
 		--,ap.currencyid  --維護時檢查用，所以先註解留著
 		--,apd.Price
 		--,apd.Qty
-		,apd.Qty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) PO_amt
+        -- 已關單代表不會再使用這一張採購單進行「收料」，但是已經收料（In Qty ）的數量後續還是會建立請款，因此已關單的要計算的是已實際收料的數量
+		,[PO_amt]=IIF(ap.Status!='Closed'
+                    , apd.Qty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) 
+                    , apd.InQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate)  )
 		--,dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) rate
 INTO #total_PO
 from LocalPO ap WITH (NOLOCK) 
@@ -428,7 +438,8 @@ OUTER APPLY (--採購價，根據Category、POID，作分組加總
 
 GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,t.POID ,Standard.order_amt ,Standard.order_qty ,Po.PO_amt ,Standard.order_qty
 
-DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO
+DROP TABLE #tmp_AllOrders --,#BePurchased 
+,#total_PO
 " + Environment.NewLine);
 
                 #endregion
