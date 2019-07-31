@@ -404,6 +404,7 @@ namespace Sci.Production.Cutting
                 result = DBProxy.Current.SelectSP("", "Cutting_P01_QtyBreakdown_PoCombbySPList_TableOfGoods", new List<SqlParameter> { new SqlParameter("@PoID", _id) }, out dt_Sheet2);
                 if (!result) { MyUtility.Msg.ErrorBox(result.ToString(), "error"); return false; }
                 if (dt_Sheet2.Length < 1) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
+                if (dt_Sheet2[0].Rows.Count < 1) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
 
                 // 計算orders.Qty
                 DataTable dtQty;
@@ -724,6 +725,7 @@ select distinct sizecode,Seq
                 // 調整欄位 EX-FTY Date 寬度
                 wkcolor.Columns[dt2ColsCnt - 1].ColumnWidth = 11;
                 // 加入註解                
+                wkcolor.Cells.ClearComments();
                 wkcolor.Cells[8, dt2ColsCnt - 1].AddComment("One day in advance and Exclude weekend");
                 // 調整欄位CUST CD 寬度
                 wkcolor.Columns[dt2ColsCnt - 2].ColumnWidth = 13;
