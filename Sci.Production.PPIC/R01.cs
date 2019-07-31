@@ -162,13 +162,14 @@ namespace Sci.Production.PPIC
 
                 worksheet = objApp.Sheets[1];
 
-                worksheet.Columns[6].ColumnWidth = 40;
                 worksheet.Columns[8].ColumnWidth = 40;
                 worksheet.Columns[10].ColumnWidth = 40;
-                worksheet.Columns[14].ColumnWidth = 40;
-                worksheet.Columns[18].ColumnWidth = 40;
-                worksheet.Columns[29].ColumnWidth = 40;
+                worksheet.Columns[12].ColumnWidth = 40;
+                worksheet.Columns[16].ColumnWidth = 40;
+                worksheet.Columns[20].ColumnWidth = 40;
+                worksheet.Columns[23].ColumnWidth = 40;
                 worksheet.Columns[31].ColumnWidth = 40;
+                worksheet.Columns[33].ColumnWidth = 40;
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
@@ -1004,17 +1005,20 @@ select
 	MDivisionID,
 	SewingLineID,
 	FactoryID,
-	[InlineDate] = Cast(Inline as date),
-	[OfflineDate] = Cast(Offline as date),
+	[InlineDate] = Cast(ss.Inline as date),
+	[OfflineDate] = Cast(ss.Offline as date),
 	Inline,
 	Offline,
     [InlineHour] = DATEDIFF(ss,Cast(Inline as date),Inline) / 3600.0	  ,
     [OfflineHour] = DATEDIFF(ss,Cast(Offline as date),Offline) / 3600.0	  ,
-	[OriEff] = isnull(OriEff,MaxEff),
+	[OriEff] = isnull(ss.OriEff,ss.MaxEff),
 	LearnCurveID,
 	Sewer,
-	[AlloQty] = sum(AlloQty)
-	into #APSList
+	[AlloQty] = sum(AlloQty),
+	[HourOutput] = (Sewer * 3600.0 * isnull(OriEff,MaxEff) / 100) / TotalSewingTime,
+	[OriWorkHour] = sum(AlloQty) / ((Sewer * 3600.0 * isnull(OriEff,MaxEff) / 100) / TotalSewingTime),
+	[TotalWorkHour] = WorkHour
+	into #APSListWorkDay
 from SewingSchedule ss  WITH (NOLOCK) 
 where exists( 
 select 1 
@@ -1032,16 +1036,30 @@ group by	APSNo ,
 			Offline,
 			isnull(OriEff,MaxEff),
 			LearnCurveID,
-			Sewer
+			Sewer,
+			TotalSewingTime,
+            WorkHour
 
---取得SewingTime
 select 
-		APSNo,[TotalSewingTime] = sum(TotalSewingTime)
-into #APSSewingTime
-from (select distinct aps.APSNo,s.TotalSewingTime
-			from #APSList aps
-			inner join SewingSchedule s with (nolock) on aps.APSNo = s.APSNo) a
-group by APSNo
+	APSNo,
+	MDivisionID,
+	SewingLineID,
+	FactoryID,
+	Inline,
+	Offline,
+	LearnCurveID,
+	Sewer,
+	AlloQty = sum(AlloQty)
+into #APSList
+from #APSListWorkDay
+group by APSNo,
+		 MDivisionID,
+		 SewingLineID,
+		 FactoryID,
+		 Inline,
+		 Offline,
+		 LearnCurveID,
+		 Sewer
 
 --取得OrderQty by APSNo
 select  aps.APSNo,[OrderQty] =sum(o.Qty) 
@@ -1149,7 +1167,8 @@ o.KPILETA,
 o.MTLETA,
 [Artwork] = s.OrderID+'('  +oa.Artwork + ')',
 o.InspDate,
-[Remarks] = s.OrderID + '(' + CAST(s.AlloQty as varchar) + ',' + s.ComboType + ',' + CAST(OtherAlloQty.val as varchar) + ')'
+[Remarks] = s.OrderID + '(' + CAST(s.AlloQty as varchar) + ',' + s.ComboType + ',' + CAST(OtherAlloQty.val as varchar) + ')',
+[EffList] = s.OrderID+'(' + s.ComboType + ','+ CONVERT(varchar,isnull(s.OriEff,s.MaxEff)) +')'
 into #APSColumnGroup
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
@@ -1159,33 +1178,13 @@ left join Country c WITH (NOLOCK) on o.Dest = c.ID
 outer apply (select [val] = isnull(sum(AlloQty),0) from SewingSchedule with (nolock) where OrderID = s.OrderID and ComboType = s.ComboType and APSNo <> s.APSNo) OtherAlloQty
 where exists( select 1 from #APSList where APSNo = s.APSNo)
 
---組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
-Declare @StartDate date
-Declare @EndDate date
-select @StartDate = min(Inline),@EndDate = max(Offline)
-from #APSList
-
-SELECT f.FactoryID,cast(DATEADD(DAY,number,@StartDate) as datetime) [WorkDate]
-into #WorkDate
-FROM master..spt_values s
-cross join (select distinct FactoryID from #APSList) f
-WHERE s.type = 'P'
-AND DATEADD(DAY,number,@StartDate) <= @EndDate
-
---刪掉星期天
-delete #WorkDate where datepart(WEEKDAY,WorkDate) = 1
-
---刪掉各工廠對應的假日
-delete w
-from #WorkDate  w
-inner join Holiday h on w.FactoryID = h.FactoryID and w.WorkDate = h.HolidayDate
-
 CREATE INDEX IDX_TMP_APSColumnGroup ON #APSColumnGroup (APSNo);
 CREATE INDEX IDX_TMP_APSListArticle ON #APSListArticle (APSNo);
 
 --填入資料串連欄位 by APSNo
 select
 al.APSNo,
+al.SewingLineID,
 [CustPO] = CustPO.val,
 [CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算CustPO數量
 [SP] = SP.val,
@@ -1198,7 +1197,7 @@ al.APSNo,
 aoo.OrderQty,
 al.AlloQty,
 [CPU] = CPU.val,
-al.OriEff,
+[EffList] = EffList.val,
 al.LearnCurveID,
 al.Inline,
 al.Offline,
@@ -1230,7 +1229,28 @@ outer apply (SELECT val =  Stuff((select distinct concat( ',',CPU)   from #APSCo
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Artwork)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ArtworkType
 outer apply (select [KPILETA] = MAX(KPILETA),[MTLETA] = MAX(MTLETA),[InspDate] = MAX(InspDate) from #APSColumnGroup where APSNo = al.APSNo) as OrderMax
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Remarks
+outer apply (SELECT val =  Stuff((select distinct concat( ',',EffList)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as EffList
 
+--組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
+Declare @StartDate date
+Declare @EndDate date
+select @StartDate = min(Inline),@EndDate = max(Offline)
+from #APSList
+
+SELECT f.FactoryID,cast(DATEADD(DAY,number,@StartDate) as datetime) [WorkDate]
+into #WorkDate
+FROM master..spt_values s
+cross join (select distinct FactoryID from #APSList) f
+WHERE s.type = 'P'
+AND DATEADD(DAY,number,@StartDate) <= @EndDate
+
+--刪掉星期天
+delete #WorkDate where datepart(WEEKDAY,WorkDate) = 1
+
+--刪掉各工廠對應的假日
+delete w
+from #WorkDate  w
+inner join Holiday h on w.FactoryID = h.FactoryID and w.WorkDate = h.HolidayDate
 
 --展開計畫日期資料
 select  al.APSNo,
@@ -1245,9 +1265,12 @@ select  al.APSNo,
         [StartHour] = cast(wkd.StartHour as float),
         [EndHour] = cast(wkd.EndHour as float),
         al.InlineHour,
-        al.OfflineHour
+        al.OfflineHour,
+		al.HourOutput,
+		al.OriWorkHour,
+		al.TotalWorkHour
 into #Workhour_step1
-from #APSList al
+from #APSListWorkDay al
 inner join #WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
 inner join Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and 
                                                 wkd.SewingLineID = al.SewingLineID and 
@@ -1271,8 +1294,11 @@ select  APSNo,
         EndHour,
         InlineHour,
         OfflineHour,
-		[StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate ORDER BY StartHour),
-		[EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate ORDER BY EndHour desc)
+		[StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,HourOutput ORDER BY StartHour),
+		[EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,HourOutput ORDER BY EndHour desc),
+		HourOutput,
+		OriWorkHour,
+		TotalWorkHour
 into #Workhour_step2
 from #Workhour_step1	
 
@@ -1286,11 +1312,16 @@ LearnCurveID,
 [SewingStart] = DATEADD(mi, min(StartHour) * 60,   WorkDate),
 [SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
 WorkDate,
-[WorkingTime] = sum(EndHour - StartHour)  * 3600.0,
-[WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo ORDER BY WorkDate)
+[WorkingTime] = sum(EndHour - StartHour),
+[WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo ORDER BY WorkDate),
+HourOutput,
+OriWorkHour,
+TotalWorkHour
 into #APSExtendWorkDate
 from #Workhour_step2 
-group by APSNo,LearnCurveID,WorkDate
+group by APSNo,LearnCurveID,WorkDate,HourOutput,
+OriWorkHour,
+TotalWorkHour
 
 --取得LearnCurve Efficiency by Work Date
 select 
@@ -1299,12 +1330,19 @@ awd.SewingStart,
 awd.SewingEnd,
 [SewingOutput] = isnull(apo.SewingOutput,0),
 awd.WorkingTime,
-[LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100))
+[LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
+[StdOutput] = floor(SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / TotalWorkHour) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0)
 into #APSExtendWorkDateFin
 from #APSExtendWorkDate awd
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 left join #APSSewingOutput apo on awd.APSNo = apo.APSNo and awd.WorkDate = apo.OutputDate
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
+group by awd.APSNo,
+		 awd.SewingStart,
+		 awd.SewingEnd,
+		 isnull(apo.SewingOutput,0),
+		 awd.WorkingTime,
+		 ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))
 
 --計算這一天的標準產量
 --= (工作時數 / 車縫一件成衣需要花費的秒數) * 工人數 * 效率
@@ -1312,6 +1350,8 @@ outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = aw
 --組合最終table
 select
 apm.APSNo,
+apm.SewingLineID,
+[SewingDay] = cast(apf.SewingStart as date),
 apf.SewingStart,
 apf.SewingEnd,
 apm.MDivisionID,
@@ -1327,11 +1367,11 @@ apm.ProductionFamilyID,
 apm.Style,
 apm.OrderQty,
 apm.AlloQty,
-[StdOutput] = StdOutput.val,
+[StdOutput] = apf.StdOutput,
 apm.CPU,
-[DayWorkHour] = DayWorkHour.val,
-[HourOutput] = iif(DayWorkHour.val = 0,0,floor(StdOutput.val / DayWorkHour.val)),
-[OriEff] = apm.OriEff / 100.0,
+[DayWorkHour] = apf.WorkingTime,
+[HourOutput] = iif(apf.WorkingTime = 0,0,floor(apf.StdOutput / apf.WorkingTime)),
+apm.EffList,
 [LearnCurveEff] = apf.LearnCurveEff / 100.0,
 apm.Inline,
 apm.Offline,
@@ -1347,13 +1387,10 @@ apf.SewingOutput,
 apm.ScannedQty,
 apm.ClogQty
 from #APSMain apm
-inner join #APSSewingTime apt on apm.APSNo = apt.APSNo
-inner join #APSExtendWorkDateFin apf on apt.APSNo = apf.APSNo
-outer apply(select [val] = floor(cast(apf.WorkingTime as float) /cast( apt.TotalSewingTime as float) * cast(apm.Sewer as float) * cast(apm.OriEff as float) /100.0 * cast(apf.LearnCurveEff as float) / 100.0)) StdOutput
-outer apply(select [val] = apf.WorkingTime / 3600.0) DayWorkHour
+inner join #APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart
 
-drop table	#APSList,#APSMain,#APSSewingTime,#APSExtendWorkDateFin,#APSOrderQty,#APSCuttingOutput,#APSPackingQty,#APSSewingOutput,
+drop table	#APSListWorkDay,#APSList,#APSMain,#APSExtendWorkDateFin,#APSOrderQty,#APSCuttingOutput,#APSPackingQty,#APSSewingOutput,
 			#tmpOrderArtwork,#APSListArticle,#APSColumnGroup,#WorkDate,#APSExtendWorkDate,#Workhour_step1,#Workhour_step2
 ");
             #endregion
