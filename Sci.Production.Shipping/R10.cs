@@ -779,7 +779,7 @@ where s.Type = 'EXPORT'");
 select distinct a.* 
 into #Accno 
 from (
-select Accountid as Accno from tmpMaterialData where AccountID not in ('61012001','61012002','61012003','61012004','61012005','59121111')
+select Accountid as Accno from tmpMaterialData where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
 and AccountID <> ''
 ) a
 select Accno=cast(Accno as nvarchar(100)) ,rn=ROW_NUMBER() over (order by Accno)
