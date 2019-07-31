@@ -504,7 +504,11 @@ where InvA.OrderID = '{0}'
                 .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(8), settings: this.size).Get(out this.col_Size)
                 .Numeric("Qty", header: "Order Qty", iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Qty", settings: this.balance).Get(out this.col_qty)
-                .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true);
+                .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true)
+                .Text("CustCDID", header: "Cust CD", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Dest", header: "Dest", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("OrderTypeID", header: "Order Type", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                ;
         }
 
         /// <summary>
@@ -918,7 +922,7 @@ where oqd.Id = '{0}'
 
             if (!MyUtility.Check.Empty(msg.ToString()))
             {
-                MyUtility.Msg.WarningBox("Below records are in packing FOC already, please check again" + Environment.NewLine + msg.ToString());
+                MyUtility.Msg.WarningBox("Below issue SP# [Qty] must be morre than 0!" + Environment.NewLine + msg.ToString());
                 return false;
             }
 
@@ -1029,13 +1033,6 @@ where oqd.Id = '{0}'
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-
-            // Pull-out date不可為空
-            if (MyUtility.Check.Empty(this.CurrentMaintain["PulloutDate"]))
-            {
-                MyUtility.Msg.WarningBox("Pull-out date can't empty!!");
-                return;
-            }
 
             // 檢查累計Pullout數不可超過訂單數量
             if (!Prgs.CheckPulloutQtyWithOrderQty(this.CurrentMaintain["ID"].ToString()))

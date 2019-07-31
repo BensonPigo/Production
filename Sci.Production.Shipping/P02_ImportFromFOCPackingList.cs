@@ -217,7 +217,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{
                                             Sci.Env.User.UserID));
             }
 
-            insertCmds.Add(string.Format("update PackingList set ExpressID = '{0}' where ID = '{1}'", MyUtility.Convert.GetString(this.masterData["ID"]), MyUtility.Convert.GetString(dt.Rows[0]["ID"])));
+            insertCmds.Add($"update PackingList set ExpressID = '{this.masterData["ID"]}' where ID = '{dt.Rows[0]["ID"]}'");
             DualResult result1, result2;
             using (TransactionScope transactionScope = new TransactionScope())
             {

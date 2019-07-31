@@ -312,7 +312,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             {
                 DualResult failResult;
 
-                DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '' where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentData["DutyNo"])));
+                DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '',pulloutdate=null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentData["DutyNo"])));
                 if (!result)
                 {
                     failResult = new DualResult(false, "Update packing list fail!! Pls try again.\r\n" + result.ToString());
