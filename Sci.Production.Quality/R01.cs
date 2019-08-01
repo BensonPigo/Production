@@ -251,7 +251,6 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
 	,[MinSciDelivery] = (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))
 	,[MinBuyerDelivery] = (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category)),
 	F.Refno,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,
-	F.Refno,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,
 	C.WeaveTypeID,
 	IIF(F.Nonphysical = 1,'Y',' ')[N/A Physical],
 	F.Result,
