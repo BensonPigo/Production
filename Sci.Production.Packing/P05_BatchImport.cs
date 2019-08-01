@@ -57,7 +57,11 @@ namespace Sci.Production.Packing
                 .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("PulloutQty", header: "Accu. Ship Qty", iseditingreadonly: true)
-                .Numeric("ShipQty", header: "Qty");
+                .Numeric("ShipQty", header: "Qty")
+                .Text("CustCDID", header: "Cust CD", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Dest", header: "Dest", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                ;
 
             this.gridDetail.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
         }
@@ -79,6 +83,9 @@ with OrderData as (
             , o.POID
             , o.SeasonID
             , Factory = o.FtyGroup
+            , o.CustCDID
+            , o.Dest
+            , o.OrderTypeID
     from    Orders o WITH (NOLOCK) 
     inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
     inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id
@@ -170,6 +177,9 @@ select  0 as Selected
         , isnull(fd.Price,-1) as Price
         , od.SeasonID
         , od.Factory
+        , od.CustCDID
+        , od.Dest
+        , od.OrderTypeID
 into #tmp
 from OrderData od
 left join FOCData fd on od.ID = fd.ID and od.Article = fd.Article and od.SizeCode = fd.SizeCode
