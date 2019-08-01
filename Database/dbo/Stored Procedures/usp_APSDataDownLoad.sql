@@ -624,10 +624,26 @@ where fa.FACTORYID = f.ID
 
 	--將APS的Sewing Schedule更新進PMS
 	DECLARE cursor_sewingschedule CURSOR FOR
-	select SALESORDERNO,REFNO,NAME,ID,STARTTIME,ENDTIME,ROUND(CAPACITY*60,0) as GSD,DURATION,UPDATEDATE,SUM(PLANAMOUNT) as AlloQty,POID 
+	select SALESORDERNO,REFNO,NAME,ID,STARTTIME,ENDTIME,ROUND(CAPACITY*60,0) as GSD,DURATION,UPDATEDATE,SUM(PLANAMOUNT) as AlloQty,POID, OriEFF = Max(EFFICIENCY)
 	from #tmpAPSSchedule
 	group by SALESORDERNO,REFNO,NAME,ID,STARTTIME,ENDTIME,ROUND(CAPACITY*60,0),DURATION,UPDATEDATE,POID
 	order by SALESORDERNO
+	/*
+		APS的生產計劃資料結構（ProductionEvent、ProductionEventDetail）
+		一張生產計畫=一筆ProductionEvent
+		一張生產計劃包含多個項目(ProductionEventDetail)，細分到OrderID、ComboType、SewingLineID、Article、SizeCode
+		因此 一個ProductionEvent 對 多ProductionEventDetail
+
+		但，PMS的生產計劃資料結構(SewingSchedule、SewingSchedule_Detail)
+		第一層SewingSchedule，就已經細分到OrderID、ComboType、SewingLineID		
+		而SewingSchedule_Detail，則是進一部細分到Article、SizeCode
+		
+		同樣是一對多，但是資料分組的方式不一樣
+
+		因此若要寫入正確的SewingSchedule.OriEff，在必須根據OrderID、ComboType、SewingLineID	做分組
+
+		P.S ** 根據上述原因，可知得出SewingSchedule.MaxEff的計算方式是錯的
+	*/
 	
 	declare @inline datetime,
 			@offline datetime,
@@ -640,12 +656,12 @@ where fa.FACTORYID = f.ID
 			@pmseditdate datetime,
 			@apspoid int,
 			@maxeff numeric(24,10),
+			@OriEff numeric(24,10),
 			@apseff numeric(24,10),
 			@article varchar(8),
 			@sizecode varchar(8),
 			@detailalloqty int,
-			@LnCurveTemplateID int,
-			@orieff numeric(5,2);
+			@LnCurveTemplateID int;
 
 
 	CREATE TABLE #ProdEff (Efficiency numeric(24,10))
@@ -654,7 +670,7 @@ where fa.FACTORYID = f.ID
 	CREATE TABLE #DynamicEff (BeginDate datetime,Eff numeric(24,10))
 
 	OPEN cursor_sewingschedule
-	FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid
+	FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @combotype is null or @combotype = ''
@@ -683,9 +699,6 @@ where fa.FACTORYID = f.ID
 					SET @maxeff = @apseff
 
 				delete from #ProdEff 
-
-				--學習曲線(Learning Curve)算進來之前先記錄下來，用於寫入SewingSchedul.Orieff
-				SET @orieff=CONVERT(numeric(5,2),isnull(@maxeff*100,0))
 
 				SET @apseff = null
 				--否有設定LearningCurve
@@ -782,7 +795,7 @@ where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid 
 						,@login
 						,@editdate
 						,@LnCurveTemplateID
-						,@orieff
+						,@OriEff
 						);
 
 						--取最新的ID
@@ -833,10 +846,6 @@ where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid 
 							SET @maxeff = @apseff
 
 						delete from #ProdEff 
-
-						
-						--學習曲線(Learning Curve)算進來之前先記錄下來，用於寫入SewingSchedul.Orieff
-						SET @orieff=CONVERT(numeric(5,2),isnull(@maxeff*100,0))
 
 						SET @apseff = null
 						--否有設定LearningCurve
@@ -897,7 +906,7 @@ Order by fe.BeginDate Desc'
 									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(@set,0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
 									WorkHour = CONVERT(numeric(8,3),isnull(@duration,0)), EditName = @login, EditDate = @editdate
 									,LearnCurveID = @LnCurveTemplateID
-									,OriEff = @orieff
+									,OriEff = @OriEff
 								where ID = @sewingscheduleid;
 
 								--更新SewingSchedule_Detail
