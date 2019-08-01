@@ -24,6 +24,7 @@ namespace Sci.Production.Shipping
         private string strDest;
         private string strCategory;
         private string strShipMode;
+        private string strJunk;
 
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -50,6 +51,7 @@ namespace Sci.Production.Shipping
             this.strDest = this.txtcountry.TextBox1.Text;
             this.strCategory = this.comboCategory.SelectedValue.ToString();
             this.strShipMode = this.comboshipmode.Text;
+            this.strJunk = this.cancelOrder.Checked ? "1" : string.Empty;
 
             return base.ValidateInput();
         }
@@ -62,6 +64,7 @@ select oq.BuyerDelivery
 ,oq.Id
 ,oq.Seq
 ,oq.ShipmodeID
+,[CancelOrder]=IIF(o.Junk=1,'Y','')
 ,fs.ShipperID
 ,o.MDivisionID,o.FactoryID
 ,[PackingID] = p.ID
@@ -152,6 +155,11 @@ and not exists(
             if (!MyUtility.Check.Empty(this.strShipMode))
             {
                 sqlcmd += $@" and oq.ShipModeID  = '{this.strShipMode}'" + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(this.strJunk))
+            {
+                sqlcmd += $@" and o.Junk  = {this.strJunk}" + Environment.NewLine;
             }
             #endregion
 
