@@ -742,8 +742,11 @@ where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid 
 				select @apseff = Eff from #DynamicEff
 				
 				IF @apseff is not null and @apseff <> 0
+				BEGIN	
 					SET @maxeff = @maxeff*@apseff
-				
+					SET @OriEff=@OriEff*@apseff
+				END
+
 				SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
 
 				delete from #DynamicEff
@@ -795,7 +798,7 @@ where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid 
 						,@login
 						,@editdate
 						,@LnCurveTemplateID
-						,@OriEff
+						,CONVERT(numeric(5,2),isnull(@OriEff*100,0))
 						);
 
 						--取最新的ID
@@ -889,7 +892,10 @@ Order by fe.BeginDate Desc'
 						select @LnCurveTemplateID = LNCURVETEMPLATEID from #LnCurveTemplate
 
 						IF @apseff is not null and @apseff <>0
+						BEGIN	
 							SET @maxeff = @maxeff*@apseff
+							SET @OriEff=@OriEff*@apseff
+						END
 
 						delete from #DynamicEff
 						delete from #LnCurveTemplate
@@ -906,7 +912,7 @@ Order by fe.BeginDate Desc'
 									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(@set,0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
 									WorkHour = CONVERT(numeric(8,3),isnull(@duration,0)), EditName = @login, EditDate = @editdate
 									,LearnCurveID = @LnCurveTemplateID
-									,OriEff = @OriEff
+									,OriEff =CONVERT(numeric(5,2),isnull( @OriEff*100,0))
 								where ID = @sewingscheduleid;
 
 								--更新SewingSchedule_Detail
