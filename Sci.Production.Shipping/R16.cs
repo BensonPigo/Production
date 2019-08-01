@@ -51,7 +51,7 @@ namespace Sci.Production.Shipping
             this.strDest = this.txtcountry.TextBox1.Text;
             this.strCategory = this.comboCategory.SelectedValue.ToString();
             this.strShipMode = this.comboshipmode.Text;
-            this.strJunk = this.cancelOrder.Checked ? "1" : string.Empty;
+            this.strJunk = this.cancelOrder.Checked ? string.Empty : "0";
 
             return base.ValidateInput();
         }
