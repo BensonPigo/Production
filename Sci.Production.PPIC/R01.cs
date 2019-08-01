@@ -1016,8 +1016,7 @@ select
 	Sewer,
 	[AlloQty] = sum(AlloQty),
 	[HourOutput] = (Sewer * 3600.0 * isnull(OriEff,MaxEff) / 100) / TotalSewingTime,
-	[OriWorkHour] = sum(AlloQty) / ((Sewer * 3600.0 * isnull(OriEff,MaxEff) / 100) / TotalSewingTime),
-	[TotalWorkHour] = WorkHour
+	[OriWorkHour] = sum(AlloQty) / ((Sewer * 3600.0 * isnull(OriEff,MaxEff) / 100) / TotalSewingTime)
 	into #APSListWorkDay
 from SewingSchedule ss  WITH (NOLOCK) 
 where exists( 
@@ -1037,8 +1036,7 @@ group by	APSNo ,
 			isnull(OriEff,MaxEff),
 			LearnCurveID,
 			Sewer,
-			TotalSewingTime,
-            WorkHour
+			TotalSewingTime
 
 select 
 	APSNo,
@@ -1267,8 +1265,7 @@ select  al.APSNo,
         al.InlineHour,
         al.OfflineHour,
 		al.HourOutput,
-		al.OriWorkHour,
-		al.TotalWorkHour
+		al.OriWorkHour
 into #Workhour_step1
 from #APSListWorkDay al
 inner join #WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
@@ -1297,8 +1294,7 @@ select  APSNo,
 		[StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,HourOutput ORDER BY StartHour),
 		[EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,HourOutput ORDER BY EndHour desc),
 		HourOutput,
-		OriWorkHour,
-		TotalWorkHour
+		OriWorkHour
 into #Workhour_step2
 from #Workhour_step1	
 
@@ -1313,15 +1309,23 @@ LearnCurveID,
 [SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
 WorkDate,
 [WorkingTime] = sum(EndHour - StartHour),
-[WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo ORDER BY WorkDate),
+[WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,HourOutput ORDER BY WorkDate),
 HourOutput,
-OriWorkHour,
-TotalWorkHour
+OriWorkHour
 into #APSExtendWorkDate
 from #Workhour_step2 
 group by APSNo,LearnCurveID,WorkDate,HourOutput,
-OriWorkHour,
-TotalWorkHour
+OriWorkHour
+
+--取得每個計劃去除LearnCurve後的總工時
+SELECT
+awd.APSNo,
+[TotalWorkHour] = sum(WorkingTime * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0)
+into #OriTotalWorkHour
+FROM (select distinct APSNo,LearnCurveID,WorkingTime,WorkDateSer from #APSExtendWorkDate) awd
+left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
+outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
+group by awd.APSNo
 
 --取得LearnCurve Efficiency by Work Date
 select 
@@ -1331,9 +1335,10 @@ awd.SewingEnd,
 [SewingOutput] = isnull(apo.SewingOutput,0),
 awd.WorkingTime,
 [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
-[StdOutput] = floor(SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / TotalWorkHour) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0)
+[StdOutput] = floor(SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0)
 into #APSExtendWorkDateFin
 from #APSExtendWorkDate awd
+inner join #OriTotalWorkHour otw on otw.APSNo = awd.APSNo
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 left join #APSSewingOutput apo on awd.APSNo = apo.APSNo and awd.WorkDate = apo.OutputDate
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
@@ -1391,7 +1396,7 @@ inner join #APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart
 
 drop table	#APSListWorkDay,#APSList,#APSMain,#APSExtendWorkDateFin,#APSOrderQty,#APSCuttingOutput,#APSPackingQty,#APSSewingOutput,
-			#tmpOrderArtwork,#APSListArticle,#APSColumnGroup,#WorkDate,#APSExtendWorkDate,#Workhour_step1,#Workhour_step2
+			#tmpOrderArtwork,#APSListArticle,#APSColumnGroup,#WorkDate,#APSExtendWorkDate,#Workhour_step1,#Workhour_step2,#OriTotalWorkHour
 ");
             #endregion
 
