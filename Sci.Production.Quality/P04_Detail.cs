@@ -1776,15 +1776,20 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
         /// <returns></returns>
         private string addShrinkageUnit(DataTable dt, string strFilter, int count)
         {
-            string strValie = dt.Select(strFilter)[0][count].ToString();
-            if (((string.Compare(dt.Columns[count].ColumnName, "Shrinkage1", true) == 0) ||
-                (string.Compare(dt.Columns[count].ColumnName, "Shrinkage2", true) == 0) ||
-                (string.Compare(dt.Columns[count].ColumnName, "Shrinkage3", true) == 0)) &&
-                !MyUtility.Check.Empty(strValie)
-                )
+            string strValie = string.Empty;
+            if (dt.Select(strFilter).Length > 0)
             {
-                strValie = strValie + "%";
+                strValie = dt.Select(strFilter)[0][count].ToString();
+                if (((string.Compare(dt.Columns[count].ColumnName, "Shrinkage1", true) == 0) ||
+                    (string.Compare(dt.Columns[count].ColumnName, "Shrinkage2", true) == 0) ||
+                    (string.Compare(dt.Columns[count].ColumnName, "Shrinkage3", true) == 0)) &&
+                    !MyUtility.Check.Empty(strValie)
+                    )
+                {
+                    strValie = strValie + "%";
+                }
             }
+
             return strValie;
         }
     }
