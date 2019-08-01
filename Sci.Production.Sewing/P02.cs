@@ -780,7 +780,7 @@ WHERE ID = 'SCIMIS'
 ");
 
                 #region 填寫Mail需要的資料
-                string ccAddress = "planning@sportscity.com.tw;team3@sportscity.com.tw";
+                string ccAddress = "";
                 string subject = "Unlock Sewing(Mockup)";
                 string od = string.Empty;
 
@@ -805,7 +805,9 @@ Remark : {callReason.ReturnRemark}
 
                 // 塞進MailTo物件
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
-                email.EditMode = false;
+
+                // email畫面關閉後額外塞入CC人員
+                email.SendingBefore += this.Email_SendingBefore;
                 email.ShowDialog(this);
 
                 if (email.DialogResult == DialogResult.OK)
@@ -823,6 +825,13 @@ values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason
                 }
             }
         }
+
+        /// <summary>
+        /// email畫面關閉後額外塞入CC人員
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Email_SendingBefore(object sender, MailTo.SendMailBeforeArg e) => e.Mail.CC.Add("planning@sportscity.com.tw;team3@sportscity.com.tw");
 
         private void BtnBatchRecall_Click(object sender, EventArgs e)
         {
