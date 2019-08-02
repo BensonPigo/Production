@@ -23,13 +23,15 @@ namespace Sci.Production.Warehouse
         private string strCutNo;
         private DualResult result;
         private DataTable dtExcel;
+        private DataRow DataRow;
 
-        public P10_Print(DataRow dr,string CutNo)
+        public P10_Print(DataRow dr,string CutNo, DataRow dataRow)
         {
             InitializeComponent();
             this.Text = "P10 " + dr["ID"].ToString();
             drPrint = dr;
             strCutNo = CutNo;
+            DataRow = dataRow;
 
             #region 依狀態顯示Print按鈕功能
             //if (string.Compare(drPrint["Status"].ToString(), "Confirmed", true) != 0 && this.radioTransferSlip.Checked)
@@ -54,6 +56,7 @@ select
  [Received Date] = null
 ,[Time Started] = null
  ,Refno = isnull (psd.Refno, '')
+, isS.Colorid
  , SPNo = isd.POID
  , Roll = isd.Roll
  ,[Cutting Schedule]=''
@@ -65,6 +68,7 @@ left join Orders o on o.ID=isd.POID
 left join Po_Supp_Detail psd on isd.POID = psd.ID
  and isd.Seq1 = psd.SEQ1
  and isd.Seq2 = psd.SEQ2
+left join Issue_Summary isS with(nolock) on isS.Ukey = isd.Issue_SummaryUkey
 outer apply(
 select SUM(FI.InQty) AS Arrived from FtyInventory fi where fi.POID=isd.POID and fi.Seq1= isd.Seq1 and fi.Seq2 = isd.Seq2 and fi.Roll = isd.Roll and fi.Dyelot = isd.Dyelot
 and StockType in ('B','I')
@@ -93,30 +97,34 @@ order by psd.Refno,isd.POID,isd.Roll
                 string excelName = "Warehouse_P10_FabricsRelaxationLogsheet.xltx";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelName);
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
+                worksheet.Cells[3, 3] = MyUtility.Convert.GetString(DataRow["cutplanID"]);
+                worksheet.Cells[4, 3] = ((DateTime)MyUtility.Convert.GetDate(DataRow["issuedate"])).ToString("d");
+
                 #region 插入需要row數量
                 for (int i = 1; i < dtExcel.Rows.Count; i++)
                 {
-                    worksheet.Rows[7 + i, Type.Missing].Insert(Excel.XlDirection.xlDown);
+                    worksheet.Rows[8 + i, Type.Missing].Insert(Excel.XlDirection.xlDown);
                 }
                 #endregion
-                MyUtility.Excel.CopyToXls(dtExcel, "", excelName, 7, false, null, excelApp, wSheet: excelApp.Sheets[1]);
+                MyUtility.Excel.CopyToXls(dtExcel, "", excelName, 8, false, null, excelApp, wSheet: excelApp.Sheets[1]);
                 // 固定寬度,避免格式資料跑掉
                 worksheet.Columns[1].ColumnWidth = 6;
                 worksheet.Columns[2].ColumnWidth = 7;
                 worksheet.Columns[3].ColumnWidth = 8;
-                worksheet.Columns[4].ColumnWidth = 9;
-                worksheet.Columns[5].ColumnWidth = 5;
-                worksheet.Columns[6].ColumnWidth = 7;
-                worksheet.Columns[7].ColumnWidth = 44;
-                worksheet.Columns[8].ColumnWidth = 6;
+                worksheet.Columns[4].ColumnWidth = 8;
+                worksheet.Columns[5].ColumnWidth = 9;
+                worksheet.Columns[6].ColumnWidth = 5;
+                worksheet.Columns[7].ColumnWidth = 7;
+                worksheet.Columns[8].ColumnWidth = 44;
                 worksheet.Columns[9].ColumnWidth = 6;
-                worksheet.Columns[10].ColumnWidth = 9;
-                worksheet.Columns[11].ColumnWidth = 6;
+                worksheet.Columns[10].ColumnWidth = 6;
+                worksheet.Columns[11].ColumnWidth = 9;
+                worksheet.Columns[12].ColumnWidth = 6;
                 worksheet.Columns[12].ColumnWidth = 7;
-                worksheet.Columns[12].ColumnWidth = 8;
+                worksheet.Columns[13].ColumnWidth = 8;
                 excelApp.Cells.EntireRow.AutoFit();
                 
-                worksheet.Rows[6].RowHeight = 25;
+                worksheet.Rows[7].RowHeight = 25;
 
                 #region Save Excel
                 string excelFile = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P10_FabricsRelaxationLogsheet");
