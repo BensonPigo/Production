@@ -126,7 +126,7 @@ namespace Sci.Production.Logistic
 
             sqlcmd.Append(@"
 select a.MDivisionID,a.FactoryID,a.OrderID,a.PackingID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled
-,TTLQty,[QtyPerSize],a.PulloutComplete,ActPulloutDate
+,TTLQty,[QtyPerSize],a.PulloutComplete,ActPulloutDate,reason
 from(
 select 
 p.MDivisionID
@@ -145,6 +145,7 @@ p.MDivisionID
 ,[PulloutComplete] = case when o.qty > isnull(s.ShipQty,0) then 'S'
 						               when o.qty <= isnull(s.ShipQty,0) then'Y'  end
 ,[ActPulloutDate] = o.ActPulloutDate
+,rea.reason
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -172,6 +173,13 @@ outer apply(
 	from PackingList_Detail pp
 	where pp.ID= pd.ID and pp.CTNStartNo=pd.CTNStartNo
 ) TTL
+outer apply(
+	select distinct  reason=concat(c.ClogReasonID,'-'+cr.Description)
+	from ClogGarmentDispose_Detail cd
+	inner join ClogGarmentDispose c on c.ID=cd.ID
+	left join ClogReason cr on cr.id = c.ClogReasonID
+	where cd.PackingListID = p.ID
+)rea
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and o.PulloutComplete = 1
@@ -197,6 +205,7 @@ p.MDivisionID
 ,pd.id,pd.Seq
 ,[PulloutComplete] = 'N'
 ,[ActPulloutDate] = o.ActPulloutDate
+,rea.reason
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -218,6 +227,13 @@ outer apply(
 	from PackingList_Detail pp
 	where pp.ID= pd.ID and pp.CTNStartNo=pd.CTNStartNo
 ) TTL
+outer apply(
+	select distinct  reason=concat(c.ClogReasonID,'-'+cr.Description)
+	from ClogGarmentDispose_Detail cd
+	inner join ClogGarmentDispose c on c.ID=cd.ID
+	left join ClogReason cr on cr.id = c.ClogReasonID
+	where cd.PackingListID = p.ID
+)rea
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and (p.PulloutID = '' or po.Status = 'New')
@@ -272,7 +288,7 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
 
             // 填內容值
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 14];
+            object[,] objArray = new object[1, 15];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
@@ -291,6 +307,7 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
                     objArray[0, 11] = dr["QtyPerSize"];
                     objArray[0, 12] = dr["PulloutComplete"];
                     objArray[0, 13] = dr["ActPulloutDate"];
+                    objArray[0, 14] = dr["reason"];
                 }
 
                 worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
