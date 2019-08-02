@@ -950,7 +950,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         protected override bool ClickPrint()
         {
             Sci.Production.Warehouse.P10_Print callForm;
-            callForm = new P10_Print(CurrentMaintain, this.editCutNo.Text);
+            callForm = new P10_Print(CurrentMaintain, this.editCutNo.Text,this.CurrentMaintain);
             callForm.ShowDialog(this);
 
             return true;
