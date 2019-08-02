@@ -1034,6 +1034,23 @@ order by os.Seq",
                 return false;
             }
 
+            // 保存前檢查加入若PackingLIst 的[Ship Mode]不在Order_QtyShip中，不給存
+            DataTable detailsData = (DataTable)this.detailgridbs.DataSource;
+            DataTable dataTableDistinct = detailsData.DefaultView.ToTable(true, "OrderID");
+            List<string> orderIdList = dataTableDistinct.AsEnumerable().Select(o => o["OrderID"].ToString()).ToList();
+
+            foreach (var orderID in orderIdList)
+            {
+                string shipmodeID = MyUtility.GetValue.Lookup($"SELECT TOP 1 ShipmodeID FROM Order_QtyShip WHERE ID='{orderID}'");
+
+                if (this.CurrentMaintain["ShipModeID"].ToString() != shipmodeID)
+                {
+                    MyUtility.Msg.WarningBox($"There is no [Ship Mode] in this [SP No.]:{orderID} !");
+                    return false;
+                }
+            }
+
+
             bool isSavecheckOK = Prgs.P03SaveCheck(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.detailgrid);
             if (!isSavecheckOK)
             {
