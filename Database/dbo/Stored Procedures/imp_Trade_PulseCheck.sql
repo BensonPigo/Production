@@ -82,7 +82,7 @@ select  s.OutputDate
 		, [MockupCPUFactor] = isnull(mo.CPUFactor,0)
 		, [OrderStyle] = isnull(o.StyleID,'')
 		, [MockupStyle] = isnull(mo.StyleID,'')
-        , [Rate] = isnull(dbo.[GetOrderLocation_Rate_ByLinked](o.id ,sd.ComboType, o.MDivisionID),100)/100
+        , [Rate] =isnull(dbo.[GetOrderLocation_Rate_ByLinked](o.id ,sd.ComboType, o.MDivisionID),100)/100
 		, System.StdTMS
         , o.SubconInSisterFty
         , [SubconOutFty] = iif(sf.id is null,'Other',s.SubconOutFty)
@@ -339,7 +339,7 @@ group by MDivisionID
 	group by MDivisionID
 
 select  [PPH] = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
-	   , [Efficiency] = (IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))/(3600/1400))
+	   , [Efficiency] = (IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))/(3600*1.0/1400*1.0))
 	   , [Avg Working Hours] = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2)) 
 	   , q.MDivisionID
 into #tmp_excludeInOutTotal
@@ -396,12 +396,12 @@ group by MDivisionID
 --寫入資料
 DECLARE CURSOR_ CURSOR FOR
 select a.MDivisionID
-	,[Performed] = cast(c.[Total CPU Included Subcon-In] - isnull(d.[Subcon-Out Total CPU(sister)],0) as decimal(18,6))
-	,e.[Working Days]
-	,[Avg Working Hours] =cast(f.TotalManHour / b.TotalManpower as decimal(18,6))
-	,a.[PPH]
-	,a.[Efficiency]
-	,[Direct Manpower] = cast(b.TotalManpower / e.[Working Days] as decimal(18,6))
+	,[Performed] = cast(c.[Total CPU Included Subcon-In] - isnull(d.[Subcon-Out Total CPU(sister)],0) as decimal(18,2))
+	,[Working Days] = cast(e.[Working Days] as decimal(18, 0))
+	,[Avg Working Hours] =cast(f.TotalManHour / b.TotalManpower as decimal(18,2))
+	,[PPH] = cast(a.[PPH] as decimal(18,2))
+	,[Efficiency] = cast(a.[Efficiency] as decimal(18,2))
+	,[Direct Manpower] = cast(b.TotalManpower / e.[Working Days] as decimal(18,0))
 from #tmp_excludeInOutTotal a
 left join #tmp_TotalManpower b on a.MDivisionID = b.MDivisionID
 left join #tmp_cpuFactor c on a.MDivisionID =c.MDivisionID
@@ -435,6 +435,7 @@ Begin
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
+		([ItemID],[Year],[Month],[MDivision],[Value],[AddName],[AddDate],[EditName],[EditDate])
 		select @ItemID, @Year, @Month, @_MDivisionID, @AvgWorkingHours, @UserID, GETDATE(), null, null
 	end
 
@@ -449,6 +450,7 @@ Begin
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
+		([ItemID],[Year],[Month],[MDivision],[Value],[AddName],[AddDate],[EditName],[EditDate])
 		select @ItemID, @Year, @Month, @_MDivisionID, @PPH, @UserID, GETDATE(), null, null
 	end 
 
@@ -463,6 +465,7 @@ Begin
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
+		([ItemID],[Year],[Month],[MDivision],[Value],[AddName],[AddDate],[EditName],[EditDate])
 		select @ItemID, @Year, @Month, @_MDivisionID, @Efficiency, @UserID, GETDATE(), null, null
 	end  
 
@@ -477,6 +480,7 @@ Begin
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
+		([ItemID],[Year],[Month],[MDivision],[Value],[AddName],[AddDate],[EditName],[EditDate])
 		select @ItemID, @Year, @Month, @_MDivisionID, @DirectManpower, @UserID, GETDATE(), null, null
 	end  
 
@@ -492,6 +496,7 @@ Begin
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
+		([ItemID],[Year],[Month],[MDivision],[Value],[AddName],[AddDate],[EditName],[EditDate])
 		select @ItemID, @Year, @Month, @_MDivisionID, @Performed, @UserID, GETDATE(), null, null
 	end  
 
@@ -506,6 +511,7 @@ Begin
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
+		([ItemID],[Year],[Month],[MDivision],[Value],[AddName],[AddDate],[EditName],[EditDate])
 		select @ItemID, @Year, @Month, @_MDivisionID, @WorkingDays, @UserID, GETDATE(), null, null
 	end
 
