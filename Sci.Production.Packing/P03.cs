@@ -1041,9 +1041,9 @@ order by os.Seq",
 
             foreach (var orderID in orderIdList)
             {
-                string shipmodeID = MyUtility.GetValue.Lookup($"SELECT TOP 1 ShipmodeID FROM Order_QtyShip WHERE ID='{orderID}'");
+                bool exists = MyUtility.Check.Seek($"SELECT TOP 1 ShipmodeID FROM Order_QtyShip WHERE ID='{orderID}' AND ShipmodeID='{this.CurrentMaintain["ShipModeID"].ToString() }'");
 
-                if (this.CurrentMaintain["ShipModeID"].ToString() != shipmodeID)
+                if (!exists)
                 {
                     MyUtility.Msg.WarningBox($"There is no [Ship Mode] in this [SP No.]:{orderID} !");
                     return false;
