@@ -44,6 +44,7 @@ BEGIN
 		set @date_e = dateadd(day,-1,DATEADD(MONTH,6,@date_s))
 	end
 
+	--#tmpFactory
 	SELECT CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , Factory.ID as FactoryID
 		, iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
 	, Factory.CPU
@@ -53,7 +54,8 @@ BEGIN
 	,Round(Capacity * fw.HalfMonth2 / (fw.HalfMonth1 + fw.HalfMonth2),10) as HalfCapacity2
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,Factory.FactorySort
-	into #tmpFactory From Factory
+	into #tmpFactory 
+	From Factory
 	inner join Country on Factory.CountryID = Country.ID
 	left join Factory_TMS on Factory.ID = Factory_Tms.ID
 		And ((@ReportType = 1 and Factory_Tms.Year = @Year)
@@ -68,8 +70,10 @@ BEGIN
 	And Artworktype.ID = @ArtWorkType
 	And (factory.MDivisionID = @M or @M = '') And (factory.ID = @Fty or @Fty = '')
 
+	--#Orders
 	select id,FactoryID,CPU,OrderTypeID,ProgramID,Qty,Category,BrandID,BuyerDelivery,SciDelivery,CpuRate,GMTComplete
-	into #Orders From orders 
+	into #Orders 
+	From orders 
 	outer apply (select CpuRate from GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O') ) gcRate
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
@@ -100,7 +104,8 @@ BEGIN
 	,Round((cCPU * iif(Orders.GMTComplete = 'S', Orders.Qty - GetPulloutData.Qty, 0) * CpuRate),0) as OrderShortage
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,OrderDate ,FactorySort
-	into #tmpOrder1 from #Orders Orders
+	into #tmpOrder1 
+	from #Orders Orders
 	inner join Factory on Orders.FactoryID = Factory.ID
 	left Join Order_TmsCost on @CalArtWorkType != 'CPU' and Orders.ID = Order_TmsCost.ID And Order_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Order_TmsCost.ArtworkTypeID
@@ -111,16 +116,25 @@ BEGIN
 	outer apply (select dbo.GetHalfMonWithYear(OrderDate,@isSCIDelivery) as Date2) odd2	
 	outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = Orders.id) GetPulloutData
 
-	select sd.ID,OrderId,SUM(QAQty*sl.Rate/100) as QAQty 
+	--#sew2
+	select sd.ID,sd.OrderId,SUM(QAQty*ol.Rate/100) as QAQty 
 	into #sew2 
 	from (select *,sidx=ROW_NUMBER()over(partition by id,orderid,ComboType,Article,Color,OldDetailKey order by id) 
 		from SewingOutput_Detail
 		) sd 
 	inner join Orders o on sd.OrderId = o.ID 
-	inner join Style_Location sl on o.StyleUkey = sl.StyleUkey 
-		and sl.Location = sd.ComboType where OrderId in (select ID from #tmpOrder1) and sidx = 1 GROUP BY sd.ID,OrderId	
-	select ID,OutputDate into #sew1 from SewingOutput where ID in (select ID from #sew2) GROUP BY ID,OutputDate
-	select s2.OrderId,sum(s2.QAQty) as QAQty, max(s1.OutputDate) as OutputDate into #sew_Order from #sew2 s2 
+	inner join Order_Location ol on o.ID = ol.OrderId and ol.Location = sd.ComboType 
+	where sd.OrderId in (select ID from #tmpOrder1) and sidx = 1 GROUP BY sd.ID,sd.OrderId	
+
+	--#sew1
+	select ID,OutputDate into #sew1 
+	from SewingOutput 
+	where ID in (select ID from #sew2) GROUP BY ID,OutputDate
+
+	--#sew2
+	select s2.OrderId,sum(s2.QAQty) as QAQty, max(s1.OutputDate) as OutputDate 
+	into #sew_Order 
+	from #sew2 s2 
 	inner join #sew1 s1 on s2.ID = s1.ID 
 	group by s2.OrderId
 
@@ -138,7 +152,9 @@ BEGIN
 	
 
 	--Fty Local Order
-	select ID,CPU,Qty,FactoryID,StyleUkey,BuyerDelivery,SCIDelivery into #FactoryOrder from Orders
+	select ID,CPU,Qty,FactoryID,StyleUkey,BuyerDelivery,SCIDelivery 
+	into #FactoryOrder 
+	from Orders
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
@@ -148,6 +164,7 @@ BEGIN
 	AND Orders.LocalOrder = 1
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
 
+	--#tmpFactoryOrder1
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
 	, Factory.CountryID
@@ -160,7 +177,8 @@ BEGIN
 	,FactoryOrder.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,FactorySort
-	into #tmpFactoryOrder1 from #FactoryOrder FactoryOrder
+	into #tmpFactoryOrder1 
+	from #FactoryOrder FactoryOrder
 	inner join Factory on FactoryOrder.FactoryID = Factory.ID
 	left join Style on Style.Ukey = FactoryOrder.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
@@ -176,22 +194,36 @@ BEGIN
 	
 	
 	--By Sewing
-	select sd.ID,OrderId,SUM(QAQty*sl.Rate/100) as QAQty into #sew4 from (select *,sidx=ROW_NUMBER()over(partition by id,orderid,ComboType,Article,Color,OldDetailKey order by id) from SewingOutput_Detail) sd inner join Orders o on sd.OrderId = o.ID inner join Style_Location sl on o.StyleUkey = sl.StyleUkey and sl.Location = sd.ComboType where OrderId in (select ID from #tmpFactoryOrder1) and sidx = 1 GROUP BY sd.ID,OrderId	
-	select ID,OutputDate into #sew3 from SewingOutput where ID in (select ID from #sew4) GROUP BY ID,OutputDate
-	select s4.OrderId,sum(s4.QAQty) as QAQty, max(s3.OutputDate) as OutputDate into #sew_FtyOrder from #sew4 s4 inner join #sew3 s3 on s4.ID = s3.ID group by s4.OrderId
-	
 
+	--#sew4
+	select sd.ID,OrderId,SUM(QAQty*sl.Rate/100) as QAQty 
+	into #sew4 
+	from (select *,sidx=ROW_NUMBER()over(partition by id,orderid,ComboType,Article,Color,OldDetailKey order by id) from SewingOutput_Detail) sd inner join Orders o on sd.OrderId = o.ID inner join Style_Location sl on o.StyleUkey = sl.StyleUkey and sl.Location = sd.ComboType where OrderId in (select ID from #tmpFactoryOrder1) and sidx = 1 GROUP BY sd.ID,OrderId	
+	
+	--#sew3
+	select ID,OutputDate 
+	into #sew3 
+	from SewingOutput where ID in (select ID from #sew4) GROUP BY ID,OutputDate
+
+	--#sew_FtyOrder
+	select s4.OrderId,sum(s4.QAQty) as QAQty, max(s3.OutputDate) as OutputDate 
+	into #sew_FtyOrder 
+	from #sew4 s4 inner join #sew3 s3 on s4.ID = s3.ID group by s4.OrderId
+	
+	--#tmpFactoryOrder2
 	Select #tmpFactoryOrder1.*, SewingOutput.QAQty, /*Sewingoutput_Detail.InlineQty,*/ Sewingoutput.OutputDate
 	,iif(@ReportType = 1, Date1, Date2) as SewingYYMM
 	,Sewingoutput.OutputDate as SewingYYMM_Ori
 	,Round((cCPU * SewingOutput.QAQty * CpuRate),10) as SewCapacity
-	into #tmpFactoryOrder2 From #tmpFactoryOrder1	
+	into #tmpFactoryOrder2 
+	From #tmpFactoryOrder1	
 	left join #sew_FtyOrder SewingOutput on SewingOutput.OrderId = #tmpFactoryOrder1.ID
 	outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate,@isSCIDelivery) as Date2) odd2
 
 
 	--Forecast
+	--#tmpForecast1
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
 	, Factory.CountryID
@@ -204,7 +236,8 @@ BEGIN
 	,Orders.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,FactorySort
-	into #tmpForecast1 from Orders
+	into #tmpForecast1 
+	from Orders
 	left join Factory on Factory.ID = Orders.FactoryID
 	left join Style on Style.Ukey = Orders.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
