@@ -960,7 +960,7 @@ Order by fe.BeginDate Desc'
 					END
 			END
 
-		FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid
+		FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff
 
 	END
 	CLOSE cursor_sewingschedule
