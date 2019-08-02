@@ -15,6 +15,7 @@ using Sci.Win.Tools;
 using System.Linq;
 using Sci.Utility;
 using Sci.Win.Tems;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.Cutting
 {
@@ -36,7 +37,7 @@ namespace Sci.Production.Cutting
         Ict.Win.UI.DataGridViewTextBoxColumn col_seq2;
         Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
         Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_cutno;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_cutno;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_layer;
         Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
         Ict.Win.UI.DataGridViewTextBoxColumn col_cutref;
@@ -474,6 +475,14 @@ where WorkOrderUkey={0}", masterID);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
+            DataGridViewGeneratorTextColumnSettings cutno = new DataGridViewGeneratorTextColumnSettings();
+            cutno.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                Regex NumberPattern = new Regex("^[0-9]{1,6}$");
+                if (!NumberPattern.IsMatch(e.FormattedValue.ToString())) { dr["Cutno"] = DBNull.Value; }
+            };
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
             EstCutDate.CellValidating += (s, e) =>
             {
@@ -528,7 +537,7 @@ where WorkOrderUkey={0}", masterID);
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6)).Get(out col_cutref)
-                .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3).Get(out col_cutno)
+                .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(5), settings: cutno).Get(out col_cutno)
                 .Text("MarkerName", header: "Marker\r\nName", width: Widths.AnsiChars(5)).Get(out col_Markername)
                 .Text("Fabriccombo", header: "Fabric\r\nCombo", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("FabricPanelCode", header: "Fab_Panel\r\nCode", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -616,8 +625,8 @@ where WorkOrderUkey={0}", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
-                else ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
 
             };
             col_cutno.CellFormatting += (s, e) =>
@@ -634,7 +643,8 @@ where WorkOrderUkey={0}", masterID);
                     e.CellStyle.BackColor = Color.Pink;
                     e.CellStyle.ForeColor = Color.Red;
                 }
-            };
+            }; 
+
             #endregion
             #region markname
             col_Markername.EditingControlShowing += (s, e) =>
@@ -1798,7 +1808,7 @@ where WorkOrderUkey={0}", masterID);
             grid.ValidateControl();
             #region 變更先將同d,Cutref, FabricPanelCode, CutNo, MarkerName, estcutdate 且有cutref,Cuno無cutplanid 的cutref值找出來Group by→cutref 會相同
             string cmdsql = string.Format(@"
-            SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, isnull(CutNo,0) as cutno,
+            SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, CutNo,
             isnull(MarkerName,'') as MarkerName, estcutdate
             FROM Workorder WITH (NOLOCK) 
             WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
@@ -1853,7 +1863,7 @@ Begin Transaction [Trans_Name] -- Trans_Name
                     DataRow newdr = cutreftb.NewRow();
                     newdr["MarkerName"] = dr["MarkerName"] == null ? string.Empty : dr["MarkerName"];
                     newdr["FabricCombo"] = dr["FabricCombo"] == null ? string.Empty : dr["FabricCombo"];
-                    newdr["Cutno"] = dr["Cutno"] == null ? 0 : dr["Cutno"];
+                    newdr["Cutno"] = dr["Cutno"];
                     newdr["estcutdate"] = dr["estcutdate"] == null ? string.Empty : dr["estcutdate"];
                     newdr["cutref"] = maxref;
                     cutreftb.Rows.Add(newdr);
@@ -2022,6 +2032,7 @@ END";
             newRow["SCIRefno"] = OldRow["SCIRefno"];
             newRow["FabricCombo"] = OldRow["FabricCombo"];
             newRow["FabricPanelCode"] = OldRow["FabricPanelCode"];
+            newRow["Cutno"] = DBNull.Value;
             if (isAdditionalrevisedmarker) newRow["isbyAdditionalRevisedMarker"] = 2;
             else newRow["isbyAdditionalRevisedMarker"] = 0;
 
@@ -2315,94 +2326,78 @@ END";
             gridValid();
 
             int index = 0;
-            foreach (DataRow item in DetailDatas)
-            {
-                if (MyUtility.Check.Empty(item["MarkerNo"].ToString()))
-                {
-                    this.detailgrid.SelectRowTo(index);
-                    MyUtility.Msg.WarningBox("Marker No cannot be empty.");
-                    return false;
-                }
-                else if (MyUtility.Check.Empty(item["FabricPanelCode"].ToString()))
-                {
-                    this.detailgrid.SelectRowTo(index);
-                    MyUtility.Msg.WarningBox("Fab_Panel Code cannot be empty.");
-                    return false;
-                }
-                else if (MyUtility.Check.Empty(item["CutRef"].ToString()) && !MyUtility.Check.Empty(item["CutNo"].ToString())) //尚未設定 CutRef# 且 Cut# 不為空
-                {
-
-                    this.detailgrid.SelectRowTo(index);
-
-                    //與該筆相同 FabricCombo、Cut# 的資料
-                    List<DataRow> SameDatas = DetailDatas.Where(o => 
-                                                                    o["CutRef"].ToString() == string.Empty
-                                                                    && o["CutNo"].ToString() == item["CutNo"].ToString()
-                                                                    && o["FabricCombo"].ToString() == item["FabricCombo"].ToString() 
-                                                                    && o["Ukey"].ToString() != item["Ukey"].ToString()).ToList();
-
-                    if (SameDatas.Count > 0)
-                    {
-                        foreach (var SigngleData in SameDatas)
-                        {
-                            // Mark Name 與 Marker No 需完全一致
-                            if (SigngleData["MarkerName"].ToString() != item["MarkerName"].ToString() || SigngleData["MarkerNo"].ToString() != item["MarkerNo"].ToString())
-                            {
-                                MyUtility.Msg.WarningBox("In the same fabric combo, different 'Marker Name' and 'Marker No' cannot cut in one time which means cannot set the same cut#.");
-                                return false;
-                            }
-                        }
-                    }
-                }
-                index++;
+            foreach(DataRow row in DetailDatas.Where(x => MyUtility.Check.Empty(x["MarkerNo"].ToString())))
+            { 
+                index = DetailDatas.IndexOf(row);
+                this.detailgrid.SelectRowTo(index);
+                MyUtility.Msg.WarningBox("Marker No cannot be empty.");
+                return false;
             }
 
-            DataTable Dg = ((DataTable)detailgridbs.DataSource);
-            for (int i = Dg.Rows.Count; i > 0; i--)
+            foreach (DataRow row in DetailDatas.Where(x => MyUtility.Check.Empty(x["FabricPanelCode"].ToString())))
             {
-                if (Dg.Rows[i - 1].RowState != DataRowState.Deleted)
+                index = DetailDatas.IndexOf(row);
+                this.detailgrid.SelectRowTo(index);
+                MyUtility.Msg.WarningBox("Fab_Panel Code cannot be empty.");
+                return false;
+            }
+
+            foreach (DataRow row in DetailDatas.Where(x => MyUtility.Check.Empty(x["CutRef"].ToString()) && !MyUtility.Check.Empty(x["CutNo"].ToString())))
+            {
+                //與該筆相同 FabricCombo、Cut# 的資料
+                List<DataRow> SameDatas = DetailDatas.Where(o =>
+                                                                o["CutRef"].ToString() == string.Empty
+                                                                && o["CutNo"].ToString() == row["CutNo"].ToString()
+                                                                && o["FabricCombo"].ToString() == row["FabricCombo"].ToString()
+                                                                && o["Ukey"].ToString() != row["Ukey"].ToString()).ToList();
+
+                if (SameDatas.Count > 0)
                 {
-                    if (MyUtility.Check.Empty(Dg.Rows[i - 1]["MarkerName"]) || MyUtility.Check.Empty(Dg.Rows[i - 1]["Layer"]) ||
-                        MyUtility.Check.Empty(Dg.Rows[i - 1]["SEQ1"]) || MyUtility.Check.Empty(Dg.Rows[i - 1]["SEQ2"]) ||
-                        MyUtility.Convert.GetString(Dg.Rows[i - 1]["MarkerName"]) == "" ||
-                        MyUtility.Convert.GetString(Dg.Rows[i - 1]["Layer"]) == "0" ||
-                        MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ1"]) == "" ||
-                        MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ2"]) == "")
+                    var SigngleData = SameDatas.Where(x => x["MarkerName"].ToString() != row["MarkerName"].ToString() ||
+                                                           x["MarkerNo"].ToString() != row["MarkerNo"].ToString()
+                                               ).ToList();
+                    if (SigngleData.Count > 0)
                     {
-                        //Dg.Rows[i - 1].Delete();
-                        MyUtility.Msg.ErrorBox(string.Format("MarkerName,Layer,SEQ1,SEQ2 can't be empty"));
+                        index = DetailDatas.IndexOf(row);
+                        this.detailgrid.SelectRowTo(index);
+                        MyUtility.Msg.WarningBox("In the same fabric combo, different 'Marker Name' and 'Marker No' cannot cut in one time which means cannot set the same cut#.");
                         return false;
-                    }
-                }
+                    } 
+                } 
             }
 
-            #region 刪除Qty 為0
-            DataTable copyTb = sizeratioTb.Copy();
-            DataRow[] deledr;
-            foreach (DataRow dr in copyTb.Rows)
+            var query = DetailDatas.Where(x => x.RowState != DataRowState.Deleted &&
+                                    (MyUtility.Check.Empty(x["MarkerName"]) ||
+                                    MyUtility.Check.Empty(x["Layer"]) ||
+                                    MyUtility.Check.Empty(x["SEQ1"]) ||
+                                    MyUtility.Check.Empty(x["SEQ2"]))).ToList();
+            if (query.Count > 0)
             {
-                if (dr.RowState != DataRowState.Deleted)
+                MyUtility.Msg.ErrorBox(string.Format("MarkerName,Layer,SEQ1,SEQ2 can't be empty"));
+                return false;
+            } 
+
+            #region 刪除Qty 為0 
+            DataRow[] deledr;
+            foreach (DataRow dr in sizeratioTb.AsEnumerable().Where(
+                                x => x.RowState != DataRowState.Deleted &&
+                                (Convert.ToInt32(x["Qty"]) == 0 || MyUtility.Check.Empty(x["SizeCode"]))))
+            {
+                deledr = sizeratioTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}'", dr["WorkOrderUkey"], dr["NewKey"], dr["SizeCode"]));
+                if (deledr.Length > 0)
                 {
-                    if (Convert.ToInt32(dr["Qty"]) == 0 || MyUtility.Check.Empty(dr["SizeCode"]))
-                    {
-                        deledr = sizeratioTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}'", dr["WorkOrderUkey"], dr["NewKey"], dr["SizeCode"]));
-                        if (deledr.Length > 0)
-                        {
-                            deledr[0].Delete();
-                        }
-                    }
+                    deledr[0].Delete();
                 }
             }
-            DataTable copyTb2 = distqtyTb.Copy();
-            foreach (DataRow dr2 in copyTb2.Rows)
+            foreach (DataRow dr2 in distqtyTb.AsEnumerable().Where(
+                                x => x.RowState != DataRowState.Deleted &&
+                                (Convert.ToInt32(x["Qty"]) == 0 || MyUtility.Check.Empty(x["SizeCode"]) || MyUtility.Check.Empty(x["Article"])) && 
+                                x["OrderID"].ToString().ToUpper() != "EXCESS"))
             {
-                if (dr2.RowState != DataRowState.Deleted)
+                deledr = distqtyTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}' and Article = '{3}' and OrderID = '{4}'", dr2["WorkOrderUkey"], dr2["NewKey"], dr2["SizeCode"], dr2["Article"], dr2["OrderID"]));
+                if (deledr.Length > 0)
                 {
-                    if ((Convert.ToInt32(dr2["Qty"]) == 0 || MyUtility.Check.Empty(dr2["SizeCode"]) || MyUtility.Check.Empty(dr2["Article"])) && dr2["OrderID"].ToString().ToUpper() != "EXCESS")
-                    {
-                        deledr = distqtyTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}' and Article = '{3}' and OrderID = '{4}'", dr2["WorkOrderUkey"], dr2["NewKey"], dr2["SizeCode"], dr2["Article"], dr2["OrderID"]));
-                        if (deledr.Length > 0) deledr[0].Delete();
-                    }
+                    deledr[0].Delete();
                 }
             }
             #endregion
@@ -2417,6 +2412,11 @@ END";
                     msg1 = msg1 + dr["WorkOrderUkey"].ToString() + "\n";
                 }
             }
+            if (!MyUtility.Check.Empty(msg1))
+            {
+                MyUtility.Msg.WarningBox("The SizeRatio duplicate ,Please see below <Ukey> \n" + msg1);
+                return false;
+            }
 
             MyUtility.Tool.ProcessWithDatatable(distqtyTb, "OrderID,Article,SizeCode,WorkOrderUkey,NewKey", "Select OrderID,Article,SizeCode,WorkOrderUkey,NewKey,Count() as countN from #tmp having countN >1 Group by OrderID,Article,SizeCode,WorkOrderUkey,NewKey", out dt);
             if (dt != null)
@@ -2426,23 +2426,15 @@ END";
                     msg2 = msg2 + dr["WorkOrderUkey"].ToString() + "\n";
                 }
             }
-            if (!MyUtility.Check.Empty(msg1))
-            {
-                MyUtility.Msg.WarningBox("The SizeRatio duplicate ,Please see below <Ukey> \n" + msg1);
-                return false;
-            }
             if (!MyUtility.Check.Empty(msg2))
             {
                 MyUtility.Msg.WarningBox("The Distribute Qty data duplicate ,Please see below <Ukey> \n" + msg2);
                 return false;
             }
+
             #region 檢查每一筆 Total distributionQty是否大於TotalCutQty總和
-            foreach (DataRow dr_d in Dg.Rows)
+            foreach (DataRow dr_d in DetailDatas.Where(x => x.RowState != DataRowState.Deleted))
             {
-                if (dr_d.RowState == DataRowState.Deleted)
-                {
-                    continue;
-                }
                 decimal ttlcutqty = 0, ttldisqty = 0;
                 DataRow[] sizedr = sizeratioTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
                 DataRow[] distdr = distqtyTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
@@ -2465,18 +2457,14 @@ END";
             #region RevisedMarkerOriginalData 非AdditionalRevisedMarker功能增加的資料 isbyAdditionalRevisedMarker == 0
             string sqlInsertRevisedMarkerOriginalData = string.Empty;
             sqlInsertRevisedMarkerOriginalData += "declare @ID bigint";
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in DetailDatas.Where(w => (w.RowState == DataRowState.Modified) &&
+                            MyUtility.Convert.GetString(w["MarkerName", DataRowVersion.Original]) != MyUtility.Convert.GetString(w["MarkerName"]) &&
+                            MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 0))
             {
-                if (dr.RowState == DataRowState.Modified &&
-                    MyUtility.Convert.GetString(dr["MarkerName", DataRowVersion.Original]) != MyUtility.Convert.GetString(dr["MarkerName"]) &&
-                    MyUtility.Convert.GetInt(dr["isbyAdditionalRevisedMarker"]) == 0
-                    )
+                string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData_Detail where WorkOrderUkey = ('{dr["ukey"]}')  ";
+                if (!MyUtility.Check.Seek(sqlchk))
                 {
-                    // 已經寫過則不再寫入
-                    string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData_Detail where WorkOrderUkey = ('{dr["ukey"]}')  ";
-                    if (!MyUtility.Check.Seek(sqlchk))
-                    {
-                        sqlInsertRevisedMarkerOriginalData += $@"
+                    sqlInsertRevisedMarkerOriginalData += $@"
 INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
 ([ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid],[MarkerLength]
 ,[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo],[MarkerDownLoadId]
@@ -2501,7 +2489,6 @@ select [ID],@ID,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternPa
 INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[SizeCode],[Qty])
 select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
 ";
-                    }
                 }
             }
             #endregion
@@ -2585,77 +2572,64 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
             #endregion
             int ukey, newkey;
             DataRow[] dray;
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in DetailDatas.Where(w => w.RowState != DataRowState.Deleted))
             {
                 ukey = Convert.ToInt32(dr["Ukey"]);
                 newkey = Convert.ToInt32(dr["Newkey"]);
-                if (dr.RowState != DataRowState.Deleted) //將Ukey 寫入其他Table
-                {
-                    dray = sizeratioTb.Select(string.Format("newkey={0} and workorderUkey= 0", newkey)); //0表示新增
-                    foreach (DataRow dr2 in dray)
-                    {
-                        dr2["WorkOrderUkey"] = ukey;
-                    }
 
-                    dray = distqtyTb.Select(string.Format("newkey={0} and workorderUkey= 0", newkey)); //0表示新增
-                    foreach (DataRow dr2 in dray)
-                    {
-                        dr2["WorkOrderUkey"] = ukey;
-                    }
+                dray = sizeratioTb.Select(string.Format("newkey={0} and workorderUkey= 0", newkey)); //0表示新增
+                foreach (DataRow dr2 in dray)
+                {
+                    dr2["WorkOrderUkey"] = ukey;
+                }
+
+                dray = distqtyTb.Select(string.Format("newkey={0} and workorderUkey= 0", newkey)); //0表示新增
+                foreach (DataRow dr2 in dray)
+                {
+                    dr2["WorkOrderUkey"] = ukey;
                 }
             }
             string delsql = "", updatesql = "", insertsql = "";
             string cId = CurrentMaintain["ID"].ToString();
             #region SizeRatio 修改
-            foreach (DataRow dr in sizeratioTb.Rows)
+            #region 刪除
+            foreach (DataRow dr in sizeratioTb.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted))
             {
-                #region 刪除
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    delsql = delsql + string.Format("Delete From WorkOrder_SizeRatio Where WorkOrderUkey={0} and SizeCode ='{1}' and ID ='{2}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], cId);
-                }
-                #endregion
-                #region 修改
-                if (dr.RowState == DataRowState.Modified)
-                {
-                    updatesql = updatesql + string.Format("Update WorkOrder_SizeRatio set Qty = {0},SizeCode = '{4}' where WorkOrderUkey ={1} and SizeCode = '{2}' and id ='{3}';", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode", DataRowVersion.Original], cId, dr["SizeCode"]);
-                }
-                #endregion
-                #region 新增
-                if (dr.RowState == DataRowState.Added)
-                {
-                    insertsql = insertsql + string.Format("Insert into WorkOrder_SizeRatio(WorkOrderUkey,SizeCode,Qty,ID) values({0},'{1}',{2},'{3}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], cId);
-                }
-                #endregion
+                delsql = delsql + string.Format("Delete From WorkOrder_SizeRatio Where WorkOrderUkey={0} and SizeCode ='{1}' and ID ='{2}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], cId);
             }
             #endregion
+            #region 修改
+            foreach (DataRow dr in sizeratioTb.AsEnumerable().Where(x => x.RowState == DataRowState.Modified))
+            {
+                updatesql = updatesql + string.Format("Update WorkOrder_SizeRatio set Qty = {0},SizeCode = '{4}' where WorkOrderUkey ={1} and SizeCode = '{2}' and id ='{3}';", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode", DataRowVersion.Original], cId, dr["SizeCode"]);
+            }
+            #endregion
+            #region 新增
+            foreach (DataRow dr in sizeratioTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
+            {
+                insertsql = insertsql + string.Format("Insert into WorkOrder_SizeRatio(WorkOrderUkey,SizeCode,Qty,ID) values({0},'{1}',{2},'{3}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], cId);
+            }
+            #endregion
+            #endregion
             #region Distribute 修改
-            DataTable DeleteTb = distqtyTb.Copy();
-            foreach (DataRow dr in DeleteTb.Rows)
-            {
-                #region 刪除
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
-                }
-                #endregion
+            #region 刪除
+            foreach (DataRow dr in distqtyTb.AsEnumerable().Where(x => x.RowState== DataRowState.Deleted))
+            {                
+                 delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
             }
-            foreach (DataRow dr in distqtyTb.Rows)
+            #endregion
+            #region 修改
+            foreach (DataRow dr in distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Modified)) 
             {
-                // dr["ID", DataRowVersion.Original]
-                #region 修改
-                if (dr.RowState == DataRowState.Modified)
-                {
-                    updatesql = updatesql + string.Format("Update WorkOrder_distribute set Qty = {0},SizeCode = '{6}' where WorkOrderUkey ={1} and SizeCode = '{2}' and Article = '{3}' and OrderID = '{4}' and ID ='{5}'; ", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode", DataRowVersion.Original], dr["Article"], dr["OrderID"], cId, dr["SizeCode"]);
-                }
-                #endregion
-                #region 新增
-                if (dr.RowState == DataRowState.Added)
-                {
-                    insertsql = insertsql + string.Format("Insert into WorkOrder_distribute(WorkOrderUkey,SizeCode,Qty,Article,OrderID,ID) values({0},'{1}',{2},'{3}','{4}','{5}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], dr["Article"], dr["OrderID"], cId);
-                }
-                #endregion
+                updatesql = updatesql + string.Format("Update WorkOrder_distribute set Qty = {0},SizeCode = '{6}' where WorkOrderUkey ={1} and SizeCode = '{2}' and Article = '{3}' and OrderID = '{4}' and ID ='{5}'; ", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode", DataRowVersion.Original], dr["Article"], dr["OrderID"], cId, dr["SizeCode"]);
             }
+            #endregion
+            #region 新增
+            foreach (DataRow dr in distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
+            {                
+                insertsql = insertsql + string.Format("Insert into WorkOrder_distribute(WorkOrderUkey,SizeCode,Qty,Article,OrderID,ID) values({0},'{1}',{2},'{3}','{4}','{5}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], dr["Article"], dr["OrderID"], cId);
+            }
+            #endregion
             #endregion
             #region PatternPanel 修改
             //foreach (DataRow dr in PatternPanelTb.Rows)
