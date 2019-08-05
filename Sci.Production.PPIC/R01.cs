@@ -162,13 +162,13 @@ namespace Sci.Production.PPIC
 
                 worksheet = objApp.Sheets[1];
 
-                worksheet.Columns[8].ColumnWidth = 40;
-                worksheet.Columns[10].ColumnWidth = 40;
+                worksheet.Columns[8].ColumnWidth = 10;
+                worksheet.Columns[10].ColumnWidth = 10;
                 worksheet.Columns[12].ColumnWidth = 40;
                 worksheet.Columns[16].ColumnWidth = 40;
                 worksheet.Columns[20].ColumnWidth = 40;
                 worksheet.Columns[23].ColumnWidth = 40;
-                worksheet.Columns[31].ColumnWidth = 40;
+                worksheet.Columns[31].ColumnWidth = 20;
                 worksheet.Columns[33].ColumnWidth = 40;
 
                 #region Save & Show Excel
@@ -963,7 +963,8 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
 
             if (!MyUtility.Check.Empty(this.inline))
             {
-                sqlWhere.Append(string.Format(" and s.Inline >= '{0}'", Convert.ToDateTime(this.inline).ToString("d")));
+                // Inline After 再搜尋時判斷的是在 Inline - Offline 的期間有包含到 Inline Afer 這一段區間的 Schedule
+                sqlWhere.Append(string.Format(" and (s.Inline >= '{0}' or (s.Inline <= '{0}' and s.Offline >= '{0}'))", Convert.ToDateTime(this.inline).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.offline))
@@ -1001,42 +1002,45 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             sqlCmd.Append($@"
 --畫面抓取條件，取得APSNo
 select
-	APSNo ,
-	MDivisionID,
-	SewingLineID,
-	FactoryID,
-	[InlineDate] = Cast(ss.Inline as date),
-	[OfflineDate] = Cast(ss.Offline as date),
-	Inline,
-	Offline,
-    [InlineHour] = DATEDIFF(ss,Cast(Inline as date),Inline) / 3600.0	  ,
-    [OfflineHour] = DATEDIFF(ss,Cast(Offline as date),Offline) / 3600.0	  ,
-	[OriEff] = isnull(ss.OriEff,ss.MaxEff),
+	s.APSNo ,
+	s.MDivisionID,
+	s.SewingLineID,
+	s.FactoryID,
+	[InlineDate] = Cast(s.Inline as date),
+	[OfflineDate] = Cast(s.Offline as date),
+	s.Inline,
+	s.Offline,
+    [InlineHour] = DATEDIFF(ss,Cast(s.Inline as date),s.Inline) / 3600.0	  ,
+    [OfflineHour] = DATEDIFF(ss,Cast(s.Offline as date),s.Offline) / 3600.0	  ,
+	[OriEff] = isnull(s.OriEff,s.MaxEff),
 	LearnCurveID,
 	Sewer,
-	[AlloQty] = sum(AlloQty),
-	[HourOutput] = (Sewer * 3600.0 * isnull(OriEff,MaxEff) / 100) / TotalSewingTime,
-	[OriWorkHour] = sum(AlloQty) / ((Sewer * 3600.0 * isnull(OriEff,MaxEff) / 100) / TotalSewingTime)
+	[AlloQty] = sum(s.AlloQty),
+	[HourOutput] = (s.Sewer * 3600.0 * isnull(s.OriEff,s.MaxEff) / 100) / s.TotalSewingTime,
+	[OriWorkHour] = sum(s.AlloQty) / ((s.Sewer * 3600.0 * isnull(s.OriEff,s.MaxEff) / 100) / s.TotalSewingTime),
+	[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float),
+	s.TotalSewingTime,
+	s.OrderID
 	into #APSListWorkDay
-from SewingSchedule ss  WITH (NOLOCK) 
-where exists( 
-select 1 
-from SewingSchedule s
+from SewingSchedule s  WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-where	ss.APSNo = s.APSNo
-		{sqlWhere.ToString()}
-)
-group by	APSNo ,
-			MDivisionID,
-			SewingLineID,
-			FactoryID,
-			Inline,
-			Offline,
-			isnull(OriEff,MaxEff),
-			LearnCurveID,
-			Sewer,
-			TotalSewingTime
+where 1 = 1 {sqlWhere.ToString()}
+group by	s.APSNo ,
+			s.MDivisionID,
+			s.SewingLineID,
+			s.FactoryID,
+			s.Inline,
+			s.Offline,
+			isnull(s.OriEff,s.MaxEff),
+			s.LearnCurveID,
+			s.Sewer,
+			s.TotalSewingTime,
+			o.CPU,
+			o.CPUFactor,
+			s.OrderID,
+			s.ComboType,
+			o.StyleUkey
 
 select 
 	APSNo,
@@ -1097,16 +1101,17 @@ group by	aps.APSNo,
 			so.OutputDate
 
 --取得Artwork
-select  ot.ID
+select  distinct
+		o.StyleID
         , at.Abbreviation
         , ot.Qty
         , ot.TMS
         , at.Classify
 into #tmpAllArtwork
 from Order_TmsCost ot WITH (NOLOCK) 
-        , ArtworkType at WITH (NOLOCK) 
-where   ot.ArtworkTypeID = at.ID
-        and (ot.Price > 0 or at.Classify in ('O','I') )
+inner join ArtworkType at WITH (NOLOCK)  on ot.ArtworkTypeID = at.ID
+inner join Orders o with (nolock) on ot.ID = o.id
+where   (ot.Price > 0 or at.Classify in ('O','I') )
         and (at.Classify in ('S','I') or at.IsSubprocess = 1)
         and (ot.TMS > 0 or ot.Qty > 0)
         and at.Abbreviation !=''
@@ -1115,26 +1120,26 @@ where   ot.ArtworkTypeID = at.ID
 select * 
 into #tmpArtWork
 from (
-    select  ID
+    select  StyleID
             , Abbreviation+':'+Convert(varchar,Qty) as Artwork 
     from #tmpAllArtwork 
     where Qty > 0
         
     union all
-    select  ID
+    select  StyleID
             , Abbreviation+':'+Convert(varchar,TMS) as Artwork 
     from #tmpAllArtwork 
     where TMS > 0 and Classify in ('O','I')
 ) a 
 
-select tmpArtWorkID.ID
+select tmpArtWorkID.StyleID
         , Artwork = Stuff((select   CONCAT(',',Artwork) 
 						from #tmpArtWork 
-						where ID = tmpArtWorkID.ID 
+						where StyleID = tmpArtWorkID.StyleID 
 						order by Artwork for xml path('')),1,1,'')   
 into #tmpOrderArtwork
 from (
-	select distinct ID
+	select distinct StyleID
 	from #tmpArtWork
 ) tmpArtWorkID
 
@@ -1142,13 +1147,22 @@ drop table #tmpAllArtwork,#tmpArtWork
 
 --取得order對應的Articl
 select
-distinct
 s.APSNo,
-[Colorway] = s.OrderID+'(' + sd.Article + ')'
+[Colorway] = Rtrim(sd.Article) +'(' + cast(SUM(sd.AlloQty) as varchar) + ')'
 into #APSListArticle
 from SewingSchedule s with (nolock)
 inner join SewingSchedule_Detail sd with (nolock) on s.ID = sd.ID
 where exists( select 1 from #APSList where APSNo = s.APSNo)
+group by s.APSNo,sd.Article
+
+--取得 Remarks欄位
+select
+s.APSNo,
+[Remarks] = s.OrderID + '(' + s_other.SewingLineID + ',' + s.ComboType + ',' + CAST(s_other.AlloQty as varchar) + ')'
+into #APSRemarks
+from SewingSchedule s with (nolock)
+inner join SewingSchedule s_other on s_other.OrderID = s.OrderID and s_other.ComboType = s.ComboType and s_other.APSNo <> s.APSNo
+where  exists( select 1 from #APSList where APSNo = s.APSNo)
 
 --取得每個計劃需要串接起來的欄位，供後續使用
 select
@@ -1158,22 +1172,18 @@ o.CustPONo,
 o.CdCodeID,
 cd.ProductionFamilyID,
 o.StyleID,
-[CPU] =s.OrderID+'('  + CONVERT(varchar,cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float)) + ')',
 o.PFOrder,
 o.MTLExport,
 o.KPILETA,
 o.MTLETA,
-[Artwork] = s.OrderID+'('  +oa.Artwork + ')',
-o.InspDate,
-[Remarks] = s.OrderID + '(' + CAST(s.AlloQty as varchar) + ',' + s.ComboType + ',' + CAST(OtherAlloQty.val as varchar) + ')',
-[EffList] = s.OrderID+'(' + s.ComboType + ','+ CONVERT(varchar,isnull(s.OriEff,s.MaxEff)) +')'
+[Artwork] = o.StyleID+'('  +oa.Artwork + ')',
+o.InspDate
 into #APSColumnGroup
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 inner join CDCode cd with (nolock) on o.CdCodeID = cd.ID
-left join #tmpOrderArtwork oa on oa.ID = s.OrderID
+left join #tmpOrderArtwork oa on oa.StyleID = o.StyleID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID 
-outer apply (select [val] = isnull(sum(AlloQty),0) from SewingSchedule with (nolock) where OrderID = s.OrderID and ComboType = s.ComboType and APSNo <> s.APSNo) OtherAlloQty
 where exists( select 1 from #APSList where APSNo = s.APSNo)
 
 CREATE INDEX IDX_TMP_APSColumnGroup ON #APSColumnGroup (APSNo);
@@ -1194,8 +1204,6 @@ al.SewingLineID,
 [Style] = Style.val,
 aoo.OrderQty,
 al.AlloQty,
-[CPU] = CPU.val,
-[EffList] = EffList.val,
 al.LearnCurveID,
 al.Inline,
 al.Offline,
@@ -1217,17 +1225,15 @@ from #APSList al
 left join #APSCuttingOutput aco on al.APSNo = aco.APSNo
 left join #APSOrderQty aoo on al.APSNo = aoo.APSNo
 left join #APSPackingQty apo on al.APSNo = apo.APSNo
-outer apply (SELECT val =  Stuff((select distinct concat( ',',CustPONo)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CustPO
+outer apply (SELECT val =  Stuff((select distinct concat( ',',CustPONo)   from #APSColumnGroup where APSNo = al.APSNo and CustPONo <> '' FOR XML PATH('')),1,1,'') ) as CustPO
 outer apply (SELECT val =  Stuff((select distinct concat( ',',SP)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as SP
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Colorway)   from #APSListArticle where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Colorway
 outer apply (SELECT val =  Stuff((select distinct concat( ',',CdCodeID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CDCode
 outer apply (SELECT val =  Stuff((select distinct concat( ',',ProductionFamilyID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ProductionFamilyID
 outer apply (SELECT val =  Stuff((select distinct concat( ',',StyleID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Style
-outer apply (SELECT val =  Stuff((select distinct concat( ',',CPU)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CPU
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Artwork)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ArtworkType
 outer apply (select [KPILETA] = MAX(KPILETA),[MTLETA] = MAX(MTLETA),[InspDate] = MAX(InspDate) from #APSColumnGroup where APSNo = al.APSNo) as OrderMax
-outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Remarks
-outer apply (SELECT val =  Stuff((select distinct concat( ',',EffList)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as EffList
+outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from #APSRemarks where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Remarks
 
 --組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
 Declare @StartDate date
@@ -1265,7 +1271,11 @@ select  al.APSNo,
         al.InlineHour,
         al.OfflineHour,
 		al.HourOutput,
-		al.OriWorkHour
+		al.OriWorkHour,
+		al.CPU,
+		al.TotalSewingTime,
+		al.Sewer,
+		al.OrderID
 into #Workhour_step1
 from #APSListWorkDay al
 inner join #WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
@@ -1291,10 +1301,14 @@ select  APSNo,
         EndHour,
         InlineHour,
         OfflineHour,
-		[StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,HourOutput ORDER BY StartHour),
-		[EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,HourOutput ORDER BY EndHour desc),
+		[StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID ORDER BY StartHour),
+		[EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID ORDER BY EndHour desc),
 		HourOutput,
-		OriWorkHour
+		OriWorkHour,
+		CPU,
+		TotalSewingTime,
+		Sewer,
+		OrderID
 into #Workhour_step2
 from #Workhour_step1	
 
@@ -1309,23 +1323,25 @@ LearnCurveID,
 [SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
 WorkDate,
 [WorkingTime] = sum(EndHour - StartHour),
-[WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,HourOutput ORDER BY WorkDate),
+[WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,OrderID ORDER BY WorkDate),
 HourOutput,
-OriWorkHour
+OriWorkHour,
+CPU,
+TotalSewingTime,
+Sewer
 into #APSExtendWorkDate
 from #Workhour_step2 
 group by APSNo,LearnCurveID,WorkDate,HourOutput,
-OriWorkHour
+OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID
 
 --取得每個計劃去除LearnCurve後的總工時
 SELECT
 awd.APSNo,
-[TotalWorkHour] = sum(WorkingTime * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0)
+awd.WorkDate,
+[TotalWorkHour] = sum(OriWorkHour)
 into #OriTotalWorkHour
-FROM (select distinct APSNo,LearnCurveID,WorkingTime,WorkDateSer from #APSExtendWorkDate) awd
-left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
-outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
-group by awd.APSNo
+FROM #APSExtendWorkDate awd
+group by awd.APSNo,awd.WorkDate
 
 --取得LearnCurve Efficiency by Work Date
 select 
@@ -1335,10 +1351,12 @@ awd.SewingEnd,
 [SewingOutput] = isnull(apo.SewingOutput,0),
 awd.WorkingTime,
 [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
-[StdOutput] = floor(SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0)
+[StdOutput] = SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0,
+[CPU] = SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0,
+[Efficienycy] =  SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.WorkingTime * awd.Sewer * 3600.0)
 into #APSExtendWorkDateFin
 from #APSExtendWorkDate awd
-inner join #OriTotalWorkHour otw on otw.APSNo = awd.APSNo
+inner join #OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 left join #APSSewingOutput apo on awd.APSNo = apo.APSNo and awd.WorkDate = apo.OutputDate
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
@@ -1347,7 +1365,8 @@ group by awd.APSNo,
 		 awd.SewingEnd,
 		 isnull(apo.SewingOutput,0),
 		 awd.WorkingTime,
-		 ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))
+		 ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
+		 awd.Sewer
 
 --計算這一天的標準產量
 --= (工作時數 / 車縫一件成衣需要花費的秒數) * 工人數 * 效率
@@ -1373,10 +1392,10 @@ apm.Style,
 apm.OrderQty,
 apm.AlloQty,
 [StdOutput] = apf.StdOutput,
-apm.CPU,
+apf.CPU,
 [DayWorkHour] = apf.WorkingTime,
 [HourOutput] = iif(apf.WorkingTime = 0,0,floor(apf.StdOutput / apf.WorkingTime)),
-apm.EffList,
+apf.Efficienycy,
 [LearnCurveEff] = apf.LearnCurveEff / 100.0,
 apm.Inline,
 apm.Offline,
@@ -1395,7 +1414,7 @@ from #APSMain apm
 inner join #APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart
 
-drop table	#APSListWorkDay,#APSList,#APSMain,#APSExtendWorkDateFin,#APSOrderQty,#APSCuttingOutput,#APSPackingQty,#APSSewingOutput,
+drop table	#APSListWorkDay,#APSList,#APSMain,#APSExtendWorkDateFin,#APSOrderQty,#APSCuttingOutput,#APSPackingQty,#APSSewingOutput,#APSRemarks,
 			#tmpOrderArtwork,#APSListArticle,#APSColumnGroup,#WorkDate,#APSExtendWorkDate,#Workhour_step1,#Workhour_step2,#OriTotalWorkHour
 ");
             #endregion
