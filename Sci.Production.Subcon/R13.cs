@@ -89,13 +89,13 @@ namespace Sci.Production.Subcon
                                                     ,a.IssueDate
                                                     ,a.ApvDate
                                                     ,a.CurrencyID
-                                                    ,a.Amount+a.Vat apAmount
+                                                    ,[apAmount]=SUM(c.Amount) OVER (PARTITION BY c.OrderID) * iif(a.VatRate = 0 ,1, a.VatRate)
                                                     ,a.ArtworkTypeID
                                                     ,c.ArtworkPoID
                                                     ,c.OrderID
                                                     ,d.StyleID
                                                     ,dbo.getPass1(e.Handle) pohandle
-                                                    ,[poAmount]=SUM(f.Amount) OVER (PARTITION BY c.ArtworkPoID)
+                                                    ,[poAmount]=SUM(f.Amount) OVER (PARTITION BY c.OrderID)
                                                     ,e.IssueDate
                                                     ,a.InvNo
                                              from ArtworkAP a WITH (NOLOCK) 
