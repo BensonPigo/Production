@@ -303,6 +303,8 @@
             this.Controls.Add(this.lbDisposeDate);
             this.Controls.Add(this.dateBuyerDelivery);
             this.Controls.Add(this.labelBuyerDelivery);
+            this.IsSupportPrint = false;
+            this.IsSupportToPrint = false;
             this.Name = "R03";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. Clog Garment Dispose Report";
