@@ -353,6 +353,21 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
 
             };
             #endregion
+
+            #region Scrap Location 開窗
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts12 = new DataGridViewGeneratorTextColumnSettings();
+            ts12.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "O");
+                    frm.ShowDialog(this);
+                }
+
+            };
+            #endregion
             #region FIR 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts10 = new DataGridViewGeneratorTextColumnSettings();
             ts10.CellMouseDoubleClick += (s, e) =>
@@ -404,6 +419,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
             .Text("LObQty", header: "Scrap Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts8)  //30
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11)  //32
+            .Text("CLocation", header: "Crap Location", iseditingreadonly: true, settings: ts12)  //32
             .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10)  //33
             .Text("WashLab", header: "WashLab Report", iseditingreadonly: true, settings: ts10)  //33
             .Text("Preshrink", header: "Preshrink", iseditingreadonly: true)  //34
@@ -629,6 +645,7 @@ from(
             , LObQty = iif (LObQty = 0, '',format(LObQty,'#,###,###,###.##'))
             , ALocation
             , BLocation 
+            , CLocation
             , ThirdCountry
             , junk
             , BomTypeCalculate
@@ -690,6 +707,7 @@ from(
                     , m.LObQty
                     , m.ALocation
                     , m.BLocation 
+                    , m.CLocation
                     , s.ThirdCountry
                     , a.junk
                     , fabric.BomTypeCalculate
@@ -788,6 +806,7 @@ from(
                     , m.LObQty
                     , m.ALocation
                     , m.BLocation 
+                    , m.CLocation
                     , s.ThirdCountry
                     , a.junk
                     , fabric.BomTypeCalculate
@@ -880,6 +899,7 @@ select ROW_NUMBER_D = 1
        , [LObQty] = iif (l.LobQty = 0, '',format(l.LobQty,'#,###,###,###.##'))
        , [ALocation] = l.ALocation
        , [BLocation] = '-' 
+       , [CLocation] = ''
        , [ThirdCountry] = 0
        , [junk] = 0
        , [BomTypeCalculate] = 0

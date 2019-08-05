@@ -1,40 +1,47 @@
-﻿CREATE TABLE [dbo].[Express] (
-    [ID]               VARCHAR (13)   CONSTRAINT [DF_Express_ID] DEFAULT ('') NOT NULL,
-    [MDivisionID]      VARCHAR (8)    CONSTRAINT [DF_Express_MDivisionID] DEFAULT ('') NULL,
-    [ShipMark]         VARCHAR (10)   CONSTRAINT [DF_Express_ShipMark] DEFAULT ('') NULL,
-    [FromTag]          VARCHAR (1)    CONSTRAINT [DF_Express_FromTag] DEFAULT ('') NULL,
-    [FromSite]         VARCHAR (8)    CONSTRAINT [DF_Express_FromSite] DEFAULT ('') NULL,
-    [ToTag]            VARCHAR (1)    CONSTRAINT [DF_Express_ToTag] DEFAULT ('') NULL,
-    [ToSite]           VARCHAR (8)    CONSTRAINT [DF_Express_ToSite] DEFAULT ('') NULL,
-    [Dest]             VARCHAR (2)    CONSTRAINT [DF_Express_Dest] DEFAULT ('') NULL,
-    [PortAir]          VARCHAR (20)   CONSTRAINT [DF_Express_PortAir] DEFAULT ('') NULL,
-    [ShipDate]         DATE           NULL,
-    [ETD]              DATE           NULL,
-    [ETA]              DATE           NULL,
-    [CTNQty]           SMALLINT       CONSTRAINT [DF_Express_CTNQty] DEFAULT ((0)) NULL,
-    [Handle]           VARCHAR (10)   CONSTRAINT [DF_Express_Handle] DEFAULT ('') NULL,
-    [Manager]          VARCHAR (10)   CONSTRAINT [DF_Express_Manager] DEFAULT ('') NULL,
-    [NW]               NUMERIC (8, 2) CONSTRAINT [DF_Express_NW] DEFAULT ((0)) NULL,
-    [CTNNW]            NUMERIC (8, 2) CONSTRAINT [DF_Express_CTNNW] DEFAULT ((0)) NULL,
-    [VW]               NUMERIC (8, 2) CONSTRAINT [DF_Express_VW] DEFAULT ((0)) NULL,
-    [CarrierID]        VARCHAR (4)    CONSTRAINT [DF_Express_CarrierID] DEFAULT ('') NULL,
-    [ExpressACNo]      VARCHAR (20)   CONSTRAINT [DF_Express_ExpressACNo] DEFAULT ('') NULL,
-    [BLNo]             VARCHAR (20)   CONSTRAINT [DF_Express_BLNo] DEFAULT ('') NULL,
-    [Remark]           NVARCHAR (100) CONSTRAINT [DF_Express_Remark] DEFAULT ('') NULL,
-    [FtyInvNo]         VARCHAR (25)   CONSTRAINT [DF_Express_FtyInvNo] DEFAULT ('') NULL,
-    [Status]           VARCHAR (15)   CONSTRAINT [DF_Express_Status] DEFAULT ('') NULL,
-    [StatusUpdateDate] DATETIME       NULL,
-    [SendDate]         DATETIME       NULL,
-    [PayDate]          DATE           NULL,
-    [CurrencyID]       VARCHAR (8)    CONSTRAINT [DF_Express_CurrencyID] DEFAULT ('') NULL,
-    [Amount]           NUMERIC (9, 2) CONSTRAINT [DF_Express_Amount] DEFAULT ((0)) NULL,
-    [InvNo]            VARCHAR (25)   CONSTRAINT [DF_Express_InvNo] DEFAULT ('') NULL,
-    [AddName]          VARCHAR (10)   CONSTRAINT [DF_Express_AddName] DEFAULT ('') NULL,
-    [AddDate]          DATETIME       NULL,
-    [EditName]         VARCHAR (10)   CONSTRAINT [DF_Express_EditName] DEFAULT ('') NULL,
-    [EditDate]         DATETIME       NULL,
+CREATE TABLE [dbo].[Express] (
+    [ID]                  VARCHAR (13)   CONSTRAINT [DF_Express_ID] DEFAULT ('') NOT NULL,
+    [MDivisionID]         VARCHAR (8)    CONSTRAINT [DF_Express_MDivisionID] DEFAULT ('') NULL,
+    [ShipMark]            VARCHAR (10)   CONSTRAINT [DF_Express_ShipMark] DEFAULT ('') NULL,
+    [FromTag]             VARCHAR (1)    CONSTRAINT [DF_Express_FromTag] DEFAULT ('') NULL,
+    [FromSite]            VARCHAR (8)    CONSTRAINT [DF_Express_FromSite] DEFAULT ('') NULL,
+    [ToTag]               VARCHAR (1)    CONSTRAINT [DF_Express_ToTag] DEFAULT ('') NULL,
+    [ToSite]              VARCHAR (8)    CONSTRAINT [DF_Express_ToSite] DEFAULT ('') NULL,
+    [Dest]                VARCHAR (2)    CONSTRAINT [DF_Express_Dest] DEFAULT ('') NULL,
+    [PortAir]             VARCHAR (20)   CONSTRAINT [DF_Express_PortAir] DEFAULT ('') NULL,
+    [ShipDate]            DATE           NULL,
+    [ETD]                 DATE           NULL,
+    [ETA]                 DATE           NULL,
+    [CTNQty]              SMALLINT       CONSTRAINT [DF_Express_CTNQty] DEFAULT ((0)) NULL,
+    [Handle]              VARCHAR (10)   CONSTRAINT [DF_Express_Handle] DEFAULT ('') NULL,
+    [Manager]             VARCHAR (10)   CONSTRAINT [DF_Express_Manager] DEFAULT ('') NULL,
+    [NW]                  NUMERIC (8, 2) CONSTRAINT [DF_Express_NW] DEFAULT ((0)) NULL,
+    [CTNNW]               NUMERIC (8, 2) CONSTRAINT [DF_Express_CTNNW] DEFAULT ((0)) NULL,
+    [VW]                  NUMERIC (8, 2) CONSTRAINT [DF_Express_VW] DEFAULT ((0)) NULL,
+    [CarrierID]           VARCHAR (4)    CONSTRAINT [DF_Express_CarrierID] DEFAULT ('') NULL,
+    [ExpressACNo]         VARCHAR (20)   CONSTRAINT [DF_Express_ExpressACNo] DEFAULT ('') NULL,
+    [BLNo]                VARCHAR (20)   CONSTRAINT [DF_Express_BLNo] DEFAULT ('') NULL,
+    [Remark]              NVARCHAR (100) CONSTRAINT [DF_Express_Remark] DEFAULT ('') NULL,
+    [FtyInvNo]            VARCHAR (25)   CONSTRAINT [DF_Express_FtyInvNo] DEFAULT ('') NULL,
+    [Status]              VARCHAR (15)   CONSTRAINT [DF_Express_Status] DEFAULT ('') NULL,
+    [StatusUpdateDate]    DATETIME       NULL,
+    [SendDate]            DATETIME       NULL,
+    [PayDate]             DATE           NULL,
+    [CurrencyID]          VARCHAR (8)    CONSTRAINT [DF_Express_CurrencyID] DEFAULT ('') NULL,
+    [Amount]              NUMERIC (9, 2) CONSTRAINT [DF_Express_Amount] DEFAULT ((0)) NULL,
+    [InvNo]               VARCHAR (25)   CONSTRAINT [DF_Express_InvNo] DEFAULT ('') NULL,
+    [AddName]             VARCHAR (10)   CONSTRAINT [DF_Express_AddName] DEFAULT ('') NULL,
+    [AddDate]             DATETIME       NULL,
+    [EditName]            VARCHAR (10)   CONSTRAINT [DF_Express_EditName] DEFAULT ('') NULL,
+    [EditDate]            DATETIME       NULL,
+    [ByCustomerCarrier]   VARCHAR (15)   CONSTRAINT [DF_Express_ByCustomerCarrier] DEFAULT ('') NULL,
+    [ByCustomerAccountID] VARCHAR (15)   CONSTRAINT [DF_Express_ByCustomerAccountID] DEFAULT ('') NULL,
+    [ByFtyCarrier]        VARCHAR (8)    CONSTRAINT [DF_Express_ByFtyCarrier] DEFAULT ('') NULL,
     CONSTRAINT [PK_Express] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
+
+
 
 
 
@@ -184,5 +191,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturi
 
 
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'供應商代碼(Payer為工廠)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'ByFtyCarrier';
 
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'快遞付款(Payer為客人)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'ByCustomerCarrier';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'快遞付款會計科目(Payer為客人)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'ByCustomerAccountID';
 
