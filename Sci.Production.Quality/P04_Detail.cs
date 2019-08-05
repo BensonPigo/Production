@@ -1107,7 +1107,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 {
                     for (int i = 4; i < dtShrinkage.Columns.Count; i++)
                     {
-                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM' and type ='Chest Width'", i);
+                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM' and type ='Waistband (relax)'", i);
                     }
 
                     for (int i = 4; i < dtShrinkage.Columns.Count; i++)
@@ -1598,7 +1598,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 {
                     for (int i = 4; i < dtShrinkage.Columns.Count; i++)
                     {
-                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM' and type ='Chest Width'", i);
+                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM' and type ='Waistband (relax)'", i);
                     }
 
                     for (int i = 4; i < dtShrinkage.Columns.Count; i++)
