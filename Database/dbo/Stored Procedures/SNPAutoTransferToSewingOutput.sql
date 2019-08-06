@@ -294,7 +294,15 @@ BEGIN
 				[ID]= dbo.GetSewingOutputID_For_SNPAutoTransferToSewingOutput('SNPSM',RowNumber,@execuDatetime)
 				,*
 			INTO #tmp_SewingOutput
-			FROM #tmp_2
+			FROM #tmp_2 t
+			where not exists(
+				select 1 from SewingOutput s 
+				where s.OutputDate = t.OutputDate 
+				and s.SewingLineID = t.SewingLineID 
+				and s.FactoryID = t.FactoryID
+				and s.Team = t.Team 
+				and s.Shift = t.Shift
+			)
 
 			
 
