@@ -51,7 +51,7 @@ namespace Sci.Production.Thread
            .Numeric("Seamlength", header: "TTL Seam Length", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, iseditingreadonly: true)
            .Text("SEQ", header: "Thread Location SEQ", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("ThreadLocationid", header: "Thread Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
-           .Text("UseRatioNumeric", header: "UseRatio", width: Widths.AnsiChars(15), iseditingreadonly: true)
+           .Text("UseRatio", header: "UseRatio", width: Widths.AnsiChars(15), iseditingreadonly: true)
            .Numeric("Allowance", header: "Start End Loss", width: Widths.AnsiChars(7), integer_places: 7, iseditingreadonly: true)
            .Numeric("UseLength", header: "Use Length", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, iseditingreadonly: true)
            .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(7), integer_places: 7, iseditingreadonly: true)
