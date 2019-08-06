@@ -1158,11 +1158,12 @@ group by s.APSNo,sd.Article
 --取得 Remarks欄位
 select
 s.APSNo,
-[Remarks] = s.OrderID + '(' + s_other.SewingLineID + ',' + s.ComboType + ',' + CAST(s_other.AlloQty as varchar) + ')'
+[Remarks] = s.OrderID + '(' + s_other.SewingLineID + ',' + s.ComboType + ',' + CAST(sum(s_other.AlloQty) as varchar) + ')'
 into #APSRemarks
 from SewingSchedule s with (nolock)
 inner join SewingSchedule s_other on s_other.OrderID = s.OrderID and s_other.ComboType = s.ComboType and s_other.APSNo <> s.APSNo
 where  exists( select 1 from #APSList where APSNo = s.APSNo)
+group by s.APSNo,s.OrderID,s_other.SewingLineID,s.ComboType
 
 --取得每個計劃需要串接起來的欄位，供後續使用
 select
