@@ -28,7 +28,7 @@ BEGIN
 	DECLARE @sewingcell varchar(2),
 			@sewinglineid varchar(2),
 			@description nvarchar(500),
-			@sewer numeric(24,10),
+			@sewer int,
 			@set numeric(24,10),
 			@STATE bit
 	OPEN cursor_sewingline
@@ -573,9 +573,9 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	--SewingSchedule
 	BEGIN
 	--撈APS的Sewing Schedule Detail
-	CREATE TABLE #tmpAPSSchedule (ID int,POID int,SALESORDERNO varchar(20),REFNO varchar(100),NAME varchar(50),STARTTIME datetime,ENDTIME datetime,UPDATEDATE datetime,POCOLOR char(60),POSIZE varchar(30),PLANAMOUNT numeric(24,10),DURATION numeric(24,10),CAPACITY numeric(24,10),EFFICIENCY numeric(24,10));
+	CREATE TABLE #tmpAPSSchedule (ID int,POID int,SALESORDERNO varchar(20),REFNO varchar(100),NAME varchar(50),STARTTIME datetime,ENDTIME datetime,UPDATEDATE datetime,POCOLOR char(60),POSIZE varchar(30),PLANAMOUNT numeric(24,10),DURATION numeric(24,10),CAPACITY numeric(24,10),EFFICIENCY numeric(24,10), Sewer int);
 	SET @cmd = 'insert into #tmpAPSSchedule
-SELECT p.ID, pd.POID, po.SALESORDERNO, po.REFNO, fa.NAME, p.STARTTIME, p.ENDTIME, p.UPDATEDATE, pd.POCOLOR, pd.POSIZE, pd.PLANAMOUNT, p.DURATION, po.CAPACITY, pd.EFFICIENCY
+SELECT p.ID, pd.POID, po.SALESORDERNO, po.REFNO, fa.NAME, p.STARTTIME, p.ENDTIME, p.UPDATEDATE, pd.POCOLOR, pd.POSIZE, pd.PLANAMOUNT, p.DURATION, po.CAPACITY, pd.EFFICIENCY, sewer = p.WorkerNumber
 from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT p
 	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f
 	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa
@@ -624,9 +624,9 @@ where fa.FACTORYID = f.ID
 
 	--將APS的Sewing Schedule更新進PMS
 	DECLARE cursor_sewingschedule CURSOR FOR
-	select SALESORDERNO,REFNO,NAME,ID,STARTTIME,ENDTIME,ROUND(CAPACITY*60,0) as GSD,DURATION,UPDATEDATE,SUM(PLANAMOUNT) as AlloQty,POID, OriEFF = Max(EFFICIENCY)
+	select SALESORDERNO,REFNO,NAME,ID,STARTTIME,ENDTIME,ROUND(CAPACITY*60,0) as GSD,DURATION,UPDATEDATE,SUM(PLANAMOUNT) as AlloQty,POID, OriEFF = Max(EFFICIENCY), sewer
 	from #tmpAPSSchedule
-	group by SALESORDERNO,REFNO,NAME,ID,STARTTIME,ENDTIME,ROUND(CAPACITY*60,0),DURATION,UPDATEDATE,POID
+	group by SALESORDERNO,REFNO,NAME,ID,STARTTIME,ENDTIME,ROUND(CAPACITY*60,0),DURATION,UPDATEDATE,POID,Sewer
 	order by SALESORDERNO
 	/*
 		APS的生產計劃資料結構（ProductionEvent、ProductionEventDetail）
@@ -670,7 +670,7 @@ where fa.FACTORYID = f.ID
 	CREATE TABLE #DynamicEff (BeginDate datetime,Eff numeric(24,10))
 
 	OPEN cursor_sewingschedule
-	FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff
+	FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff, @sewer
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @combotype is null or @combotype = ''
@@ -747,7 +747,7 @@ where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid 
 					SET @OriEff=@OriEff*@apseff
 				END
 
-				SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
+				SET @sewer = iif (isnull(@sewer, 0) = 0, isnull ((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid), 0), @sewer)
 
 				delete from #DynamicEff
 				IF @gsd = 0
@@ -906,7 +906,7 @@ Order by fe.BeginDate Desc'
 						set @set = (3600/@gsd)*@sewer*@maxeff
 						Begin Try
 							Begin Transaction
-								SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
+								SET @sewer = iif (isnull(@sewer, 0) = 0, isnull ((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid), 0), @sewer)
 								update SewingSchedule 
 								set SewingLineID = @sewinglineid, AlloQty = isnull(@alloqty,0), Inline = @inline, Offline = @offline, Sewer = isnull(@sewer,0), 
 									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(@set,0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
@@ -960,7 +960,7 @@ Order by fe.BeginDate Desc'
 					END
 			END
 
-		FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff
+		FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff, @Sewer
 
 	END
 	CLOSE cursor_sewingschedule
