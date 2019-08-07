@@ -2446,7 +2446,11 @@ values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}','{callReason.R
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Email_SendingBefore(object sender, MailTo.SendMailBeforeArg e) => e.Mail.CC.Add("planning@sportscity.com.tw;team3@sportscity.com.tw");
+        private void Email_SendingBefore(object sender, MailTo.SendMailBeforeArg e)
+        {
+            e.Mail.CC.Add("planning@sportscity.com.tw");
+            e.Mail.CC.Add("team3@sportscity.com.tw");
+        }
 
         /// <inheritdoc/>
         protected override void ClickRecall()
