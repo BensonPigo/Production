@@ -57,7 +57,7 @@ namespace Sci.Production.IE
             this.Helper.Controls.Grid.Generator(this.gridArtworkSummary)
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("ThreadLocation", header: "Thread Location", width: Widths.AnsiChars(12), iseditingreadonly: true)
-                .Numeric("UseRatioNumeric", header: "UseRatioNumeric", decimal_places: 2, iseditingreadonly: true)
+                .Numeric("UseRatio", header: "UseRatio", decimal_places: 2, iseditingreadonly: true)
                 .Numeric("Allowance", header: "Start End Loss", decimal_places: 2, iseditingreadonly: true);
 
             string sqlCmd = string.Format("select * from MachineType_ThreadRatio where ID='{0}'", this.Id);
