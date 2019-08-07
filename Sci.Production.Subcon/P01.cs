@@ -322,7 +322,15 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             numTotal.Text = (Convert.ToDecimal(numVat.Text) + Convert.ToDecimal(numAmount.Text)).ToString();
             txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
-            //btnIrrPriceReason.Enabled = !this.EditMode;  //ISP20190976
+            if (this.CurrentMaintain["ID"] == DBNull.Value)
+            {
+                btnIrrPriceReason.Enabled = false;
+            }
+            else
+            {
+                btnIrrPriceReason.Enabled = true;
+            }
+
             //btnIrprice.Enabled = !this.EditMode;
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();

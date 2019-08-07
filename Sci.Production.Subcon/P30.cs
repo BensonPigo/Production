@@ -717,7 +717,14 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtLocalPurchaseItem.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
-            //btnIrrPriceReason.Enabled = !this.EditMode;  //ISP20190976
+            if (this.CurrentMaintain["ID"] == DBNull.Value)
+            {
+                btnIrrPriceReason.Enabled = false;
+            }
+            else
+            {
+                btnIrrPriceReason.Enabled = true;
+            }
 
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
