@@ -740,7 +740,7 @@ Select  a.ThreadColorId
         , a.Seq
         , a.ThreadLocationId
         , a.Refno
-        , d.UseRatioNumeric
+        , d.UseRatio
         , a.MachineTypeId
         , isnull(f.OrderQty,0) as OrderQty 
         , isnull(g.MeterToCone,0.00) as MeterToCone
@@ -810,8 +810,8 @@ from (
             , Threadcombdesc
             , colordesc
             , #tmp.MeterToCone
-            , ConsumptionQty = CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100)
-            , TotalQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
+            , ConsumptionQty = CEILING(Sum(OrderQty * (Seamlength * UseRatio + Allowance)) / 100)
+            , TotalQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatio + Allowance)) / 100 / #tmp.MeterToCone)
                                                  , 0)
             , AutoCreate = 'true' 
             , UseStockQty = 0
@@ -943,7 +943,7 @@ OUTER APPLY
                 foreach (var item in queryS)
                 {
                     decimal sL = Convert.ToDecimal(item["SeamLength"]);
-                    decimal uRN = Convert.ToDecimal(item["UseRatioNumeric"]);
+                    decimal uRN = Convert.ToDecimal(item["UseRatio"]);
                     decimal aQ = Convert.ToDecimal(item["Allowance"]);
                     decimal oQ = Convert.ToDecimal(item["OrderQty"]);
 
@@ -956,7 +956,7 @@ OUTER APPLY
                     newdr["SeamLength"] = item["SeamLength"];
                     newdr["SEQ"] = item["SEQ"];
                     newdr["ThreadLocationid"] = item["ThreadLocationid"];
-                    newdr["UseRatioNumeric"] = item["UseRatioNumeric"];
+                    newdr["UseRatio"] = item["UseRatio"];
                     newdr["UseLength"] = (sL * uRN) + aQ;
                     newdr["TotalLength"] = ((sL * uRN) + aQ) * oQ;
                     newdr["Machinetypeid"] = item["Machinetypeid"];
