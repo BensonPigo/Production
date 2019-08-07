@@ -2393,6 +2393,7 @@
     <Build Include="dbo\Functions\getFOCInvAdjQty.sql" />
     <Build Include="dbo\Tables\FreightCollectByCustomer.sql" />
     <Build Include="dbo\Tables\Carrier_Detail_Freight.sql" />
+    <Build Include="dbo\Functions\QtyBySetPerSubprocess_PatternPanel.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
