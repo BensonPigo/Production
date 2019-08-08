@@ -136,7 +136,7 @@ Begin
 				, System.StdTMS
 				, o.SubconInSisterFty
 				, [SubconOutFty] = iif(sf.id is null,''Other'',s.SubconOutFty)
-				, s.MDivisionID
+				, [MDivisionID] = iif(f.CountryID = ''PH'', isnull(f.KPICode,f.ID) , s.MDivisionID)
 		--INTO #tmpSewingDetail
 		from [' + @_name + '].[Production].dbo.System, [' + @_name + '].[Production].dbo.SewingOutput s WITH (NOLOCK) 
 		left join [' + @_name + '].[Production].dbo.SCIFty sf WITH (NOLOCK) on sf.ID = s.SubconOutFty
@@ -305,38 +305,60 @@ from
 group by MDivisionID
 
  
- 	select StdTMS
-		   , QAQty = Sum(QAQty)
-		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
-		   , MDivisionID
-	into #tmpQty
-	from #tmp
-	where LastShift <> 'O' 
-          --排除Subcon in non sister資料
-          and LastShift <> 'I'
-		  or (LastShift = 'I' and SubconInSisterFty = 1)
-	group by StdTMS, MDivisionID
+select StdTMS
+	   , QAQty = Sum(QAQty)
+	   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
+	   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
+	   , MDivisionID
+into #tmpQty
+from #tmp
+where LastShift <> 'O' 
+      --排除Subcon in non sister資料
+      and LastShift <> 'I'
+	  or (LastShift = 'I' and SubconInSisterFty = 1)
+group by StdTMS, MDivisionID
 
-	select ManPower = Sum(Manpower)
-		, MDivisionID
-	into #tmpTtlManPower
+select ManPower = Sum(a.Manpower)  - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
+	,MDivisionID
+into #tmpTtlManPower
+from (
+	select OutputDate
+			, FactoryID
+			, SewingLineID
+			, LastShift
+			, Team
+			, ManPower = Max(ActManPower)
+			, MDivisionID
+	from #tmp
+	where LastShift <> 'O'
+	--排除 subcon in non sister的數值
+    and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInSisterFty <> 0 ))   
+	group by OutputDate, FactoryID, SewingLineID, LastShift, Team ,MDivisionID
+) a
+outer apply
+(
+	select ManPower
 	from (
 		select OutputDate
-			   , FactoryID
-			   , SewingLineID
-			   , LastShift
-			   , Team
-			   , ManPower = Max(ActManPower) 
-			   , MDivisionID
+				, FactoryID
+				, SewingLineID
+				, LastShift
+				, Team
+				, ManPower = Max(ActManPower)
+				,SubconInSisterFty
+				,MDivisionID
 		from #tmp
-		where LastShift <> 'O' 
-			  --排除Subcon in non sister資料
-              and LastShift <> 'I'
-		      or (LastShift = 'I' and SubconInSisterFty = 1)
-		group by OutputDate, FactoryID, SewingLineID, LastShift, Team, MDivisionID
-	) a
-	group by MDivisionID
+		where LastShift <> 'O'
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team,SubconInSisterFty, MDivisionID
+	) m2
+	where  (m2.LastShift = 'I' and m2.SubconInSisterFty = 1)
+			and m2.Team = a.Team 
+			and m2.SewingLineID = a.SewingLineID	
+			and a.OutputDate = m2.OutputDate
+			and m2.FactoryID = a.FactoryID	
+			and m2.MDivisionID = a.MDivisionID
+) d
+group by MDivisionID
 
 select  [PPH] = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
 	   , [Efficiency] = (IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))/(3600*1.0/1400*1.0))
@@ -398,7 +420,7 @@ DECLARE CURSOR_ CURSOR FOR
 select a.MDivisionID
 	,[Performed] = cast(c.[Total CPU Included Subcon-In] - isnull(d.[Subcon-Out Total CPU(sister)],0) as decimal(18,2))
 	,[Working Days] = cast(e.[Working Days] as decimal(18, 0))
-	,[Avg Working Hours] =cast(f.TotalManHour / b.TotalManpower as decimal(18,2))
+	,[Avg Working Hours] =cast(a.[Avg Working Hours] as decimal(18,2))
 	,[PPH] = cast(a.[PPH] as decimal(18,2))
 	,[Efficiency] = cast(a.[Efficiency] as decimal(18,2))
 	,[Direct Manpower] = cast(b.TotalManpower / e.[Working Days] as decimal(18,0))
