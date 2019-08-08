@@ -708,4 +708,37 @@ update t
 			(s.Ukey    , s.RefNo , s.HisType 	, s.OldValue , s.NewValue 		
 			, s.Remark 	 , s.AddName , s.AddDate 		);
 	
+	------------MachinePending------------------
+	Merge Machine.dbo.MachinePending  as t
+		using Trade_To_Pms.dbo.MachinePending as s 
+		on t.id=s.id
+		when matched and t.status = 'Confirmed' then update set 
+			t.TPEComplete = s.TPEComplete
+	;
+	
+	------------MachinePending_Detail------------------
+	declare @Tdebit table(id varchar(13),MachineID varchar(16))
+	Merge Machine.dbo.MachinePending_Detail  as t
+	using (
+		select md.*,m.status
+		from Trade_To_Pms.dbo.MachinePending_Detail md
+		inner join Machine.dbo.MachinePending m on m.id = md.id
+	)as s 
+	on t.id=s.id and t.[MachineID] = s.[MachineID]
+	when matched and s.status = 'Confirmed' and t.TPEApvDate is not null then update set 
+		t.TPEReject = s.TPEReject
+	output inserted.ID,inserted.MachineID
+	into @Tdebit
+	;
+	
+	update dbo.Machine set Status = 'Pending',EstFinishRepairDate =null where ID in (select MachineID from @Tdebit)
+
+	update m set m.Status = 'Good'
+	from Machine m
+	where exists(select 1 from @Tdebit t where t.MachineID = m.ID)
+	update md set Results = 'Reject'
+	from MachinePending_Detail md
+	where exists(select 1 from @Tdebit t where t.ID = md.ID and t.MachineID =
+	md.MachineID)
+
 	END
