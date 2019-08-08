@@ -725,17 +725,18 @@ update t
 		inner join Machine.dbo.MachinePending m on m.id = md.id
 	)as s 
 	on t.id=s.id and t.[MachineID] = s.[MachineID]
-	when matched and s.status = 'Confirmed' and t.TPEApvDate is not null then update set 
+	when matched and s.status = 'Confirmed' and s.TPEApvDate is not null then update set 
 		t.TPEReject = s.TPEReject
 	output inserted.ID,inserted.MachineID,inserted.TPEReject
 	into @Tdebit
 	;
-	
+
 	update Machine.dbo.Machine set Status = 'Pending',EstFinishRepairDate =null where ID in (select MachineID from @Tdebit where TPEReject = 0)  
 
 	update m set m.Status = 'Good'
 	from Machine.dbo.Machine m
-	where exists(select 1 from @Tdebit t where t.MachineID = m.ID)
+	where exists(select 1 from @Tdebit t where t.MachineID = m.ID and TPEReject = 1)
+
 	update md set Results = 'Reject'
 	from MachinePending_Detail md
 	where exists(select 1 from @Tdebit t where t.ID = md.ID and t.MachineID = md.MachineID and TPEReject = 1)
