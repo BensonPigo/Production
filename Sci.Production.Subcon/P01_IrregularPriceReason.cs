@@ -20,16 +20,20 @@ namespace Sci.Production.Subcon
     {
         DataTable OriginDT_FromDB;
         DataTable ModifyDT_FromP01;
+        DataTable _detailDatas;
+
+        public int ReasonNullCount = 0;
         string _ArtWorkPO_ID = string.Empty;
         string _FactoryID = string.Empty;
         
-        public P01_IrregularPriceReason(string ArtWorkPO_ID, string FactoryID)
+        public P01_IrregularPriceReason(string ArtWorkPO_ID, string FactoryID, DataTable detailDatas)
         {
             InitializeComponent();
 
             this.EditMode = false;
             _ArtWorkPO_ID = ArtWorkPO_ID;
             _FactoryID = FactoryID;
+            _detailDatas = detailDatas;
         }
 
         protected override void OnFormLoaded()
@@ -140,11 +144,11 @@ namespace Sci.Production.Subcon
             {
                 DataTable ModifyTable = (DataTable)listControlBindingSource1.DataSource;
 
-                if (ModifyTable.Select("SubconReasonID=''").Count() > 0)
-                {
-                    MyUtility.Msg.WarningBox("Reason can not be empty.");
-                    return;
-                }
+                //if (ModifyTable.Select("SubconReasonID=''").Count() > 0)
+                //{
+                //    MyUtility.Msg.WarningBox("Reason can not be empty.");
+                //    return;
+                //}
                 gridgridIrregularPrice.IsEditingReadOnly = true;
 
                 StringBuilder sql = new StringBuilder();
@@ -349,6 +353,10 @@ namespace Sci.Production.Subcon
                 #region 查詢所有價格異常紀錄
 
                 sql.Append(@"
+SELECT POID,[Amount]=Sum(Amount)
+INTO #AmountList
+FROM #TmpSource
+GROUP BY POID
 
 --根據表頭LocalPO的ID，整理出ArtworkTypeID、POID、OrderID
 SELECT DISTINCT[ArtworkTypeID] = ad.ArtworkTypeID ,[OrderId] = ad.OrderID  ,[POID]=o.POID
@@ -395,6 +403,7 @@ WHERE  EXiSTS  (
 				WHERE ArtworkTypeID= ap.ArtworkTypeID  AND POID=Orders.POID) --相同Category、POID
 	   --AND apd.OrderId  IN  ( SELECT OrderID FROM #BePurchased ) 且有被採購的OrderID (註解原因 各項目可能會再其他子單進行採購)
        --AND ap.Status = 'Approved' 現在不需要過濾狀態
+       AND ap.ID <> @artWorkPO_ID  --SQL撈資料要排除當下的LocalPO.ID
 
 --繡花成本處理：列出同POID、Category=EMB_Thread（繡線）的總額清單
 SELECT   LPD.POID
@@ -420,10 +429,10 @@ WHERE LP.Category = 'EMB_Thread'
 --開始整合
 SELECT o.BrandID ,o.StyleID  ,t.ArtworkTypeID  ,t.POID 
 ,[stdPrice]=round(Standard.order_amt/iif(Standard.order_qty=0,1,Standard.order_qty),3) 
-,[PoPrice]=round(Po.PO_amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) 
+,[PoPrice]=round( (po.Po_Amt + (SELECT Amount FROM #AmountList WHERE POID=t.POID)) / iif(Standard.order_qty=0,1,Standard.order_qty),3) 
 ,[PoPriceWithEmbroidery] =IIF(Embroidery.LocalPo_amt IS NULL ,
-							round(po.Po_Amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) , 
-							round((po.Po_Amt+Embroidery.LocalPo_amt) / iif(Standard.order_qty=0,1,Standard.order_qty)
+							round( (po.Po_Amt + (SELECT Amount FROM #AmountList WHERE POID=t.POID)) / iif(Standard.order_qty=0,1,Standard.order_qty),3) , 
+							round(( (po.Po_Amt + (SELECT Amount FROM #AmountList WHERE POID=t.POID)) +Embroidery.LocalPo_amt) / iif(Standard.order_qty=0,1,Standard.order_qty)
 							,3) )
 FROM #tmp_AllOrders t
 INNER JOIN Orders o WITH (NOLOCK) on o.id = t.OrderId
@@ -466,7 +475,8 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
                 #endregion
 
                 this.ShowWaitMessage("Data Loading...");
-                result = DBProxy.Current.Select(null, sql.ToString(), parameters, out Price_Dt);
+                //result = DBProxy.Current.Select(null, sql.ToString(), parameters, out Price_Dt);
+                result = MyUtility.Tool.ProcessWithDatatable(_detailDatas, "", sql.ToString(), out Price_Dt, "#TmpSource", null, parameters);
                 sql.Clear();
                 this.HideWaitMessage();
 
@@ -673,6 +683,7 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
                             listControlBindingSource1.DataSource = IPR_Grid.Copy();
                         }
                         ModifyDT_FromP01 = IPR_Grid.Copy();
+                        this.ReasonNullCount = IPR_Grid.Select("SubconReasonID=''").Length;
                     }
                     else
                     {

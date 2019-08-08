@@ -285,6 +285,19 @@ namespace Sci.Production.Subcon
             CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
             #endregion
 
+            #region 檢查異常價格
+
+            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), ((DataTable)detailgridbs.DataSource));
+
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+
+            if (Has_Irregular_Price && frm.ReasonNullCount > 0)
+            {
+                MyUtility.Msg.WarningBox("There is Irregular Price!! Please fix it.");
+                return false;
+            }
+            #endregion
+
             return base.ClickSaveBefore();
         }
 
@@ -742,7 +755,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             this.btnIrrPriceReason.ForeColor = Color.Black;
 
-            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), ((DataTable)detailgridbs.DataSource));
 
             //取得價格異常DataTable，如果有，則存在 P30的_Irregular_Price_Table，  開啟P30_IrregularPriceReason時後直接丟進去，避免再做一次查詢
 
@@ -1698,7 +1711,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
         private void btnIrrPriceReason_Click(object sender, EventArgs e)
         {
             //進入Deatail畫面時，會取得_Irregular_Price_Table，直接丟進去開啟
-            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), ((DataTable)detailgridbs.DataSource));
 
             this.ShowWaitMessage("Data Loading...");
             frm.ShowDialog(this);
@@ -1802,6 +1815,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                 this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid";
             }
         }
+        
     }
 }
 
