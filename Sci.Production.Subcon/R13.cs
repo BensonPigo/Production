@@ -89,13 +89,13 @@ namespace Sci.Production.Subcon
                                                     ,a.IssueDate
                                                     ,a.ApvDate
                                                     ,a.CurrencyID
-                                                    ,a.Amount+a.Vat apAmount
+                                                    ,[apAmount]=sum(c.Amount) * iif(a.VatRate = 0 ,1, a.VatRate)
                                                     ,a.ArtworkTypeID
                                                     ,c.ArtworkPoID
                                                     ,c.OrderID
                                                     ,d.StyleID
                                                     ,dbo.getPass1(e.Handle) pohandle
-                                                    ,[poAmount]=SUM(f.Amount) OVER (PARTITION BY c.ArtworkPoID)
+                                                    ,[poAmount]=sum(f.Amount)
                                                     ,e.IssueDate
                                                     ,a.InvNo
                                              from ArtworkAP a WITH (NOLOCK) 
@@ -193,7 +193,9 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                sqlCmd.Append(@" order by a.Currencyid, a.LocalSuppId,a.Id");
+                sqlCmd.Append(@" group by a.MDivisionID ,a.FactoryID ,a.LocalSuppID ,b.abb ,a.id ,a.IssueDate ,a.ApvDate
+                                    ,a.CurrencyID ,a.ArtworkTypeID ,c.ArtworkPoID ,c.OrderID ,d.StyleID, e.Handle ,e.IssueDate ,a.InvNo ,a.VatRate 
+                                 order by a.Currencyid, a.LocalSuppId,a.Id");
 
             }
 
