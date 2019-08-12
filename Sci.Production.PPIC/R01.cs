@@ -162,14 +162,38 @@ namespace Sci.Production.PPIC
 
                 worksheet = objApp.Sheets[1];
 
-                worksheet.Columns[8].ColumnWidth = 10;
-                worksheet.Columns[10].ColumnWidth = 10;
-                worksheet.Columns[12].ColumnWidth = 40;
-                worksheet.Columns[16].ColumnWidth = 40;
-                worksheet.Columns[20].ColumnWidth = 40;
-                worksheet.Columns[23].ColumnWidth = 40;
-                worksheet.Columns[31].ColumnWidth = 20;
-                worksheet.Columns[33].ColumnWidth = 40;
+                worksheet.Columns[1].ColumnWidth = 8;
+                worksheet.Columns[2].ColumnWidth = 8;
+                worksheet.Columns[6].ColumnWidth = 8;
+                worksheet.Columns[7].ColumnWidth = 8;
+                worksheet.Columns[8].ColumnWidth = 8;
+                worksheet.Columns[9].ColumnWidth = 8;
+                worksheet.Columns[10].ColumnWidth = 8;
+                worksheet.Columns[11].ColumnWidth = 8;
+                worksheet.Columns[12].ColumnWidth = 8;
+                worksheet.Columns[13].ColumnWidth = 8;
+                worksheet.Columns[14].ColumnWidth = 8;
+                worksheet.Columns[15].ColumnWidth = 8;
+                worksheet.Columns[16].ColumnWidth = 8;
+                worksheet.Columns[17].ColumnWidth = 8;
+                worksheet.Columns[18].ColumnWidth = 8;
+                worksheet.Columns[19].ColumnWidth = 8;
+                worksheet.Columns[20].ColumnWidth = 8;
+                worksheet.Columns[21].ColumnWidth = 8;
+                worksheet.Columns[22].ColumnWidth = 8;
+                worksheet.Columns[23].ColumnWidth = 8;
+                worksheet.Columns[24].ColumnWidth = 8;
+                worksheet.Columns[25].ColumnWidth = 8;
+                worksheet.Columns[26].ColumnWidth = 8;
+                worksheet.Columns[29].ColumnWidth = 8;
+                worksheet.Columns[30].ColumnWidth = 8;
+                worksheet.Columns[33].ColumnWidth = 8;
+                worksheet.Columns[34].ColumnWidth = 8;
+                worksheet.Columns[35].ColumnWidth = 8;
+                worksheet.Columns[36].ColumnWidth = 8;
+                worksheet.Columns[37].ColumnWidth = 8;
+                worksheet.Columns[38].ColumnWidth = 8;
+                worksheet.Columns[39].ColumnWidth = 8;
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
@@ -1178,7 +1202,8 @@ o.MTLExport,
 o.KPILETA,
 o.MTLETA,
 [Artwork] = o.StyleID+'('  +oa.Artwork + ')',
-o.InspDate
+o.InspDate,
+o.Category
 into #APSColumnGroup
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
@@ -1203,6 +1228,7 @@ al.SewingLineID,
 [CDCode] = CDCode.val,
 [ProductionFamilyID] = ProductionFamilyID.val,
 [Style] = Style.val,
+[StyleCnt] = iif(LEN(Style.val) > 0,(LEN(Style.val) - LEN(REPLACE(Style.val, ',', ''))) / LEN(',') + 1,0),
 aoo.OrderQty,
 al.AlloQty,
 al.LearnCurveID,
@@ -1220,7 +1246,8 @@ OrderMax.InspDate,
 [ClogQty] = isnull(apo.ClogQty,0),
 al.MDivisionID,
 al.FactoryID,
-al.Sewer
+al.Sewer,
+[Category] = Category.val
 into #APSMain
 from #APSList al
 left join #APSCuttingOutput aco on al.APSNo = aco.APSNo
@@ -1228,6 +1255,7 @@ left join #APSOrderQty aoo on al.APSNo = aoo.APSNo
 left join #APSPackingQty apo on al.APSNo = apo.APSNo
 outer apply (SELECT val =  Stuff((select distinct concat( ',',CustPONo)   from #APSColumnGroup where APSNo = al.APSNo and CustPONo <> '' FOR XML PATH('')),1,1,'') ) as CustPO
 outer apply (SELECT val =  Stuff((select distinct concat( ',',SP)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as SP
+outer apply (SELECT val =  Stuff((select distinct concat( '+',Category)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Category
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Colorway)   from #APSListArticle where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Colorway
 outer apply (SELECT val =  Stuff((select distinct concat( ',',CdCodeID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CDCode
 outer apply (SELECT val =  Stuff((select distinct concat( ',',ProductionFamilyID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ProductionFamilyID
@@ -1385,11 +1413,13 @@ apm.CustPO,
 apm.CustPoCnt,
 apm.SP,
 apm.SpCnt,
+apm.Category,
 apm.Colorway,
 apm.ColorwayCnt,
 apm.CDCode,
 apm.ProductionFamilyID,
 apm.Style,
+apm.StyleCnt,
 apm.OrderQty,
 apm.AlloQty,
 [StdOutput] = apf.StdOutput,
