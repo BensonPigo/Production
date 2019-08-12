@@ -27,6 +27,7 @@ RETURN
 		where w.FactoryID = @factory
 		and w.SewingLineID = @sewingline
 		and w.Date between dateadd(day,-90,@outputdate) and  @outputdate
+		and w.Holiday=0
 	)
 	select cumulate = IIF(Count(1)=0, 1, Count(1))
 	from stmp s
