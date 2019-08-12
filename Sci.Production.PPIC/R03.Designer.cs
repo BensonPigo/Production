@@ -74,6 +74,7 @@
             this.txtcustcd = new Sci.Production.Class.txtcustcd();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.checkByCPU = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -442,7 +443,7 @@
             this.checkQtyBDownByShipmode.Checked = true;
             this.checkQtyBDownByShipmode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkQtyBDownByShipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkQtyBDownByShipmode.Location = new System.Drawing.Point(13, 572);
+            this.checkQtyBDownByShipmode.Location = new System.Drawing.Point(13, 571);
             this.checkQtyBDownByShipmode.Name = "checkQtyBDownByShipmode";
             this.checkQtyBDownByShipmode.Size = new System.Drawing.Size(286, 21);
             this.checkQtyBDownByShipmode.TabIndex = 27;
@@ -453,7 +454,7 @@
             // 
             this.checkListPOCombo.AutoSize = true;
             this.checkListPOCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkListPOCombo.Location = new System.Drawing.Point(13, 600);
+            this.checkListPOCombo.Location = new System.Drawing.Point(13, 599);
             this.checkListPOCombo.Name = "checkListPOCombo";
             this.checkListPOCombo.Size = new System.Drawing.Size(121, 21);
             this.checkListPOCombo.TabIndex = 28;
@@ -619,9 +620,21 @@
             this.txtstyle.tarBrand = null;
             this.txtstyle.tarSeason = null;
             // 
+            // checkByCPU
+            // 
+            this.checkByCPU.AutoSize = true;
+            this.checkByCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkByCPU.Location = new System.Drawing.Point(13, 626);
+            this.checkByCPU.Name = "checkByCPU";
+            this.checkByCPU.Size = new System.Drawing.Size(75, 21);
+            this.checkByCPU.TabIndex = 116;
+            this.checkByCPU.Text = "By CPU";
+            this.checkByCPU.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(587, 650);
+            this.ClientSize = new System.Drawing.Size(587, 682);
+            this.Controls.Add(this.checkByCPU);
             this.Controls.Add(this.txtSp2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -726,6 +739,7 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtSp2, 0);
+            this.Controls.SetChildIndex(this.checkByCPU, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -779,5 +793,6 @@
         private Win.UI.Label label1;
         private System.Windows.Forms.Label label2;
         private Win.UI.TextBox txtSp2;
+        private Win.UI.CheckBox checkByCPU;
     }
 }
