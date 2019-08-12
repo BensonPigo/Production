@@ -26,6 +26,24 @@ BEGIN
 
 	if @MDivisionID <> ''
 	begin
+		if exists
+		(
+			select MDivisionID
+			from (
+				select MDivisionID, ID from [PMS\pmsdb\PH1].[Production].dbo.Factory  union all
+				select MDivisionID, ID from [PMS\pmsdb\PH2].[Production].dbo.Factory 
+			) a
+			where ID = @MDivisionID
+		)
+		begin
+			select @MDivisionID = MDivisionID
+			from (
+				select MDivisionID, ID from [PMS\pmsdb\PH1].[Production].dbo.Factory  union all
+				select MDivisionID, ID from [PMS\pmsdb\PH2].[Production].dbo.Factory 
+			) a
+			where ID = @MDivisionID
+		end
+			   
 		if not exists(
 			select 1
 			from (
