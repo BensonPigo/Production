@@ -169,7 +169,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numttlqty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnIrrPriceReason, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayLockDate, 0);
@@ -179,6 +178,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayCloseDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuserClose, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocalPurchaseItem, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
