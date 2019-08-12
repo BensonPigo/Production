@@ -31,7 +31,7 @@ namespace Sci.Production.Cutting
             else
                 this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);    
             
-            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Sci.Env.User.Factory}'";       
+            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Sci.Env.User.Factory}'";
         }
 
         protected override void OnFormLoaded()
@@ -1035,6 +1035,13 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'"
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             txtLineNo.Text = item.GetSelectedString();
+        }
+
+        private void BtnBatchDelete_Click(object sender, EventArgs e)
+        {
+            var form = new P10_BatchDelete();
+            form.ShowDialog();
+            this.RenewData();
         }
 
         private void txtLineNo_Validating(object sender, CancelEventArgs e)

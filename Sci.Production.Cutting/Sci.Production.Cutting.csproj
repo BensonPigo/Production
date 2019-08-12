@@ -246,6 +246,12 @@
     <Compile Include="P10.Designer.cs">
       <DependentUpon>P10.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10_BatchDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_BatchDelete.Designer.cs">
+      <DependentUpon>P10_BatchDelete.cs</DependentUpon>
+    </Compile>
     <Compile Include="P10_Generate.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -508,6 +514,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P10.resx">
       <DependentUpon>P10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_BatchDelete.resx">
+      <DependentUpon>P10_BatchDelete.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_Generate.resx">
       <DependentUpon>P10_Generate.cs</DependentUpon>

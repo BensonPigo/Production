@@ -77,6 +77,7 @@
             this.labelFabPanelCode = new Sci.Win.UI.Label();
             this.txtFabricPanelCode = new Sci.Win.UI.TextBox();
             this.ckIsEXCESS = new Sci.Win.UI.CheckBox();
+            this.btnBatchDelete = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -773,9 +774,21 @@
             this.ckIsEXCESS.Text = "IsEXCESS";
             this.ckIsEXCESS.UseVisualStyleBackColor = true;
             // 
+            // btnBatchDelete
+            // 
+            this.btnBatchDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchDelete.Location = new System.Drawing.Point(876, 3);
+            this.btnBatchDelete.Name = "btnBatchDelete";
+            this.btnBatchDelete.Size = new System.Drawing.Size(116, 30);
+            this.btnBatchDelete.TabIndex = 24;
+            this.btnBatchDelete.Text = "Batch Delete";
+            this.btnBatchDelete.UseVisualStyleBackColor = true;
+            this.btnBatchDelete.Click += new System.EventHandler(this.BtnBatchDelete_Click);
+            // 
             // P10
             // 
             this.ClientSize = new System.Drawing.Size(999, 564);
+            this.Controls.Add(this.btnBatchDelete);
             this.DefaultControl = "txtCutRef";
             this.DefaultControlForEdit = "txtCutRef";
             this.DefaultDetailOrder = "BundleGroup";
@@ -786,9 +799,11 @@
             this.IsGridIconVisible = false;
             this.KeyField1 = "id";
             this.Name = "P10";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P10.Bundle Card";
             this.WorkAlias = "Bundle";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchDelete, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -859,5 +874,6 @@
         private Win.UI.TextBox txtFabricPanelCode;
         private Win.UI.Label labelFabPanelCode;
         private Win.UI.CheckBox ckIsEXCESS;
+        private Win.UI.Button btnBatchDelete;
     }
 }

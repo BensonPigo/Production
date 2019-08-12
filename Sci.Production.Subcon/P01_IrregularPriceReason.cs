@@ -20,16 +20,20 @@ namespace Sci.Production.Subcon
     {
         DataTable OriginDT_FromDB;
         DataTable ModifyDT_FromP01;
+        DataTable _detailDatas;
+
+        public int ReasonNullCount = 0;
         string _ArtWorkPO_ID = string.Empty;
         string _FactoryID = string.Empty;
         
-        public P01_IrregularPriceReason(string ArtWorkPO_ID, string FactoryID)
+        public P01_IrregularPriceReason(string ArtWorkPO_ID, string FactoryID, DataTable detailDatas)
         {
             InitializeComponent();
 
             this.EditMode = false;
             _ArtWorkPO_ID = ArtWorkPO_ID;
             _FactoryID = FactoryID;
+            _detailDatas = detailDatas;
         }
 
         protected override void OnFormLoaded()
@@ -138,10 +142,16 @@ namespace Sci.Production.Subcon
 
             if (this.EditMode)
             {
+                DataTable ModifyTable = (DataTable)listControlBindingSource1.DataSource;
+
+                //if (ModifyTable.Select("SubconReasonID=''").Count() > 0)
+                //{
+                //    MyUtility.Msg.WarningBox("Reason can not be empty.");
+                //    return;
+                //}
                 gridgridIrregularPrice.IsEditingReadOnly = true;
 
                 StringBuilder sql = new StringBuilder();
-                DataTable ModifyTable = (DataTable)listControlBindingSource1.DataSource;
                 //ModifyTable 去掉 OriginDT_FromDB，剩下的不是新增就是修改
                 var Insert_Or_Update = ModifyTable.AsEnumerable().Except(OriginDT_FromDB.AsEnumerable(), DataRowComparer.Default).Where(o => o.Field<string>("SubconReasonID").Trim() != "");
 
@@ -343,6 +353,10 @@ namespace Sci.Production.Subcon
                 #region 查詢所有價格異常紀錄
 
                 sql.Append(@"
+SELECT POID,[Amount]=Sum(Amount)
+INTO #AmountList
+FROM #TmpSource
+GROUP BY POID
 
 --根據表頭LocalPO的ID，整理出ArtworkTypeID、POID、OrderID
 SELECT DISTINCT[ArtworkTypeID] = ad.ArtworkTypeID ,[OrderId] = ad.OrderID  ,[POID]=o.POID
@@ -369,9 +383,15 @@ SELECT  ap.ID
 		,Orders.POID
 		,[OID]=apd.OrderId
 		,ap.currencyid  --維護時檢查用，所以先註解留著
-		,apd.Price
-		,apd.PoQty
-		,apd.PoQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) PO_amt
+		--,apd.PoQty
+		--,apd.PoQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) PO_amt
+
+		-- 已關單代表不會再使用這一張採購單進行「外發」，但是已經外發（arm Out）的數量後續還是會建立請款，因此已關單的要計算的是已實際外發的數量
+		,[Qty]=IIF(ap.Status!='Closed',apd.PoQty ,apd.Farmout)
+		,[PO_amt]= IIF(ap.Status!='Closed'
+						,apd.PoQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) 
+						,apd.Farmout * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) )
+
 		,dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) rate
 INTO #total_PO
 FROM ArtworkPO ap WITH (NOLOCK) 
@@ -383,13 +403,21 @@ WHERE  EXiSTS  (
 				WHERE ArtworkTypeID= ap.ArtworkTypeID  AND POID=Orders.POID) --相同Category、POID
 	   --AND apd.OrderId  IN  ( SELECT OrderID FROM #BePurchased ) 且有被採購的OrderID (註解原因 各項目可能會再其他子單進行採購)
        --AND ap.Status = 'Approved' 現在不需要過濾狀態
+       AND ap.ID <> @artWorkPO_ID  --SQL撈資料要排除當下的LocalPO.ID
 
 --繡花成本處理：列出同POID、Category=EMB_Thread（繡線）的總額清單
 SELECT   LPD.POID
 		,LP.currencyid
 		, [Price]=LPd.Price  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購單價
-		, LPD.Qty localap_qty  --採購數量
-		, [LocalPo_amt]=LPD.Price* LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
+
+		--, LPD.Qty localap_qty  --採購數量
+		--, [LocalPo_amt]=LPD.Price* LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
+		-- 已關單代表不會再使用這一張採購單進行「收料」，但是已經收料（In Qty ）的數量後續還是會建立請款，因此已關單的要計算的是已實際收料的數量
+		, [Qty]=IIF(LP.Status!='Closed',LPD.Qty ,LPD.InQty)  --數量
+		, [LocalPo_amt]=IIF(LP.Status!='Closed'
+							, LPD.Price * LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
+							,LPD.Price * LPD.InQty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate))
+
 		, dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) rate
 INTO #Embroidery_List
 FROM LocalPO LP
@@ -401,10 +429,10 @@ WHERE LP.Category = 'EMB_Thread'
 --開始整合
 SELECT o.BrandID ,o.StyleID  ,t.ArtworkTypeID  ,t.POID 
 ,[stdPrice]=round(Standard.order_amt/iif(Standard.order_qty=0,1,Standard.order_qty),3) 
-,[PoPrice]=round(Po.PO_amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) 
+,[PoPrice]=round( (po.Po_Amt + (SELECT Amount FROM #AmountList WHERE POID=t.POID)) / iif(Standard.order_qty=0,1,Standard.order_qty),3) 
 ,[PoPriceWithEmbroidery] =IIF(Embroidery.LocalPo_amt IS NULL ,
-							round(po.Po_Amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) , 
-							round((po.Po_Amt+Embroidery.LocalPo_amt) / iif(Standard.order_qty=0,1,Standard.order_qty)
+							round( (po.Po_Amt + (SELECT Amount FROM #AmountList WHERE POID=t.POID)) / iif(Standard.order_qty=0,1,Standard.order_qty),3) , 
+							round(( (po.Po_Amt + (SELECT Amount FROM #AmountList WHERE POID=t.POID)) +Embroidery.LocalPo_amt) / iif(Standard.order_qty=0,1,Standard.order_qty)
 							,3) )
 FROM #tmp_AllOrders t
 INNER JOIN Orders o WITH (NOLOCK) on o.id = t.OrderId
@@ -438,7 +466,8 @@ outer apply(--繡花成本，根據POID，作分組加總
 
 GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,t.POID ,Standard.order_amt ,Standard.order_qty ,po.Po_Amt ,Standard.order_qty ,Embroidery.LocalPo_amt
 
-DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO ,#Embroidery_List
+DROP TABLE #tmp_AllOrders --,#BePurchased 
+,#total_PO ,#Embroidery_List
 
 
 " + Environment.NewLine);
@@ -446,7 +475,8 @@ DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO ,#Embroidery_List
                 #endregion
 
                 this.ShowWaitMessage("Data Loading...");
-                result = DBProxy.Current.Select(null, sql.ToString(), parameters, out Price_Dt);
+                //result = DBProxy.Current.Select(null, sql.ToString(), parameters, out Price_Dt);
+                result = MyUtility.Tool.ProcessWithDatatable(_detailDatas, "", sql.ToString(), out Price_Dt, "#TmpSource", null, parameters);
                 sql.Clear();
                 this.HideWaitMessage();
 
@@ -653,6 +683,7 @@ DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO ,#Embroidery_List
                             listControlBindingSource1.DataSource = IPR_Grid.Copy();
                         }
                         ModifyDT_FromP01 = IPR_Grid.Copy();
+                        this.ReasonNullCount = IPR_Grid.Select("SubconReasonID=''").Length;
                     }
                     else
                     {

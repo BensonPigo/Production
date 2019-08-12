@@ -65,7 +65,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(637, 395);
+            this.browse.Size = new System.Drawing.Size(677, 395);
             // 
             // tabs
             // 
@@ -156,6 +156,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B02. Irregular Price Reason";
             this.WorkAlias = "SubconReason";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
