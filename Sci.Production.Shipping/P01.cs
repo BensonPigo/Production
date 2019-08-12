@@ -22,6 +22,8 @@ namespace Sci.Production.Shipping
     public partial class P01 : Sci.Win.Tems.Input1
     {
         private string excelFile;
+        private decimal numVWeightOldValue;
+        private decimal numForwarderNQuotationOldValue;
 
         /// <summary>
         /// P01
@@ -487,7 +489,8 @@ values ('{0}','Status','','New','{1}',GETDATE())",
         // V.Weight(Kgs)
         private void NumVWeight_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && this.numVWeight.OldValue != this.numVWeight.Value)
+            //if (this.EditMode && this.numVWeight.OldValue != this.numVWeight.Value)\
+            if (this.EditMode && this.numVWeightOldValue != this.numVWeight.Value)
             {
                 this.CalculateEstAmt();
             }
@@ -496,7 +499,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
         // Quotation(USD/Kgs)
         private void NumForwarderNQuotation_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && this.numForwarderNQuotation.OldValue != this.numForwarderNQuotation.Value)
+            if (this.EditMode && this.numForwarderNQuotationOldValue != this.numForwarderNQuotation.Value)
             {
                 this.CalculateEstAmt();
             }
@@ -1416,6 +1419,18 @@ and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
             {
                 this.ChangeQuotationAVG();
             }
+        }
+
+        private void numVWeight_ValueChanged(object sender, EventArgs e)
+        {
+            this.numVWeightOldValue = this.numVWeight.OldValue.HasValue ? this.numVWeight.OldValue.Value : 0 ;
+        }
+
+        private void numForwarderNQuotation_VisibleChanged(object sender, EventArgs e)
+        {
+            
+            this.numForwarderNQuotationOldValue = this.numForwarderNQuotation.OldValue.HasValue ? this.numForwarderNQuotation.OldValue.Value : 0;
+
         }
     }
 }
