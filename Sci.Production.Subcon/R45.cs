@@ -41,7 +41,6 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             this.comboSubPorcess.SelectedIndex = 0;
             #endregion
 
-
             this.txtMdivision.Text = Sci.Env.User.Keyword;
 
             //排除非生產工廠
@@ -68,7 +67,6 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
                 }
                 else
                 {
-
                     #region WHERE條件
 
                     if (!string.IsNullOrEmpty(this.txtMdivision.Text))
@@ -86,20 +84,20 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
                         sqlWhere.Append($"AND b.Orderid='{this.txtSPNo.Text}'" + Environment.NewLine);
                     }
 
-
                     if (!string.IsNullOrEmpty(this.txtCutRef.Text))
                     {
                         sqlWhere.Append($"AND w.CutRef='{this.txtCutRef.Text}'" + Environment.NewLine);
                     }
-
 
                     if (!string.IsNullOrEmpty(this.comboSubPorcess.Text))
                     {
                         sqlWhere.Append($"AND ( DefaultSubProcess.SubProcessID LIKE '%{this.comboSubPorcess.Text}%' OR HasSubProcess.Value > 0  )" + Environment.NewLine);
                     }
 
-
-
+                    if (!MyUtility.Check.Empty(txtSize.Text))
+                    {
+                        sqlWhere.Append($"AND bd.SizeCode='{this.txtSize.Text}'" + Environment.NewLine);
+                    }
 
                     sqlWhere.Append($"ORDER BY b.Colorid,bd.SizeCode,b.PatternPanel,bd.BundleNo");
 
@@ -112,9 +110,6 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
                     return base.ValidateInput();
                 }
             }
-
-
-
         }
 
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
@@ -124,11 +119,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             //StringBuilder sqlWhere = new StringBuilder();
             List<SqlParameter> parameterList = new List<SqlParameter>();
 
-
-
-
             sqlCmd.Append($@"
-
 SELECT
 bd.BundleGroup
 ,b.Colorid
