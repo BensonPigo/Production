@@ -83,6 +83,8 @@ namespace Sci.Production.Sewing
                 sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
+            this.ShowWaitMessage("Data Loading...");
+
             string sqlcmd = $@"
 declare @TransferDate1  datetime = '{dateTransfer1}'
 declare @TransferDate2  datetime = '{dateTransfer2}'
@@ -111,7 +113,7 @@ select
 from DRYTransfer dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-LEFT JOIN  PackingList_Detail pd with(nolock)  ON pd.SCICtnNo = dr.SCICtnNo 
+LEFT JOIN  PackingList_Detail pd with(nolock)  ON pd.SCICtnNo = dr.SCICtnNo  AND dr.OrderID = pd.OrderID
 where 1=1
 {sqlwhere}
 GROUP BY dr.TransferTo
@@ -143,6 +145,7 @@ GROUP BY dr.TransferTo
                 MyUtility.Msg.WarningBox("Datas not found!");
             }
 
+            this.HideWaitMessage();
             this.listControlBindingSource1.DataSource = dt;
             this.grid1.AutoResizeColumns();
         }

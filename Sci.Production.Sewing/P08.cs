@@ -67,6 +67,8 @@ namespace Sci.Production.Sewing
                 sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
+            this.ShowWaitMessage("Data Loading...");
+
             string sqlcmd = $@"
 declare @datereceive1 date = '{datereceive1}'
 declare @datereceive2 date = '{datereceive2}'
@@ -92,7 +94,7 @@ select
 from DRYReceive dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = dr.SCICtnNo 
+left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = dr.SCICtnNo AND dr.OrderID = pd.OrderID
 where 1=1
 {sqlwhere}
 ";
@@ -109,6 +111,7 @@ where 1=1
                 MyUtility.Msg.WarningBox("Datas not found!");
             }
 
+            this.HideWaitMessage();
             this.listControlBindingSource1.DataSource = dt;
             this.grid1.AutoResizeColumns();
         }
