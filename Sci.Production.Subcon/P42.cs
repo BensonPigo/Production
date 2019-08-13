@@ -524,7 +524,7 @@ outer apply(
 )w
 where o.ID ='{drSelected["OrderID"]}'
 
-select b.Orderid,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select b.Orderid,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
@@ -535,13 +535,13 @@ cross join(
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
 )s
 
-select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault
+select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo
 
 union
 
-select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -555,7 +555,8 @@ select
 					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
 						and bio.InComing is not null and bio.OutGoing is not null then 1
 					else 0
-				end
+				end,
+	IsEXCESS
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -564,6 +565,7 @@ where b.subProcessid='{subProcess}'
 select
 	t.BundleNo,
 	b.Qty,
+	EXCESS=iif(IsEXCESS=1,'Y',''),
 	Status=case when MIN(isComplete)=1 then 'Complete'
 				when sum(isComplete)>0 then 'OnGoing'
 				when sum(isComplete)=0 then 'Not Yet Load'
@@ -574,7 +576,7 @@ outer apply(
 	from Bundle_Detail bd with(nolock)
 	where bd.BundleNo = t.BundleNo
 )b
-group by t.SubProcessID,t.Orderid,t.BundleNo,b.qty
+group by t.SubProcessID,t.Orderid,t.BundleNo,b.qty,IsEXCESS
 order by t.BundleNo
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
@@ -624,7 +626,7 @@ outer apply(
 where o.ID ='{drSelected["OrderID"]}' and oq.Article='{drSelected["Article"]}' and oq.SizeCode='{drSelected["SizeCode"]}'
 
 
-select b.Orderid,b.Article,b.Sizecode,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select b.Orderid,b.Article,b.Sizecode,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
@@ -636,13 +638,13 @@ cross join(
 )s
 
 
-select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault
+select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo
 
 union
 
-select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -658,7 +660,8 @@ select
 					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
 						and bio.InComing is not null and bio.OutGoing is not null then 1
 					else 0
-				end
+				end,
+	IsEXCESS
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -667,6 +670,7 @@ where b.subProcessid='{subProcess}'
 select
 	[Bundle#]=t.BundleNo,
 	b.Qty,
+	EXCESS=iif(IsEXCESS=1,'Y',''),
 	Status=case when MIN(isComplete)=1 then 'Complete'
 				when sum(isComplete)>0 then 'OnGoing'
 				when sum(isComplete)=0 then 'Not Yet Load'
@@ -678,7 +682,7 @@ outer apply(
 	inner join Bundle b WITH (NOLOCK) on b.id = bd.Id
 	where bd.BundleNo = t.BundleNo and b.Article = t.Article and b.Sizecode = t.Sizecode
 )b
-group by t.SubProcessID,t.Orderid,t.BundleNo,t.Article,t.Sizecode,b.qty
+group by t.SubProcessID,t.Orderid,t.BundleNo,t.Article,t.Sizecode,b.qty,IsEXCESS
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 ";
