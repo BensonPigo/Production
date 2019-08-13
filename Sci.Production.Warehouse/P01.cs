@@ -31,6 +31,15 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("IsForecast = 0 and Whseclose is null");
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add("0", "");
+            comboBox1_RowSource.Add("1", "Subcon-in from sister factory (same zone)");
+            comboBox1_RowSource.Add("2", "Subcon-in from sister factory (different zone)");
+            comboBox1_RowSource.Add("3", "Subcon-in from non-sister factory");
+            comboBox1_RowSource.Add(string.Empty, string.Empty);
+            this.comboSubconInType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.comboSubconInType.ValueMember = "Key";
+            this.comboSubconInType.DisplayMember = "Value";
         }
 
         public P01(ToolStripMenuItem menuitem, string history)
@@ -42,7 +51,15 @@ namespace Sci.Production.Warehouse
                 : string.Format("IsForecast = 0 and Whseclose is not null");
             dataType = history;
             btnCloseMTL.Enabled = history != "Y";
-
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add("0", "Fabric");
+            comboBox1_RowSource.Add("1", "Subcon-in from sister factory (same zone)");
+            comboBox1_RowSource.Add("2", "Subcon-in from sister factory (different zone)");
+            comboBox1_RowSource.Add("3", "Subcon-in from non-sister factory");
+            comboBox1_RowSource.Add(string.Empty, string.Empty);
+            this.comboSubconInType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.comboSubconInType.ValueMember = "Key";
+            this.comboSubconInType.DisplayMember = "Value";
         }
 
         protected override void OnDetailDetached()
@@ -258,6 +275,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             CurrentMaintain["CtnType"] = "1";
             CurrentMaintain["CPUFactor"] = 1;
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            CurrentMaintain["SubconInType"] = "0";
         }
 
         //Production output

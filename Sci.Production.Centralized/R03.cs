@@ -201,7 +201,7 @@ Where 1=1
 
 and f.IsProduceFty = '1'
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
-and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))
+and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and o.SubconInType = '0'))
 ";
                 if (this.dateRange1.Value1.HasValue)
                 {

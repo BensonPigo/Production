@@ -152,17 +152,17 @@ BEGIN
 	
 
 	--Fty Local Order
-	select ID,CPU,Qty,FactoryID,StyleUkey,BuyerDelivery,SCIDelivery 
+	select ID,CPU,Qty,FactoryID,StyleUkey,BuyerDelivery,SCIDelivery ,SubconInType,ProgramID
 	into #FactoryOrder 
 	from Orders
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	And Orders.Junk = 0 and Orders.Qty > 0 
-	AND SubconInSisterFty = 0
 	AND @HasFtyLocalOrder = 1
 	AND Orders.LocalOrder = 1
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
+
 
 	--#tmpFactoryOrder1
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
@@ -177,6 +177,8 @@ BEGIN
 	,FactoryOrder.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,FactorySort
+	,SubconInType
+	,FactoryOrder.ProgramID
 	into #tmpFactoryOrder1 
 	from #FactoryOrder FactoryOrder
 	inner join Factory on FactoryOrder.FactoryID = Factory.ID
@@ -187,9 +189,7 @@ BEGIN
 	outer apply (select iif(@CalArtWorkType = 'CPU', FactoryOrder.CPU, cTms) as cCPU) ccpu
 	outer apply (select 1 as CpuRate ) gcRate
 	outer apply (select iif(@isSCIDelivery = 0, FactoryOrder.BuyerDelivery, FactoryOrder.SCIDelivery) as OrderDate) odd
-	--outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),OrderDate),'yyyyMM') as Date1) odd1
-	--outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
 	outer apply (select dbo.GetHalfMonWithYear(OrderDate,@isSCIDelivery) as Date2) odd2
 	
 	
@@ -260,37 +260,49 @@ BEGIN
 		CountryID varchar(2)
 		,MDivisionID varchar(8)
 		,FactoryID varchar(10)
+		,ProgramID varchar(10)
 		,OrderYYMM varchar(10)
 		,OrderLoadingCPU numeric(14,2)
 		,OrderShortage numeric(14,2)
 		,MaxOutputDate date
 		,MinOutPutDate date
 		,FactorySort varchar(3)
+		,SubconInType varchar(1)
 	)
 	
 	insert into @tmpFinal
-	Select CountryID, MDivisionID, FactoryID, #tmpOrder2.OrderYYMM
+	Select CountryID, MDivisionID, FactoryID
+	, ProgramID=''
+	, #tmpOrder2.OrderYYMM
 	,sum(OrderCapacity) as OrderLoadingCPU
 	,sum(OrderShortage) as OrderShortage
 	,Max(OutPutDate) as MaxOutputDate, Min(OutPutDate) as MinOutPutDate
-	,FactorySort
+	,FactorySort	
+	,SubconInType=''
 	From #tmpOrder2 Group by CountryID,MDivisionID,FactoryID,#tmpOrder2.OrderYYMM,FactorySort
 
 	insert into @tmpFinal
-	Select CountryID, MDivisionID, FactoryID, #tmpForecast1.OrderYYMM
+	Select CountryID, MDivisionID, FactoryID
+	, ProgramID=''
+	, #tmpForecast1.OrderYYMM
 	,sum(ForecastCapacity) as OrderLoadingCPU
 	,0 as OrderShortage
 	,null as MaxOutputDate, null as MinOutPutDate
-	,FactorySort
+	,FactorySort	
+	,SubconInType=''
 	From #tmpForecast1 Group by CountryID,MDivisionID,FactoryID,#tmpForecast1.OrderYYMM,FactorySort
-
+	
 	insert into @tmpFinal
-	Select CountryID, MDivisionID, FactoryID, #tmpFactoryOrder2.OrderYYMM
+	Select CountryID, MDivisionID, FactoryID
+	,ProgramID
+	,#tmpFactoryOrder2.OrderYYMM
 	,sum(FactoryOrderCapacity) as OrderLoadingCPU
 	,0 as OrderShortage
 	,Max(OutPutDate) as MaxOutputDate, Min(OutPutDate) as MinOutPutDate
 	,FactorySort
-	From #tmpFactoryOrder2 Group by CountryID,MDivisionID,FactoryID,#tmpFactoryOrder2.OrderYYMM,FactorySort
+	,SubconInType
+	From #tmpFactoryOrder2 
+	Group by CountryID,MDivisionID,FactoryID,#tmpFactoryOrder2.OrderYYMM,FactorySort,ProgramID,SubconInType
 
 	select 
 		CountryID
@@ -302,8 +314,11 @@ BEGIN
 		, Max(MaxOutputDate) as MaxOutputDate
 		, Min(MinOutPutDate) as MinOutPutDate
 		,FactorySort
-	into #tmpFinal from @tmpFinal 
-	group by CountryID,MDivisionID,FactoryID,OrderYYMM,FactorySort
+		,ProgramID
+		,SubconInType
+	into #tmpFinal 
+	from @tmpFinal 
+	group by CountryID,MDivisionID,FactoryID,OrderYYMM,FactorySort,ProgramID,SubconInType
 
 	if(@ReportType = 1)
 	Begin
@@ -383,16 +398,91 @@ BEGIN
 		
 				
 		--(L) By Factory Loading CPU
-		select a.CountryID, MDivisionID, a.FactoryID, a.OrderYYMM as MONTH, b.OrderLoadingCPU as Capacity1, c.OrderLoadingCPU as Capacity2
-		from (
-			select CountryID,MDivisionID,FactoryID,substring(OrderYYMM,1,6) as OrderYYMM,sum(OrderLoadingCPU) as OrderLoadingCPU,max(MaxOutputDate) as MaxOutputDate, min(MinOutPutDate) as MinOutPutDate, FactorySort from #tmpFinal group by CountryID,MDivisionID,FactoryID,substring(OrderYYMM,1,6),FactorySort 
-		) a 
-		left join (
-			select FactoryID, substring(OrderYYMM,1,6) as OrderYYMM, sum(OrderLoadingCPU) as OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 1 group by FactoryID,substring(OrderYYMM,1,6)
-		) b on a.FactoryID = b.FactoryID and substring(a.OrderYYMM,1,6) = b.OrderYYMM
-		left join (
-			select FactoryID, substring(OrderYYMM,1,6) as OrderYYMM, sum(OrderLoadingCPU) as OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 2 group by FactoryID,substring(OrderYYMM,1,6)
-		) c on a.FactoryID = c.FactoryID and substring(a.OrderYYMM,1,6) = c.OrderYYMM
+		
+select a.CountryID, MDivisionID, a.FactoryID, a.OrderYYMM as MONTH
+,[str_Capacity1]  = case when (b.OrderLoadingCPU2 > 0) then ('='+ convert(varchar(100),b.OrderLoadingCPU1) +'+' 
+					 + convert(varchar(100),b.OrderLoadingCPU2))
+					 when (b.OrderLoadingCPU2 < 0) then ('='+ convert(varchar(100),b.OrderLoadingCPU1)  
+					 + convert(varchar(100),b.OrderLoadingCPU2))
+				else convert(varchar(100),isnull(b.OrderLoadingCPU1,0)) end
+,[str_Capacity2]  = case when (c.OrderLoadingCPU2 > 0) then ('='+ convert(varchar(100),c.OrderLoadingCPU1) +'+' 
+					 + convert(varchar(100),c.OrderLoadingCPU2))
+					 when (c.OrderLoadingCPU2 < 0) then ('='+ convert(varchar(100),c.OrderLoadingCPU1)  
+					 + convert(varchar(100),c.OrderLoadingCPU2))
+				else convert(varchar(100),isnull(c.OrderLoadingCPU1,0)) end
+,[Capacity1]  = case when (b.OrderLoadingCPU2 > 0) then ( b.OrderLoadingCPU1 +b.OrderLoadingCPU2 )
+					 when (b.OrderLoadingCPU2 < 0) then ( b.OrderLoadingCPU1 +b.OrderLoadingCPU2 )
+				else convert(varchar(100),isnull(b.OrderLoadingCPU1,0)) end
+,[Capacity2]  = case when (c.OrderLoadingCPU2 > 0) then ( c.OrderLoadingCPU1 +c.OrderLoadingCPU2 )
+					 when (c.OrderLoadingCPU2 < 0) then ( c.OrderLoadingCPU1 +c.OrderLoadingCPU2 )
+				else convert(varchar(100),isnull(c.OrderLoadingCPU1,0)) end
+from (
+	select CountryID,MDivisionID,FactoryID,substring(OrderYYMM,1,6) as OrderYYMM
+	,sum(OrderLoadingCPU) as OrderLoadingCPU
+	,max(MaxOutputDate) as MaxOutputDate
+	,min(MinOutPutDate) as MinOutPutDate
+	, FactorySort 
+	from #tmpFinal 
+	group by CountryID,MDivisionID,FactoryID,substring(OrderYYMM,1,6),FactorySort 
+) a 
+left join (
+select FactoryID,OrderYYMM,[OrderLoadingCPU1] = sum(OrderLoadingCPU1) ,[OrderLoadingCPU2] = sum(OrderLoadingCPU2)
+	from (
+		select FactoryID, substring(OrderYYMM,1,6) as OrderYYMM
+		, isnull(sum(OrderLoadingCPU),0) as OrderLoadingCPU1 
+		, 0 as OrderLoadingCPU2
+		from #tmpFinal 
+		where RIGHT(OrderYYMM,1) = 1 
+		and SubconInType!=2
+		group by FactoryID,substring(OrderYYMM,1,6)
+	union all
+		select FactoryID, substring(OrderYYMM,1,6) as OrderYYMM
+		, 0 as OrderLoadingCPU1 
+		, isnull(sum(OrderLoadingCPU),0) as OrderLoadingCPU2
+		from #tmpFinal 
+		where RIGHT(OrderYYMM,1) = 1 
+		and SubconInType = 2
+		group by FactoryID,substring(OrderYYMM,1,6)
+	union all
+		select [FactoryID] = ProgramID, substring(OrderYYMM,1,6) as OrderYYMM
+		, 0 as OrderLoadingCPU1 
+		, - isnull(sum(OrderLoadingCPU),0) as OrderLoadingCPU2
+		from #tmpFinal 
+		where RIGHT(OrderYYMM,1) = 1 
+		and SubconInType = 2
+		group by ProgramID,substring(OrderYYMM,1,6)
+	) a
+group by FactoryID,OrderYYMM
+) b on a.FactoryID = b.FactoryID and substring(a.OrderYYMM,1,6) = b.OrderYYMM
+left join (
+	select FactoryID,OrderYYMM,[OrderLoadingCPU1] = sum(OrderLoadingCPU1) ,[OrderLoadingCPU2] = sum(OrderLoadingCPU2)
+	from (
+		select FactoryID, substring(OrderYYMM,1,6) as OrderYYMM
+		, isnull(sum(OrderLoadingCPU),0) as OrderLoadingCPU1 
+		, 0 as OrderLoadingCPU2
+		from #tmpFinal 
+		where RIGHT(OrderYYMM,1) = 2 
+		and SubconInType!=2
+		group by FactoryID,substring(OrderYYMM,1,6)
+	union all
+		select FactoryID, substring(OrderYYMM,1,6) as OrderYYMM
+		, 0 as OrderLoadingCPU1 
+		, isnull(sum(OrderLoadingCPU),0) as OrderLoadingCPU2
+		from #tmpFinal 
+		where RIGHT(OrderYYMM,1) = 2
+		and SubconInType = 2
+		group by FactoryID,substring(OrderYYMM,1,6)
+	union all
+		select [FactoryID] = ProgramID, substring(OrderYYMM,1,6) as OrderYYMM
+		, 0 as OrderLoadingCPU1 
+		, - isnull(sum(OrderLoadingCPU),0) as OrderLoadingCPU2
+		from #tmpFinal 
+		where RIGHT(OrderYYMM,1) = 2 
+		and SubconInType = 2
+		group by ProgramID,substring(OrderYYMM,1,6)
+	) a
+group by FactoryID,OrderYYMM
+) c on a.FactoryID = c.FactoryID and substring(a.OrderYYMM,1,6) = c.OrderYYMM
 		
 
 		--For Forecast shared

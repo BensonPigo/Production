@@ -165,7 +165,6 @@
             this.txtPONo = new Sci.Win.UI.TextBox();
             this.txtStyle = new Sci.Win.UI.TextBox();
             this.checkLocalOrder = new Sci.Win.UI.CheckBox();
-            this.checkSubconInFromSisterFactory = new Sci.Win.UI.CheckBox();
             this.checkForecast = new Sci.Win.UI.CheckBox();
             this.checkCancelledOrder = new Sci.Win.UI.CheckBox();
             this.checkPullForwardOrder = new Sci.Win.UI.CheckBox();
@@ -297,6 +296,7 @@
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
             this.displayIsMixMarker = new Sci.Win.UI.DisplayBox();
             this.shapeContainer6 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.comboSubconInType = new Ict.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -313,6 +313,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboSubconInType);
+            this.detailcont.Controls.Add(this.txtdropdownlistCategory);
             this.detailcont.Controls.Add(this.displayIsMixMarker);
             this.detailcont.Controls.Add(this.btnExpectionFormRemark);
             this.detailcont.Controls.Add(this.txtDevSample);
@@ -420,7 +422,6 @@
             this.detailcont.Controls.Add(this.dateCutOffDate);
             this.detailcont.Controls.Add(this.dateKPIDel);
             this.detailcont.Controls.Add(this.dateCMPQCFM);
-            this.detailcont.Controls.Add(this.txtdropdownlistCategory);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelOrderType);
             this.detailcont.Controls.Add(this.labelProject);
@@ -428,7 +429,6 @@
             this.detailcont.Controls.Add(this.checkPullForwardOrder);
             this.detailcont.Controls.Add(this.checkCancelledOrder);
             this.detailcont.Controls.Add(this.checkForecast);
-            this.detailcont.Controls.Add(this.checkSubconInFromSisterFactory);
             this.detailcont.Controls.Add(this.checkLocalOrder);
             this.detailcont.Controls.Add(this.txtStyle);
             this.detailcont.Controls.Add(this.txtPONo);
@@ -609,10 +609,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1717,7 +1717,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -1932,18 +1932,6 @@
             this.checkLocalOrder.TabIndex = 3;
             this.checkLocalOrder.Text = "Local order";
             this.checkLocalOrder.UseVisualStyleBackColor = true;
-            // 
-            // checkSubconInFromSisterFactory
-            // 
-            this.checkSubconInFromSisterFactory.AutoSize = true;
-            this.checkSubconInFromSisterFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SubconInSisterFty", true));
-            this.checkSubconInFromSisterFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSubconInFromSisterFactory.Location = new System.Drawing.Point(275, 31);
-            this.checkSubconInFromSisterFactory.Name = "checkSubconInFromSisterFactory";
-            this.checkSubconInFromSisterFactory.Size = new System.Drawing.Size(180, 19);
-            this.checkSubconInFromSisterFactory.TabIndex = 4;
-            this.checkSubconInFromSisterFactory.Text = "Subcon-in from sister factory";
-            this.checkSubconInFromSisterFactory.UseVisualStyleBackColor = true;
             // 
             // checkForecast
             // 
@@ -3105,6 +3093,7 @@
             this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(285, 197);
+            this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 14;
@@ -3321,7 +3310,7 @@
             // 
             this.shapeContainer6.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer6.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer6.Name = "shapeContainer1";
+            this.shapeContainer6.Name = "shapeContainer6";
             this.shapeContainer6.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape4,
             this.lineShape2,
@@ -3329,6 +3318,19 @@
             this.shapeContainer6.Size = new System.Drawing.Size(1000, 660);
             this.shapeContainer6.TabIndex = 45;
             this.shapeContainer6.TabStop = false;
+            // 
+            // comboSubconInType
+            // 
+            this.comboSubconInType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboSubconInType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "SubconInType", true));
+            this.comboSubconInType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboSubconInType.FormattingEnabled = true;
+            this.comboSubconInType.IsSupportUnselect = true;
+            this.comboSubconInType.Location = new System.Drawing.Point(275, 29);
+            this.comboSubconInType.Name = "comboSubconInType";
+            this.comboSubconInType.ReadOnly = true;
+            this.comboSubconInType.Size = new System.Drawing.Size(271, 23);
+            this.comboSubconInType.TabIndex = 225;
             // 
             // P01
             // 
@@ -3365,7 +3367,6 @@
         private Win.UI.CheckBox checkPullForwardOrder;
         private Win.UI.CheckBox checkCancelledOrder;
         private Win.UI.CheckBox checkForecast;
-        private Win.UI.CheckBox checkSubconInFromSisterFactory;
         private Win.UI.CheckBox checkLocalOrder;
         private Win.UI.TextBox txtStyle;
         private Win.UI.TextBox txtPONo;
@@ -3631,5 +3632,6 @@
         private Win.UI.Button btnEConsMNFailed;
         private Win.UI.DisplayBox displayIsMixMarker;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer6;
+        private Ict.Win.UI.ComboBox comboSubconInType;
     }
 }

@@ -397,7 +397,7 @@ namespace Sci.Production.Planning
                 	              Cross Apply getOutputInformation(o.ID, '{3}') si
                 	              Where o.BuyerDelivery between '{2}' and '{3}'
                 	              And o.Junk = 0
-                	              And o.SubconInSisterFty = 0
+                	              And o.SubconInType in ('1','2')
                 	              " + load + @"
                 	              ) a
                             Group by a.CountryID, a.Alias, a.MDivisionID, a.FactoryID, a.Capacity
@@ -1015,16 +1015,28 @@ namespace Sci.Production.Planning
                         for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
                         {
                             DataRow[] rows = dtLoadCPU.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon)));
-                            decimal capacity12 = 0;
-                            decimal capacity22 = 0;
+                            string capacity12 = "0";
+                            string capacity22 = "0";
                             if (rows.Length > 0)
                             {
-                                capacity12 = rows[0]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity1"]) : 0;
-                                capacity22 = rows[0]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity2"]) : 0;
+                                capacity12 = rows[0]["str_Capacity1"] != DBNull.Value ? Convert.ToString(rows[0]["str_Capacity1"]) : "0";
+                                capacity22 = rows[0]["str_Capacity2"] != DBNull.Value ? Convert.ToString(rows[0]["str_Capacity2"]) : "0";
                             }
 
                             wks.Cells[this.sheetStart, 5 + (idx * 2)].Value = capacity12;
                             wks.Cells[this.sheetStart, 5 + (idx * 2) + 1].Value = capacity22;
+
+                            // Change Color
+                            if (string.Compare(capacity12.Substring(0, 1), "=") == 0)
+                            {
+                                wks.Cells[this.sheetStart, 5 + (idx * 2)].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#f9f900"));
+                            }
+
+                            if (string.Compare(capacity22.Substring(0, 1), "=") == 0)
+                            {
+                                wks.Cells[this.sheetStart, 5 + (idx * 2) + 1].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#f9f900"));
+                            }
+
                             idx += 1;
                         }
 
