@@ -51,6 +51,16 @@ namespace Sci.Production.PPIC
             this.dataType = type;
             this.btnShipmentFinished.Visible = this.dataType == "1"; // Shipment Finished
             this.btnBacktoPPICMasterList.Visible = this.dataType != "1"; // Back to P01. PPIC Master List
+
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add("0", "");
+            comboBox1_RowSource.Add("1", "Subcon-in from sister factory (same zone)");
+            comboBox1_RowSource.Add("2", "Subcon-in from sister factory (different zone)");
+            comboBox1_RowSource.Add("3", "Subcon-in from non-sister factory");
+            comboBox1_RowSource.Add(string.Empty, string.Empty);
+            this.comboSubconInType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.comboSubconInType.ValueMember = "Key";
+            this.comboSubconInType.DisplayMember = "Value";
         }
 
         /// <inheritdoc/>
@@ -133,7 +143,6 @@ namespace Sci.Production.PPIC
             {
                 this.ControlButton();
             }
-
 
             switch (this.CurrentMaintain["IsMixMarker"].ToString())
             {
@@ -426,6 +435,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.CurrentMaintain["CtnType"] = "1";
             this.CurrentMaintain["CPUFactor"] = 1;
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["SubconInType"] = "0";
         }
 
         /// <inheritdoc/>
@@ -443,7 +453,6 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 this.txtSpecialId1.ReadOnly = true;
                 this.txtSpecialId2.ReadOnly = true;
                 this.txtSpecialId3.ReadOnly = true;
-                this.checkSubconInFromSisterFactory.ReadOnly = true;
                 this.checkCancelledOrder.ReadOnly = true;
                 this.checkFOC.ReadOnly = true;
                 this.checkSP.ReadOnly = true;
@@ -562,19 +571,28 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 #endregion
 
                 // 檢查是否幫姊妹廠代工
-                if (MyUtility.Convert.GetString(this.CurrentMaintain["SubconInSisterFty"]).ToUpper() == "FALSE")
+                List<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                cmds.Add(new SqlParameter("@programid", this.CurrentMaintain["ProgramID"].ToString()));
+                cmds.Add(new SqlParameter("@factoryid", this.CurrentMaintain["FactoryID"].ToString()));
+                System.Data.DataTable sCIFtyData;
+                string sqlCmd = "select ID from SCIFty WITH (NOLOCK) where ID = @programid";
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out sCIFtyData);
+                if (result && sCIFtyData.Rows.Count < 1)
                 {
-                    // sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@programid", MyUtility.Convert.GetString(this.CurrentMaintain["ProgramID"]));
-
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                    cmds.Add(sp1);
-                    System.Data.DataTable sCIFtyData;
-                    string sqlCmd = "select ID from SCIFty WITH (NOLOCK) where ID = @programid";
-                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out sCIFtyData);
-                    if (result && sCIFtyData.Rows.Count > 0)
+                    this.CurrentMaintain["SubconInType"] = 3;
+                }
+                else
+                {
+                    if (MyUtility.Check.Seek(@"
+select ID from SCIFty s WITH (NOLOCK)
+where id = @programid
+and exists (select 1 from Factory where id = @factoryid and s.MDivisionID = MDivisionID)", cmds, null))
                     {
-                        this.CurrentMaintain["SubconInSisterFty"] = 1;
+                        this.CurrentMaintain["SubconInType"] = 1;
+                    }
+                    else
+                    {
+                        this.CurrentMaintain["SubconInType"] = 2;
                     }
                 }
 

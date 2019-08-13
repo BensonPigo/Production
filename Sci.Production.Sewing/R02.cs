@@ -213,7 +213,7 @@ select  s.OutputDate
 		, [MockupStyle] = isnull(mo.StyleID,'')
         , [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100
 		, System.StdTMS
-        , o.SubconInSisterFty
+        , o.SubconInType
         , [SubconOutFty] = iif(sf.id is null,'Other',s.SubconOutFty)
 INTO #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
@@ -278,14 +278,14 @@ select OutputDate,Category
 	   , Rate
 	   , StdTMS
 	   , IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
-       , SubconInSisterFty
+       , SubconInType
        , [SubconOutFty] = isnull(SubconOutFty,'')
 INTO #tmpSewingGroup
 from #tmpSewingDetail
 group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
 		 , OrderCategory, LocalOrder, FactoryID, OrderProgram, MockupProgram
 		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
-		 , MockupStyle, Rate, StdTMS,SubconInSisterFty,isnull(SubconOutFty,'')
+		 , MockupStyle, Rate, StdTMS,SubconInType,isnull(SubconOutFty,'')
 
 select t.*
 	   , isnull(w.Holiday, 0) as Holiday
@@ -327,7 +327,7 @@ select OutputDate
 	   , LastShift
 	   , ComboType
 	   , FactoryID
-       , SubconInSisterFty
+       , SubconInType
        , SubconOutFty
 from #tmp2ndFilter");
             #endregion
@@ -686,7 +686,7 @@ order by aLine.SewingLineID, aLine.Team");
                 #region 組SQL
                 failResult = MyUtility.Tool.ProcessWithDatatable(
                     this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInSisterFty",
+                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType",
                     string.Format(@"
 ;with tmpQty as (
 	select StdTMS
@@ -697,7 +697,7 @@ order by aLine.SewingLineID, aLine.Team");
 	where LastShift <> 'O' 
           --排除Subcon in non sister資料
           and LastShift <> 'I'
-		  or (LastShift = 'I' and SubconInSisterFty = 1)
+		  or (LastShift = 'I' and SubconInType in ('1','2'))
 	group by StdTMS
 ),
 tmpTtlManPower as (
@@ -713,7 +713,7 @@ tmpTtlManPower as (
 		where LastShift <> 'O' 
 			  --排除Subcon in non sister資料
               and LastShift <> 'I'
-		      or (LastShift = 'I' and SubconInSisterFty = 1)
+		      or (LastShift = 'I' and SubconInType in ('1','2'))
 		group by OutputDate, FactoryID, SewingLineID, LastShift, Team
 	) a*/
 
@@ -728,7 +728,7 @@ tmpTtlManPower as (
 		from #tmp
 		where LastShift <> 'O'
 		--排除 subcon in non sister的數值
-        and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInSisterFty <> 0 ))   
+        and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInType <> 0 ))   
 		group by OutputDate, FactoryID, SewingLineID, LastShift, Team 
 	) a
 	outer apply
@@ -741,12 +741,12 @@ tmpTtlManPower as (
 					, LastShift
 					, Team
 					, ManPower = Max(ActManPower)
-					,SubconInSisterFty
+					,SubconInType
 			from #tmp
 			where LastShift <> 'O'
-			group by OutputDate, FactoryID, SewingLineID, LastShift, Team,SubconInSisterFty
+			group by OutputDate, FactoryID, SewingLineID, LastShift, Team,SubconInType
 		) m2
-		where  (m2.LastShift = 'I' and m2.SubconInSisterFty = 1)
+		where  (m2.LastShift = 'I' and m2.SubconInType in ('1','2'))
 				and m2.Team = a.Team 
 				and m2.SewingLineID = a.SewingLineID	
 				and a.OutputDate = m2.OutputDate
@@ -782,7 +782,7 @@ left join tmpTtlManPower mp on 1 = 1"),
                 #region 組SQL
                 failResult = MyUtility.Tool.ProcessWithDatatable(
                     this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInSisterFty",
+                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType",
                     string.Format(@"
 ;with tmpQty as (
 	select StdTMS
@@ -790,7 +790,7 @@ left join tmpTtlManPower mp on 1 = 1"),
 		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
 		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
-	where LastShift = 'I' and SubconInSisterFty = 0
+	where LastShift = 'I' and SubconInType = 0
 	group by StdTMS
 )
 select q.QAQty
@@ -820,7 +820,7 @@ from tmpQty q"),
                 #region 組SQL
                 failResult = MyUtility.Tool.ProcessWithDatatable(
                     this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInSisterFty",
+                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType",
                     string.Format(@"
 ;with tmpQty as (
 	select StdTMS
@@ -828,7 +828,7 @@ from tmpQty q"),
 		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
 		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
-	where LastShift = 'I' and SubconInSisterFty = 1
+	where LastShift = 'I' and SubconInType = 1
 	group by StdTMS
 )
 select q.QAQty
@@ -913,7 +913,7 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
                 {
                     failResult = MyUtility.Tool.ProcessWithDatatable(
                         this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty",
+                        "OrderId,ComboType,QAQty,LastShift,SubconInType",
                         string.Format(@"
 
     Select ID
@@ -950,7 +950,7 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
             --排除 subcon in non sister的數值
-          and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInSisterFty <> 0 ))           
+          and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType <> 0 ))           
           and ot.Price > 0 		    
 		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 			  or ot.ArtworkTypeID <> 'SP_THREAD')
@@ -997,7 +997,7 @@ order by t1.ID"),
                 {
                     failResult = MyUtility.Tool.ProcessWithDatatable(
                         this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty,Program",
+                        "OrderId,ComboType,QAQty,LastShift,SubconInType,Program",
                         string.Format(@"
 --準備台北資料(須排除這些)
 select ps.ID
@@ -1070,7 +1070,7 @@ order by t1.ID"),
                 {
                     failResult = MyUtility.Tool.ProcessWithDatatable(
                         this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty,SubconOutFty",
+                        "OrderId,ComboType,QAQty,LastShift,SubconInType,SubconOutFty",
                         string.Format(@"
 --準備台北資料(須排除這些)
 select ps.ID

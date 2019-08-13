@@ -41,7 +41,6 @@
             this.txtPONo = new Sci.Win.UI.TextBox();
             this.txtStyleNo = new Sci.Win.UI.TextBox();
             this.checkLocalOrder = new Sci.Win.UI.CheckBox();
-            this.checkSubconInFromSisterFactory = new Sci.Win.UI.CheckBox();
             this.checkForecast = new Sci.Win.UI.CheckBox();
             this.checkCancelledOrder = new Sci.Win.UI.CheckBox();
             this.checkPullForwardOrder = new Sci.Win.UI.CheckBox();
@@ -179,6 +178,7 @@
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
             this.btnPFHistory = new Sci.Win.UI.Button();
             this.displayIsMixMarker = new Sci.Win.UI.DisplayBox();
+            this.comboSubconInType = new Ict.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -194,6 +194,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboSubconInType);
             this.detailcont.Controls.Add(this.displayIsMixMarker);
             this.detailcont.Controls.Add(this.btnPFHistory);
             this.detailcont.Controls.Add(this.btnExpectionFormRemark);
@@ -287,12 +288,12 @@
             this.detailcont.Controls.Add(this.numOrderQty);
             this.detailcont.Controls.Add(this.labelFOCQty);
             this.detailcont.Controls.Add(this.labelOrderQty);
-            this.detailcont.Controls.Add(this.txtuserLocalMR);
             this.detailcont.Controls.Add(this.txtuserMCHandle);
-            this.detailcont.Controls.Add(this.txttpeuserPOSMR);
-            this.detailcont.Controls.Add(this.txttpeuserPOHandle);
+            this.detailcont.Controls.Add(this.txtuserLocalMR);
             this.detailcont.Controls.Add(this.txttpeuserHandle);
+            this.detailcont.Controls.Add(this.txttpeuserPOHandle);
             this.detailcont.Controls.Add(this.txttpeuserSMR);
+            this.detailcont.Controls.Add(this.txttpeuserPOSMR);
             this.detailcont.Controls.Add(this.labelBuyMonth);
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.labelLocalMR);
@@ -327,7 +328,6 @@
             this.detailcont.Controls.Add(this.checkPullForwardOrder);
             this.detailcont.Controls.Add(this.checkCancelledOrder);
             this.detailcont.Controls.Add(this.checkForecast);
-            this.detailcont.Controls.Add(this.checkSubconInFromSisterFactory);
             this.detailcont.Controls.Add(this.checkLocalOrder);
             this.detailcont.Controls.Add(this.txtStyleNo);
             this.detailcont.Controls.Add(this.txtPONo);
@@ -494,18 +494,6 @@
             this.checkLocalOrder.TabIndex = 14;
             this.checkLocalOrder.Text = "Local order";
             this.checkLocalOrder.UseVisualStyleBackColor = true;
-            // 
-            // checkSubconInFromSisterFactory
-            // 
-            this.checkSubconInFromSisterFactory.AutoSize = true;
-            this.checkSubconInFromSisterFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SubconInSisterFty", true));
-            this.checkSubconInFromSisterFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSubconInFromSisterFactory.Location = new System.Drawing.Point(275, 31);
-            this.checkSubconInFromSisterFactory.Name = "checkSubconInFromSisterFactory";
-            this.checkSubconInFromSisterFactory.Size = new System.Drawing.Size(180, 19);
-            this.checkSubconInFromSisterFactory.TabIndex = 15;
-            this.checkSubconInFromSisterFactory.Text = "Subcon-in from sister factory";
-            this.checkSubconInFromSisterFactory.UseVisualStyleBackColor = true;
             // 
             // checkForecast
             // 
@@ -1331,6 +1319,7 @@
             this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(278, 197);
+            this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 133;
@@ -1851,6 +1840,19 @@
             this.displayIsMixMarker.Size = new System.Drawing.Size(126, 21);
             this.displayIsMixMarker.TabIndex = 196;
             // 
+            // comboSubconInType
+            // 
+            this.comboSubconInType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboSubconInType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "SubconInType", true));
+            this.comboSubconInType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboSubconInType.FormattingEnabled = true;
+            this.comboSubconInType.IsSupportUnselect = true;
+            this.comboSubconInType.Location = new System.Drawing.Point(275, 29);
+            this.comboSubconInType.Name = "comboSubconInType";
+            this.comboSubconInType.ReadOnly = true;
+            this.comboSubconInType.Size = new System.Drawing.Size(271, 23);
+            this.comboSubconInType.TabIndex = 226;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 721);
@@ -1884,7 +1886,6 @@
         private Win.UI.CheckBox checkPullForwardOrder;
         private Win.UI.CheckBox checkCancelledOrder;
         private Win.UI.CheckBox checkForecast;
-        private Win.UI.CheckBox checkSubconInFromSisterFactory;
         private Win.UI.CheckBox checkLocalOrder;
         private Win.UI.TextBox txtStyleNo;
         private Win.UI.TextBox txtPONo;
@@ -2032,5 +2033,6 @@
         private Win.UI.Button btnExpectionFormRemark;
         private Win.UI.Button btnPFHistory;
         private Win.UI.DisplayBox displayIsMixMarker;
+        private Ict.Win.UI.ComboBox comboSubconInType;
     }
 }
