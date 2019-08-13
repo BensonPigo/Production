@@ -83,6 +83,8 @@ namespace Sci.Production.Sewing
                 sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
+            this.ShowWaitMessage("Data Loading...");
+
             string sqlcmd = $@"
 declare @TransferDate1  datetime = '{dateTransfer1}'
 declare @TransferDate2  datetime = '{dateTransfer2}'
@@ -90,14 +92,14 @@ declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 declare @TransferTo nvarchar(20) = '{transferTo}'
 
-select 
+select DISTINCT
 	dr.TransferTo
 	,[TransferDate]=CONVERT(varchar, dr.TransferDate, 111) +' '+ LEFT(CONVERT(varchar, dr.TransferDate, 108),5)
     --,dr.TransferDate
-	,[PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
-	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
+	,[PackingListID] = iif(pd.OrigID = '' OR pd.OrigID IS NULL  ,dr.PackingListID , pd.OrigID)
+	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '' OR pd.OrigCTNStartNo IS NULL    ,dr.CTNStartNo   , pd.OrigCTNStartNo)
 	,[Qty]=ISNULL(Sum(pd.QtyPerCTN),0)
-	,[OrderID] = iif(pd.OrigOrderID = '',pd.OrderID, pd.OrigOrderID)
+	,[OrderID] = iif(pd.OrigOrderID = '' OR pd.OrigOrderID IS NULL ,dr.OrderID, pd.OrigOrderID)
 	,o.CustPONo
 	,o.StyleID
 	,o.BrandID
@@ -111,14 +113,16 @@ select
 from DRYTransfer dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-LEFT JOIN  PackingList_Detail pd with(nolock)  ON pd.SCICtnNo = dr.SCICtnNo 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.SCICtnNo = dr.SCICtnNo
+													AND dr.OrderID = pd.OrderID
+													AND  pd.CTNStartNo = dr.CTNStartNo AND dr.OrderID = pd.OrderID AND dr.PackingListID=pd.id 
 where 1=1
 {sqlwhere}
 GROUP BY dr.TransferTo
 		,dr.TransferDate
-		,iif(pd.OrigID = '',pd.ID, pd.OrigID)
-		,iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
-		,iif(pd.OrigOrderID = '',pd.OrderID, pd.OrigOrderID)
+		, iif(pd.OrigID = '' OR pd.OrigID IS NULL  ,dr.PackingListID , pd.OrigID)
+		, iif(pd.OrigCTNStartNo = '' OR pd.OrigCTNStartNo IS NULL    ,dr.CTNStartNo   , pd.OrigCTNStartNo)
+		, iif(pd.OrigOrderID = '' OR pd.OrigOrderID IS NULL ,dr.OrderID, pd.OrigOrderID)
 		,o.CustPONo
 		,o.StyleID
 		,o.BrandID
@@ -129,6 +133,8 @@ GROUP BY dr.TransferTo
         ,iif(pd.OrigID != '',pd.ID, pd.OrigID)
         ,iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
         ,iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+ ORDER BY dr.TransferTo,[PackingListID],[CTNStartNo],[OrderID]
+
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -143,6 +149,7 @@ GROUP BY dr.TransferTo
                 MyUtility.Msg.WarningBox("Datas not found!");
             }
 
+            this.HideWaitMessage();
             this.listControlBindingSource1.DataSource = dt;
             this.grid1.AutoResizeColumns();
         }
