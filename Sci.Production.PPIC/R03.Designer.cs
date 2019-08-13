@@ -624,7 +624,7 @@
             // 
             this.checkByCPU.AutoSize = true;
             this.checkByCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkByCPU.Location = new System.Drawing.Point(13, 626);
+            this.checkByCPU.Location = new System.Drawing.Point(271, 516);
             this.checkByCPU.Name = "checkByCPU";
             this.checkByCPU.Size = new System.Drawing.Size(75, 21);
             this.checkByCPU.TabIndex = 116;
