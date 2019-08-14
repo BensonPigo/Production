@@ -1,4 +1,7 @@
-﻿using System.Windows.Forms;
+﻿using Ict;
+using Sci.Data;
+using System.Data;
+using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
@@ -15,6 +18,14 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
+
+            DualResult result;
+            DataTable dt = new DataTable();
+            string cmd = "SELECT ID, Name FROM DropDownList WITH (NOLOCK)  WHERE Type='SubProcess_InOutRule'";
+            if (result = DBProxy.Current.Select(null, cmd, out dt))
+            {
+                MyUtility.Tool.SetupCombox(this.combInOutRule, 2, dt);
+            }
         }
 
         /// <inheritdoc/>

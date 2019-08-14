@@ -40,6 +40,8 @@
             this.txtBcsDate = new Sci.Win.UI.TextBox();
             this.labelBcsDate = new Sci.Win.UI.Label();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.combInOutRule = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -54,6 +56,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.combInOutRule);
             this.detailcont.Controls.Add(this.txtartworktype_ftyArtworkType);
             this.detailcont.Controls.Add(this.labelBcsDate);
             this.detailcont.Controls.Add(this.txtBcsDate);
@@ -97,7 +101,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(70, 57);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(89, 23);
@@ -106,7 +109,6 @@
             // 
             // labelShowSeq
             // 
-            this.labelShowSeq.Lines = 0;
             this.labelShowSeq.Location = new System.Drawing.Point(70, 167);
             this.labelShowSeq.Name = "labelShowSeq";
             this.labelShowSeq.Size = new System.Drawing.Size(89, 23);
@@ -132,7 +134,7 @@
             this.checkDisplayonreport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkDisplayonreport.Location = new System.Drawing.Point(412, 112);
             this.checkDisplayonreport.Name = "checkDisplayonreport";
-            this.checkDisplayonreport.Size = new System.Drawing.Size(135, 21);
+            this.checkDisplayonreport.Size = new System.Drawing.Size(121, 21);
             this.checkDisplayonreport.TabIndex = 7;
             this.checkDisplayonreport.Text = "Is RFID Default";
             this.checkDisplayonreport.UseVisualStyleBackColor = true;
@@ -156,14 +158,13 @@
             this.checkProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkProcess.Location = new System.Drawing.Point(412, 57);
             this.checkProcess.Name = "checkProcess";
-            this.checkProcess.Size = new System.Drawing.Size(78, 21);
+            this.checkProcess.Size = new System.Drawing.Size(127, 21);
             this.checkProcess.TabIndex = 5;
             this.checkProcess.Text = "Is RFID Process";
             this.checkProcess.UseVisualStyleBackColor = true;
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Lines = 0;
             this.labelArtworkType.Location = new System.Drawing.Point(70, 112);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(89, 23);
@@ -205,7 +206,6 @@
             // 
             // labelBcsDate
             // 
-            this.labelBcsDate.Lines = 0;
             this.labelBcsDate.Location = new System.Drawing.Point(70, 221);
             this.labelBcsDate.Name = "labelBcsDate";
             this.labelBcsDate.Size = new System.Drawing.Size(89, 23);
@@ -224,6 +224,27 @@
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 1;
             // 
+            // combInOutRule
+            // 
+            this.combInOutRule.BackColor = System.Drawing.Color.White;
+            this.combInOutRule.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "InOutRule", true));
+            this.combInOutRule.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combInOutRule.FormattingEnabled = true;
+            this.combInOutRule.IsSupportUnselect = true;
+            this.combInOutRule.Location = new System.Drawing.Point(162, 273);
+            this.combInOutRule.Name = "combInOutRule";
+            this.combInOutRule.OldText = "";
+            this.combInOutRule.Size = new System.Drawing.Size(121, 24);
+            this.combInOutRule.TabIndex = 17;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(70, 273);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(89, 23);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "In Out Rule";
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
@@ -237,6 +258,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B01.SubProcess Data";
             this.WorkAlias = "Subprocess";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -266,5 +288,7 @@
         private Win.UI.Label labelBcsDate;
         private Win.UI.TextBox txtBcsDate;
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Win.UI.ComboBox combInOutRule;
+        private Win.UI.Label label1;
     }
 }
