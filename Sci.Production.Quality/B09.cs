@@ -26,6 +26,7 @@ namespace Sci.Production.Quality
         {
             base.OnDetailEntered();
             this.chkJunk.ForeColor = Color.Blue;
+            this.chkGarmentTest.ForeColor = Color.Blue;
             this.chkP10.ForeColor = Color.Blue;
             this.chkP11.ForeColor = Color.Blue;
             this.chkP12.ForeColor = Color.Blue;
