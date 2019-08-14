@@ -1036,19 +1036,21 @@ select
 	s.Offline,
     [InlineHour] = DATEDIFF(ss,Cast(s.Inline as date),s.Inline) / 3600.0	  ,
     [OfflineHour] = DATEDIFF(ss,Cast(s.Offline as date),s.Offline) / 3600.0	  ,
-	[OriEff] = isnull(s.OriEff,s.MaxEff),
+	[OriEff] = OriEff.val,
 	LearnCurveID,
 	Sewer,
 	[AlloQty] = sum(s.AlloQty),
-	[HourOutput] = (s.Sewer * 3600.0 * isnull(s.OriEff,s.MaxEff) / 100) / s.TotalSewingTime,
-	[OriWorkHour] = sum(s.AlloQty) / ((s.Sewer * 3600.0 * isnull(s.OriEff,s.MaxEff) / 100) / s.TotalSewingTime),
+	[HourOutput] = (s.Sewer * 3600.0 * OriEff.val / 100) / s.TotalSewingTime,
+	[OriWorkHour] = sum(s.AlloQty) / ((s.Sewer * 3600.0 * OriEff.val / 100) / s.TotalSewingTime),
 	[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float),
 	s.TotalSewingTime,
-	s.OrderID
+	s.OrderID,
+	s.LNCSERIALNumber
 	into #APSListWorkDay
 from SewingSchedule s  WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
+outer apply(select [val] = iif(s.OriEff is null and s.SewLineEff is null,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) OriEff
 where 1 = 1 {sqlWhere.ToString()}
 group by	s.APSNo ,
 			s.MDivisionID,
@@ -1056,7 +1058,7 @@ group by	s.APSNo ,
 			s.FactoryID,
 			s.Inline,
 			s.Offline,
-			isnull(s.OriEff,s.MaxEff),
+			OriEff.val,
 			s.LearnCurveID,
 			s.Sewer,
 			s.TotalSewingTime,
@@ -1064,7 +1066,8 @@ group by	s.APSNo ,
 			o.CPUFactor,
 			s.OrderID,
 			s.ComboType,
-			o.StyleUkey
+			o.StyleUkey,
+			s.LNCSERIALNumber
 
 select 
 	APSNo,
@@ -1304,7 +1307,8 @@ select  al.APSNo,
 		al.CPU,
 		al.TotalSewingTime,
 		al.Sewer,
-		al.OrderID
+		al.OrderID,
+		al.LNCSERIALNumber
 into #Workhour_step1
 from #APSListWorkDay al
 inner join #WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
@@ -1337,7 +1341,8 @@ select  APSNo,
 		CPU,
 		TotalSewingTime,
 		Sewer,
-		OrderID
+		OrderID,
+		LNCSERIALNumber
 into #Workhour_step2
 from #Workhour_step1	
 
@@ -1352,16 +1357,44 @@ LearnCurveID,
 [SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
 WorkDate,
 [WorkingTime] = sum(EndHour - StartHour),
-[WorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,OrderID ORDER BY WorkDate),
+[OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,OrderID ORDER BY WorkDate),
 HourOutput,
 OriWorkHour,
 CPU,
 TotalSewingTime,
-Sewer
-into #APSExtendWorkDate
+Sewer,
+LNCSERIALNumber
+into #APSExtendWorkDate_step1
 from #Workhour_step2 
 group by APSNo,LearnCurveID,WorkDate,HourOutput,
-OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID
+OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID,LNCSERIALNumber
+
+--欄位 LNCSERIALNumber 
+--    第一天學習曲線計算方式 = 最後一天對應的工作天數 『減去』（該計畫總生產天數 『減去』一天因為要推出第一天）
+--    ※ 但請注意以下特出例外狀況
+--       1. LNCSERIALNumber 為空值或零
+--       2. 計算後的結果為零或負數
+--       遇到以上特殊例外狀況，
+--       生產的第一天都對應學習曲線的第一天。
+select
+APSNo,
+LearnCurveID,
+SewingStart,
+SewingEnd,
+WorkDate,
+WorkingTime,
+OriWorkDateSer,
+[WorkDateSer] = case	when isnull(LNCSERIALNumber,0) = 0 then OriWorkDateSer
+						when LNCSERIALNumber - isnull(max(OriWorkDateSer) OVER (PARTITION BY APSNo),0) <= 0 then OriWorkDateSer
+						else OriWorkDateSer + LNCSERIALNumber - isnull(max(OriWorkDateSer) OVER (PARTITION BY APSNo),0) end,
+HourOutput,
+OriWorkHour,
+CPU,
+TotalSewingTime,
+Sewer,
+LNCSERIALNumber
+into #APSExtendWorkDate
+from #APSExtendWorkDate_step1
 
 --取得每個計劃去除LearnCurve後的總工時
 SELECT
@@ -1446,7 +1479,7 @@ inner join #APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart
 
 drop table	#APSListWorkDay,#APSList,#APSMain,#APSExtendWorkDateFin,#APSOrderQty,#APSCuttingOutput,#APSPackingQty,#APSSewingOutput,#APSRemarks,
-			#tmpOrderArtwork,#APSListArticle,#APSColumnGroup,#WorkDate,#APSExtendWorkDate,#Workhour_step1,#Workhour_step2,#OriTotalWorkHour
+			#tmpOrderArtwork,#APSListArticle,#APSColumnGroup,#WorkDate,#APSExtendWorkDate,#Workhour_step1,#Workhour_step2,#OriTotalWorkHour,#APSExtendWorkDate_step1
 ");
             #endregion
 
