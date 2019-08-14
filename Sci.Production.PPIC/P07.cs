@@ -70,7 +70,6 @@ namespace Sci.Production.PPIC
                 return;
             }
 
-            this.DeleteCutting();
             this.Setcuttingdate();
 
             this.HideWaitMessage();
@@ -81,64 +80,6 @@ namespace Sci.Production.PPIC
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void DeleteCutting()
-        {
-            string sewdate = DateTime.Now.AddDays(90).ToShortDateString();
-
-            this.HideWaitMessage();
-            this.ShowWaitMessage("Data Update...");
-            #region 先刪除不在SewingSchedule 內的Cutting 資料
-            string sqlcmd = string.Format(
-                @"Delete Cutting from Cutting WITH (NOLOCK) join 
-            (Select a.id from Cutting a WITH (NOLOCK) where a.FactoryID = '{1}' and a.Finished = 0 and a.id not in 
-            (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , (SELECT orderid
-            FROM Sewingschedule b WITH (NOLOCK) 
-            WHERE Inline <= '{0}' And offline is not null and offline !=''
-            AND b.FactoryID = '{1}' group by b.orderid) d where c.id = d.orderid and c.FtyGroup = '{1}')) f
-            on cutting.id = f.ID",
-                sewdate,
-                Sci.Env.User.Factory);
-
-            DBProxy.Current.DefaultTimeout = 600;
-
-            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
-            if (!result)
-            {
-                MyUtility.Msg.WaitClear();
-                this.ShowErr(sqlcmd, result);
-                this.HideWaitMessage();
-                return;
-            }
-            #region 移除使用TransactionScope
-
-            // TransactionScope _transactionscope = new TransactionScope();
-            // using (_transactionscope)
-            // {
-            //    try
-            //    {
-            //        if (!(dresult = DBProxy.Current.Execute(null, sqlcmd)))
-            //        {
-            //            _transactionscope.Dispose();
-            //            ShowErr(sqlcmd, dresult);
-            //            return;
-            //        }
-
-            // _transactionscope.Complete();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        _transactionscope.Dispose();
-            //        ShowErr("Commit transaction error.", ex);
-            //        return;
-            //    }
-            // }
-            // _transactionscope.Dispose();
-            // _transactionscope = null;
-            #endregion
-
-            #endregion
         }
 
         private void Setcuttingdate()
@@ -175,19 +116,9 @@ group by ord.CuttingSp ,a.Type",
                 Sci.Env.User.Factory,
                 Sci.Env.User.UserID);
 
-            // dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
-            // string sewin, sewof;
-            // foreach (DataRow dr in cuttingtb.Rows)
-            // {
-            //    if (dr["inline"] == DBNull.Value) sewin = "null";
-            //    else sewin = Convert.ToDateTime(dr["inline"]).ToShortDateString();
-            //    if (dr["offlinea"] == DBNull.Value) sewof = "null";
-            //    else sewof = Convert.ToDateTime(dr["offlinea"]).ToShortDateString();
-
-            // updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}','{5}', GetDate()); ", dr["cuttingsp"], sewin, sewof, Sci.Env.User.Keyword, Sci.Env.User.Factory, Sci.Env.User.UserID);
-            // }
             updsql = updsql + string.Format(
                 @"
+--Sewingschedule有cutting也有
 update cutting 
 set SewInLine =s.inline,sewoffline = s.offlinea
 from
@@ -214,7 +145,33 @@ from
 	where ord.cuttingsp = cut.CuttingSP and ord.FtyGroup = '{1}'
 	group by ord.CuttingSp 
 )s
-where id = s.CuttingSP",
+where id = s.CuttingSP
+
+
+--Sewingschedule沒有，cutting有
+update cutting set SewInLine = s.sewinline, sewoffline = s.sewoffline
+from Cutting WITH (NOLOCK) 
+join (
+	Select o2.cuttingsp,sewinline=min(o2.sewinline) ,sewoffline=max(o2.sewoffline)
+	from Cutting c WITH (NOLOCK) 
+	inner join orders o2 with(nolock) on o2.CuttingSP =  c.ID
+	where c.FactoryID = '{1}'
+	and c.Finished = 0 
+	and not exists (
+		Select 1
+		from orders o WITH (NOLOCK)
+		inner join Sewingschedule s WITH (NOLOCK) on o.id = s.orderid 
+		where s.Inline <= '{0}'
+		And s.offline is not null and s.offline !='' 
+		and s.FactoryID = '{1}'
+		and o.FtyGroup = '{1}' 
+		and o.IsForecast = 0 
+		and o.LocalOrder = 0 
+		and o.cuttingsp  = c.id
+	)
+	group by o2.CuttingSp 
+)s on cutting.id = s.cuttingsp
+",
                 sewdate,
                 Sci.Env.User.Factory);
 
@@ -227,41 +184,6 @@ where id = s.CuttingSP",
                 return;
             }
 
-            // dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
-            // foreach (DataRow dr in cuttingtb.Rows)
-            // {
-            //    if (dr["inline"] == DBNull.Value) sewin = "";
-            //    else sewin = Convert.ToDateTime(dr["inline"]).ToShortDateString();
-            //    if (dr["offlinea"] == DBNull.Value) sewof = "";
-            //    else sewof = Convert.ToDateTime(dr["offlinea"]).ToShortDateString();
-
-            // updsql = updsql + string.Format("update cutting set SewInLine ='{0}',sewoffline = '{1}' where id = '{2}'; ", sewin, sewof, dr["cuttingsp"]);
-            // }
-            #region 修改資料,移除使用TransactionScope
-
-            // TransactionScope _transactionscope = new TransactionScope();
-            // using (_transactionscope)
-            // {
-            //    try
-            //    {
-            //        if (!(dresult = DBProxy.Current.Execute(null, updsql)))
-            //        {
-            //            _transactionscope.Dispose();
-            //            ShowErr(updsql, dresult);
-            //            return;
-            //        }
-            //        _transactionscope.Complete();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        _transactionscope.Dispose();
-            //        ShowErr("Commit transaction error.", ex);
-            //        return;
-            //    }
-            // }
-            // _transactionscope.Dispose();
-            // _transactionscope = null;
-            #endregion
             #endregion
 
             DBProxy.Current.DefaultTimeout = 0;
