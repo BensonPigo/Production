@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci;
 using System.Transactions;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -85,6 +86,26 @@ namespace Sci.Production.Shipping
             {
                 return;
             }
+
+            #region PackingListID 存在Pullout 則不能匯入
+            List<SqlParameter> listParameter = new List<SqlParameter>();
+            listParameter.Add(new SqlParameter("@PackingID", this.txtFOCPL.Text));
+            DataRow dr;
+            string sqlcmdChk = @"
+select distinct p.ID as PulloutID
+from PackingList_Detail pd WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
+inner join Pullout_Detail p on p.PackingListID = pd.ID
+where pd.ID = @PackingID
+and Factory.IsProduceFty=1
+";
+            if (MyUtility.Check.Seek(sqlcmdChk, listParameter,out dr))
+            {
+                MyUtility.Msg.WarningBox($@"FOC PL# already in pullout ID: {dr["PulloutID"]}");
+                return;
+            }
+            #endregion
 
             string sqlCmd = string.Format(
                 @"select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
