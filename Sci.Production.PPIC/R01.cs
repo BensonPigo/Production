@@ -1045,7 +1045,8 @@ select
 	[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float),
 	s.TotalSewingTime,
 	s.OrderID,
-	s.LNCSERIALNumber
+	s.LNCSERIALNumber,
+    s.ComboType
 	into #APSListWorkDay
 from SewingSchedule s  WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
@@ -1308,7 +1309,8 @@ select  al.APSNo,
 		al.TotalSewingTime,
 		al.Sewer,
 		al.OrderID,
-		al.LNCSERIALNumber
+		al.LNCSERIALNumber,
+        al.ComboType
 into #Workhour_step1
 from #APSListWorkDay al
 inner join #WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
@@ -1334,15 +1336,16 @@ select  APSNo,
         EndHour,
         InlineHour,
         OfflineHour,
-		[StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID ORDER BY StartHour),
-		[EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID ORDER BY EndHour desc),
+		[StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID,ComboType ORDER BY StartHour),
+		[EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID,ComboType ORDER BY EndHour desc),
 		HourOutput,
 		OriWorkHour,
 		CPU,
 		TotalSewingTime,
 		Sewer,
 		OrderID,
-		LNCSERIALNumber
+		LNCSERIALNumber,
+        ComboType
 into #Workhour_step2
 from #Workhour_step1	
 
@@ -1357,7 +1360,7 @@ LearnCurveID,
 [SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
 WorkDate,
 [WorkingTime] = sum(EndHour - StartHour),
-[OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,OrderID ORDER BY WorkDate),
+[OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,OrderID,ComboType ORDER BY WorkDate),
 HourOutput,
 OriWorkHour,
 CPU,
@@ -1367,7 +1370,7 @@ LNCSERIALNumber
 into #APSExtendWorkDate_step1
 from #Workhour_step2 
 group by APSNo,LearnCurveID,WorkDate,HourOutput,
-OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID,LNCSERIALNumber
+OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID,LNCSERIALNumber,ComboType
 
 --欄位 LNCSERIALNumber 
 --    第一天學習曲線計算方式 = 最後一天對應的工作天數 『減去』（該計畫總生產天數 『減去』一天因為要推出第一天）
