@@ -36,12 +36,13 @@ namespace Sci.Production.Tools
             // 2.關閉New/Dele/Move功能
             if (!Sci.Env.User.IsAdmin)
             {
-                this.DefaultFilter = "ID = '" + Sci.Env.User.UserID + "'";
+                this.DefaultFilter = $@"ID = '{Sci.Env.User.UserID}' and ISMIS = 0";
                 this.IsSupportNew = false;
                 this.IsSupportDelete = false;
             } 
             else
             {
+                this.DefaultFilter = "ISMIS = 0";
                 this.editFactory.PopUp += (s, e) => 
                 {
                     DBProxy.Current.Select(null, "SELECT DISTINCT FtyGroup FROM Factory WHERE FtyGroup != '' and Junk = 0 ORDER BY FtyGroup", out dtFactory);
@@ -70,7 +71,7 @@ namespace Sci.Production.Tools
                 };
             }
 
-            this.DefaultFilter += "ISMIS=0";
+         
 
           Dictionary<string, string> codePageSource = new Dictionary<string, string>();
             codePageSource.Add("950", "繁體中文");
