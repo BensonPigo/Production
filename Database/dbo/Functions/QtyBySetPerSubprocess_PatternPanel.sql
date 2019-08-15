@@ -90,8 +90,7 @@ BEGIN
 		SizeCode varchar(100),
 		PatternCode varchar(20),
 		QtyBySet int,
-		QtyBySubprocess int, 
-		num int
+		QtyBySubprocess int
 	)
 
 	declare @CutpartBySet Table(
@@ -135,7 +134,10 @@ BEGIN
 		OriInQty int,
 		OriOutQty int,
 		FinishedQty int,
-		num int
+		num int,
+		num_In int,
+		num_Out int,
+		num_F int
 	)
 	
 	declare @FinalQtyBySet Table(
@@ -199,8 +201,7 @@ BEGIN
 			st1.SizeCode,
 			CutpartCount.PatternCode,
 			CutpartCount.QtyBySet,
-			CutpartCount.QtyBySubprocess,
-			num = count (1) over (partition by OrderID, PatternPanel, FabricPanelCode, Article, Sizecode)
+			CutpartCount.QtyBySubprocess
 	from @AllOrders st1
 	cross join @SubProcess sub
 	outer apply (
@@ -328,30 +329,31 @@ BEGIN
 			, PatternCode
 			, InQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0)) / iif(IsPair=1,m,1)
 			, OutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0)) / iif(IsPair=1,m,1)
-			, OriInQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0)) / iif(IsPair=1,m,1)
-			, OriOutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0)) / iif(IsPair=1,m,1)
+			, OriInQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0)) --原始裁片數總和
+			, OriOutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0)) --原始裁片數總和
 			, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0))
 									when InOutRule = 2 then sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0))
 									else sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate) and
 										  InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate)
 										  ,Qty,0)) end) / iif(IsPair=1,m,1)
-			, num = count (1) over (partition by Orderid, Size, PatternPanel, FabricPanelCode, BundleGroup)
-	from @BundleInOutDetail 
+			 ,num = count(1)
+			, num_In = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),1,0)) 
+			, num_Out= sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),1,0))
+			, num_F  = case	when InOutRule = 1 then sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),1,0))
+									when InOutRule = 2 then sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),1,0))
+									else sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate) and
+										  InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate)
+										  ,1,0)) end
+	from @BundleInOutDetail	
 	group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair,m
+
 	-- 篩選 BundleGroup Step.1 --
 	if (@IsNeedCombinBundleGroup = 1)
 	begin
-		update bunInOut
-		set bunInOut.InQty = 0
-			, bunInOut.OutQty = 0
-		from @BundleInOutQty bunInOut
-		inner join @QtyBySetPerCutpart bas on bunInOut.OrderID = bas.OrderID
-											  and bunInOut.SubprocessId = bas.SubprocessId
-											  and bunInOut.PatternPanel = bas.PatternPanel
-											  and bunInOut.FabricPanelCode = bas.FabricPanelCode
-											  and bunInOut.Article = bas.Article
-											  and bunInOut.Size = bas.SizeCode
-		where bunInOut.num < bas.num
+		update @BundleInOutQty
+		set InQty = iif(num_In<num,0,InQty)
+			, OutQty = iif(num_Out<num,0,OutQty)
+			, FinishedQty = iif(num_F<num,0,FinishedQty)
 	end
 	
 	-- Step 2. --	
@@ -469,5 +471,6 @@ BEGIN
 		from @BundleInOutQty bunIO
 		where cbs.OrderID = bunIO.OrderID and cbs.Sizecode = bunIO.Size and cbs.Article = bunIO.Article and bunIO.SubprocessId = sub.SubprocessId and bunIO.PatternPanel = sub.PatternPanel
 	) IOQtyPerPcs
+	where sub.SubprocessId is not null
 	RETURN ;
 END
