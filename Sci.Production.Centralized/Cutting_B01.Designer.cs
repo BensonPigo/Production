@@ -40,6 +40,8 @@
             this.txtBcsDate = new Sci.Win.UI.TextBox();
             this.labelBcsDate = new Sci.Win.UI.Label();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.label1 = new Sci.Win.UI.Label();
+            this.combInOutRule = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -54,6 +56,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.combInOutRule);
             this.detailcont.Controls.Add(this.txtartworktype_ftyArtworkType);
             this.detailcont.Controls.Add(this.labelBcsDate);
             this.detailcont.Controls.Add(this.txtBcsDate);
@@ -219,6 +223,27 @@
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 1;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(70, 276);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(89, 23);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "In Out Rule";
+            // 
+            // combInOutRule
+            // 
+            this.combInOutRule.BackColor = System.Drawing.Color.White;
+            this.combInOutRule.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "InOutRule", true));
+            this.combInOutRule.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combInOutRule.FormattingEnabled = true;
+            this.combInOutRule.IsSupportUnselect = true;
+            this.combInOutRule.Location = new System.Drawing.Point(162, 276);
+            this.combInOutRule.Name = "combInOutRule";
+            this.combInOutRule.OldText = "";
+            this.combInOutRule.Size = new System.Drawing.Size(121, 24);
+            this.combInOutRule.TabIndex = 19;
+            // 
             // Cutting_B01
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
@@ -231,6 +256,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "Cutting_B01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "Cutting_B01.SubProcess Data";
             this.WorkAlias = "Subprocess";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -260,5 +286,7 @@
         private Win.UI.Label labelBcsDate;
         private Win.UI.TextBox txtBcsDate;
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Win.UI.Label label1;
+        private Win.UI.ComboBox combInOutRule;
     }
 }

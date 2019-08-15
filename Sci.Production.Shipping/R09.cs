@@ -80,7 +80,9 @@ inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
 left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
 outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
-where s.Type = 'IMPORT'");
+where s.Type = 'IMPORT'
+      AND se.Junk <> 1
+");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {
                     sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.arrivePortDate1).ToString("d")));
@@ -131,7 +133,9 @@ from ShippingAP s WITH (NOLOCK)
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
-where fe.Type <> 3");
+where fe.Type <> 3
+      AND se.Junk <> 1
+");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {
                     sqlCmd.Append(string.Format(" and fe.PortArrival >= '{0}'", Convert.ToDateTime(this.arrivePortDate1).ToString("d")));
@@ -230,7 +234,9 @@ inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
 left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
-where s.Type = 'IMPORT'");
+where s.Type = 'IMPORT'
+      AND se.Junk <> 1
+");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {
                     sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.arrivePortDate1).ToString("d")));
@@ -283,7 +289,9 @@ inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
-where fe.Type <> 3");
+where fe.Type <> 3
+      AND se.Junk <> 1
+");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {
                     sqlCmd.Append(string.Format(" and fe.PortArrival >= '{0}'", Convert.ToDateTime(this.arrivePortDate1).ToString("d")));

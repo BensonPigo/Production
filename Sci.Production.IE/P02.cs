@@ -358,12 +358,12 @@ order by OutputDate
 
             if (this.CurrentMaintain["Type"].ToString() == "N")
             {
-                Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(this.CurrentMaintain["Status"].ToString() == "New", this.CurrentMaintain["ID"].ToString(), null, null);
+                Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null);
                 callNextForm.ShowDialog(this);
             }
             else
             {
-                Sci.Production.IE.P02_RepeatCheckList callNextForm = new Sci.Production.IE.P02_RepeatCheckList(this.CurrentMaintain["Status"].ToString() == "New", this.CurrentMaintain["ID"].ToString(), null, null);
+                Sci.Production.IE.P02_RepeatCheckList callNextForm = new Sci.Production.IE.P02_RepeatCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null);
                 callNextForm.ShowDialog(this);
             }
         }
@@ -389,7 +389,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 }
             }
 
-            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(this.CurrentMaintain["Status"].ToString() != "Closed", this.CurrentMaintain["ID"].ToString(), null, null);
+            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(string.Compare(this.CurrentMaintain["Status"].ToString(), "Closed", true) != 0, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
         }
 
