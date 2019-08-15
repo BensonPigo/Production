@@ -98,13 +98,17 @@ select
 	FinishedFOCStockinQty =o.FOCQty - isnull(c.value2,0)
 from orders o with(nolock)
 outer apply(
-	select 
+	select sum(value) as value , sum(value2) as value2 
+	from
+	(	
+		select 
 		value = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
 		value2=iif( pl.Type='F',sum(pod.ShipQty),0)
-	from Pullout_Detail pod with(nolock)
-	inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
-	where pod.OrderID = o.id
-	group by pl.Type
+		from Pullout_Detail pod with(nolock)
+		inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
+		where pod.OrderID = o.ID
+		group by pl.Type
+	) a
 )c
 where o.Junk = 0
 and not exists(select 1 from Order_Finish ox where ox.id = o.ID)
