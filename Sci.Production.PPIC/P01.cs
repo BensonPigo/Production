@@ -572,21 +572,31 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
 
                 // 檢查是否幫姊妹廠代工
                 List<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                cmds.Add(new SqlParameter("@programid", this.CurrentMaintain["ProgramID"].ToString()));
-                cmds.Add(new SqlParameter("@factoryid", this.CurrentMaintain["FactoryID"].ToString()));
+                cmds.Add(new SqlParameter("@ProgramID", this.CurrentMaintain["ProgramID"].ToString()));
+                cmds.Add(new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"].ToString()));
+                cmds.Add(new SqlParameter("@M", this.CurrentMaintain["MDivisionID"].ToString()));
                 System.Data.DataTable sCIFtyData;
-                string sqlCmd = "select ID from SCIFty WITH (NOLOCK) where ID = @programid";
+                string sqlCmd = @"
+select ID from SCIFty WITH (NOLOCK) where ID = @programid
+union all
+select ID from SCIFty WITH (NOLOCK) where ID = (select FactoryID from Orders where id=@programid)";
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out sCIFtyData);
                 if (result && sCIFtyData.Rows.Count < 1)
                 {
                     this.CurrentMaintain["SubconInType"] = 3;
+                    this.CurrentMaintain["SubconInSisterFty"] = 0;
                 }
                 else
                 {
                     if (MyUtility.Check.Seek(@"
 select ID from SCIFty s WITH (NOLOCK)
-where id = @programid
-and exists (select 1 from Factory where id = @factoryid and s.MDivisionID = MDivisionID)", cmds, null))
+where id = @ProgramID
+and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)
+union all
+select ID from SCIFty s WITH (NOLOCK)
+where id in (select FactoryID from orders WITH (NOLOCK) where id = @ProgramID)
+and exists (select 1 from Factory WITH (NOLOCK) where id =  @FactoryID  and s.MDivisionID = MDivisionID)
+", cmds, null))
                     {
                         this.CurrentMaintain["SubconInType"] = 1;
                     }
@@ -594,6 +604,8 @@ and exists (select 1 from Factory where id = @factoryid and s.MDivisionID = MDiv
                     {
                         this.CurrentMaintain["SubconInType"] = 2;
                     }
+
+                    this.CurrentMaintain["SubconInSisterFty"] = 1;
                 }
 
                 string strUpd_QtyShip_BuyerDelivery = string.Format(
