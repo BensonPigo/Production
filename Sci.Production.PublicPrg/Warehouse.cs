@@ -128,6 +128,13 @@ when matched and src.stocktype = 'B' then
 	update 
 	set target.alocation = src.location;
 
+merge dbo.mdivisionpodetail as target
+using  #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
+when matched and src.stocktype = 'O' then
+	update 
+	set target.Clocation = src.location;
+
 drop Table #TmpSource";
                     break;
                 #endregion
@@ -159,7 +166,18 @@ when matched and src.stocktype = 'B' then
 	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.alocation = src.location
 when not matched by target and src.stocktype = 'B' then
     insert ([Poid],[Seq1],[Seq2],[inqty],[alocation])
-    values (src.poid,src.seq1,src.seq2,src.qty,src.location);";
+    values (src.poid,src.seq1,src.seq2,src.qty,src.location);
+
+merge dbo.mdivisionpodetail as target
+using  #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
+when matched and src.stocktype = 'O' then
+	update 
+	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.Clocation = src.location
+when not matched by target and src.stocktype = 'O' then
+    insert ([Poid],[Seq1],[Seq2],[inqty],[Clocation])
+    values (src.poid,src.seq1,src.seq2,src.qty,src.location);
+";
                     }
                     else
                     {
