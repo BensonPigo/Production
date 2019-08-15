@@ -165,9 +165,14 @@ join (
 		And s.offline is not null and s.offline !='' 
 		and s.FactoryID = '{1}'
 		and o.FtyGroup = '{1}' 
-		and o.IsForecast = 0 
-		and o.LocalOrder = 0 
 		and o.cuttingsp  = c.id
+	)
+	and exists (
+		select 1
+		from Orders o
+		where o2.POID = o.ID
+				and o.IsForecast = 0 
+				and o.LocalOrder = 0 
 	)
 	group by o2.CuttingSp 
 )s on cutting.id = s.cuttingsp
