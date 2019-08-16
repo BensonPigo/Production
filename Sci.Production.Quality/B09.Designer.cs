@@ -215,9 +215,9 @@
             this.chkGarmentTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkGarmentTest.Location = new System.Drawing.Point(460, 81);
             this.chkGarmentTest.Name = "chkGarmentTest";
-            this.chkGarmentTest.Size = new System.Drawing.Size(114, 21);
+            this.chkGarmentTest.Size = new System.Drawing.Size(221, 21);
             this.chkGarmentTest.TabIndex = 14;
-            this.chkGarmentTest.Text = "Garment Test";
+            this.chkGarmentTest.Text = "P04. Laboratory-Garment Test";
             this.chkGarmentTest.UseVisualStyleBackColor = true;
             // 
             // B09
