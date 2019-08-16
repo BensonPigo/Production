@@ -357,7 +357,7 @@ select	FactoryID
 		, Line
 		, AccuStd
 		, AccuLoad = AccuLoading
-into #print
+into #print0
 from (
 	select	FactoryID
 			, SP = orderID
@@ -405,6 +405,30 @@ from (
 	) std
 	group by FactoryID, orderID, StyleID, cdate2, SewLine, std.value
 ) a
+
+
+select FactoryID
+		, SP
+		, StyleID
+		, SewingDate 
+		, Line
+		, AccuStd = iif(p.AccuStd > isnull(x4.StdQ,0),isnull(x4.StdQ,0), p.AccuStd)
+		, AccuLoad 
+into #print
+from #print0 p
+outer apply(
+	select top 1 x3.StdQ
+	from(
+		select Date,StdQ=sum(x2.StdQ) over(order by x2.Date)
+		from(
+			select Date,StdQ=sum(StdQ) 
+			from dbo.[getDailystdq](p.SP)
+			group by Date
+		)x2
+	)x3
+	where x3.Date <= p.SewingDate
+	order by Date desc
+)x4
 
 /*
 *	判斷 ToExcel & 算出 BCS = Round(loading / std * 100, 2)
