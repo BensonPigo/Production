@@ -3329,7 +3329,7 @@
             this.comboSubconInType.Location = new System.Drawing.Point(275, 29);
             this.comboSubconInType.Name = "comboSubconInType";
             this.comboSubconInType.ReadOnly = true;
-            this.comboSubconInType.Size = new System.Drawing.Size(271, 23);
+            this.comboSubconInType.Size = new System.Drawing.Size(293, 23);
             this.comboSubconInType.TabIndex = 225;
             // 
             // P01
