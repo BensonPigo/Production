@@ -96,13 +96,17 @@ select
 	
 from orders o with(nolock)
 outer apply(
-	select 
+	select sum(value) as value , sum(value2) as value2 
+	from
+	(	
+		select 
 		value = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
-		value2 = iif(pl.Type = 'F',sum(pod.ShipQty),0)
-	from Pullout_Detail pod with(nolock)
-	inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
-	where pod.OrderID = o.id
-	group by pl.Type
+		value2=iif( pl.Type='F',sum(pod.ShipQty),0)
+		from Pullout_Detail pod with(nolock)
+		inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
+		where pod.OrderID = o.ID
+		group by pl.Type
+	) a
 )c
 outer apply(
 	select FOCQty=sum(ox.FOCQty),addDate=min(addDate) from Order_Finish ox where ox.id = o.ID
