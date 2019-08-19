@@ -20,6 +20,10 @@
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_SewingSchedule_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
+    [LearnCurveID] INT NULL, 
+    [OriEff] NUMERIC(5, 2) NULL, 
+    [SewLineEff] NUMERIC(5, 2) NULL, 
+    [LNCSERIALNumber] INT NULL, 
     CONSTRAINT [PK_SewingSchedule] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
