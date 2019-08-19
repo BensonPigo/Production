@@ -419,12 +419,9 @@ from #print0 p
 outer apply(
 	select top 1 x3.StdQ
 	from(
-		select Date,StdQ=sum(x2.StdQ) over(order by x2.Date)
-		from(
-			select Date,StdQ=sum(StdQ) 
-			from dbo.[getDailystdq](p.SP)
-			group by Date
-		)x2
+		select Date,StdQ=sum(StdQ) 
+		from dbo.[getDailystdq](p.SP)
+		group by Date
 	)x3
 	where x3.Date <= p.SewingDate
 	order by Date desc
