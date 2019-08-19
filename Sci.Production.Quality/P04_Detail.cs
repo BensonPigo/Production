@@ -775,8 +775,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 {
                     worksheet.Cells[73, 6] = "V";
                 }
-
-                worksheet.Cells[74, 9] = MyUtility.Convert.GetString(Deatilrow["Showname"]);
+                
                 #endregion
 
                 #region 插入圖片與Technician名字
@@ -796,21 +795,25 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 {
                     technicianName = drTechnicianInfo["name"].ToString();
                     picSource = drTechnicianInfo["SignaturePic"].ToString();
-                }
-                //Name
-                worksheet.Cells[74, 9] = technicianName;
-
-                //插入圖檔
-                if (!MyUtility.Check.Empty(picSource))
-                {
-                    if (File.Exists(picSource))
+                    //Name
+                    worksheet.Cells[74, 9] = technicianName;
+                    //插入圖檔
+                    if (!MyUtility.Check.Empty(picSource))
                     {
-                        img = Image.FromFile(picSource);
-                        Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[72, 9];
+                        if (File.Exists(picSource))
+                        {
+                            img = Image.FromFile(picSource);
+                            Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[72, 9];
 
-                        worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
+                            worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
+                        }
                     }
                 }
+                else
+                {
+                    worksheet.Cells[74, 9] = MyUtility.Convert.GetString(Deatilrow["Showname"]);
+                }
+                
                 #endregion
 
                 #region After Wash Appearance Check list
@@ -1320,21 +1323,26 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 {
                     technicianName = drTechnicianInfo["name"].ToString();
                     picSource = drTechnicianInfo["SignaturePic"].ToString();
-                }
-                //Name
-                worksheet.Cells[74, 9] = technicianName;
+                    //Name
+                    worksheet.Cells[74, 9] = technicianName;
 
-                //插入圖檔
-                if (!MyUtility.Check.Empty(picSource))
-                {
-                    if (File.Exists(picSource))
+                    //插入圖檔
+                    if (!MyUtility.Check.Empty(picSource))
                     {
-                        img = Image.FromFile(picSource);
-                        Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[72, 9];
+                        if (File.Exists(picSource))
+                        {
+                            img = Image.FromFile(picSource);
+                            Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[72, 9];
 
-                        worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
+                            worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
+                        }
                     }
                 }
+                else
+                {
+                    worksheet.Cells[74, 9] = MyUtility.Convert.GetString(Deatilrow["Showname"]);
+                }
+                
                 #endregion
 
                 #region After Wash Appearance Check list
