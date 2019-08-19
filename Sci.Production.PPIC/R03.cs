@@ -1562,6 +1562,12 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                     records = null;
                 }
 
+                string key = Convert.ToDateTime(dr["SciDelivery"]).ToString("yyyyMM");
+                if (Convert.ToDateTime(dr["SciDelivery"]).Day <= 7)
+                {
+                    key = Convert.ToDateTime(dr["SciDelivery"]).AddMonths(-1).ToString("yyyyMM");
+                }
+
                 #region 填固定欄位資料
                 objArray[intRowsStart, 0] = dr["MDivisionID"];
                 objArray[intRowsStart, 1] = dr["FactoryID"];
@@ -1569,7 +1575,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 3] = MyUtility.Check.Empty(dr["BuyerDelivery"]) ? string.Empty : Convert.ToDateTime(dr["BuyerDelivery"]).ToString("yyyyMM");
                 objArray[intRowsStart, 4] = dr["EarliestSCIDlv"];
                 objArray[intRowsStart, 5] = dr["SciDelivery"];
-                objArray[intRowsStart, 6] = dr["SciDelivery"];
+                objArray[intRowsStart, 6] = key;
                 objArray[intRowsStart, 7] = dr["CRDDate"];
                 objArray[intRowsStart, 8] = MyUtility.Check.Empty(dr["CRDDate"]) ? string.Empty : Convert.ToDateTime(dr["CRDDate"]).ToString("yyyyMM");
                 objArray[intRowsStart, 9] = MyUtility.Convert.GetDate(dr["BuyerDelivery"]) != MyUtility.Convert.GetDate(dr["CRDDate"]) ? "Y" : string.Empty;
