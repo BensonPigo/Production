@@ -444,6 +444,7 @@ IF @ByFactory = 1
 	from #print
 	where SewingDate between @StartDate and @EndDate
 	group by FactoryID, SewingDate
+	having not (sum(AccuStd) = 0 and sum(AccuLoad) =0 )
 	order by FactoryID, SewingDate
 Else  
 with step1 as ( --InComing有日期同PatternCode加總，算出每個Pattern總數
@@ -520,8 +521,8 @@ select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line,p.AccuStd,acc.QtyAll
     outer apply (
     	select value = ROUND(acc.QtyAll / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
     ) BCS
-where SewingDate between @StartDate and @EndDate and acc.QtyAll > 0
-and p.AccuStd !=0
+where SewingDate between @StartDate and @EndDate 
+and not (acc.QtyAll = 0 and p.AccuStd =0 )
 order by p.FactoryID,p.SP,p.SewingDate,p.Line
 
 drop table #tsp
@@ -532,6 +533,7 @@ drop table #print
 drop table #TablePatternUkey;
 drop table #TablePatternCode,#tmp_TablePatternCode;
 drop table #CBDate
+DROP TABLE #print0
 "
                 , (SP.Empty()) ? "" : "and o.id = @SP"
                 , (Factory.Empty()) ? "" : "and f.ID = @FactoryID"
