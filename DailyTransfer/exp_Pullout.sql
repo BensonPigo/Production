@@ -59,7 +59,7 @@ FROM #CUR_PULLOUT1  A, Production.dbo.Pullout_Detail_Detail B
 WHERE A.ID = B.ID  
 ORDER BY B.ID 
 
-SELECT B.* 
+SELECT B.* , OldPulloutDate=iif(B.Type = 'D'or B.Type = 'M',A.PulloutDate,Null)
 INTO Pullout_Revise
 FROM #CUR_PULLOUT1  A, Production.dbo.Pullout_Revise B 
 WHERE A.ID = B.ID 
