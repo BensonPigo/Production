@@ -401,12 +401,11 @@ select FactoryID
 		, SewingDate 
 		, Line
 		, AccuStd = iif(isnull(x4.StdQ,0) > isnull(Upperlimit.qty,0),isnull(Upperlimit.qty,0), isnull(x4.StdQ,0))
-		, Upperlimit.qty
 		, AccuLoad 
 into #print
 from #print0 p
 outer apply(
-	select top 1 x3.StdQ
+	select top 1 x3.StdQ,x3.Date
 	from(        
 		select Date,StdQ=sum(x2.StdQ) over(order by x2.Date)
         from(
@@ -420,14 +419,18 @@ outer apply(
 	order by Date desc
 )x4
 outer apply(	
-	select BuyerDelivery,qty = sum(qty) over(order by BuyerDelivery)
-	from (
-		SELECT BuyerDelivery,qty = sum(qty)
-		FROM Order_QtyShip 
-		WHERE ID =p.SP
-		group by BuyerDelivery
-	)x
-	where x.BuyerDelivery>p.SewingDate
+	select top 1 x3.qty,x3.BuyerDelivery
+	from(  
+		select BuyerDelivery,qty = sum(qty) over(order by BuyerDelivery)
+		from (
+			SELECT BuyerDelivery,qty = sum(qty)
+			FROM Order_QtyShip 
+			WHERE ID =p.SP
+			group by BuyerDelivery
+		)x2
+	)x3
+	where x3.BuyerDelivery <= p.SewingDate
+	order by BuyerDelivery desc
 )Upperlimit
 
 /*
