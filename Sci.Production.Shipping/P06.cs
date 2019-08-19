@@ -536,6 +536,12 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 return;
             }
 
+            // 判斷 Packing List 的 Ship Mode 是否與業務設定的一致
+            if (!this.CheckShipMode())
+            {
+                return;
+            }
+
             // 模擬按Edit行為
             this.toolbar.cmdEdit.PerformClick();
 
@@ -1472,6 +1478,68 @@ from SummaryData",
             }
 
             return Result.True;
+        }
+
+        // 檢查表身的ShipMode與表頭的ShipMode要相同 & ShipModeID 不存在Order_QtyShip 就return
+        private bool CheckShipMode()
+        {
+            StringBuilder msg = new StringBuilder();
+
+            var dtShipMode = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
+            if (dtShipMode == null || dtShipMode.Count() == 0)
+            {
+                return true;
+            }
+
+            DualResult result;
+            DataTable dtCheckResult;
+            string strSql;
+            DataRow drPackingShipModeCheckResult;
+            foreach (DataRow dr in dtShipMode)
+            {
+                #region 檢查Packing List 的ship mode
+                strSql = $"select ShipModeID from PackingList with (nolock) where ID = '{dr["PackingListID"]}' and ShipModeID <> '{dr["ShipModeID"]}'";
+                bool isPackListShipModeInconsistent = MyUtility.Check.Seek(strSql, out drPackingShipModeCheckResult);
+                if (isPackListShipModeInconsistent)
+                {
+                    msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(drPackingShipModeCheckResult["ShipModeID"])));
+                    continue;
+                }
+                #endregion
+
+                #region 檢查Order_QtyShip 的ship mode
+                strSql = $@"
+select distinct oq.ID,oq.Seq,oq.ShipmodeID
+from PackingList p  with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID=pd.ID
+inner join Order_QtyShip oq with (nolock) on oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+inner join Orders o with (nolock) on oq.ID = o.ID
+where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
+";
+                result = DBProxy.Current.Select(null, strSql, out dtCheckResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return result;
+                }
+
+                if (dtCheckResult.Rows.Count > 0)
+                {
+                    foreach (DataRow drError in dtCheckResult.Rows)
+                    {
+                        msg.Append($"Order ID:{drError["PackingListID"]},   Seq{drError["Seq"]},   Shipping Mode:{drError["ShipmodeID"]}\r\n");
+                    }
+                }
+                #endregion
+            }
+
+            if (msg.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!\r\n" + msg.ToString());
+                return false;
+            }
+
+            return true;
         }
     }
 }
