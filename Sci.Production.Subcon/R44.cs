@@ -355,7 +355,6 @@ select	FactoryID
 		, StyleID
 		, SewingDate = DateAdd(day, 1 ,SewingDate)
 		, Line
-		, AccuStd
 		, AccuLoad = AccuLoading
 into #print0
 from (
@@ -364,7 +363,6 @@ from (
 			, StyleID
 			, SewingDate = cdate2
 			, Line = SewLine
-			, AccuStd = isnull(std.value, 0)
 			, AccuLoading = sum (isnull(MinLoadingQty, 0))
 	from (
 /*
@@ -393,17 +391,7 @@ from (
 		)w
 		group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode
 	)x 
-	outer apply(
-		select	value = isnull(( iif((select sum(s.StdQ)
-									from dbo.getDailystdq(x.orderid) s
-									where s.Date between @StartDate and @EndDate
-									)=0,0,(select sum(s.StdQ)
-									from dbo.getDailystdq(x.orderid) s
-									where s.Date <= @EndDate
-									)))
-								, 0)
-	) std
-	group by FactoryID, orderID, StyleID, cdate2, SewLine, std.value
+	group by FactoryID, orderID, StyleID, cdate2, SewLine
 ) a
 
 
@@ -412,20 +400,35 @@ select FactoryID
 		, StyleID
 		, SewingDate 
 		, Line
-		, AccuStd = iif(p.AccuStd > isnull(x4.StdQ,0),isnull(x4.StdQ,0), p.AccuStd)
+		, AccuStd = iif(isnull(x4.StdQ,0) > isnull(Upperlimit.qty,0),isnull(Upperlimit.qty,0), isnull(x4.StdQ,0))
+		, Upperlimit.qty
 		, AccuLoad 
 into #print
 from #print0 p
 outer apply(
 	select top 1 x3.StdQ
-	from(
-		select Date,StdQ=sum(StdQ) 
-		from dbo.[getDailystdq](p.SP)
-		group by Date
+	from(        
+		select Date,StdQ=sum(x2.StdQ) over(order by x2.Date)
+        from(
+            select Date,StdQ=sum(StdQ) 
+            from dbo.[getDailystdq](p.SP)
+            group by Date
+        )x2
+
 	)x3
 	where x3.Date <= p.SewingDate
 	order by Date desc
 )x4
+outer apply(	
+	select BuyerDelivery,qty = sum(qty) over(order by BuyerDelivery)
+	from (
+		SELECT BuyerDelivery,qty = sum(qty)
+		FROM Order_QtyShip 
+		WHERE ID =p.SP
+		group by BuyerDelivery
+	)x
+	where x.BuyerDelivery>p.SewingDate
+)Upperlimit
 
 /*
 *	判斷 ToExcel & 算出 BCS = Round(loading / std * 100, 2)
