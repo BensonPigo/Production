@@ -796,45 +796,20 @@ from #tmp";
                 MyUtility.Msg.WarningBox("Did not finish Bulk To Inventory");
                 return;
             }
-            // 新增Excel物件
-            Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
             // 新增workbook
-            Microsoft.Office.Interop.Excel.Workbook workbook = excel.Application.Workbooks.Add(true);
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = workbook.Worksheets[1];
-            // 固定視窗
-            worksheet.Application.ActiveWindow.SplitRow = 2;
-            worksheet.Application.ActiveWindow.FreezePanes = true;
-            // 合併儲存格
-            Excel.Range range = worksheet.get_Range((Excel.Range)worksheet.Cells[1, 1], (Excel.Range)worksheet.Cells[1, Exceldt.Columns.Count]);
-            range.Merge(false);
 
-            worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", Sci.Env.User.Keyword));
-            ((Excel.Range)worksheet.Cells[1, 1]).HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            string excelName = "Warehouse_P28";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            //excelApp.DisplayAlerts = false;
+            MyUtility.Excel.CopyToXls(Exceldt, "", $"{excelName}.xltx", 2, false, null, excelApp, wSheet: excelApp.Sheets[1], DisplayAlerts_ForSaveFile: false);
 
-            for (int i = 0; i < Exceldt.Columns.Count; i++)
-            {
-                worksheet.Cells[2, i + 1] = Exceldt.Columns[i].ColumnName;
-            }
-
-            int index = 0;
-            foreach (DataRow dr in Exceldt.Rows)
-            {
-                for (int i = 0; i < dr.Table.Columns.Count; i++)
-                {
-                    worksheet.Cells[3 + index, i + 1] = dr[i];
-                }
-                index++;
-            }
-            worksheet.Columns.AutoFit();
+            excelApp.Sheets[1].Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P28");
-            excel.ActiveWorkbook.SaveAs(strExcelName);
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
-            Marshal.ReleaseComObject(range);
-            Marshal.ReleaseComObject(worksheet);
-            Marshal.ReleaseComObject(workbook);
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelName);
+            excelApp.ActiveWorkbook.SaveAs(strExcelName);
+            excelApp.Quit();
+            Marshal.ReleaseComObject(excelApp);
 
             strExcelName.OpenFile();
             #endregion
