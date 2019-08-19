@@ -107,12 +107,16 @@ g.ID
 ,g.ShipModeID
 ,g.CYCFS
 ,g.ShipTermID
-,g.Handle,(g.Forwarder+' - '+isnull(ls.Abb,'')) as Forwarder
+,[Handle] = dbo.getPass1(g.Handle)
+,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
 ,g.Vessel
 ,g.ETD
 ,g.ETA
 ,g.SONo
 ,g.SOCFMDate
+,g.CutOffDate
+,g.ShipPlanID
+,sp.Status
 ,g.TotalShipQty
 ,g.TotalCTNQty
 ,isnull((select CTNRNo+'/'+TruckNo+',' from GMTBooking_CTNR WITH (NOLOCK) where ID = g.ID for xml path('')),'') as CTNTruck
@@ -126,6 +130,7 @@ g.ID
 from GMTBooking g WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
+left join ShipPlan sp WITH (NOLOCK) on sp.ID = g.ShipPlanID
 OUTER APPLY(
 	SELECT [Value]=Count(ID)
 	 FROM
@@ -499,7 +504,7 @@ where pl.ID<>'' and 1=1 "));
             if (this.reportType == "1")
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 26];
+                object[,] objArray = new object[1, 29];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -519,16 +524,19 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 14] = dr["ETA"];
                     objArray[0, 15] = dr["SONo"];
                     objArray[0, 16] = dr["SOCFMDate"];
-                    objArray[0, 17] = MyUtility.Check.Empty(dr["CTNTruck"]) ? dr["CTNTruck"] : MyUtility.Convert.GetString(dr["CTNTruck"]).Substring(0, MyUtility.Convert.GetString(dr["CTNTruck"]).Length - 1);
-                    objArray[0, 18] = dr["TotalShipQty"];
-                    objArray[0, 19] = dr["TotalCTNQty"];
-                    objArray[0, 20] = dr["TotalGW"];
-                    objArray[0, 21] = dr["TotalCBM"];
-                    objArray[0, 22] = dr["AddDate"];
-                    objArray[0, 23] = dr["ConfirmDate"];
-                    objArray[0, 24] = dr["Remark"];
-                    objArray[0, 25] = dr["PulloutComplete"].ToString();
-                    worksheet.Range[string.Format("A{0}:Z{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 17] = dr["CutOffDate"];
+                    objArray[0, 18] = dr["ShipPlanID"];
+                    objArray[0, 19] = dr["Status"];
+                    objArray[0, 20] = MyUtility.Check.Empty(dr["CTNTruck"]) ? dr["CTNTruck"] : MyUtility.Convert.GetString(dr["CTNTruck"]).Substring(0, MyUtility.Convert.GetString(dr["CTNTruck"]).Length - 1);
+                    objArray[0, 21] = dr["TotalShipQty"];
+                    objArray[0, 22] = dr["TotalCTNQty"];
+                    objArray[0, 23] = dr["TotalGW"];
+                    objArray[0, 24] = dr["TotalCBM"];
+                    objArray[0, 25] = dr["AddDate"];
+                    objArray[0, 26] = dr["ConfirmDate"];
+                    objArray[0, 27] = dr["Remark"];
+                    objArray[0, 28] = dr["PulloutComplete"].ToString();
+                    worksheet.Range[string.Format("A{0}:AC{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }

@@ -851,11 +851,27 @@ values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason
 
         protected override void ClickSend()
         {
+            base.ClickSend();
+            string sqlcmdChk = $@"
+select 1
+FROM SewingOutput s
+INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
+INNER JOIN MockupOrder mo ON mo.ID = sd.OrderId
+where 1=1
+    and s.OutputDate < = CAST (GETDATE() AS DATE) 
+    and s.LockDate is null 
+    and s.FactoryID  = '{Sci.Env.User.Factory}'
+";
+            if (!MyUtility.Check.Seek(sqlcmdChk))
+            {
+                MyUtility.Msg.WarningBox("Already lock now!");
+                return;
+            }
+
             if (MyUtility.Msg.QuestionBox("Lock sewing data?") == DialogResult.No)
             {
                 return;
             }
-            base.ClickSend();
 
             string sqlcmd = $@"
 update  s 

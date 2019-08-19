@@ -91,5 +91,7 @@
     <Build Include="dbo\Stored Procedures\F_F002_InsertData.sql" />
     <Build Include="dbo\Stored Procedures\F_F001_COPBasic.sql" />
     <Build Include="dbo\Stored Procedures\P_DeleteSewingOutPut.sql" />
+    <Build Include="dbo\Tables\EfficiencyBI.sql" />
+    <Build Include="dbo\Stored Procedures\ImportEfficiencyBI.sql" />
   </ItemGroup>
 </Project>

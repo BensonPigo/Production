@@ -616,7 +616,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
 
-            // 組要Insert進TransferToClog的資料
+            // 主要Insert進TransferToClog的資料
             foreach (DataRow dr in selectedData)
             {
                 insertCmds.Add(string.Format(
@@ -631,9 +631,20 @@ values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}','{5}');",
 
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(
-                    @"update PackingList_Detail 
-set TransferDate = null, ReceiveDate = null, ClogLocationId = '', ReturnDate = GETDATE(), ClogReceiveCFADate =null
-where ID = '{0}' and CTNStartNo = '{1}' and DisposeFromClog= 0 ; ",
+                    @"
+update PackingList_Detail 
+set TransferDate = null
+, ReceiveDate = null
+, ClogLocationId = ''
+, ReturnDate = GETDATE()
+, ClogReceiveCFADate =null
+, ScanQty = 0 
+, ScanEditDate = null
+, ScanName = ''
+, Lacking = 0
+, ActCTNWeight = null
+where ID = '{0}' and CTNStartNo = '{1}' 
+and DisposeFromClog= 0 ; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"])));
             }

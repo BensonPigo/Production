@@ -40,6 +40,7 @@
             this.chkP12 = new Sci.Win.UI.CheckBox();
             this.chkP13 = new Sci.Win.UI.CheckBox();
             this.txtID = new Sci.Production.Class.txtuser();
+            this.chkGarmentTest = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -55,6 +56,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkGarmentTest);
             this.detailcont.Controls.Add(this.chkP13);
             this.detailcont.Controls.Add(this.chkP12);
             this.detailcont.Controls.Add(this.chkP11);
@@ -140,7 +142,7 @@
             // 
             this.chkJunk.AutoSize = true;
             this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.chkJunk.ForeColor = System.Drawing.Color.Blue;
+            this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkJunk.Location = new System.Drawing.Point(460, 22);
             this.chkJunk.Name = "chkJunk";
             this.chkJunk.Size = new System.Drawing.Size(57, 21);
@@ -152,8 +154,8 @@
             // 
             this.chkP10.AutoSize = true;
             this.chkP10.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SampleGarmentWash", true));
-            this.chkP10.ForeColor = System.Drawing.Color.Blue;
-            this.chkP10.Location = new System.Drawing.Point(460, 81);
+            this.chkP10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkP10.Location = new System.Drawing.Point(460, 108);
             this.chkP10.Name = "chkP10";
             this.chkP10.Size = new System.Drawing.Size(247, 21);
             this.chkP10.TabIndex = 10;
@@ -164,8 +166,8 @@
             // 
             this.chkP11.AutoSize = true;
             this.chkP11.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MockupCrocking", true));
-            this.chkP11.ForeColor = System.Drawing.Color.Blue;
-            this.chkP11.Location = new System.Drawing.Point(460, 108);
+            this.chkP11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkP11.Location = new System.Drawing.Point(460, 135);
             this.chkP11.Name = "chkP11";
             this.chkP11.Size = new System.Drawing.Size(209, 21);
             this.chkP11.TabIndex = 11;
@@ -176,8 +178,8 @@
             // 
             this.chkP12.AutoSize = true;
             this.chkP12.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MockupOven", true));
-            this.chkP12.ForeColor = System.Drawing.Color.Blue;
-            this.chkP12.Location = new System.Drawing.Point(460, 135);
+            this.chkP12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkP12.Location = new System.Drawing.Point(460, 162);
             this.chkP12.Name = "chkP12";
             this.chkP12.Size = new System.Drawing.Size(188, 21);
             this.chkP12.TabIndex = 12;
@@ -188,8 +190,8 @@
             // 
             this.chkP13.AutoSize = true;
             this.chkP13.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MockupWash", true));
-            this.chkP13.ForeColor = System.Drawing.Color.Blue;
-            this.chkP13.Location = new System.Drawing.Point(460, 162);
+            this.chkP13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkP13.Location = new System.Drawing.Point(460, 189);
             this.chkP13.Name = "chkP13";
             this.chkP13.Size = new System.Drawing.Size(190, 21);
             this.chkP13.TabIndex = 13;
@@ -206,10 +208,23 @@
             this.txtID.TabIndex = 5;
             this.txtID.TextBox1Binding = "";
             // 
+            // chkGarmentTest
+            // 
+            this.chkGarmentTest.AutoSize = true;
+            this.chkGarmentTest.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GarmentTest", true));
+            this.chkGarmentTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkGarmentTest.Location = new System.Drawing.Point(460, 81);
+            this.chkGarmentTest.Name = "chkGarmentTest";
+            this.chkGarmentTest.Size = new System.Drawing.Size(221, 21);
+            this.chkGarmentTest.TabIndex = 14;
+            this.chkGarmentTest.Text = "P04. Laboratory-Garment Test";
+            this.chkGarmentTest.UseVisualStyleBackColor = true;
+            // 
             // B09
             // 
             this.ClientSize = new System.Drawing.Size(743, 365);
             this.Name = "B09";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B09. Technician List";
             this.WorkAlias = "Technician";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -240,5 +255,6 @@
         private Win.UI.Button btnDelete;
         private Win.UI.Button btnAttach;
         private Class.txtuser txtID;
+        private Win.UI.CheckBox chkGarmentTest;
     }
 }
