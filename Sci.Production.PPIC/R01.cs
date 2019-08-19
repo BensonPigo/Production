@@ -1041,7 +1041,7 @@ select
 	Sewer,
 	[AlloQty] = sum(s.AlloQty),
 	[HourOutput] = (s.Sewer * 3600.0 * OriEff.val / 100) / s.TotalSewingTime,
-	[OriWorkHour] = sum(s.AlloQty) / ((s.Sewer * 3600.0 * OriEff.val / 100) / s.TotalSewingTime),
+	[OriWorkHour] = iif (s.Sewer = 0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * OriEff.val / 100) / s.TotalSewingTime)),
 	[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float),
 	s.TotalSewingTime,
 	s.OrderID,
@@ -1281,14 +1281,6 @@ cross join (select distinct FactoryID from #APSList) f
 WHERE s.type = 'P'
 AND DATEADD(DAY,number,@StartDate) <= @EndDate
 
---刪掉星期天
-delete #WorkDate where datepart(WEEKDAY,WorkDate) = 1
-
---刪掉各工廠對應的假日
-delete w
-from #WorkDate  w
-inner join Holiday h on w.FactoryID = h.FactoryID and w.WorkDate = h.HolidayDate
-
 --展開計畫日期資料
 select  al.APSNo,
         al.LearnCurveID,
@@ -1409,16 +1401,15 @@ FROM #APSExtendWorkDate awd
 group by awd.APSNo,awd.WorkDate
 
 --取得LearnCurve Efficiency by Work Date
-select 
-awd.APSNo,
-awd.SewingStart,
-awd.SewingEnd,
-[SewingOutput] = isnull(apo.SewingOutput,0),
-awd.WorkingTime,
-[LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
-[StdOutput] = SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0,
-[CPU] = SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0,
-[Efficienycy] =  SUM(awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.WorkingTime * awd.Sewer * 3600.0)
+select  awd.APSNo
+        , awd.SewingStart
+        , awd.SewingEnd
+        , [SewingOutput] = isnull(apo.SewingOutput,0)
+        , awd.WorkingTime
+        , [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))
+        , [StdOutput] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
+        , [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
+        , [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.WorkingTime * awd.Sewer * 3600.0)
 into #APSExtendWorkDateFin
 from #APSExtendWorkDate awd
 inner join #OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
