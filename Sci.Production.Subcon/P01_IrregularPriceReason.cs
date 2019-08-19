@@ -353,9 +353,10 @@ namespace Sci.Production.Subcon
                 #region 查詢所有價格異常紀錄
 
                 sql.Append(@"
-SELECT POID,[Amount]=Sum(Amount)
+SELECT t.POID,[Amount]=Sum(t.Amount*dbo.getRate('KP',ap.CurrencyID,'USD',ap.issuedate))
 INTO #AmountList
-FROM #TmpSource
+FROM #TmpSource t
+inner join ArtworkPO ap with(nolock) on ap.id = t.id
 GROUP BY POID
 
 --根據表頭LocalPO的ID，整理出ArtworkTypeID、POID、OrderID
@@ -384,15 +385,15 @@ SELECT  ap.ID
 		,[OID]=apd.OrderId
 		,ap.currencyid  --維護時檢查用，所以先註解留著
 		--,apd.PoQty
-		--,apd.PoQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) PO_amt
+		--,apd.PoQty * apd.Price * dbo.getRate('KP',ap.CurrencyID,'USD',ap.issuedate) PO_amt
 
 		-- 已關單代表不會再使用這一張採購單進行「外發」，但是已經外發（arm Out）的數量後續還是會建立請款，因此已關單的要計算的是已實際外發的數量
 		,[Qty]=IIF(ap.Status!='Closed',apd.PoQty ,apd.Farmout)
 		,[PO_amt]= IIF(ap.Status!='Closed'
-						,apd.PoQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) 
-						,apd.Farmout * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) )
+						,apd.PoQty * apd.Price * dbo.getRate('KP',ap.CurrencyID,'USD',ap.issuedate) 
+						,apd.Farmout * apd.Price * dbo.getRate('KP',ap.CurrencyID,'USD',ap.issuedate) )
 
-		,dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) rate
+		,dbo.getRate('KP',ap.CurrencyID,'USD',ap.issuedate) rate
 INTO #total_PO
 FROM ArtworkPO ap WITH (NOLOCK) 
 INNER JOIN ArtworkPO_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
@@ -408,17 +409,17 @@ WHERE  EXiSTS  (
 --繡花成本處理：列出同POID、Category=EMB_Thread（繡線）的總額清單
 SELECT   LPD.POID
 		,LP.currencyid
-		, [Price]=LPd.Price  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購單價
+		, [Price]=LPd.Price  * dbo.getRate('KP', LP.CurrencyID, 'USD', LP.issuedate) --採購單價
 
 		--, LPD.Qty localap_qty  --採購數量
-		--, [LocalPo_amt]=LPD.Price* LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
+		--, [LocalPo_amt]=LPD.Price* LPD.Qty  * dbo.getRate('KP', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
 		-- 已關單代表不會再使用這一張採購單進行「收料」，但是已經收料（In Qty ）的數量後續還是會建立請款，因此已關單的要計算的是已實際收料的數量
 		, [Qty]=IIF(LP.Status!='Closed',LPD.Qty ,LPD.InQty)  --數量
 		, [LocalPo_amt]=IIF(LP.Status!='Closed'
-							, LPD.Price * LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
-							,LPD.Price * LPD.InQty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate))
+							, LPD.Price * LPD.Qty  * dbo.getRate('KP', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
+							,LPD.Price * LPD.InQty  * dbo.getRate('KP', LP.CurrencyID, 'USD', LP.issuedate))
 
-		, dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) rate
+		, dbo.getRate('KP', LP.CurrencyID, 'USD', LP.issuedate) rate
 INTO #Embroidery_List
 FROM LocalPO LP
 inner join LocalPO_Detail LPD on LP.Id = LPD.Id

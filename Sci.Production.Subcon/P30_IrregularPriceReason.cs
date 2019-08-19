@@ -370,9 +370,10 @@ namespace Sci.Production.Subcon
                 #region 查詢所有價格異常紀錄
 
                 sql.Append(@"
-SELECT POID,[Amount]=Sum(Amount)
+SELECT t.POID,[Amount]=Sum(t.Amount*dbo.getRate('KP',ap.CurrencyID,'USD',ap.issuedate))
 INTO #AmountList
-FROM #TmpSource
+FROM #TmpSource t
+inner join LocalPO ap with(nolock) on ap.id = t.id
 GROUP BY POID
 
 --根據表頭LocalPO的ID，整理出Category、POID、OrderID
@@ -403,9 +404,9 @@ SELECT  ap.ID
 		--,apd.Qty
         -- 已關單代表不會再使用這一張採購單進行「收料」，但是已經收料（In Qty ）的數量後續還是會建立請款，因此已關單的要計算的是已實際收料的數量
 		,[PO_amt]=IIF(ap.Status!='Closed'
-                    , apd.Qty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) 
-                    , apd.InQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate)  )
-		--,dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) rate
+                    , apd.Qty * apd.Price * dbo.getRate('KP',ap.CurrencyID,'USD',ap.issuedate) 
+                    , apd.InQty * apd.Price * dbo.getRate('KP',ap.CurrencyID,'USD',ap.issuedate)  )
+		--,dbo.getRate('KP',ap.CurrencyID,'USD',ap.issuedate) rate
 INTO #total_PO
 from LocalPO ap WITH (NOLOCK) 
 INNER JOIN LocalPO_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
