@@ -286,8 +286,9 @@
             this.comboSummaryBy.Location = new System.Drawing.Point(114, 299);
             this.comboSummaryBy.Name = "comboSummaryBy";
             this.comboSummaryBy.OldText = "";
-            this.comboSummaryBy.Size = new System.Drawing.Size(128, 24);
+            this.comboSummaryBy.Size = new System.Drawing.Size(200, 24);
             this.comboSummaryBy.TabIndex = 550;
+            this.comboSummaryBy.SelectedValueChanged += new System.EventHandler(this.ComboSummaryBy_SelectedValueChanged);
             // 
             // R01
             // 
@@ -317,7 +318,10 @@
             this.DefaultControlForEdit = "comboM";
             this.IsSupportToPrint = false;
             this.Name = "R01";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R01. Sewing Line Schedule Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
