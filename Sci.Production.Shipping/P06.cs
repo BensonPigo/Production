@@ -1527,7 +1527,7 @@ where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Cate
                 {
                     foreach (DataRow drError in dtCheckResult.Rows)
                     {
-                        msg.Append($"Order ID:{drError["ID"]},   Seq{drError["Seq"]},   Shipping Mode:{drError["ShipmodeID"]}\r\n");
+                        msg.Append($"Order ID : {drError["ID"]},   Seq : {drError["Seq"]},   Shipping Mode : {drError["ShipmodeID"]}\r\n");
                     }
                 }
                 #endregion
