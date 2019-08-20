@@ -732,15 +732,15 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             sqlpre = string.Format(
                 @"
 Select  a.ThreadColorId
-        , d.Allowance
+        , Allowance = isnull(d.Allowance,0)
         , a.Article
         , a.ThreadCombId
         , b.OperationId
-        , SeamLength = e.SeamLength * b.Frequency
+        , SeamLength = isnull( e.SeamLength * b.Frequency,0)
         , a.Seq
         , a.ThreadLocationId
         , a.Refno
-        , d.UseRatio
+        , UseRatio = isnull(d.UseRatio,0)
         , a.MachineTypeId
         , isnull(f.OrderQty,0) as OrderQty 
         , isnull(g.MeterToCone,0.00) as MeterToCone
@@ -800,7 +800,7 @@ where   c.Styleukey = (select o.Styleukey
                 @"
 select *
        , AllowanceQty = isnull (AllowanceQty.value, 0)
-       , PurchaseQty = TotalQty + isnull (AllowanceQty.value, 0)
+       , PurchaseQty = isnull(TotalQty,0) + isnull (AllowanceQty.value, 0)
         , [CurNewCone] = X.newCone
         , [CurUsedCone] = X.usedcone
 from (
