@@ -334,15 +334,21 @@ BEGIN
 		--(A)+(B)By MDivisionID
 		select CountryID, CountryName, MDivisionID, #tmpFactory.OrderYYMM as Month, sum(Capacity) as Capacity from #tmpFactory 
 		group by CountryID, CountryName, MDivisionID,#tmpFactory.OrderYYMM
-	
+		
 		--(C)By Factory
 		select 
 			a.CountryID, a.MDivisionID, a.FactoryID, a.OrderYYMM as Month, Factory.CountryID + '-' + Country.Alias as CountryName,
 			a.Capacity, c.Tms, a.FtyTmsCapa, a.OrderShortage
 		from (
-			select CountryID, MDivisionID, FactoryID, OrderYYMM,sum(Capacity) as Capacity, sum(FtyTmsCapa) as FtyTmsCapa, sum(OrderShortage) as OrderShortage from (
-				select CountryID, MDivisionID, FactoryID, OrderYYMM, OrderCapacity as Capacity, 0 as FtyTmsCapa, OrderShortage from #tmpOrder1 union all
-				select CountryID, MDivisionID, FactoryID, OrderYYMM, ForecastCapacity, 0, 0 from #tmpForecast1 union all
+			select CountryID, MDivisionID, FactoryID, OrderYYMM
+			, sum(Capacity) as Capacity
+			, sum(FtyTmsCapa) as FtyTmsCapa
+			, sum(OrderShortage) as OrderShortage 
+			from (
+				select CountryID, MDivisionID, FactoryID, OrderYYMM, OrderCapacity as Capacity, 0 as FtyTmsCapa, OrderShortage from #tmpOrder1 
+				union all
+				select CountryID, MDivisionID, FactoryID, OrderYYMM, ForecastCapacity, 0, 0 from #tmpForecast1 
+				union all
 				select CountryID, MDivisionID, FactoryID, OrderYYMM, 0, Capacity as FtyTmsCapa, 0 from #tmpFactory 
 			) c group by CountryID, MDivisionID, FactoryID, OrderYYMM			
 		) a
@@ -357,8 +363,48 @@ BEGIN
 		) c on a.FactoryID = c.ID
 		
 		--(D)By non-sister
-		Select CountryID, MDivisionID, FactoryID, OrderYYMM as Month, SUM(FactoryOrderCapacity) as Capacity  from #tmpFactoryOrder1
-		Group by CountryID,MDivisionID,FactoryID,OrderYYMM
+
+		select CountryID, MDivisionID, FactoryID, [Month]
+				,sum(Capacity1) as Capacity1,sum(Capacity2) as Capacity2
+		into #tmpSister
+		from (
+				Select CountryID, MDivisionID, FactoryID, OrderYYMM as Month
+				,[Capacity1] = isnull(SUM(FactoryOrderCapacity),0)
+				,[Capacity2] = 0 
+				from #tmpFactoryOrder1
+				where SubconInType!=2
+				Group by CountryID,MDivisionID,FactoryID,OrderYYMM
+			union all
+				Select CountryID, MDivisionID, FactoryID, OrderYYMM as Month
+				,[Capacity1] = 0
+				,[Capacity2] = isnull(SUM(FactoryOrderCapacity),0) 
+				from #tmpFactoryOrder1
+				where SubconInType=2
+				Group by CountryID,MDivisionID,FactoryID,OrderYYMM
+			union all
+				Select t.CountryID, t.MDivisionID
+				, [FactoryID] = case when f.ID is null then (select FactoryID from orders where id=t.ProgramID)
+					else t.ProgramID end
+				, OrderYYMM as Month
+				,[Capacity1] = 0
+				,[Capacity2] = - isnull(SUM(FactoryOrderCapacity),0) 
+				from #tmpFactoryOrder1 t
+				left join SCIFty f on t.ProgramID=f.ID
+				where SubconInType=2
+				Group by t.CountryID,t.MDivisionID,ProgramID,OrderYYMM,f.ID
+		) a 
+		group by CountryID, MDivisionID, FactoryID, [Month]
+
+
+			select CountryID, MDivisionID, FactoryID, [Month]
+				,[str_Capacity] =  case when (Capacity2 > 0) then ('='+ convert(varchar(100),Capacity1) +'+'+ convert(varchar(100),Capacity2))
+										 when (Capacity2 < 0) then ('='+ convert(varchar(100),Capacity1) + convert(varchar(100),Capacity2))
+										else convert(varchar(100),isnull(Capacity1,0)) end
+				,[Capacity] = case when (Capacity2 > 0) then ( Capacity1 + Capacity2 )
+									when (Capacity2 < 0) then ( Capacity1 + Capacity2 )
+									else convert(varchar(100),isnull(Capacity1,0)) end
+		from #tmpSister
+
 
 		--For Forecast shared
 		select CountryID, MDivisionID, FactoryID, OrderYYMM as Month, sum(ForecastCapacity) as Capacity from #tmpForecast1 group by CountryID,MDivisionID,FactoryID,OrderYYMM
@@ -518,7 +564,7 @@ drop table #FactoryOrder
 drop table #sew3
 drop table #sew4
 drop table #sew_FtyOrder
-		
+drop table #tmpSister		
 
 END
 GO
