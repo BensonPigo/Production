@@ -101,7 +101,7 @@ Select
             [PtnDesc] = bd.PatternDesc,
             [Group] = bd.BundleGroup,
             [Size] = bd.SizeCode,
-            [Artwork] = stuff(sub.sub,1,1,''),
+            --[Artwork] = stuff(sub.sub,1,1,''),
             [Qty] = bd.Qty,
             [RFID Reader] = bt.RFIDReaderId,
             [Sub-process] = bt.SubprocessId,
@@ -120,14 +120,14 @@ Select
             left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
             left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
             left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
-            outer apply(
+            /*outer apply(
 	             select sub= (
 		             Select distinct concat('+', bda.SubprocessId)
 		             from Bundle_Detail_Art bda WITH (NOLOCK) 
 		             where bda.Bundleno = bd.Bundleno
 		             for xml path('')
 	             )
-            ) as sub
+            ) as sub*/
             where 1=1
             ");
             #endregion
