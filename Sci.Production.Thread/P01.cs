@@ -91,6 +91,7 @@ where b.Id = a.OperationId and a.id='{0}'",
             //    P01_Detail.ShowDialog();
             // }});
             #endregion
+            this.btnGenerate.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
             this.btnGenerate.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
         }
 
