@@ -429,8 +429,8 @@ outer apply(
 			group by BuyerDelivery
 		)x2
 	)x3
-	where x3.BuyerDelivery <= p.SewingDate
-	order by BuyerDelivery desc
+	where x3.BuyerDelivery >= p.SewingDate
+	order by BuyerDelivery 
 )Upperlimit
 
 /*
