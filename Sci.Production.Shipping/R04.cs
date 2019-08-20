@@ -234,6 +234,10 @@ left join
 	inner join GMTBooking gb on gb.id = p.INVNo 
 )gb2 on  gb2.orderid = o.id and gb2.OrderShipmodeSeq = oq.seq
 where 1=1 and isnull(ot.IsGMTMaster,0) != 1
+
+AND oq.Qty <>( (select isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) 
+				- [dbo].getInvAdjQty(o.ID,oq.Seq) )
+
 and o.PulloutComplete=0 and o.Qty > 0", whereFCRDate));
 
             if (!MyUtility.Check.Empty(this.buyerDlv1))
