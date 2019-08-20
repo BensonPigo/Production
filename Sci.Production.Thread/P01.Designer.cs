@@ -174,6 +174,7 @@
             // 
             // btnGenerate
             // 
+            this.btnGenerate.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnGenerate.Enabled = false;
             this.btnGenerate.Location = new System.Drawing.Point(790, 15);
             this.btnGenerate.Name = "btnGenerate";
