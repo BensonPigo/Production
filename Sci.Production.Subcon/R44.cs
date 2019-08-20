@@ -355,16 +355,14 @@ select	FactoryID
 		, StyleID
 		, SewingDate = DateAdd(day, 1 ,SewingDate)
 		, Line
-		, AccuStd
 		, AccuLoad = AccuLoading
-into #print
+into #print0
 from (
 	select	FactoryID
 			, SP = orderID
 			, StyleID
 			, SewingDate = cdate2
 			, Line = SewLine
-			, AccuStd = isnull(std.value, 0)
 			, AccuLoading = sum (isnull(MinLoadingQty, 0))
 	from (
 /*
@@ -393,18 +391,47 @@ from (
 		)w
 		group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode
 	)x 
-	outer apply(
-		select	value = isnull(( iif((select sum(s.StdQ)
-									from dbo.getDailystdq(x.orderid) s
-									where s.Date between @StartDate and @EndDate
-									)=0,0,(select sum(s.StdQ)
-									from dbo.getDailystdq(x.orderid) s
-									where s.Date <= @EndDate
-									)))
-								, 0)
-	) std
-	group by FactoryID, orderID, StyleID, cdate2, SewLine, std.value
+	group by FactoryID, orderID, StyleID, cdate2, SewLine
 ) a
+
+
+select FactoryID
+		, SP
+		, StyleID
+		, SewingDate 
+		, Line
+		, AccuStd = iif(isnull(x4.StdQ,0) > isnull(Upperlimit.qty,0),isnull(Upperlimit.qty,0), isnull(x4.StdQ,0))
+		, AccuLoad 
+into #print
+from #print0 p
+outer apply(
+	select top 1 x3.StdQ,x3.Date
+	from(        
+		select Date,StdQ=sum(x2.StdQ) over(order by x2.Date)
+        from(
+            select Date,StdQ=sum(StdQ) 
+            from dbo.[getDailystdq](p.SP)
+            group by Date
+        )x2
+
+	)x3
+	where x3.Date <= p.SewingDate
+	order by Date desc
+)x4
+outer apply(	
+	select top 1 x3.qty,x3.BuyerDelivery
+	from(  
+		select BuyerDelivery,qty = sum(qty) over(order by BuyerDelivery)
+		from (
+			SELECT BuyerDelivery,qty = sum(qty)
+			FROM Order_QtyShip 
+			WHERE ID =p.SP
+			group by BuyerDelivery
+		)x2
+	)x3
+	where x3.BuyerDelivery >= p.SewingDate
+	order by BuyerDelivery 
+)Upperlimit
 
 /*
 *	判斷 ToExcel & 算出 BCS = Round(loading / std * 100, 2)
@@ -420,6 +447,7 @@ IF @ByFactory = 1
 	from #print
 	where SewingDate between @StartDate and @EndDate
 	group by FactoryID, SewingDate
+	having not (sum(AccuStd) = 0 and sum(AccuLoad) =0 )
 	order by FactoryID, SewingDate
 Else  
 with step1 as ( --InComing有日期同PatternCode加總，算出每個Pattern總數
@@ -496,8 +524,8 @@ select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line,p.AccuStd,acc.QtyAll
     outer apply (
     	select value = ROUND(acc.QtyAll / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
     ) BCS
-where SewingDate between @StartDate and @EndDate and acc.QtyAll > 0
-and p.AccuStd !=0
+where SewingDate between @StartDate and @EndDate 
+and not (acc.QtyAll = 0 and p.AccuStd =0 )
 order by p.FactoryID,p.SP,p.SewingDate,p.Line
 
 drop table #tsp
@@ -508,6 +536,7 @@ drop table #print
 drop table #TablePatternUkey;
 drop table #TablePatternCode,#tmp_TablePatternCode;
 drop table #CBDate
+DROP TABLE #print0
 "
                 , (SP.Empty()) ? "" : "and o.id = @SP"
                 , (Factory.Empty()) ? "" : "and f.ID = @FactoryID"
