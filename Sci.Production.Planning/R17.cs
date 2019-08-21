@@ -95,6 +95,7 @@ SELECT
 	,KPICode = F.KPICode
 	,FactoryID = o.FactoryID
 	,OrderID = o.ID
+	,o.StyleID
 	,Seq = Order_QS.seq
 	,BrandID = o.BrandID
 	,Order_QS.BuyerDelivery
@@ -237,6 +238,7 @@ SELECT
 		,t.KPICode
 		,t.FactoryID
 		,t.OrderID 
+		,t.StyleID
 		,t.seq
 		,t.BrandID
 		,BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)--G
@@ -293,6 +295,7 @@ SELECT
     ,KPICode = t.KPICode
     ,FactoryID = t.FactoryID
     ,t.OrderID  
+	,t.StyleID
     ,t.Seq 
     ,t.BrandID  
     , BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)
@@ -385,6 +388,7 @@ SELECT  '' AS CountryID
 , '' AS KPICode
 , '' AS FactoryID
 , '' AS OrderID
+, '' AS StyleID
 , '' AS Seq
 , '' AS BrandID
 , '' AS BuyerDelivery
@@ -754,6 +758,7 @@ SELECT Alias = c.alias
      , KPICode =  f.KPICode
      , FactoryID = o.FactoryID
      , OrderID = o.ID
+     , StyleID = o.StyleID
      , Seq = Order_QS.Seq
      , FtyKPI = convert(varchar(10),Order_QS.FtyKPI ,111)     
      , Extension = convert(varchar(10),iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 111)
@@ -852,7 +857,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                 int preRowsStart = intRowsStart;
                 int rownum = intRowsStart; // 每筆資料匯入之位置
                 int intColumns = 7; // 匯入欄位數
-                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD" };
+                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE" };
                 object[,] objArray = new object[1, intColumns]; // 每列匯入欄位區間
                 #region 將資料放入陣列並寫入Excel範例檔
 
@@ -864,32 +869,33 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                 Db_ExcelColumn.Add("B", "KPICode");
                 Db_ExcelColumn.Add("C", "FactoryID");
                 Db_ExcelColumn.Add("D", "OrderID");
-                Db_ExcelColumn.Add("E", "Seq");
-                Db_ExcelColumn.Add("F", "BrandID");
-                Db_ExcelColumn.Add("G", "BuyerDelivery");
-                Db_ExcelColumn.Add("H", "FtyKPI");
-                Db_ExcelColumn.Add("I", "Extension");
-                Db_ExcelColumn.Add("J", "DeliveryByShipmode");
-                Db_ExcelColumn.Add("K", "OrderQty");
-                Db_ExcelColumn.Add("L", "OnTimeQty");
-                Db_ExcelColumn.Add("M", "FailQty");
-                Db_ExcelColumn.Add("N", "pullOutDate");
-                Db_ExcelColumn.Add("O", "Shipmode");
-                Db_ExcelColumn.Add("P", "P");
-                Db_ExcelColumn.Add("Q", "GMTComplete");
-                Db_ExcelColumn.Add("R", "ReasonID");
-                Db_ExcelColumn.Add("S", "ReasonName");
-                Db_ExcelColumn.Add("T", "MR");
-                Db_ExcelColumn.Add("U", "SMR");
-                Db_ExcelColumn.Add("V", "POHandle");
-                Db_ExcelColumn.Add("W", "POSMR");
-                Db_ExcelColumn.Add("X", "OrderTypeID");
-                Db_ExcelColumn.Add("Y", "isDevSample");
-                Db_ExcelColumn.Add("Z", "SewouptQty");
-                Db_ExcelColumn.Add("AA", "SewLastDate");
-                Db_ExcelColumn.Add("AB", "CTNLastReceiveDate");
-                Db_ExcelColumn.Add("AC", "Order_QtyShipCount");
-                Db_ExcelColumn.Add("AD", "Alias");
+                Db_ExcelColumn.Add("E", "StyleID");
+                Db_ExcelColumn.Add("F", "Seq");
+                Db_ExcelColumn.Add("G", "BrandID");
+                Db_ExcelColumn.Add("H", "BuyerDelivery");
+                Db_ExcelColumn.Add("I", "FtyKPI");
+                Db_ExcelColumn.Add("J", "Extension");
+                Db_ExcelColumn.Add("K", "DeliveryByShipmode");
+                Db_ExcelColumn.Add("L", "OrderQty");
+                Db_ExcelColumn.Add("M", "OnTimeQty");
+                Db_ExcelColumn.Add("N", "FailQty");
+                Db_ExcelColumn.Add("O", "pullOutDate");
+                Db_ExcelColumn.Add("P", "Shipmode");
+                Db_ExcelColumn.Add("Q", "P");
+                Db_ExcelColumn.Add("R", "GMTComplete");
+                Db_ExcelColumn.Add("S", "ReasonID");
+                Db_ExcelColumn.Add("T", "ReasonName");
+                Db_ExcelColumn.Add("U", "MR");
+                Db_ExcelColumn.Add("V", "SMR");
+                Db_ExcelColumn.Add("W", "POHandle");
+                Db_ExcelColumn.Add("X", "POSMR");
+                Db_ExcelColumn.Add("Y", "OrderTypeID");
+                Db_ExcelColumn.Add("Z", "isDevSample");
+                Db_ExcelColumn.Add("AA", "SewouptQty");
+                Db_ExcelColumn.Add("AB", "SewLastDate");
+                Db_ExcelColumn.Add("AC", "CTNLastReceiveDate");
+                Db_ExcelColumn.Add("AD", "Order_QtyShipCount");
+                Db_ExcelColumn.Add("AE", "Alias");
 
 
 
@@ -897,16 +903,17 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                 Db_ExcelColumn2.Add("B", "KPICode");
                 Db_ExcelColumn2.Add("C", "FactoryID");
                 Db_ExcelColumn2.Add("D", "OrderID");
-                Db_ExcelColumn2.Add("E", "Seq");
-                Db_ExcelColumn2.Add("F", "FtyKPI");
-                Db_ExcelColumn2.Add("G", "Extension");
-                Db_ExcelColumn2.Add("H", "DeliveryByShipmode");
-                Db_ExcelColumn2.Add("I", "OrderQty");
-                Db_ExcelColumn2.Add("J", "OnTimeQty");
-                Db_ExcelColumn2.Add("K", "pullOutDate");
-                Db_ExcelColumn2.Add("L", "ShipmodeID");
-                Db_ExcelColumn2.Add("M", "OrderTypeID");
-                Db_ExcelColumn2.Add("N", "isDevSample");
+                Db_ExcelColumn2.Add("E", "StyleID");
+                Db_ExcelColumn2.Add("F", "Seq");
+                Db_ExcelColumn2.Add("G", "FtyKPI");
+                Db_ExcelColumn2.Add("H", "Extension");
+                Db_ExcelColumn2.Add("I", "DeliveryByShipmode");
+                Db_ExcelColumn2.Add("J", "OrderQty");
+                Db_ExcelColumn2.Add("K", "OnTimeQty");
+                Db_ExcelColumn2.Add("L", "pullOutDate");
+                Db_ExcelColumn2.Add("M", "ShipmodeID");
+                Db_ExcelColumn2.Add("N", "OrderTypeID");
+                Db_ExcelColumn2.Add("O", "isDevSample");
 
 
                 #region 匯出SDP
@@ -997,7 +1004,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                 {
                     worksheet = excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
-                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample" };
+                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
                     for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                     {
@@ -1041,7 +1048,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "Sewing Qty", "Last sewing output date", "Last carton received date", "Partial shipment" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "Sewing Qty", "Last sewing output date", "Last carton received date", "Partial shipment" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -1085,7 +1092,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[4];
                         worksheet.Name = "On time Order List by PullOut";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode", "Order Type", "Dev. Sample" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode", "Order Type", "Dev. Sample" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -1133,6 +1140,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                                             KPICode = data.Field<string>("KPICode"),
                                             FactoryID = data.Field<string>("FactoryID"),
                                             OrderID = data.Field<string>("OrderID"),
+                                            Style = data.Field<string>("StyleID"),
                                             Seq = data.Field<string>("Seq"),
                                             BrandID = data.Field<string>("BrandID"),
                                             FtyKPI = data.Field<string>("FtyKPI"),
@@ -1152,7 +1160,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason", "Handle", "Order Type", "Dev. Sample" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason", "Handle", "Order Type", "Dev. Sample" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -1175,20 +1183,21 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                             objArray_1[0, 1] = dr.KPICode;
                             objArray_1[0, 2] = dr.FactoryID;
                             objArray_1[0, 3] = dr.OrderID;
-                            objArray_1[0, 4] = dr.Seq;
-                            objArray_1[0, 5] = dr.BrandID;
-                            objArray_1[0, 6] = dr.FtyKPI;
-                            objArray_1[0, 7] = dr.Extension;
-                            objArray_1[0, 8] = dr.DeliveryByShipmode;
-                            objArray_1[0, 9] = dr.OrderQty;
-                            objArray_1[0, 10] = dr.FailQty;
-                            objArray_1[0, 11] = dr.pullOutDate;
-                            objArray_1[0, 12] = dr.Shipmode;
-                            objArray_1[0, 13] = dr.ReasonID;
-                            objArray_1[0, 14] = dr.ReasonName;
-                            objArray_1[0, 15] = dr.MR;
-                            objArray_1[0, 16] = dr.OrderTypeID;
-                            objArray_1[0, 17] = dr.isDevSample;
+                            objArray_1[0, 4] = dr.Style;
+                            objArray_1[0, 5] = dr.Seq;
+                            objArray_1[0, 6] = dr.BrandID;
+                            objArray_1[0, 7] = dr.FtyKPI;
+                            objArray_1[0, 8] = dr.Extension;
+                            objArray_1[0, 9] = dr.DeliveryByShipmode;
+                            objArray_1[0, 10] = dr.OrderQty;
+                            objArray_1[0, 11] = dr.FailQty;
+                            objArray_1[0, 12] = dr.pullOutDate;
+                            objArray_1[0, 13] = dr.Shipmode;
+                            objArray_1[0, 14] = dr.ReasonID;
+                            objArray_1[0, 15] = dr.ReasonName;
+                            objArray_1[0, 16] = dr.MR;
+                            objArray_1[0, 17] = dr.OrderTypeID;
+                            objArray_1[0, 18] = dr.isDevSample;
                             worksheet.Range[string.Format("A{0}:{1}{0}", i, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
 
