@@ -84,16 +84,22 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.label2 = new Sci.Win.UI.Label();
-            this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
-            this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
-            this.txtUserPOApproved = new Sci.Production.Class.txtuser();
-            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.labelClipFilesPath = new Sci.Win.UI.Label();
             this.btnPicFilesPath = new Sci.Win.UI.Button();
             this.txtPicFilesPath = new Sci.Win.UI.TextBox();
             this.labPicFilesPath = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
+            this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
+            this.labelClipFilesPath = new Sci.Win.UI.Label();
+            this.txtUserPOApproved = new Sci.Production.Class.txtuser();
+            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.txtMarkerInputPath = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtMarkerOutputPath = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.btnMarkerInputPath = new Sci.Win.UI.Button();
+            this.btnMarkerOutputPath = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -591,7 +597,7 @@
             // btnSketchFilesPath
             // 
             this.btnSketchFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnSketchFilesPath.Location = new System.Drawing.Point(642, 388);
+            this.btnSketchFilesPath.Location = new System.Drawing.Point(643, 388);
             this.btnSketchFilesPath.Name = "btnSketchFilesPath";
             this.btnSketchFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnSketchFilesPath.TabIndex = 23;
@@ -602,7 +608,7 @@
             // btnCilpFilesPath
             // 
             this.btnCilpFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCilpFilesPath.Location = new System.Drawing.Point(642, 442);
+            this.btnCilpFilesPath.Location = new System.Drawing.Point(643, 442);
             this.btnCilpFilesPath.Name = "btnCilpFilesPath";
             this.btnCilpFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnCilpFilesPath.TabIndex = 25;
@@ -615,9 +621,9 @@
             this.lineShape9.BorderColor = System.Drawing.Color.DarkGray;
             this.lineShape9.Name = "lineShape9";
             this.lineShape9.X1 = 726;
-            this.lineShape9.X2 = 727;
+            this.lineShape9.X2 = 726;
             this.lineShape9.Y1 = 7;
-            this.lineShape9.Y2 = 470;
+            this.lineShape9.Y2 = 529;
             // 
             // lineShape8
             // 
@@ -626,7 +632,7 @@
             this.lineShape8.X1 = 8;
             this.lineShape8.X2 = 7;
             this.lineShape8.Y1 = 7;
-            this.lineShape8.Y2 = 471;
+            this.lineShape8.Y2 = 529;
             // 
             // lineShape7
             // 
@@ -634,8 +640,8 @@
             this.lineShape7.Name = "lineShape7";
             this.lineShape7.X1 = 8;
             this.lineShape7.X2 = 726;
-            this.lineShape7.Y1 = 471;
-            this.lineShape7.Y2 = 471;
+            this.lineShape7.Y1 = 529;
+            this.lineShape7.Y2 = 529;
             // 
             // lineShape6
             // 
@@ -693,6 +699,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnMarkerOutputPath);
+            this.panel1.Controls.Add(this.btnMarkerInputPath);
+            this.panel1.Controls.Add(this.txtMarkerOutputPath);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.txtMarkerInputPath);
+            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.btnPicFilesPath);
             this.panel1.Controls.Add(this.txtPicFilesPath);
             this.panel1.Controls.Add(this.labPicFilesPath);
@@ -750,8 +762,38 @@
             this.panel1.Controls.Add(this.shapeContainer2);
             this.panel1.Location = new System.Drawing.Point(10, 38);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(737, 484);
+            this.panel1.Size = new System.Drawing.Size(737, 543);
             this.panel1.TabIndex = 50;
+            // 
+            // btnPicFilesPath
+            // 
+            this.btnPicFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnPicFilesPath.Location = new System.Drawing.Point(643, 415);
+            this.btnPicFilesPath.Name = "btnPicFilesPath";
+            this.btnPicFilesPath.Size = new System.Drawing.Size(30, 25);
+            this.btnPicFilesPath.TabIndex = 48;
+            this.btnPicFilesPath.Text = "...";
+            this.btnPicFilesPath.UseVisualStyleBackColor = true;
+            this.btnPicFilesPath.Click += new System.EventHandler(this.BtnPicFilesPath_Click);
+            // 
+            // txtPicFilesPath
+            // 
+            this.txtPicFilesPath.BackColor = System.Drawing.Color.White;
+            this.txtPicFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtPicFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
+            this.txtPicFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPicFilesPath.Location = new System.Drawing.Point(133, 415);
+            this.txtPicFilesPath.Name = "txtPicFilesPath";
+            this.txtPicFilesPath.Size = new System.Drawing.Size(506, 23);
+            this.txtPicFilesPath.TabIndex = 47;
+            // 
+            // labPicFilesPath
+            // 
+            this.labPicFilesPath.Location = new System.Drawing.Point(17, 415);
+            this.labPicFilesPath.Name = "labPicFilesPath";
+            this.labPicFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labPicFilesPath.TabIndex = 49;
+            this.labPicFilesPath.Text = "Pic Files Path";
             // 
             // label2
             // 
@@ -800,6 +842,14 @@
             this.lbQCMachineDelayTime.TabIndex = 44;
             this.lbQCMachineDelayTime.Text = "QC Machine Delay Time";
             // 
+            // labelClipFilesPath
+            // 
+            this.labelClipFilesPath.Location = new System.Drawing.Point(17, 442);
+            this.labelClipFilesPath.Name = "labelClipFilesPath";
+            this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labelClipFilesPath.TabIndex = 43;
+            this.labelClipFilesPath.Text = "Clip Files Path";
+            // 
             // txtUserPOApproved
             // 
             this.txtUserPOApproved.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
@@ -826,7 +876,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(737, 484);
+            this.shapeContainer2.Size = new System.Drawing.Size(737, 543);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
@@ -839,47 +889,69 @@
             this.lineShape10.Y1 = 227;
             this.lineShape10.Y2 = 227;
             // 
-            // labelClipFilesPath
+            // txtMarkerInputPath
             // 
-            this.labelClipFilesPath.Location = new System.Drawing.Point(17, 442);
-            this.labelClipFilesPath.Name = "labelClipFilesPath";
-            this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
-            this.labelClipFilesPath.TabIndex = 43;
-            this.labelClipFilesPath.Text = "Clip Files Path";
+            this.txtMarkerInputPath.BackColor = System.Drawing.Color.White;
+            this.txtMarkerInputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMarkerInputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerInputPath", true));
+            this.txtMarkerInputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerInputPath.Location = new System.Drawing.Point(178, 471);
+            this.txtMarkerInputPath.Name = "txtMarkerInputPath";
+            this.txtMarkerInputPath.Size = new System.Drawing.Size(460, 23);
+            this.txtMarkerInputPath.TabIndex = 50;
             // 
-            // btnPicFilesPath
+            // label1
             // 
-            this.btnPicFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnPicFilesPath.Location = new System.Drawing.Point(642, 415);
-            this.btnPicFilesPath.Name = "btnPicFilesPath";
-            this.btnPicFilesPath.Size = new System.Drawing.Size(30, 25);
-            this.btnPicFilesPath.TabIndex = 48;
-            this.btnPicFilesPath.Text = "...";
-            this.btnPicFilesPath.UseVisualStyleBackColor = true;
-            this.btnPicFilesPath.Click += new System.EventHandler(this.BtnPicFilesPath_Click);
+            this.label1.Location = new System.Drawing.Point(16, 471);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(159, 23);
+            this.label1.TabIndex = 51;
+            this.label1.Text = "Marker Files Input Path";
             // 
-            // txtPicFilesPath
+            // txtMarkerOutputPath
             // 
-            this.txtPicFilesPath.BackColor = System.Drawing.Color.White;
-            this.txtPicFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtPicFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
-            this.txtPicFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPicFilesPath.Location = new System.Drawing.Point(133, 415);
-            this.txtPicFilesPath.Name = "txtPicFilesPath";
-            this.txtPicFilesPath.Size = new System.Drawing.Size(506, 23);
-            this.txtPicFilesPath.TabIndex = 47;
+            this.txtMarkerOutputPath.BackColor = System.Drawing.Color.White;
+            this.txtMarkerOutputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMarkerOutputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerOutputPath", true));
+            this.txtMarkerOutputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerOutputPath.Location = new System.Drawing.Point(178, 500);
+            this.txtMarkerOutputPath.Name = "txtMarkerOutputPath";
+            this.txtMarkerOutputPath.Size = new System.Drawing.Size(460, 23);
+            this.txtMarkerOutputPath.TabIndex = 52;
             // 
-            // labPicFilesPath
+            // label3
             // 
-            this.labPicFilesPath.Location = new System.Drawing.Point(17, 415);
-            this.labPicFilesPath.Name = "labPicFilesPath";
-            this.labPicFilesPath.Size = new System.Drawing.Size(112, 23);
-            this.labPicFilesPath.TabIndex = 49;
-            this.labPicFilesPath.Text = "Pic Files Path";
+            this.label3.Location = new System.Drawing.Point(16, 500);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(159, 23);
+            this.label3.TabIndex = 53;
+            this.label3.Text = "Marker Files Output Path";
+            // 
+            // btnMarkerInputPath
+            // 
+            this.btnMarkerInputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnMarkerInputPath.Location = new System.Drawing.Point(643, 471);
+            this.btnMarkerInputPath.Name = "btnMarkerInputPath";
+            this.btnMarkerInputPath.Size = new System.Drawing.Size(30, 25);
+            this.btnMarkerInputPath.TabIndex = 54;
+            this.btnMarkerInputPath.Text = "...";
+            this.btnMarkerInputPath.UseVisualStyleBackColor = true;
+            this.btnMarkerInputPath.Click += new System.EventHandler(this.BtnMarkerInputPath_Click);
+            // 
+            // btnMarkerOutputPath
+            // 
+            this.btnMarkerOutputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnMarkerOutputPath.Location = new System.Drawing.Point(643, 499);
+            this.btnMarkerOutputPath.Name = "btnMarkerOutputPath";
+            this.btnMarkerOutputPath.Size = new System.Drawing.Size(30, 25);
+            this.btnMarkerOutputPath.TabIndex = 55;
+            this.btnMarkerOutputPath.Text = "...";
+            this.btnMarkerOutputPath.UseVisualStyleBackColor = true;
+            this.btnMarkerOutputPath.Click += new System.EventHandler(this.BtnMarkerOutputPath_Click);
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(759, 534);
+            this.ClientSize = new System.Drawing.Size(759, 593);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "numSample";
             this.DefaultControlForEdit = "numSample";
@@ -967,5 +1039,11 @@
         private Win.UI.TextBox txtPicFilesPath;
         private Win.UI.Label labPicFilesPath;
         private Win.UI.Label labelClipFilesPath;
+        private Win.UI.TextBox txtMarkerOutputPath;
+        private Win.UI.Label label3;
+        private Win.UI.TextBox txtMarkerInputPath;
+        private Win.UI.Label label1;
+        private Win.UI.Button btnMarkerOutputPath;
+        private Win.UI.Button btnMarkerInputPath;
     }
 }
