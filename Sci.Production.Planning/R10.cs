@@ -655,10 +655,23 @@ namespace Sci.Production.Planning
 
                         for (int mon = 1; mon < 13; mon++)
                         {
+                            string Capacity = "0";
+
                             DataRow[] rows = dtFactory.Select(string.Format("Month = '{0}' and FactoryID = '{1}'", this.intYear.ToString() + mon.ToString("00"), factoryID));
-                            wks.Cells[this.sheetStart, mon + 1].Value = (rows.Length > 0) ? rows[0]["Capacity"] : 0;
+                            if (rows.Length > 0)
+                            {
+                                Capacity = rows[0]["str_Capacity"].ToString();
+                            }
+
+                            wks.Cells[this.sheetStart, mon + 1].Value = Capacity;
+
+                            // Change Color
+                            if (string.Compare(Capacity.Substring(0, 1), "=") == 0)
+                            {
+                                wks.Cells[this.sheetStart, mon + 1].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#f9f900"));
+                            }
                         }
-                        
+
                         wks.Cells[this.sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), this.sheetStart);
                         if (MyUtility.Convert.GetDecimal(dtFactory.Compute("Sum(Capacity)", $"FactoryID = '{factoryID}'")) == 0)
                         {
@@ -673,33 +686,9 @@ namespace Sci.Production.Planning
                     // 5 By non-sister
                     int nonSisStart = this.sheetStart;
                     DataTable dtByNonSister = this.SafeGetDt(dt2, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
-
-                   // this.SetTableToRow(wks, this.sheetStart, "non-sister sub-in", dtByNonSister);
-                    wks.Cells[this.sheetStart, 1].Value = "non-sister sub-in";
-                    for (int mon = 1; mon < 13; mon++)
-                    {
-                        string Capacity = "0";
-
-                        DataRow[] rows = dtByNonSister.Select(string.Format("Month = '{0}'", this.intYear.ToString() + mon.ToString("00")));
-                        if (rows.Length > 0)
-                        {
-                            Capacity = rows[0]["str_Capacity"].ToString();
-                        }
-
-                        wks.Cells[this.sheetStart, mon + 1].Value = Capacity;
-
-                        // Change Color
-                        if (string.Compare(Capacity.Substring(0, 1), "=") == 0)
-                        {
-                            wks.Cells[this.sheetStart, mon + 1].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#f9f900"));
-                        }
-                    }
-
-                    wks.Cells[this.sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), this.sheetStart);
-
+                    this.SetTableToRow(wks, this.sheetStart, "non-sister sub-in", dtByNonSister);
                     this.DrawBottomLine(wks, this.sheetStart, 1);
                     this.sheetStart += 1;
-                    lisSumFtyNonSis.Add(ftyStart.ToString() + "," + nonSisStart.ToString());
 
                     // Shortage
                     shortageStart = this.sheetStart;
