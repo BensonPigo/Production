@@ -3332,6 +3332,51 @@ when not matched by source then
 	delete;	
 
 
+
+------FreightCollectByCustomer---------------
+Merge Production.dbo.FreightCollectByCustomer as t
+Using (select a.* from Trade_To_Pms.dbo.FreightCollectByCustomer a ) as s
+on t.[Dest]=s.[Dest] and t.[BrandID] = s.[BrandID] and t.[CarrierID] = s.[CarrierID] and t.[Account]=s.[Account]
+when matched then 
+	update set	
+		 t.[CustCDID]		=s.[CustCDID]	
+		,t.[DestPort]		=s.[DestPort]	
+		,t.[OrderTypeID]	=s.[OrderTypeID]
+		,t.[Remarks]		=s.[Remarks]	
+		,t.[AddDate]		=s.[AddDate]	
+		,t.[AddName]		=s.[AddName]	
+		,t.[EditDate]		=s.[EditDate]	
+		,t.[EditName] 		=s.[EditName] 	
+when not matched by target then
+	insert ([BrandID],[Dest],[CarrierID],[Account],[CustCDID],[DestPort],[OrderTypeID],[Remarks],[AddDate],[AddName],[EditDate],[EditName]) 
+	values (s.[BrandID],s.[Dest],s.[CarrierID],s.[Account],s.[CustCDID],s.[DestPort],s.[OrderTypeID],s.[Remarks],s.[AddDate],s.[AddName],s.[EditDate],s.[EditName])
+when not matched by source then 
+	delete;	
+	
+------[Carrier_Detail_Freight]---------------
+Merge Production.dbo.[Carrier_Detail_Freight] as t
+Using (select a.* from Trade_To_Pms.dbo.[Carrier_Detail_Freight] a ) as s
+on t.[ID]=s.[ID] and t.[Ukey] = s.[Ukey]
+when matched then 
+	update set	
+		 t.[Payer]		=s.[Payer]
+		,t.[FromTag]	=s.[FromTag]
+		,t.[FromInclude]=s.[FromInclude]
+		,t.[FromExclude]=s.[FromExclude]
+		,t.[ToTag]		=s.[ToTag]
+		,t.[ToInclude]	=s.[ToInclude]
+		,t.[ToExclude]	=s.[ToExclude]
+		,t.[ToFty]		=s.[ToFty]
+		,t.[AddName]	=s.[AddName]
+		,t.[AddDate]	=s.[AddDate]
+		,t.[EditName]	=s.[EditName]
+		,t.[EditDate]	=s.[EditDate]	
+when not matched by target then
+	insert ([ID],[Payer],[FromTag],[FromInclude],[FromExclude],[ToTag],[ToInclude],[ToExclude],[ToFty],[AddName],[AddDate],[EditName],[EditDate])
+	values (s.[ID],s.[Payer],s.[FromTag],s.[FromInclude],s.[FromExclude],s.[ToTag],s.[ToInclude],s.[ToExclude],s.[ToFty],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+when not matched by source then 
+	delete;	
+
 END
 
 

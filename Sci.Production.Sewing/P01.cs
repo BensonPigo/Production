@@ -2402,8 +2402,7 @@ AND p0.PKey IN (
 FOR XML PATH('')
 
 ");
-
-                string ccAddress = string.Empty;
+                string ccAddress = "";
                 string subject = "Request Unlock Sewing";
 
                 string od = string.Empty;
@@ -2423,7 +2422,11 @@ Reason : {MyUtility.GetValue.Lookup($@"select name from Reason where ReasonTypeI
 Remark : {callReason.ReturnRemark}
 ";
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
+
+                // email畫面關閉後額外塞入CC人員
+                email.SendingBefore += this.Email_SendingBefore;
                 email.ShowDialog(this);
+
                 if (email.DialogResult == DialogResult.OK)
                 {
                     this.btnRequestUnlock.Enabled = false;
@@ -2436,6 +2439,17 @@ values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}','{callReason.R
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// email畫面關閉後額外塞入CC人員
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Email_SendingBefore(object sender, MailTo.SendMailBeforeArg e)
+        {
+            e.Mail.CC.Add("planning@sportscity.com.tw");
+            e.Mail.CC.Add("team3@sportscity.com.tw");
         }
 
         /// <inheritdoc/>
@@ -2498,6 +2512,22 @@ where ID = '{this.CurrentMaintain["ID"]}'
         protected override void ClickSend()
         {
             base.ClickSend();
+            string sqlcmdChk = $@"
+select 1
+FROM SewingOutput s
+INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
+INNER JOIN Orders o ON o.ID = sd.OrderId
+where 1=1
+    and s.OutputDate < = CAST (GETDATE() AS DATE) 
+    and s.LockDate is null 
+    and s.FactoryID  = '{Sci.Env.User.Factory}'
+";
+            if (!MyUtility.Check.Seek(sqlcmdChk))
+            {
+                MyUtility.Msg.WarningBox("Already lock now!");
+                return;
+            }
+
             if (MyUtility.Msg.QuestionBox("Lock sewing data?") == DialogResult.No)
             {
                 return;
@@ -2531,7 +2561,10 @@ where 1=1
                 scope.Complete();
             }
 
-            SendMail();
+            if (MyUtility.Check.Seek($@"select 1 from Factory where type !='S' and id = '{Sci.Env.User.Factory}'"))
+            {
+                SendMail();
+            }
         }
 
         /// <summary>

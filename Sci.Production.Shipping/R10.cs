@@ -116,11 +116,15 @@ namespace Sci.Production.Shipping
                     if (this.reportType == 1)
                     {
                         #region 組SQL
-                        sqlCmd.Append(@"with tmpGB 
+                        sqlCmd.Append(@"
+with tmpGB 
 as (
 select distinct 'GARMENT' as Type,
 g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,
-IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
+[Category] = case when o.Category = 'B' then 'Bulk'
+					  when o.Category = 'S' then 'Sample'
+					  when o.Category = 'G' then 'Garment'
+					  else '' end,
 g.CustCDID,g.Dest,g.ShipModeID,p.PulloutDate,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
 s.BLNo,
 se.CurrencyID,
@@ -193,7 +197,10 @@ where s.Type = 'EXPORT'
 as (
 select distinct 'GARMENT' as Type,
 p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,
-IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
+[Category] = case when o.Category = 'B' then 'Bulk'
+					  when o.Category = 'S' then 'Sample'
+					  when o.Category = 'G' then 'Garment'
+					  else '' end,
 o.CustCDID,o.Dest,p.ShipModeID,p.PulloutDate,
 '' as Forwarder,
 s.BLNo,
@@ -259,7 +266,10 @@ with tmpGB
 as (
 select distinct 'GARMENT' as Type,
 g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,
-IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
+[Category] = case when o.Category = 'B' then 'Bulk'
+					  when o.Category = 'S' then 'Sample'
+					  when o.Category = 'G' then 'Garment'
+					  else '' end,
 pd.OrderID,oq.BuyerDelivery,
 g.CustCDID,g.Dest,g.ShipModeID,p.ID as packingid, p.PulloutID,p.PulloutDate,
 g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
@@ -334,7 +344,10 @@ tmpPL
 as (
 select distinct 'GARMENT' as Type,
 p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,
-IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
+[Category] = case when o.Category = 'B' then 'Bulk'
+					  when o.Category = 'S' then 'Sample'
+					  when o.Category = 'G' then 'Garment'
+					  else '' end,
 pd.OrderID,oq.BuyerDelivery,
 o.CustCDID,o.Dest,p.ShipModeID,p.ID as packingid, p.PulloutID,p.PulloutDate,
 '' as Forwarder,
@@ -424,14 +437,25 @@ outer apply (
 	)s
 
 
-select type,id,OnBoardDate,Shipper,BrandID,Category,[OQty]=sum(oqs.OQty),CustCDID,
+select type,id,OnBoardDate,Shipper,BrandID,Category = Category.value,[OQty]=sum(oqs.OQty),CustCDID,
 Dest,ShipModeID,PulloutDate,
 [ShipQty]=sum(pt.ShipQty),[ctnqty]=sum(pt.ctnqty),[gw]=sum(pt.gw),[CBM]=sum(pt.CBM),Forwarder,BLNo,CurrencyID 
 into #temp3
 from #temp2 a
 outer apply(select sum(qty) as OQty from Order_QtyShip  WITH (NOLOCK) where id=a.OrderID) as oqs
 outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList WITH (NOLOCK)  where id=a.packingID) as pt
-group by type,id,OnBoardDate,Shipper,BrandID,Category,CustCDID,
+outer apply(
+	select value = Stuff((
+		select concat(',',Category)
+		from (
+				select 	distinct Category
+				from #temp2 d
+				where d.id = a.ID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Category
+group by type,id,OnBoardDate,Shipper,BrandID,Category.value,CustCDID,
 Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID 
 
 select a.*,b.AccountID,b.Amount 
@@ -562,7 +586,11 @@ drop table #temp1,#temp2,#temp3,#temp4,#tmpTotoalCBM,#tmpTotoalGW
                     #region 組SQL
                     sqlCmd.Append(@"with tmpGB 
 as (
-select distinct 'GARMENT' as Type,g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
+select distinct 'GARMENT' as Type,g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,
+[Category] = case when o.Category = 'B' then 'Bulk'
+					  when o.Category = 'S' then 'Sample'
+					  when o.Category = 'G' then 'Garment'
+					  else '' end,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
 s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
@@ -635,7 +663,11 @@ where s.Type = 'EXPORT'
                     sqlCmd.Append(@"),
 tmpPL
 as (
-select distinct 'GARMENT' as Type,p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
+select distinct 'GARMENT' as Type,p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,
+[Category] = case when o.Category = 'B' then 'Bulk'
+					  when o.Category = 'S' then 'Sample'
+					  when o.Category = 'G' then 'Garment'
+					  else '' end,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,'' as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
 s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
@@ -779,7 +811,7 @@ where s.Type = 'EXPORT'");
 select distinct a.* 
 into #Accno 
 from (
-select Accountid as Accno from tmpMaterialData where AccountID not in ('61012001','61012002','61012003','61012004','61012005','59121111')
+select Accountid as Accno from tmpMaterialData where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
 and AccountID <> ''
 ) a
 select Accno=cast(Accno as nvarchar(100)) ,rn=ROW_NUMBER() over (order by Accno)
@@ -809,7 +841,7 @@ order by SUBSTRING(Accno,1,4),rn"));
                     }
 
                     StringBuilder allAccno = new StringBuilder();
-                    allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005],[59121111]");
+                    allAccno.Append("[61022001],[61022002],[61022003],[61022004],[61022005],[59121111]");
                     foreach (DataRow dr in this.accnoData.Rows)
                     {
                         allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));

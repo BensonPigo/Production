@@ -19,6 +19,7 @@ namespace Sci.Production.Class
         private bool _FilteMDivision = false;
         private bool _boolFtyGroupList = true;
         private bool _IsProduceFty = false;
+        private Object _MDivision;
 
         [Description("是否要顯示 Junk 的資料")]
         public bool IssupportJunk
@@ -39,6 +40,13 @@ namespace Sci.Production.Class
         {
             get { return _IsProduceFty; }
             set { _IsProduceFty = value; }
+        }
+
+        [Description("M元件")]
+        public Object MDivision
+        {
+            get { return _MDivision; }
+            set { _MDivision = value; }
         }
 
         /// <summary>
@@ -64,7 +72,6 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
             #region SQL Parameter
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
             #endregion
             #region SQL Filte
             List<string> listFilte = new List<string>();
@@ -78,6 +85,12 @@ namespace Sci.Production.Class
             }
             if (FilteMDivision)
             {
+                listSqlPar.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+                listFilte.Add("MDivisionID = @MDivision");
+            }
+            if (_MDivision != null && !MyUtility.Check.Empty(((Sci.Win.UI.TextBox)_MDivision).Text))
+            {
+                listSqlPar.Add(new SqlParameter("@MDivision", ((Sci.Win.UI.TextBox)_MDivision).Text));
                 listFilte.Add("MDivisionID = @MDivision");
             }
             #endregion

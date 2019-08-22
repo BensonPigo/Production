@@ -189,7 +189,7 @@ namespace Sci.Production.Thread
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("SEQ", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("ThreadLocation", header: "Thread Location", width: Widths.Auto(true), iseditingreadonly: true)
-                .Text("UseRatioNumeric", header: "UseRatioNumeric", width: Widths.Auto(true), iseditingreadonly: true)
+                .Text("UseRatio", header: "UseRatio", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("Allowance", header: "Start End Loss", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(16), settings: refno_col);
 
@@ -229,7 +229,7 @@ namespace Sci.Production.Thread
                     select
                         MT.SEQ,
                         MT.ThreadLocation,
-                        MT.UseRatioNumeric,
+                        MT.UseRatio,
                         MT.Allowance,
                         TD.id,
                         TD.Refno

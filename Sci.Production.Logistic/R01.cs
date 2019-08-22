@@ -91,6 +91,7 @@ select  o.FactoryID
         , s.StyleName
         , o.CustPONo
         , o.Customize1
+		, o.Junk
         , oq.BuyerDelivery
         , oq.ShipmodeID
 		, oq.Seq
@@ -101,6 +102,7 @@ select  o.FactoryID
         , o.ClogCTN
 		, o.CfaCTN
         , o.PulloutCTNQty
+		, o.StyleUkey
 into #tmp_Orders
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
@@ -138,7 +140,6 @@ where o.Category = 'B'");
             }
 
             sqlCmd.Append(@"
-
 select distinct pd.OrderID,pd.OrderShipmodeSeq,pd.ClogLocationId
 into #tmp_ClogLocationId
 from PackingList_Detail pd WITH (NOLOCK) 
@@ -182,6 +183,12 @@ inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID
 where ReceiveDate is not null and pd.DisposeFromClog= 0
 group by pd.OrderID
 
+select pd.OrderID,pd.OrderShipmodeSeq,sum(ScanQty) ScanQtybyShipmode
+into #tmp_ScanQtybyShipmode
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join (select distinct id,Seq from #tmp_Orders) o on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq
+group by pd.OrderID,pd.OrderShipmodeSeq
+
 select pd.OrderID,sum(ShipQty) TtlPullGMTQty
 into #tmp_TtlPullGMTQty
 from Pullout p WITH (NOLOCK) 
@@ -198,7 +205,28 @@ inner join #tmp_Orders o on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq
 where p.Status <> 'New'
 group by pd.OrderID,pd.OrderShipmodeSeq
 
-
+select Orderid=id,sewQty=sum(QAQty)
+into #tmp_sewQty
+from(
+	select id,Article, SizeCode, QAQty = MIN(QAQty)
+	from(
+		select
+			o.id
+			, oq.Article
+			, oq.SizeCode
+			, oq.Qty
+			, ComboType = sl.Location
+			, QAQty = isnull(sum(sdd.QAQty),0)
+		from #tmp_Orders o WITH (NOLOCK) 
+		inner join Style_Location sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey
+		inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+		left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
+			on sdd.OrderId = o.ID and sdd.Article = oq.Article and sdd.SizeCode = oq.SizeCode and sdd.ComboType = sl.Location
+		group by o.id,oq.Article,oq.SizeCode,oq.Qty,sl.Location
+	)m
+	group by id,Article,SizeCode
+)s
+group by id
 
 select o.*,
 	 Location = stuff ((select concat(',',ClogLocationId)  from #tmp_ClogLocationId
@@ -213,9 +241,11 @@ select o.*,
 	,TtlGMTQty = isnull(ttlg.TtlGMTQty,0)
 	,TtlClogGMTQty = isnull(ttlc.TtlClogGMTQty,0)
 	,TtlPullGMTQty = isnull(ttlp.TtlPullGMTQty,0)
+	,ScanQtybyShipmode=isnull(ttls.ScanQtybyShipmode,0)
 	,GMTQty = isnull(ctn.GMTQty,0)
 	,ClogGMTQty = isnull(clog.ClogGMTQty,0)
 	,PullGMTQty = isnull(pullG.PullGMTQty,0)
+	,sewQty=isnull(tlsq.sewQty,0)
 into #tmp 
 from #tmp_Orders o
 left join #tmp_CTNQty ctn on o.ID = ctn.OrderID and o.Seq = ctn.OrderShipmodeSeq
@@ -224,9 +254,12 @@ left join #tmp_PullQty pull on o.ID = pull.OrderID and o.Seq = pull.OrderShipmod
 left join #tmp_TtlGMTQty ttlg on o.ID = ttlg.OrderID 
 left join #tmp_TtlClogGMTQty ttlc on o.ID = ttlc.OrderID
 left join #tmp_TtlPullGMTQty ttlp on o.ID = ttlp.OrderID 
+left join #tmp_ScanQtybyShipmode ttls on o.ID = ttls.OrderID and ttls.OrderShipmodeSeq = pull.OrderShipmodeSeq
 left join #tmp_PullGMTQty pullG on o.ID = pullG.OrderID and o.Seq = pullG.OrderShipmodeSeq 
+left join #tmp_sewQty tlsq on o.ID = tlsq.Orderid
 
-drop table #tmp_Orders,#tmp_ClogLocationId,#tmp_CTNQty,#tmp_ClogQty,#tmp_PullQty,#tmp_TtlGMTQty,#tmp_TtlClogGMTQty,#tmp_TtlPullGMTQty,#tmp_PullGMTQty
+drop table #tmp_Orders,#tmp_ClogLocationId,#tmp_CTNQty,#tmp_ClogQty,#tmp_PullQty,#tmp_TtlGMTQty
+,#tmp_TtlClogGMTQty,#tmp_TtlPullGMTQty,#tmp_PullGMTQty,#tmp_ScanQtybyShipmode,#tmp_sewQty
 
 select t.ID,RetCtnBySP = count(cr.ID)
 into #tmp2
@@ -234,12 +267,28 @@ from #tmp t left join ClogReturn cr on cr.OrderID = t.ID
 group by t.ID
 
 select 
-	t.FactoryID,t.MCHandle,t.SewLine,t.ID,t.BrandID,t.StyleID,t.StyleName,t.CustPONo,t.Customize1,t.SciDelivery,t.BuyerDelivery,t.ShipmodeID,t.Location
+     t.FactoryID
+    ,t.MCHandle
+    ,t.SewLine
+    ,t.ID
+    ,t.BrandID
+    ,t.StyleID
+    ,t.StyleName
+    ,t.CustPONo
+    ,t.Customize1
+    ,t.SciDelivery
+    ,[Junk]= IIF(t.Junk=1,'Y','')
+    ,t.BuyerDelivery
+    ,t.ShipmodeID
+    ,t.Location
 	,t.TotalCTN,DRYCTN=isnull(t.DRYCTN,0),PackErrCTN = isnull(t.PackErrCTN,0),ClogCTN=isnull(t.ClogCTN,0),CfaCTN=isnull(t.CfaCTN,0),t2.RetCtnBySP
 	,[Bal Ctn by SP#]=isnull(t.TotalCTN,0)-isnull(t.ClogCTN,0) -isnull(t.DRYCTN,0) -isnull(t.CfaCTN,0) - isnull(t.PackErrCTN,0)
 	,[% by SP#]=iif(isnull(t.TtlGMTQty,0)=0,0,Round(1-((t.TtlGMTQty-isnull(t.TtlClogGMTQty,0))/t.TtlGMTQty),2)*100)
 	,[Ctn SDP by SP#]=iif(isnull(t.TotalCTN,0)=0, 0,ROUND(isnull(t.ClogCTN,0)/t.TotalCTN,2)*100)
-	,t.PulloutCTNQty,t.TtlGMTQty,t.TtlClogGMTQty
+	,t.PulloutCTNQty
+	,t.TtlGMTQty
+	,[Sewing Qty by SP#]=sewQty
+	,t.TtlClogGMTQty
 	,[Bal Qty by SP#] = isnull(t.TtlGMTQty,0)-isnull(t.TtlClogGMTQty,0)
 	,[Qty SDP by SP#]=iiF(isnull(t.TtlGMTQty,0)=0,0,ROUND(isnull(t.TtlClogGMTQty,0)/t.TtlGMTQty,2)*100)
 	,t.TtlPullGMTQty,t.CTNQty,t.ClogQty
@@ -247,7 +296,9 @@ select
 	,[Ctn SDP by Shipmode]=iiF(isnull(t.CTNQty,0)=0,0,ROUND(isnull(t.ClogQty,0)/t.CTNQty,2)*100)
 	,t.PullQty
 	,[CTN in CLOG]=isnull(t.ClogQty,0)-isnull(t.PullQty,0)
-	,t.GMTQty,t.ClogGMTQty
+	,t.GMTQty
+	,[Scan Qty by Shipmode]=ScanQtybyShipmode
+	,t.ClogGMTQty
 	,[Bal Qty by Shipmode]=isnull(t.GMTQty,0)-isnull(t.PullGMTQty,0)
 	,[Qty SDP by Shipmode]=iif(isnull(t.GMTQty,0)=0,0,ROUND(isnull(t.ClogGMTQty,0)/t.GMTQty,2)*100)
 	,t.PullGMTQty
@@ -257,6 +308,7 @@ order by t.FactoryID,t.ID,t.BuyerDelivery
 
 drop table #tmp,#tmp2
                 
+
 ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);

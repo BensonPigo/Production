@@ -90,7 +90,7 @@ namespace Sci.Production.Shipping
                 excel.Visible = false;
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
                 int intRowsCount = worksheet.UsedRange.Rows.Count + 6;
-                int intRowsStart = 8;
+                int intRowsStart = 3;
                 int intRowsRead = intRowsStart - 1;
 
                 Microsoft.Office.Interop.Excel.Range range;

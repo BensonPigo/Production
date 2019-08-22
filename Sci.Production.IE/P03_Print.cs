@@ -341,7 +341,7 @@ order by no
 
             // 插圖 Picture1
             intRowsStart++;
-            string destination_path = MyUtility.GetValue.Lookup("select PicPath from System WITH (NOLOCK) ", null);
+            string destination_path = MyUtility.GetValue.Lookup("select StyleSketch from System WITH (NOLOCK) ", null);
             string picture12 = string.Format("select Picture1, Picture2 from Style where id = '{0}' and BrandID = '{1}' and SeasonID = '{2}'", style, brand, season);
             DataRow pdr;
             MyUtility.Check.Seek(picture12, out pdr);
@@ -433,6 +433,11 @@ order by no
             // Template
             worksheet.Cells[rownum, 27] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,5,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
             worksheet.Cells[rownum, 18] = $"=IF(OR(ISNA(VLOOKUP(O{rownum},Operation,5,0)),M{rownum}=\"\"),\"\",IF(VLOOKUP(O{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
+
+            // only Machine Type
+            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,3,0)),\"\",IF(VLOOKUP(D{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum},Operation,3,0)))";
+            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,3,0)),\"\",IF(VLOOKUP(O{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum},Operation,3,0)))";
+
         }
 
         private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators)
@@ -672,8 +677,8 @@ order by no
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
                 string endRow = (norow + 5).ToString();
-                worksheet.Names.Add("MachineINV1", worksheet.Range["J17", "J" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineINV2", worksheet.Range["M17", "M" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV1", worksheet.Range["W17", "W" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["X17", "X" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["Z19", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["Q17", "R" + endRow], Type.Missing);
                 worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$T$17:$T${endRow}))/2,0)", Type.Missing);
@@ -798,8 +803,8 @@ order by no
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
                 int endRow = norow + 5;
-                worksheet.Names.Add("MachineINV1", worksheet.Range["J17", "J" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineINV2", worksheet.Range["M17", "M" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV1", worksheet.Range["W17", "W" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["X17", "X" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["Z19", "AA" + endRow]);
                 worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["Q17", "R" + endRow]);
                 worksheet.Names.Add("TtlTMS", $"=(SUM('Line Mapping'!$B$17:$B${endRow})+SUM('Line Mapping'!$T$17:$T${endRow}))/2");

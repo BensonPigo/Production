@@ -245,9 +245,11 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
 	,t.WhseArrival
 	,SUM(t.StockQty) AS StockQty1
 	,[BalanceQty]=IIF(BalanceQty.BalanceQty=0,NULL,BalanceQty.BalanceQty)
-	,t.TotalRollsCalculated,
-	(SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))[MinSciDelivery],
-	(SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))[MinBuyerDelivery],
+	,t.TotalRollsCalculated
+    ,mp.ALocation
+	,mp.BLocation	
+	,[MinSciDelivery] = (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))
+	,[MinBuyerDelivery] = (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category)),
 	F.Refno,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,
 	C.WeaveTypeID,
 	IIF(F.Nonphysical = 1,'Y',' ')[N/A Physical],
@@ -304,6 +306,7 @@ from dbo.FIR F WITH (NOLOCK)
     inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
     inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
 	LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
+    left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
     OUTER APPLY(SELECT * FROM  Fabric C WITH (NOLOCK) WHERE C.SCIRefno = F.SCIRefno)C
 OUTER APPLY(
 		SELECT * FROM  FIR_Laboratory L WITH (NOLOCK) WHERE 1=1		
@@ -372,6 +375,7 @@ ftp.TotalPoint,F.Odor,F.OdorDate,f.PhysicalInspector,f.WeightInspector
 ,fl.CrockingInspector,fl.HeatInspector,fl.WashInspector,v.Name,cfd.Name
 ,t.TotalRollsCalculated
 ,BalanceQty.BalanceQty
+,mp.ALocation,mp.BLocation
 
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)

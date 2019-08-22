@@ -727,6 +727,8 @@ tmpTtlManPower as (
 				, ManPower = Max(ActManPower)
 		from #tmp
 		where LastShift <> 'O'
+		--排除 subcon in non sister的數值
+        and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInSisterFty <> 0 ))   
 		group by OutputDate, FactoryID, SewingLineID, LastShift, Team 
 	) a
 	outer apply
@@ -1572,7 +1574,7 @@ where f.Junk = 0",
         {
             insertRow = 5;
             Microsoft.Office.Interop.Excel.Range rngToInsert;
-            object[,] objArray = new object[1, 15];
+            object[,] objArray = new object[1, 16];
             int iQAQty = 2, iTotalCPU = 3, iCPUSewer = 6, iAvgWorkHour = 7, iManHour = 9, iEff = 10;
             string sEff;
             foreach (DataRow dr in this.printData.Rows)
@@ -1602,6 +1604,9 @@ where f.Junk = 0",
                         {
                             objArray[0, 11] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManpower;
                             objArray[0, 12] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManhours;
+
+                            string Holiday = (pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().Holiday == 1) ? "Y" : "";
+                            objArray[0, 14] = Holiday;
                         }
                         else
                         {
@@ -1611,7 +1616,7 @@ where f.Junk = 0",
 
                         objArray[0, 10] = MyUtility.Convert.GetDouble(objArray[0, 11]) == 0 ? 0 : MyUtility.Convert.GetDouble(objArray[0, 12]) / MyUtility.Convert.GetDouble(objArray[0, 11]);
                         objArray[0, 13] = string.Format("=IF(M{0}=0,0,ROUND((C{0}/(M{0}*3600/1400))*100,1))", insertRow);
-                        objArray[0, 14] = string.Empty;
+                        objArray[0, 15] = string.Empty;
                     }
                 }
 

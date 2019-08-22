@@ -29,7 +29,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.destination_path = MyUtility.GetValue.Lookup("select PicPath from System WITH (NOLOCK) ", null);
+            this.destination_path = MyUtility.GetValue.Lookup("select StyleSketch from System WITH (NOLOCK) ", null);
         }
 
         /// <inheritdoc/>
@@ -120,6 +120,23 @@ namespace Sci.Production.PPIC
             {
                 this.displayStyleApprove2.Text = string.Empty;
             }
+
+            #region LocalStyle Enable [Attach][Delete] Button
+            if (MyUtility.Check.Empty(this.CurrentMaintain["LocalStyle"]))
+            {
+                this.btnPicture1Attach.Visible = false;
+                this.btnPicture2Attach.Visible = false;
+                this.btnPicture1Delete.Visible = false;
+                this.btnPicture2Delete.Visible = false;
+            }
+            else
+            {
+                this.btnPicture1Attach.Visible = true;
+                this.btnPicture2Attach.Visible = true;
+                this.btnPicture1Delete.Visible = true;
+                this.btnPicture2Delete.Visible = true;
+            }
+            #endregion
         }
 
         /// <inheritdoc/>

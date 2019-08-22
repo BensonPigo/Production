@@ -56,7 +56,8 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboFrom, 2, 1, "1,Factory,2,Brand");
-            MyUtility.Tool.SetupCombox(this.comboTO, 2, 1, "1,SCI,2,Factory,3,Sullpier,4,Brand");
+            MyUtility.Tool.SetupCombox(this.comboTO, 2, 1, "1,SCI,2,Factory,3,Supplier,4,Brand");
+            MyUtility.Tool.SetupCombox(this.cmbPayer, 2, 1, "3RD,Freight Collect by 3rd Party,CUST,Freight Collect by Customer,FTY,Freight Pre-Paid by Fty,HAND,Hand Carry");
         }
 
         /// <inheritdoc/>
@@ -295,6 +296,11 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
         // Context Menu選擇Delete this Record
         private void MenuDelete()
         {
+            if (!this.CheckPullexists())
+            {
+                return;
+            }
+
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "1" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "2" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "3")
             {
                 Sci.Production.Shipping.P02_AddByPOItem callPOItemForm = new Sci.Production.Shipping.P02_AddByPOItem();
@@ -504,6 +510,11 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                     this.batchprint.Enabled = false;
                 }
             }
+
+            string sqlsupp = $@"select Abb from LocalSupp with(nolock) where Junk = 0 and id ='{this.CurrentMaintain["ByFtyCarrier"]}' ";
+            this.disSuppabb.Value = MyUtility.GetValue.Lookup(sqlsupp);
+
+            this.CarrierbyEnable();
         }
 
         /// <inheritdoc/>
@@ -657,6 +668,8 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             this.CurrentMaintain["CTNNW"] = 0;
             this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             this.txtCarrier.ReadOnly = true; // 因為Key Down事件，如果按Delete or Backspace按鍵會真的將字元給移除，如果跳出視窗後按Cancel的話，資料會不正確，所以就把此欄位設定為ReadOnly
+            this.txtCarrierbyCustomer.ReadOnly = true;
+            this.txtCarrierbyFty.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -679,6 +692,8 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             {
                 this.txtTO.ReadOnly = MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "1" ? true : false;
                 this.txtCarrier.ReadOnly = true;
+                this.txtCarrierbyCustomer.ReadOnly = true;
+                this.txtCarrierbyFty.ReadOnly = true;
             }
             else
             {
@@ -687,6 +702,8 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                 this.txtShipMark.ReadOnly = true;
                 this.txtPort.ReadOnly = true;
                 this.txtCarrier.ReadOnly = true;
+                this.txtCarrierbyCustomer.ReadOnly = true;
+                this.txtCarrierbyFty.ReadOnly = true;
                 this.txtBLNo.ReadOnly = true;
                 this.comboFrom.ReadOnly = true;
                 this.comboTO.ReadOnly = true;
@@ -753,9 +770,22 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["CarrierID"]))
+
+            if (this.EditMode && this.cmbPayer.Text.ToLower() == "Freight Collect By 3rd Party".ToLower() && MyUtility.Check.Empty(this.CurrentMaintain["CarrierID"]))
             {
                 this.txtCarrier.Focus();
+                MyUtility.Msg.WarningBox("Carrier can't empty");
+                return false;
+            }
+            else if (this.EditMode && this.cmbPayer.Text.ToLower() == "Freight Collect By Customer".ToLower() && MyUtility.Check.Empty(this.CurrentMaintain["ByCustomerCarrier"]))
+            {
+                this.txtCarrierbyCustomer.Focus();
+                MyUtility.Msg.WarningBox("Carrier can't empty");
+                return false;
+            }
+            else if (this.EditMode && this.cmbPayer.Text.ToLower() == "Freight Pre-Paid by Fty".ToLower() && MyUtility.Check.Empty(this.CurrentMaintain["ByFtyCarrier"]))
+            {
+                this.txtCarrierbyFty.Focus();
                 MyUtility.Msg.WarningBox("Carrier can't empty");
                 return false;
             }
@@ -799,6 +829,12 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
         }
 
         /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
@@ -819,9 +855,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             this.CurrentMaintain["FromTag"] = this.comboFrom.SelectedValue;
             this.CurrentMaintain["FromSite"] = string.Empty;
             this.displayFrom.Value = string.Empty;
-            this.CurrentMaintain["CarrierID"] = string.Empty;
-            this.displayCarrier.Value = string.Empty;
-            this.CurrentMaintain["ExpressACNo"] = string.Empty;
+            this.ClearCarrier();
         }
 
         // From Site
@@ -857,6 +891,8 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                 IList<DataRow> brand = item.GetSelecteds();
                 this.displayFrom.Value = MyUtility.Convert.GetString(brand[0]["NameEN"]);
             }
+
+            this.ClearCarrier();
         }
 
         // From Site
@@ -938,7 +974,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                     }
                 }
 
-                this.GetCarrier();
+                this.ClearCarrier();
             }
         }
 
@@ -948,14 +984,9 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             this.CurrentMaintain["ToTag"] = this.comboTO.SelectedValue;
             this.CurrentMaintain["ToSite"] = MyUtility.Convert.GetString(this.comboTO.SelectedValue) == "1" ? "SCI" : string.Empty;
             this.displayTO.Value = string.Empty;
-            this.CurrentMaintain["CarrierID"] = string.Empty;
-            this.displayCarrier.Value = string.Empty;
-            this.CurrentMaintain["ExpressACNo"] = string.Empty;
             this.txtTO.ReadOnly = MyUtility.Convert.GetString(this.comboTO.SelectedValue) == "1" ? true : false;
-            if (MyUtility.Convert.GetString(this.comboTO.SelectedValue) == "1")
-            {
-                this.GetCarrier();
-            }
+
+            this.ClearCarrier();
         }
 
         // To Site
@@ -1011,6 +1042,8 @@ and IsFactory=0";
                 this.displayTO.Value = brand[0]["NameEN"].ToString();
                 this.CurrentMaintain["Dest"] = brand[0]["CountryID"].ToString();
             }
+
+            this.ClearCarrier();
         }
 
         // To Site
@@ -1144,70 +1177,10 @@ and ID = @id ";
                     }
                 }
 
-                this.GetCarrier();
+                this.ClearCarrier();
             }
         }
 
-        private void GetCarrier()
-        {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["FromTag"]) && MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1" && !MyUtility.Check.Empty(this.CurrentMaintain["FromSite"]) && !MyUtility.Check.Empty(this.CurrentMaintain["ToSite"]))
-            {
-                string fromSite = string.Empty, toSite = string.Empty, fromCountry = string.Empty, toCountry = string.Empty;
-                fromSite = MyUtility.Convert.GetString(this.CurrentMaintain["FromSite"]);
-                fromCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Factory WITH (NOLOCK) where ID = '{0}'", fromSite));
-                toSite = MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]);
-                switch (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]))
-                {
-                    case "1":
-                        toCountry = "TW";
-                        break;
-                    case "2":
-                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", toSite));
-                        break;
-                    case "3":
-                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Supp WITH (NOLOCK) where ID = '{0}'  union all select CountryID from LocalSupp WITH (NOLOCK) where ID = '{0}'", toSite));
-                        break;
-                    case "4":
-                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Brand WITH (NOLOCK) where ID = '{0}'", toSite));
-                        break;
-                }
-
-                string sqlCmd = string.Format(
-                    @"declare @1st varchar(4),@2nd varchar(4),@3rd varchar(4),@4th varchar(4),@5th varchar(4),@6th varchar(4) ;
-select @1st=ID from Carrier_FtyRule where FromSite = '{0}' and ToSite = '{2}';
-select @2nd=ID from Carrier_FtyRule where FromSite = '{0}' and ToCountry = '{3}';
-select @3rd=ID from Carrier_FtyRule where FromCountry = '{1}' and ToSite = '{2}';
-select @4th=ID from Carrier_FtyRule where FromCountry = '{1}' and ToCountry = '{3}';
-select @5th=ID from Carrier_FtyRule where FromSite = '{0}';
-select @6th=ID from Carrier_FtyRule where FromCountry = '{1}';
-
-select c.ID,c.Account,c.SuppID,isnull(s.AbbEN,isnull(ls.Abb,'')) as Abb from Carrier c WITH (NOLOCK) 
-left join Supp s WITH (NOLOCK) on c.SuppID = s.ID
-left join Localsupp ls WITH (NOLOCK) on c.SuppID = ls.ID
-where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4th is null,iif(@5th is null,@6th,@5th),@4th),@3rd),@2nd)),@1st));",
-                    fromSite,
-                    fromCountry,
-                    toSite,
-                    toCountry);
-
-                DataTable carrierData;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out carrierData);
-                if (result && carrierData.Rows.Count > 0)
-                {
-                    this.CurrentMaintain["CarrierID"] = carrierData.Rows[0]["ID"];
-                    this.CurrentMaintain["ExpressACNo"] = carrierData.Rows[0]["Account"];
-                    this.displayCarrier.Value = MyUtility.Convert.GetString(carrierData.Rows[0]["SuppID"]) + " " + MyUtility.Convert.GetString(carrierData.Rows[0]["Abb"]);
-                }
-                else
-                {
-                    this.CurrentMaintain["CarrierID"] = string.Empty;
-                    this.CurrentMaintain["ExpressACNo"] = string.Empty;
-                    this.displayCarrier.Value = string.Empty;
-                }
-            }
-        }
-
-        // ETD
         private void DateETD_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(this.dateETD.Value) && this.dateETD.OldValue != this.dateETD.Value)
@@ -1268,12 +1241,32 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
         // Carrier按右鍵帶出的資料
         private void CarrierPopup()
         {
-            string sqlCmd = @"select c.ID,c.SuppID,isnull(s.AbbEN,isnull(ls.Abb,'')) as Abb,c.Account
-from Carrier c WITH (NOLOCK) 
-left join Supp s WITH (NOLOCK) on c.SuppID = s.ID
-left join Localsupp ls WITH (NOLOCK) on c.SuppID = ls.ID
-where c.Junk = 0";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "5,8,20,20", this.txtCarrier.Text);
+            string fromTag = this.NametoTag(this.comboFrom.Text);
+            string toTag = this.NametoTag(this.comboTO.Text);
+            if (MyUtility.Check.Empty(this.txtFrom.Text))
+            {
+                MyUtility.Msg.WarningBox($"Please select < From {this.comboFrom.Text} >");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtTO.Text))
+            {
+                MyUtility.Msg.WarningBox($"Please select < To {this.comboTO.Text} >");
+                return;
+            }
+
+            string fromCountry = this.ConverToCountry(this.comboFrom.Text, this.txtFrom.Text);
+            string toCountry = this.ConverToCountry(this.comboTO.Text, this.txtTO.Text);
+            string sqlCmd = $@"
+select CarrierID=ca.id,SuppID=su.ID,su.AbbEN,Account
+from Carrier ca
+inner join Carrier_Detail_Freight cd on  cd.id=ca.id
+inner join Supp su on su.ID = ca.SuppID
+where FromTag='{fromTag}' 
+and ToTag='{toTag}' 
+and (FromInclude like'%{fromCountry}%' or FromInclude = '')
+and (ToInclude like'%{toCountry}%' or ToInclude = '')";
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,8,10,20", this.txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -1282,7 +1275,7 @@ where c.Junk = 0";
 
             IList<DataRow> carrier = item.GetSelecteds();
             this.CurrentMaintain["CarrierID"] = item.GetSelectedString();
-            this.displayCarrier.Value = MyUtility.Convert.GetString(carrier[0]["SuppID"]) + " " + MyUtility.Convert.GetString(carrier[0]["Abb"]);
+            this.displayCarrier.Value = MyUtility.Convert.GetString(carrier[0]["SuppID"]) + " " + MyUtility.Convert.GetString(carrier[0]["AbbEN"]);
             this.CurrentMaintain["ExpressACNo"] = carrier[0]["Account"];
         }
 
@@ -1427,6 +1420,11 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 return;
             }
 
+            if (!this.CheckPullexists())
+            {
+                return;
+            }
+
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Junk > this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)
             {
@@ -1435,7 +1433,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
 
             IList<string> updateCmds = new List<string>();
             updateCmds.Add(string.Format("update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            updateCmds.Add(string.Format("update PackingList set ExpressID = '' where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update PackingList set ExpressID = '',pulloutdate=null where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -1506,7 +1504,11 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 return;
             }
 
-            string updateCmd = string.Format("update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
+            updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}'";
+
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -1594,6 +1596,188 @@ When first applicant's team leader approval, anyone can not do any modification.
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, string.Empty, content.ToString(), false, false);
                 email.ShowDialog(this);
             }
+        }
+
+        private bool CheckPullexists()
+        {
+            #region 若該HC#下的Packing已經被拉到Pullout Report中且Pullout Status為confirm則不能刪除
+            string sqlchk = $@"
+select distinct p.ID
+from Pullout_Detail pd
+inner join PackingList pl on pl.id = pd.PackingListID
+inner join Pullout p on p.id = pd.id
+where p.status = 'confirmed'
+and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
+";
+            DataTable pkdt;
+            DualResult result = DBProxy.Current.Select(null, sqlchk, out pkdt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (pkdt.Rows.Count > 0)
+            {
+                string msg = "These PackingList# are existed in Pullout Report so it can't be delete!\r\nPackingList#: " + string.Join(Environment.NewLine + "PackingList#: ", pkdt.AsEnumerable().Select(row => row["ID"]).ToList());
+                MyUtility.Msg.WarningBox(msg);
+                return false;
+            }
+
+            return true;
+            #endregion
+        }
+
+        private void CarrierbyEnable()
+        {
+            if (this.EditMode && this.cmbPayer.Text.ToLower() == "Freight Collect By 3rd Party".ToLower())
+            {
+                this.txtCarrier.Enabled = true;
+                this.txtCarrierbyCustomer.Enabled = false;
+                this.txtCarrierbyFty.Enabled = false;
+            }
+            else if (this.EditMode && this.cmbPayer.Text.ToLower() == "Freight Collect By Customer".ToLower())
+            {
+                this.txtCarrier.Enabled = false;
+                this.txtCarrierbyCustomer.Enabled = true;
+                this.txtCarrierbyFty.Enabled = false;
+            }
+            else if (this.EditMode && this.cmbPayer.Text.ToLower() == "Freight Pre-Paid by Fty".ToLower())
+            {
+                this.txtCarrier.Enabled = false;
+                this.txtCarrierbyCustomer.Enabled = false;
+                this.txtCarrierbyFty.Enabled = true;
+            }
+            else
+            {
+                this.txtCarrier.Enabled = false;
+                this.txtCarrierbyCustomer.Enabled = false;
+                this.txtCarrierbyFty.Enabled = false;
+            }
+        }
+
+        private void TxtCarrierbyCustomer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            this.CarrierbyCustomerPopup();
+        }
+
+        private void TxtCarrierbyCustomer_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.CarrierbyCustomerPopup();
+            }
+        }
+
+        // Carrier按右鍵帶出的資料
+        private void CarrierbyCustomerPopup()
+        {
+            string sqlCmd = $@"
+select CarrierID,Account
+from FreightCollectByCustomer
+where BrandID='{this.txtTO.Text}'
+and Dest='{this.CurrentMaintain["Dest"]}'
+";
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10", this.txtCarrier.Text);
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.CurrentMaintain["ByCustomerCarrier"] = item.GetSelectedString();
+            this.CurrentMaintain["ByCustomerAccountID"] = item.GetSelecteds()[0]["Account"];
+        }
+
+        private void TxtCarrierbyFty_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            this.CarrierbyFtyPopup();
+        }
+
+        private void TxtCarrierbyFty_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.CarrierbyFtyPopup();
+            }
+        }
+
+        // Carrier按右鍵帶出的資料
+        private void CarrierbyFtyPopup()
+        {
+            string sqlCmd = @"select id,Abb from LocalSupp with(nolock) where Junk = 0";
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,15", this.txtCarrier.Text);
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.CurrentMaintain["ByFtyCarrier"] = item.GetSelectedString();
+            this.disSuppabb.Value = item.GetSelecteds()[0]["abb"];
+        }
+
+        private string NametoTag(string n)
+        {
+            if (n == "Brand") // 因為trade來的設定資料是Buyer
+            {
+                n = "Buyer";
+            }
+
+            string sql = $@"select id from DropDownList where Type = 'ShipPlan_HC_To' and name ='{n}'";
+            return MyUtility.GetValue.Lookup(sql);
+        }
+
+        private string ConverToCountry(string tag, string id)
+        {
+            string c = string.Empty;
+            switch (tag)
+            {
+                case "SCI":
+                    c = "TW";
+                    break;
+                case "Factory":
+                    c = MyUtility.GetValue.Lookup($"select countryID from factory with(nolock) where id = '{id}'");
+                    break;
+                case "Supplier":
+                    c = MyUtility.GetValue.Lookup($"select countryID from Supp with(nolock) where id = '{id}'");
+                    break;
+                case "Brand":
+                    c = MyUtility.GetValue.Lookup($"select countryID from brand with(nolock) where id = '{id}'");
+                    break;
+                default:
+                    break;
+            }
+
+            return c;
+        }
+
+        private void ClearCarrier()
+        {
+            if (this.CurrentMaintain == null || !this.EditMode)
+            {
+                return;
+            }
+
+            this.CurrentMaintain["CarrierID"] = string.Empty;
+            this.CurrentMaintain["ByCustomerCarrier"] = string.Empty;
+            this.CurrentMaintain["ByCustomerAccountID"] = string.Empty;
+            this.CurrentMaintain["ByFtyCarrier"] = string.Empty;
+            this.CurrentMaintain["ExpressACNo"] = string.Empty;
+            this.displayCarrier.Text = string.Empty;
+            this.disSuppabb.Text = string.Empty;
+        }
+
+        private void CmbPayer_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            this.CurrentMaintain["FreightBy"] = this.cmbPayer.SelectedValue;
+            this.ClearCarrier();
+            this.CurrentMaintain.EndEdit();
+        }
+
+        private void CmbPayer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.CarrierbyEnable();
         }
     }
 }

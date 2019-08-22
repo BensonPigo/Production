@@ -67,17 +67,19 @@ namespace Sci.Production.Sewing
                 sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
+            this.ShowWaitMessage("Data Loading...");
+
             string sqlcmd = $@"
 declare @datereceive1 date = '{datereceive1}'
 declare @datereceive2 date = '{datereceive2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 
-select 
+select DISTINCT
 	dr.ReceiveDate
-	,[PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
-	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '',pd.CTNStartNo, pd.OrigCTNStartNo)
-	,[OrderID] = iif(pd.OrigOrderID = '',pd.OrderID, pd.OrigOrderID)
+	,[PackingListID] = iif(pd.OrigID = '' OR pd.OrigID IS NULL  ,dr.PackingListID , pd.OrigID)
+	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '' OR pd.OrigCTNStartNo IS NULL    ,dr.CTNStartNo   , pd.OrigCTNStartNo)
+	,[OrderID] = iif(pd.OrigOrderID = '' OR pd.OrigOrderID IS NULL ,dr.OrderID, pd.OrigOrderID)
 	,o.CustPONo
 	,o.StyleID
 	,o.BrandID
@@ -92,9 +94,13 @@ select
 from DRYReceive dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = dr.SCICtnNo 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.SCICtnNo = dr.SCICtnNo
+													AND dr.OrderID = pd.OrderID
+													AND  pd.CTNStartNo = dr.CTNStartNo AND dr.OrderID = pd.OrderID AND dr.PackingListID=pd.id 
 where 1=1
 {sqlwhere}
+
+ ORDER BY dr.ReceiveDate,[PackingListID],[CTNStartNo],[OrderID]
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -109,6 +115,7 @@ where 1=1
                 MyUtility.Msg.WarningBox("Datas not found!");
             }
 
+            this.HideWaitMessage();
             this.listControlBindingSource1.DataSource = dt;
             this.grid1.AutoResizeColumns();
         }

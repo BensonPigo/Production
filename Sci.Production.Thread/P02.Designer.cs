@@ -132,6 +132,18 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(892, 192);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1015, 387);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1015, 349);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(1015, 38);
+            //
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(1015, 387);
@@ -360,10 +372,9 @@
             this.GridAlias = "ThreadRequisition_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "refno,threadcolorid";
+            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
-            this.IsSupportNew = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "OrderID";
             this.Name = "P02";
             this.OnLineHelpID = "Sci.Win.Tems.Input8";

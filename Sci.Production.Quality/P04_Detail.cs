@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -774,7 +775,45 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 {
                     worksheet.Cells[73, 6] = "V";
                 }
-                worksheet.Cells[74, 9] = MyUtility.Convert.GetString(Deatilrow["Showname"]);
+                
+                #endregion
+
+                #region 插入圖片與Technician名字
+                string sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
+                                        from Technician t WITH (NOLOCK)
+                                        inner join pass1 p WITH (NOLOCK) on t.ID = p.ID  
+                                        outer apply (select PicPath from system) s 
+                                        where t.ID = '{Deatilrow["inspector"]}'
+                                        and t.GarmentTest = 1";
+                DataRow drTechnicianInfo;
+                string technicianName = string.Empty;
+                string picSource = string.Empty;
+                Image img = null;
+                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[12, 2];
+
+                if (MyUtility.Check.Seek(sql_cmd, out drTechnicianInfo))
+                {
+                    technicianName = drTechnicianInfo["name"].ToString();
+                    picSource = drTechnicianInfo["SignaturePic"].ToString();
+                    //Name
+                    worksheet.Cells[74, 9] = technicianName;
+                    //插入圖檔
+                    if (!MyUtility.Check.Empty(picSource))
+                    {
+                        if (File.Exists(picSource))
+                        {
+                            img = Image.FromFile(picSource);
+                            Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[72, 9];
+
+                            worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
+                        }
+                    }
+                }
+                else
+                {
+                    worksheet.Cells[74, 9] = MyUtility.Convert.GetString(Deatilrow["Showname"]);
+                }
+                
                 #endregion
 
                 #region After Wash Appearance Check list
@@ -1107,7 +1146,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 {
                     for (int i = 4; i < dtShrinkage.Columns.Count; i++)
                     {
-                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM' and type ='Chest Width'", i);
+                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM' and type ='Waistband (relax)'", i);
                     }
 
                     for (int i = 4; i < dtShrinkage.Columns.Count; i++)
@@ -1264,7 +1303,46 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 {
                     worksheet.Cells[72, 6] = "V";
                 }
-                worksheet.Cells[73, 9] = MyUtility.Convert.GetString(Deatilrow["Showname"]);
+                #endregion
+
+                #region 插入圖片與Technician名字
+                string sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
+                                        from Technician t WITH (NOLOCK)
+                                        inner join pass1 p WITH (NOLOCK) on t.ID = p.ID  
+                                        outer apply (select PicPath from system) s 
+                                        where t.ID = '{Deatilrow["inspector"]}'
+                                        and t.GarmentTest=1
+";
+                DataRow drTechnicianInfo;
+                string technicianName = string.Empty;
+                string picSource = string.Empty;
+                Image img = null;
+                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[12, 2];
+
+                if (MyUtility.Check.Seek(sql_cmd, out drTechnicianInfo))
+                {
+                    technicianName = drTechnicianInfo["name"].ToString();
+                    picSource = drTechnicianInfo["SignaturePic"].ToString();
+                    //Name
+                    worksheet.Cells[74, 9] = technicianName;
+
+                    //插入圖檔
+                    if (!MyUtility.Check.Empty(picSource))
+                    {
+                        if (File.Exists(picSource))
+                        {
+                            img = Image.FromFile(picSource);
+                            Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[72, 9];
+
+                            worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
+                        }
+                    }
+                }
+                else
+                {
+                    worksheet.Cells[74, 9] = MyUtility.Convert.GetString(Deatilrow["Showname"]);
+                }
+                
                 #endregion
 
                 #region After Wash Appearance Check list
@@ -1598,7 +1676,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 {
                     for (int i = 4; i < dtShrinkage.Columns.Count; i++)
                     {
-                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM' and type ='Chest Width'", i);
+                        worksheet.Cells[44, i] = addShrinkageUnit(dtShrinkage, @"Location = 'BOTTOM' and type ='Waistband (relax)'", i);
                     }
 
                     for (int i = 4; i < dtShrinkage.Columns.Count; i++)
@@ -1776,15 +1854,20 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
         /// <returns></returns>
         private string addShrinkageUnit(DataTable dt, string strFilter, int count)
         {
-            string strValie = dt.Select(strFilter)[0][count].ToString();
-            if (((string.Compare(dt.Columns[count].ColumnName, "Shrinkage1", true) == 0) ||
-                (string.Compare(dt.Columns[count].ColumnName, "Shrinkage2", true) == 0) ||
-                (string.Compare(dt.Columns[count].ColumnName, "Shrinkage3", true) == 0)) &&
-                !MyUtility.Check.Empty(strValie)
-                )
+            string strValie = string.Empty;
+            if (dt.Select(strFilter).Length > 0)
             {
-                strValie = strValie + "%";
+                strValie = dt.Select(strFilter)[0][count].ToString();
+                if (((string.Compare(dt.Columns[count].ColumnName, "Shrinkage1", true) == 0) ||
+                    (string.Compare(dt.Columns[count].ColumnName, "Shrinkage2", true) == 0) ||
+                    (string.Compare(dt.Columns[count].ColumnName, "Shrinkage3", true) == 0)) &&
+                    !MyUtility.Check.Empty(strValie)
+                    )
+                {
+                    strValie = strValie + "%";
+                }
             }
+
             return strValie;
         }
     }

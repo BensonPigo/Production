@@ -254,6 +254,7 @@
             // 
             // pictureBox2
             // 
+            this.pictureBox2.Image = null;
             this.pictureBox2.Location = new System.Drawing.Point(458, 70);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(430, 429);
@@ -302,6 +303,7 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Image = null;
             this.pictureBox1.Location = new System.Drawing.Point(9, 71);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(430, 428);
@@ -569,6 +571,7 @@
             this.comboSizeUnit.IsSupportUnselect = true;
             this.comboSizeUnit.Location = new System.Drawing.Point(108, 223);
             this.comboSizeUnit.Name = "comboSizeUnit";
+            this.comboSizeUnit.OldText = "";
             this.comboSizeUnit.Size = new System.Drawing.Size(72, 24);
             this.comboSizeUnit.TabIndex = 19;
             // 
@@ -1038,6 +1041,7 @@
             this.comboGender.IsSupportUnselect = true;
             this.comboGender.Location = new System.Drawing.Point(108, 277);
             this.comboGender.Name = "comboGender";
+            this.comboGender.OldText = "";
             this.comboGender.Size = new System.Drawing.Size(121, 24);
             this.comboGender.TabIndex = 23;
             this.comboGender.Type = "Gender";
@@ -1090,6 +1094,7 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.Name = "P04";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "P04. Style Management";
             this.UniqueExpress = "Ukey";
             this.WorkAlias = "Style";

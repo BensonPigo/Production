@@ -47,6 +47,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtbuyer = new Sci.Production.Class.txtbuyer();
             this.txtShipper = new Sci.Win.UI.TextBox();
+            this.cancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -57,12 +58,20 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(535, 26);
-            this.toexcel.TabIndex = 9;
+            this.toexcel.TabIndex = 10;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(535, 62);
-            this.close.TabIndex = 10;
+            this.close.TabIndex = 11;
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(489, 162);
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(505, 198);
             // 
             // LabShippingMode
             // 
@@ -245,9 +254,23 @@
             this.txtShipper.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtShipper_PopUp);
             this.txtShipper.Validating += new System.ComponentModel.CancelEventHandler(this.TxtShipper_Validating);
             // 
+            // cancelOrder
+            // 
+            this.cancelOrder.AutoSize = true;
+            this.cancelOrder.Checked = true;
+            this.cancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cancelOrder.Location = new System.Drawing.Point(49, 338);
+            this.cancelOrder.Name = "cancelOrder";
+            this.cancelOrder.Size = new System.Drawing.Size(160, 21);
+            this.cancelOrder.TabIndex = 9;
+            this.cancelOrder.Text = "Include Cancel Order";
+            this.cancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R16
             // 
-            this.ClientSize = new System.Drawing.Size(627, 364);
+            this.ClientSize = new System.Drawing.Size(627, 395);
+            this.Controls.Add(this.cancelOrder);
             this.Controls.Add(this.txtShipper);
             this.Controls.Add(this.comboshipmode);
             this.Controls.Add(this.comboCategory);
@@ -269,6 +292,8 @@
             this.Name = "R16";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R16. Outstanding Garment Booking List";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -290,6 +315,7 @@
             this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.comboshipmode, 0);
             this.Controls.SetChildIndex(this.txtShipper, 0);
+            this.Controls.SetChildIndex(this.cancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -315,5 +341,6 @@
         private Class.comboDropDownList comboCategory;
         private Class.txtshipmode comboshipmode;
         private Win.UI.TextBox txtShipper;
+        private Win.UI.CheckBox cancelOrder;
     }
 }

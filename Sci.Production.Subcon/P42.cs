@@ -1,0 +1,703 @@
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
+
+namespace Sci.Production.Subcon
+{
+    public partial class P42 : Sci.Win.Tems.QueryForm
+    {
+        public P42(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.cmbSummaryBy, 2, 1, "0,SP#,1,Article / Size");
+            this.txtfactory1.MDivision = txtMdivision1;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+        }
+
+        private void GridSetup(int summaryType = 0)
+        {
+            this.grid1.Columns.Clear();
+            DataGridViewGeneratorTextColumnSettings sp = new DataGridViewGeneratorTextColumnSettings();
+            sp.CellMouseDoubleClick += (s, e) =>
+            {
+                DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
+                if (drSelected == null)
+                {
+                    return;
+                }
+
+                var frm = new Sci.Production.Subcon.P42_SubProcessStatus(drSelected, summaryType);
+                frm.ShowDialog(this);
+            };
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true, settings: sp)
+            .Text("POID", header: "MotherSP#", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .Text("CustPONo", header: "P.O.", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("ProgramID", header: "Program", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            ;
+            if (summaryType == 1)
+            {
+                this.Helper.Controls.Grid.Generator(this.grid1)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                ;
+            }
+
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .Text("CutCellid", header: "Cut Cell", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SewLine", header: "Inline Line", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            ;
+            if (summaryType == 0)
+            {
+                this.Helper.Controls.Grid.Generator(this.grid1)
+                .Date("InLineDate", header: "In Line Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("OffLineDate", header: "Off Line Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                ;
+            }
+            else
+            {
+                this.Helper.Controls.Grid.Generator(this.grid1)
+                .DateTime("InLineDate", header: "In Line Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .DateTime("OffLineDate", header: "Off Line Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                ;
+            }
+
+            int subprocessStartColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["OffLineDate"].Ordinal;
+            foreach (DataColumn column in ((DataTable)this.listControlBindingSource1.DataSource).Columns)
+            {
+                if (column.Ordinal > subprocessStartColumn)
+                {
+                    DataGridViewGeneratorTextColumnSettings subprocess = new DataGridViewGeneratorTextColumnSettings();
+                    subprocess.CellMouseDoubleClick += (s, e) =>
+                    {
+                        DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
+                        if (drSelected == null)
+                        {
+                            return;
+                        }
+
+                        this.ShowBundleQtyStatus(drSelected, column.ColumnName, summaryType);
+                    };
+                    subprocess.CellFormatting += (s, e) =>
+                    {
+                        DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
+                        switch (MyUtility.Convert.GetString(e.Value))
+                        {
+                            case "Complete":
+                                e.CellStyle.BackColor = Color.Green;
+                                break;
+                            case "OnGoing":
+                                e.CellStyle.BackColor = Color.Yellow;
+                                break;
+                            case "Not Yet Load":
+                                e.CellStyle.BackColor = Color.Red;
+                                break;
+                            default:
+                                break;
+                        }
+
+                    };
+                    this.Helper.Controls.Grid.Generator(this.grid1)
+                    .Text(column.ColumnName, header: column.ColumnName, width: Widths.AnsiChars(12), iseditingreadonly: true, settings: subprocess);
+                }
+            }
+        }
+
+        private void BtnQuery_Click(object sender, EventArgs e)
+        {
+            this.Query();
+        }
+
+        private void Query()
+        {
+            this.listControlBindingSource1.DataSource = null;
+            if (MyUtility.Check.Empty(this.txtSp1.Text) && !MyUtility.Check.Empty(this.txtSp2.Text))
+            {
+                MyUtility.Msg.WarningBox("Must enter SP#1");
+                this.txtSp1.Focus();
+                return;
+            }
+            if (!MyUtility.Check.Empty(this.txtSp1.Text) && MyUtility.Check.Empty(this.txtSp2.Text))
+            {
+                MyUtility.Msg.WarningBox("Must enter SP#2");
+                this.txtSp2.Focus();
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtSp1.Text) &&
+                MyUtility.Check.Empty(this.txtPO.Text) &&
+                MyUtility.Check.Empty(this.dateSCIDelivery.Value1) &&
+                MyUtility.Check.Empty(this.dateInline.Value1) &&
+                MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+            {
+                MyUtility.Msg.WarningBox("SP#, P.O., SCI Delivery, Inline Date and Buyer Delivery cannot all empty.");
+                return;
+            }
+
+            int summaryType = MyUtility.Convert.GetInt(this.cmbSummaryBy.SelectedValue);
+            #region where
+            string where = string.Empty;
+            List<string> whereCategory = new List<string>();
+            if (this.chkBulk.Checked)
+            {
+                whereCategory.Add("'B'");
+            }
+            if (this.chkSample.Checked)
+            {
+                whereCategory.Add("'S'");
+            }
+            if (whereCategory.Count > 0)
+            {
+                where += $" and o.Category in ({string.Join(",", whereCategory)}) ";
+            }
+            if (!MyUtility.Check.Empty(this.txtSp1.Text))
+            {
+                where += $" and o.id between '{this.txtSp1.Text}' and '{this.txtSp2.Text}' ";
+            }
+            if (!MyUtility.Check.Empty(this.txtPO.Text))
+            {
+                where += $" and o.CustPONo  ='{this.txtPO.Text}' ";
+            }
+            if (!MyUtility.Check.Empty(this.txtMdivision1.Text))
+            {
+                where += $" and o.MDivisionID  ='{this.txtMdivision1.Text}' ";
+            }
+            if (!MyUtility.Check.Empty(this.txtfactory1.Text))
+            {
+                where += $" and o.FactoryID  ='{this.txtfactory1.Text}' ";
+            }
+            if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
+            {
+                where += $" and o.SCIDelivery between '{((DateTime)this.dateSCIDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateSCIDelivery.Value2).ToString("d")}' ";
+            }
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+            {
+                where += $" and o.BuyerDelivery between '{((DateTime)this.dateBuyerDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateBuyerDelivery.Value2).ToString("d")}' ";
+            }
+            if (!MyUtility.Check.Empty(this.dateInline.Value1))
+            {
+                if (summaryType == 0)
+                {
+                    where += $" and o.SewInLine between '{((DateTime)this.dateInline.Value1).ToString("d")}' and '{((DateTime)this.dateInline.Value2).ToString("d")}' ";
+                }
+                else
+                {
+                    where += $" and Inline between '{((DateTime)this.dateInline.Value1).ToString("d")}' and '{((DateTime)this.dateInline.Value2).ToString("d")}' ";
+                }           
+            }
+            #endregion
+
+            string sqlcmd = string.Empty;
+
+            if (summaryType == 0)
+            {
+                sqlcmd = $@"select 
+	o.MDivisionID,
+	o.FactoryID,
+	o.ID,
+	o.POID,
+	o.CustPONo,
+	o.ProgramID,
+	o.StyleID,
+	o.BrandID,
+	o.SeasonID,
+	w.CutCellid,
+	o.SewLine,
+	InLineDate=o.SewInLine,
+	OffLineDate=o.SewOffLine
+into #tmpOrders
+from orders o with(nolock)
+outer apply(
+	select CutCellid=STUFF((
+		select concat(',',w1.CutCellid)
+		from(
+			select distinct wo.CutCellid
+	        from WorkOrder_Distribute wd with(nolock) 
+	        inner join WorkOrder wo with(nolock) on wo.Ukey = wd.WorkOrderUkey
+			where wd.OrderID = o.ID and isnull(wo.CutCellid,'')<>''
+		)w1
+		for xml path(''))
+	,1,1,'')
+)w
+where 1=1
+{where}
+
+select b.Orderid,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+into #tmpBundleNo
+from Bundle b with(nolock)
+inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
+inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+cross join(
+	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+	from SubProcess s
+	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
+)s
+
+select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault
+into #tmpBundleNo_SubProcess
+from #tmpBundleNo
+
+union
+
+select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+from #tmpBundleNo b
+inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
+inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
+
+declare @AllSubprocess nvarchar(max)
+declare @Col nvarchar(max)
+select @AllSubprocess = STUFF((
+select concat(',[',s.SubProcessID,']')
+from(
+	select b.SubProcessID,b.ShowSeq,b.IsRFIDDefault
+	from #tmpBundleNo_SubProcess b
+	group by b.SubProcessID,b.ShowSeq,b.IsRFIDDefault
+)s
+order by s.ShowSeq,s.SubProcessID
+for xml path('')
+),1,1,'')
+
+select @Col = STUFF((
+select concat(',[',s.SubProcessID,']=isnull([',s.SubProcessID,'],''No Schedule'')')
+from(
+	select b.SubProcessID,b.ShowSeq,b.IsRFIDDefault
+	from #tmpBundleNo_SubProcess b
+	group by b.SubProcessID,b.ShowSeq,b.IsRFIDDefault
+)s
+order by s.ShowSeq,s.SubProcessID
+for xml path('')
+),1,1,'')
+
+select
+	b.Orderid,
+	b.BundleNo,
+	b.subProcessid,
+	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
+					when b.InOutRule = 2 and bio.OutGoing is not null then 1
+					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
+						and bio.InComing is not null and bio.OutGoing is not null then 1
+					else 0
+				end
+into #tmpBundleNo_Complete
+from #tmpBundleNo_SubProcess b
+left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+
+select
+	t.Orderid,
+	t.SubProcessID,
+	Status=case when MIN(isComplete)=1 then 'Complete'
+				when sum(isComplete)>0 then 'OnGoing'
+				when sum(isComplete)=0 then 'Not Yet Load'
+				end
+into #tmp
+from #tmpBundleNo_Complete t
+group by t.SubProcessID,t.Orderid
+
+declare @sql nvarchar(max)=N'
+select Orderid,'+@Col+N'
+into #right
+from #tmp
+PIVOT(min(Status) for SubProcessID in('+@AllSubprocess+N'))as pt
+
+select 
+	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate,
+	'+@Col+N'
+from #tmpOrders o
+inner join #right r on r.Orderid=o.id
+'
+exec(@sql)
+
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp
+";
+            }
+            else
+            {
+                sqlcmd = $@"
+select
+	o.MDivisionID,
+	o.FactoryID,
+	o.ID,
+	o.POID,
+	o.CustPONo,
+	o.ProgramID,
+	o.StyleID,
+	o.BrandID,
+	o.SeasonID,
+	oq.Article,
+	oq.SizeCode,
+	w.CutCellid,
+	o.SewLine,
+	InLineDate=s.Inline,
+	OffLineDate=s.Offline
+into #tmpOrders
+from orders o with(nolock)
+left join Order_Qty oq with(nolock) on oq.ID = o.ID
+outer apply(
+	select CutCellid=STUFF((
+		select concat(',',w1.CutCellid)
+		from(
+			select distinct wo.CutCellid
+	        from WorkOrder_Distribute wd with(nolock) 
+	        inner join WorkOrder wo with(nolock) on wo.Ukey = wd.WorkOrderUkey
+			where wd.OrderID = o.ID and isnull(wo.CutCellid,'')<>''
+		)w1
+		for xml path(''))
+	,1,1,'')
+)w
+outer apply(
+	select Inline=Min(ss.Inline),Offline=Max(ss.Offline)
+	from SewingSchedule_Detail ssd with(nolock)
+	inner join SewingSchedule ss with(nolock) on ss.ID = ssd.ID
+	where ssd.OrderID = o.ID and ssd.Article = oq.Article and ssd.SizeCode = oq.SizeCode
+)s
+where 1=1
+{where}
+
+select b.Orderid,b.Article,b.Sizecode,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+into #tmpBundleNo
+from Bundle b with(nolock)
+inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
+inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+cross join(
+	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+	from SubProcess s
+	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
+)s
+
+
+select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault
+into #tmpBundleNo_SubProcess
+from #tmpBundleNo
+
+union
+
+select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+from #tmpBundleNo b
+inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
+inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
+
+declare @AllSubprocess nvarchar(max)
+declare @Col nvarchar(max)
+select @AllSubprocess = STUFF((
+select concat(',[',s.SubProcessID,']')
+from(
+	select b.SubProcessID,b.ShowSeq,b.IsRFIDDefault
+	from #tmpBundleNo_SubProcess b
+	group by b.SubProcessID,b.ShowSeq,b.IsRFIDDefault
+)s
+order by s.ShowSeq,s.SubProcessID
+for xml path('')
+),1,1,'')
+
+select @Col = STUFF((
+select concat(',[',s.SubProcessID,']=isnull([',s.SubProcessID,'],''No Schedule'')')
+from(
+	select b.SubProcessID,b.ShowSeq,b.IsRFIDDefault
+	from #tmpBundleNo_SubProcess b
+	group by b.SubProcessID,b.ShowSeq,b.IsRFIDDefault
+)s
+order by s.ShowSeq,s.SubProcessID
+for xml path('')
+),1,1,'')
+
+select
+	b.Orderid,
+	b.Article,
+	b.Sizecode,
+	b.BundleNo,
+	b.subProcessid,
+	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
+					when b.InOutRule = 2 and bio.OutGoing is not null then 1
+					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
+						and bio.InComing is not null and bio.OutGoing is not null then 1
+					else 0
+				end
+into #tmpBundleNo_Complete
+from #tmpBundleNo_SubProcess b
+left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+
+select
+	t.Orderid,
+	t.Article,
+	t.Sizecode,
+	t.SubProcessID,
+	Status=case when MIN(isComplete)=1 then 'Complete'
+				when sum(isComplete)>0 then 'OnGoing'
+				when sum(isComplete)=0 then 'Not Yet Load'
+				end
+into #tmp
+from #tmpBundleNo_Complete t
+group by t.SubProcessID,t.Orderid,t.Article,t.Sizecode
+
+declare @sql nvarchar(max)=N'
+select Orderid,Article,Sizecode,'+@Col+N'
+into #right
+from #tmp
+PIVOT(min(Status) for SubProcessID in('+@AllSubprocess+N'))as pt
+
+select 
+	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.Article,o.Sizecode,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate,
+	'+@Col+N'
+from #tmpOrders o
+inner join #right r on r.Orderid=o.id and r.Article = o.Article and r.Sizecode = o.Sizecode
+'
+exec(@sql)
+
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp
+";
+            }
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
+            }
+            else
+            {
+                this.listControlBindingSource1.DataSource = dt;
+                this.GridSetup(summaryType);
+            }
+        }
+
+        private void ShowBundleQtyStatus(DataRow drSelected, string subProcess, int summaryType)
+        {
+            string sqlcmd = string.Empty;
+            string caption = string.Empty;
+
+            if (summaryType == 0)
+            {
+                sqlcmd = $@"
+select 
+	o.MDivisionID,
+	o.FactoryID,
+	o.ID,
+	o.POID,
+	o.CustPONo,
+	o.ProgramID,
+	o.StyleID,
+	o.BrandID,
+	o.SeasonID,
+	w.CutCellid,
+	o.SewLine,
+	InLineDate=o.SewInLine,
+	OffLineDate=o.SewOffLine
+into #tmpOrders
+from orders o with(nolock)
+outer apply(
+	select CutCellid=STUFF((
+		select concat(',',w1.CutCellid)
+		from(
+			select distinct wo.CutCellid
+	        from WorkOrder_Distribute wd with(nolock) 
+	        inner join WorkOrder wo with(nolock) on wo.Ukey = wd.WorkOrderUkey
+			where wd.OrderID = o.ID and isnull(wo.CutCellid,'')<>''
+		)w1
+		for xml path(''))
+	,1,1,'')
+)w
+where o.ID ='{drSelected["OrderID"]}'
+
+select b.Orderid,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
+into #tmpBundleNo
+from Bundle b with(nolock)
+inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
+inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+cross join(
+	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+	from SubProcess s
+	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
+)s
+
+select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
+into #tmpBundleNo_SubProcess
+from #tmpBundleNo
+
+union
+
+select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
+from #tmpBundleNo b
+inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
+inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
+
+select
+	b.Orderid,
+	b.BundleNo,
+	b.subProcessid,
+	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
+					when b.InOutRule = 2 and bio.OutGoing is not null then 1
+					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
+						and bio.InComing is not null and bio.OutGoing is not null then 1
+					else 0
+				end,
+	IsEXCESS
+into #tmpBundleNo_Complete
+from #tmpBundleNo_SubProcess b
+left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+where b.subProcessid='{subProcess}'
+
+select
+	t.BundleNo,
+	b.Qty,
+	EXCESS=iif(IsEXCESS=1,'Y',''),
+	Status=case when MIN(isComplete)=1 then 'Complete'
+				when sum(isComplete)>0 then 'OnGoing'
+				when sum(isComplete)=0 then 'Not Yet Load'
+				end
+from #tmpBundleNo_Complete t
+outer apply(
+	select qty=sum(bd.Qty)
+	from Bundle_Detail bd with(nolock)
+	where bd.BundleNo = t.BundleNo
+)b
+group by t.SubProcessID,t.Orderid,t.BundleNo,b.qty,IsEXCESS
+order by t.BundleNo
+
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
+";
+                caption = $"SubProcess:{subProcess}";
+            }
+            else
+            {
+                sqlcmd = $@"
+select 
+	o.MDivisionID,
+	o.FactoryID,
+	o.ID,
+	o.POID,
+	o.CustPONo,
+	o.ProgramID,
+	o.StyleID,
+	o.BrandID,
+	o.SeasonID,
+	oq.Article,
+	oq.SizeCode,
+	w.CutCellid,
+	o.SewLine,
+	InLineDate=s.Inline,
+	OffLineDate=s.Offline
+into #tmpOrders
+from orders o with(nolock)
+inner join Order_Qty oq with(nolock) on oq.ID = o.ID
+outer apply(
+	select CutCellid=STUFF((
+		select concat(',',w1.CutCellid)
+		from(
+			select distinct wo.CutCellid
+	        from WorkOrder_Distribute wd with(nolock) 
+	        inner join WorkOrder wo with(nolock) on wo.Ukey = wd.WorkOrderUkey
+			where wd.OrderID = o.ID and isnull(wo.CutCellid,'')<>''
+		)w1
+		for xml path(''))
+	,1,1,'')
+)w
+outer apply(
+	select Inline=Min(ss.Inline),Offline=Max(ss.Offline)
+	from SewingSchedule_Detail ssd with(nolock)
+	inner join SewingSchedule ss with(nolock) on ss.ID = ssd.ID
+	where ssd.OrderID = o.ID and ssd.Article = oq.Article and ssd.SizeCode = oq.SizeCode
+)s
+where o.ID ='{drSelected["OrderID"]}' and oq.Article='{drSelected["Article"]}' and oq.SizeCode='{drSelected["SizeCode"]}'
+
+
+select b.Orderid,b.Article,b.Sizecode,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
+into #tmpBundleNo
+from Bundle b with(nolock)
+inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
+inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+cross join(
+	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+	from SubProcess s
+	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
+)s
+
+
+select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
+into #tmpBundleNo_SubProcess
+from #tmpBundleNo
+
+union
+
+select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
+from #tmpBundleNo b
+inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
+inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
+
+select
+	b.Orderid,
+	b.Article,
+	b.Sizecode,
+	b.BundleNo,
+	b.subProcessid,
+	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
+					when b.InOutRule = 2 and bio.OutGoing is not null then 1
+					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
+						and bio.InComing is not null and bio.OutGoing is not null then 1
+					else 0
+				end,
+	IsEXCESS
+into #tmpBundleNo_Complete
+from #tmpBundleNo_SubProcess b
+left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+where b.subProcessid='{subProcess}'
+
+select
+	[Bundle#]=t.BundleNo,
+	b.Qty,
+	EXCESS=iif(IsEXCESS=1,'Y',''),
+	Status=case when MIN(isComplete)=1 then 'Complete'
+				when sum(isComplete)>0 then 'OnGoing'
+				when sum(isComplete)=0 then 'Not Yet Load'
+				end
+from #tmpBundleNo_Complete t
+outer apply(
+	select qty=sum(bd.Qty)
+	from Bundle_Detail bd with(nolock)
+	inner join Bundle b WITH (NOLOCK) on b.id = bd.Id
+	where bd.BundleNo = t.BundleNo and b.Article = t.Article and b.Sizecode = t.Sizecode
+)b
+group by t.SubProcessID,t.Orderid,t.BundleNo,t.Article,t.Sizecode,b.qty,IsEXCESS
+
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
+";
+                caption = $"SubProcess:{subProcess} - Article:{drSelected["Article"]} - Size:{drSelected["SizeCode"]}";
+            }
+
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
+
+            MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: caption);
+        }
+    }
+}

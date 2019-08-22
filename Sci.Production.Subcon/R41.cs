@@ -264,7 +264,9 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' then Stuff
 	                                                            from ArtworkPO ap with (nolock)
 	                                                            inner join ArtworkPO_Detail apd with (nolock) on ap.ID = apd.ID
 	                                                            inner join LocalSupp ls with (nolock) on ap.LocalSuppID = ls.ID
-	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = b.OrderId FOR XML PATH('')),1,1,'')  
+	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = b.OrderId 
+	                                                            AND (ap.Status ='Approved' OR (ap.Status ='Closed' AND apd.Farmout > 0))                        
+	                                                            FOR XML PATH('')),1,1,'')  
                     else '' end
 ) PoSuppFromOrderID
 outer apply (
@@ -272,7 +274,9 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 	                                                            from ArtworkPO ap with (nolock)
 	                                                            inner join ArtworkPO_Detail apd with (nolock) on ap.ID = apd.ID
 	                                                            inner join LocalSupp ls with (nolock) on ap.LocalSuppID = ls.ID
-	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = o.POID FOR XML PATH('')),1,1,'')  
+	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = o.POID 
+	                                                            AND (ap.Status ='Approved' OR (ap.Status ='Closed' AND apd.Farmout > 0))                        
+	                                                            FOR XML PATH('')),1,1,'')  
                     else '' end
 ) PoSuppFromPOID
 outer apply(

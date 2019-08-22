@@ -749,6 +749,7 @@
             0,
             0,
             0});
+            this.numVWeight.ValueChanged += new System.EventHandler(this.numVWeight_ValueChanged);
             this.numVWeight.Validated += new System.EventHandler(this.NumVWeight_Validated);
             // 
             // numExchangeRate
@@ -860,6 +861,7 @@
             0,
             0,
             0});
+            this.numForwarderNQuotation.VisibleChanged += new System.EventHandler(this.numForwarderNQuotation_VisibleChanged);
             this.numForwarderNQuotation.Validated += new System.EventHandler(this.NumForwarderNQuotation_Validated);
             // 
             // numForwarder1Quotation
@@ -2017,6 +2019,7 @@
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(268, 339);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 21);
             this.txtfactory.TabIndex = 37;

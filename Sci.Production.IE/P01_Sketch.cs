@@ -53,7 +53,7 @@ namespace Sci.Production.IE
             cmds.Add(sp2);
             cmds.Add(sp3);
 
-            string sqlCmd = @"select s.Picture1,s.Picture2,s1.PicPath
+            string sqlCmd = @"select s.Picture1,s.Picture2,s1.StyleSketch
 from Style s WITH (NOLOCK) 
 left join System s1 WITH (NOLOCK) on 1=1
 where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid";
@@ -77,9 +77,9 @@ where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid";
                 }
                 else
                 {
-                    if (File.Exists(styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim()))
+                    if (File.Exists(styleData.Rows[0]["StyleSketch"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim()))
                     {
-                        this.picture1.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim();
+                        this.picture1.ImageLocation = styleData.Rows[0]["StyleSketch"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim();
                     }
                     else
                     {
@@ -93,9 +93,9 @@ where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid";
                 }
                 else
                 {
-                    if (File.Exists(styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim()))
+                    if (File.Exists(styleData.Rows[0]["StyleSketch"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim()))
                     {
-                        this.picture2.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim();
+                        this.picture2.ImageLocation = styleData.Rows[0]["StyleSketch"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim();
                     }
                     else
                     {
