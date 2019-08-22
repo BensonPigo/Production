@@ -40,7 +40,7 @@ namespace Sci.Production.Shipping
                 .Numeric("ChargeablePulloutQty", header: "Chargeable Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FOCPulloutQty", header: "FOC Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FinishedFOCStockinQty", header: "Finished FOC Stock-in Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Date("BuyerDelivery", header: "Stock-in Date", iseditingreadonly: true)
+                .Date("StockInDate", header: "Stock-in Date", iseditingreadonly: true)
                 .Numeric("CurrentFOCStock", header: "Current FOC Stock", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 ;
         }
