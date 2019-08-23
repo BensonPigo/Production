@@ -359,11 +359,13 @@
             this.IsSupportJunk = true;
             this.IsSupportUnclose = true;
             this.IsSupportUnJunk = true;
+            this.JunkChkValue = "New";
             this.Name = "B03";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B03. Shipping Expense";
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "ID";
+            this.UnjunkChkValue = "Junk";
             this.WorkAlias = "ShipExpense";
             this.FormLoaded += new System.EventHandler(this.B03_FormLoaded);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.B03_FormClosing);

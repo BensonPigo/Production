@@ -51,8 +51,6 @@ namespace Sci.Production.Basic
             {
                 this.btnBankDetail.ForeColor = Color.Black;
             }
-
-            this.JunkSwitch();
         }
 
         /// <summary>
@@ -135,7 +133,8 @@ namespace Sci.Production.Basic
         /// <param name="e">e</param>
         private void BtnBankDetail_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B04_BankData callNextForm = new Sci.Production.Basic.B04_BankData(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            //Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(new ToolStripMenuItem(), this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -184,7 +183,7 @@ namespace Sci.Production.Basic
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Junk=1,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'Junk',Junk=1,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }
@@ -192,38 +191,37 @@ namespace Sci.Production.Basic
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
-            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Junk=0,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'New' ,Junk=0,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }
 
-        /// <summary>
-        /// 判斷junk欄位、異動Toolbar
-        /// </summary>
-        private void JunkSwitch()
+        Form batchapprove;
+        private void btnBatchApprove_Click(object sender, EventArgs e)
         {
-            if (this.EditMode || this.CurrentMaintain == null)
+
+            if (!this.Perm.Confirm)
             {
+                MyUtility.Msg.WarningBox("You don't have permission to confirm.");
                 return;
             }
 
-            this.Junk = Convert.ToBoolean(this.CurrentMaintain["Junk"]);
-            if (this.Junk)
+            if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                this.toolbar.cmdUnJunk.Enabled = true;
-                this.toolbar.cmdJunk.Enabled = false;
+                this.batchapprove = new Sci.Production.Basic.B04_BatchApprove(reload);
+                this.batchapprove.Show();
             }
             else
             {
-                this.toolbar.cmdJunk.Enabled = true;
-                this.toolbar.cmdUnJunk.Enabled = false;
+                this.batchapprove.Activate();
             }
         }
 
-        protected override void EnsureToolbarExt()
+
+        public void reload()
         {
-            base.EnsureToolbarExt();
-            this.JunkSwitch();
+            this.ReloadDatas();
+            this.RenewData();
         }
     }
 }

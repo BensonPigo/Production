@@ -52,8 +52,6 @@ namespace Sci.Production.Shipping
             {
                 this.btnPaymentHistory.ForeColor = Color.Black;
             }
-
-            this.JunkSwitch();
         }
 
         /// <inheritdoc/>
@@ -270,42 +268,6 @@ namespace Sci.Production.Shipping
             DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=0,Status='New',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
-        }
-        /// <summary>
-        /// 判斷junk欄位、異動Toolbar
-        /// </summary>
-        private void JunkSwitch()
-        {
-            if (this.EditMode || this.CurrentMaintain == null)
-            {
-                return;
-            }
-
-            if (this.CurrentMaintain["Status"].ToString() == "Locked")
-            {
-                this.toolbar.cmdJunk.Enabled = false;
-                this.toolbar.cmdUnJunk.Enabled = false;
-                return;
-            }
-
-            this.Junk = Convert.ToBoolean(this.CurrentMaintain["Junk"]);
-
-            if (this.Junk)
-            {
-                this.toolbar.cmdUnJunk.Enabled = true;
-                this.toolbar.cmdJunk.Enabled = false;
-            }
-            else
-            {
-                this.toolbar.cmdJunk.Enabled = true;
-                this.toolbar.cmdUnJunk.Enabled = false;
-            }
-        }
-
-        protected override void EnsureToolbarExt()
-        {
-            base.EnsureToolbarExt();
-            this.JunkSwitch();
         }
     }
 }

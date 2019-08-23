@@ -114,7 +114,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(893, 407);
+            this.browse.Size = new System.Drawing.Size(893, 439);
             // 
             // tabs
             // 
@@ -232,7 +232,7 @@
             this.txtAbbreviation.Location = new System.Drawing.Point(156, 42);
             this.txtAbbreviation.Name = "txtAbbreviation";
             this.txtAbbreviation.Size = new System.Drawing.Size(120, 23);
-            this.txtAbbreviation.TabIndex = 2;
+            this.txtAbbreviation.TabIndex = 1;
             // 
             // txtCompany
             // 
@@ -243,7 +243,7 @@
             this.txtCompany.Location = new System.Drawing.Point(156, 96);
             this.txtCompany.Name = "txtCompany";
             this.txtCompany.Size = new System.Drawing.Size(317, 23);
-            this.txtCompany.TabIndex = 6;
+            this.txtCompany.TabIndex = 3;
             // 
             // txtTel
             // 
@@ -253,7 +253,7 @@
             this.txtTel.Location = new System.Drawing.Point(156, 123);
             this.txtTel.Name = "txtTel";
             this.txtTel.Size = new System.Drawing.Size(220, 23);
-            this.txtTel.TabIndex = 7;
+            this.txtTel.TabIndex = 4;
             // 
             // txtFax
             // 
@@ -263,7 +263,7 @@
             this.txtFax.Location = new System.Drawing.Point(156, 150);
             this.txtFax.Name = "txtFax";
             this.txtFax.Size = new System.Drawing.Size(220, 23);
-            this.txtFax.TabIndex = 8;
+            this.txtFax.TabIndex = 5;
             // 
             // editAddress
             // 
@@ -274,7 +274,7 @@
             this.editAddress.Multiline = true;
             this.editAddress.Name = "editAddress";
             this.editAddress.Size = new System.Drawing.Size(400, 82);
-            this.editAddress.TabIndex = 9;
+            this.editAddress.TabIndex = 6;
             // 
             // checkJunk
             // 
@@ -286,7 +286,7 @@
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.ReadOnly = true;
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
-            this.checkJunk.TabIndex = 1;
+            this.checkJunk.TabIndex = 11;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
@@ -298,7 +298,7 @@
             this.checkUseSBTS.Location = new System.Drawing.Point(587, 42);
             this.checkUseSBTS.Name = "checkUseSBTS";
             this.checkUseSBTS.Size = new System.Drawing.Size(92, 21);
-            this.checkUseSBTS.TabIndex = 3;
+            this.checkUseSBTS.TabIndex = 12;
             this.checkUseSBTS.Text = "Use SBTS";
             this.checkUseSBTS.UseVisualStyleBackColor = true;
             // 
@@ -310,7 +310,7 @@
             this.checkIsFactory.Location = new System.Drawing.Point(587, 69);
             this.checkIsFactory.Name = "checkIsFactory";
             this.checkIsFactory.Size = new System.Drawing.Size(88, 21);
-            this.checkIsFactory.TabIndex = 5;
+            this.checkIsFactory.TabIndex = 13;
             this.checkIsFactory.Text = "Is Factory";
             this.checkIsFactory.UseVisualStyleBackColor = true;
             // 
@@ -321,7 +321,7 @@
             this.btnAccountingChartNo.Location = new System.Drawing.Point(698, 15);
             this.btnAccountingChartNo.Name = "btnAccountingChartNo";
             this.btnAccountingChartNo.Size = new System.Drawing.Size(163, 30);
-            this.btnAccountingChartNo.TabIndex = 13;
+            this.btnAccountingChartNo.TabIndex = 18;
             this.btnAccountingChartNo.Text = "Accounting chart no";
             this.btnAccountingChartNo.UseVisualStyleBackColor = true;
             this.btnAccountingChartNo.Click += new System.EventHandler(this.BtnAccountingChartNo_Click);
@@ -333,7 +333,7 @@
             this.btnBankDetail.Location = new System.Drawing.Point(698, 52);
             this.btnBankDetail.Name = "btnBankDetail";
             this.btnBankDetail.Size = new System.Drawing.Size(163, 30);
-            this.btnBankDetail.TabIndex = 14;
+            this.btnBankDetail.TabIndex = 19;
             this.btnBankDetail.Text = "Bank detail";
             this.btnBankDetail.UseVisualStyleBackColor = true;
             this.btnBankDetail.Click += new System.EventHandler(this.BtnBankDetail_Click);
@@ -345,7 +345,7 @@
             this.txtpayterm_ftyPaymentTerm.Location = new System.Drawing.Point(156, 321);
             this.txtpayterm_ftyPaymentTerm.Name = "txtpayterm_ftyPaymentTerm";
             this.txtpayterm_ftyPaymentTerm.Size = new System.Drawing.Size(384, 23);
-            this.txtpayterm_ftyPaymentTerm.TabIndex = 11;
+            this.txtpayterm_ftyPaymentTerm.TabIndex = 9;
             this.txtpayterm_ftyPaymentTerm.TextBox1Binding = "";
             // 
             // txtCurrency
@@ -357,7 +357,7 @@
             this.txtCurrency.Location = new System.Drawing.Point(156, 294);
             this.txtCurrency.Name = "txtCurrency";
             this.txtCurrency.Size = new System.Drawing.Size(40, 23);
-            this.txtCurrency.TabIndex = 10;
+            this.txtCurrency.TabIndex = 8;
             // 
             // txtCountryNationality
             // 
@@ -366,7 +366,7 @@
             this.txtCountryNationality.Location = new System.Drawing.Point(156, 69);
             this.txtCountryNationality.Name = "txtCountryNationality";
             this.txtCountryNationality.Size = new System.Drawing.Size(232, 22);
-            this.txtCountryNationality.TabIndex = 4;
+            this.txtCountryNationality.TabIndex = 2;
             this.txtCountryNationality.TextBox1Binding = "";
             // 
             // numWHoldingTerm
@@ -382,7 +382,7 @@
             0,
             0});
             this.numWHoldingTerm.Size = new System.Drawing.Size(40, 23);
-            this.numWHoldingTerm.TabIndex = 12;
+            this.numWHoldingTerm.TabIndex = 10;
             this.numWHoldingTerm.Value = new decimal(new int[] {
             0,
             0,
@@ -397,7 +397,7 @@
             this.chkIsShipping.Location = new System.Drawing.Point(587, 96);
             this.chkIsShipping.Name = "chkIsShipping";
             this.chkIsShipping.Size = new System.Drawing.Size(152, 21);
-            this.chkIsShipping.TabIndex = 15;
+            this.chkIsShipping.TabIndex = 14;
             this.chkIsShipping.Text = "Is Shipping Supplier";
             this.chkIsShipping.UseVisualStyleBackColor = true;
             // 
@@ -409,7 +409,7 @@
             this.chkisSubcon.Location = new System.Drawing.Point(587, 123);
             this.chkisSubcon.Name = "chkisSubcon";
             this.chkisSubcon.Size = new System.Drawing.Size(145, 21);
-            this.chkisSubcon.TabIndex = 16;
+            this.chkisSubcon.TabIndex = 15;
             this.chkisSubcon.Text = "Is Subcon Supplier";
             this.chkisSubcon.UseVisualStyleBackColor = true;
             // 
@@ -421,7 +421,7 @@
             this.chkisMisc.Location = new System.Drawing.Point(587, 150);
             this.chkisMisc.Name = "chkisMisc";
             this.chkisMisc.Size = new System.Drawing.Size(186, 21);
-            this.chkisMisc.TabIndex = 17;
+            this.chkisMisc.TabIndex = 16;
             this.chkisMisc.Text = "Is Miscellaneous Supplier";
             this.chkisMisc.UseVisualStyleBackColor = true;
             // 
@@ -433,7 +433,7 @@
             this.chkIsSintexSubcon.Location = new System.Drawing.Point(587, 177);
             this.chkIsSintexSubcon.Name = "chkIsSintexSubcon";
             this.chkIsSintexSubcon.Size = new System.Drawing.Size(131, 21);
-            this.chkIsSintexSubcon.TabIndex = 18;
+            this.chkIsSintexSubcon.TabIndex = 17;
             this.chkIsSintexSubcon.Text = "Is Sintex Subcon";
             this.chkIsSintexSubcon.UseVisualStyleBackColor = true;
             // 
@@ -446,7 +446,7 @@
             this.txtEmail.Location = new System.Drawing.Point(156, 265);
             this.txtEmail.Name = "txtEmail";
             this.txtEmail.Size = new System.Drawing.Size(317, 23);
-            this.txtEmail.TabIndex = 19;
+            this.txtEmail.TabIndex = 7;
             // 
             // label1
             // 
@@ -469,10 +469,12 @@
             this.IsSupportJunk = true;
             this.IsSupportPrint = false;
             this.IsSupportUnJunk = true;
+            this.JunkChkValue = "New";
             this.Name = "B04";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B04. Supplier/Sub Con (Local)";
             this.UniqueExpress = "ID";
+            this.UnjunkChkValue = "Junk";
             this.WorkAlias = "LocalSupp";
             this.Load += new System.EventHandler(this.B04_FormLoaded);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
