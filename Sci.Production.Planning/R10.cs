@@ -29,6 +29,7 @@ namespace Sci.Production.Planning
         private int sheetStart = 6;
 
         private string M;
+        private string Zone;
         private string Fty;
 
         private string title = string.Empty;
@@ -99,6 +100,7 @@ namespace Sci.Production.Planning
             this.isSCIDelivery = (this.comboDate.SelectedItem.ToString() == "SCI Delivery") ? true : false;
             this.M = this.txtM.Text;
             this.Fty = this.txtFactory.Text;
+            this.Zone = this.txtZone.Text;
 
             this.intYear = Convert.ToInt32(this.numYear.Value);
             this.intMonth = Convert.ToInt32(this.numMonth.Value);
@@ -344,6 +346,16 @@ namespace Sci.Production.Planning
                     }
                 }
 
+                if (!this.txtZone.Text.Empty())
+                {
+                    sqlWheres.Add(" f.Zone = '" + this.Zone + "'");
+                    loadingWheres.Add(" f.Zone ='" + this.Zone + "'");
+                    if (this.txtM.Text.Empty())
+                    {
+                        workWheres.Add(" exists (select 1 from Factory WITH (NOLOCK) where zone = '" + this.Zone + "' and ID = w.FactoryID)");
+                    }
+                }
+
                 if (!this.txtBrand.Text.Empty())
                 {
                     loadingWheres.Add("o.BrandID = '" + this.BrandID + "'");
@@ -394,6 +406,7 @@ namespace Sci.Production.Planning
                 	              Left Join Order_TmsCost ot WITH (NOLOCK) on o.ID = ot.ID and ot.ArtworkTypeID = 'SEWING'
                 	              Left Join #tmpFtyCapacity t on t.ID = o.FactoryID
                 	              Left Join Country c WITH (NOLOCK) on c.ID = t.CountryID
+                                  Left Join Factory f WITH (NOLOCK) on f.id = o.factoryID
                 	              Cross Apply getOutputInformation(o.ID, '{3}') si
                 	              Where o.BuyerDelivery between '{2}' and '{3}'
                 	              And o.Junk = 0
@@ -578,7 +591,8 @@ namespace Sci.Production.Planning
                                 new SqlParameter("@Month", this.intMonth),
                                 new SqlParameter("@SourceStr", this.SourceStr),
                                 new SqlParameter("@M", this.M),
-                                new SqlParameter("@Fty", this.Fty)
+                                new SqlParameter("@Fty", this.Fty),
+                                new SqlParameter("@Zone", this.Zone)
                             };
         }
 
@@ -1496,6 +1510,30 @@ namespace Sci.Production.Planning
             /// 正數紫色、負數綠色
             /// </summary>
             Normal,
+        }
+
+        private void TxtZone_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select distinct zone from Factory WITH (NOLOCK) where isSCI=1 and junk=0 ", "8", this.Text, false, ",");
+            item.Size = new System.Drawing.Size(300, 250);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.txtZone.Text = item.GetSelectedString();
+        }
+
+        private void TxtZone_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string strZone = this.txtZone.Text;
+            if (!string.IsNullOrWhiteSpace(strZone) && strZone != this.txtZone.OldValue)
+            {
+                if (MyUtility.Check.Seek(string.Format("select distinct zone from Factory WITH (NOLOCK) where Zone = '{0}'", strZone)) == false)
+                {
+                    this.txtZone.Text = string.Empty;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Zone : {0} > not found!!!", strZone));
+                    return;
+                }
+            }
         }
     }
 }
