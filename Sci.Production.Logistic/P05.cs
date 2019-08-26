@@ -134,7 +134,7 @@ FROM
 
 )a
 
-SELECT
+SELECT DISTINCT
 [PackID]= cr.PackingListID
 , pd.OrderShipmodeSeq 
 , pd.OrigID
