@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
                 .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
-               .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(16), iseditingreadonly: true)
@@ -77,6 +77,11 @@ namespace Sci.Production.Shipping
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
                 where += $@" and o.BuyerDelivery between '{((DateTime)this.dateBuyerDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateBuyerDelivery.Value2).ToString("d")}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtfactory.Text))
+            {
+                where += $@" and o.FtyGroup ='{this.txtfactory.Text}'";
             }
 
             #endregion
