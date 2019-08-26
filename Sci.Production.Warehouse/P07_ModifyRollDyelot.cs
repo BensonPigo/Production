@@ -498,47 +498,86 @@ from (
             string sqlupd1 = string.Empty;
             string sqlupd2 = string.Empty;
 
+            List<string> duplicateList = new List<string>();
+
+            // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
             foreach (var drModify in modifyDrList)
             {
                 // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
                 sqlcmd = string.Format(@"
 select 1 from dbo.Receiving_Detail WITH (NOLOCK) 
 where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}' and ( roll!='{4}' and dyelot!='{5}')
-"                    , docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll"], drModify["dyelot"]);
+", docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll"], drModify["dyelot"]);
+
                 if (MyUtility.Check.Seek(sqlcmd, null))
                 {
-                    MyUtility.Msg.WarningBox("Roll# & Dyelot# already existed!!");
-                    return;
+                    duplicateList.Add($"{drModify["poid"]}-{(drModify["seq1"].ToString() + " " + drModify["seq2"].ToString())}-{drModify["roll"]}-{drModify["dyelot"]}");
                 }
+            }
+            if (duplicateList.Count() > 0)
+            {
+
+                MyUtility.Msg.WarningBox(@"Roll# & Dyelot# already existed!!"
++ Environment.NewLine
++ "Duplicate list SP# - Seq - Roll# - Dyelot as below."
++ Environment.NewLine
++ duplicateList.JoinToString(Environment.NewLine));
+                return;
+            }
+
+            //修改到Roll或Dyelot時。因為主索引鍵被修改，需要檢查
+            foreach (var drModify in modifyDrList)
+            {
+
                 string Original_Roll = drModify["roll", DataRowVersion.Original].ToString();
                 string Current_Roll = drModify["roll", DataRowVersion.Current].ToString();
 
                 string Original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
                 string Current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
 
-                //修改到Roll或Dyelot時。因為主索引鍵被修改，需要檢查
-                if (Original_Roll != Current_Roll || Original_Dyelot!= Current_Dyelot)
+                if (Original_Roll != Current_Roll || Original_Dyelot != Current_Dyelot)
                 {
 
-                    sqlcmd = string.Format(@"
-SELECT   [FirID]=f.ID
-		,[Roll]=r.Roll
-		,[Dyelot]=r.Dyelot
-		,[StockQty]=r.StockQty
-		,r.Ukey
-FROM Receiving_Detail r
-INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
-INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
-WHERE r.ID='{0}' AND p.FabricType='F' AND p.FabricType='F' AND  roll='{1}' AND dyelot='{2}'
+                        // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
+                        sqlcmd = string.Format(@"
+    SELECT   [FirID]=f.ID
+		    ,[Roll]=r.Roll
+		    ,[Dyelot]=r.Dyelot
+		    ,[StockQty]=r.StockQty
+		    ,r.Ukey
+    FROM Receiving_Detail r
+    INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
+    INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
+    WHERE r.ID='{0}' AND p.FabricType='F' AND p.FabricType='F' AND  roll='{1}' AND dyelot='{2}'
+    --and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}' 
+    ", docno, drModify["roll"], drModify["dyelot"], drModify["Seq1"], drModify["Seq2"] , drModify["poid"]);
 
-", docno, drModify["roll"], drModify["dyelot"]);
                     if (MyUtility.Check.Seek(sqlcmd, null))
                     {
-                        MyUtility.Msg.WarningBox("Roll# & Dyelot# already existed!!");
-                        return;
+                        duplicateList.Add($"{drModify["poid"]}-{(drModify["seq1"].ToString()+" "+ drModify["seq2"].ToString())}-{drModify["roll"]}-{drModify["dyelot"]}");
                     }
-
                 }
+            }
+
+            if (duplicateList.Count() > 0)
+            {
+
+                MyUtility.Msg.WarningBox(@"Roll# & Dyelot# already existed!!" 
++ Environment.NewLine
++ "Duplicate list SP# - Seq - Roll# - Dyelot as below."
++ Environment.NewLine
++ duplicateList.JoinToString(Environment.NewLine));
+                return;
+            }
+
+            foreach (var drModify in modifyDrList)
+            {
+                string Original_Roll = drModify["roll", DataRowVersion.Original].ToString();
+                string Current_Roll = drModify["roll", DataRowVersion.Current].ToString();
+
+                string Original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
+                string Current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
+
 
                 string FirID = MyUtility.GetValue.Lookup($@"
 SELECT   [FirID]=f.ID
