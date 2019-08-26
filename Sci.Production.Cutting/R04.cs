@@ -135,9 +135,13 @@ end"
 select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished
 into #tmpWO
 from WorkOrder WO
-left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
-left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
 INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+outer apply(
+	select cDate=min(co.cDate),Status=min(Status)
+	from CuttingOutput co WITH (NOLOCK) 
+	inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
+	where cod.WorkOrderUkey = wo.Ukey and Status != 'New'
+) as co
 where 1 = 1 AND wo.EstCutDate is not null ");
                 if (!MyUtility.Check.Empty(MDivision))
                 {
@@ -237,9 +241,13 @@ drop table #tmpWO
 select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished,wo.FactoryID
 into #tmpWO
 from WorkOrder WO
-left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
-left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
 INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+outer apply(
+	select cDate=min(co.cDate),Status=min(Status)
+	from CuttingOutput co WITH (NOLOCK) 
+	inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
+	where cod.WorkOrderUkey = wo.Ukey and Status != 'New'
+) as co
 where 1 = 1 AND wo.EstCutDate is not null 
 ");
                 if (!MyUtility.Check.Empty(MDivision))
@@ -362,8 +370,12 @@ into #tmpWO
 from  WorkOrder as wo  
 inner join Cutting as c WITH (NOLOCK) on c.ID = wo.ID 
 inner join CutCell as cc WITH (NOLOCK) on cc.ID = wo.CutCellID and WO.MDivisionID = cc.MDivisionID
-left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
-left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'New'
+outer apply(
+	select cDate=min(co.cDate),Status=min(Status)
+	from CuttingOutput co WITH (NOLOCK) 
+	inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
+	where cod.WorkOrderUkey = wo.Ukey and Status != 'New'
+) as co
 where 1 = 1  AND wo.EstCutDate is not null
 ");
                 if (!MyUtility.Check.Empty(MDivision))

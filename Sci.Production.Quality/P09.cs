@@ -120,6 +120,7 @@ namespace Sci.Production.Quality
             Helper.Controls.Grid.Generator(this.grid1)
             .CheckBox("selected", header: "", trueValue: 1, falseValue: 0, iseditable: true)
             .Text("ID", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("InvoiceNo", header: "Invoice#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PoID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("seq", header: "Seq#", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -369,6 +370,7 @@ select distinct
 	FileExistI= cast(0 as bit),
 	FileExistT= cast(0 as bit),
 	ed.id,
+    ed.InvoiceNo,
 	Export.ETA,
 	ed.PoID,
 	seq=ed.seq1+'-'+ed.seq2,

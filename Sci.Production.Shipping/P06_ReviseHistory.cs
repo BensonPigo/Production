@@ -60,6 +60,8 @@ namespace Sci.Production.Shipping
                 .DateTime("AddDate", header: "Edit Date", width: Widths.AnsiChars(20))
                 .Text("ReviseStatus", header: "Revise Status", width: Widths.AnsiChars(7))
                 .Text("OrderID", header: "SP no.", width: Widths.AnsiChars(15))
+                .Text("OldShipModeID", header: "Shipping Mode(Original)", width: Widths.AnsiChars(10))
+                .Text("ShipmodeID", header: "Shipping Mode(Revised)", width: Widths.AnsiChars(10))
                 .Numeric("OldShipQty", header: "Ship Q'ty (Old)", width: Widths.AnsiChars(6), settings: this.oldqty)
                 .Numeric("NewShipQty", header: "Ship Q'ty (Revised)", width: Widths.AnsiChars(6), settings: this.newqty)
                 .Text("OldStatusExp", header: "Status (Old)", width: Widths.AnsiChars(8))
@@ -70,7 +72,6 @@ namespace Sci.Production.Shipping
                 .Text("OrderShipmodeSeq", header: "Order Shipmode Seq", width: Widths.AnsiChars(1))
                 .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(5))
                 .Numeric("ShipModeSeqQty", header: "Order Q'ty by Seq", width: Widths.AnsiChars(5))
-                .Text("ShipmodeID", header: "Shipping Mode", width: Widths.AnsiChars(10))
                 .Text("PackingListID", header: "Packing#", width: Widths.AnsiChars(15))
                 .Text("AddName", header: "Edit Name", width: Widths.AnsiChars(10));
 

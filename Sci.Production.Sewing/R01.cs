@@ -137,7 +137,7 @@ select  s.OutputDate
 		, System.StdTMS
 		, [InspectQty] = isnull(r.InspectQty,0)
 		, [RejectQty] = isnull(r.RejectQty,0)
-        , [SubconInSisterFty] = isnull(o.SubconInSisterFty,0)
+        , [SubconInType] = isnull(o.SubconInType,0)
 into #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -196,7 +196,7 @@ select OutputDate
 	   , StdTMS
 	   , InspectQty
 	   , RejectQty
-       , SubconInSisterFty
+       , SubconInType
 into #tmpSewingGroup
 from #tmpSewingDetail
 group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
@@ -204,7 +204,7 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
 		 , MockupCDCodeID, FactoryID, OrderCPU, OrderCPUFactor
 		 , MockupCPU, MockupCPUFactor, OrderStyle, MockupStyle
 		 , OrderSeason, MockupSeason, Rate, StdTMS, InspectQty
-		 , RejectQty, SubconInSisterFty
+		 , RejectQty, SubconInType
 ----↓計算累計天數 function table太慢直接寫在這
 select distinct scOutputDate = s.OutputDate 
 	   , style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
@@ -272,8 +272,9 @@ group by s.style, s.SewingLineID, s.FactoryID, s.Shift, s.Team
 		 , s.OrderId, s.ComboType
 -----↑計算累計天數
 select t.*
-	   , LastShift = CASE WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInSisterFty = 1 then 'I'
-                          WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInSisterFty = 0 then 'IN'
+	   , LastShift = CASE WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 
+        and t.SubconInType in ('1','2') then 'I'
+                          WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInType = 0 then 'IN'
                      ELSE t.Shift END
 	   , FtyType = f.Type
 	   , FtyCountry = f.CountryID

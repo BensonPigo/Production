@@ -503,7 +503,8 @@ BEGIN
 				t.AddDate				= s.AddDate,
 				t.FtyGroup              = s.FTY_Group,
 				t.ForecastSampleGroup   = s.ForecastSampleGroup,				
-				t.DyeingLoss			= s.DyeingLoss
+				t.DyeingLoss			= s.DyeingLoss,
+				t.SubconInType = '0'
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -531,7 +532,7 @@ BEGIN
 			, MDivisionID			, MCHandle				, KPIChangeReason		, MDClose				, CPUFactor				
 			, SizeUnit				, CuttingSP				, IsMixMarker			, EachConsSource		, KPIEachConsApprove	
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
-			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss
+			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
 			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
@@ -558,7 +559,7 @@ BEGIN
 			, s.MDivisionID 		, S.MCHandle			, s.KPIChangeReason		, S.MDClose				, s.CPUFactor			
 			, s.SizeUnit			, s.CuttingSP			, s.IsMixMarker			, s.EachConsSource		, s.KPIEachConsApprove	
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
-			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss
+			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 

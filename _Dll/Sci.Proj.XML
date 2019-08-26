@@ -2829,6 +2829,9 @@
         <member name="M:Sci.Win.UI.StdReportSetting.OnDetailGridSetup">
             <inheritdoc/>
         </member>
+        <member name="M:Sci.Win.UI.StdReportSetting.ClickSaveBefore">
+            <inheritdoc/>
+        </member>
         <member name="F:Sci.Win.UI.StdReportSetting.components">
             <summary>
             Required designer variable.

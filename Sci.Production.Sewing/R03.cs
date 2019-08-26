@@ -128,8 +128,8 @@ with tmp1stData as (
     where   1=1
             and so.Shift <> 'O'
             and o.Category in ({0})
-            --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
-            and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))",
+            --排除non sister的資料o.LocalOrder = 1 and o.SubconInType = 0
+            and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and o.SubconInType = 0))",
                 this.category));
 
             if (!MyUtility.Check.Empty(this.output1))

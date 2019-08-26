@@ -813,7 +813,7 @@ where id='{dr["OrderID"]}'");
             callNextForm.ShowDialog(this);
         }
 
-        private string updatePackinglist; // 用來先在ReviseData()準備更新Packinglist.pulloutid的SQL, 在save才執行
+        private string updatePackinglist = string.Empty; // 用來先在ReviseData()準備更新Packinglist.pulloutid的SQL, 在save才執行
 
         // Revise from ship plan and FOC/LO packing list
         private bool ReviseData()
@@ -847,13 +847,43 @@ and (Type = 'F' or Type = 'L')",
 
             sqlCmd = string.Format(
                 @"
+select distinct p.ID from PackingList p WITH (NOLOCK) where p.PulloutDate = '{0}' and p.MDivisionID = '{1}'and p.ShipPlanID != ''and p.Status = 'New'",
+                Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
+                Sci.Env.User.Keyword);
+
+            DataTable packDataconfirm;
+            result = DBProxy.Current.Select(null, sqlCmd, out packDataconfirm);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query ship plan fail!\r\n" + result.ToString());
+                return false;
+            }
+
+            if (packDataconfirm != null && packDataconfirm.Rows.Count > 0)
+            {
+                if (msgString.Length > 0)
+                {
+                    msgString.Append("\r\n");
+                }
+
+                msgString.Append("Packing List ID:" + string.Join(", ", packDataconfirm.AsEnumerable().Select(row => row["ID"].ToString())));
+            }
+
+            if (msgString.Length > 0)
+            {
+                MyUtility.Msg.WarningBox(string.Format("Below data not yet confirm!!\r\n{0}", msgString.ToString()));
+                return false;
+            }
+
+            sqlCmd = string.Format(
+                @"
 select distinct p.ShipPlanID
 from PackingList p WITH (NOLOCK) 
 left join ShipPlan s WITH (NOLOCK) on s.ID = p.ShipPlanID
 where p.PulloutDate = '{0}' 
 and p.MDivisionID = '{1}'
 and p.ShipPlanID != ''
-and (s.Status != 'Confirmed' or p.Status = 'New')",
+and s.Status != 'Confirmed' ",
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
                 Sci.Env.User.Keyword);
 
@@ -1494,6 +1524,7 @@ from SummaryData",
             reviseRow["Remark"] = dr["Remark"];
             reviseRow["Pullout_DetailUKey"] = dr["UKey"]; // Pullout_Revise沒有ukey
             reviseRow["INVNo"] = dr["INVNo"];
+            reviseRow["OldShipModeID"] = type == "Missing" ? string.Empty : dr["ShipModeID"];
             reviseRow["ShipModeID"] = dr["ShipModeID"];
             reviseRow["AddName"] = Sci.Env.User.UserID;
             reviseRow["AddDate"] = DateTime.Now;

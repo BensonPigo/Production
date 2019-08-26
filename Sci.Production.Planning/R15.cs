@@ -495,7 +495,7 @@ where IsTMS =1 or IsPrice = 1
 
             #region SummaryBy SP#
             string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT" };
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true);
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true, isNeedCombinBundleGroup: true);
             sqlCmd.Append($@"
 
 -- 依撈出來的order資料(cte)去找各製程的WIP
@@ -1048,7 +1048,7 @@ pivot
             }
             #endregion
             string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT" };
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: false);
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: false, isNeedCombinBundleGroup: true);
             #region SummaryBy Acticle/Size
             sqlCmd.Append($@"
 -- 依撈出來的order資料(cte)去找各製程的WIP

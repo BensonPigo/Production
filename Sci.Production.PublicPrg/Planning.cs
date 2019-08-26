@@ -168,15 +168,6 @@ inner join {tempTable} t on t.OrderID = bun.Orderid
             foreach (string subprocessID in subprocessIDs)
             {
                 string subprocessIDt = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
-                string isSpectialReader = string.Empty;
-                if (subprocessID.ToLower().EqualString("sorting") || subprocessID.ToLower().EqualString("loading"))
-                {
-                    isSpectialReader = "1";
-                }
-                else
-                {
-                    isSpectialReader = "0";
-                }
 
                 // --Step 2. --
                 //-- * 2.找出所有 Fabric Combo +Fabric Pancel Code +Article + SizeCode->Cartpart(包含同部位數量)
@@ -197,8 +188,7 @@ select	st1.OrderID,
 		st1.SizeCode,
 		CutpartCount.PatternCode,
 		CutpartCount.QtyBySet,
-		CutpartCount.QtyBySubprocess,
-		num = count (1) over (partition by OrderID, PatternPanel, FabricPanelCode, Article, Sizecode)
+		CutpartCount.QtyBySubprocess
 into #QtyBySetPerCutpart{subprocessIDt}
 from #AllOrders st1
 outer apply (
@@ -282,12 +272,20 @@ select	Orderid
 		, PatternCode
 		, InQty = sum(iif(InComing is not null ,Qty,0)) / iif(IsPair=1,m,1)
 		, OutQty = sum(iif(OutGoing is not null ,Qty,0)) / iif(IsPair=1,m,1)
-		, OriInQty = sum(iif(InComing is not null ,Qty,0)) / iif(IsPair=1,m,1)
-		, OriOutQty = sum(iif(OutGoing is not null ,Qty,0)) / iif(IsPair=1,m,1)
+		, OriInQty = sum(iif(InComing is not null ,Qty,0)) 
+		, OriOutQty = sum(iif(OutGoing is not null ,Qty,0)) 
 		, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null ,Qty,0))
 								when InOutRule = 2 then sum(iif(OutGoing is not null ,Qty,0))
 								else sum(iif(OutGoing is not null and InComing is not null ,Qty,0)) end) / iif(IsPair=1,m,1)
-		, num = count (1) over (partition by Orderid, Size, PatternPanel, FabricPanelCode, BundleGroup)
+		, num = count(1)
+		, num_In = sum(iif(InComing is not null ,1,0)) 
+		, num_Out= sum(iif(OutGoing is not null ,1,0))
+		, num_F  = case	when InOutRule = 1 then sum(iif(InComing is not null ,1,0))
+								when InOutRule = 2 then sum(iif(OutGoing is not null ,1,0))
+								else sum(iif(OutGoing is not null and InComing is not null ,1,0)) end
+
+
+
 into #BundleInOutQty{subprocessIDt}
 from #BundleInOutDetail{subprocessIDt}
 group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair,m
@@ -298,16 +296,10 @@ group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, Fabr
                 {
                     sqlcmd += $@"
 --篩選 BundleGroup Step.1 --
-update bunInOut
-set bunInOut.InQty = 0
-	, bunInOut.OutQty = 0
-from #BundleInOutQty{subprocessIDt} bunInOut
-inner join #QtyBySetPerCutpart{subprocessIDt} bas on bunInOut.OrderID = bas.OrderID
-										and bunInOut.PatternPanel = bas.PatternPanel
-										and bunInOut.FabricPanelCode = bas.FabricPanelCode
-										and bunInOut.Article = bas.Article
-										and bunInOut.Size = bas.SizeCode
-where bunInOut.num < bas.num
+update #BundleInOutQty{subprocessIDt}
+set InQty = iif(num_In<num,0,InQty)
+	, OutQty = iif(num_Out<num,0,OutQty)
+	, FinishedQty = iif(num_F<num,0,FinishedQty)
 
 select	OrderID
 		, Article
@@ -433,6 +425,7 @@ outer apply (
 	from #BundleInOutQty{subprocessIDt} bunIO
 	where cbs.OrderID = bunIO.OrderID and cbs.Sizecode = bunIO.Size and cbs.Article = bunIO.Article
 ) IOQtyPerPcs
+where FinishedQty is not null
 ";
                 if (bySP)
                 {

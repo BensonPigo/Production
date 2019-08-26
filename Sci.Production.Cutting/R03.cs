@@ -81,6 +81,7 @@ namespace Sci.Production.Cutting
 select
 	[M] = wo.MDivisionID,
 	[Factory] = o.FtyGroup,
+    [PPIC Close] = iif(c.Finished=1,'V',''),
 	[Est.Cutting Date]= wo.EstCutDate,
 	[Act.Cutting Date] = MincDate.MincoDate,
 	[Earliest Sewing Inline] = c.SewInLine,
@@ -145,7 +146,7 @@ outer apply(
 		select min(co.cDate)
 		from CuttingOutput co WITH (NOLOCK) 
 		inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
-		where cod.WorkOrderUkey = wo.Ukey
+		where cod.WorkOrderUkey = wo.Ukey and co.Status != 'New' 
 	)
 ) as MincDate
 outer apply(
@@ -330,7 +331,7 @@ where 1=1
             #endregion
             sqlCmd.Append(@"
 select 
-[M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
+[M],[Factory],[PPIC Close],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
 ,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,BuyerDelivery

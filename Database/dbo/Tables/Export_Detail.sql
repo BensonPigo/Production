@@ -48,6 +48,7 @@
     [BalanceQty]     NUMERIC (12, 2)  CONSTRAINT [DF_Export_Detail_BalanceQty] DEFAULT ((0)) NULL,
     [BalanceFOC]     NUMERIC (12, 2)  CONSTRAINT [DF_Export_Detail_BalanceFOC] DEFAULT ((0)) NULL,
     [CurrencyId]     VARCHAR (3)     CONSTRAINT [DF_Export_Detail_CurrencyId] DEFAULT ('') NULL,
+    [InvoiceNo] VARCHAR(200) NULL DEFAULT (''), 
     CONSTRAINT [PK_Export_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC, [ShipPlanHandle] ASC)
 );
 
@@ -257,3 +258,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Export_Detail', @level2type = N'COLUMN', @level2name = N'EditName';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'發票號碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'InvoiceNo'

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[FIR_Physical] (
+CREATE TABLE [dbo].[FIR_Physical] (
     [ID]          BIGINT         CONSTRAINT [DF_FIR_Physical_ID] DEFAULT ((0)) NOT NULL,
     [Roll]        VARCHAR (8)    CONSTRAINT [DF_FIR_Physical_Roll] DEFAULT ('') NULL,
     [Dyelot]      VARCHAR (8)    CONSTRAINT [DF_FIR_Physical_Dyelot] DEFAULT ('') NULL,
@@ -21,8 +21,11 @@
     [Moisture]    BIT            CONSTRAINT [DF_FIR_Physical_Moisture] DEFAULT ((0)) NULL,
     [QCTime]      INT            CONSTRAINT [DF_FIR_Physical_QCTime] DEFAULT ((0)) NOT NULL,
     [QCStopQty]   TINYINT        CONSTRAINT [DF_FIR_Physical_QCStopQty] DEFAULT ((0)) NOT NULL,
+    [IsQMS]       BIT            DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
+
+
 
 
 
@@ -131,5 +134,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QC驗布時
 
 
 GO
-
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為QMS操作', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Physical', @level2type = N'COLUMN', @level2name = N'IsQMS';
 
