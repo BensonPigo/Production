@@ -286,11 +286,13 @@ WHERE   StockType='{dr["tostocktype"]}'
 
             int selectindex = comboCategory.SelectedIndex;
             int selectindex2 = comboFabricType.SelectedIndex;
-            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e, SP1, SP2, StockSP1, StockSP2, ProjectID, factory;
+            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e,InvCfmDate_s, InvfmDate_e, SP1, SP2, StockSP1, StockSP2, ProjectID, factory;
             CuttingInline_b = null;
             CuttingInline_e = null;
             OrderCfmDate_b = null;
             OrderCfmDate_e = null;
+            InvCfmDate_s = null;
+            InvfmDate_e = null;
             SP1 = this.txtIssueSP1.Text;
             SP2 = this.txtIssueSP2.Text;
             StockSP1 = this.txtStockSP1.Text;
@@ -304,9 +306,25 @@ WHERE   StockType='{dr["tostocktype"]}'
             if (dateOrderCfmDate.Value1 != null) { OrderCfmDate_b = this.dateOrderCfmDate.Text1; }
             if (dateOrderCfmDate.Value2 != null) { OrderCfmDate_e = this.dateOrderCfmDate.Text2; }
 
+            if (dateInventoryCfm.Value1 != null) { InvCfmDate_s = this.dateInventoryCfm.Value1.Value.ToAppDateTimeFormatString(); }
+            if (dateInventoryCfm.Value2 != null) { InvfmDate_e = this.dateInventoryCfm.Value2.Value.AddDays(1).AddSeconds(-1).ToAppDateTimeFormatString(); }
+
+            string InvCfmDate_Where = string.Empty;
+
+            if (!string.IsNullOrEmpty(InvCfmDate_s))
+            {
+                InvCfmDate_Where += $"AND i.ConfirmDate >= '{InvCfmDate_s}'" + Environment.NewLine;
+            }
+
+            if (!string.IsNullOrEmpty(InvfmDate_e))
+            {
+                InvCfmDate_Where += $"                AND i.ConfirmDate <= '{InvfmDate_e}'" + Environment.NewLine;
+            }
+
             if ((CuttingInline_b == null && CuttingInline_e == null) &&
                  MyUtility.Check.Empty(SP1) && MyUtility.Check.Empty(StockSP1) && MyUtility.Check.Empty(ProjectID) &&
-                (OrderCfmDate_b == null && OrderCfmDate_e == null))
+                (OrderCfmDate_b == null && OrderCfmDate_e == null)
+                )
             {
                 MyUtility.Msg.WarningBox("< Project ID >\r\n< Cutting Inline >\r\n< Order Confirm Date >\r\n< Issue SP# >\r\n< Stock SP# >\r\ncan't be empty!!");
                 txtIssueSP1.Focus();
@@ -363,6 +381,7 @@ WHERE   StockType='{dr["tostocktype"]}'
                 and Seq70Poid = rtrim(o.id)
                 and Seq70Seq1 = rtrim(pd.seq1)
                 and Seq70Seq2 = pd.seq2
+                {1}
     ) x -- 需要轉的數量
     cross apply (
 	    select sum(s2.Qty) as InQty 
@@ -377,7 +396,7 @@ WHERE   StockType='{dr["tostocktype"]}'
     ) xx --已轉的數量
     where   pd.seq1 like '7%' 
             and f.MDivisionID = '{0}'
-            and checkProduceFty.IsProduceFty = '1'", Env.User.Keyword));
+            and checkProduceFty.IsProduceFty = '1'", Env.User.Keyword , InvCfmDate_Where));
 
             #region -- 條件 --
             switch (selectindex)
