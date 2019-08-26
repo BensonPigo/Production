@@ -57,7 +57,7 @@
             this.labelProgress});
             this.statusStrip.Location = new System.Drawing.Point(0, 64);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(264, 22);
+            this.statusStrip.Size = new System.Drawing.Size(262, 22);
             this.statusStrip.TabIndex = 8;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -78,7 +78,7 @@
             this.AcceptButton = this.btnUpdate;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(264, 86);
+            this.ClientSize = new System.Drawing.Size(262, 86);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btnUpdate);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
