@@ -168,15 +168,6 @@ inner join {tempTable} t on t.OrderID = bun.Orderid
             foreach (string subprocessID in subprocessIDs)
             {
                 string subprocessIDt = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
-                string isSpectialReader = string.Empty;
-                if (subprocessID.ToLower().EqualString("sorting") || subprocessID.ToLower().EqualString("loading"))
-                {
-                    isSpectialReader = "1";
-                }
-                else
-                {
-                    isSpectialReader = "0";
-                }
 
                 // --Step 2. --
                 //-- * 2.找出所有 Fabric Combo +Fabric Pancel Code +Article + SizeCode->Cartpart(包含同部位數量)
@@ -434,6 +425,7 @@ outer apply (
 	from #BundleInOutQty{subprocessIDt} bunIO
 	where cbs.OrderID = bunIO.OrderID and cbs.Sizecode = bunIO.Size and cbs.Article = bunIO.Article
 ) IOQtyPerPcs
+where FinishedQty is not null
 ";
                 if (bySP)
                 {
