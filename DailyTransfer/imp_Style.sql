@@ -113,8 +113,8 @@ a.Ukey	= b.Ukey
 ,a.ComboType	= b.ComboType
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
-,a.EditName	= IIF(a.EditDate >= b.EditDate,a.EditName,b.EditName)
-,a.EditDate	= IIF(a.EditDate >= b.EditDate,a.EditDate,b.EditDate)
+,a.TPEEditName	= b.EditName
+,a.TPEEditDate 	= b.EditDate
 ,a.SizeUnit	= b.SizeUnit
 ,a.ModularParent	= b.ModularParent
 ,a.CPUAdjusted	= b.CPUAdjusted
@@ -184,8 +184,8 @@ ID
 ,ComboType
 ,AddName
 ,AddDate
-,EditName
-,EditDate
+,TPEEditName
+,TPEEditDate 
 ,SizeUnit
 ,ModularParent
 ,CPUAdjusted

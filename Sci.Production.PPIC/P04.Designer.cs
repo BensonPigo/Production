@@ -110,6 +110,12 @@
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
             this.txtcdcode = new Sci.Production.Class.txtcdcode();
+            this.numFinishingProcessID2 = new Sci.Win.UI.NumericBox();
+            this.numFinishingProcessID1 = new Sci.Win.UI.NumericBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtTPEEditBy = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -123,10 +129,14 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(897, 507);
+            this.detail.Size = new System.Drawing.Size(1000, 570);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numFinishingProcessID2);
+            this.detailcont.Controls.Add(this.numFinishingProcessID1);
+            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.displayStyleApprove2);
             this.detailcont.Controls.Add(this.comboGender);
             this.detailcont.Controls.Add(this.btnComboType);
@@ -198,22 +208,31 @@
             this.detailcont.Controls.Add(this.txttpeuserHandle);
             this.detailcont.Controls.Add(this.txttpeuserSMR);
             this.detailcont.Controls.Add(this.txtcdcode);
-            this.detailcont.Size = new System.Drawing.Size(897, 469);
+            this.detailcont.Size = new System.Drawing.Size(1000, 532);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 469);
+            this.detailbtm.Controls.Add(this.txtTPEEditBy);
+            this.detailbtm.Controls.Add(this.label2);
+            this.detailbtm.Location = new System.Drawing.Point(0, 532);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.TabIndex = 1;
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.label2, 0);
+            this.detailbtm.Controls.SetChildIndex(this.txtTPEEditBy, 0);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(897, 507);
+            this.browse.Size = new System.Drawing.Size(966, 570);
             // 
             // tabs
             // 
             this.tabs.Controls.Add(this.tabPage1);
-            this.tabs.Size = new System.Drawing.Size(905, 536);
+            this.tabs.Size = new System.Drawing.Size(1008, 599);
             this.tabs.TabIndex = 0;
             this.tabs.Controls.SetChildIndex(this.tabPage1, 0);
             this.tabs.Controls.SetChildIndex(this.detail, 0);
@@ -221,17 +240,17 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(260, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(508, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Location = new System.Drawing.Point(734, 7);
+            this.editby.Size = new System.Drawing.Size(260, 23);
             this.editby.TabIndex = 1;
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(460, 13);
+            this.lbleditby.Location = new System.Drawing.Point(686, 13);
             // 
             // tabPage1
             // 
@@ -844,7 +863,7 @@
             // btnTMSCost
             // 
             this.btnTMSCost.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnTMSCost.Location = new System.Drawing.Point(713, 7);
+            this.btnTMSCost.Location = new System.Drawing.Point(778, 13);
             this.btnTMSCost.Name = "btnTMSCost";
             this.btnTMSCost.Size = new System.Drawing.Size(180, 30);
             this.btnTMSCost.TabIndex = 33;
@@ -855,7 +874,7 @@
             // btnStdGSD
             // 
             this.btnStdGSD.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnStdGSD.Location = new System.Drawing.Point(713, 40);
+            this.btnStdGSD.Location = new System.Drawing.Point(778, 46);
             this.btnStdGSD.Name = "btnStdGSD";
             this.btnStdGSD.Size = new System.Drawing.Size(180, 30);
             this.btnStdGSD.TabIndex = 34;
@@ -866,7 +885,7 @@
             // btnFTYGSD
             // 
             this.btnFTYGSD.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnFTYGSD.Location = new System.Drawing.Point(713, 73);
+            this.btnFTYGSD.Location = new System.Drawing.Point(778, 79);
             this.btnFTYGSD.Name = "btnFTYGSD";
             this.btnFTYGSD.Size = new System.Drawing.Size(180, 30);
             this.btnFTYGSD.TabIndex = 35;
@@ -877,7 +896,7 @@
             // btnProductionKits
             // 
             this.btnProductionKits.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnProductionKits.Location = new System.Drawing.Point(713, 106);
+            this.btnProductionKits.Location = new System.Drawing.Point(778, 112);
             this.btnProductionKits.Name = "btnProductionKits";
             this.btnProductionKits.Size = new System.Drawing.Size(180, 30);
             this.btnProductionKits.TabIndex = 36;
@@ -888,7 +907,7 @@
             // btnArtwork
             // 
             this.btnArtwork.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnArtwork.Location = new System.Drawing.Point(713, 139);
+            this.btnArtwork.Location = new System.Drawing.Point(778, 145);
             this.btnArtwork.Name = "btnArtwork";
             this.btnArtwork.Size = new System.Drawing.Size(180, 30);
             this.btnArtwork.TabIndex = 37;
@@ -899,7 +918,7 @@
             // btnQtyCartonbyCustCD
             // 
             this.btnQtyCartonbyCustCD.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnQtyCartonbyCustCD.Location = new System.Drawing.Point(713, 172);
+            this.btnQtyCartonbyCustCD.Location = new System.Drawing.Point(778, 178);
             this.btnQtyCartonbyCustCD.Name = "btnQtyCartonbyCustCD";
             this.btnQtyCartonbyCustCD.Size = new System.Drawing.Size(180, 30);
             this.btnQtyCartonbyCustCD.TabIndex = 38;
@@ -910,7 +929,7 @@
             // btnWeightdata
             // 
             this.btnWeightdata.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnWeightdata.Location = new System.Drawing.Point(713, 204);
+            this.btnWeightdata.Location = new System.Drawing.Point(778, 210);
             this.btnWeightdata.Name = "btnWeightdata";
             this.btnWeightdata.Size = new System.Drawing.Size(180, 30);
             this.btnWeightdata.TabIndex = 39;
@@ -921,7 +940,7 @@
             // btnGarmentList
             // 
             this.btnGarmentList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnGarmentList.Location = new System.Drawing.Point(713, 237);
+            this.btnGarmentList.Location = new System.Drawing.Point(778, 243);
             this.btnGarmentList.Name = "btnGarmentList";
             this.btnGarmentList.Size = new System.Drawing.Size(180, 30);
             this.btnGarmentList.TabIndex = 40;
@@ -932,7 +951,7 @@
             // btnSimilarStyle
             // 
             this.btnSimilarStyle.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnSimilarStyle.Location = new System.Drawing.Point(713, 270);
+            this.btnSimilarStyle.Location = new System.Drawing.Point(778, 276);
             this.btnSimilarStyle.Name = "btnSimilarStyle";
             this.btnSimilarStyle.Size = new System.Drawing.Size(180, 30);
             this.btnSimilarStyle.TabIndex = 41;
@@ -943,7 +962,7 @@
             // btnHSCode
             // 
             this.btnHSCode.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnHSCode.Location = new System.Drawing.Point(717, 304);
+            this.btnHSCode.Location = new System.Drawing.Point(778, 310);
             this.btnHSCode.Name = "btnHSCode";
             this.btnHSCode.Size = new System.Drawing.Size(180, 30);
             this.btnHSCode.TabIndex = 42;
@@ -1015,7 +1034,7 @@
             // btnComboType
             // 
             this.btnComboType.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnComboType.Location = new System.Drawing.Point(713, 336);
+            this.btnComboType.Location = new System.Drawing.Point(778, 342);
             this.btnComboType.Name = "btnComboType";
             this.btnComboType.Size = new System.Drawing.Size(180, 30);
             this.btnComboType.TabIndex = 43;
@@ -1085,9 +1104,66 @@
             this.txtcdcode.TabIndex = 9;
             this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);
             // 
+            // numFinishingProcessID2
+            // 
+            this.numFinishingProcessID2.BackColor = System.Drawing.Color.White;
+            this.numFinishingProcessID2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FinishingProcessID2", true));
+            this.numFinishingProcessID2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numFinishingProcessID2.Location = new System.Drawing.Point(184, 500);
+            this.numFinishingProcessID2.Name = "numFinishingProcessID2";
+            this.numFinishingProcessID2.NullValue = null;
+            this.numFinishingProcessID2.Size = new System.Drawing.Size(117, 23);
+            this.numFinishingProcessID2.TabIndex = 73;
+            // 
+            // numFinishingProcessID1
+            // 
+            this.numFinishingProcessID1.BackColor = System.Drawing.Color.White;
+            this.numFinishingProcessID1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FinishingProcessID1", true));
+            this.numFinishingProcessID1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numFinishingProcessID1.Location = new System.Drawing.Point(183, 470);
+            this.numFinishingProcessID1.Name = "numFinishingProcessID1";
+            this.numFinishingProcessID1.NullValue = null;
+            this.numFinishingProcessID1.Size = new System.Drawing.Size(117, 23);
+            this.numFinishingProcessID1.TabIndex = 72;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(5, 499);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(175, 23);
+            this.label3.TabIndex = 75;
+            this.label3.Text = "Finishing Process Setting 2";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(5, 470);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(175, 23);
+            this.label1.TabIndex = 74;
+            this.label1.Text = "Finishing Process Setting 1";
+            // 
+            // txtTPEEditBy
+            // 
+            this.txtTPEEditBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtTPEEditBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtTPEEditBy.IsSupportEditMode = false;
+            this.txtTPEEditBy.Location = new System.Drawing.Point(414, 7);
+            this.txtTPEEditBy.Name = "txtTPEEditBy";
+            this.txtTPEEditBy.ReadOnly = true;
+            this.txtTPEEditBy.Size = new System.Drawing.Size(265, 23);
+            this.txtTPEEditBy.TabIndex = 77;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(337, 13);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(78, 17);
+            this.label2.TabIndex = 76;
+            this.label2.Text = "TPE Edit By";
+            // 
             // P04
             // 
-            this.ClientSize = new System.Drawing.Size(905, 569);
+            this.ClientSize = new System.Drawing.Size(1008, 632);
             this.DefaultControl = "txtStyleNo";
             this.DefaultControlForEdit = "txtuserLocalMR";
             this.DefaultOrder = "ID,SeasonID";
@@ -1199,5 +1275,11 @@
         private Win.UI.Button btnComboType;
         private Class.txtdropdownlist comboGender;
         private Win.UI.DisplayBox displayStyleApprove2;
+        private Win.UI.NumericBox numFinishingProcessID2;
+        private Win.UI.NumericBox numFinishingProcessID1;
+        private Win.UI.Label label3;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtTPEEditBy;
+        private Win.UI.Label label2;
     }
 }
