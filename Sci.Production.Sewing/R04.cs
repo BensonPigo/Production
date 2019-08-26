@@ -83,7 +83,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,OrderQty = o.Qty
     ,s.SubconOutFty
     ,s.SubConOutContractNumber
-    ,o.SubconInSisterFty
+    ,o.SubconInType
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'')
 	,Remark=isnull(sd.Remark,'')
     ,o.SciDelivery
@@ -158,7 +158,7 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
     ,OrderQty
     ,SubconOutFty
     ,SubConOutContractNumber
-    ,SubconInSisterFty
+    ,SubconInType
     ,SewingReasonDesc
     ,Remark
 into #tmpSewingGroup
@@ -295,7 +295,7 @@ select * from(
 		,Shift =    CASE    WHEN t.LastShift=''D'' then ''Day''
                             WHEN t.LastShift=''N'' then ''Night''
                             WHEN t.LastShift=''O'' then ''Subcon-Out''
-                            WHEN t.LastShift=''I'' and SubconInSisterFty = 1 then ''Subcon-In(Sister)''
+                            WHEN t.LastShift=''I'' and SubconInType in (''1'',''2'') then ''Subcon-In(Sister)''
                             else ''Subcon-In(Non Sister)'' end
 		,t.SubconOutFty
         ,t.SubConOutContractNumber
