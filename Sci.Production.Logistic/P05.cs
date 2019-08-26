@@ -112,7 +112,7 @@ namespace Sci.Production.Logistic
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmdWhere.Append($"and pd.ID = '{this.txtPackID.Text}'");
+                sqlCmdWhere.Append($"and pd.PackingListID = '{this.txtPackID.Text}'");
                 sqlCmdWhere_Ori.Append($"and pd.OrigID =  '{this.txtPackID.Text}' ");
             }
 
@@ -127,28 +127,31 @@ SELECT *
 INTO   #tmp_NoRepeat
 FROM
 (
-	SELECT DISTINCT ID,CTNStartNo ,OrderID ,OrderShipmodeSeq ,OrigID,OrigOrderID ,OrigCTNStartNo
-	FROM PackingList_Detail pd
+	SELECT DISTINCT ID,CTNStartNo ,OrderID,PackingListID,MDivisionID,ReceiveDate,AddDate,AddName,ClogLocationId 
+	FROM ClogReceive pd
 	WHERE 1=1
 	{sqlCmdWhere}
-	UNION 
-	SELECT DISTINCT ID,CTNStartNo ,OrderID ,OrderShipmodeSeq,OrigID,OrigOrderID ,OrigCTNStartNo
-	FROM PackingList_Detail pd
-	WHERE 1=1
-	{sqlCmdWhere_Ori}
 
 )a
 
-SELECt 
-[PackID]=pd.ID
+SELECT
+[PackID]= cr.PackingListID
 , pd.OrderShipmodeSeq 
 , pd.OrigID
 , pd.OrigOrderID 
 , pd.OrigCTNStartNo 
-,cr.*
+, cr.ID
+, cr.CTNStartNo 
+, cr.OrderID
+, cr.PackingListID
+, cr.MDivisionID
+, cr.ReceiveDate
+, cr.AddDate
+, cr.AddName
+, cr.ClogLocationId
 INTO #MainTable
-from  #tmp_NoRepeat pd WITH (NOLOCK) 
-inner join ClogReceive cr WITH (NOLOCK) on pd.ID = cr.PackingListID and pd.CTNStartNo = cr.CTNStartNo 
+from  #tmp_NoRepeat cr WITH (NOLOCK) 
+LEFT JOIN PackingList_Detail pd  on pd.ID = cr.PackingListID and pd.CTNStartNo = cr.CTNStartNo 
 WHERE       cr.MDivisionID = '{Sci.Env.User.Keyword}'
 ");
 
@@ -204,11 +207,11 @@ select  1 as selected
         , RepackOrderID
         , RepackCtnStartNo
 from (
-    select  t.ReceiveDate
-            , [PackingListID] = iif(t.OrigID = '',t.PackID, t.OrigID)
-            , [OrderID] = iif(t.OrigOrderID = '',t.OrderID, t.OrigOrderID)
+     select  t.ReceiveDate
+            , [PackingListID] = iif(t.OrigID = '' OR t.OrigID IS NULL,t.PackID, t.OrigID)
+            , [OrderID] = iif(t.OrigOrderID = '' OR t.OrigOrderID IS NULL,t.OrderID, t.OrigOrderID)
             , oq.Seq
-            , [CTNStartNo] = iif(t.OrigCTNStartNo = '',t.CTNStartNo, t.OrigCTNStartNo)
+            , [CTNStartNo] = iif(t.OrigCTNStartNo = '' OR t.OrigCTNStartNo IS NULL,t.CTNStartNo, t.OrigCTNStartNo)
             , isnull(o.StyleID,'') as StyleID
             , isnull(o.BrandID,'') as BrandID
             , isnull(o.Customize1,'') as Customize1
