@@ -1050,9 +1050,10 @@ select
 	into #APSListWorkDay
 from SewingSchedule s  WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
+inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 outer apply(select [val] = iif(s.OriEff is null and s.SewLineEff is null,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) OriEff
-where 1 = 1 {sqlWhere.ToString()}
+where 1 = 1 {sqlWhere.ToString()} and s.APSno <> 0
 group by	s.APSNo ,
 			s.MDivisionID,
 			s.SewingLineID,
