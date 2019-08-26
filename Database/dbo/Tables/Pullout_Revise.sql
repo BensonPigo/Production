@@ -16,8 +16,11 @@
     [AddDate]            DATETIME      NULL,
     [OldUKey]            VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OldUKey] DEFAULT ('') NULL,
     [OldReviseKey]       VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OldReviseKey] DEFAULT ('') NULL,
+    [OldShipModeID]      VARCHAR (5)   NULL,
     CONSTRAINT [PK_Pullout_Revise] PRIMARY KEY CLUSTERED ([ReviseKey] ASC)
 );
+
+
 
 
 

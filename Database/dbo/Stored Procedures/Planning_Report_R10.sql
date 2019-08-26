@@ -18,6 +18,7 @@ CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	,@SourceStr varchar(50) = 'Order,Forecast,Fty Local Order'
 	,@M varchar(20)
 	,@Fty varchar(20)
+	,@Zone varchar(20)
 AS
 BEGIN
 
@@ -41,7 +42,7 @@ BEGIN
 
 	--#tmpFactory
 	SELECT CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , Factory.ID as FactoryID
-		, iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		, Factory.MDivisionID
 	, Factory.CPU
 	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS.TMS 
 	,Capacity
@@ -63,7 +64,7 @@ BEGIN
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1  And Factory.Junk = 0 And Artworktype.ReportDropdown = 1 
 	And Artworktype.ID = @ArtWorkType
-	And (factory.MDivisionID = @M or @M = '') And (factory.ID = @Fty or @Fty = '')
+	And (factory.MDivisionID = @M or @M = '') And (factory.ID = @Fty or @Fty = '') and (Factory.Zone = @Zone or @Zone = '')
 
 	--#Orders
 	select id,FactoryID,CPU,OrderTypeID,ProgramID,Qty,Category,BrandID,BuyerDelivery,SciDelivery,CpuRate,GMTComplete
@@ -77,22 +78,23 @@ BEGIN
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
 	And (orders.MDivisionID = @M or @M = '') And (orders.FactoryID = @Fty or @Fty = '')  
+	and (exists(select 1 from Factory where id = Orders.FactoryID and Zone = @Zone) or @Zone = '')
 	--and localorder = 0
 	
 	if not exists(select 1 from #tmpFactory)
 	begin
 		insert into #tmpFactory
 		SELECT top 1 CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , '' as FactoryID
-			, iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+			, Factory.MDivisionID
 		, CPU=0		,Year=@Year, Month='00', ArtworkTypeID=@ArtWorkType, TMS =0
 		,Capacity=0		, HalfCapacity1=0		, HalfCapacity2=0		,OrderYYMM=concat(@Year,'00')		,FactorySort = 0
 		From Factory inner join Country on Factory.CountryID = Country.ID
-		where (factory.ID = @Fty or @Fty = '') 
+		where (factory.ID = @Fty or @Fty = '') and (Factory.Zone = @Zone or Zone = '')
 	end
 
 	--Order
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID, CPURate
-		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		,Factory.MDivisionID
 	, Factory.CountryID	
 	,Orders.CPU, cTms, cCPU
 	,Order_TmsCost.ArtworktypeID
@@ -160,11 +162,11 @@ BEGIN
 	AND @HasFtyLocalOrder = 1
 	AND Orders.LocalOrder = 1
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
-
+	and (exists(select 1 from Factory where id = Orders.FactoryID and Zone = @Zone) or @Zone = '')
 
 	--#tmpFactoryOrder1
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
-		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		,Factory.MDivisionID
 	, Factory.CountryID
 	,Style.CPU, cTms, cCPU
 	,Style_TmsCost.ArtworkTypeID 
@@ -230,7 +232,7 @@ BEGIN
 	--Forecast
 	--#tmpForecast1
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID
-		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		,Factory.MDivisionID
 	, Factory.CountryID
 	,cTms as ArtworkTypeTMS
 	,Style.CPU, cTms, cCPU
@@ -258,7 +260,9 @@ BEGIN
 	AND @HasForecast = 1
 	AND Orders.IsForecast = 1
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')  
+	and (Factory.Zone = @Zone or @Zone = '')
 	--and localorder = 0
+
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	--
 	declare @tmpFinal table (

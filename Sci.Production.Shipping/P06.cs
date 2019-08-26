@@ -813,7 +813,7 @@ where id='{dr["OrderID"]}'");
             callNextForm.ShowDialog(this);
         }
 
-        private string updatePackinglist; // 用來先在ReviseData()準備更新Packinglist.pulloutid的SQL, 在save才執行
+        private string updatePackinglist = string.Empty; // 用來先在ReviseData()準備更新Packinglist.pulloutid的SQL, 在save才執行
 
         // Revise from ship plan and FOC/LO packing list
         private bool ReviseData()
@@ -1524,6 +1524,7 @@ from SummaryData",
             reviseRow["Remark"] = dr["Remark"];
             reviseRow["Pullout_DetailUKey"] = dr["UKey"]; // Pullout_Revise沒有ukey
             reviseRow["INVNo"] = dr["INVNo"];
+            reviseRow["OldShipModeID"] = type == "Missing" ? string.Empty : dr["ShipModeID"];
             reviseRow["ShipModeID"] = dr["ShipModeID"];
             reviseRow["AddName"] = Sci.Env.User.UserID;
             reviseRow["AddDate"] = DateTime.Now;
