@@ -43,7 +43,11 @@
     [MtlAutoLock]                BIT            CONSTRAINT [DF_System_MtlAutoLock] DEFAULT ((0)) NOT NULL,
     [InspAutoLockAcc]            BIT            DEFAULT ((0)) NOT NULL,
     [ShippingMarkPath]           VARCHAR (80)   NULL,
-    [StyleSketch]                VARCHAR (80)   NULL
+    [StyleSketch]                VARCHAR (80)   NULL,
+	[ARKServerName] VARCHAR(20) NULL, 
+    [ARKDatabaseName] VARCHAR(20) NULL, 
+    [ARKLoginId] VARCHAR(20) NULL, 
+    [ARKLoginPwd] VARCHAR(20) NULL
 );
 
 
