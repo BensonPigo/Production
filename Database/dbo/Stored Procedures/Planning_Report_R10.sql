@@ -164,7 +164,6 @@ BEGIN
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
 	and (exists(select 1 from Factory where id = Orders.FactoryID and Zone = @Zone) or @Zone = '')
 
-
 	--#tmpFactoryOrder1
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 		,Factory.MDivisionID
@@ -263,6 +262,7 @@ BEGIN
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')  
 	and (Factory.Zone = @Zone or @Zone = '')
 	--and localorder = 0
+
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	--
 	declare @tmpFinal table (
