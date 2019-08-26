@@ -145,8 +145,8 @@ order by o.ID
         {
             DataTable dt = ((DataTable)listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
             string insertOrderFinished = $@"
-insert Order_Finish(ID,FOCQty,AddName,AddDate)
-select OrderID,FinishedFOCStockinQty,'{Sci.Env.User.UserID}',getdate()
+insert Order_Finish(ID,FOCQty,CurrentFOCQty,AddName,AddDate)
+select OrderID,FinishedFOCStockinQty,(FinishedFOCStockinQty -FOCPulloutQty) ,'{Sci.Env.User.UserID}',getdate()
 from #tmp
 ";
             DataTable odt;
