@@ -126,6 +126,7 @@ and exists (
 	where oqd.Id = o.id
 	and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
 )--有一筆Price為0表示此Orderid有Foc
+and o.MDivisionID = '{Sci.Env.User.Keyword}'
 {where}
 order by o.ID
 ";
