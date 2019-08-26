@@ -119,6 +119,7 @@ select  F.MDivisionID
         ,[Wkno] = wk.wkno
         ,PS.id
         ,style = si.StyleID
+		,o.BrandID
         ,PSD.FinalETD
         ,supp = concat(PS.suppid,'-',S.NameEN )
         ,S.CountryID
