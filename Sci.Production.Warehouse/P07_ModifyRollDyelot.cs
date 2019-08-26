@@ -549,7 +549,7 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
     INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
     INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
     WHERE r.ID='{0}' AND p.FabricType='F' AND p.FabricType='F' AND  roll='{1}' AND dyelot='{2}'
-    --and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}' 
+    and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}' 
     ", docno, drModify["roll"], drModify["dyelot"], drModify["Seq1"], drModify["Seq2"] , drModify["poid"]);
 
                     if (MyUtility.Check.Seek(sqlcmd, null))
