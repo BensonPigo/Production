@@ -286,13 +286,13 @@ WHERE   StockType='{dr["tostocktype"]}'
 
             int selectindex = comboCategory.SelectedIndex;
             int selectindex2 = comboFabricType.SelectedIndex;
-            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e,InvCfmDate_s, InvfmDate_e, SP1, SP2, StockSP1, StockSP2, ProjectID, factory;
+            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e,InvCfmDate_s, InvCfmDate_e, SP1, SP2, StockSP1, StockSP2, ProjectID, factory;
             CuttingInline_b = null;
             CuttingInline_e = null;
             OrderCfmDate_b = null;
             OrderCfmDate_e = null;
             InvCfmDate_s = null;
-            InvfmDate_e = null;
+            InvCfmDate_e = null;
             SP1 = this.txtIssueSP1.Text;
             SP2 = this.txtIssueSP2.Text;
             StockSP1 = this.txtStockSP1.Text;
@@ -307,7 +307,7 @@ WHERE   StockType='{dr["tostocktype"]}'
             if (dateOrderCfmDate.Value2 != null) { OrderCfmDate_e = this.dateOrderCfmDate.Text2; }
 
             if (dateInventoryCfm.Value1 != null) { InvCfmDate_s = this.dateInventoryCfm.Value1.Value.ToAppDateTimeFormatString(); }
-            if (dateInventoryCfm.Value2 != null) { InvfmDate_e = this.dateInventoryCfm.Value2.Value.AddDays(1).AddSeconds(-1).ToAppDateTimeFormatString(); }
+            if (dateInventoryCfm.Value2 != null) { InvCfmDate_e = this.dateInventoryCfm.Value2.Value.AddDays(1).AddSeconds(-1).ToAppDateTimeFormatString(); }
 
             string InvCfmDate_Where = string.Empty;
 
@@ -316,17 +316,18 @@ WHERE   StockType='{dr["tostocktype"]}'
                 InvCfmDate_Where += $"AND i.ConfirmDate >= '{InvCfmDate_s}'" + Environment.NewLine;
             }
 
-            if (!string.IsNullOrEmpty(InvfmDate_e))
+            if (!string.IsNullOrEmpty(InvCfmDate_e))
             {
-                InvCfmDate_Where += $"                AND i.ConfirmDate <= '{InvfmDate_e}'" + Environment.NewLine;
+                InvCfmDate_Where += $"                AND i.ConfirmDate <= '{InvCfmDate_e}'" + Environment.NewLine;
             }
 
             if ((CuttingInline_b == null && CuttingInline_e == null) &&
                  MyUtility.Check.Empty(SP1) && MyUtility.Check.Empty(StockSP1) && MyUtility.Check.Empty(ProjectID) &&
-                (OrderCfmDate_b == null && OrderCfmDate_e == null)
+                (OrderCfmDate_b == null && OrderCfmDate_e == null) &&
+                (InvCfmDate_s == null && InvCfmDate_s == null)
                 )
             {
-                MyUtility.Msg.WarningBox("< Project ID >\r\n< Cutting Inline >\r\n< Order Confirm Date >\r\n< Issue SP# >\r\n< Stock SP# >\r\ncan't be empty!!");
+                MyUtility.Msg.WarningBox("< Project ID >\r\n< Cutting Inline >\r\n< Order Confirm Date >\r\n< Issue SP# >\r\n< Stock SP# >\r\n< Inventory Cfm Date >\r\ncan't be empty!!");
                 txtIssueSP1.Focus();
                 return;
             }
