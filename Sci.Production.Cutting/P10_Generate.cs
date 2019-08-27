@@ -52,13 +52,25 @@ namespace Sci.Production.Cutting
             #endregion
 
             #region 準備GarmentList & ArticleGroup
+            string sizes = string.Empty;
+            if (qtyTb != null)
+            {
+                var sizeList = qtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+                sizes = "'" + string.Join("','", sizeList) + "'";
+            }
+            string sizeGroup = string.Empty;
+            if (!MyUtility.Check.Empty(sizes))
+            {
+                string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{maindatarow["poid"].ToString()}' and SizeCode IN ({sizes})";
+                sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
+            }
             //GarmentList
-            PublicPrg.Prgs.GetGarmentListTable(maindr["cutref"].ToString(), maindatarow["poid"].ToString(), out garmentTb);
+            PublicPrg.Prgs.GetGarmentListTable(maindr["cutref"].ToString(), maindatarow["poid"].ToString(), sizeGroup, out garmentTb);
             //ArticleGroup
             string patidsql;
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
 
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{maindatarow["poid"].ToString()}','{maindatarow["cutref"].ToString()}','',{Styleyukey})s";
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{maindatarow["poid"].ToString()}','{maindatarow["cutref"].ToString()}','',{Styleyukey},'{sizeGroup}')s";
 
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             string headercodesql = string.Format(@"
@@ -1233,7 +1245,9 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
         private void btnGarment_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, maindatarow["poid"].ToString(), maindatarow["cutref"].ToString());
+            var Sizelist = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, maindatarow["poid"].ToString(), maindatarow["cutref"].ToString(), Sizelist);
             callNextForm.ShowDialog(this);
         }
 

@@ -228,7 +228,17 @@ outer apply(
 	where psd.ID = wo.id and psd.SCIRefno = wo.SCIRefno
 	and fi.InQty is not null
 ) as fi
-outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',wo.MarkerNo,o.StyleUkey)p)p
+outer apply(
+	SELECT TOP 1 SizeGroup=IIF(ISNULL(SizeGroup,'')='','N',SizeGroup)
+	FROM Order_SizeCode 
+	WHERE ID = o.POID and SizeCode IN 
+	(
+		select distinct wd.SizeCode
+		from WorkOrder_Distribute wd WITH (NOLOCK)
+		where wd.WorkOrderUkey = wo.Ukey
+	)
+) as ss
+outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',wo.MarkerNo,o.StyleUkey,ss.SizeGroup)p)p
 
 where 1=1
 

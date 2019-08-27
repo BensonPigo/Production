@@ -11,6 +11,7 @@ using Sci.Win.UI;
 using Ict.Data;
 using Ict;
 using Sci.Win.Tools;
+using System.Linq;
 using System.Transactions;
 
 namespace Sci.Production.Cutting
@@ -802,8 +803,10 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
         private void btnGarmentList_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["poid"].ToString(), "Orders", "ID");
+            var Sizelist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+
             Sci.Production.PublicForm.GarmentList callNextForm =
-    new Sci.Production.PublicForm.GarmentList(ukey, CurrentMaintain["poid"].ToString(), txtCutRef.Text);
+    new Sci.Production.PublicForm.GarmentList(ukey, CurrentMaintain["poid"].ToString(), txtCutRef.Text, Sizelist);
             callNextForm.ShowDialog(this);
             OnDetailEntered();
         }
