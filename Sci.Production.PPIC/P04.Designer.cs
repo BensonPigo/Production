@@ -227,7 +227,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(966, 570);
+            this.browse.Size = new System.Drawing.Size(1000, 570);
             // 
             // tabs
             // 
@@ -240,6 +240,7 @@
             // 
             // createby
             // 
+            this.createby.Location = new System.Drawing.Point(70, 9);
             this.createby.Size = new System.Drawing.Size(260, 23);
             // 
             // editby
@@ -1147,7 +1148,7 @@
             this.txtTPEEditBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtTPEEditBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtTPEEditBy.IsSupportEditMode = false;
-            this.txtTPEEditBy.Location = new System.Drawing.Point(414, 7);
+            this.txtTPEEditBy.Location = new System.Drawing.Point(416, 7);
             this.txtTPEEditBy.Name = "txtTPEEditBy";
             this.txtTPEEditBy.ReadOnly = true;
             this.txtTPEEditBy.Size = new System.Drawing.Size(265, 23);
@@ -1155,7 +1156,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(337, 13);
+            this.label2.Location = new System.Drawing.Point(336, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(78, 17);
             this.label2.TabIndex = 76;
