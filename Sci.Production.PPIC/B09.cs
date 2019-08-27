@@ -16,6 +16,12 @@ namespace Sci.Production.PPIC
             InitializeComponent();
         }
 
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.CurrentMaintain["DM300"] = DBNull.Value;
+        }
+
         protected override bool ClickSaveBefore()
         {
             // GetID
