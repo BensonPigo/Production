@@ -323,11 +323,10 @@ WHERE   StockType='{dr["tostocktype"]}'
 
             if ((CuttingInline_b == null && CuttingInline_e == null) &&
                  MyUtility.Check.Empty(SP1) && MyUtility.Check.Empty(StockSP1) && MyUtility.Check.Empty(ProjectID) &&
-                (OrderCfmDate_b == null && OrderCfmDate_e == null) &&
-                (InvCfmDate_s == null && InvCfmDate_s == null)
+                (OrderCfmDate_b == null && OrderCfmDate_e == null) 
                 )
             {
-                MyUtility.Msg.WarningBox("< Project ID >\r\n< Cutting Inline >\r\n< Order Confirm Date >\r\n< Issue SP# >\r\n< Stock SP# >\r\n< Inventory Cfm Date >\r\ncan't be empty!!");
+                MyUtility.Msg.WarningBox("< Project ID >\r\n< Cutting Inline >\r\n< Order Confirm Date >\r\n< Issue SP# >\r\n< Stock SP# >\r\ncan't be empty!!");
                 txtIssueSP1.Focus();
                 return;
             }
