@@ -628,7 +628,7 @@ VALUES(s.[DM300],s.[DM200],s.[DM201],s.[DM202],s.[DM205],s.[DM203],s.[DM204],s.[
 	   s.[DM208],s.[DM209],s.[DM210],s.[DM212],s.[DM214],s.[DM215],s.[DM216],s.[DM219],GetDate(),0);
 
 
---10. 轉出區間 當AddDate or EditDate =今天
+--11. 轉出區間 當EditDate =今天
 MERGE StyleFPSetting AS T
 USING(
 	SELECT  [StyleID] = id,[SeasonID], [BrandID],[FinishingProcessID1],[FinishingProcessID2]
