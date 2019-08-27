@@ -15,5 +15,25 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
         }
+
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.CurrentMaintain["DM300"] = DBNull.Value;
+        }
+
+        protected override bool ClickSaveBefore()
+        {
+            // GetID
+            if (this.IsDetailInserting)
+            {
+                string id = MyUtility.GetValue.Lookup(@"
+select MAXID = case when max(DM300) >= 0 then max(DM300) +1 else 0 end
+from FinishingProcess");
+                this.CurrentMaintain["DM300"] = id;
+            }
+
+            return base.ClickSaveBefore();
+        }
     }
 }

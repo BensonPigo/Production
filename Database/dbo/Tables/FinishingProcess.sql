@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[FinishingProcess] (
-    [DM300]    INT          IDENTITY (1, 1) NOT NULL,
+    [DM300]    INT NOT NULL,
     [DM200]    INT          CONSTRAINT [DF_FinishingProcess_DM200] DEFAULT ((0)) NULL,
     [DM201]    INT          CONSTRAINT [DF_FinishingProcess_DM201] DEFAULT ((0)) NULL,
     [DM202]    INT          CONSTRAINT [DF_FinishingProcess_DM202] DEFAULT ((0)) NULL,

@@ -152,6 +152,8 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
             base.ClickNewAfter();
             this.CurrentMaintain["LocalStyle"] = 1;
             this.CurrentMaintain["LocalMR"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["FinishingProcessID1"] = DBNull.Value;
+            this.CurrentMaintain["FinishingProcessID2"] = DBNull.Value;
             this.displayStyleApprove2.Text = string.Empty;
         }
 

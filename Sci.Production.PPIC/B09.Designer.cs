@@ -674,11 +674,7 @@
             0,
             0});
             this.numDM300.Name = "numDM300";
-            this.numDM300.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.numDM300.NullValue = null;
             this.numDM300.ReadOnly = true;
             this.numDM300.Size = new System.Drawing.Size(117, 23);
             this.numDM300.TabIndex = 16;
