@@ -62,6 +62,8 @@
     [ThreadEditdate]      DATETIME       NULL,
     [ThickFabric] BIT CONSTRAINT [DF_Style_ThickFabric] DEFAULT (0) NOT NULL, 
     [DyeingID] VARCHAR(5) NULL, 
+    [FinishingProcessID1] INT NULL, 
+    [FinishingProcessID2] INT NULL, 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 
@@ -337,3 +339,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadP01us
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadP01use', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'ThreadEditdate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'整燙設定1',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'FinishingProcessID1'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'整燙設定2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'FinishingProcessID2'
