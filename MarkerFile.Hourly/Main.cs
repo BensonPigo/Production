@@ -31,6 +31,7 @@ namespace MarkerFile.Hourly
         string tpeMisMail = string.Empty;
         private string MarkerInputPath;
         private string MarkerOutputPath;
+        List<FileInfo> fileInfos = new List<FileInfo>();
         public Main()
         {
             InitializeComponent();
@@ -77,35 +78,34 @@ namespace MarkerFile.Hourly
             if (!result) { ShowErr(result); return; }
 
             mailTo = _mailTo.Rows[0];
-
-            this.tpeMisMail = MyUtility.GetValue.Lookup("Select ToAddress From dbo.MailTo Where ID = '101'");
-
-            #region File Path
-            DataTable Path;
-            result = DBProxy.Current.Select("Production", "select MarkerInputPath,MarkerOutputPath from system", out Path);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            this.MarkerInputPath = MyUtility.Convert.GetString(Path.Rows[0]["MarkerInputPath"]);
-            this.MarkerOutputPath = MyUtility.Convert.GetString(Path.Rows[0]["MarkerOutputPath"]);
-            this.MarkerInputPath = @"C:\test\Pattern\URI MARKER\KURIS\BULK";
-            this.MarkerOutputPath = @"C:\test\Pattern\MarkerFileTPETest";
-
-            if (MyUtility.Check.Empty(MarkerInputPath) || MyUtility.Check.Empty(MarkerOutputPath))
-            {
-                MyUtility.Msg.WarningBox("Please set MarkerInputPath and MarkerOutputPath");
-                this.Close();
-            }
-            #endregion
         }
 
         private void Run()
         {
             string msg = string.Empty;
-            MarkerSwitch(out msg);
+            #region File Path
+            DataTable Path;
+            DualResult result = DBProxy.Current.Select("Production", "select MarkerInputPath,MarkerOutputPath from system", out Path);
+            if (!result)
+            {
+                msg = result.ToSimpleString();
+            }
+            if (MyUtility.Check.Empty(msg))
+            {
+                this.MarkerInputPath = MyUtility.Convert.GetString(Path.Rows[0]["MarkerInputPath"]);
+                this.MarkerOutputPath = MyUtility.Convert.GetString(Path.Rows[0]["MarkerOutputPath"]);
+
+                if (MyUtility.Check.Empty(MarkerInputPath) || MyUtility.Check.Empty(MarkerOutputPath))
+                {
+                    msg = "Please set MarkerInputPath and MarkerOutputPath";
+                }
+            }
+            #endregion
+
+            if (MyUtility.Check.Empty(msg))
+            {
+                MarkerSwitch(out msg);
+            }
             mymailTo(msg);
         }
 
@@ -276,7 +276,7 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
             return true;
         }
 
-        private bool DeleteFileFromList(DataTable deleteFileData,out string msg)
+        private bool DeleteFileFromList(DataTable deleteFileData, out string msg)
         {
             foreach (DataRow item in deleteFileData.Rows)
             {
@@ -328,10 +328,30 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
                 return false;
             }
 
-            DirectoryInfo di = new DirectoryInfo(this.MarkerInputPath);
-            foreach (var fi in di.GetFiles())
+            fileInfos.Clear();
+            // 找出指定目錄(包含所有子目錄) 的檔案, 加入 fileInfos
+            try
             {
-                // 找有檔案名稱一樣,但最後編輯時間不一樣
+                FindFile(MarkerInputPath);
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+                return false;
+            }
+
+            // 取最新編輯時間的那筆檔案
+            var fileList = fileInfos.AsEnumerable().OrderByDescending(s => s.LastWriteTime)
+                .GroupBy(s => s.Name, (key, fileGroup) => new
+                {
+                    Name = key,
+                    fileGroup.First().FullName,
+                    fileGroup.First().LastWriteTime,
+                }).ToList();
+
+            foreach (var fi in fileList)
+            {
+                // 找檔案名稱在DB內有,但最後編輯時間不一樣
                 var chkExists = markerFileNameSwitchRecord.AsEnumerable().
                     Where(w => MyUtility.Convert.GetString(w["OriFileName"]) == fi.Name && ((DateTime)w["OriFileLastMDate"]).ToString("yyyy/MM/dd HH:mm:ss") != fi.LastWriteTime.ToString("yyyy/MM/dd HH:mm:ss")).
                     ToList();
@@ -342,11 +362,10 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
                         // 以對應的[MarkerFileNameSwitchRecord].[CutRef]為檔名，複製該input資料夾路徑馬克檔，到output資料夾路徑以取代舊馬克檔
                         try
                         {
-                            string sourceFile = System.IO.Path.Combine(this.MarkerInputPath, fi.Name);
                             string destPath = System.IO.Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["CuttingID"]));
                             string destFile = System.IO.Path.Combine(destPath, MyUtility.Convert.GetString(item["CutRef"]) + ".gbr");
                             Directory.CreateDirectory(destPath);
-                            File.Copy(sourceFile, destFile, true);
+                            File.Copy(fi.FullName, destFile, true);
                         }
                         catch (IOException e)
                         {
@@ -413,9 +432,23 @@ and not exists(select 1 from [MarkerFileNameSwitchRecord] where cutref = w.cutre
                 return false;
             }
 
+            // 取最新編輯時間的那筆檔案
+            var fileList = fileInfos.AsEnumerable().OrderByDescending(s => s.LastWriteTime)
+                .GroupBy(s => s.Name, (key, fileGroup) => new
+                {
+                    Name = key,
+                    fileGroup.First().FullName,
+                    fileGroup.First().LastWriteTime,
+                }).ToList();
+
             foreach (DataRow item in copyFileData.Rows)
             {
-                string sourceFile = Path.Combine(this.MarkerInputPath, @"\", MyUtility.Convert.GetString(item["filename"]));
+                if (fileList.Where(w => w.Name.ToLower() == MyUtility.Convert.GetString(item["filename"]).ToLower()).Count() == 0)
+                {
+                    continue;
+                }
+
+                string sourceFile = fileList.Where(w => w.Name.ToLower() == MyUtility.Convert.GetString(item["filename"]).ToLower()).Select(s => s.FullName).First().ToString();
                 string targetPath = Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["id"]));
                 string destFile = Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["id"]), MyUtility.Convert.GetString(item["CutRef"]) + ".gbr");
                 string lastWriteTime = File.GetLastWriteTime(sourceFile).ToString("yyyy/MM/dd HH:mm:ss");
@@ -459,6 +492,21 @@ VALUES
 
             msg = "";
             return true;
+        }
+
+        public void FindFile(string dirPath) //引數dirPath為指定的目錄
+        {
+            //在指定目錄及子目錄下查詢檔案,在listBox1中列出子目錄及檔案
+            DirectoryInfo Dir = new DirectoryInfo(dirPath);
+            // 不用子目錄下，先註解
+            //foreach (DirectoryInfo d in Dir.GetDirectories())//查詢子目錄
+            //{
+            //    FindFile(Dir + @"\" + d.ToString() + @"\");
+            //}
+            foreach (FileInfo f in Dir.GetFiles("*.gbr")) //查詢檔案
+            {
+                fileInfos.Add(f);
+            }
         }
     }
 }
