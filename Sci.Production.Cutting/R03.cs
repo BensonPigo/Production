@@ -349,7 +349,7 @@ outer apply(
 									and pg.Annotation!=''
 		where pgl.PatternUKEY = t.patternUKey and pgl.FabricPanelCode = t.FabricPanelCode
 	)a
-	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(a.Annotation,'+'))s
+	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(dbo.[RemoveNumericCharacters](a.Annotation),'+'))s
 	where exists(select 1 from SubProcess where id = s.data)
 	for xml path(''))
 	,1,1,'')
