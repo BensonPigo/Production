@@ -30,7 +30,7 @@ namespace Sci.Production.Class
             if (e.Button == MouseButtons.Right)
             {
                 string sqlcmd = string.Format(@"
-select l.id , l.Abb 
+select DISTINCT l.id , l.Abb 
 from dbo.LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed'

@@ -480,7 +480,7 @@ select * from FtyExportData");
 --select ID,AbbEN from Supp WITH (NOLOCK) 
 --order by ID
 
-select l.ID, l.Abb
+select DISTINCT l.ID, l.Abb
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed' 
@@ -515,7 +515,7 @@ order by l.ID
                         @"select * from (
 --select ID,Abb from LocalSupp WITH (NOLOCK) 
 
-select l.ID, l.Abb
+select DISTINCT l.ID, l.Abb
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed' 

@@ -74,7 +74,7 @@ namespace Sci.Production.Class
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem($@"
-select l.ID,l.Name,l.Abb 
+select DISTINCT l.ID,l.Name,l.Abb 
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed'  
@@ -94,10 +94,10 @@ order by l.ID"
             //this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID");
             this.displayBox1.Text = MyUtility.GetValue.Lookup($@"
 
-select l.Abb
+select DISTINCT l.Abb
 from dbo.LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  ID = '{this.textBox1.Text.ToString()}'
+WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  l.ID = '{this.textBox1.Text.ToString()}'
 ");
 
         }

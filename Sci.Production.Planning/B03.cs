@@ -121,7 +121,7 @@ namespace Sci.Production.Planning
 
                     //sqlcmd = "select id,abb,currencyid from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                     sqlcmd = @"
-select l.id ,l.abb ,l.currencyid 
+select DISTINCT l.id ,l.abb ,l.currencyid 
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed'  AND l.IsFactory = 0

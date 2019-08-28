@@ -117,10 +117,10 @@ namespace Sci.Production.Class
                 string Sql = string.Format(@"
 --select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'
 
-select l.Junk
+select DISTINCT l.Junk
 from dbo.LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  ID = '{0}'
+WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  l.ID = '{0}'
 ", textValue);
 
                 if (IsSubcon)
@@ -159,10 +159,10 @@ WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  ID = '{0}'
                     }
                     //this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
                     this.displayBox1.Text = MyUtility.GetValue.Lookup($@"
-select l.Abb
+select DISTINCT l.Abb
 from dbo.LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  ID = '{this.textBox1.Text.ToString()}'
+WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  l.ID = '{this.textBox1.Text.ToString()}'
 ");
                 }
             }
@@ -174,10 +174,10 @@ WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  ID = '{this.textBox1.Text.ToStrin
             //this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
             this.displayBox1.Text = MyUtility.GetValue.Lookup($@"
 
-select l.Abb
+select DISTINCT l.Abb
 from dbo.LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  ID = '{this.textBox1.Text.ToString()}'
+WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  l.ID = '{this.textBox1.Text.ToString()}'
 ");
         }
 
@@ -189,7 +189,7 @@ WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  ID = '{this.textBox1.Text.ToStrin
             selectCommand = @"
 --select ID,Abb,Name from LocalSupp WITH (NOLOCK) where 1=1 
 
-select l.ID ,l.Abb ,l.Name
+select DISTINCT l.ID ,l.Abb ,l.Name
 from dbo.LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed'
@@ -226,10 +226,10 @@ WHERE l.Junk=0 and lb.Status= 'Confirmed'
             //this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
             this.displayBox1.Text = MyUtility.GetValue.Lookup($@"
 
-select l.Abb
+select DISTINCT l.Abb
 from dbo.LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  ID = '{this.textBox1.Text.ToString()}'
+WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  l.ID = '{this.textBox1.Text.ToString()}'
 ");
 
         }
@@ -255,7 +255,7 @@ WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  ID = '{this.textBox1.Text.ToStrin
                     string sql = @"
 --select ID,Abb,Name from LocalSupp WITH (NOLOCK) where 1=1 
 
-select l.ID ,l.Abb ,l.Name
+select DISTINCT l.ID ,l.Abb ,l.Name
 from dbo.LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed'
@@ -289,10 +289,10 @@ order by ID
 --select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 and ID = '{0}'
 
 
-select l.ID ,l.Abb ,l.Name
+select DISTINCT l.ID ,l.Abb ,l.Name
 from dbo.LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' and ID = '{0}'
+WHERE l.Junk=0 and lb.Status= 'Confirmed' and l.ID = '{0}'
 order by ID
 ", newValue);
                 if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)

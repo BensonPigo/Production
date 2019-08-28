@@ -71,7 +71,7 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(textValue))
             {
                 string Sql = string.Format(@"
-select l.Junk
+select DISTINCT l.Junk
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed'  AND l.ID = '{0}'  
@@ -99,7 +99,7 @@ select Junk from Supp WITH (NOLOCK) where ID = '{0}'
                         }
                     }
                     string sql_cmd = $@"
-select l.Abb
+select DISTINCT l.Abb
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed' AND l.ID = '{this.textBox1.Text.ToString()}'   
@@ -114,7 +114,7 @@ select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.te
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             string sql_cmd = $@"
-select l.Abb
+select DISTINCT l.Abb
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed' AND l.ID = '{this.textBox1.Text.ToString()}'   
@@ -130,7 +130,7 @@ select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.te
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
             string selectCommand;
             selectCommand = $@"
-select l.ID , l.Abb , l.Name
+select DISTINCT l.ID , l.Abb , l.Name
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed'
@@ -139,7 +139,7 @@ select ID,[Name] = NameEN,[Abb] = AbbEN from Supp WITH (NOLOCK) order by ID";
             if (!IsIncludeJunk)
             {
                 selectCommand = @"
-select l.ID , l.Abb , l.Name
+select DISTINCT l.ID , l.Abb , l.Name
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed'
@@ -155,7 +155,7 @@ select ID,[Name] = NameEN,[Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0
             this.textBox1.Text = item.GetSelectedString();
             this.textBox1.ValidateControl();
             string sql_cmd = $@"
-select l.Abb
+select DISTINCT l.Abb
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 WHERE l.Junk=0 and lb.Status= 'Confirmed' AND l.ID = '{this.textBox1.Text.ToString()}'   

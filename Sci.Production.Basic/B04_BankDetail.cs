@@ -73,6 +73,7 @@ WHERE lb.ID='{ID}' AND lb.PKey='{PKey}'
             Ict.Win.DataGridViewGeneratorTextColumnSettings City = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             Ict.Win.DataGridViewGeneratorTextColumnSettings MidSWIFTCode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             Ict.Win.DataGridViewGeneratorTextColumnSettings MidBankName = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings Default = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             CountryID.MaxLength = 2;
             AccountNo.MaxLength = 30;
@@ -164,8 +165,20 @@ order by ID
                 }
             };
 
+            Default.CellValidating += (s, e) =>
+            {
+
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                dr["IsDefault"] = e.FormattedValue;
+
+                if (Convert.ToBoolean(dr["IsDefault"]))
+                {
+                    this.CurrentMaintain["ByCheck"] = false;
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: true)
+                .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(5),settings: Default, trueValue: 1, falseValue: 0, iseditable: true)
                 .Text("AccountNo", header: "Account No.", width: Widths.AnsiChars(13), settings: AccountNo)
                 .Text("SWIFTCode", header: "Swift", width: Widths.AnsiChars(13), settings: SWIFTCode)
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(13), settings: AccountName)
@@ -296,6 +309,12 @@ order by ID
             // Pay by Check沒打勾
             if (!Convert.ToBoolean(this.CurrentMaintain["ByCheck"]))
             {
+                if (defaultCount == 0)
+                {
+                    MyUtility.Msg.InfoBox("There is NO data is checked.");
+                    return false;
+                }
+
                 if (hasEmpty || allEmpty)
                 {
                     MyUtility.Msg.InfoBox("If default is checked, column can not be empty except [Intermediary Bank] , [Intermediary Bank-SWIFT Code] and [Remark]." + Environment.NewLine + "If default is NOT checked, column can not be all empty."); 
@@ -306,11 +325,11 @@ order by ID
             // Pay by Check打勾
             else
             {
-                if (allEmpty)
-                {
-                    MyUtility.Msg.InfoBox("If default is checked, column can not be empty except [Intermediary Bank] , [Intermediary Bank-SWIFT Code] and [Remark]." + Environment.NewLine + "If default is NOT checked, column can not be all empty.");
-                    return false;
-                }
+                //if (allEmpty)
+                //{
+                //    MyUtility.Msg.InfoBox("If default is checked, column can not be empty except [Intermediary Bank] , [Intermediary Bank-SWIFT Code] and [Remark]." + Environment.NewLine + "If default is NOT checked, column can not be all empty.");
+                //    return false;
+                //}
             }
 
             return base.ClickSaveBefore();
@@ -363,6 +382,17 @@ order by ID
             }
 
             base.ClickConfirm();
+        }
+
+        protected override bool ClickEditBefore()
+        {
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be modified!");
+                return false;
+            }
+
+            return base.ClickEditBefore();
         }
     }
 }
