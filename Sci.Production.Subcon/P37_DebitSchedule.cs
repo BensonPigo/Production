@@ -15,10 +15,12 @@ namespace Sci.Production.Subcon
 {
     public partial class P37_DebitSchedule : Sci.Win.Subs.Input4
     {
-        public P37_DebitSchedule(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
+        private DataRow Master;
+        public P37_DebitSchedule(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow _Master)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
+            this.Master = _Master;
             this.KeyField1 = "ID";
             this.WorkAlias = "Debit_Schedule";
         }
@@ -73,6 +75,7 @@ namespace Sci.Production.Subcon
 
         protected override bool OnSaveBefore()
         {
+            decimal Amount = 0;
             foreach (DataRow dr in Datas)
             {
                 if (MyUtility.Check.Empty(dr["IssueDate"]) || MyUtility.Check.Empty(dr["Amount"]))
@@ -80,6 +83,13 @@ namespace Sci.Production.Subcon
                     MyUtility.Msg.WarningBox("< Debit Date >  & < Debit Amount > can't be empty!!");
                     return false;
                 }
+                Amount += (decimal)dr["Amount"];
+            }
+
+            if ((decimal)Master["Amount"] < Amount)
+            {
+                MyUtility.Msg.WarningBox("Total deibt amount more than DBC amount, cann't save!!");
+                return false;
             }
 
             return base.OnSaveBefore();
