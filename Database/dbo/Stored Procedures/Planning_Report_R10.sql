@@ -8,6 +8,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月	--3:Production status 不做
 	,@BrandID varchar(20)
@@ -42,7 +43,7 @@ BEGIN
 
 	--#tmpFactory
 	SELECT CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , Factory.ID as FactoryID
-		, Factory.MDivisionID
+		, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
 	, Factory.CPU
 	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS.TMS 
 	,Capacity
@@ -79,13 +80,13 @@ BEGIN
 	AND @HasOrders = 1
 	And (orders.MDivisionID = @M or @M = '') And (orders.FactoryID = @Fty or @Fty = '')  
 	and (exists(select 1 from Factory where id = Orders.FactoryID and Zone = @Zone) or @Zone = '')
-	--and localorder = 0
+	and (localorder = 0 or SubconInType=2)
 	
 	if not exists(select 1 from #tmpFactory)
 	begin
 		insert into #tmpFactory
 		SELECT top 1 CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , '' as FactoryID
-			, Factory.MDivisionID
+			, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
 		, CPU=0		,Year=@Year, Month='00', ArtworkTypeID=@ArtWorkType, TMS =0
 		,Capacity=0		, HalfCapacity1=0		, HalfCapacity2=0		,OrderYYMM=concat(@Year,'00')		,FactorySort = 0
 		From Factory inner join Country on Factory.CountryID = Country.ID
@@ -94,7 +95,7 @@ BEGIN
 
 	--Order
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID, CPURate
-		,Factory.MDivisionID
+		,iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
 	, Factory.CountryID	
 	,Orders.CPU, cTms, cCPU
 	,Order_TmsCost.ArtworktypeID
@@ -166,7 +167,7 @@ BEGIN
 
 	--#tmpFactoryOrder1
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
-		,Factory.MDivisionID
+		,iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
 	, Factory.CountryID
 	,Style.CPU, cTms, cCPU
 	,Style_TmsCost.ArtworkTypeID 
@@ -232,7 +233,7 @@ BEGIN
 	--Forecast
 	--#tmpForecast1
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID
-		,Factory.MDivisionID
+		,iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
 	, Factory.CountryID
 	,cTms as ArtworkTypeTMS
 	,Style.CPU, cTms, cCPU
@@ -261,7 +262,7 @@ BEGIN
 	AND Orders.IsForecast = 1
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')  
 	and (Factory.Zone = @Zone or @Zone = '')
-	--and localorder = 0
+	and (localorder = 0 or SubconInType=2)
 
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	--
@@ -361,7 +362,7 @@ BEGIN
 				,[Capacity2] = 0 
 				,[FtyTmsCapa] = 0, OrderShortage
 				from #tmpOrder1
-				where SubconInType!=2
+				where SubconInType!=2 and LocalOrder=0
 			union all
 				Select CountryID, MDivisionID, FactoryID, OrderYYMM
 				,[Capacity1] = 0
@@ -387,7 +388,7 @@ BEGIN
 				,[Capacity2] = 0 
 				,[FtyTmsCapa] = 0, OrderShortage =0
 				from #tmpForecast1
-				where SubconInType!=2
+				where SubconInType!=2 and LocalOrder=0
 			union all
 				Select CountryID, MDivisionID, FactoryID, OrderYYMM
 				,[Capacity1] = 0
