@@ -9,6 +9,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月	--3:Production status 不做
 	,@BrandID varchar(20)
@@ -159,8 +160,7 @@ BEGIN
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
-	AND SubconInSisterFty = 0
-	And Orders.Junk = 0 and Orders.Qty > 0 
+	And Orders.Junk = 0 and Orders.Qty > 0 	
 	AND @HasFtyLocalOrder = 1
 	AND Orders.LocalOrder = 1
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
@@ -439,7 +439,9 @@ BEGIN
 		) c on a.FactoryID = c.ID
 		
 		--(D)By non-sister
-		Select CountryID, MDivisionID, FactoryID, OrderYYMM as Month, SUM(FactoryOrderCapacity) as Capacity  from #tmpFactoryOrder1
+		Select CountryID, MDivisionID, FactoryID, OrderYYMM as Month, SUM(FactoryOrderCapacity) as Capacity  
+		from #tmpFactoryOrder1
+		where SubconInType=3
 		Group by CountryID,MDivisionID,FactoryID,OrderYYMM
 
 		--For Forecast shared
