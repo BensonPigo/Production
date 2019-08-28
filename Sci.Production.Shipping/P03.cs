@@ -273,5 +273,14 @@ where ed.ID = '{0}'", masterID);
             callNextForm.ShowDialog(this);
             this.ReloadDatas();
         }
+
+        private void BtnCOinfor_Click(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                P03_CO_Information callForm = new P03_CO_Information(CurrentMaintain["ID"].ToString());
+                callForm.ShowDialog();
+            }
+        }
     }
 }

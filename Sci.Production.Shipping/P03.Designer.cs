@@ -88,6 +88,7 @@
             this.numTPEPaidUSD = new Sci.Win.UI.NumericBox();
             this.label4 = new Sci.Win.UI.Label();
             this.btnBatchUpload = new Sci.Win.UI.Button();
+            this.btnCOinfor = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,6 +105,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCOinfor);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.numTPEPaidUSD);
             this.masterpanel.Controls.Add(this.chkDelay);
@@ -163,7 +165,7 @@
             this.masterpanel.Controls.Add(this.dateArrivePortDate);
             this.masterpanel.Controls.Add(this.dateArriveWHDate);
             this.masterpanel.Controls.Add(this.dateDoxRcvDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 344);
+            this.masterpanel.Size = new System.Drawing.Size(990, 344);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDoxRcvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
@@ -224,11 +226,12 @@
             this.masterpanel.Controls.SetChildIndex(this.chkDelay, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTPEPaidUSD, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCOinfor, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 344);
-            this.detailpanel.Size = new System.Drawing.Size(892, 5);
+            this.detailpanel.Size = new System.Drawing.Size(990, 218);
             // 
             // gridicon
             // 
@@ -240,7 +243,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 5);
+            this.detailgridcont.Size = new System.Drawing.Size(990, 218);
             // 
             // detail2
             // 
@@ -256,16 +259,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(990, 600);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(990, 562);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 562);
+            this.detailbtm.Size = new System.Drawing.Size(990, 38);
             // 
             // browse
             // 
@@ -726,9 +729,9 @@
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(859, 61);
+            this.btnExpenseData.Location = new System.Drawing.Point(848, 58);
             this.btnExpenseData.Name = "btnExpenseData";
-            this.btnExpenseData.Size = new System.Drawing.Size(123, 30);
+            this.btnExpenseData.Size = new System.Drawing.Size(134, 30);
             this.btnExpenseData.TabIndex = 42;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
@@ -736,9 +739,9 @@
             // 
             // btnShippingMark
             // 
-            this.btnShippingMark.Location = new System.Drawing.Point(859, 97);
+            this.btnShippingMark.Location = new System.Drawing.Point(848, 94);
             this.btnShippingMark.Name = "btnShippingMark";
-            this.btnShippingMark.Size = new System.Drawing.Size(123, 30);
+            this.btnShippingMark.Size = new System.Drawing.Size(134, 30);
             this.btnShippingMark.TabIndex = 43;
             this.btnShippingMark.Text = "Shipping Mark";
             this.btnShippingMark.UseVisualStyleBackColor = true;
@@ -946,6 +949,16 @@
             this.btnBatchUpload.UseVisualStyleBackColor = true;
             this.btnBatchUpload.Click += new System.EventHandler(this.btnBatchUpload_Click);
             // 
+            // btnCOinfor
+            // 
+            this.btnCOinfor.Location = new System.Drawing.Point(848, 131);
+            this.btnCOinfor.Name = "btnCOinfor";
+            this.btnCOinfor.Size = new System.Drawing.Size(134, 30);
+            this.btnCOinfor.TabIndex = 60;
+            this.btnCOinfor.Text = "C/O information";
+            this.btnCOinfor.UseVisualStyleBackColor = true;
+            this.btnCOinfor.Click += new System.EventHandler(this.BtnCOinfor_Click);
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(998, 662);
@@ -963,6 +976,7 @@
             this.IsSupportNew = false;
             this.KeyField1 = "ID";
             this.Name = "P03";
+            this.OnLineHelpID = "Sci.Win.Tems.Input2";
             this.Text = "P03. Import Schedule";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Export";
@@ -1049,5 +1063,6 @@
         private Win.UI.Label label4;
         private Win.UI.NumericBox numTPEPaidUSD;
         private Win.UI.Button btnBatchUpload;
+        private Win.UI.Button btnCOinfor;
     }
 }
