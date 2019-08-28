@@ -14,6 +14,7 @@ using Sci.Win.Tools;
 using System.Linq;
 using Sci.Production.PublicPrg;
 using System.Transactions;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.Cutting
 {
@@ -203,7 +204,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     e.EditingControl.Text = sele.GetSelectedString();
                     dr["PatternDesc"] = (sele.GetSelecteds()[0]["PatternDesc"]).ToString();
                     dr["PatternCode"] = (sele.GetSelecteds()[0]["PatternCode"]).ToString();
-                    string[] ann = (sele.GetSelecteds()[0]["Annotation"]).ToString().Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(sele.GetSelecteds()[0]["Annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
                     bool lallpart;
                     #region 算Subprocess
@@ -230,7 +231,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                 {
                     dr["PatternDesc"] = (gemdr[0]["PatternDesc"]).ToString();
                     dr["PatternCode"] = (gemdr[0]["PatternCode"]).ToString();
-                    string[] ann = (gemdr[0]["Annotation"]).ToString().Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(gemdr[0]["Annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
                     bool lallpart;
                     #region 算Subprocess
@@ -904,7 +905,7 @@ order by ArticleGroup", patternukey);
                 else
                 {
                     //Annotation 
-                    string[] ann = dr["annotation"].ToString().Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(dr["annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
                     #region Annotation有在Subprocess 內需要寫入bundle_detail_art，寫入Bundle_Detail_pattern
                     if (ann.Length > 0)
@@ -1217,7 +1218,7 @@ order by ArticleGroup", patternukey);
                 foreach (DataRow chdr in checkdr)
                 {
                     string art = "";
-                    string[] ann = chdr["annotation"].ToString().Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(chdr["annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
                     if (ann.Length > 0)
                     {
                         bool lallpart;
