@@ -198,10 +198,13 @@
             // txtfactoryByM
             // 
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM.boolFtyGroupList = true;
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.IsProduceFty = false;
             this.txtfactoryByM.IssupportJunk = false;
             this.txtfactoryByM.Location = new System.Drawing.Point(642, 49);
+            this.txtfactoryByM.MDivision = null;
             this.txtfactoryByM.Name = "txtfactoryByM";
             this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM.TabIndex = 98;
@@ -414,6 +417,7 @@
             "SP#"});
             this.comboSortBy.Location = new System.Drawing.Point(63, 11);
             this.comboSortBy.Name = "comboSortBy";
+            this.comboSortBy.OldText = "";
             this.comboSortBy.Size = new System.Drawing.Size(144, 24);
             this.comboSortBy.TabIndex = 0;
             // 
@@ -524,6 +528,7 @@
             this.Controls.Add(this.panel1);
             this.DefaultControl = "txtCutRefStart";
             this.Name = "P12";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P12. Batch Print Bundle Card";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel3, 0);
