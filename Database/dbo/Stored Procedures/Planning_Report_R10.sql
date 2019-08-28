@@ -159,6 +159,7 @@ BEGIN
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
+	AND SubconInSisterFty = 0
 	And Orders.Junk = 0 and Orders.Qty > 0 
 	AND @HasFtyLocalOrder = 1
 	AND Orders.LocalOrder = 1
