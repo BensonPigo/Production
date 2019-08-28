@@ -1343,8 +1343,8 @@ into #Workhour_step2
 from #Workhour_step1	
 
 --依照班表順序，將inline,offline當天StartHour與EndHour update與inline,offline相同
-update #Workhour_step2 set StartHour = InlineHour where WorkDate = InlineDate and StartHourSort = 1
-update #Workhour_step2 set EndHour = OfflineHour where WorkDate = OfflineDate and EndHourSort = 1
+update #Workhour_step2 set StartHour = InlineHour where WorkDate = InlineDate and StartHourSort = 1 and InlineHour > StartHour
+update #Workhour_step2 set EndHour = OfflineHour where WorkDate = OfflineDate and EndHourSort = 1 and OfflineHour < EndHour
 
 select 
 APSNo,
