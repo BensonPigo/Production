@@ -38,12 +38,8 @@
             this.labelStatus = new Sci.Win.UI.Label();
             this.labelReportType = new Sci.Win.UI.Label();
             this.comboShipper = new Sci.Win.UI.ComboBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.dateInvoiceDate = new Sci.Win.UI.DateRange();
             this.dateETD = new Sci.Win.UI.DateRange();
-            this.txtshipmodeShippingMode = new Sci.Production.Class.txtshipmode();
-            this.txtshiptermShipmentTerm = new Sci.Production.Class.txtshipterm();
-            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
             this.comboStatus = new Sci.Win.UI.ComboBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioDetailList = new Sci.Win.UI.RadioButton();
@@ -54,30 +50,41 @@
             this.dateFCR = new Sci.Win.UI.DateRange();
             this.dateCutoff = new Sci.Win.UI.DateRange();
             this.dateConfirm = new Sci.Win.UI.DateRange();
+            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.txtshiptermShipmentTerm = new Sci.Production.Class.txtshipterm();
+            this.txtshipmodeShippingMode = new Sci.Production.Class.txtshipmode();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.Location = new System.Drawing.Point(492, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 48);
+            this.toexcel.Location = new System.Drawing.Point(492, 48);
             this.toexcel.TabIndex = 15;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 84);
+            this.close.Location = new System.Drawing.Point(492, 84);
             this.close.TabIndex = 16;
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(288, 28);
+            this.buttonCustomized.Location = new System.Drawing.Point(446, 120);
+            this.buttonCustomized.Visible = true;
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(340, 1);
+            this.checkUseCustomized.Location = new System.Drawing.Point(472, 156);
+            this.checkUseCustomized.Visible = true;
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(472, 183);
+            this.txtVersion.Visible = true;
             // 
             // labelShipper
             // 
@@ -163,15 +170,6 @@
             this.comboShipper.Size = new System.Drawing.Size(121, 24);
             this.comboShipper.TabIndex = 1;
             // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(134, 48);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(86, 23);
-            this.txtbrand.TabIndex = 2;
-            // 
             // dateInvoiceDate
             // 
             // 
@@ -216,37 +214,6 @@
             this.dateETD.Size = new System.Drawing.Size(280, 23);
             this.dateETD.TabIndex = 4;
             // 
-            // txtshipmodeShippingMode
-            // 
-            this.txtshipmodeShippingMode.BackColor = System.Drawing.Color.White;
-            this.txtshipmodeShippingMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmodeShippingMode.FormattingEnabled = true;
-            this.txtshipmodeShippingMode.IsSupportUnselect = true;
-            this.txtshipmodeShippingMode.Location = new System.Drawing.Point(134, 263);
-            this.txtshipmodeShippingMode.Name = "txtshipmodeShippingMode";
-            this.txtshipmodeShippingMode.OldText = "";
-            this.txtshipmodeShippingMode.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmodeShippingMode.TabIndex = 8;
-            this.txtshipmodeShippingMode.UseFunction = "ORDER";
-            // 
-            // txtshiptermShipmentTerm
-            // 
-            this.txtshiptermShipmentTerm.BackColor = System.Drawing.Color.White;
-            this.txtshiptermShipmentTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshiptermShipmentTerm.Location = new System.Drawing.Point(134, 299);
-            this.txtshiptermShipmentTerm.Name = "txtshiptermShipmentTerm";
-            this.txtshiptermShipmentTerm.Size = new System.Drawing.Size(50, 23);
-            this.txtshiptermShipmentTerm.TabIndex = 9;
-            // 
-            // txtcountryDestination
-            // 
-            this.txtcountryDestination.DisplayBox1Binding = "";
-            this.txtcountryDestination.Location = new System.Drawing.Point(135, 335);
-            this.txtcountryDestination.Name = "txtcountryDestination";
-            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
-            this.txtcountryDestination.TabIndex = 10;
-            this.txtcountryDestination.TextBox1Binding = "";
-            // 
             // comboStatus
             // 
             this.comboStatus.BackColor = System.Drawing.Color.White;
@@ -279,6 +246,7 @@
             this.radioDetailList.TabStop = true;
             this.radioDetailList.Text = "Detail List";
             this.radioDetailList.UseVisualStyleBackColor = true;
+            this.radioDetailList.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
             // 
             // radioMainList
             // 
@@ -291,6 +259,7 @@
             this.radioMainList.TabStop = true;
             this.radioMainList.Text = "Main List";
             this.radioMainList.UseVisualStyleBackColor = true;
+            this.radioMainList.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
             // 
             // label1
             // 
@@ -382,9 +351,49 @@
             this.dateConfirm.Size = new System.Drawing.Size(280, 23);
             this.dateConfirm.TabIndex = 117;
             // 
+            // txtcountryDestination
+            // 
+            this.txtcountryDestination.DisplayBox1Binding = "";
+            this.txtcountryDestination.Location = new System.Drawing.Point(135, 335);
+            this.txtcountryDestination.Name = "txtcountryDestination";
+            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtcountryDestination.TabIndex = 10;
+            this.txtcountryDestination.TextBox1Binding = "";
+            // 
+            // txtshiptermShipmentTerm
+            // 
+            this.txtshiptermShipmentTerm.BackColor = System.Drawing.Color.White;
+            this.txtshiptermShipmentTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshiptermShipmentTerm.Location = new System.Drawing.Point(134, 299);
+            this.txtshiptermShipmentTerm.Name = "txtshiptermShipmentTerm";
+            this.txtshiptermShipmentTerm.Size = new System.Drawing.Size(50, 23);
+            this.txtshiptermShipmentTerm.TabIndex = 9;
+            // 
+            // txtshipmodeShippingMode
+            // 
+            this.txtshipmodeShippingMode.BackColor = System.Drawing.Color.White;
+            this.txtshipmodeShippingMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshipmodeShippingMode.FormattingEnabled = true;
+            this.txtshipmodeShippingMode.IsSupportUnselect = true;
+            this.txtshipmodeShippingMode.Location = new System.Drawing.Point(134, 263);
+            this.txtshipmodeShippingMode.Name = "txtshipmodeShippingMode";
+            this.txtshipmodeShippingMode.OldText = "";
+            this.txtshipmodeShippingMode.Size = new System.Drawing.Size(80, 24);
+            this.txtshipmodeShippingMode.TabIndex = 8;
+            this.txtshipmodeShippingMode.UseFunction = "ORDER";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(134, 48);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(86, 23);
+            this.txtbrand.TabIndex = 2;
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(522, 468);
+            this.ClientSize = new System.Drawing.Size(584, 468);
             this.Controls.Add(this.dateConfirm);
             this.Controls.Add(this.dateCutoff);
             this.Controls.Add(this.dateFCR);
@@ -409,10 +418,12 @@
             this.Controls.Add(this.labelInvoiceDate);
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.labelShipper);
+            this.IsSupportCustomized = true;
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R01. Garment Booking Report";
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelShipper, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
             this.Controls.SetChildIndex(this.labelInvoiceDate, 0);
