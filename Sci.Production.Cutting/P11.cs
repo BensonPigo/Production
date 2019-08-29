@@ -23,6 +23,7 @@ namespace Sci.Production.Cutting
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
         DataTable CutRefTb, ArticleSizeTb, ExcessTb, GarmentTb, GarmentTb_CutRefEmpty, allpartTb, patternTb, artTb, qtyTb, SizeRatioTb, headertb;
+        DataTable ArticleSizeTb_View;
         string f_code;
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -506,6 +507,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             GarmentTb_CutRefEmpty = null;
             CutRefTb = null;
             ArticleSizeTb = null;
+            ArticleSizeTb_View = null;
             ExcessTb = null;
             SizeRatioTb = null;
             headertb = null;
@@ -790,9 +792,11 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
                 qty_newRow["SizeCode"] = dr["SizeCode"];
                 qty_newRow["iden"] = iden;
                 qtyTb.Rows.Add(qty_newRow);
-                #endregion       
+                #endregion
                 //MANTIS 9044   
                 //createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["FabricPanelCode"].ToString(), dr["Cutref"].ToString(), iden, dr["ArticleGroup"].ToString());
+
+                ArticleSizeTb_View = ArticleSizeTb.Select($"Ukey ='{dr["Ukey"]}' and Fabriccombo = '{dr["Fabriccombo"]}'").CopyToDataTable();
                 createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["FabricPanelCode"].ToString(), dr["Cutref"].ToString(), iden, "");
                 int totalpart = MyUtility.Convert.GetInt(patternTb.Compute("sum(Parts)", string.Format("iden ={0}", iden)));
                 dr["TotalParts"] = totalpart;
@@ -825,7 +829,11 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
             #region 輸出GarmentTb
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
 
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{poid}','{cutref}','',{Styleyukey})s";
+            var Sizelist = ArticleSizeTb_View.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+            string sizes = "'" + string.Join("','", Sizelist) + "'";
+            string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{poid}' and SizeCode IN ({sizes})";
+            string sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{poid}','{cutref}','',{Styleyukey},'{sizeGroup}')s";
 
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             string headercodesql = string.Format(@"
@@ -1031,6 +1039,7 @@ order by ArticleGroup", patternukey);
 
             ArticleSizeTb.DefaultView.RowFilter
                 = string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["Fabriccombo"]);
+            ArticleSizeTb_View = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["Fabriccombo"])).CopyToDataTable();
             if (ArticleSizeTb.Rows.Count == 0)
             {
                 return;
@@ -1319,6 +1328,8 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
         {
             if (CutRefTb == null) return;
             if (CutRefTb.Rows.Count == 0) return;
+            if (ArticleSizeTb_View == null) return;
+            //if (ArticleSizeTb_View.Rows.Count == 0) return;
             if (gridArticleSize.GetSelecteds().Count == 0)
             {
                 MyUtility.Msg.InfoBox("No distrubed data to create CutPart data");
@@ -1327,7 +1338,9 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
 
             DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, selectDr["poid"].ToString(), selectDr["Cutref"].ToString());
+            var Sizelist = ArticleSizeTb_View.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, selectDr["poid"].ToString(), selectDr["Cutref"].ToString(), Sizelist);
             callNextForm.ShowDialog(this);
         }
 

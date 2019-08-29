@@ -168,7 +168,7 @@ where CuttingSp = '{0}'"
             else btnBundleCard.ForeColor = Color.Black;
 
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
-            string patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{CurrentMaintain["ID"].ToString()}','','',{ukey})s";
+            string patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{CurrentMaintain["ID"].ToString()}','','',{ukey},'')s";
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             if (patternukey != "") btnGarmentList.ForeColor = Color.Blue;
             else btnGarmentList.ForeColor = Color.Black;  
