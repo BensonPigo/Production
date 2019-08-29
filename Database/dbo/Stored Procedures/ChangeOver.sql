@@ -122,6 +122,8 @@ BEGIN
 	delete from ChgOver_Check where not exists (select 1 from ChgOver where ChgOver.ID = ChgOver_Check.ID);
 	delete from ChgOver_Problem where not exists (select 1 from ChgOver where ChgOver.ID = ChgOver_Problem.ID);
 
+	--當Update Type = R時, 若[ChgOver_Check].[ActualDate]全為空 (條件[ChgOver_Check].ID=[ChgOver].ID)則將此筆 [ChgOver_Check] 資料刪除
+	delete from ChgOver_Check where exists (select 1 from ChgOver where ChgOver.ID = ChgOver_Check.ID and Type = 'R') and ActualDate is null;
 
 	--填Category欄位值
 	update ChgOver set Category = c.Category
