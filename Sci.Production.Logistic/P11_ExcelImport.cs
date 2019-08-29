@@ -22,9 +22,9 @@ namespace Sci.Production.Logistic
 
         public P11_ExcelImport(DataRow _master, DataTable DetailData)
         {
-            InitializeComponent();
-            detailData = DetailData;
-            master = _master;
+            this.InitializeComponent();
+            this.detailData = DetailData;
+            this.master = _master;
         }
 
         protected override void OnFormLoaded()
@@ -217,11 +217,13 @@ namespace Sci.Production.Logistic
                 newRow["Status"] = "Catron already pullout.";
             }
 
+            string existIData = MyUtility.GetValue.Lookup($"SELECT TOP 1 ID  FROM ClogGarmentDispose_Detail WHERE PackingListID='{PackingListID}' AND CTNStartNO='{CTNStartNo}' AND ID != '{this.master["ID"]}'");
+
             // 5
-            if (MyUtility.Check.Seek($"SELECT 1 FROM ClogGarmentDispose_Detail WHERE PackingListID='{PackingListID}' AND CTNStartNO='{CTNStartNo}'") )
+            if (!MyUtility.Check.Empty(existIData))
             {
 
-                newRow["Status"] = "Pack ID + CTN# already exist.";
+                newRow["Status"] = $"Pack ID + CTN# already exist({existIData}).";
             }
 
             dt.Clear();
@@ -283,18 +285,23 @@ WHERE pd.ID='{PackingListID}' AND pd.CTNStartNO='{CTNStartNo}'
 
             try
             {
-                List<DataRow> okData = gridDate.AsEnumerable().Where(o => o["Status"].ToString() == string.Empty).ToList();
+                List<DataRow> okDataList = gridDate.AsEnumerable().Where(o => o["Status"].ToString() == string.Empty).ToList();
 
-                foreach (DataRow signleData in okData)
+                foreach (DataRow signleData in okDataList)
                 {
-                    if (this.detailData.Select($" PackingListID = '{signleData["PackingListID"]}' AND CTNStartNO= '{signleData["CTNStartNO"]}'").Length == 0)
-                    { 
+                    bool isExistsMasterDetail = this.detailData.AsEnumerable().Where(o => o["PackingListID"].Equals(signleData["PackingListID"]) && o["PackingListID"].Equals(signleData["PackingListID"])).Any();
+                    if (!isExistsMasterDetail)
+                    {
                         this.detailData.ImportRow(signleData);
+                        gridDate.Rows.Remove(signleData);
+                    }
+                    else
+                    {
                         gridDate.Rows.Remove(signleData);
                     }
                 }
 
-                if (okData.Count > 0)
+                if (okDataList.Count > 0)
                 {
                     MyUtility.Msg.InfoBox("Success!");
                 }
