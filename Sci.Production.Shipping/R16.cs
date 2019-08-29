@@ -110,13 +110,9 @@ outer apply(
 	where OrderID=oq.Id and OrderShipmodeSeq = oq.Seq
 )pkQty
 outer apply(
-	select ct = count(1)
-	from(
-		select distinct id
-		from PackingList_Detail pld with(nolock)
-		where OrderID=oq.Id and OrderShipmodeSeq = oq.Seq
-	)a	
-	inner join ClogReceive cr with(nolock) on cr.PackingListID = a.id and cr.OrderID = o.ID
+	select ct=count(1)
+	from PackingList_Detail pld with(nolock)
+	where OrderID=oq.Id and OrderShipmodeSeq = oq.Seq and pld.TransferCFADate is not null and pld.CTNQty = 1
 )atCLog
 outer apply(
 	select sum(l.CBM) CBM
