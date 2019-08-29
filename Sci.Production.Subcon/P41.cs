@@ -51,6 +51,38 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
         {
             base.OnFormLoaded();
 
+            DataGridViewGeneratorTextColumnSettings BundleReplacement = new DataGridViewGeneratorTextColumnSettings();
+            BundleReplacement.CellMouseDoubleClick += (s, e) =>
+            {
+                DataRow drSelected = this.grid.GetDataRow(e.RowIndex);
+                if (drSelected == null)
+                {
+                    return;
+                }
+                string sqlcmd = $@"
+select
+	Date = bi.DefectUpdateDate,
+	BundleNo=bi.BundleNo,
+	SubProcess=bi.SubProcessID,
+	[Reason Descripotion] = concat(bi.ReasonID, ' ', bdr.Reason),
+	[Defect Qty (pcs)]=bi.DefectQty,
+	[Replacement Qty (pcs)]=bi.ReplacementQty,
+	Status=iif(bi.DefectQty=bi.ReplacementQty,'Complete','')
+from ManufacturingExecution.dbo.BundleInspection bi with(nolock)
+left join ManufacturingExecution.dbo.BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID and bdr.SubProcessID = bi.SubProcessID
+where bi.BundleNo='{drSelected["BundleNo"]}'
+";
+                DataTable dt;
+                DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out dt);
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                    return;
+                }
+
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: $"{drSelected["BundleNo"]} Bundle Replacement");
+            };
+
             #region 欄位設定
             this.grid.DataSource = listControlBindingSource1;
 
@@ -78,7 +110,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             .Text("ReceiveQtyLoading", header: "Receive Qty Loading", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("XXXRFIDIn", header: "RFID In", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("XXXRFIDOut", header: "RFID Out", width: Widths.AnsiChars(13), iseditingreadonly: true)            
-            //.Text("", header: "Fab. Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("BundleReplacement", header: "Bundle Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: BundleReplacement)
             ;
 
             #endregion
@@ -162,7 +194,6 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             #endregion
 
             sqlCmd.Append($@"
-
 SELECT
 bd.BundleNo
 ,b.Orderid
@@ -193,7 +224,7 @@ bd.BundleNo
 ,[ReceiveQtyLoading]= IIF(ReceiveQtyLoading.InComing != '' OR ReceiveQtyLoading.InComing IS NOT NULL , 'Complete' ,'Not Complete')
 ,[XXXRFIDIn]=bio.InComing
 ,[XXXRFIDOut]=bio.OutGoing
-
+,BundleReplacement=BR.RQ
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
 {(this.chkExtendAllParts.Checked ? "LEFT JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID AND bd.Patterncode ='ALLPARTS'" : "")}
@@ -247,6 +278,18 @@ OUTER APPLY(
 		)
 	)M
 )DefaultSubProcess
+
+outer apply(
+    select RQ=stuff((
+	    select concat(',',ReasonID,'(',sum(isnull(bi.DefectQty,0)-isnull(bi.ReplacementQty,0)),')')
+	    from ManufacturingExecution.dbo.BundleInspection bi  with(nolock)
+	    where isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
+	    and bi.BundleNo = bd.BundleNo
+	    group by ReasonID
+	    for xml path('')
+    ),1,1,'')
+)BR
+
 WHERE o.MDivisionID='{Sci.Env.User.Keyword}' 
 
 ");
