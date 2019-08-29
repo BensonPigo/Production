@@ -136,6 +136,7 @@ bd.BundleGroup
 ,bd.Qty
 ,bd.BundleNo
 ,[ActualAcc.ReceivedQty]=''
+,[IsEXCESS] = case when b.IsEXCESS=1 then 'V' else '' end
 ,[Remartks]=''
 ,[WaterbeetleConfirmation]=''
 
@@ -306,7 +307,7 @@ WHERE 1=1
                     Excel.Range range = objSheets.get_Range((Excel.Range)objSheets.Cells[1, 1], (Excel.Range)objSheets.Cells[1, 14]);
                     range.UnMerge();
                     // 如果是LOADING，這一欄不顯示
-                    objSheets.Columns["N"].Clear();
+                    objSheets.Columns["O"].Clear();
 
                     Excel.Range range2 = objSheets.get_Range((Excel.Range)objSheets.Cells[1, 1], (Excel.Range)objSheets.Cells[1, 12]);
                     range.Merge();
@@ -319,13 +320,13 @@ WHERE 1=1
                 range4.Columns.ColumnWidth = 8;
 
                 //多於資訊清除
-                objSheets.Columns["O"].Clear();
                 objSheets.Columns["P"].Clear();
                 objSheets.Columns["Q"].Clear();
                 objSheets.Columns["R"].Clear();
                 objSheets.Columns["S"].Clear();
                 objSheets.Columns["T"].Clear();
                 objSheets.Columns["U"].Clear();
+                objSheets.Columns["V"].Clear();
 
 
 
