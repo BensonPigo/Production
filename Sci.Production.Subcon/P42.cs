@@ -126,9 +126,10 @@ where b.Orderid = '{drSelected["OrderID"]}'
             }
 
             int subprocessStartColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["OffLineDate"].Ordinal;
+            int BundleReplacementColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["BundleReplacement"].Ordinal;
             foreach (DataColumn column in ((DataTable)this.listControlBindingSource1.DataSource).Columns)
             {
-                if (column.Ordinal > subprocessStartColumn)
+                if (column.Ordinal > subprocessStartColumn && column.Ordinal < BundleReplacementColumn)
                 {
                     DataGridViewGeneratorTextColumnSettings subprocess = new DataGridViewGeneratorTextColumnSettings();
                     subprocess.CellMouseDoubleClick += (s, e) =>
