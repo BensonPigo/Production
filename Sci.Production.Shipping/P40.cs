@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -331,7 +332,7 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                 string fabricType = MyUtility.Convert.GetString(dr["FabricType"]);
                 if (fabricType.EqualString("A") || fabricType.EqualString("F"))
                 {
-                    if (!MyUtility.Check.Seek($"select 1 from Fabric with(nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLcode"]}'"))
+                    if (!MyUtility.Check.Seek($"select 1 from Fabric with(nolock) where Refno = '{dr["Refno"].ToString().Replace("'", "''")}' and NLCode = '{dr["NLcode"]}'"))
                     {
                         MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
                         return false;
@@ -339,7 +340,7 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                 }
                 else
                 {
-                    if (!MyUtility.Check.Seek($"select 1 from LocalItem with(nolock) where ltrim(Refno) = '{dr["Refno"]}' and NLCode = '{dr["NLcode"]}'"))
+                    if (!MyUtility.Check.Seek($"select 1 from LocalItem with(nolock) where ltrim(Refno) = '{dr["Refno"].ToString().Replace("'", "''")}' and NLCode = '{dr["NLcode"]}'"))
                     {
                         MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
                         return false;
@@ -483,7 +484,7 @@ outer apply(
 	select top 1 f1.* 
 	from Fabric f1 with(nolock) 
 	inner join brand b2 with(nolock) on f1.BrandID = b2.id 
-	where f1.Refno = '{dr["Refno"]}' and b2.BrandGroup = b.BrandGroup and f1.Type = '{dr["FabricType"]}' and f1.Junk = 0
+	where f1.Refno = '{dr["Refno"].ToString().Replace("'", "''")}' and b2.BrandGroup = b.BrandGroup and f1.Type = '{dr["FabricType"]}' and f1.Junk = 0
 	order by f1.NLCodeEditDate desc
 )f
 where b.id = '{dr["BrandID"]}'
@@ -520,7 +521,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
                 }
                 else if (type.EqualString("L"))
                 {
-                    string sql = $@"select li.HSCode,li.NLCode,li.CustomsUnit,li.NLCode from LocalItem li where ltrim(li.RefNo) = '{dr["RefNo"]}' ";
+                    string sql = $@"select li.HSCode,li.NLCode,li.CustomsUnit,li.NLCode from LocalItem li where ltrim(li.RefNo) = '{dr["RefNo"].ToString().Replace("'", "''")}' ";
                     DataRow row;
                     if (MyUtility.Check.Seek(sql, out row))
                     {
