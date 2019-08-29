@@ -289,7 +289,7 @@ WHERE pd.ID='{PackingListID}' AND pd.CTNStartNO='{CTNStartNo}'
 
                 foreach (DataRow signleData in okDataList)
                 {
-                    bool isExistsMasterDetail = this.detailData.AsEnumerable().Where(o => o["PackingListID"].Equals(signleData["PackingListID"]) && o["PackingListID"].Equals(signleData["PackingListID"])).Any();
+                    bool isExistsMasterDetail = this.detailData.AsEnumerable().Where(o => o["PackingListID"].Equals(signleData["PackingListID"]) && o["CTNStartNO"].Equals(signleData["CTNStartNO"])).Any();
                     if (!isExistsMasterDetail)
                     {
                         this.detailData.ImportRow(signleData);
