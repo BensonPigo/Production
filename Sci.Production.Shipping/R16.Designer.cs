@@ -47,7 +47,9 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtbuyer = new Sci.Production.Class.txtbuyer();
             this.txtShipper = new Sci.Win.UI.TextBox();
-            this.cancelOrder = new Sci.Win.UI.CheckBox();
+            this.chkcancelOrder = new Sci.Win.UI.CheckBox();
+            this.chkFOC = new Sci.Win.UI.CheckBox();
+            this.chkGMTCompleteShortage = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -67,11 +69,15 @@
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(489, 162);
+            this.buttonCustomized.Location = new System.Drawing.Point(489, 134);
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(505, 198);
+            this.checkUseCustomized.Location = new System.Drawing.Point(515, 170);
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(515, 197);
             // 
             // LabShippingMode
             // 
@@ -221,6 +227,7 @@
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(158, 114);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(125, 23);
             this.txtfactory.TabIndex = 3;
@@ -254,23 +261,45 @@
             this.txtShipper.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtShipper_PopUp);
             this.txtShipper.Validating += new System.ComponentModel.CancelEventHandler(this.TxtShipper_Validating);
             // 
-            // cancelOrder
+            // chkcancelOrder
             // 
-            this.cancelOrder.AutoSize = true;
-            this.cancelOrder.Checked = true;
-            this.cancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cancelOrder.Location = new System.Drawing.Point(49, 338);
-            this.cancelOrder.Name = "cancelOrder";
-            this.cancelOrder.Size = new System.Drawing.Size(160, 21);
-            this.cancelOrder.TabIndex = 9;
-            this.cancelOrder.Text = "Include Cancel Order";
-            this.cancelOrder.UseVisualStyleBackColor = true;
+            this.chkcancelOrder.AutoSize = true;
+            this.chkcancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkcancelOrder.Location = new System.Drawing.Point(49, 326);
+            this.chkcancelOrder.Name = "chkcancelOrder";
+            this.chkcancelOrder.Size = new System.Drawing.Size(160, 21);
+            this.chkcancelOrder.TabIndex = 9;
+            this.chkcancelOrder.Text = "Include Cancel Order";
+            this.chkcancelOrder.UseVisualStyleBackColor = true;
+            // 
+            // chkFOC
+            // 
+            this.chkFOC.AutoSize = true;
+            this.chkFOC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkFOC.Location = new System.Drawing.Point(49, 353);
+            this.chkFOC.Name = "chkFOC";
+            this.chkFOC.Size = new System.Drawing.Size(104, 21);
+            this.chkFOC.TabIndex = 145;
+            this.chkFOC.Text = "Include FOC";
+            this.chkFOC.UseVisualStyleBackColor = true;
+            // 
+            // chkGMTCompleteShortage
+            // 
+            this.chkGMTCompleteShortage.AutoSize = true;
+            this.chkGMTCompleteShortage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkGMTCompleteShortage.Location = new System.Drawing.Point(49, 380);
+            this.chkGMTCompleteShortage.Name = "chkGMTCompleteShortage";
+            this.chkGMTCompleteShortage.Size = new System.Drawing.Size(233, 21);
+            this.chkGMTCompleteShortage.TabIndex = 146;
+            this.chkGMTCompleteShortage.Text = "Include GMT Complete-Shortage";
+            this.chkGMTCompleteShortage.UseVisualStyleBackColor = true;
             // 
             // R16
             // 
-            this.ClientSize = new System.Drawing.Size(627, 395);
-            this.Controls.Add(this.cancelOrder);
+            this.ClientSize = new System.Drawing.Size(627, 446);
+            this.Controls.Add(this.chkGMTCompleteShortage);
+            this.Controls.Add(this.chkFOC);
+            this.Controls.Add(this.chkcancelOrder);
             this.Controls.Add(this.txtShipper);
             this.Controls.Add(this.comboshipmode);
             this.Controls.Add(this.comboCategory);
@@ -292,6 +321,7 @@
             this.Name = "R16";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R16. Outstanding Garment Booking List";
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.print, 0);
@@ -315,7 +345,9 @@
             this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.comboshipmode, 0);
             this.Controls.SetChildIndex(this.txtShipper, 0);
-            this.Controls.SetChildIndex(this.cancelOrder, 0);
+            this.Controls.SetChildIndex(this.chkcancelOrder, 0);
+            this.Controls.SetChildIndex(this.chkFOC, 0);
+            this.Controls.SetChildIndex(this.chkGMTCompleteShortage, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -341,6 +373,8 @@
         private Class.comboDropDownList comboCategory;
         private Class.txtshipmode comboshipmode;
         private Win.UI.TextBox txtShipper;
-        private Win.UI.CheckBox cancelOrder;
+        private Win.UI.CheckBox chkcancelOrder;
+        private Win.UI.CheckBox chkFOC;
+        private Win.UI.CheckBox chkGMTCompleteShortage;
     }
 }

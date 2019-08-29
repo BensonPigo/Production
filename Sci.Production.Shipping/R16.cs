@@ -25,6 +25,8 @@ namespace Sci.Production.Shipping
         private string strCategory;
         private string strShipMode;
         private string strJunk;
+        private bool FOC;
+        private bool GMTCompleteShortage;
 
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -51,7 +53,9 @@ namespace Sci.Production.Shipping
             this.strDest = this.txtcountry.TextBox1.Text;
             this.strCategory = this.comboCategory.SelectedValue.ToString();
             this.strShipMode = this.comboshipmode.Text;
-            this.strJunk = this.cancelOrder.Checked ? string.Empty : "0";
+            this.strJunk = this.chkcancelOrder.Checked ? string.Empty : "0";
+            this.FOC = this.chkFOC.Checked;
+            this.GMTCompleteShortage = this.chkGMTCompleteShortage.Checked;
 
             return base.ValidateInput();
         }
@@ -59,24 +63,34 @@ namespace Sci.Production.Shipping
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             string sqlcmd = $@"
-select oq.BuyerDelivery
-,o.BrandID
-,oq.Id
-,oq.Seq
-,oq.ShipmodeID
-,[CancelOrder]=IIF(o.Junk=1,'Y','')
-,fs.ShipperID
-,o.MDivisionID,o.FactoryID
-,[PackingID] = p.ID
-,oq.SDPDate,oq.Qty
-,pkQty.CTNQty,pkQty.gw
-,l.CBM
-,o.CustCDID
-,[Destination] = (select id+'-'+Alias from Country where Id=o.Dest)
-,p.Remark
+select 
+	oq.BuyerDelivery
+	,o.BrandID
+	,oq.Id
+	,oq.Seq
+	,oq.ShipmodeID
+	,[CancelOrder]=IIF(o.Junk=1,'Y','')
+	,fs.ShipperID
+	,o.MDivisionID
+	,o.FactoryID
+	,[PackingID] = p.ID
+	,oq.SDPDate,oq.Qty
+	,pkQty.CTNQty
+	,pkQty.gw
+	,l.CBM
+	,foc.FOC
+	,sew.QAQty
+	,atCLog.ct
+	,o.OrderTypeID
+	,o.CustCDID
+	,[Destination] = (select id+'-'+Alias from Country where Id=o.Dest)
+	,o.GMTComplete
+	,ShortageQty=iif(o.GMTComplete='S', isnull(o.Qty,0)-isnull(o.FOCQty,0)-isnull(PulloutQty.OrderQty,0)+isnull(inv.DiffQty,0),null)
+	,p.Remark
 from Orders o
 inner join Order_QtyShip oq on o.ID=oq.Id
 left join Brand b on b.id=o.BrandID
+inner join Factory f with(nolock) on f.id = o.FactoryID
 outer apply (
 	select distinct p.ID,p.Remark,p.INVNo
 	from PackingList p
@@ -96,10 +110,47 @@ outer apply(
 	where OrderID=oq.Id and OrderShipmodeSeq = oq.Seq
 )pkQty
 outer apply(
-	select sum(l.CBM) CBM from PackingList_Detail pd
+	select ct = count(1)
+	from(
+		select distinct id
+		from PackingList_Detail pld with(nolock)
+		where OrderID=oq.Id and OrderShipmodeSeq = oq.Seq
+	)a	
+	inner join ClogReceive cr with(nolock) on cr.PackingListID = a.id and cr.OrderID = o.ID
+)atCLog
+outer apply(
+	select sum(l.CBM) CBM
+	from PackingList_Detail pd
 	inner join LocalItem l on l.RefNo=pd.RefNo
 	where pd.OrderID=oq.Id and pd.OrderShipmodeSeq=oq.Seq
 )L
+outer apply(
+	select top 1 FOC='Y'
+	from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' 
+	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode 
+	where oqd.Id = o.id
+	and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
+)FOC
+outer apply(
+	select QAQty=sum(sdd.QAQty)
+	from SewingOutput_Detail_Detail sdd WITH (NOLOCK)
+	where  sdd.OrderId = o.ID
+)sew
+outer apply(
+	select OrderQty=sum(pd.OrderQty)
+	from Pullout_Detail pd WITH (NOLOCK)
+	inner join Pullout p WITH (NOLOCK)on p.id = pd.id
+	where pd.OrderID = o.ID and pd.PackingListID = p.ID  and pd.ShipmodeID = oq.ShipmodeID
+	 and p.Status != 'New' and pd.PackingListType != 'F'
+)PulloutQty
+outer apply(
+	select DiffQty=sum (iaq.DiffQty)
+	from InvAdjust ia
+	inner join  InvAdjust_Qty iaq WITH (NOLOCK) on ia.ID = iaq.ID
+	where exists(select 1 from GMTBooking where id = ia.GarmentInvoiceID)
+	and ia.OrderID = o.ID and ia.OrderShipmodeSeq = oq.Seq
+)inv
 where o.localOrder = 0
 and (p.INVNo ='' or p.INVNo is null)
 and not exists(
@@ -109,6 +160,7 @@ and not exists(
 	inner join PackingList p on p.ID=pd.ID and p.Type='F'
 	where oq2.Id=oq.Id and oq2.Seq=oq.Seq
 )
+and f.IsProduceFty = 1
 ";
             #region Where
 
@@ -160,6 +212,16 @@ and not exists(
             if (!MyUtility.Check.Empty(this.strJunk))
             {
                 sqlcmd += $@" and o.Junk  = {this.strJunk}" + Environment.NewLine;
+            }
+
+            if (!this.GMTCompleteShortage)
+            {
+                sqlcmd += $@" and isnull(o.GMTComplete,'') <> 'S' ";
+            }
+
+            if (!this.FOC)
+            {
+                sqlcmd += $@" and isnull(FOC.FOC,'') <> 'Y' ";
             }
             #endregion
 
