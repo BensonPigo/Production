@@ -90,6 +90,7 @@
             this.lbDuring = new Sci.Win.UI.Label();
             this.cbDuring = new Sci.Win.UI.ComboBox();
             this.btnRepackCartons = new Sci.Win.UI.Button();
+            this.btnPackScanHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -107,6 +108,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnPackScanHistory);
             this.masterpanel.Controls.Add(this.btnRepackCartons);
             this.masterpanel.Controls.Add(this.disClogCFMStatus);
             this.masterpanel.Controls.Add(this.lbClogCFMStatus);
@@ -165,7 +167,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateLocateforTransferClog);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(1089, 313);
+            this.masterpanel.Size = new System.Drawing.Size(1089, 350);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateLocateforTransferClog, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
@@ -225,15 +227,16 @@
             this.masterpanel.Controls.SetChildIndex(this.lbClogCFMStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.disClogCFMStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnRepackCartons, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPackScanHistory, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 313);
-            this.detailpanel.Size = new System.Drawing.Size(1089, 336);
+            this.detailpanel.Location = new System.Drawing.Point(0, 350);
+            this.detailpanel.Size = new System.Drawing.Size(1089, 330);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(894, 278);
+            this.gridicon.Location = new System.Drawing.Point(894, 315);
             this.gridicon.TabIndex = 8;
             // 
             // refresh
@@ -242,7 +245,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1089, 336);
+            this.detailgridcont.Size = new System.Drawing.Size(1089, 330);
             // 
             // detail2
             // 
@@ -258,15 +261,15 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1089, 687);
+            this.detail.Size = new System.Drawing.Size(1089, 718);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1089, 649);
+            this.detailcont.Size = new System.Drawing.Size(1089, 680);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 649);
+            this.detailbtm.Location = new System.Drawing.Point(0, 680);
             this.detailbtm.Size = new System.Drawing.Size(1089, 38);
             // 
             // browse
@@ -279,7 +282,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1097, 716);
+            this.tabs.Size = new System.Drawing.Size(1097, 747);
             // 
             // createby
             // 
@@ -934,10 +937,22 @@
             this.btnRepackCartons.UseVisualStyleBackColor = true;
             this.btnRepackCartons.Click += new System.EventHandler(this.BtnRepackCartons_Click);
             // 
+            // btnPackScanHistory
+            // 
+            this.btnPackScanHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPackScanHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnPackScanHistory.Location = new System.Drawing.Point(813, 280);
+            this.btnPackScanHistory.Name = "btnPackScanHistory";
+            this.btnPackScanHistory.Size = new System.Drawing.Size(179, 30);
+            this.btnPackScanHistory.TabIndex = 72;
+            this.btnPackScanHistory.Text = "Scan and Pack Deleted History";
+            this.btnPackScanHistory.UseVisualStyleBackColor = true;
+            this.btnPackScanHistory.Click += new System.EventHandler(this.btnPackScanHistory_Click);
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1097, 749);
+            this.ClientSize = new System.Drawing.Size(1097, 780);
             this.Controls.Add(this.btnBatchConf);
             this.DefaultControl = "txtbrand";
             this.DefaultControlForEdit = "txtbrand";
@@ -1044,5 +1059,6 @@
         private Win.UI.ComboBox cbDuring;
         private Win.UI.Label lbDuring;
         private Win.UI.Button btnRepackCartons;
+        private Win.UI.Button btnPackScanHistory;
     }
 }
