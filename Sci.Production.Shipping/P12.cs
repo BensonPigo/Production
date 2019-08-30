@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
                 .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
-               .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(16), iseditingreadonly: true)
@@ -79,6 +79,11 @@ namespace Sci.Production.Shipping
                 where += $@" and o.BuyerDelivery between '{((DateTime)this.dateBuyerDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateBuyerDelivery.Value2).ToString("d")}' ";
             }
 
+            if (!MyUtility.Check.Empty(this.txtfactory.Text))
+            {
+                where += $@" and o.FtyGroup ='{this.txtfactory.Text}'";
+            }
+
             #endregion
             string sqlcmd = $@"
 select
@@ -121,6 +126,7 @@ and exists (
 	where oqd.Id = o.id
 	and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
 )--有一筆Price為0表示此Orderid有Foc
+and o.MDivisionID = '{Sci.Env.User.Keyword}'
 {where}
 order by o.ID
 ";
@@ -145,8 +151,8 @@ order by o.ID
         {
             DataTable dt = ((DataTable)listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
             string insertOrderFinished = $@"
-insert Order_Finish(ID,FOCQty,AddName,AddDate)
-select OrderID,FinishedFOCStockinQty,'{Sci.Env.User.UserID}',getdate()
+insert Order_Finish(ID,FOCQty,CurrentFOCQty,AddName,AddDate)
+select OrderID,FinishedFOCStockinQty,(FinishedFOCStockinQty -FOCPulloutQty) ,'{Sci.Env.User.UserID}',getdate()
 from #tmp
 ";
             DataTable odt;

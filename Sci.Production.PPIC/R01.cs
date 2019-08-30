@@ -1050,9 +1050,10 @@ select
 	into #APSListWorkDay
 from SewingSchedule s  WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
+inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 outer apply(select [val] = iif(s.OriEff is null and s.SewLineEff is null,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) OriEff
-where 1 = 1 {sqlWhere.ToString()}
+where 1 = 1 {sqlWhere.ToString()} and s.APSno <> 0
 group by	s.APSNo ,
 			s.MDivisionID,
 			s.SewingLineID,
@@ -1342,8 +1343,8 @@ into #Workhour_step2
 from #Workhour_step1	
 
 --依照班表順序，將inline,offline當天StartHour與EndHour update與inline,offline相同
-update #Workhour_step2 set StartHour = InlineHour where WorkDate = InlineDate and StartHourSort = 1
-update #Workhour_step2 set EndHour = OfflineHour where WorkDate = OfflineDate and EndHourSort = 1
+update #Workhour_step2 set StartHour = InlineHour where WorkDate = InlineDate and StartHourSort = 1 and InlineHour > StartHour
+update #Workhour_step2 set EndHour = OfflineHour where WorkDate = OfflineDate and EndHourSort = 1 and OfflineHour < EndHour
 
 select 
 APSNo,

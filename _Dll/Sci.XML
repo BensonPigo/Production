@@ -3957,6 +3957,16 @@
             0:header,1:data
             </summary>
         </member>
+        <member name="M:Sci.Win.PrivReportUtils.GetEmptyStandSettigs(System.String,System.String,System.String,System.String)">
+            <summary>
+            第一次設定設定客製化時預設值
+            </summary>
+            <param name="formName">formName</param>
+            <param name="userID">userID</param>
+            <param name="reportType">reportType</param>
+            <param name="version">version</param>
+            <returns>StandardReport</returns>
+        </member>
         <member name="T:Sci.Win.IGridDefinition">
             <summary>
             Interface of Grid property definitions.
@@ -12770,12 +12780,49 @@
             修改這個方法的內容。
             </summary>
         </member>
+        <member name="T:Sci.Win.Tools.CustomizeVersionName">
+            <summary>
+            填寫VersionName
+            </summary>
+        </member>
+        <member name="F:Sci.Win.Tools.CustomizeVersionName.versionName">
+            <summary>
+            versionName
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeVersionName.#ctor(System.Collections.Generic.IList{Sci.Win.StandardReport})">
+            <summary>
+            填寫VersionName
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeVersionName.OnSaveClick">
+            <summary>
+            Save
+            </summary>
+        </member>
+        <member name="F:Sci.Win.Tools.CustomizeVersionName.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeVersionName.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeVersionName.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
         <member name="T:Sci.Win.Tools.CustomizeView">
             <summary>
             CustomizeView
             </summary>
         </member>
-        <member name="M:Sci.Win.Tools.CustomizeView.#ctor(Sci.Win.StandardReport)">
+        <member name="M:Sci.Win.Tools.CustomizeView.#ctor(System.Collections.Generic.IList{Sci.Win.StandardReport})">
             <summary>
             CustomizeView
             </summary>
@@ -12783,6 +12830,33 @@
         </member>
         <member name="M:Sci.Win.Tools.CustomizeView.OnFormLoaded">
             <inheritdoc/>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeView.OnSaveClick">
+            <summary>
+            OnSaveClick
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeView.OnCancellick">
+            <summary>
+            OnCancellick
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeView.OnVersionChanged(System.Object,System.EventArgs)">
+            <summary>
+            OnVersionChanged
+            </summary>
+            <param name="sender">sender</param>
+            <param name="e">e</param>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeView.OnNewClick">
+            <summary>
+            OnNewClick
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.CustomizeView.OnDeleteClick">
+            <summary>
+            OnDeleteClick
+            </summary>
         </member>
         <member name="F:Sci.Win.Tools.CustomizeView.components">
             <summary>

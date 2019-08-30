@@ -177,7 +177,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
         /// </summary>
         /// <param name="string styleukey"></param>
         /// <param name="Out DataTable(GarmentList Table)"></param>
-        public static void GetGarmentListTable(string cutref, string OrderID,out DataTable OutTb)
+        public static void GetGarmentListTable(string cutref, string OrderID, string sizeGroup ,out DataTable OutTb)
         {
             DataTable garmentListTb;
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", OrderID, "Orders", "ID");
@@ -186,7 +186,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             OutTb = null;
             string patidsql;
 
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{OrderID}','{cutref}','',{Styleyukey})s";
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{OrderID}','{cutref}','',{Styleyukey},'{sizeGroup}')s";
 
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion

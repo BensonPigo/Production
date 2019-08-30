@@ -18,13 +18,18 @@ namespace Sci.Production.PublicForm
         private DataTable headertb;
         private string patternukey;
         private string _cutref;
-        public GarmentList(string ukey,string cid,string cutref)
+        private string sizes;
 
+        public GarmentList(string ukey,string cid,string cutref,List<string> sizeList = null)
         {
             InitializeComponent();
             Styleyukey = ukey;
             id = cid;
             _cutref = cutref;
+            if (sizeList != null)
+            {
+                sizes = "'" + string.Join("','", sizeList) + "'";
+            }
             requery();
             gridSetup();
             this.gridGarment.AutoResizeColumns();
@@ -33,7 +38,14 @@ namespace Sci.Production.PublicForm
         {
             string patidsql ;
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{id}','{_cutref}','',{Styleyukey})s";
+            string sizeGroup = string.Empty;
+            if (!MyUtility.Check.Empty(sizes))
+            {
+                string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{this.id}' and SizeCode IN ({this.sizes})";
+                sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
+            }
+
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{id}','{_cutref}','',{Styleyukey},'{sizeGroup}')s";
             patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion
             #region 找ArticleGroup 當Table Header

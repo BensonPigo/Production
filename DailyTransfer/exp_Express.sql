@@ -48,7 +48,9 @@ end;
 
 SELECT * 
 INTO Express
-FROM [Production].dbo.Express  WHERE (AddDate >=@DateStart  or EditDate >=@DateStart) ORDER BY Id
+FROM [Production].dbo.Express  
+WHERE upper(FreightBy) = '3RD'
+and (AddDate >=@DateStart  or EditDate >=@DateStart) ORDER BY Id
 
 SELECT B.* 
 INTO Express_Detail

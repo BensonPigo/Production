@@ -1328,13 +1328,14 @@ BEGIN
 						delete from #DynamicEff
 						delete from #LnCurveTemplate
 						
+						SET @sewer = iif (isnull(@sewer, 0) = 0, isnull ((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid), 0), @sewer)
+
 						IF @gsd = 0
 							set @set = 0
 						ELSE
 							set @set = (3600/@gsd)*@sewer*@maxeff
 						Begin Try
 							Begin Transaction
-								SET @sewer = iif (isnull(@sewer, 0) = 0, isnull ((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid), 0), @sewer)
 								
 								update SewingSchedule 
 								set SewingLineID = @sewinglineid

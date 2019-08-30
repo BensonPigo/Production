@@ -158,10 +158,12 @@ ad.*,
 [MainDefect] = asdMain.ID + '-' + asdMain.Name,
 [SubDefect] = asdSub.SubID + '-' + asdSub.SubName,
 asdSub.MtlTypeID,
-asdSub.FabricType
+asdSub.FabricType,
+o.StyleID
 from ADIDASComplain_Detail ad with (nolock)
 left join ADIDASComplainDefect asdMain with (nolock) on ad.DefectMainID = asdMain.ID
 left join ADIDASComplainDefect_Detail asdSub with (nolock) on  asdMain.ID = asdSub.ID and ad.DefectSubID = asdSub.SubID
+left join orders o on o.ID=ad.OrderID
 where ad.ID = '{0}'
 order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-' + asdSub.SubName,ad.OrderID
 ", masterID);
@@ -274,6 +276,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 .Text("SalesName", header: "Sales Org. Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Article", header: "Article ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ArticleName", header: "Article Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("ProductionDate", header: "Production Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("MainDefect", header: "Main Defect", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("SubDefect", header: "Sub Defect", width: Widths.AnsiChars(25), iseditingreadonly: true)
@@ -298,7 +301,12 @@ SELECT DISTINCT PSD.Refno
   FROM [PO_Supp_Detail] PSD
   inner JOIN Fabric F ON F.SCIRefno = PSD.SCIRefno
   inner JOIN PO_Supp PS ON PS.ID = PSD.ID AND PS.SEQ1= PSD.SEQ1
-  inner join orders o on o.poid = ps.ID
+  inner join(
+	select distinct o.POID,o.ID,oq.OrderIDFrom 
+	from Orders o
+	left join Order_Qty_Garment oq on oq.ID=o.POID and o.Category='G'
+	where o.ID='{this.CurrentDetailData["OrderID"]}'
+) o on isnull(o.OrderIDFrom,o.poid) = ps.ID
   WHERE o.id = '{this.CurrentDetailData["OrderID"].ToString()}' AND 
         F.MtlTypeID = '{this.CurrentDetailData["MtlTypeID"].ToString()}' AND 
         PSD.FabricType = '{this.CurrentDetailData["FabricType"].ToString()}' AND 
@@ -316,8 +324,14 @@ ORDER BY PSD.Refno
             string sqlGetSupplier = $@"
 select distinct [Supplier] = ps.SuppID 
 from PO_Supp ps
-left join orders o on o.poid = ps.id
-where o.id = '{this.CurrentDetailData["OrderID"].ToString()}' {whereSuppID}
+left join(
+	select distinct o.POID,o.ID,oq.OrderIDFrom 
+	from Orders o
+	left join Order_Qty_Garment oq on oq.ID=o.POID and o.Category='G'
+	where o.ID='{this.CurrentDetailData["OrderID"]}'
+) o on isnull(o.OrderIDFrom,o.poid) = ps.ID
+where o.id = '{this.CurrentDetailData["OrderID"]}' 
+{whereSuppID}
 order by ps.SuppID
 ";
 

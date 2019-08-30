@@ -102,6 +102,11 @@
             this.checkUseCustomized.Location = new System.Drawing.Point(475, 156);
             this.checkUseCustomized.Visible = true;
             // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(475, 183);
+            this.txtVersion.Visible = true;
+            // 
             // labelBuyerDelivery
             // 
             this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 11);
@@ -688,6 +693,7 @@
             this.Name = "R03";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. PPIC master list report";
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.print, 0);

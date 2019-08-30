@@ -137,6 +137,13 @@ namespace Sci.Production.PPIC
                 this.btnPicture2Delete.Visible = true;
             }
             #endregion
+
+            // 寫入TPE Edit By
+            this.txtTPEEditBy.Text = MyUtility.GetValue.Lookup($@"
+select Name = s.TPEEditName+' '+ isnull(p.Name,'')+' '+isnull(format(s.TPEEditDate,'yyyy/MM/dd hh:mm:ss'),'') 
+from Style s
+left join Pass1 p on s.TPEEditName = p.ID
+where s.ukey = {this.CurrentMaintain["ukey"]}");
         }
 
         /// <inheritdoc/>
@@ -145,6 +152,8 @@ namespace Sci.Production.PPIC
             base.ClickNewAfter();
             this.CurrentMaintain["LocalStyle"] = 1;
             this.CurrentMaintain["LocalMR"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["FinishingProcessID1"] = DBNull.Value;
+            this.CurrentMaintain["FinishingProcessID2"] = DBNull.Value;
             this.displayStyleApprove2.Text = string.Empty;
         }
 
@@ -235,6 +244,21 @@ namespace Sci.Production.PPIC
                 }
             }
             #endregion
+
+            // 檢查 Finishing Process Setting 1 & Finishing Process Setting 2 是否存在 [FinishingProcess].DM300
+            if (this.CurrentMaintain["FinishingProcessID1"] != DBNull.Value &&
+                !MyUtility.Check.Seek($@"select 1 from FinishingProcess where DM300 = '{this.CurrentMaintain["FinishingProcessID1"]}'"))
+            {
+                MyUtility.Msg.WarningBox("Finishing Process Setting does not exist. Please check again!");
+                return false;
+            }
+
+            if (this.CurrentMaintain["FinishingProcessID2"] != DBNull.Value &&
+               !MyUtility.Check.Seek($@"select 1 from FinishingProcess where DM300 = '{this.CurrentMaintain["FinishingProcessID2"]}'"))
+            {
+                MyUtility.Msg.WarningBox("Finishing Process Setting does not exist. Please check again!");
+                return false;
+            }
 
             if (this.IsDetailInserting)
             {

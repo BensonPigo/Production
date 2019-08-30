@@ -683,7 +683,23 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )remark
-outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',w.MarkerNo,o.StyleUkey) p)p
+outer apply(
+	SELECT TOP 1 SizeGroup=IIF(ISNULL(SizeGroup,'')='','N',SizeGroup)
+	FROM Order_SizeCode 
+	WHERE ID = o.POID and SizeCode IN 
+	(
+		Select distinct SizeCode
+		from Cutplan_Detail cd2 WITH (NOLOCK) 		
+		inner join WorkOrder w2 on cd2.WorkorderUkey = w2.Ukey
+		inner join WorkOrder_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderUKey = ws2.WorkOrderUkey
+		where cd2.ID = c.ID
+		and cd2.SewingLineID = cd.SewingLineID
+		and cd2.OrderID = cd.OrderID
+		and w2.SEQ1 = w.SEQ1 
+		and w2.SEQ2 = w.SEQ2
+	)
+) as ss
+outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',w.MarkerNo,o.StyleUkey,ss.SizeGroup) p)p
 
 where 1 = 1
 ");
@@ -728,7 +744,7 @@ outer apply(
 									and pg.Annotation!=''
 		where pgl.PatternUKEY = t.patternUKey and pgl.FabricPanelCode = t.FabricPanelCode
 	)a
-	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(a.Annotation,'+'))s
+	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(dbo.[RemoveNumericCharacters](a.Annotation),'+'))s
 	where exists(select 1 from SubProcess where id = s.data)
 	for xml path(''))
 	,1,1,'')

@@ -13,7 +13,7 @@ using Ict.Data;
 using Ict;
 using Sci.Win.Tools;
 using Sci.Production.PublicPrg;
-
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.Cutting
 {
@@ -52,13 +52,25 @@ namespace Sci.Production.Cutting
             #endregion
 
             #region 準備GarmentList & ArticleGroup
+            string sizes = string.Empty;
+            if (qtyTb != null)
+            {
+                var sizeList = qtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+                sizes = "'" + string.Join("','", sizeList) + "'";
+            }
+            string sizeGroup = string.Empty;
+            if (!MyUtility.Check.Empty(sizes))
+            {
+                string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{maindatarow["poid"].ToString()}' and SizeCode IN ({sizes})";
+                sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
+            }
             //GarmentList
-            PublicPrg.Prgs.GetGarmentListTable(maindr["cutref"].ToString(), maindatarow["poid"].ToString(), out garmentTb);
+            PublicPrg.Prgs.GetGarmentListTable(maindr["cutref"].ToString(), maindatarow["poid"].ToString(), sizeGroup, out garmentTb);
             //ArticleGroup
             string patidsql;
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
 
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{maindatarow["poid"].ToString()}','{maindatarow["cutref"].ToString()}','',{Styleyukey})s";
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{maindatarow["poid"].ToString()}','{maindatarow["cutref"].ToString()}','',{Styleyukey},'{sizeGroup}')s";
 
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             string headercodesql = string.Format(@"
@@ -171,7 +183,7 @@ group by sizeCode"
                 else
                 {
                     //Annotation 
-                    string[] ann = dr["annotation"].ToString().Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(dr["annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
                     #region Annotation有在Subprocess 內需要寫入bundle_detail_art，寫入Bundle_Detail_pattern
                     if (ann.Length > 0)
@@ -374,7 +386,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     e.EditingControl.Text = sele.GetSelectedString();
                     dr["PatternDesc"] = (sele.GetSelecteds()[0]["PatternDesc"]).ToString();
                     dr["PatternCode"] = (sele.GetSelecteds()[0]["PatternCode"]).ToString();
-                    string[] ann = (sele.GetSelecteds()[0]["Annotation"]).ToString().Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(sele.GetSelecteds()[0]["Annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
                     bool lallpart;
                     #region 算Subprocess
@@ -402,7 +414,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 {
                     dr["PatternDesc"] = (gemdr[0]["PatternDesc"]).ToString();
                     dr["PatternCode"] = (gemdr[0]["PatternCode"]).ToString();
-                    string[] ann = (gemdr[0]["Annotation"]).ToString().Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(gemdr[0]["Annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
                     bool lallpart;
                     #region 算Subprocess
@@ -829,7 +841,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 foreach (DataRow chdr in checkdr)
                 {
                     string art = "";
-                    string[] ann = chdr["annotation"].ToString().Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(chdr["annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
                     if (ann.Length > 0)
                     {
                         bool lallpart;
@@ -1233,7 +1245,9 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
         private void btnGarment_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, maindatarow["poid"].ToString(), maindatarow["cutref"].ToString());
+            var Sizelist = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, maindatarow["poid"].ToString(), maindatarow["cutref"].ToString(), Sizelist);
             callNextForm.ShowDialog(this);
         }
 

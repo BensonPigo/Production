@@ -29,7 +29,7 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
-               .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(16), iseditingreadonly: true)
@@ -40,6 +40,7 @@ namespace Sci.Production.Shipping
                 .Numeric("ChargeablePulloutQty", header: "Chargeable Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FOCPulloutQty", header: "FOC Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FinishedFOCStockinQty", header: "Finished FOC Stock-in Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Date("StockInDate", header: "Stock-in Date", iseditingreadonly: true)
                 .Numeric("CurrentFOCStock", header: "Current FOC Stock", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 ;
         }
@@ -92,8 +93,8 @@ select
 	ChargeablePulloutQty = isnull(c.value,0),
 	FOCPulloutQty = isnull(c.value2,0),
 	FinishedFOCStockinQty =isnull(oxx.FOCQty,0),
-	CurrentFOCStock= isnull(oxx.FOCQty,0) - isnull(c2.value,0)
-	
+    [StockInDate] = convert(date, oxx.addDate),
+	CurrentFOCStock= CurrentFOCQty
 from orders o with(nolock)
 outer apply(
 	select sum(value) as value , sum(value2) as value2 
@@ -109,18 +110,8 @@ outer apply(
 	) a
 )c
 outer apply(
-	select FOCQty=sum(ox.FOCQty),addDate=min(addDate) from Order_Finish ox where ox.id = o.ID
+	select FOCQty=sum(ox.FOCQty),addDate=min(addDate),CurrentFOCQty = sum(CurrentFOCQty) from Order_Finish ox where ox.id = o.ID
 )oxx
-outer apply(
-	select 
-		value=iif( pl.Type='F',sum(pod.ShipQty),0)
-	from Pullout_Detail pod with(nolock)
-	inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
-	where pod.OrderID = o.id
-    and pl.pulloutdate > oxx.addDate
-	group by pl.Type
-)c2
-
 
 where o.Junk = 0
 and exists(select 1 from Order_Finish ox where ox.id = o.ID)

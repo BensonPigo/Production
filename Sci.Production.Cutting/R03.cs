@@ -81,6 +81,7 @@ namespace Sci.Production.Cutting
 select
 	[M] = wo.MDivisionID,
 	[Factory] = o.FtyGroup,
+    [PPIC Close] = iif(c.Finished=1,'V',''),
 	[Est.Cutting Date]= wo.EstCutDate,
 	[Act.Cutting Date] = MincDate.MincoDate,
 	[Earliest Sewing Inline] = c.SewInLine,
@@ -145,7 +146,7 @@ outer apply(
 		select min(co.cDate)
 		from CuttingOutput co WITH (NOLOCK) 
 		inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
-		where cod.WorkOrderUkey = wo.Ukey
+		where cod.WorkOrderUkey = wo.Ukey and co.Status != 'New' 
 	)
 ) as MincDate
 outer apply(
@@ -227,7 +228,17 @@ outer apply(
 	where psd.ID = wo.id and psd.SCIRefno = wo.SCIRefno
 	and fi.InQty is not null
 ) as fi
-outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',wo.MarkerNo,o.StyleUkey)p)p
+outer apply(
+	SELECT TOP 1 SizeGroup=IIF(ISNULL(SizeGroup,'')='','N',SizeGroup)
+	FROM Order_SizeCode 
+	WHERE ID = o.POID and SizeCode IN 
+	(
+		select distinct wd.SizeCode
+		from WorkOrder_Distribute wd WITH (NOLOCK)
+		where wd.WorkOrderUkey = wo.Ukey
+	)
+) as ss
+outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',wo.MarkerNo,o.StyleUkey,ss.SizeGroup)p)p
 
 where 1=1
 
@@ -330,7 +341,7 @@ where 1=1
             #endregion
             sqlCmd.Append(@"
 select 
-[M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
+[M],[Factory],[PPIC Close],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
 ,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,BuyerDelivery
@@ -348,7 +359,7 @@ outer apply(
 									and pg.Annotation!=''
 		where pgl.PatternUKEY = t.patternUKey and pgl.FabricPanelCode = t.FabricPanelCode
 	)a
-	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(a.Annotation,'+'))s
+	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(dbo.[RemoveNumericCharacters](a.Annotation),'+'))s
 	where exists(select 1 from SubProcess where id = s.data)
 	for xml path(''))
 	,1,1,'')
