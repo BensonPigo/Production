@@ -46,6 +46,48 @@ namespace Sci.Production.Subcon
                 var frm = new Sci.Production.Subcon.P42_SubProcessStatus(drSelected, summaryType);
                 frm.ShowDialog(this);
             };
+
+            DataGridViewGeneratorTextColumnSettings BundleReplacement = new DataGridViewGeneratorTextColumnSettings();
+            BundleReplacement.CellMouseDoubleClick += (s, e) =>
+            {
+                DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
+                if (drSelected == null)
+                {
+                    return;
+                }
+                string where = string.Empty;
+                string caption = $"SP:{drSelected["OrderID"]} ";
+                if (summaryType == 1)
+                {
+                    where = $"and bd.SizeCode = '{drSelected["SizeCode"]}' and b.Article = '{drSelected["Article"]}'";
+                    caption += $" Size:{drSelected["SizeCode"]}' Article :{drSelected["Article"]}";
+                }
+                string sqlcmd = $@"
+select
+	Date = bi.DefectUpdateDate,
+	BundleNo=bi.BundleNo,
+	SubProcess=bi.SubProcessID,
+	[Reason Descripotion] = concat(bi.ReasonID, ' ', bdr.Reason),
+	[Defect Qty (pcs)]=bi.DefectQty,
+	[Replacement Qty (pcs)]=bi.ReplacementQty,
+	Status=iif(bi.DefectQty=bi.ReplacementQty,'Complete','')
+from ManufacturingExecution.dbo.BundleInspection bi with(nolock)
+inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
+inner join Bundle b with(nolock) on b.id = bd.id
+left join ManufacturingExecution.dbo.BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID and bdr.SubProcessID = bi.SubProcessID
+where b.Orderid = '{drSelected["OrderID"]}' 
+{where}
+";
+                DataTable dt;
+                DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out dt);
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                    return;
+                }
+
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: $"{caption} Bundle Replacement");
+            };
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true, settings: sp)
@@ -84,9 +126,10 @@ namespace Sci.Production.Subcon
             }
 
             int subprocessStartColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["OffLineDate"].Ordinal;
+            int BundleReplacementColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["BundleReplacement"].Ordinal;
             foreach (DataColumn column in ((DataTable)this.listControlBindingSource1.DataSource).Columns)
             {
-                if (column.Ordinal > subprocessStartColumn)
+                if (column.Ordinal > subprocessStartColumn && column.Ordinal < BundleReplacementColumn)
                 {
                     DataGridViewGeneratorTextColumnSettings subprocess = new DataGridViewGeneratorTextColumnSettings();
                     subprocess.CellMouseDoubleClick += (s, e) =>
@@ -122,6 +165,10 @@ namespace Sci.Production.Subcon
                     .Text(column.ColumnName, header: column.ColumnName, width: Widths.AnsiChars(12), iseditingreadonly: true, settings: subprocess);
                 }
             }
+
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .Text("BundleReplacement", header: "Bundle Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: BundleReplacement)
+            ;
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -323,8 +370,21 @@ PIVOT(min(Status) for SubProcessID in('+@AllSubprocess+N'))as pt
 select 
 	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate,
 	'+@Col+N'
+    ,BundleReplacement=RQ
 from #tmpOrders o
 inner join #right r on r.Orderid=o.id
+outer apply(
+    select RQ=stuff((
+	    select concat('','',ReasonID,''('',sum(isnull(bi.DefectQty,0)-isnull(bi.ReplacementQty,0)),'')'')
+	    from ManufacturingExecution.dbo.BundleInspection bi  with(nolock)
+        inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
+        inner join Bundle b with(nolock) on b.id = bd.id
+	    where isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
+	    and  b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
+	    group by ReasonID
+	    for xml path('''')
+    ),1,1,'''')
+)BR
 '
 exec(@sql)
 
@@ -459,8 +519,22 @@ PIVOT(min(Status) for SubProcessID in('+@AllSubprocess+N'))as pt
 select 
 	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.Article,o.Sizecode,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate,
 	'+@Col+N'
+    ,BundleReplacement=RQ
 from #tmpOrders o
 inner join #right r on r.Orderid=o.id and r.Article = o.Article and r.Sizecode = o.Sizecode
+outer apply(
+    select RQ=stuff((
+	    select concat('','',ReasonID,''('',sum(isnull(bi.DefectQty,0)-isnull(bi.ReplacementQty,0)),'')'')
+	    from ManufacturingExecution.dbo.BundleInspection bi  with(nolock)
+        inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
+        inner join Bundle b with(nolock) on b.id = bd.id
+	    where isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
+	    and  b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
+		and b.Article = o.Article and bd.SizeCode = o.Sizecode
+	    group by ReasonID
+	    for xml path('''')
+    ),1,1,'''')
+)BR
 '
 exec(@sql)
 
