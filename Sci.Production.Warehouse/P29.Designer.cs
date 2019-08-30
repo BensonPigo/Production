@@ -32,6 +32,8 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
+            this.dateInventoryCfm = new Sci.Win.UI.DateRange();
+            this.label3 = new Sci.Win.UI.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtStockSP2 = new Sci.Win.UI.TextBox();
             this.txtStockSP1 = new Sci.Win.UI.TextBox();
@@ -62,8 +64,6 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateInventoryCfm = new Sci.Win.UI.DateRange();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -107,6 +107,35 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1078, 107);
             this.panel1.TabIndex = 1;
+            // 
+            // dateInventoryCfm
+            // 
+            // 
+            // 
+            // 
+            this.dateInventoryCfm.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateInventoryCfm.DateBox1.Name = "";
+            this.dateInventoryCfm.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateInventoryCfm.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateInventoryCfm.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateInventoryCfm.DateBox2.Name = "";
+            this.dateInventoryCfm.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateInventoryCfm.DateBox2.TabIndex = 1;
+            this.dateInventoryCfm.Location = new System.Drawing.Point(480, 75);
+            this.dateInventoryCfm.Name = "dateInventoryCfm";
+            this.dateInventoryCfm.Size = new System.Drawing.Size(280, 23);
+            this.dateInventoryCfm.TabIndex = 10;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(351, 75);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(127, 23);
+            this.label3.TabIndex = 22;
+            this.label3.Text = "Inventory Cfm Date";
             // 
             // label2
             // 
@@ -467,35 +496,6 @@
             this.gridRel.Size = new System.Drawing.Size(464, 441);
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(351, 75);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(127, 23);
-            this.label3.TabIndex = 22;
-            this.label3.Text = "Inventory Cfm Date";
-            // 
-            // dateInventoryCfm
-            // 
-            // 
-            // 
-            // 
-            this.dateInventoryCfm.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateInventoryCfm.DateBox1.Name = "";
-            this.dateInventoryCfm.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateInventoryCfm.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateInventoryCfm.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateInventoryCfm.DateBox2.Name = "";
-            this.dateInventoryCfm.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateInventoryCfm.DateBox2.TabIndex = 1;
-            this.dateInventoryCfm.Location = new System.Drawing.Point(480, 75);
-            this.dateInventoryCfm.Name = "dateInventoryCfm";
-            this.dateInventoryCfm.Size = new System.Drawing.Size(280, 23);
-            this.dateInventoryCfm.TabIndex = 10;
             // 
             // P29
             // 
