@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P14 : Sci.Win.Tems.Base
+    public partial class P14 : Sci.Win.Tems.QueryForm
     {
        private DataTable dtCertOfOrigin;
        private DataTable dtExport;
@@ -29,9 +29,17 @@ namespace Sci.Production.Shipping
         {
             base.OnFormLoaded();
 
+            // dateRange 變色
+            this.dateETA.DateBox1.TextBackColor = Color.Pink;
+            this.dateETA.DateBox2.TextBackColor = Color.Pink;
+
             #region 欄位事件設定
 
             DataGridViewGeneratorDateColumnSettings col_SendDate = new DataGridViewGeneratorDateColumnSettings();
+            Ict.Win.UI.DataGridViewTextBoxColumn col_MaxLength15;
+            Ict.Win.UI.DataGridViewTextBoxColumn col_MaxLength20;
+            Ict.Win.UI.DataGridViewTextBoxColumn col_MaxLength30;
+
             col_SendDate.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1 || e.FormattedValue == null) return;
@@ -59,11 +67,11 @@ namespace Sci.Production.Shipping
 
             this.Helper.Controls.Grid.Generator(this.gridCertOfOrigin)
                 .Text("SuppID", header: "Supplier", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("FormXPayINV", header: "Payment Invoice#", width: Widths.AnsiChars(16), iseditingreadonly: true)
-                .Text("COName", header: "Form C/O Name", width: Widths.AnsiChars(15))
+                .Text("FormXPayINV", header: "Payment Invoice#", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .Text("COName", header: "Form C/O Name", width: Widths.AnsiChars(15)).Get(out col_MaxLength15)
                 .Date("ReceiveDate", header: "Form Rcvd Date", width: Widths.AnsiChars(10))
-                .Text("Carrier", header: "Carrier", width: Widths.AnsiChars(16))
-                .Text("AWBNo", header: "AWB#", width: Widths.AnsiChars(20))
+                .Text("Carrier", header: "Carrier", width: Widths.AnsiChars(18)).Get(out col_MaxLength30)
+                .Text("AWBNo", header: "AWB#", width: Widths.AnsiChars(20)).Get(out col_MaxLength20)
                 .Date("SendDate", header: "Form Send Date", width: Widths.AnsiChars(10), settings: col_SendDate)
                 ;
 
@@ -71,6 +79,9 @@ namespace Sci.Production.Shipping
             this.gridCertOfOrigin.Columns["ReceiveDate"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridCertOfOrigin.Columns["Carrier"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridCertOfOrigin.Columns["AWBNo"].DefaultCellStyle.BackColor = Color.Pink;
+            col_MaxLength15.MaxLength = 15;
+            col_MaxLength20.MaxLength = 20;
+            col_MaxLength30.MaxLength = 30;
 
             // Grid CertOfOrigin
             this.gridExport.IsEditingReadOnly = true;

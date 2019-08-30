@@ -51,6 +51,7 @@
             // 
             // panel3
             // 
+            this.panel3.BorderStyle = System.Windows.Forms.Border3DStyle.RaisedOuter;
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.txtSupp);
             this.panel3.Controls.Add(this.labelSPNo);
@@ -59,15 +60,15 @@
             this.panel3.Controls.Add(this.dateETA);
             this.panel3.Controls.Add(this.labelReceiveDate);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel3.Location = new System.Drawing.Point(0, 33);
+            this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(971, 58);
+            this.panel3.Size = new System.Drawing.Size(971, 55);
             this.panel3.TabIndex = 4;
             // 
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(870, 10);
+            this.btnQuery.Location = new System.Drawing.Point(870, 13);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 3;
@@ -79,14 +80,14 @@
             // 
             this.txtSupp.BackColor = System.Drawing.Color.White;
             this.txtSupp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSupp.Location = new System.Drawing.Point(355, 14);
+            this.txtSupp.Location = new System.Drawing.Point(355, 17);
             this.txtSupp.Name = "txtSupp";
             this.txtSupp.Size = new System.Drawing.Size(77, 23);
             this.txtSupp.TabIndex = 1;
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(286, 14);
+            this.labelSPNo.Location = new System.Drawing.Point(286, 17);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(66, 23);
             this.labelSPNo.TabIndex = 4;
@@ -96,14 +97,14 @@
             // 
             this.txtPayInv.BackColor = System.Drawing.Color.White;
             this.txtPayInv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPayInv.Location = new System.Drawing.Point(140, 14);
+            this.txtPayInv.Location = new System.Drawing.Point(140, 17);
             this.txtPayInv.Name = "txtPayInv";
             this.txtPayInv.Size = new System.Drawing.Size(130, 23);
             this.txtPayInv.TabIndex = 0;
             // 
             // labelPackID
             // 
-            this.labelPackID.Location = new System.Drawing.Point(19, 14);
+            this.labelPackID.Location = new System.Drawing.Point(19, 17);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(118, 23);
             this.labelPackID.TabIndex = 2;
@@ -111,7 +112,7 @@
             // 
             // dateETA
             // 
-            this.dateETA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.dateETA.BackColor = System.Drawing.Color.White;
             this.dateETA.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             // 
             // 
@@ -127,14 +128,14 @@
             this.dateETA.DateBox2.Name = "";
             this.dateETA.DateBox2.Size = new System.Drawing.Size(124, 23);
             this.dateETA.DateBox2.TabIndex = 1;
-            this.dateETA.Location = new System.Drawing.Point(519, 14);
+            this.dateETA.Location = new System.Drawing.Point(519, 17);
             this.dateETA.Name = "dateETA";
             this.dateETA.Size = new System.Drawing.Size(270, 23);
             this.dateETA.TabIndex = 2;
             // 
             // labelReceiveDate
             // 
-            this.labelReceiveDate.Location = new System.Drawing.Point(463, 14);
+            this.labelReceiveDate.Location = new System.Drawing.Point(463, 17);
             this.labelReceiveDate.Name = "labelReceiveDate";
             this.labelReceiveDate.Size = new System.Drawing.Size(53, 23);
             this.labelReceiveDate.TabIndex = 0;
@@ -154,14 +155,14 @@
             this.gridCertOfOrigin.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridCertOfOrigin.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridCertOfOrigin.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCertOfOrigin.Location = new System.Drawing.Point(19, 97);
+            this.gridCertOfOrigin.Location = new System.Drawing.Point(12, 61);
             this.gridCertOfOrigin.Name = "gridCertOfOrigin";
             this.gridCertOfOrigin.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCertOfOrigin.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCertOfOrigin.RowTemplate.Height = 24;
             this.gridCertOfOrigin.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCertOfOrigin.ShowCellToolTips = false;
-            this.gridCertOfOrigin.Size = new System.Drawing.Size(931, 223);
+            this.gridCertOfOrigin.Size = new System.Drawing.Size(947, 259);
             this.gridCertOfOrigin.TabIndex = 5;
             this.gridCertOfOrigin.TabStop = false;
             // 
@@ -179,14 +180,14 @@
             this.gridExport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridExport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridExport.Location = new System.Drawing.Point(19, 362);
+            this.gridExport.Location = new System.Drawing.Point(12, 364);
             this.gridExport.Name = "gridExport";
             this.gridExport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridExport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridExport.RowTemplate.Height = 24;
             this.gridExport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridExport.ShowCellToolTips = false;
-            this.gridExport.Size = new System.Drawing.Size(931, 164);
+            this.gridExport.Size = new System.Drawing.Size(947, 164);
             this.gridExport.TabIndex = 6;
             this.gridExport.TabStop = false;
             // 
@@ -208,6 +209,11 @@
             this.Controls.Add(this.gridExport);
             this.Controls.Add(this.gridCertOfOrigin);
             this.Controls.Add(this.panel3);
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
+            this.IsSupportPrint = false;
             this.Name = "P14";
             this.OnLineHelpID = "Sci.Win.Forms.Base";
             this.Text = "P14. Certificate of Origin";
@@ -222,7 +228,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridExport)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
