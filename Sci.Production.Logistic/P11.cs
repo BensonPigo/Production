@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using Sci.Win.Tems;
 using Ict.Win;
 using Sci.Data;
+using System.IO;
 
 namespace Sci.Production.Logistic
 {
@@ -54,10 +55,12 @@ namespace Sci.Production.Logistic
             if (this.EditMode)
             {
                 this.btnImport.Enabled = true;
+                this.btnExcelImport.Enabled = true;
             }
             else
             {
                 this.btnImport.Enabled = false;
+                this.btnExcelImport.Enabled = false;
             }
         }
 
@@ -312,6 +315,28 @@ where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartN
 
             P11_Import p11_Import = new P11_Import(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource);
             p11_Import.ShowDialog();
+        }
+
+        private void btnExcelImport_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Logistic.P11_ExcelImport callNextForm = new Sci.Production.Logistic.P11_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            callNextForm.ShowDialog(this);
+        }
+
+        private void btnDownloadExcel_Click(object sender, EventArgs e)
+        {
+
+            // 呼叫執行檔絕對路徑
+            DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\ClogP11_ExcelImportTemplete.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null)
+            {
+                return;
+            }
+
+            excel.Visible = true;
         }
     }
 }
