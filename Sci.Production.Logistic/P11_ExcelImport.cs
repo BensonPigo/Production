@@ -208,7 +208,7 @@ namespace Sci.Production.Logistic
             // 3
             if (MyUtility.Check.Empty(PackingList_Detail["ReceiveDate"]))
             {
-                newRow["Status"] = "Catron in Clog.";
+                newRow["Status"] = "Catron not in Clog.";
             }
 
             // 4
