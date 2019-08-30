@@ -113,7 +113,7 @@ select  s.OutputDate
 		, s.Category
 		, s.Shift
 		, s.SewingLineID
-		, [ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty)
+		, [ActManPower] = s.Manpower
 		, s.Team
 		, sd.OrderId
 		, sd.ComboType
@@ -172,7 +172,7 @@ select OutputDate
 	   , Category
 	   , Shift
 	   , SewingLineID
-	   , ActManPower = Round(Sum(ActManPower),2)
+	   , ActManPower = ActManPower
 	   , Team
 	   , OrderId
 	   , ComboType
@@ -204,7 +204,7 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
 		 , MockupCDCodeID, FactoryID, OrderCPU, OrderCPUFactor
 		 , MockupCPU, MockupCPUFactor, OrderStyle, MockupStyle
 		 , OrderSeason, MockupSeason, Rate, StdTMS, InspectQty
-		 , RejectQty, SubconInType
+		 , RejectQty, SubconInType,ActManPower
 ----↓計算累計天數 function table太慢直接寫在這
 select distinct scOutputDate = s.OutputDate 
 	   , style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
@@ -301,32 +301,27 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
 	   , CDNo = IIF(Category = 'M', MockupCDCodeID, OrderCdCodeID) + '-' + ComboType
 	   , ActManPower = IIF(SHIFT = 'O'
-                            ,MAX(IIF(QAQty > 0, ActManPower / QAQty, ActManPower)) OVER (PARTITION BY SHIFT,Team,SewingLineID)
-                            ,IIF(QAQty > 0, ActManPower / QAQty, ActManPower))
+                            ,MAX(ActManPower) OVER (PARTITION BY SHIFT,Team,SewingLineID)
+                            ,ActManPower)
 	   , WorkHour
-	   , ManHour = IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour
-	   , TargetCPU = ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 3) * 3600 / StdTMS, 3) 
+	   , ManHour = ActManPower * WorkHour
+	   , TargetCPU = ROUND(ROUND(ActManPower * WorkHour, 3) * 3600 / StdTMS, 3) 
 	   , TMS = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * StdTMS
 	   , CPUPrice = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
 	   , TargetQty = IIF(IIF(Category = 'M', MockupCPU * MockupCPUFactor
 	   									   , OrderCPU * OrderCPUFactor * Rate) > 0
-	   					    , ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   					    						   , ActManPower) * WorkHour, 2) * 3600 / StdTMS, 2) / IIF(Category = 'M', MockupCPU * MockupCPUFactor
+	   					    , ROUND(ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS, 2) / IIF(Category = 'M', MockupCPU * MockupCPUFactor
 	   					    																							     , OrderCPU * OrderCPUFactor * Rate)
 						    , 0) 
 	   , QAQty
 	   , TotalCPU = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * QAQty
-	   , CPUSewer = IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   									   , ActManPower) * WorkHour, 2) > 0
+	   , CPUSewer = IIF(ROUND(ActManPower * WorkHour, 2) > 0
    							     , ROUND((IIF(Category = 'M', MockupCPU * MockupCPUFactor
-   							     						    , OrderCPU * OrderCPUFactor * Rate) * QAQty), 3) / ROUND(IIF(QAQty > 0, ActManPower / QAQty
-   							     																								  , ActManPower) * WorkHour, 3)
+   							     						    , OrderCPU * OrderCPUFactor * Rate) * QAQty), 3) / ROUND(ActManPower * WorkHour, 3)
      						     , 0) 
-	   , EFF = ROUND(IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   										, ActManPower) * WorkHour, 2) > 0
+	   , EFF = ROUND(IIF(ROUND(ActManPower * WorkHour, 2) > 0
 	   						      , (ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor
-	   						      							 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   						      							 																	   , ActManPower) * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
+	   						      							 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
 	   							  , 1) 
 	   , RFT = IIF(InspectQty > 0, ROUND((InspectQty - RejectQty) / InspectQty * 100, 2), 0)
 	   , CumulateDate
