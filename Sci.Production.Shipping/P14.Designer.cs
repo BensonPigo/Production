@@ -112,7 +112,7 @@
             // 
             // dateETA
             // 
-            this.dateETA.BackColor = System.Drawing.Color.White;
+            this.dateETA.BackColor = System.Drawing.SystemColors.Menu;
             this.dateETA.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             // 
             // 
