@@ -2180,6 +2180,14 @@ END";
                 return;
             }
 
+            string sqlchkOutput = $@"select id from CuttingOutput_Detail where WorkOrderUkey = '{CurrentDetailData["uKey"]}'";
+            DataRow dataRow;
+            if (MyUtility.Check.Seek(sqlchkOutput, out dataRow))
+            {
+                MyUtility.Msg.WarningBox($"Already create output <{dataRow["id"]}>, cann't be deleted");
+                return;
+            }
+
             string ukey = CurrentDetailData["Ukey"].ToString() == "" ? "0" : CurrentDetailData["Ukey"].ToString();
             int NewKey = Convert.ToInt32(CurrentDetailData["NewKey"]);
             DataRow[] drar = sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
@@ -2449,6 +2457,46 @@ END";
             #endregion
             CurrentMaintain["cutinline"] = ((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null);
             CurrentMaintain["CutOffLine"] = ((DataTable)detailgridbs.DataSource).Compute("MAX(estcutdate)", null);
+
+
+            string sqchk = $@"
+declare @round int =(select StockRound from unit where id = 'YDS')
+select  t.id,psd.RefNo,psd.ColorID ,wocons = cast(round(sum(t.Cons),@round) as float), psdqty = cast(round(sum([dbo].[GetUnitQty](psd.POUnit,'YDS',psd.Qty)),@round)as float)
+	,seq.seq
+from #tmp t
+inner join Po_Supp_Detail psd with(nolock) on psd.id = t.id and psd.SEQ1 = t.SEQ1 and psd.SEQ2 = t.SEQ2
+outer apply(
+	select seq = stuff((
+			select distinct concat(' and ',psd2.SEQ1,'-'+psd2.SEQ2)
+			from Po_Supp_Detail psd2 with(nolock) 
+			where psd2.id = t.id and psd2.RefNo = psd.RefNo and psd2.ColorID = psd.ColorID
+			for xml path('')
+		),1,5,'')
+)seq
+group by t.id,psd.RefNo,psd.ColorID,seq.seq
+having sum(t.Cons)>sum([dbo].[GetUnitQty](psd.POUnit,'YDS',psd.Qty))
+";
+            DataTable dtover;
+            DualResult dualResult = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqchk, out dtover);
+            if (!dualResult)
+            {
+                this.ShowErr(dualResult);
+                return false;
+            }
+            string msg = string.Empty;
+            foreach (DataRow row1 in dtover.Rows)
+            {
+                msg += $@"{row1["seq"]} work order cons {row1["wocons"]} over purchase qty {row1["psdqty"]}
+";
+            }
+            if (!MyUtility.Check.Empty(msg))
+            {
+                if (MyUtility.Msg.QuestionBox(msg) == DialogResult.No)
+                {
+                    return false;
+                }
+            }
+
             return base.ClickSaveBefore();
         }
 
