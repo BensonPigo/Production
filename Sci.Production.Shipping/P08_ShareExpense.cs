@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using System.Transactions;
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -21,18 +22,22 @@ namespace Sci.Production.Shipping
         private DataRow apData;
         private DataTable SEData;
         private DataTable SEGroupData;
+        private bool Apflag;
+        private string LocalSuppID;
 
         /// <summary>
         /// P08_ShareExpense
         /// </summary>
         /// <param name="aPData">aPData</param>
-        public P08_ShareExpense(DataRow aPData)
+        public P08_ShareExpense(DataRow aPData, bool apflag)
         {
             this.InitializeComponent();
             this.apData = aPData;
+            this.Apflag = apflag;
             this.displayCurrency.Value = MyUtility.Convert.GetString(this.apData["CurrencyID"]);
             this.numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(this.apData["CurrencyID"]), "Currency", "ID"));
             this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(this.apData["Amount"]);
+            this.LocalSuppID = MyUtility.Convert.GetString(this.apData["LocalSuppID"]);
             this.ControlButton();
         }
 
@@ -1078,6 +1083,58 @@ where   ShippingAPID = '{3}'
                     }
                 }
                 #endregion
+
+                if (this.Apflag)
+                {
+                    DataTable tmp = (DataTable)this.listControlBindingSource1.DataSource;
+                    DataTable dt;
+                    string sqlGBchk = $@"
+select distinct g.Forwarder,g.id
+from GMTBooking g
+inner join #tmp t on g.id=t.InvNo
+";
+                    DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlGBchk, out dt);
+                    if (!dualResult)
+                    {
+                        this.ShowErr(dualResult);
+                    }
+
+                    string msgs = @"Forwarder is different from APP request, please double check.
+";
+                    List<string> listID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != this.LocalSuppID).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                    if (listID.Count > 0)
+                    {
+                        string gid = string.Join(",", listID);
+                        msgs += $@"Garment Booking : {gid}
+";
+                    }
+
+                    sqlGBchk = $@"
+select distinct AirPP.Forwarder,p.id
+from GMTBooking g with(nolock)
+inner join #tmp t on g.id=t.InvNo
+inner join PackingList p with(nolock) on p.INVNo = g.id
+inner join PackingList_Detail pd with(nolock) on pd.id = p.id
+inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipmodeSeq = pd.OrderShipmodeSeq
+";
+                    dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlGBchk, out dt);
+                    if (!dualResult)
+                    {
+                        this.ShowErr(dualResult);
+                    }
+
+                    List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != this.LocalSuppID).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                    if (packingListID.Count > 0)
+                    {
+                        string pid = string.Join(",", packingListID);
+                        msgs += $@"Packing List : {pid}";
+                    }
+
+                    if (!MyUtility.Check.Empty(msgs))
+                    {
+                        MyUtility.Msg.WarningBox(msgs);
+                    }
+                }
 
                 this.EditMode = false;
             }

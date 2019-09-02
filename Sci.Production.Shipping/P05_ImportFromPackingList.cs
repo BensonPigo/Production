@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Sci;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -341,6 +342,30 @@ and a.OrderID = b.OrderID", allPackID.ToString().Substring(0, allPackID.Length -
                             currentRow.SetAdded();
                             this.detailData.ImportRow(currentRow);
                         }
+                    }
+
+                    DataTable tmp = dr.CopyToDataTable();
+                    string sqlcmd = $@"
+SELECT AirPP.Forwarder,t.id
+From #tmp t
+inner join PackingList_Detail pd with(nolock) on pd.id = t.id
+inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipmodeSeq = pd.OrderShipmodeSeq
+";
+                    DataTable dt;
+                    DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlcmd, out dt);
+                    if (!dualResult)
+                    {
+                        this.ShowErr(dualResult);
+                    }
+
+                    List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != MyUtility.Convert.GetString(this.masterData["Forwarder"])).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                    if (packingListID.Count > 0)
+                    {
+                        string pid = string.Join(",", packingListID);
+                        string msg = $@"Forwarder is different from APP request, please double check.
+Garment Booking : {this.masterData["id"]}
+Packing List : {pid}";
+                        MyUtility.Msg.WarningBox(msg);
                     }
                 }
             }
