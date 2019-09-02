@@ -363,7 +363,6 @@ inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipm
                     {
                         string pid = string.Join(",", packingListID);
                         string msg = $@"Forwarder is different from APP request, please double check.
-Garment Booking : {this.masterData["id"]}
 Packing List : {pid}";
                         MyUtility.Msg.WarningBox(msg);
                     }
