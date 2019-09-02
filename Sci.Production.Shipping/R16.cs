@@ -109,10 +109,12 @@ outer apply(
 	from PackingList_Detail
 	where OrderID=oq.Id and OrderShipmodeSeq = oq.Seq
 )pkQty
-outer apply(
-	select ct=count(1)
-	from PackingList_Detail pld with(nolock)
-	where OrderID=oq.Id and OrderShipmodeSeq = oq.Seq and pld.TransferCFADate is not null and pld.CTNQty = 1
+outer apply(    
+    select ct=sum(b.CTNQty) 
+    from PackingList a, PackingList_Detail b 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.DisposeFromClog = 0 and ReceiveDate is not null
+    and TransferCFADate is null AND CFAReturnClogDate is null
+    and b.OrderID=oq.Id and b.OrderShipmodeSeq = oq.Seq
 )atCLog
 outer apply(
 	select sum(l.CBM) CBM
@@ -134,7 +136,7 @@ outer apply(
 	where  sdd.OrderId = o.ID
 )sew
 outer apply(
-	select OrderQty=sum(pd.OrderQty)
+	select OrderQty=sum(pd.ShipQty)
 	from Pullout_Detail pd WITH (NOLOCK)
 	inner join Pullout p WITH (NOLOCK)on p.id = pd.id
 	where pd.OrderID = o.ID and pd.ShipmodeID = oq.ShipmodeID
