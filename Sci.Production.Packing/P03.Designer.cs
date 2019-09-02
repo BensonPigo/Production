@@ -276,7 +276,7 @@
             // 
             this.browse.Controls.Add(this.cbDuring);
             this.browse.Controls.Add(this.lbDuring);
-            this.browse.Size = new System.Drawing.Size(1089, 687);
+            this.browse.Size = new System.Drawing.Size(1089, 718);
             this.browse.Controls.SetChildIndex(this.lbDuring, 0);
             this.browse.Controls.SetChildIndex(this.cbDuring, 0);
             // 
@@ -940,7 +940,7 @@
             // btnPackScanHistory
             // 
             this.btnPackScanHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnPackScanHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnPackScanHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.btnPackScanHistory.Location = new System.Drawing.Point(813, 280);
             this.btnPackScanHistory.Name = "btnPackScanHistory";
             this.btnPackScanHistory.Size = new System.Drawing.Size(179, 30);
