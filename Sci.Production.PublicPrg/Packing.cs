@@ -275,7 +275,10 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                 }
             }
 
-            foreach (DataRow dr in PackingListDetaildata.Rows)
+            // 依CtnStart#排序 來計算混尺碼重量 
+            PackingListDetaildata.DefaultView.Sort = "CTNStartNo,CTNQty desc";
+            DataTable dtSort = PackingListDetaildata.DefaultView.ToTable();
+            foreach (DataRow dr in dtSort.Rows)
             {
                 if(dr.RowState == DataRowState.Deleted)
                     continue;
