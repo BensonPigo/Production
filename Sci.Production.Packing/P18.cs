@@ -12,6 +12,7 @@ using System.Linq;
 using Ict.Win;
 using System.Linq.Dynamic;
 using Sci.Win.Tools;
+using System.Transactions;
 
 namespace Sci.Production.Packing
 {
@@ -130,7 +131,9 @@ namespace Sci.Production.Packing
                                            pd.Color,
                                            pd.SizeCode  ,
                                            pd.QtyPerCTN,
-                                          ScanQty = isnull(pd.ScanQty,0),
+                                           ScanQty = Cast(isnull(ScanQty.Value,0) as smallint),
+                                           pd.ScanEditDate,
+                                           pd.ScanName,
                                            pd.barcode,
                                            p.BrandID,
                                            o.StyleID,
@@ -145,6 +148,15 @@ namespace Sci.Production.Packing
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
                                 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
                                 left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+								OUTER APPLY (
+									SELECT [Value]=SUM(ScanQty) 
+									FROM PackingList_Detail 
+									WHERE ID= p.Id 
+											AND OrderID=pd.OrderID 
+											AND CTNStartNo=pd.CTNStartNo  
+											AND CTNStartNo=pd.CTNStartNo 
+											AND SCICtnNo=pd.SCICtnNo
+								)ScanQty
                                 where p.Type in ('B','L') ";
 
             foreach (string where in aLLwhere)
@@ -325,12 +337,14 @@ namespace Sci.Production.Packing
         /// <returns>result</returns>
         private DualResult ClearScanQty(DataRow[] tmp, string clearType)
         {
-            DualResult result = new DualResult(true);
+            DualResult result1 = new DualResult(true);
+            DualResult result2 = new DualResult(true);
+            short oriScanQty = (short)tmp[0]["ScanQty"];
             if (tmp.Length == 0)
             {
-                result = new DualResult(false, new BaseResult.MessageInfo("ClearScanQty Error"));
+                result1 = new DualResult(false, new BaseResult.MessageInfo("ClearScanQty Error"));
 
-                return result;
+                return result1;
             }
 
             foreach (DataRow dr in tmp)
@@ -342,11 +356,66 @@ namespace Sci.Production.Packing
             {
                 string upd_sql = $@"update PackingList_Detail set ScanQty = 0,ScanEditDate = NULL , ActCTNWeight = 0
 where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Article = '{tmp[0]["Article"]}'";
-                result = DBProxy.Current.Execute(null, upd_sql);
+
+                string insertCmds = $@"
+
+INSERT INTO [dbo].[PackingScan_History]
+           ([MDivisionID]
+           ,[PackingListID]
+           ,[OrderID]
+           ,[CTNStartNo]
+           ,[SCICtnNo]
+           ,[DeleteFrom]
+           ,[ScanQty]
+           ,[ScanEditDate]
+           ,[ScanName]
+           ,[AddName]
+           ,[AddDate])
+     VALUES
+           ('{Sci.Env.User.Keyword}'
+           ,'{tmp[0]["ID"]}'
+           ,'{tmp[0]["OrderID"]}'
+           ,'{tmp[0]["CTNStartNo"]}'
+           ,(SELECt TOP 1 SCICtnNo FROm PackingList_Detail WHERE ID = '{tmp[0]["ID"]}' AND CTNStartNo='{tmp[0]["CTNStartNo"]}')
+           ,'Packing P18'
+           ,{oriScanQty}
+           ,'{Convert.ToDateTime(tmp[0]["ScanEditDate"]).ToAppDateTimeFormatString()}'
+           ,'{tmp[0]["ScanName"]}'
+           ,'{Sci.Env.User.UserID}'
+           ,GETDATE()
+            )
+";
+
+                result1 = DBProxy.Current.Execute(null, upd_sql);
+
+                using (TransactionScope transactionScope = new TransactionScope())
+                {
+                    try
+                    {
+                        result2 = DBProxy.Current.Execute(null, insertCmds);
+                        result1 = DBProxy.Current.Execute(null, upd_sql);
+
+                        if (result1 && result2)
+                        {
+                            transactionScope.Complete();
+                            transactionScope.Dispose();
+                        }
+                        else
+                        {
+                            transactionScope.Dispose();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        transactionScope.Dispose();
+                        this.ShowErr("Commit transaction error.", ex);
+                    }
+                }
+
                 this.LoadSelectCarton();
             }
 
-            return result;
+            return new DualResult(result1 && result2);
         }
 
         /// <summary>
