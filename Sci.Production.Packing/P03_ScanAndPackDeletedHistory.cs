@@ -43,7 +43,7 @@ SELECT
 	,[ScanQty]= ScanQty
 	,[ScanName]= ScanName+'-'+ (select Name from pass1 where id=ScanName)
 	,[ScanDate]= ScanEditDate
-	,[DeletedBy]=AddName +'-'+ (select Name from pass1 where id=AddName)
+	,[DeletedBy]=AddName +'-'+ (select Name from pass1 where id=PackingScan_History.AddName)
 	,[DeletedDate]=AddDate
 FROM PackingScan_History
 WHERE PackingListID='{this.PackingListID}'
