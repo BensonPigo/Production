@@ -39,6 +39,14 @@
             this.txtLocation2 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtWk = new Sci.Win.UI.TextBox();
+            this.label7 = new Sci.Win.UI.Label();
+            this.txtRoll = new Sci.Win.UI.TextBox();
+            this.label6 = new Sci.Win.UI.Label();
+            this.txtColor = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
             this.comboStockType = new Sci.Production.Class.comboDropDownList(this.components);
             this.label1 = new Sci.Win.UI.Label();
             this.cmbMaterialType = new Sci.Win.UI.ComboBox();
@@ -54,14 +62,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtColor = new Sci.Win.UI.TextBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.txtRoll = new Sci.Win.UI.TextBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.txtWk = new Sci.Win.UI.TextBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -73,7 +73,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(912, 15);
+            this.btnCancel.Location = new System.Drawing.Point(999, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 5;
@@ -85,7 +85,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(816, 16);
+            this.btnImport.Location = new System.Drawing.Point(903, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 4;
@@ -97,7 +97,7 @@
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(865, 14);
+            this.btnQuery.Location = new System.Drawing.Point(952, 14);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(84, 30);
             this.btnQuery.TabIndex = 12;
@@ -126,7 +126,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1008, 53);
+            this.groupBox2.Size = new System.Drawing.Size(1095, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
@@ -148,7 +148,7 @@
             // 
             this.btnUpdateAllLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateAllLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUpdateAllLocation.Location = new System.Drawing.Point(635, 16);
+            this.btnUpdateAllLocation.Location = new System.Drawing.Point(722, 16);
             this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
             this.btnUpdateAllLocation.Size = new System.Drawing.Size(156, 30);
             this.btnUpdateAllLocation.TabIndex = 3;
@@ -203,9 +203,79 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1008, 86);
+            this.groupBox1.Size = new System.Drawing.Size(1095, 86);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
+            // 
+            // txtWk
+            // 
+            this.txtWk.BackColor = System.Drawing.Color.White;
+            this.txtWk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWk.IsSupportEditMode = false;
+            this.txtWk.Location = new System.Drawing.Point(303, 51);
+            this.txtWk.Name = "txtWk";
+            this.txtWk.Size = new System.Drawing.Size(130, 23);
+            this.txtWk.TabIndex = 8;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(237, 51);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(63, 23);
+            this.label7.TabIndex = 20;
+            this.label7.Text = "WK#";
+            // 
+            // txtRoll
+            // 
+            this.txtRoll.BackColor = System.Drawing.Color.White;
+            this.txtRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRoll.IsSupportEditMode = false;
+            this.txtRoll.Location = new System.Drawing.Point(637, 22);
+            this.txtRoll.Name = "txtRoll";
+            this.txtRoll.Size = new System.Drawing.Size(60, 23);
+            this.txtRoll.TabIndex = 5;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(583, 22);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(51, 23);
+            this.label6.TabIndex = 18;
+            this.label6.Text = "Roll";
+            // 
+            // txtColor
+            // 
+            this.txtColor.BackColor = System.Drawing.Color.White;
+            this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtColor.IsSupportEditMode = false;
+            this.txtColor.Location = new System.Drawing.Point(512, 22);
+            this.txtColor.Name = "txtColor";
+            this.txtColor.Size = new System.Drawing.Size(68, 23);
+            this.txtColor.TabIndex = 4;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(434, 22);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "Color";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(12, 51);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(94, 23);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Transaction ID";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(12, 22);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(94, 23);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "SP#";
             // 
             // comboStockType
             // 
@@ -328,7 +398,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 86);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 391);
+            this.panel1.Size = new System.Drawing.Size(1095, 391);
             this.panel1.TabIndex = 20;
             // 
             // gridImport
@@ -352,83 +422,13 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(1008, 391);
+            this.gridImport.Size = new System.Drawing.Size(1095, 391);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(12, 22);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(94, 23);
-            this.label3.TabIndex = 14;
-            this.label3.Text = "SP#";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(12, 51);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(94, 23);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Transaction ID";
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(434, 22);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 16;
-            this.label5.Text = "Color";
-            // 
-            // txtColor
-            // 
-            this.txtColor.BackColor = System.Drawing.Color.White;
-            this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtColor.IsSupportEditMode = false;
-            this.txtColor.Location = new System.Drawing.Point(512, 22);
-            this.txtColor.Name = "txtColor";
-            this.txtColor.Size = new System.Drawing.Size(68, 23);
-            this.txtColor.TabIndex = 4;
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(583, 22);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(51, 23);
-            this.label6.TabIndex = 18;
-            this.label6.Text = "Roll";
-            // 
-            // txtRoll
-            // 
-            this.txtRoll.BackColor = System.Drawing.Color.White;
-            this.txtRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRoll.IsSupportEditMode = false;
-            this.txtRoll.Location = new System.Drawing.Point(637, 22);
-            this.txtRoll.Name = "txtRoll";
-            this.txtRoll.Size = new System.Drawing.Size(60, 23);
-            this.txtRoll.TabIndex = 5;
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(237, 51);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(63, 23);
-            this.label7.TabIndex = 20;
-            this.label7.Text = "WK#";
-            // 
-            // txtWk
-            // 
-            this.txtWk.BackColor = System.Drawing.Color.White;
-            this.txtWk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWk.IsSupportEditMode = false;
-            this.txtWk.Location = new System.Drawing.Point(303, 51);
-            this.txtWk.Name = "txtWk";
-            this.txtWk.Size = new System.Drawing.Size(130, 23);
-            this.txtWk.TabIndex = 8;
-            // 
             // P26_Import
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 530);
+            this.ClientSize = new System.Drawing.Size(1095, 530);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
