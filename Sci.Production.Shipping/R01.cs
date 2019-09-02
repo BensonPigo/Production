@@ -52,6 +52,7 @@ namespace Sci.Production.Shipping
             this.comboStatus.SelectedIndex = 0;
             this.txtshipmodeShippingMode.SelectedIndex = -1;
             this.radioMainList.Checked = true;
+            
         }
 
         /// <inheritdoc/>
@@ -588,6 +589,7 @@ where pl.ID<>'' and 1=1 "));
 
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
+            this.CreateCustomizedExcel(ref worksheet);
             this.HideWaitMessage();
 
             #region Save & Show Excel
@@ -600,6 +602,18 @@ where pl.ID<>'' and 1=1 "));
             strExcelName.OpenFile();
             #endregion
             return true;
+        }
+
+        private void Radio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.radioMainList.Checked)
+            {
+                this.ReportType = "MainList";
+            }
+            if (this.radioDetailList.Checked)
+            {
+                this.ReportType = "DetailList";
+            }
         }
     }
 }

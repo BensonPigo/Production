@@ -154,6 +154,9 @@ select ID
         ,TransferCFADate
         ,CFAReturnClogDate
         ,SCICtnNo
+		, ScanQty
+		, ScanEditDate
+		, ScanName
         , rn = ROW_NUMBER() over (order by PackingListID, OrderID, (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
         , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))	
 from (
@@ -177,23 +180,31 @@ from (
             , b.TransferCFADate 
             , b.CFAReturnClogDate 
             , b.SCICtnNo
+			, [ScanQty]=ScanQty.Value
+			, b.ScanEditDate
+			, b.ScanName
     from PackingList a WITH (NOLOCK) 
-         , PackingList_Detail b WITH (NOLOCK) 
-         , Orders c WITH (NOLOCK) 
-         , Country d WITH (NOLOCK) 
-         , TransferToClog t WITH (NOLOCK)
-	where   b.OrderId = c.Id 
-	        and a.Id = b.Id 
-	        and b.CTNStartNo != '' 
+    INNER JOIN  PackingList_Detail b WITH (NOLOCK)  ON a.Id = b.Id 
+    INNEr JOIN  Orders c WITH (NOLOCK) ON b.OrderId = c.Id 
+    INNER JOIN  Country d WITH (NOLOCK) ON  c.Dest = d.ID 
+    INNER JOIN  TransferToClog t WITH (NOLOCK) On a.id = t.PackingListID
+	OUTER APPLY (
+		SELECT [Value]=SUM(pd.ScanQty) 
+		FROM PackingList_Detail pd
+		WHERE pd.ID= a.Id 
+				AND OrderID=b.OrderID 
+				AND CTNStartNo=b.CTNStartNo  
+				AND CTNStartNo=b.CTNStartNo 
+				AND SCICtnNo=b.SCICtnNo
+	)ScanQty
+	where   b.CTNStartNo != '' 
 	        and b.ReceiveDate is not null
             and b.TransferCFADate is null
             and b.CFAReturnClogDate is null
             and b.DisposeFromClog= 0
-	        and c.Dest = d.ID 
             and a.MDivisionID = '{0}' 
             and (a.Type = 'B' or a.Type = 'L') 
             and c.MDivisionID = '{0}'
-            and a.id = t.PackingListID
 ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
@@ -647,6 +658,35 @@ where ID = '{0}' and CTNStartNo = '{1}'
 and DisposeFromClog= 0 ; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"])));
+
+                insertCmds.Add($@"
+
+INSERT INTO [dbo].[PackingScan_History]
+           ([MDivisionID]
+           ,[PackingListID]
+           ,[OrderID]
+           ,[CTNStartNo]
+           ,[SCICtnNo]
+           ,[DeleteFrom]
+           ,[ScanQty]
+           ,[ScanEditDate]
+           ,[ScanName]
+           ,[AddName]
+           ,[AddDate])
+     VALUES
+           ('{Sci.Env.User.Keyword}'
+           ,'{dr["PackingListID"]}'
+           ,'{dr["OrderID"]}'
+           ,'{dr["CTNStartNo"]}'
+           ,'{dr["SCICtnNo"]}'
+           ,'Clog P03'
+           ,{dr["ScanQty"]}
+           ,'{Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString()}'
+           ,'{dr["ScanName"]}'
+           ,'{Sci.Env.User.UserID}'
+           ,GETDATE()
+            )
+");
             }
 
             // Update Orders的資料
