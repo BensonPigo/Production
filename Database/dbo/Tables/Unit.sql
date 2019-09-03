@@ -11,6 +11,7 @@
     [EditDate]      DATETIME       NULL,
     [MiAdidasRound] NUMERIC (2)    NULL,
     [RoundStep]     NUMERIC (4, 2) NULL,
+    [StockRound] NUMERIC(2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Unit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
