@@ -274,7 +274,7 @@ group by s.style, s.SewingLineID, s.FactoryID, s.Shift, s.Team
 select t.*
 	   , LastShift = CASE WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 
         and t.SubconInType in ('1','2') then 'I'
-                          WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInType = 0 then 'IN'
+                          WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInType IN ('0','3') then 'IN'
                      ELSE t.Shift END
 	   , FtyType = f.Type
 	   , FtyCountry = f.CountryID
@@ -619,7 +619,9 @@ order by ArtworkTypeID"),
             }
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
+#if DEBUG
+            excel.Visible = true;
+#endif
             worksheet.Cells[1, 1] = this._factoryName;
             worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", this._factory, Convert.ToDateTime(this._date).ToString("MM/dd"),  "(Included Subcon-IN)");
 
