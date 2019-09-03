@@ -421,7 +421,7 @@ left join tmpTtlManPower mp on 1 = 1
 		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
 		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
-	where LastShift = 'I' and SubconInType = 0
+	where LastShift = 'I' and SubconInType in ('0','3')
 	group by StdTMS
 )
 select q.QAQty
@@ -516,7 +516,7 @@ tmpAllSubprocess as(
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
             --排除 subcon in non sister的數值
-          and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType <> 0 ))           
+          and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
           and ot.Price > 0 		    
 		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 			  or ot.ArtworkTypeID <> 'SP_THREAD')
