@@ -29,6 +29,7 @@ namespace Sci.Production.Packing
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6))
                 .Text("OrderID", header: "Order ID", width: Widths.AnsiChars(18))
                 .Numeric("ScanQty", header: "Scan Qty", width: Widths.AnsiChars(6) ,decimal_places:0)
+                .Numeric("LackingQty", header: "Lacking Qty", width: Widths.AnsiChars(6), decimal_places: 0)
                 .Text("ScanName", header: "Scan Name", width: Widths.AnsiChars(25))
                 .DateTime("ScanDate", header: "Scan Date", width: Widths.AnsiChars(25))
                 .Text("DeletedBy", header: "Deleted By", width: Widths.AnsiChars(25))
@@ -37,15 +38,22 @@ namespace Sci.Production.Packing
             DataTable dt;
             string cmd = $@"
 SELECT 
-	 [DeleteFrom]=DeleteFrom
-	,CTNStartNo
-	,[OrderID]=OrderID
-	,[ScanQty]= ScanQty
-	,[ScanName]= ScanName+'-'+ (select Name from pass1 where id=ScanName)
-	,[ScanDate]= ScanEditDate
-	,[DeletedBy]=AddName +'-'+ (select Name from pass1 where id=PackingScan_History.AddName)
-	,[DeletedDate]=AddDate
-FROM PackingScan_History
+	 [DeleteFrom]=ph.DeleteFrom
+	,ph.CTNStartNo
+	,[OrderID]=ph.OrderID
+	,[ScanQty]= ph.ScanQty
+	,[LackingQty]= Lacking.Qty
+	,[ScanName]= ph.ScanName+'-'+ (select Name from pass1 where id=ph.ScanName)
+	,[ScanDate]= ph.ScanEditDate
+	,[DeletedBy]=ph.AddName +'-'+ (select Name from pass1 where id=ph.AddName)
+	,[DeletedDate]=ph.AddDate
+FROM PackingScan_History ph
+OUTER APPLY(
+	select [Qty] = sum(QtyPerCTN) - sum(ScanQty) 
+	from PackingList_Detail pld 
+	where pld.ID=ph.PackingListID and pld.OrderID=ph.OrderID and pld.CTNStartNo=ph.CTNStartNo
+	and pld.Lacking=1
+)Lacking
 WHERE PackingListID='{this.PackingListID}'
 ";
 
