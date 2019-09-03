@@ -420,7 +420,6 @@ select  s.SewingLineID
             , o.KPILETA
             , o.MTLETA
             , o.MTLExport
-            , O.CutInLine
             , s.Inline
             , s.Offline
             , o.SciDelivery
@@ -469,7 +468,7 @@ select  s.SewingLineID
 
             if (!MyUtility.Check.Empty(this.inline))
             {
-                sqlCmd.Append(string.Format(" and s.Inline >= '{0}'", Convert.ToDateTime(this.inline).ToString("d")));
+                sqlCmd.Append(string.Format(" and (s.Inline >= '{0}' or (s.Inline <= '{0}' and s.Offline >= '{0}'))", Convert.ToDateTime(this.inline).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.offline))
@@ -528,6 +527,15 @@ from
 	 inner join #tmp_main t on s.Id = t.OrderID
 ) a
 where a.r_id = 1
+
+select 
+wd.OrderID,
+[CutInLine] = MIN(a.EstCutDate)
+into #tmp_CutInLine
+from WorkOrder_Distribute wd with (nolock)
+inner join  WorkOrder a with (nolock) on a.Ukey = wd.WorkOrderUkey
+where exists(select 1 from #tmp_main b where wd.OrderID = b.OrderID)
+group by wd.OrderID
 
 ");
             #endregion
@@ -612,7 +620,7 @@ select  SewingLineID
         , PFRemark
         , MTLETA
         , MTLExport
-        ,CutInLine
+        , CutInLine
         , Inline
         , Offline
         , SciDelivery
@@ -629,15 +637,17 @@ from (
 			,isnull(pf.PFRemark,'') PFRemark
 			,IIF(w.ctn = 0, 0,w.Hours/w.ctn) WorkHour
 			, isnull(SUBSTRING(ta.Artwork, 1, LEN(ta.Artwork) - 1), '') as ArtWork 
+            , tc.CutInLine
 		from #tmp_main t
 		left join #tmp_PFRemark pf on t.OrderID = pf.Id
 		left join #tmp_WorkHour w on w.FactoryID = t.FtyGroup  and w.SewingLineID =t.SewingLineID and w.Inline = Convert(Date,t.Inline) and w.Offline = Convert(Date,t.Offline) 
 		left join #tmpOrderArtwork ta on ta.ID = t.OrderID 
+        left join #tmp_CutInLine tc on tc.OrderID = t.OrderID
 ) a
 order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID
 
 
-drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork
+drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_CutInLine
 ");
             #endregion
 
@@ -673,7 +683,6 @@ select  s.SewingLineID
             , o.KPILETA  
             , o.MTLETA
             , o.MTLExport
-            , o.CutInLine
             , s.Inline
             , s.Offline
             , o.SciDelivery
@@ -725,7 +734,7 @@ select  s.SewingLineID
 
             if (!MyUtility.Check.Empty(this.inline))
             {
-                sqlCmd.Append(string.Format(" and s.Inline >= '{0}'", Convert.ToDateTime(this.inline).ToString("d")));
+                sqlCmd.Append(string.Format(" and (s.Inline >= '{0}' or (s.Inline <= '{0}' and s.Offline >= '{0}'))", Convert.ToDateTime(this.inline).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.offline))
@@ -784,6 +793,21 @@ from
 	 inner join #tmp_main t on s.Id = t.OrderID
 ) a
 where a.r_id = 1
+
+select
+wd.OrderID,
+wd.Article,
+wd.SizeCode,
+[CutInLine] = MIN(w.EstCutDate)
+into #tmp_CutInLine
+from WorkOrder_Distribute wd with (nolock)
+inner join WorkOrder w with (nolock) on wd.WorkOrderUkey = w.Ukey
+where exists (select 1 from #tmp_main tw where  wd.OrderID = tw.OrderID and 
+                                                    wd.Article = tw.Article and 
+                                                    wd.SizeCode = tw.SizeCode)
+group by wd.OrderID,
+         wd.Article,
+         wd.SizeCode
 
 ");
             #endregion
@@ -911,7 +935,7 @@ select  SewingLineID
         , PFRemark
         , MTLETA
         , MTLExport
-        ,CutInLine
+        , CutInLine
         , Inline
         , Offline
         , SciDelivery
@@ -936,6 +960,7 @@ from
 		, [CutQty] = ISNULL( cutQty.cutQty,0)
 		, [SewingQty] = ISNULL( sewingQty.sewingQty,0)
 		, [ClogQty] = ISNULL( clogQty.clogQty,0)
+        , tc.CutInLine
 	from #tmp_main t
 	left join #tmp_PFRemark pf on t.OrderID = pf.Id
 	left join #tmp_WorkHour w on w.FactoryID = t.FtyGroup  and w.SewingLineID =t.SewingLineID and w.Inline = Convert(Date,t.Inline) and w.Offline = Convert(Date,t.Offline) 
@@ -945,11 +970,11 @@ from
 	left join #tmp_CutQty cutQty on cutQty.OrderID = t.OrderID and cutQty.Article =t.Article and cutQty.Size = t.SizeCode
 	left join #tmp_SewingQty sewingQty on sewingQty.OrderId = t.OrderID and sewingQty.Article = t.Article and sewingQty.SizeCode = t.SizeCode and sewingQty.ComboType =t.ComboType and sewingQty.SewingLineID =t.SewingLineID
 	left join #tmp_ClogQty clogQty on clogQty.OrderID = t.OrderID and clogQty.Article = t.Article and clogQty.SizeCode = t.SizeCode
-
+    left join #tmp_CutInLine tc on tc.OrderID = t.OrderID and tc.Article = t.Article and tc.SizeCode = t.SizeCode
 ) t
 order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID
 
-drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_AlloQty,#tmp_CutQty,#tmp_SewingQty,#tmp_ClogQty
+drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_AlloQty,#tmp_CutQty,#tmp_SewingQty,#tmp_ClogQty,#tmp_CutInLine
 ");
             #endregion
 
@@ -1036,12 +1061,13 @@ select
 	s.Offline,
     [InlineHour] = DATEDIFF(ss,Cast(s.Inline as date),s.Inline) / 3600.0	  ,
     [OfflineHour] = DATEDIFF(ss,Cast(s.Offline as date),s.Offline) / 3600.0	  ,
-	[OriEff] = OriEff.val,
+	s.OriEff,
+    s.SewLineEff,
 	LearnCurveID,
 	Sewer,
 	[AlloQty] = sum(s.AlloQty),
-	[HourOutput] = iif(isnull(s.TotalSewingTime,0)=0,0,(s.Sewer * 3600.0 * OriEff.val / 100) / s.TotalSewingTime),
-	[OriWorkHour] = iif (s.Sewer = 0 or isnull(s.TotalSewingTime,0)=0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * OriEff.val / 100) / s.TotalSewingTime)),
+	[HourOutput] = iif(isnull(s.TotalSewingTime,0)=0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime),
+	[OriWorkHour] = iif (s.Sewer = 0 or isnull(s.TotalSewingTime,0)=0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)),
 	[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float),
 	s.TotalSewingTime,
 	s.OrderID,
@@ -1052,7 +1078,7 @@ from SewingSchedule s  WITH (NOLOCK)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-outer apply(select [val] = iif(s.OriEff is null and s.SewLineEff is null,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) OriEff
+outer apply(select [val] = iif(s.OriEff is null and s.SewLineEff is null,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
 where 1 = 1 {sqlWhere.ToString()} and s.APSno <> 0
 group by	s.APSNo ,
 			s.MDivisionID,
@@ -1060,7 +1086,9 @@ group by	s.APSNo ,
 			s.FactoryID,
 			s.Inline,
 			s.Offline,
-			OriEff.val,
+			ScheduleEff.val,
+            s.OriEff,
+            s.SewLineEff,
 			s.LearnCurveID,
 			s.Sewer,
 			s.TotalSewingTime,
@@ -1080,6 +1108,8 @@ select
 	Offline,
 	LearnCurveID,
 	Sewer,
+    OriEff,
+    SewLineEff,
 	AlloQty = sum(AlloQty)
 into #APSList
 from #APSListWorkDay
@@ -1090,7 +1120,9 @@ group by APSNo,
 		 Inline,
 		 Offline,
 		 LearnCurveID,
-		 Sewer
+		 Sewer,
+         OriEff,
+         SewLineEff
 
 --取得OrderQty by APSNo
 select  aps.APSNo,[OrderQty] =sum(o.Qty) 
@@ -1208,7 +1240,9 @@ o.KPILETA,
 o.MTLETA,
 [Artwork] = o.StyleID+'('  +oa.Artwork + ')',
 o.InspDate,
-o.Category
+o.Category,
+o.SCIDelivery,
+o.BuyerDelivery
 into #APSColumnGroup
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
@@ -1252,7 +1286,13 @@ OrderMax.InspDate,
 al.MDivisionID,
 al.FactoryID,
 al.Sewer,
-[Category] = Category.val
+[Category] = Category.val,
+OrderDateInfo.MaxSCIDelivery,
+OrderDateInfo.MinSCIDelivery,
+OrderDateInfo.MaxBuyerDelivery,
+OrderDateInfo.MinBuyerDelivery,
+OriEff,
+SewLineEff
 into #APSMain
 from #APSList al
 left join #APSCuttingOutput aco on al.APSNo = aco.APSNo
@@ -1268,6 +1308,9 @@ outer apply (SELECT val =  Stuff((select distinct concat( ',',StyleID)   from #A
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Artwork)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ArtworkType
 outer apply (select [KPILETA] = MAX(KPILETA),[MTLETA] = MAX(MTLETA),[InspDate] = MAX(InspDate) from #APSColumnGroup where APSNo = al.APSNo) as OrderMax
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from #APSRemarks where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Remarks
+outer apply (SELECT MaxSCIDelivery = Max(SCIDelivery),MinSCIDelivery = Min(SCIDelivery),
+                    MaxBuyerDelivery = Max(BuyerDelivery),MinBuyerDelivery = Min(BuyerDelivery)
+                    from #APSColumnGroup where APSNo = al.APSNo) as OrderDateInfo
 
 --組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
 Declare @StartDate date
@@ -1441,6 +1484,10 @@ apm.CustPO,
 apm.CustPoCnt,
 apm.SP,
 apm.SpCnt,
+apm.MinSCIDelivery,
+apm.MaxSCIDelivery,
+apm.MinBuyerDelivery,
+apm.MaxBuyerDelivery,
 apm.Category,
 apm.Colorway,
 apm.ColorwayCnt,
@@ -1455,6 +1502,8 @@ apf.CPU,
 [DayWorkHour] = apf.WorkingTime,
 [HourOutput] = iif(apf.WorkingTime = 0,0,floor(apf.StdOutput / apf.WorkingTime)),
 apf.Efficienycy,
+apm.OriEff / 100.0,
+apm.SewLineEff / 100.0,
 [LearnCurveEff] = apf.LearnCurveEff / 100.0,
 apm.Inline,
 apm.Offline,
