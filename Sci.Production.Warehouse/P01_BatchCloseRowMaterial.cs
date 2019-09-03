@@ -16,7 +16,6 @@ namespace Sci.Production.Warehouse
     {
         DataRow dr_master;
         DataTable dt_detail;
-        bool AutoQuery = false;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable [] dtBatch;
@@ -147,6 +146,7 @@ select  0 Selected
     ,m.ActPulloutDate
     ,m.ppicClose
     ,dbo.getPOComboList(m.poid,m.poid) [PoCombo] 
+    ,[MCHandle] = dbo.getPass1_ExtNo((select MCHandle from orders where id=m.POID))
 from (
     select  a.POID
             ,max(a.ActPulloutDate) ActPulloutDate
@@ -205,7 +205,8 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
                 .Date("buyerdelivery", header: "Buyer Delivery", iseditingreadonly: true)      //5
                 .Date("ActPulloutDate", header: "Last Pullout Date", iseditingreadonly: true)      //5
                 .Date("ppicclose", header: "Last PPIC Close", iseditingreadonly: true)      //5
-               .EditText("pocombo", header: "PO Combo", iseditingreadonly: true, width: Widths.AnsiChars(25))
+                .EditText("pocombo", header: "PO Combo", iseditingreadonly: true, width: Widths.AnsiChars(25))
+                .Text("MCHandle", header: "MC Handle", iseditingreadonly: true, width: Widths.AnsiChars(30))
                ; //8
         }
 

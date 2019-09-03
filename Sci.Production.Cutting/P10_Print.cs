@@ -86,8 +86,9 @@ from (
         ,a.Qty [Quantity]
         ,a.BundleNo [Barcode]
         ,SeasonID = concat(c.SeasonID,' ', c.dest)
-            ,brand=c.brandid
+        ,brand=c.brandid
         ,b.item
+        ,b.IsEXCESS
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -125,6 +126,7 @@ from (
         ,SeasonID = concat(c.SeasonID,' ', c.dest)
             ,brand=c.brandid
         ,b.item
+        ,b.IsEXCESS
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -181,6 +183,7 @@ from (
             ,SeasonID = concat(c.SeasonID, ' ', c.dest)
             ,brand=c.brandid
         ,b.item
+        ,b.IsEXCESS
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
 	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -212,6 +215,7 @@ from (
             ,SeasonID = concat(c.SeasonID, ' ', c.dest)
             ,brand=c.brandid
             ,b.item
+            ,b.IsEXCESS
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
 	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -534,7 +538,8 @@ order by x.[Bundle]");
                         Barcode = row1["Barcode"].ToString(),
                         Season = row1["Seasonid"].ToString(),
                         brand = row1["brand"].ToString(),
-                        item = row1["item"].ToString()
+                        item = row1["item"].ToString(),
+                        EXCESS1 = row1["isEXCESS"].ToString()
                     }).ToList();
                 data.AddRange(
                  dt2.AsEnumerable().Select(row1 => new P10_PrintData()
@@ -557,7 +562,8 @@ order by x.[Bundle]");
                      Barcode2 = row1["Barcode"].ToString(),
                      Season2 = row1["Seasonid"].ToString(),
                      brand2 = row1["brand"].ToString(),
-                     item2 = row1["item"].ToString()
+                     item2 = row1["item"].ToString(),
+                     EXCESS2 = row1["isEXCESS"].ToString()
                  }).ToList());
 
 
@@ -582,7 +588,8 @@ order by x.[Bundle]");
                     Barcode3 = row1["Barcode"].ToString(),
                     Season3 = row1["Seasonid"].ToString(),
                     brand3 = row1["brand"].ToString(),
-                    item3 = row1["item"].ToString()
+                    item3 = row1["item"].ToString(),
+                    EXCESS3 = row1["isEXCESS"].ToString()
                 }).ToList());
 
                 report.ReportDataSource = data;
@@ -702,6 +709,5 @@ order by x.[Bundle]");
             }
 
         }
-
     }
 }
