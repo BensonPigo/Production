@@ -529,12 +529,13 @@ from
 where a.r_id = 1
 
 select 
-OrderID,
-[CutInLine] = MIN(EstCutDate)
+wd.OrderID,
+[CutInLine] = MIN(a.EstCutDate)
 into #tmp_CutInLine
-from WorkOrder a with (nolock)
-where exists(select 1 from #tmp_main b where a.OrderID = b.OrderID)
-group by OrderID
+from WorkOrder_Distribute wd with (nolock)
+inner join  WorkOrder a with (nolock) on a.Ukey = wd.WorkOrderUkey
+where exists(select 1 from #tmp_main b where wd.OrderID = b.OrderID)
+group by wd.OrderID
 
 ");
             #endregion
