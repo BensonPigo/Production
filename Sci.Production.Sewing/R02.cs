@@ -728,7 +728,7 @@ tmpTtlManPower as (
 		from #tmp
 		where LastShift <> 'O'
 		--排除 subcon in non sister的數值
-        and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInType <> 0 ))   
+        and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInType not in ('0','3')))   
 		group by OutputDate, FactoryID, SewingLineID, LastShift, Team 
 	) a
 	outer apply
