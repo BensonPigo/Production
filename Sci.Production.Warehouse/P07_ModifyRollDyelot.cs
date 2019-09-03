@@ -487,13 +487,6 @@ from (
                 return;
             }
 
-            if (modifyDrList.GroupBy(s => new { Roll = s["Roll"].ToString(), Dyelot = s["Dyelot"].ToString() })
-                .Select(g => new { g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Any(r => r.ct > 1))
-            {
-                MyUtility.Msg.WarningBox("Roll# & Dyelot# can not  duplicate!!");
-                return;
-            }            
-
             string sqlcmd;
             string sqlupd1 = string.Empty;
             string sqlupd2 = string.Empty;
@@ -554,7 +547,7 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
 
                     if (MyUtility.Check.Seek(sqlcmd, null))
                     {
-                        duplicateList.Add($"{drModify["poid"]}-{(drModify["seq1"].ToString()+" "+ drModify["seq2"].ToString())}-{drModify["roll"]}-{drModify["dyelot"]}");
+                        duplicateList.Add($"{drModify["poid"]} - {(drModify["seq1"].ToString()+" "+ drModify["seq2"].ToString())} - {drModify["roll"]} - {drModify["dyelot"]}");
                     }
                 }
             }
@@ -566,7 +559,7 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
 + Environment.NewLine
 + "Duplicate list SP# - Seq - Roll# - Dyelot as below."
 + Environment.NewLine
-+ duplicateList.JoinToString(Environment.NewLine));
++ duplicateList.Distinct().JoinToString(Environment.NewLine));
                 return;
             }
 
