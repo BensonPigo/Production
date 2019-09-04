@@ -50,7 +50,7 @@
             this.txtReceiver = new Sci.Win.UI.TextBox();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelAirPPNo = new Sci.Win.UI.Label();
-            this.txtAirPPNo = new Sci.Win.UI.TextBox();
+            this.txtPackingListID = new Sci.Win.UI.TextBox();
             this.txttpeuserTeamLeader = new Sci.Production.Class.txttpeuser();
             this.labelBrand = new Sci.Win.UI.Label();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
@@ -78,7 +78,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(13, 13);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(87, 23);
@@ -87,7 +86,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(13, 40);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(87, 23);
@@ -96,7 +94,6 @@
             // 
             // labelPrice
             // 
-            this.labelPrice.Lines = 0;
             this.labelPrice.Location = new System.Drawing.Point(13, 126);
             this.labelPrice.Name = "labelPrice";
             this.labelPrice.Size = new System.Drawing.Size(87, 23);
@@ -105,7 +102,6 @@
             // 
             // labelQty
             // 
-            this.labelQty.Lines = 0;
             this.labelQty.Location = new System.Drawing.Point(13, 153);
             this.labelQty.Name = "labelQty";
             this.labelQty.Size = new System.Drawing.Size(87, 23);
@@ -114,7 +110,6 @@
             // 
             // labelNW
             // 
-            this.labelNW.Lines = 0;
             this.labelNW.Location = new System.Drawing.Point(13, 180);
             this.labelNW.Name = "labelNW";
             this.labelNW.Size = new System.Drawing.Size(87, 23);
@@ -123,7 +118,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(13, 207);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(87, 23);
@@ -132,7 +126,6 @@
             // 
             // labelTeamLeader
             // 
-            this.labelTeamLeader.Lines = 0;
             this.labelTeamLeader.Location = new System.Drawing.Point(13, 234);
             this.labelTeamLeader.Name = "labelTeamLeader";
             this.labelTeamLeader.Size = new System.Drawing.Size(87, 23);
@@ -141,7 +134,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(13, 261);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(87, 23);
@@ -214,7 +206,6 @@
             // 
             // labelCTNNo
             // 
-            this.labelCTNNo.Lines = 0;
             this.labelCTNNo.Location = new System.Drawing.Point(417, 126);
             this.labelCTNNo.Name = "labelCTNNo";
             this.labelCTNNo.Size = new System.Drawing.Size(70, 23);
@@ -260,7 +251,6 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(417, 153);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(70, 23);
@@ -305,7 +295,6 @@
             // 
             // labelReceiver
             // 
-            this.labelReceiver.Lines = 0;
             this.labelReceiver.Location = new System.Drawing.Point(417, 180);
             this.labelReceiver.Name = "labelReceiver";
             this.labelReceiver.Size = new System.Drawing.Size(70, 23);
@@ -332,28 +321,28 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(103, 206);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(91, 24);
             this.comboCategory.TabIndex = 8;
             // 
             // labelAirPPNo
             // 
-            this.labelAirPPNo.Lines = 0;
             this.labelAirPPNo.Location = new System.Drawing.Point(417, 206);
             this.labelAirPPNo.Name = "labelAirPPNo";
             this.labelAirPPNo.Size = new System.Drawing.Size(70, 23);
             this.labelAirPPNo.TabIndex = 117;
-            this.labelAirPPNo.Text = "Air PP No.";
+            this.labelAirPPNo.Text = "PL#";
             // 
             // txtAirPPNo
             // 
-            this.txtAirPPNo.BackColor = System.Drawing.Color.White;
-            this.txtAirPPNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DutyNo", true));
-            this.txtAirPPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtAirPPNo.Location = new System.Drawing.Point(491, 206);
-            this.txtAirPPNo.Name = "txtAirPPNo";
-            this.txtAirPPNo.Size = new System.Drawing.Size(120, 23);
-            this.txtAirPPNo.TabIndex = 9;
-            this.txtAirPPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtAirPPNo_Validating);
+            this.txtPackingListID.BackColor = System.Drawing.Color.White;
+            this.txtPackingListID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PackingListID", true));
+            this.txtPackingListID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPackingListID.Location = new System.Drawing.Point(491, 206);
+            this.txtPackingListID.Name = "txtAirPPNo";
+            this.txtPackingListID.Size = new System.Drawing.Size(120, 23);
+            this.txtPackingListID.TabIndex = 9;
+            this.txtPackingListID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPackingListID_Validating);
             // 
             // txttpeuserTeamLeader
             // 
@@ -367,7 +356,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(417, 233);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(70, 23);
@@ -397,7 +385,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(302, 13);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(53, 23);
@@ -416,7 +403,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(494, 13);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(36, 23);
@@ -444,7 +430,7 @@
             this.Controls.Add(this.displayBrand);
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.txttpeuserTeamLeader);
-            this.Controls.Add(this.txtAirPPNo);
+            this.Controls.Add(this.txtPackingListID);
             this.Controls.Add(this.labelAirPPNo);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.txtReceiver);
@@ -468,6 +454,7 @@
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.labelSPNo);
             this.Name = "P02_AddByPOItem";
+            this.OnLineHelpID = "Sci.Win.Subs.Input2A";
             this.Text = "International Air/Express - Add by PO item";
             this.WorkAlias = "Express_Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
@@ -493,7 +480,7 @@
             this.Controls.SetChildIndex(this.txtReceiver, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.labelAirPPNo, 0);
-            this.Controls.SetChildIndex(this.txtAirPPNo, 0);
+            this.Controls.SetChildIndex(this.txtPackingListID, 0);
             this.Controls.SetChildIndex(this.txttpeuserTeamLeader, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
             this.Controls.SetChildIndex(this.displayBrand, 0);
@@ -533,7 +520,7 @@
         private Win.UI.TextBox txtReceiver;
         private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelAirPPNo;
-        private Win.UI.TextBox txtAirPPNo;
+        private Win.UI.TextBox txtPackingListID;
         private Class.txttpeuser txttpeuserTeamLeader;
         private Win.UI.Label labelBrand;
         private Win.UI.DisplayBox displayBrand;

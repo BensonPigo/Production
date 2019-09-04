@@ -45,8 +45,8 @@ namespace Sci.Production.Shipping
                 if (this.OperationMode == 3)
                 {
                     MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "1,Sample");
-                    this.txtAirPPNo.ReadOnly = true;
-                    this.txtAirPPNo.IsSupportEditMode = false;
+                    this.txtPackingListID.ReadOnly = true;
+                    this.txtPackingListID.IsSupportEditMode = false;
                 }
             }
 
@@ -151,47 +151,32 @@ from Orders WITH (NOLOCK) where ID = '{0}'", this.txtSPNo.Text), out orderData))
             }
         }
 
-        // Air PP No.
-        private void TxtAirPPNo_Validating(object sender, CancelEventArgs e)
+        private void TxtPackingListID_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && this.txtAirPPNo.OldValue != this.txtAirPPNo.Text)
+            if (this.EditMode && this.txtPackingListID.OldValue != this.txtPackingListID.Text)
             {
-                if (!this.ChkAirPP())
+                if (!this.ChkPackingListID())
                 {
-                    this.CurrentData["DutyNo"] = string.Empty;
+                    this.CurrentData["PackingListID"] = string.Empty;
                     e.Cancel = true;
                     return;
                 }
             }
         }
 
-        private bool ChkAirPP()
+        private bool ChkPackingListID()
         {
-            DataRow airPPData;
-            if (!MyUtility.Check.Seek(string.Format("select OrderID from AirPP WITH (NOLOCK) where ID = '{0}'  and Status <> 'Junked'", this.txtAirPPNo.Text), out airPPData))
+            string sqlchk = $@"
+select 1
+from PackingList pl WITH (NOLOCK)
+inner join PackingList_Detail pld WITH (NOLOCK) on pld.id = pl.id
+where pl.ID = '{this.txtPackingListID.Text}'
+and pl.Type in ('B','S')
+and pld.OrderID = '{this.txtSPNo.Text}'
+";
+            if (!MyUtility.Check.Seek(sqlchk))
             {
-                MyUtility.Msg.WarningBox("Air PP No. not found!!");
-                return false;
-            }
-            else
-            {
-                if (airPPData["OrderID"].ToString() != this.txtSPNo.Text)
-                {
-                    MyUtility.Msg.WarningBox("SP# and Air PP's SP# is inconsistent!!");
-                    return false;
-                }
-            }
-
-            if (MyUtility.Check.Seek(
-                string.Format(
-                @"select ed.ID 
-from Express_Detail ed WITH (NOLOCK) 
-inner join Express e WITH (NOLOCK) on ed.ID = e.ID and e.Status <> 'Junked'
-where DutyNo = '{0}' and ed.ID <> '{1}'",
-                this.txtAirPPNo.Text,
-                MyUtility.Convert.GetString(this.CurrentData["ID"])), out airPPData))
-            {
-                MyUtility.Msg.WarningBox(string.Format("This Air PP No. already in HC#{0}, so can't be assign!!", MyUtility.Convert.GetString(airPPData["ID"])));
+                MyUtility.Msg.WarningBox("PackingList No. not found!!");
                 return false;
             }
 
@@ -258,10 +243,10 @@ where DutyNo = '{0}' and ed.ID <> '{1}'",
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentData["DutyNo"]))
+            if (MyUtility.Check.Empty(this.CurrentData["PackingListID"]))
             {
-                this.txtAirPPNo.Focus();
-                MyUtility.Msg.WarningBox("Air PP No. can't empty!");
+                this.txtPackingListID.Focus();
+                MyUtility.Msg.WarningBox("PackingListID No. can't empty!");
                 return false;
             }
             #endregion
@@ -269,7 +254,7 @@ where DutyNo = '{0}' and ed.ID <> '{1}'",
             // 新增檢查
             if (this.OperationMode == 2)
             {
-                if (!this.ChkAirPP())
+                if (!this.ChkPackingListID())
                 {
                     return false;
                 }
