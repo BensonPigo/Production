@@ -475,7 +475,11 @@ namespace Sci.Production.Cutting
                     string currentArticle = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[9 + ii, 1]).Text);
                     string currentLine = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[9 + ii, 2]).Text);
                     string mergeArticle = dtMerge.Rows[artChg_Count]["SHELL A/ SIZE"].ToString();
-                    string mergeSewLine = dtSewLing.Rows[lineChg_Count]["Sewing Line"].ToString();
+                    string mergeSewLine = string.Empty;
+                    if (dtSewLing.Rows.Count > 0)
+                    {
+                        mergeSewLine = dtSewLing.Rows[lineChg_Count]["Sewing Line"].ToString();
+                    }
 
                     if (mergeArticle == currentArticle)
                     {
@@ -502,7 +506,7 @@ namespace Sci.Production.Cutting
                         }
 
                         // 合併 Sewing Line
-                        if (mergeSewLine== currentLine)
+                        if (mergeSewLine== currentLine && !MyUtility.Check.Empty(mergeSewLine))
                         {
                             rangeMerge2++;
 
