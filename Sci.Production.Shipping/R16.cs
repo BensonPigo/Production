@@ -139,8 +139,7 @@ outer apply(
 	select OrderQty=sum(pd.ShipQty)
 	from Pullout_Detail pd WITH (NOLOCK)
 	inner join Pullout p WITH (NOLOCK)on p.id = pd.id
-	where pd.OrderID = o.ID and pd.ShipmodeID = oq.ShipmodeID
-	 and p.Status != 'New' and pd.PackingListType != 'F'
+	where pd.OrderID = o.ID and p.Status != 'New' and pd.PackingListType != 'F'
 )PulloutQty
 outer apply(
 	select DiffQty=sum (iaq.DiffQty)
