@@ -524,7 +524,7 @@ where SCICtnNo = '{dr["SCICtnNo"]}'
                     }
 
                     // update GMTBooking
-                    result = Prgs.P03_UpdateGMT(this.drMaster);
+                    result = Prgs.P03_UpdateGMT(this.drMaster, this.dtMainDetail);
                     if (!result)
                     {
                         transactionScope.Dispose();

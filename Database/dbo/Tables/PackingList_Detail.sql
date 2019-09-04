@@ -50,6 +50,8 @@
     [OrigOrderID]         VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_OrigOrderID] DEFAULT ('') NOT NULL,
     [OrigCTNStartNo]      VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_OrigCTNStartNo] DEFAULT ('') NOT NULL,
     [DisposeDate]         DATE           NULL,
+    [APPBookingVW] NUMERIC(20, 2) NULL DEFAULT ((0)), 
+    [APPEstAmtVW] NUMERIC(20, 2) NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC),
     CONSTRAINT [UK_PackingList_Detail] UNIQUE NONCLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
