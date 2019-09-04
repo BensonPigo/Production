@@ -42,7 +42,7 @@ SELECT
 	,ph.CTNStartNo
 	,[OrderID]=ph.OrderID
 	,[ScanQty]= ph.ScanQty
-	,[LackingQty]= Lacking.Qty
+	,[LackingQty]= ISNULL(Lacking.Qty,0)
 	,[ScanName]= ph.ScanName+'-'+ (select Name from pass1 where id=ph.ScanName)
 	,[ScanDate]= ph.ScanEditDate
 	,[DeletedBy]=ph.AddName +'-'+ (select Name from pass1 where id=ph.AddName)
