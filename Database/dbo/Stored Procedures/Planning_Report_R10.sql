@@ -271,7 +271,7 @@ BEGIN
 		CountryID varchar(2)
 		,MDivisionID varchar(8)
 		,FactoryID varchar(10)
-		,ProgramID varchar(10)
+		,ProgramID varchar(20)
 		,OrderYYMM varchar(10)
 		,OrderLoadingCPU numeric(14,2)
 		,OrderShortage numeric(14,2)
