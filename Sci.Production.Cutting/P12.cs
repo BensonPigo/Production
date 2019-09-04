@@ -739,26 +739,15 @@ where bd.BundleNo = '{0}'",
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             #region excel
-            bool checkone = false;
-            for (int i = 0; i < this.grid1.Rows.Count; i++)
-            {
-                if (!MyUtility.Check.Empty(this.grid1[0, i].Value)  //判斷是否為空值
-                    && (bool)this.grid1[0, i].Value == true)　//判斷是否有打勾
-                {
-                    checkone = true;
-                }
-
-                if (false && true)
-                {
-                    //execute aaa
-                }
-            }
-            if (!checkone)
+            this.grid1.ValidateControl();
+            var r = dtt.AsEnumerable().Where(row => (bool)row["selected"]).ToList();
+            if (r.Count == 0)
             {
                 grid1.Focus();
                 MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
+
             DataTable selects = dtt.AsEnumerable()
                 .Where(row => (bool)row["selected"])
                 .CopyToDataTable();
