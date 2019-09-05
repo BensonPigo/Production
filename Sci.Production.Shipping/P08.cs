@@ -12,6 +12,7 @@ using Sci.Production.PublicPrg;
 using Ict.Data;
 using Sci.Win;
 using System.Reflection;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -807,7 +808,18 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         // Share Expense
         private void BtnShareExpense_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P08_ShareExpense callNextForm = new Sci.Production.Shipping.P08_ShareExpense(this.CurrentMaintain);
+            bool apflag = false;
+            if (((DataTable)this.detailgridbs.DataSource).Rows.Count > 0)
+            {
+                var dt = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().
+                    Where(w => MyUtility.Convert.GetString(w["Account"]).Substring(0, 4) == "6105" || MyUtility.Convert.GetString(w["Account"]).Substring(0, 4) == "5912").ToList();
+                if (dt.Count > 0)
+                {
+                    apflag = true;
+                }
+            }
+
+            Sci.Production.Shipping.P08_ShareExpense callNextForm = new Sci.Production.Shipping.P08_ShareExpense(this.CurrentMaintain, apflag);
             callNextForm.ShowDialog(this);
         }
 
