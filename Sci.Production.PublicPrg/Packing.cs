@@ -2516,9 +2516,17 @@ where CustCD.value != @CustCD
                 #region 重新計算表身每一個紙箱的材積重
                 DataRow drLocalitem;
                 string sqlLocalItem = $@"
-select [BookingVW] = isnull(round(((CtnLength * CtnWeight * CtnHeight) * ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)) /6000,2),0),
-[APPEstAmtVW] = isnull(round(((CtnLength * CtnWeight * CtnHeight) * ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)) /5000,2),0)
+select 
+[BookingVW] = isnull(round(
+	(CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /6000
+,2),0)
+,[APPEstAmtVW] = isnull(round(
+	(CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /5000
+,2),0)
 from LocalItem
+outer apply(
+	select value = ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)
+) rate
 where RefNo='{dr["Refno"]}'";
                 if (MyUtility.Check.Empty(dr["CTNQty"]) || MyUtility.Convert.GetInt(dr["CTNQty"]) > 0)
                 {
