@@ -624,26 +624,23 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 }
             }
 
-            IList<string> insertCmds = new List<string>();
-            IList<string> updateCmds = new List<string>();
+            string sql = $@"
+declare @MDivisionID as varchar(8) = '{Sci.Env.User.Keyword}'
+	, @Userid As nvarchar(10) = '{Sci.Env.User.UserID}'
 
-            // 主要Insert進TransferToClog的資料
-            foreach (DataRow dr in selectedData)
-            {
-                insertCmds.Add(string.Format(
-                    @"insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo)
-values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}','{5}');",
-                    Sci.Env.User.Keyword,
-                    MyUtility.Convert.GetString(dr["PackingListID"]),
-                    MyUtility.Convert.GetString(dr["OrderID"]),
-                    MyUtility.Convert.GetString(dr["CTNStartNo"]),
-                    Sci.Env.User.UserID,
-                    MyUtility.Convert.GetString(dr["SCICtnNo"])));
+insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo)
+select GETDATE() ReturnDate
+	,@MDivisionID MDivisionID
+	,PackingListID PackingListID
+	,OrderID OrderID
+	,CTNStartNo CTNStartNo
+	,GETDATE() AddDate
+	,@Userid AddName
+	,SCICtnNo SCICtnNo
+from #tmp ;
 
-                // 要順便更新PackingList_Detail
-                updateCmds.Add(string.Format(
-                    @"
-update PackingList_Detail 
+
+update pd 
 set TransferDate = null
 , ReceiveDate = null
 , ClogLocationId = ''
@@ -654,73 +651,53 @@ set TransferDate = null
 , ScanName = ''
 , Lacking = 0
 , ActCTNWeight = null
-where ID = '{0}' and CTNStartNo = '{1}' 
-and DisposeFromClog= 0 ; ",
-                    MyUtility.Convert.GetString(dr["PackingListID"]),
-                    MyUtility.Convert.GetString(dr["CTNStartNo"])));
+from PackingList_Detail pd
+inner join #tmp t on pd.ID = t.PackingListID and pd.CTNStartNo = t.CTNStartNo 
+where pd.DisposeFromClog= 0 ;
 
-                insertCmds.Add($@"
 
-INSERT INTO [dbo].[PackingScan_History]
-           ([MDivisionID]
-           ,[PackingListID]
-           ,[OrderID]
-           ,[CTNStartNo]
-           ,[SCICtnNo]
-           ,[DeleteFrom]
-           ,[ScanQty]
-           ,[ScanEditDate]
-           ,[ScanName]
-           ,[AddName]
-           ,[AddDate])
-     VALUES
-           ('{Sci.Env.User.Keyword}'
-           ,'{dr["PackingListID"]}'
-           ,'{dr["OrderID"]}'
-           ,'{dr["CTNStartNo"]}'
-           ,'{dr["SCICtnNo"]}'
-           ,'Clog P03'
-           ,{dr["ScanQty"]}
-           ,'{Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString()}'
-           ,'{dr["ScanName"]}'
-           ,'{Sci.Env.User.UserID}'
-           ,GETDATE()
-            )
-");
-            }
+INSERT INTO [PackingScan_History]([MDivisionID],[PackingListID],[OrderID],[CTNStartNo],[SCICtnNo]
+	,[DeleteFrom],[ScanQty],[ScanEditDate],[ScanName],[AddName],[AddDate])
+select @MDivisionID [MDivisionID]
+    ,PackingListID [PackingListID]
+    ,OrderID [OrderID]
+    ,CTNStartNo [CTNStartNo]
+    ,SCICtnNo [SCICtnNo]
+    ,'Clog P03' [DeleteFrom]
+    ,ScanQty [ScanQty]
+    ,ScanEditDate [ScanEditDate]
+    ,ScanName [ScanName]
+    ,@Userid [AddName]
+    ,GETDATE() [AddDate]
+from #tmp ;
+";
 
             // Update Orders的資料
-            DataTable selectData = null;
+            DataTable selectOrdersData = null;
             try
             {
                 MyUtility.Tool.ProcessWithDatatable(
                     dt,
                     "Selected,OrderID",
                     @"select distinct OrderID from #tmp a where a.Selected = 1",
-                    out selectData);
+                    out selectOrdersData);
             }
             catch (Exception ex)
             {
                 MyUtility.Msg.ErrorBox("Prepare update orders data fail!\r\n" + ex.ToString());
             }
 
+            DataTable resulttb;
             DualResult result1 = Result.True, result2 = Result.True;
+
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
-                    if (updateCmds.Count > 0)
-                    {
-                        result1 = Sci.Data.DBProxy.Current.Executes(null, updateCmds);
-                    }
+                    // 主要Insert進TransferToClog的資料
+                    result1 = MyUtility.Tool.ProcessWithDatatable(selectedData.CopyToDataTable(), "PackingListID,OrderID,CTNStartNo,SCICtnNo,ScanQty,ScanEditDate,ScanName", sql, out resulttb, "#tmp");
 
-                    if (insertCmds.Count > 0)
-                    {
-                        result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
-                    }
-
-                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
-
+                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectOrdersData);
                     if (result1 && result2 && prgResult)
                     {
                         transactionScope.Complete();
