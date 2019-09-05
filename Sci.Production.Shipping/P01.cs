@@ -798,12 +798,13 @@ where Id = '{orderID}'
                             this.dateBuyerDelivery.Value = Convert.ToDateTime(orderQtyData.Rows[0]["BuyerDelivery"]);
                             if (string.Compare(orderData["Category"].ToString(), "S", true) != 0)
                             {
+                                DataRow drPacking;
                                 string sqlcmd = $@"
 select GW = ISNULL(sum(gw),0),APPEstAmtVW = ISNULL(sum(APPEstAmtVW),0)  
 from PackingList_Detail
 where OrderID = '{orderID}' and OrderShipmodeSeq = '{orderQtyData.Rows[0]["Seq"]}'
 ";
-                                if (MyUtility.Check.Seek(sqlcmd, out DataRow drPacking))
+                                if (MyUtility.Check.Seek(sqlcmd, out drPacking))
                                 {
                                     this.CurrentMaintain["GW"] = drPacking["GW"];
                                     this.CurrentMaintain["VW"] = drPacking["APPEstAmtVW"];
@@ -834,12 +835,13 @@ where OrderID = '{orderID}' and OrderShipmodeSeq = '{orderQtyData.Rows[0]["Seq"]
 
                                 if (string.Compare(orderData["Category"].ToString(), "S", true) != 0)
                                 {
+                                    DataRow drPacking;
                                     string sqlcmd = $@"
 select GW = ISNULL(sum(gw),0),APPEstAmtVW = ISNULL(sum(APPEstAmtVW),0)  
 from PackingList_Detail
 where OrderID = '{orderID}' and OrderShipmodeSeq = '{item.GetSelectedString()}'
 ";
-                                    if (MyUtility.Check.Seek(sqlcmd, out DataRow drPacking))
+                                    if (MyUtility.Check.Seek(sqlcmd, out drPacking))
                                     {
                                         this.CurrentMaintain["GW"] = drPacking["GW"];
                                         this.CurrentMaintain["VW"] = drPacking["APPEstAmtVW"];
