@@ -260,6 +260,7 @@ select
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
+    , b.IsEXCESS
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -314,6 +315,7 @@ select
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
+    , b.IsEXCESS
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
@@ -411,6 +413,7 @@ select
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
+    , b.IsEXCESS
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -465,6 +468,7 @@ select
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
+    , b.IsEXCESS
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
@@ -605,6 +609,7 @@ OPTION (RECOMPILE)"
                         pdata.Season = dr["Seasonid"].ToString();
                         pdata.brand = dr["brand"].ToString();
                         pdata.item = dr["item"].ToString();
+                        pdata.EXCESS1 = dr["IsEXCESS"].ToString();
                         pdata.CutRef = tmpCut;
                     }
                     else if (j == 1)
@@ -630,6 +635,7 @@ OPTION (RECOMPILE)"
                         pdata.Season2 = dr["Seasonid"].ToString();
                         pdata.brand2 = dr["brand"].ToString();
                         pdata.item2 = dr["item"].ToString();
+                        pdata.EXCESS2 = dr["IsEXCESS"].ToString();
                         pdata.CutRef2 = tmpCut;
                     }
                     else
@@ -655,6 +661,7 @@ OPTION (RECOMPILE)"
                         pdata.Season3 = dr["Seasonid"].ToString();
                         pdata.brand3 = dr["brand"].ToString();
                         pdata.item3 = dr["item"].ToString();
+                        pdata.EXCESS3 = dr["IsEXCESS"].ToString();
                         pdata.CutRef3 = tmpCut;
                     }
                 }
@@ -732,26 +739,15 @@ where bd.BundleNo = '{0}'",
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             #region excel
-            bool checkone = false;
-            for (int i = 0; i < this.grid1.Rows.Count; i++)
-            {
-                if (!MyUtility.Check.Empty(this.grid1[0, i].Value)  //判斷是否為空值
-                    && (bool)this.grid1[0, i].Value == true)　//判斷是否有打勾
-                {
-                    checkone = true;
-                }
-
-                if (false && true)
-                {
-                    //execute aaa
-                }
-            }
-            if (!checkone)
+            this.grid1.ValidateControl();
+            var r = dtt.AsEnumerable().Where(row => (bool)row["selected"]).ToList();
+            if (r.Count == 0)
             {
                 grid1.Focus();
                 MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
+
             DataTable selects = dtt.AsEnumerable()
                 .Where(row => (bool)row["selected"])
                 .CopyToDataTable();

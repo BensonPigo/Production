@@ -359,7 +359,7 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                                 }
                             }
 
-                            if (t)
+                            if (t || dr["ShipModeID", DataRowVersion.Original].EqualString(dr["ShipModeID"]) == false)
                             {
                                 result = this.WriteRevise("Revise", dr);
 
@@ -1172,7 +1172,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     #endregion
 
                     // shipQty,OrderQty,InvNo 修改過才會更換資料
-                    if (MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"]) || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"]) || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"]))
+                    if (MyUtility.Convert.GetString(dr["ShipmodeID"]).EqualString(MyUtility.Convert.GetString(packData[0]["ShipmodeID"])) == false || MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"]) || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"]) || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"]))
                     {
                         dr["ShipQty"] = packData[0]["ShipQty"];
                         dr["OrderQty"] = packData[0]["OrderQty"];
@@ -1524,7 +1524,7 @@ from SummaryData",
             reviseRow["Remark"] = dr["Remark"];
             reviseRow["Pullout_DetailUKey"] = dr["UKey"]; // Pullout_Revise沒有ukey
             reviseRow["INVNo"] = dr["INVNo"];
-            reviseRow["OldShipModeID"] = type == "Missing" ? string.Empty : dr["ShipModeID"];
+            reviseRow["OldShipModeID"] = type == "Missing" ? string.Empty : dr["ShipModeID", DataRowVersion.Original];
             reviseRow["ShipModeID"] = dr["ShipModeID"];
             reviseRow["AddName"] = Sci.Env.User.UserID;
             reviseRow["AddDate"] = DateTime.Now;

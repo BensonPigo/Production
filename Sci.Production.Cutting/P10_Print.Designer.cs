@@ -37,17 +37,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(392, 12);
+            this.print.Location = new System.Drawing.Point(445, 12);
             this.print.TabIndex = 0;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(392, 48);
+            this.toexcel.Location = new System.Drawing.Point(445, 48);
             this.toexcel.TabIndex = 1;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(392, 84);
+            this.close.Location = new System.Drawing.Point(445, 84);
             this.close.TabIndex = 2;
             // 
             // radioPanel1
@@ -96,11 +96,15 @@
             // 
             // P10_Print
             // 
-            this.ClientSize = new System.Drawing.Size(484, 162);
+            this.ClientSize = new System.Drawing.Size(537, 162);
             this.Controls.Add(this.radioPanel1);
             this.DefaultControl = "radioBundleCard";
             this.Name = "P10_Print";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "P10. Print";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);

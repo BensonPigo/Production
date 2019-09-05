@@ -2180,6 +2180,17 @@ END";
                 return;
             }
 
+            if (CurrentDetailData.RowState != DataRowState.Added)
+            {
+                string sqlchkOutput = $@"select id from CuttingOutput_Detail where WorkOrderUkey = '{CurrentDetailData["uKey"]}'";
+                DataRow dataRow;
+                if (MyUtility.Check.Seek(sqlchkOutput, out dataRow))
+                {
+                    MyUtility.Msg.WarningBox($"Already create output <{dataRow["id"]}>, cann't be deleted");
+                    return;
+                }
+            }
+
             string ukey = CurrentDetailData["Ukey"].ToString() == "" ? "0" : CurrentDetailData["Ukey"].ToString();
             int NewKey = Convert.ToInt32(CurrentDetailData["NewKey"]);
             DataRow[] drar = sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
@@ -2449,6 +2460,7 @@ END";
             #endregion
             CurrentMaintain["cutinline"] = ((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null);
             CurrentMaintain["CutOffLine"] = ((DataTable)detailgridbs.DataSource).Compute("MAX(estcutdate)", null);
+
             return base.ClickSaveBefore();
         }
 

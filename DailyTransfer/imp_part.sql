@@ -464,14 +464,12 @@ update t
 				inner join Trade_To_PMS.dbo.MmsAP b on a.ID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
 				group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price, b.ExportID
 				) as s
-	on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
+	on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2 and t.TPEPOID = s.TPEPOID and t.ExportID = s.ExportID
 	when matched then 
-		update	set	t.TPEPOID = s.TPEPOID,
-					t.APDATE = s.APDATE,
+		update	set	t.APDATE = s.APDATE,
 					t.VoucherID = s.VoucherID,
 					t.Price = s.Price,
-					t.Qty = s.Qty,
-					t.ExportID = s.ExportID
+					t.Qty = s.Qty
 	when not matched by target then
 		insert	(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty,ExportID)
 			values(s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty,s.ExportID);

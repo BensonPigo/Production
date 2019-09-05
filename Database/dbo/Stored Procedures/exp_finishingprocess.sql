@@ -222,6 +222,64 @@ BEGIN
 	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'GenSongUpdated'
 END
 
+IF OBJECT_ID(N'ClogReturn') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[ClogReturn](
+	[ID]			 [bigint] NOT NULL,
+	[SCICtnNo]		 [varchar](15) NOT NULL,
+	[ReturnDate]	 [date] NOT NULL,
+	[OrderID]		 [varchar](13) NOT NULL,
+	[PackingListID]  [varchar](13) NOT NULL,
+	[CustCTN]		 [varchar](30) NULL,
+	[CmdTime]		 [datetime] NOT NULL,
+	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
+	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0)),
+	 CONSTRAINT [PK_ClogReturn] PRIMARY KEY CLUSTERED 
+	(
+		[ID] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+END
+
+IF OBJECT_ID(N'FinishingProcess') IS NULL
+BEGIN 
+CREATE TABLE [dbo].[FinishingProcess] (
+    [DM300]			 TINYINT      DEFAULT ((0)) NOT NULL,
+    [DM200]			 INT          DEFAULT ((0)) NULL,
+    [DM201]			 INT          DEFAULT ((0)) NULL,
+    [DM202]			 INT          DEFAULT ((0)) NULL,
+    [DM205]			 INT          DEFAULT ((0)) NULL,
+    [DM203]			 INT          DEFAULT ((0)) NULL,
+    [DM204]			 INT          DEFAULT ((0)) NULL,
+    [DM206]			 INT          DEFAULT ((0)) NULL,
+    [DM207]			 INT          DEFAULT ((0)) NULL,
+    [DM208]			 INT          DEFAULT ((0)) NULL,
+    [DM209]			 INT          DEFAULT ((0)) NULL,
+    [DM210]			 INT          DEFAULT ((0)) NULL,
+    [DM212]			 INT          DEFAULT ((0)) NULL,
+    [DM214]			 INT          DEFAULT ((0)) NULL,
+    [DM215]			 INT          DEFAULT ((0)) NULL,
+    [DM216]			 INT          DEFAULT ((0)) NULL,
+    [DM219]			 INT          DEFAULT ((0)) NULL,
+    [CmdTime]		 datetime NULL,
+    [SunriseUpdated] bit   DEFAULT ((0)) NULL
+	)
+END
+
+IF OBJECT_ID(N'StyleFPSetting') IS NULL
+BEGIN 
+CREATE TABLE [dbo].[StyleFPSetting] (
+    [StyleID]			varchar(15),
+	[SeasonID]			varchar(10),
+	[BrandID]			varchar(8),
+	[FPSetting1]		INT   DEFAULT ((0)) NULL,
+	[FPSetting2]		INT   DEFAULT ((0)) NULL,
+    [CmdTime]			datetime NULL,
+    [SunriseUpdated]	bit   DEFAULT ((0)) NULL
+	)
+END
+
+
 declare @cDate date = CONVERT(date,GETDATE());
 declare @yestarDay date =CONVERT(Date, dateAdd(day,-1,GetDate()));
 --declare @cDate date = CONVERT(date, DATEADD(DAY,-10, GETDATE()));-- for test
@@ -532,3 +590,61 @@ UPDATE SET
 WHEN NOT MATCHED BY TARGET THEN
 INSERT([SCICtnNo],[Side],[Seq],[FilePath],[FileName],[CmdTime],[SunriseUpdated],[GenSongUpdated])
 VALUES(s.[SCICtnNo],s.[Side],s.[Seq],s.[FilePath],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
+
+
+--10. 轉出區間 當AddDate or EditDate =今天
+MERGE FinishingProcess AS T
+USING(
+	SELECT *
+	FROM Production.dbo.FinishingProcess
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+) as s
+on t.DM300=s.DM300
+WHEN MATCHED THEN
+UPDATE SET
+    t.[DM300]   =s.[DM300],			
+	t.[DM200]	=s.[DM200],			
+	t.[DM201]	=s.[DM201],			
+	t.[DM202]	=s.[DM202],			
+	t.[DM205]	=s.[DM205],			
+	t.[DM203]	=s.[DM203],			
+	t.[DM204]	=s.[DM204],			
+	t.[DM206]	=s.[DM206],			
+	t.[DM207]	=s.[DM207],			
+	t.[DM208]	=s.[DM208],			
+	t.[DM209]	=s.[DM209],			
+	t.[DM210]	=s.[DM210],			
+	t.[DM212]	=s.[DM212],			
+	t.[DM214]	=s.[DM214],			
+	t.[DM215]	=s.[DM215],			
+	t.[DM216]	=s.[DM216],			
+	t.[DM219]	=s.[DM219],			
+	t.[CmdTime]	= GetDate(),	
+	t.[SunriseUpdated] = 0
+WHEN NOT MATCHED BY TARGET THEN
+INSERT([DM300],[DM200],[DM201],[DM202],[DM205],[DM203],[DM204],[DM206],[DM207],
+	   [DM208],[DM209],[DM210],[DM212],[DM214],[DM215],[DM216],[DM219],[CmdTime],[SunriseUpdated])
+VALUES(s.[DM300],s.[DM200],s.[DM201],s.[DM202],s.[DM205],s.[DM203],s.[DM204],s.[DM206],s.[DM207],
+	   s.[DM208],s.[DM209],s.[DM210],s.[DM212],s.[DM214],s.[DM215],s.[DM216],s.[DM219],GetDate(),0);
+
+
+--11. 轉出區間 當EditDate =今天
+MERGE StyleFPSetting AS T
+USING(
+	SELECT  [StyleID] = id,[SeasonID], [BrandID],[FinishingProcessID1],[FinishingProcessID2]
+	FROM Production.dbo.Style 
+	where convert(date,EditDate) = @cDate
+) as s
+on t.StyleID=s.StyleID
+WHEN MATCHED THEN
+UPDATE SET
+   t.[StyleID]		=s.[StyleID],               
+   t.[SeasonID]		=s.[SeasonID],	
+   t.[BrandID]		=s.[BrandID],	
+   t.[FPSetting1]	=s.[FinishingProcessID1],
+   t.[FPSetting2]	=s.[FinishingProcessID2],
+   t.[CmdTime]	= GetDate(),	
+   t.[SunriseUpdated] = 0
+WHEN NOT MATCHED BY TARGET THEN
+INSERT([StyleID] ,[SeasonID], [BrandID],[FPSetting1],[FPSetting2],[CmdTime],[SunriseUpdated])
+VALUES(s.[StyleID] ,s.[SeasonID], s.[BrandID],s.[FinishingProcessID1],s.[FinishingProcessID2],GetDate(),0);

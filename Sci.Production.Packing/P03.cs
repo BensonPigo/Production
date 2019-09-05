@@ -282,6 +282,20 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 this.btnCartonSummary.ForeColor = Color.Black;
             }
 
+            // Scan and Pack Deleted History按鈕變色
+            if (MyUtility.Check.Seek($@"
+select 1 from PackingList_Detail pd WITH (NOLOCK)
+INNER JOIN PackingScan_History ph  WITH (NOLOCK) ON pd.ID=ph.PackingListID AND pd.OrderID=ph.OrderID AND pd.CTNStartNo=ph.CTNStartNo AND pd.SCICtnNo=ph.SCICtnNo
+WHERE pd.ID='{this.CurrentMaintain["ID"]}'
+"))
+            {
+                this.btnPackScanHistory.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnPackScanHistory.ForeColor = Color.Black;
+            }
+
             // Repack Cartons 控制
             bool isNotNew = !this.CurrentMaintain["Status"].Equals("New");
             bool isShippingLock = this.CurrentMaintain["GMTBookingLock"].Equals("Y");
@@ -2086,6 +2100,12 @@ inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
             {
                 this.ReloadDatas();
             }
+        }
+        
+        private void btnPackScanHistory_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Packing.P03_ScanAndPackDeletedHistory form = new P03_ScanAndPackDeletedHistory(this.CurrentMaintain["ID"].ToString());
+            form.ShowDialog(this);
         }
     }
 }

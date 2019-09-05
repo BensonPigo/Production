@@ -193,7 +193,7 @@ select  s.OutputDate
 		, s.Category
 		, s.Shift
 		, s.SewingLineID
-		, [ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty)
+		, [ActManPower] = s.Manpower
 		, s.Team
 		, sd.OrderId
 		, sd.ComboType
@@ -257,7 +257,7 @@ where s.OutputDate between '{0}' and '{1}' and (o.CateGory != 'G' or s.Category=
 select OutputDate,Category
 	   , Shift
 	   , SewingLineID
-	   , ActManPower1 = Sum(ActManPower)
+	   , ActManPower1 = ActManPower
 	   , Team
 	   , OrderId
 	   , ComboType
@@ -286,10 +286,11 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
 		 , OrderCategory, LocalOrder, FactoryID, OrderProgram, MockupProgram
 		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
 		 , MockupStyle, Rate, StdTMS,SubconInType,isnull(SubconOutFty,'')
+        ,ActManPower
 
 select t.*
 	   , isnull(w.Holiday, 0) as Holiday
-	   , IIF(isnull(QAQty, 0) = 0, ActManPower1, (ActManPower1 / QAQty)) as ActManPower
+	   , ActManPower1 as ActManPower
 INTO #tmp1stFilter
 from #tmpSewingGroup t
 left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID 
@@ -728,7 +729,7 @@ tmpTtlManPower as (
 		from #tmp
 		where LastShift <> 'O'
 		--排除 subcon in non sister的數值
-        and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInType <> 0 ))   
+        and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInType not in ('0','3')))   
 		group by OutputDate, FactoryID, SewingLineID, LastShift, Team 
 	) a
 	outer apply
@@ -790,7 +791,7 @@ left join tmpTtlManPower mp on 1 = 1"),
 		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
 		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
-	where LastShift = 'I' and SubconInType = 0
+	where LastShift = 'I' and SubconInType in ('0','3')
 	group by StdTMS
 )
 select q.QAQty
@@ -828,7 +829,7 @@ from tmpQty q"),
 		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
 		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
-	where LastShift = 'I' and SubconInType = 1
+	where LastShift = 'I' and SubconInType in ('1','2')
 	group by StdTMS
 )
 select q.QAQty
@@ -950,7 +951,7 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
             --排除 subcon in non sister的數值
-          and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType <> 0 ))           
+          and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
           and ot.Price > 0 		    
 		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 			  or ot.ArtworkTypeID <> 'SP_THREAD')
