@@ -1471,6 +1471,7 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
 SELECT AirPP.Forwarder,t.id
 From #tmp t
 inner join PackingList_Detail pd with(nolock) on pd.id = t.id
+inner join PackingList p with(nolock) on p.id = pd.id and p.ShipModeID in('A/P','S-A/P','E/P')
 inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipmodeSeq = pd.OrderShipmodeSeq
 ";
             DataTable dt;
@@ -1480,14 +1481,16 @@ inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipm
                 this.ShowErr(dualResult);
             }
 
-            List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"])).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
-            if (packingListID.Count > 0)
+            if (dt.Rows.Count > 0)
             {
-                string pid = string.Join(",", packingListID);
-                string msg = $@"Forwarder is different from APP request, please double check.
-Garment Booking : {this.CurrentMaintain["id"]}
+                List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"])).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                if (packingListID.Count > 0)
+                {
+                    string pid = string.Join(",", packingListID);
+                    string msg = $@"Forwarder is different from APP request, please double check.
 Packing List : {pid}";
-                MyUtility.Msg.WarningBox(msg);
+                    MyUtility.Msg.WarningBox(msg);
+                }
             }
 
             // 帶資料到Shipper
