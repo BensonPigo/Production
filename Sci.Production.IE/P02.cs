@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace Sci.Production.IE
 {
@@ -74,6 +75,9 @@ namespace Sci.Production.IE
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
+            bool existsChgOver_Check = MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
+            this.btnCheckList.ForeColor = existsChgOver_Check ? Color.Blue : Color.Black;
 
             string brand = string.Format(
                 @"SELECT BrandID FROM Orders WITH (NOLOCK) 
@@ -356,16 +360,8 @@ order by OutputDate
                 }
             }
 
-            if (this.CurrentMaintain["Type"].ToString() == "N")
-            {
-                Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null);
-                callNextForm.ShowDialog(this);
-            }
-            else
-            {
-                Sci.Production.IE.P02_RepeatCheckList callNextForm = new Sci.Production.IE.P02_RepeatCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null);
-                callNextForm.ShowDialog(this);
-            }
+            Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null, this.CurrentMaintain["Type"].ToString());
+            callNextForm.ShowDialog(this);
         }
 
         // Problem
@@ -389,7 +385,10 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 }
             }
 
-            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(string.Compare(this.CurrentMaintain["Status"].ToString(), "Closed", true) != 0, this.CurrentMaintain["ID"].ToString(), null, null);
+            bool canEdit = this.CurrentMaintain["Status"].ToString() != "Closed" &&
+                           this.CurrentMaintain["Status"].ToString() != "Approved";
+
+            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
         }
 
