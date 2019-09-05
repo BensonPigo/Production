@@ -1099,8 +1099,7 @@ inner join #tmp t on g.id=t.InvNo
                         this.ShowErr(dualResult);
                     }
 
-                    string msgs = @"Forwarder is different from APP request, please double check.
-";
+                    string msgs = string.Empty;
                     List<string> listID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != this.LocalSuppID).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
                     if (listID.Count > 0)
                     {
@@ -1132,6 +1131,8 @@ inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipm
 
                     if (!MyUtility.Check.Empty(msgs))
                     {
+                        msgs = @"Forwarder is different from APP request, please double check.
+" + msgs;
                         MyUtility.Msg.WarningBox(msgs);
                     }
                 }
