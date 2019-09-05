@@ -504,7 +504,9 @@ BEGIN
 				t.FtyGroup              = s.FTY_Group,
 				t.ForecastSampleGroup   = s.ForecastSampleGroup,				
 				t.DyeingLoss			= s.DyeingLoss,
-				t.SubconInType = '0'
+				t.SubconInType = '0',
+				t.FirstProduction       = s.FirstProduction,
+				t.LastProductionDate       = s.LastProductionDate
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -533,6 +535,7 @@ BEGIN
 			, SizeUnit				, CuttingSP				, IsMixMarker			, EachConsSource		, KPIEachConsApprove	
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
 			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
+			, FirstProduction		, LastProductionDate
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
 			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
@@ -560,6 +563,7 @@ BEGIN
 			, s.SizeUnit			, s.CuttingSP			, s.IsMixMarker			, s.EachConsSource		, s.KPIEachConsApprove	
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
 			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
+			, s.FirstProduction		, s.LastProductionDate
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
