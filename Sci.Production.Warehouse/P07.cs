@@ -247,7 +247,37 @@ where x.value > 1
                 MyUtility.Msg.WarningBox(resultCheck.Description);
                 return false;
             }
-            #endregion 
+            #endregion
+
+            #region 表身的資料存在Po_Supp_Detail中但是已被Junk，就要跳出訊息告知且不做任何動作
+            //string sqlchkPSDJunk = string.Empty;
+
+            //if (MyUtility.Check.Empty(CurrentMaintain["exportid"]))
+            //{
+
+            //}
+            //else
+            //{
+
+            //}
+
+            //DataTable junkdt;
+            //DualResult dualResult = MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, string.Empty, sqlchkPSDJunk, out junkdt);
+            //if (!dualResult)
+            //{
+            //    this.ShowErr(dualResult);
+            //    return false;
+            //}
+
+            //if (junkdt.Rows.Count > 0)
+            //{
+            //    string msgjunk = "Below item already junk can't be receive.";
+
+
+            //    MyUtility.Msg.WarningBox(msgjunk);
+            //    return false;
+            //}
+            #endregion
 
             DateTime ArrivePortDate;
             DateTime WhseArrival;
