@@ -360,7 +360,7 @@ order by OutputDate
                 }
             }
 
-            Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null);
+            Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null, this.CurrentMaintain["Type"].ToString());
             callNextForm.ShowDialog(this);
         }
 
