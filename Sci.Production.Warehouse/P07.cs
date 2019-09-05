@@ -251,7 +251,7 @@ where x.value > 1
 
             #region 表身的資料存在Po_Supp_Detail中但是已被Junk，就要跳出訊息告知且不做任何動作
             string sqlchkPSDJunk = $@"
-select  concat('SP#: ',p.id,', Seq#: ',Ltrim(Rtrim(p.seq1)), '-', p.seq2) as seq
+select distinct concat('SP#: ',p.id,', Seq#: ',Ltrim(Rtrim(p.seq1)), '-', p.seq2) as seq
 from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 inner join #tmp t on p.id =t.poid and p.SEQ1 = t.SEQ1 and p.SEQ2 = t.SEQ2
 where p.junk = 1
@@ -267,9 +267,9 @@ where p.junk = 1
 
             if (junkdt.Rows.Count > 0)
             {
-                string.Join("\r\n")
-                string msgjunk = "Below item already junk can't be receive.";
-
+                var v = junkdt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["seq"])).ToList();
+                string msgjunk = @"Below item already junk can't be receive.
+" + string.Join("\r\n", v);
 
                 MyUtility.Msg.WarningBox(msgjunk);
                 return false;
