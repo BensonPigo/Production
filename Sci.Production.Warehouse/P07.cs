@@ -250,33 +250,30 @@ where x.value > 1
             #endregion
 
             #region 表身的資料存在Po_Supp_Detail中但是已被Junk，就要跳出訊息告知且不做任何動作
-            //string sqlchkPSDJunk = string.Empty;
+            string sqlchkPSDJunk = $@"
+select  concat('SP#: ',p.id,', Seq#: ',Ltrim(Rtrim(p.seq1)), '-', p.seq2) as seq
+from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+inner join #tmp t on p.id =t.poid and p.SEQ1 = t.SEQ1 and p.SEQ2 = t.SEQ2
+where p.junk = 1
+";
 
-            //if (MyUtility.Check.Empty(CurrentMaintain["exportid"]))
-            //{
+            DataTable junkdt;
+            DualResult dualResult = MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, string.Empty, sqlchkPSDJunk, out junkdt);
+            if (!dualResult)
+            {
+                this.ShowErr(dualResult);
+                return false;
+            }
 
-            //}
-            //else
-            //{
-
-            //}
-
-            //DataTable junkdt;
-            //DualResult dualResult = MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, string.Empty, sqlchkPSDJunk, out junkdt);
-            //if (!dualResult)
-            //{
-            //    this.ShowErr(dualResult);
-            //    return false;
-            //}
-
-            //if (junkdt.Rows.Count > 0)
-            //{
-            //    string msgjunk = "Below item already junk can't be receive.";
+            if (junkdt.Rows.Count > 0)
+            {
+                string.Join("\r\n")
+                string msgjunk = "Below item already junk can't be receive.";
 
 
-            //    MyUtility.Msg.WarningBox(msgjunk);
-            //    return false;
-            //}
+                MyUtility.Msg.WarningBox(msgjunk);
+                return false;
+            }
             #endregion
 
             DateTime ArrivePortDate;
