@@ -1466,33 +1466,37 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
                 return;
             }
 
-            DataTable tmp = (DataTable)this.detailgridbs.DataSource;
-            string sqlcmdchk = $@"
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "A/P" ||
+                MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "S-A/P" ||
+                MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "E/P"
+                )
+            {
+                DataTable tmp = (DataTable)this.detailgridbs.DataSource;
+                string sqlcmdchk = $@"
 SELECT AirPP.Forwarder,t.id
 From #tmp t
 inner join PackingList_Detail pd with(nolock) on pd.id = t.id
-inner join PackingList p with(nolock) on p.id = pd.id and p.ShipModeID in('A/P','S-A/P','E/P')
 inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipmodeSeq = pd.OrderShipmodeSeq
 ";
-            DataTable dt;
-            DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlcmdchk, out dt);
-            if (!dualResult)
-            {
-                this.ShowErr(dualResult);
-            }
-
-            if (dt.Rows.Count > 0)
-            {
-                List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"])).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
-                if (packingListID.Count > 0)
+                DataTable dt;
+                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlcmdchk, out dt);
+                if (!dualResult)
                 {
-                    string pid = string.Join(",", packingListID);
-                    string msg = $@"Forwarder is different from APP request, please double check.
+                    this.ShowErr(dualResult);
+                }
+
+                if (dt.Rows.Count > 0)
+                {
+                    List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"])).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                    if (packingListID.Count > 0)
+                    {
+                        string pid = string.Join(",", packingListID);
+                        string msg = $@"Forwarder is different from APP request, please double check.
 Packing List : {pid}";
-                    MyUtility.Msg.WarningBox(msg);
+                        MyUtility.Msg.WarningBox(msg);
+                    }
                 }
             }
-
             // 帶資料到Shipper
             string SP = string.Empty;
             DualResult result;
