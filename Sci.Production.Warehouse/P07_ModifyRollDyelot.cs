@@ -487,6 +487,40 @@ from (
                 return;
             }
 
+            var allDatas= modifyDrList = source.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
+            if (allDatas.GroupBy(o => new {
+                                            POID = o["POID"].ToString()
+                                            , Seq = o["Seq"].ToString()
+                                            , Roll = o["Roll"].ToString()
+                                            , Dyelot = o["Dyelot"].ToString() })
+                    .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() })
+                    .Any(r => r.ct > 1)
+               )
+            {
+                //modifyDrList.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() })
+                //    .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Any(r => r.ct > 1)
+                var CheckList = allDatas.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() }).Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Where(o=>o.ct > 1).ToList();
+
+
+                List<string> _duplicateList = new List<string>();
+
+                foreach (var item in CheckList)
+                {
+                    _duplicateList.Add($"{item.POID}-{item.Seq}-{item.Roll}-{item.Dyelot}");
+                }
+
+
+                MyUtility.Msg.WarningBox(@"Roll# & Dyelot# already existed!!"
++ Environment.NewLine
++ "Duplicate list SP# - Seq - Roll# - Dyelot as below."
++ Environment.NewLine
++ _duplicateList.JoinToString(Environment.NewLine));
+
+                //MyUtility.Msg.WarningBox("Roll# & Dyelot# can not  duplicate!!");
+                return;
+            }
+
+
             string sqlcmd;
             string sqlupd1 = string.Empty;
             string sqlupd2 = string.Empty;
