@@ -188,8 +188,15 @@ select  p.GMTBookingLock
 							order by sod.OrderId
                             for xml path('')
                           ), 1, 1, '')         , Pullout.sendtotpe
+,pl2.APPBookingVW,pl2.APPEstAmtVW
 from PackingList p WITH (NOLOCK) 
 left join Pullout WITH (NOLOCK) on Pullout.id=p.Pulloutid
+outer apply(
+	select APPBookingVW = ISNULL(sum(p2.APPBookingVW),0) 
+	,APPEstAmtVW = ISNULL(sum(p2.APPEstAmtVW),0)
+	from PackingList_Detail p2
+	where p2.ID=p.ID
+) pl2
 where {0}", this.masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -298,6 +305,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("Dest", header: "Destination", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Numeric("NW", header: "ttl N.W.", decimal_places: 3, iseditingreadonly: true)
                 .Numeric("NNW", header: "ttl N.N.W.", decimal_places: 3, iseditingreadonly: true)
+                .Numeric("APPBookingVW", header: "V.W. for APP booking", decimal_places: 2, iseditingreadonly: true)
+                .Numeric("APPEstAmtVW", header: "V.W for APP est. Amt", decimal_places: 2, iseditingreadonly: true)
                 .Text("Status", header: "Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Numeric("ClogCTNQty", header: "CTN in C-Logs", iseditingreadonly: true)
                 .Date("InspDate", header: "Est. Inspection date", iseditingreadonly: true)
@@ -742,7 +751,7 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
             #region 組出表身所有的PackingListID與加總ShipQty,CTNQty,NW,GW,NNW,CBM 
             StringBuilder allPackID = new StringBuilder();
             int ttlshipqty = 0, ttlctnqty = 0;
-            double ttlnw = 0.0, ttlgw = 0.0, ttlnnw = 0.0, ttlcbm = 0.0;
+            double ttlnw = 0.0, ttlgw = 0.0, ttlnnw = 0.0, ttlcbm = 0.0, ttlAPPBookingVW =0.0, ttlAPPEstAmtVW = 0.0;
             foreach (DataRow dr in this.DetailDatas)
             {
                 allPackID.Append(string.Format("'{0}',", MyUtility.Convert.GetString(dr["ID"])));
@@ -752,6 +761,8 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
                 ttlgw = MyUtility.Math.Round(ttlgw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
                 ttlnnw = MyUtility.Math.Round(ttlnnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
                 ttlcbm = MyUtility.Math.Round(ttlcbm + MyUtility.Convert.GetDouble(dr["CBM"]), 4);
+                ttlAPPBookingVW = MyUtility.Math.Round(ttlAPPBookingVW + MyUtility.Convert.GetDouble(dr["APPBookingVW"]), 2);
+                ttlAPPEstAmtVW = MyUtility.Math.Round(ttlAPPEstAmtVW + MyUtility.Convert.GetDouble(dr["APPEstAmtVW"]), 2);
             }
             #endregion
 
@@ -885,7 +896,8 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             this.CurrentMaintain["TotalGW"] = MyUtility.Math.Round(ttlgw, 3);
             this.CurrentMaintain["TotalNNW"] = MyUtility.Math.Round(ttlnnw, 3);
             this.CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 4);
-
+            this.CurrentMaintain["TotalAPPBookingVW"] = ttlAPPBookingVW;
+            this.CurrentMaintain["TotalAPPEstAmtVW"] = ttlAPPEstAmtVW;
             return base.ClickSaveBefore();
         }
 

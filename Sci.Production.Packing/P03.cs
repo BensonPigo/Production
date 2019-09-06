@@ -380,6 +380,11 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             }
             #endregion
 
+            // 加總APPBookingVW & APPEstAmtVW
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            this.numAppBookingVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPBookingVW)", string.Empty));
+            this.numAppEstAmtVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPEstAmtVW)", string.Empty));
+
             Color_Change();
         }
 
@@ -1064,7 +1069,6 @@ order by os.Seq",
                 }
             }
 
-
             bool isSavecheckOK = Prgs.P03SaveCheck(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.detailgrid);
             if (!isSavecheckOK)
             {
@@ -1109,7 +1113,7 @@ order by os.Seq",
         /// <returns>DualResult</returns>
         protected override DualResult ClickSavePre()
         {
-            return Prgs.P03_UpdateGMT(this.CurrentMaintain);
+            return Prgs.P03_UpdateGMT(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
         }
 
         /// <summary>
