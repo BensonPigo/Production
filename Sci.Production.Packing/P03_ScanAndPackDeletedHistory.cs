@@ -29,9 +29,9 @@ namespace Sci.Production.Packing
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6))
                 .Text("OrderID", header: "Order ID", width: Widths.AnsiChars(18))
                 .Numeric("ScanQty", header: "Scan Qty", width: Widths.AnsiChars(6) ,decimal_places:0)
-                .Numeric("LackingQty", header: "Lacking Qty", width: Widths.AnsiChars(6), decimal_places: 0)
                 .Text("ScanName", header: "Scan Name", width: Widths.AnsiChars(25))
                 .DateTime("ScanDate", header: "Scan Date", width: Widths.AnsiChars(25))
+                .Numeric("LackingQty", header: "Lacking Qty", width: Widths.AnsiChars(6), decimal_places: 0)
                 .Text("DeletedBy", header: "Deleted By", width: Widths.AnsiChars(25))
                 .DateTime("DeletedDate", header: "Deleted Date", width: Widths.AnsiChars(25));
 

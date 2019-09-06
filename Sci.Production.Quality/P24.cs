@@ -502,6 +502,9 @@ set TransferCFADate = null
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");
+                                string ScanQty = MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"].ToString();
+                                string ScanEditDate = MyUtility.Check.Empty(dr["ScanEditDate"]) ? "NULL" : "'"+Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString()+"'";
+
                                 insertCmds.Add($@"
 
 INSERT INTO [dbo].[PackingScan_History]
@@ -523,8 +526,8 @@ INSERT INTO [dbo].[PackingScan_History]
            ,'{dr["CTNStartNo"]}'
            ,'{dr["SCICtnNo"]}'
            ,'QA P24'
-           ,{dr["ScanQty"]}
-           ,'{Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString()}'
+           ,{ScanQty}
+           ,{ScanEditDate}
            ,'{dr["ScanName"]}'
            ,'{Sci.Env.User.UserID}'
            ,GETDATE()
