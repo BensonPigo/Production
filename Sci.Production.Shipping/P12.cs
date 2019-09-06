@@ -102,6 +102,7 @@ select
 	FOCPulloutQty = isnull(c.value2,0),
 	FinishedFOCStockinQty =o.FOCQty - isnull(c.value2,0)
 from orders o with(nolock)
+inner join Factory f with(nolock) on f.id = o.FactoryID and f.IsProduceFty = 1
 outer apply(
 	select sum(value) as value , sum(value2) as value2 
 	from
@@ -149,14 +150,15 @@ order by o.ID
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
-            DataTable odt;
-            DualResult result;
-
-            if (dt.Rows.Count == 0)
+            if (((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Count() == 0)
             {
                 return;
             }
+
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
+            DataTable dt2 = dt.Copy();
+            DataTable odt;
+            DualResult result;
 
             string sqlchk = $@"
 select t.OrderID
@@ -176,16 +178,15 @@ inner join Order_Finish ox with(nolock) on ox.id = t.OrderID
                 string msg = $@"SP# already extsis Finished FOC
 SP# : {string.Join(",", idList)}";
                 MyUtility.Msg.WarningBox(msg);
+                dt2 = dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).CopyToDataTable();
             }
-
-            dt.AsEnumerable().Where(w=>MyUtility.Convert.GetString(w["OrderId"]).)
 
             string insertOrderFinished = $@"
 insert Order_Finish(ID,FOCQty,CurrentFOCQty,AddName,AddDate)
 select OrderID,FinishedFOCStockinQty,(FinishedFOCStockinQty -FOCPulloutQty) ,'{Sci.Env.User.UserID}',getdate()
 from #tmp
 ";
-            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, insertOrderFinished, out odt);
+            result = MyUtility.Tool.ProcessWithDatatable(dt2, string.Empty, insertOrderFinished, out odt);
             if (!result)
             {
                 this.ShowErr(result);

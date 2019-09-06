@@ -1,12 +1,11 @@
 CREATE TABLE [dbo].[Order_Finish] (
-    [UKey]    BIGINT       IDENTITY (1, 1) NOT NULL,
     [ID]      VARCHAR (13) NOT NULL,
     [FOCQty]  INT          NOT NULL,
     [AddName] VARCHAR (10) NULL,
     [AddDate] DATETIME     NULL,
     [CurrentFOCQty] INT NOT NULL DEFAULT ((0)), 
     [EditDate] DATETIME NULL, 
-    CONSTRAINT [PK_Order_Finish] PRIMARY KEY CLUSTERED ([UKey] ASC)
+    CONSTRAINT [PK_Order_Finish] PRIMARY KEY CLUSTERED ([ID])
 );
 
 
