@@ -56,8 +56,9 @@
             this.chkisSubcon = new Sci.Win.UI.CheckBox();
             this.chkisMisc = new Sci.Win.UI.CheckBox();
             this.chkIsSintexSubcon = new Sci.Win.UI.CheckBox();
-            this.txtEmail = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.editRemark = new Sci.Win.UI.EditBox();
+            this.btnBatchApprove = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -66,14 +67,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(893, 439);
-            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editRemark);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.txtEmail);
             this.detailcont.Controls.Add(this.chkIsSintexSubcon);
             this.detailcont.Controls.Add(this.chkisMisc);
             this.detailcont.Controls.Add(this.chkisSubcon);
@@ -102,21 +99,15 @@
             this.detailcont.Controls.Add(this.labelNationality);
             this.detailcont.Controls.Add(this.labelAbbreviation);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(893, 401);
             this.detailcont.TabIndex = 0;
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 401);
-            this.detailbtm.Size = new System.Drawing.Size(893, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(893, 439);
+            this.browse.Size = new System.Drawing.Size(945, 483);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(901, 468);
+            this.tabs.Size = new System.Drawing.Size(953, 512);
             // 
             // createby
             // 
@@ -190,7 +181,7 @@
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Location = new System.Drawing.Point(28, 294);
+            this.labelCurrency.Location = new System.Drawing.Point(28, 263);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(125, 23);
             this.labelCurrency.TabIndex = 7;
@@ -198,7 +189,7 @@
             // 
             // labelPaymentTerm
             // 
-            this.labelPaymentTerm.Location = new System.Drawing.Point(28, 321);
+            this.labelPaymentTerm.Location = new System.Drawing.Point(28, 290);
             this.labelPaymentTerm.Name = "labelPaymentTerm";
             this.labelPaymentTerm.Size = new System.Drawing.Size(125, 23);
             this.labelPaymentTerm.TabIndex = 8;
@@ -206,7 +197,7 @@
             // 
             // labelWHoldingRate
             // 
-            this.labelWHoldingRate.Location = new System.Drawing.Point(28, 348);
+            this.labelWHoldingRate.Location = new System.Drawing.Point(28, 317);
             this.labelWHoldingRate.Name = "labelWHoldingRate";
             this.labelWHoldingRate.Size = new System.Drawing.Size(125, 23);
             this.labelWHoldingRate.TabIndex = 9;
@@ -326,10 +317,10 @@
             // 
             this.txtpayterm_ftyPaymentTerm.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermID", true));
             this.txtpayterm_ftyPaymentTerm.DisplayBox1Binding = "";
-            this.txtpayterm_ftyPaymentTerm.Location = new System.Drawing.Point(156, 321);
+            this.txtpayterm_ftyPaymentTerm.Location = new System.Drawing.Point(156, 290);
             this.txtpayterm_ftyPaymentTerm.Name = "txtpayterm_ftyPaymentTerm";
             this.txtpayterm_ftyPaymentTerm.Size = new System.Drawing.Size(384, 23);
-            this.txtpayterm_ftyPaymentTerm.TabIndex = 9;
+            this.txtpayterm_ftyPaymentTerm.TabIndex = 8;
             this.txtpayterm_ftyPaymentTerm.TextBox1Binding = "";
             // 
             // txtCurrency
@@ -338,10 +329,10 @@
             this.txtCurrency.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID", true));
             this.txtCurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCurrency.IsSupportSytsemContextMenu = false;
-            this.txtCurrency.Location = new System.Drawing.Point(156, 294);
+            this.txtCurrency.Location = new System.Drawing.Point(156, 263);
             this.txtCurrency.Name = "txtCurrency";
             this.txtCurrency.Size = new System.Drawing.Size(40, 23);
-            this.txtCurrency.TabIndex = 8;
+            this.txtCurrency.TabIndex = 7;
             // 
             // txtCountryNationality
             // 
@@ -358,7 +349,7 @@
             this.numWHoldingTerm.BackColor = System.Drawing.Color.White;
             this.numWHoldingTerm.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WithHoldingRate", true));
             this.numWHoldingTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numWHoldingTerm.Location = new System.Drawing.Point(156, 348);
+            this.numWHoldingTerm.Location = new System.Drawing.Point(156, 317);
             this.numWHoldingTerm.Name = "numWHoldingTerm";
             this.numWHoldingTerm.NullValue = new decimal(new int[] {
             0,
@@ -366,7 +357,7 @@
             0,
             0});
             this.numWHoldingTerm.Size = new System.Drawing.Size(40, 23);
-            this.numWHoldingTerm.TabIndex = 10;
+            this.numWHoldingTerm.TabIndex = 9;
             this.numWHoldingTerm.Value = new decimal(new int[] {
             0,
             0,
@@ -421,28 +412,41 @@
             this.chkIsSintexSubcon.Text = "Is Sintex Subcon";
             this.chkIsSintexSubcon.UseVisualStyleBackColor = true;
             // 
-            // txtEmail
-            // 
-            this.txtEmail.BackColor = System.Drawing.Color.White;
-            this.txtEmail.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtEmail.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Email", true));
-            this.txtEmail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtEmail.Location = new System.Drawing.Point(156, 265);
-            this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(317, 23);
-            this.txtEmail.TabIndex = 7;
-            // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(28, 265);
+            this.label1.Location = new System.Drawing.Point(28, 343);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(125, 23);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "E-mail";
+            this.label1.TabIndex = 19;
+            this.label1.Text = "Remark";
+            // 
+            // editRemark
+            // 
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(156, 346);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(400, 82);
+            this.editRemark.TabIndex = 10;
+            // 
+            // btnBatchApprove
+            // 
+            this.btnBatchApprove.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnBatchApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnBatchApprove.Location = new System.Drawing.Point(824, 3);
+            this.btnBatchApprove.Name = "btnBatchApprove";
+            this.btnBatchApprove.Size = new System.Drawing.Size(122, 30);
+            this.btnBatchApprove.TabIndex = 21;
+            this.btnBatchApprove.Text = "Batch Approve";
+            this.btnBatchApprove.UseVisualStyleBackColor = true;
+            this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(901, 501);
+            this.ClientSize = new System.Drawing.Size(953, 545);
+            this.Controls.Add(this.btnBatchApprove);
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "txtTel";
             this.DefaultOrder = "ID";
@@ -458,9 +462,11 @@
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B04. Supplier/Sub Con (Local)";
             this.UniqueExpress = "ID";
-            this.UnjunkChkValue = "Junk";
+            this.UnjunkChkValue = "Junked";
             this.WorkAlias = "LocalSupp";
             this.Load += new System.EventHandler(this.B04_FormLoaded);
+            this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -504,7 +510,8 @@
         private Win.UI.CheckBox chkisSubcon;
         private Win.UI.CheckBox chkIsShipping;
         private Win.UI.CheckBox chkIsSintexSubcon;
+        private Win.UI.EditBox editRemark;
         private Win.UI.Label label1;
-        private Win.UI.TextBox txtEmail;
+        private Win.UI.Button btnBatchApprove;
     }
 }

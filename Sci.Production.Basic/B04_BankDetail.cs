@@ -13,16 +13,47 @@ namespace Sci.Production.Basic
     {
 
         private bool _canconfirm;
+        private bool _canedit;
         private string LocalSupp_Bank_ID;
 
-        public B04_BankDetail(bool canedit, string ID, string keyvalue2, string keyvalue3)
+        public B04_BankDetail(bool canedit, string ID, string keyvalue2, string keyvalue3, bool cancomfirmed)
         {
             InitializeComponent();
+            this._canconfirm = cancomfirmed;
+            this._canedit = canedit;
             this.DefaultFilter = "ID = '" + ID.Trim() + "'";
             this.LocalSupp_Bank_ID = ID;
             if (this.CurrentMaintain == null)
             {
                 this.labelStatus.Text = string.Empty;
+            }
+        }
+
+
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            this.toolbar.cmdEdit.Enabled = this._canedit && !this.EditMode;
+            this.toolbar.cmdNew.Enabled = this._canedit && !this.EditMode;
+            this.toolbar.cmdConfirm.Visible = true;
+
+            if (this.CurrentMaintain != null)
+            {
+                if (this.tabs.SelectedIndex == 0)
+                {
+                    this.toolbar.cmdConfirm.Enabled = false;
+                    this.toolbar.cmdSave.Enabled = false;
+                }
+                else
+                {
+                    this.toolbar.cmdConfirm.Enabled = this._canconfirm && !this.EditMode && this.CurrentMaintain["Status"].ToString().EqualString("New");
+                    this.toolbar.cmdSave.Enabled = this._canedit && this.EditMode;
+                }
+            }
+            else
+            {
+                this.toolbar.cmdConfirm.Enabled = false;
+                this.toolbar.cmdSave.Enabled = false;
             }
         }
 

@@ -257,7 +257,7 @@ namespace Sci.Production.Shipping
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=1,Status='Junk',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=1,Status='Junked',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }

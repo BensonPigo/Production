@@ -1,4 +1,5 @@
 ﻿using Sci.Data;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -133,7 +134,7 @@ namespace Sci.Production.Basic
         /// <param name="e">e</param>
         private void BtnBankDetail_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(Prgs.GetAuthority(Sci.Env.User.UserID, "B04. Supplier/Sub Con (Local)", "CanEdit"), this.CurrentMaintain["ID"].ToString(), null, null ,this.Perm.Confirm);
             //Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(new ToolStripMenuItem(), this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
@@ -183,7 +184,7 @@ namespace Sci.Production.Basic
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'Junk',Junk=1,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'Junked',Junk=1,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }
