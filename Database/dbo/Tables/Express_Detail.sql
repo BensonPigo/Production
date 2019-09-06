@@ -23,6 +23,7 @@
     [AddDate]     DATETIME        NULL,
     [EditName]    VARCHAR (10)    CONSTRAINT [DF_Express_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME        NULL,
+    [PackingListID] VARCHAR(13) NULL, 
     CONSTRAINT [PK_Express_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [Seq1] ASC, [Seq2] ASC, [Category] ASC)
 );
 
