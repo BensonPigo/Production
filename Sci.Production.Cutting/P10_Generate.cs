@@ -183,7 +183,7 @@ group by sizeCode"
                 else
                 {
                     //Annotation 
-                    string[] ann = Regex.Replace(dr["annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(dr["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
                     #region Annotation有在Subprocess 內需要寫入bundle_detail_art，寫入Bundle_Detail_pattern
                     if (ann.Length > 0)
