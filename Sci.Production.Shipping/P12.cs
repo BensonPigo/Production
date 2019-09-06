@@ -147,16 +147,45 @@ order by o.ID
             this.listControlBindingSource1.DataSource = dt;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
-            DataTable dt = ((DataTable)listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
+            DataTable odt;
+            DualResult result;
+
+            if (dt.Rows.Count == 0)
+            {
+                return;
+            }
+
+            string sqlchk = $@"
+select t.OrderID
+from #tmp t
+inner join Order_Finish ox with(nolock) on ox.id = t.OrderID
+";
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlchk, out odt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (odt.Rows.Count > 0)
+            {
+                var idList = odt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["OrderID"])).ToList();
+                string msg = $@"SP# already extsis Finished FOC
+SP# : {string.Join(",", idList)}";
+                MyUtility.Msg.WarningBox(msg);
+            }
+
+            dt.AsEnumerable().Where(w=>MyUtility.Convert.GetString(w["OrderId"]).)
+
             string insertOrderFinished = $@"
 insert Order_Finish(ID,FOCQty,CurrentFOCQty,AddName,AddDate)
 select OrderID,FinishedFOCStockinQty,(FinishedFOCStockinQty -FOCPulloutQty) ,'{Sci.Env.User.UserID}',getdate()
 from #tmp
 ";
-            DataTable odt;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, insertOrderFinished, out odt);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, insertOrderFinished, out odt);
             if (!result)
             {
                 this.ShowErr(result);
