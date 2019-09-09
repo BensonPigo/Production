@@ -51,10 +51,9 @@ Return
 				, t.ComboType
 		from temp t
 		outer apply (
-			select value = IIF(AccuStdQ > AlloQty, IIF(AccuStdQ - t.baseStdQ <= 0, t.baseStdQ
-																				 , IIF(t.baseStdQ + (AlloQty - AccuStdQ) < 0, 0
-																						  							   	    , t.baseStdQ + (AlloQty - AccuStdQ)))
-												 , t.baseStdQ)
+			select value = case when AccuStdQ > AlloQty and t.baseStdQ + (AlloQty - AccuStdQ) < 0 then 0
+								when AccuStdQ > AlloQty then t.baseStdQ + (AlloQty - AccuStdQ)
+								else t.baseStdQ end
 		) StdQ
 	)
 
