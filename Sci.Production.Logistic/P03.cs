@@ -299,12 +299,32 @@ order by rn ");
                 this.numTotalCTNQty.Value = 0;
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
-Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.OrderID, 
-TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo'
-,0 as rn
-,0 as rn1
-, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark, b.TransferCFADate ,b.CFAReturnClogDate  ,b.CustCTN
-,[FtyGroup]=a.FactoryID ,b.FtyReqReturnDate,b.SCICtnNo
+Select distinct '' as ID
+    , 0 as selected
+    , b.ReceiveDate
+    , b.Id as PackingListID
+    , b.OrderID
+    , TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo'
+    , 0 as rn
+    , 0 as rn1
+    , c.CustPONo
+    , c.StyleID
+    , c.SeasonID
+    , c.BrandID
+    , c.Customize1
+    , d.Alias
+    , c.BuyerDelivery
+    , b.ClogLocationId
+    , '' as Remark
+    , b.TransferCFADate
+    , b.CFAReturnClogDate
+    , b.CustCTN
+    , [FtyGroup]=a.FactoryID
+    , b.FtyReqReturnDate
+    , b.SCICtnNo
+	, [ScanQty]=b.ScanQty
+	, b.ScanEditDate
+	, b.ScanName
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -347,12 +367,30 @@ pd.OrderID
 ,pd.ReceiveDate
 ,pd.FtyReqReturnDate
 ,pd.ReturnDate
-,pd.ClogLocationId,p.MDivisionID
-,pd.TransferCFADate ,pd.CFAReturnClogDate 
+,pd.ClogLocationId
+,p.MDivisionID
+,pd.TransferCFADate
+,pd.CFAReturnClogDate 
 ,p.FactoryID
 ,pd.SCICtnNo
-from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
-where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0",
+,[ScanQty]=ScanQty.Value
+,pd.ScanEditDate
+,pd.ScanName
+from PackingList_Detail pd WITH (NOLOCK)
+inner join PackingList p (NOLOCK) on pd.id = p.id
+OUTER APPLY (
+	SELECT [Value]=SUM(ppd.ScanQty) 
+	FROM PackingList_Detail ppd
+	WHERE ppd.ID= p.Id 
+			AND ppd.OrderID=pd.OrderID 
+			AND ppd.CTNStartNo=pd.CTNStartNo  
+			AND ppd.CTNStartNo=pd.CTNStartNo 
+			AND ppd.SCICtnNo=pd.SCICtnNo
+)ScanQty
+where pd.ID = '{0}' 
+and CTNStartNo = '{1}' 
+and pd.CTNQty > 0 
+and pd.DisposeFromClog= 0",
                                     dr["PackingListID"].ToString(),
                                     dr["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -361,7 +399,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromC
                                     {
                                         if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
                                         {
-                                            dr["Remark"] = "This carton not yet send to Clog.";
+                                            dr["Remark"] = dr["Remark"] + "This carton not yet send to Clog.";
                                         }
                                         else
                                         {
@@ -370,7 +408,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromC
                                     }
                                     else
                                     {
-                                        dr["Remark"] = "This carton has been return.";
+                                        dr["Remark"] = dr["Remark"] + "This carton has been return.";
                                     }
 
                                     if (!(MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"])))
@@ -380,7 +418,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromC
 
                                     if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
                                     {
-                                        dr["Remark"] = "The order's M is not equal to login M.";
+                                        dr["Remark"] = dr["Remark"] + "The order's M is not equal to login M.";
                                     }
 
                                     dr["OrderID"] = seekData["OrderID"];
@@ -391,6 +429,9 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromC
                                     dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
                                     dr["FtyReqReturnDate"] = seekData["FtyReqReturnDate"];
                                     dr["FtyGroup"] = seekData["FactoryID"];
+                                    dr["ScanQty"] = seekData["ScanQty"];
+                                    dr["ScanEditDate"] = seekData["ScanEditDate"];
+                                    dr["ScanName"] = seekData["ScanName"];
                                     string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
                                     sqlCmd = string.Format(
                                         @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
@@ -416,10 +457,33 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromC
                                 {
                                     dr["CustCTN"] = sl[1];
                                     sqlCmd = $@"
-select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
-,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID,pd.SCICtnNo
+select pd.OrderID
+,pd.OrderShipmodeSeq
+,pd.ReceiveDate
+,pd.ReturnDate
+,pd.ClogLocationId
+,p.MDivisionID
+,pd.TransferCFADate
+,pd.CFAReturnClogDate
+,pd.id
+,pd.CTNStartNo
+,pd.FtyReqReturnDate
+,p.FactoryID
+,pd.SCICtnNo
+,[ScanQty]=ScanQty.Value
+,pd.ScanEditDate
+,pd.ScanName
 from PackingList_Detail pd WITH (NOLOCK)  
 inner join PackingList p (NOLOCK) on pd.id = p.id
+OUTER APPLY (
+	SELECT [Value]=SUM(ppd.ScanQty) 
+	FROM PackingList_Detail ppd
+	WHERE ppd.ID= p.Id 
+			AND ppd.OrderID=pd.OrderID 
+			AND ppd.CTNStartNo=pd.CTNStartNo  
+			AND ppd.CTNStartNo=pd.CTNStartNo 
+			AND ppd.SCICtnNo=pd.SCICtnNo
+)ScanQty
 where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0";
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
@@ -427,7 +491,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         {
                                             if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
                                             {
-                                                dr["Remark"] = "This carton not yet send to Clog.";
+                                                dr["Remark"] = dr["Remark"] + "This carton not yet send to Clog.";
                                             }
                                             else
                                             {
@@ -436,7 +500,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         }
                                         else
                                         {
-                                            dr["Remark"] = "This carton has been return.";
+                                            dr["Remark"] = dr["Remark"] + "This carton has been return.";
                                         }
 
                                         if (!(MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"])))
@@ -446,11 +510,11 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
                                         if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
                                         {
-                                            dr["Remark"] = "The order's M is not equal to login M.";
+                                            dr["Remark"] = dr["Remark"] + "The order's M is not equal to login M.";
                                         }
 
                                         string packinglistid = seekData["id"].ToString().Trim();
-                                        string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                        string cTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                         dr["OrderID"] = seekData["OrderID"];
                                         dr["SCICtnNo"] = seekData["SCICtnNo"];
                                         dr["ClogLocationId"] = seekData["ClogLocationId"];
@@ -459,6 +523,9 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
                                         dr["FtyReqReturnDate"] = seekData["FtyReqReturnDate"];
                                         dr["FtyGroup"] = seekData["FactoryID"];
+                                        dr["ScanQty"] = seekData["ScanQty"];
+                                        dr["ScanEditDate"] = seekData["ScanEditDate"];
+                                        dr["ScanName"] = seekData["ScanName"];
                                         string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
                                         sqlCmd = string.Format(
                                             @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
@@ -472,7 +539,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                         {
                                             dr["packinglistid"] = packinglistid.Trim();
-                                            dr["CTNStartNo"] = CTNStartNo.Trim();
+                                            dr["CTNStartNo"] = cTNStartNo.Trim();
                                             dr["StyleID"] = seekData["StyleID"];
                                             dr["SeasonID"] = seekData["SeasonID"];
                                             dr["BrandID"] = seekData["BrandID"];
@@ -484,7 +551,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     }
                                     else
                                     {
-                                        dr["Remark"] = "This carton is not in packing list.";
+                                        dr["Remark"] = dr["Remark"] + "This carton is not in packing list.";
                                     }
                                 }
 
@@ -499,10 +566,33 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                             {
                                 dr["CustCTN"] = sl[1];
                                 string sqlCmd = $@"
-select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
-,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID,pd.SCICtnNo
+select pd.OrderID
+,pd.OrderShipmodeSeq
+,pd.ReceiveDate
+,pd.ReturnDate
+,pd.ClogLocationId
+,p.MDivisionID
+,pd.TransferCFADate
+,pd.CFAReturnClogDate
+,pd.id
+,pd.CTNStartNo
+,pd.FtyReqReturnDate
+,p.FactoryID
+,pd.SCICtnNo
+,[ScanQty]=ScanQty.Value
+,pd.ScanEditDate
+,pd.ScanName
 from PackingList_Detail pd WITH (NOLOCK)  
 inner join PackingList p (NOLOCK) on pd.id = p.id
+OUTER APPLY (
+	SELECT [Value]=SUM(ppd.ScanQty) 
+	FROM PackingList_Detail ppd
+	WHERE ppd.ID= p.Id 
+			AND ppd.OrderID=pd.OrderID 
+			AND ppd.CTNStartNo=pd.CTNStartNo  
+			AND ppd.CTNStartNo=pd.CTNStartNo 
+			AND ppd.SCICtnNo=pd.SCICtnNo
+)ScanQty
 where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
@@ -510,7 +600,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     {
                                         if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
                                         {
-                                            dr["Remark"] = "This carton not yet send to Clog.";
+                                            dr["Remark"] = dr["Remark"] + "This carton not yet send to Clog.";
                                         }
                                         else
                                         {
@@ -519,7 +609,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     }
                                     else
                                     {
-                                        dr["Remark"] = "This carton has been return.";
+                                        dr["Remark"] = dr["Remark"] + "This carton has been return.";
                                     }
 
                                     if (!(MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"])))
@@ -529,11 +619,11 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
                                     if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
                                     {
-                                        dr["Remark"] = "The order's M is not equal to login M.";
+                                        dr["Remark"] = dr["Remark"] + "The order's M is not equal to login M.";
                                     }
 
                                     string packinglistid = seekData["id"].ToString().Trim();
-                                    string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                    string cTNStartNo1 = seekData["CTNStartNo"].ToString().Trim();
                                     dr["OrderID"] = seekData["OrderID"];
                                     dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["ClogLocationId"] = seekData["ClogLocationId"];
@@ -542,6 +632,9 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
                                     dr["FtyReqReturnDate"] = seekData["FtyReqReturnDate"];
                                     dr["FtyGroup"] = seekData["FactoryID"];
+                                    dr["ScanQty"] = seekData["ScanQty"];
+                                    dr["ScanEditDate"] = seekData["ScanEditDate"];
+                                    dr["ScanName"] = seekData["ScanName"];
                                     string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
                                     sqlCmd = string.Format(
                                         @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
@@ -555,7 +648,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
                                         dr["packinglistid"] = packinglistid.Trim();
-                                        dr["CTNStartNo"] = CTNStartNo.Trim();
+                                        dr["CTNStartNo"] = cTNStartNo1.Trim();
                                         dr["StyleID"] = seekData["StyleID"];
                                         dr["SeasonID"] = seekData["SeasonID"];
                                         dr["BrandID"] = seekData["BrandID"];
@@ -567,7 +660,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                 }
                                 else
                                 {
-                                    dr["Remark"] = "This carton is not in packing list.";
+                                    dr["Remark"] = dr["Remark"] + "This carton is not in packing list.";
                                 }
 
                                 if (dr["Remark"].ToString().Trim() != string.Empty)
