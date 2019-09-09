@@ -522,35 +522,44 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select ed.*
-	                ,case when ed.Category in ('4','9') then ed.MtlDesc else ed.Description end nDescription
-                from
-                (
-	                select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
-		                dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
-		                isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
-		                isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
-		                isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
-		                isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Leader)),ed.Leader) as LeaderName,
-		                CASE ed.Category
-			                WHEN '1' THEN N'Sample'
-			                WHEN '2' THEN N'SMS'
-			                WHEN '3' THEN N'Bulk'
-			                WHEN '4' THEN N'Material'
-			                WHEN '5' THEN N'Dox'
-			                WHEN '6' THEN N'Machine/Parts'
-			                WHEN '7' THEN N'Mock Up'
-			                WHEN '8' THEN N'Other Sample'
-			                WHEN '9' THEN N'Other Material'
-			                ELSE N''
-		                END as CategoryName
-		                from Express_Detail ed WITH (NOLOCK) 
-		                left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
-		                left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
-		                left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
-	                where ed.ID = '{0}'
-                )ed
-                Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
+                @"
+select ed.*
+	,case when ed.Category in ('4','9') then ed.MtlDesc else ed.Description end nDescription
+	,AirPPno=iif(isnull(ed.PackingListID,'') = '',ed.DutyNo , airpp.AirPPno)
+from
+(
+	select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
+		dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
+		isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
+		isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
+		isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
+		isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Leader)),ed.Leader) as LeaderName,
+		CASE ed.Category
+			WHEN '1' THEN N'Sample'
+			WHEN '2' THEN N'SMS'
+			WHEN '3' THEN N'Bulk'
+			WHEN '4' THEN N'Material'
+			WHEN '5' THEN N'Dox'
+			WHEN '6' THEN N'Machine/Parts'
+			WHEN '7' THEN N'Mock Up'
+			WHEN '8' THEN N'Other Sample'
+			WHEN '9' THEN N'Other Material'
+			ELSE N''
+		END as CategoryName
+	from Express_Detail ed WITH (NOLOCK) 
+	left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
+	left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
+	left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
+	where ed.ID = '{0}'
+)ed
+outer apply(
+	select top 1 AirPPno = AirPP.ID
+	from PackingList_Detail pld with(nolock)
+	inner join AirPP with(nolock) on AirPP.OrderID = pld.OrderID and AirPP.OrderShipmodeSeq = pld.OrderShipmodeSeq
+	where pld.id = ed.PackingListID and pld.OrderID = ed.OrderID
+	order by AirPP.AddDate desc
+)airpp
+Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -605,7 +614,8 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(7), decimal_places: 2)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(5))
                 .Text("CategoryName", header: "Category", width: Widths.AnsiChars(14))
-                .Text("DutyNo", header: "AirPP#/FOC PL#", width: Widths.AnsiChars(13))
+                .Text("PackingListID", header: "PL#", width: Widths.AnsiChars(13))
+                .Text("AirPPno", header: "AirPP#", width: Widths.AnsiChars(13))
                 .Text("InChargeName", header: "In Charge", width: Widths.AnsiChars(25))
                 .Text("ReceiverName", header: "Receiver", width: Widths.AnsiChars(13))
                 .Text("LeaderName", header: "Team Leader", width: Widths.AnsiChars(30))
