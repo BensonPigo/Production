@@ -178,19 +178,30 @@ inner join Order_Finish ox with(nolock) on ox.id = t.OrderID
                 string msg = $@"SP# already extsis Finished FOC
 SP# : {string.Join(",", idList)}";
                 MyUtility.Msg.WarningBox(msg);
-                dt2 = dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).CopyToDataTable();
+                if (dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).Count() > 0)
+                {
+                    dt2 = dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).CopyToDataTable();
+                }
+
+                if (dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).Count() == 0)
+                {
+                    dt2.Clear();
+                }
             }
 
-            string insertOrderFinished = $@"
+            if (dt2.Rows.Count > 0)
+            {
+                string insertOrderFinished = $@"
 insert Order_Finish(ID,FOCQty,CurrentFOCQty,AddName,AddDate)
 select OrderID,FinishedFOCStockinQty,(FinishedFOCStockinQty -FOCPulloutQty) ,'{Sci.Env.User.UserID}',getdate()
 from #tmp
 ";
-            result = MyUtility.Tool.ProcessWithDatatable(dt2, string.Empty, insertOrderFinished, out odt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
+                result = MyUtility.Tool.ProcessWithDatatable(dt2, string.Empty, insertOrderFinished, out odt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
             }
 
             this.Find();
