@@ -5,6 +5,7 @@ CREATE TABLE [dbo].[Order_Finish] (
     [AddDate] DATETIME     NULL,
     [CurrentFOCQty] INT NOT NULL DEFAULT ((0)), 
     [EditDate] DATETIME NULL, 
+    [Ukey] BIGINT NOT NULL IDENTITY, 
     CONSTRAINT [PK_Order_Finish] PRIMARY KEY CLUSTERED ([ID])
 );
 
