@@ -23,10 +23,20 @@ namespace Sci.Production.IE
         /// <param name="keyvalue1">keyvalue1</param>
         /// <param name="keyvalue2">keyvalue2</param>
         /// <param name="keyvalue3">keyvalue3</param>
-        public P02_NewCheckList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
+        /// <param name="changeoverType"></param>
+        public P02_NewCheckList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string changeoverType)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
+
+            if (changeoverType == "R")
+            {
+                this.Text = "Check List - Repeat";
+            }
+            else
+            {
+                this.Text = "Check List - New";
+            }
         }
 
         /// <summary>

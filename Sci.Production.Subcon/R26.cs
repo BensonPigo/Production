@@ -272,6 +272,7 @@ select DISTINCT c.FactoryID
 	        ,[Supp] = a.LocalSuppID+'-'+d.Abb 
 	        ,b.Delivery
 	        ,b.Refno
+            ,Category = Iif(a.category = 'CARTON' AND iscarton = 0, 'CARDBOARD', a.category) 
             ,[IsCarton] = iif(li.IsCarton = 1 ,'Y','')
 	        ,b.ThreadColorID + ' - ' + ThreadColor.Description		
 			,[PRConfirmedDate]=CASE WHEN a.Category = 'CARTON' 
@@ -291,6 +292,8 @@ select DISTINCT c.FactoryID
             ,a.CurrencyID 
 	        ,b.Price
 	        ,[Amount] = b.Qty*b.Price
+            ,x.KPIRate
+            ,[Amount (USD)] = iif(x.KPIRate = 0, 0, b.Qty*b.Price/x.KPIRate)
 	        ,b.InQty
             ,b.qty-b.InQty
 	        ,b.APQty
@@ -303,6 +306,7 @@ left join orders c WITH (NOLOCK) on c.ID = b.POID
 left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID 
 left join ThreadColor on b.ThreadColorID = ThreadColor.ID
 left join LocalItem li WITH (NOLOCK) on li.RefNo=b.Refno
+outer apply(select KPIRate = dbo.getrate('KP','USD',a.CurrencyID ,a.IssueDate))x
 " + sqlWhere);
                 result = DBProxy.Current.Select("", sqlcd, lis, out dtt);
                 if (!result)
