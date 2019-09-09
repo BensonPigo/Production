@@ -102,6 +102,7 @@ select
 	FOCPulloutQty = isnull(c.value2,0),
 	FinishedFOCStockinQty =o.FOCQty - isnull(c.value2,0)
 from orders o with(nolock)
+inner join Factory f with(nolock) on f.id = o.FactoryID and f.IsProduceFty = 1
 outer apply(
 	select sum(value) as value , sum(value2) as value2 
 	from
@@ -147,20 +148,60 @@ order by o.ID
             this.listControlBindingSource1.DataSource = dt;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
-            DataTable dt = ((DataTable)listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
-            string insertOrderFinished = $@"
-insert Order_Finish(ID,FOCQty,CurrentFOCQty,AddName,AddDate)
-select OrderID,FinishedFOCStockinQty,(FinishedFOCStockinQty -FOCPulloutQty) ,'{Sci.Env.User.UserID}',getdate()
-from #tmp
-";
+            if (((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Any(dr => dr["selected"].EqualDecimal(1)))
+            {
+                return;
+            }
+
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(dr => MyUtility.Convert.GetBool(dr["selected"])).CopyToDataTable();
+            DataTable dt2 = dt.Copy();
             DataTable odt;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, insertOrderFinished, out odt);
+            DualResult result;
+
+            string sqlchk = $@"
+select t.OrderID
+from #tmp t
+inner join Order_Finish ox with(nolock) on ox.id = t.OrderID
+";
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlchk, out odt);
             if (!result)
             {
                 this.ShowErr(result);
                 return;
+            }
+
+            if (odt.Rows.Count > 0)
+            {
+                var idList = odt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["OrderID"])).ToList();
+                string msg = $@"SP# already extsis Finished FOC
+SP# : {string.Join(",", idList)}";
+                MyUtility.Msg.WarningBox(msg);
+                if (dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).Count() > 0)
+                {
+                    dt2 = dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).CopyToDataTable();
+                }
+
+                if (dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).Count() == 0)
+                {
+                    dt2.Clear();
+                }
+            }
+
+            if (dt2.Rows.Count > 0)
+            {
+                string insertOrderFinished = $@"
+insert Order_Finish(ID,FOCQty,CurrentFOCQty,AddName,AddDate)
+select OrderID,FinishedFOCStockinQty,(FinishedFOCStockinQty -FOCPulloutQty) ,'{Sci.Env.User.UserID}',getdate()
+from #tmp
+";
+                result = MyUtility.Tool.ProcessWithDatatable(dt2, string.Empty, insertOrderFinished, out odt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
             }
 
             this.Find();
