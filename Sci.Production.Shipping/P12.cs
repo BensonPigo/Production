@@ -150,12 +150,12 @@ order by o.ID
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            if (((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Count() == 0)
+            if (((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Any(dr => dr["selected"].EqualDecimal(1)))
             {
                 return;
             }
 
-            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(dr => MyUtility.Convert.GetBool(dr["selected"])).CopyToDataTable();
             DataTable dt2 = dt.Copy();
             DataTable odt;
             DualResult result;
