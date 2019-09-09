@@ -178,6 +178,7 @@ BEGIN
 	,Round((cCPU * FactoryOrder.Qty * CPURate),10) as FactoryOrderCapacity
 	,FactoryOrder.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
+	,OrderDate
 	,FactorySort
 	,SubconInType
 	,FactoryOrder.ProgramID
@@ -227,7 +228,7 @@ BEGIN
 	into #tmpFactoryOrder2 
 	From #tmpFactoryOrder1	
 	left join #sew_FtyOrder SewingOutput on SewingOutput.OrderId = #tmpFactoryOrder1.ID
-	outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
+	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate,@isSCIDelivery) as Date2) odd2
 
 
