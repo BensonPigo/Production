@@ -948,7 +948,7 @@ SELECT * INTO #total_PO FROM(
     --第二部分：自己這張，因為還沒有存入DB所以要納入
     SELECT  ArtworkTypeID,o.POID,OrderId
 		    ,[Qty]=PoQty
-		    ,[PO_amt]= amount * dbo.getRate('KP','USD','USD',GETDATE()) 
+		    ,[PO_amt]= amount * dbo.getRate('KP','{this._masterData["CurrencyID"]}','USD',GETDATE()) 
     FROM #TmpSource
 	INNER JOIN Orders o ON o.ID=#TmpSource.orderid
 

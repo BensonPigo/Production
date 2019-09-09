@@ -1125,6 +1125,11 @@ where id = '{spNo}' and Category = 'S'
             }
 
         }
+
+        private void txtsubconSupplier_Leave(object sender, EventArgs e)
+        {
+            this.CurrentMaintain["localsuppid"] = txtsubconSupplier.TextBox1.Text;
+        }
     }
 
 }
