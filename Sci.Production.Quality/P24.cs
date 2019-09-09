@@ -109,6 +109,9 @@ select distinct
 ,[Returnto] = '' 
 ,p2.remark
 ,p2.SCICtnNo
+,p2.ScanQty
+,p2.ScanName
+,p2.ScanEditDate
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -493,9 +496,42 @@ set TransferCFADate = null
 , ReceiveDate = null
 , TransferDate = null
 , CFAReturnFtyDate = CONVERT(varchar(100), GETDATE(), 111)
+, ScanQty = 0 
+, ScanEditDate = null
+, ScanName = ''
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");
+                                string ScanQty = MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"].ToString();
+                                string ScanEditDate = MyUtility.Check.Empty(dr["ScanEditDate"]) ? "NULL" : "'"+Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString()+"'";
+
+                                insertCmds.Add($@"
+
+INSERT INTO [dbo].[PackingScan_History]
+           ([MDivisionID]
+           ,[PackingListID]
+           ,[OrderID]
+           ,[CTNStartNo]
+           ,[SCICtnNo]
+           ,[DeleteFrom]
+           ,[ScanQty]
+           ,[ScanEditDate]
+           ,[ScanName]
+           ,[AddName]
+           ,[AddDate])
+     VALUES
+           ('{Sci.Env.User.Keyword}'
+           ,'{dr["ID"]}'
+           ,'{dr["OrderID"]}'
+           ,'{dr["CTNStartNo"]}'
+           ,'{dr["SCICtnNo"]}'
+           ,'QA P24'
+           ,{ScanQty}
+           ,{ScanEditDate}
+           ,'{dr["ScanName"]}'
+           ,'{Sci.Env.User.UserID}'
+           ,GETDATE()
+            )");
                                 break;
                             default:
                                 break;

@@ -132,6 +132,11 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             }
 
             this.ComputeOrderQty();
+
+            // 加總APPBookingVW & APPEstAmtVW
+            this.numAppBookingVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPBookingVW)", string.Empty));
+            this.numAppEstAmtVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPEstAmtVW)", string.Empty));
+
             Color_Change();
         }
 
@@ -679,6 +684,37 @@ order by os.Seq", dr["OrderID"].ToString(),
                 }
                 #endregion
 
+                #region 重新計算表身每一個紙箱的材積重
+                DataRow drLocalitem;
+                string sqlLocalItem = $@"
+select 
+[BookingVW] = isnull(round(
+	(CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /6000
+,2),0)
+,[APPEstAmtVW] = isnull(round(
+	(CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /5000
+,2),0)
+from LocalItem
+outer apply(
+	select value = ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)
+) rate
+where RefNo='{dr["Refno"]}'";
+                if (MyUtility.Check.Empty(dr["CTNQty"]) || MyUtility.Convert.GetInt(dr["CTNQty"]) > 0)
+                {
+                    if (MyUtility.Check.Seek(sqlLocalItem, out drLocalitem))
+                    {
+                        dr["AppBookingVW"] = MyUtility.Convert.GetDecimal(drLocalitem["BookingVW"]) * MyUtility.Convert.GetInt(dr["CTNQty"]);
+                        dr["APPEstAmtVW"] = MyUtility.Convert.GetDecimal(drLocalitem["APPEstAmtVW"]) * MyUtility.Convert.GetInt(dr["CTNQty"]);
+                    }
+                }
+                else
+                {
+                    dr["AppBookingVW"] = 0;
+                    dr["APPEstAmtVW"] = 0;
+                }
+
+                #endregion
+
                 #region 重算表身Grid的Bal. Qty
 
                 // 目前還有多少衣服尚未裝箱
@@ -891,78 +927,7 @@ where InvA.OrderID = '{0}'
         /// <returns>DualResult</returns>
         protected override DualResult ClickSavePre()
         {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["INVNo"]))
-            {
-                this.sqlCmd = string.Format(
-                    @"select isnull(sum(ShipQty),0) as ShipQty,isnull(sum(CTNQty),0) as CTNQty,isnull(sum(NW),0) as NW,isnull(sum(GW),0) as GW,isnull(sum(NNW),0) as NNW,isnull(sum(CBM),0) as CBM
-from PackingList WITH (NOLOCK) 
-where INVNo = '{0}'
-and ID != '{1}'",
-                    this.CurrentMaintain["INVNo"].ToString(),
-                    this.CurrentMaintain["ID"].ToString());
-
-                DataTable summaryData;
-                if (this.result = DBProxy.Current.Select(null, this.sqlCmd, out summaryData))
-                {
-                    string updateCmd = @"update GMTBooking
-set TotalShipQty = @ttlShipQty, TotalCTNQty = @ttlCTNQty, TotalNW = @ttlNW, TotalNNW = @ttlNNW, TotalGW = @ttlGW, TotalCBM = @ttlCBM
-where ID = @INVNo";
-                    #region 準備sql參數資料
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                    sp1.ParameterName = "@ttlShipQty";
-                    sp1.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["ShipQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["ShipQty"]);
-
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                    sp2.ParameterName = "@ttlCTNQty";
-                    sp2.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["CTNQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["CTNQty"]);
-
-                    System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                    sp3.ParameterName = "@ttlNW";
-                    sp3.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["NW"].ToString()), 2);
-
-                    System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                    sp4.ParameterName = "@ttlNNW";
-                    sp4.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["NNW"].ToString()), 2);
-
-                    System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-                    sp5.ParameterName = "@ttlGW";
-                    // ISP20181015 GW抓到小數點後3位
-                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["GW"].ToString()), 3);
-
-                    System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-                    sp6.ParameterName = "@ttlCBM";
-                    // ISP20181015 CBM抓到小數點後4位
-                    sp6.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"].ToString());
-
-                    System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
-                    sp7.ParameterName = "@INVNo";
-                    sp7.Value = this.CurrentMaintain["INVNo"].ToString();
-
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                    cmds.Add(sp1);
-                    cmds.Add(sp2);
-                    cmds.Add(sp3);
-                    cmds.Add(sp4);
-                    cmds.Add(sp5);
-                    cmds.Add(sp6);
-                    cmds.Add(sp7);
-                    #endregion
-
-                    this.result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
-                    if (!this.result)
-                    {
-                        DualResult failResult = new DualResult(false, "Update Garment Booking fail!\r\n" + this.result.ToString());
-                        return failResult;
-                    }
-                }
-                else
-                {
-                    DualResult failResult = new DualResult(false, "Select PackingList fail!\r\n" + this.result.ToString());
-                    return failResult;
-                }
-            }
-
-            return Result.True;
+            return Prgs.P03_UpdateGMT(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
         }
 
         /// <summary>

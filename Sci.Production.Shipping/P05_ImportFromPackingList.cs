@@ -239,6 +239,14 @@ select  pd.Selected
         , pd.Status
         , pd.InspDate
         , pd.ClogCTNQty
+        , APPBookingVW = isnull(
+                          (select sum (APPBookingVW) 
+                          from PackingList_Detail pld with(Nolock)
+                          where pld.id = pd.id), 0)
+        , APPEstAmtVW = isnull(
+                          (select sum (APPEstAmtVW) 
+                          from PackingList_Detail pld with(Nolock)
+                          where pld.id = pd.id), 0)
 from PackData pd");
             #endregion
 

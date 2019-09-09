@@ -52,9 +52,18 @@ FROM [Production].dbo.Express
 WHERE upper(FreightBy) = '3RD'
 and (AddDate >=@DateStart  or EditDate >=@DateStart) ORDER BY Id
 
-SELECT B.* 
+SELECT B.* ,AirPPID=iif(isnull(b.PackingListID,'') = '',b.DutyNo , airpp.AirPPno)
 INTO Express_Detail
-FROM  Pms_To_Trade.dbo.Express  A, [Production].dbo.Express_Detail  B WHERE A.ID = B.ID ORDER BY B.ID 
+FROM  Pms_To_Trade.dbo.Express  A
+inner join [Production].dbo.Express_Detail  B on A.ID = B.ID
+outer apply(
+	select top 1 AirPPno = AirPP.ID
+	from [Production].dbo.PackingList_Detail pld with(nolock)
+	inner join [Production].dbo.AirPP with(nolock) on AirPP.OrderID = pld.OrderID and AirPP.OrderShipmodeSeq = pld.OrderShipmodeSeq
+	where pld.id = B.PackingListID and pld.OrderID = B.OrderID
+	order by AirPP.AddDate desc
+)airpp
+ ORDER BY B.ID 
 
 SELECT B.* 
 INTO  Express_CTNData
