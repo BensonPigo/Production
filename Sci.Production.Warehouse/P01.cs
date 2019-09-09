@@ -93,7 +93,6 @@ namespace Sci.Production.Warehouse
             btnBatchClose.Size = new Size(180, 30);//預設是(80,30)
             btnBatchClose.Visible = dataType != "Y";
             #endregion
-            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "B,Bulk,S,Sample,M,Material");
 
         }
 
