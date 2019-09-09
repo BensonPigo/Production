@@ -85,32 +85,34 @@ namespace Sci.Production.Quality
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
 
-SELECT [Inspected Date] = FP.InspDate,
-       [Inspector] = FP.Inspector,
-       o.brandID,
-       o.FtyGroup,
-       o.StyleID,
-       [SP#] = F.POID,
-       [SEQ#] = concat(RTRIM(F.SEQ1) ,'-',F.SEQ2),
-       [StockType]=(select Name from DropDownList ddl  where ddl.id like '%'+rd. StockType+'%' and ddl.Type = 'Pms_StockType'),
-       [WK#] = re.ExportID ,
-	   [Supplier]=f.SuppID,
-	   [Supplier Name]=(select AbbEN from Supp where id = f.SuppID),
-	   [ATA] = p.FinalETA ,
-       [Roll#] = fp.Roll,
-       [Dyelot#] = fp.Dyelot,
-	   [Ref#]=p.RefNo,
-	   [Color]=dbo.GetColorMultipleID(o.BrandID,p.ColorID) ,
-       [Arrived YDS] = RD.StockQty,
-       [Actual YDS] = FP.ActualYds,
-       [Full Width] = ww.width,
-       [Actual Width] = FP.ActualWidth,
-       [Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
-	                Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2)),
-	   [Total Defect Points]=FP.TotalPoint,
-       [Grade] = FP.Grade,
-       [Remark]=FP.Remark,
-       [MCHandle]= dbo.getPass1_ExtNo(o.MCHandle)
+SELECT [Inspected Date] = FP.InspDate
+       ,[Inspector] = FP.Inspector
+       ,o.brandID
+       ,o.FtyGroup
+       ,o.StyleID
+       ,[SP#] = F.POID
+       ,[SEQ#] = concat(RTRIM(F.SEQ1) ,'-',F.SEQ2)
+       ,[StockType]=(select Name from DropDownList ddl  where ddl.id like '%'+rd. StockType+'%' and ddl.Type = 'Pms_StockType')
+       ,[WK#] = re.ExportID
+	   ,[Supplier]=f.SuppID
+	   ,[Supplier Name]=(select AbbEN from Supp where id = f.SuppID)
+	   ,[ATA] = p.FinalETA 
+       ,[Roll#] = fp.Roll
+       ,[Dyelot#] = fp.Dyelot
+	   ,[Ref#]=p.RefNo
+	   ,[Color]=dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+       ,[Arrived YDS] = RD.StockQty
+       ,[Actual YDS] = FP.ActualYds
+       ,[Full Width] = ww.width
+       ,[Actual Width] = FP.ActualWidth
+       ,[Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
+	                Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2))
+	   ,[Total Defect Points]=FP.TotalPoint
+       ,[Grade] = FP.Grade
+	   ,[inspectionTimeStart] = DATEADD(second, FP.QCTime*-1, FP.AddDate)
+	   ,[inspectionTimeFinish] = FP.AddDate
+       ,[Remark]=FP.Remark
+       ,[MCHandle]= dbo.getPass1_ExtNo(o.MCHandle)
        ,Fabric.WeaveTypeID
 into #tmp
 FROM System,FIR_Physical AS FP
