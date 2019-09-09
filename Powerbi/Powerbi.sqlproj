@@ -93,5 +93,8 @@
     <Build Include="dbo\Stored Procedures\P_DeleteSewingOutPut.sql" />
     <Build Include="dbo\Tables\EfficiencyBI.sql" />
     <Build Include="dbo\Stored Procedures\ImportEfficiencyBI.sql" />
+    <Build Include="dbo\Stored Procedures\P_ImportSewingLineSchedule.sql" />
+    <Build Include="dbo\Tables\P_SewingLineSchedule.sql" />
+    <Build Include="dbo\Functions\P_GetStyleLocation_Rate.sql" />
   </ItemGroup>
 </Project>

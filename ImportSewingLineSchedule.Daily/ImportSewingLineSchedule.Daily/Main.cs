@@ -102,15 +102,16 @@ namespace ImportSewingLineSchedule.Daily
             try
             {
                 string sqlcmd = $@"
+Delete P_SewingLineSchedule --刪除全部
+
 Declare @ServerName varchar(20);
-Declare  @OutputDate datetime ={OutputDate};
 DECLARE ServerNameList CURSOR FOR select name from sys.servers WHERE Name Like 'PMS\pmsdb\%'
 OPEN ServerNameList
 FETCH NEXT FROM ServerNameList INTO @ServerName
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	--SELECT @ServerName
-	EXEC P_ImportSewingLineSchedule @OutputDate,@ServerName
+	EXEC [P_ImportSewingLineSchedule] @ServerName
 FETCH NEXT FROM ServerNameList INTO @ServerName
 END
 CLOSE ServerNameList
@@ -155,7 +156,7 @@ Stored Procedure: [PBIReportData].P_ImportSewingLineSchedule
 ";
             #endregion
 
-            subject = "Import SewingDailyOutPut";
+            subject = "Import SewingLineSchedule";
             if (issucess)
             {
                 subject += " Success";
@@ -181,12 +182,12 @@ Stored Procedure: [PBIReportData].P_ImportSewingLineSchedule
 
         private void btnTestWebAPI_Click(object sender, EventArgs e)
         {
-            this.CallJobLogApi("Import SewingDailyOutPut to Power BI", "Import SewingDailyOutPut to Power BI Test", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
+            this.CallJobLogApi("Import SewingLineSchedule to Power BI", "Import SewingLineSchedule to Power BI Test", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
         }
 
         private void btnTestMail_Click(object sender, EventArgs e)
         {
-            SendMail("Import SewingDailyOutPut", "Import SewingDailyOutPut Test mail.");
+            SendMail("Import SewingLineSchedule", "Import SewingLineSchedule Test mail.");
         }
 
 
