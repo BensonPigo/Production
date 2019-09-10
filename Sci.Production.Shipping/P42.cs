@@ -176,6 +176,11 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                     {
                         dr["fabricType"] = e.FormattedValue;
                         dr.EndEdit();
+                        if (!(MyUtility.Convert.GetString(dr["FabricType"]) == "F" || MyUtility.Convert.GetString(dr["FabricType"]) == "A"))
+                        {
+                            dr["usageUnit"] = string.Empty;
+                            dr.EndEdit();
+                        }
                         this.BRT(dr, e);
                     }
                 }
