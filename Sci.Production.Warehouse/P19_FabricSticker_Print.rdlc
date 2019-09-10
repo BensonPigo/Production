@@ -720,7 +720,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value />
+                              <Value>=Fields!Remark.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -1589,7 +1589,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value />
+                              <Value>=Fields!Remark.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -1815,6 +1815,10 @@
         </Field>
         <Field Name="ToFactory">
           <DataField>ToFactory</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Remark">
+          <DataField>Remark</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
