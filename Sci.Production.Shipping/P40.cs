@@ -20,6 +20,7 @@ namespace Sci.Production.Shipping
         private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings brand = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings refno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings usageUnit = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings fabricType = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_nlcode;
@@ -118,7 +119,7 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = $@"
-select vdd.ID,vdd.Refno,vdd.FabricType,vdd.NLCode,Qty = Round(vdd.Qty,2),vdd.Remark,vd.HSCode,vd.UnitID,vd.Price,vdd.BrandID
+select vdd.ID,vdd.Refno,vdd.FabricType,vdd.NLCode,Qty = Round(vdd.Qty,2),vdd.Remark,vd.HSCode,vd.UnitID,vd.Price,vdd.BrandID,vdd.UsageUnit
 from VNImportDeclaration_Detail_Detail vdd with(nolock)
 inner join VNImportDeclaration_Detail vd with(nolock) on vd.id = vdd.ID and vd.NLCode = vdd.NLCode
 where vdd.id = '{masterID}'
@@ -215,11 +216,42 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                     {
                         dr["fabricType"] = e.FormattedValue;
                         dr.EndEdit();
+                        if (!(MyUtility.Convert.GetString(dr["FabricType"]) == "F" || MyUtility.Convert.GetString(dr["FabricType"]) == "A"))
+                        {
+                            dr["usageUnit"] = string.Empty;
+                            dr.EndEdit();
+                        }
+
                         this.BRT(dr);
                     }
                 }
             };
             #endregion
+            #region usageUnit的Validating
+            this.usageUnit.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!(MyUtility.Convert.GetString(dr["FabricType"]) == "F" || MyUtility.Convert.GetString(dr["FabricType"]) == "A"))
+                {
+                    e.IsEditable = false;
+                }
+            };
+
+            this.usageUnit.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["usageUnit"] = e.FormattedValue;
+                        dr.EndEdit();
+                        this.BRT(dr);
+                    }
+                }
+            };
+            #endregion
+
             this.qty.CellMouseDoubleClick += (s, e) =>
                 {
                     if (!this.EditMode)
@@ -238,6 +270,7 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                 .Text("BrandId", header: "Brand", width: Widths.AnsiChars(10), settings: this.brand)
                 .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), settings: this.refno)
                 .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), settings: this.fabricType)
+                .Text("UsageUnit", header: "UsageUnit", width: Widths.AnsiChars(8), settings: this.usageUnit)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
                 .Numeric("Qty", header: "Customs Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
@@ -471,7 +504,7 @@ when not matched by source and t.id in(select id from #tmps) then
 
         private void BRT(DataRow dr)
         {
-            if ((!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"])) ||
+            if ((!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]) && !MyUtility.Check.Empty(dr["usageUnit"])) ||
                 (MyUtility.Convert.GetString(dr["FabricType"]).EqualString("L") && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"])))
             {
                 string type = MyUtility.Convert.GetString(dr["FabricType"]);
@@ -484,7 +517,7 @@ outer apply(
 	select top 1 f1.* 
 	from Fabric f1 with(nolock) 
 	inner join brand b2 with(nolock) on f1.BrandID = b2.id 
-	where f1.Refno = '{dr["Refno"].ToString().Replace("'", "''")}' and b2.BrandGroup = b.BrandGroup and f1.Type = '{dr["FabricType"]}' and f1.Junk = 0
+	where f1.Refno = '{dr["Refno"].ToString().Replace("'", "''")}' and b2.BrandGroup = b.BrandGroup and f1.Type = '{dr["FabricType"]}' and f1.Junk = 0 and f1.usageUnit = '{dr["usageUnit"]}'
 	order by f1.NLCodeEditDate desc
 )f
 where b.id = '{dr["BrandID"]}'

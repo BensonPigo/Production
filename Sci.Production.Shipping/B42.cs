@@ -110,6 +110,7 @@ where vdd.ID = '{0}'
         private void ClearDetailDt(DataRow curDr)
         {
             curDr["NLCode"] = string.Empty;
+            curDr["UsageUnit"] = string.Empty;
             curDr["Refno"] = string.Empty;
             curDr["StockUnit"] = string.Empty;
             curDr["SCIRefno"] = string.Empty;
@@ -120,12 +121,13 @@ where vdd.ID = '{0}'
             curDr["FabricType"] = string.Empty;
             curDr["LocalItem"] = 0;
             curDr["Waste"] = 0;
+            curDr.EndEdit();
         }
 
-        private bool GetCustomRefnoInfo(DataRow drDetail, string refno, string nlCode)
+        private bool GetCustomRefnoInfo(DataRow drDetail, string refno, string nlCode, string usageUnit)
         {
             DataRow drNLCode;
-            drNLCode = Prgs.GetNLCodeDataByRefno(refno, drDetail["UsageQty"].ToString(), this.CurrentMaintain["BrandID"].ToString(), drDetail["FabricType"].ToString(), nlCode: nlCode);
+            drNLCode = Prgs.GetNLCodeDataByRefno(refno, drDetail["UsageQty"].ToString(), this.CurrentMaintain["BrandID"].ToString(), drDetail["FabricType"].ToString(), nlCode: nlCode, usageUnit: usageUnit);
 
             if (drNLCode == null)
             {
@@ -197,6 +199,11 @@ where vdd.ID = '{0}'
                     return;
                 }
 
+                if (newvalue == "L" || newvalue == "Misc")
+                {
+                    dr["usageUnit"] = string.Empty;
+                }
+
                 if (oldvalue != newvalue)
                 {
                     this.ClearDetailDt(dr);
@@ -238,7 +245,7 @@ where vdd.ID = '{0}'
                     return;
                 }
 
-                bool isExists = this.GetCustomRefnoInfo(dr, dr["Refno"].ToString(), newvalue);
+                bool isExists = this.GetCustomRefnoInfo(dr, dr["Refno"].ToString(), newvalue, usageUnit: MyUtility.Convert.GetString(dr["usageUnit"]));
                 if (!isExists)
                 {
                     MyUtility.Msg.WarningBox("<Customs Code> not found!");
@@ -246,6 +253,52 @@ where vdd.ID = '{0}'
                 }
             };
 
+            #endregion
+
+            #region usageUnit
+            DataGridViewGeneratorTextColumnSettings usageUnit = new DataGridViewGeneratorTextColumnSettings();
+            usageUnit.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Convert.GetBool(dr["UserCreate"])
+                || !(MyUtility.Convert.GetString(dr["FabricType"]) == "F" || MyUtility.Convert.GetString(dr["FabricType"]) == "A"))
+                {
+                    e.IsEditable = false;
+                }
+            };
+
+            usageUnit.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                string oldvalue = MyUtility.Convert.GetString(dr["usageUnit"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(newvalue))
+                {
+                    this.ClearDetailDt(dr);
+                    return;
+                }
+
+                if ((MyUtility.Convert.GetString(dr["FabricType"]) == "F" || MyUtility.Convert.GetString(dr["FabricType"]) == "A") &&
+                !MyUtility.Check.Empty(dr["NLCode"]) && !MyUtility.Check.Empty(dr["RefNo"]))
+                {
+                    bool isExists = this.GetCustomRefnoInfo(dr, dr["RefNo"].ToString(), dr["NLCode"].ToString(), usageUnit: newvalue);
+                    if (!isExists)
+                    {
+                        MyUtility.Msg.WarningBox("<Usage Unit> not found!");
+                        e.Cancel = true;
+                    }
+                }
+            };
             #endregion
 
             #region Refno
@@ -281,7 +334,7 @@ where vdd.ID = '{0}'
                     return;
                 }
 
-                bool isExists = this.GetCustomRefnoInfo(dr, newvalue, string.Empty);
+                bool isExists = this.GetCustomRefnoInfo(dr, newvalue, string.Empty, usageUnit: MyUtility.Convert.GetString(dr["usageUnit"]));
                 if (!isExists)
                 {
                     MyUtility.Msg.WarningBox("<Ref No> not found!");
@@ -319,7 +372,7 @@ where vdd.ID = '{0}'
                 }
 
                 DataRow drNLCode;
-                drNLCode = Prgs.GetNLCodeDataByRefno(dr["RefNo"].ToString(), newvalue, this.CurrentMaintain["BrandID"].ToString(), dr["FabricType"].ToString(), dr["SciRefNo"].ToString());
+                drNLCode = Prgs.GetNLCodeDataByRefno(dr["RefNo"].ToString(), newvalue, this.CurrentMaintain["BrandID"].ToString(), dr["FabricType"].ToString(), dr["SciRefNo"].ToString(), usageUnit: MyUtility.Convert.GetString(dr["usageUnit"]));
                 if (drNLCode == null)
                 {
                     MyUtility.Msg.WarningBox("<Customs Qty> Transfer error");
@@ -341,6 +394,7 @@ where vdd.ID = '{0}'
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlCodeCol)
                 .ComboBox("FabricType", header: "Type", width: Widths.AnsiChars(3), settings: typeCol)
+                .Text("UsageUnit", header: "UsageUnit", width: Widths.AnsiChars(8), settings: usageUnit)
                 .Text("RefNo", header: "Ref No", width: Widths.AnsiChars(20), settings: refnoCol)
                 .Text("UnitID", header: "Customs Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("SystemQty", header: "System Qty", decimal_places: 6, width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out systemQtyColumn)

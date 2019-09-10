@@ -47,6 +47,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.panel5 = new Sci.Win.UI.Panel();
+            this.btnDownloadExcel = new Sci.Win.UI.Button();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchImport)).BeginInit();
@@ -71,6 +72,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnDownloadExcel);
             this.panel3.Controls.Add(this.numericttlsp);
             this.panel3.Controls.Add(this.numericFail);
             this.panel3.Controls.Add(this.numericSucessSP);
@@ -111,7 +113,7 @@
             // 
             this.numericFail.BackColor = System.Drawing.Color.White;
             this.numericFail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericFail.Location = new System.Drawing.Point(813, 12);
+            this.numericFail.Location = new System.Drawing.Point(840, 12);
             this.numericFail.Name = "numericFail";
             this.numericFail.NullValue = new decimal(new int[] {
             0,
@@ -130,7 +132,7 @@
             // 
             this.numericSucessSP.BackColor = System.Drawing.Color.White;
             this.numericSucessSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericSucessSP.Location = new System.Drawing.Point(694, 12);
+            this.numericSucessSP.Location = new System.Drawing.Point(760, 12);
             this.numericSucessSP.Name = "numericSucessSP";
             this.numericSucessSP.NullValue = new decimal(new int[] {
             0,
@@ -166,7 +168,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(773, 12);
+            this.label3.Location = new System.Drawing.Point(800, 12);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(37, 23);
             this.label3.TabIndex = 11;
@@ -174,7 +176,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(569, 12);
+            this.label2.Location = new System.Drawing.Point(635, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(122, 23);
             this.label2.TabIndex = 10;
@@ -208,7 +210,7 @@
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(433, 8);
+            this.btnImport.Location = new System.Drawing.Point(427, 8);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(80, 30);
             this.btnImport.TabIndex = 4;
@@ -255,6 +257,7 @@
             this.gridBatchImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchImport.RowTemplate.Height = 24;
             this.gridBatchImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBatchImport.ShowCellToolTips = false;
             this.gridBatchImport.Size = new System.Drawing.Size(977, 482);
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
@@ -268,6 +271,16 @@
             this.panel5.Size = new System.Drawing.Size(977, 482);
             this.panel5.TabIndex = 4;
             // 
+            // btnDownloadExcel
+            // 
+            this.btnDownloadExcel.Location = new System.Drawing.Point(513, 8);
+            this.btnDownloadExcel.Name = "btnDownloadExcel";
+            this.btnDownloadExcel.Size = new System.Drawing.Size(119, 30);
+            this.btnDownloadExcel.TabIndex = 12;
+            this.btnDownloadExcel.Text = "Download Excel";
+            this.btnDownloadExcel.UseVisualStyleBackColor = true;
+            this.btnDownloadExcel.Click += new System.EventHandler(this.BtnDownloadExcel_Click);
+            // 
             // B42_BatchImport
             // 
             this.CancelButton = this.btnClose;
@@ -277,6 +290,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "B42_BatchImport";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Batch Import";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -306,5 +320,6 @@
         private Win.UI.Label label1;
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.Button btnselectfile;
+        private Win.UI.Button btnDownloadExcel;
     }
 }

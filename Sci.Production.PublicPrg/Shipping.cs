@@ -222,25 +222,26 @@ where ID = '{0}'", expressID);
         #endregion
 
         #region GetNLCodeDataByRefno
-        public static DataRow GetNLCodeDataByRefno(string refno, string usageQty, string brandID, string type, string sciRefno = "", string nlCode = "")
+        public static DataRow GetNLCodeDataByRefno(string refno, string usageQty, string brandID, string type, string sciRefno = "", string nlCode = "", string usageUnit = "")
         {
             string sqlGetNLCode = string.Empty;
+            string sqlFA = string.Empty;
             string whereSciRefno = MyUtility.Check.Empty(sciRefno) ? string.Empty : " and f.SciRefno = @SciRefno";
             string whereNLCode = MyUtility.Check.Empty(nlCode) ? string.Empty : " and f.NLCode = @NLCode";
+            //string whereUsageUnit = MyUtility.Check.Empty(usageUnit) ? string.Empty : " and f.UsageUnit = @usageUnit";
             DataRow drNLCode = null;
             string inputUsageQty = MyUtility.Check.Empty(usageQty) ? "0" : usageQty;
             List<SqlParameter> parGetNLCode = new List<SqlParameter>() {    new SqlParameter("@Refno", refno),
                                                                             new SqlParameter("@inputUsageQty", usageQty),
                                                                             new SqlParameter("@BrandID", brandID),
                                                                             new SqlParameter("@SciRefno", sciRefno),
-                                                                            new SqlParameter("@NLCode", nlCode)};
-
+                                                                            new SqlParameter("@NLCode", nlCode),
+                                                                            new SqlParameter("@usageUnit", usageUnit)};
             string fabricType = type;
-
 
             if (fabricType == "F")
             {
-                sqlGetNLCode = $@"
+                sqlFA = $@"
 Declare @UsageQty numeric(12,4) = @inputUsageQty
 select  top 1
         NLCode ,
@@ -255,7 +256,7 @@ select  top 1
         [UsageUnit] = 'YDS',
 		[StockQty] = StockQty.val
 from Fabric f with (nolock)
-inner join Brand b with (nolock) on b.ID = @BrandID 
+inner join Brand b with (nolock) on b.{{0}} = @BrandID 
 inner join Brand b2 with (nolock) on b2.BrandGroup = b.BrandGroup and f.BrandID = b2.ID 
 outer apply(select [val] = dbo.getStockUnit(f.SCIRefNo,default)) as StockUnit
 outer apply(select [val] = dbo.getUnitRate('YDS',StockUnit.val) * @UsageQty) as StockQty
@@ -263,13 +264,13 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = St
 outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = 'M') M2Rate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = 'M') M2UnitRate
- where f.Refno = @Refno and f.Type = 'F' and f.Junk = 0 {whereSciRefno} {whereNLCode}
+ where f.Refno = @Refno and f.Type = 'F' and f.Junk = 0 {whereSciRefno} {whereNLCode} and f.UsageUnit = @usageUnit
 order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
 ";
             }
             else if (fabricType == "A")
             {
-                sqlGetNLCode = $@"
+                sqlFA = $@"
 Declare @UsageQty numeric(12,4) = @inputUsageQty
 select  NLCode ,
         [StockUnit] = StockUnit.val,
@@ -283,7 +284,7 @@ select  NLCode ,
         [UsageUnit] = f.UsageUnit,
 		[StockQty] = StockQty.val
 from Fabric f with (nolock)
-inner join Brand b with (nolock) on b.ID = @BrandID 
+inner join Brand b with (nolock) on b.{{0}} = @BrandID 
 inner join Brand b2 with (nolock) on b2.BrandGroup = b.BrandGroup and f.BrandID = b2.ID 
 outer apply(select [val] = dbo.getStockUnit(f.SCIRefNo,default)) as StockUnit
 outer apply(select [val] = dbo.getUnitRate(f.UsageUnit,StockUnit.val) * @UsageQty) as StockQty
@@ -291,7 +292,7 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = St
 outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = 'M') M2Rate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = 'M') M2UnitRate
- where f.Refno = @Refno and f.Type = 'A' and f.Junk = 0 {whereSciRefno} {whereNLCode}
+ where f.Refno = @Refno and f.Type = 'A' and f.Junk = 0 {whereSciRefno} {whereNLCode} and f.UsageUnit = @usageUnit
 order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
 ";
             }
@@ -335,8 +336,22 @@ select  Misc.NLCode,
 from  SciMachine_Misc Misc with (nolock) 
 where Ltrim(Misc.ID)  = @Refno";
             }
+            bool isNLCodeExists = false;
+            if (fabricType == "F" || fabricType == "A")
+            {
+                sqlGetNLCode = string.Format(sqlFA, "id");
+                isNLCodeExists = MyUtility.Check.Seek(sqlGetNLCode, parGetNLCode, out drNLCode);
+                if (!isNLCodeExists)
+                {
+                    sqlGetNLCode = string.Format(sqlFA, "BrandGroup");
+                    isNLCodeExists = MyUtility.Check.Seek(sqlGetNLCode, parGetNLCode, out drNLCode);
+                }
+            }
+            else
+            {
+                isNLCodeExists = MyUtility.Check.Seek(sqlGetNLCode, parGetNLCode, out drNLCode);
+            }
 
-            bool isNLCodeExists = MyUtility.Check.Seek(sqlGetNLCode, parGetNLCode, out drNLCode);
             if (isNLCodeExists)
             {
                 return drNLCode;
