@@ -34,16 +34,18 @@
             this.txtShippingExpenseID_s = new Sci.Win.UI.TextBox();
             this.txtShippingExpenseID_e = new Sci.Win.UI.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.txtsubcon = new Sci.Production.Class.txtsubcon();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(396, 12);
+            this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(396, 48);
+            this.toexcel.TabIndex = 5;
             // 
             // close
             // 
@@ -84,7 +86,7 @@
             this.chkIncludeJunk.Location = new System.Drawing.Point(27, 93);
             this.chkIncludeJunk.Name = "chkIncludeJunk";
             this.chkIncludeJunk.Size = new System.Drawing.Size(106, 21);
-            this.chkIncludeJunk.TabIndex = 99;
+            this.chkIncludeJunk.TabIndex = 4;
             this.chkIncludeJunk.Text = "Include Junk";
             this.chkIncludeJunk.UseVisualStyleBackColor = true;
             // 
@@ -95,7 +97,8 @@
             this.txtShippingExpenseID_s.Location = new System.Drawing.Point(114, 19);
             this.txtShippingExpenseID_s.Name = "txtShippingExpenseID_s";
             this.txtShippingExpenseID_s.Size = new System.Drawing.Size(118, 23);
-            this.txtShippingExpenseID_s.TabIndex = 100;
+            this.txtShippingExpenseID_s.TabIndex = 1;
+            this.txtShippingExpenseID_s.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtShippingExpenseID_s_PopUp);
             // 
             // txtShippingExpenseID_e
             // 
@@ -104,7 +107,8 @@
             this.txtShippingExpenseID_e.Location = new System.Drawing.Point(260, 19);
             this.txtShippingExpenseID_e.Name = "txtShippingExpenseID_e";
             this.txtShippingExpenseID_e.Size = new System.Drawing.Size(118, 23);
-            this.txtShippingExpenseID_e.TabIndex = 101;
+            this.txtShippingExpenseID_e.TabIndex = 2;
+            this.txtShippingExpenseID_e.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtShippingExpenseID_e_PopUp);
             // 
             // label3
             // 
@@ -115,34 +119,42 @@
             this.label3.TabIndex = 102;
             this.label3.Text = "~";
             // 
-            // txtsubcon1
+            // txtsubcon
             // 
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = true;
-            this.txtsubcon1.isMisc = false;
-            this.txtsubcon1.isShipping = true;
-            this.txtsubcon1.isSubcon = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(114, 55);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 103;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtsubcon.DisplayBox1Binding = "";
+            this.txtsubcon.IsIncludeJunk = true;
+            this.txtsubcon.isMisc = false;
+            this.txtsubcon.isShipping = true;
+            this.txtsubcon.isSubcon = false;
+            this.txtsubcon.Location = new System.Drawing.Point(114, 55);
+            this.txtsubcon.Name = "txtsubcon";
+            this.txtsubcon.Size = new System.Drawing.Size(170, 23);
+            this.txtsubcon.TabIndex = 3;
+            this.txtsubcon.TextBox1Binding = "";
             // 
             // R18
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(488, 161);
-            this.Controls.Add(this.txtsubcon1);
+            this.Controls.Add(this.txtsubcon);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtShippingExpenseID_e);
             this.Controls.Add(this.txtShippingExpenseID_s);
             this.Controls.Add(this.chkIncludeJunk);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportLocate = false;
+            this.IsSupportMove = false;
+            this.IsSupportNew = false;
+            this.IsSupportPrint = false;
+            this.IsSupportToPrint = false;
             this.Name = "R18";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R18. Shipping expense list";
+            this.Text = "R18. Shipping Expense List";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -155,7 +167,7 @@
             this.Controls.SetChildIndex(this.txtShippingExpenseID_s, 0);
             this.Controls.SetChildIndex(this.txtShippingExpenseID_e, 0);
             this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.txtsubcon1, 0);
+            this.Controls.SetChildIndex(this.txtsubcon, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -169,6 +181,6 @@
         private Win.UI.TextBox txtShippingExpenseID_s;
         private Win.UI.TextBox txtShippingExpenseID_e;
         private System.Windows.Forms.Label label3;
-        private Class.txtsubcon txtsubcon1;
+        private Class.txtsubcon txtsubcon;
     }
 }
