@@ -55,6 +55,7 @@ namespace Sci.Production.Subcon
                 {
                     CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier.TextBox1.Text, "LocalSupp", "ID");
                 }
+                this.CurrentMaintain["localsuppid"] = txtsubconSupplier.TextBox1.Text;
             };
 
             this.detailgrid.RowPostPaint += Detailgrid_RowPostPaint;
@@ -1042,26 +1043,6 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
         private void txtsubconSupplier_Validating(object sender, CancelEventArgs e)
         {
 
-            if (MyUtility.Check.Empty(this.txtsubconSupplier.TextBox1.Text))
-            {
-                this.CurrentMaintain["LocalSuppID"] = DBNull.Value;
-            }
-            #region supplier有調整需清空表身price
-            if (!isNeedPlanningP03Quote)
-            {
-                return;
-            }
-
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                string spNo = dr["orderid"].ToString();
-                if (!this.IsSampleOrder(spNo))
-                {
-                    dr["unitprice"] = 0;
-                }
-            }
-
-            #endregion
         }
 
         private bool IsSampleOrder(string spNo)
@@ -1124,11 +1105,6 @@ where id = '{spNo}' and Category = 'S'
                 this.btnIrrPriceReason.ForeColor = Color.Black;
             }
 
-        }
-
-        private void txtsubconSupplier_Leave(object sender, EventArgs e)
-        {
-            this.CurrentMaintain["localsuppid"] = txtsubconSupplier.TextBox1.Text;
         }
     }
 

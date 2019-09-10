@@ -671,7 +671,6 @@
             this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
             this.txtsubconSupplier.TabIndex = 0;
             this.txtsubconSupplier.TextBox1Binding = "";
-            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtsubconSupplier_Validating);
             // 
             // labelTotalPoQty
             // 
