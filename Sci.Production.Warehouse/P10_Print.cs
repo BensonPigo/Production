@@ -257,6 +257,7 @@ select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1
         , t.Roll
         , t.Dyelot
         , t.Qty
+        , [BalanceQty] = b.InQty - b.OutQty + b.AdjustQty
         , p.StockUnit
         , [location]=dbo.Getlocation(b.ukey)      
         , [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )       
@@ -299,6 +300,7 @@ where t.id= @ID";
                         Roll = row1["Roll"].ToString().Trim(),
                         Dyelot = row1["Dyelot"].ToString().Trim(),
                         Qty = row1["Qty"].ToString().Trim(),
+                        BalanceQty = row1["BalanceQty"].ToString().Trim(),
                         Total = row1["Total"].ToString().Trim()
                     }).OrderBy(s => s.GroupPoid).ThenBy(s => s.GroupSeq).ThenBy(s => s.Dyelot).ThenBy(s => s.Roll).ToList();
 

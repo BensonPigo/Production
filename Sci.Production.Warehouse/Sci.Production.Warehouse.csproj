@@ -1790,10 +1790,13 @@
   <ItemGroup>
     <EmbeddedResource Include="P10_RelaxationSticker_Print.rdlc" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
+    <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />
     <None Include="Properties\DataSources\P11_Print.datasource" />
     <None Include="Properties\DataSources\P11_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
+    <None Include="Properties\DataSources\P13_PrintData.datasource" />
+    <None Include="Properties\DataSources\P16_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P22_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P23_FabricSticker_PrintData.datasource" />

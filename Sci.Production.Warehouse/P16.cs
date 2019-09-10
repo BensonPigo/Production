@@ -860,6 +860,7 @@ select  a.POID
         ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[Description]
         ,b.StockUnit
         ,a.Qty
+        ,[BalanceQty] = FI.InQty - FI.OutQty + FI.AdjustQty
         ,dbo.Getlocation(fi.ukey)[Location] 
 from dbo.IssueLack_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
@@ -885,6 +886,7 @@ where a.id= @ID", pars, out dtDetail);
                     DESC = row1["Description"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     QTY = Convert.ToDecimal(row1["QTY"]),
+                    BalanceQty = row1["BalanceQty"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim()
                 }).ToList();
             #endregion

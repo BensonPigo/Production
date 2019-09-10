@@ -154,6 +154,7 @@ select t.POID,
 	    t.Roll,
 	    t.Dyelot,
 	    t.Qty,
+        [BalanceQty] = FI.InQty - FI.OutQty + FI.AdjustQty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
 	    [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
@@ -185,6 +186,7 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["Dyelot"].ToString().Trim(),
                     QTY = row1["Qty"].ToString().Trim(),
+                    BalanceQty = row1["BalanceQty"].ToString().Trim(),
                     TotalQTY = row1["Total"].ToString().Trim()
                 }).ToList();
 
