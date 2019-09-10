@@ -619,6 +619,7 @@
             this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(373, 14);
+            this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(100, 23);
             this.txtmfactory.TabIndex = 4;
@@ -662,6 +663,9 @@
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.isMisc = false;
+            this.txtsubconSupplier.isShipping = false;
+            this.txtsubconSupplier.isSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(107, 40);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
