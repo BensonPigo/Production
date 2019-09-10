@@ -196,7 +196,7 @@
             this.dateBuyerDelivery.Location = new System.Drawing.Point(114, 155);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(234, 23);
-            this.dateBuyerDelivery.TabIndex = 6;
+            this.dateBuyerDelivery.TabIndex = 5;
             // 
             // dateSCIDelivery
             // 
@@ -218,7 +218,7 @@
             this.dateSCIDelivery.Location = new System.Drawing.Point(114, 191);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(234, 23);
-            this.dateSCIDelivery.TabIndex = 7;
+            this.dateSCIDelivery.TabIndex = 6;
             // 
             // txtbrand
             // 
@@ -227,7 +227,7 @@
             this.txtbrand.Location = new System.Drawing.Point(114, 227);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(85, 23);
-            this.txtbrand.TabIndex = 8;
+            this.txtbrand.TabIndex = 7;
             // 
             // checkForPrintOut
             // 
@@ -236,7 +236,7 @@
             this.checkForPrintOut.Location = new System.Drawing.Point(240, 227);
             this.checkForPrintOut.Name = "checkForPrintOut";
             this.checkForPrintOut.Size = new System.Drawing.Size(108, 21);
-            this.checkForPrintOut.TabIndex = 106;
+            this.checkForPrintOut.TabIndex = 8;
             this.checkForPrintOut.Text = "For Print Out";
             this.checkForPrintOut.UseVisualStyleBackColor = true;
             // 
@@ -259,7 +259,7 @@
             this.comboSummaryBy.Name = "comboSummaryBy";
             this.comboSummaryBy.OldText = "";
             this.comboSummaryBy.Size = new System.Drawing.Size(200, 24);
-            this.comboSummaryBy.TabIndex = 550;
+            this.comboSummaryBy.TabIndex = 9;
             this.comboSummaryBy.SelectedValueChanged += new System.EventHandler(this.ComboSummaryBy_SelectedValueChanged);
             // 
             // dateSewingDate
@@ -282,7 +282,7 @@
             this.dateSewingDate.Location = new System.Drawing.Point(114, 120);
             this.dateSewingDate.Name = "dateSewingDate";
             this.dateSewingDate.Size = new System.Drawing.Size(234, 23);
-            this.dateSewingDate.TabIndex = 551;
+            this.dateSewingDate.TabIndex = 4;
             // 
             // labSewingDate
             // 
