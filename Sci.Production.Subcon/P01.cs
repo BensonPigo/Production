@@ -1042,7 +1042,26 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
 
         private void txtsubconSupplier_Validating(object sender, CancelEventArgs e)
         {
+            if (MyUtility.Check.Empty(this.txtsubconSupplier.TextBox1.Text))
+            {
+                this.CurrentMaintain["LocalSuppID"] = DBNull.Value;
+            }
+            #region supplier有調整需清空表身price
+            if (!isNeedPlanningP03Quote)
+            {
+                return;
+            }
 
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string spNo = dr["orderid"].ToString();
+                if (!this.IsSampleOrder(spNo))
+                {
+                    dr["unitprice"] = 0;
+                }
+            }
+
+            #endregion
         }
 
         private bool IsSampleOrder(string spNo)
