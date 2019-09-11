@@ -88,7 +88,6 @@
             this.numTPEPaidUSD = new Sci.Win.UI.NumericBox();
             this.label4 = new Sci.Win.UI.Label();
             this.btnBatchUpload = new Sci.Win.UI.Button();
-            this.btnCOinfor = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -105,7 +104,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnCOinfor);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.numTPEPaidUSD);
             this.masterpanel.Controls.Add(this.chkDelay);
@@ -226,7 +224,6 @@
             this.masterpanel.Controls.SetChildIndex(this.chkDelay, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTPEPaidUSD, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnCOinfor, 0);
             // 
             // detailpanel
             // 
@@ -729,7 +726,7 @@
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(848, 58);
+            this.btnExpenseData.Location = new System.Drawing.Point(848, 72);
             this.btnExpenseData.Name = "btnExpenseData";
             this.btnExpenseData.Size = new System.Drawing.Size(134, 30);
             this.btnExpenseData.TabIndex = 42;
@@ -739,7 +736,7 @@
             // 
             // btnShippingMark
             // 
-            this.btnShippingMark.Location = new System.Drawing.Point(848, 94);
+            this.btnShippingMark.Location = new System.Drawing.Point(848, 108);
             this.btnShippingMark.Name = "btnShippingMark";
             this.btnShippingMark.Size = new System.Drawing.Size(134, 30);
             this.btnShippingMark.TabIndex = 43;
@@ -949,16 +946,6 @@
             this.btnBatchUpload.UseVisualStyleBackColor = true;
             this.btnBatchUpload.Click += new System.EventHandler(this.btnBatchUpload_Click);
             // 
-            // btnCOinfor
-            // 
-            this.btnCOinfor.Location = new System.Drawing.Point(848, 131);
-            this.btnCOinfor.Name = "btnCOinfor";
-            this.btnCOinfor.Size = new System.Drawing.Size(134, 30);
-            this.btnCOinfor.TabIndex = 60;
-            this.btnCOinfor.Text = "C/O information";
-            this.btnCOinfor.UseVisualStyleBackColor = true;
-            this.btnCOinfor.Click += new System.EventHandler(this.BtnCOinfor_Click);
-            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(998, 662);
@@ -1063,6 +1050,5 @@
         private Win.UI.Label label4;
         private Win.UI.NumericBox numTPEPaidUSD;
         private Win.UI.Button btnBatchUpload;
-        private Win.UI.Button btnCOinfor;
     }
 }

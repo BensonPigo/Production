@@ -197,7 +197,7 @@ Values(s.SuppID,s.FormXPayINV,s.COName,convert(date,s.ReceiveDate),s.Carrier,s.A
             this.listControlBindingSource1.DataSource = null;
             this.listControlBindingSource2.DataSource = null;
 
-            if (!this.dateETA.HasValue1 || !this.dateETA.HasValue2)
+            if ((!this.dateETA.HasValue1 || !this.dateETA.HasValue2) && MyUtility.Check.Empty(this.txtPayInv.Text))
             {
                 MyUtility.Msg.WarningBox("Please input <ETA> first!");
                 return;

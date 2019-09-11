@@ -216,7 +216,7 @@
             this.IsSupportPrint = false;
             this.Name = "P14";
             this.OnLineHelpID = "Sci.Win.Forms.Base";
-            this.Text = "P14. Certificate of Origin";
+            this.Text = "P14. Material Certificate of Origin Record";
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.gridCertOfOrigin, 0);
             this.Controls.SetChildIndex(this.gridExport, 0);
