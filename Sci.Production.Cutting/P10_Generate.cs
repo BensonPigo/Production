@@ -51,36 +51,6 @@ namespace Sci.Production.Cutting
             DBProxy.Current.Select(null, cmd_art, out artTb);
             #endregion
 
-            #region 準備GarmentList & ArticleGroup
-            string sizes = string.Empty;
-            if (qtyTb != null)
-            {
-                var sizeList = qtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
-                sizes = "'" + string.Join("','", sizeList) + "'";
-            }
-            string sizeGroup = string.Empty;
-            if (!MyUtility.Check.Empty(sizes))
-            {
-                string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{maindatarow["poid"].ToString()}' and SizeCode IN ({sizes})";
-                sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
-            }
-            //GarmentList
-            PublicPrg.Prgs.GetGarmentListTable(maindr["cutref"].ToString(), maindatarow["poid"].ToString(), sizeGroup, out garmentTb);
-            //ArticleGroup
-            string patidsql;
-            string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
-
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{maindatarow["poid"].ToString()}','{maindatarow["cutref"].ToString()}','',{Styleyukey},'{sizeGroup}')s";
-
-            string patternukey = MyUtility.GetValue.Lookup(patidsql);
-            string headercodesql = string.Format(@"
-Select distinct ArticleGroup 
-from Pattern_GL_LectraCode WITH (NOLOCK) 
-where PatternUkey = '{0}'
-order by ArticleGroup", patternukey);
-            DBProxy.Current.Select(null, headercodesql, out f_codeTb);
-            #endregion
-
             #region Size-CutQty
             int totalCutQty = 0;
             if (MyUtility.Check.Empty(maindr["cutref"])) //無CutRef 就直接抓取Order_Qty 的SizeCode
@@ -135,6 +105,36 @@ group by sizeCode"
                     j++;
                 }
             }
+            #endregion
+
+            #region 準備GarmentList & ArticleGroup
+            string sizes = string.Empty;
+            if (qtyTb != null)
+            {
+                var sizeList = qtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+                sizes = "'" + string.Join("','", sizeList) + "'";
+            }
+            string sizeGroup = string.Empty;
+            if (!MyUtility.Check.Empty(sizes))
+            {
+                string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{maindatarow["poid"].ToString()}' and SizeCode IN ({sizes})";
+                sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
+            }
+            //GarmentList
+            PublicPrg.Prgs.GetGarmentListTable(maindr["cutref"].ToString(), maindatarow["poid"].ToString(), sizeGroup, out garmentTb);
+            //ArticleGroup
+            string patidsql;
+            string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
+
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{maindatarow["poid"].ToString()}','{maindatarow["cutref"].ToString()}','',{Styleyukey},'{sizeGroup}')s";
+
+            string patternukey = MyUtility.GetValue.Lookup(patidsql);
+            string headercodesql = string.Format(@"
+Select distinct ArticleGroup 
+from Pattern_GL_LectraCode WITH (NOLOCK) 
+where PatternUkey = '{0}'
+order by ArticleGroup", patternukey);
+            DBProxy.Current.Select(null, headercodesql, out f_codeTb);
             #endregion
             //計算左上TotalQty
             calsumQty();
