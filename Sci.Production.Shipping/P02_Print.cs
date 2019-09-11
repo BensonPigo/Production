@@ -157,7 +157,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[8, 10] = MyUtility.Check.Empty(this.masterData["SendDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["SendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
 
                 int rownum = 11;
-                object[,] objArray = new object[1, 15];
+                object[,] objArray = new object[1, 16];
                 foreach (DataRow dr in this.detailData.Rows)
                 {
                     objArray[0, 0] = dr["OrderID"];
@@ -173,9 +173,10 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                     objArray[0, 10] = dr["Qty"];
                     objArray[0, 11] = dr["UnitID"];
                     objArray[0, 12] = dr["CategoryName"];
-                    objArray[0, 13] = dr["DutyNo"];
-                    objArray[0, 14] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:O{0}", rownum)].Value2 = objArray;
+                    objArray[0, 13] = dr["PackingListID"];
+                    objArray[0, 14] = dr["AirPPno"];
+                    objArray[0, 15] = dr["Remark"];
+                    worksheet.Range[string.Format("A{0}:P{0}", rownum)].Value2 = objArray;
 
                     rownum++;
                 }
