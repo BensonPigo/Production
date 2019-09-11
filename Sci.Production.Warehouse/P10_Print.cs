@@ -226,9 +226,30 @@ where id = @MDivision", pars, out dt);
                 #endregion
 
                 #region  抓表身資料
+                string strsql = $@"select distinct poid,seq1,seq2 from issue_detail where id='{id}'";
+                DataTable dttmp;
+                if (!(result = DBProxy.Current.Select(null,strsql,out dttmp)))
+                {
+                    ShowErr(result);
+                    return false;
+                }
+
+                DataTable dtRollTrans = new DataTable();
+                foreach (DataRow dr in dttmp.Rows)
+                {
+                    DataTable dttmp1 = new DataTable();
+                    dttmp1 = Sci.Production.PublicPrg.Prgs.RollTranscation(dr["Poid"].ToString(),
+                    dr["Seq1"].ToString(),
+                    dr["Seq2"].ToString());
+
+                    dtRollTrans.Merge(dttmp1);
+                }
+                
+
                 pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
                 DataTable bb;
+
                 sqlcmd = @"
 select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll) 
 			            AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
@@ -257,7 +278,7 @@ select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1
         , t.Roll
         , t.Dyelot
         , t.Qty
-        , [BalanceQty] = b.InQty - b.OutQty + b.AdjustQty
+        , [BalanceQty] = RollTrans.balance
         , p.StockUnit
         , [location]=dbo.Getlocation(b.ukey)      
         , [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )       
@@ -276,8 +297,15 @@ outer apply (
     select value = iif (left (t.seq1, 1) != '7', ''
                                                , '**PLS USE STOCK FROM SP#:' + iif (isnull (concat (p.StockPOID, p.StockSeq1, p.StockSeq2), '') = '', '',concat (p.StockPOID, p.StockSeq1, p.StockSeq2)) + '**')
 ) as stock7X
+outer apply(
+	select convert(float,balance) as balance from #tmp
+	where id = t.Id
+	and Roll=t.Roll and Dyelot=t.Dyelot
+    and Seq1=t.Seq1 and Seq2=t.Seq2
+)RollTrans
 where t.id= @ID";
-                result = DBProxy.Current.Select("", sqlcmd, pars, out bb);
+                //result = DBProxy.Current.Select("", sqlcmd, pars, out bb);
+                result = MyUtility.Tool.ProcessWithDatatable(dtRollTrans, "", sqlcmd, out bb, paramters: pars);
                 if (!result) { this.ShowErr(sqlcmd, result); }
 
                 if (bb == null || bb.Rows.Count == 0)

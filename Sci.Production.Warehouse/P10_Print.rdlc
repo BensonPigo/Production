@@ -593,7 +593,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!BalanceQty.Value</Value>
+                                  <Value>=Fields!Qty.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
