@@ -61,6 +61,14 @@
             this.btnDel = new Sci.Win.UI.Button();
             this.labVersionWarning = new System.Windows.Forms.Label();
             this.btnCIPF = new Sci.Win.UI.Button();
+            this.ui_pnlBatchUpdate = new Sci.Win.UI.Panel();
+            this.label1 = new Sci.Win.UI.Label();
+            this.ui_cbxLocationBatchUpdate = new Sci.Win.UI.ComboBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.ui_btnLocationBatchUpdate = new Sci.Win.UI.Button();
+            this.ui_btnBatchDelete = new Sci.Win.UI.Button();
+            this.ui_btnBatchCopy = new Sci.Win.UI.Button();
+            this.txtInsertPosition = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -73,10 +81,12 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.ui_pnlBatchUpdate.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.ui_pnlBatchUpdate);
             this.masterpanel.Controls.Add(this.btnCIPF);
             this.masterpanel.Controls.Add(this.labVersionWarning);
             this.masterpanel.Controls.Add(this.btnDel);
@@ -109,8 +119,7 @@
             this.masterpanel.Controls.Add(this.labelBrand);
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
-            this.masterpanel.Size = new System.Drawing.Size(987, 150);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Size = new System.Drawing.Size(987, 155);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
@@ -143,15 +152,17 @@
             this.masterpanel.Controls.SetChildIndex(this.btnDel, 0);
             this.masterpanel.Controls.SetChildIndex(this.labVersionWarning, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCIPF, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.ui_pnlBatchUpdate, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 150);
-            this.detailpanel.Size = new System.Drawing.Size(987, 293);
+            this.detailpanel.Location = new System.Drawing.Point(0, 155);
+            this.detailpanel.Size = new System.Drawing.Size(987, 288);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(797, 114);
+            this.gridicon.Location = new System.Drawing.Point(797, 119);
             this.gridicon.TabIndex = 9;
             // 
             // refresh
@@ -161,7 +172,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(987, 293);
+            this.detailgridcont.Size = new System.Drawing.Size(987, 288);
             // 
             // detail2
             // 
@@ -417,7 +428,7 @@
             // btnCopy
             // 
             this.btnCopy.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCopy.Location = new System.Drawing.Point(716, 114);
+            this.btnCopy.Location = new System.Drawing.Point(387, 91);
             this.btnCopy.Name = "btnCopy";
             this.btnCopy.Size = new System.Drawing.Size(58, 30);
             this.btnCopy.TabIndex = 15;
@@ -427,7 +438,7 @@
             // 
             // btnArtSum
             // 
-            this.btnArtSum.Location = new System.Drawing.Point(579, 114);
+            this.btnArtSum.Location = new System.Drawing.Point(451, 123);
             this.btnArtSum.Name = "btnArtSum";
             this.btnArtSum.Size = new System.Drawing.Size(80, 30);
             this.btnArtSum.TabIndex = 14;
@@ -437,7 +448,7 @@
             // 
             // btnSketch
             // 
-            this.btnSketch.Location = new System.Drawing.Point(436, 114);
+            this.btnSketch.Location = new System.Drawing.Point(451, 90);
             this.btnSketch.Name = "btnSketch";
             this.btnSketch.Size = new System.Drawing.Size(80, 30);
             this.btnSketch.TabIndex = 13;
@@ -448,7 +459,7 @@
             // btnCopyFromStyleStdGSD
             // 
             this.btnCopyFromStyleStdGSD.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCopyFromStyleStdGSD.Location = new System.Drawing.Point(236, 114);
+            this.btnCopyFromStyleStdGSD.Location = new System.Drawing.Point(248, 122);
             this.btnCopyFromStyleStdGSD.Name = "btnCopyFromStyleStdGSD";
             this.btnCopyFromStyleStdGSD.Size = new System.Drawing.Size(197, 30);
             this.btnCopyFromStyleStdGSD.TabIndex = 12;
@@ -541,7 +552,7 @@
             // btnDel
             // 
             this.btnDel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnDel.Location = new System.Drawing.Point(662, 114);
+            this.btnDel.Location = new System.Drawing.Point(325, 91);
             this.btnDel.Name = "btnDel";
             this.btnDel.Size = new System.Drawing.Size(51, 30);
             this.btnDel.TabIndex = 28;
@@ -562,13 +573,103 @@
             // 
             // btnCIPF
             // 
-            this.btnCIPF.Location = new System.Drawing.Point(519, 114);
+            this.btnCIPF.Location = new System.Drawing.Point(248, 91);
             this.btnCIPF.Name = "btnCIPF";
             this.btnCIPF.Size = new System.Drawing.Size(57, 30);
             this.btnCIPF.TabIndex = 29;
             this.btnCIPF.Text = "CIPF";
             this.btnCIPF.UseVisualStyleBackColor = true;
             this.btnCIPF.Click += new System.EventHandler(this.btnCIPF_Click);
+            // 
+            // ui_pnlBatchUpdate
+            // 
+            this.ui_pnlBatchUpdate.Controls.Add(this.txtInsertPosition);
+            this.ui_pnlBatchUpdate.Controls.Add(this.label1);
+            this.ui_pnlBatchUpdate.Controls.Add(this.ui_cbxLocationBatchUpdate);
+            this.ui_pnlBatchUpdate.Controls.Add(this.label2);
+            this.ui_pnlBatchUpdate.Controls.Add(this.ui_btnLocationBatchUpdate);
+            this.ui_pnlBatchUpdate.Controls.Add(this.ui_btnBatchDelete);
+            this.ui_pnlBatchUpdate.Controls.Add(this.ui_btnBatchCopy);
+            this.ui_pnlBatchUpdate.Location = new System.Drawing.Point(537, 91);
+            this.ui_pnlBatchUpdate.Name = "ui_pnlBatchUpdate";
+            this.ui_pnlBatchUpdate.Size = new System.Drawing.Size(256, 60);
+            this.ui_pnlBatchUpdate.TabIndex = 169;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Location = new System.Drawing.Point(197, 1);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(57, 23);
+            this.label1.TabIndex = 228;
+            this.label1.Text = "Position";
+            this.label1.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ui_cbxLocationBatchUpdate
+            // 
+            this.ui_cbxLocationBatchUpdate.BackColor = System.Drawing.Color.White;
+            this.ui_cbxLocationBatchUpdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ui_cbxLocationBatchUpdate.FormattingEnabled = true;
+            this.ui_cbxLocationBatchUpdate.IsSupportUnselect = true;
+            this.ui_cbxLocationBatchUpdate.Location = new System.Drawing.Point(3, 28);
+            this.ui_cbxLocationBatchUpdate.Name = "ui_cbxLocationBatchUpdate";
+            this.ui_cbxLocationBatchUpdate.OldText = "";
+            this.ui_cbxLocationBatchUpdate.Size = new System.Drawing.Size(82, 24);
+            this.ui_cbxLocationBatchUpdate.TabIndex = 168;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.Location = new System.Drawing.Point(0, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(195, 23);
+            this.label2.TabIndex = 151;
+            this.label2.Text = "Batch Update";
+            this.label2.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ui_btnLocationBatchUpdate
+            // 
+            this.ui_btnLocationBatchUpdate.Location = new System.Drawing.Point(85, 28);
+            this.ui_btnLocationBatchUpdate.Name = "ui_btnLocationBatchUpdate";
+            this.ui_btnLocationBatchUpdate.Size = new System.Drawing.Size(22, 24);
+            this.ui_btnLocationBatchUpdate.TabIndex = 167;
+            this.ui_btnLocationBatchUpdate.Text = "↓";
+            this.ui_btnLocationBatchUpdate.UseVisualStyleBackColor = true;
+            this.ui_btnLocationBatchUpdate.Click += new System.EventHandler(this.BtnLocationBatchUpdate_Click);
+            // 
+            // ui_btnBatchDelete
+            // 
+            this.ui_btnBatchDelete.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.ui_btnBatchDelete.Location = new System.Drawing.Point(107, 28);
+            this.ui_btnBatchDelete.Name = "ui_btnBatchDelete";
+            this.ui_btnBatchDelete.Size = new System.Drawing.Size(44, 24);
+            this.ui_btnBatchDelete.TabIndex = 165;
+            this.ui_btnBatchDelete.Text = "Del";
+            this.ui_btnBatchDelete.UseVisualStyleBackColor = true;
+            this.ui_btnBatchDelete.Click += new System.EventHandler(this.BtnBatchDelete_Click);
+            // 
+            // ui_btnBatchCopy
+            // 
+            this.ui_btnBatchCopy.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.ui_btnBatchCopy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ui_btnBatchCopy.Location = new System.Drawing.Point(151, 28);
+            this.ui_btnBatchCopy.Name = "ui_btnBatchCopy";
+            this.ui_btnBatchCopy.Size = new System.Drawing.Size(44, 24);
+            this.ui_btnBatchCopy.TabIndex = 164;
+            this.ui_btnBatchCopy.Text = "Copy";
+            this.ui_btnBatchCopy.UseVisualStyleBackColor = true;
+            this.ui_btnBatchCopy.Click += new System.EventHandler(this.BtnBatchCopy_Click);
+            // 
+            // txtInsertPosition
+            // 
+            this.txtInsertPosition.BackColor = System.Drawing.Color.White;
+            this.txtInsertPosition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtInsertPosition.Location = new System.Drawing.Point(197, 29);
+            this.txtInsertPosition.Name = "txtInsertPosition";
+            this.txtInsertPosition.Size = new System.Drawing.Size(57, 23);
+            this.txtInsertPosition.TabIndex = 170;
             // 
             // P01
             // 
@@ -582,6 +683,7 @@
             this.KeyField1 = "ID";
             this.KeyField2 = "ID";
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P01. Factory GSD";
             this.UniqueExpress = "ID";
             this.WorkAlias = "TimeStudy";
@@ -600,6 +702,8 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.ui_pnlBatchUpdate.ResumeLayout(false);
+            this.ui_pnlBatchUpdate.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -640,5 +744,13 @@
         private Win.UI.Button btnDel;
         private System.Windows.Forms.Label labVersionWarning;
         private Win.UI.Button btnCIPF;
+        private Win.UI.Panel ui_pnlBatchUpdate;
+        private Win.UI.ComboBox ui_cbxLocationBatchUpdate;
+        private Win.UI.Label label2;
+        private Win.UI.Button ui_btnLocationBatchUpdate;
+        private Win.UI.Button ui_btnBatchDelete;
+        private Win.UI.Button ui_btnBatchCopy;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtInsertPosition;
     }
 }
