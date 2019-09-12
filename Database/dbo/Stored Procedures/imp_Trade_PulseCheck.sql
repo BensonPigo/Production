@@ -190,7 +190,7 @@ group by CountryID, Zone
 select OutputDate,Category
 	   , Shift
 	   , SewingLineID
-	   , ActManPower1 = Sum(ActManPower)
+	   , ActManPower1 = ActManPower
 	   , Team
 	   , OrderId
 	   , ComboType
@@ -221,7 +221,7 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
 		 , OrderCategory, LocalOrder, FactoryID, OrderProgram, MockupProgram
 		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
 		 , MockupStyle, Rate, StdTMS,isnull(SubconOutFty,'')
-		 , CountryID, Zone, SubconInType
+		 , CountryID, Zone, SubconInType, ActManPower
 
 
 select t.*
