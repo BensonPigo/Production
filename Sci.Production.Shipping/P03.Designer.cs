@@ -163,7 +163,7 @@
             this.masterpanel.Controls.Add(this.dateArrivePortDate);
             this.masterpanel.Controls.Add(this.dateArriveWHDate);
             this.masterpanel.Controls.Add(this.dateDoxRcvDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 344);
+            this.masterpanel.Size = new System.Drawing.Size(990, 344);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDoxRcvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
@@ -228,7 +228,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 344);
-            this.detailpanel.Size = new System.Drawing.Size(892, 5);
+            this.detailpanel.Size = new System.Drawing.Size(990, 218);
             // 
             // gridicon
             // 
@@ -240,7 +240,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 5);
+            this.detailgridcont.Size = new System.Drawing.Size(990, 218);
             // 
             // detail2
             // 
@@ -256,16 +256,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(990, 600);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(990, 562);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 562);
+            this.detailbtm.Size = new System.Drawing.Size(990, 38);
             // 
             // browse
             // 
@@ -726,9 +726,9 @@
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(859, 61);
+            this.btnExpenseData.Location = new System.Drawing.Point(848, 72);
             this.btnExpenseData.Name = "btnExpenseData";
-            this.btnExpenseData.Size = new System.Drawing.Size(123, 30);
+            this.btnExpenseData.Size = new System.Drawing.Size(134, 30);
             this.btnExpenseData.TabIndex = 42;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
@@ -736,9 +736,9 @@
             // 
             // btnShippingMark
             // 
-            this.btnShippingMark.Location = new System.Drawing.Point(859, 97);
+            this.btnShippingMark.Location = new System.Drawing.Point(848, 108);
             this.btnShippingMark.Name = "btnShippingMark";
-            this.btnShippingMark.Size = new System.Drawing.Size(123, 30);
+            this.btnShippingMark.Size = new System.Drawing.Size(134, 30);
             this.btnShippingMark.TabIndex = 43;
             this.btnShippingMark.Text = "Shipping Mark";
             this.btnShippingMark.UseVisualStyleBackColor = true;
@@ -963,6 +963,7 @@
             this.IsSupportNew = false;
             this.KeyField1 = "ID";
             this.Name = "P03";
+            this.OnLineHelpID = "Sci.Win.Tems.Input2";
             this.Text = "P03. Import Schedule";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Export";
