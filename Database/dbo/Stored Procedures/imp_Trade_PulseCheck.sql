@@ -84,11 +84,11 @@ select  s.OutputDate
 		, [MockupStyle] = isnull(mo.StyleID,'')
         , [Rate] =isnull(dbo.[GetOrderLocation_Rate_ByLinked](o.id ,sd.ComboType, o.MDivisionID),100)/100
 		, System.StdTMS
-        , o.SubconInSisterFty
+        , o.SubconInType
         , [SubconOutFty] = iif(sf.id is null,'Other',s.SubconOutFty)
 		, f.CountryID
 		, f.Zone
-		, [SewingOutputID] = S.ID
+		, [SewingOutputID] = S.ID 
 INTO #tmpSewingDetail
 from [PMS\pmsdb\PH1].[Production].dbo.System, [PMS\pmsdb\PH1].[Production].dbo.SewingOutput s WITH (NOLOCK) 
 left join [PMS\pmsdb\PH1].[Production].dbo.SCIFty sf WITH (NOLOCK) on sf.ID = s.SubconOutFty
@@ -136,11 +136,11 @@ Begin
 				, [MockupStyle] = isnull(mo.StyleID,'''')
 				, [Rate] = isnull(dbo.[GetOrderLocation_Rate_ByLinked](o.id ,sd.ComboType, o.MDivisionID),100)/100
 				, System.StdTMS
-				, o.SubconInSisterFty
+				, o.SubconInType
 				, [SubconOutFty] = iif(sf.id is null,''Other'',s.SubconOutFty)
 				, f.CountryID
 				, f.Zone
-				, [SewingOutputID] = S.ID
+				, [SewingOutputID] = S.ID 
 		--INTO #tmpSewingDetail
 		from [' + @_name + '].[Production].dbo.System, [' + @_name + '].[Production].dbo.SewingOutput s WITH (NOLOCK) 
 		left join [' + @_name + '].[Production].dbo.SCIFty sf WITH (NOLOCK) on sf.ID = s.SubconOutFty
@@ -159,6 +159,7 @@ Begin
 		begin 
 			set @sql = @sql + ' and f.CountryID = ''' + @CountryID + ''' '
 		end
+
 		--select @_name name, @sql sql
 
 		insert into #tmpSewingDetail
@@ -189,7 +190,7 @@ group by CountryID, Zone
 select OutputDate,Category
 	   , Shift
 	   , SewingLineID
-	   , ActManPower1 = Sum(ActManPower)
+	   , ActManPower1 = ActManPower
 	   , Team
 	   , OrderId
 	   , ComboType
@@ -210,7 +211,7 @@ select OutputDate,Category
 	   , Rate
 	   , StdTMS
 	   , IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
-       , SubconInSisterFty
+       , SubconInType 
        , [SubconOutFty] = isnull(SubconOutFty,'')
 	   , CountryID
 	   , Zone
@@ -219,13 +220,13 @@ from #tmpSewingDetail
 group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
 		 , OrderCategory, LocalOrder, FactoryID, OrderProgram, MockupProgram
 		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
-		 , MockupStyle, Rate, StdTMS,SubconInSisterFty,isnull(SubconOutFty,'')
-		 , CountryID, Zone
+		 , MockupStyle, Rate, StdTMS,isnull(SubconOutFty,'')
+		 , CountryID, Zone, SubconInType, ActManPower
 
 
 select t.*
 	   , isnull(w.Holiday, 0) as Holiday
-	   , IIF(isnull(QAQty, 0) = 0, ActManPower1, (ActManPower1 / QAQty)) as ActManPower
+	   , ActManPower1 as ActManPower
 INTO #tmp1stFilter
 from #tmpSewingGroup t
 left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID 
@@ -255,7 +256,7 @@ select OutputDate
 	   , LastShift
 	   , ComboType
 	   , FactoryID
-       , SubconInSisterFty
+       , SubconInType
        , SubconOutFty
 	   , CountryID
 	   , Zone
@@ -276,8 +277,8 @@ from
 		   , StdTMS
 		   , QAQty = Sum(QAQty)
 		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
-		   , CountryID
-		   , Zone
+	   , CountryID
+	   , Zone
 	from #tmp
 	where LastShift <> 'O'
 	group by OutputDate, StdTMS, CountryID, Zone
@@ -333,8 +334,7 @@ from
 	) d
 	group by OutputDate, CountryID, Zone
 )a
-group by CountryID, Zone
-
+group by CountryID, Zone 
  
 select StdTMS
 	   , QAQty = Sum(QAQty)
@@ -347,7 +347,7 @@ from #tmp
 where LastShift <> 'O' 
       --排除Subcon in non sister資料
       and LastShift <> 'I'
-	  or (LastShift = 'I' and SubconInSisterFty = 1)
+	  or (LastShift = 'I' and SubconInType in ('1','2'))
 group by StdTMS, CountryID, Zone
 
 select ManPower = Sum(a.Manpower)  - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
@@ -366,7 +366,7 @@ from (
 	from #tmp
 	where LastShift <> 'O'
 	--排除 subcon in non sister的數值
-    and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInSisterFty <> 0 ))   
+    and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInType in ('1','2')))   
 	group by OutputDate, FactoryID, SewingLineID, LastShift, Team ,CountryID, Zone
 ) a
 outer apply
@@ -379,14 +379,14 @@ outer apply
 				, LastShift
 				, Team
 				, ManPower = Max(ActManPower)
-				, SubconInSisterFty
+				, SubconInType
 				, CountryID
 				, Zone
 		from #tmp
 		where LastShift <> 'O'
-		group by OutputDate, FactoryID, SewingLineID, LastShift, Team, SubconInSisterFty, CountryID, Zone
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team, SubconInType, CountryID, Zone
 	) m2
-	where  (m2.LastShift = 'I' and m2.SubconInSisterFty = 1)
+	where  (m2.LastShift = 'I' and m2.SubconInType in ('1','2'))
 			and m2.Team = a.Team 
 			and m2.SewingLineID = a.SewingLineID	
 			and a.OutputDate = m2.OutputDate
@@ -492,7 +492,6 @@ left join #tmp_PulseCheck p1 on a.CountryID = p1.CountryID and a.Zone = p1.Zone 
 left join #tmp_PulseCheck p2 on a.CountryID = p2.CountryID and a.Zone = p2.Zone and p2.Name = 'Capacity'
 left join #tmp_CMPAbsent cm on a.CountryID = cm.CountryID and a.Zone = cm.Zone
 
-
 declare @_CountryID as varchar(8)
 	, @_Zone as varchar(8)
 	, @Performed as decimal(18,6)
@@ -505,7 +504,6 @@ declare @_CountryID as varchar(8)
  	, @PerformedLoading as decimal(18,6)
 	, @PerformedCapacity as decimal(18,6)
 	, @CMPAbsent as decimal(18,6)
- 
 
 OPEN CURSOR_
 FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_Zone, @Performed, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent
@@ -653,13 +651,13 @@ DEALLOCATE CURSOR_
 
 drop table #tmp,#tmp_Dropdownlist
 
-drop table #tmp_ManHour,#tmp_TotalManpower,#tmp_excludeInOutTotal,#tmpQty,#tmpTtlManPower,#tmp_cpuFactor,#tmp_SubconCPU_sister,#tmp_WorkingDays
+drop table #tmp_ManHour,#tmp_TotalManpower,#tmp_excludeInOutTotal,#tmpQty,#tmpTtlManPower,#tmp_cpuFactor,#tmp_SubconCPU_sister,#tmp_WorkingDays,#tmp_PulseCheck,#tmp_CMPAbsent
 
 
 --select b.name, a.* 
 --from tradedb.trade.dbo.PulseCheck a
 --left join Tradedb.Trade.dbo.Dropdownlist b on a.ItemID = b.ID and type = 'PulseCheck'
 
---select * from Tradedb.Trade.dbo.Dropdownlist
+--select * from Tradedb.Trade.dbo.Dropdownlist 
 
 End
