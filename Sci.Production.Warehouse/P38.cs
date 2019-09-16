@@ -86,6 +86,7 @@ namespace Sci.Production.Warehouse
                   .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12),iseditingreadonly:false,settings: remark)
                   .Text("FIR", header: "FIR", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                  .Text("PointRate", header: "Point rate\n\rper 100yds", width: Widths.AnsiChars(2), iseditingreadonly: true)
                   .Text("WashLab Report", header: "WashLab Report", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
@@ -137,6 +138,8 @@ namespace Sci.Production.Warehouse
             }
 
             strSQLCmd.Append($@"
+
+--#tmp_FtyInventory
 select 0 as [selected]
         , fi.POID
         , fi.seq1
@@ -264,6 +267,7 @@ and fi2.MtlLocationID ='{this.txtMtlLocation.Text}'");
 
             strSQLCmd.Append($@"
 
+--#tmp_FIR_Result1
 select f.POID,f.SEQ1,f.SEQ2,f.Dyelot,f.Roll
 	,max(fp.Result) as PhyResult, max(fw.Result) as WeightResult , max(FS.Result) AS ShadeboneResult, max(FC.Result) AS ContinuityResult, max(FO.Result) AS OdorResult
 into #tmp_FIR_Result1
@@ -280,6 +284,7 @@ left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and f.Dyelot 
 left join FIR_Odor fo on f.id=fo.ID AND F.OdorEncode=1 and fs.Dyelot=fo.Dyelot and f.Roll=fo.Roll 
 group by f.POID,f.SEQ1,f.SEQ2,f.Dyelot,f.Roll
 
+--#tmp_FIR_Result2
 select distinct a.POID,a.SEQ1,a.SEQ2,a.Dyelot
 	,PhyResult = case when PhyResult > 0 then 'Fail' when PhyResult is null then null else 'Pass' end
 	,WeightResult = case when WeightResult >0 then 'Fail' when WeightResult is null then null else 'Pass' end
@@ -311,6 +316,7 @@ from (
 	group by  a.POID,a.SEQ1,a.SEQ2,a.Dyelot
 )a
 
+--#tmp_WashLab
 select distinct f.POID,f.SEQ1,f.SEQ2
 	,FLResult = case when fl >0 then 'Fail' when fl is null then null else 'Pass' end
 	,ovenResult = case when oven>1 then 'Fail' when oven is null then null else 'Pass' end
@@ -333,16 +339,32 @@ from
 	group by f.POID,f.SEQ1,f.SEQ2
 )f
 
+--#tmp_Air
 select distinct a.POID,a.SEQ1,a.SEQ2,a.Result
 into #tmp_Air
 from AIR a
 inner join #tmp_FtyInventory fi on a.POID= fi.POID	and a.SEQ1 =fi.Seq1 and a.SEQ2 = fi.Seq2  
 
+--#tmp_Air_Lab
 select distinct a.POID,a.SEQ1,a.SEQ2,a.Result
 into #tmp_Air_Lab
 from AIR_Laboratory a
 inner join #tmp_FtyInventory fi on a.POID= fi.POID	and a.SEQ1 =fi.Seq1 and a.SEQ2 = fi.Seq2  
 
+--#tmp_PointRate
+SELECT POID,seq1,seq2,roll,Dyelot ,[PointRate]=ISNULL(Cast(FIR.PointRate as varchar),'Blank')
+INTO #tmp_PointRate
+FROM #tmp_FtyInventory t
+OUTER APPLY(
+	select fp.PointRate
+	from FIR f
+	left join FIR_Physical fp on fp.ID = f.ID
+	WHERE 	f.POID = t.POID
+		and f.SEQ1 = t.Seq1
+		and f.SEQ2 = t.Seq2
+		and fp.Roll = t.Roll
+		and fp.Dyelot = t.Dyelot
+)FIR
 
 
 select distinct fi.*
@@ -370,6 +392,7 @@ select distinct fi.*
 					then 'Fail' else 'Pass' end
 					)
 				end
+		,[PointRate]=IIF(fi.FabricType='Accessory','',PointRate.PointRate)
 		,[WashLab Report] = case when fi.sFabricType='A' then iif(Air_Lab.Result='','Blank',Air_Lab.Result)
 							when WashLab.FLResult='Fail' or WashLab.ovenResult='Fail' or WashLab.cfResult='Fail'
 								then 'Fail'
@@ -382,8 +405,9 @@ left join #tmp_FIR_Result2 FIR_Result2 on FIR_Result2.POID=fi.POID	and FIR_Resul
 left join #tmp_WashLab WashLab on WashLab.POID= fi.POID	and WashLab.SEQ1 =fi.Seq1 and WashLab.SEQ2 = fi.Seq2 
 left join #tmp_Air Air on Air.POID= fi.POID	and Air.SEQ1 =fi.Seq1 and Air.SEQ2 = fi.Seq2  
 left join #tmp_Air_Lab Air_Lab on Air_Lab.POID= fi.POID	and Air_Lab.SEQ1 =fi.Seq1 and Air_Lab.SEQ2 = fi.Seq2  
+left join #tmp_PointRate PointRate on PointRate.POID=fi.POID	and PointRate.SEQ1 = fi.Seq1 and PointRate.SEQ2 = fi.Seq2 and PointRate.Roll=fi.Roll and PointRate.Dyelot=fi.Dyelot   
 
-drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab
+drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab,#tmp_PointRate
 ");
 
             Ict.DualResult result;

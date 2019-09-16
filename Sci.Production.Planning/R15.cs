@@ -197,7 +197,7 @@ namespace Sci.Production.Planning
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
-                        objSheets.Cells[1, 80 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
+                        objSheets.Cells[1, 81 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
                     }
 
                     // 首列資料篩選
@@ -256,7 +256,7 @@ namespace Sci.Production.Planning
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
-                        objSheets.Cells[1, 80 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
+                        objSheets.Cells[1, 81 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
                     }
 
                     // 首列資料篩選
@@ -707,6 +707,7 @@ select t.MDivisionID
                                  , iif(isnull(#cte2.AVG_QAQTY, 0) = 0, 0
                                                                      , ceiling((t.qty+t.FOCQty - #cte2.sewing_output) / (#cte2.AVG_QAQTY*1.0)))
                                  , #cte2.firstSewingDate) 
+       , [Scanned_Qty] = PackDetail.ScanQty
        , [pack_rate] = IIF(isnull(t.TotalCTN, 0) = 0, 0
                                                     , round(t.ClogCTN / (t.TotalCTN * 1.0), 4) * 100 ) 
        , t.TotalCTN
@@ -845,6 +846,11 @@ outer apply(
 	),1,1,'')))
 )spdX
 outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
+outer apply(
+    select ScanQty = sum(pd.ScanQty)
+    from PackingList_Detail pd
+    where pd.OrderId = t.OrderID
+)PackDetail
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
@@ -1262,6 +1268,7 @@ select t.MDivisionID
                                  , iif(isnull(#cte2.AVG_QAQTY, 0) = 0, 0
                                                                      , ceiling((t.qty+t.FOCQty - #cte2.sewing_output) / (#cte2.AVG_QAQTY*1.0)))
                                  , #cte2.firstSewingDate) 
+       , [Scanned_Qty] = PackDetail.ScanQty
        , [pack_rate] = IIF(isnull(t.TotalCTN, 0) = 0, 0
                                                     , round(t.ClogCTN / (t.TotalCTN * 1.0), 4) * 100 ) 
        , t.TotalCTN               
@@ -1416,6 +1423,13 @@ outer apply(
 	),1,1,'')))
 )spdX
 outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
+outer apply(
+    select ScanQty = sum(pd.ScanQty)
+    from PackingList_Detail pd
+    where pd.OrderId = t.OrderID
+    and pd.Article = t.Article
+	and pd.SizeCode = t.SizeCode
+)PackDetail
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode", this.orderby));

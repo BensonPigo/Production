@@ -45,8 +45,8 @@
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelDesc = new Sci.Win.UI.Label();
             this.displaySPNo = new Sci.Win.UI.DisplayBox();
-            this.labelSciRefno = new Sci.Win.UI.Label();
-            this.displaySciRefno = new Sci.Win.UI.DisplayBox();
+            this.labelRefno = new Sci.Win.UI.Label();
+            this.displayRefno = new Sci.Win.UI.DisplayBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridRollNo = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -120,7 +120,6 @@
             // 
             // labelRequestVariance
             // 
-            this.labelRequestVariance.Lines = 0;
             this.labelRequestVariance.Location = new System.Drawing.Point(181, 21);
             this.labelRequestVariance.Name = "labelRequestVariance";
             this.labelRequestVariance.Size = new System.Drawing.Size(127, 23);
@@ -138,7 +137,6 @@
             // 
             // labelTotalQty
             // 
-            this.labelTotalQty.Lines = 0;
             this.labelTotalQty.Location = new System.Drawing.Point(439, 22);
             this.labelTotalQty.Name = "labelTotalQty";
             this.labelTotalQty.Size = new System.Drawing.Size(95, 23);
@@ -155,8 +153,8 @@
             this.groupBox1.Controls.Add(this.labelSPNo);
             this.groupBox1.Controls.Add(this.labelDesc);
             this.groupBox1.Controls.Add(this.displaySPNo);
-            this.groupBox1.Controls.Add(this.labelSciRefno);
-            this.groupBox1.Controls.Add(this.displaySciRefno);
+            this.groupBox1.Controls.Add(this.labelRefno);
+            this.groupBox1.Controls.Add(this.displayRefno);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -176,7 +174,6 @@
             // 
             // labelSizeSpec
             // 
-            this.labelSizeSpec.Lines = 0;
             this.labelSizeSpec.Location = new System.Drawing.Point(684, 19);
             this.labelSizeSpec.Name = "labelSizeSpec";
             this.labelSizeSpec.Size = new System.Drawing.Size(75, 23);
@@ -204,7 +201,6 @@
             // 
             // label4
             // 
-            this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(459, 19);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
@@ -213,7 +209,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(6, 19);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 23);
@@ -222,7 +217,6 @@
             // 
             // labelDesc
             // 
-            this.labelDesc.Lines = 0;
             this.labelDesc.Location = new System.Drawing.Point(6, 51);
             this.labelDesc.Name = "labelDesc";
             this.labelDesc.Size = new System.Drawing.Size(75, 23);
@@ -238,23 +232,22 @@
             this.displaySPNo.Size = new System.Drawing.Size(124, 23);
             this.displaySPNo.TabIndex = 112;
             // 
-            // labelSciRefno
+            // labelRefno
             // 
-            this.labelSciRefno.Lines = 0;
-            this.labelSciRefno.Location = new System.Drawing.Point(233, 19);
-            this.labelSciRefno.Name = "labelSciRefno";
-            this.labelSciRefno.Size = new System.Drawing.Size(75, 23);
-            this.labelSciRefno.TabIndex = 113;
-            this.labelSciRefno.Text = "SciRefno";
+            this.labelRefno.Location = new System.Drawing.Point(233, 19);
+            this.labelRefno.Name = "labelRefno";
+            this.labelRefno.Size = new System.Drawing.Size(75, 23);
+            this.labelRefno.TabIndex = 113;
+            this.labelRefno.Text = "Refno";
             // 
-            // displaySciRefno
+            // displayRefno
             // 
-            this.displaySciRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySciRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySciRefno.Location = new System.Drawing.Point(311, 19);
-            this.displaySciRefno.Name = "displaySciRefno";
-            this.displaySciRefno.Size = new System.Drawing.Size(124, 23);
-            this.displaySciRefno.TabIndex = 114;
+            this.displayRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRefno.Location = new System.Drawing.Point(311, 19);
+            this.displayRefno.Name = "displayRefno";
+            this.displayRefno.Size = new System.Drawing.Size(124, 23);
+            this.displayRefno.TabIndex = 114;
             // 
             // panel1
             // 
@@ -285,6 +278,7 @@
             this.gridRollNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridRollNo.RowTemplate.Height = 24;
             this.gridRollNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridRollNo.ShowCellToolTips = false;
             this.gridRollNo.Size = new System.Drawing.Size(1008, 386);
             this.gridRollNo.TabIndex = 0;
             this.gridRollNo.TabStop = false;
@@ -296,6 +290,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P10_Detail_Detail";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Roll#";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -327,8 +322,8 @@
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelDesc;
         private Win.UI.DisplayBox displaySPNo;
-        private Win.UI.Label labelSciRefno;
-        private Win.UI.DisplayBox displaySciRefno;
+        private Win.UI.Label labelRefno;
+        private Win.UI.DisplayBox displayRefno;
         private Win.UI.NumericBox numRequestVariance;
         private Win.UI.Label labelRequestVariance;
     }
