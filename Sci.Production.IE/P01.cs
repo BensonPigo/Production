@@ -1520,10 +1520,20 @@ where ID = {0}",
                 return;
             }
 
+
+            // Deleted資料列會影響Index抓取，故擋掉
+            var deletedDatas = dt.AsEnumerable().Where(o => o.RowState == DataRowState.Deleted).ToList();
+
+            if (deletedDatas.Any())
+            {
+                MyUtility.Msg.WarningBox("There is data be deleted, please save first.");
+                return;
+            }
+
             int insertPosition;
 
             // 取得要放置的Index
-            if (MyUtility.Check.Empty(txtInsertPosition))
+            if (MyUtility.Check.Empty(this.txtInsertPosition.Text))
             {
                 insertPosition = dt.Rows.Count;
             }
@@ -1550,17 +1560,126 @@ where ID = {0}",
             // 複製並插入
             var copyRow = this.SelectedDetailGridDataRow.OrderBy(o => o["Seq"]);
 
+
+            bool isAllNum = true;
+
+            // 勾選了幾筆
+            int insertStartIndex = insertPosition;
+            int insertEndIndex = this.SelectedDetailGridDataRow.Count() + insertPosition - 1;
+
             if (copyRow.Any())
             {
+                #region 直接塞最後面的情況
+
+                // 直接塞最後面的情況
+                if (insertPosition == dt.Rows.Count)
+                {
+                    // 若最後一筆Seq包含文字，則不自動編碼
+                    if (int.TryParse(dt.Rows[dt.Rows.Count - 1]["Seq"].ToString(), out int y))
+                    {
+                        int i = 1;
+                        int maxSeq = Convert.ToInt32(dt.Rows[dt.Rows.Count - 1]["Seq"]);
+                        copyRow.ToList().ForEach(row =>
+                        {
+                            var newRow = dt.NewRow();
+                            newRow.ItemArray = row.ItemArray;
+                            newRow["Selected"] = "0";
+                            newRow["Seq"] = (maxSeq + (i * 10)).ToString().PadLeft(4, '0');
+                            dt.Rows.InsertAt(newRow, insertPosition++);
+                            i++;
+                        });
+
+                    }
+                    else
+                    {
+                        copyRow.ToList().ForEach(row =>
+                        {
+                            var newRow = dt.NewRow();
+                            newRow.ItemArray = row.ItemArray;
+                            newRow["Selected"] = "0";
+                            dt.Rows.InsertAt(newRow, insertPosition++);
+                        });
+
+                    }
+
+                    return;
+                }
+
+                #endregion
+
+                #region 重新編碼範圍內是否有不是數字的情況
+                int x;
+
+                // 判斷勾選的是否都是數字
                 copyRow.ToList().ForEach(row =>
+                {
+                    if (!int.TryParse(row["Seq"].ToString() , out x))
+                    {
+                        isAllNum = false;
+                    }
+                });
+
+                // 判斷後續要異動Seq的是否都是數字
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dt.Rows.IndexOf(dr) > insertEndIndex)
+                    {
+                        if (dt.Rows[dt.Rows.IndexOf(dr) - 1].RowState == DataRowState.Deleted)
+                        {
+                            continue;
+                        }
+
+                        if (!int.TryParse(dt.Rows[dt.Rows.IndexOf(dr) - 1]["Seq"].ToString(), out x))
+                        {
+                            isAllNum = false;
+                        }
+                    }
+                }
+
+                // 判斷被塞的位置是否為數字
+                if (!int.TryParse(dt.Rows[insertPosition]["Seq"].ToString(), out x))
+                {
+                    isAllNum = false;
+                }
+                #endregion
+
+                if (isAllNum)
+                {
+                    // 編碼範圍內都是數字，則自動編碼
+                    int i = 0;
+                    copyRow.ToList().ForEach(row =>
+                    {
+                        var newRow = dt.NewRow();
+                        newRow.ItemArray = row.ItemArray;
+                        newRow["Selected"] = "0";
+                        newRow["Seq"] = (Convert.ToInt32(dt.Rows[insertPosition]["Seq"]) + (i * 10)).ToString().PadLeft(4, '0');  // 取代原本的Seq
+                        dt.Rows.InsertAt(newRow, insertPosition++);
+                        i++;
+                    });
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        if (dt.Rows.IndexOf(dr) > insertEndIndex)
+                        {
+                            // 前一個Seq
+                            int preSeq = Convert.ToInt32(dt.Rows[dt.Rows.IndexOf(dr) - 1]["Seq"]);
+                            dr["Seq"] = MyUtility.Convert.GetString(preSeq + 10).PadLeft(4, '0');
+                        }
+                    }
+                }
+                else
+                {
+                    // 編碼範圍內有文字，則塞入就好
+                    copyRow.ToList().ForEach(row =>
                     {
                         var newRow = dt.NewRow();
                         newRow.ItemArray = row.ItemArray;
                         newRow["Selected"] = "0";
                         dt.Rows.InsertAt(newRow, insertPosition++);
                     });
-            }
+                }
 
+            }
 
         }
     }

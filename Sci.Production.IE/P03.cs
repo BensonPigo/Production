@@ -1294,8 +1294,7 @@ select ID = null
 	   , TotalGSD = td.SMV
 	   , Cycle = td.SMV
 	   , TotalCycle = td.SMV
-	   --, td.MachineTypeID
-	   , [MachineTypeID]=IIF(td.MachineTypeID IS NULL OR td.MachineTypeID = '' ,td.OperationID ,td.MachineTypeID )
+	   , td.MachineTypeID
        , Attachment = td.Mold
        , Template --= null
 	   , td.OperationID
@@ -1303,7 +1302,7 @@ select ID = null
 	   , GroupKey = 0
 	   , New = 0
 	   , EmployeeID = ''
-	   , Description = o.DescEN
+	   , Description = IIF(td.MachineTypeID IS NULL OR td.MachineTypeID = '' ,td.OperationID ,o.DescEN )
 	   , EmployeeName = ''
 	   , EmployeeSkill = ''
 	   , Efficiency = 100
