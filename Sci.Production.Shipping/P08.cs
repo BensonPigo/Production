@@ -491,25 +491,24 @@ where sd.ID = '{0}'", masterID);
 select a.isapp 
 from #tmp sd
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID";
-            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqlchkforisapp, out tmpdt);
+left join [FinanceEN].dbo.AccountNO a on a.ID = substring(se.AccountID,1,4)
+";
+            DataTable dDt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlchkforisapp, out tmpdt);
             if (!result)
             {
                 this.ShowErr(result);
                 return false;
             }
 
-            if (this.detailgridbs.DataSource != null)
+            var hasisapp = tmpdt.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["IsAPP"]));
+            if (hasisapp.Count() > 0)
             {
-                var hasisapp = tmpdt.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["IsAPP"]));
-                if (hasisapp.Count() > 0)
+                var notapp = tmpdt.AsEnumerable().Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]));
+                if (notapp.Count() > 0)
                 {
-                    var notapp = tmpdt.AsEnumerable().Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]));
-                    if (notapp.Count() > 0)
-                    {
-                        MyUtility.Msg.WarningBox("Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.");
-                        return false;
-                    }
+                    MyUtility.Msg.WarningBox("Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.");
+                    return false;
                 }
             }
 
