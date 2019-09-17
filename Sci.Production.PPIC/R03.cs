@@ -1553,7 +1553,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 {
                     // DataRow[] find_subprocess = orderArtworkData.Select(string.Format("ID = '{0}' and ArtworkTypeID = '{1}' and (Price > 0 or Qty > 0)", MyUtility.Convert.GetString(dr["ID"]), subProcess));
                     var records = from record in lookupID[MyUtility.Convert.GetString(dr["ID"])]
-                                  where record.Field<string>("ArtworkTypeID") == this.subProcess
+                                  where record.Field<string>("ArtworkTypeID").ToUpper() == this.subProcess.ToUpper()
                                            && (record.Field<decimal>("Price") > 0 || record.Field<decimal>("Qty") > 0)
                                   select record;
                     if (records.Count() == 0)
