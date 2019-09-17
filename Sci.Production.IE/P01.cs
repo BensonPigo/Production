@@ -205,6 +205,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 
             if (this.EditMode)
             {
+                this.txtInsertPosition.Text = string.Empty;
                 this.ui_pnlBatchUpdate.Visible = true;
             }
             else
@@ -1474,20 +1475,20 @@ where ID = {0}",
 
         private void BtnLocationBatchUpdate_Click(object sender, EventArgs e)
         {
-            if (this.EditMode == false)
-            {
-                return;
-            }
+            //if (this.EditMode == false)
+            //{
+            //    return;
+            //}
 
-            this.detailgrid.ValidateControl();
+            //this.detailgrid.ValidateControl();
 
-            this.SelectedDetailGridDataRow
-                .Where(row => !string.IsNullOrEmpty(row.Field<string>("OperationID")) && row.Field<string>("OperationID").StartsWith("--") == false)
-                .ToList()
-                .ForEach(row =>
-                {
-                    row["Location"] = this.ui_cbxLocationBatchUpdate.SelectedValue;
-                });
+            //this.SelectedDetailGridDataRow
+            //    .Where(row => !string.IsNullOrEmpty(row.Field<string>("OperationID")) && row.Field<string>("OperationID").StartsWith("--") == false)
+            //    .ToList()
+            //    .ForEach(row =>
+            //    {
+            //        row["Location"] = this.ui_cbxLocationBatchUpdate.SelectedValue;
+            //    });
         }
 
         private void BtnBatchDelete_Click(object sender, EventArgs e)
@@ -1555,6 +1556,7 @@ where ID = {0}",
                     {
                         var newRow = dt.NewRow();
                         newRow.ItemArray = row.ItemArray;
+                        newRow["Selected"] = "0";
                         dt.Rows.InsertAt(newRow, insertPosition++);
                     });
             }

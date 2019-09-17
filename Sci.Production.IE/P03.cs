@@ -108,6 +108,7 @@ order by ld.No, ld.GroupKey", masterID);
             DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings Notice = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             #region No.的Valid
@@ -466,6 +467,7 @@ order by ld.No, ld.GroupKey", masterID);
             };
             threadColor.MaxLength = 1;
             no.MaxLength = 4;
+            Notice.MaxLength = 600;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
@@ -479,6 +481,7 @@ order by ld.No, ld.GroupKey", masterID);
             .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: attachment)
             .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: template)
             .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
+            .Text("Notice", header: "Notice", width: Widths.AnsiChars(60), settings: Notice)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
             .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -662,11 +665,11 @@ order by ld.No, ld.GroupKey", masterID);
         /// <returns>bool</returns>
         protected override bool ClickEditBefore()
         {
-            if (!PublicPrg.Prgs.GetAuthority(this.CurrentMaintain["AddName"].ToString()))
-            {
-                MyUtility.Msg.WarningBox("This record is not created by yourself, so you can't modify this record!!");
-                return false;
-            }
+            //if (!PublicPrg.Prgs.GetAuthority(this.CurrentMaintain["AddName"].ToString()))
+            //{
+            //    MyUtility.Msg.WarningBox("This record is not created by yourself, so you can't modify this record!!");
+            //    return false;
+            //}
 
             if (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED")
             {
@@ -1291,9 +1294,10 @@ select ID = null
 	   , TotalGSD = td.SMV
 	   , Cycle = td.SMV
 	   , TotalCycle = td.SMV
-	   , td.MachineTypeID
-       , Attachment = null
-       , Template = null
+	   --, td.MachineTypeID
+	   , [MachineTypeID]=IIF(td.MachineTypeID IS NULL OR td.MachineTypeID = '' ,td.OperationID ,td.MachineTypeID )
+       , Attachment = td.Mold
+       , Template --= null
 	   , td.OperationID
 	   , MoldID = td.Mold
 	   , GroupKey = 0

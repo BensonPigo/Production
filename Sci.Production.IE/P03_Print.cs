@@ -192,6 +192,7 @@ order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]))
             {
                 sqlCmd = string.Format(
                     @"select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
+,[ActCycleTime(average)]=SUM(ISNULL(ActCycle,0))/COUNT(DISTINCT No)
 from LineMapping_Detail ld WITH (NOLOCK) 
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 GROUP BY NO
@@ -532,6 +533,14 @@ order by no
             series1.Name = "Takt time";
             series1.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
 
+            // 新增折線圖
+            Microsoft.Office.Interop.Excel.SeriesCollection seriesCollection_actTime = chartPage.SeriesCollection();
+            Microsoft.Office.Interop.Excel.Series series1_actTime = seriesCollection_actTime.NewSeries();
+            series1_actTime.Values = chartData.get_Range("D2", string.Format("D{0}", MyUtility.Convert.GetString(chartDataEndRow)));
+            series1_actTime.XValues = chartData.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(chartDataEndRow)));
+            series1_actTime.Name = "Act Cycle Time(average)";
+            series1_actTime.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
+
             // 更改圖表版面配置 && 填入圖表標題 & 座標軸標題
             chartPage.ApplyLayout(9);
             chartPage.ChartTitle.Select();
@@ -699,7 +708,8 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "N")}{norow}",
-                        TaktFormula = $"=D1"
+                        ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
+                        TaktFormula = $"=E1"
                     });
 
                     if (leftDirection)
@@ -827,7 +837,8 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "N")}{norow}",
-                        TaktFormula = $"=D1"
+                        ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
+                        TaktFormula = $"=E1"
                     });
 
                     if (leftDirection)
@@ -900,13 +911,14 @@ order by no
             // 填act Cycle Time
             worksheet = cycleTimeSheet;
             int intRowsStart = 2;
-            object[,] objArray = new object[1, 3];
+            object[,] objArray = new object[1, 4];
             foreach (CycleTimeChart dr in list_CycleTimeChart)
             {
                 objArray[0, 0] = dr.OperatorNo;
                 objArray[0, 1] = dr.ActCycleFormula;
                 objArray[0, 2] = dr.TaktFormula;
-                worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 3] = dr.ActCycleTime;
+                worksheet.Range[string.Format("A{0}:D{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -978,6 +990,7 @@ order by no
         {
             private string operatorNo;
             private string actCycleFormula;
+            private string actCycleTime;
             private string taktFormula;
 
             public string OperatorNo
@@ -1003,6 +1016,19 @@ order by no
                 set
                 {
                     this.actCycleFormula = value;
+                }
+            }
+
+            public string ActCycleTime
+            {
+                get
+                {
+                    return this.actCycleTime;
+                }
+
+                set
+                {
+                    this.actCycleTime = value;
                 }
             }
 

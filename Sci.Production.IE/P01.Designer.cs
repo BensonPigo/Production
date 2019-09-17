@@ -63,12 +63,9 @@
             this.btnCIPF = new Sci.Win.UI.Button();
             this.ui_pnlBatchUpdate = new Sci.Win.UI.Panel();
             this.label1 = new Sci.Win.UI.Label();
-            this.ui_cbxLocationBatchUpdate = new Sci.Win.UI.ComboBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.ui_btnLocationBatchUpdate = new Sci.Win.UI.Button();
+            this.txtInsertPosition = new Sci.Win.UI.TextBox();
             this.ui_btnBatchDelete = new Sci.Win.UI.Button();
             this.ui_btnBatchCopy = new Sci.Win.UI.Button();
-            this.txtInsertPosition = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -583,68 +580,39 @@
             // 
             // ui_pnlBatchUpdate
             // 
-            this.ui_pnlBatchUpdate.Controls.Add(this.txtInsertPosition);
             this.ui_pnlBatchUpdate.Controls.Add(this.label1);
-            this.ui_pnlBatchUpdate.Controls.Add(this.ui_cbxLocationBatchUpdate);
-            this.ui_pnlBatchUpdate.Controls.Add(this.label2);
-            this.ui_pnlBatchUpdate.Controls.Add(this.ui_btnLocationBatchUpdate);
+            this.ui_pnlBatchUpdate.Controls.Add(this.txtInsertPosition);
             this.ui_pnlBatchUpdate.Controls.Add(this.ui_btnBatchDelete);
             this.ui_pnlBatchUpdate.Controls.Add(this.ui_btnBatchCopy);
             this.ui_pnlBatchUpdate.Location = new System.Drawing.Point(537, 91);
             this.ui_pnlBatchUpdate.Name = "ui_pnlBatchUpdate";
-            this.ui_pnlBatchUpdate.Size = new System.Drawing.Size(256, 60);
+            this.ui_pnlBatchUpdate.Size = new System.Drawing.Size(132, 60);
             this.ui_pnlBatchUpdate.TabIndex = 169;
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.Location = new System.Drawing.Point(197, 1);
+            this.label1.Location = new System.Drawing.Point(3, 4);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(57, 23);
+            this.label1.Size = new System.Drawing.Size(60, 23);
             this.label1.TabIndex = 228;
             this.label1.Text = "Position";
             this.label1.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // ui_cbxLocationBatchUpdate
+            // txtInsertPosition
             // 
-            this.ui_cbxLocationBatchUpdate.BackColor = System.Drawing.Color.White;
-            this.ui_cbxLocationBatchUpdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.ui_cbxLocationBatchUpdate.FormattingEnabled = true;
-            this.ui_cbxLocationBatchUpdate.IsSupportUnselect = true;
-            this.ui_cbxLocationBatchUpdate.Location = new System.Drawing.Point(3, 28);
-            this.ui_cbxLocationBatchUpdate.Name = "ui_cbxLocationBatchUpdate";
-            this.ui_cbxLocationBatchUpdate.OldText = "";
-            this.ui_cbxLocationBatchUpdate.Size = new System.Drawing.Size(82, 24);
-            this.ui_cbxLocationBatchUpdate.TabIndex = 168;
-            // 
-            // label2
-            // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.Location = new System.Drawing.Point(0, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(195, 23);
-            this.label2.TabIndex = 151;
-            this.label2.Text = "Batch Update";
-            this.label2.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ui_btnLocationBatchUpdate
-            // 
-            this.ui_btnLocationBatchUpdate.Location = new System.Drawing.Point(85, 28);
-            this.ui_btnLocationBatchUpdate.Name = "ui_btnLocationBatchUpdate";
-            this.ui_btnLocationBatchUpdate.Size = new System.Drawing.Size(22, 24);
-            this.ui_btnLocationBatchUpdate.TabIndex = 167;
-            this.ui_btnLocationBatchUpdate.Text = "↓";
-            this.ui_btnLocationBatchUpdate.UseVisualStyleBackColor = true;
-            this.ui_btnLocationBatchUpdate.Click += new System.EventHandler(this.BtnLocationBatchUpdate_Click);
+            this.txtInsertPosition.BackColor = System.Drawing.Color.White;
+            this.txtInsertPosition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtInsertPosition.Location = new System.Drawing.Point(66, 4);
+            this.txtInsertPosition.Name = "txtInsertPosition";
+            this.txtInsertPosition.Size = new System.Drawing.Size(60, 23);
+            this.txtInsertPosition.TabIndex = 170;
             // 
             // ui_btnBatchDelete
             // 
             this.ui_btnBatchDelete.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.ui_btnBatchDelete.Location = new System.Drawing.Point(107, 28);
+            this.ui_btnBatchDelete.Location = new System.Drawing.Point(3, 30);
             this.ui_btnBatchDelete.Name = "ui_btnBatchDelete";
-            this.ui_btnBatchDelete.Size = new System.Drawing.Size(44, 24);
+            this.ui_btnBatchDelete.Size = new System.Drawing.Size(60, 24);
             this.ui_btnBatchDelete.TabIndex = 165;
             this.ui_btnBatchDelete.Text = "Del";
             this.ui_btnBatchDelete.UseVisualStyleBackColor = true;
@@ -654,22 +622,13 @@
             // 
             this.ui_btnBatchCopy.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.ui_btnBatchCopy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ui_btnBatchCopy.Location = new System.Drawing.Point(151, 28);
+            this.ui_btnBatchCopy.Location = new System.Drawing.Point(66, 30);
             this.ui_btnBatchCopy.Name = "ui_btnBatchCopy";
-            this.ui_btnBatchCopy.Size = new System.Drawing.Size(44, 24);
+            this.ui_btnBatchCopy.Size = new System.Drawing.Size(60, 24);
             this.ui_btnBatchCopy.TabIndex = 164;
             this.ui_btnBatchCopy.Text = "Copy";
             this.ui_btnBatchCopy.UseVisualStyleBackColor = true;
             this.ui_btnBatchCopy.Click += new System.EventHandler(this.BtnBatchCopy_Click);
-            // 
-            // txtInsertPosition
-            // 
-            this.txtInsertPosition.BackColor = System.Drawing.Color.White;
-            this.txtInsertPosition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInsertPosition.Location = new System.Drawing.Point(197, 29);
-            this.txtInsertPosition.Name = "txtInsertPosition";
-            this.txtInsertPosition.Size = new System.Drawing.Size(57, 23);
-            this.txtInsertPosition.TabIndex = 170;
             // 
             // P01
             // 
@@ -745,9 +704,6 @@
         private System.Windows.Forms.Label labVersionWarning;
         private Win.UI.Button btnCIPF;
         private Win.UI.Panel ui_pnlBatchUpdate;
-        private Win.UI.ComboBox ui_cbxLocationBatchUpdate;
-        private Win.UI.Label label2;
-        private Win.UI.Button ui_btnLocationBatchUpdate;
         private Win.UI.Button ui_btnBatchDelete;
         private Win.UI.Button ui_btnBatchCopy;
         private Win.UI.Label label1;
