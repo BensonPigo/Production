@@ -28,7 +28,6 @@ namespace ImportSewingLineSchedule.Daily
         StringBuilder sqlmsg = new StringBuilder();
         bool IsAuto = Convert.ToBoolean(ConfigurationManager.AppSettings["IsAuto"]);
         bool isTestJobLog = Convert.ToBoolean(ConfigurationManager.AppSettings["IsTestJobLog"]);
-        bool AnotherDat = Convert.ToBoolean(ConfigurationManager.AppSettings["UseAnotherDate"]);
 
         bool issucess = true;
         string tpeMisMail = string.Empty;
@@ -94,29 +93,35 @@ namespace ImportSewingLineSchedule.Daily
         #region Export/Update (非同步) 執行Procedure
         private DualResult AsyncUpdateExport(SqlConnection conn)
         {
-            if (this.AnotherDat)
+            DataTable serverdt;
+            string sqlserver = string.Empty;
+            if (isTestJobLog)
             {
-                this.OutputDate ="'"+ ConfigurationManager.AppSettings["OutputDate_AnotherDate"].ToString() + "'";
+                sqlserver = $@" select name from sys.servers WHERE Name Like 'testing%' and Name not like '%mis' ";
+            }
+            else
+            {
+                sqlserver= $@" select name from sys.servers WHERE Name Like 'PMS\pmsdb\%'";
             }
 
+            DualResult dualResult = DBProxy.Current.Select(null, sqlserver, out serverdt);
+            if (!dualResult)
+            {
+                return dualResult;
+            }
+            string date = DateTime.Now.AddDays(-15).ToString("yyyy/MM/dd");
             try
             {
-                string sqlcmd = $@"
-Delete P_SewingLineSchedule --刪除全部
+                string sqlcmd = $@"Delete P_SewingLineSchedule --先刪除全部";
 
-Declare @ServerName varchar(20);
-DECLARE ServerNameList CURSOR FOR select name from sys.servers WHERE Name Like 'PMS\pmsdb\%'
-OPEN ServerNameList
-FETCH NEXT FROM ServerNameList INTO @ServerName
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	--SELECT @ServerName
-	EXEC [P_ImportSewingLineSchedule] @ServerName
-FETCH NEXT FROM ServerNameList INTO @ServerName
-END
-CLOSE ServerNameList
-DEALLOCATE ServerNameList
-                    ";
+                foreach (DataRow item in serverdt.Rows)
+                {
+                    sqlcmd += $@"
+insert into [P_SewingLineSchedule]
+SELECT *  FROM OPENQUERY ([{item["name"]}],'SET FMTONLY OFF; exec production.dbo.GetSewingLineScheduleData ''{date}''')
+";
+                }
+                   
                 SqlCommand cmd = new SqlCommand(sqlcmd, conn);
                 //cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 7200;  //12分鐘
@@ -136,12 +141,7 @@ DEALLOCATE ServerNameList
         {
             String subject = "";
             String desc = "";
-            string strDate = DateTime.Now.AddDays(-2).ToString("yyyy/MM/dd");
-
-            if (this.AnotherDat)
-            {
-                strDate =  ConfigurationManager.AppSettings["OutputDate_AnotherDate"].ToString() ;
-            }
+            string strDate = DateTime.Now.ToString("yyyy/MM/dd");
 
             #region 組合 Desc
             if (!MyUtility.Check.Empty(ErrorMsg))
@@ -151,8 +151,7 @@ DEALLOCATE ServerNameList
 
             desc = $@"Please check below information.
 Transfer date:{ strDate }
-Instance: PMSDB\POWERBI
-Stored Procedure: [PBIReportData].P_ImportSewingLineSchedule
+Stored Procedure: GetSewingLineScheduleData
 ";
             #endregion
 
@@ -160,6 +159,7 @@ Stored Procedure: [PBIReportData].P_ImportSewingLineSchedule
             if (issucess)
             {
                 subject += " Success";
+                desc += Environment.NewLine + "Success";
             }
             else
             {
