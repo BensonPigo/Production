@@ -66,7 +66,7 @@ BEGIN
 			) disBundle
 			outer apply (
 				select top 1
-						BundleNo = tmp.EpcId
+						BundleNo = cast(tmp.EpcId as varchar(10))
 						, SubProcessId = RRS.processId
 						, TransDate = tmp.TransDate
 						, AddDate = GetDate()
@@ -155,8 +155,21 @@ BEGIN
 
 	End Try
 	Begin Catch
-		SELECT ERROR_NUMBER(), ERROR_MESSAGE();
+		IF @@TRANCOUNT > 0
 		RollBack Tran
+
+		DECLARE  @ErrorMessage  NVARCHAR(4000),  
+				 @ErrorSeverity INT,    
+				 @ErrorState    INT;
+		SELECT     
+			@ErrorMessage  = ERROR_MESSAGE(),    
+			@ErrorSeverity = ERROR_SEVERITY(),   
+			@ErrorState    = ERROR_STATE();
+
+		RAISERROR (@ErrorMessage, -- Message text.    
+					 @ErrorSeverity, -- Severity.    
+					 @ErrorState -- State.    
+				   ); 
 	End Catch	'
 
 	EXEC(@Cmd1 + @Cmd2)
