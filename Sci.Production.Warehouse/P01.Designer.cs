@@ -169,7 +169,7 @@
             this.dateCRDDate = new Sci.Win.UI.DateBox();
             this.labelSDPDate = new Sci.Win.UI.Label();
             this.dateSDPDate = new Sci.Win.UI.DateBox();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.btnTrimCard = new Sci.Win.UI.Button();
             this.btnCloseMTL = new Sci.Win.UI.Button();
             this.btnMeterialStatus = new Sci.Win.UI.Button();
@@ -195,6 +195,7 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.comboSubconInType);
+            this.detailcont.Controls.Add(this.txtdropdownlistCategory);
             this.detailcont.Controls.Add(this.displayIsMixMarker);
             this.detailcont.Controls.Add(this.btnPFHistory);
             this.detailcont.Controls.Add(this.btnExpectionFormRemark);
@@ -203,7 +204,6 @@
             this.detailcont.Controls.Add(this.btnMeterialStatus);
             this.detailcont.Controls.Add(this.btnCloseMTL);
             this.detailcont.Controls.Add(this.btnTrimCard);
-            this.detailcont.Controls.Add(this.comboCategory);
             this.detailcont.Controls.Add(this.labelSDPDate);
             this.detailcont.Controls.Add(this.dateSDPDate);
             this.detailcont.Controls.Add(this.labelCFMDate);
@@ -1742,18 +1742,22 @@
             this.dateSDPDate.Size = new System.Drawing.Size(100, 21);
             this.dateSDPDate.TabIndex = 182;
             // 
-            // comboCategory
+            // txtdropdownlistCategory
             // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "category", true));
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(346, 83);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(121, 23);
-            this.comboCategory.TabIndex = 183;
+            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtdropdownlistCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "category", true));
+            this.txtdropdownlistCategory.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtdropdownlistCategory.FormattingEnabled = true;
+            this.txtdropdownlistCategory.IsSupportUnselect = true;
+            this.txtdropdownlistCategory.Location = new System.Drawing.Point(346, 83);
+            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
+            this.txtdropdownlistCategory.OldText = "";
+            this.txtdropdownlistCategory.ReadOnly = true;
+            this.txtdropdownlistCategory.Size = new System.Drawing.Size(121, 23);
+            this.txtdropdownlistCategory.TabIndex = 183;
+            this.txtdropdownlistCategory.TabStop = false;
+            this.txtdropdownlistCategory.Type = "Category";
             // 
             // btnTrimCard
             // 
@@ -2015,7 +2019,7 @@
         private Win.UI.Label labelPOSMR;
         private Class.txttpeuser txttpeuserPOHandle;
         private Class.txttpeuser txttpeuserPOSMR;
-        private Win.UI.ComboBox comboCategory;
+        private Class.txtdropdownlist txtdropdownlistCategory;
         private Win.UI.Label labelSDPDate;
         private Win.UI.DateBox dateSDPDate;
         private Win.UI.Label labelCFMDate;

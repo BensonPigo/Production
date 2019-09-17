@@ -65,6 +65,7 @@
             this.txtWKNo2 = new Sci.Win.UI.TextBox();
             this.txtWKNo1 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.chkWhseClose = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -500,9 +501,21 @@
             this.label2.TabIndex = 143;
             this.label2.Text = "～";
             // 
+            // chkWhseClose
+            // 
+            this.chkWhseClose.AutoSize = true;
+            this.chkWhseClose.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkWhseClose.Location = new System.Drawing.Point(13, 497);
+            this.chkWhseClose.Name = "chkWhseClose";
+            this.chkWhseClose.Size = new System.Drawing.Size(142, 21);
+            this.chkWhseClose.TabIndex = 145;
+            this.chkWhseClose.Text = "exclude closed SP";
+            this.chkWhseClose.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(528, 525);
+            this.ClientSize = new System.Drawing.Size(528, 548);
+            this.Controls.Add(this.chkWhseClose);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtWKNo2);
             this.Controls.Add(this.txtWKNo1);
@@ -544,6 +557,7 @@
             this.Name = "R03";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. Material Delivery Report";
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.labelSeason, 0);
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.labelFabricType, 0);
@@ -584,6 +598,7 @@
             this.Controls.SetChildIndex(this.txtWKNo1, 0);
             this.Controls.SetChildIndex(this.txtWKNo2, 0);
             this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.chkWhseClose, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -628,5 +643,6 @@
         private Win.UI.TextBox txtWKNo2;
         private Win.UI.TextBox txtWKNo1;
         private Win.UI.Label label2;
+        private Win.UI.CheckBox chkWhseClose;
     }
 }

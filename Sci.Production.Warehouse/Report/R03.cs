@@ -409,6 +409,11 @@ where 1=1
 
             sqlCmd.Append($@" and fabric.DWR = {dwr}");
 
+            if (chkWhseClose.Checked)
+            {
+                sqlCmd.Append(" and o.WhseClose is null");
+            }
+
             if (orderby.ToUpper().TrimEnd() == "SUPPLIER")
             {
                 sqlCmd.Append(" ORDER BY PS.SUPPID, PSD.ID, PSD.SEQ1, PSD.SEQ2 ");
