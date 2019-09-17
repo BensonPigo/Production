@@ -507,7 +507,10 @@ left join [FinanceEN].dbo.AccountNO a on a.ID = substring(se.AccountID,1,4)
                 var notapp = tmpdt.AsEnumerable().Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]));
                 if (notapp.Count() > 0)
                 {
-                    MyUtility.Msg.WarningBox("Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.");
+                    MyUtility.Msg.WarningBox(@"Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.
+
+If the application is for Air - Prepaid Invoice, please ensure that all item codes are linked to the correct Account Name -
+6105 - Air prepaid apparel - FTY and / or 5912 - Disburz for SCI Adm Expz, Thank You.");
                     return false;
                 }
             }
