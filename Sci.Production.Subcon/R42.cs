@@ -209,7 +209,7 @@ Select
 SELECT 
 RFIDProcessLocationID ,Type ,TagId ,TransferDate ,PanelNo ,BundleNo ,RFIDReaderId ,SubprocessId ,LocationID ,CutCellID
 INTO #BundleTransfer
-FROM BundleTransfer bt
+FROM BundleTransfer bt WITH (NOLOCK)
 WHERE 1=1
 ");
 
@@ -232,7 +232,7 @@ SELECT
 			,item
 			,bd.PatternCode,bd.PatternDesc,bd.BundleGroup,bd.SizeCode,b.Qty
 INTO #BundleAll
-FROM Bundle b
+FROM Bundle b WITH (NOLOCK)
 LEFT JOIN Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
 WHERE 1=1
 AND  EXISTS(SELECT 1 FROM #BundleTransfer WHERE BundleNo=bd.bundleNo)
