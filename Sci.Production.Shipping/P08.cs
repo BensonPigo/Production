@@ -145,7 +145,7 @@ and FKMenu= (select PKey from MenuDetail where FormName='Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account,se.UnitID
+                @"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account,se.UnitID,a.IsAPP 
 from ShippingAP_Detail sd WITH (NOLOCK) 
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
@@ -486,6 +486,32 @@ where sd.ID = '{0}'", masterID);
                 return false;
             }
             #endregion
+            DataTable tmpdt;
+            string sqlchkforisapp = $@"
+select a.isapp 
+from #tmp sd
+left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
+left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqlchkforisapp, out tmpdt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (this.detailgridbs.DataSource != null)
+            {
+                var hasisapp = tmpdt.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["IsAPP"]));
+                if (hasisapp.Count() > 0)
+                {
+                    var notapp = tmpdt.AsEnumerable().Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]));
+                    if (notapp.Count() > 0)
+                    {
+                        MyUtility.Msg.WarningBox("Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.");
+                        return false;
+                    }
+                }
+            }
 
             // Supplier與B/L No 如果重複才需要填寫原因, Reason 不可為空
             if (!MyUtility.Check.Empty(this.txtBLNo.Text))
