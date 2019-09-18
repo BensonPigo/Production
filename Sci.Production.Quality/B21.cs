@@ -19,7 +19,8 @@ namespace Sci.Production.Quality
          public B21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();                    
+            InitializeComponent();
+            this.DefaultOrder = "DefectTypeID,id";
         }
 
          protected override void ClickEditAfter()
