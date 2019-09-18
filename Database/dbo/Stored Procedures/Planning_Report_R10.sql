@@ -199,12 +199,12 @@ BEGIN
 	--By Sewing from Local Order
 
 	--#sew4
-	select sd.ID,OrderId,SUM(QAQty*sl.Rate/100) as QAQty 
+	select sd.ID,OrderId,SUM(QAQty*ol.Rate/100) as QAQty 
 	into #sew4 
 	from (select *,sidx=ROW_NUMBER()over(partition by id,orderid,ComboType,Article,Color,OldDetailKey order by id) 
 	from SewingOutput_Detail) sd 
 	inner join Orders o on sd.OrderId = o.ID 
-	inner join Style_Location sl on o.StyleUkey = sl.StyleUkey and sl.Location = sd.ComboType 
+	inner join Order_Location ol on o.ID = ol.OrderId and ol.Location = sd.ComboType 
 	where OrderId in (select ID from #tmpFactoryOrder1) and sidx = 1 
 	GROUP BY sd.ID,OrderId	
 	
