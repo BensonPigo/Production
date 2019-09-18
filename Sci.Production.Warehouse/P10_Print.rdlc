@@ -761,7 +761,7 @@
                           <Top>0.78493cm</Top>
                           <Left>0.36787cm</Left>
                           <Height>0cm</Height>
-                          <Width>14.54736cm</Width>
+                          <Width>13.62476cm</Width>
                           <Style>
                             <Border>
                               <Style>Dotted</Style>
@@ -788,9 +788,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.52946cm</Top>
-                          <Left>14.91526cm</Left>
+                          <Left>13.96276cm</Left>
                           <Height>0.55591cm</Height>
-                          <Width>2.03257cm</Width>
+                          <Width>1.39757cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -820,9 +820,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Total</rd:DefaultName>
                           <Top>0.52946cm</Top>
-                          <Left>16.94782cm</Left>
+                          <Left>15.36033cm</Left>
                           <Height>0.55591cm</Height>
-                          <Width>2.79897cm</Width>
+                          <Width>2.67781cm</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
                             <Border>
