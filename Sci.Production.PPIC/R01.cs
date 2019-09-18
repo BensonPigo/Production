@@ -1027,13 +1027,20 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
 
             if (!MyUtility.Check.Empty(this.SewingDate1))
             {
-                // Inline After 再搜尋時判斷的是在 Inline - Offline 的期間有包含到 Inline Afer 這一段區間的 Schedule
-                sqlWhere.Append(string.Format(" and (s.Inline >= '{0}' or (s.Inline <= '{0}' and s.Offline >= '{0}'))", Convert.ToDateTime(this.SewingDate1).ToString("d")));
+                // 搜尋時判斷的是在 Inline - Offline 的期間有包含到 SewingDate1 這一段區間的 Schedule
+                sqlWhere.Append(string.Format(
+                    @" 
+and (s.Inline >= '{0}' or
+('{0}' between convert(date, s.Inline) and convert(date, s.Offline)))", Convert.ToDateTime(this.SewingDate1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.SewingDate2))
             {
-                sqlWhere.Append(string.Format(" and s.Offline < '{0}'", Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("d")));
+                // 搜尋時判斷的是在 Inline - Offline 的期間有包含到 SewingDate2 這一段區間的 Schedule
+                sqlWhere.Append(string.Format(
+                    @" 
+and (convert(date,s.Offline) <= '{0}' or
+('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
