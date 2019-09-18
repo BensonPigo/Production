@@ -112,6 +112,7 @@ select  [SubProcessCPU] = @subProcessCPU,
             string sql;
             if (!MyUtility.Check.Empty(this.orderData["OrigBuyerDelivery"]))
             {
+                string whereSeasonID = $" and fsd.SeasonID = '{this.orderData["SeasonID"]}'";
                 sql = string.Format(
                     @"select fd.CpuCost
                                     from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
@@ -123,8 +124,11 @@ select  [SubProcessCPU] = @subProcessCPU,
                     this.orderData["BrandID"].ToString(),
                     this.orderData["FactoryID"].ToString(),
                     Convert.ToDateTime(this.orderData["OrigBuyerDelivery"]).ToString("d"));
-
-                this.numCPUCost.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql));
+                this.numCPUCost.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql + whereSeasonID));
+                if (MyUtility.Check.Empty(this.numCPUCost.Value))
+                {
+                    this.numCPUCost.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql + " and fsd.SeasonID = '' "));
+                }
             }
         }
 

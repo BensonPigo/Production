@@ -58,7 +58,7 @@ select
 	F=sum(pd.ShipQty),
 	c.NameEN,
 	I=sum(pd.ShipQty)*round(o.PoPrice,2),
-	M=sum(pd.ShipQty)*Round((((isnull(o.CPU,0) + isnull(s1.Price,0)) * isnull(f.CpuCost,0)) + isnull(s2.Price,0) + isnull(s3.Price,0)), 3),
+	M=sum(pd.ShipQty)*Round((((isnull(o.CPU,0) + isnull(s1.Price,0)) * isnull(isnull(f1.CpuCost,f.CpuCost),0)) + isnull(s2.Price,0) + isnull(s3.Price,0)), 3),
 	BIRShipTo=SUBSTRING(ccd.BIRShipTo,0,CHARINDEX(char(13),ccd.BIRShipTo))
 into #tmp
 from orders o with(nolock)
@@ -78,6 +78,18 @@ outer apply(
 	and fsd.ShipperID = fd.ShipperID
 	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 	and o.OrigBuyerDelivery is not null
+    and fsd.seasonID = o.seasonID
+)f1
+outer apply(
+	select fd.CpuCost
+	from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+	where fsd.BrandID = o.BrandID
+	and fsd.FactoryID = o.FactoryID
+	and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+	and fsd.ShipperID = fd.ShipperID
+	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and o.OrigBuyerDelivery is not null
+    and fsd.seasonID = ''
 )f
 outer apply(
 	select Price = sum(ot.Price)
@@ -95,7 +107,7 @@ outer apply(
 	select dbo.GetLocalPurchaseStdCost(o.id) price
 )s3
 where b.Status = 'New'
-group by b.id,p.INVNo,p.gw,c.NameEN,o.CPU,s1.Price,s2.Price,s3.price,f.CpuCost,ccd.BIRShipTo,o.PoPrice
+group by b.id,p.INVNo,p.gw,c.NameEN,o.CPU,s1.Price,s2.Price,s3.price,isnull(isnull(f1.CpuCost,f.CpuCost),0),ccd.BIRShipTo,o.PoPrice
 
 
 select selected = 0,b.id,b.InvSerial,KGS=round(sum(t.KGS),2),qty=round(sum(t.F),2),t.NameEN,BIRShipTo,fob=round(sum(t.I),2),material=round(sum(t.I),2)-round(sum(t.M),2),cmp=round(sum(t.M),2),b.brandid

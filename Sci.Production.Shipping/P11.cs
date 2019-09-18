@@ -264,7 +264,7 @@ select
 	G=o.CurrencyID,
 	H=round(o.PoPrice,2),
 	J=sum(pd.ShipQty)*round(o.PoPrice,2),
-	M=sum(pd.ShipQty)*Round((((isnull(o.CPU,0) + isnull(s1.Price,0)) * isnull(f.CpuCost,0)) + isnull(s2.Price,0) + isnull(s3.Price,0)), 3)
+	M=sum(pd.ShipQty)*Round((((isnull(o.CPU,0) + isnull(s1.Price,0)) * isnull(isnull(f1.CpuCost,f.CpuCost),0)) + isnull(s2.Price,0) + isnull(s3.Price,0)), 3)
 from orders o with(nolock)
 inner join PackingList_Detail pd with(nolock) on pd.OrderID = o.id
 inner join PackingList p with(nolock) on p.id = pd.id
@@ -278,6 +278,18 @@ outer apply(
 	and fsd.ShipperID = fd.ShipperID
 	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 	and o.OrigBuyerDelivery is not null
+    and fsd.seasonID = o.seasonID
+)f1
+outer apply(
+	select fd.CpuCost
+	from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+	where fsd.BrandID = o.BrandID
+	and fsd.FactoryID = o.FactoryID
+	and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+	and fsd.ShipperID = fd.ShipperID
+	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and o.OrigBuyerDelivery is not null
+    and fsd.seasonID = ''
 )f
 outer apply(
 	select Price = sum(ot.Price)
@@ -296,8 +308,8 @@ outer apply(
 )s3
 where p.INVNo in({string.Join(",", ids)})
 group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,
-o.id,o.CPU,isnull(f.CpuCost,0),isnull(s1.Price,0)+isnull(s2.Price,0),isnull(s3.Price,0)
-,s1.Price,s2.Price,s3.price,f.CpuCost,o.CurrencyID
+o.id,o.CPU,isnull(isnull(f1.CpuCost,f.CpuCost),0),isnull(s1.Price,0)+isnull(s2.Price,0),isnull(s3.Price,0)
+,s1.Price,s2.Price,s3.price,o.CurrencyID
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)

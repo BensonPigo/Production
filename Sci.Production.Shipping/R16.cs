@@ -103,6 +103,14 @@ outer apply(
 	where oq.BuyerDelivery between BeginDate and EndDate 
 	and FactoryId = o.FactoryID 
 	and BrandID = o.BrandID
+	and SeasonID = o.SeasonID
+)fs1
+outer apply(
+	Select ShipperID =isnull(fs1.ShipperID,ShipperID)
+	from FtyShipper_Detail  
+	where oq.BuyerDelivery between BeginDate and EndDate 
+	and FactoryId = o.FactoryID 
+	and SeasonID = ''
 )fs
 outer apply(
 	select sum(CTNQty) CTNQty , sum(GW) gw
