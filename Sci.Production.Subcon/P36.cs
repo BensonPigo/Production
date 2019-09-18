@@ -328,9 +328,6 @@ Where a.id = '{0}' order by orderid ", masterID);
                 var frm = new Sci.Win.UI.SelectReason(reasonType);
                 frm.ShowDialog();
                 if (MyUtility.Check.Empty(frm.ReturnReason)) return;
-//                insertCmd = string.Format(@"Insert into LocalDebit_History 
-//(histype,id,oldvalue,newvalue,reasonid,remark,addname,adddate)
-//values ('LocalDebit','{5}','{0}','{1}','{3}','{4}','{2}',getdate())", oldvalue, newValue, Sci.Env.User.UserID, frm.ReturnReason, frm.ReturnRemark, CurrentMaintain["id"]);
 
                 insertCmd = @"Insert into LocalDebit_History 
 (histype,id,oldvalue,newvalue,reasonid,remark,addname,adddate)
@@ -345,10 +342,6 @@ values ('LocalDebit',@id,@oldvalue,@newvalue,@reasonid,@remark,@addname,getdate(
             }
             else
             {
-//                insertCmd = string.Format(@"Insert into LocalDebit_History 
-//(histype,id,oldvalue,newvalue,reasonid,remark,addname,adddate)
-//values ('LocalDebit','{3}','{0}','{1}','','','{2}',getdate())", oldvalue, newValue, Sci.Env.User.UserID, CurrentMaintain["id"]);
-
 
                 insertCmd = @"Insert into LocalDebit_History 
 (histype,id,oldvalue,newvalue,reasonid,remark,addname,adddate)
