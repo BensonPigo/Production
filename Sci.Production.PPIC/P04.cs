@@ -37,6 +37,36 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(this.comboSizeUnit, 1, 1, "CM,INCH");
+
+            // DB 結構為int 無法使用MyUtility.Tool.SetupCombox方法寫入
+            this.comboPressing1.Add("No Pressing", 0);
+            this.comboPressing1.Add("Manual Pressing", 1);
+            this.comboPressing1.Add("Auto Pressing", 2);
+            this.comboPressing1.Add("Manual + Auto Pressing", 3);
+            this.comboPressing1.SelectedIndex = 1;
+            this.comboFolding1.Add("Manual Folding", 0);
+            this.comboFolding1.Add("Auto Folding", 1);
+            this.comboFolding1.SelectedIndex = 0;
+            this.comboFolding2.Add("0", 0);
+            this.comboFolding2.SelectedIndex = 0;
+
+            string sql = string.Format(
+                @" select distinct DM300
+                    from (
+	                    select 0 as DM300
+	                    union all
+	                    select distinct DM300 
+	                    from FinishingProcess
+                    )a ");
+            DataTable dtFinishingProcess;
+            DualResult selectResult = DBProxy.Current.Select(null, sql, out dtFinishingProcess);
+            if (!selectResult) { this.ShowErr(sql, selectResult); }
+            foreach (DataRow dr in dtFinishingProcess.Rows)
+            {
+                this.comboPressing2.Add(dr["DM300"].ToString(), dtFinishingProcess.Rows.IndexOf(dr));
+            }
+
+            this.comboPressing2.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -152,9 +182,9 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
             base.ClickNewAfter();
             this.CurrentMaintain["LocalStyle"] = 1;
             this.CurrentMaintain["LocalMR"] = Sci.Env.User.UserID;
-            this.CurrentMaintain["FinishingProcessID1"] = DBNull.Value;
-            this.CurrentMaintain["FinishingProcessID2"] = DBNull.Value;
             this.displayStyleApprove2.Text = string.Empty;
+            this.ComboPressing1_SelectedIndexChanged(null, null);
+            this.ComboFolding1_SelectedIndexChanged(null, null);
         }
 
         /// <inheritdoc/>
@@ -164,6 +194,8 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
             this.txtStyleNo.ReadOnly = true;
             this.txtSeason.ReadOnly = true;
             this.txtBrand.ReadOnly = true;
+            this.ComboPressing1_SelectedIndexChanged(null, null);
+            this.ComboFolding1_SelectedIndexChanged(null, null);
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "FALSE")
             {
@@ -244,22 +276,6 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                 }
             }
             #endregion
-
-            // 檢查 Finishing Process Setting 1 & Finishing Process Setting 2 是否存在 [FinishingProcess].DM300
-            if (this.CurrentMaintain["FinishingProcessID1"] != DBNull.Value &&
-                !MyUtility.Check.Seek($@"select 1 from FinishingProcess where DM300 = '{this.CurrentMaintain["FinishingProcessID1"]}'"))
-            {
-                MyUtility.Msg.WarningBox("Finishing Process Setting does not exist. Please check again!");
-                return false;
-            }
-
-            if (this.CurrentMaintain["FinishingProcessID2"] != DBNull.Value &&
-               !MyUtility.Check.Seek($@"select 1 from FinishingProcess where DM300 = '{this.CurrentMaintain["FinishingProcessID2"]}'"))
-            {
-                MyUtility.Msg.WarningBox("Finishing Process Setting does not exist. Please check again!");
-                return false;
-            }
-
             if (this.IsDetailInserting)
             {
                 // 檢查Style+Brand+Season是否已存在
@@ -764,6 +780,47 @@ where a.Article is null",
                         return;
                     }
                 }
+            }
+        }
+
+        private void ComboPressing1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            int selectValue = MyUtility.Convert.GetInt(this.comboPressing1.SelectedValue2);
+            this.comboPressing2.SelectedIndex = 0;
+            switch (selectValue)
+            {
+                case 2:
+                case 3:
+                    this.comboPressing2.Enabled = true;
+                    break;
+                default:
+                    this.comboPressing2.Enabled = false;
+                    break;
+            }
+        }
+
+        private void ComboFolding1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            int selectValue = MyUtility.Convert.GetInt(this.comboFolding1.SelectedValue2);
+            this.comboFolding2.SelectedIndex = 0;
+            switch (selectValue)
+            {
+                case 1:
+                    this.comboFolding2.Enabled = true;
+                    break;
+                default:
+                    this.comboFolding2.Enabled = false;
+                    break;
             }
         }
     }

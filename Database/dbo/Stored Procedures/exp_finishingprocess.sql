@@ -272,10 +272,12 @@ CREATE TABLE [dbo].[StyleFPSetting] (
     [StyleID]			varchar(15),
 	[SeasonID]			varchar(10),
 	[BrandID]			varchar(8),
-	[FPSetting1]		INT   DEFAULT ((0)) NULL,
-	[FPSetting2]		INT   DEFAULT ((0)) NULL,
     [CmdTime]			datetime NULL,
-    [SunriseUpdated]	bit   DEFAULT ((0)) NULL
+    [SunriseUpdated]	bit   DEFAULT ((0)) NULL,
+	[Pressing1]			INT   DEFAULT ((1)) NULL,
+	[Pressing2]			INT   DEFAULT ((0)) NULL,
+	[Folding1]			INT   DEFAULT ((0)) NULL,
+	[Folding2]			INT   DEFAULT ((0)) NULL
 	)
 END
 
@@ -631,7 +633,13 @@ VALUES(s.[DM300],s.[DM200],s.[DM201],s.[DM202],s.[DM205],s.[DM203],s.[DM204],s.[
 --11. 轉出區間 當EditDate =今天
 MERGE StyleFPSetting AS T
 USING(
-	SELECT  [StyleID] = id,[SeasonID], [BrandID],[FinishingProcessID1],[FinishingProcessID2]
+	SELECT  [StyleID] = id
+		,[SeasonID]
+		,[BrandID]
+		,Pressing1
+		,Pressing2
+		,Folding1
+		,Folding2
 	FROM Production.dbo.Style 
 	where convert(date,EditDate) = @cDate
 ) as s
@@ -641,10 +649,12 @@ UPDATE SET
    t.[StyleID]		=s.[StyleID],               
    t.[SeasonID]		=s.[SeasonID],	
    t.[BrandID]		=s.[BrandID],	
-   t.[FPSetting1]	=s.[FinishingProcessID1],
-   t.[FPSetting2]	=s.[FinishingProcessID2],
+   t.[Pressing1]	=s.[Pressing1],
+   t.[Pressing2]	=s.[Pressing2],
+   t.[Folding1]		=s.[Folding1],
+   t.[Folding2]		=s.[Folding2],
    t.[CmdTime]	= GetDate(),	
    t.[SunriseUpdated] = 0
 WHEN NOT MATCHED BY TARGET THEN
-INSERT([StyleID] ,[SeasonID], [BrandID],[FPSetting1],[FPSetting2],[CmdTime],[SunriseUpdated])
-VALUES(s.[StyleID] ,s.[SeasonID], s.[BrandID],s.[FinishingProcessID1],s.[FinishingProcessID2],GetDate(),0);
+INSERT([StyleID], [SeasonID], [BrandID], [Pressing1], [Pressing2], [Folding1], [Folding2], [CmdTime], [SunriseUpdated])
+VALUES(s.[StyleID] ,s.[SeasonID], s.[BrandID], s.[Pressing1], s.[Pressing2], s.[Folding1], s.[Folding2], GetDate(), 0);

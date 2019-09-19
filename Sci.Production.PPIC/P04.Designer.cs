@@ -110,12 +110,14 @@
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
             this.txtcdcode = new Sci.Production.Class.txtcdcode();
-            this.numFinishingProcessID2 = new Sci.Win.UI.NumericBox();
-            this.numFinishingProcessID1 = new Sci.Win.UI.NumericBox();
             this.label3 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtTPEEditBy = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.comboPressing2 = new Sci.Win.UI.ComboBox();
+            this.comboFolding1 = new Sci.Win.UI.ComboBox();
+            this.comboFolding2 = new Sci.Win.UI.ComboBox();
+            this.comboPressing1 = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -133,8 +135,10 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.numFinishingProcessID2);
-            this.detailcont.Controls.Add(this.numFinishingProcessID1);
+            this.detailcont.Controls.Add(this.comboPressing1);
+            this.detailcont.Controls.Add(this.comboFolding2);
+            this.detailcont.Controls.Add(this.comboPressing2);
+            this.detailcont.Controls.Add(this.comboFolding1);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.displayStyleApprove2);
@@ -1105,43 +1109,21 @@
             this.txtcdcode.TabIndex = 9;
             this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);
             // 
-            // numFinishingProcessID2
-            // 
-            this.numFinishingProcessID2.BackColor = System.Drawing.Color.White;
-            this.numFinishingProcessID2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FinishingProcessID2", true));
-            this.numFinishingProcessID2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFinishingProcessID2.Location = new System.Drawing.Point(184, 500);
-            this.numFinishingProcessID2.Name = "numFinishingProcessID2";
-            this.numFinishingProcessID2.NullValue = null;
-            this.numFinishingProcessID2.Size = new System.Drawing.Size(117, 23);
-            this.numFinishingProcessID2.TabIndex = 73;
-            // 
-            // numFinishingProcessID1
-            // 
-            this.numFinishingProcessID1.BackColor = System.Drawing.Color.White;
-            this.numFinishingProcessID1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FinishingProcessID1", true));
-            this.numFinishingProcessID1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFinishingProcessID1.Location = new System.Drawing.Point(183, 470);
-            this.numFinishingProcessID1.Name = "numFinishingProcessID1";
-            this.numFinishingProcessID1.NullValue = null;
-            this.numFinishingProcessID1.Size = new System.Drawing.Size(117, 23);
-            this.numFinishingProcessID1.TabIndex = 72;
-            // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(5, 499);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(175, 23);
+            this.label3.Size = new System.Drawing.Size(224, 23);
             this.label3.TabIndex = 75;
-            this.label3.Text = "Finishing Process Setting 2";
+            this.label3.Text = "Finishing Process Setting(Folding)";
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(5, 470);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(175, 23);
+            this.label1.Size = new System.Drawing.Size(224, 23);
             this.label1.TabIndex = 74;
-            this.label1.Text = "Finishing Process Setting 1";
+            this.label1.Text = "Finishing Process Setting(Pressing)";
             // 
             // txtTPEEditBy
             // 
@@ -1161,6 +1143,60 @@
             this.label2.Size = new System.Drawing.Size(78, 17);
             this.label2.TabIndex = 76;
             this.label2.Text = "TPE Edit By";
+            // 
+            // comboPressing2
+            // 
+            this.comboPressing2.BackColor = System.Drawing.Color.White;
+            this.comboPressing2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue2", this.mtbs, "Pressing2", true));
+            this.comboPressing2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPressing2.FormattingEnabled = true;
+            this.comboPressing2.IsSupportUnselect = true;
+            this.comboPressing2.Location = new System.Drawing.Point(361, 469);
+            this.comboPressing2.Name = "comboPressing2";
+            this.comboPressing2.OldText = "";
+            this.comboPressing2.Size = new System.Drawing.Size(121, 24);
+            this.comboPressing2.TabIndex = 77;
+            // 
+            // comboFolding1
+            // 
+            this.comboFolding1.BackColor = System.Drawing.Color.White;
+            this.comboFolding1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue2", this.mtbs, "Folding1", true));
+            this.comboFolding1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFolding1.FormattingEnabled = true;
+            this.comboFolding1.IsSupportUnselect = true;
+            this.comboFolding1.Location = new System.Drawing.Point(233, 499);
+            this.comboFolding1.Name = "comboFolding1";
+            this.comboFolding1.OldText = "";
+            this.comboFolding1.Size = new System.Drawing.Size(121, 24);
+            this.comboFolding1.TabIndex = 78;
+            this.comboFolding1.SelectedIndexChanged += new System.EventHandler(this.ComboFolding1_SelectedIndexChanged);
+            // 
+            // comboFolding2
+            // 
+            this.comboFolding2.BackColor = System.Drawing.Color.White;
+            this.comboFolding2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue2", this.mtbs, "Folding2", true));
+            this.comboFolding2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFolding2.FormattingEnabled = true;
+            this.comboFolding2.IsSupportUnselect = true;
+            this.comboFolding2.Location = new System.Drawing.Point(361, 501);
+            this.comboFolding2.Name = "comboFolding2";
+            this.comboFolding2.OldText = "";
+            this.comboFolding2.Size = new System.Drawing.Size(121, 24);
+            this.comboFolding2.TabIndex = 79;
+            // 
+            // comboPressing1
+            // 
+            this.comboPressing1.BackColor = System.Drawing.Color.White;
+            this.comboPressing1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue2", this.mtbs, "Pressing1", true));
+            this.comboPressing1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPressing1.FormattingEnabled = true;
+            this.comboPressing1.IsSupportUnselect = true;
+            this.comboPressing1.Location = new System.Drawing.Point(233, 469);
+            this.comboPressing1.Name = "comboPressing1";
+            this.comboPressing1.OldText = "";
+            this.comboPressing1.Size = new System.Drawing.Size(122, 24);
+            this.comboPressing1.TabIndex = 80;
+            this.comboPressing1.SelectedIndexChanged += new System.EventHandler(this.ComboPressing1_SelectedIndexChanged);
             // 
             // P04
             // 
@@ -1276,11 +1312,13 @@
         private Win.UI.Button btnComboType;
         private Class.txtdropdownlist comboGender;
         private Win.UI.DisplayBox displayStyleApprove2;
-        private Win.UI.NumericBox numFinishingProcessID2;
-        private Win.UI.NumericBox numFinishingProcessID1;
         private Win.UI.Label label3;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtTPEEditBy;
         private Win.UI.Label label2;
+        private Win.UI.ComboBox comboFolding2;
+        private Win.UI.ComboBox comboFolding1;
+        private Win.UI.ComboBox comboPressing2;
+        private Win.UI.ComboBox comboPressing1;
     }
 }
