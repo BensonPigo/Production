@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,7 +21,6 @@ namespace Sci.Production.Packing
         private DataTable gridData;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
-        /// <inheritdoc/>
         public P25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
