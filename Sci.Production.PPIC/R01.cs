@@ -26,8 +26,8 @@ namespace Sci.Production.PPIC
         private string line2;
         private string brand;
         private string type;
-        private DateTime? SewingDate1;
-        private DateTime? SewingDate2;
+        private DateTime? inline;
+        private DateTime? offline;
         private DateTime? buyerDelivery1;
         private DateTime? buyerDelivery2;
         private DateTime? sciDelivery1;
@@ -92,8 +92,8 @@ namespace Sci.Production.PPIC
             this.factory = this.comboFactory.Text;
             this.line1 = this.txtSewingLineStart.Text;
             this.line2 = this.txtSewingLineEnd.Text;
-            this.SewingDate1 = this.dateSewingDate.Value1;
-            this.SewingDate2 = this.dateSewingDate.Value2;
+            this.inline = this.dateInlineAfter.Value;
+            this.offline = this.dateOfflineBefore.Value;
             this.buyerDelivery1 = this.dateBuyerDelivery.Value1;
             this.buyerDelivery2 = this.dateBuyerDelivery.Value2;
             this.sciDelivery1 = this.dateSCIDelivery.Value1;
@@ -102,14 +102,6 @@ namespace Sci.Production.PPIC
 
             this.type = this.comboSummaryBy.SelectedValue2.ToString();
 
-            if (MyUtility.Check.Empty(SewingDate1) && MyUtility.Check.Empty(SewingDate2) &&
-                MyUtility.Check.Empty(buyerDelivery1) && MyUtility.Check.Empty(buyerDelivery2) &&
-                MyUtility.Check.Empty(sciDelivery1) && MyUtility.Check.Empty(sciDelivery2)
-                )
-            {
-                MyUtility.Msg.WarningBox("Date can't be all empty!");
-                return false;
-            }
             return base.ValidateInput();
         }
 
@@ -172,6 +164,7 @@ namespace Sci.Production.PPIC
 
                 worksheet.Columns[1].ColumnWidth = 8;
                 worksheet.Columns[2].ColumnWidth = 8;
+                worksheet.Columns[6].ColumnWidth = 8;
                 worksheet.Columns[7].ColumnWidth = 8;
                 worksheet.Columns[8].ColumnWidth = 8;
                 worksheet.Columns[9].ColumnWidth = 8;
@@ -192,16 +185,15 @@ namespace Sci.Production.PPIC
                 worksheet.Columns[24].ColumnWidth = 8;
                 worksheet.Columns[25].ColumnWidth = 8;
                 worksheet.Columns[26].ColumnWidth = 8;
-                worksheet.Columns[27].ColumnWidth = 8;
+                worksheet.Columns[29].ColumnWidth = 8;
                 worksheet.Columns[30].ColumnWidth = 8;
-                worksheet.Columns[31].ColumnWidth = 8;
+                worksheet.Columns[33].ColumnWidth = 8;
                 worksheet.Columns[34].ColumnWidth = 8;
                 worksheet.Columns[35].ColumnWidth = 8;
                 worksheet.Columns[36].ColumnWidth = 8;
                 worksheet.Columns[37].ColumnWidth = 8;
                 worksheet.Columns[38].ColumnWidth = 8;
                 worksheet.Columns[39].ColumnWidth = 8;
-                worksheet.Columns[40].ColumnWidth = 8;
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
@@ -474,14 +466,14 @@ select  s.SewingLineID
                 sqlCmd.Append(string.Format(" and s.SewingLineID <= '{0}'", this.line2));
             }
 
-            if (!MyUtility.Check.Empty(this.SewingDate1))
+            if (!MyUtility.Check.Empty(this.inline))
             {
-                sqlCmd.Append(string.Format(" and (s.Inline >= '{0}' or (s.Inline <= '{0}' and s.Offline >= '{0}'))", Convert.ToDateTime(this.SewingDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and (s.Inline >= '{0}' or (s.Inline <= '{0}' and s.Offline >= '{0}'))", Convert.ToDateTime(this.inline).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(this.SewingDate2))
+            if (!MyUtility.Check.Empty(this.offline))
             {
-                sqlCmd.Append(string.Format(" and s.Offline < '{0}'", Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("d")));
+                sqlCmd.Append(string.Format(" and s.Offline < '{0}'", Convert.ToDateTime(this.offline).AddDays(1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
@@ -740,14 +732,14 @@ select  s.SewingLineID
                 sqlCmd.Append(string.Format(" and s.SewingLineID <= '{0}'", this.line2));
             }
 
-            if (!MyUtility.Check.Empty(this.SewingDate1))
+            if (!MyUtility.Check.Empty(this.inline))
             {
-                sqlCmd.Append(string.Format(" and (s.Inline >= '{0}' or (s.Inline <= '{0}' and s.Offline >= '{0}'))", Convert.ToDateTime(this.SewingDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and (s.Inline >= '{0}' or (s.Inline <= '{0}' and s.Offline >= '{0}'))", Convert.ToDateTime(this.inline).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(this.SewingDate2))
+            if (!MyUtility.Check.Empty(this.offline))
             {
-                sqlCmd.Append(string.Format(" and s.Offline < '{0}'", Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("d")));
+                sqlCmd.Append(string.Format(" and s.Offline < '{0}'", Convert.ToDateTime(this.offline).AddDays(1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
@@ -992,15 +984,8 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             return result;
         }
 
-        /// <summary>
-        /// ***若邏輯修改, PowerBI StoredProcedure [P_SewingLineSchedule]需一起調整***
-        /// </summary>
-        /// <returns></returns>
         private DualResult Query_by_StylePerEachSewingDate()
         {
-            /*
-             若邏輯修改, PowerBI StoredProcedure [P_SewingLineSchedule]需一起調整
-             */
             DualResult result;
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlWhere = new StringBuilder();
@@ -1025,22 +1010,15 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
                 sqlWhere.Append(string.Format(" and s.SewingLineID <= '{0}'", this.line2));
             }
 
-            if (!MyUtility.Check.Empty(this.SewingDate1))
+            if (!MyUtility.Check.Empty(this.inline))
             {
-                // 搜尋時判斷的是在 Inline - Offline 的期間有包含到 SewingDate1 這一段區間的 Schedule
-                sqlWhere.Append(string.Format(
-                    @" 
-and (s.Inline >= '{0}' or
-('{0}' between convert(date, s.Inline) and convert(date, s.Offline)))", Convert.ToDateTime(this.SewingDate1).ToString("d")));
+                // Inline After 再搜尋時判斷的是在 Inline - Offline 的期間有包含到 Inline Afer 這一段區間的 Schedule
+                sqlWhere.Append(string.Format(" and (s.Inline >= '{0}' or (s.Inline <= '{0}' and s.Offline >= '{0}'))", Convert.ToDateTime(this.inline).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(this.SewingDate2))
+            if (!MyUtility.Check.Empty(this.offline))
             {
-                // 搜尋時判斷的是在 Inline - Offline 的期間有包含到 SewingDate2 這一段區間的 Schedule
-                sqlWhere.Append(string.Format(
-                    @" 
-and (convert(date,s.Offline) <= '{0}' or
-('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate2).ToString("d")));
+                sqlWhere.Append(string.Format(" and s.Offline < '{0}'", Convert.ToDateTime(this.offline).AddDays(1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
@@ -1496,7 +1474,6 @@ group by awd.APSNo,
 --組合最終table
 select
 apm.APSNo,
-apm.Sewer,
 apm.SewingLineID,
 [SewingDay] = cast(apf.SewingStart as date),
 apf.SewingStart,
