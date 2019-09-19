@@ -1567,6 +1567,7 @@ where ID = {0}",
             int insertStartIndex = insertPosition;
             int insertEndIndex = this.SelectedDetailGridDataRow.Count() + insertPosition - 1;
 
+            int t = 0;
             if (copyRow.Any())
             {
                 #region 直接塞最後面的情況
@@ -1575,7 +1576,7 @@ where ID = {0}",
                 if (insertPosition == dt.Rows.Count)
                 {
                     // 若最後一筆Seq包含文字，則不自動編碼
-                    if (int.TryParse(dt.Rows[dt.Rows.Count - 1]["Seq"].ToString(), out int y))
+                    if (int.TryParse(dt.Rows[dt.Rows.Count - 1]["Seq"].ToString(), out t))
                     {
                         int i = 1;
                         int maxSeq = Convert.ToInt32(dt.Rows[dt.Rows.Count - 1]["Seq"]);
