@@ -1892,34 +1892,17 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             {
                 DataTable tmpdt = this.DetailDatas.CopyToDataTable();
                 string sqlcmd = $@"
-select distinct f.ShipperID 
+select distinct ShipperID=isnull(f1.ShipperID, f2.ShipperID)
 from #tmp t
 inner join Orders o on o.id = t.Orderid
-left join FtyShipper_Detail f on o.FactoryID = f.FactoryID and o.SeasonID = f.SeasonID
-where f.BrandID='{this.txtbrand.Text}'
-and GETDATE() between f.BeginDate and f.EndDate";
+outer apply(select ShipperID from FtyShipper_Detail f where o.FactoryID = f.FactoryID and o.SeasonID = f.SeasonID and  f.BrandID='NB' and GETDATE() between f.BeginDate and f.EndDate)f1
+outer apply(select ShipperID from FtyShipper_Detail f where o.FactoryID = f.FactoryID and f.SeasonID = '' and  f.BrandID='NB' and GETDATE() between f.BeginDate and f.EndDate)f2
+";
                 result = MyUtility.Tool.ProcessWithDatatable(tmpdt, "Orderid", sqlcmd, out dtShipper);
                 if (!result)
                 {
                     this.ShowErr(sqlcmd, result);
                     return false;
-                }
-
-                if (dtShipper.Rows.Count == 0)
-                {
-                    sqlcmd = $@"
-select distinct f.ShipperID 
-from #tmp t
-inner join Orders o on o.id = t.Orderid
-left join FtyShipper_Detail f on o.FactoryID = f.FactoryID and f.SeasonID = ''
-where f.BrandID='{this.txtbrand.Text}'
-and GETDATE() between f.BeginDate and f.EndDate";
-                    result = MyUtility.Tool.ProcessWithDatatable(tmpdt, "Orderid", sqlcmd, out dtShipper);
-                    if (!result)
-                    {
-                        this.ShowErr(sqlcmd, result);
-                        return false;
-                    }
                 }
 
                 if (dtShipper.Rows.Count > 1)

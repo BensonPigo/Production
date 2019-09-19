@@ -110,6 +110,7 @@ outer apply(
 	from FtyShipper_Detail  
 	where oq.BuyerDelivery between BeginDate and EndDate 
 	and FactoryId = o.FactoryID 
+	and BrandID = o.BrandID
 	and SeasonID = ''
 )fs
 outer apply(
