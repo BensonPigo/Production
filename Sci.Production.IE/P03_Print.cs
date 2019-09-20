@@ -191,11 +191,31 @@ order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]))
             if (!this.change)
             {
                 sqlCmd = string.Format(
-                    @"select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
-,[ActCycleTime(average)]=SUM(ISNULL(ActCycle,0))/COUNT(DISTINCT No)
+                    @"select No 
+,CT = COUNT(1)
+,[ActCycle] = Max(ld.ActCycle)
+,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
+OUTER APPLY(
+	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
+	(
+		SELECT DISTINCT No, ActCycle, TotalGSD, TotalCycle
+		FROM 
+		(
+			select  ld.*
+					, o.DescEN as Description
+					, e.Name as EmployeeName
+					, e.Skill as EmployeeSkill
+					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+			from LineMapping_Detail ld WITH (NOLOCK) 
+			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+			where ld.ID = {0} AND No <> ''
+		)a
+	)b
+)ActCycle
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-GROUP BY NO
+GROUP BY NO ,ActCycle.Value
 order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
@@ -221,11 +241,32 @@ from(
 )x
 group by ID
 
-select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
+select No
+,CT = COUNT(1)
+,[ActCycle] = Max(ld.ActCycle)
+,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
+OUTER APPLY(
+	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
+	(
+		SELECT DISTINCT No, ActCycle, TotalGSD, TotalCycle
+		FROM 
+		(
+			select  ld.*
+					, o.DescEN as Description
+					, e.Name as EmployeeName
+					, e.Skill as EmployeeSkill
+					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+			from LineMapping_Detail ld WITH (NOLOCK) 
+			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+			where ld.ID = {0} AND No <> ''
+		)a
+	)b
+)ActCycle
 where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno
-GROUP BY NO
+GROUP BY NO ,ActCycle.Value
 order by no
 
 ",
@@ -251,10 +292,30 @@ from(
 group by ID
 
 select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
+,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
+
+OUTER APPLY(
+	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
+	(
+		SELECT DISTINCT No, ActCycle, TotalGSD, TotalCycle
+		FROM 
+		(
+			select  ld.*
+					, o.DescEN as Description
+					, e.Name as EmployeeName
+					, e.Skill as EmployeeSkill
+					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+			from LineMapping_Detail ld WITH (NOLOCK) 
+			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+			where ld.ID = {0} AND No <> ''
+		)a
+	)b
+)ActCycle
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-GROUP BY NO
+GROUP BY NO ,ActCycle.Value
 order by no
 
 ",
@@ -502,7 +563,7 @@ order by no
             Microsoft.Office.Interop.Excel.Series series2 = seriesCollection2.NewSeries();
             series2.Values = chartData2.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(chartDataEndRow)));
             series2.XValues = chartData2.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(chartDataEndRow)));
-            series2.Name = "TotalCycle Time";
+            series2.Name = "Total Cycle Time";
 
             // 折線圖的資料標籤不顯示
             series2.ApplyDataLabels(Microsoft.Office.Interop.Excel.XlDataLabelsType.xlDataLabelsShowNone, false, false);
