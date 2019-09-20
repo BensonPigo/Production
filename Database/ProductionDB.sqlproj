@@ -2401,6 +2401,7 @@
     </Build>
     <Build Include="dbo\Tables\PackingScan_History.sql" />
     <Build Include="dbo\Tables\CertOfOrigin.sql" />
+    <Build Include="dbo\Stored Procedures\GetSewingLineScheduleData.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

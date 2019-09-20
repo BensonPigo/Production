@@ -99,3 +99,6 @@ ImportSewingDailyOutput.Daily/ImportSewingDailyOutput.Daily/bin
 ImportSewingDailyOutput.Daily/ImportSewingDailyOutput.Daily/obj
 db.lock
 storage.ide
+ImportSewingLineSchedule.Daily/.vs/
+ImportSewingLineSchedule.Daily/ImportSewingLineSchedule.Daily/bin/
+ImportSewingLineSchedule.Daily/ImportSewingLineSchedule.Daily/obj/
