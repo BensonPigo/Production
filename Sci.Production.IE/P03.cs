@@ -55,7 +55,7 @@ namespace Sci.Production.IE
             this.DetailSelectCommand = string.Format(
                 @"
 select  ld.*
-        , o.DescEN as Description
+        , [Description]= IIF( o.DescEN = '' OR  o.DescEN IS NULL , ld.OperationID,o.DescEN)
         , e.Name as EmployeeName
         , e.Skill as EmployeeSkill
         , iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
