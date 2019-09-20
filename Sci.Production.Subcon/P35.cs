@@ -228,29 +228,17 @@ where lapd.id = '{0}'"
 
         protected override void ClickSaveAfter()
         {
-            //檢查localap ,localap_detail amount與vat在存檔之後是否有差異
-            string chk_sql = string.Format(@"select la.amount,ld.detail_amount
-                                from LocalAP la
-                                inner join (select '{0}' as id,round(sum(a.price * a.qty),{1}) as detail_amount from localap_detail a 
-                                 where a.id = '{0}') ld on la.id = ld.id
-                                where la.id = '{0}' and la.amount <> ld.detail_amount", CurrentMaintain["ID"], exact);
-
-            DataRow dr;
-            if (MyUtility.Check.Seek(chk_sql, out dr, ""))
+            string sqlupdate = string.Format(@"update la set amount = ld.detail_amount
+                from LocalAP la
+                inner join (select '{0}' as id,round(sum(a.price * a.qty),{1}) as detail_amount from localap_detail a 
+                where a.id = '{0}') ld on la.id = ld.id
+                where la.id = '{0}' and la.amount <> ld.detail_amount
+                ", CurrentMaintain["ID"], exact);
+            DualResult result = DBProxy.Current.Execute(null, sqlupdate);
+            if (!result)
             {
-                string sqlupdate = string.Format(@"update la set amount = ld.detail_amount
-from LocalAP la
-inner join (select '{0}' as id,round(sum(a.price * a.qty),{1}) as detail_amount from localap_detail a 
-where a.id = '{0}') ld on la.id = ld.id
-where la.id = '{0}' and la.amount <> ld.detail_amount
-", CurrentMaintain["ID"], exact);
-                DualResult result = DBProxy.Current.Execute(null, sqlupdate);
-                if (!result)
-                {
-                    this.ShowErr(result);
-                }
+                this.ShowErr(result);
             }
-
             base.ClickSaveAfter();
         }
 
