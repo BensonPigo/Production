@@ -81,7 +81,7 @@ namespace Sci.Production.Shipping
 with GB as 
 (
     select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
-    '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
+    '' as ShippingAPID, g.BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
     '' as ShareBase, 0 as FtyWK 
     from GMTBooking g  WITH (NOLOCK) 
     left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
