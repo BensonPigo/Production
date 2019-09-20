@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+<<<<<<< HEAD
 using Ict;
 using Ict.Win;
 using Sci.Data;
@@ -12,6 +13,11 @@ using Sci;
 using System.Transactions;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
+=======
+using System.IO.Compression;
+using Sci.Data;
+using Ict.Win;
+>>>>>>> ISP20191302
 
 namespace Sci.Production.Packing
 {
@@ -27,8 +33,31 @@ namespace Sci.Production.Packing
             this.InitializeComponent();
         }
 
+<<<<<<< HEAD
         /// <inheritdoc/>
         protected override void OnFormLoaded()
+=======
+        private void btnSelecPath_Click(object sender, EventArgs e)
+        {
+
+            FolderBrowserDialog path = new FolderBrowserDialog();
+            path.ShowDialog();
+            string dirPath = string.Empty;
+
+            if (!MyUtility.Check.Empty(path.SelectedPath))
+            {
+                dirPath = path.SelectedPath;
+            }
+            else
+            {
+                dirPath = @"D:\TestPath";
+            }
+
+            this.txtPath.Text = dirPath;
+        }
+
+        private void btnSelectFile_Click(object sender, EventArgs e)
+>>>>>>> ISP20191302
         {
             base.OnFormLoaded();
 
@@ -83,11 +112,15 @@ namespace Sci.Production.Packing
                 sqlParameters.Add(new SqlParameter("@PGID_s", this.txtPGID_s.Text));
             }
 
+<<<<<<< HEAD
             if (!MyUtility.Check.Empty(this.txtPGID_e.Text))
             {
                 sqlWhere.Add(" p.ID <= @PGID_e ");
                 sqlParameters.Add(new SqlParameter("@PGID_e", this.txtPGID_e.Text));
             }
+=======
+                    List<ZPL> zPL_Object = this.Get_ZPL_Object(dataList_String, custCTN_List);
+>>>>>>> ISP20191302
 
             if (!MyUtility.Check.Empty(this.txtSP_s.Text))
             {
@@ -149,8 +182,100 @@ WHERE p.MDivisionID = @MDivisionID
             this.listControlBindingSource.DataSource = this.gridData;
         }
 
+<<<<<<< HEAD
         /// <inheritdoc/>
         private void BtnToExcel_Click(object sender, EventArgs e)
+=======
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.grid1.IsEditingReadOnly = true;
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .Text("PackingListID", header: "Packing No. ", width: Widths.AnsiChars(15))
+            .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(15))
+            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(20))
+            .Text("SCICtnNo", header: "SCI Ctn No.", width: Widths.AnsiChars(20))
+            .Text("Article", header: "Color Way ", width: Widths.AnsiChars(10))
+            .Text("SizeCode", header: "Size ", width: Widths.AnsiChars(10))
+            .Text("CustCTN", header: "Cust #", width: Widths.AnsiChars(30))
+            ;
+        }
+
+        private void Mapping_PackingList_Detal(List<ZPL> zPL_Object)
+        {
+
+            List<ZPL> zPL_Object_1 = zPL_Object.OrderBy(o => o.CustCTN).ToList();
+            DataTable dt = new DataTable();
+
+            zPL_Object.ForEach( singleZPL => {
+
+                DataTable tmpDt;
+                string sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
+
+
+DECLARE @pdUkey bigint=0;
+
+--SELECT pd.* --@pdUkey = pd.Ukey
+SELECT   [PackingListID]=p.ID
+        ,pd.OrderID
+        ,pd.CTNStartNo
+        ,pd.SCICtnNo
+        ,pd.Article
+        ,pd.SizeCode
+        --,pd.CustCTN
+        ,[CustCTN] = '{singleZPL.CustCTN}'
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON pd.OrderID=o.ID 
+WHERE 1=1
+AND pd.Article = '{singleZPL.Article}'
+AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
+AND (
+		pd.SizeCode in
+		(
+			SELECT TOP 1 SizeCode 
+			FROM Order_SizeSpec 
+			WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{singleZPL.SizeCode}')
+		) 
+		OR 
+		pd.SizeCode='{singleZPL.SizeCode}'
+	)
+AND EXISTS (SELECT 1 FROM #tmoOrders WHERE ID = o.ID AND StyleID = o.StyleID)
+/*
+UPDATE pd
+SET pd.CustCTN='{singleZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN PackingList p ON p.ID=pd.ID
+WHERE Ukey = @pdUkey AND CustCTN = '' AND p.Status='New'
+*/
+
+";
+
+                DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                if (dt.Rows.Count == 0 && tmpDt.Rows.Count > 0)
+                {
+                    dt = tmpDt.Copy();
+                }
+                else
+                {
+                    foreach (DataRow item in tmpDt.Rows)
+                    {
+                        dt.Rows.Add(item);
+                    }
+                }
+            });
+
+            this.listControlBindingSource1.DataSource = dt;
+        }
+
+        private List<ZPL> Get_ZPL_Object(Dictionary<string, string> dataList_String, List<string> custCTN_List)
+>>>>>>> ISP20191302
         {
             this.grid.ValidateControl();
             this.grid.EndEdit();
@@ -371,6 +496,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
                 }
             }
+<<<<<<< HEAD
             else
             {
                 // 刪除多餘的Row
@@ -389,6 +515,20 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
 
             #region 寫入完整箱的資料
             foreach (DataRow dr in printData.Rows)
+=======
+
+            return list;
+        }
+
+        #region 類別定義
+
+        public class ZipHelper
+        {
+            /// <summary>
+            /// 將串入的ZPL檔案轉成Zip檔資料流存在記憶體
+            /// </summary>
+            public static byte[] ZipData(Dictionary<string, byte[]> data)
+>>>>>>> ISP20191302
             {
                 int ctnQty = item["CtnType"].ToString() == "2" ? MyUtility.Convert.GetInt(minCtnQty) : MyUtility.Convert.GetInt(dr["CtnQty"]);
                 if (!MyUtility.Check.Empty(ctnQty))
@@ -440,6 +580,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
                         insertCTN = 2;
                     }
 
+<<<<<<< HEAD
                     worksheet.Cells[row, 19] = remain;
                     if (item["CtnType"].ToString() != "2")
                     {
@@ -468,6 +609,30 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
                     ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
                 }
             }
+=======
+        }
+
+        public class P25_Object
+        {
+            public string PackingList_Detail_CustCTN { get; set; }
+
+            public string PackingList_Detail_ID { get; set; }
+
+            public string PackingList_Detail_OrderId { get; set; }
+
+            public string PackingList_Detail_CTNStartNo { get; set; }
+
+            public string PackingList_Detail_SCICtnNo { get; set; }
+
+            public string PackingList_Detail_Article { get; set; }
+
+            public string PackingList_Detail_SizeCode { get; set; }
+        }
+
+        public class ZPL
+        {
+            public string CustPONo { get; set; }
+>>>>>>> ISP20191302
 
             string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : string.Empty;
             string[] cdsab = cds.Split('\r');
@@ -518,6 +683,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
                 }
             }
 
+<<<<<<< HEAD
             for (int i = 1; ; i++)
             {
                 if (i > 1)
@@ -577,5 +743,10 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
 
             this.HideWaitMessage();
         }
+=======
+            public string CTNStartNo { get; set; }
+        }
+        #endregion
+>>>>>>> ISP20191302
     }
 }
