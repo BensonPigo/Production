@@ -274,9 +274,6 @@ where la.id = '{0}' and la.amount <> ld.detail_amount
         {
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
-                if (e.Details.Columns.Contains("Amount"))
-                    e.Details.Columns.Remove("Amount");
-                e.Details.ColumnsDecimalAdd("Amount", 0, "Qty*Price");
                 foreach (DataRow dr in e.Details.Rows)
                 {
                     dr["description"] = Prgs.GetItemDesc(e.Master["category"].ToString(), dr["refno"].ToString());                    
