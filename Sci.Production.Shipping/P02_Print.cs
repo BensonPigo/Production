@@ -49,7 +49,10 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.reportType = this.radioDetailList.Checked ? "1" : this.radioPackingList.Checked ? "2" : "3";
+            if (this.radioDetailList.Checked) this.reportType = "1";
+            if (this.radioPackingList.Checked) this.reportType = "2";
+            if (this.radioDetailPackingList.Checked) this.reportType = "3";
+            if (this.rdbtnDHLcustomsclearance.Checked) this.reportType = "4";
             return base.ValidateInput();
         }
 
@@ -63,7 +66,7 @@ namespace Sci.Production.Shipping
                 this.destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Dest"])));
                 this.carrier = MyUtility.GetValue.Lookup(string.Format("select (c.SuppID + '-' + s.AbbEN) as Supplier from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(this.masterData["CarrierID"])));
             }
-            else
+            else if (this.reportType == "2" || this.reportType == "3")
             {
                 DataRow dr;
                 if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Factory WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["MDivisionID"])), out dr))
@@ -111,6 +114,10 @@ namespace Sci.Production.Shipping
 from Express_Detail WITH (NOLOCK) where ID = '{0}'
 group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.detailSummary);
+            }
+            else if (this.reportType == "4")
+            {
+
             }
 
             return Result.True;
@@ -295,7 +302,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 #endregion
                 #endregion
             }
-            else
+            else if (this.reportType == "3")
             {
                 #region Detail Packing List
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailPackingList.xltx";
@@ -409,6 +416,69 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 #endregion
                 #endregion
             }
+            else if (this.reportType == "4")
+            {
+                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DHL_XCCA.xltx";
+                Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+                if (excel == null)
+                {
+                    return false;
+                }
+
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
+                worksheet.Cells[2, 2] = MyUtility.Convert.GetString(this.masterData["BLNo"]);
+                worksheet.Cells[4, 10] = MyUtility.Convert.GetDecimal(this.masterData["NW"]) + MyUtility.Convert.GetDecimal(this.masterData["CTNNW"]);
+
+                int rownum = 6;
+                foreach (DataRow dr in this.detailData.Rows)
+                {
+                    string sSeq1 = MyUtility.Convert.GetString(dr["Seq1"]);
+                    string sSeq2 = MyUtility.Convert.GetString(dr["Seq2"]);
+                    int iCategory = MyUtility.Convert.GetInt(dr["Category"]);
+                    bool bQty = MyUtility.Check.Empty(dr["Qty"]);
+                    bool bPrice = MyUtility.Check.Empty(dr["Price"]);
+                    decimal decQty = bQty ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
+                    decimal decPrice = bPrice ? 0 : MyUtility.Convert.GetDecimal(dr["Price"]);
+
+                    worksheet.Cells[rownum, 1] = string.Format("{0}-{1}", sSeq1, sSeq2);
+                    worksheet.Cells[rownum, 2] = this.CategoryName(iCategory);
+                    bool isnDescription = false;
+                    worksheet.Cells[rownum, 3] = this.GetDescription(iCategory, dr, out isnDescription);
+                    if (isnDescription)
+                    {
+                        worksheet.Cells[rownum, 3].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Yellow);
+                    }
+
+                    worksheet.Cells[rownum, 8] = "USD";
+                    worksheet.Cells[rownum, 9] = decPrice;
+                    worksheet.Cells[rownum, 10] = decQty;
+                    worksheet.Cells[rownum, 11] = dr["UnitID"];
+                    worksheet.Cells[rownum, 12] = dr["NW"];
+                    if (!MyUtility.Check.Empty(dr["Orderid"]))
+                    {
+                        worksheet.Cells[rownum, 13] = MyUtility.GetValue.Lookup($"select CountryID from Factory f with(nolock) join orders o with(nolock) on o.FtyGroup = f.ID where o.id ='{dr["OrderID"]}' ");
+                    }
+                    else
+                    {
+                        worksheet.Cells[rownum, 13].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Yellow);
+                    }
+
+                    rownum++;
+                }
+
+                worksheet.Rows.AutoFit();
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_DHL_XCCA");
+                excel.ActiveWorkbook.SaveAs(strExcelName);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
+            }
 
             return true;
         }
@@ -440,10 +510,10 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                     rtnStr = "Mock Up";
                     break;
                 case 8:
-                    rtnStr = "Other Sample";
+                    rtnStr = this.reportType == "4" ? "Sample" : "Other Sample";
                     break;
                 case 9:
-                    rtnStr = "Other Material";
+                    rtnStr = this.reportType == "4" ? "Material" : "Other Material";
                     break;
                 default:
                     rtnStr = string.Empty;
@@ -451,6 +521,28 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             }
 
             return rtnStr;
+        }
+
+        private string GetDescription(int iCategory, DataRow dr, out bool isnDescription)
+        {
+            string sql = string.Empty;
+            if (iCategory == 4 || iCategory == 9)
+            {
+                sql = $@"select Description = dbo.getMtlDesc('{dr["OrderID"]}', '{dr["Seq1"]}', '{dr["Seq2"]}', 1, 0)";
+            }
+            else
+            {
+                sql = $@"
+select Description = dbo.getBOFMtlDesc(isnull(
+		(select o.StyleUkey from orders o with(nolock) where o.id ='{dr["OrderID"]}'),
+		(select ukey from Style with(nolock) where id='{dr["StyleID"]}' and BrandID='{dr["BrandID"]}' and SeasonID ='{dr["SeasonID"]}')
+	)) 
+";
+            }
+
+            string findDescription = MyUtility.GetValue.Lookup(sql);
+            isnDescription = MyUtility.Check.Empty(findDescription);
+            return MyUtility.Check.Empty(findDescription) ? MyUtility.Convert.GetString(dr["nDescription"]) : findDescription;
         }
     }
 }
