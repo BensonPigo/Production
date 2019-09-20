@@ -200,15 +200,10 @@ where lapd.id = '{0}'"
                 string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
-                    MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
+                    MyUtility.Msg.WarningBox("Factory can't empty!!");
                     return false;
                 }
                 CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LA", "LocalAP", (DateTime)CurrentMaintain["issuedate"]);
-                if (MyUtility.Check.Empty(CurrentMaintain["id"]))
-                {
-                    MyUtility.Msg.WarningBox("Server is busy, Please re-try it again", "GetID() Failed");
-                    return false;
-                }
             }
 
             #region 加總明細金額至表頭
@@ -241,8 +236,19 @@ where lapd.id = '{0}'"
                                 where la.id = '{0}' and la.amount <> ld.detail_amount", CurrentMaintain["ID"], exact);
 
             DataRow dr;
-            if (MyUtility.Check.Seek(chk_sql, out dr, "")) {
-                MyUtility.Msg.WarningBox(string.Format("Header Amount<{0}> and Detail Amount<{1}> are different,please check with MIS",dr["amount"],dr["detail_amount"]));
+            if (MyUtility.Check.Seek(chk_sql, out dr, ""))
+            {
+                string sqlupdate = string.Format(@"update la set amount = ld.detail_amount
+from LocalAP la
+inner join (select '{0}' as id,round(sum(a.price * a.qty),{1}) as detail_amount from localap_detail a 
+where a.id = '{0}') ld on la.id = ld.id
+where la.id = '{0}' and la.amount <> ld.detail_amount
+", CurrentMaintain["ID"], exact);
+                DualResult result = DBProxy.Current.Execute(null, sqlupdate);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
             }
 
             base.ClickSaveAfter();
