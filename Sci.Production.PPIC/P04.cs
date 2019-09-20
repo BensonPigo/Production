@@ -791,7 +791,9 @@ where a.Article is null",
             }
 
             int selectValue = MyUtility.Convert.GetInt(this.comboPressing1.SelectedValue2);
-            this.comboPressing2.SelectedIndex = 0;
+            this.comboPressing1.DataBindings["SelectedValue2"].WriteValue();
+            this.comboPressing2.SelectedValue2 = 0;
+            this.comboPressing2.DataBindings["SelectedValue2"].WriteValue();
             switch (selectValue)
             {
                 case 2:
@@ -812,7 +814,9 @@ where a.Article is null",
             }
 
             int selectValue = MyUtility.Convert.GetInt(this.comboFolding1.SelectedValue2);
+            this.comboFolding1.DataBindings["SelectedValue2"].WriteValue();
             this.comboFolding2.SelectedIndex = 0;
+            this.comboFolding2.DataBindings["SelectedValue2"].WriteValue();
             switch (selectValue)
             {
                 case 1:
