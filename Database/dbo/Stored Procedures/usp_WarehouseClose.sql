@@ -188,9 +188,10 @@ BEGIN
 		Insert into FtyInventory_Detail(Ukey, MtlLocationID)
 		select f.Ukey,ToLocation=isnull(sd.ToLocation,'')
 		from @TB f
-		left join dbo.SubTransfer_Detail sd 
+		inner join dbo.SubTransfer_Detail sd 
 		on sd.id = @poid  and  sd.FromFtyInventoryUkey = f.sourceUkey
 		where not exists(select 1 from FtyInventory_Detail fd where f.Ukey = fd.Ukey)
+		and isnull(sd.ToLocation,'') <> ''
 		drop table #tmpFtyInventory
 
 
