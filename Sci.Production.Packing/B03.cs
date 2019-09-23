@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,6 +19,8 @@ namespace Sci.Production.Packing
     /// </summary>
     public partial class B03 : Sci.Win.Tems.Input1
     {
+        private Hashtable ht = new Hashtable();
+
         /// <summary>
         /// B03
         /// </summary>
@@ -26,6 +29,13 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
+
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\");
+            if (this.ht.Count == 0)
+            {
+                this.ht.Add("Picture1", path + "CTN.jpg");
+                this.pictureBox1.ImageLocation = this.ht["Picture1"].ToString();
+            }
         }
 
         private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
