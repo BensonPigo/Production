@@ -34,10 +34,14 @@ namespace Sci.Production.Packing
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         /// <inheritdoc/>
         protected override void OnFormLoaded()
 =======
         private void btnSelecPath_Click(object sender, EventArgs e)
+=======
+        private void BtnSelecPath_Click(object sender, EventArgs e)
+>>>>>>> ISP20191302 - 暫時commit
         {
 
             FolderBrowserDialog path = new FolderBrowserDialog();
@@ -56,8 +60,12 @@ namespace Sci.Production.Packing
             this.txtPath.Text = dirPath;
         }
 
+<<<<<<< HEAD
         private void btnSelectFile_Click(object sender, EventArgs e)
 >>>>>>> ISP20191302
+=======
+        private void BtnSelectFile_Click(object sender, EventArgs e)
+>>>>>>> ISP20191302 - 暫時commit
         {
             base.OnFormLoaded();
 
@@ -122,11 +130,18 @@ namespace Sci.Production.Packing
                     List<ZPL> zPL_Object = this.Get_ZPL_Object(dataList_String, custCTN_List);
 >>>>>>> ISP20191302
 
+<<<<<<< HEAD
             if (!MyUtility.Check.Empty(this.txtSP_s.Text))
             {
                 sqlWhere.Add(" p.OrderID >= @SP_s ");
                 sqlParameters.Add(new SqlParameter("@SP_s", this.txtSP_s.Text));
             }
+=======
+                    this.Mapping_PackingList_Detal(zPL_Object);
+                    // 存檔至路徑
+                    //var zip = ZipHelper.ZipData(dataList);
+                    //System.IO.File.WriteAllBytes($@"{dirPath}\P25_Files.zip", zip);
+>>>>>>> ISP20191302 - 暫時commit
 
             if (!MyUtility.Check.Empty(this.txtSP_e.Text))
             {
@@ -183,9 +198,13 @@ WHERE p.MDivisionID = @MDivisionID
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         /// <inheritdoc/>
         private void BtnToExcel_Click(object sender, EventArgs e)
 =======
+=======
+        /// <inheritdoc/>
+>>>>>>> ISP20191302 - 暫時commit
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -193,7 +212,7 @@ WHERE p.MDivisionID = @MDivisionID
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("PackingListID", header: "Packing No. ", width: Widths.AnsiChars(15))
             .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(15))
-            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(20))
+            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(5))
             .Text("SCICtnNo", header: "SCI Ctn No.", width: Widths.AnsiChars(20))
             .Text("Article", header: "Color Way ", width: Widths.AnsiChars(10))
             .Text("SizeCode", header: "Size ", width: Widths.AnsiChars(10))
@@ -204,23 +223,120 @@ WHERE p.MDivisionID = @MDivisionID
         private void Mapping_PackingList_Detal(List<ZPL> zPL_Object)
         {
 
-            List<ZPL> zPL_Object_1 = zPL_Object.OrderBy(o => o.CustCTN).ToList();
-            DataTable dt = new DataTable();
+            DataTable resutDt = new DataTable();
+            string sqlCmdAA = $@"
+SELECT [PackingListID]=pd.ID
+        ,pd.OrderID
+        ,pd.CTNStartNo
+        ,pd.SCICtnNo
+        ,pd.Article
+        ,pd.SizeCode
+        ,pd.CustCTN
+FROM PackingList_Detail pd
+WHERE 1=0
+";
 
-            zPL_Object.ForEach( singleZPL => {
+            // 取得結構
+            DBProxy.Current.Select(null, sqlCmdAA, out resutDt);
 
+            #region 規則說明
+            /*
+ZPL對應PackingList_Detail時，可能會有以下情況：（請從ZPL為起點，去找屬於哪個PackingList_Detail）
+
+
+  1.相同PackingList，相同訂單，不同箱號(CTNStartno)
+例如：有100個ZPL檔 
+→ 依據PackingList_Detail.OrderID、Article、CTNStartno等資訊，一個ZPL對應一個箱號寫入
+
+(可能多個SzieCode集中在一個箱號，等ZPL格式確定會長什麼樣子再研究做法)
+
+--------------------------------------------------------------------------------
+
+  2.不同PackingList，相同訂單(SP#)，相同箱號(CTNStartno)
+→ 依照OrderShipmodeSeq，從最小 & CustCTN為空的開始填入
+
+例如：
+SP#：19050463PP003、箱號：1，分屬兩個PackingList (ES2PG19010638 , ES2PG19040460)
+
+先填入 ES2PG19010638 這個PackingList_Deatail的CustCTN，因為OrderShipmodeSeq是01 且 CustCTN為空
+
+有100個ZPL檔，分屬19050463PP003這個訂單的兩個PackingList
+
+--------------------------------------------------------------------------------
+
+  3. CustPONo + StyleID 會對應到多個SP#
+→ 找出ID最小的SP#，且Article、SizeCode、箱號相同的PackingList_Detail，都更新CustCTN
+
+例如：
+CustPONo='4202777060' 、 StyleID='1351662'，會對應到19101523PP004、19101523PP006兩個SP#
+
+
+
+總結：
+先區分有沒有多OrdersID(狀況3)
+再區分有沒有多PackingList(狀況1或2)
+
+因此對應方式有四種
+
+             */
+            #endregion
+
+            zPL_Object.ForEach(singleZPL =>
+            {
                 DataTable tmpDt;
-                string sqlCmd = $@"
+                string sqlCmd = string.Empty;
+                bool isType3 = false;
+
+                // 狀況3判斷
+                sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+FROM Orders 
+WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
+
+";
+
+                DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                if (tmpDt.Rows.Count > 1)
+                {
+                    isType3 = true;
+                }
+
+                if (isType3)
+                {
+                    #region 有3的狀況
+
+                    sqlCmd = $@"
 
 SELECT ID ,StyleID ,POID
 INTO #tmoOrders
 FROM Orders 
 WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
 
+DECLARE @MinOrderID varchar(20)
 
-DECLARE @pdUkey bigint=0;
+SELECT @MinOrderID = MIN(pd.OrderID)
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON pd.OrderID=o.ID 
+WHERE 1=1
+AND p.Type = 'B'
+AND pd.Article = '{singleZPL.Article}'
+AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
+AND (
+		pd.SizeCode in
+		(
+			SELECT TOP 1 SizeCode 
+			FROM Order_SizeSpec 
+			WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{singleZPL.SizeCode}')
+		) 
+		OR 
+		pd.SizeCode='{singleZPL.SizeCode}'
+	)
+AND EXISTS (SELECT 1 FROM #tmoOrders WHERE ID = o.ID AND StyleID = o.StyleID)
+;
 
---SELECT pd.* --@pdUkey = pd.Ukey
 SELECT   [PackingListID]=p.ID
         ,pd.OrderID
         ,pd.CTNStartNo
@@ -233,6 +349,248 @@ FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON pd.OrderID=o.ID 
 WHERE 1=1
+AND p.Type = 'B'
+AND pd.Article = '{singleZPL.Article}'
+AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
+AND (
+		pd.SizeCode in
+		(
+			SELECT TOP 1 SizeCode 
+			FROM Order_SizeSpec 
+			WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders WHERE ID = @MinOrderID) AND SizeSpec IN ('{singleZPL.SizeCode}')
+		) 
+		OR 
+		pd.SizeCode='{singleZPL.SizeCode}'
+	)
+AND EXISTS (SELECT 1 FROM #tmoOrders WHERE ID = o.ID AND StyleID = o.StyleID AND ID = @MinOrderID)
+
+";
+                    #endregion
+
+                    foreach (DataRow dr in tmpDt.Rows)
+                    {
+                        string orderID = dr["ID"].ToString();
+
+                        // 再判斷是不是 狀況2
+                        #region 再判斷是不是 狀況2
+                        sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
+
+SELECT pd.*
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' AND pd.CustCTN = ''
+    AND pd.OrderID ='{orderID}'
+    AND CTNStartNo='{singleZPL.CTNStartNo}' 
+    AND Article = '{singleZPL.Article}'
+    AND (
+	    pd.SizeCode in
+	    (
+		    SELECT TOP 1 SizeCode 
+		    FROM Order_SizeSpec 
+		    WHERE SizeItem='S01' AND ID = '{orderID}' AND SizeSpec IN ('{singleZPL.SizeCode}')
+	    ) 
+	    OR 
+	    pd.SizeCode='{singleZPL.SizeCode}'
+        )
+
+";
+                        #endregion
+
+                        DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                        if (tmpDt.Rows.Count > 1)
+                        {
+                            #region 狀況2
+
+                            string min_OrderShipmodeSeq_PackingListID = tmpDt.AsEnumerable().OrderByDescending(o => o["OrderShipmodeSeq"].ToString()).FirstOrDefault()["ID"].ToString();
+
+                            sqlCmd = $@"
+
+SELECT [PackingListID]=pd.ID
+        ,pd.OrderID
+        ,pd.CTNStartNo
+        ,pd.SCICtnNo
+        ,pd.Article
+        ,pd.SizeCode
+        --,pd.CustCTN
+        ,[CustCTN] = '{singleZPL.CustCTN}'
+FROM PackingList_Detail pd
+WHERE ID='{min_OrderShipmodeSeq_PackingListID}' 
+AND pd.OrderID ='{orderID}'
+AND CTNStartNo='{singleZPL.CTNStartNo}' 
+AND Article = '{singleZPL.Article}'  
+ AND (
+		pd.SizeCode in
+		(
+			SELECT TOP 1 SizeCode 
+			FROM Order_SizeSpec 
+			WHERE SizeItem='S01' AND ID ='{orderID}' AND SizeSpec IN ('{singleZPL.SizeCode}')
+		) 
+		OR 
+		pd.SizeCode='{singleZPL.SizeCode}'
+	)
+
+";
+
+                            DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                            resutDt = this.InsertResultDt(resutDt, tmpDt);
+                            #endregion
+                        }
+                        else
+                        {
+                            #region 狀況1
+
+                            sqlCmd = $@"
+
+SELECT   [PackingListID]=p.ID
+        ,pd.OrderID
+        ,pd.CTNStartNo
+        ,pd.SCICtnNo
+        ,pd.Article
+        ,pd.SizeCode
+        --,pd.CustCTN
+        ,[CustCTN] = '{singleZPL.CustCTN}'
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON pd.OrderID=o.ID 
+WHERE 1=1
+AND p.Type = 'B'
+AND pd.Article = '{singleZPL.Article}'
+AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
+AND (
+		pd.SizeCode in
+		(
+			SELECT TOP 1 SizeCode 
+			FROM Order_SizeSpec 
+			WHERE SizeItem='S01' AND ID ='{orderID}' AND SizeSpec IN ('{singleZPL.SizeCode}')
+		) 
+		OR 
+		pd.SizeCode='{singleZPL.SizeCode}'
+	)
+AND pd.OrderID ='{orderID}'
+
+
+";
+
+
+                            DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                            resutDt = this.InsertResultDt(resutDt, tmpDt);
+                            #endregion
+                        }
+                    }
+                }
+                else
+                {
+                    #region 判斷是不是 狀況2
+                    sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
+
+SELECT pd.*
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' AND pd.CustCTN = ''
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND CTNStartNo='{singleZPL.CTNStartNo}' 
+    AND Article = '{singleZPL.Article}'
+    AND (
+	    pd.SizeCode in
+	    (
+		    SELECT TOP 1 SizeCode 
+		    FROM Order_SizeSpec 
+		    WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{singleZPL.SizeCode}')
+	    ) 
+	    OR 
+	    pd.SizeCode='{singleZPL.SizeCode}'
+        )
+
+";
+                    #endregion
+
+                    DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                    if (tmpDt.Rows.Count > 1)
+                    {
+                        #region 狀況2
+
+                        string min_OrderShipmodeSeq_PackingListID = tmpDt.AsEnumerable().OrderBy(o => o["OrderShipmodeSeq"].ToString()).FirstOrDefault()["ID"].ToString();
+
+                        sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
+
+SELECT [PackingListID]=pd.ID
+        ,pd.OrderID
+        ,pd.CTNStartNo
+        ,pd.SCICtnNo
+        ,pd.Article
+        ,pd.SizeCode
+        --,pd.CustCTN
+        ,[CustCTN] = '{singleZPL.CustCTN}'
+FROM PackingList_Detail pd
+WHERE ID='{min_OrderShipmodeSeq_PackingListID}' 
+AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+AND CTNStartNo='{singleZPL.CTNStartNo}' 
+AND Article = '{singleZPL.Article}'  
+ AND (
+		pd.SizeCode in
+		(
+			SELECT TOP 1 SizeCode 
+			FROM Order_SizeSpec 
+			WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{singleZPL.SizeCode}')
+		) 
+		OR 
+		pd.SizeCode='{singleZPL.SizeCode}'
+	)
+
+";
+
+                        DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                        resutDt = this.InsertResultDt(resutDt, tmpDt);
+
+                        #endregion
+                    }
+                    else
+                    {
+                        #region 狀況1
+
+                        sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
+
+
+SELECT   [PackingListID]=p.ID
+        ,pd.OrderID
+        ,pd.CTNStartNo
+        ,pd.SCICtnNo
+        ,pd.Article
+        ,pd.SizeCode
+        --,pd.CustCTN
+        ,[CustCTN] = '{singleZPL.CustCTN}'
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON pd.OrderID=o.ID 
+WHERE 1=1
+AND p.Type = 'B'
 AND pd.Article = '{singleZPL.Article}'
 AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
 AND (
@@ -256,22 +614,31 @@ WHERE Ukey = @pdUkey AND CustCTN = '' AND p.Status='New'
 
 ";
 
-                DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+                        DBProxy.Current.Select(null, sqlCmd, out tmpDt);
 
-                if (dt.Rows.Count == 0 && tmpDt.Rows.Count > 0)
-                {
-                    dt = tmpDt.Copy();
-                }
-                else
-                {
-                    foreach (DataRow item in tmpDt.Rows)
-                    {
-                        dt.Rows.Add(item);
+                        resutDt = this.InsertResultDt(resutDt, tmpDt);
+                        #endregion
                     }
                 }
+
+                //DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                //this.InsertResultDt(resutDt, tmpDt);
             });
 
-            this.listControlBindingSource1.DataSource = dt;
+            this.listControlBindingSource1.DataSource = resutDt;
+        }
+
+        private DataTable InsertResultDt(DataTable target , DataTable source)
+        {
+            if (source.Rows.Count > 0)
+            {
+                foreach (DataRow item in target.Rows)
+                {
+                    target.Rows.Add(item);
+                }
+            }
+            return target;
         }
 
         private List<ZPL> Get_ZPL_Object(Dictionary<string, string> dataList_String, List<string> custCTN_List)
@@ -288,6 +655,7 @@ WHERE Ukey = @pdUkey AND CustCTN = '' AND p.Status='New'
                 return;
             }
 
+<<<<<<< HEAD
             DataRow[] selectedDatas = gridData.Select("Sel=1");
 
             if (selectedDatas.Length == 0)
@@ -295,6 +663,9 @@ WHERE Ukey = @pdUkey AND CustCTN = '' AND p.Status='New'
                 MyUtility.Msg.WarningBox("Please choose the data first.");
                 return;
             }
+=======
+                string content = dataList_String[custCTNno];
+>>>>>>> ISP20191302 - 暫時commit
 
             this.btnToExcel.Enabled = false;
             foreach (DataRow item in selectedDatas)

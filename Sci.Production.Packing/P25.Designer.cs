@@ -319,7 +319,7 @@
             this.btnSelectFile.TabIndex = 1;
             this.btnSelectFile.Text = "Select File";
             this.btnSelectFile.UseVisualStyleBackColor = true;
-            this.btnSelectFile.Click += new System.EventHandler(this.btnSelectFile_Click);
+            this.btnSelectFile.Click += new System.EventHandler(this.BtnSelectFile_Click);
             // 
             // label2
             // 
@@ -348,8 +348,12 @@
             this.btnSelecPath.TabIndex = 4;
             this.btnSelecPath.Text = "SelecPath";
             this.btnSelecPath.UseVisualStyleBackColor = true;
+<<<<<<< HEAD
             this.btnSelecPath.Click += new System.EventHandler(this.btnSelecPath_Click);
 >>>>>>> ISP20191302
+=======
+            this.btnSelecPath.Click += new System.EventHandler(this.BtnSelecPath_Click);
+>>>>>>> ISP20191302 - 暫時commit
             // 
             // panel1
             // 
