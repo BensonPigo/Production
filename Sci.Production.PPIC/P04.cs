@@ -791,9 +791,16 @@ where a.Article is null",
             }
 
             int selectValue = MyUtility.Convert.GetInt(this.comboPressing1.SelectedValue2);
-            if (MyUtility.Convert.GetInt(this.CurrentMaintain["Pressing1"]) == selectValue)
+            if (string.IsNullOrEmpty(MyUtility.Convert.GetString(this.CurrentMaintain["Pressing1"])))
             {
-                return;
+                this.comboPressing1.SelectedValue2 = 0;
+            }
+            else
+            {
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["Pressing1"]) == selectValue)
+                {
+                    return;
+                }
             }
 
             this.comboPressing1.DataBindings["SelectedValue2"].WriteValue();
@@ -819,9 +826,16 @@ where a.Article is null",
             }
 
             int selectValue = MyUtility.Convert.GetInt(this.comboFolding1.SelectedValue2);
-            if (MyUtility.Convert.GetInt(this.CurrentMaintain["Folding1"]) == selectValue)
+            if (string.IsNullOrEmpty(MyUtility.Convert.GetString(this.CurrentMaintain["Folding1"])))
             {
-                return;
+                this.comboFolding1.SelectedIndex = 0;
+            }
+            else
+            {
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["Folding1"]) == selectValue)
+                {
+                    return;
+                }
             }
 
             this.comboFolding1.DataBindings["SelectedValue2"].WriteValue();
