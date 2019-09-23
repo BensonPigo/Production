@@ -94,7 +94,8 @@ t.AddName= s.AddName,
 t.AddDate= s.AddDate,
 t.EditName= s.EditName,
 t.EditDate= s.EditDate,
-t.DescriptionDetail = s.DescriptionDetail
+t.DescriptionDetail = s.DescriptionDetail,
+t.PurchaseBatchQty = s.BatchQty
 
 	when not matched by target and s.type='O' then 
 		insert ( ID
@@ -116,7 +117,8 @@ t.DescriptionDetail = s.DescriptionDetail
 ,AddDate
 ,EditName
 ,EditDate
-,DescriptionDetail	)
+,DescriptionDetail
+,PurchaseBatchQty	)
 
 values(s.refno,
 s.Model,
@@ -137,7 +139,8 @@ s.AddName,
 s.AddDate,
 s.EditName,
 s.EditDate,
-s.DescriptionDetail
+s.DescriptionDetail,
+s.BatchQty
  );
 
  

@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,12 +19,20 @@ namespace Sci.Production.Packing
         private string destination_path; // 放的路徑
         private bool Upload_flag = false;
         string Destination_fileName;
+        private Hashtable ht = new Hashtable();
 
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.destination_path = MyUtility.GetValue.Lookup("select ShippingMarkPath from System WITH (NOLOCK) ", null);
+
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\");
+            if (this.ht.Count == 0)
+            {
+                this.ht.Add("Picture1", path + "CTN.jpg");
+                this.pictureBox1.ImageLocation = this.ht["Picture1"].ToString();
+            }
         }
 
         protected override void OnDetailEntered()

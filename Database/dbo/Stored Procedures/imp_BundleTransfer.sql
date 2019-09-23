@@ -70,7 +70,7 @@ BEGIN
 						, SubProcessId = RRS.processId
 						, TransDate = tmp.TransDate
 						, AddDate = GetDate()
-						, rd.SewingLineID
+						, SewingLineID = isnull(rd.SewingLineID,'''')
 						, [LocationID] = isnull (tmp.LocationID, ' + '''''' + ')
 						, PanelNo=isnull(tmp.PanelNo,'''')
 						, CutCellID=isnull(RRP.CutCellID,'''')

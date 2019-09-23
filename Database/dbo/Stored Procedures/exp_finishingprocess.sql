@@ -1,4 +1,3 @@
-﻿
 -- =============================================
 -- Description:	轉出FPS資料
 -- =============================================
@@ -162,8 +161,9 @@ BEGIN
 	[CmdTime]		 [dateTime] NOT NULL,
 	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
 	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0)),
-	IsRotate		 [bit] NOT NULL DEFAULT ((0)),
+	IsHorizontal	 [bit] NOT NULL DEFAULT ((0)),
 	FilePath		 [varchar](80) NOT NULL DEFAULT (('')),
+	IsSSCC			 [bit] NOT NULL DEFAULT ((0))
  CONSTRAINT [PK_ShippingMark] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC,	
@@ -272,10 +272,12 @@ CREATE TABLE [dbo].[StyleFPSetting] (
     [StyleID]			varchar(15),
 	[SeasonID]			varchar(10),
 	[BrandID]			varchar(8),
-	[FPSetting1]		INT   DEFAULT ((0)) NULL,
-	[FPSetting2]		INT   DEFAULT ((0)) NULL,
     [CmdTime]			datetime NULL,
-    [SunriseUpdated]	bit   DEFAULT ((0)) NULL
+    [SunriseUpdated]	bit   DEFAULT ((0)) NULL,
+	[Pressing1]			INT   DEFAULT ((1)) NULL,
+	[Pressing2]			INT   DEFAULT ((0)) NULL,
+	[Folding1]			INT   DEFAULT ((0)) NULL,
+	[Folding2]			INT   DEFAULT ((0)) NULL
 	)
 END
 
@@ -541,8 +543,9 @@ USING(
 	,[Is2Side] = Is2Side ,[FileName]=''
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
-	,[IsRotate]
+	,[IsHorizontal]
 	,[FilePath] = (select TOP 1 ShippingMarkPath from Production.dbo.System)
+	,IsSSCC
 	FROM Production.dbo.ShippingMarkpicture 
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
@@ -558,13 +561,15 @@ UPDATE SET
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = 0,
 	t.GenSongUpdated = 0,
-	t.IsRotate = s.IsRotate,
-	t.FilePath = s.FilePath
+	t.IsHorizontal = s.IsHorizontal,
+	t.FilePath = s.FilePath,
+	t.IsSSCC = s.IsSSCC
 WHEN NOT MATCHED BY TARGET THEN
 INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
-		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[IsRotate] ,[FilePath])
+		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[IsHorizontal] ,[FilePath],[IsSSCC])
+
 Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
-		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[IsRotate] ,s.[FilePath]);
+		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[IsHorizontal] ,s.[FilePath],s.[IsSSCC]);
 
 --09. 轉出區間 當AddDate or EditDate =今天
 MERGE ShippingMarkPic_Detail AS T
@@ -631,7 +636,13 @@ VALUES(s.[DM300],s.[DM200],s.[DM201],s.[DM202],s.[DM205],s.[DM203],s.[DM204],s.[
 --11. 轉出區間 當EditDate =今天
 MERGE StyleFPSetting AS T
 USING(
-	SELECT  [StyleID] = id,[SeasonID], [BrandID],[FinishingProcessID1],[FinishingProcessID2]
+	SELECT  [StyleID] = id
+		,[SeasonID]
+		,[BrandID]
+		,Pressing1
+		,Pressing2
+		,Folding1
+		,Folding2
 	FROM Production.dbo.Style 
 	where convert(date,EditDate) = @cDate
 ) as s
@@ -641,10 +652,12 @@ UPDATE SET
    t.[StyleID]		=s.[StyleID],               
    t.[SeasonID]		=s.[SeasonID],	
    t.[BrandID]		=s.[BrandID],	
-   t.[FPSetting1]	=s.[FinishingProcessID1],
-   t.[FPSetting2]	=s.[FinishingProcessID2],
+   t.[Pressing1]	=s.[Pressing1],
+   t.[Pressing2]	=s.[Pressing2],
+   t.[Folding1]		=s.[Folding1],
+   t.[Folding2]		=s.[Folding2],
    t.[CmdTime]	= GetDate(),	
    t.[SunriseUpdated] = 0
 WHEN NOT MATCHED BY TARGET THEN
-INSERT([StyleID] ,[SeasonID], [BrandID],[FPSetting1],[FPSetting2],[CmdTime],[SunriseUpdated])
-VALUES(s.[StyleID] ,s.[SeasonID], s.[BrandID],s.[FinishingProcessID1],s.[FinishingProcessID2],GetDate(),0);
+INSERT([StyleID], [SeasonID], [BrandID], [Pressing1], [Pressing2], [Folding1], [Folding2], [CmdTime], [SunriseUpdated])
+VALUES(s.[StyleID] ,s.[SeasonID], s.[BrandID], s.[Pressing1], s.[Pressing2], s.[Folding1], s.[Folding2], GetDate(), 0);
