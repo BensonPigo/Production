@@ -4,7 +4,8 @@
     [BeginDate] DATE        NOT NULL,
     [EndDate]   DATE        NULL,
     [ShipperID]   VARCHAR (8) CONSTRAINT [DF_FtyShipper_Detail_Shipper] DEFAULT ('') NULL,
-    CONSTRAINT [PK_FtyShipper_Detail] PRIMARY KEY CLUSTERED ([BrandID] ASC, [FactoryID] ASC, [BeginDate] ASC)
+    [SeasonID] VARCHAR(10) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_FtyShipper_Detail] PRIMARY KEY CLUSTERED ([SeasonID], [BeginDate], [FactoryID], [BrandID])
 );
 
 

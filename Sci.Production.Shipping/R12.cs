@@ -108,7 +108,14 @@ outer apply
     select top 1 ROUND(fcd.CpuCost,3) as CpuCost
 	from dbo.FtyShipper_Detail fd  
 	inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
-	where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate 
+	where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate and fd.seasonID=o.seasonID
+) cpucost1
+outer apply
+(	
+    select top 1 isnull(cpucost1.CpuCost, ROUND(fcd.CpuCost,3)) as CpuCost
+	from dbo.FtyShipper_Detail fd  
+	inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
+	where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate  and fd.seasonID=''
 ) cpucost
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(pd.OrderID,'AMT')   ) sub_Process_AMT
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(pd.OrderID,'CPU')   ) sub_Process_CPU

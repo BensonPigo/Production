@@ -679,46 +679,9 @@ order by fwd.WhseNo",
             #endregion
 
             #region 檢查Shipper
-
-            // 帶資料到Shipper
-            string SP = string.Empty;
-            DataTable dtShipper;
-            if (this.DetailDatas.Count > 0)
+            if (!this.CheckShipper())
             {
-                foreach (DataRow dr in this.DetailDatas)
-                {
-                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
-                }
-
-                string sqlcmd = $@"
-select distinct f.ShipperID from Orders o
-left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
-where ID in ({SP.Substring(0, SP.Length - 1)})
-and f.BrandID='{this.txtbrand.Text}'
-and GETDATE() between f.BeginDate and f.EndDate";
-
-                if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
-                {
-                    if (dtShipper.Rows.Count > 1)
-                    {
-                        MyUtility.Msg.WarningBox("The shipper for those SP are not the same, please check Packing # and SP No. again! ");
-                        return false;
-                    }
-                    else if (dtShipper.Rows.Count == 1)
-                    {
-                        this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
-                    }
-                    else
-                    {
-                        MyUtility.Msg.WarningBox("Shipper not found! ");
-                        return false;
-                    }
-                }
-                else
-                {
-                    this.ShowErr(sqlcmd, result);
-                    return false;
-                }
+                return false;
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
@@ -1509,46 +1472,10 @@ Packing List : {pid}";
                     }
                 }
             }
-            // 帶資料到Shipper
-            string SP = string.Empty;
-            DualResult result;
-            DataTable dtShipper;
-            if (this.DetailDatas.Count > 0)
+
+            if (!this.CheckShipper())
             {
-                foreach (DataRow dr in this.DetailDatas)
-                {
-                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
-                }
-
-                string sqlcmd = $@"
-select distinct f.ShipperID from Orders o
-left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
-where ID in ({SP.Substring(0, SP.Length - 1)})
-and f.BrandID='{this.txtbrand.Text}'
-and GETDATE() between f.BeginDate and f.EndDate";
-
-                if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
-                {
-                    if (dtShipper.Rows.Count > 1)
-                    {
-                        MyUtility.Msg.WarningBox("The shipper for those SP are not the same, please check Packing # and SP No. again! ");
-                        return;
-                    }
-                    else if (dtShipper.Rows.Count == 1)
-                    {
-                        this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
-                    }
-                    else
-                    {
-                        MyUtility.Msg.WarningBox("Shipper not found! ");
-                        return;
-                    }
-                }
-                else
-                {
-                    this.ShowErr(sqlcmd, result);
-                    return;
-                }
+                return;
             }
 
             // shipper 不可為空
@@ -1558,7 +1485,7 @@ and GETDATE() between f.BeginDate and f.EndDate";
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return;
             }
-
+            DualResult result;
             // 當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
             {
@@ -1955,6 +1882,46 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
         {
             Production.Shipping.P05_UnconfirmHistory dialog = new P05_UnconfirmHistory(this.CurrentMaintain["ID"].ToString());
             dialog.ShowDialog(this);
+        }
+
+        private bool CheckShipper()
+        {
+            DataTable dtShipper;
+            DualResult result;
+            if (this.DetailDatas.Count > 0)
+            {
+                DataTable tmpdt = this.DetailDatas.CopyToDataTable();
+                string sqlcmd = $@"
+select distinct ShipperID=isnull(f1.ShipperID, f2.ShipperID)
+from #tmp t
+inner join Orders o on o.id = t.Orderid
+outer apply(select ShipperID from FtyShipper_Detail f where o.FactoryID = f.FactoryID and o.SeasonID = f.SeasonID and  f.BrandID='{this.txtbrand.Text}' and GETDATE() between f.BeginDate and f.EndDate)f1
+outer apply(select ShipperID from FtyShipper_Detail f where o.FactoryID = f.FactoryID and f.SeasonID = '' and  f.BrandID='{this.txtbrand.Text}' and GETDATE() between f.BeginDate and f.EndDate)f2
+";
+                result = MyUtility.Tool.ProcessWithDatatable(tmpdt, "Orderid", sqlcmd, out dtShipper);
+                if (!result)
+                {
+                    this.ShowErr(sqlcmd, result);
+                    return false;
+                }
+
+                if (dtShipper.Rows.Count > 1)
+                {
+                    MyUtility.Msg.WarningBox("The shipper for those SP are not the same, please check Packing # and SP No. again! ");
+                    return false;
+                }
+                else if (dtShipper.Rows.Count == 1)
+                {
+                    this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Shipper not found! ");
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
