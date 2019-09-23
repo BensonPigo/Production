@@ -84,16 +84,17 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.label2 = new Sci.Win.UI.Label();
-            this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
-            this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
-            this.txtUserPOApproved = new Sci.Production.Class.txtuser();
-            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.labelClipFilesPath = new Sci.Win.UI.Label();
             this.btnPicFilesPath = new Sci.Win.UI.Button();
             this.txtPicFilesPath = new Sci.Win.UI.TextBox();
             this.labPicFilesPath = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
+            this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
+            this.labelClipFilesPath = new Sci.Win.UI.Label();
+            this.txtUserPOApproved = new Sci.Production.Class.txtuser();
+            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.chkMtlAutoLock = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -693,6 +694,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.chkMtlAutoLock);
             this.panel1.Controls.Add(this.btnPicFilesPath);
             this.panel1.Controls.Add(this.txtPicFilesPath);
             this.panel1.Controls.Add(this.labPicFilesPath);
@@ -753,6 +755,36 @@
             this.panel1.Size = new System.Drawing.Size(737, 484);
             this.panel1.TabIndex = 50;
             // 
+            // btnPicFilesPath
+            // 
+            this.btnPicFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnPicFilesPath.Location = new System.Drawing.Point(642, 415);
+            this.btnPicFilesPath.Name = "btnPicFilesPath";
+            this.btnPicFilesPath.Size = new System.Drawing.Size(30, 25);
+            this.btnPicFilesPath.TabIndex = 48;
+            this.btnPicFilesPath.Text = "...";
+            this.btnPicFilesPath.UseVisualStyleBackColor = true;
+            this.btnPicFilesPath.Click += new System.EventHandler(this.BtnPicFilesPath_Click);
+            // 
+            // txtPicFilesPath
+            // 
+            this.txtPicFilesPath.BackColor = System.Drawing.Color.White;
+            this.txtPicFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtPicFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
+            this.txtPicFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPicFilesPath.Location = new System.Drawing.Point(133, 415);
+            this.txtPicFilesPath.Name = "txtPicFilesPath";
+            this.txtPicFilesPath.Size = new System.Drawing.Size(506, 23);
+            this.txtPicFilesPath.TabIndex = 47;
+            // 
+            // labPicFilesPath
+            // 
+            this.labPicFilesPath.Location = new System.Drawing.Point(17, 415);
+            this.labPicFilesPath.Name = "labPicFilesPath";
+            this.labPicFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labPicFilesPath.TabIndex = 49;
+            this.labPicFilesPath.Text = "Pic Files Path";
+            // 
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
@@ -800,6 +832,14 @@
             this.lbQCMachineDelayTime.TabIndex = 44;
             this.lbQCMachineDelayTime.Text = "QC Machine Delay Time";
             // 
+            // labelClipFilesPath
+            // 
+            this.labelClipFilesPath.Location = new System.Drawing.Point(17, 442);
+            this.labelClipFilesPath.Name = "labelClipFilesPath";
+            this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labelClipFilesPath.TabIndex = 43;
+            this.labelClipFilesPath.Text = "Clip Files Path";
+            // 
             // txtUserPOApproved
             // 
             this.txtUserPOApproved.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
@@ -839,43 +879,17 @@
             this.lineShape10.Y1 = 227;
             this.lineShape10.Y2 = 227;
             // 
-            // labelClipFilesPath
+            // chkMtlAutoLock
             // 
-            this.labelClipFilesPath.Location = new System.Drawing.Point(17, 442);
-            this.labelClipFilesPath.Name = "labelClipFilesPath";
-            this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
-            this.labelClipFilesPath.TabIndex = 43;
-            this.labelClipFilesPath.Text = "Clip Files Path";
-            // 
-            // btnPicFilesPath
-            // 
-            this.btnPicFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnPicFilesPath.Location = new System.Drawing.Point(642, 415);
-            this.btnPicFilesPath.Name = "btnPicFilesPath";
-            this.btnPicFilesPath.Size = new System.Drawing.Size(30, 25);
-            this.btnPicFilesPath.TabIndex = 48;
-            this.btnPicFilesPath.Text = "...";
-            this.btnPicFilesPath.UseVisualStyleBackColor = true;
-            this.btnPicFilesPath.Click += new System.EventHandler(this.BtnPicFilesPath_Click);
-            // 
-            // txtPicFilesPath
-            // 
-            this.txtPicFilesPath.BackColor = System.Drawing.Color.White;
-            this.txtPicFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtPicFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
-            this.txtPicFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPicFilesPath.Location = new System.Drawing.Point(133, 415);
-            this.txtPicFilesPath.Name = "txtPicFilesPath";
-            this.txtPicFilesPath.Size = new System.Drawing.Size(506, 23);
-            this.txtPicFilesPath.TabIndex = 47;
-            // 
-            // labPicFilesPath
-            // 
-            this.labPicFilesPath.Location = new System.Drawing.Point(17, 415);
-            this.labPicFilesPath.Name = "labPicFilesPath";
-            this.labPicFilesPath.Size = new System.Drawing.Size(112, 23);
-            this.labPicFilesPath.TabIndex = 49;
-            this.labPicFilesPath.Text = "Pic Files Path";
+            this.chkMtlAutoLock.AutoSize = true;
+            this.chkMtlAutoLock.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MtlAutoLock", true));
+            this.chkMtlAutoLock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkMtlAutoLock.Location = new System.Drawing.Point(342, 197);
+            this.chkMtlAutoLock.Name = "chkMtlAutoLock";
+            this.chkMtlAutoLock.Size = new System.Drawing.Size(219, 21);
+            this.chkMtlAutoLock.TabIndex = 50;
+            this.chkMtlAutoLock.Text = "Auto lock all received material.";
+            this.chkMtlAutoLock.UseVisualStyleBackColor = true;
             // 
             // B02
             // 
@@ -967,5 +981,6 @@
         private Win.UI.TextBox txtPicFilesPath;
         private Win.UI.Label labPicFilesPath;
         private Win.UI.Label labelClipFilesPath;
+        private Win.UI.CheckBox chkMtlAutoLock;
     }
 }
