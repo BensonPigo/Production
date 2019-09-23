@@ -190,7 +190,7 @@ BEGIN
 		from @TB f
 		inner join dbo.SubTransfer_Detail sd 
 		on sd.id = @poid  and  sd.FromFtyInventoryUkey = f.sourceUkey
-		where not exists(select 1 from FtyInventory_Detail fd where f.Ukey = fd.Ukey)
+		where not exists(select 1 from FtyInventory_Detail fd where f.Ukey = fd.Ukey and sd.ToLocation = fd.MtlLocationID)
 		and isnull(sd.ToLocation,'') <> ''
 		drop table #tmpFtyInventory
 
