@@ -2252,7 +2252,7 @@ where not exists(select BrandID from Production.dbo.FtyShipper as a WITH (NOLOCK
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.FtyShipper_Detail
 from Production.dbo.FtyShipper_Detail as a left join Trade_To_Pms.dbo.FtyShipper_Detail as b
-on a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate
+on a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate  and a.SeasonID	=b.SeasonID 
 where b.BrandID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -2263,7 +2263,8 @@ SET
       a.EndDate	      =b.EndDate	
       ,a.ShipperID	      =b.ShipperID	
 
-from Production.dbo.FtyShipper_Detail as a inner join Trade_To_Pms.dbo.FtyShipper_Detail as b ON a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate
+from Production.dbo.FtyShipper_Detail as a
+inner join Trade_To_Pms.dbo.FtyShipper_Detail as b ON a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate  and a.SeasonID	=b.SeasonID
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.FtyShipper_Detail(
        BrandID
@@ -2271,7 +2272,7 @@ INSERT INTO Production.dbo.FtyShipper_Detail(
       ,BeginDate
       ,EndDate
       ,ShipperID
-
+	  ,SeasonID
 )
 select 
        BrandID
@@ -2279,9 +2280,10 @@ select
       ,BeginDate
       ,EndDate
       ,ShipperID
-
+	  ,SeasonID
 from Trade_To_Pms.dbo.FtyShipper_Detail as b WITH (NOLOCK)
-where not exists(select BrandID from Production.dbo.FtyShipper_Detail as a WITH (NOLOCK) where a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate)
+where not exists(select BrandID from Production.dbo.FtyShipper_Detail as a WITH (NOLOCK) 
+where a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate and a.SeasonID	=b.SeasonID)
 
 
 
