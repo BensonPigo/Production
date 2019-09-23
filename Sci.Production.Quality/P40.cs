@@ -307,8 +307,11 @@ SELECT DISTINCT PSD.Refno
 	left join Order_Qty_Garment oq on oq.ID=o.POID and o.Category='G'
 	where o.ID='{this.CurrentDetailData["OrderID"]}'
 ) o on isnull(o.OrderIDFrom,o.poid) = ps.ID
+outer apply(
+	select value = RTRIM(LTRIM(data)) from dbo.SplitString('{this.CurrentDetailData["MtlTypeID"].ToString()}',',')
+) MtlType
   WHERE o.id = '{this.CurrentDetailData["OrderID"].ToString()}' AND 
-        F.MtlTypeID = '{this.CurrentDetailData["MtlTypeID"].ToString()}' AND 
+        F.MtlTypeID like MtlType.value AND 
         PSD.FabricType = '{this.CurrentDetailData["FabricType"].ToString()}' AND 
         PS.SuppID = '{this.CurrentDetailData["SuppID"].ToString()}' {whereRefno}
 ORDER BY PSD.Refno
