@@ -453,12 +453,18 @@ update t
 				t.DescriptionDetail = s.DescriptionDetail,
 				t.UnitID = s.UnitID,
 				t.Delivery = s.Delivery,
-				t.SuppEstETA = s.SuppEstETA
+				t.SuppEstETA = s.SuppEstETA,
+				t.Complete = s.Complete,
+				t.ShipQty = isnull(s.ShipQty,0),
+				t.ShipFOC = isnull(s.ShipFOC,0),
+				t.ShipETA = s.ShipETA 
 		when not matched by target then
 		insert  (ID ,Seq1 ,Seq2 ,MasterGroupID ,MachineGroupID ,MachineBrandID ,Model ,Description 
-				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA)
+				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA
+				,Complete , ShipQty, ShipFOC,ShipETA)
 		values	(s.ID ,s.Seq1 ,s.Seq2 ,s.MasterGroupID ,s.MachineGroupID ,s.MachineBrandID ,s.Model ,s.Description
-				 ,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA);
+				 ,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA
+				 ,s.Complete ,s.ShipQty ,s.ShipFOC ,s.ShipETA);
 
 ------------------MachinePO_Detail_TPEAP----------------------
 	Merge	Machine.[dbo].[MachinePO_Detail_TPEAP] as t
