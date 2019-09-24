@@ -17,7 +17,12 @@ using System.Runtime.InteropServices;
 using System.IO.Compression;
 using Sci.Data;
 using Ict.Win;
+<<<<<<< HEAD
 >>>>>>> ISP20191302
+=======
+using System.Drawing;
+using System.Net;
+>>>>>>> ISP20191302 - 完成至Part 3
 
 namespace Sci.Production.Packing
 {
@@ -56,8 +61,7 @@ namespace Sci.Production.Packing
             {
                 dirPath = @"D:\TestPath";
             }
-
-            this.txtPath.Text = dirPath;
+            
         }
 
 <<<<<<< HEAD
@@ -101,6 +105,7 @@ namespace Sci.Production.Packing
                     MyUtility.Check.Empty(this.txtSP_e.Text) &&
                     MyUtility.Check.Empty(this.txtPOno.Text))
             {
+<<<<<<< HEAD
                 this.txtPGID_s.Focus();
                 MyUtility.Msg.WarningBox("Packing Guide ID, SP#, P.O. No cannot all be empty.");
                 return;
@@ -148,6 +153,66 @@ namespace Sci.Production.Packing
                 sqlWhere.Add(" p.OrderID <= @SP_e ");
                 sqlParameters.Add(new SqlParameter("@SP_e", this.txtSP_e.Text));
             }
+=======
+                this.ShowWaitMessage("Processing....");
+                string file = openFileDialog1.FileName;
+                string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
+
+                if (MyUtility.Check.Empty(shippingMarkPath))
+                {
+                    MyUtility.Msg.InfoBox("Please set <Shipping Mark Path> first.");
+                    return;
+                }
+
+                try
+                {
+                    #region 1.若上傳的ZPL檔，包含多張ZPL，先拆成個別ZPL
+
+                    using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), System.Text.Encoding.UTF8))
+                    {
+
+                        // 1-1.讀取內容
+                        oriZplConten = reader.ReadToEnd();
+
+                        // 1-2.去除換行符號
+                        tmpzplContent = oriZplConten.Replace("\r\n", string.Empty);
+
+                        // 1-3.先取得檔名，CustCTN被包在 ^FD>;>8 和 ^FS之間，取得CustCTN，作為檔名
+                        custCTNArray = tmpzplContent.Split(new string[] { "^FD>;>8", "^FS" }, StringSplitOptions.RemoveEmptyEntries);
+                        custCTN_List = custCTNArray.Where(o => !o.Contains("^")).Distinct().ToList();
+
+                        // 1-4.拆出多個ZPL檔的內容，每一個ZPL都是以 ^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0 開頭
+                        tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0");
+
+                        string[] stringSeparators = new string[] { "\r\n" };
+
+                        // 1-5.最後拆出來的每一個ZPL，包含兩張圖片
+                        contentsOfZPL = tmpzplContent.Split(stringSeparators, StringSplitOptions.None);
+                    }
+                    #endregion
+
+                    // 2.根據ZPL檔名，取得對應的內容
+                    Dictionary<string, string> dataList = new Dictionary<string, string>();
+
+                    foreach (string singleFileName in custCTN_List)
+                    {
+                        string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                        dataList.Add(singleFileName, contentString);
+                    }
+
+                    // 3.透過API將ZPL檔轉成PDF，並存到指定路徑
+                    foreach (string singleFileName in custCTN_List)
+                    {
+                        string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                        this.CallAPI(singleFileName, contentString, shippingMarkPath);
+                    }
+
+                    // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
+                    List<ZPL> zPL_Objects = this.Analysis_ZPL(dataList, custCTN_List);
+
+                    // 開始Mapping(沒有混碼的情況才執行這段)
+                    this.Mapping_PackingList_Detal(zPL_Objects);
+>>>>>>> ISP20191302 - 完成至Part 3
 
             if (!MyUtility.Check.Empty(this.txtPOno.Text))
             {
@@ -217,12 +282,24 @@ WHERE p.MDivisionID = @MDivisionID
             .Text("Article", header: "Color Way ", width: Widths.AnsiChars(10))
             .Text("SizeCode", header: "Size ", width: Widths.AnsiChars(10))
             .Text("CustCTN", header: "Cust #", width: Widths.AnsiChars(30))
+            .Text("ZPL_StyleID", header: "ZPL Style No.", width: Widths.AnsiChars(15))
+            .Text("ZPL_Article", header: "ZPL ColorWay", width: Widths.AnsiChars(10))
+            .Text("ZPL_SizeCode", header: "ZPL Size", width: Widths.AnsiChars(10))
+            .Text("ZPL_CTNStartNo", header: "ZPL CTN#", width: Widths.AnsiChars(5))
+            .Text("ZPL_ShipQty", header: "ZPL Ship Qty", width: Widths.AnsiChars(5))
             ;
+            this.grid1.Columns["CustCTN"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["CustCTN"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
+        /// <summary>
+        /// 將上傳的ZPL檔，與PackingList_Detail對應，若有對上的則放上Grid
+        /// </summary>
+        /// <param name="zPL_Object">上傳的ZPL檔</param>
         private void Mapping_PackingList_Detal(List<ZPL> zPL_Object)
         {
 
+            List<string> notMappingList = new List<string>();
             DataTable resutDt = new DataTable();
             string sqlCmdAA = $@"
 SELECT [PackingListID]=pd.ID
@@ -232,6 +309,12 @@ SELECT [PackingListID]=pd.ID
         ,pd.Article
         ,pd.SizeCode
         ,pd.CustCTN
+        ,pd.Ukey
+        ,[ZPL_StyleID] = ''
+        ,[ZPL_Article] = ''
+        ,[ZPL_SizeCode] = ''
+        ,[ZPL_CTNStartNo] ='' 
+        ,[ZPL_ShipQty] =''
 FROM PackingList_Detail pd
 WHERE 1=0
 ";
@@ -305,82 +388,21 @@ WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
 
                 if (isType3)
                 {
-                    #region 有3的狀況
-
-                    sqlCmd = $@"
-
-SELECT ID ,StyleID ,POID
-INTO #tmoOrders
-FROM Orders 
-WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
-
-DECLARE @MinOrderID varchar(20)
-
-SELECT @MinOrderID = MIN(pd.OrderID)
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON pd.OrderID=o.ID 
-WHERE 1=1
-AND p.Type = 'B'
-AND pd.Article = '{singleZPL.Article}'
-AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
-AND (
-		pd.SizeCode in
-		(
-			SELECT TOP 1 SizeCode 
-			FROM Order_SizeSpec 
-			WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{singleZPL.SizeCode}')
-		) 
-		OR 
-		pd.SizeCode='{singleZPL.SizeCode}'
-	)
-AND EXISTS (SELECT 1 FROM #tmoOrders WHERE ID = o.ID AND StyleID = o.StyleID)
-;
-
-SELECT   [PackingListID]=p.ID
-        ,pd.OrderID
-        ,pd.CTNStartNo
-        ,pd.SCICtnNo
-        ,pd.Article
-        ,pd.SizeCode
-        --,pd.CustCTN
-        ,[CustCTN] = '{singleZPL.CustCTN}'
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON pd.OrderID=o.ID 
-WHERE 1=1
-AND p.Type = 'B'
-AND pd.Article = '{singleZPL.Article}'
-AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
-AND (
-		pd.SizeCode in
-		(
-			SELECT TOP 1 SizeCode 
-			FROM Order_SizeSpec 
-			WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders WHERE ID = @MinOrderID) AND SizeSpec IN ('{singleZPL.SizeCode}')
-		) 
-		OR 
-		pd.SizeCode='{singleZPL.SizeCode}'
-	)
-AND EXISTS (SELECT 1 FROM #tmoOrders WHERE ID = o.ID AND StyleID = o.StyleID AND ID = @MinOrderID)
-
-";
-                    #endregion
-
+                    #region 有3的狀況，意即有多OrderID
+                    List<string> orderIDs = new List<string>();
                     foreach (DataRow dr in tmpDt.Rows)
                     {
-                        string orderID = dr["ID"].ToString();
+                        orderIDs.Add(dr["ID"].ToString());
+                    }
+                    #endregion
 
+                    foreach (string orderID in orderIDs)
+                    {
                         // 再判斷是不是 狀況2
                         #region 再判斷是不是 狀況2
                         sqlCmd = $@"
 
-SELECT ID ,StyleID ,POID
-INTO #tmoOrders
-FROM Orders 
-WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
-
-SELECT pd.*
+SELECT DISTINCT pd.ID ,pd.OrderShipmodeSeq
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
@@ -389,14 +411,14 @@ WHERE p.Type ='B' AND pd.CustCTN = ''
     AND CTNStartNo='{singleZPL.CTNStartNo}' 
     AND Article = '{singleZPL.Article}'
     AND (
-	    pd.SizeCode in
-	    (
-		    SELECT TOP 1 SizeCode 
-		    FROM Order_SizeSpec 
-		    WHERE SizeItem='S01' AND ID = '{orderID}' AND SizeSpec IN ('{singleZPL.SizeCode}')
-	    ) 
-	    OR 
-	    pd.SizeCode='{singleZPL.SizeCode}'
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID = '{orderID}' AND SizeSpec IN ('{singleZPL.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{singleZPL.SizeCode}'
         )
 
 ";
@@ -418,17 +440,24 @@ SELECT [PackingListID]=pd.ID
         ,pd.SCICtnNo
         ,pd.Article
         ,pd.SizeCode
-        --,pd.CustCTN
         ,[CustCTN] = '{singleZPL.CustCTN}'
+        ,pd.Ukey
+        ,[ZPL_StyleID] = '{singleZPL.StyleID}'
+        ,[ZPL_Article] = '{singleZPL.Article}'
+        ,[ZPL_SizeCode] = '{singleZPL.SizeCode}'
+        ,[ZPL_CTNStartNo] ='{singleZPL.CTNStartNo}' 
+        ,[ZPL_ShipQty] = '{singleZPL.ShipQty}'
+
 FROM PackingList_Detail pd
 WHERE ID='{min_OrderShipmodeSeq_PackingListID}' 
 AND pd.OrderID ='{orderID}'
-AND CTNStartNo='{singleZPL.CTNStartNo}' 
-AND Article = '{singleZPL.Article}'  
- AND (
+AND pd.CTNStartNo='{singleZPL.CTNStartNo}' 
+AND pd.Article = '{singleZPL.Article}'  
+AND pd.ShipQty = {singleZPL.ShipQty}
+AND (
 		pd.SizeCode in
 		(
-			SELECT TOP 1 SizeCode 
+			SELECT SizeCode 
 			FROM Order_SizeSpec 
 			WHERE SizeItem='S01' AND ID ='{orderID}' AND SizeSpec IN ('{singleZPL.SizeCode}')
 		) 
@@ -439,6 +468,12 @@ AND Article = '{singleZPL.Article}'
 ";
 
                             DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                            // 找不到的話記錄下來，做為提示訊息
+                            //if (tmpDt.Rows.Count == 0)
+                            //{
+                            //    notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
+                            //}
 
                             resutDt = this.InsertResultDt(resutDt, tmpDt);
                             #endregion
@@ -455,8 +490,14 @@ SELECT   [PackingListID]=p.ID
         ,pd.SCICtnNo
         ,pd.Article
         ,pd.SizeCode
-        --,pd.CustCTN
         ,[CustCTN] = '{singleZPL.CustCTN}'
+        ,pd.Ukey
+        ,[ZPL_StyleID] = '{singleZPL.StyleID}'
+        ,[ZPL_Article] = '{singleZPL.Article}'
+        ,[ZPL_SizeCode] = '{singleZPL.SizeCode}'
+        ,[ZPL_CTNStartNo] ='{singleZPL.CTNStartNo}' 
+        ,[ZPL_ShipQty] = '{singleZPL.ShipQty}'
+
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON pd.OrderID=o.ID 
@@ -464,10 +505,11 @@ WHERE 1=1
 AND p.Type = 'B'
 AND pd.Article = '{singleZPL.Article}'
 AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
+AND pd.ShipQty = {singleZPL.ShipQty}
 AND (
 		pd.SizeCode in
 		(
-			SELECT TOP 1 SizeCode 
+			SELECT SizeCode 
 			FROM Order_SizeSpec 
 			WHERE SizeItem='S01' AND ID ='{orderID}' AND SizeSpec IN ('{singleZPL.SizeCode}')
 		) 
@@ -479,8 +521,13 @@ AND pd.OrderID ='{orderID}'
 
 ";
 
-
                             DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                            // 找不到的話記錄下來，做為提示訊息
+                            //if (tmpDt.Rows.Count == 0)
+                            //{
+                            //    notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
+                            //}
 
                             resutDt = this.InsertResultDt(resutDt, tmpDt);
                             #endregion
@@ -497,7 +544,8 @@ INTO #tmoOrders
 FROM Orders 
 WHERE CustPONo='{singleZPL.CustPONo}' AND StyleID='{singleZPL.StyleID}'
 
-SELECT pd.*
+SELECT DISTINCT 
+        pd.ID ,pd.OrderShipmodeSeq
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
@@ -506,16 +554,17 @@ WHERE p.Type ='B' AND pd.CustCTN = ''
     AND CTNStartNo='{singleZPL.CTNStartNo}' 
     AND Article = '{singleZPL.Article}'
     AND (
-	    pd.SizeCode in
-	    (
-		    SELECT TOP 1 SizeCode 
-		    FROM Order_SizeSpec 
-		    WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{singleZPL.SizeCode}')
-	    ) 
-	    OR 
-	    pd.SizeCode='{singleZPL.SizeCode}'
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{singleZPL.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{singleZPL.SizeCode}'
         )
 
+DROP TABLE #tmoOrders
 ";
                     #endregion
 
@@ -540,17 +589,24 @@ SELECT [PackingListID]=pd.ID
         ,pd.SCICtnNo
         ,pd.Article
         ,pd.SizeCode
-        --,pd.CustCTN
         ,[CustCTN] = '{singleZPL.CustCTN}'
+        ,pd.Ukey
+        ,[ZPL_StyleID] = '{singleZPL.StyleID}'
+        ,[ZPL_Article] = '{singleZPL.Article}'
+        ,[ZPL_SizeCode] = '{singleZPL.SizeCode}'
+        ,[ZPL_CTNStartNo] ='{singleZPL.CTNStartNo}' 
+        ,[ZPL_ShipQty] = '{singleZPL.ShipQty}'
+
 FROM PackingList_Detail pd
 WHERE ID='{min_OrderShipmodeSeq_PackingListID}' 
 AND pd.OrderID = (SELECT ID FROM #tmoOrders)
-AND CTNStartNo='{singleZPL.CTNStartNo}' 
+AND CTNStartNo='{singleZPL.CTNStartNo}'
+AND pd.ShipQty = {singleZPL.ShipQty}
 AND Article = '{singleZPL.Article}'  
- AND (
+AND (
 		pd.SizeCode in
 		(
-			SELECT TOP 1 SizeCode 
+			SELECT SizeCode 
 			FROM Order_SizeSpec 
 			WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{singleZPL.SizeCode}')
 		) 
@@ -558,9 +614,16 @@ AND Article = '{singleZPL.Article}'
 		pd.SizeCode='{singleZPL.SizeCode}'
 	)
 
+DROP TABLE #tmoOrders
 ";
 
                         DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                        //// 找不到的話記錄下來，做為提示訊息
+                        //if (tmpDt.Rows.Count == 0)
+                        //{
+                        //    notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
+                        //}
 
                         resutDt = this.InsertResultDt(resutDt, tmpDt);
 
@@ -584,8 +647,14 @@ SELECT   [PackingListID]=p.ID
         ,pd.SCICtnNo
         ,pd.Article
         ,pd.SizeCode
-        --,pd.CustCTN
         ,[CustCTN] = '{singleZPL.CustCTN}'
+        ,pd.Ukey
+        ,[ZPL_StyleID] = '{singleZPL.StyleID}'
+        ,[ZPL_Article] = '{singleZPL.Article}'
+        ,[ZPL_SizeCode] = '{singleZPL.SizeCode}'
+        ,[ZPL_CTNStartNo] ='{singleZPL.CTNStartNo}' 
+        ,[ZPL_ShipQty] = '{singleZPL.ShipQty}'
+
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON pd.OrderID=o.ID 
@@ -593,10 +662,11 @@ WHERE 1=1
 AND p.Type = 'B'
 AND pd.Article = '{singleZPL.Article}'
 AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
+AND pd.ShipQty = {singleZPL.ShipQty}
 AND (
 		pd.SizeCode in
 		(
-			SELECT TOP 1 SizeCode 
+			SELECT SizeCode 
 			FROM Order_SizeSpec 
 			WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{singleZPL.SizeCode}')
 		) 
@@ -604,45 +674,74 @@ AND (
 		pd.SizeCode='{singleZPL.SizeCode}'
 	)
 AND EXISTS (SELECT 1 FROM #tmoOrders WHERE ID = o.ID AND StyleID = o.StyleID)
-/*
-UPDATE pd
-SET pd.CustCTN='{singleZPL.CustCTN}'
-FROM PackingList_Detail pd
-INNER JOIN PackingList p ON p.ID=pd.ID
-WHERE Ukey = @pdUkey AND CustCTN = '' AND p.Status='New'
-*/
 
+DROP TABLE #tmoOrders
 ";
 
                         DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                        //// 找不到的話記錄下來，做為提示訊息
+                        //if (tmpDt.Rows.Count == 0)
+                        //{
+                        //    notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
+                        //}
 
                         resutDt = this.InsertResultDt(resutDt, tmpDt);
                         #endregion
                     }
                 }
-
-                //DBProxy.Current.Select(null, sqlCmd, out tmpDt);
-
-                //this.InsertResultDt(resutDt, tmpDt);
             });
+
+            // 沒有Mapping到的提供清單
+            if (notMappingList.Count > 0)
+            {
+                string msg = "Not Mapping :" + Environment.NewLine;
+                msg += notMappingList.JoinToString("、");
+                MyUtility.Msg.WarningBox(msg);
+
+                // ShowErr(msg);
+            }
 
             this.listControlBindingSource1.DataSource = resutDt;
         }
 
-        private DataTable InsertResultDt(DataTable target , DataTable source)
+        private DataTable InsertResultDt(DataTable target, DataTable source)
         {
             if (source.Rows.Count > 0)
             {
-                foreach (DataRow item in target.Rows)
+                foreach (DataRow item in source.Rows)
                 {
-                    target.Rows.Add(item);
+                    DataRow dr = target.NewRow();
+                    dr["PackingListID"] = item["PackingListID"];
+                    dr["OrderID"] = item["OrderID"];
+                    dr["CTNStartNo"] = item["CTNStartNo"];
+                    dr["SCICtnNo"] = item["SCICtnNo"];
+                    dr["Article"] = item["Article"];
+                    dr["SizeCode"] = item["SizeCode"];
+                    dr["CustCTN"] = item["CustCTN"];
+                    dr["Ukey"] = item["Ukey"];
+
+                    dr["ZPL_StyleID"] = item["ZPL_StyleID"];
+                    dr["ZPL_Article"] = item["ZPL_Article"];
+                    dr["ZPL_SizeCode"] = item["ZPL_SizeCode"];
+                    dr["ZPL_CTNStartNo"] = item["ZPL_CTNStartNo"];
+                    dr["ZPL_ShipQty"] = item["ZPL_ShipQty"];
+                    target.Rows.Add(dr);
                 }
             }
             return target;
         }
 
+<<<<<<< HEAD
         private List<ZPL> Get_ZPL_Object(Dictionary<string, string> dataList_String, List<string> custCTN_List)
 >>>>>>> ISP20191302
+=======
+        /// <summary>
+        /// 從單張ZPL內容中，拆解出需要的欄位資訊
+        /// </summary>
+        /// <returns>整理完的ZPL物件</returns>
+        private List<ZPL> Analysis_ZPL(Dictionary<string, string> dataList_String, List<string> custCTN_List)
+>>>>>>> ISP20191302 - 完成至Part 3
         {
             this.grid.ValidateControl();
             this.grid.EndEdit();
@@ -891,6 +990,57 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
             return list;
         }
 
+        /// <summary>
+        /// 透過Web API，將ZPL轉成圖片並下載
+        /// </summary>
+        /// <param name="zplFileName">CustCTN</param>
+        /// <param name="zplContentString">ZPL文字內容</param>
+        /// <param name="shippingMarkPath">指定下載到哪裡</param>
+        private void CallAPI(string zplFileName , string zplContentString , string shippingMarkPath)
+        {
+            // 一份ZPL有兩張圖片，因此再拆一次
+            string[] stringSeparators = new string[] { "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH0,0^LRN" };
+            string[] content = zplContentString.Split(stringSeparators, StringSplitOptions.None);
+
+            for (int i = 0; i < content.Length; i++)
+            {
+                if (i == 1)
+                {
+                    content[i] = "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH0,0^LRN" + content[i];
+                }
+
+                byte[] zpl = Encoding.UTF8.GetBytes(content[i]);
+
+                // 使用API，相關說明：http://labelary.com/service.html
+                var request = (HttpWebRequest)WebRequest.Create("http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/");
+                request.Method = "POST";
+
+                // request.Accept = "application/pdf"; //如果要PDF，把這行解開
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = zpl.Length;
+
+                var requestStream = request.GetRequestStream();
+                requestStream.Write(zpl, 0, zpl.Length);
+                requestStream.Close();
+
+                try
+                {
+                    var response = (HttpWebResponse)request.GetResponse();
+                    var responseStream = response.GetResponseStream();
+                    // 存入[System].ShippingMarkPath 路徑下
+                    var fileStream = File.Create($@"{shippingMarkPath + zplFileName}_{(i + 1).ToString()}.png"); // 如果要PDF，把副檔名改成pdf
+
+                    responseStream.CopyTo(fileStream);
+                    responseStream.Close();
+                    fileStream.Close();
+                }
+                catch (WebException ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
         #region 類別定義
 
         public class ZipHelper
@@ -1117,6 +1267,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
 =======
             public string CTNStartNo { get; set; }
         }
+
         #endregion
 >>>>>>> ISP20191302
     }
