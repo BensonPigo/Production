@@ -1,15 +1,16 @@
 ﻿CREATE TABLE [dbo].[BundleInOut] (
-    [BundleNo]              VARCHAR (10) CONSTRAINT [DF_BundleInOut_BundleNo] DEFAULT ('') NULL,
-    [SubProcessId]          VARCHAR (10) CONSTRAINT [DF_BundleInOut_SubProcessId] DEFAULT ('') NULL,
+    [BundleNo]              VARCHAR (10) CONSTRAINT [DF_BundleInOut_BundleNo] DEFAULT ('') NOT NULL,
+    [SubProcessId]          VARCHAR (10) CONSTRAINT [DF_BundleInOut_SubProcessId] DEFAULT ('') NOT NULL,
     [InComing]              DATETIME     NULL,
     [OutGoing]              DATETIME     NULL,
-    [AddDate]               DATETIME     NULL,
+    [AddDate]               DATETIME     NOT NULL,
     [EditDate]              DATETIME     NULL,
-    [SewingLineID]          VARCHAR (2)  NULL,
+    [SewingLineID]          VARCHAR (2)  NOT NULL DEFAULT (''),
     [LocationID]            VARCHAR (10) DEFAULT ('') NOT NULL,
     [RFIDProcessLocationID] VARCHAR (15) CONSTRAINT [DF_BundleInOut_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
     [PanelNo]               VARCHAR (24) CONSTRAINT [DF_BundleInOut_PanelNo] DEFAULT ('') NOT NULL,
-    [CutCellID]             VARCHAR (10) CONSTRAINT [DF_BundleInOut_CutCellID] DEFAULT ('') NOT NULL
+    [CutCellID]             VARCHAR (10) CONSTRAINT [DF_BundleInOut_CutCellID] DEFAULT ('') NOT NULL, 
+    CONSTRAINT [PK_BundleInOut] PRIMARY KEY ([SubProcessId], [BundleNo], [RFIDProcessLocationID])
 );
 
 
@@ -46,11 +47,4 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Bundle-Subp
 
 
 GO
-CREATE NONCLUSTERED INDEX [NonClusteredIndex-20170801-090820]
-    ON [dbo].[BundleInOut]([SubProcessId] ASC);
-
-
-GO
-CREATE CLUSTERED INDEX [ClusteredIndex-20170801-090525]
-    ON [dbo].[BundleInOut]([BundleNo] ASC);
 
