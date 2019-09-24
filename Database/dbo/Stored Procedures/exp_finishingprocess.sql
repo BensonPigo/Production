@@ -1,4 +1,4 @@
--- =============================================
+﻿-- =============================================
 -- Description:	轉出FPS資料
 -- =============================================
 CREATE PROCEDURE [dbo].[exp_finishingprocess]
@@ -79,11 +79,14 @@ BEGIN
 	[CmdTime]			[datetime] NOT NULL,
 	[SunriseUpdated]	[bit] NOT NULL DEFAULT ((0)),
 	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
+	[PackingCTN]        [varchar](19) NOT NULL,
  CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED 
 (
 	[SCICtnNo] ASC,
 	[Article] ASC,
-	[SizeCode] ASC
+	[SizeCode] ASC,
+	[OrderID] ASC,
+	[OrderShipmodeSeq]
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
@@ -402,6 +405,7 @@ USING(
 	,[Junk] = iif(fpsPacking.ID is not null,1,0)
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	,[PackingCTN] = pd.id + pd.CTNStartNo
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
 	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
@@ -421,16 +425,12 @@ USING(
 	or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate)
 ) as S
 on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode
+AND T.OrderID = S.OrderID AND T.OrderShipmodeSeq = S.OrderShipmodeSeq
 WHEN MATCHED THEN
 UPDATE SET
 	t.ID = s.id,
-	t.SCICtnNo = s.SCICtnNo,
 	t.CustCTN = iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN),
 	t.PulloutDate = s.PulloutDate,
-	t.OrderID = s.OrderID,
-	t.OrderShipmodeSeq = s.OrderShipmodeSeq,
-	t.Article = s.Article,
-	t.SizeCode = s.SizeCode,
 	t.ShipQty = s.ShipQty,
 	t.Barcode = s.Barcode,
 	t.GW = s.GW,
@@ -442,18 +442,19 @@ UPDATE SET
 	t.junk = s.junk,
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = s.SunriseUpdated,
-	t.GenSongUpdated = s.GenSongUpdated
+	t.GenSongUpdated = s.GenSongUpdated,
+	t.PackingCTN = s.PackingCTN
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  ID, SCICtnNo
 , CustCTN
 ,  PulloutDate,  OrderID, OrderShipmodeSeq, Article, SizeCode
 		, ShipQty, Barcode, GW, CtnRefno, CtnLength, CtnWidth, CtnHeight, CtnUnit
-	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated) 
+	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated,PackingCTN) 
 VALUES(s.ID, s.SCICtnNo, 
 iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 , s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
 		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
-	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated)	;
+	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN)	;
 
 -- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
 update t
