@@ -25,6 +25,7 @@
     [FactoryID]   VARCHAR (8)     DEFAULT ('') NOT NULL,
     [ExVoucherID] VARCHAR (16)    DEFAULT ('') NULL,
     [Reason]      VARCHAR (5)     DEFAULT ('') NULL,
+    [VoucherDate] DATE NULL, 
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
