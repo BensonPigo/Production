@@ -634,7 +634,7 @@ VALUES(s.[DM300],s.[DM200],s.[DM201],s.[DM202],s.[DM205],s.[DM203],s.[DM204],s.[
 	   s.[DM208],s.[DM209],s.[DM210],s.[DM212],s.[DM214],s.[DM215],s.[DM216],s.[DM219],GetDate(),0);
 
 
---11. 轉出區間 當EditDate =今天
+--11. 轉出區間 當AddDate or TPEEditDate or EditDate =今天
 MERGE StyleFPSetting AS T
 USING(
 	SELECT  [StyleID] = id
@@ -645,7 +645,7 @@ USING(
 		,Folding1
 		,Folding2
 	FROM Production.dbo.Style 
-	where convert(date,EditDate) = @cDate
+	where (convert(date,AddDate) = @cDate or convert(date,TPEEditDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as s
 on t.StyleID=s.StyleID
 WHEN MATCHED THEN
