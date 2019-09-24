@@ -125,6 +125,13 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
 
         protected override void ClickConfirm()
         {
+            bool detailCellHasEmpty = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["SuppID"]) || MyUtility.Check.Empty(s["Refno"])).Any();
+            if (detailCellHasEmpty)
+            {
+                MyUtility.Msg.WarningBox("<Supplier>,<Ref#> can not be empty");
+                return;
+            }
+
             string sqlConfirm = $"update ADIDASComplain set FtyApvName = '{Env.User.UserID}',FtyApvDate = GETDATE() where ID = '{this.CurrentMaintain["ID"].ToString()}'";
             DualResult result = DBProxy.Current.Execute(null, sqlConfirm);
             if (!result)
@@ -173,13 +180,6 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
         protected override bool ClickSaveBefore()
         {
-            bool detailCellHasEmpty = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["SuppID"]) || MyUtility.Check.Empty(s["Refno"])).Any();
-            if (detailCellHasEmpty)
-            {
-                MyUtility.Msg.WarningBox("<Supplier>,<Ref#> can not be empty");
-                return false;
-            }
-
             return base.ClickSaveBefore();
         }
 
