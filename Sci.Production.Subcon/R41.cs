@@ -26,6 +26,7 @@ namespace Sci.Production.Subcon
             comboload();
             this.comboFactory.setDataSource();
             this.comboRFIDProcessLocation.setDataSource();
+            this.comboRFIDProcessLocation.SelectedIndex = 1;
         }
 
         private void comboload()
@@ -137,7 +138,7 @@ namespace Sci.Production.Subcon
                 sqlWhere.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
             }
 
-            if (!MyUtility.Check.Empty(this.processLocation))
+            if (this.processLocation != "ALL")
             {
                 sqlWhere.Append(string.Format(@" and bio.RFIDProcessLocationID = '{0}'", this.processLocation));
             }
