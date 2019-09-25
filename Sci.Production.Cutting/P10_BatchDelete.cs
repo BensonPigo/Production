@@ -27,12 +27,14 @@ namespace Sci.Production.Cutting
 
         private void QueryData()
         {
-            DateTime? AddDate1, AddDate2;
+            DateTime? AddDate1, AddDate2, EstCutDate;
             AddDate1 = dateAddDate.Value1;
             AddDate2 = dateAddDate.Value2;
+            EstCutDate = dateEstCutDate.Value;
             if ((MyUtility.Check.Empty(AddDate1) && MyUtility.Check.Empty(AddDate2)) &&
                 MyUtility.Check.Empty(this.txtCutRef.Text) &&
-                MyUtility.Check.Empty(this.txtSPNo.Text))
+                MyUtility.Check.Empty(this.txtSPNo.Text) &&
+                MyUtility.Check.Empty(this.txtSPNo1.Text)) 
             {
                 MyUtility.Msg.WarningBox("SP#, CutRef add AddDate cannot all be empty.");
                 return;
@@ -44,16 +46,28 @@ namespace Sci.Production.Cutting
                 sqlwhere += $@" and convert(date, b.adddate)  between '{Convert.ToDateTime(AddDate1).ToString("d")}' and '{Convert.ToDateTime(AddDate2).ToString("d")}'";
             }
 
+            if (!MyUtility.Check.Empty(EstCutDate))
+            {
+                sqlwhere += $@" and estdate.estcutdate = '{Convert.ToDateTime(EstCutDate).ToString("d")}'"; ;
+            }
+
             if (!MyUtility.Check.Empty(this.txtCutRef.Text))
             {
                 sqlwhere += $@" and b.CutRef = '{this.txtCutRef.Text}'"; ;
             }
 
-            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text) && !MyUtility.Check.Empty(this.txtSPNo1.Text))
             {
-                sqlwhere += $@" and b.OrderID = '{this.txtSPNo.Text}'";
+                sqlwhere += $@" and b.OrderID >= '{this.txtSPNo.Text}' and b.OrderID <= '{this.txtSPNo1.Text}'";
             }
-
+            else if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+            {
+                sqlwhere += $@" and b.OrderID like '{this.txtSPNo.Text}%'";
+            }
+            else if (!MyUtility.Check.Empty(this.txtSPNo1.Text))
+            {
+                sqlwhere += $@" and b.OrderID like '{this.txtSPNo1.Text}%'";
+            }
             string sqlcmd = $@"
 select 
 [Selected]=0
@@ -70,7 +84,9 @@ left join Orders o on b.Orderid=o.ID
 outer apply
 (
 	Select MAX(estcutdate) as estcutdate
-	from workorder WITH (NOLOCK) where workorder.id = b.POID and workorder.cutref = b.CutRef
+	from workorder WITH (NOLOCK) 
+    where workorder.id = b.POID 
+    and workorder.cutref = b.CutRef
 	and workorder.MDivisionID = b.MDivisionID
 ) as estdate
 where 1=1
