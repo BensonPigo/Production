@@ -109,37 +109,78 @@ from #tmpSewingDetail
 
 ----↓計算累計天數 function table太慢直接寫在這
 
-select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> ''M'',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.SewingReasonDesc
+select distinct scOutputDate = s.OutputDate 
+	,style = IIF(t.Category <> ''M'',OrderStyle,MockupStyle)
+	,t.SewingLineID
+	,t.FactoryID
+	,t.Shift
+	,t.Team
+	,t.OrderId
+	,t.ComboType
+	,t.SewingReasonDesc
 into #stmp
 from #tmpSewingGroup t
-inner join ['+@ServerName+'].Production.dbo.SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID
-inner join ['+@ServerName+'].Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID 
---INNER JOIN SewingReason sr ON sd.SewingReasonID=sr.ID AND sr.Type=''SO''
+inner join ['+@ServerName+'].Production.dbo.SewingOutput s WITH (NOLOCK) on s.OutputDate between dateadd(day,-90, t.OutputDate) and  t.OutputDate
+															and s.FactoryID = t.FactoryID 
+															and s.SewingLineID = t.SewingLineID 
+inner join ['+@ServerName+'].Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
 left join ['+@ServerName+'].Production.dbo.Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join ['+@ServerName+'].Production.dbo.MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
 --
-select w.Hours, w.Date, style = IIF(t.Category <> ''M'',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.SewingReasonDesc
+select w.Hours
+	, w.Date
+	, style = IIF(t.Category <> ''M'',OrderStyle,MockupStyle)
+	,t.SewingLineID
+	,t.FactoryID
+	,t.Shift
+	,t.Team
+	,t.OrderId
+	,t.ComboType
+	,t.SewingReasonDesc
 into #wtmp
 from #tmpSewingGroup t
-inner join  ['+@ServerName+'].Production.dbo.WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate and isnull(w.Holiday,0) = 0
+inner join  ['+@ServerName+'].Production.dbo.WorkHour w WITH (NOLOCK) on w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate 
+																and w.SewingLineID = t.SewingLineID 
+																and w.FactoryID = t.FactoryID 
+																--and isnull(w.Holiday,0) = 0
+																and w.Holiday=0
 --
-select s.scOutputDate,cumulate = IIF(Count(1)=0, 1, Count(1)over(partition by s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType order by s.scOutputDate)),
-s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
+select s.scOutputDate
+	,cumulate = IIF(Count(1)=0, 1, Count(1)over(partition by s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType order by s.scOutputDate))
+	,s.style
+	,s.SewingLineID
+	,s.FactoryID
+	,s.Shift
+	,s.Team
+	,s.OrderId
+	,s.ComboType
 into #cl
 from #stmp s
 where s.scOutputDate >
 isnull((
 	select date = max(Date)
 	from #wtmp w 
-	left join #stmp s2 on s2.scOutputDate = w.Date and w.style = s2.style and w.SewingLineID = s2.SewingLineID and w.FactoryID = s2.FactoryID and w.Shift = s2.Shift and w.Team = s2.Team
-	and w.OrderId = s2.OrderId and w.ComboType = s2.ComboType
+	left join #stmp s2 on s2.scOutputDate = w.Date 
+							and w.style = s2.style 
+							and w.SewingLineID = s2.SewingLineID 
+							and w.FactoryID = s2.FactoryID 
+							and w.Shift = s2.Shift 
+							and w.Team = s2.Team
+							and w.OrderId = s2.OrderId 
+							and w.ComboType = s2.ComboType
 	where s2.scOutputDate is null
-	and w.style = s.style and w.SewingLineID = s.SewingLineID and w.FactoryID = s.FactoryID and w.Shift = s.Shift and w.Team = s.Team and w.OrderId = s.OrderId 
+	and w.style = s.style 
+	and w.SewingLineID = s.SewingLineID 
+	and w.FactoryID = s.FactoryID 
+	and w.Shift = s.Shift
+	and w.Team = s.Team 
+	and w.OrderId = s.OrderId 
 	and w.ComboType = s.ComboType
 ),''1900/01/01'')
 group by s.scOutputDate,s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
 --↑計算累計天數
+
 select t.*,IIF(t.Shift <> ''O'' and t.Category <> ''M'' and t.LocalOrder = 1, ''I'',t.Shift) as LastShift,
 f.Type as FtyType,f.CountryID as FtyCountry
 ,CumulateDate= isnull(c.cumulate,1)
