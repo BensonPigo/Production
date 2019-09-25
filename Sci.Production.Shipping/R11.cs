@@ -154,12 +154,13 @@ where a.ID = '{0}'", this.txtForwarder.Text);
                 sqlCmd.Append(@"
 with GBData
 as (
-    select distinct 
+    select 
     	   IE = 'Export'
            , Type = 'GARMENT'
            , g.ID
            , OnBoardDate = g.ETD
            , g.Shipper
+		   , [Factory]=Factory.Value
            , g.BrandID
            , Category = IIF(p.Type = 'B','Bulk',IIF(p.Type = 'S','Sample','')) 
            , OrderQty = isnull((select sum(a.Qty) 
@@ -184,9 +185,22 @@ as (
 		   , Forwarder = g.Forwarder+'-'+isnull(l.Abb,'')
 		   , BLNo = ''
 		   , [NoExportCharges] = iif(isnull(g.NoExportCharges,0)=1,'V','')
+		   , [PackingListID]=p.id
     from GMTBooking g WITH (NOLOCK) 
     inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
     left join LocalSupp l WITH (NOLOCK) on l.ID = g.Forwarder
+	OUTER APPLY (
+					SELECT  [Value]= STUFF(
+											(
+												SELECT Distinct ','+o.FactoryID
+												FROM PackingList_Detail pd WITH (NOLOCK) 
+												left join Orders o WITH (NOLOCK) on o.ID = pd.orderID
+												WHERE pd.ID = p.ID
+												FOR XML PATH('')
+											)
+	
+										, 1, 1, '')	
+	)Factory
     where not exists (
 			    select 1 
 			    from ShareExpense WITH (NOLOCK) 
@@ -243,6 +257,7 @@ PLData as (
 			, p.ID
 			, OnBoardDate = null 
 			, p.MDivisionID
+		    , [Factory]=Factory.Value
 			, p.BrandID
 			, Category = IIF((select top 1 o.Category 
 							  from Orders o WITH (NOLOCK) 
@@ -272,7 +287,20 @@ PLData as (
 			, Forwarder = ''
 			, BLNo = ''
 			, [NoExportCharges] = ''
+			, [PackingListID]=p.id
 	from PackingList p WITH (NOLOCK) 
+	OUTER APPLY (
+					SELECT  [Value]= STUFF(
+											(
+												SELECT Distinct ','+o.FactoryID
+												FROM PackingList_Detail pd WITH (NOLOCK) 
+												left join Orders o WITH (NOLOCK) on o.ID = pd.orderID
+												WHERE pd.ID = p.ID
+												FOR XML PATH('')
+											)
+	
+										, 1, 1, '')	
+	)Factory
 	where (p.Type = 'F' or p.Type = 'L')
 		  and not exists (
 		  		select 1 
