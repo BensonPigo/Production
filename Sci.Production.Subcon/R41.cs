@@ -26,7 +26,7 @@ namespace Sci.Production.Subcon
             comboload();
             this.comboFactory.setDataSource();
             this.comboRFIDProcessLocation.setDataSource();
-            this.comboRFIDProcessLocation.SelectedIndex = 1;
+            this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
         private void comboload()

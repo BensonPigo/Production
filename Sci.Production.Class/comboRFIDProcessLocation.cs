@@ -43,17 +43,17 @@ namespace Sci.Production.Class
             if (isForReport)
             {
                 sqlcmd = @"
-				select [ID] = ''
-                union
                 select [ID] = 'ALL'
-                union
+                union all
+				select [ID] = ''
+                union all
                 select ID from RFIDProcessLocation " + whereIncludeJunk;
             }
             else
             {
                 sqlcmd = @"
 				select [ID] = ''
-                union
+                union all
                 select ID from RFIDProcessLocation " + whereIncludeJunk;
             }
             #endregion
