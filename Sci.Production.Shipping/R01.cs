@@ -476,8 +476,15 @@ where pl.ID<>'' and 1=1 "));
                 sqlCmd.Append(string.Format(
                     @"
 and exists (select 1
-from (select pd.OrderID, pd.OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) inner join PackingList pl2 on pd.ID = pl2.id where pl2.INVNo = g.ID ) a
-inner join Order_QtyShip oq WITH (NOLOCK) on a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq and oq.BuyerDelivery between '{0}' and '{1}' )", Convert.ToDateTime(this.Delivery1).ToString("d"), Convert.ToDateTime(this.Delivery2).ToString("d")));
+            from (
+                select pd.OrderID
+                       , pd.OrderShipmodeSeq 
+                from PackingList_Detail pd WITH (NOLOCK) 
+                inner join PackingList pl2 on pd.ID = pl2.id where pl2.INVNo = g.ID 
+            ) a
+            inner join Order_QtyShip oq WITH (NOLOCK) on a.OrderID = oq.Id 
+                                                         and a.OrderShipmodeSeq = oq.Seq 
+                                                         and oq.BuyerDelivery between '{0}' and '{1}' )", Convert.ToDateTime(this.Delivery1).ToString("d"), Convert.ToDateTime(this.Delivery2).ToString("d")));
             }
 
             #endregion
@@ -599,8 +606,8 @@ inner join Order_QtyShip oq WITH (NOLOCK) on a.OrderID = oq.Id and a.OrderShipmo
                     objArray[0, 34] = dr["Remark"];
                     worksheet.Range[string.Format("A{0}:AH{0}", intRowsStart)].Value2 = objArray;
                     if (this.hasDelivery &&
-                        !(MyUtility.Convert.GetDate(dr["BuyerDelivery"]) >= this.dateDelivery.Value1 &&
-                        MyUtility.Convert.GetDate(dr["BuyerDelivery"]) <= this.dateDelivery.Value2))
+                        (MyUtility.Convert.GetDate(dr["BuyerDelivery"]) < this.dateDelivery.Value1 ||
+                        MyUtility.Convert.GetDate(dr["BuyerDelivery"]) > this.dateDelivery.Value2))
                     {
                         worksheet.Range[string.Format("A{0}:AI{0}", intRowsStart)].Font.Color = ColorTranslator.ToOle(Color.Red);
                     }
