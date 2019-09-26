@@ -82,7 +82,9 @@ BEGIN
 						and disBundle.processId = RRS.processId
 						and disBundle.Type = rd.Type
 				order by tmp.TransDate Desc
-			) getLastTrans '
+			) getLastTrans 
+			where exists(select 1 from Bundle_Detail bd where bd.BundleNo = getLastTrans.BundleNo)
+			'
 
 			--add update BundleInOut			
 			-- RFIDReader.Type=1
