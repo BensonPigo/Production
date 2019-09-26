@@ -314,7 +314,12 @@ AND aft.Article IS NOT NULL
  inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
  where o.ID = '{POID}'
- AND EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
+ AND (
+     EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
+     OR
+     (SELECT COUNT(1) FROM #tmpOrder_Article) = 0
+ )
+--Order List如果是空，代表所有訂單都有用到這個物料
 
 
 
@@ -401,7 +406,12 @@ AND aft.Article IS NOT NULL
  inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
  where o.ID = '{POID}'
- AND EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
+ AND (
+     EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
+     OR
+     (SELECT COUNT(1) FROM #tmpOrder_Article) = 0
+ )
+--Order List如果是空，代表所有訂單都有用到這個物料
 
 
 
