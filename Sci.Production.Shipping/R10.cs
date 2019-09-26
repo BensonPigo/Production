@@ -968,52 +968,57 @@ where s.Type = 'EXPORT'");
                 this.printData.Columns.RemoveAt(2);
             }
 
-            int allColumn = this.reportType == 1 ? 23 : 27;
-            int i = 0;
-            int counts = 0;
-            string accnoL1 = "5912"; // Z欄 5912-2222 Airfreight
-            string accnoLnow = string.Empty;
-            if (this.reportType != 3)
-            {
-                counts = this.accnoData.Rows.Count;
-                foreach (DataRow dr in this.accnoData.Rows)
-                {
-                    i++;
-                    string sql = string.Format("select concat(SUBSTRING(id,1,4),iif(len(id)>4,'-'+SUBSTRING(id,5,4),''),char(10)+char(13) ,Name) from [FinanceEN].dbo.AccountNo  WITH (NOLOCK)  where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"]));
-                    string accnoColName = MyUtility.GetValue.Lookup(sql);
-                    accnoLnow = MyUtility.Convert.GetString(dr["Accno"]).Substring(0, 4);
-                    string accnoLnow2 = MyUtility.Convert.GetString(dr["Accno"]).Length > 8 ? MyUtility.Convert.GetString(dr["Accno"]).Substring(4) : MyUtility.Convert.GetString(dr["Accno"]).Length > 4 ? "-" + MyUtility.Convert.GetString(dr["Accno"]).Substring(4) : string.Empty;
-                    worksheet.Cells[1, allColumn + i] = MyUtility.Check.Empty(accnoColName) ? accnoLnow + accnoLnow2 : accnoColName;
-
-                    accnoL1 = MyUtility.Convert.GetString(dr["Accno"]).Substring(0, 4);
-                }
-
-                worksheet.Cells[1, allColumn + i + 1] = "Total Export Fee";
-            }
-
-            string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + i);
-            string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + i + 1);
-            var first6105 = this.accnoData.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Accno"]).Substring(0, 4).EqualString("6105")).GroupBy(t => 1).Select(s => new { rn = s.Min(m => MyUtility.Convert.GetInt(m["rn"])) }).ToList();
-            string first6105Column = string.Empty;
-            if (first6105.Count > 0)
-            {
-                if (this.accnoData.Select("Accno like '5912%'").Count() > 0)
-                {
-                    first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn + 1);
-                }
-                else
-                {
-                    first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn);
-                }
-            }
-
-            string sumCol5912start = string.Empty;
-            string sumCol5912 = string.Empty;
-            string sumCol6105 = string.Empty;
-            string sumCol5912TTL = string.Empty;
-            string sumCol6105TTL = string.Empty;
             if (this.reportType == 1 || this.reportType == 2)
             {
+                int allColumn = this.reportType == 1 ? 23 : 27;
+
+                #region Setting AccountNo
+                int i = 0;
+                int counts = 0;
+                string accnoL1 = "5912"; // Z欄 5912-2222 Airfreight
+                string accnoLnow = string.Empty;
+                if (this.reportType != 3)
+                {
+                    counts = this.accnoData.Rows.Count;
+                    foreach (DataRow dr in this.accnoData.Rows)
+                    {
+                        i++;
+                        string sql = string.Format("select concat(SUBSTRING(id,1,4),iif(len(id)>4,'-'+SUBSTRING(id,5,4),''),char(10)+char(13) ,Name) from [FinanceEN].dbo.AccountNo  WITH (NOLOCK)  where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"]));
+                        string accnoColName = MyUtility.GetValue.Lookup(sql);
+                        accnoLnow = MyUtility.Convert.GetString(dr["Accno"]).Substring(0, 4);
+                        string accnoLnow2 = MyUtility.Convert.GetString(dr["Accno"]).Length > 8 ? MyUtility.Convert.GetString(dr["Accno"]).Substring(4) : MyUtility.Convert.GetString(dr["Accno"]).Length > 4 ? "-" + MyUtility.Convert.GetString(dr["Accno"]).Substring(4) : string.Empty;
+                        worksheet.Cells[1, allColumn + i] = MyUtility.Check.Empty(accnoColName) ? accnoLnow + accnoLnow2 : accnoColName;
+
+                        accnoL1 = MyUtility.Convert.GetString(dr["Accno"]).Substring(0, 4);
+                    }
+
+                    worksheet.Cells[1, allColumn + i + 1] = "Total Export Fee";
+                }
+
+                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + i);
+                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + i + 1);
+
+                var first6105 = this.accnoData.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Accno"]).Substring(0, 4).EqualString("6105")).GroupBy(t => 1).Select(s => new { rn = s.Min(m => MyUtility.Convert.GetInt(m["rn"])) }).ToList();
+                string first6105Column = string.Empty;
+                if (first6105.Count > 0)
+                {
+                    if (this.accnoData.Select("Accno like '5912%'").Count() > 0)
+                    {
+                        first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn + 1);
+                    }
+                    else
+                    {
+                        first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn);
+                    }
+                }
+
+                string sumCol5912start = string.Empty;
+                string sumCol5912 = string.Empty;
+                string sumCol6105 = string.Empty;
+                string sumCol5912TTL = string.Empty;
+                string sumCol6105TTL = string.Empty;
+                #endregion
+
                 // 填內容值
                 int intRowsStart = 2;
                 object[,] objArray = new object[1, allColumn + i + 1];
@@ -1148,10 +1153,12 @@ where s.Type = 'EXPORT'");
                     {
                         sc1 = $"-{sumCol5912TTL}{intRowsStart}";
                     }
+
                     if (!MyUtility.Check.Empty(sumCol6105TTL))
                     {
                         sc2 = $"-{sumCol6105TTL}{intRowsStart}";
                     }
+
                     objArray[0, allColumn + this.accnoData.Rows.Count] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, this.reportType == 1 ? "R" : "V", sc1, sc2);
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;

@@ -290,7 +290,7 @@ declare @yestarDay date =CONVERT(Date, dateAdd(day,-1,GetDate()));
 --declare @cDate date = CONVERT(date, DATEADD(DAY,-10, GETDATE()));-- for test
 --declare @yestarDay date =CONVERT(Date, dateAdd(day,-11,GetDate()));-- for test
 
---01. 轉出區間 [Production].[dbo].[Orders].AddDate or EditDate= 昨天
+--01. 轉出區間 [Production].[dbo].[Orders].AddDate or EditDate= 今天
 MERGE Orders AS T
 USING(
 	SELECT id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
@@ -305,7 +305,7 @@ USING(
 		where StyleUkey=o.StyleUkey
 		for xml path('')
 	),1,1,'')) SL
-	where (convert(date,AddDate) = @yestarDay or convert(date,EditDate) = @yestarDay)
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
 on T.ID = S.ID
 WHEN MATCHED THEN
@@ -336,14 +336,14 @@ VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Categ
 	,s.Dest, s.CustCDID, s.StyleUnit, s.SetQty, s.Location, s.PulloutComplete, s.Junk
 	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated)	;
 
---02. 轉出區間 [Production].[dbo].[Order_QtyShip].AddDate or EditDate= 昨天
+--02. 轉出區間 [Production].[dbo].[Order_QtyShip].AddDate or EditDate= 今天
 MERGE Order_QtyShip AS T
 USING(
 	SELECT id, Seq, ShipmodeID, BuyerDelivery, Qty, EstPulloutDate
 	,ReadyDate,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	FROM Production.dbo.Order_QtyShip o
-	where (convert(date,AddDate) = @yestarDay or convert(date,EditDate) = @yestarDay)
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
 on T.ID = S.ID and T.SEQ = S.SEQ
 WHEN MATCHED THEN

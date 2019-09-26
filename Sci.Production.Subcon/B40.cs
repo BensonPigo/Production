@@ -23,7 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             comboload();
-            this.comboRFIDProcessLocation.setDataSource();
+            this.comboRFIDProcessLocation.setDataSource(false);
         }
 
         private void comboload()

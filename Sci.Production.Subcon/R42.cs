@@ -28,6 +28,7 @@ namespace Sci.Production.Subcon
             comboload();
             this.comboFactory.setDataSource();
             this.comboRFIDProcessLocation.setDataSource();
+            this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
         //string date = "";
