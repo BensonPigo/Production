@@ -34,9 +34,10 @@ namespace Sci.Production.Cutting
             if ((MyUtility.Check.Empty(AddDate1) && MyUtility.Check.Empty(AddDate2)) &&
                 MyUtility.Check.Empty(this.txtCutRef.Text) &&
                 MyUtility.Check.Empty(this.txtSPNo.Text) &&
-                MyUtility.Check.Empty(this.txtSPNo1.Text)) 
+                MyUtility.Check.Empty(this.txtSPNo1.Text) &&
+                MyUtility.Check.Empty(EstCutDate)) 
             {
-                MyUtility.Msg.WarningBox("SP#, CutRef add AddDate cannot all be empty.");
+                MyUtility.Msg.WarningBox("search condition can't be all empty!!");
                 return;
             }
 
