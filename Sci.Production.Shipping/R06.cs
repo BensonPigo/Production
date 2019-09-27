@@ -144,6 +144,7 @@ where s.Status = 'Approved'");
 		[AccountName]=an.Name
 from ShippingAP s WITH (NOLOCK)
 left join ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
+                                           and sh.Junk != 1
 left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID 
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
 where s.Status = 'Approved'");
