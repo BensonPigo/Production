@@ -97,6 +97,7 @@ namespace Sci.Production.Shipping
 		ExportINV =  Stuff((select distinct iif(WKNo = '','',concat( '/',WKNo)) + iif(InvNo = '','',concat( '/',InvNo) )   
                             from ShareExpense she 
                             where she.ShippingAPID = s.ID 
+                                  and she.Junk != 1
                             FOR XML PATH('')),1,1,'') ,
 		sd.[ShipExpenseID],
 		se.Description,
@@ -170,6 +171,7 @@ select s.Type
                         select distinct InvNo 
                         from ShareExpense WITH (NOLOCK) 
                         where ShippingAPID = s.ID
+                              and junk != 1
                  ) a 
                 for xml path('')),'') as ExportInv
 from ShippingAP s WITH (NOLOCK) 
