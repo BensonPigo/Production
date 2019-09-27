@@ -324,7 +324,9 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                         dr["NWPerPcs"] = 0;
                     }
                 }
+                PackingListDetaildata.Select($"Ukey = {dr["Ukey"]}")[0]["NWPerPcs"] = dr["NWPerPcs"];
             }
+
             //最後一筆資料也要寫入
             tmpPacklistRow = tmpPacklistWeight.NewRow();
             tmpPacklistRow["CTNStartNo"] = ctnNo;
