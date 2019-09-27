@@ -90,7 +90,7 @@ namespace Sci.Production.Shipping
 		s.[BLNo],
 		s.[Remark],
 		s.[InvNo],
-		ExportINV =  Stuff((select iif(WKNo = '','',concat( '/',WKNo)) + iif(InvNo = '','',concat( '/',InvNo) )   from ShareExpense she where she.ShippingAPID = s.ID FOR XML PATH('')),1,1,'') ,
+		ExportINV =  Stuff((select iif(WKNo = '','',concat( '/',WKNo)) + iif(InvNo = '','',concat( '/',InvNo) )   from ShareExpense she where she.ShippingAPID = s.ID and she.Junk != 1 FOR XML PATH('')),1,1,'') ,
 		sd.[ShipExpenseID],
 		se.Description,
 		sd.[Qty],
@@ -113,7 +113,7 @@ where s.Status = 'Approved'");
             {
                 sqlCmd.Append(@"select s.Type,s.SubType,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherID,
 s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amt,s.BLNo,s.Remark,s.InvNo,
-isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense WITH (NOLOCK) where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
+isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense WITH (NOLOCK) where ShippingAPID = s.ID and Junk != 1) a for xml path('')),'') as ExportInv
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 where s.Status = 'Approved'");
