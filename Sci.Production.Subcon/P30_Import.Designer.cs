@@ -37,6 +37,8 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.label1 = new Sci.Win.UI.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
@@ -54,8 +56,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.chkQty = new Sci.Win.UI.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -142,6 +143,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkQty);
             this.groupBox1.Controls.Add(this.txtfactory1);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.label8);
@@ -164,9 +166,31 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1008, 147);
+            this.groupBox1.Size = new System.Drawing.Size(1008, 170);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.boolFtyGroupList = true;
+            this.txtfactory1.FilteMDivision = true;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(140, 111);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 22;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 110);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(128, 23);
+            this.label1.TabIndex = 21;
+            this.label1.Text = "Factory";
             // 
             // label8
             // 
@@ -181,16 +205,16 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(590, 117);
+            this.txtbrand.Location = new System.Drawing.Point(140, 140);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(107, 23);
             this.txtbrand.TabIndex = 8;
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(462, 117);
+            this.labelBrand.Location = new System.Drawing.Point(9, 140);
             this.labelBrand.Name = "labelBrand";
-            this.labelBrand.Size = new System.Drawing.Size(125, 23);
+            this.labelBrand.Size = new System.Drawing.Size(128, 23);
             this.labelBrand.TabIndex = 19;
             this.labelBrand.Text = "Brand";
             // 
@@ -357,9 +381,9 @@
             // 
             this.panel1.Controls.Add(this.gridImport);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 147);
+            this.panel1.Location = new System.Drawing.Point(0, 170);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 353);
+            this.panel1.Size = new System.Drawing.Size(1008, 330);
             this.panel1.TabIndex = 20;
             // 
             // gridImport
@@ -383,28 +407,23 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(1008, 353);
+            this.gridImport.Size = new System.Drawing.Size(1008, 330);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
-            // label1
+            // chkQty
             // 
-            this.label1.Location = new System.Drawing.Point(9, 117);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(128, 23);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Factory";
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.FilteMDivision = true;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(140, 118);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 22;
+            this.chkQty.AutoSize = true;
+            this.chkQty.Checked = true;
+            this.chkQty.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkQty.Location = new System.Drawing.Point(462, 113);
+            this.chkQty.Name = "chkQty";
+            this.chkQty.Size = new System.Drawing.Size(136, 21);
+            this.chkQty.TabIndex = 23;
+            this.chkQty.Text = "Only Show Qty>0";
+            this.chkQty.UseVisualStyleBackColor = true;
+            this.chkQty.CheckedChanged += new System.EventHandler(this.ChkQty_CheckedChanged);
             // 
             // P30_Import
             // 
@@ -414,6 +433,7 @@
             this.Controls.Add(this.groupBox2);
             this.DefaultControl = "dateEstBookingDate";
             this.Name = "P30_Import";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Import From P/O#";
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
@@ -454,5 +474,6 @@
         private System.Windows.Forms.Label label8;
         private Class.txtfactory txtfactory1;
         private Win.UI.Label label1;
+        private Win.UI.CheckBox chkQty;
     }
 }

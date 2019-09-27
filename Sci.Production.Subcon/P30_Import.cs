@@ -84,7 +84,7 @@ namespace Sci.Production.Subcon
                 if (dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
                 {
                     strSQLCmd = string.Format(@"
-select distinct 1 as Selected
+select distinct iif(sum(b.CTNQty) -isnull(lp.qty,0)<=0,0,1) as Selected
        , c.POID 
        , b.OrderID 
        , c.StyleID
@@ -93,7 +93,7 @@ select distinct 1 as Selected
        , b.RefNo 
        , dbo.getitemdesc('{2}',b.refno) as description 
        , '' as threadcolorid
-       , sum(b.CTNQty) qty
+       , qty = iif(sum(b.CTNQty) -isnull(lp.qty,0)<0,0,sum(b.CTNQty) -isnull(lp.qty,0))
        , d.UnitID
        , d.Price
        , sum(b.CTNQty) * d.Price as amount
@@ -106,14 +106,12 @@ select distinct 1 as Selected
        , c.SewInLine
        , delivery = a.EstCTNArrive
        , br.BuyerID
-into #tmp
 from dbo.PackingList a WITH (NOLOCK) 
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID    
 inner join Brand br WITH (NOLOCK) on c.BrandID = br.ID
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
 inner join factory WITH (NOLOCK) on c.FactoryID = factory.id
---inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
 outer apply(
     select o1.POID
            , isnull(sum(o1.qty),0) order_qty
@@ -124,6 +122,11 @@ outer apply(
           and ot.ArtworkTypeID = '{2}'
     group by o1.poid
 ) y
+outer apply(
+	select qty   = sum(qty)                    
+	from LocalPo_Detail lpd WITH (NOLOCK) 
+    where b.OrderID = lpd.OrderId and b.RefNo = lpd.Refno
+)lp
 where a.ApvToPurchase = 1 
       and a.LocalPOID = ''
       and d.localsuppid = '{3}'
@@ -154,17 +157,8 @@ where a.ApvToPurchase = 1
                     if (!MyUtility.Check.Empty(approved_e)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e); }
 
                     strSQLCmd += string.Format(@" 
-group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID
-
-select * from #tmp a
-where  not exists (select orderID 
-                      from LocalPo_Detail 
-                      where (RequestID = '' or RequestID = a.RequestID)
-                      		and Poid = a.POID 
-                      		and OrderID = a.OrderID 
-                      		and Refno = a.RefNo
-                            and ID !='{0}')
-", dr_localPO["ID"]);
+group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID,lp.qty
+");
 
                     #region 準備sql參數資料
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -297,8 +291,6 @@ where a.status = 'Approved'
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd,cmds, out dtlocal))
                 {
-                    if (dtlocal.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtlocal;
                 }
                 else 
@@ -394,50 +386,88 @@ where Qty - ShipQty - DiffQty = 0";
                 }
                 #endregion  
             }
+
+            this.showQtymorezero();
+            if (this.listControlBindingSource1.Position == -1)
+            {
+                MyUtility.Msg.WarningBox("Data not found");
+            }
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
-            ns.CellValidating += (s, e) =>
+            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings chk = new DataGridViewGeneratorCheckBoxColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+            chk.CellEditable += (s, e) =>
             {
-                if (this.EditMode && e.FormattedValue != null)
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetDecimal(dr["qty"]) == 0)
                 {
-                    DataRow ddr = gridImport.GetDataRow<DataRow>(e.RowIndex);
-                    if ((decimal)e.FormattedValue > (decimal)ddr["unpaid"])
-                    {
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Qty can't be more than unpaid");
-                        return;
-                    }
-
-                    ddr["qty"] = e.FormattedValue;
+                    e.IsEditable = false;
+                }
+                else
+                {
+                    e.IsEditable = true;
                 }
             };
 
+            qty.CellMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left && dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
+                {
+                    DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
+                    Sci.Production.Subcon.P30_Qty callNextForm = new Sci.Production.Subcon.P30_Qty(dr);
+                    callNextForm.ShowDialog(this);
+                }
+            };
 
             this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridImport)
-                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                .Text("poid", header: "Master SP#", iseditingreadonly: true) //0
-                .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))//1
-                .Text("styleid", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(13))//2
-                .Text("Seasonid", header: "Season", iseditingreadonly: true, width: Widths.AnsiChars(13))//3
-                 .Text("refno", header: "Refno", iseditingreadonly: true)      //4
-                .Text("description", header: "Description", iseditingreadonly: true)//5
-                .Text("threadcolorid", header: "Color Shade", iseditingreadonly: true)//6
-                .Numeric("qty", header: "Qty", iseditingreadonly: true)//7
-                .Text("Unitid", header: "Unit", iseditingreadonly: true)//8
-                .Numeric("Price", header: "Price", iseditable: true, decimal_places: 4, integer_places: 4)  //9
-                .Numeric("amount", header: "Amount", iseditable: true, decimal_places: 4, integer_places: 4)  //10
-                .Text("remark", header: "Remark", iseditingreadonly: true)//11
-                .Date("etd", header: "ETD", iseditingreadonly: true)//12
-                 .Text("requestid", header: "Request ID", iseditingreadonly: true)//13
-                 .Text("BuyerID", header: "Buyer", iseditingreadonly: true)//14
-                ;
+            .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: chk).Get(out col_chk)   //0
+            .Text("poid", header: "Master SP#", iseditingreadonly: true) //0
+            .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))//1
+            .Text("styleid", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(13))//2
+            .Text("Seasonid", header: "Season", iseditingreadonly: true, width: Widths.AnsiChars(13))//3
+            .Text("refno", header: "Refno", iseditingreadonly: true)      //4
+            .Text("description", header: "Description", iseditingreadonly: true)//5
+            .Text("threadcolorid", header: "Color Shade", iseditingreadonly: true)//6
+            .Numeric("qty", header: "Qty", iseditingreadonly: true, settings: qty)//7
+            .Text("Unitid", header: "Unit", iseditingreadonly: true)//8
+            .Numeric("Price", header: "Price", iseditable: true, decimal_places: 4, integer_places: 4)  //9
+            .Numeric("amount", header: "Amount", iseditable: true, decimal_places: 4, integer_places: 4)  //10
+            .Text("remark", header: "Remark", iseditingreadonly: true)//11
+            .Date("etd", header: "ETD", iseditingreadonly: true)//12
+            .Text("requestid", header: "Request ID", iseditingreadonly: true)//13
+            .Text("BuyerID", header: "Buyer", iseditingreadonly: true)//14
+            ;
+            Color backDefaultColor = gridImport.DefaultCellStyle.BackColor;
+            this.gridImport.RowPrePaint += (s, e) =>
+            {
+                if (e.RowIndex < 0)
+                {
+                    return;
+                }
+
+                DataRow dr = ((DataRowView)this.gridImport.Rows[e.RowIndex].DataBoundItem).Row;
+                #region 變色規則，若該 Row 已經變色則跳過
+                if (MyUtility.Convert.GetDecimal(dr["qty"]) == 0)
+                {
+                    if (this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(217, 217, 217))
+                    {
+                        this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(217, 217, 217);
+                    }
+                }
+                else
+                {
+                    if (this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
+                    {
+                        this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
+                    }
+                }
+                #endregion
+            };
         }
 
         // close
@@ -624,6 +654,23 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
             sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P30_Import"));
 
+        }
+
+        private void ChkQty_CheckedChanged(object sender, EventArgs e)
+        {
+            this.showQtymorezero();
+        }
+
+        private void showQtymorezero()
+        {
+            if (this.chkQty.Checked)
+            {
+                ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = "Qty > 0";
+            }
+            else
+            {
+                ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = "";
+            }
         }
     }
 }
