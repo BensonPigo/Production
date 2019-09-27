@@ -30,6 +30,7 @@ namespace Sci.Production.Shipping
         private string emptyDTMask = string.Empty;
         private string empmask;
         private string dtmask;
+        private DateTime? FBDate_Ori;
 
         /// <summary>
         /// P05
@@ -262,6 +263,15 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 this.btnCFM.Enabled = false;
             }
             #endregion
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["FBDate"]))
+            {
+                this.FBDate_Ori = DateTime.Parse(this.CurrentMaintain["FBDate"].ToString());
+            }
+            else
+            {
+                this.FBDate_Ori = null;
+            }
         }
 
         /// <inheritdoc/>
@@ -668,11 +678,14 @@ order by fwd.WhseNo",
             if (!MyUtility.Check.Empty(CurrentMaintain["FBDate"]))
             {
                 DateTime FBDate = DateTime.Parse(this.CurrentMaintain["FBDate"].ToString());
-                if (DateTime.Compare(FBDate, DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd")).AddMonths(-1)) < 0 ||
-                    DateTime.Compare(FBDate, DateTime.Now) > 0)
+                if (this.FBDate_Ori != FBDate)
                 {
-                    MyUtility.Msg.WarningBox("<Forward Booking Date> cannot be later than today or one month earlier !");
-                    return false;
+                    if (DateTime.Compare(FBDate, DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd")).AddMonths(-1)) < 0 ||
+                        DateTime.Compare(FBDate, DateTime.Now) > 0)
+                    {
+                        MyUtility.Msg.WarningBox("<Forward Booking Date> cannot be later than today or one month earlier !");
+                        return false;
+                    }
                 }
             }
 
