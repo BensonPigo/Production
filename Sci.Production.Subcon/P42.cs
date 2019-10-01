@@ -598,7 +598,17 @@ outer apply(
 )w
 where o.ID ='{drSelected["OrderID"]}'
 
-select b.Orderid,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
+select   b.Orderid
+        ,bd.BundleNo
+        ,s.SubProcessID
+        ,s.ShowSeq
+        ,s.InOutRule
+        ,s.IsRFIDDefault
+        ,b.IsEXCESS
+        ,bd.PatternDesc
+        ,b.Article
+        ,bd.BundleGroup
+        ,bd.SizeCode
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
@@ -609,13 +619,33 @@ cross join(
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
 )s
 
-select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
+select   Orderid
+        ,BundleNo
+        ,SubProcessID
+        ,ShowSeq
+        ,InOutRule
+        ,IsRFIDDefault
+        ,IsEXCESS
+        ,PatternDesc
+        ,Article
+        ,BundleGroup
+        ,SizeCode
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo
 
 union
 
-select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
+select   Orderid
+        ,bda.BundleNo
+        ,bda.SubProcessID
+        ,s.ShowSeq
+        ,s.InOutRule
+        ,s.IsRFIDDefault
+        ,IsEXCESS
+        ,PatternDesc
+        ,Article
+        ,BundleGroup
+        ,SizeCode
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -631,6 +661,10 @@ select
 					else 0
 				end,
 	IsEXCESS
+    ,PatternDesc
+    ,Article
+    ,BundleGroup
+    ,SizeCode
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -644,13 +678,18 @@ select
 				when sum(isComplete)>0 then 'OnGoing'
 				when sum(isComplete)=0 then 'Not Yet Load'
 				end
+
+    ,PatternDesc
+    ,Article
+    ,BundleGroup
+    ,SizeCode
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
 	from Bundle_Detail bd with(nolock)
 	where bd.BundleNo = t.BundleNo
 )b
-group by t.SubProcessID,t.Orderid,t.BundleNo,b.qty,IsEXCESS
+group by t.SubProcessID,t.Orderid,t.BundleNo,b.qty,IsEXCESS,PatternDesc,Article,BundleGroup,SizeCode
 order by t.BundleNo
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
@@ -700,7 +739,18 @@ outer apply(
 where o.ID ='{drSelected["OrderID"]}' and oq.Article='{drSelected["Article"]}' and oq.SizeCode='{drSelected["SizeCode"]}'
 
 
-select b.Orderid,b.Article,b.Sizecode,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
+select   b.Orderid
+        ,b.Article
+        ,b.Sizecode
+        ,bd.BundleNo
+        ,s.SubProcessID
+        ,s.ShowSeq
+        ,s.InOutRule
+        ,s.IsRFIDDefault
+        ,b.IsEXCESS
+        ,bd.PatternDesc
+        ,bd.BundleGroup
+        ,[BD_SizeCode]=bd.SizeCode
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
@@ -713,12 +763,18 @@ cross join(
 
 
 select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
+    ,PatternDesc
+    ,BundleGroup
+    ,[BD_SizeCode]
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo
 
 union
 
 select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
+    ,PatternDesc
+    ,BundleGroup
+    ,[BD_SizeCode]
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -736,6 +792,9 @@ select
 					else 0
 				end,
 	IsEXCESS
+    ,PatternDesc
+    ,BundleGroup
+    ,[BD_SizeCode]
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -749,6 +808,10 @@ select
 				when sum(isComplete)>0 then 'OnGoing'
 				when sum(isComplete)=0 then 'Not Yet Load'
 				end
+    ,PatternDesc
+    ,Article
+    ,BundleGroup
+    ,SizeCode
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
@@ -757,6 +820,9 @@ outer apply(
 	where bd.BundleNo = t.BundleNo and b.Article = t.Article and b.Sizecode = t.Sizecode
 )b
 group by t.SubProcessID,t.Orderid,t.BundleNo,t.Article,t.Sizecode,b.qty,IsEXCESS
+    ,PatternDesc
+    ,BundleGroup
+    ,[BD_SizeCode]
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 ";
@@ -770,8 +836,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
                 ShowErr(result);
                 return;
             }
-
-            MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: caption);
+            MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: caption/*,ontoexcel: this.ToExcel_Click*/);
         }
     }
 }
