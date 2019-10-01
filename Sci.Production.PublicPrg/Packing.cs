@@ -276,6 +276,16 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             }
 
             // 依CtnStart#排序 來計算混尺碼重量 
+            if (PackingListDetaildata.Columns.Contains("tmpKey") == false) {
+                PackingListDetaildata.Columns.Add("tmpKey", typeof(decimal));
+            }
+
+            int tmpkey = 0;
+            foreach (DataRow dr in PackingListDetaildata.Rows)
+            {
+                dr["tmpKey"] = tmpkey;
+                tmpkey++;
+            }
             PackingListDetaildata.DefaultView.Sort = "CTNStartNo,CTNQty desc";
             DataTable dtSort = PackingListDetaildata.DefaultView.ToTable();
             foreach (DataRow dr in dtSort.Rows)
@@ -324,7 +334,14 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                         dr["NWPerPcs"] = 0;
                     }
                 }
+                PackingListDetaildata.Select($"tmpkey = {dr["tmpkey"]}")[0]["NWPerPcs"] = dr["NWPerPcs"];
             }
+
+            if (PackingListDetaildata.Columns.Contains("tmpKey") == true)
+            {
+                PackingListDetaildata.Columns.Remove("tmpKey");
+            }
+
             //最後一筆資料也要寫入
             tmpPacklistRow = tmpPacklistWeight.NewRow();
             tmpPacklistRow["CTNStartNo"] = ctnNo;
