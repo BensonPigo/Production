@@ -385,6 +385,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     sele = new SelectItem(garmentarRC, "PatternCode,PatternDesc,Annotation", "10,20,20", dr["PatternCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
+                    if (patternTb.Select($@"PatternCode = '{sele.GetSelectedString()}'").Count() > 0)
+                    {
+                        dr["isPair"] = patternTb.Select($@"PatternCode = '{sele.GetSelectedString()}'")[0]["isPair"];
+                    }
                     e.EditingControl.Text = sele.GetSelectedString();
                     dr["PatternDesc"] = (sele.GetSelecteds()[0]["PatternDesc"]).ToString();
                     dr["PatternCode"] = (sele.GetSelecteds()[0]["PatternCode"]).ToString();
@@ -410,6 +414,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 string patcode = e.FormattedValue.ToString();
                 string oldvalue = dr["PatternCode"].ToString();
                 if (oldvalue == patcode) return;
+                if (patternTb.Select($@"PatternCode = '{patcode}'").Count() > 0)
+                {
+                    dr["isPair"] = patternTb.Select($@"PatternCode = '{patcode}'")[0]["isPair"];
+                }
 
                 DataRow[] gemdr = garmentarRC.Select(string.Format("PatternCode ='{0}'", patcode), "");
                 if (gemdr.Length > 0)
@@ -438,6 +446,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     dr["Parts"] = 0;
                 }
                 dr.EndEdit();
+
             };
             subcell.EditingMouseDown += (s, e) =>
             {
@@ -868,6 +877,12 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                         art = Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), artTb, out lallpart);
                         #endregion
                     }
+
+                    bool isPair = MyUtility.Convert.GetBool(chdr["isPair"]);
+                    if (patternTb.Select($@"PatternCode = '{chdr["PatternCode"]}'").Count() > 0)
+                    {
+                        isPair = MyUtility.Convert.GetBool(patternTb.Select($@"PatternCode = '{chdr["PatternCode"]}'")[0]["isPair"]);
+                    }
                     //新增PatternTb
                     DataRow ndr2 = patternTb.NewRow();
                     ndr2["PatternCode"] = chdr["PatternCode"];
@@ -875,7 +890,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     ndr2["Location"] = chdr["Location"];
                     ndr2["Parts"] = chdr["Parts"]; ;
                     ndr2["art"] = "EMB";
-                    ndr2["isPair"] = chdr["isPair"]; ;
+                    ndr2["isPair"] = isPair; 
+
                     patternTb.Rows.Add(ndr2);
                     chdr.Delete(); //刪除
                 }
