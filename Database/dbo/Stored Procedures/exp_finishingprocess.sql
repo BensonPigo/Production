@@ -1,4 +1,4 @@
--- =============================================
+﻿-- =============================================
 -- Description:	轉出FPS資料
 -- =============================================
 CREATE PROCEDURE [dbo].[exp_finishingprocess]
@@ -79,11 +79,14 @@ BEGIN
 	[CmdTime]			[datetime] NOT NULL,
 	[SunriseUpdated]	[bit] NOT NULL DEFAULT ((0)),
 	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
+	[PackingCTN]        [varchar](19) NOT NULL,
  CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED 
 (
 	[SCICtnNo] ASC,
 	[Article] ASC,
-	[SizeCode] ASC
+	[SizeCode] ASC,
+	[OrderID] ASC,
+	[OrderShipmodeSeq]
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
@@ -287,7 +290,7 @@ declare @yestarDay date =CONVERT(Date, dateAdd(day,-1,GetDate()));
 --declare @cDate date = CONVERT(date, DATEADD(DAY,-10, GETDATE()));-- for test
 --declare @yestarDay date =CONVERT(Date, dateAdd(day,-11,GetDate()));-- for test
 
---01. 轉出區間 [Production].[dbo].[Orders].AddDate or EditDate= 昨天
+--01. 轉出區間 [Production].[dbo].[Orders].AddDate or EditDate= 今天
 MERGE Orders AS T
 USING(
 	SELECT id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
@@ -302,7 +305,7 @@ USING(
 		where StyleUkey=o.StyleUkey
 		for xml path('')
 	),1,1,'')) SL
-	where (convert(date,AddDate) = @yestarDay or convert(date,EditDate) = @yestarDay)
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
 on T.ID = S.ID
 WHEN MATCHED THEN
@@ -333,14 +336,14 @@ VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Categ
 	,s.Dest, s.CustCDID, s.StyleUnit, s.SetQty, s.Location, s.PulloutComplete, s.Junk
 	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated)	;
 
---02. 轉出區間 [Production].[dbo].[Order_QtyShip].AddDate or EditDate= 昨天
+--02. 轉出區間 [Production].[dbo].[Order_QtyShip].AddDate or EditDate= 今天
 MERGE Order_QtyShip AS T
 USING(
 	SELECT id, Seq, ShipmodeID, BuyerDelivery, Qty, EstPulloutDate
 	,ReadyDate,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	FROM Production.dbo.Order_QtyShip o
-	where (convert(date,AddDate) = @yestarDay or convert(date,EditDate) = @yestarDay)
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
 on T.ID = S.ID and T.SEQ = S.SEQ
 WHEN MATCHED THEN
@@ -402,6 +405,7 @@ USING(
 	,[Junk] = iif(fpsPacking.ID is not null,1,0)
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	,[PackingCTN] = pd.id + pd.CTNStartNo
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
 	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
@@ -421,16 +425,12 @@ USING(
 	or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate)
 ) as S
 on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode
+AND T.OrderID = S.OrderID AND T.OrderShipmodeSeq = S.OrderShipmodeSeq
 WHEN MATCHED THEN
 UPDATE SET
 	t.ID = s.id,
-	t.SCICtnNo = s.SCICtnNo,
 	t.CustCTN = iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN),
 	t.PulloutDate = s.PulloutDate,
-	t.OrderID = s.OrderID,
-	t.OrderShipmodeSeq = s.OrderShipmodeSeq,
-	t.Article = s.Article,
-	t.SizeCode = s.SizeCode,
 	t.ShipQty = s.ShipQty,
 	t.Barcode = s.Barcode,
 	t.GW = s.GW,
@@ -442,18 +442,19 @@ UPDATE SET
 	t.junk = s.junk,
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = s.SunriseUpdated,
-	t.GenSongUpdated = s.GenSongUpdated
+	t.GenSongUpdated = s.GenSongUpdated,
+	t.PackingCTN = s.PackingCTN
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  ID, SCICtnNo
 , CustCTN
 ,  PulloutDate,  OrderID, OrderShipmodeSeq, Article, SizeCode
 		, ShipQty, Barcode, GW, CtnRefno, CtnLength, CtnWidth, CtnHeight, CtnUnit
-	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated) 
+	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated,PackingCTN) 
 VALUES(s.ID, s.SCICtnNo, 
 iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 , s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
 		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
-	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated)	;
+	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN)	;
 
 -- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
 update t
@@ -633,7 +634,7 @@ VALUES(s.[DM300],s.[DM200],s.[DM201],s.[DM202],s.[DM205],s.[DM203],s.[DM204],s.[
 	   s.[DM208],s.[DM209],s.[DM210],s.[DM212],s.[DM214],s.[DM215],s.[DM216],s.[DM219],GetDate(),0);
 
 
---11. 轉出區間 當EditDate =今天
+--11. 轉出區間 當AddDate or TPEEditDate or EditDate =今天
 MERGE StyleFPSetting AS T
 USING(
 	SELECT  [StyleID] = id
@@ -644,7 +645,7 @@ USING(
 		,Folding1
 		,Folding2
 	FROM Production.dbo.Style 
-	where convert(date,EditDate) = @cDate
+	where (convert(date,AddDate) = @cDate or convert(date,TPEEditDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as s
 on t.StyleID=s.StyleID
 WHEN MATCHED THEN

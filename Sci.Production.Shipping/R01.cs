@@ -34,7 +34,10 @@ namespace Sci.Production.Shipping
         private DateTime? FCRDate2;
         private DateTime? CutOffDate2;
         private DateTime? SOCFMDate2;
+        private DateTime? Delivery1;
+        private DateTime? Delivery2;
         private DataTable printData;
+        private bool hasDelivery;
 
         /// <summary>
         /// R01
@@ -52,7 +55,6 @@ namespace Sci.Production.Shipping
             this.comboStatus.SelectedIndex = 0;
             this.txtshipmodeShippingMode.SelectedIndex = -1;
             this.radioMainList.Checked = true;
-            
         }
 
         /// <inheritdoc/>
@@ -63,6 +65,7 @@ namespace Sci.Production.Shipping
             //    MyUtility.Msg.WarningBox("Invoice Date can't empty!!");
             //    return false;
             // }
+            this.hasDelivery = false;
             this.shipper = this.comboShipper.Text;
             this.brand = this.txtbrand.Text;
             this.shipmode = this.txtshipmodeShippingMode.Text;
@@ -84,7 +87,8 @@ namespace Sci.Production.Shipping
             this.CutOffDate2 = this.dateCutoff.Value2;
             this.SOCFMDate2 = this.dateConfirm.Value2;
 
-
+            this.Delivery1 = this.dateDelivery.Value1;
+            this.Delivery2 = this.dateDelivery.Value2;
 
             return base.ValidateInput();
         }
@@ -465,6 +469,24 @@ where pl.ID<>'' and 1=1 "));
                 sqlCmd_where.Append(" and g.Status <> 'Confirmed'");
             }
 
+            if (!MyUtility.Check.Empty(this.Delivery1))
+            {
+                this.hasDelivery = true;
+
+                sqlCmd.Append(string.Format(
+                    @"
+and exists (select 1
+            from (
+                select pd.OrderID
+                       , pd.OrderShipmodeSeq 
+                from PackingList_Detail pd WITH (NOLOCK) 
+                inner join PackingList pl2 on pd.ID = pl2.id where pl2.INVNo = g.ID 
+            ) a
+            inner join Order_QtyShip oq WITH (NOLOCK) on a.OrderID = oq.Id 
+                                                         and a.OrderShipmodeSeq = oq.Seq 
+                                                         and oq.BuyerDelivery between '{0}' and '{1}' )", Convert.ToDateTime(this.Delivery1).ToString("d"), Convert.ToDateTime(this.Delivery2).ToString("d")));
+            }
+
             #endregion
 
             sqlCmd.Append(" order by g.ID" + Environment.NewLine + " DROP TABLE #tmp1,#tmp2");
@@ -544,7 +566,7 @@ where pl.ID<>'' and 1=1 "));
             else
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 35];
+                object[,] objArray = new object[1, 36];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -583,6 +605,13 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 33] = dr["Vessel"];
                     objArray[0, 34] = dr["Remark"];
                     worksheet.Range[string.Format("A{0}:AH{0}", intRowsStart)].Value2 = objArray;
+                    if (this.hasDelivery &&
+                        (MyUtility.Convert.GetDate(dr["BuyerDelivery"]) < this.dateDelivery.Value1 ||
+                        MyUtility.Convert.GetDate(dr["BuyerDelivery"]) > this.dateDelivery.Value2))
+                    {
+                        worksheet.Range[string.Format("A{0}:AI{0}", intRowsStart)].Font.Color = ColorTranslator.ToOle(Color.Red);
+                    }
+
                     intRowsStart++;
                 }
             }
@@ -609,10 +638,14 @@ where pl.ID<>'' and 1=1 "));
             if (this.radioMainList.Checked)
             {
                 this.ReportType = "MainList";
+                this.dateDelivery.ReadOnly = true;
+                this.dateDelivery.Value1 = null;
+                this.dateDelivery.Value2 = null;
             }
             if (this.radioDetailList.Checked)
             {
                 this.ReportType = "DetailList";
+                this.dateDelivery.ReadOnly = false;
             }
         }
     }

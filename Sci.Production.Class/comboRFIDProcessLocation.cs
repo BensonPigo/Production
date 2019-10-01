@@ -29,7 +29,7 @@ namespace Sci.Production.Class
         /// <summary>
         /// Set ComboBox Data
         /// </summary>
-        public void setDataSource()
+        public void setDataSource(bool isForReport = true)
         {
             DataTable dtRFIDProcessLocation;
             DualResult result;
@@ -39,10 +39,23 @@ namespace Sci.Production.Class
             {
                 whereIncludeJunk = string.Empty;
             }
-            string sqlcmd = @"
-                select [ID] = ''
-                union
+            string sqlcmd = string.Empty ;
+            if (isForReport)
+            {
+                sqlcmd = @"
+                select [ID] = 'ALL'
+                union all
+				select [ID] = ''
+                union all
                 select ID from RFIDProcessLocation " + whereIncludeJunk;
+            }
+            else
+            {
+                sqlcmd = @"
+				select [ID] = ''
+                union all
+                select ID from RFIDProcessLocation " + whereIncludeJunk;
+            }
             #endregion
             result = DBProxy.Current.Select(null, sqlcmd, out dtRFIDProcessLocation);
             if (result)

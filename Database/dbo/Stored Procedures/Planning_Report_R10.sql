@@ -178,6 +178,7 @@ BEGIN
 	,Round((cCPU * FactoryOrder.Qty * CPURate),10) as FactoryOrderCapacity
 	,FactoryOrder.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
+	,OrderDate
 	,FactorySort
 	,SubconInType
 	,FactoryOrder.ProgramID
@@ -198,14 +199,14 @@ BEGIN
 	--By Sewing from Local Order
 
 	--#sew4
-	select sd.ID,OrderId,SUM(QAQty*sl.Rate/100) as QAQty 
+	select sd.ID,sd.OrderId,SUM(QAQty*ol.Rate/100) as QAQty 
 	into #sew4 
 	from (select *,sidx=ROW_NUMBER()over(partition by id,orderid,ComboType,Article,Color,OldDetailKey order by id) 
 	from SewingOutput_Detail) sd 
 	inner join Orders o on sd.OrderId = o.ID 
-	inner join Style_Location sl on o.StyleUkey = sl.StyleUkey and sl.Location = sd.ComboType 
-	where OrderId in (select ID from #tmpFactoryOrder1) and sidx = 1 
-	GROUP BY sd.ID,OrderId	
+	inner join Order_Location ol on o.ID = ol.OrderId and ol.Location = sd.ComboType 
+	where sd.OrderId in (select ID from #tmpFactoryOrder1) and sidx = 1 
+	GROUP BY sd.ID,sd.OrderId	
 	
 	--#sew3
 	select ID,OutputDate 
@@ -227,7 +228,7 @@ BEGIN
 	into #tmpFactoryOrder2 
 	From #tmpFactoryOrder1	
 	left join #sew_FtyOrder SewingOutput on SewingOutput.OrderId = #tmpFactoryOrder1.ID
-	outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
+	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate,@isSCIDelivery) as Date2) odd2
 
 
