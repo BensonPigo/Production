@@ -40,9 +40,9 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
 
             // 建立NoNLCode, NotInPO, UnitNotFound的結構
-            string sqlCmd = "select '' as SCIRefno,'' as Refno,'' as BrandID,'' as Type,'' as Description,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare from VNImportDeclaration WITH (NOLOCK) where 1=0";
+            string sqlCmd = "select '' as SCIRefno,'' as Refno,'' as BrandID,'' as Type,'' as Description,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare,UsageUnit='' from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out this.NoNLCode);
-            sqlCmd = "select '' as ID,'' as POID,'' as Seq1,'' as Seq2,'' as Seq,'' as Description,'' as Type,'' as OriUnit,0.0 as OriImportQty,0.0 as Width,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare,0.0000 as Price  from VNImportDeclaration WITH (NOLOCK) where 1=0";
+            sqlCmd = "select '' as ID,'' as POID,'' as Seq1,'' as Seq2,'' as Seq,'' as Description,'' as Type,'' as OriUnit,0.0 as OriImportQty,0.0 as Width,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare,0.0000 as Price,UsageUnit=''   from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out this.NotInPO);
             sqlCmd = "select '' as OriUnit,'' as CustomsUnit,'' as RefNo from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out this.UnitNotFound);
