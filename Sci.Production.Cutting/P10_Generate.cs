@@ -386,7 +386,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     e.EditingControl.Text = sele.GetSelectedString();
                     dr["PatternDesc"] = (sele.GetSelecteds()[0]["PatternDesc"]).ToString();
                     dr["PatternCode"] = (sele.GetSelecteds()[0]["PatternCode"]).ToString();
-                    string[] ann = Regex.Replace(sele.GetSelecteds()[0]["Annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(sele.GetSelecteds()[0]["Annotation"].ToString(), @"[\d]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
                     bool lallpart;
                     #region 算Subprocess
@@ -414,7 +414,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 {
                     dr["PatternDesc"] = (gemdr[0]["PatternDesc"]).ToString();
                     dr["PatternCode"] = (gemdr[0]["PatternCode"]).ToString();
-                    string[] ann = Regex.Replace(gemdr[0]["Annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(gemdr[0]["Annotation"].ToString(), @"[\d]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
                     bool lallpart;
                     #region 算Subprocess
@@ -841,7 +841,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 foreach (DataRow chdr in checkdr)
                 {
                     string art = "";
-                    string[] ann = Regex.Replace(chdr["annotation"].ToString(), @"[\d-]", string.Empty).Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(chdr["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); //剖析Annotation
                     if (ann.Length > 0)
                     {
                         bool lallpart;
