@@ -651,6 +651,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
                         this.CurrentMaintain["IsLocalPO"] = 0;
                         this.CurrentMaintain["ShipModeID"] = string.Empty;
                         this.CurrentMaintain["FromSite"] = string.Empty;
+                        this.CurrentMaintain["FromSite"] = string.Empty;
                     }
                     else
                     {
@@ -938,6 +939,7 @@ select e.ID
 	   						  where UnitFrom = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
 	   						  		and UnitTo = 'M'),'') 
 	   , POSeq = '01'
+	   , f.UsageUnit
 from FtyExport e WITH (NOLOCK) 
 inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
@@ -985,6 +987,7 @@ select e.ID
 	   						  where UnitFrom = ed.UnitId 
 	   						  		and UnitTo = 'M'), '') 
 	   , POSeq = isnull(psd.Seq1, '') 
+	   , f.UsageUnit
 from FtyExport e WITH (NOLOCK) 
 inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
@@ -1033,6 +1036,7 @@ select e.ID
 	   						  where UnitFrom = ed.UnitId 
 	   						  		and UnitTo = 'M'), '') 
 	   , POSeq = isnull(psd.Seq1, '') 
+	   , f.UsageUnit
 from Export e WITH (NOLOCK) 
 inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
@@ -1077,6 +1081,7 @@ where {0}", sqlWhere);
                     newRow["PcsKg"] = dr["PcsKg"];
                     newRow["NoDeclare"] = dr["NoDeclare"];
                     newRow["Price"] = dr["Price"];
+                    newRow["UsageUnit"] = dr["UsageUnit"];
                     this.NotInPO.Rows.Add(newRow);
                 }
                 else
@@ -1099,6 +1104,7 @@ where {0}", sqlWhere);
                             newRow["PcsLength"] = dr["PcsLength"];
                             newRow["PcsKg"] = dr["PcsKg"];
                             newRow["NoDeclare"] = dr["NoDeclare"];
+                            newRow["UsageUnit"] = dr["UsageUnit"];
                             this.NoNLCode.Rows.Add(newRow);
                         }
                     }
@@ -1199,6 +1205,7 @@ with ExportDetail as (
 	   						  		    and UnitTo = 'M'),'')
             , ed.RefNo 
             , f.Brandid
+	        , f.UsageUnit
     from FtyExport e WITH (NOLOCK) 
     inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
     left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
@@ -1253,6 +1260,7 @@ with ExportDetail as (
 	   						  		    and UnitTo = 'M'),'') 
             , f.RefNo 
             , f.BrandID
+	        , f.UsageUnit
     from FtyExport e WITH (NOLOCK) 
     inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
     left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
@@ -1308,6 +1316,7 @@ with ExportDetail as (
 	   						  		    and UnitTo = 'M'), '') 
             , f.RefNo 
             , f.BrandID
+	        , f.UsageUnit
     from Export e WITH (NOLOCK) 
     inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
     left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
@@ -1347,6 +1356,7 @@ NotInPo as (
            , UnitRate = UnitRate.value
            , f.RefNo
            , f.BrandID
+	       , f.UsageUnit
 	from #tmp
     left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = #tmp.POID and psd.SEQ1 = #tmp.Seq1 and psd.SEQ2 = #tmp.Seq2
     left join orders o with(nolock) on o.id = psd.ID
@@ -1391,6 +1401,7 @@ select NLCode
        , RefNo
        , Type
        , BrandID
+       , UsageUnit
 	   , sum(NewQty) as NewQty
 	   , sum(NewQty * Price) as Price 
 from (
@@ -1401,6 +1412,7 @@ from (
            , RefNo
            , Type
            , BrandID
+           , UsageUnit
 		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate),Refno)
     from ExportDetail WITH (NOLOCK) 
     where NoDeclare = 0
@@ -1418,10 +1430,11 @@ from (
            , RefNo
            , Type
            , BrandID
+           , UsageUnit
 		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate),Refno)
     from NotInPo WITH (NOLOCK) 
 ) a
-group by NLCode, HSCode, CustomsUnit, RefNo,Type,BrandID");
+group by NLCode, HSCode, CustomsUnit, RefNo,Type,BrandID,UsageUnit");
 
             DataTable selectedData;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.NotInPO, null, sqlCmd.ToString(), out selectedData);
@@ -1437,7 +1450,7 @@ group by NLCode, HSCode, CustomsUnit, RefNo,Type,BrandID");
             // 將資料做排序
             result = MyUtility.Tool.ProcessWithDatatable(
                     selectedData,
-                    @"NLCode,HSCode,CustomsUnit,NewQty,Price,RefNo,Type,BrandID",
+                    @"NLCode,HSCode,CustomsUnit,NewQty,Price,RefNo,Type,BrandID,UsageUnit",
                     string.Format(@"
 select NLCode
 	   , HSCode
@@ -1446,6 +1459,7 @@ select NLCode
        , RefNo
        , Type
        , BrandID = isnull(BrandID,'')
+       , UsageUnit
 	   , Price = iif(NewQty=0,0,Price / NewQty)
 from #tmp
 order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
@@ -1475,6 +1489,7 @@ order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
                 newRow["Qty"] = dr["NewQty"];
                 newRow["UnitID"] = dr["CustomsUnit"];
                 newRow["Price"] = dr["Price"];
+                newRow["UsageUnit"] = dr["UsageUnit"];
                 newRow["Remark"] = string.Empty;
                 ((DataTable)this.detailgridbs.DataSource).Rows.Add(newRow);
             }
