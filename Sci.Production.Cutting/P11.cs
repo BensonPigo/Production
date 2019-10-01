@@ -1039,11 +1039,12 @@ order by ArticleGroup", patternukey);
 
             ArticleSizeTb.DefaultView.RowFilter
                 = string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["Fabriccombo"]);
-            ArticleSizeTb_View = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["Fabriccombo"])).CopyToDataTable();
             if (ArticleSizeTb.Rows.Count == 0)
             {
                 return;
             }
+
+            ArticleSizeTb_View = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["Fabriccombo"])).CopyToDataTable();
 
             if (gridArticleSize.GetSelectedRowIndex() == -1)
             {
