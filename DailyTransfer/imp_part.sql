@@ -351,7 +351,8 @@ s.BatchQty
 	Foc = B.Foc,
 	ShipQty = B.ShipQty,
 	ShipFoc = B.ShipFoc,
-	ShipETA = B.ShipETA
+	ShipETA = B.ShipETA,
+	Junk = B.Junk
 	FROM Machine.DBO.MiscPO_Detail A
 	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on  a.MiscID=b.Refno 
 													and  a.SEQ2=b.Seq2 
@@ -423,7 +424,8 @@ update t
 		t.Foc=s.Foc,
 		t.ShipQty=s.ShipQty,
 		t.ShipFoc=s.ShipFoc,
-		t.ShipETA=s.ShipETA
+		t.ShipETA=s.ShipETA,
+		t.Junk = s.Junk
 		from  Machine.dbo.MiscPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
