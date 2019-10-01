@@ -75,6 +75,42 @@ select p.ID
 , p.ShipQty
 , p.PulloutID
 , Pullout.SendToTPE
+
+, [OrderShipmodeSeq] = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
+                                from (
+                                    select pd.OrderShipmodeSeq 
+                                    from PackingList_Detail pd WITH (NOLOCK) 
+                                    left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+                                                                        and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+                                    where pd.ID = p.id
+                                    group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+                                ) a 
+                                for xml path('')
+                            ), 1, 1, '') 
+							
+, [OrderTtlQty] = STUFF ((select CONCAT (',', cast (a.Qty as nvarchar)) 
+                    from (
+                        select distinct o.id,o.Qty
+                        from PackingList_Detail pd WITH (NOLOCK) 
+                        inner join orders o with(nolock) on o.id= pd.orderid
+                        where pd.ID = p.id
+                    ) a 
+					order by a.id
+                    for xml path('')
+                    ), 1, 1, '') 
+, [ProdOutputTtlQty] = STUFF ((select CONCAT (',', cast (sum(sod.qaqty) as nvarchar)) 
+                from (
+                    select pd.OrderID
+                    from PackingList_Detail pd WITH (NOLOCK) 
+                    where pd.ID = p.id
+                    group by pd.OrderID
+                ) a 
+                inner join SewingOutput_Detail_Detail sod with(nolock) on sod.orderid= a.orderid
+				group by sod.OrderId
+				order by sod.OrderId
+                for xml path('')
+                ), 1, 1, '') 
+
 from PackingList p WITH (NOLOCK) 
 left join Pullout WITH (NOLOCK)  on Pullout.ID = p.PulloutID and Pullout.Status <> 'NEW'
 where {0} 
@@ -240,8 +276,11 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("ID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
                 .Text("Status", header: "Packing Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .Text("OrderTtlQty", header: "Order Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("ProdOutputTtlQty", header: "Prod. Output Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("ShipQty", header: "TTL Qty", iseditingreadonly: true)
                 .Numeric("CTNQty", header: "TTL CTN", iseditingreadonly: true)
                 .Numeric("CBM", header: "CBM", decimal_places: 3, iseditingreadonly: true)
