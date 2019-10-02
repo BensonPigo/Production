@@ -997,8 +997,9 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             }
             #endregion
             #region 檢查 如果IsPair =✔, 加總相同的Cut Part的Parts, 必需>0且可以被2整除
-            var SamePairCt = this.patternTb.AsEnumerable().GroupBy(g => new { CutPart = g["PatternCode"] })
-                .Select(s => new { s.Key.CutPart, Parts = s.Sum(i => MyUtility.Convert.GetBool(i["isPair"]) ? 1 : 0) }).ToList();
+            var SamePairCt = this.patternTb.AsEnumerable().Where(w=> MyUtility.Convert.GetBool(w["isPair"]))
+                .GroupBy(g => new { CutPart = g["PatternCode"] })
+                .Select(s => new { s.Key.CutPart, Parts = s.Sum(i => MyUtility.Convert.GetDecimal(i["Parts"])) }).ToList();
             if (SamePairCt.Where(w => w.Parts % 2 !=0).Any())
             {
                 var mp = SamePairCt.Where(w => w.Parts % 2 != 0).ToList();

@@ -1567,8 +1567,8 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             var idenlist = ArticleSizeTb.Select("Sel=1").AsEnumerable().Select(s => MyUtility.Convert.GetString(s["iden"])).ToList();
             var patternSaveList = this.patternTb.AsEnumerable().Where(w => idenlist.Contains(MyUtility.Convert.GetString(w["iden"]))).ToList();
 
-            var SamePairCt = patternSaveList.GroupBy(g => new { CutPart = g["PatternCode"], iden = g["iden"] })
-                .Select(s => new { s.Key.CutPart,s.Key.iden, Parts = s.Sum(i => MyUtility.Convert.GetBool(i["isPair"]) ? 1 : 0) }).ToList();
+            var SamePairCt = patternSaveList.Where(w => MyUtility.Convert.GetBool(w["isPair"])).GroupBy(g => new { CutPart = g["PatternCode"], iden = g["iden"] })
+                .Select(s => new { s.Key.CutPart,s.Key.iden, Parts = s.Sum(i => MyUtility.Convert.GetDecimal(i["Parts"])) }).ToList();
             if (SamePairCt.Where(w => w.Parts % 2 != 0).Any())
             {
                 var mp = SamePairCt.Where(w => w.Parts % 2 != 0).ToList();
