@@ -91,7 +91,8 @@ declare @APSList TABLE(
 	[Sewer] [int] NULL,
 	[OriEff] [numeric](5, 2) NULL,
 	[SewLineEff] [numeric](5, 2) NULL,
-	[AlloQty] [int] NULL
+	[AlloQty] [int] NULL,
+	[TotalSewingTime] int NULL
 )
 insert into @APSList
 select 
@@ -105,6 +106,7 @@ select
 	Sewer,
     OriEff,
     SewLineEff,
+	[TotalSewingTime]=SUM(TotalSewingTime),
 	AlloQty = sum(AlloQty)
 from @APSListWorkDay
 group by APSNo,
@@ -339,7 +341,8 @@ declare @APSMain TABLE(
 	[MaxBuyerDelivery] [date] NULL,
 	[MinBuyerDelivery] [date] NULL,
 	[OriEff] [numeric](5, 2) NULL,
-	[SewLineEff] [numeric](5, 2) NULL
+	[SewLineEff] [numeric](5, 2) NULL,
+	[TotalSewingTime] int NULL
 )
 insert into @APSMain
 select
@@ -379,7 +382,8 @@ OrderDateInfo.MinSCIDelivery,
 OrderDateInfo.MaxBuyerDelivery,
 OrderDateInfo.MinBuyerDelivery,
 OriEff,
-SewLineEff
+SewLineEff,
+TotalSewingTime 
 from @APSList al
 left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
 left join @APSOrderQty aoo on al.APSNo = aoo.APSNo
@@ -661,6 +665,7 @@ group by awd.APSNo,
 select
 	[APSNo]=apm.APSNo,
 	[SewingLineID]=apm.SewingLineID,
+	[Sewer]=apm.Sewer,
 	[SewingDay] = cast(apf.SewingStart as date),
 	[SewingStartTime]=apf.SewingStart,
 	[SewingEndTime]=apf.SewingEnd,
@@ -685,9 +690,10 @@ select
 	[AlloQty]=apm.AlloQty,
 	[StardardOutputPerDay]= apf.StdOutput,
 	[CPU]=apf.CPU,
+	[SewingCPU] = ( apm.TotalSewingTime / (SELECT StdTMS * 1.0 FROm System))  ,
 	[WorkHourPerDay]= apf.WorkingTime,
 	[StardardOutputPerHour] = iif(apf.WorkingTime = 0,0,floor(apf.StdOutput / apf.WorkingTime)),
-	[Efficienycy]=apf.Efficienycy,
+	[Efficienycy]= ROUND( apf.Efficienycy ,2,1),
 	[ScheduleEfficiency]=round(apm.OriEff / 100.0,2),
 	[LineEfficiency]=round(apm.SewLineEff / 100.0,2),
 	[LearningCurve]= round(apf.LearnCurveEff / 100.0,2),

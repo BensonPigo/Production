@@ -1132,6 +1132,7 @@ select
 	Sewer,
     OriEff,
     SewLineEff,
+	[TotalSewingTime]=SUM(TotalSewingTime),
 	AlloQty = sum(AlloQty)
 into #APSList
 from #APSListWorkDay
@@ -1314,7 +1315,9 @@ OrderDateInfo.MinSCIDelivery,
 OrderDateInfo.MaxBuyerDelivery,
 OrderDateInfo.MinBuyerDelivery,
 OriEff,
-SewLineEff
+SewLineEff,
+TotalSewingTime 
+
 into #APSMain
 from #APSList al
 left join #APSCuttingOutput aco on al.APSNo = aco.APSNo
@@ -1496,8 +1499,8 @@ group by awd.APSNo,
 --組合最終table
 select
 apm.APSNo,
-apm.Sewer,
 apm.SewingLineID,
+apm.Sewer,
 [SewingDay] = cast(apf.SewingStart as date),
 apf.SewingStart,
 apf.SewingEnd,
@@ -1522,9 +1525,10 @@ apm.OrderQty,
 apm.AlloQty,
 [StdOutput] = apf.StdOutput,
 apf.CPU,
+[SewingCPU] = ( apm.TotalSewingTime / (SELECT StdTMS * 1.0 FROm System) )  ,
 [DayWorkHour] = apf.WorkingTime,
 [HourOutput] = iif(apf.WorkingTime = 0,0,floor(apf.StdOutput / apf.WorkingTime)),
-apf.Efficienycy,
+[Efficienycy]=ROUND( apf.Efficienycy ,2,1),
 apm.OriEff / 100.0,
 apm.SewLineEff / 100.0,
 [LearnCurveEff] = apf.LearnCurveEff / 100.0,
