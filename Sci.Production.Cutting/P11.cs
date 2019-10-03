@@ -414,9 +414,9 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     bool ispair = MyUtility.Convert.GetBool(e.FormattedValue);
                     dr["IsPair"] = ispair;
                     dr.EndEdit(); 
-                    if (patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'and IsPair<>'{ispair}' and iden = '{dr["iden"]}'").Count() > 0)
+                    if (patternTb.Select($@"PatternCode = '{dr["PatternCode"]}' and iden = '{dr["iden"]}'").Count() > 0)
                     {
-                        foreach (DataRow row in patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'and IsPair<>'{ispair}' and iden = '{dr["iden"]}'"))
+                        foreach (DataRow row in patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'and iden = '{dr["iden"]}'"))
                         {
                             row["IsPair"] = ispair;
                         }

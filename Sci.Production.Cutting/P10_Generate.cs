@@ -495,9 +495,9 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     bool ispair = MyUtility.Convert.GetBool(e.FormattedValue);
                     dr["IsPair"] = ispair;
                     dr.EndEdit();
-                    if (patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'and IsPair<>'{ispair}'").Count() > 0)
+                    if (patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'").Count() > 0)
                     {
-                        foreach (DataRow item in patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'and IsPair<>'{ispair}'"))
+                        foreach (DataRow item in patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'"))
                         {
                             item["IsPair"] = ispair;
                         }
@@ -941,6 +941,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
         {
             DataRow ndr = patternTb.NewRow();
             patternTb.Rows.Add();
+            grid_art.ValidateControl();
         }
 
         private void deleteRecordToolStripMenuItem_Click(object sender, EventArgs e)
