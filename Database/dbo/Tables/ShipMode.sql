@@ -8,6 +8,7 @@
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_ShipMode_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
+    [IncludeSeaShipping] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ShipMode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
