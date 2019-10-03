@@ -663,13 +663,16 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
 
         private void showQtymorezero()
         {
-            if (this.chkQty.Checked)
+            if (this.listControlBindingSource1 != null && this.listControlBindingSource1.DataSource != null)
             {
-                ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = "Qty > 0";
-            }
-            else
-            {
-                ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = "";
+                if (this.chkQty.Checked)
+                {
+                    ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = "Qty > 0";
+                }
+                else
+                {
+                    ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = "";
+                }
             }
         }
     }
