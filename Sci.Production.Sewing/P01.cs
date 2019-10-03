@@ -79,7 +79,7 @@ namespace Sci.Production.Sewing
 where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                 if (MyUtility.Check.Seek(strSqlcmd) &&
                     this.Perm.Recall &&
-                    string.Compare(this.CurrentMaintain["Status"].ToString(), "Send") == 0)
+                    string.Compare(this.CurrentMaintain["Status"].ToString(), "Sent") == 0)
                 {
                     this.toolbar.cmdRecall.Enabled = true;
                 }
@@ -136,7 +136,7 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                 this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate;
 
                 #region "btnRequestUnlock"
-                this.btnRequestUnlock.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send");
+                this.btnRequestUnlock.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Sent");
                 DataTable dt;
                 string sql = string.Format(
                     @"select count(*) cnt
@@ -157,7 +157,7 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                 this.oldManHour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]);
                 switch (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]))
                 {
-                    case "Send":
+                    case "Sent":
                         this.lbstatus.Text = "Daily Lock";
                         break;
                     case "Locked":
@@ -1035,7 +1035,7 @@ order by a.OrderId,os.Seq",
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["LockDate"]) && !MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send"))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["LockDate"]) && !MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Sent"))
             {
                 MyUtility.Msg.WarningBox("This record already locked, can't modify.");
                 return false;
@@ -1396,8 +1396,8 @@ where (OrderID <> '' or OrderID is not null)
             }
             #endregion
 
-            #region 若status = send 表身Qty要等於表頭的Qty 且 Manhours不變 [日結]
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send"))
+            #region 若status = Sent 表身Qty要等於表頭的Qty 且 Manhours不變 [日結]
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Sent"))
             {
                 decimal nQ = 0;
                 foreach (DataRow dr in this.DetailDatas)
@@ -2469,7 +2469,7 @@ declare @ukey bigint
 select top 1 @ukey=ukey,@reasonID=reasonID,@remark=remark from SewingOutput_DailyUnlock where SewingOutputID = '{this.CurrentMaintain["ID"]}' order by Ukey desc
 
 insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{this.CurrentMaintain["ID"]}','Status','Send','New',isnull(@reasonID,''),isnull(@remark,''),'{Sci.Env.User.UserID}',GETDATE())
+values ('{this.CurrentMaintain["ID"]}','Status','Sent','New',isnull(@reasonID,''),isnull(@remark,''),'{Sci.Env.User.UserID}',GETDATE())
 
 Update SewingOutput_DailyUnlock set 
 	UnLockDate = getdate()
@@ -2535,7 +2535,7 @@ where 1=1
 
             string sqlcmd = $@"
 UPDATE  s 
-SET s.LockDate = CONVERT(date, GETDATE()) , s.Status='Send'
+SET s.LockDate = CONVERT(date, GETDATE()) , s.Status='Sent'
 , s.editname='{Sci.Env.User.UserID}', s.editdate=getdate()
 FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
