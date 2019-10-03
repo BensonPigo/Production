@@ -53,20 +53,20 @@ namespace Sci.Production.Shipping
                 .Numeric("NewPrice", header: "New Price", width: Widths.AnsiChars(7), decimal_places: 5, iseditingreadonly: true)
                 ;
 
-            this.Helper.Controls.Grid.Generator(this.grid2)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk2)
-                .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("SuppAbb", header: "Supp Abb", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("Price", header: "Price", width: Widths.AnsiChars(7), decimal_places: 5, iseditingreadonly: true)
-                .Date("QuotDate", header: "QuotDate", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                ;
+            //this.Helper.Controls.Grid.Generator(this.grid2)
+            //    .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk2)
+            //    .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            //    .Text("SuppAbb", header: "Supp Abb", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            //    .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            //    .Numeric("Price", header: "Price", width: Widths.AnsiChars(7), decimal_places: 5, iseditingreadonly: true)
+            //    .Date("QuotDate", header: "QuotDate", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            //    ;
 
 
-            for (int i = 0; i < this.grid2.Columns.Count; i++)
-            {
-                this.grid2.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            }
+            //for (int i = 0; i < this.grid2.Columns.Count; i++)
+            //{
+            //    this.grid2.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            //}
 
             this.Query();
             this.listControlBindingSource1.Filter = "IsApproved='N'";
@@ -135,6 +135,8 @@ ORDER BY l.ID
             DataSet datas = null;
             this.master = null;
             this.detail = null;
+
+            // 將表頭跟表身一次撈完
             #region
             string sqlCmd = this.Sqlcmd() +
                 $@"
@@ -211,6 +213,7 @@ from (
 	) four
 ) tmp
 outer apply(select SuppAbb = abb from LocalSupp l where l.id=LocalSuppID)abb
+WHERE tmp.ChooseSupp = tmp.seq  --只搜尋出ChooseSupp 的那一筆就好
 order by Ukey, seq
 
 drop table #bas
@@ -227,79 +230,11 @@ drop table #bas
                 this.listControlBindingSource1.DataSource = null;
             }
 
-            if (this.listControlBindingSource2.DataSource != null)
-            {
-                this.listControlBindingSource2.DataSource = null;
-            }
-
-            //var query = from t in datas.Tables[0].AsEnumerable()
-            //            group t by new { t1 = MyUtility.Convert.GetString(t["id"]) } into m
-            //            select new
-            //            {
-            //                id = m.Key.t1,
-            //                ct = m.Count()
-            //            };
-
-            //List<string> msg = new List<string>();
-            //if (query.ToList().Count > 0)
-            //{
-            //    query.ToList().ForEach(q =>
-            //    {
-            //        if (q.ct > 1)
-            //        {
-            //            msg.Add(q.id);
-            //            foreach (var item in datas.Tables[0].Select($"id = '{q.id}'"))
-            //            {
-            //                item.Delete();
-            //            }
-
-            //            foreach (var item in datas.Tables[1].Select($"id = '{q.id}'"))
-            //            {
-            //                item.Delete();
-            //            }
-            //        }
-            //    });
-            //}
-
-            datas.Tables[0].AcceptChanges();
-            datas.Tables[1].AcceptChanges();
-
-            if (datas.Tables[0].Rows.Count == 0)
-            {
-                return;
-            }
-
             this.master = datas.Tables[0];
-            this.master.TableName = "Master";
-
             this.detail = datas.Tables[1];
-            this.detail.TableName = "Detail";
 
-            //DataRelation relation = new DataRelation(
-            //    "rel1",
-            //        new DataColumn[] { this.master.Columns["ID"] },
-            //        new DataColumn[] { this.detail.Columns["ID"] });
-
-            DataRelation relation = new DataRelation(
-                "rel1",
-                    new DataColumn[] { this.master.Columns["Ukey"] },
-                    new DataColumn[] { this.detail.Columns["Ukey"] });
-
-            datas.Relations.Add(relation);
-
-            this.listControlBindingSource1.DataSource = datas;
-            this.listControlBindingSource1.DataMember = "Master";
-            this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
-            this.listControlBindingSource2.DataMember = "rel1";
+            this.listControlBindingSource1.DataSource = datas.Tables[0];
             this.grid1.AutoResizeColumns();
-
-            this.grid2.AutoResizeColumns();
-            //            if (msg.Count > 0)
-            //            {
-            //                MyUtility.Msg.WarningBox($@"Code have more than one new quotation, please handle those individually. 
-            //Code{ string.Join(",", msg)}.");
-            //            }
-
 
             for (int i = 0; i < this.grid1.Rows.Count; i++)
             {
@@ -449,8 +384,8 @@ when matched then update set
             Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_B03.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];   // 取得工作表
             worksheet.Cells[3, 1] = MyUtility.GetValue.Lookup("select RgCode from System", "Production");
-            Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A7:A10").EntireRow; // 複製格式後插入
-            Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A11", Type.Missing).EntireRow;
+            Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A7:A7").EntireRow; // 複製格式後插入
+            Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A8", Type.Missing).EntireRow;
             for (int i = 0; i < selectdt.Rows.Count - 1; i++)
             {
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
@@ -458,26 +393,27 @@ when matched then update set
 
             for (int i = 0; i < selectdt.Rows.Count; i++)
             {
-                int irow = 7 + (i * 4);
+                int irow = 7 + i;
+
                 worksheet.Cells[irow, 1] = selectdt.Rows[i]["ID"];
                 worksheet.Cells[irow, 2] = selectdt.Rows[i]["Description"];
                 worksheet.Cells[irow, 3] = selectdt.Rows[i]["IsApproved"];
                 worksheet.Cells[irow, 4] = selectdt.Rows[i]["UnitID"];
                 worksheet.Cells[irow, 5] = selectdt.Rows[i]["AccountIDN"];
 
-                worksheet.Cells[irow, 11] = selectdt.Rows[i]["sLocalSuppID"];
-                worksheet.Cells[irow, 12] = selectdt.Rows[i]["currencyid"];
-                worksheet.Cells[irow, 13] = MyUtility.Convert.GetDecimal(selectdt.Rows[i]["price"]).ToString("#,#.####");
+                worksheet.Cells[irow, 10] = selectdt.Rows[i]["sLocalSuppID"];
+                worksheet.Cells[irow, 11] = selectdt.Rows[i]["currencyid"];
+                worksheet.Cells[irow, 12] = MyUtility.Convert.GetDecimal(selectdt.Rows[i]["price"]).ToString("#,#.####");
 
                 DataView dv = this.detail.Select($"ID = '{selectdt.Rows[i]["ID"]}' and Ukey = {selectdt.Rows[i]["ukey"]} and LocalSuppID <> '' and price <> 0").CopyToDataTable().DefaultView;
                 dv.Sort = "Selected desc, Price";
                 DataTable ddt = dv.ToTable();
                 for (int j = 0; j < ddt.Rows.Count; j++)
                 {
-                    worksheet.Cells[irow + j, 7] = MyUtility.Convert.GetString(ddt.Rows[j]["LocalSuppID"]) + "-" + MyUtility.Convert.GetString(ddt.Rows[j]["SuppAbb"]);
-                    worksheet.Cells[irow + j, 8] = ddt.Rows[j]["CurrencyID"];
-                    worksheet.Cells[irow + j, 9] = MyUtility.Convert.GetDecimal(ddt.Rows[j]["Price"]).ToString("#,#.####");
-                    worksheet.Cells[irow + j, 10] = MyUtility.Convert.GetDate(ddt.Rows[j]["QuotDate"]);
+                    worksheet.Cells[irow + j, 6] = MyUtility.Convert.GetString(ddt.Rows[j]["LocalSuppID"]) + "-" + MyUtility.Convert.GetString(ddt.Rows[j]["SuppAbb"]);
+                    worksheet.Cells[irow + j, 7] = ddt.Rows[j]["CurrencyID"];
+                    worksheet.Cells[irow + j, 8] = MyUtility.Convert.GetDecimal(ddt.Rows[j]["Price"]).ToString("#,#.####");
+                    worksheet.Cells[irow + j, 9] = MyUtility.Convert.GetDate(ddt.Rows[j]["QuotDate"]);
                 }
             }
 
