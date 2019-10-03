@@ -37,6 +37,7 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.chkQty = new Sci.Win.UI.CheckBox();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -56,7 +57,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.chkQty = new Sci.Win.UI.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -166,9 +166,23 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1008, 170);
+            this.groupBox1.Size = new System.Drawing.Size(1008, 143);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // chkQty
+            // 
+            this.chkQty.AutoSize = true;
+            this.chkQty.Checked = true;
+            this.chkQty.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkQty.Location = new System.Drawing.Point(462, 113);
+            this.chkQty.Name = "chkQty";
+            this.chkQty.Size = new System.Drawing.Size(136, 21);
+            this.chkQty.TabIndex = 23;
+            this.chkQty.Text = "Only Show Qty>0";
+            this.chkQty.UseVisualStyleBackColor = true;
+            this.chkQty.CheckedChanged += new System.EventHandler(this.ChkQty_CheckedChanged);
             // 
             // txtfactory1
             // 
@@ -205,16 +219,16 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(140, 140);
+            this.txtbrand.Location = new System.Drawing.Point(298, 110);
             this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(107, 23);
+            this.txtbrand.Size = new System.Drawing.Size(122, 23);
             this.txtbrand.TabIndex = 8;
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(9, 140);
+            this.labelBrand.Location = new System.Drawing.Point(209, 111);
             this.labelBrand.Name = "labelBrand";
-            this.labelBrand.Size = new System.Drawing.Size(128, 23);
+            this.labelBrand.Size = new System.Drawing.Size(81, 23);
             this.labelBrand.TabIndex = 19;
             this.labelBrand.Text = "Brand";
             // 
@@ -381,9 +395,9 @@
             // 
             this.panel1.Controls.Add(this.gridImport);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 170);
+            this.panel1.Location = new System.Drawing.Point(0, 143);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 330);
+            this.panel1.Size = new System.Drawing.Size(1008, 357);
             this.panel1.TabIndex = 20;
             // 
             // gridImport
@@ -407,23 +421,9 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(1008, 330);
+            this.gridImport.Size = new System.Drawing.Size(1008, 357);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
-            // 
-            // chkQty
-            // 
-            this.chkQty.AutoSize = true;
-            this.chkQty.Checked = true;
-            this.chkQty.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkQty.Location = new System.Drawing.Point(462, 113);
-            this.chkQty.Name = "chkQty";
-            this.chkQty.Size = new System.Drawing.Size(136, 21);
-            this.chkQty.TabIndex = 23;
-            this.chkQty.Text = "Only Show Qty>0";
-            this.chkQty.UseVisualStyleBackColor = true;
-            this.chkQty.CheckedChanged += new System.EventHandler(this.ChkQty_CheckedChanged);
             // 
             // P30_Import
             // 

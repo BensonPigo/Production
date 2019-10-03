@@ -44,7 +44,8 @@ namespace Sci.Production.Subcon
             string sqlcmd1 = $@"
 select pd.ID,pd.OrderID,pd.OrderShipmodeSeq,pd.RefNo,Qty=sum(pd.CTNQty)
 from PackingList_Detail pd WITH (NOLOCK)
-where id = '{this.DataRow["requestid"]}' -- requestid = 前一層PackingList.ID
+where 1=1
+and id = '{this.DataRow["requestid"]}' -- requestid = 前一層PackingList.ID
 and pd.OrderId = '{this.DataRow["OrderId"]}'
 and pd.Refno = '{this.DataRow["Refno"]}'
 group by pd.ID,pd.OrderID,pd.OrderShipmodeSeq,pd.RefNo
