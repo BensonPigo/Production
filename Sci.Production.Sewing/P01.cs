@@ -31,7 +31,6 @@ namespace Sci.Production.Sewing
         private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings SewingReasonID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private DateTime systemLockDate;
         private decimal? oldttlqaqty;
         private decimal? oldManHour;
         private string loginFactory;
@@ -47,7 +46,6 @@ namespace Sci.Production.Sewing
             this.InitializeComponent();
             this.DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O'", Sci.Env.User.Factory);
             MyUtility.Tool.SetupCombox(this.comboTeam, 1, 1, "A,B");
-            this.systemLockDate = Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) "));
             this.DoSubForm = new P01_QAOutput();
 
             // 當Grid目前在最後一筆的最後一欄時，按Enter要自動新增一筆Record
@@ -133,7 +131,8 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
             base.OnDetailEntered();
             if (this.CurrentMaintain != null)
             {
-                this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate;
+                DateTime? sewingMonthlyLockDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($"select LockDate from SewingMonthlyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'"));
+                this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= sewingMonthlyLockDate;
 
                 #region "btnRequestUnlock"
                 this.btnRequestUnlock.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Sent");
@@ -1050,7 +1049,8 @@ order by a.OrderId,os.Seq",
             base.ClickEditAfter();
             this.dateDate.ReadOnly = true;
             this.txtsewinglineLine.ReadOnly = true;
-            if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
+            DateTime? sewingMonthlyLockDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($"select LockDate from SewingMonthlyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'"));
+            if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= sewingMonthlyLockDate)
             {
                 this.txtdropdownlistShift.ReadOnly = true;
                 this.comboTeam.ReadOnly = true;
@@ -1073,7 +1073,8 @@ order by a.OrderId,os.Seq",
                 return false;
             }
 
-            if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
+            DateTime? sewingMonthlyLockDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($"select LockDate from SewingMonthlyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'"));
+            if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= sewingMonthlyLockDate)
             {
                 MyUtility.Msg.WarningBox("The date earlier than Sewing Lock Date, can't delete.");
                 return false;
@@ -1217,10 +1218,11 @@ order by a.OrderId,os.Seq",
             #region 新增時檢查Date不可早於Sewing Lock Date
             if (this.IsDetailInserting)
             {
-                if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
+                DateTime? sewingMonthlyLockDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($"select LockDate from SewingMonthlyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'"));
+                if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= sewingMonthlyLockDate)
                 {
                     this.dateDate.Focus();
-                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
+                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(sewingMonthlyLockDate).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                     return false;
                 }
             }
@@ -1372,11 +1374,9 @@ where (OrderID <> '' or OrderID is not null)
             }
             #endregion
 
-            #region 若sewingoutput.outputDate <= system.sewlock 表身Qty要等於表頭的Qty [月結]
-            DataTable sys;
-            DBProxy.Current.Select(null, "select sewlock from system WITH (NOLOCK) ", out sys);
+            #region 若sewingoutput.outputDate <= SewingMonthlyLock.LockDate 表身Qty要等於表頭的Qty [月結]
             DateTime? sod = MyUtility.Convert.GetDate(this.CurrentMaintain["outputDate"]);
-            DateTime? sl = MyUtility.Convert.GetDate(sys.Rows[0][0]);
+            DateTime? sl = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($"select LockDate from SewingMonthlyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'"));
             if (sod <= sl)
             {
                 decimal nQ = 0;
@@ -2015,11 +2015,12 @@ and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
                     return;
                 }
 
-                if (this.dateDate.Value <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
+                DateTime? sewingMonthlyLockDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($"select LockDate from SewingMonthlyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'"));
+                if (this.dateDate.Value <= sewingMonthlyLockDate)
                 {
                     this.dateDate.Value = null;
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
+                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(sewingMonthlyLockDate).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                     return;
                 }
             }
