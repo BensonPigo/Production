@@ -159,14 +159,13 @@ Select
     ),1,1,'')
 	,WorkOderLayer = a.Layer
 	,AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
-	,CuttingLayer = a.Layer-isnull(acc.AccuCuttingLayer,0)
+	,CuttingLayer = a.Layer-isnull(acc.AccuCuttingLayer,0) 
 	,LackingLayers = 0
 	,a.ConsPC
 	,SRQ.SizeRatioQty
 	,a.Layer
-	,acc.AccuCuttingLayer
 from WorkOrder a WITH (NOLOCK)
-outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey)acc
+outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey and id <> '{this.CurrentMaintain["ID"]}')acc
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = a.Ukey)SRQ
 where a.CutRef = '{e.FormattedValue}'
 and a.CutRef != ''
@@ -207,7 +206,16 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 {
                     DataTable dtCamWork = new DataTable();
                     DataRow seldr;
-                    var rows = dt.AsEnumerable().Where(x => MyUtility.Convert.GetInt(x["WorkOderLayer"]) > MyUtility.Convert.GetInt(x["AccuCuttingLayer"]));
+
+                    var nowOutputRow = this.DetailDatas.Where(x => x["CutRef"].EqualString(e.FormattedValue)).GroupBy(x => x["CutRef"]).Select(x => new { OutputLayer = x.Sum(y => MyUtility.Convert.GetInt(y["Layer"])) });
+                    var nowOutputRow_Layer = 0;
+                    foreach (var nowOutputRowVal in nowOutputRow)
+                    {
+                        nowOutputRow_Layer += nowOutputRowVal.OutputLayer;
+                    }
+                    var delRow = this.GetDetailGridDatasByDeleted().FirstOrDefault(x => x["CutRef", DataRowVersion.Original].EqualString(e.FormattedValue));
+                    int delRow_Layer = delRow == null ? 0 : MyUtility.Convert.GetInt(delRow["Layer", DataRowVersion.Original]);
+                    var rows = dt.AsEnumerable().Where(x => MyUtility.Convert.GetInt(x["WorkOderLayer"]) > MyUtility.Convert.GetInt(x["AccuCuttingLayer"]) + nowOutputRow_Layer - delRow_Layer);
                     if (rows.Any())
                     {
                         dtCamWork = rows.CopyToDataTable();
@@ -273,8 +281,9 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     dr["MarkerName"] = seldr["MarkerName"];
                     dr["WorkOderLayer"] = seldr["WorkOderLayer"];
                     dr["AccuCuttingLayer"] = seldr["AccuCuttingLayer"];
-                    dr["Layer"] = seldr["CuttingLayer"];
-                    dr["LackingLayers"] = seldr["LackingLayers"];
+                    dr["Layer"] = MyUtility.Convert.GetInt(seldr["CuttingLayer"]) - nowOutputRow_Layer;
+                    //dr["LackingLayers"] = seldr["LackingLayers"];
+                    dr["LackingLayers"] = MyUtility.Convert.GetInt(seldr["WorkOderLayer"]) - MyUtility.Convert.GetInt(seldr["AccuCuttingLayer"]) - (MyUtility.Convert.GetInt(dr["Layer"]) + nowOutputRow_Layer);
                     dr["Cons"] = seldr["Cons"];
                     dr["FabricPanelCode"] = seldr["FabricPanelCode"];
                     dr["cutno"] = seldr["cutno"];
