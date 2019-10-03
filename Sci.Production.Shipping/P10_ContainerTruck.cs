@@ -64,8 +64,9 @@ namespace Sci.Production.Shipping
 select [GB#]=g.ID,LoadingType=g.CYCFS,b.BrandGroup,g.Forwarder,g.CutOffDate
 from GMTBooking g WITH(NOLOCK)
 inner join Brand b with(nolock) on b.ID = g.BrandID
+inner join ShipMode s with(nolock) on s.id = g.ShipModeID 
 where g.shipPlanID = '{this.ShipPlanID}'
-and g.ShipModeID = 'Sea'
+and s.IncludeSeaShipping = 1
 and g.CYCFS = 'CY-CY'";
                     DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
@@ -92,8 +93,9 @@ and g.CYCFS = 'CY-CY'";
 select g.id,g.CYCFS ,b.BrandGroup,g.Forwarder,g.CutOffDate
 from GMTBooking g WITH (NOLOCK) 
 inner join Brand b with(nolock) on b.ID = g.BrandID
+inner join ShipMode s with(nolock) on s.id = g.ShipModeID 
 where g.shipPlanID = '{this.ShipPlanID}' and g.id = '{e.FormattedValue}'
-and g.ShipModeID = 'Sea'
+and s.IncludeSeaShipping = 1
 and g.CYCFS = 'CY-CY'
 ";
                 DataRow dr;
