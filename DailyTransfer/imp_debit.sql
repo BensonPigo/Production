@@ -39,10 +39,6 @@ insert @Sayfty select id from Production.dbo.Factory
 			t.VoucherFactory=s.VoucherFactory ,
 			t.VoucherSettle=s.VoucherSettle ,
 			t.IsSubcon=s.IsSubcon ,
-			t.LCLName=s.LCLName ,
-			t.LCLCurrency=s.LCLCurrency ,
-			t.LCLAmount=s.LCLAmount ,
-			t.LCLRate=s.LCLRate ,
 			t.Attn=s.Attn ,
 			t.CC=s.CC ,
 			t.Subject=s.Subject ,
@@ -61,8 +57,6 @@ insert @Sayfty select id from Production.dbo.Factory
 			t.AddName=s.AddName ,
 			t.issuedate=s.cdate ,
 			t.AddDate=s.AddDate ,
-			t.EditName=s.EditName ,
-			t.EditDate=s.EditDate ,
 			t.SysDate=s.SysDate ,
 			t.MDivisionID=(SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty WITH (NOLOCK) where id=s.BrandID)
 	when not matched by target then 	
