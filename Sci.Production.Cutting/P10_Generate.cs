@@ -14,6 +14,7 @@ using Ict;
 using Sci.Win.Tools;
 using Sci.Production.PublicPrg;
 using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace Sci.Production.Cutting
 {
@@ -350,6 +351,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             DataGridViewGeneratorTextColumnSettings patterncell2 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings partsCell1 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings partsCell2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings isPair = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             #region 左上grid
             NoCell.CellValidating += (s, e) =>
@@ -383,6 +385,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     sele = new SelectItem(garmentarRC, "PatternCode,PatternDesc,Annotation", "10,20,20", dr["PatternCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
+                    if (patternTb.Select($@"PatternCode = '{sele.GetSelectedString()}'").Count() > 0)
+                    {
+                        dr["isPair"] = patternTb.Select($@"PatternCode = '{sele.GetSelectedString()}'")[0]["isPair"];
+                    }
                     e.EditingControl.Text = sele.GetSelectedString();
                     dr["PatternDesc"] = (sele.GetSelecteds()[0]["PatternDesc"]).ToString();
                     dr["PatternCode"] = (sele.GetSelecteds()[0]["PatternCode"]).ToString();
@@ -408,6 +414,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 string patcode = e.FormattedValue.ToString();
                 string oldvalue = dr["PatternCode"].ToString();
                 if (oldvalue == patcode) return;
+                if (patternTb.Select($@"PatternCode = '{patcode}'").Count() > 0)
+                {
+                    dr["isPair"] = patternTb.Select($@"PatternCode = '{patcode}'")[0]["isPair"];
+                }
 
                 DataRow[] gemdr = garmentarRC.Select(string.Format("PatternCode ='{0}'", patcode), "");
                 if (gemdr.Length > 0)
@@ -436,6 +446,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     dr["Parts"] = 0;
                 }
                 dr.EndEdit();
+
             };
             subcell.EditingMouseDown += (s, e) =>
             {
@@ -475,6 +486,23 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 dr.EndEdit();
                 calAllPart();
                 caltotalpart();
+            };
+            isPair.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid_art.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetString(dr["PatternCode"]).ToUpper() != "ALLPARTS")
+                {
+                    bool ispair = MyUtility.Convert.GetBool(e.FormattedValue);
+                    dr["IsPair"] = ispair;
+                    dr.EndEdit();
+                    if (patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'").Count() > 0)
+                    {
+                        foreach (DataRow item in patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'"))
+                        {
+                            item["IsPair"] = ispair;
+                        }
+                    }
+                }
             };
             #endregion
 
@@ -563,7 +591,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1)
-            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
+            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair);
             grid_art.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["art"].DefaultCellStyle.BackColor = Color.Pink;
@@ -849,6 +877,12 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                         art = Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), artTb, out lallpart);
                         #endregion
                     }
+
+                    bool isPair = MyUtility.Convert.GetBool(chdr["isPair"]);
+                    if (patternTb.Select($@"PatternCode = '{chdr["PatternCode"]}'").Count() > 0)
+                    {
+                        isPair = MyUtility.Convert.GetBool(patternTb.Select($@"PatternCode = '{chdr["PatternCode"]}'")[0]["isPair"]);
+                    }
                     //新增PatternTb
                     DataRow ndr2 = patternTb.NewRow();
                     ndr2["PatternCode"] = chdr["PatternCode"];
@@ -856,7 +890,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     ndr2["Location"] = chdr["Location"];
                     ndr2["Parts"] = chdr["Parts"]; ;
                     ndr2["art"] = "EMB";
-                    ndr2["isPair"] = chdr["isPair"]; ;
+                    ndr2["isPair"] = isPair; 
+
                     patternTb.Rows.Add(ndr2);
                     chdr.Delete(); //刪除
                 }
@@ -906,6 +941,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
         {
             DataRow ndr = patternTb.NewRow();
             patternTb.Rows.Add();
+            grid_art.ValidateControl();
         }
 
         private void deleteRecordToolStripMenuItem_Click(object sender, EventArgs e)
@@ -958,6 +994,19 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             if (isEmptyCutPart)
             {
                 MyUtility.Msg.WarningBox("<CutPart> can not be empty!");
+                return;
+            }
+            #endregion
+            #region 檢查 如果IsPair =✔, 加總相同的Cut Part的Parts, 必需>0且可以被2整除
+            var SamePairCt = this.patternTb.AsEnumerable().Where(w=> MyUtility.Convert.GetBool(w["isPair"]))
+                .GroupBy(g => new { CutPart = g["PatternCode"] })
+                .Select(s => new { s.Key.CutPart, Parts = s.Sum(i => MyUtility.Convert.GetDecimal(i["Parts"])) }).ToList();
+            if (SamePairCt.Where(w => w.Parts % 2 !=0).Any())
+            {
+                var mp = SamePairCt.Where(w => w.Parts % 2 != 0).ToList();
+                string msg = @"The following bundle is pair, but parts is not pair, please check Cut Part parts";
+                DataTable dt = ToDataTable(mp);
+                MyUtility.Msg.ShowMsgGrid(dt, msg: msg,caption: "Warning");
                 return;
             }
             #endregion
@@ -1259,6 +1308,64 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
         private void P10_Generate_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.listControlBindingSource1.DataSource = null;
+        }
+
+
+
+        private DataTable ToDataTable<T>(List<T> items)
+        {
+            var tb = new DataTable(typeof(T).Name);
+
+            PropertyInfo[] props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (PropertyInfo prop in props)
+            {
+                Type t = GetCoreType(prop.PropertyType);
+                tb.Columns.Add(prop.Name, t);
+            }
+
+            foreach (T item in items)
+            {
+                var values = new object[props.Length];
+
+                for (int i = 0; i < props.Length; i++)
+                {
+                    values[i] = props[i].GetValue(item, null);
+                }
+
+                tb.Rows.Add(values);
+            }
+
+            return tb;
+        }
+        /// <summary>
+        /// Determine of specified type is nullable
+        /// </summary>
+        public static bool IsNullable(Type t)
+        {
+            return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
+        }
+
+        /// <summary>
+        /// Return underlying type if type is Nullable otherwise return the type
+        /// </summary>
+        public static Type GetCoreType(Type t)
+        {
+            if (t != null && IsNullable(t))
+            {
+                if (!t.IsValueType)
+                {
+                    return t;
+                }
+                else
+                {
+                    return Nullable.GetUnderlyingType(t);
+                }
+            }
+            else
+            {
+                return t;
+            }
         }
     }
 }
