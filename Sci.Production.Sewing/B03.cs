@@ -168,10 +168,17 @@ and a.ProductionDate  = '{1}'",
                 .Text("Team", header: "Team", width: Widths.AnsiChars(1), settings: team, iseditingreadonly: true);
         }
 
+        protected override void OnDetailGridAppendClick()
+        {
+            base.OnDetailGridAppendClick();
+            this.CurrentDetailData["Team"] = "A";
+        }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentDetailData["Team"] = "A";
         }
 
         private void BtnCopyDate_Click(object sender, EventArgs e)
