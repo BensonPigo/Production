@@ -168,6 +168,12 @@ and a.ProductionDate  = '{1}'",
                 .Text("Team", header: "Team", width: Widths.AnsiChars(1), settings: team, iseditingreadonly: true);
         }
 
+        protected override void OnDetailGridInsertClick()
+        {
+            base.OnDetailGridInsertClick();
+            this.CurrentDetailData["Team"] = "A";
+        }
+
         protected override void OnDetailGridAppendClick()
         {
             base.OnDetailGridAppendClick();
