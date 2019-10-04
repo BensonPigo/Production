@@ -405,7 +405,7 @@ when matched then update set
                 worksheet.Cells[irow, 11] = selectdt.Rows[i]["currencyid"];
                 worksheet.Cells[irow, 12] = MyUtility.Convert.GetDecimal(selectdt.Rows[i]["price"]).ToString("#,#.####");
 
-                DataView dv = this.detail.Select($"ID = '{selectdt.Rows[i]["ID"]}' and Ukey = {selectdt.Rows[i]["ukey"]} and LocalSuppID <> '' and price <> 0").CopyToDataTable().DefaultView;
+                DataView dv = this.detail.Select($"ID = '{selectdt.Rows[i]["ID"]}' and Ukey = {selectdt.Rows[i]["ukey"]}").CopyToDataTable().DefaultView;
                 dv.Sort = "Selected desc, Price";
                 DataTable ddt = dv.ToTable();
                 for (int j = 0; j < ddt.Rows.Count; j++)
