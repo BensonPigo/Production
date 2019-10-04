@@ -40,15 +40,30 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(425, 12);
+            this.print.Location = new System.Drawing.Point(463, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(425, 48);
+            this.toexcel.Location = new System.Drawing.Point(463, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(425, 84);
+            this.close.Location = new System.Drawing.Point(463, 84);
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(417, 120);
+            this.buttonCustomized.Visible = true;
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(443, 156);
+            this.checkUseCustomized.Visible = true;
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(443, 183);
+            this.txtVersion.Visible = true;
             // 
             // txtbrand
             // 
@@ -149,7 +164,7 @@
             // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(517, 179);
+            this.ClientSize = new System.Drawing.Size(555, 317);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.labelSCIDelivery);
             this.Controls.Add(this.txtbrand);
@@ -158,9 +173,14 @@
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelBuyerDelivery);
+            this.IsSupportCustomized = true;
             this.IsSupportToPrint = false;
             this.Name = "R01";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R01. Carton Status Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
