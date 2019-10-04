@@ -288,7 +288,7 @@
             // 
             this.browse.Controls.Add(this.cbDuring);
             this.browse.Controls.Add(this.lbDuring);
-            this.browse.Size = new System.Drawing.Size(1089, 718);
+            this.browse.Size = new System.Drawing.Size(1107, 718);
             this.browse.Controls.SetChildIndex(this.lbDuring, 0);
             this.browse.Controls.SetChildIndex(this.cbDuring, 0);
             // 

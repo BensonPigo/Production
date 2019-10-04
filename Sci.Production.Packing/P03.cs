@@ -1993,12 +1993,23 @@ order by PD.seq
                         MyUtility.Msg.WarningBox("excel file format error !!");
                         return;
                     }
+
+                    if (!MyUtility.Check.Empty(item["Cust CTN#"]))
+                    {
+                        if (item["Cust CTN#"].ToString().Length > 30)
+                        {
+                            MyUtility.Msg.WarningBox("Cust CTN# length can not be more than 30 !!");
+                            return;
+                        }
+                    }
                 }
 
                 string updateSqlCmd = $@"
 update b set b.CustCTN = a.[Cust CTN#]
 from #tmp a
 inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
+
+update PackingList set  EditName = '{Sci.Env.User.UserID}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"].ToString()}'
 ";
                 DataTable udt;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(dtexcel, string.Empty, updateSqlCmd, out udt);
@@ -2046,12 +2057,23 @@ inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
                 for (int i = 2; i <= lngRowCount; i++)
                 {
                     DataRow drRow = dtExcel.NewRow();
+                    bool isNUll = false;
                     for (int j = 1; j <= lngColumnCount; j++)
                     {
-                        drRow[j - 1] = MyUtility.Check.Empty(objValue[i, j]) ? string.Empty : objValue[i, j].ToString();
+                        if (!MyUtility.Check.Empty(objValue[i, j]))
+                        {
+                            drRow[j - 1] = MyUtility.Check.Empty(objValue[i, j]) ? string.Empty : objValue[i, j].ToString();
+                        }
+                        else
+                        {
+                            isNUll = true;
+                        }
                     }
 
-                    dtExcel.Rows.Add(drRow);
+                    if (!isNUll)
+                    {
+                        dtExcel.Rows.Add(drRow);
+                    }
                 }
 
                 xlsBook.Close();
