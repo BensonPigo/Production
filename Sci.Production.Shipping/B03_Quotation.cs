@@ -198,7 +198,7 @@ namespace Sci.Production.Shipping
 
             if (MyUtility.Check.Empty(suppId) || MyUtility.Check.Empty(currencyId) || MyUtility.Check.Empty(price) || MyUtility.Check.Empty(QuotDate))
             {
-                MyUtility.Msg.WarningBox("Choosed Set of data can't be empty!!");
+                MyUtility.Msg.WarningBox("Data can't be empty!!");
                 return false;
             }
 
