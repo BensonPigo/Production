@@ -62,6 +62,7 @@ namespace Sci.Production.Centralized
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
             strSevers.Remove("PMSDB_TSR");
+            strSevers.Remove("PMSDB_NAI");
             DataTable ftyServerDatas = new DataTable();
             ftyServerDatas.Columns.Add("Factory", typeof(string));
             ftyServerDatas.Columns.Add("nowConnection", typeof(string));
@@ -202,6 +203,11 @@ namespace Sci.Production.Centralized
                 this.lbDate.Text = "Unlock Date";
                 this.Type = "Unlock";
             }
+        }
+
+        private void TxtCentralizedmulitM1_TextChanged(object sender, EventArgs e)
+        {
+            this.txtCentralizedmulitFactory1.Text = string.Empty;
         }
     }
 }

@@ -139,6 +139,7 @@
             this.txtCentralizedmulitM1.ReadOnly = true;
             this.txtCentralizedmulitM1.Size = new System.Drawing.Size(433, 23);
             this.txtCentralizedmulitM1.TabIndex = 13;
+            this.txtCentralizedmulitM1.TextChanged += new System.EventHandler(this.TxtCentralizedmulitM1_TextChanged);
             // 
             // txtCentralizedmulitFactory1
             // 
