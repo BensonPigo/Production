@@ -635,7 +635,8 @@ select
 	f1.BrandId,
 	f1.HSCode,
 	UnitID=f1.CustomsUnit,
-	qty=sum(ad.QtyBefore-ad.QtyAfter)
+	qty=sum(ad.QtyBefore-ad.QtyAfter),
+	f.UsageUnit
 into #tmp
 from Adjust a with(nolock)
 inner join Adjust_Detail ad with(nolock) on ad.ID=a.ID
@@ -650,9 +651,9 @@ outer apply(
 	order by f.NLCodeEditDate desc
 )f1
 where a.Type = 'R' and a.id = '{this.txtWKNo.Text}'
-group by psd.Refno,f1.type,f1.NLCode,f1.BrandId,f1.HSCode,f1.CustomsUnit
+group by psd.Refno,f1.type,f1.NLCode,f1.BrandId,f1.HSCode,f1.CustomsUnit,f1.UsageUnit
 
-select Refno,FabricType,NLCode,BrandId,HSCode,UnitID,qty = case when FabricType = 'A' then A.Qty when FabricType = 'F' then F.Qty end
+select Refno,FabricType,NLCode,BrandId,HSCode,UnitID,qty = case when FabricType = 'A' then A.Qty when FabricType = 'F' then F.Qty end, t.UsageUnit
 from #tmp t
 outer apply(
 	select top 1
@@ -702,7 +703,7 @@ left join orders o with(nolock) on o.id = ald.POID
 where al.Type = 'R' and al.id = '{this.txtWKNo.Text}'
 group by ald.Refno,li.NLCode,o.BrandID,li.HSCode,li.CustomsUnit
 
-select Refno,FabricType='L',NLCode,BrandId,HSCode,UnitID,L.Qty
+select Refno,FabricType='L',NLCode,BrandId,HSCode,UnitID,L.Qty,UsageUnit=''
 from #tmp t
 outer apply(
 	select  
@@ -741,7 +742,8 @@ select
 	Qty = case when fed.FabricType = 'A' then a.Qty
 			            when fed.FabricType = 'F' then FF.Qty
 			            when fed.FabricType = '' then L.Qty
-					end
+					end,
+	f1.UsageUnit
 into #tmp
 from FtyExport fe WITH (NOLOCK)
 inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id	
@@ -787,9 +789,9 @@ outer apply(
 )L
 where fe.Type = 3 and fe.id='{this.txtWKNo.Text}'
 
-select Refno,FabricType,NLCode,BrandId,HSCode,UnitID, qty = sum(qty)
+select Refno,FabricType,NLCode,BrandId,HSCode,UnitID,UsageUnit, qty = sum(qty)
 from #tmp
-group by Refno,FabricType,NLCode,BrandId,HSCode,UnitID
+group by Refno,FabricType,NLCode,BrandId,HSCode,UnitID,UsageUnit
 
 drop table #tmp
 ";
