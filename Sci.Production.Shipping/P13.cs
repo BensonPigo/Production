@@ -94,7 +94,7 @@ select
 	FOCPulloutQty = isnull(ShipQty_ByType.TotalFocShipQty,0),
 	FinishedFOCStockinQty =isnull(oxx.FOCQty,0),
     [StockInDate] = convert(date, oxx.addDate),
-	CurrentFOCStock= dbo.GetFocByOrder(o.ID)
+	CurrentFOCStock= dbo.GetFocStockByOrder(o.ID)
 from orders o with(nolock)
 outer apply(
 	select sum(TotalNotFocShipQty) as TotalNotFocShipQty , sum(TotalFocShipQty) as TotalFocShipQty 

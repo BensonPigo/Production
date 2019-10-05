@@ -138,7 +138,7 @@ OUTER APPLY(
 )PackingList_Chk_IsAllPullout
 
 OUTER APPLY(
-	SELECT Value=dbo.GetFocByOrder(o.ID)
+	SELECT Value=dbo.GetFocStockByOrder(o.ID)
 )FocStockQty
 
 where o.Junk = 0
