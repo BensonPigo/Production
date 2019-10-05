@@ -37,8 +37,8 @@
             this.dateLock = new Sci.Win.UI.DateBox();
             this.btnlock = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
-            this.txtCentralizedmulitFactory1 = new Sci.Production.Class.txtCentralizedmulitFactory();
             this.txtCentralizedmulitM1 = new Sci.Production.Class.txtCentralizedmulitM();
+            this.txtCentralizedmulitFactory1 = new Sci.Production.Class.txtCentralizedmulitFactory();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -128,18 +128,6 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
-            // txtCentralizedmulitFactory1
-            // 
-            this.txtCentralizedmulitFactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtCentralizedmulitFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtCentralizedmulitFactory1.IsSupportEditMode = false;
-            this.txtCentralizedmulitFactory1.Location = new System.Drawing.Point(122, 72);
-            this.txtCentralizedmulitFactory1.Name = "txtCentralizedmulitFactory1";
-            this.txtCentralizedmulitFactory1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtCentralizedmulitFactory1.ReadOnly = true;
-            this.txtCentralizedmulitFactory1.Size = new System.Drawing.Size(571, 23);
-            this.txtCentralizedmulitFactory1.TabIndex = 12;
-            // 
             // txtCentralizedmulitM1
             // 
             this.txtCentralizedmulitM1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -151,6 +139,19 @@
             this.txtCentralizedmulitM1.ReadOnly = true;
             this.txtCentralizedmulitM1.Size = new System.Drawing.Size(433, 23);
             this.txtCentralizedmulitM1.TabIndex = 13;
+            // 
+            // txtCentralizedmulitFactory1
+            // 
+            this.txtCentralizedmulitFactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCentralizedmulitFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCentralizedmulitFactory1.IsSupportEditMode = false;
+            this.txtCentralizedmulitFactory1.Location = new System.Drawing.Point(122, 72);
+            this.txtCentralizedmulitFactory1.MObjectName = this.txtCentralizedmulitM1;
+            this.txtCentralizedmulitFactory1.Name = "txtCentralizedmulitFactory1";
+            this.txtCentralizedmulitFactory1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtCentralizedmulitFactory1.ReadOnly = true;
+            this.txtCentralizedmulitFactory1.Size = new System.Drawing.Size(571, 23);
+            this.txtCentralizedmulitFactory1.TabIndex = 12;
             // 
             // Sewing_P11
             // 

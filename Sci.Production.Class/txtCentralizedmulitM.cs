@@ -33,11 +33,12 @@ namespace Sci.Production.Class
             DataTable Data;
 
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
+            List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
+            strSevers.Remove("PMSDB_TSR");
             List<string> connectionString = new List<string>();
             foreach (string ss in strSevers)
             {
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
                 connectionString.Add(connections);
             }
 

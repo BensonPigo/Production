@@ -24,6 +24,14 @@ namespace Sci.Production.Class
             this.ReadOnly = true;
         }
 
+        private Control M;
+        [Category("Custom Properties")]
+        public Control MObjectName
+        {
+            set { this.M = value; }
+            get { return this.M; }
+        }
+
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -33,11 +41,12 @@ namespace Sci.Production.Class
             DataTable Data;
 
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
+            List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split( ',' ).ToList();
+            strSevers.Remove("PMSDB_TSR");
             List<string> connectionString = new List<string>();
             foreach (string ss in strSevers)
             {
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
                 connectionString.Add(connections);
             }
 
@@ -46,7 +55,12 @@ namespace Sci.Production.Class
                 MyUtility.Msg.WarningBox("no connection loaded.");
                 return;
             }
-
+            string whereM = string.Empty;
+            if (this.M != null && !MyUtility.Check.Empty(this.M.Text))
+            {
+                List<string> mList = this.M.Text.Split(',').ToList();
+                whereM = " where MDivisionID in ('" + string.Join("','", mList) + "')";
+            }
             // 將所有工廠的資料合併起來
             for (int i = 0; i < connectionString.Count; i++)
             {
@@ -56,7 +70,7 @@ namespace Sci.Production.Class
                 using (con = new SqlConnection(conString))
                 {
                     con.Open();
-                    string sqlcmd = $@"select distinct Factory=FTYGroup from Factory WITH (NOLOCK) order by Factory";
+                    string sqlcmd = $@"select distinct Factory=FTYGroup from Factory WITH (NOLOCK) {whereM} order by Factory";
                     result = DBProxy.Current.SelectByConn(con, sqlcmd, out Data);
                     if (!result)
                     {
