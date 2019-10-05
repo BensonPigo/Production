@@ -41,6 +41,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(792, 388);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.label4);
@@ -48,6 +52,12 @@
             this.detailcont.Controls.Add(this.displayID);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(792, 350);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 350);
+            this.detailbtm.Size = new System.Drawing.Size(792, 38);
             // 
             // browse
             // 
@@ -65,7 +75,7 @@
             this.txtReason.Location = new System.Drawing.Point(121, 75);
             this.txtReason.Name = "txtReason";
             this.txtReason.Size = new System.Drawing.Size(452, 23);
-            this.txtReason.TabIndex = 12;
+            this.txtReason.TabIndex = 2;
             // 
             // displayID
             // 
@@ -75,7 +85,7 @@
             this.displayID.Location = new System.Drawing.Point(121, 27);
             this.displayID.Name = "displayID";
             this.displayID.Size = new System.Drawing.Size(100, 23);
-            this.displayID.TabIndex = 10;
+            this.displayID.TabIndex = 1;
             // 
             // label3
             // 

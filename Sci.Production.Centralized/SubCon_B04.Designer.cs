@@ -75,7 +75,7 @@
             this.txtReason.Location = new System.Drawing.Point(121, 75);
             this.txtReason.Name = "txtReason";
             this.txtReason.Size = new System.Drawing.Size(452, 23);
-            this.txtReason.TabIndex = 12;
+            this.txtReason.TabIndex = 2;
             // 
             // displayID
             // 
@@ -85,7 +85,7 @@
             this.displayID.Location = new System.Drawing.Point(121, 27);
             this.displayID.Name = "displayID";
             this.displayID.Size = new System.Drawing.Size(100, 23);
-            this.displayID.TabIndex = 10;
+            this.displayID.TabIndex = 1;
             // 
             // label3
             // 
