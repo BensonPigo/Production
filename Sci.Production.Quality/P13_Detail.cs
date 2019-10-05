@@ -581,7 +581,9 @@ where ReportNo = '{this.reportNo}';";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + file + ".xltx");
             objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-
+#if DEBUG
+            objApp.Visible = true;
+#endif
             //設定表頭資料
             worksheet.Cells[4,2] = this.displayReportNo.Text;
             worksheet.Cells[5,2] = this.masterDr["T1Subcon"].ToString() + "-" + MyUtility.GetValue.Lookup("Abb", this.masterDr["T1Subcon"].ToString(), "LocalSupp", "ID");
@@ -655,9 +657,12 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             foreach (DataRow dr in gridData.Rows)
             {
                 string remark= dr["Remark"].ToString(); 
+                string fabric = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + " - " + dr["FabricColorName"].ToString();
+                string Artwork = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + " - " + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + " - " + dr["ArtworkColorName"].ToString();
+
                 worksheet.Cells[start_row, 1] = styleNo;
-                worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + " - " + dr["FabricColorName"].ToString();
-                worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + " - " + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + " - " + dr["ArtworkColorName"].ToString();
+                worksheet.Cells[start_row, 2] = fabric;
+                worksheet.Cells[start_row, 3] = Artwork;
                 worksheet.Cells[start_row, 4] = dr["Result"].ToString();
                 worksheet.Cells[start_row, 5] = remark;
                 worksheet.Rows[start_row].Font.Bold = false;
@@ -665,12 +670,15 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
                 worksheet.Rows[start_row].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
                 //合併儲存格無法AutoFit()因此要自己算高度
-                if ((remark.Length / 20) > 1)
+                if (fabric.Length > remark.Length || Artwork.Length > remark.Length)
                 {
-                    worksheet.Range[$"E{start_row}", $"E{start_row}"].RowHeight = remark.Length / 20 * 16.5;
+                    worksheet.Rows[start_row].AutoFit();
                 }
                 else
-                    worksheet.Rows[start_row].AutoFit();
+                {
+                    worksheet.Range[$"E{start_row}", $"E{start_row}"].RowHeight = (remark.Length / 20 + 1) * 16.5;
+                }
+
                 start_row++;
             }
             #endregion
