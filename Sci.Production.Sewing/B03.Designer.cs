@@ -54,21 +54,12 @@
             this.masterpanel.Controls.Add(this.txtFactoryID);
             this.masterpanel.Controls.Add(this.lbDate);
             this.masterpanel.Controls.Add(this.dateProductionDate);
-            this.masterpanel.Size = new System.Drawing.Size(792, 100);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateProductionDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtFactoryID, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbFactoryID, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCopyDate, 0);
-            // 
-            // detailpanel
-            // 
-            this.detailpanel.Size = new System.Drawing.Size(792, 249);
-            // 
-            // detailgridcont
-            // 
-            this.detailgridcont.Size = new System.Drawing.Size(792, 249);
             // 
             // detail2
             // 
@@ -81,18 +72,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(792, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(792, 349);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(792, 38);
             // 
             // browse
             // 
@@ -163,7 +142,7 @@
             this.KeyField2 = "FactoryID,ProductionDate";
             this.Name = "B03";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B03";
+            this.Text = "B03. Daily Production Line Allocation";
             this.WorkAlias = "ProductionLineAllocation";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();

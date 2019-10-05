@@ -20,6 +20,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.DefaultFilter = string.Format("FactoryID = '{0}'", Sci.Env.User.Factory);
         }
 
         protected override void OnDetailEntered()

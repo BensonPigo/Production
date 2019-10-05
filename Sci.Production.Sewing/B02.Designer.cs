@@ -80,7 +80,7 @@
             this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtID.Location = new System.Drawing.Point(128, 39);
             this.txtID.Name = "txtID";
-            this.txtID.Size = new System.Drawing.Size(76, 23);
+            this.txtID.Size = new System.Drawing.Size(47, 23);
             this.txtID.TabIndex = 0;
             // 
             // lbName
@@ -98,7 +98,7 @@
             this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtName.Location = new System.Drawing.Point(365, 39);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(133, 23);
+            this.txtName.Size = new System.Drawing.Size(52, 23);
             this.txtName.TabIndex = 1;
             // 
             // B02
