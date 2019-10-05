@@ -3195,10 +3195,11 @@ when matched then
 					t.AddDate		 = s.AddDate	 ,
 					t.AddName		 = s.AddName	 ,
 					t.EditDate		 = s.EditDate	 ,
-					t.EditName		 = s.EditName
+					t.EditName		 = s.EditName	 ,
+					t.Status		 = s.Status
 when not matched by target then
-      insert (Type,ID,Reason,Responsible,Junk,AddDate,AddName,EditDate,EditName
-      ) values (s.Type,s.ID,s.Reason,s.Responsible,s.Junk,s.AddDate,s.AddName,s.EditDate,s.EditName
+      insert (Type,ID,Reason,Responsible,Junk,AddDate,AddName,EditDate,EditName ,Status
+      ) values (s.Type,s.ID,s.Reason,s.Responsible,s.Junk,s.AddDate,s.AddName,s.EditDate,s.EditName ,Status
       )
 when not matched by source then 
       delete;     
