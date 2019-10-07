@@ -271,7 +271,7 @@ from  Orders o WITH (NOLOCK)
 inner join Factory f on o.FactoryID = f.ID
 where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
         and o.ID = '{e.FormattedValue}'
-		and o.Category != 'G'
+		and o.Category NOT IN ( 'G' ,'A')
         and f.IsProduceFty = 1
 ";
                 bool chkQrder = MyUtility.Check.Seek(chkQrderSql);
@@ -611,7 +611,7 @@ select o.ID,o.BrandID,o.StyleID,o.SeasonID
 from  Orders o WITH (NOLOCK) 
 inner join Factory f on o.FactoryID = f.ID
 where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
-		and o.Category != 'G'
+		and o.Category NOT IN ( 'G' ,'A')
         and f.IsProduceFty = 1 and o.Junk = 0 order by o.AddDate desc
 ";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(orderChkSql, "18,15,12,8", null, null);
@@ -692,7 +692,7 @@ outer apply(select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,'{comboType}')
 ,(select rate = rate from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = '{comboType}'))/100)r
 where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
         and o.ID = '{orderID}'
-		and o.Category != 'G'
+		and o.Category NOT IN ( 'G' ,'A')
         and f.IsProduceFty = 1
 ";
             bool chkQrder = MyUtility.Check.Seek(chkQrderSql, out resultDr);
