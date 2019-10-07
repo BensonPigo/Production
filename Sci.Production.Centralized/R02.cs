@@ -144,7 +144,7 @@ FROM ORDERS
 left join Factory on  Factory.ID = Orders.FactoryID 
 left join CDCode on Orders.CDCodeID = CDCode.ID 
 WHERE   1=1 
-        and Orders.Category != 'G'
+        and Orders.Category NOT IN ('G','A')
         and Orders.LocalOrder = 0
         and Factory.IsProduceFty = '1'");
                 string strSQL_Loading_b = strSQL_Loading;
@@ -193,7 +193,7 @@ left join SewingOutput on SewingOutput.ID = SewingOutput_Detail_Detail.ID
 left join Factory on Factory.ID = SewingOutput.FactoryID 
 left join ( {0} )  LoadingList on LoadingList.ID = SewingOutput_Detail_Detail.OrderId
 WHERE   1=1
-        and orders.Category != 'G'
+        and orders.Category NOT IN ('G','A')
         and Sewingoutput.Shift <> 'I'
         and Factory.IsProduceFty = '1'
         and Factory.KPICode <> ''
@@ -868,7 +868,7 @@ Select  Orders.ID
 from Orders WITH (NOLOCK) 
 Left Join Factory WITH (NOLOCK) on Orders.FactoryID = Factory.ID 
 WHERE DATEPART(YEAR, DATEADD(DAY, -7, Orders.SCIDelivery)) = '{0}'
-      and Orders.Category != 'G' ", this.gdclYear);
+      and Orders.Category NOT IN ('G','A') ", this.gdclYear);
                 if (this.txtFactory1.Text != string.Empty)
                 {
                     strSQL += string.Format(" AND Orders.FactoryID = '{0}'  ", this.txtFactory1.Text);
@@ -938,7 +938,7 @@ Select  OrderID
 from Sewingoutput WITH (NOLOCK)
 inner join Sewingoutput_Detail WITH (NOLOCK) on Sewingoutput.ID = Sewingoutput_Detail.ID 
 inner join Orders With(NoLock) on SewingOutput_Detail.OrderID = orders.ID
-where   orders.Category != 'G'
+where   orders.Category NOT IN ('G','A')
         and DATEPART (YEAR, DATEADD (DAY, -7, Sewingoutput.OutputDate)) = '{0}'  
         --Sewingoutput_Detail.OrderID = '{0}'
                                                             ", this.gdclYear);

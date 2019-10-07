@@ -367,7 +367,7 @@ from Orders o WITH (NOLOCK)
 inner join Factory f on o.FactoryID = f.ID
 where   o.FtyGroup = @factoryid 
         and o.ID = @id
-		and o.Category != 'G'
+		and o.Category NOT IN ('G','A')
         and f.IsProduceFty = 1";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ordersData);
                         if (!result || ordersData.Rows.Count <= 0)
@@ -2667,7 +2667,7 @@ outer apply(
 ) as r
 where s.OutputDate = '{0}'
 	  and s.FactoryID = '{1}'
-      and (o.CateGory != 'G' or s.Category='M')  ",
+      and (o.CateGory NOT IN ('G','A') or s.Category='M')  ",
                 Convert.ToDateTime(dateMaxOutputDate).ToString("d"),
                 Sci.Env.User.Factory));
 
@@ -2726,7 +2726,7 @@ inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID
 inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
 left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle) and (o.CateGory != 'G' or t.Category='M')   
+where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle) and (o.CateGory NOT IN ('G','A') or t.Category='M')   
 order by style, s.OutputDate
 
 select w.Hours
