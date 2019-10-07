@@ -27,6 +27,15 @@ namespace Sci.Production.Quality
         private string id;
         private bool isSee = false;
         private string status;
+        private Dictionary<string, string> listTestingMethod = new Dictionary<string, string>() {
+           { "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle", "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" },
+           { "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle", "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" },
+           { "c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle", "c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle" },
+           { "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle", "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle" },
+           { "e. 5 continuous wash, 40 degrees in standard domestic washing machine and trumble dry after 5 cycle for non football style", "e. 5 continuous wash, 40 degrees in standard domestic washing machine and trumble dry after 5 cycle for non football style" },
+           { "f. 5 continuous wash, 60 degrees in standard domestic washing machine and trumble dry after 5 cycle for football style", "f. 5 continuous wash, 60 degrees in standard domestic washing machine and trumble dry after 5 cycle for football style" },
+        };
+
         public P15_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, string status)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -35,11 +44,9 @@ namespace Sci.Production.Quality
             isSee = true;
             this.reportNo = keyvalue2;
             this.status = status;
-            MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,
-                "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle,c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle,d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle");
+            this.comboTestingMethod.DataSource = new BindingSource(listTestingMethod, null); ;
+            this.comboTestingMethod.ValueMember = "Key";
+            this.comboTestingMethod.DisplayMember = "Value";
 
             this.comboTestingMethod.DrawMode = DrawMode.OwnerDrawVariable;
             this.comboTestingMethod.DrawItem += new DrawItemEventHandler(comboBox2_DrawItem);
@@ -66,8 +73,8 @@ namespace Sci.Production.Quality
           
             if (e.Index != -1)
             {
-                System.Collections.DictionaryEntry item = (System.Collections.DictionaryEntry)cbox.Items[e.Index];
-                string txt = item.Key.ToString();
+                var item = (KeyValuePair<string,string>)cbox.Items[e.Index];
+                string txt = item.Key;
 
                 e.DrawBackground();
                 if (this.EditMode)
@@ -88,9 +95,7 @@ namespace Sci.Production.Quality
             ComboxBoxEx cbox = (ComboxBoxEx)sender;
             if (cbox.SelectedItem == null) return;
 
-            System.Collections.DictionaryEntry item = (System.Collections.DictionaryEntry)cbox.SelectedItem;
             SetComboBoxHeight(this.comboTestingMethod.Handle, 50);
-            //label1.Text = item["id"].ToString();
         }
 
         [DllImport("user32.dll")]
@@ -152,11 +157,7 @@ namespace Sci.Production.Quality
                 this.num2Pnr.Value = MyUtility.Convert.GetDecimal(Detaildr["HT2ndPressnoreverse"]);
                 this.txtPOff.Text = Detaildr["HTPellOff"].ToString();
                 string TestMethod = Detaildr["TestingMethod"].ToString();
-                if (TestMethod != @"a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" &&
-                    TestMethod != @"b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" &&
-                    TestMethod != @"c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle" &&
-                    TestMethod != @"d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle"
-                    )
+                if (!listTestingMethod.ContainsKey(TestMethod))
                 {
                     this.txtOther.Text = Detaildr["TestingMethod"].ToString();
                     this.chkOtherMethod.Checked = true;
