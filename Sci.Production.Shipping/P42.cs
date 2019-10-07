@@ -636,13 +636,14 @@ select
 	f1.HSCode,
 	UnitID=f1.CustomsUnit,
 	qty=sum(ad.QtyBefore-ad.QtyAfter),
-	f.UsageUnit
+	UsageUnit = FabricUsage.v
 into #tmp
 from Adjust a with(nolock)
 inner join Adjust_Detail ad with(nolock) on ad.ID=a.ID
 inner join PO_Supp_Detail psd with(nolock) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd .seq2 = ad. seq2
 left join orders o with(nolock) on o.id = ad.POID
 left join brand b with(nolock) on b.id = o.BrandID
+left join fabric f with(nolock) on psd.SCIRefno = f.SCIRefno
 outer apply(
 	select top 1 f.*
 	from Fabric f with(nolock)
@@ -650,8 +651,11 @@ outer apply(
 	where f.Refno = psd.Refno and b2.BrandGroup = b.BrandGroup
 	order by f.NLCodeEditDate desc
 )f1
+outer apply (
+    select v = isnull (f.UsageUnit, f1.SCIRefno)
+) FabricUsage
 where a.Type = 'R' and a.id = '{this.txtWKNo.Text}'
-group by psd.Refno,f1.type,f1.NLCode,f1.BrandId,f1.HSCode,f1.CustomsUnit,f1.UsageUnit
+group by psd.Refno,f1.type,f1.NLCode,f1.BrandId,f1.HSCode,f1.CustomsUnit,FabricUsage.v
 
 select Refno,FabricType,NLCode,BrandId,HSCode,UnitID,qty = case when FabricType = 'A' then A.Qty when FabricType = 'F' then F.Qty end, t.UsageUnit
 from #tmp t

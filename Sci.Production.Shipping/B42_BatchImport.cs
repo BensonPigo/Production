@@ -150,7 +150,7 @@ from VNConsumption where 1=0";
 
                         if (drNLCode == null)
                         {
-                            remark += "Refno not found." + Environment.NewLine;
+                            remark += "Refno not found." + Environment.NewLine + "Fabric / Accessory need input usage unit." + Environment.NewLine;
                         }
                         else if (MyUtility.Check.Empty(drNLCode["NLCode"]))
                         {
