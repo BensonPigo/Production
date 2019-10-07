@@ -201,6 +201,7 @@ outer apply (
 				, bunD.BundleGroup
 		from Bundle_Detail bunD WITH (NOLOCK) 
 		inner join Bundle bun  WITH (NOLOCK) on bunD.Id = bun.ID
+		INNER JOIn Orders o ON bun.Orderid = o.ID AND bun.MDivisionid = o.MDivisionID 
 		where bun.Orderid = st1.Orderid
 				and bun.PatternPanel = st1.PatternPanel
 				and bun.FabricPanelCode = st1.FabricPanelCode
@@ -435,7 +436,7 @@ into #{subprocessIDt}
 from(
 	select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
 	from #QtyBySetPerSubprocess{subprocessIDt}	minPatternPanel
-	group by OrderID, SizeCode
+	group by OrderID, SizeCode ,Article
 ) minArticle
 group by OrderID
 ";
