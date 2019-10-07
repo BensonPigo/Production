@@ -146,33 +146,33 @@
             // 
             this.label6.Location = new System.Drawing.Point(365, 33);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(102, 23);
+            this.label6.Size = new System.Drawing.Size(131, 23);
             this.label6.TabIndex = 5;
-            this.label6.Text = "From Left";
+            this.label6.Text = "From Left (mm)";
             // 
             // label7
             // 
             this.label7.Location = new System.Drawing.Point(365, 74);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(102, 23);
+            this.label7.Size = new System.Drawing.Size(131, 23);
             this.label7.TabIndex = 6;
-            this.label7.Text = "From Top";
+            this.label7.Text = "From Top (mm)";
             // 
             // label8
             // 
             this.label8.Location = new System.Drawing.Point(365, 115);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(102, 23);
+            this.label8.Size = new System.Drawing.Size(131, 23);
             this.label8.TabIndex = 7;
-            this.label8.Text = "Stamp Length";
+            this.label8.Text = "Stamp Length (mm)";
             // 
             // label9
             // 
             this.label9.Location = new System.Drawing.Point(365, 156);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(102, 23);
+            this.label9.Size = new System.Drawing.Size(131, 23);
             this.label9.TabIndex = 8;
-            this.label9.Text = "Stamp Width";
+            this.label9.Text = "Stamp Width (mm)";
             // 
             // txtbrand1
             // 
@@ -211,9 +211,8 @@
             // 
             this.numFromLeft.BackColor = System.Drawing.Color.White;
             this.numFromLeft.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromLeft", true));
-            this.numFromLeft.DecimalPlaces = 2;
             this.numFromLeft.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromLeft.Location = new System.Drawing.Point(470, 33);
+            this.numFromLeft.Location = new System.Drawing.Point(499, 33);
             this.numFromLeft.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -237,9 +236,8 @@
             // 
             this.numFromTop.BackColor = System.Drawing.Color.White;
             this.numFromTop.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromTop", true));
-            this.numFromTop.DecimalPlaces = 2;
             this.numFromTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromTop.Location = new System.Drawing.Point(470, 74);
+            this.numFromTop.Location = new System.Drawing.Point(499, 74);
             this.numFromTop.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -263,9 +261,8 @@
             // 
             this.numStampLength.BackColor = System.Drawing.Color.White;
             this.numStampLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StampLength", true));
-            this.numStampLength.DecimalPlaces = 2;
             this.numStampLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numStampLength.Location = new System.Drawing.Point(470, 115);
+            this.numStampLength.Location = new System.Drawing.Point(499, 115);
             this.numStampLength.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -289,9 +286,8 @@
             // 
             this.numStampWidth.BackColor = System.Drawing.Color.White;
             this.numStampWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StampWidth", true));
-            this.numStampWidth.DecimalPlaces = 2;
             this.numStampWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numStampWidth.Location = new System.Drawing.Point(470, 156);
+            this.numStampWidth.Location = new System.Drawing.Point(499, 156);
             this.numStampWidth.Maximum = new decimal(new int[] {
             99999999,
             0,
