@@ -98,7 +98,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(716, 318);
+            this.browse.Size = new System.Drawing.Size(716, 374);
             // 
             // tabs
             // 
@@ -140,33 +140,33 @@
             // 
             this.label6.Location = new System.Drawing.Point(381, 74);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(102, 23);
+            this.label6.Size = new System.Drawing.Size(117, 23);
             this.label6.TabIndex = 15;
-            this.label6.Text = "From Left";
+            this.label6.Text = "From Left (mm)";
             // 
             // label7
             // 
             this.label7.Location = new System.Drawing.Point(381, 115);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(102, 23);
+            this.label7.Size = new System.Drawing.Size(117, 23);
             this.label7.TabIndex = 16;
-            this.label7.Text = "From Top";
+            this.label7.Text = "From Top (mm)";
             // 
             // label8
             // 
             this.label8.Location = new System.Drawing.Point(381, 156);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(102, 23);
+            this.label8.Size = new System.Drawing.Size(117, 23);
             this.label8.TabIndex = 17;
-            this.label8.Text = "Pic Length";
+            this.label8.Text = "Pic Length (mm)";
             // 
             // label9
             // 
             this.label9.Location = new System.Drawing.Point(381, 197);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(102, 23);
+            this.label9.Size = new System.Drawing.Size(117, 23);
             this.label9.TabIndex = 18;
-            this.label9.Text = "Pic Width";
+            this.label9.Text = "Pic Width (mm)";
             // 
             // txtbrand1
             // 
@@ -205,9 +205,8 @@
             // 
             this.numFromLeft.BackColor = System.Drawing.Color.White;
             this.numFromLeft.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromLeft", true));
-            this.numFromLeft.DecimalPlaces = 2;
             this.numFromLeft.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromLeft.Location = new System.Drawing.Point(486, 74);
+            this.numFromLeft.Location = new System.Drawing.Point(501, 74);
             this.numFromLeft.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -231,9 +230,8 @@
             // 
             this.numFromTop.BackColor = System.Drawing.Color.White;
             this.numFromTop.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromTop", true));
-            this.numFromTop.DecimalPlaces = 2;
             this.numFromTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromTop.Location = new System.Drawing.Point(486, 115);
+            this.numFromTop.Location = new System.Drawing.Point(501, 115);
             this.numFromTop.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -257,9 +255,8 @@
             // 
             this.numPicLength.BackColor = System.Drawing.Color.White;
             this.numPicLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PicLength", true));
-            this.numPicLength.DecimalPlaces = 2;
             this.numPicLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPicLength.Location = new System.Drawing.Point(486, 156);
+            this.numPicLength.Location = new System.Drawing.Point(501, 156);
             this.numPicLength.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -283,9 +280,8 @@
             // 
             this.numPicWidth.BackColor = System.Drawing.Color.White;
             this.numPicWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PicWidth", true));
-            this.numPicWidth.DecimalPlaces = 2;
             this.numPicWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPicWidth.Location = new System.Drawing.Point(486, 197);
+            this.numPicWidth.Location = new System.Drawing.Point(501, 197);
             this.numPicWidth.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -327,7 +323,7 @@
             // 
             this.lblSeq.Location = new System.Drawing.Point(381, 33);
             this.lblSeq.Name = "lblSeq";
-            this.lblSeq.Size = new System.Drawing.Size(102, 23);
+            this.lblSeq.Size = new System.Drawing.Size(117, 23);
             this.lblSeq.TabIndex = 14;
             this.lblSeq.Text = "Seq";
             // 
@@ -336,7 +332,7 @@
             this.numSeq.BackColor = System.Drawing.Color.White;
             this.numSeq.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Seq", true));
             this.numSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numSeq.Location = new System.Drawing.Point(486, 33);
+            this.numSeq.Location = new System.Drawing.Point(501, 33);
             this.numSeq.Maximum = new decimal(new int[] {
             2147483647,
             0,
