@@ -64,7 +64,8 @@ BEGIN
 	SELECT pd.Article,pd.SizeCode,[ShipQty]=SUM(pd.ShipQty)
 	FROM PackingList p 
 	INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-	WHERE p.Status <> 'New' AND pd.OrderID = @OrderID
+	INNER JOIN Pullout pu ON p.PulloutID=pu.ID
+	WHERE pu.Status <> 'New' AND pd.OrderID = @OrderID
 	GROUP BY pd.Article,pd.SizeCode
 	ORDER BY  pd.Article,pd.SizeCode 
 
@@ -86,7 +87,8 @@ BEGIN
 	WHERE t1.Price=0
 	--GROUP BY t1.Article,t1.SizeCode
 
-	SET @FocStockQty = @FocQty_InOrder - @TotalShipQty + @TotalDiffQty
+	--台北調整，調整的是出貨數量，因此不能直接用庫存數去減
+	SET @FocStockQty = @FocQty_InOrder - ( ISNULL(@TotalShipQty,0) +  ISNULL(@TotalDiffQty,0) )
 
 	-- Return the result of the function
 	RETURN @FocStockQty

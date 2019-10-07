@@ -155,6 +155,7 @@ and exists (
 and o.MDivisionID = '{Sci.Env.User.Keyword}'
 
 AND o.FOCQty > 0  --訂單有 FOC 數量
+AND FocStockQty.Value > 0  ----如果出貨出光了也不需要出現
 AND (	
 		PackingList_Chk_HasFoc.Result='false' 
 		OR 
