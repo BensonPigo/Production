@@ -41,7 +41,7 @@
             this.numPrice = new Sci.Win.UI.NumericBox();
             this.dateCanvassDate = new Sci.Win.UI.DateBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.btnCanvassRecord = new Sci.Win.UI.Button();
+            this.btnQuotationRecord = new Sci.Win.UI.Button();
             this.btnPaymentHistory = new Sci.Win.UI.Button();
             this.labelUnit = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -58,13 +58,17 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(882, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtAccountNo);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.btnPaymentHistory);
-            this.detailcont.Controls.Add(this.btnCanvassRecord);
+            this.detailcont.Controls.Add(this.btnQuotationRecord);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.dateCanvassDate);
             this.detailcont.Controls.Add(this.numPrice);
@@ -81,6 +85,11 @@
             this.detailcont.Controls.Add(this.txtUnit);
             this.detailcont.Controls.Add(this.txtsubconSupplier);
             this.detailcont.Controls.Add(this.txtbrand);
+            this.detailcont.Size = new System.Drawing.Size(882, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(882, 38);
             // 
             // browse
             // 
@@ -149,7 +158,7 @@
             this.labelCanvassDate.Name = "labelCanvassDate";
             this.labelCanvassDate.Size = new System.Drawing.Size(90, 23);
             this.labelCanvassDate.TabIndex = 9;
-            this.labelCanvassDate.Text = "Canvass Date";
+            this.labelCanvassDate.Text = "Quot. Date";
             // 
             // labelAccountNo
             // 
@@ -236,17 +245,17 @@
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
-            // btnCanvassRecord
+            // btnQuotationRecord
             // 
-            this.btnCanvassRecord.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCanvassRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCanvassRecord.Location = new System.Drawing.Point(683, 57);
-            this.btnCanvassRecord.Name = "btnCanvassRecord";
-            this.btnCanvassRecord.Size = new System.Drawing.Size(138, 30);
-            this.btnCanvassRecord.TabIndex = 16;
-            this.btnCanvassRecord.Text = "Canvass Record";
-            this.btnCanvassRecord.UseVisualStyleBackColor = true;
-            this.btnCanvassRecord.Click += new System.EventHandler(this.BtnCanvassRecord_Click);
+            this.btnQuotationRecord.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnQuotationRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnQuotationRecord.Location = new System.Drawing.Point(683, 57);
+            this.btnQuotationRecord.Name = "btnQuotationRecord";
+            this.btnQuotationRecord.Size = new System.Drawing.Size(138, 30);
+            this.btnQuotationRecord.TabIndex = 16;
+            this.btnQuotationRecord.Text = "Quotation Record";
+            this.btnQuotationRecord.UseVisualStyleBackColor = true;
+            this.btnQuotationRecord.Click += new System.EventHandler(this.BtnCanvassRecord_Click);
             // 
             // btnPaymentHistory
             // 
@@ -304,6 +313,9 @@
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.isMisc = false;
+            this.txtsubconSupplier.isShipping = false;
+            this.txtsubconSupplier.isSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(120, 187);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(159, 23);
@@ -344,6 +356,7 @@
             this.IsSupportDelete = false;
             this.IsSupportUnclose = true;
             this.Name = "B03";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B03. Shipping Expense";
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "ID";
@@ -381,7 +394,7 @@
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
         private Win.UI.Button btnPaymentHistory;
-        private Win.UI.Button btnCanvassRecord;
+        private Win.UI.Button btnQuotationRecord;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label labelUnit;
         private Class.txtunit_local txtUnit;

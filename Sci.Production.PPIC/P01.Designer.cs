@@ -301,6 +301,7 @@
             this.displayIsMixMarker = new Sci.Win.UI.DisplayBox();
             this.shapeContainer6 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.comboSubconInType = new Ict.Win.UI.ComboBox();
+            this.chkAFbyAdidas = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -317,6 +318,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkAFbyAdidas);
             this.detailcont.Controls.Add(this.comboSubconInType);
             this.detailcont.Controls.Add(this.txtdropdownlistCategory);
             this.detailcont.Controls.Add(this.displayIsMixMarker);
@@ -3376,6 +3378,18 @@
             this.comboSubconInType.Size = new System.Drawing.Size(293, 23);
             this.comboSubconInType.TabIndex = 225;
             // 
+            // chkAFbyAdidas
+            // 
+            this.chkAFbyAdidas.AutoSize = true;
+            this.chkAFbyAdidas.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AirFreightByBrand", true));
+            this.chkAFbyAdidas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkAFbyAdidas.Location = new System.Drawing.Point(839, 419);
+            this.chkAFbyAdidas.Name = "chkAFbyAdidas";
+            this.chkAFbyAdidas.Size = new System.Drawing.Size(95, 19);
+            this.chkAFbyAdidas.TabIndex = 226;
+            this.chkAFbyAdidas.Text = "AF by adidas";
+            this.chkAFbyAdidas.UseVisualStyleBackColor = true;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3681,5 +3695,6 @@
         private Ict.Win.UI.ComboBox comboSubconInType;
         private Win.UI.DateBox dateLastProductionDate;
         private Win.UI.Label labLastProductionDate;
+        private Win.UI.CheckBox chkAFbyAdidas;
     }
 }

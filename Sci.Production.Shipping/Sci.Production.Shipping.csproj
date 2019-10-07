@@ -149,6 +149,12 @@
     <Compile Include="B03_BatchApprove.Designer.cs">
       <DependentUpon>B03_BatchApprove.cs</DependentUpon>
     </Compile>
+    <Compile Include="B03_Quotation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03_Quotation.Designer.cs">
+      <DependentUpon>B03_Quotation.cs</DependentUpon>
+    </Compile>
     <Compile Include="B05.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -214,12 +220,6 @@
     </Compile>
     <Compile Include="B03.Designer.cs">
       <DependentUpon>B03.cs</DependentUpon>
-    </Compile>
-    <Compile Include="B03_CanvassRecord.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="B03_CanvassRecord.Designer.cs">
-      <DependentUpon>B03_CanvassRecord.cs</DependentUpon>
     </Compile>
     <Compile Include="B03_PaymentHistory.cs">
       <SubType>Form</SubType>
@@ -814,6 +814,9 @@
     <EmbeddedResource Include="B03_BatchApprove.resx">
       <DependentUpon>B03_BatchApprove.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B03_Quotation.resx">
+      <DependentUpon>B03_Quotation.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B05.resx">
       <DependentUpon>B05.cs</DependentUpon>
     </EmbeddedResource>
@@ -847,9 +850,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="B03_CanvassRecord.resx">
-      <DependentUpon>B03_CanvassRecord.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B03_PaymentHistory.resx">
       <DependentUpon>B03_PaymentHistory.cs</DependentUpon>

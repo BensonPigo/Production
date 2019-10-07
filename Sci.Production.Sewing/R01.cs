@@ -158,7 +158,7 @@ outer apply(
 ) as r
 where s.OutputDate = '{0}'
 	  and s.FactoryID = '{1}'
-      and (o.CateGory != 'G' or s.Category='M')  ",
+      and (o.CateGory NOT IN ( 'G' ,'A') or s.Category='M')  ",
                 Convert.ToDateTime(this._date).ToString("d"),
                 this._factory));
 
@@ -561,7 +561,7 @@ tmpAllSubprocess as (
            , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), ta.DecimalNumber) 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
 	inner join tmpArtwork ta on ta.ID = ot.ArtworkTypeID
 --	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --												 and sl.Location = a.ComboType

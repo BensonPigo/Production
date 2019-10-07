@@ -1045,6 +1045,14 @@ where refno = '{0}'
 
             #region Qty Valid
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            ns.CellMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left &&  MyUtility.Convert.GetString(this.CurrentMaintain["category"]) == "CARTON")
+                {
+                    Sci.Production.Subcon.P30_Qty callNextForm = new Sci.Production.Subcon.P30_Qty(CurrentDetailData);
+                    callNextForm.ShowDialog(this);
+                }
+            };
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)

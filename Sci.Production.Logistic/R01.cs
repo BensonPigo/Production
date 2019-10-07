@@ -103,6 +103,9 @@ select  o.FactoryID
 		, o.CfaCTN
         , o.PulloutCTNQty
 		, o.StyleUkey
+		, [OrderQty] = o.Qty
+		, [ShipmodeQty] = oq.Qty
+		, o.GMTComplete
 into #tmp_Orders
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
@@ -217,7 +220,7 @@ from(
 			, oq.Qty
 			, ComboType = sl.Location
 			, QAQty = isnull(sum(sdd.QAQty),0)
-		from #tmp_Orders o WITH (NOLOCK) 
+		from (select distinct id,StyleUkey from #tmp_Orders) o
 		inner join Style_Location sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey
 		inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
 		left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
@@ -263,7 +266,8 @@ drop table #tmp_Orders,#tmp_ClogLocationId,#tmp_CTNQty,#tmp_ClogQty,#tmp_PullQty
 
 select t.ID,RetCtnBySP = count(cr.ID)
 into #tmp2
-from #tmp t left join ClogReturn cr on cr.OrderID = t.ID
+from (select distinct ID from #tmp) t 
+left join ClogReturn cr on cr.OrderID = t.ID
 group by t.ID
 
 select 
@@ -276,6 +280,7 @@ select
     ,t.StyleName
     ,t.CustPONo
     ,t.Customize1
+	,t.GMTComplete
     ,t.SciDelivery
     ,[Junk]= IIF(t.Junk=1,'Y','')
     ,t.BuyerDelivery
@@ -286,6 +291,7 @@ select
 	,[% by SP#]=iif(isnull(t.TtlGMTQty,0)=0,0,Round(1-((t.TtlGMTQty-isnull(t.TtlClogGMTQty,0))/t.TtlGMTQty),2)*100)
 	,[Ctn SDP by SP#]=iif(isnull(t.TotalCTN,0)=0, 0,ROUND(isnull(t.ClogCTN,0)/t.TotalCTN,2)*100)
 	,t.PulloutCTNQty
+	,t.OrderQty
 	,t.TtlGMTQty
 	,[Sewing Qty by SP#]=sewQty
 	,t.TtlClogGMTQty
@@ -296,6 +302,7 @@ select
 	,[Ctn SDP by Shipmode]=iiF(isnull(t.CTNQty,0)=0,0,ROUND(isnull(t.ClogQty,0)/t.CTNQty,2)*100)
 	,t.PullQty
 	,[CTN in CLOG]=isnull(t.ClogQty,0)-isnull(t.PullQty,0)
+	,t.ShipmodeQty
 	,t.GMTQty
 	,[Scan Qty by Shipmode]=ScanQtybyShipmode
 	,t.ClogGMTQty
@@ -346,7 +353,6 @@ drop table #tmp,#tmp2
             }
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
             worksheet.Cells[2, 1] = string.Format(
                 "Buyer Delivery: {0} ~ {1}             SCI Delivery: {2} ~ {3}             M: {4}             Brand: {5}",
                 MyUtility.Check.Empty(this.buyerDelivery1) ? string.Empty : Convert.ToDateTime(this.buyerDelivery1).ToString("d"),
@@ -359,7 +365,7 @@ drop table #tmp,#tmp2
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R01_CartonStatusReport.xltx", 3, false, null, excel);// 將datatable copy to excel
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
-
+            this.CreateCustomizedExcel(ref worksheet);
             #region Save & show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_R01_CartonStatusReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
@@ -375,5 +381,6 @@ drop table #tmp,#tmp2
             this.HideWaitMessage();
             return true;
         }
+
     }
 }

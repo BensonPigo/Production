@@ -281,6 +281,12 @@
     <Compile Include="SubCon_B03.Designer.cs">
       <DependentUpon>SubCon_B03.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubCon_B04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubCon_B04.Designer.cs">
+      <DependentUpon>SubCon_B04.cs</DependentUpon>
+    </Compile>
     <Compile Include="Thread_B06.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -365,6 +371,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SubCon_B03.resx">
       <DependentUpon>SubCon_B03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubCon_B04.resx">
+      <DependentUpon>SubCon_B04.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Thread_B06.resx">
       <DependentUpon>Thread_B06.cs</DependentUpon>
