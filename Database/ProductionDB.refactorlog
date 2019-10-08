@@ -385,4 +385,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="UseRatioRule_Thick" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="d5ee03ad-c7b9-4551-95b0-f56af67b1e9d" ChangeDateTime="08/21/2019 07:48:10">
+    <Property Name="ElementName" Value="[dbo].[System].[ARKloginId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[System]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ARKLoginId" />
+  </Operation>
 </Operations>
