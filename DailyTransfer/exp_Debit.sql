@@ -27,7 +27,7 @@ WHERE EditDate
 BETWEEN Convert(DATE,DATEADD(day,-30,GETDATE()))AND CONVERT(date,Getdate()) OR SysDate BETWEEN Convert(DATE,DATEADD(day,-30,GETDATE())) AND CONVERT(date,Getdate())
 ORDER BY ID ;
 
-
+-------PMS  Debit_Schedule會先轉到Debit5，再透過Trade的SP轉進 Debit_Schedules-------
 with amount as(
  select id,IssueDate,sum(Amount) as Amount from Production.dbo.Debit_Schedule group by id,IssueDate
  ),
@@ -40,7 +40,7 @@ inner join Production.dbo.Debit d on ds.ID = d.ID
 where exists (select 1 from Production.dbo.Debit_Schedule tds 
 where tds.ID = ds.ID )
  )
- select a.ID,a.IssueDate,a.Amount,b.VoucherID,b.AddName,b.AddDate,b.EditDate,b.EditName,b.SysDate 
+ select a.ID,a.IssueDate,a.Amount,b.VoucherID,b.AddName,b.AddDate,b.EditDate,b.EditName,b.SysDate ,b.CurrencyID
  INTO Debit5
  from amount a
  inner join allDebit b on a.id=b.id and a.IssueDate=b.IssueDate 

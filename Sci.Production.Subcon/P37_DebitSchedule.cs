@@ -29,6 +29,7 @@ namespace Sci.Production.Subcon
         {
             Helper.Controls.Grid.Generator(this.grid)
                 .Date("issuedate", header: "Debit Date", width: Widths.AnsiChars(10))
+                .Text("CurrencyID", header: "Debit Currency", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Numeric("amount", header: "Deibt Amount", integer_places: 12, decimal_places: 2)
                 .Text("voucherid", header: "Voucher No.", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .DateTime("VOUCHERDATE", header: "Voucher Date", width: Widths.AnsiChars(10), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMdd)
@@ -38,6 +39,11 @@ namespace Sci.Production.Subcon
                 .DateTime("editDate", header: "Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
                 .Text("editName", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 ;
+
+
+            grid.Columns["issuedate"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["amount"].DefaultCellStyle.BackColor = Color.Pink;
+
             return true;
         }
      
@@ -49,8 +55,14 @@ namespace Sci.Production.Subcon
             foreach (DataRow dr in datas.Rows)
             {
                 dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from [FinanceEN].[dbo].[Voucher] WITH (NOLOCK) where id = '{0}'", dr["voucherid"]));
+
+                dr["CurrencyID"] = "USD";
             }
             //this.grid.AutoResizeColumns();
+
+
+            grid.Columns["issuedate"].DefaultCellStyle.ForeColor = Color.Red;
+            grid.Columns["amount"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
         protected override void OnEditModeChanged()
@@ -86,7 +98,7 @@ namespace Sci.Production.Subcon
                 Amount += (decimal)dr["Amount"];
             }
 
-            if ((decimal)Master["Amount"] < Amount)
+            if ((decimal)Master["TaipeiAMT"] < Amount)
             {
                 MyUtility.Msg.WarningBox("Total deibt amount more than DBC amount, cann't save!!");
                 return false;
