@@ -295,7 +295,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                 if(dr.RowState == DataRowState.Deleted)
                     continue;
 
-                if (!MyUtility.Check.Empty(dr["CTNQty"]))
+                if (!MyUtility.Check.Empty(dr["CTNQty"]) || ctnNo != dr["CTNStartNo"].ToString())
                 {
                     if (ctnNo != dr["CTNStartNo"].ToString())
                     {
