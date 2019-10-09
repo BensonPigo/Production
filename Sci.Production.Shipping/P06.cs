@@ -1172,11 +1172,15 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     #endregion
 
                     // shipQty,OrderQty,InvNo 修改過才會更換資料
-                    if (MyUtility.Convert.GetString(dr["ShipmodeID"]).EqualString(MyUtility.Convert.GetString(packData[0]["ShipmodeID"])) == false || MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"]) || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"]) || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"]))
+                    if (MyUtility.Convert.GetString(dr["ShipmodeID"]).EqualString(MyUtility.Convert.GetString(packData[0]["ShipmodeID"])) == false
+                        || MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"])
+                        || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"])
+                        || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"])
+                        || MyUtility.Convert.GetString(dr["ShipModeSeqQty"]) != MyUtility.Convert.GetString(packData[0]["OrderShipQty"]))
                     {
                         dr["ShipQty"] = packData[0]["ShipQty"];
                         dr["OrderQty"] = packData[0]["OrderQty"];
-                        dr["ShipModeSeqQty"] = packData[0]["OrderShipmodeSeq"];
+                        dr["ShipModeSeqQty"] = packData[0]["OrderShipQty"];
                         dr["Status"] = newStatus;
                         dr["StatusExp"] = this.GetStatusName(newStatus);
                         dr["INVNo"] = packData[0]["INVNo"];
