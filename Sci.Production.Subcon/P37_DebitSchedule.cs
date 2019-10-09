@@ -17,7 +17,11 @@ namespace Sci.Production.Subcon
     {
         private DataRow Master;
         private string _FromFuncton;
-        public P37_DebitSchedule(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow _Master,string FromFuncton)
+        private bool _isTaipeiDBC;
+        private string _CurrencyID;
+        private string _TaipeiCurrencyID;
+
+        public P37_DebitSchedule(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow _Master,string FromFuncton,bool isTaipeiDBC = true)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
@@ -25,6 +29,12 @@ namespace Sci.Production.Subcon
             this.KeyField1 = "ID";
             this.WorkAlias = "Debit_Schedule";
             this._FromFuncton = FromFuncton;
+            this._isTaipeiDBC = isTaipeiDBC;
+            this._CurrencyID = this.Master["CurrencyID"].ToString();
+           
+            //固定是USD，如果有需要換從這邊改
+
+            this._TaipeiCurrencyID = "USD";
         }
         
         protected override bool OnGridSetup()
@@ -73,14 +83,18 @@ namespace Sci.Production.Subcon
      
         protected override void OnRequeryPost(DataTable datas)
         {
-            base.OnRequeryPost(datas);
             decimal ttl = 0;
             datas.Columns.Add("VOUCHERDATE");
             foreach (DataRow dr in datas.Rows)
             {
                 dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from [FinanceEN].[dbo].[Voucher] WITH (NOLOCK) where id = '{0}'", dr["voucherid"]));
 
-                dr["CurrencyID"] = "USD";
+                //根據Debit是否為台北建立的，修改自動帶入的幣別
+                /*if (_isTaipeiDBC)
+                    dr["CurrencyID"] = this._TaipeiCurrencyID;
+                else
+                    dr["CurrencyID"] = this._CurrencyID;
+                    */
                 ttl += MyUtility.Check.Empty(dr["amount"]) ? 0 : (Convert.ToDecimal(dr["amount"]));
             }
             //this.grid.AutoResizeColumns();
@@ -91,6 +105,8 @@ namespace Sci.Production.Subcon
                 grid.Columns["issuedate"].DefaultCellStyle.ForeColor = Color.Red;
                 grid.Columns["amount"].DefaultCellStyle.ForeColor = Color.Red;
             }
+
+            base.OnRequeryPost(datas);
         }
 
         protected override void OnEditModeChanged()
@@ -115,7 +131,7 @@ namespace Sci.Production.Subcon
 
         protected override bool OnSaveBefore()
         {
-            decimal Amount = 0;
+            decimal GridAmount = 0;
             foreach (DataRow dr in Datas)
             {
                 if (MyUtility.Check.Empty(dr["IssueDate"]) || MyUtility.Check.Empty(dr["Amount"]))
@@ -123,13 +139,25 @@ namespace Sci.Production.Subcon
                     MyUtility.Msg.WarningBox("< Debit Date >  & < Debit Amount > can't be empty!!");
                     return false;
                 }
-                Amount += (decimal)dr["Amount"];
+                GridAmount += (decimal)dr["Amount"];
             }
 
-            if ((decimal)Master["TaipeiAMT"] < Amount)
+            //根據Debit是否為台北建立的，修改判斷的數字
+            if (_isTaipeiDBC)
             {
-                MyUtility.Msg.WarningBox("Total deibt amount more than DBC amount, cann't save!!");
-                return false;
+                if ((decimal)Master["TaipeiAMT"] < GridAmount)
+                {
+                    MyUtility.Msg.WarningBox("Total deibt amount more than DBC amount, cann't save!!");
+                    return false;
+                }
+            }
+            else
+            {
+                if ((decimal)Master["Amount"] < GridAmount)
+                {
+                    MyUtility.Msg.WarningBox("Total deibt amount more than DBC amount, cann't save!!");
+                    return false;
+                }
             }
 
             return base.OnSaveBefore();
@@ -138,7 +166,12 @@ namespace Sci.Production.Subcon
         protected override void OnInsertPrepare(DataRow data)
         {
             base.OnInsertPrepare(data);
-            data["CurrencyID"] = "USD";
+
+            //根據Debit是否為台北建立的，修改自動帶入的幣別
+            if (_isTaipeiDBC)
+                data["CurrencyID"] = this._TaipeiCurrencyID;
+            else
+                data["CurrencyID"] = this._CurrencyID;
         }
     }
 }

@@ -57,7 +57,7 @@
             this.numericBoxTotal.BackColor = System.Drawing.Color.White;
             this.numericBoxTotal.DecimalPlaces = 2;
             this.numericBoxTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBoxTotal.Location = new System.Drawing.Point(374, 8);
+            this.numericBoxTotal.Location = new System.Drawing.Point(345, 9);
             this.numericBoxTotal.Name = "numericBoxTotal";
             this.numericBoxTotal.NullValue = new decimal(new int[] {
             0,
@@ -76,9 +76,9 @@
             // 
             this.label1.Location = new System.Drawing.Point(254, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(116, 23);
+            this.label1.Size = new System.Drawing.Size(88, 23);
             this.label1.TabIndex = 96;
-            this.label1.Text = "USD TTL Amount";
+            this.label1.Text = "TTL Amount";
             // 
             // P37_DebitSchedule
             // 
