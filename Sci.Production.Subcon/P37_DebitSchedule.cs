@@ -16,21 +16,43 @@ namespace Sci.Production.Subcon
     public partial class P37_DebitSchedule : Sci.Win.Subs.Input4
     {
         private DataRow Master;
-        public P37_DebitSchedule(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow _Master)
+        private string _FromFuncton;
+        public P37_DebitSchedule(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow _Master,string FromFuncton)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
             this.Master = _Master;
             this.KeyField1 = "ID";
             this.WorkAlias = "Debit_Schedule";
+            this._FromFuncton = FromFuncton;
         }
         
         protected override bool OnGridSetup()
         {
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings amountSetting = new DataGridViewGeneratorNumericColumnSettings();
+
+            amountSetting.CellValidating += (s, e) =>
+             {
+                 if (this.EditMode)
+                 {
+                     DataTable dt = (DataTable)this.gridbs.DataSource;
+                     DataRow currDr = dt.Rows[e.RowIndex];
+                     currDr["amount"] = e.FormattedValue;
+
+                     decimal ttl = 0;
+                     foreach (DataRow dr in dt.Rows)
+                     {
+                         ttl += MyUtility.Check.Empty(dr["amount"]) ? 0 : (Convert.ToDecimal(dr["amount"]));
+                     }
+
+                     this.numericBoxTotal.Text = ttl.ToString();
+                 }
+             };
+
             Helper.Controls.Grid.Generator(this.grid)
                 .Date("issuedate", header: "Debit Date", width: Widths.AnsiChars(10))
                 .Text("CurrencyID", header: "Debit Currency", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                .Numeric("amount", header: "Deibt Amount", integer_places: 12, decimal_places: 2)
+                .Numeric("amount", header: "Deibt Amount", integer_places: 12, decimal_places: 2,settings: amountSetting)
                 .Text("voucherid", header: "Voucher No.", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .DateTime("VOUCHERDATE", header: "Voucher Date", width: Widths.AnsiChars(10), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMdd)
                 .Text("ExVoucherID", header: "Ex Voucher No.", width: Widths.AnsiChars(18), iseditingreadonly: true)
@@ -41,28 +63,34 @@ namespace Sci.Production.Subcon
                 ;
 
 
-            grid.Columns["issuedate"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["amount"].DefaultCellStyle.BackColor = Color.Pink;
-
+            if (this._FromFuncton == "P36")
+            {
+                grid.Columns["issuedate"].DefaultCellStyle.BackColor = Color.Pink;
+                grid.Columns["amount"].DefaultCellStyle.BackColor = Color.Pink;
+            }
             return true;
         }
      
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
-
+            decimal ttl = 0;
             datas.Columns.Add("VOUCHERDATE");
             foreach (DataRow dr in datas.Rows)
             {
                 dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from [FinanceEN].[dbo].[Voucher] WITH (NOLOCK) where id = '{0}'", dr["voucherid"]));
 
                 dr["CurrencyID"] = "USD";
+                ttl += MyUtility.Check.Empty(dr["amount"]) ? 0 : (Convert.ToDecimal(dr["amount"]));
             }
             //this.grid.AutoResizeColumns();
+            this.numericBoxTotal.Text = ttl.ToString();
 
-
-            grid.Columns["issuedate"].DefaultCellStyle.ForeColor = Color.Red;
-            grid.Columns["amount"].DefaultCellStyle.ForeColor = Color.Red;
+            if (this._FromFuncton=="P36")
+            {
+                grid.Columns["issuedate"].DefaultCellStyle.ForeColor = Color.Red;
+                grid.Columns["amount"].DefaultCellStyle.ForeColor = Color.Red;
+            }
         }
 
         protected override void OnEditModeChanged()
@@ -105,6 +133,12 @@ namespace Sci.Production.Subcon
             }
 
             return base.OnSaveBefore();
+        }
+
+        protected override void OnInsertPrepare(DataRow data)
+        {
+            base.OnInsertPrepare(data);
+            data["CurrencyID"] = "USD";
         }
     }
 }
