@@ -25,11 +25,34 @@ BEGIN
 		END
 	END
 
+	--取得建立ARK server位置
+	Declare @ARKServerName varchar(20)
+	Declare @ARKDatabaseName varchar(20)
+	Declare @ARKLoginId varchar(20)
+	Declare @ARKLoginPwd varchar(20)
+
+	select  @ARKServerName = ARKServerName,
+			@ARKDatabaseName = ARKDatabaseName,
+			@ARKLoginId = ARKLoginId,
+			@ARKLoginPwd = ARKLoginPwd
+	from system
+
+	IF NOT EXISTS (SELECT 1 FROM sys.servers WHERE name = @ARKServerName)
+	BEGIN
+		--新建連線
+		EXEC master.dbo.sp_addlinkedserver @server = @ARKServerName, @srvproduct=N'SQL Server'
+		--設定連線登入資訊
+		EXEC master.dbo.sp_addlinkedsrvlogin @rmtsrvname = @ARKServerName, @locallogin = NULL , @useself = N'False', @rmtuser = @ARKLoginId, @rmtpassword = @ARKLoginPwd
+	END
+
+
 	--Datas處理
 	declare @Cmd1 varchar(max)
+	declare @CmdARK varchar(max)
+	declare @CmdARK2 varchar(max)
 	declare @Cmd2 varchar(max)
 	declare @RaisError varchar(max)
-
+	set xact_abort on;
 	Set @Cmd1 = N'
 	Begin Try
 		Begin tran
@@ -85,6 +108,119 @@ BEGIN
 			) getLastTrans 
 			where exists(select 1 from Bundle_Detail bd where bd.BundleNo = getLastTrans.BundleNo)
 			'
+
+
+		--add Synchronize MiddlewareARK
+		Set @CmdARK = N'
+		select 
+		distinct
+		[Factory] = o.FtyGroup,
+		o.BrandID,
+		o.StyleID,
+		o.SeasonID,
+		[ComboType] = sl.Location,
+		[WorkLine] = b.Sewinglineid,
+		b.Orderid,
+		s.StyleName,
+		s.Description,
+		o.Qty
+		into #ToMiddleARK
+		from #disTmp d
+		inner join Bundle_Detail bd with (nolock) on d.BundleNo = bd.BundleNo
+		inner join Bundle b with (nolock) on b.ID = bd.Id
+		inner join orders o with (nolock) on b.Orderid = o.ID
+		inner join Style_Location sl with (nolock) on o.StyleUkey = sl.StyleUkey
+		inner join Style s with (nolock) on s.Ukey = o.StyleUkey
+		
+		
+		--MiddlewareARK.WorkLineRFIDReaderLog
+		select distinct 
+		Factory,
+		WorkLine,
+		[Order_No] = Orderid,
+		ComboType
+		into #WorkLineRFIDReaderLog
+		from #ToMiddleARK
+		
+		update t  set t.SCIUpdate = GetDate(),t.ARKUpdate = null
+			from ['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.WorkLineRFIDReaderLog t
+			where exists (select 1 from #WorkLineRFIDReaderLog s where 
+											t.Factory = s.Factory collate Chinese_Taiwan_Stroke_CI_AS 
+										and t.WorkLine = s.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
+										and t.Order_No = s.Order_No collate Chinese_Taiwan_Stroke_CI_AS
+										and t.ComboType = s.ComboType collate Chinese_Taiwan_Stroke_CI_AS)
+		
+		insert into ['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.WorkLineRFIDReaderLog(Factory, WorkLine, Order_No, ComboType, SCIUpdate, ARKUpdate)
+					select s.Factory, s.WorkLine, s.Order_No,s.ComboType, GetDate(), null
+					from #WorkLineRFIDReaderLog s
+					where not exists(select 1 from ['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.WorkLineRFIDReaderLog t
+												where	t.Factory = s.Factory collate Chinese_Taiwan_Stroke_CI_AS 
+														and t.WorkLine = s.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
+														and t.Order_No = s.Order_No collate Chinese_Taiwan_Stroke_CI_AS
+														and t.ComboType = s.ComboType collate Chinese_Taiwan_Stroke_CI_AS)
+		
+		
+		--MiddlewareARK.Product
+		select
+		distinct
+		[Product_No] = BrandID + ''-'' + StyleID + ''-'' + SeasonID + ''-'' + ComboType,
+		[product_name] = StyleName,
+		[product_desc] = Description,
+		[Brand] = BrandID,
+		[Style] = StyleID,
+		[Season] = SeasonID,
+		ComboType
+		into #Product
+		from #ToMiddleARK
+		
+		update t set t.SCIUpdate = GetDate()
+		from ['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.Product t
+		where exists(select 1 from #Product s where 
+							t.Brand = s.Brand collate Chinese_Taiwan_Stroke_CI_AS 
+						and t.Style = s.Style collate Chinese_Taiwan_Stroke_CI_AS
+						and t.Season = s.Season collate Chinese_Taiwan_Stroke_CI_AS
+						and t.ComboType = s.ComboType collate Chinese_Taiwan_Stroke_CI_AS)
+		
+		insert into ['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.Product(product_no, product_name, product_desc, image_url, Brand, Style, Season, ComboType, SCIUpdate)
+				select s.product_no, s.product_name, s.product_desc, null, Brand, Style, Season, ComboType, GetDate()
+						from #Product s
+						where not exists(select 1 from	['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.Product t
+														where	t.Brand = s.Brand collate Chinese_Taiwan_Stroke_CI_AS 
+															and t.Style = s.Style collate Chinese_Taiwan_Stroke_CI_AS
+															and t.Season = s.Season collate Chinese_Taiwan_Stroke_CI_AS
+															and t.ComboType = s.ComboType collate Chinese_Taiwan_Stroke_CI_AS
+										)'
+		
+		Set @CmdARK2 = N'
+		--MiddlewareARK.Orders
+		select 
+		[order_no] = ark.Orderid,
+		ark.ComboType,
+		[customer_name] = ark.BrandID,
+		[product_id] = pd.product_id,
+		[order_total] = ark.Qty
+		into #ARKOrders
+		from #ToMiddleARK ark
+		inner join ['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.Product pd with (nolock) on	pd.Brand = ark.BrandID and 
+																			pd.Style = ark.StyleID and 
+																			pd.Season = ark.SeasonID and 
+																			pd.ComboType = ark.ComboType
+		
+		update t set t.SCIUpdate = GetDate()
+		from ['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.Orders t
+			where exists(select 1 from  #ARKOrders s
+									where	t.order_no = s.order_no collate Chinese_Taiwan_Stroke_CI_AS 
+										and t.ComboType = s.ComboType collate Chinese_Taiwan_Stroke_CI_AS)
+		
+		
+		insert	into ['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.Orders(order_no, ComboType, customer_name, product_id, order_total, place_time, delivery_date, unit_price, remarks, SCIUpdate)
+				select s.order_no, s.ComboType, s.customer_name, s.product_id, s.order_total, null, null, 0, null, GetDate()
+						from #ARKOrders s
+						where not exists(select 1 from ['+@ARKServerName+'].'+@ARKDatabaseName+'.dbo.Orders t
+														where	t.order_no = s.order_no collate Chinese_Taiwan_Stroke_CI_AS 
+															and t.ComboType = s.ComboType collate Chinese_Taiwan_Stroke_CI_AS)
+
+		'
 
 			--add update BundleInOut			
 			-- RFIDReader.Type=1
@@ -174,6 +310,6 @@ BEGIN
 				   ); 
 	End Catch	'
 
-	EXEC(@Cmd1 + @Cmd2)
+	EXEC(@Cmd1 + @CmdARK + @CmdARK2 + @Cmd2)
 
 END
