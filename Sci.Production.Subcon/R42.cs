@@ -177,7 +177,7 @@ Select
                 {
                     sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
                 }
-                if (!MyUtility.Check.Empty(this.processLocation))
+                if (this.processLocation != "ALL")
                 {
                     sqlCmd.Append(string.Format(@" and bt.RFIDProcessLocationID = '{0}'", this.processLocation));
                 }
@@ -192,7 +192,7 @@ Select
                     BundleTransfer_Where += $@" and (bt.SubprocessId in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')" + Environment.NewLine;
                 }
 
-                if (!MyUtility.Check.Empty(this.processLocation))
+                if (this.processLocation != "ALL")
                 {
                     BundleTransfer_Where += $@" and bt.RFIDProcessLocationID = '{this.processLocation}'" + Environment.NewLine;
                 }
