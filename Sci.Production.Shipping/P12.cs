@@ -96,29 +96,62 @@ select
 	o.StyleID,
 	o.SeasonID,
 	o.Qty,
-	ChargeableQty =o.Qty-o.FOCQty,
+	ChargeableQty = o.Qty - o.FOCQty,
 	o.FOCQty,
-	ChargeablePulloutQty = isnull(c.value,0),
-	FOCPulloutQty = isnull(c.value2,0),
-	FinishedFOCStockinQty =o.FOCQty - isnull(c.value2,0)
+	ChargeablePulloutQty = isnull(ShipQty_ByType.TotalNotFocShipQty,0),
+	FOCPulloutQty = isnull(ShipQty_ByType.TotalFocShipQty,0),
+	FinishedFOCStockinQty = ISNULL(FocStockQty.Value ,0)    --o.FOCQty - isnull(TotalShipQty_ByType.TotalFocShipQty,0)  改用Function取得FOC庫存
 from orders o with(nolock)
 inner join Factory f with(nolock) on f.id = o.FactoryID and f.IsProduceFty = 1
 outer apply(
-	select sum(value) as value , sum(value2) as value2 
+	select sum(TotalNotFocShipQty) as TotalNotFocShipQty , sum(TotalFocShipQty) as TotalFocShipQty 
 	from
 	(	
 		select 
-		value = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
-		value2=iif( pl.Type='F',sum(pod.ShipQty),0)
+		[TotalNotFocShipQty] = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
+		[TotalFocShipQty]=iif( pl.Type='F',sum(pod.ShipQty),0)
 		from Pullout_Detail pod with(nolock)
 		inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
 		where pod.OrderID = o.ID
 		group by pl.Type
 	) a
-)c
+)ShipQty_ByType
+
+OUTER APPLY(
+	--判斷FOC 是否建立 PackingList
+	SELECT [Result]=IIF(COUNT(p.ID) > 0 ,'true' , 'false') 
+	FROM PackingList p
+	INNER JOIN PackingList_Detail pd ON p.ID=pd.ID 
+	WHERE p.Type = 'F' AND pd.OrderID=o.ID
+)PackingList_Chk_HasFoc
+
+OUTER APPLY(
+	--
+	--如果 FOC 沒建立 PackingList，不需判斷出貨
+	--如果 FOC 已建立了 PackingList，判斷是否『所有』的 FOC PackingList 都完成出貨（出貨的Pullout Stauts != New）。
+	SELECT  [Result]=IIF( PackingList_Chk_HasFoc.Result='false','true'
+			,IIF( COUNT(p.ID) > 0,'true','false' )) -- 有New的話表示不是全部都完成出貨
+	FROM PackingList p
+	INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+	WHERE   p.Type = 'F' AND pd.OrderID=o.ID --AND pu.Status = 'New'
+			AND EXISTS 
+			(	--判斷有無建立 Pullout
+				SELECT 1 FROM Pullout pu WHERE  p.PulloutID=pu.ID
+			)
+			AND NOT EXISTS 
+			(	--若有建立 Pullout，判斷是不是全部出貨
+				SELECT 1 FROM Pullout pu WHERE  p.PulloutID=pu.ID AND pu.Status = 'New'
+			)
+
+)PackingList_Chk_IsAllPullout
+
+OUTER APPLY(
+	SELECT Value=dbo.GetFocStockByOrder(o.ID)
+)FocStockQty
+
 where o.Junk = 0
-and not exists(select 1 from Order_Finish ox where ox.id = o.ID)
-and o.FOCQty > isnull(c.value2,0)
+and not exists(select 1 from Order_Finish ox where ox.id = o.ID)  --訂單尚未執行 FOC 入庫
+and o.FOCQty > isnull(ShipQty_ByType.TotalFocShipQty,0)
 and exists (
 	select 1
 	from Order_QtyShip_Detail oqd WITH (NOLOCK) 
@@ -128,6 +161,14 @@ and exists (
 	and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
 )--有一筆Price為0表示此Orderid有Foc
 and o.MDivisionID = '{Sci.Env.User.Keyword}'
+
+AND o.FOCQty > 0  --訂單有 FOC 數量
+AND FocStockQty.Value > 0  ----如果出貨出光了也不需要出現
+AND (	
+		PackingList_Chk_HasFoc.Result='false' 
+		OR 
+		(PackingList_Chk_HasFoc.Result='true' AND PackingList_Chk_IsAllPullout.Result = 'true')
+	)
 {where}
 order by o.ID
 ";
@@ -192,8 +233,8 @@ SP# : {string.Join(",", idList)}";
             if (dt2.Rows.Count > 0)
             {
                 string insertOrderFinished = $@"
-insert Order_Finish(ID,FOCQty,CurrentFOCQty,AddName,AddDate)
-select OrderID,FinishedFOCStockinQty,(FinishedFOCStockinQty -FOCPulloutQty) ,'{Sci.Env.User.UserID}',getdate()
+insert Order_Finish(ID,FOCQty,AddName,AddDate)
+select OrderID,FinishedFOCStockinQty ,'{Sci.Env.User.UserID}',getdate()
 from #tmp
 ";
                 result = MyUtility.Tool.ProcessWithDatatable(dt2, string.Empty, insertOrderFinished, out odt);
