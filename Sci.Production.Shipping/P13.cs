@@ -90,39 +90,31 @@ select
 	o.Qty,
 	ChargeableQty =o.Qty-o.FOCQty,
 	o.FOCQty,
-	ChargeablePulloutQty = isnull(c.value,0),
-	FOCPulloutQty = isnull(c.value2,0),
+	ChargeablePulloutQty = isnull(ShipQty_ByType.TotalNotFocShipQty,0),
+	FOCPulloutQty = isnull(ShipQty_ByType.TotalFocShipQty,0),
 	FinishedFOCStockinQty =isnull(oxx.FOCQty,0),
     [StockInDate] = convert(date, oxx.addDate),
-	CurrentFOCStock= CurrentFOCQty
+	CurrentFOCStock= dbo.GetFocStockByOrder(o.ID)
 from orders o with(nolock)
 outer apply(
-	select sum(value) as value , sum(value2) as value2 
+	select sum(TotalNotFocShipQty) as TotalNotFocShipQty , sum(TotalFocShipQty) as TotalFocShipQty 
 	from
 	(	
 		select 
-		value = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
-		value2=iif( pl.Type='F',sum(pod.ShipQty),0)
+		[TotalNotFocShipQty] = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
+		[TotalFocShipQty]=iif( pl.Type='F',sum(pod.ShipQty),0)
 		from Pullout_Detail pod with(nolock)
 		inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
 		where pod.OrderID = o.ID
 		group by pl.Type
 	) a
-)c
+)ShipQty_ByType
 outer apply(
-	select FOCQty=sum(ox.FOCQty),addDate=min(addDate),CurrentFOCQty = sum(CurrentFOCQty) from Order_Finish ox where ox.id = o.ID
+	select FOCQty=sum(ox.FOCQty),addDate=min(addDate) from Order_Finish ox where ox.id = o.ID
 )oxx
 
-where o.Junk = 0
+where 1=1
 and exists(select 1 from Order_Finish ox where ox.id = o.ID)
-and exists (
-	select 1
-	from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' 
-	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode 
-	where oqd.Id = o.id
-	and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
-)--有一筆Price為0表示此Orderid有Foc
 {where}
 order by o.ID
 ";

@@ -675,7 +675,6 @@ WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
                 return;
             }
 
-            this.UpOrderFinish_CurrentFOCQty(true);
         }
 
         /// <inheritdoc/>
@@ -751,50 +750,6 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
                 return;
             }
 
-            this.UpOrderFinish_CurrentFOCQty(false);
-        }
-
-        private void UpOrderFinish_CurrentFOCQty(bool isConfirmed)
-        {
-            #region 調整Order_Finish CurrentFOCQty
-            DataTable dtPullout;
-            IList<string> updateCmds = new List<string>();
-            DualResult result;
-
-            string sqlcmd = $@"	
-select OrderID,sum(ShipQty) as ShipQty from Pullout_Detail 
-where id = '{this.CurrentMaintain["id"]}'
-and exists(select 1 from Order_Finish where id = Pullout_Detail.OrderID)
-group by OrderID";
-
-            if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtPullout)))
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            string chart = isConfirmed ? "-" : "+";
-
-            if (!MyUtility.Check.Empty(dtPullout) && dtPullout.Rows.Count > 0)
-            {
-                foreach (DataRow dr in dtPullout.Rows)
-                {
-                    updateCmds.Add($@"	
-update Order_Finish
-set CurrentFOCQty = CurrentFOCQty {chart} {dr["ShipQty"]}
-,EditDate = Getdate()
-where id='{dr["OrderID"]}'");
-                }
-
-                result = DBProxy.Current.Executes(null, updateCmds);
-                if (!result)
-                {
-                    MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
-                    return;
-                }
-            }
-
-            #endregion
         }
 
         // History
