@@ -114,6 +114,7 @@ outer apply(
 )oxx
 
 where 1=1
+and exists(select 1 from Order_Finish ox where ox.id = o.ID)
 {where}
 order by o.ID
 ";

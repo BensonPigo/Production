@@ -130,11 +130,19 @@ OUTER APPLY(
 	--如果 FOC 沒建立 PackingList，不需判斷出貨
 	--如果 FOC 已建立了 PackingList，判斷是否『所有』的 FOC PackingList 都完成出貨（出貨的Pullout Stauts != New）。
 	SELECT  [Result]=IIF( PackingList_Chk_HasFoc.Result='false','true'
-			,IIF( COUNT(pu.ID) > 0,'false','true' )) -- 有New的話表示不是全部都完成出貨
+			,IIF( COUNT(p.ID) > 0,'true','false' )) -- 有New的話表示不是全部都完成出貨
 	FROM PackingList p
 	INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-	INNER JOIN Pullout pu ON p.PulloutID=pu.ID
-	WHERE p.Type = 'F' AND pd.OrderID=o.ID AND pu.Status = 'New'
+	WHERE   p.Type = 'F' AND pd.OrderID=o.ID --AND pu.Status = 'New'
+			AND EXISTS 
+			(	--判斷有無建立 Pullout
+				SELECT 1 FROM Pullout pu WHERE  p.PulloutID=pu.ID
+			)
+			AND NOT EXISTS 
+			(	--若有建立 Pullout，判斷是不是全部出貨
+				SELECT 1 FROM Pullout pu WHERE  p.PulloutID=pu.ID AND pu.Status = 'New'
+			)
+
 )PackingList_Chk_IsAllPullout
 
 OUTER APPLY(
