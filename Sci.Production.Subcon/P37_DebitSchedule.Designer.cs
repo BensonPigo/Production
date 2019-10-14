@@ -54,9 +54,10 @@
             // 
             // numericBoxTotal
             // 
-            this.numericBoxTotal.BackColor = System.Drawing.Color.White;
+            this.numericBoxTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBoxTotal.DecimalPlaces = 2;
-            this.numericBoxTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBoxTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBoxTotal.IsSupportEditMode = false;
             this.numericBoxTotal.Location = new System.Drawing.Point(345, 9);
             this.numericBoxTotal.Name = "numericBoxTotal";
             this.numericBoxTotal.NullValue = new decimal(new int[] {
@@ -64,6 +65,7 @@
             0,
             0,
             0});
+            this.numericBoxTotal.ReadOnly = true;
             this.numericBoxTotal.Size = new System.Drawing.Size(100, 23);
             this.numericBoxTotal.TabIndex = 95;
             this.numericBoxTotal.Value = new decimal(new int[] {

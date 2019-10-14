@@ -35,6 +35,7 @@ namespace Sci.Production.Subcon
             //固定是USD，如果有需要換從這邊改
 
             this._TaipeiCurrencyID = "USD";
+            this.numericBoxTotal.ReadOnly = true;
         }
         
         protected override bool OnGridSetup()
