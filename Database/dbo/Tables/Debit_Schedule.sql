@@ -8,6 +8,7 @@
     [EditName]  VARCHAR (10)    CONSTRAINT [DF_Debit_Schedule_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME        NULL,
     [SysDate]   DATETIME        NULL, 
+    [CurrencyID] VARCHAR(3) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Debit_Schedule] PRIMARY KEY ([ID], [IssueDate])
 );
 
