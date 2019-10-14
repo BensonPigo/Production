@@ -100,7 +100,7 @@ select
 	o.FOCQty,
 	ChargeablePulloutQty = isnull(ShipQty_ByType.TotalNotFocShipQty,0),
 	FOCPulloutQty = isnull(ShipQty_ByType.TotalFocShipQty,0),
-	FinishedFOCStockinQty = ISNULL(FocStockQty.Value ,0)    --o.FOCQty - isnull(TotalShipQty_ByType.TotalFocShipQty,0)  改用Function取得FOC庫存
+	FinishedFOCStockinQty = ISNULL(FocStockQty.Value ,0)    -- Function 取得 FOC 庫存
 from orders o with(nolock)
 inner join Factory f with(nolock) on f.id = o.FactoryID and f.IsProduceFty = 1
 outer apply(
@@ -150,26 +150,28 @@ OUTER APPLY(
 )FocStockQty
 
 where o.Junk = 0
-and not exists(select 1 from Order_Finish ox where ox.id = o.ID)  --訂單尚未執行 FOC 入庫
-and o.FOCQty > isnull(ShipQty_ByType.TotalFocShipQty,0)
-and exists (
-	select 1
-	from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' 
-	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode 
-	where oqd.Id = o.id
-	and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
-)--有一筆Price為0表示此Orderid有Foc
-and o.MDivisionID = '{Sci.Env.User.Keyword}'
-
-AND o.FOCQty > 0  --訂單有 FOC 數量
-AND FocStockQty.Value > 0  ----如果出貨出光了也不需要出現
-AND (	
-		PackingList_Chk_HasFoc.Result='false' 
-		OR 
-		(PackingList_Chk_HasFoc.Result='true' AND PackingList_Chk_IsAllPullout.Result = 'true')
-	)
-{where}
+        and o.MDivisionID = '{Sci.Env.User.Keyword}'
+        AND o.FOCQty > 0  --訂單有 FOC 數量
+        AND FocStockQty.Value > 0  -- FOC 還有未出貨的數量
+        and not exists(
+            select 1 
+            from Order_Finish ox 
+            where ox.id = o.ID
+        )  --訂單尚未執行 FOC 入庫
+        and exists (
+	        select 1
+	        from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	        left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' 
+	        left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode 
+	        where oqd.Id = o.id
+	        and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
+        )-- 有一筆 Price 為 0 表示此 Orderid 有Foc
+        AND (	
+		        PackingList_Chk_HasFoc.Result='false' 
+		        OR 
+		        (PackingList_Chk_HasFoc.Result='true' AND PackingList_Chk_IsAllPullout.Result = 'true')
+	    ) -- 排除 FOC 已建立 FOC PL 但是還沒出貨
+        {where}
 order by o.ID
 ";
             DataTable dt;
