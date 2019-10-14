@@ -167,7 +167,7 @@ inner join {tempTable} t on t.OrderID = bun.Orderid
 
             foreach (string subprocessID in subprocessIDs)
             {
-                string subprocessIDt = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
+                string subprocessIDtmp = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
 
                 // --Step 2. --
                 //-- * 2.找出所有 Fabric Combo +Fabric Pancel Code +Article + SizeCode->Cartpart(包含同部位數量)
@@ -189,7 +189,7 @@ select	st1.OrderID,
 		CutpartCount.PatternCode,
 		CutpartCount.QtyBySet,
 		CutpartCount.QtyBySubprocess
-into #QtyBySetPerCutpart{subprocessIDt}
+into #QtyBySetPerCutpart{subprocessIDtmp}
 from #AllOrders st1
 outer apply (
 	select	bunD.Patterncode
@@ -225,8 +225,8 @@ select	st2.Orderid
 		, st2.Sizecode
 		, QtyBySet = sum (st2.QtyBySet)
 		, QtyBySubprocess = sum (st2.QtyBySubProcess)
-into #CutpartBySet{subprocessIDt}
-from #QtyBySetPerCutpart{subprocessIDt} st2
+into #CutpartBySet{subprocessIDtmp}
+from #QtyBySetPerCutpart{subprocessIDtmp} st2
 group by st2.Orderid, st2.Article, st2.Sizecode
 
 
@@ -244,9 +244,9 @@ select	st0.Orderid
 		, bunD.Qty
 		, IsPair=isnull(bunD.IsPair,0)
 		, m=iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
-into #BundleInOutDetail{subprocessIDt}
-from #QtyBySetPerCutpart{subprocessIDt} st0
-inner join SubProcess sub on sub.ID = '{subprocessIDt}'
+into #BundleInOutDetail{subprocessIDtmp}
+from #QtyBySetPerCutpart{subprocessIDtmp} st0
+inner join SubProcess sub on sub.ID = '{subprocessID}'
 left join Order_SizeCode os with (nolock) on os.ID = st0.POID and os.SizeCode = st0.SizeCode
 outer apply(
 	select bunD.BundleGroup, bunD.Qty, bunD.BundleNo,bunD.IsPair
@@ -287,8 +287,8 @@ select	Orderid
 
 
 
-into #BundleInOutQty{subprocessIDt}
-from #BundleInOutDetail{subprocessIDt}
+into #BundleInOutQty{subprocessIDtmp}
+from #BundleInOutDetail{subprocessIDtmp}
 group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair,m
 
 ";
@@ -297,7 +297,7 @@ group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, Fabr
                 {
                     sqlcmd += $@"
 --篩選 BundleGroup Step.1 --
-update #BundleInOutQty{subprocessIDt}
+update #BundleInOutQty{subprocessIDtmp}
 set InQty = iif(num_In<num,0,InQty)
 	, OutQty = iif(num_Out<num,0,OutQty)
 	, FinishedQty = iif(num_F<num,0,FinishedQty)
@@ -308,7 +308,7 @@ select	OrderID
 		, InQty = min (InQty)
 		, OutQty = min (OutQty)
 		, FinishedQty = min (FinishedQty)
-into #FinalQtyBySet{subprocessIDt}
+into #FinalQtyBySet{subprocessIDtmp}
 from (
 	select	OrderID
 			, Size
@@ -336,7 +336,7 @@ from (
 					, InQty = min (InQty)
 					, OutQty = min (OutQty)
 					, FinishedQty = min (FinishedQty)
-			from #BundleInOutQty{subprocessIDt}
+			from #BundleInOutQty{subprocessIDtmp}
 			group by OrderID, Size, Article, PatternPanel, FabricPanelCode, BundleGroup
 		) minGroupCutpart							
 		group by OrderID, Size, Article, PatternPanel, FabricPanelCode
@@ -355,7 +355,7 @@ select	OrderID
 		, InQty = min (InQty)
 		, OutQty = min (OutQty)
 		, FinishedQty = min (FinishedQty)
-into #FinalQtyBySet{subprocessIDt}
+into #FinalQtyBySet{subprocessIDtmp}
 from (
 	select	OrderID
 			, Size
@@ -383,7 +383,7 @@ from (
 					, InQty = sum (InQty)
 					, OutQty = sum (OutQty)
 					, FinishedQty = sum (FinishedQty)
-			from #BundleInOutQty{subprocessIDt}
+			from #BundleInOutQty{subprocessIDtmp}
 			group by OrderID, Size, Article, PatternPanel, FabricPanelCode, PatternCode
 		) sumbas
 		group by OrderID, Size, Article, PatternPanel, FabricPanelCode
@@ -416,14 +416,14 @@ select	OrderID = cbs.OrderID
 						when sub.FinishedQty>oq.qty then oq.qty
 						else sub.FinishedQty
 						end
-into #QtyBySetPerSubprocess{subprocessIDt}
-from #CutpartBySet{subprocessIDt} cbs
+into #QtyBySetPerSubprocess{subprocessIDtmp}
+from #CutpartBySet{subprocessIDtmp} cbs
 left join Order_Qty oq  WITH (NOLOCK) on oq.id = cbs.OrderID and oq.SizeCode = cbs.SizeCode and oq.Article = cbs.Article
-left join #FinalQtyBySet{subprocessIDt} sub on cbs.Orderid = sub.Orderid and cbs.Sizecode = sub.size and cbs.Article = sub.Article
+left join #FinalQtyBySet{subprocessIDtmp} sub on cbs.Orderid = sub.Orderid and cbs.Sizecode = sub.size and cbs.Article = sub.Article
 outer apply (
 	select	InQtyByPcs = sum (isnull (bunIO.OriInQty, 0))
 			, OutQtyByPcs = sum (isnull (bunIO.OriOutQty, 0))
-	from #BundleInOutQty{subprocessIDt} bunIO
+	from #BundleInOutQty{subprocessIDtmp} bunIO
 	where cbs.OrderID = bunIO.OrderID and cbs.Sizecode = bunIO.Size and cbs.Article = bunIO.Article
 ) IOQtyPerPcs
 where FinishedQty is not null
@@ -432,10 +432,10 @@ where FinishedQty is not null
                 {
                     sqlcmd += $@"
 select OrderID, InQtyBySet = sum (InQty), OutQtyBySet = sum (OutQty)
-into #{subprocessIDt}
+into #{subprocessIDtmp}
 from(
 	select OrderID, SizeCode, InQty = min (InQtyBySet), OutQty = min (OutQtyBySet)
-	from #QtyBySetPerSubprocess{subprocessIDt}	minPatternPanel
+	from #QtyBySetPerSubprocess{subprocessIDtmp}	minPatternPanel
 	group by OrderID, SizeCode ,Article
 ) minArticle
 group by OrderID
