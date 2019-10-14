@@ -181,7 +181,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(5392, 163);
+            this.gridicon.Location = new System.Drawing.Point(5517, 163);
             // 
             // refresh
             // 
@@ -713,6 +713,9 @@
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.isMisc = false;
+            this.txtsubconSupplier.isShipping = false;
+            this.txtsubconSupplier.isSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(113, 90);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
@@ -842,6 +845,7 @@
             this.JunkChkValue = "New";
             this.KeyField1 = "ID";
             this.Name = "P36";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.RecallChkValue = "Sent";
             this.ReceiveChkValue = "Sent";
             this.ReturnChkValue = "Received";
