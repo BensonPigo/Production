@@ -72,10 +72,13 @@ BEGIN
 
 	--4. 台北財務調整的數量
 	INSERT @Tmp3
-	SELECt iq.Article,iq.SizeCode,iq.DiffQty
+	SELECt iq.Article,iq.SizeCode,[DiffQty]= SUM(iq.DiffQty)
 	FROm InvAdjust i
 	INNER JOIN InvAdjust_Qty iq ON i.ID = iq.ID
 	WHERE i.OrderID = @OrderID
+	GROUP BY iq.Article,iq.SizeCode
+
+	----P.S  3、4的部分都根據Article、SizeCode先分組加總再最後加總避免發散
 
 	--P.S 如果以後要增加各Article/SizeCode的FOC出貨，從這找
 	SELECT --t1.Article,t1.SizeCode
