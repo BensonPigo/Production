@@ -87,9 +87,9 @@ select
 	,o.GMTComplete
 	,ShortageQty=iif(o.GMTComplete='S', isnull(o.Qty,0)-isnull(o.FOCQty,0)-isnull(PulloutQty.OrderQty,0)+isnull(inv.DiffQty,0),null)
 	,[Category]=Category.Value--**
-	,[ReasonRemark]=o.OutstandingRemark
+    ,[OutstandingReason]=OutstandingRemark.Value
 	,[EstPODD]=o.EstPODD
-	,[OutstandingRemark]=OutstandingRemark.Value
+	,[ReasonRemark]=o.OutstandingRemark
 	,[PackingListRemark]=p.Remark
 from Orders o
 inner join Order_QtyShip oq on o.ID=oq.Id
