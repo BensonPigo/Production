@@ -183,7 +183,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2892, 397);
+            this.gridicon.Location = new System.Drawing.Point(3017, 397);
             // 
             // refresh
             // 
@@ -197,15 +197,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1000, 649);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(994, 603);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -250,7 +250,6 @@
             // 
             // labelDebitNo
             // 
-            this.labelDebitNo.Lines = 0;
             this.labelDebitNo.Location = new System.Drawing.Point(17, 9);
             this.labelDebitNo.Name = "labelDebitNo";
             this.labelDebitNo.Size = new System.Drawing.Size(75, 23);
@@ -262,7 +261,6 @@
             this.lblSubconDebitNote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblSubconDebitNote.BackColor = System.Drawing.Color.Transparent;
             this.lblSubconDebitNote.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.lblSubconDebitNote.Lines = 0;
             this.lblSubconDebitNote.Location = new System.Drawing.Point(659, 9);
             this.lblSubconDebitNote.Name = "lblSubconDebitNote";
             this.lblSubconDebitNote.Size = new System.Drawing.Size(178, 23);
@@ -275,7 +273,6 @@
             this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.lblStatus.Lines = 0;
             this.lblStatus.Location = new System.Drawing.Point(836, 9);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(151, 23);
@@ -295,7 +292,6 @@
             // 
             // labelDebitDate
             // 
-            this.labelDebitDate.Lines = 0;
             this.labelDebitDate.Location = new System.Drawing.Point(17, 41);
             this.labelDebitDate.Name = "labelDebitDate";
             this.labelDebitDate.Size = new System.Drawing.Size(75, 23);
@@ -314,7 +310,6 @@
             // 
             // labelHandle
             // 
-            this.labelHandle.Lines = 0;
             this.labelHandle.Location = new System.Drawing.Point(275, 41);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(48, 23);
@@ -323,7 +318,6 @@
             // 
             // labelSMR
             // 
-            this.labelSMR.Lines = 0;
             this.labelSMR.Location = new System.Drawing.Point(275, 73);
             this.labelSMR.Name = "labelSMR";
             this.labelSMR.Size = new System.Drawing.Size(48, 23);
@@ -342,7 +336,6 @@
             // 
             // labelSettledDate
             // 
-            this.labelSettledDate.Lines = 0;
             this.labelSettledDate.Location = new System.Drawing.Point(275, 9);
             this.labelSettledDate.Name = "labelSettledDate";
             this.labelSettledDate.Size = new System.Drawing.Size(87, 23);
@@ -361,7 +354,6 @@
             // 
             // labelConfirmDate
             // 
-            this.labelConfirmDate.Lines = 0;
             this.labelConfirmDate.Location = new System.Drawing.Point(644, 105);
             this.labelConfirmDate.Name = "labelConfirmDate";
             this.labelConfirmDate.Size = new System.Drawing.Size(97, 23);
@@ -370,7 +362,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(17, 73);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(75, 23);
@@ -400,7 +391,6 @@
             // 
             // labelSubconName
             // 
-            this.labelSubconName.Lines = 0;
             this.labelSubconName.Location = new System.Drawing.Point(12, 29);
             this.labelSubconName.Name = "labelSubconName";
             this.labelSubconName.Size = new System.Drawing.Size(102, 23);
@@ -409,7 +399,6 @@
             // 
             // labelAmount
             // 
-            this.labelAmount.Lines = 0;
             this.labelAmount.Location = new System.Drawing.Point(768, 41);
             this.labelAmount.Name = "labelAmount";
             this.labelAmount.Size = new System.Drawing.Size(75, 23);
@@ -462,7 +451,6 @@
             // 
             // labelRate
             // 
-            this.labelRate.Lines = 0;
             this.labelRate.Location = new System.Drawing.Point(646, 29);
             this.labelRate.Name = "labelRate";
             this.labelRate.Size = new System.Drawing.Size(75, 23);
@@ -471,7 +459,6 @@
             // 
             // labelTotalAmt
             // 
-            this.labelTotalAmt.Lines = 0;
             this.labelTotalAmt.Location = new System.Drawing.Point(318, 29);
             this.labelTotalAmt.Name = "labelTotalAmt";
             this.labelTotalAmt.Size = new System.Drawing.Size(75, 23);
@@ -504,7 +491,6 @@
             // 
             // labelReceivedAmt
             // 
-            this.labelReceivedAmt.Lines = 0;
             this.labelReceivedAmt.Location = new System.Drawing.Point(12, 60);
             this.labelReceivedAmt.Name = "labelReceivedAmt";
             this.labelReceivedAmt.Size = new System.Drawing.Size(102, 23);
@@ -533,7 +519,6 @@
             // 
             // labelTWSettledVoucherNo
             // 
-            this.labelTWSettledVoucherNo.Lines = 0;
             this.labelTWSettledVoucherNo.Location = new System.Drawing.Point(646, 28);
             this.labelTWSettledVoucherNo.Name = "labelTWSettledVoucherNo";
             this.labelTWSettledVoucherNo.Size = new System.Drawing.Size(157, 23);
@@ -542,7 +527,6 @@
             // 
             // labelFactoryVoucherNo
             // 
-            this.labelFactoryVoucherNo.Lines = 0;
             this.labelFactoryVoucherNo.Location = new System.Drawing.Point(318, 28);
             this.labelFactoryVoucherNo.Name = "labelFactoryVoucherNo";
             this.labelFactoryVoucherNo.Size = new System.Drawing.Size(137, 23);
@@ -551,7 +535,6 @@
             // 
             // labelTWVoucherNo
             // 
-            this.labelTWVoucherNo.Lines = 0;
             this.labelTWVoucherNo.Location = new System.Drawing.Point(12, 28);
             this.labelTWVoucherNo.Name = "labelTWVoucherNo";
             this.labelTWVoucherNo.Size = new System.Drawing.Size(111, 23);
@@ -560,7 +543,6 @@
             // 
             // labelTitle
             // 
-            this.labelTitle.Lines = 0;
             this.labelTitle.Location = new System.Drawing.Point(17, 105);
             this.labelTitle.Name = "labelTitle";
             this.labelTitle.Size = new System.Drawing.Size(75, 23);
@@ -589,7 +571,6 @@
             // 
             // labelFrom
             // 
-            this.labelFrom.Lines = 0;
             this.labelFrom.Location = new System.Drawing.Point(17, 137);
             this.labelFrom.Name = "labelFrom";
             this.labelFrom.Size = new System.Drawing.Size(75, 23);
@@ -608,7 +589,6 @@
             // 
             // labelAttn
             // 
-            this.labelAttn.Lines = 0;
             this.labelAttn.Location = new System.Drawing.Point(17, 169);
             this.labelAttn.Name = "labelAttn";
             this.labelAttn.Size = new System.Drawing.Size(75, 23);
@@ -627,7 +607,6 @@
             // 
             // labelCC
             // 
-            this.labelCC.Lines = 0;
             this.labelCC.Location = new System.Drawing.Point(17, 201);
             this.labelCC.Name = "labelCC";
             this.labelCC.Size = new System.Drawing.Size(75, 23);
@@ -636,7 +615,6 @@
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Lines = 0;
             this.labelCurrency.Location = new System.Drawing.Point(644, 41);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(75, 23);
@@ -655,7 +633,6 @@
             // 
             // labelConfirm
             // 
-            this.labelConfirm.Lines = 0;
             this.labelConfirm.Location = new System.Drawing.Point(644, 73);
             this.labelConfirm.Name = "labelConfirm";
             this.labelConfirm.Size = new System.Drawing.Size(55, 23);
@@ -675,7 +652,6 @@
             // 
             // labelSubSubconName
             // 
-            this.labelSubSubconName.Lines = 0;
             this.labelSubSubconName.Location = new System.Drawing.Point(420, 137);
             this.labelSubSubconName.Name = "labelSubSubconName";
             this.labelSubSubconName.Size = new System.Drawing.Size(138, 23);
@@ -726,7 +702,6 @@
             // 
             // labelBalance
             // 
-            this.labelBalance.Lines = 0;
             this.labelBalance.Location = new System.Drawing.Point(318, 60);
             this.labelBalance.Name = "labelBalance";
             this.labelBalance.Size = new System.Drawing.Size(102, 23);
@@ -793,7 +768,6 @@
             // 
             // labelFactoryVoucherDate
             // 
-            this.labelFactoryVoucherDate.Lines = 0;
             this.labelFactoryVoucherDate.Location = new System.Drawing.Point(318, 57);
             this.labelFactoryVoucherDate.Name = "labelFactoryVoucherDate";
             this.labelFactoryVoucherDate.Size = new System.Drawing.Size(137, 23);
@@ -867,6 +841,7 @@
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P37";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P37. Debit Memo (Taipei)";
             this.UniqueExpress = "id";
             this.WorkAlias = "Debit";

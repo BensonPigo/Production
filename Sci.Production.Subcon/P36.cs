@@ -31,6 +31,8 @@ namespace Sci.Production.Subcon
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
         }
 
+        private bool isTaipeiDBC = false;
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -54,6 +56,9 @@ namespace Sci.Production.Subcon
             else
                 this.displayAmtReceived.Text = "";
             lblTaipeiDebitNote.Visible = (!MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]));
+
+            this.isTaipeiDBC = (!MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]));
+
             numTotalAmt.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) + decimal.Parse(CurrentMaintain["tax"].ToString());
             btnDebitSchedule.Enabled = !this.EditMode && CurrentMaintain["status"].ToString().ToUpper() == "CONFIRMED";
             // 剛好settle的 voucher# & Date 顯示
@@ -515,7 +520,7 @@ where id = '{4}'"
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
             //var frm = new Sci.Production.Subcon.P37_DebitSchedule(Production.PublicPrg.Prgs.GetAuthority(dr["cfmname"].ToString()), dr["ID"].ToString(), null, null);
-            var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null,this.CurrentMaintain);  //調成跟舊系統一樣，不管誰都可以編輯
+            var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null,this.CurrentMaintain,"P36");  //調成跟舊系統一樣，不管誰都可以編輯
             frm.ShowDialog(this);
             this.RenewData();
             this.Refresh();
