@@ -293,6 +293,12 @@
     </Compile>
     <Compile Include="P13_FabricSticker_PrintData.cs" />
     <Compile Include="P13_PrintData.cs" />
+    <Compile Include="P14.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P14.Designer.cs">
+      <DependentUpon>P14.cs</DependentUpon>
+    </Compile>
     <Compile Include="P15_PrintData.cs" />
     <Compile Include="P15_Unfinish.cs">
       <SubType>Form</SubType>
@@ -1128,6 +1134,7 @@
     <Compile Include="Report\R38.Designer.cs">
       <DependentUpon>R38.cs</DependentUpon>
     </Compile>
+    <Compile Include="P14_PrintData.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1246,6 +1253,9 @@
     <EmbeddedResource Include="P07.resx">
       <DependentUpon>P07.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P14.resx">
+      <DependentUpon>P14.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P15_Import.resx">
       <DependentUpon>P15_Import.cs</DependentUpon>
@@ -1789,6 +1799,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="P10_RelaxationSticker_Print.rdlc" />
+    <EmbeddedResource Include="P14_Print.rdlc" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />
@@ -1796,6 +1807,7 @@
     <None Include="Properties\DataSources\P11_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_PrintData.datasource" />
+    <None Include="Properties\DataSources\P14_PrintData.datasource" />
     <None Include="Properties\DataSources\P16_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P22_FabricSticker_PrintData.datasource" />

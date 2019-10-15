@@ -399,6 +399,36 @@ drop table #tmpS1;
 drop table #TmpSource;";
                     #endregion
                     break;
+                case 5:
+                    #region 更新OutQty
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+
+select poid, seq1, seq2, stocktype,qty=sum(qty)
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype
+
+merge dbo.FtyInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) + s.qty
+when not matched then
+    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[StockType],[outqty])
+    values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
+			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+			 ,s.poid,s.seq1,s.seq2,s.stocktype,s.qty);
+
+drop table #tmpS1;
+drop table #TmpSource;";
+                    #endregion
+                    break;
                 case 6:
                     #region 更新OutQty with Location
                     sqlcmd = @"
@@ -2065,9 +2095,9 @@ Where a.id = '{SubTransfer_ID}'";
             int nCount = 0;
             int drcount = result.Count;
             IList<string> cListBarcodeNo;
-            cListBarcodeNo = GetBatchID("", "Issue_Detail", default(DateTime), 3, "BarcodeNo", batchNumber: drcount, sequenceMode: 2,sequenceLength: 4, ignoreSeq: 3, orderByCol: "Ukey");
             try
             {
+                cListBarcodeNo = GetBatchID("", "Issue_Detail", default(DateTime), 3, "BarcodeNo", batchNumber: drcount, sequenceMode: 2,sequenceLength: 4, ignoreSeq: 3, orderByCol: "Ukey");
                 foreach (DataRow dr in result)
                 {
                     if (dr.RowState == DataRowState.Deleted)
@@ -2342,7 +2372,9 @@ union all
 			when 'D' then 'P13. Issue Material by Item'
 			when 'E' then 'P72. Transfer Inventory to Bulk (Confirm)'
 			when 'F' then 'P75. Material Borrow cross M (Confirm)'
-			when 'G' then 'P77. Material Return Back cross M (Request)'  end name
+			when 'G' then 'P77. Material Return Back cross M (Request)' 
+			when 'H' then 'P14. Issue Thread Allowance' 
+            end name
 	,0 as inqty, sum(Qty) released,0 as adjust, a.remark,'' location
 from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
