@@ -112,7 +112,8 @@ order by NLCode",
         // NL Code
         private void TxtNLCode_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && this.txtNLCode.OldValue != this.txtNLCode.Text)
+            string oldvalue = MyUtility.Convert.GetString(this.CurrentMaintain["NLCode"]);
+            if (this.EditMode && oldvalue != this.txtNLCode.Text)
             {
                 if (MyUtility.Check.Empty(this.txtNLCode.Text))
                 {
