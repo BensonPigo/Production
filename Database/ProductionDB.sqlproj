@@ -2405,6 +2405,9 @@
     <Build Include="dbo\Tables\LineLocation.sql" />
     <Build Include="dbo\Tables\ProductionLineAllocation.sql" />
     <Build Include="dbo\Tables\ProductionLineAllocation_Detail.sql" />
+    <Build Include="dbo\Tables\ArtworkReq.sql" />
+    <Build Include="dbo\Tables\ArtworkReq_Detail.sql" />
+    <Build Include="dbo\Tables\ArtworkReq_IrregularQty.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
