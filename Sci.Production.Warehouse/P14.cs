@@ -84,16 +84,28 @@ namespace Sci.Production.Warehouse
             if (!this.checkToSisterFty.Checked)
             {
                 List<string> msgpoid = new List<string>();
+                int i = -1;
+                bool f = false;
                 foreach (DataRow dr in this.DetailDatas)
                 {
-                    if (dr.RowState != DataRowState.Deleted && MyUtility.Check.Empty(dr["poid"]))
+                    if (dr.RowState != DataRowState.Deleted)
                     {
-                        msgpoid.Add(MyUtility.Convert.GetString(dr["seq"]));
+                        if (!f)
+                        {
+                            i++;
+                        }
+                        if (MyUtility.Check.Empty(dr["poid"]))
+                        {
+                            msgpoid.Add(MyUtility.Convert.GetString(dr["seq"]));
+                            f = true;
+                        }
                     }
                 }
                 if (msgpoid.Count > 0)
                 {
                     MyUtility.Msg.WarningBox("Seq: " + string.Join(",", msgpoid) + ". To SP# can't empty!");
+                    this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells[6];
+                    this.detailgrid.BeginEdit(true);
                     return false;
                 }
             }
@@ -137,11 +149,7 @@ namespace Sci.Production.Warehouse
             }
             return base.ClickSavePre();
         }
-        protected override DualResult ClickSave()
-        {
 
-            return base.ClickSave();
-        }
         protected override bool ClickDeleteBefore()
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed")
@@ -155,7 +163,7 @@ namespace Sci.Production.Warehouse
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"
-select  a.*
+select distinct a.*
 	, concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 	, dbo.getmtldesc(i.OrderID,a.seq1,a.seq2,2,0) as [description]
 	, p1.SuppColor
@@ -164,7 +172,8 @@ select  a.*
 from dbo.issue_detail as a WITH (NOLOCK) 
 inner join issue i WITH (NOLOCK) on i.id = a.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = i.OrderID and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = i.OrderID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
+left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = i.OrderID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B' 
+	and isnull(c.Roll,'') = isnull(a.Roll,'') and isnull(c.Dyelot,'')  = isnull(a.Dyelot,'')
 Where a.id = '{0}'", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -299,10 +308,11 @@ order by SEQ1, SEQ2
             string sqlupd2_FIO = "";
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"
-Select  d.poid        ,d.seq1        ,d.seq2
+Select  d.seq1,d.seq2
 from dbo.Issue_Detail d WITH (NOLOCK) 
 inner join Issue i WITH (NOLOCK) on d.id = i.id
-inner join FtyInventory f WITH (NOLOCK) on i.OrderID = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and f.StockType = 'B'
+inner join FtyInventory f WITH (NOLOCK) on i.OrderID = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and f.StockType = 'B'  
+	and isnull(d.Roll,'') = isnull(f.Roll,'') and isnull(d.Dyelot,'')  = isnull(f.Dyelot,'')
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -326,11 +336,13 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             #region 檢查負數庫存
             sqlcmd = string.Format(@"
-Select  d.poid        ,d.seq1        ,d.seq2,   d.qty
-        ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
+Select distinct d.seq1,d.seq2,d.qty
+        ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,
+        d.ukey
 from dbo.Issue_Detail d WITH (NOLOCK) 
 inner join Issue i WITH (NOLOCK) on d.id = i.id
-inner join FtyInventory f WITH (NOLOCK) on i.OrderID = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and f.StockType = 'B'
+inner join FtyInventory f WITH (NOLOCK) on i.OrderID = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and f.StockType = 'B'  
+	and isnull(d.Roll,'') = isnull(f.Roll,'') and isnull(d.Dyelot,'')  = isnull(f.Dyelot,'')
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) 
 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -382,14 +394,16 @@ and d.Id = '{0}'", CurrentMaintain["id"]);
             var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
-                             poid = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
+                             poid = m.Field<string>("poid"),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
                              stocktype = m.Field<string>("stocktype"),
                              qty = m.Field<decimal>("qty"),
                              location = m.Field<string>("location"),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
                          }).ToList();
-            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(5, null, true);
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -476,14 +490,16 @@ and d.Id = '{0}'", CurrentMaintain["id"]);
             var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
-                             poid = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
+                             poid = m.Field<string>("poid"),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
                              stocktype = m.Field<string>("stocktype"),
                              qty = -(m.Field<decimal>("qty")),
                              location = m.Field<string>("location"),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
                          }).ToList();
-            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(5, null, false);
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -595,7 +611,7 @@ select
 from dbo.issue_detail as a WITH (NOLOCK) 
 inner join issue i WITH (NOLOCK) on i.id = a.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = i.OrderID and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = i.OrderID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
+left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = i.OrderID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'  and isnull(c.Roll,'') = '' and isnull(c.Dyelot,'')  = ''
 Where a.id = @ID
 order by SEQ,POID
 ";

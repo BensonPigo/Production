@@ -399,36 +399,6 @@ drop table #tmpS1;
 drop table #TmpSource;";
                     #endregion
                     break;
-                case 5:
-                    #region 更新OutQty
-                    sqlcmd = @"
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-
-select poid, seq1, seq2, stocktype,qty=sum(qty)
-into #tmpS1
-from #TmpSource
-group by poid, seq1, seq2, stocktype
-
-merge dbo.FtyInventory as target
-using #tmpS1 as s
-    on target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.stocktype = s.stocktype
-when matched then
-    update
-    set outqty = isnull(outqty,0.00) + s.qty
-when not matched then
-    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[StockType],[outqty])
-    values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
-			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.poid,s.seq1,s.seq2,s.stocktype,s.qty);
-
-drop table #tmpS1;
-drop table #TmpSource;";
-                    #endregion
-                    break;
                 case 6:
                     #region 更新OutQty with Location
                     sqlcmd = @"
