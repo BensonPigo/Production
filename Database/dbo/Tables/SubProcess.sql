@@ -12,6 +12,8 @@
     [EditDate]      DATETIME     NULL,
     [BCSDate]       NUMERIC (2)  NULL,
     [InOutRule]     TINYINT      DEFAULT ((0)) NOT NULL,
+    [FullName] VARCHAR(15) NULL, 
+    [IsLackingAndReplacement] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -74,3 +76,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = '0-NotSetting
 4-FromOutToIn', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubProcess', @level2type = N'COLUMN', @level2name = N'InOutRule';
 
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Subprocess Full Name',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SubProcess',
+    @level2type = N'COLUMN',
+    @level2name = N'FullName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Lacking and Replacement selected',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SubProcess',
+    @level2type = N'COLUMN',
+    @level2name = N'IsLackingAndReplacement'

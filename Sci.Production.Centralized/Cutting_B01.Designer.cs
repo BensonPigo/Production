@@ -39,9 +39,12 @@
             this.txtShowSeq = new Sci.Win.UI.TextBox();
             this.txtBcsDate = new Sci.Win.UI.TextBox();
             this.labelBcsDate = new Sci.Win.UI.Label();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.label1 = new Sci.Win.UI.Label();
             this.combInOutRule = new Sci.Win.UI.ComboBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.chkIsLackingAndReplacement = new Sci.Win.UI.CheckBox();
+            this.txtFullName = new Sci.Win.UI.TextBox();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -56,6 +59,9 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtFullName);
+            this.detailcont.Controls.Add(this.label2);
+            this.detailcont.Controls.Add(this.chkIsLackingAndReplacement);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.combInOutRule);
             this.detailcont.Controls.Add(this.txtartworktype_ftyArtworkType);
@@ -211,18 +217,6 @@
             this.labelBcsDate.TabIndex = 16;
             this.labelBcsDate.Text = "BcsDate";
             // 
-            // txtartworktype_ftyArtworkType
-            // 
-            this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "t";
-            this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
-            this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(162, 112);
-            this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
-            this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_ftyArtworkType.TabIndex = 1;
-            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(70, 276);
@@ -243,6 +237,49 @@
             this.combInOutRule.OldText = "";
             this.combInOutRule.Size = new System.Drawing.Size(121, 24);
             this.combInOutRule.TabIndex = 19;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(315, 277);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 23);
+            this.label2.TabIndex = 24;
+            this.label2.Text = "Full Name";
+            // 
+            // chkIsLackingAndReplacement
+            // 
+            this.chkIsLackingAndReplacement.AutoSize = true;
+            this.chkIsLackingAndReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsLackingAndReplacement", true));
+            this.chkIsLackingAndReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsLackingAndReplacement.Location = new System.Drawing.Point(315, 167);
+            this.chkIsLackingAndReplacement.Name = "chkIsLackingAndReplacement";
+            this.chkIsLackingAndReplacement.Size = new System.Drawing.Size(191, 21);
+            this.chkIsLackingAndReplacement.TabIndex = 23;
+            this.chkIsLackingAndReplacement.Text = "Lacking and Replacement";
+            this.chkIsLackingAndReplacement.UseVisualStyleBackColor = true;
+            // 
+            // txtFullName
+            // 
+            this.txtFullName.BackColor = System.Drawing.Color.White;
+            this.txtFullName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FullName", true));
+            this.txtFullName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFullName.Location = new System.Drawing.Point(407, 277);
+            this.txtFullName.MaxLength = 15;
+            this.txtFullName.Name = "txtFullName";
+            this.txtFullName.Size = new System.Drawing.Size(156, 23);
+            this.txtFullName.TabIndex = 25;
+            // 
+            // txtartworktype_ftyArtworkType
+            // 
+            this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_ftyArtworkType.cClassify = "";
+            this.txtartworktype_ftyArtworkType.cSubprocess = "t";
+            this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
+            this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(162, 112);
+            this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
+            this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_ftyArtworkType.TabIndex = 1;
             // 
             // Cutting_B01
             // 
@@ -288,5 +325,8 @@
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.Label label1;
         private Win.UI.ComboBox combInOutRule;
+        private Win.UI.Label label2;
+        private Win.UI.CheckBox chkIsLackingAndReplacement;
+        private Win.UI.TextBox txtFullName;
     }
 }
