@@ -105,38 +105,34 @@ order by NLCode",
         // NL Code
         private void TxtNLCode_Validating(object sender, CancelEventArgs e)
         {
-            string oldvalue = MyUtility.Convert.GetString(this.CurrentMaintain["NLCode"]);
-            if (this.EditMode && oldvalue != this.txtNLCode.Text)
+            if (MyUtility.Check.Empty(this.txtNLCode.Text))
             {
-                if (MyUtility.Check.Empty(this.txtNLCode.Text))
+                this.CurrentMaintain["NLCode"] = string.Empty;
+                this.CurrentMaintain["HSCode"] = string.Empty;
+                this.CurrentMaintain["CustomsUnit"] = string.Empty;
+            }
+            else
+            {
+                DataRow nLCodeDate;
+                if (MyUtility.Check.Seek(
+                    string.Format(
+                        @"select NLCode,HSCode,UnitID
+from VNContract_Detail WITH (NOLOCK) 
+where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
+and NLCode = '{0}'", this.txtNLCode.Text), out nLCodeDate))
+                {
+                    this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
+                    this.CurrentMaintain["HSCode"] = nLCodeDate["HSCode"];
+                    this.CurrentMaintain["CustomsUnit"] = nLCodeDate["UnitID"];
+                }
+                else
                 {
                     this.CurrentMaintain["NLCode"] = string.Empty;
                     this.CurrentMaintain["HSCode"] = string.Empty;
                     this.CurrentMaintain["CustomsUnit"] = string.Empty;
-                }
-                else
-                {
-                    DataRow nLCodeDate;
-                    if (MyUtility.Check.Seek(
-                        string.Format(
-                            @"select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", this.txtNLCode.Text), out nLCodeDate))
-                    {
-                        this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
-                        this.CurrentMaintain["HSCode"] = nLCodeDate["HSCode"];
-                        this.CurrentMaintain["CustomsUnit"] = nLCodeDate["UnitID"];
-                    }
-                    else
-                    {
-                        this.CurrentMaintain["NLCode"] = string.Empty;
-                        this.CurrentMaintain["HSCode"] = string.Empty;
-                        this.CurrentMaintain["CustomsUnit"] = string.Empty;
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("The Customs Code is not in the Contract!!");
-                        return;
-                    }
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("The Customs Code is not in the Contract!!");
+                    return;
                 }
             }
         }
