@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[P_DeleteSewingOutPut]
+﻿CREATE PROCEDURE [dbo].[P_DeleteEfficiencyBI]
 	 @OutputDate date
 AS
 BEGIN

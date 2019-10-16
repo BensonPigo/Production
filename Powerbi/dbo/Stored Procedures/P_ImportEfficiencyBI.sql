@@ -1,6 +1,6 @@
 ﻿
 
-CREATE PROCEDURE [dbo].[P_ImportSewingDailyOutput]
+CREATE PROCEDURE [dbo].[P_ImportEfficiencyBI]
 	(
 	 @OutputDate datetime,
 	 @ServerName varchar(50)
