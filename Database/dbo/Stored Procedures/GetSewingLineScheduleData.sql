@@ -91,8 +91,8 @@ declare @APSList TABLE(
 	[Sewer] [int] NULL,
 	[OriEff] [numeric](5, 2) NULL,
 	[SewLineEff] [numeric](5, 2) NULL,
-	[AlloQty] [int] NULL,
-	[TotalSewingTime] int NULL
+	[TotalSewingTime] int NULL,
+	[AlloQty] [int] NULL
 )
 insert into @APSList
 select 
@@ -106,7 +106,7 @@ select
 	Sewer,
     OriEff,
     SewLineEff,
-	[TotalSewingTime]=SUM(TotalSewingTime),
+	[TotalSewingTime]=SUM(TotalSewingTime)/count(1),
 	AlloQty = sum(AlloQty)
 from @APSListWorkDay
 group by APSNo,
