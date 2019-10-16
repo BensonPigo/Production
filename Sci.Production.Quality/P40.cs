@@ -189,9 +189,9 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
             DataGridViewGeneratorTextColumnSettings textSuppID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings textRefno = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings responsibility = new DataGridViewGeneratorTextColumnSettings();
 
             #region Event
-
             textSuppID.CellValidating = (s, e) =>
             {
                 if (!this.EditMode)
@@ -269,6 +269,62 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
                 this.CurrentDetailData["Refno"] = selectItem.GetSelectedString();
             };
+
+            textSuppID.CellMouseDoubleClick = (s, e) =>
+            {
+                if (!this.EditMode) return;
+                if (e.RowIndex == -1) return;
+                if (e.Button == MouseButtons.Left)
+                {
+                    this.CurrentDetailData["SuppID"] = @"N/A";
+                    this.CurrentDetailData.EndEdit();
+                }
+            };
+            textRefno.CellMouseDoubleClick = (s, e) =>
+            {
+                if (!this.EditMode) return;
+                if (e.RowIndex == -1) return;
+                if (e.Button == MouseButtons.Left)
+                {
+                    this.CurrentDetailData["Refno"] = @"N/A";
+                    this.CurrentDetailData.EndEdit();
+                }
+            };
+
+            responsibility.EditingMouseDown += (s, e) =>
+            {
+                if (!this.EditMode) return;
+                if (e.RowIndex == -1) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    string sqlcmd = @"select distinct responsibility from ADIDASComplainDefect_Detail";
+                    SelectItem item1 = new SelectItem(sqlcmd, "", this.CurrentDetailData["responsibility"].ToString());
+                    DialogResult result = item1.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.CurrentDetailData["responsibility"] = item1.GetSelectedString();
+                    this.CurrentDetailData.EndEdit();
+                }
+            };
+            responsibility.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;
+                if (e.RowIndex == -1) return;
+                string sqlcmd = $@"select 1 from ADIDASComplainDefect_Detail where responsibility = '{e.FormattedValue}'";
+                if(!MyUtility.Check.Seek(sqlcmd))
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    this.CurrentDetailData["responsibility"] = string.Empty;
+                }
+                else
+                {
+                    this.CurrentDetailData["responsibility"] = e.FormattedValue;
+                }
+                this.CurrentDetailData.EndEdit();
+            };
             #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -283,6 +339,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SuppID", header: "Supplier", width: Widths.AnsiChars(6), settings: textSuppID, iseditingreadonly: this.isShowHistory)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), settings: textRefno, iseditingreadonly: this.isShowHistory)
+                .Text("Responsibility", header: "Responsibility", width: Widths.AnsiChars(20),settings: responsibility, iseditingreadonly: this.isShowHistory)
+
                 .CheckBox("IsEM", header: "IsEM");
 
             if (!this.isShowHistory)
@@ -290,6 +348,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 this.detailgrid.Columns["SuppID"].DefaultCellStyle.BackColor = Color.Pink;
                 this.detailgrid.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
                 this.detailgrid.Columns["IsEM"].DefaultCellStyle.BackColor = Color.Pink;
+                this.detailgrid.Columns["Responsibility"].DefaultCellStyle.BackColor = Color.Pink;
             }
         }
 
