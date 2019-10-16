@@ -1132,7 +1132,7 @@ select
 	Sewer,
     OriEff,
     SewLineEff,
-	[TotalSewingTime]=SUM(TotalSewingTime),
+	[TotalSewingTime]=SUM(TotalSewingTime)/count(1),
 	AlloQty = sum(AlloQty)
 into #APSList
 from #APSListWorkDay
@@ -1314,10 +1314,9 @@ OrderDateInfo.MaxSCIDelivery,
 OrderDateInfo.MinSCIDelivery,
 OrderDateInfo.MaxBuyerDelivery,
 OrderDateInfo.MinBuyerDelivery,
-OriEff,
-SewLineEff,
-TotalSewingTime 
-
+al.OriEff,
+al.SewLineEff,
+al.TotalSewingTime 
 into #APSMain
 from #APSList al
 left join #APSCuttingOutput aco on al.APSNo = aco.APSNo
@@ -1525,7 +1524,7 @@ apm.OrderQty,
 apm.AlloQty,
 [StdOutput] = apf.StdOutput,
 apf.CPU,
-[SewingCPU] = ( apm.TotalSewingTime / (SELECT StdTMS * 1.0 FROm System) )  ,
+[SewingCPU] = ( apm.TotalSewingTime / (SELECT StdTMS * 1.0 from System) )  ,
 [DayWorkHour] = apf.WorkingTime,
 [HourOutput] = iif(apf.WorkingTime = 0,0,floor(apf.StdOutput / apf.WorkingTime)),
 [Efficienycy]=ROUND( apf.Efficienycy ,2,1),
