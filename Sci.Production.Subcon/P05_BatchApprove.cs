@@ -36,8 +36,8 @@ namespace Sci.Production.Subcon
                  .Date("ReqDate", header: "Req Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(30), iseditingreadonly: true)
                  .Text("LocalSuppID", header: "Supplier", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                 .Text("DeptMgrApv", header: "Dept. Mgr Apv", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("MgMgrApv", header: "Mg Mgr Apv", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("DeptApvName", header: "Dept. Mgr Apv", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("MgApvName", header: "Mg Mgr Apv", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 ;
 
@@ -75,11 +75,14 @@ select 0 Selected
 	,ReqDate
 	,ArtworkTypeID
 	,LocalSuppID
+	,[DeptApvName] = (select name from Pass1 where id = DeptApvName)
+	,[MgApvName] = (select name from pass1 where id = MgApvName)
+	,Remark
 from ArtworkReq
 where (
-([Status] = 'Locked' and Exceed = 1) 
+    ([Status] = 'Locked' and Exceed = 1) 
 or 
-([Status] = 'New' and Exceed = 0)
+    ([Status] = 'New' and Exceed = 0)
 )
 
 
@@ -179,8 +182,18 @@ select aq.MDivisionID as [M]
 from Artworkreq aq
 inner join Artworkreq_Detail aqd on aq.id = aqd.id
 left join orders o on aqd.OrderID = o.ID
-where aq.status = 'Locked' 
-order by aq.ID, aqd.OrderID ");
+where 
+(
+    (aq.Status = 'Locked' and Exceed = 1) 
+or 
+    (aq.Status = 'New' and Exceed = 0)
+)
+order by aq.ID, aqd.OrderID 
+
+
+
+
+");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (printData.Rows.Count <= 0)
             {

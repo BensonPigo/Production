@@ -29,6 +29,7 @@ namespace Sci.Production.Subcon
         public P05_BatchCreate()
         {
             InitializeComponent();
+            dateReqDate.Value = DateTime.Today;
         }
 
         //Find Now Button
@@ -422,8 +423,8 @@ outer apply (
 )cost
 WHERE 	not exists(
 			select 1
-			from artworkpo a WITH (NOLOCK) 
-			inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id 
+			from artworkReq a WITH (NOLOCK) 
+			inner join artworkReq_detail ap WITH (NOLOCK) on ap.id = a.id 
 			where a.localsuppid = Order_TmsCost.localsuppid 
 				  and a.artworktypeid = Order_TmsCost.artworktypeid and 
 				  ap.OrderID = orders.ID) 

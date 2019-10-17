@@ -26,7 +26,6 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             dr_artworkReq = master;
             dt_artworkReqDetail = detail;
-
             this.Text += string.Format(" : {0}", dr_artworkReq["artworktypeid"].ToString());
         }
 
@@ -63,8 +62,8 @@ select  Selected = 0
         , sao.LocalSuppId
 		, [orderID] = q.ID
         , OrderQty = sum(q.qty)  
-        , [AccReqQty] = ReqQty.ReqQty 
-        , ReqQty = iif(sum(q.qty)-ReqQty.ReqQty < 0, 0, sum(q.qty)-ReqQty.ReqQty)
+        , [AccReqQty] = ReqQty.value + PoQty.value
+        , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value))
 		, o.SewInLIne
 		, o.SciDelivery
 		, oa.ArtworkID
@@ -72,9 +71,10 @@ select  Selected = 0
 		, oa.PatternCode
 		, oa.PatternDesc
 		, [qtygarment] = iif(isnull(ot.qty,0) = 0,1,ot.qty)
-        , Style = o.StyleID
+        , o.StyleID
 		, o.POID
         , id = ''
+        , ExceedQty = 0
 from  orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
@@ -87,11 +87,22 @@ inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUk
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
-        select ReqQty = ISNULL(sum(ReqQty),0)
-        from ArtworkReq_Detail AD, ArtworkReq A
-        where AD.ID = A.ID 
+        select value = ISNULL(sum(ReqQty),0)
+        from ArtworkReq_Detail AD, ArtworkReq a
+        where ad.ID=a.ID
+		and a.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}' 
 		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
+        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
 ) ReqQty
+outer apply (
+        select value = ISNULL(sum(PoQty),0)
+        from ArtworkPO_Detail AD,ArtworkPO A
+        where a.ID=ad.ID
+		and a.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}' 
+		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
+        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
+		and ad.ArtworkReqID=''
+) PoQty
 where f.IsProduceFty=1
 and o.category  in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
@@ -126,9 +137,7 @@ and((o.Category = 'B' and  ot.InhouseOSP = 'O' and ot.price > 0) or(o.category !
                 strSQLCmd += string.Format(" and o.ID <= '{0}'",  sp_e);
             }
 
-
-            strSQLCmd += " group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc,ReqQty.ReqQty, o.StyleID, o.StyleID,iif(at.isArtwork = 1,vsa.Cost,sao.Price),sao.Price , o.POID,ot.qty";
-
+            strSQLCmd += " group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID,iif(at.isArtwork = 1,vsa.Cost,sao.Price),sao.Price , o.POID,ot.qty,PoQty.value,ReqQty.value";
 
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
@@ -165,21 +174,21 @@ where id ='{dr_artworkReq["artworktypeid"]}'
 ");
             }
 
-                this.gridBatchImport.Font = new Font("Arial", 9);
+            this.gridBatchImport.Font = new Font("Arial", 9);
             this.gridBatchImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridBatchImport.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridBatchImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                .Text("orderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
+                .Text("orderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true)
                 .Numeric("AccReqQty", header: "Accu. Req. Qty", iseditingreadonly: true, settings: col_ReqQty)
                 .Numeric("ReqQty", header: "Req. Qty", iseditable: true)
                 .Date("sewinline", header: "Sew. Inline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", iseditingreadonly: true)
-                .Text("ArtworkID", header: "Artwork", iseditingreadonly: true)      //5
+                .Text("ArtworkID", header: "Artwork", iseditingreadonly: true, width: Widths.AnsiChars(13))      //5
                 .Numeric("stitch", header: Caption_stitch, iseditingreadonly: true)
                 .Text("PatternCode", header: "Cut. Part", iseditingreadonly: true)
-                .Text("PatternDesc", header: "Cut. Part Name", iseditingreadonly: true)
+                .Text("PatternDesc", header: "Cut. Part Name", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, iseditingreadonly: true)
                 ;
             this.gridBatchImport.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;  
@@ -206,15 +215,18 @@ where id ='{dr_artworkReq["artworktypeid"]}'
                 foreach (DataRow tmp in dr2)
                 {
                     DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}'");
+                    decimal exceedQty = MyUtility.Convert.GetDecimal(tmp["AccReqQty"]) + MyUtility.Convert.GetDecimal(tmp["ReqQty"]) - MyUtility.Convert.GetDecimal(tmp["OrderQty"]);
 
                     if (findrow.Length > 0)
                     {
                         findrow[0]["ReqQty"] = tmp["ReqQty"];
                         findrow[0]["qtygarment"] = tmp["qtygarment"];
+                        findrow[0]["ExceedQty"] = exceedQty;
                     }
                     else
                     {
                         tmp["id"] = dr_artworkReq["id"];
+                        tmp["ExceedQty"] = exceedQty;
                         tmp.AcceptChanges();
                         tmp.SetAdded();
                         dt_artworkReqDetail.ImportRow(tmp);

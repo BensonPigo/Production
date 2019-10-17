@@ -220,12 +220,6 @@
     <Compile Include="P05_ReqQtyList.Designer.cs">
       <DependentUpon>P05_ReqQtyList.cs</DependentUpon>
     </Compile>
-    <Compile Include="P05_SpecialRecord.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P05_SpecialRecord.designer.cs">
-      <DependentUpon>P05_SpecialRecord.cs</DependentUpon>
-    </Compile>
     <Compile Include="P30_Qty.cs">
       <SubType>Form</SubType>
     </Compile>

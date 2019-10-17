@@ -59,8 +59,6 @@ namespace Sci.Production.Subcon
                 }
                 this.ReloadDatas();
             };
-
-            
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -123,7 +121,6 @@ ORDER BY ap.OrderID   ", masterID);
             #endregion
             #region Batch Import, Special record button
             btnBatchImport.Enabled = this.EditMode;
-            btnSpecialRecord.Enabled = this.EditMode;
             #endregion
             #region Batch create
             btnBatchCreate.Enabled = !this.EditMode;
@@ -169,39 +166,46 @@ ORDER BY ap.OrderID   ", masterID);
 
             dispClosed.Text = CurrentMaintain["CloseUnCloseName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", CurrentMaintain["CloseUnCloseName"].ToString(), "Pass1", "ID") + dateClose;
             #endregion
+        }
 
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
             #region 動態ToolBar 參數
 
-            // Close ChkValue
-            if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Closed", true) != 0 && !IsDetailInserting)
-            {   
-                this.toolbar.cmdClose.Enabled = true;
-            }
-            else
-            {  
-                this.toolbar.cmdClose.Enabled = false;
-            }
+            if (!this.EditMode && this.CurrentMaintain != null)
+            {
+                // Close ChkValue
+                if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Closed", true) != 0 && !IsDetailInserting)
+                {
+                    this.toolbar.cmdClose.Enabled = true;
+                }
+                else
+                {
+                    this.toolbar.cmdClose.Enabled = false;
+                }
 
-            // unApv ChkValue
-            if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Approved", true) == 0 && !MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
-            {   
-                this.toolbar.cmdUnconfirm.Enabled = true;
-            }
-            else
-            {
-                this.toolbar.cmdUnconfirm.Enabled = false;
-            }
+                // unApv ChkValue
+                if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Approved", true) == 0 && !MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
+                {
+                    this.toolbar.cmdUnconfirm.Enabled = true;
+                }
+                else
+                {
+                    this.toolbar.cmdUnconfirm.Enabled = false;
+                }
 
-            // unCheck ChkValue
-            if ((string.Compare(this.CurrentMaintain["Status"].ToString(), "Locked", true) == 0 && !MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
-                || (string.Compare(this.CurrentMaintain["Status"].ToString(), "Approved", true) == 0 && MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
-                )
-            {
-                this.toolbar.cmdUncheck.Enabled = true;
-            }
-            else
-            {
-                this.toolbar.cmdUncheck.Enabled = false;
+                // unCheck ChkValue
+                if ((string.Compare(this.CurrentMaintain["Status"].ToString(), "Locked", true) == 0 && !MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
+                    || (string.Compare(this.CurrentMaintain["Status"].ToString(), "Approved", true) == 0 && MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
+                    )
+                {
+                    this.toolbar.cmdUncheck.Enabled = true;
+                }
+                else
+                {
+                    this.toolbar.cmdUncheck.Enabled = false;
+                }
             }
             #endregion
         }
@@ -260,23 +264,6 @@ ORDER BY ap.OrderID   ", masterID);
 
             return base.ClickEditBefore();
         }
-
-//        protected override void ClickEditAfter()
-//        {
-//            base.ClickEditAfter();
-//            # region 如果採購單已建立 AP, 則Supplier欄位不可編輯
-//            string chkp10exists = $@"
-//select 1
-//from ArtworkPO_detail apd with(nolock)
-//inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
-//where  apd.id = '{CurrentMaintain["id"]}' 
-//";
-//            if (MyUtility.Check.Seek(chkp10exists))
-//            {
-//                txtsubconSupplier.TextBox1.ReadOnly = true;
-//            }
-//            #endregion
- //       }
 
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
@@ -377,7 +364,7 @@ where id = '{CurrentMaintain["id"]}'";
                 ShowErr(sqlcmd, result);
                 return;
             }
-
+            MyUtility.Msg.InfoBox("Successfully");
         }
 
         protected override void ClickUncheck()
@@ -393,7 +380,6 @@ where id = '{CurrentMaintain["id"]}'";
                 return;
             }
 
-
             sqlcmd = $@"
 update artworkReq 
 set status='New'
@@ -406,6 +392,7 @@ where id = '{CurrentMaintain["id"]}'";
                 ShowErr(sqlcmd, result);
                 return;
             }
+            MyUtility.Msg.InfoBox("Successfully");
         }
 
         protected override void ClickConfirm()
@@ -425,7 +412,7 @@ where id = '{CurrentMaintain["id"]}'";
                 ShowErr(sqlcmd, result);
                 return;
             }
-
+            MyUtility.Msg.InfoBox("Successfully");
             base.ClickConfirm();
         }
 
@@ -453,6 +440,7 @@ where id = '{CurrentMaintain["id"]}'";
                 ShowErr(sqlcmd, result);
                 return;
             }
+            MyUtility.Msg.InfoBox("Successfully");
         }
 
         protected override void ClickClose()
@@ -473,6 +461,7 @@ where id = '{CurrentMaintain["id"]}'";
                 ShowErr(sqlcmd, result);
                 return;
             }
+            MyUtility.Msg.InfoBox("Successfully");
         }
 
         protected override void ClickUnclose()
@@ -493,6 +482,7 @@ where id = '{CurrentMaintain["id"]}'";
                 ShowErr(sqlcmd, result);
                 return;
             }
+            MyUtility.Msg.InfoBox("Successfully");
         }
 
         protected override void ClickUndo()
@@ -564,25 +554,6 @@ where id = '{CurrentMaintain["id"]}'";
 
             #endregion
 
-        }
-
-        //Special Record
-        private void btnSpecialRecord_Click(object sender, EventArgs e)
-        {
-            var dr = CurrentMaintain; if (null == dr) return;
-            if (dr["artworktypeid"] == DBNull.Value)
-            {
-                MyUtility.Msg.WarningBox("Please fill Artworktype first!");
-                txtartworktype_ftyArtworkType.Focus();
-                return;
-            }
-
-            var frm = new Sci.Production.Subcon.P05_SpecialRecord(dr, (DataTable)detailgridbs.DataSource);
-            frm.ShowDialog(this);
-            this.RenewData();
-            detailgridbs.EndEdit();
-
-            this.RefreshIrregularQtyReason();
         }
 
         // batch create

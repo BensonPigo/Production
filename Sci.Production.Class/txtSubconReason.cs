@@ -141,7 +141,7 @@ order by id
                 if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
                 {
                     cellcombo.DataSource = dt;
-                    cellcombo.DisplayMember = "Reason";
+                    cellcombo.DisplayMember = "SubconReasonID";
                     cellcombo.ValueMember = "SubconReasonID";
                 }
             }

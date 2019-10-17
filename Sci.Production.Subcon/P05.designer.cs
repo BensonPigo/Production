@@ -38,15 +38,10 @@
             this.labStatus = new Sci.Win.UI.Label();
             this.labExceed = new Sci.Win.UI.Label();
             this.btnBatchImport = new Sci.Win.UI.Button();
-            this.btnSpecialRecord = new Sci.Win.UI.Button();
             this.displayReqID = new Sci.Win.UI.DisplayBox();
             this.dateReqDate = new Sci.Win.UI.DateBox();
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.btnBatchCreate = new Sci.Win.UI.Button();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
-            this.txtuserHandle = new Sci.Production.Class.txtuser();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
             this.btnIrrQtyReason = new Sci.Win.UI.Button();
             this.btnBatchApprove = new Sci.Win.UI.Button();
             this.labDeptMgrApv = new Sci.Win.UI.Label();
@@ -55,6 +50,10 @@
             this.labMGMgrApv = new Sci.Win.UI.Label();
             this.dispClosed = new Sci.Win.UI.DisplayBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
+            this.txtuserHandle = new Sci.Production.Class.txtuser();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -78,7 +77,6 @@
             this.masterpanel.Controls.Add(this.txtartworktype_ftyArtworkType);
             this.masterpanel.Controls.Add(this.txtsubconSupplier);
             this.masterpanel.Controls.Add(this.displayReqID);
-            this.masterpanel.Controls.Add(this.btnSpecialRecord);
             this.masterpanel.Controls.Add(this.btnBatchImport);
             this.masterpanel.Controls.Add(this.labExceed);
             this.masterpanel.Controls.Add(this.labStatus);
@@ -90,7 +88,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.dateReqDate);
-            this.masterpanel.Size = new System.Drawing.Size(1061, 155);
+            this.masterpanel.Size = new System.Drawing.Size(1061, 149);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateReqDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
@@ -103,7 +101,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.labExceed, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchImport, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnSpecialRecord, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayReqID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsubconSupplier, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtartworktype_ftyArtworkType, 0);
@@ -114,14 +111,14 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 155);
-            this.detailpanel.Size = new System.Drawing.Size(1061, 299);
+            this.detailpanel.Location = new System.Drawing.Point(0, 149);
+            this.detailpanel.Size = new System.Drawing.Size(1061, 305);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(946, 113);
-            this.gridicon.TabIndex = 11;
+            this.gridicon.TabIndex = 10;
             // 
             // refresh
             // 
@@ -129,7 +126,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1061, 299);
+            this.detailgridcont.Size = new System.Drawing.Size(1061, 305);
             // 
             // detail2
             // 
@@ -176,7 +173,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1049, 556);
+            this.browse.Size = new System.Drawing.Size(1061, 556);
             // 
             // tabs
             // 
@@ -213,7 +210,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(285, 17);
+            this.labelFactory.Location = new System.Drawing.Point(285, 49);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(84, 23);
             this.labelFactory.TabIndex = 4;
@@ -229,9 +226,9 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Location = new System.Drawing.Point(285, 50);
+            this.labelSupplier.Location = new System.Drawing.Point(6, 49);
             this.labelSupplier.Name = "labelSupplier";
-            this.labelSupplier.Size = new System.Drawing.Size(84, 23);
+            this.labelSupplier.Size = new System.Drawing.Size(97, 23);
             this.labelSupplier.TabIndex = 6;
             this.labelSupplier.Text = "Supplier";
             // 
@@ -245,9 +242,9 @@
             // 
             // labelReqDate
             // 
-            this.labelReqDate.Location = new System.Drawing.Point(6, 50);
+            this.labelReqDate.Location = new System.Drawing.Point(285, 17);
             this.labelReqDate.Name = "labelReqDate";
-            this.labelReqDate.Size = new System.Drawing.Size(97, 23);
+            this.labelReqDate.Size = new System.Drawing.Size(84, 23);
             this.labelReqDate.TabIndex = 9;
             this.labelReqDate.Text = "Req. Date";
             // 
@@ -266,7 +263,7 @@
             this.labStatus.Location = new System.Drawing.Point(729, 14);
             this.labStatus.Name = "labStatus";
             this.labStatus.Size = new System.Drawing.Size(126, 23);
-            this.labStatus.TabIndex = 16;
+            this.labStatus.TabIndex = 6;
             this.labStatus.Text = "Not Approve";
             this.labStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
@@ -274,10 +271,10 @@
             // 
             this.labExceed.BackColor = System.Drawing.Color.Transparent;
             this.labExceed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labExceed.Location = new System.Drawing.Point(729, 42);
+            this.labExceed.Location = new System.Drawing.Point(729, 50);
             this.labExceed.Name = "labExceed";
             this.labExceed.Size = new System.Drawing.Size(113, 23);
-            this.labExceed.TabIndex = 44;
+            this.labExceed.TabIndex = 7;
             this.labExceed.Text = "Exceed Qty";
             this.labExceed.TextStyle.Color = System.Drawing.Color.Red;
             // 
@@ -287,21 +284,10 @@
             this.btnBatchImport.Location = new System.Drawing.Point(858, 7);
             this.btnBatchImport.Name = "btnBatchImport";
             this.btnBatchImport.Size = new System.Drawing.Size(188, 30);
-            this.btnBatchImport.TabIndex = 6;
+            this.btnBatchImport.TabIndex = 8;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
             this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
-            // 
-            // btnSpecialRecord
-            // 
-            this.btnSpecialRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSpecialRecord.Location = new System.Drawing.Point(858, 42);
-            this.btnSpecialRecord.Name = "btnSpecialRecord";
-            this.btnSpecialRecord.Size = new System.Drawing.Size(188, 30);
-            this.btnSpecialRecord.TabIndex = 7;
-            this.btnSpecialRecord.Text = "Special Record";
-            this.btnSpecialRecord.UseVisualStyleBackColor = true;
-            this.btnSpecialRecord.Click += new System.EventHandler(this.btnSpecialRecord_Click);
             // 
             // displayReqID
             // 
@@ -316,10 +302,10 @@
             // dateReqDate
             // 
             this.dateReqDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReqDate", true));
-            this.dateReqDate.Location = new System.Drawing.Point(107, 50);
+            this.dateReqDate.Location = new System.Drawing.Point(373, 17);
             this.dateReqDate.Name = "dateReqDate";
             this.dateReqDate.Size = new System.Drawing.Size(100, 23);
-            this.dateReqDate.TabIndex = 0;
+            this.dateReqDate.TabIndex = 3;
             // 
             // txtRemark
             // 
@@ -343,65 +329,12 @@
             this.btnBatchCreate.UseVisualStyleBackColor = true;
             this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
             // 
-            // txtmfactory
-            // 
-            this.txtmfactory.BackColor = System.Drawing.Color.White;
-            this.txtmfactory.boolFtyGroupList = true;
-            this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
-            this.txtmfactory.FilteMDivision = true;
-            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory.IsProduceFty = false;
-            this.txtmfactory.IssupportJunk = false;
-            this.txtmfactory.Location = new System.Drawing.Point(373, 17);
-            this.txtmfactory.MDivision = null;
-            this.txtmfactory.Name = "txtmfactory";
-            this.txtmfactory.Size = new System.Drawing.Size(100, 23);
-            this.txtmfactory.TabIndex = 3;
-            // 
-            // txtuserHandle
-            // 
-            this.txtuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
-            this.txtuserHandle.DisplayBox1Binding = "";
-            this.txtuserHandle.Location = new System.Drawing.Point(373, 80);
-            this.txtuserHandle.Name = "txtuserHandle";
-            this.txtuserHandle.Size = new System.Drawing.Size(300, 23);
-            this.txtuserHandle.TabIndex = 5;
-            this.txtuserHandle.TextBox1Binding = "";
-            // 
-            // txtartworktype_ftyArtworkType
-            // 
-            this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
-            this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
-            this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(108, 83);
-            this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
-            this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(165, 23);
-            this.txtartworktype_ftyArtworkType.TabIndex = 1;
-            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
-            // 
-            // txtsubconSupplier
-            // 
-            this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
-            this.txtsubconSupplier.DisplayBox1Binding = "";
-            this.txtsubconSupplier.IsIncludeJunk = false;
-            this.txtsubconSupplier.isMisc = false;
-            this.txtsubconSupplier.isShipping = false;
-            this.txtsubconSupplier.isSubcon = false;
-            this.txtsubconSupplier.Location = new System.Drawing.Point(373, 50);
-            this.txtsubconSupplier.Name = "txtsubconSupplier";
-            this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
-            this.txtsubconSupplier.TabIndex = 4;
-            this.txtsubconSupplier.TextBox1Binding = "";
-            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtsubconSupplier_Validating);
-            // 
             // btnIrrQtyReason
             // 
-            this.btnIrrQtyReason.Location = new System.Drawing.Point(858, 77);
+            this.btnIrrQtyReason.Location = new System.Drawing.Point(858, 45);
             this.btnIrrQtyReason.Name = "btnIrrQtyReason";
             this.btnIrrQtyReason.Size = new System.Drawing.Size(188, 30);
-            this.btnIrrQtyReason.TabIndex = 8;
+            this.btnIrrQtyReason.TabIndex = 9;
             this.btnIrrQtyReason.Text = "Irregular Qty Reason";
             this.btnIrrQtyReason.UseVisualStyleBackColor = true;
             this.btnIrrQtyReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click);
@@ -474,6 +407,59 @@
             this.label1.TabIndex = 77;
             this.label1.Text = "Closed/UnClosed By";
             // 
+            // txtmfactory
+            // 
+            this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.boolFtyGroupList = true;
+            this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory.FilteMDivision = true;
+            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
+            this.txtmfactory.IssupportJunk = false;
+            this.txtmfactory.Location = new System.Drawing.Point(373, 49);
+            this.txtmfactory.MDivision = null;
+            this.txtmfactory.Name = "txtmfactory";
+            this.txtmfactory.Size = new System.Drawing.Size(100, 23);
+            this.txtmfactory.TabIndex = 4;
+            // 
+            // txtuserHandle
+            // 
+            this.txtuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
+            this.txtuserHandle.DisplayBox1Binding = "";
+            this.txtuserHandle.Location = new System.Drawing.Point(373, 80);
+            this.txtuserHandle.Name = "txtuserHandle";
+            this.txtuserHandle.Size = new System.Drawing.Size(300, 23);
+            this.txtuserHandle.TabIndex = 5;
+            this.txtuserHandle.TextBox1Binding = "";
+            // 
+            // txtartworktype_ftyArtworkType
+            // 
+            this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_ftyArtworkType.cClassify = "";
+            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
+            this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(108, 83);
+            this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
+            this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(165, 23);
+            this.txtartworktype_ftyArtworkType.TabIndex = 1;
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
+            // 
+            // txtsubconSupplier
+            // 
+            this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
+            this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.isMisc = false;
+            this.txtsubconSupplier.isShipping = false;
+            this.txtsubconSupplier.isSubcon = false;
+            this.txtsubconSupplier.Location = new System.Drawing.Point(108, 49);
+            this.txtsubconSupplier.Name = "txtsubconSupplier";
+            this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
+            this.txtsubconSupplier.TabIndex = 0;
+            this.txtsubconSupplier.TextBox1Binding = "";
+            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtsubconSupplier_Validating);
+            // 
             // P05
             // 
             this.ApvChkValue = "Locked";
@@ -481,8 +467,8 @@
             this.ClientSize = new System.Drawing.Size(1069, 618);
             this.Controls.Add(this.btnBatchApprove);
             this.Controls.Add(this.btnBatchCreate);
-            this.DefaultControl = "dateReqDate";
-            this.DefaultControlForEdit = "dateReqDate";
+            this.DefaultControl = "txtsubconSupplier";
+            this.DefaultControlForEdit = "txtsubconSupplier";
             this.ExpressQuery = true;
             this.GridAlias = "ArtworkReq_Detail";
             this.GridUniqueKey = "id,artworkid,patterncode,OrderId";
@@ -542,7 +528,6 @@
         private Win.UI.DateBox dateReqDate;
         private Class.txtsubcon txtsubconSupplier;
         private Win.UI.DisplayBox displayReqID;
-        private Win.UI.Button btnSpecialRecord;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label labExceed;
         private Win.UI.Label labStatus;

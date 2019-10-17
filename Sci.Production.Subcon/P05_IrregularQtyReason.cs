@@ -65,21 +65,21 @@ namespace Sci.Production.Subcon
                 .Text("BrandID", header: "Brand", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Numeric("StandardQty", header: "Std. Qty", decimal_places: 6, iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Numeric("ReqQty", header: "Req. Qty", decimal_places: 6, iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .ComboBox("SubconReasonID", header: "Reason#", width: Widths.AnsiChars(15), settings: comboSubReason, iseditable: false).Get(out comb_SubReason)
+                .ComboBox("SubconReasonID", header: "Reason# ", width: Widths.AnsiChars(15), settings: comboSubReason, iseditable: false).Get(out comb_SubReason)
                 .Text("ReasonDesc", header: "Reason Desc.", iseditingreadonly: true, width: Widths.AnsiChars(15))
 
-                .DateTime("CreateDate", header: "Create Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .Text("CreateBy", header: "Create By", iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .DateTime("EditBy", header: "Edit Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .Text("EditDate", header: "Edit By", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .DateTime("CreateDate", header: "Create" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(16))
+                .Text("CreateBy", header: "Create" + Environment.NewLine + "By", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .DateTime("EditBy", header: "Edit" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Text("EditDate", header: "Edit" + Environment.NewLine + "By", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 ;
             #endregion
             this.gridIrregularQty.Columns["SubconReasonID"].DefaultCellStyle.BackColor = Color.Pink;
 
-            //for (int i = 0; i < this.gridIrregularQty.Columns.Count; i++)
-            //{
-            //    this.gridIrregularQty.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            //}
+            for (int i = 0; i < this.gridIrregularQty.Columns.Count; i++)
+            {
+                this.gridIrregularQty.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
         }
 
         private void combo_SelectionChangeCommitted(object sender, EventArgs e)
@@ -207,6 +207,7 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
 
             }
 
+            Query();
             this.EditMode = !this.EditMode;
             if (EditMode)
             {
@@ -223,6 +224,14 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
         private string strQuerySqlcmd()
         {
             string sqlcmd = string.Empty;
+            // 計算為寫入DB的ReqQty數量
+            decimal reqQty = MyUtility.Convert.GetDecimal(_detailDatas.Compute("sum(ReqQty)", ""));
+
+            // 取的表身OrderID
+            var OrderIDList = _detailDatas.AsEnumerable().Select(x => x.Field<string>("OrderID"));
+
+
+            DualResult result;
             sqlcmd = $@"
 select 
 o.FactoryID
@@ -231,34 +240,69 @@ o.FactoryID
 ,o.StyleID
 ,o.BrandID
 ,ai.StandardQty
-,[ReqQty] = ReqQty.value + PoQty.value
-,ReqQty.value as reqqty , PoQty.value as poqty
-,[SubconReasonID] =ai.SubconReasonID
-,[ReasonDesc]= (select reason from SubconReason where Type='SQ' and id=ai.SubconReasonID)
+,ai.ReqQty
+,ai.SubconReasonID
+,[ReasonDesc] = (select reason from SubconReason where Type='SQ' and id=ai.SubconReasonID)
 ,[CreateBy] = (select name from Pass1 where id = ai.AddName)
 ,[CreateDate] = ai.AddDate
 ,[EditBy] = (select name from pass1 where id=ai.EditName)
 ,[EditDate] = ai.EditDate
-from ArtworkReq aq 
-inner join ArtworkReq_Detail aqd on aq.ID=aqd.ID
-inner join ArtworkReq_IrregularQty ai on ai.OrderID = aqd.OrderID and ai.ArtworkTypeID = aq.ArtworkTypeID
-inner join Orders o on ai.OrderID=o.ID
+from ArtworkReq_IrregularQty ai
+inner join Orders o on o.ID = ai.OrderID
+inner join ArtworkReq_Detail aqd on ai.OrderID = aqd.OrderID
+inner join ArtworkReq aq on aqd.ID= aq.ID and ai.ArtworkTypeID = aq.ArtworkTypeID
+where aq.id = '{_ArtWorkReq_ID}'
+";
+
+            result = DBProxy.Current.Select(null, sqlcmd, out dtLoad);
+            if (result == false) ShowErr(sqlcmd, result);
+
+            if (dtLoad.Rows.Count == 0)
+            {
+                sqlcmd = $@"
+select 
+o.FactoryID
+,voa.ArtworkTypeID
+,[OrderID] = o.ID
+,o.StyleID
+,o.BrandID
+,[StandardQty] = sum(oq.Qty)
+,[ReqQty] = ReqQty.value + PoQty.value + {reqQty}
+,[SubconReasonID] = ''
+,[ReasonDesc] = ''
+,[CreateBy] = ''
+,[CreateDate] = null
+,[EditBy] = ''
+,[EditDate] = null
+,id = ''
+from Orders o
+inner join Order_Qty oq on o.ID=oq.ID
+inner join View_Order_Artworks voa on oq.Article = voa.Article
+and voa.id=o.ID and voa.SizeCode = oq.SizeCode
 outer apply(
 	select value = ISNULL(sum(PoQty),0)
-    from ArtworkPO_Detail AD
-	where OrderID = o.ID and ad.PatternCode= aqd.PatternCode
-	and ad.ArtworkId = aqd.ArtworkID
+    from ArtworkPO_Detail AD, ArtworkPO a
+	where ad.ID = a.ID
+	and OrderID = voa.ID and ad.PatternCode= voa.PatternCode
+	and ad.PatternDesc = voa.PatternDesc and ad.ArtworkId = voa.ArtworkID
 	and ad.ArtworkReqID=''
+	and a.ArtworkTypeID = ''
 ) PoQty
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
-	from ArtworkReq_Detail aq2
-	where aqd.uKey = aq2.uKey
+	from ArtworkReq_Detail aq2 , ArtworkReq aq
+	where aq2.ID = aq.ID
+	and aq2.OrderID = voa.id and aq2.ArtworkID = voa.ArtworkID
+	and aq2.PatternCode = voa.PatternCode and aq2.PatternDesc = voa.PatternDesc
+	and aq2.id !=  '{_ArtWorkReq_ID}'
+	and aq.ArtworkTypeID = ''
 )ReqQty
-where 1=1
-and aq.ID='{_ArtWorkReq_ID}'
-and ai.ReqQty > ai.StandardQty
+where o.id in ('{string.Join("','", OrderIDList.ToList())}')
+and voa.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+group by o.FactoryID,voa.ArtworkTypeID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value
+having ReqQty.value + PoQty.value + {reqQty} > sum(oq.Qty)
 ";
+            }
 
             return sqlcmd;
         }
