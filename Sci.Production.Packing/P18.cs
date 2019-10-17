@@ -269,9 +269,17 @@ namespace Sci.Production.Packing
 
             if (this.selecedPK != null && this.numBoxScanQty.Value > 0)
             {
-                if (dr.ID == this.selecedPK.ID && dr.CTNStartNo == this.selecedPK.CTNStartNo && dr.Article == this.selecedPK.Article)
+                // 這邊加try catch 是為了ISP20191449 補充說明的bug 2 當user殺生問題可以keep當時情況
+                try
                 {
-                    return result;
+                    if (dr.ID == this.selecedPK.ID && dr.CTNStartNo == this.selecedPK.CTNStartNo && dr.Article == this.selecedPK.Article)
+                    {
+                        return result;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new DualResult(false, ex);
                 }
 
                 if (!this.LackingClose())
@@ -476,7 +484,16 @@ INSERT INTO [dbo].[PackingScan_History]
                 default_where += $" and ID = \"{this.comboPKFilter.SelectedValue}\"";
             }
 
-            this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
+            var selectCartonFilterResult = list_selectCarton.Where(default_where);
+
+            if (selectCartonFilterResult.Any())
+            {
+                this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
+            }
+            else
+            {
+                this.selcartonBS.DataSource = null;
+            }
 
             var queryTotal = from c in list_selectCarton
                              group c by c.ID into g
