@@ -233,7 +233,7 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
 
             DualResult result;
             sqlcmd = $@"
-select 
+select distinct
 o.FactoryID
 ,ai.ArtworkTypeID
 ,ai.OrderID
@@ -286,7 +286,7 @@ outer apply(
 	and OrderID = voa.ID and ad.PatternCode= voa.PatternCode
 	and ad.PatternDesc = voa.PatternDesc and ad.ArtworkId = voa.ArtworkID
 	and ad.ArtworkReqID=''
-	and a.ArtworkTypeID = ''
+	and a.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 ) PoQty
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
@@ -295,7 +295,7 @@ outer apply(
 	and aq2.OrderID = voa.id and aq2.ArtworkID = voa.ArtworkID
 	and aq2.PatternCode = voa.PatternCode and aq2.PatternDesc = voa.PatternDesc
 	and aq2.id !=  '{_ArtWorkReq_ID}'
-	and aq.ArtworkTypeID = ''
+	and aq.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 )ReqQty
 where o.id in ('{string.Join("','", OrderIDList.ToList())}')
 and voa.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'

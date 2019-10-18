@@ -209,6 +209,7 @@ where id ='{dr_artworkReq["artworktypeid"]}'
             if (dr2.Length == 0)
             {
                 MyUtility.Msg.WarningBox("please select data first.", "Warning");
+                return;
             }
             else
             {
