@@ -189,7 +189,7 @@ select  p.GMTBookingLock
 							order by sod.OrderId
                             for xml path('')
                           ), 1, 1, '')         , Pullout.sendtotpe
-,pl2.APPBookingVW,pl2.APPEstAmtVW
+    ,pl2.APPBookingVW,pl2.APPEstAmtVW
 from PackingList p WITH (NOLOCK) 
 left join Pullout WITH (NOLOCK) on Pullout.id=p.Pulloutid
 outer apply(
@@ -215,7 +215,8 @@ where {0}", this.masterID);
             base.OnDetailEntered();
 
             this.txtTerminalWhse.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(this.CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
-
+            this.displayBoxDeclarationID.Text = MyUtility.GetValue.Lookup("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
+            this.displayBoxCustomsNo.Text = MyUtility.GetValue.Lookup("DeclareNo", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
             #region AirPP List按鈕變色
             if (!this.EditMode)
             {
