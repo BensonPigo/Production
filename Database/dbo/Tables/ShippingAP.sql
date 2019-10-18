@@ -26,6 +26,8 @@
     [ExVoucherID] VARCHAR (16)    DEFAULT ('') NULL,
     [Reason]      VARCHAR (5)     DEFAULT ('') NULL,
     [VoucherDate] DATE NULL, 
+    [SharedAmtFactory] NUMERIC(12, 2) CONSTRAINT [DF_ShippingAP_SharedAmtFactory] DEFAULT (0) NOT NULL, 
+	[SharedAmtOther] NUMERIC(12, 2) CONSTRAINT [DF_ShippingAP_SharedAmtOther] DEFAULT (0) NOT NULL, 
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

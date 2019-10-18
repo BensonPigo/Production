@@ -618,6 +618,21 @@ order by os.Seq", dr["OrderID"].ToString(),
                 return false;
             }
 
+            // 檢查 表頭的 ShipMode 是否屬於必須建立 APP（請至資料表 : ShipMode 確認是否需要建立 APP : NeedCreateAPP）
+            // 若確認必須要建立 APP 則判斷表身的 N.W. / pcs 是否都有輸入
+            bool isNeedCreateAPP = MyUtility.Check.Seek($"select 1 from ShipMode with (nolock) where ID = '{this.CurrentMaintain["ShipModeID"]}' and NeedCreateAPP = 1");
+
+            if (isNeedCreateAPP)
+            {
+                bool isNWPcsEmpty = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["NWPerPcs"])).Any();
+                if (isNWPcsEmpty)
+                {
+                    string shipModeAirPP = Prgs.GetNeedCreateAppShipMode();
+                    MyUtility.Msg.WarningBox($"Shipping mode is {shipModeAirPP} row data need input N.W./Pcs");
+                    return false;
+                }
+            }
+
             // 刪除表身SP No.或Qty為空白的資料，檢查表身的Color Way與Size不可以為空值，順便填入Seq欄位值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, needPackQty = 0, ttlShipQty = 0, count = 0, drCtnQty = 0;
             double nw = 0.0, gw = 0.0, nnw = 0.0, cbm = 0.0;
