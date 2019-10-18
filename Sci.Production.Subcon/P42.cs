@@ -340,27 +340,59 @@ select
 	b.Orderid,
 	b.BundleNo,
 	b.subProcessid,
-	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
-				when b.InOutRule = 2 and bio.OutGoing is not null then 1
-				when b.InOutRule = 3 and bio.InComing is not null and bio.OutGoing is null then 1
-				when b.InOutRule = 4 and bio.InComing is null and bio.OutGoing is not null then 1
-				when b.InOutRule = 0 and bio.InComing is not null and bio.OutGoing is not null then 1
-				else 0
-			end
-into #tmpBundleNo_Complete
+	b.InOutRule 
+	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
+	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+into #tmpBundleNo_Complete2
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+
+
+SELECT Orderid,	BundleNo,InOutRule,SubProcessID
+,[CompleteCount]=CompleteCount.Value
+,[NotYetCount]=NotYetCount.Value
+,[OnGoingCount]=OnGoingCount.Value
+INTO #tmpBundleNo_Complete
+FROM #tmpBundleNo_Complete2 t
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND HasInComing='true' 
+	AND HasOutGoing='true'
+)CompleteCount
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND HasInComing!='true' 
+	AND HasOutGoing!='true'
+)NotYetCount
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND ( (HasInComing='true' AND HasOutGoing!='true') OR (HasInComing!='true' AND HasOutGoing='true'))
+)OnGoingCount
 
 select
 	t.Orderid,
 	t.SubProcessID,
-	Status=case when MIN(isComplete)=1 then 'Complete'
-				when sum(isComplete)>0 then 'OnGoing'
-				when sum(isComplete)=0 then 'Not Yet Load'
+	Status=case when CompleteCount > 0 then 'Complete'
+				when OnGoingCount > 0 then 'OnGoing'
+				when NotYetCount > 0 then 'Not Yet Load'
 				end
 into #tmp
 from #tmpBundleNo_Complete t
-group by t.SubProcessID,t.Orderid
 
 declare @sql nvarchar(max)=N'
 select Orderid,'+@Col+N'
@@ -389,7 +421,7 @@ outer apply(
 '
 exec(@sql)
 
-drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2
 ";
             }
             else
@@ -488,29 +520,66 @@ select
 	b.Sizecode,
 	b.BundleNo,
 	b.subProcessid,
-	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
-				when b.InOutRule = 2 and bio.OutGoing is not null then 1
-				when b.InOutRule = 3 and bio.InComing is not null and bio.OutGoing is null then 1
-				when b.InOutRule = 4 and bio.InComing is null and bio.OutGoing is not null then 1
-				when b.InOutRule = 0 and bio.InComing is not null and bio.OutGoing is not null then 1
-				else 0
-			end
-into #tmpBundleNo_Complete
+	b.InOutRule 
+	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
+	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+into #tmpBundleNo_Complete2
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+
+SELECT Orderid,	Article,Sizecode,BundleNo,InOutRule,SubProcessID
+,[CompleteCount]=CompleteCount.Value
+,[NotYetCount]=NotYetCount.Value
+,[OnGoingCount]=OnGoingCount.Value
+INTO #tmpBundleNo_Complete
+FROM #tmpBundleNo_Complete2 t
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND Article=t.Article
+	AND Sizecode=t.Sizecode
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND HasInComing='true' 
+	AND HasOutGoing='true'
+)CompleteCount
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND Article=t.Article
+	AND Sizecode=t.Sizecode
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND HasInComing!='true' 
+	AND HasOutGoing!='true'
+)NotYetCount
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND Article=t.Article
+	AND Sizecode=t.Sizecode
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND ( (HasInComing='true' AND HasOutGoing!='true') OR (HasInComing!='true' AND HasOutGoing='true'))
+)OnGoingCount
 
 select
 	t.Orderid,
 	t.Article,
 	t.Sizecode,
 	t.SubProcessID,
-	Status=case when MIN(isComplete)=1 then 'Complete'
-				when sum(isComplete)>0 then 'OnGoing'
-				when sum(isComplete)=0 then 'Not Yet Load'
+	Status=case when CompleteCount > 0 then 'Complete'
+				when OnGoingCount > 0 then 'OnGoing'
+				when NotYetCount > 0 then 'Not Yet Load'
 				end
 into #tmp
 from #tmpBundleNo_Complete t
-group by t.SubProcessID,t.Orderid,t.Article,t.Sizecode
 
 declare @sql nvarchar(max)=N'
 select Orderid,Article,Sizecode,'+@Col+N'
@@ -540,7 +609,7 @@ outer apply(
 '
 exec(@sql)
 
-drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2
 ";
             }
             DataTable dt;
@@ -801,7 +870,7 @@ where b.subProcessid='{subProcess}'
 select
 	[Bundle#]=t.BundleNo
 	,b.Qty
-	.EXCESS=iif(IsEXCESS=1,'Y','')
+	,EXCESS=iif(IsEXCESS=1,'Y','')
     ,PatternDesc
     ,Article
     ,BundleGroup
