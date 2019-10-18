@@ -32,37 +32,37 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(171, 12);
+            this.print.Location = new System.Drawing.Point(348, 12);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(88, 58);
+            this.toexcel.Location = new System.Drawing.Point(348, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(88, 94);
+            this.close.Location = new System.Drawing.Point(348, 84);
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCustomized.Location = new System.Drawing.Point(-87, 12);
+            this.buttonCustomized.Location = new System.Drawing.Point(90, 12);
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkUseCustomized.Location = new System.Drawing.Point(45, 12);
+            this.checkUseCustomized.Location = new System.Drawing.Point(222, 12);
             // 
             // txtVersion
             // 
             this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtVersion.Location = new System.Drawing.Point(151, 12);
+            this.txtVersion.Location = new System.Drawing.Point(328, 12);
             // 
             // R43
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(263, 225);
+            this.ClientSize = new System.Drawing.Size(440, 152);
             this.Name = "R43";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R43. Non Declaration Report-Export";
