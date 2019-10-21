@@ -530,13 +530,13 @@ select * from FtyExportData ", e.FormattedValue.ToString());
             if (
                 this.apData["SubType"].ToString().ToUpper() == "GARMENT" &&
                 this.apData["Type"].ToString().ToUpper() == "EXPORT" &&
-                !MyUtility.Check.Seek(strCheckSql))
+                !MyUtility.Check.Seek(strCheckSql) &&
+                !DBProxy.Current.DefaultModuleName.Contains("PMSDB"))
             {
                 this.AppendData();
             }
 
             this.QueryData();
-
         }
 
         private void AppendData()
