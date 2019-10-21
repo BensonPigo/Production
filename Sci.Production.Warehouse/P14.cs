@@ -377,7 +377,7 @@ and d.Id = '{0}'", CurrentMaintain["id"]);
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           poid = b.Field<string>("poid"),
+                           poid = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
@@ -391,17 +391,27 @@ and d.Id = '{0}'", CurrentMaintain["id"]);
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
-            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                         select new
+            var bsfio = ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         .GroupBy(m => new
                          {
-                             poid = m.Field<string>("poid"),
+                             poid = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
                              stocktype = m.Field<string>("stocktype"),
-                             qty = m.Field<decimal>("qty"),
                              location = m.Field<string>("location"),
                              roll = m.Field<string>("roll"),
                              dyelot = m.Field<string>("dyelot"),
+                         })
+                         .Select(m => new
+                         {
+                             m.Key.poid,
+                             m.Key.seq1,
+                             m.Key.seq2,
+                             m.Key.stocktype,
+                             m.Key.location,
+                             m.Key.roll,
+                             m.Key.dyelot,
+                             qty = m.Sum(w => w.Field<decimal>("qty"))
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
@@ -472,7 +482,7 @@ and d.Id = '{0}'", CurrentMaintain["id"]);
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           poid = b.Field<string>("poid"),
+                           poid = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
@@ -487,17 +497,27 @@ and d.Id = '{0}'", CurrentMaintain["id"]);
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
 
-            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                         select new
+            var bsfio = ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         .GroupBy(m => new
                          {
-                             poid = m.Field<string>("poid"),
+                             poid = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
                              stocktype = m.Field<string>("stocktype"),
-                             qty = -(m.Field<decimal>("qty")),
                              location = m.Field<string>("location"),
                              roll = m.Field<string>("roll"),
                              dyelot = m.Field<string>("dyelot"),
+                         })
+                         .Select(m => new
+                         {
+                             m.Key.poid,
+                             m.Key.seq1,
+                             m.Key.seq2,
+                             m.Key.stocktype,
+                             m.Key.location,
+                             m.Key.roll,
+                             m.Key.dyelot,
+                             qty = -(m.Sum(w => w.Field<decimal>("qty")))
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion
@@ -597,23 +617,37 @@ where id = @MDivision", pars, out dt);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
             string sqlcmd = @"
-select 
+select distinct
 	seq=concat(Ltrim(Rtrim(a.seq1)), '-', a.Seq2)
-	, IIF((p1.ID = lag(p1.ID,1,'')over (order by a.POID,a.seq1,a.seq2) 
-			AND(a.seq1 = lag(a.seq1,1,'')over (order by a.POID,a.seq1,a.seq2))
-			AND(a.seq2 = lag(a.seq2,1,'')over (order by a.POID,a.seq1,a.seq2))) 
-			,'',dbo.getMtlDesc(i.OrderID,a.seq1,a.seq2,2,0))[desc]
-	, dbo.Getlocation(c.ukey) location
+	,i.OrderID
+	,a.seq1,a.seq2
+	, dbo.Getlocation(f.ukey) location
 	, p1.StockUnit
 	, a.Qty
 	, a.POID
-	,[Total]=sum(a.Qty) OVER (PARTITION BY a.seq1,a.seq2 )
+    ,a.ukey
+into #tmp
 from dbo.issue_detail as a WITH (NOLOCK) 
 inner join issue i WITH (NOLOCK) on i.id = a.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = i.OrderID and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = i.OrderID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'  and isnull(c.Roll,'') = '' and isnull(c.Dyelot,'')  = ''
+inner join FtyInventory f WITH (NOLOCK) on i.OrderID = f.poid and a.seq1 = f.seq1 and a.seq2 = f.seq2 and f.StockType = 'B'  
+	and isnull(a.Roll,'') = isnull(f.Roll,'') and isnull(a.Dyelot,'')  = isnull(f.Dyelot,'')
 Where a.id = @ID
 order by SEQ,POID
+
+select
+	seq
+	, IIF((OrderID = lag(OrderID,1,'')over (order by OrderID,seq1,seq2) 
+			AND(seq1 = lag(Seq1,1,'')over (order by OrderID,seq1,seq2))
+			AND(seq2 = lag(seq2,1,'')over (order by OrderID,seq1,seq2))) 
+			,'',dbo.getMtlDesc(OrderID,seq1,seq2,2,0))[desc]
+	, location
+	, StockUnit
+	, Qty
+	, POID
+	,[Total]=sum(Qty) OVER (PARTITION BY seq1,seq2 )
+from #tmp
+drop table #tmp
 ";
             result = DBProxy.Current.Select(null, sqlcmd, pars, out dtDetail);
 
