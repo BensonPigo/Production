@@ -230,7 +230,7 @@ into #OrderSharedAmtStep1
 from #PLSharedAmt t
 inner join PackingList_Detail pld with (nolock) on t.PackID = pld.ID
 inner join AirPP app with (nolock) on pld.OrderID = app.OrderID and pld.OrderShipmodeSeq = app.OrderShipmodeSeq
-outer apply (select [Value] = isnull(sum(NWPerPcs + ShipQty),0) from PackingList_Detail where ID = t.PackID) TtlNW
+outer apply (select [Value] = isnull(sum(NWPerPcs * ShipQty),0) from PackingList_Detail where ID = t.PackID) TtlNW
 group by pld.ID, pld.OrderID, pld.OrderShipmodeSeq, TtlNW.Value, t.PLSharedAmtFin, app.RatioFty
 
 select * ,[AccuOrderSharedAmt] = SUM(OrderSharedAmt) over(PARTITION BY ID order BY OrderID,OrderShipmodeSeq )
@@ -239,7 +239,8 @@ from #OrderSharedAmtStep1
 
 
 select	*,
-		[OrderSharedAmtFin] =  case	when count(1) over(partition by ID ) = 1 then PLSharedAmtFin
+		[OrderSharedAmtFin] =  case	when OrderSharedAmt = 0 then 0
+                                    when count(1) over(partition by ID ) = 1 then PLSharedAmtFin
 									when ROW_NUMBER() over(partition by ID order BY OrderID,OrderShipmodeSeq) < count(1) over(partition by ID ) then OrderSharedAmt
 									else PLSharedAmtFin -  LAG(AccuOrderSharedAmt) over(partition by ID order by OrderID,OrderShipmodeSeq) end
 into #OrderSharedAmt
