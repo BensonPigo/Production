@@ -790,20 +790,33 @@ from #tmp ;
                     // 主要Insert進TransferToClog的資料
                     result1 = MyUtility.Tool.ProcessWithDatatable(selectedData.CopyToDataTable(), "PackingListID,OrderID,CTNStartNo,SCICtnNo,ScanQty,ScanEditDate,ScanName", sql, out resulttb, "#tmp");
 
-                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectOrdersData);
-                    if (result1 && result2 && prgResult)
-                    {
-                        transactionScope.Complete();
-                        transactionScope.Dispose();
-                        this.ControlButton4Text("Close");
-                        MyUtility.Msg.InfoBox("Complete!!");
-                    }
-                    else
+                    if (result1 == false)
                     {
                         transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
+                        MyUtility.Msg.WarningBox(result1.ToString());
                         return;
                     }
+
+                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectOrdersData);
+
+                    if (prgResult == false)
+                    {
+                        transactionScope.Dispose();
+                        MyUtility.Msg.WarningBox(prgResult.ToString());
+                        return;
+                    }
+
+                    if (result2 == false)
+                    {
+                        transactionScope.Dispose();
+                        MyUtility.Msg.WarningBox(result2.ToString());
+                        return;
+                    }
+
+                    transactionScope.Complete();
+                    transactionScope.Dispose();
+                    this.ControlButton4Text("Close");
+                    MyUtility.Msg.InfoBox("Complete!!");
                 }
                 catch (Exception ex)
                 {
