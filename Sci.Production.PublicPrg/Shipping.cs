@@ -195,7 +195,71 @@ BEGIN
 		END
 	FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@sharebase
 END
-CLOSE cursor_ttlAmount", shippingAPID, Sci.Env.User.UserID);
+CLOSE cursor_ttlAmount
+
+--以下為Airpp 拆分Factory與Other部分
+--只有AirPP的資料需要在往下分攤
+select se.InvNo,[Amount] = sum(se.Amount)
+into #InvNoSharedAmt
+from ShareExpense se with (nolock)
+where	se.ShippingAPID = '{0}' and se.Junk = 0 and
+		exists(select 1 from GMTBooking gmt with (nolock)
+							 inner join ShipMode sm with (nolock) on gmt.ShipModeID = sm.ID
+						     where gmt.ID = se.InvNo and sm.NeedCreateAPP = 1)
+group by se.InvNo
+
+select	t.InvNo,[PackID] = pl.ID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo) * pl.GW,2)
+into #PLSharedAmtStep1
+from #InvNoSharedAmt t
+inner join PackingList pl with (nolock) on pl.INVNo = t.InvNo
+
+select * ,[AccuPLSharedAmt] = SUM(PLSharedAmt) over(PARTITION BY InvNo order BY InvNo,PackID )
+into #PLSharedAmtStep2
+from #PLSharedAmtStep1
+
+select *,
+	  [PLSharedAmtFin] = case	when count(1) over(partition by invno ) = 1 then Amount
+								when ROW_NUMBER() over(partition by invno order BY InvNo,PackID) < count(1) over(partition by invno ) then PLSharedAmt
+								else Amount -  LAG(AccuPLSharedAmt) over(partition by invno order by invno,PackID) end
+into #PLSharedAmt
+from #PLSharedAmtStep2
+
+select  pld.ID,pld.OrderID,pld.OrderShipmodeSeq, t.PLSharedAmtFin, [TtlNW] = TtlNW.Value, [OrderSharedAmt] =iif(TtlNW.Value = 0,0,ROUND(t.PLSharedAmtFin / TtlNW.Value * sum(pld.NWPerPcs * pld.ShipQty),2))  , 
+		[QtyPerCTN] = sum(QtyPerCTN), [RatioFty] = isnull(app.RatioFty,0)
+into #OrderSharedAmtStep1
+from #PLSharedAmt t
+inner join PackingList_Detail pld with (nolock) on t.PackID = pld.ID
+inner join AirPP app with (nolock) on pld.OrderID = app.OrderID and pld.OrderShipmodeSeq = app.OrderShipmodeSeq
+outer apply (select [Value] = isnull(sum(NWPerPcs * ShipQty),0) from PackingList_Detail where ID = t.PackID) TtlNW
+group by pld.ID, pld.OrderID, pld.OrderShipmodeSeq, TtlNW.Value, t.PLSharedAmtFin, app.RatioFty
+
+select * ,[AccuOrderSharedAmt] = SUM(OrderSharedAmt) over(PARTITION BY ID order BY OrderID,OrderShipmodeSeq )
+into #OrderSharedAmtStep2
+from #OrderSharedAmtStep1
+
+
+select	*,
+		[OrderSharedAmtFin] =  case	when OrderSharedAmt = 0 then 0
+                                    when count(1) over(partition by ID ) = 1 then PLSharedAmtFin
+									when ROW_NUMBER() over(partition by ID order BY OrderID,OrderShipmodeSeq) < count(1) over(partition by ID ) then OrderSharedAmt
+									else PLSharedAmtFin -  LAG(AccuOrderSharedAmt) over(partition by ID order by OrderID,OrderShipmodeSeq) end
+into #OrderSharedAmt
+from #OrderSharedAmtStep2
+
+declare @SharedAmtFactory numeric (12, 2) 
+declare @SharedAmtOther numeric (12, 2) 
+
+select	@SharedAmtFactory = isnull(sum(ROUND(OrderSharedAmtFin / 100 * RatioFty,2)),0),
+		@SharedAmtOther = isnull(sum(OrderSharedAmtFin - ROUND(OrderSharedAmtFin / 100 * RatioFty,2)),0)
+from #OrderSharedAmt
+
+update ShippingAP set SharedAmtFactory = @SharedAmtFactory,SharedAmtOther = @SharedAmtOther where ID = '{0}'
+ 
+
+drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmtStep2,#PLSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#OrderSharedAmt
+--以上為Airpp 拆分Factory與Other部分
+
+", shippingAPID, Sci.Env.User.UserID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
@@ -363,6 +427,11 @@ where Ltrim(Misc.ID)  = @Refno";
 
         }
         #endregion
+
+        public static string GetNeedCreateAppShipMode()
+        {
+            return MyUtility.GetValue.Lookup("SELECT Stuff((select concat( ', ',ID)   from ShipMode where NeedCreateAPP = 1 FOR XML PATH('')),1,1,'') ");
+        }
 
         #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
         public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)

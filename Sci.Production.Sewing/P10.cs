@@ -32,6 +32,12 @@ namespace Sci.Production.Sewing
                 return;
             }
 
+            if (this.dateBoxUpdateDate.Value >= DateTime.Now.Date)
+            {
+                MyUtility.Msg.WarningBox("<Update Date> must be earlier today");
+                return;
+            }
+
             string sqlcmd = $"exec SNPAutoTransferToSewingOutput '{this.dateBoxUpdateDate.Text}' ";
 
             // 12分鐘  比照排程執行時間

@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelPackID = new Sci.Win.UI.Label();
             this.labelCtnNo = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
@@ -54,6 +54,7 @@
             this.txtScanCartonSP = new Sci.Win.UI.TextBox();
             this.labelTabCarton = new Sci.Win.UI.Label();
             this.tabPageScan = new System.Windows.Forms.TabPage();
+            this.btnLacking = new Sci.Win.UI.Button();
             this.numBoxScanQty = new Sci.Win.UI.NumericBox();
             this.numBoxScanTtlQty = new Sci.Win.UI.NumericBox();
             this.txtScanEAN = new Sci.Win.UI.TextBox();
@@ -89,7 +90,7 @@
             this.lbTotalWeight = new Sci.Win.UI.Label();
             this.txtTotalWeight = new Sci.Win.UI.TextBox();
             this.numWeight = new Sci.Win.UI.NumericBox();
-            this.btnLacking = new Sci.Win.UI.Button();
+            this.chk_AutoCheckWeight = new Sci.Win.UI.CheckBox();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -308,6 +309,16 @@
             this.tabPageScan.TabIndex = 1;
             this.tabPageScan.Text = "Scan";
             // 
+            // btnLacking
+            // 
+            this.btnLacking.Location = new System.Drawing.Point(214, 134);
+            this.btnLacking.Name = "btnLacking";
+            this.btnLacking.Size = new System.Drawing.Size(80, 30);
+            this.btnLacking.TabIndex = 112;
+            this.btnLacking.Text = "Lacking";
+            this.btnLacking.UseVisualStyleBackColor = true;
+            this.btnLacking.Click += new System.EventHandler(this.btnLacking_Click);
+            // 
             // numBoxScanQty
             // 
             this.numBoxScanQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -414,14 +425,14 @@
             this.gridScanDetail.Location = new System.Drawing.Point(345, 243);
             this.gridScanDetail.Name = "gridScanDetail";
             this.gridScanDetail.ReadOnly = true;
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridScanDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridScanDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridScanDetail.RowTemplate.Height = 24;
@@ -513,14 +524,14 @@
             this.gridSelectCartonDetail.MultiSelect = false;
             this.gridSelectCartonDetail.Name = "gridSelectCartonDetail";
             this.gridSelectCartonDetail.ReadOnly = true;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSelectCartonDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSelectCartonDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridSelectCartonDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSelectCartonDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSelectCartonDetail.RowTemplate.Height = 24;
@@ -777,19 +788,23 @@
             0});
             this.numWeight.Validating += new System.ComponentModel.CancelEventHandler(this.NumWeight_Validating);
             // 
-            // btnLacking
+            // chk_AutoCheckWeight
             // 
-            this.btnLacking.Location = new System.Drawing.Point(214, 134);
-            this.btnLacking.Name = "btnLacking";
-            this.btnLacking.Size = new System.Drawing.Size(80, 30);
-            this.btnLacking.TabIndex = 112;
-            this.btnLacking.Text = "Lacking";
-            this.btnLacking.UseVisualStyleBackColor = true;
-            this.btnLacking.Click += new System.EventHandler(this.btnLacking_Click);
+            this.chk_AutoCheckWeight.AutoSize = true;
+            this.chk_AutoCheckWeight.Checked = true;
+            this.chk_AutoCheckWeight.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chk_AutoCheckWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chk_AutoCheckWeight.Location = new System.Drawing.Point(352, 185);
+            this.chk_AutoCheckWeight.Name = "chk_AutoCheckWeight";
+            this.chk_AutoCheckWeight.Size = new System.Drawing.Size(201, 21);
+            this.chk_AutoCheckWeight.TabIndex = 112;
+            this.chk_AutoCheckWeight.Text = "Auto check weight is empty.";
+            this.chk_AutoCheckWeight.UseVisualStyleBackColor = true;
             // 
             // P18
             // 
             this.ClientSize = new System.Drawing.Size(934, 729);
+            this.Controls.Add(this.chk_AutoCheckWeight);
             this.Controls.Add(this.numWeight);
             this.Controls.Add(this.txtTotalWeight);
             this.Controls.Add(this.lbTotalWeight);
@@ -837,6 +852,7 @@
             this.Controls.Add(this.labelPackID);
             this.KeyPreview = true;
             this.Name = "P18";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P18. Scan & Pack";
             this.Controls.SetChildIndex(this.labelPackID, 0);
             this.Controls.SetChildIndex(this.labelCtnNo, 0);
@@ -883,6 +899,7 @@
             this.Controls.SetChildIndex(this.lbTotalWeight, 0);
             this.Controls.SetChildIndex(this.txtTotalWeight, 0);
             this.Controls.SetChildIndex(this.numWeight, 0);
+            this.Controls.SetChildIndex(this.chk_AutoCheckWeight, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -958,5 +975,6 @@
         private Win.UI.TextBox txtTotalWeight;
         private Win.UI.NumericBox numWeight;
         private Win.UI.Button btnLacking;
+        private Win.UI.CheckBox chk_AutoCheckWeight;
     }
 }

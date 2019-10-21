@@ -9,6 +9,7 @@
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_ShipMode_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
     [IncludeSeaShipping] BIT NOT NULL DEFAULT ((0)), 
+    [NeedCreateAPP] BIT CONSTRAINT [DF_ShipMode_NeedCreateAPP] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_ShipMode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
