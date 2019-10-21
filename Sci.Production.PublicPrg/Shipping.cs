@@ -202,7 +202,7 @@ CLOSE cursor_ttlAmount
 select se.InvNo,[Amount] = sum(se.Amount)
 into #InvNoSharedAmt
 from ShareExpense se with (nolock)
-where	ShippingAPID = '{0}' and
+where	se.ShippingAPID = '{0}' and se.Junk = 0 and
 		exists(select 1 from GMTBooking gmt with (nolock)
 							 inner join ShipMode sm with (nolock) on gmt.ShipModeID = sm.ID
 						     where gmt.ID = se.InvNo and sm.NeedCreateAPP = 1)
