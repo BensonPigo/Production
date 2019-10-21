@@ -11,6 +11,7 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Production.PublicPrg;
 using System.Linq;
+using System.Configuration;
 
 namespace Sci.Production.Shipping
 {
@@ -527,16 +528,19 @@ select * from FtyExportData ", e.FormattedValue.ToString());
 
             string strCheckSql = $@"select 1 from ShareExpense WITH (NOLOCK)  where ShippingAPID = '{this.apData["ID"]}' and (Junk=0 or junk is null)";
 
-            if (
-                this.apData["SubType"].ToString().ToUpper() == "GARMENT" &&
-                this.apData["Type"].ToString().ToUpper() == "EXPORT" &&
-                !MyUtility.Check.Seek(strCheckSql))
+            if (this.apData["SubType"].ToString().ToUpper() == "GARMENT"
+                && this.apData["Type"].ToString().ToUpper() == "EXPORT"
+                && !MyUtility.Check.Seek(strCheckSql))
             {
-                this.AppendData();
+                if (ConfigurationManager.AppSettings["TaipeiServer"] == string.Empty
+                    || (ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty
+                        && DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false))
+                {
+                    this.AppendData();
+                }
             }
 
             this.QueryData();
-
         }
 
         private void AppendData()
