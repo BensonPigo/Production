@@ -1091,7 +1091,8 @@ and Article = '{this.selecedPK.Article}'";
             DataRow drPassName;
             string passName = string.Empty;
             string sql = $@"
-select isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+select  isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName,
+        pd.ScanEditDate
 from PackingList_Detail pd
 left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
 where pd.id = '{this.selecedPK.ID}' 
@@ -1108,6 +1109,7 @@ and pd.Article = '{this.selecedPK.Article}'
             foreach (DataRow dr in dt_scanDetailrow)
             {
                 dr["PassName"] = passName;
+                dr["ScanEditDate"] = drPassName["ScanEditDate"];
             }
 
             // 檢查下方carton列表是否都掃完
