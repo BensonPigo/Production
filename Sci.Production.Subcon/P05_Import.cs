@@ -218,16 +218,18 @@ where id ='{dr_artworkReq["artworktypeid"]}'
                     DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}'");
                     decimal exceedQty = MyUtility.Convert.GetDecimal(tmp["AccReqQty"]) + MyUtility.Convert.GetDecimal(tmp["ReqQty"]) - MyUtility.Convert.GetDecimal(tmp["OrderQty"]);
 
+                    decimal finalExceedQty = exceedQty < 0 ? 0 : exceedQty;
+
                     if (findrow.Length > 0)
                     {
                         findrow[0]["ReqQty"] = tmp["ReqQty"];
                         findrow[0]["qtygarment"] = tmp["qtygarment"];
-                        findrow[0]["ExceedQty"] = exceedQty;
+                        findrow[0]["ExceedQty"] = finalExceedQty;
                     }
                     else
                     {
                         tmp["id"] = dr_artworkReq["id"];
-                        tmp["ExceedQty"] = exceedQty;
+                        tmp["ExceedQty"] = finalExceedQty;
                         tmp.AcceptChanges();
                         tmp.SetAdded();
                         dt_artworkReqDetail.ImportRow(tmp);
