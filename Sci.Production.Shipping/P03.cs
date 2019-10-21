@@ -127,7 +127,13 @@ where ed.ID = '{0}'", masterID);
                     break;
             }
 
-            decimal intPrepaidFtyImportFee = MyUtility.Convert.GetDecimal(this.CurrentMaintain["PrepaidFtyImportFee"]);
+            string sqlmainPrepaidFtyImportFee = $@"
+select PrepaidFtyImportFee
+from Export
+where ID = '{this.CurrentMaintain["MainExportID08"]}'
+";
+
+            decimal intPrepaidFtyImportFee = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlmainPrepaidFtyImportFee));
             this.chkImportChange.Enabled = !(intPrepaidFtyImportFee > 0);
         }
 
