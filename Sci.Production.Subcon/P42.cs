@@ -909,7 +909,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             this.grid2.Columns.Clear();
             //準備Grid 2
             this.Helper.Controls.Grid.Generator(this.grid2)
-            .Text("BundleNo", header: "BundleNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Bundle#", header: "BundleNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("EXCESS", header: "EXCESS", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PatternDesc", header: "PatternDesc", width: Widths.AnsiChars(20), iseditingreadonly: true)
