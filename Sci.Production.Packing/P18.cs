@@ -132,7 +132,7 @@ namespace Sci.Production.Packing
                                            pd.Color,
                                            pd.SizeCode  ,
                                            pd.QtyPerCTN,
-                                           ScanQty = Cast(isnull(ScanQty.Value,0) as smallint),
+                                           ScanQty = pd.ScanQty,
                                            pd.ScanEditDate,
                                            pd.ScanName,
                                            pd.barcode,
@@ -149,15 +149,6 @@ namespace Sci.Production.Packing
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
                                 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
                                 left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
-								OUTER APPLY (
-									SELECT [Value]=SUM(ScanQty) 
-									FROM PackingList_Detail 
-									WHERE ID= p.Id 
-											AND OrderID=pd.OrderID 
-											AND CTNStartNo=pd.CTNStartNo  
-											AND CTNStartNo=pd.CTNStartNo 
-											AND SCICtnNo=pd.SCICtnNo
-								)ScanQty
                                 where p.Type in ('B','L') ";
 
             foreach (string where in aLLwhere)
