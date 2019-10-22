@@ -247,7 +247,7 @@ namespace Sci.Production.Planning
                     objApp.Quit();
                     Marshal.ReleaseComObject(objApp);
                     Marshal.ReleaseComObject(objSheets);
-                    //Marshal.ReleaseComObject(firstRow);
+                    Marshal.ReleaseComObject(firstRow);
                     Marshal.ReleaseComObject(workbook);
 
                     strExcelName.OpenFile();
@@ -273,6 +273,10 @@ namespace Sci.Production.Planning
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
 
+
+                    // 客製化欄位，記得設定this.IsSupportCopy = true
+                    this.CreateCustomizedExcel(ref objSheets);
+
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
                     Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
@@ -297,6 +301,9 @@ namespace Sci.Production.Planning
                     Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
+
+                    // 客製化欄位，記得設定this.IsSupportCopy = true
+                    this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
