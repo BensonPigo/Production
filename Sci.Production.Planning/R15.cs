@@ -23,6 +23,7 @@ namespace Sci.Production.Planning
         private string spno2;
         private string custcd;
         private string brandid;
+        private string styleId;
         private DateTime? sciDelivery1;
         private DateTime? sciDelivery2;
         private DateTime? CustRqsDate1;
@@ -58,7 +59,7 @@ namespace Sci.Production.Planning
             DataTable dt;
             DBProxy.Current.Select(null, "select sby = 'SP#' union all select sby = 'Acticle / Size'", out dt);
             MyUtility.Tool.SetupCombox(this.comboBox1, 1, dt);
-            this.comboBox1.SelectedIndex = 0;
+            this.comboBox1.SelectedIndex = 0; this.ReportType = "SP#";
         }
 
         /// <summary>
@@ -96,6 +97,7 @@ namespace Sci.Production.Planning
             this.spno2 = this.txtSPNoEnd.Text;
             #endregion
             this.brandid = this.txtbrand.Text;
+            this.styleId = this.txtStyle.Text;
             this.custcd = this.txtCustCD.Text;
             this.mdivision = this.txtMdivision.Text;
             this.factory = this.txtfactory.Text;
@@ -193,7 +195,7 @@ namespace Sci.Production.Planning
                     Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-
+                    objApp.Visible = true;
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
@@ -203,7 +205,10 @@ namespace Sci.Production.Planning
                     // 首列資料篩選
                     Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
+
+
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
+                    this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP");
@@ -224,11 +229,14 @@ namespace Sci.Production.Planning
                     Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-
+                    objApp.Visible = true;
                     // 首列資料篩選
                     Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
+
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
+                    this.CreateCustomizedExcel(ref objSheets);
+
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP");
@@ -238,7 +246,7 @@ namespace Sci.Production.Planning
                     objApp.Quit();
                     Marshal.ReleaseComObject(objApp);
                     Marshal.ReleaseComObject(objSheets);
-                    Marshal.ReleaseComObject(firstRow);
+                    //Marshal.ReleaseComObject(firstRow);
                     Marshal.ReleaseComObject(workbook);
 
                     strExcelName.OpenFile();
@@ -336,6 +344,11 @@ namespace Sci.Production.Planning
             #endregion
 
             #region --- 條件組合  ---
+            if (!MyUtility.Check.Empty(this.styleId))
+            {
+                sqlCmd.Append($@" and o.StyleID = '{this.styleId}' ");
+            }
+
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
                 sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
@@ -348,12 +361,14 @@ namespace Sci.Production.Planning
 
             if (!MyUtility.Check.Empty(this.sewingInline1))
             {
-                sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+                // sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+                sqlCmd.Append($@"and ( o.SewInLine >= '{this.sewingInline1.Value.ToString("d")}' OR '{this.sewingInline1.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.sewingInline2))
             {
-                sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
+                // sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
+                sqlCmd.Append($@"and ( o.SewInLine <= '{this.sewingInline2.Value.ToString("d")}' OR '{this.sewingInline2.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1) && !MyUtility.Check.Empty(this.BuyerDelivery2))
@@ -625,6 +640,7 @@ select t.MDivisionID
        , t.FactoryID
        , t.SewLine
        , t.OrdersBuyerDelivery
+       , t.SciDelivery
        , t.SewInLine
        , t.SewOffLine
        , t.BrandID
@@ -909,12 +925,14 @@ WHERE 1=1 "));
 
             if (!MyUtility.Check.Empty(this.sewingInline1))
             {
-                sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+                // sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+                sqlCmd.Append($@"and ( o.SewInLine >= '{this.sewingInline1.Value.ToString("d")}' OR '{this.sewingInline1.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.sewingInline2))
             {
-                sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
+                // sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
+                sqlCmd.Append($@"and ( o.SewInLine <= '{this.sewingInline2.Value.ToString("d")}' OR '{this.sewingInline2.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1) && !MyUtility.Check.Empty(this.BuyerDelivery2))
@@ -1190,6 +1208,7 @@ select t.MDivisionID
        , t.FactoryID
        , SewingSchedule.SewingLineID
        , t.OrdersBuyerDelivery
+       , t.SciDelivery
        , SewingSchedule2.Inline
        , SewingSchedule2.Offline
        , t.BrandID
@@ -1449,6 +1468,35 @@ exec (@sql)
             #endregion
 
             return sqlCmd;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            switch (this.comboBox1.SelectedIndex)
+            {
+                case 0:
+                         this.ReportType = "SP#";
+                    break;
+                case 1:
+                    this.ReportType = "Acticle / Size";
+                    break;
+                default:
+                    break;
+            }
+
+            //if (this.comboBox1.selec)
+            //{
+            //    this.ReportType = "MainList";
+            //    this.dateDelivery.ReadOnly = true;
+            //    this.dateDelivery.Value1 = null;
+            //    this.dateDelivery.Value2 = null;
+            //}
+            //if (this.radioDetailList.Checked)
+            //{
+            //    this.ReportType = "DetailList";
+            //    this.dateDelivery.ReadOnly = false;
+            //}
         }
     }
 }
