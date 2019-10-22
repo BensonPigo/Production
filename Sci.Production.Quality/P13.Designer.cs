@@ -115,7 +115,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2474, 162);
+            this.gridicon.Location = new System.Drawing.Point(2582, 162);
             this.gridicon.Visible = false;
             // 
             // detailgridcont

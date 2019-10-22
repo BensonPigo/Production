@@ -191,7 +191,7 @@
             this.comboBoxRange.Location = new System.Drawing.Point(390, 142);
             this.comboBoxRange.Name = "comboBoxRange";
             this.comboBoxRange.OldText = "";
-            this.comboBoxRange.Size = new System.Drawing.Size(121, 24);
+            this.comboBoxRange.Size = new System.Drawing.Size(315, 24);
             this.comboBoxRange.TabIndex = 72;
             this.comboBoxRange.SelectedIndexChanged += new System.EventHandler(this.ComboBoxRange_SelectedIndexChanged);
             // 

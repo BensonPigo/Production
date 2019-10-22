@@ -74,6 +74,7 @@ where ID = '{0}'"
         // Context Menu選擇Edit This Record's Detail
         private void EditThisDetail()
         {
+            if (this.CurrentDetailData == null) return;
             Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(true, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Edit");
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
