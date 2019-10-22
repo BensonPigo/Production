@@ -297,7 +297,7 @@
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnAccumulatedQty.Location = new System.Drawing.Point(793, 78);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
-            this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
+            this.btnAccumulatedQty.Size = new System.Drawing.Size(161, 31);
             this.btnAccumulatedQty.TabIndex = 5;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
@@ -328,13 +328,12 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(845, 41);
+            this.btnImport.Location = new System.Drawing.Point(793, 41);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(89, 31);
+            this.btnImport.Size = new System.Drawing.Size(161, 31);
             this.btnImport.TabIndex = 4;
-            this.btnImport.Text = "Import";
+            this.btnImport.Text = "Import From Excel";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Visible = false;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // txtInvNo
@@ -383,6 +382,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P18";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P18. Transfer In";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
