@@ -351,8 +351,7 @@ s.BatchQty
 	Foc = B.Foc,
 	ShipQty = B.ShipQty,
 	ShipFoc = B.ShipFoc,
-	ShipETA = B.ShipETA,
-	Junk = B.Junk
+	ShipETA = B.ShipETA
 	FROM Machine.DBO.MiscPO_Detail A
 	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on  a.MiscID=b.Refno 
 													and  a.SEQ2=b.Seq2 
@@ -360,6 +359,12 @@ s.BatchQty
 	INNER JOIN  Trade_To_Pms.DBO.MmsPO C ON B.ID=C.ID
 	WHERE C.Type ='O'
 	and C.FactoryID in (select id from @Sayfty)
+
+	UPDATE a
+	SET Junk = b.Cancel
+	FROM Machine.dbo.MiscPO_Detail a
+	INNER JOIN Trade_To_Pms.dbo.MmsReq_Detail b ON a.ID = b.ID
+
 	-- ------------MachinePO--------------------
 	declare @T table (id varchar(13))
 
