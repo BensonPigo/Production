@@ -116,29 +116,45 @@ namespace Sci.Production.IE
 declare @sql varchar(max) = ''
 declare @detial_count int = 1
 declare @dayInline as varchar(10)
+declare @beginDate as date = '{0}'
+declare @endDate as date = '{1}'
+declare @dayTable table(dday date)
 
-select FactoryID, SewingLineID
-	,[dayInline] = convert(nvarchar(8),Inline,112)
-	,[dayCount] = count(*)
-into #tmp_ChgOver
-from ChgOver
-where Inline between '{0}' and '{1}'",
+while @beginDate <= @endDate
+begin
+	insert into @dayTable(dday)
+	values(@beginDate)
+	set @beginDate = dateadd(day,1,@beginDate)
+end
+
+select distinct FactoryID,SewingLineID, d.dday
+into #tmp
+from ChgOver c, @dayTable d
+where c.Inline between '{0}' and '{1}'
+",
                 this.monthS,
                 this.monthE));
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and FactoryID = '{0}'", this.factory));
+                sqlCmd.Append(string.Format(" and c.FactoryID = '{0}'", this.factory));
             }
 
             if (!MyUtility.Check.Empty(this.sewingLine))
             {
-                sqlCmd.Append(string.Format(" and SewingLineID = '{0}'", this.sewingLine));
+                sqlCmd.Append(string.Format(" and c.SewingLineID = '{0}'", this.sewingLine));
             }
 
             sqlCmd.Append(string.Format(
                 @"
-group by  FactoryID, SewingLineID, convert(nvarchar(8),Inline,112) 
+select t.FactoryID
+	,[SewingLineID] = right('00' + t.SewingLineID, 2)
+	,[dayInline] = t.dday	
+	,[dayCount] = count(c.Inline)
+into #tmp_ChgOver
+from #tmp t
+left join ChgOver c on t.FactoryID = c.FactoryID and t.SewingLineID = c.SewingLineID and t.dday = convert(nvarchar(8),c.Inline,112)
+group by t.FactoryID, t.SewingLineID, t.dday
 
 select FactoryID, SewingLineID, [totalDayCount] = sum(dayCount)
 into #tmp_ChgOver_sumDayCount
@@ -182,7 +198,7 @@ set @sql = '
 --select @sql
 exec (@sql)  
 
-drop table #tmp_ChgOver,#tmp_ChgOver_sumDayCount,#tmp_ChgOver_GroupbyDayInline"));
+drop table #tmp, #tmp_ChgOver ,#tmp_ChgOver_sumDayCount,#tmp_ChgOver_GroupbyDayInline"));
 
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printDataSummary);
             if (!result)
@@ -201,24 +217,32 @@ drop table #tmp_ChgOver,#tmp_ChgOver_sumDayCount,#tmp_ChgOver_GroupbyDayInline")
 
             sqlCmd.Append(string.Format(
                 @"
-select a.FactoryID
-	, a.SewingLineID
-	, format(a.Inline,'yyyy/MM/dd') Inline
+select distinct a.FactoryID
+	, [SewingLineID] = right('00' + a.SewingLineID, 2)
+	, a.Inline
 	, [OldSP] = b.OrderID
 	, [OldStyle] = b.StyleID
 	, [OldComboType] = b.ComboType
-	, a.OrderID
-	, a.StyleID
-	, a.ComboType
-from ChgOver a
+	, [OrderID] = c.OrderID
+	, [StyleID] = c.StyleID
+	, [ComboType] = c.ComboType 
+from ChgOver a 
 outer apply 
 (
-	select OrderID, StyleID, ComboType
+	select top 1 OrderID, StyleID, ComboType
 	from ChgOver
 	where Inline = (select max(Inline) from ChgOver where FactoryID = a.FactoryID and SewingLineID = a.SewingLineID and Inline < a.Inline)
 	and FactoryID = a.FactoryID
 	and SewingLineID = a.SewingLineID
 )b
+outer apply 
+(
+	select top 1 OrderID, StyleID, ComboType
+	from ChgOver
+	where Inline = (select max(Inline) from ChgOver where FactoryID = a.FactoryID and SewingLineID = a.SewingLineID and Inline = a.Inline)
+	and FactoryID = a.FactoryID
+	and SewingLineID = a.SewingLineID
+)c
 where a.Inline between '{0}' and '{1}'",
                 this.monthS,
                 this.monthE));
@@ -233,7 +257,7 @@ where a.Inline between '{0}' and '{1}'",
                 sqlCmd.Append(string.Format(" and a.SewingLineID = '{0}'", this.sewingLine));
             }
 
-            sqlCmd.Append(string.Format(" order by a.FactoryID, a.SewingLineID, a.Inline"));
+            sqlCmd.Append(string.Format(" order by a.FactoryID, right('00' + a.SewingLineID, 2), a.Inline"));
 
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printDataDetail);
             if (!result)
@@ -284,7 +308,7 @@ where a.Inline between '{0}' and '{1}'",
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R03_CuttingScheduleListReport");
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_R02_StyleChangeoverReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
