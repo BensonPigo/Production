@@ -195,7 +195,7 @@ namespace Sci.Production.Planning
                     Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    objApp.Visible = true;
+
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
@@ -206,8 +206,9 @@ namespace Sci.Production.Planning
                     Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
 
-
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
+
+                    // 客製化欄位，記得設定this.IsSupportCopy = true
                     this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
@@ -229,14 +230,14 @@ namespace Sci.Production.Planning
                     Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    objApp.Visible = true;
                     // 首列資料篩選
                     Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
 
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
-                    this.CreateCustomizedExcel(ref objSheets);
 
+                    // 客製化欄位，記得設定this.IsSupportCopy = true
+                    this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP");
