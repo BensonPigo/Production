@@ -215,11 +215,11 @@ where ID = '{0}'"
                 MyUtility.Msg.WarningBox("<Article / Colorway> can not be empty.");
                 return false;
             }
-            if (MyUtility.Check.Empty(this.CurrentMaintain["T1Subcon"]))
-            {
-                MyUtility.Msg.WarningBox("<T1/SubconName> can not be empty.");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(this.CurrentMaintain["T1Subcon"]))
+            //{
+            //    MyUtility.Msg.WarningBox("<T1/SubconName> can not be empty.");
+            //    return false;
+            //}
             #endregion
 
             #region 檢查欄位正確性
