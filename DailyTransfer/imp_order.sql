@@ -1489,24 +1489,25 @@ BEGIN
 		------------Order_BOA_CustCD----------Bill of Other - 用量展開
 		Merge Production.dbo.Order_BOA_CustCD as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_CustCD a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.Order_BOAUkey=s.Order_BOAUkey and t.custcdid=s.custcdid and t.refno=s.refno
+		on t.Order_BOAUkey=s.Order_BOAUkey and t.ColumnValue=s.ColumnValue
 		when matched then 
 			update set 
-				t.id		= s.id,
-				t.CustCDID	= s.CustCDID,
-				t.Refno		= s.Refno,
-				t.SCIRefno	= s.SCIRefno,
-				t.AddName	= s.AddName,
-				t.AddDate	= s.AddDate,
-				t.EditName	= s.EditName,
-				t.EditDate	= s.EditDate
+				t.id			= s.id,
+				t.CustCDID		= s.CustCDID,
+				t.Refno			= s.Refno,
+				t.SCIRefno		= s.SCIRefno,
+				t.AddName		= s.AddName,
+				t.AddDate		= s.AddDate,
+				t.EditName		= s.EditName,
+				t.EditDate		= s.EditDate,
+				t.ColumnValue	= s.ColumnValue
 		when not matched by target then
 			insert (
 				Id			, Order_BOAUkey		, CustCDID		, Refno		, SCIRefno
-				, AddName	, AddDate			, EditName		, EditDate
+				, AddName	, AddDate			, EditName		, EditDate	, ColumnValue
 			) values (
 				s.Id		, s.Order_BOAUkey	, s.CustCDID	, s.Refno	, s.SCIRefno
-				, s.AddName	, s.AddDate			, s.EditName	, s.EditDate
+				, s.AddName	, s.AddDate			, s.EditName	, s.EditDate, s.ColumnValue
 			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
