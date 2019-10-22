@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panelup = new Sci.Win.UI.Panel();
+            this.lbRange = new Sci.Win.UI.Label();
+            this.comboBoxRange = new Sci.Win.UI.ComboBox();
             this.label26 = new Sci.Win.UI.Label();
             this.label21 = new Sci.Win.UI.Label();
             this.numCT = new Sci.Win.UI.NumericBox();
@@ -116,6 +118,8 @@
             // 
             // panelup
             // 
+            this.panelup.Controls.Add(this.lbRange);
+            this.panelup.Controls.Add(this.comboBoxRange);
             this.panelup.Controls.Add(this.label26);
             this.panelup.Controls.Add(this.label21);
             this.panelup.Controls.Add(this.numCT);
@@ -169,6 +173,27 @@
             this.panelup.Name = "panelup";
             this.panelup.Size = new System.Drawing.Size(995, 415);
             this.panelup.TabIndex = 98;
+            // 
+            // lbRange
+            // 
+            this.lbRange.Location = new System.Drawing.Point(287, 143);
+            this.lbRange.Name = "lbRange";
+            this.lbRange.Size = new System.Drawing.Size(100, 23);
+            this.lbRange.TabIndex = 73;
+            this.lbRange.Text = "Range";
+            // 
+            // comboBoxRange
+            // 
+            this.comboBoxRange.BackColor = System.Drawing.Color.White;
+            this.comboBoxRange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBoxRange.FormattingEnabled = true;
+            this.comboBoxRange.IsSupportUnselect = true;
+            this.comboBoxRange.Location = new System.Drawing.Point(390, 142);
+            this.comboBoxRange.Name = "comboBoxRange";
+            this.comboBoxRange.OldText = "";
+            this.comboBoxRange.Size = new System.Drawing.Size(315, 24);
+            this.comboBoxRange.TabIndex = 72;
+            this.comboBoxRange.SelectedIndexChanged += new System.EventHandler(this.ComboBoxRange_SelectedIndexChanged);
             // 
             // label26
             // 
@@ -715,7 +740,6 @@
         private Win.UI.Label label8;
         private Win.UI.Label label7;
         private Win.UI.Label label6;
-        private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
@@ -757,5 +781,8 @@
         private Win.UI.Label label17;
         private Win.UI.Label label26;
         private Win.UI.Label label21;
+        private Win.UI.Label lbRange;
+        private Win.UI.ComboBox comboBoxRange;
+        private Win.UI.Label label5;
     }
 }
