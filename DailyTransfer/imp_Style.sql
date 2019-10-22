@@ -1064,6 +1064,7 @@ from Trade_To_Pms.dbo.Style_BOA as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
 -----------------------[Style_BOA_CustCD]-----------------------
+/*
 	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_BOA_CustCD as t
 	Using Trade_To_Pms.dbo.Style_BOA_CustCD as s
@@ -1101,7 +1102,7 @@ where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where
 	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
 		delete; 
 
-
+*/
 ------------------Style_BOA_KeyWord-------------------
 	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_BOA_KeyWord as t
