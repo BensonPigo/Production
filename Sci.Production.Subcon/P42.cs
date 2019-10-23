@@ -361,8 +361,11 @@ OUTER APPLY(
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
-	AND HasInComing='true' 
-	AND HasOutGoing='true'
+	AND (
+			(HasInComing='true' AND HasOutGoing='true') OR
+			(InOutRule = '1' AND HasInComing='true') OR
+			(InOutRule = '2' AND HasOutGoing='true')
+		)
 )CompleteCount
 OUTER APPLY(
 	SELECT Value=COUNT(Orderid)
@@ -371,8 +374,11 @@ OUTER APPLY(
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
-	AND HasInComing!='true' 
-	AND HasOutGoing!='true'
+	AND (
+			(HasInComing!='true' AND HasOutGoing!='true') OR
+			(InOutRule = '1' AND HasInComing='false') OR
+			(InOutRule = '2' AND HasOutGoing='false')
+		)
 )NotYetCount
 OUTER APPLY(
 	SELECT Value=COUNT(Orderid)
@@ -382,14 +388,15 @@ OUTER APPLY(
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
 	AND ( (HasInComing='true' AND HasOutGoing!='true') OR (HasInComing!='true' AND HasOutGoing='true'))
+	AND InOutRule NOT IN ('1','2')
 )OnGoingCount
 
 select
 	t.Orderid,
 	t.SubProcessID,
-	Status=case when CompleteCount > 0 then 'Complete'
-				when OnGoingCount > 0 then 'OnGoing'
-				when NotYetCount > 0 then 'Not Yet Load'
+	Status=case when CompleteCount > 0 AND OnGoingCount=0 AND NotYetCount=0 then 'Complete'
+				when NotYetCount > 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
+				ELSE 'OnGoing'
 				end
 into #tmp
 from #tmpBundleNo_Complete t
@@ -542,8 +549,11 @@ OUTER APPLY(
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
-	AND HasInComing='true' 
-	AND HasOutGoing='true'
+	AND (
+			(HasInComing='true' AND HasOutGoing='true') OR
+			(InOutRule = '1' AND HasInComing='true') OR
+			(InOutRule = '2' AND HasOutGoing='true')
+		)
 )CompleteCount
 OUTER APPLY(
 	SELECT Value=COUNT(Orderid)
@@ -554,8 +564,11 @@ OUTER APPLY(
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
-	AND HasInComing!='true' 
-	AND HasOutGoing!='true'
+	AND (
+			(HasInComing!='true' AND HasOutGoing!='true') OR
+			(InOutRule = '1' AND HasInComing='false') OR
+			(InOutRule = '2' AND HasOutGoing='false')
+		)
 )NotYetCount
 OUTER APPLY(
 	SELECT Value=COUNT(Orderid)
@@ -567,6 +580,7 @@ OUTER APPLY(
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
 	AND ( (HasInComing='true' AND HasOutGoing!='true') OR (HasInComing!='true' AND HasOutGoing='true'))
+	AND InOutRule NOT IN ('1','2')
 )OnGoingCount
 
 select
@@ -574,9 +588,9 @@ select
 	t.Article,
 	t.Sizecode,
 	t.SubProcessID,
-	Status=case when CompleteCount > 0 then 'Complete'
-				when OnGoingCount > 0 then 'OnGoing'
-				when NotYetCount > 0 then 'Not Yet Load'
+	Status=case when CompleteCount > 0 AND OnGoingCount=0 AND NotYetCount=0 then 'Complete'
+				when NotYetCount > 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
+				ELSE 'OnGoing'
 				end
 into #tmp
 from #tmpBundleNo_Complete t
@@ -747,12 +761,12 @@ select
     ,Article
     ,BundleGroup
     ,SizeCode
-    ,Status=case when HasInComing='true' AND HasOutGoing='true'  then 'Complete'		
-				when HasInComing='false' AND HasOutGoing='false' then 'Not Yet Load'
-				when InOutRule='3' AND HasInComing='true' AND HasOutGoing='false' then 'OnGoing'				
-				when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				
-				ELSE 'Not Valid'
-			end
+	,Status=case when (HasInComing='true' AND HasOutGoing='true') OR (InOutRule = '1' AND HasInComing='true' ) OR (InOutRule = '2' AND HasOutGoing='true' )then 'Complete'		
+			  	 when (HasInComing='false' AND HasOutGoing='false') OR (InOutRule = '1' AND HasInComing='false' ) OR (InOutRule = '2' AND HasOutGoing='false' )then 'Not Yet Load'
+			 	 when InOutRule='3' AND HasInComing='true' AND HasOutGoing='false' then 'OnGoing'				
+				 when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				
+				 ELSE 'Not Valid'
+			 end
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
@@ -875,12 +889,12 @@ select
     ,Article
     ,BundleGroup
     ,SizeCode
-	,Status=case when HasInComing='true' AND HasOutGoing='true'  then 'Complete'		
-				when HasInComing='false' AND HasOutGoing='false' then 'Not Yet Load'
-				when InOutRule='3' AND HasInComing='true' AND HasOutGoing='false' then 'OnGoing'				
-				when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				
-				ELSE 'Not Valid'
-			end
+	,Status=case when (HasInComing='true' AND HasOutGoing='true') OR (InOutRule = '1' AND HasInComing='true' ) OR (InOutRule = '2' AND HasOutGoing='true' )then 'Complete'		
+			  	 when (HasInComing='false' AND HasOutGoing='false') OR (InOutRule = '1' AND HasInComing='false' ) OR (InOutRule = '2' AND HasOutGoing='false' )then 'Not Yet Load'
+			 	 when InOutRule='3' AND HasInComing='true' AND HasOutGoing='false' then 'OnGoing'				
+				 when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				
+				 ELSE 'Not Valid'
+			 end
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
