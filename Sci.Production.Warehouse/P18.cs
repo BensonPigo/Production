@@ -362,17 +362,19 @@ where a.id = @ID", pars, out dtDetail);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            if (this.CurrentMaintain["Status"].Equals("Confirmed"))
+
+            if (this.CurrentMaintain["status"].EqualString("Confirmed"))
             {
-                this.detailgrid.IsEditingReadOnly = true;
+                this.toolbar.cmdEdit.Enabled = false;
             }
             else
             {
-                this.detailgrid.IsEditingReadOnly = false;
+                this.toolbar.cmdEdit.Enabled = true;
             }
+
             #region Status Label
 
-            label25.Text = CurrentMaintain["status"].ToString();
+            label25.Text = this.CurrentMaintain["status"].ToString();
 
             #endregion Status Label
         }

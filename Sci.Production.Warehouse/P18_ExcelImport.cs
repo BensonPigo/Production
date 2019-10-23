@@ -61,6 +61,7 @@ namespace Sci.Production.Warehouse
             grid2Data.Columns.Add("stockunit", typeof(String));
             grid2Data.Columns.Add("Description", typeof(String));
             grid2Data.Columns.Add("fabrictype", typeof(String));
+            grid2Data.Columns.Add("Weight", typeof(decimal));
             grid2Data.Columns.Add("qty", typeof(decimal));
             grid2Data.Columns.Add("OriQty", typeof(decimal));
             grid2Data.Columns.Add("stocktype", typeof(String));
@@ -80,6 +81,7 @@ namespace Sci.Production.Warehouse
                 .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false)    //3
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false)    //4
+                .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
                 .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
                 .Text("stocktype", header: "Stock Type", iseditingreadonly: true)//7
                 .Text("Location", header: "Location", iseditingreadonly: true) //8
@@ -184,7 +186,7 @@ namespace Sci.Production.Warehouse
                 //檢查Excel格式
                 Microsoft.Office.Interop.Excel.Range range = worksheet.Range[String.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
-                string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Qty", "Stock Type", "Location", "Remark" };
+                string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "G.W(kg)", "Qty", "Stock Type", "Location", "Remark" };
                 int[] ItemPosition = new int[ItemCheck.Length];
                 string[] ExcelItem = new string[intColumnsCount + 1];
 
@@ -229,7 +231,7 @@ namespace Sci.Production.Warehouse
                     DataRow newRow = grid2Data.NewRow();
                     string seq1 = (objCellArray[1, ItemPosition[1]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]].ToString().Trim(), "C").ToString();
                     string seq2 = (objCellArray[1, ItemPosition[2]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C").ToString();
-                    string stockType = (objCellArray[1, ItemPosition[6]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]].ToString().Replace("'", "").Trim(), "C").ToString();
+                    string stockType = (objCellArray[1, ItemPosition[7]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[7]].ToString().Replace("'", "").Trim(), "C").ToString();
 
                     switch (stockType)
                     {
@@ -250,10 +252,11 @@ namespace Sci.Production.Warehouse
                     newRow["seq2"] = seq2;
                     newRow["Roll"] = (objCellArray[1, ItemPosition[3]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C");
                     newRow["Dyelot"] = (objCellArray[1, ItemPosition[4]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C").ToString();
-                    newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "N");
+                    newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "N");
+                    newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]], "N");
                     newRow["stocktype"] = stockType;
-                    newRow["location"] = (objCellArray[1, ItemPosition[7]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[7]].ToString().Replace("'", "").Trim(), "C");
-                    newRow["Remark"] = (objCellArray[1, ItemPosition[8]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[8]].ToString().Trim(), "C");
+                    newRow["location"] = (objCellArray[1, ItemPosition[8]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[8]].ToString().Replace("'", "").Trim(), "C");
+                    newRow["Remark"] = (objCellArray[1, ItemPosition[9]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[9]].ToString().Trim(), "C");
                     newRow["CanWriteIn"] = true;
                     #region check Columns length
                     List<string> listColumnLengthErrMsg = new List<string>();
@@ -277,6 +280,10 @@ namespace Sci.Production.Warehouse
                     // Dyelot varchar(8)
                     if (Encoding.Default.GetBytes(newRow["Dyelot"].ToString()).Length > 8)
                         listColumnLengthErrMsg.Add("<Dyelot> length can't be more than 8 Characters.");
+
+                    // Weight  numeric (11, 2)
+                    if (decimal.Parse(newRow["Weight"].ToString()) > 9999999)
+                        listColumnLengthErrMsg.Add("<G.W(kg)> value can't be more than 9,999,999");
 
                     // qty  numeric (11, 2)
                     if (decimal.Parse(newRow["qty"].ToString()) > 999999999)
