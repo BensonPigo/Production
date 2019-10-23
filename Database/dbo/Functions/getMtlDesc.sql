@@ -20,8 +20,12 @@ BEGIN
 
 	SELECT @scirefno=p.SCIRefno
 		, @refno = p.Refno
-		, @suppcolor = Concat(iif(ISNULL(p.SuppColor,'') = '', '', p.SuppColor + CHAR(10)) 
-							  , iif(ISNULL(p.ColorID,'') = '', '', p.ColorID + ' - ') + ISNULL(c.Name, ''))
+		, @suppcolor = CASE WHEN f.MtlTypeID='SP THREAD' AND ThreadColor.SuppColor IS NOT NULL  --繡線顏色可能要從另外的項次號取
+							THEN Concat(iif(ISNULL(ThreadColor.SuppColor,'') = '', '', ThreadColor.SuppColor + CHAR(10)) 
+												  , iif(ISNULL(p.ColorID,'') = '', '', p.ColorID + ' - ') + ISNULL(c.Name, ''))
+							ELSE Concat(iif(ISNULL(p.SuppColor,'') = '', '', p.SuppColor + CHAR(10)) 
+												  , iif(ISNULL(p.ColorID,'') = '', '', p.ColorID + ' - ') + ISNULL(c.Name, ''))
+							END
 		, @StockSP = isnull(concat(p.StockPOID,' ',p.StockSeq1,' ',p.StockSeq2),'')
 		, @po_desc=@po_desc + iif(ISNULL(p.ColorDetail,'') = '', '', 'ColorDetail : ' + p.ColorDetail + CHAR(10))
 		, @po_desc=@po_desc + iif(ISNULL(p.sizespec,'') = '', '', p.sizespec + ' ')
@@ -34,11 +38,17 @@ BEGIN
 		from dbo.po_supp_detail p WITH (NOLOCK)
 		left join fabric f WITH (NOLOCK) on p.SCIRefno = f.SCIRefno
 		left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and p.ColorID = c.ID 
-		 outer apply ( select Spec, BomZipperInsert from PO_Supp_Detail tmpPO3
-        where tmpPO3.ID = IIF(IsNull(p.StockPOID, '') = '' , p.ID, p.StockPOID)
+		outer apply ( 
+			select Spec, BomZipperInsert from PO_Supp_Detail tmpPO3
+			where tmpPO3.ID = IIF(IsNull(p.StockPOID, '') = '' , p.ID, p.StockPOID)
 			and tmpPO3.Seq1 = IIF(IsNull(p.StockPOID, '') = '' , p.Seq1, p.StockSeq1)
 			and tmpPO3.Seq2 = IIF(IsNull(p.StockPOID, '') = '' , p.Seq2, p.StockSeq2)
-			) stockPO3
+		) stockPO3
+		outer apply(
+			SELECT DISTINCT pp.SuppColor
+			FROM po_supp_detail pp
+			WHERE pp.ID=p.StockPOID AND pp.Seq1 = p.StockSeq1 AND pp.Seq2 = p.StockSeq2
+		)ThreadColor
 		WHERE p.ID=@poid and seq1 = @seq1 and seq2=@seq2;
 
 	IF  @type = 1
