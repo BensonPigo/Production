@@ -568,7 +568,7 @@ namespace Sci.Production.Cutting
 
                 #region Sheet2 表身變色
                 // 顏色群組,以原始table計算,差別在原始有article,產生的Excel沒有
-                string range = MyExcelPrg.GetExcelColumnName(dtSheet2.Columns.Count - 6);
+                string range = MyExcelPrg.GetExcelColumnName(dtSheet2.Columns.Count - 7);
                 string wholRange = MyExcelPrg.GetExcelColumnName(dtSheet2.Columns.Count);
                 wkcolor.Range["A8", string.Format("{0}8", wholRange)].Interior.Color = Color.FromArgb(146, 208, 80);
                 wkcolor.Range["A8", string.Format("{0}8", wholRange)].Font.Color = Color.FromArgb(255, 0, 0);
@@ -656,7 +656,7 @@ select distinct sizecode,Seq
                 for (int i = 0; i < dt2RowsCnt; i++)
                 {
                     // 直向Total
-                    wkcolor.Cells[9 + i,dt2ColsCnt - 6 ].Value = string.Format("=SUM({0}{1}:{2}{1})", MyExcelPrg.GetExcelColumnName(3), 9 + i, MyExcelPrg.GetExcelColumnName(dt2ColsCnt -7));
+                    wkcolor.Cells[9 + i,dt2ColsCnt - 7 ].Value = string.Format("=SUM({0}{1}:{2}{1})", MyExcelPrg.GetExcelColumnName(3), 9 + i, MyExcelPrg.GetExcelColumnName(dt2ColsCnt -8));
 
                     // 取得相同的Article 數量
                     DataRow[] drArtCnt = dt_Sheet2[0].Select(string.Format("Article='{0}' and SPNO <>'' ", dt_Sheet2[0].Rows[i]["Article"]));
@@ -731,29 +731,31 @@ select distinct sizecode,Seq
                 // 加入註解                
                 wkcolor.Cells.ClearComments();
                 wkcolor.Cells[8, dt2ColsCnt - 1].AddComment("One day in advance and Exclude weekend");
-                // 調整欄位CUST CD 寬度
-                wkcolor.Columns[dt2ColsCnt - 2].ColumnWidth = 13;
-                // 調整欄位 P.O.No 寬度
-                wkcolor.Columns[dt2ColsCnt - 3].ColumnWidth = 10;
+                // 調整欄位 TOTAL 寬度
+                wkcolor.Columns[dt2ColsCnt - 7].ColumnWidth = 10;
+                // 調整欄位 SPNO 寬度
+                wkcolor.Columns[dt2ColsCnt - 6].ColumnWidth = 13;
+                // 調整欄位 KIT 寬度
+                wkcolor.Columns[dt2ColsCnt - 5].ColumnWidth = 10;
                 // 調整欄位 OrderNo 寬度
                 wkcolor.Columns[dt2ColsCnt - 4].ColumnWidth = 10;
-                // 調整欄位 SPNO 寬度
-                wkcolor.Columns[dt2ColsCnt - 5].ColumnWidth = 13;
-                // 調整欄位 TOTAL 寬度
-                wkcolor.Columns[dt2ColsCnt - 6].ColumnWidth = 8;
-                
+                // 調整欄位 P.O.No 寬度
+                wkcolor.Columns[dt2ColsCnt - 3].ColumnWidth = 10;
+                // 調整欄位CUST CD 寬度
+                wkcolor.Columns[dt2ColsCnt - 2].ColumnWidth = 13;
+
                 // 調整Sheet2表身Table header
                 wkcolor.Rows[8].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                 wkcolor.Rows[8].VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                 wkcolor.Rows[8].RowHeight = 48;
 
                 // 將表身數字欄位都置中
-                Microsoft.Office.Interop.Excel.Range rgBody = wkcolor.Range["A9", string.Format("{0}{1}", MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 6), rowCnt)];
+                Microsoft.Office.Interop.Excel.Range rgBody = wkcolor.Range["A9", string.Format("{0}{1}", MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 7), rowCnt)];
                 rgBody.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                 rgBody.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
-                // 將表身欄位 :SPNO,OrderNo,P.O.No,CUST CD 都自動換列置中
-                Microsoft.Office.Interop.Excel.Range rgBody2 = wkcolor.Range[string.Format("{0}9", MyExcelPrg.GetExcelColumnName(dt2ColsCnt-5)), string.Format("{0}{1}", MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 2), rowCnt)];
+                // 將表身欄位 :SPNO,KIT,OrderNo,P.O.No,CUST CD 都自動換列置中
+                Microsoft.Office.Interop.Excel.Range rgBody2 = wkcolor.Range[string.Format("{0}9", MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 6)), string.Format("{0}{1}", MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 2), rowCnt)];
                 rgBody2.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter; 
                 rgBody2.WrapText = true;
 
