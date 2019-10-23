@@ -168,7 +168,7 @@ from #print0 p
 outer apply(
 	select AccStdQ=max(AccStdQ)
 	from(
-		select Date,AccStdQ=sum(StdQ)over(Partition by SewingScheduleID Order by Date)
+		select Date,AccStdQ=sum(StdQ)over(Partition by ComboType Order by Date)
 		from dbo.[getDailystdq](p.SP) 
 	)x3
 	where p.SewingDate = Date
@@ -188,15 +188,15 @@ where x4.AccStdQ > 0
 IF @ByFactory = 1
 	select  FactoryID
 			, SewingDate
-            , OrderQty            
-			, Std = AccuStd
+            , OrderQty=sum(OrderQty)
+			, Std = sum(AccuStd)
 			, Loading = sum(AccuLoad) 
-			, BCS = iif(ROUND(cast(sum(AccuLoad)as decimal) / iif(AccuStd = 0, 1, AccuStd) * 100, 2) >= 100, 100
-					  , ROUND(cast(sum(AccuLoad)as decimal)  / iif(AccuStd = 0, 1, AccuStd) * 100, 2))
-			, Followup = iif(ROUND(cast(sum(AccuLoad)as decimal)  / iif(AccuStd = 0, 1, AccuStd) * 100, 2) >= 100, 0,AccuStd-sum(AccuLoad)) 
+			, BCS = iif(ROUND(cast(sum(AccuLoad)as decimal) / iif(sum(AccuStd) = 0, 1, sum(AccuStd)) * 100, 2) >= 100, 100
+					  , ROUND(cast(sum(AccuLoad)as decimal)  / iif(sum(AccuStd) = 0, 1, sum(AccuStd)) * 100, 2))
+			, Followup = iif(ROUND(cast(sum(AccuLoad)as decimal)  / iif(sum(AccuStd) = 0, 1, sum(AccuStd)) * 100, 2) >= 100, 0,sum(AccuStd)-sum(AccuLoad)) 
 	from #print
 	where SewingDate between @StartDate and @EndDate
-	group by FactoryID, SewingDate, OrderQty ,AccuStd
+	group by FactoryID, SewingDate 
 	having not (sum(AccuStd) = 0 and sum(AccuLoad) =0 )
 	order by FactoryID, SewingDate
 Else  
