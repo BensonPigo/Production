@@ -55,7 +55,6 @@ select
 	,e.PortArrival
 	,e.WhseArrival
 	,e.DocArrival
-	,c.ID,c.DeclareNo
 from Export e with(nolock)
 outer apply(select top 1 v.ID,v.DeclareNo from VNImportDeclaration v with(nolock) where v.BLNo = e.Blno and v.IsFtyExport = 0 and isnull(DeclareNo,'')<>'')a
 outer apply(select top 1 v.ID,v.DeclareNo from VNImportDeclaration v with(nolock) where v.WKNo = e.ID and v.IsFtyExport = 0and isnull(DeclareNo,'')<>'')b
@@ -77,7 +76,6 @@ select
 	,e.PortArrival
 	,e.WhseArrival
 	,e.DocArrival
-	,c.ID,c.DeclareNo
 from FtyExport e with(nolock)
 outer apply(select top 1 v.ID,v.DeclareNo from VNImportDeclaration v with(nolock) where v.BLNo = e.Blno and v.IsFtyExport = 1 and isnull(DeclareNo,'')<>'')a
 outer apply(select top 1 v.ID,v.DeclareNo from VNImportDeclaration v with(nolock) where v.WKNo = e.ID and v.IsFtyExport = 1 and isnull(DeclareNo,'')<>'')b
