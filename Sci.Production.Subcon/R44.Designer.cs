@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
@@ -38,26 +39,30 @@
             this.labelSewingDate = new Sci.Win.UI.Label();
             this.radioBySP = new Sci.Win.UI.RadioButton();
             this.radioByFactory = new Sci.Win.UI.RadioButton();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(419, 12);
+            this.print.Location = new System.Drawing.Point(440, 12);
             this.print.TabIndex = 1;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(419, 48);
+            this.toexcel.Location = new System.Drawing.Point(440, 48);
             this.toexcel.TabIndex = 2;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(419, 84);
+            this.close.Location = new System.Drawing.Point(440, 84);
             this.close.TabIndex = 3;
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.comboDropDownList1);
+            this.radioPanel1.Controls.Add(this.label1);
             this.radioPanel1.Controls.Add(this.txtSP);
             this.radioPanel1.Controls.Add(this.comboFactory);
             this.radioPanel1.Controls.Add(this.dateSewingDate);
@@ -69,7 +74,7 @@
             this.radioPanel1.Controls.Add(this.radioByFactory);
             this.radioPanel1.Location = new System.Drawing.Point(12, 12);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(398, 165);
+            this.radioPanel1.Size = new System.Drawing.Size(398, 193);
             this.radioPanel1.TabIndex = 0;
             this.radioPanel1.Value = "P/L Rcv Report";
             // 
@@ -90,11 +95,26 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(105, 7);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 0;
             // 
             // dateSewingDate
             // 
+            // 
+            // 
+            // 
+            this.dateSewingDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingDate.DateBox1.Name = "";
+            this.dateSewingDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingDate.DateBox2.Name = "";
+            this.dateSewingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingDate.DateBox2.TabIndex = 1;
             this.dateSewingDate.IsRequired = false;
             this.dateSewingDate.Location = new System.Drawing.Point(105, 40);
             this.dateSewingDate.Name = "dateSewingDate";
@@ -160,14 +180,39 @@
             this.radioByFactory.UseVisualStyleBackColor = true;
             this.radioByFactory.Value = "P/L Rcv Report";
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(8, 159);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(94, 23);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Category";
+            // 
+            // comboDropDownList1
+            // 
+            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList1.FormattingEnabled = true;
+            this.comboDropDownList1.IsSupportUnselect = true;
+            this.comboDropDownList1.Location = new System.Drawing.Point(105, 159);
+            this.comboDropDownList1.Name = "comboDropDownList1";
+            this.comboDropDownList1.OldText = "";
+            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
+            this.comboDropDownList1.TabIndex = 13;
+            this.comboDropDownList1.Type = "Pms_ReportForProduct";
+            // 
             // R44
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(511, 218);
+            this.ClientSize = new System.Drawing.Size(532, 247);
             this.Controls.Add(this.radioPanel1);
             this.Name = "R44";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R44. Loading BCS Base on Std.Q(RFID)";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -191,6 +236,7 @@
         private Win.UI.DateRange dateSewingDate;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.TextBox txtSP;
-
+        private Class.comboDropDownList comboDropDownList1;
+        private Win.UI.Label label1;
     }
 }

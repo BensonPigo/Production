@@ -17,7 +17,7 @@ namespace Sci.Production.Subcon
 {
     public partial class R44 : Sci.Win.Tems.PrintForm
     {
-        string Factory, SewingStart, SewingEnd, SP;
+        string Factory, SewingStart, SewingEnd, SP, Category;
         DataTable printData;
         public R44(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -36,6 +36,8 @@ from Factory WITH (NOLOCK)
 where Junk != 1", out dtFactory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, dtFactory);
             comboFactory.Text = Sci.Env.User.Factory;
+
+            comboDropDownList1.SelectedIndex = 2;
         }
 
         protected override bool ValidateInput()
@@ -52,6 +54,7 @@ where Junk != 1", out dtFactory);
             SewingStart = ((DateTime)dateSewingDate.Value1).ToString("yyyy-MM-dd");
             SewingEnd = ((DateTime)dateSewingDate.Value2).ToString("yyyy-MM-dd");
             SP = txtSP.Text;
+            Category = MyUtility.Convert.GetString(comboDropDownList1.SelectedValue);
             #endregion
             return true;
         }
@@ -92,10 +95,12 @@ select	masterID = o.POID
 		, o.SewInLine
 		, o.SewOffLine
         , o.MDivisionID 
+        , OrderQty = Qty
 into #tsp
 from orders o WITH (NOLOCK)
 inner join Factory f WITH (NOLOCK) on o.FactoryID = f.ID
 where	o.Junk != 1
+        and  o.Category in ({2})
 		-- {0} 篩選 OrderID
 		{0}
 		and not ((o.SewOffLine < @StartDate and o.SewInLine < @EndDate) or (o.SewInLine > @StartDate and o.SewInLine > @EndDate))
@@ -143,41 +148,38 @@ t.FactoryID,
 t.StyleID,
 [SewingDate] =  cb.SewDate,
 [Line] = t.SewLine,
-[AccuLoad] = AccuLoad.val
+[AccuLoad] = AccuLoad.val,
+OrderQty
 into #print0
 from #tsp t
 cross join #CBDate cb
 outer apply(SELECT val = isnull(sum(FinishedQtyBySet),0) FROM DBO.QtyBySetPerSubprocess(t.orderID,'LOADING',DEFAULT ,cb.SewDate,DEFAULT,DEFAULT,1,1)) as AccuLoad
-
 
 select FactoryID
 		, SP
 		, StyleID
 		, SewingDate 
 		, Line
-		, AccuStd = iif(isnull(x4.StdQ,0) > isnull(Upperlimit.qty,0),isnull(Upperlimit.qty,0), isnull(x4.StdQ,0))
+		, AccuStd = iif(isnull(x4.AccStdQ,0) > isnull(Upperlimit.qty,0),isnull(Upperlimit.qty,0), isnull(x4.AccStdQ,0))
 		, AccuLoad 
+        , OrderQty
 into #print
 from #print0 p
 outer apply(
-	select top 1 x3.StdQ,x3.Date
-	from(        
-		select Date,StdQ=sum(x2.StdQ) over(order by x2.Date)
-        from(
-            select Date,StdQ=sum(StdQ) 
-            from dbo.[getDailystdq](p.SP)
-            group by Date
-        )x2
-
+	select AccStdQ=max(AccStdQ)
+	from(
+		select Date,AccStdQ=sum(StdQ)over(Partition by SewingScheduleID Order by Date)
+		from dbo.[getDailystdq](p.SP) 
 	)x3
-	where x3.Date <= p.SewingDate
-	order by Date desc
+	where p.SewingDate = Date
 )x4
 outer apply(	
 	SELECT qty = sum(qty)
-			FROM Order_QtyShip 
-			WHERE ID =p.SP
+	FROM Order_QtyShip 
+	WHERE ID =p.SP
 )Upperlimit
+where x4.AccStdQ > 0
+
 
 /*
 *	判斷 ToExcel & 算出 BCS = Round(loading / std * 100, 2)
@@ -186,22 +188,27 @@ outer apply(
 IF @ByFactory = 1
 	select  FactoryID
 			, SewingDate
-			, Std = sum(AccuStd)
+            , OrderQty            
+			, Std = AccuStd
 			, Loading = sum(AccuLoad) 
-			, BCS = iif(ROUND(sum(AccuLoad) / iif(sum(AccuStd) = 0, 1, sum(AccuStd)) * 100, 2) >= 100, 100
-																									 , ROUND(sum(AccuLoad) / iif(sum(AccuStd) = 0, 1, sum(AccuStd)) * 100, 2))
+			, BCS = iif(ROUND(cast(sum(AccuLoad)as decimal) / iif(AccuStd = 0, 1, AccuStd) * 100, 2) >= 100, 100
+					  , ROUND(cast(sum(AccuLoad)as decimal)  / iif(AccuStd = 0, 1, AccuStd) * 100, 2))
+			, Followup = iif(ROUND(cast(sum(AccuLoad)as decimal)  / iif(AccuStd = 0, 1, AccuStd) * 100, 2) >= 100, 0,AccuStd-sum(AccuLoad)) 
 	from #print
 	where SewingDate between @StartDate and @EndDate
-	group by FactoryID, SewingDate
+	group by FactoryID, SewingDate, OrderQty ,AccuStd
 	having not (sum(AccuStd) = 0 and sum(AccuLoad) =0 )
 	order by FactoryID, SewingDate
 Else  
 
-select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line,p.AccuStd,p.AccuLoad
+select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line
+        , p.OrderQty
+        , p.AccuStd,p.AccuLoad
 		, BCS = iif(BCS.value >= 100, 100, BCS.value)
+        , Followup = iif(BCS.value >= 100, 0, p.AccuStd-p.AccuLoad) 
 	from #print p
     outer apply (
-    	select value = ROUND(p.AccuLoad / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
+    	select value = ROUND(cast(p.AccuLoad as decimal) / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
     ) BCS
 where SewingDate between @StartDate and @EndDate 
 and not (p.AccuLoad = 0 and p.AccuStd =0 )
@@ -211,9 +218,11 @@ drop table #tsp
 drop table #print
 drop table #CBDate
 DROP TABLE #print0
+
 "
                 , (SP.Empty()) ? "" : "and o.id = @SP"
-                , (Factory.Empty()) ? "" : "and f.ID = @FactoryID");
+                , (Factory.Empty()) ? "" : "and f.ID = @FactoryID"
+                , Category);
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, strSQL, sqlParameter, out printData);

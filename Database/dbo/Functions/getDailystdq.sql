@@ -3,76 +3,175 @@
 -- Create date: 2017/05/06
 -- Description:	<SP#>
 -- =============================================
-CREATE FUNCTION [dbo].[getDailystdq]
+Create FUNCTION [dbo].[getDailystdq]
 (
 	@tSP varchar(20)
 )
-RETURNS Table
-AS
-Return
+RETURNS
+@table TABLE 
 (
-	--step 1 計算 AccuStdQ 
-	----須排除假日 1. Sunday 2. 有列在 Holiday 的日期
-	with temp as (
-		select	ss.ID
-				, ss.OrderID
-				, Inline = Convert(char(10), ss.Inline, 120)
-				, Offline = Convert(char(10), ss.Offline, 120)
-				, wh.Date
-				, mHours = maxHours.value
-				, ss.AlloQty
-				, ss.StandardOutput
-				, baseStdQ = Round(maxHours.value * ss.StandardOutput, 0)
-				, AccuStdQ = sum(maxHours.value * ss.StandardOutput) over (partition by ss.id order by ss.id, wh.Date)
-				, ss.ComboType
-		from SewingSchedule ss
-		inner join WorkHour wh on	wh.SewingLineID = ss.SewingLineID 
-									and wh.FactoryID = ss.FactoryID
-									and wh.date between Convert(char(10), ss.Inline, 120) and Convert(char(10), ss.Offline, 120)
-		left join Holiday h on	h.HolidayDate = CONVERT(char(10), wh.Date, 120)
-								and h.FactoryID = wh.FactoryID
-		outer apply (
-			select value = (select max(mHour.Hours)
-							from SewingSchedule mss
-							inner join WorkHour mHour on	mHour.SewingLineID = mss.SewingLineID 
-															and mHour.FactoryID = mss.FactoryID
-															and mHour.date between Convert(char(10), mss.Inline, 120) and Convert(char(10), mss.Offline, 120)
-							where	ss.ID = mss.ID)
-		) maxHours
-		where	ss.OrderID = @tSP
-				and (ss.Offline is not null and ss.Offline != '')
-				and DATEPART(DW, wh.Date) != 1
-				and h.HolidayDate is null
-	)
-	--step 2 判斷 AccuStdQ 是否大於 AlloQty，計算 StdQ
-	, temp2 as (
-		select	t.Date
-				, StdQ = StdQ.value
-				, t.ComboType
-		from temp t
-		outer apply (
-			select value = case when AccuStdQ > AlloQty and t.baseStdQ + (AlloQty - AccuStdQ) < 0 then 0
-								when AccuStdQ > AlloQty then t.baseStdQ + (AlloQty - AccuStdQ)
-								else t.baseStdQ end
-		) StdQ
-	)
-
-	, temp3 as (
-		SELECT BuyerDelivery,qty = sum(qty)
-		FROM Order_QtyShip 
-		WHERE ID =@tSP
-		group by BuyerDelivery
-	), Upperlimit as(
-		select BuyerDelivery,qty = sum(qty) over(order by BuyerDelivery)
-		from temp3
-	)
-	select x.Date,StdQ=iif(x.StdQ>x2.qty,x2.qty,x.StdQ)
-	from(
-		--step3 計算每一天同 ComboType 的產量
-		select	t.Date
-				, StdQ = sum(StdQ)
-		from temp2 t
-		group by t.Date, t.ComboType
-	)x	
-	outer apply(select top 1 * from Upperlimit t where t.BuyerDelivery>x.Date)x2
+	Date date,
+	StdQ int
 )
+AS
+Begin
+
+declare @APSListWorkDay Table(
+	[id] [bigint] NOT NULL,
+	[APSNo] [int] NULL,
+	[MDivisionID] [varchar](8) NULL,
+	[SewingLineID] [varchar](2) NULL,
+	[FactoryID] [varchar](8) NULL,
+	[InlineDate] [date] NULL,
+	[OfflineDate] [date] NULL,
+	[Inline] [datetime] NULL,
+	[Offline] [datetime] NULL,
+	[InlineHour] [numeric](17, 6) NULL,
+	[OfflineHour] [numeric](17, 6) NULL,
+	[OrderID] [varchar](13) NOT NULL,
+	[ComboType] [varchar](1) NULL,
+	[AlloQty] [int] NULL,
+	[StandardOutput] [int] NULL
+)
+Insert Into @APSListWorkDay
+select
+	s.id,
+	s.APSNo ,
+	s.MDivisionID,
+	s.SewingLineID,
+	s.FactoryID,
+	[InlineDate] = Cast(s.Inline as date),
+	[OfflineDate] = Cast(s.Offline as date),
+	s.Inline,
+	s.Offline,
+    [InlineHour] = DATEDIFF(ss,Cast(s.Inline as date),s.Inline) / 3600.0	  ,
+    [OfflineHour] = DATEDIFF(ss,Cast(s.Offline as date),s.Offline) / 3600.0	  ,
+	s.OrderID,
+    s.ComboType,
+	s.AlloQty,
+	s.StandardOutput
+from SewingSchedule s  WITH (NOLOCK) 
+inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
+inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
+outer apply(select [val] = iif(s.OriEff is null and s.SewLineEff is null,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
+where 1 = 1 and s.OrderID = @tSP and s.APSno <> 0
+
+declare @WorkDate TABLE(
+	[FactoryID] [varchar](8) NULL,
+	[WorkDate] [datetime] NULL
+)
+
+Insert Into @WorkDate
+--組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
+SELECT f.FactoryID,cast(DATEADD(DAY,number,(select CAST(min(Inline)AS date) from @APSListWorkDay)) as datetime) [WorkDate]
+FROM master..spt_values s
+cross join (select distinct FactoryID from @APSListWorkDay) f
+WHERE s.type = 'P'
+AND DATEADD(DAY,number,(select CAST(min(Inline)AS date) from @APSListWorkDay)) <= (select cast(max(Offline)as Date) from @APSListWorkDay)
+
+declare @Workhour_step1 TABLE(
+	[APSNo] [int] NULL,
+	[SewingLineID] [varchar](2) NULL,
+	[FactoryID] [varchar](8) NULL,
+	[WorkDate] [datetime] NULL,
+	[inline] [datetime] NULL,
+	[Offline] [datetime] NULL,
+	[inlineDate] [date] NULL,
+	[OfflineDate] [date] NULL,
+	[StartHour] [float] NULL,
+	[EndHour] [float] NULL,
+	[InlineHour] [numeric](17, 6) NULL,
+	[OfflineHour] [numeric](17, 6) NULL,
+	[OrderID] [varchar](13) NOT NULL,
+	[ComboType] [varchar](1) NULL
+)
+--展開計畫日期資料
+Insert Into @Workhour_step1
+select  al.APSNo,
+        wkd.SewingLineID,
+        wkd.FactoryID,
+        [WorkDate] = cast( wkd.Date as datetime),
+		al.inline,
+		al.Offline,
+		al.inlineDate,
+		al.OfflineDate,
+        [StartHour] = cast(wkd.StartHour as float),
+        [EndHour] = cast(wkd.EndHour as float),
+        al.InlineHour,
+        al.OfflineHour,
+		al.OrderID,
+        al.ComboType
+from @APSListWorkDay al
+inner join @WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
+inner join Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and 
+                                                wkd.SewingLineID = al.SewingLineID and 
+                                                wkd.Date = wd.WorkDate
+
+--刪除每個計畫inline,offline當天超過時間的班表                                                
+delete @Workhour_step1 where WorkDate = InlineDate and EndHour <= InlineHour
+delete @Workhour_step1 where WorkDate = OfflineDate and StartHour >= OfflineHour
+declare @Workhour_step2 TABLE(
+	[APSNo] [int] NULL,
+	[SewingLineID] [varchar](2) NULL,
+	[WorkDate] [datetime] NULL,
+	[inline] [datetime] NULL,
+	[Offline] [datetime] NULL,
+	[inlineDate] [date] NULL,
+	[OfflineDate] [date] NULL,
+	[StartHour] [float] NULL,
+	[EndHour] [float] NULL,
+	[InlineHour] [numeric](17, 6) NULL,
+	[OfflineHour] [numeric](17, 6) NULL,
+	[StartHourSort] [bigint] NULL,
+	[EndHourSort] [bigint] NULL,
+	[ComboType] [varchar](1) NULL
+)
+--排出每天班表順序
+Insert Into @Workhour_step2
+select  APSNo,
+        SewingLineID,
+        WorkDate,
+		inline,
+		Offline,
+		inlineDate,
+		OfflineDate,
+        StartHour,
+        EndHour,
+        InlineHour,
+        OfflineHour,
+		[StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID,ComboType ORDER BY StartHour),
+		[EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID,ComboType ORDER BY EndHour desc),
+        ComboType
+from @Workhour_step1	
+
+--依照班表順序，將inline,offline當天StartHour與EndHour update與inline,offline相同
+update @Workhour_step2 set StartHour = InlineHour where WorkDate = InlineDate and StartHourSort = 1 and InlineHour > StartHour
+update @Workhour_step2 set EndHour = OfflineHour where WorkDate = OfflineDate and EndHourSort = 1 and OfflineHour < EndHour
+
+
+declare @APSExtendWorkDate_step1 Table(
+	[APSNo] [int] NULL,
+	[ComboType] [varchar](1) NULL,
+	[WorkDate] [datetime] NULL,
+	[SewingStart] [datetime] NULL,
+	[SewingEnd] [datetime] NULL
+) 
+Insert Into @APSExtendWorkDate_step1
+select 
+	APSNo,ComboType,WorkDate  ,
+	[SewingStart] = DATEADD(mi, min(StartHour) * 60,   WorkDate),
+	[SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate)
+from @Workhour_step2 
+group by APSNo,WorkDate,ComboType
+
+Insert into @table
+select Date = cast(WorkDate as Date)
+	, stdQty = iif(s.AlloQty>sum(x.perDayQty) over (partition by s.id) and b.WorkDate = max(b.WorkDate) over (partition by s.id),s.AlloQty,x.perDayQty)
+from @APSListWorkDay s
+inner join @APSExtendWorkDate_step1 b on s.APSNo = b.APSNo
+outer apply(select perDayQty = CEILING(cast(s.StandardOutput as decimal)*(cast(DATEDIFF(mi ,b.[SewingStart], b.[SewingEnd])as decimal)/60)))x
+
+Return;
+
+End
