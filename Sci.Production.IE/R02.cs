@@ -253,7 +253,8 @@ outer apply
 	and FactoryID = a.FactoryID
 	and SewingLineID = a.SewingLineID
 )c
-where a.Inline between '{0}' and '{1}'",
+where a.Inline >= '{0}'
+and a.Inline < dateadd(day, 1, '{1}')",
                 this.monthS,
                 this.monthE));
 
