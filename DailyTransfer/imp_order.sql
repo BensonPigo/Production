@@ -293,6 +293,8 @@ BEGIN
 						, N_Style			= IIF(isnull(a.StyleID, '') != isnull(b.StyleID, '') , b.StyleID, '')
 						, O_CustPONo		= IIF(isnull(a.CustPONo, '') != isnull(b.CustPONo, '') , a.CustPONo, '')
 						, N_CustPONo		= IIF(isnull(a.CustPONo, '') != isnull(b.CustPONo, '') , b.CustPONo, '')
+						, O_ShipModeList	= IIF(isnull(a.ShipModeList, '') != isnull(b.ShipModeList, '') , a.ShipModeList, '')
+						, N_ShipModeList	= IIF(isnull(a.ShipModeList, '') != isnull(b.ShipModeList, '') , b.ShipModeList, '')
 				from Production.dbo.Orders a WITH (NOLOCK)
 				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
 				where	(isnull(A.QTY, 0) != isnull(B.QTY, 0) 
@@ -308,6 +310,7 @@ BEGIN
 						OR isnull(A.KPILETA, '') != isnull(B.KPILETA, '')
 						OR isnull(A.LETA, '') != isnull(B.LETA, '')	
 						OR isnull(A.CustPONo, '') != isnull(B.CustPONo, '')	
+						OR isnull(A.ShipModeList, '') != isnull(B.ShipModeList, '')	
 						)
 						and b.FactoryID in (select ID from Factory)) s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToday
@@ -327,6 +330,7 @@ BEGIN
 				, t.OriginalSMnorderApv		= s.O_SmnorderApv
 				, t.OriginalLETA			= s.O_LETA
 				, t.OriginalCustPONo		= s.O_CustPONo
+				, t.OriginalShipModeList	= s.O_ShipModeList
 				, t.NewQty					= s.N_Qty
 				, t.NewBuyerDelivery		= s.N_BuyerDelivery
 				, t.NewSciDelivery			= s.N_SciDelivery
@@ -337,6 +341,7 @@ BEGIN
 				, t.NewSMnorderApv			= s.N_SMnorderApv
 				, t.NewLETA					= s.N_LETA
 				, t.NewCustPONo      		= s.N_CustPONo
+				, t.NewShipModeList			= s.N_ShipModeList
 				, t.KPILETA					= s.N_KPILETA
 				, t.MnorderApv2				= s.N_MnorderApv2
 				, t.JunkOrder				= s.N_Junk
@@ -351,7 +356,8 @@ BEGIN
 				, NewStyleID			, NewCMPQDate		, NewEachConsApv	, NewMnorderApv			, NewSMnorderApv
 				, NewLETA				, NewCustPONo		 
 				, KPILETA			    , MnorderApv2		, JunkOrder			, UpdateDate
-				, TransferDate			, BrandID
+				, TransferDate			, BrandID			
+				, OriginalShipModeList	, NewShipModeList
 			) values (
 				s.ID					, s.FactoryID		, s.MDivisionID		, s.O_Qty				, s.O_BuyerDelivery
 				, s.O_SciDelivery		, s.O_Style			, s.O_CMPQDate		, s.O_EachConsApv		, s.O_MnorderApv
@@ -361,6 +367,7 @@ BEGIN
 				, s.N_LETA				, s.N_CustPONo
 				, s.N_KPILETA		    , s.N_MnorderApv2	, s.N_Junk			, @dToday
 				, @OldDate				, s.BrandID
+				, s.O_ShipModeList		, s.N_ShipModeList
 			);
 
         ----5.No Change!
