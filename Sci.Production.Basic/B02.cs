@@ -80,5 +80,23 @@ namespace Sci.Production.Basic
                 this.txtPicFilesPath.Text = dir;
             }
         }
+
+        private void BtnMarkerInputPath_Click(object sender, EventArgs e)
+        {
+            string dir = this.GetDir();
+            if (!MyUtility.Check.Empty(dir))
+            {
+                this.txtMarkerInputPath.Text = dir;
+            }
+        }
+
+        private void BtnMarkerOutputPath_Click(object sender, EventArgs e)
+        {
+            string dir = this.GetDir();
+            if (!MyUtility.Check.Empty(dir))
+            {
+                this.txtMarkerOutputPath.Text = dir;
+            }
+        }
     }
 }
