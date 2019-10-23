@@ -8,7 +8,8 @@
     [AddDate]       DATETIME     NULL,
     [EditName]      VARCHAR (10) CONSTRAINT [DF_Order_BOA_CustCD_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME     NULL,
-    CONSTRAINT [PK_Order_BOA_CustCD] PRIMARY KEY CLUSTERED ([Order_BOAUkey] ASC, [CustCDID] ASC, [Refno] ASC)
+	[ColumnValue]   VARCHAR (50) NULL
+    CONSTRAINT [PK_Order_BOA_CustCD] PRIMARY KEY CLUSTERED ([Order_BOAUkey] ASC, [ColumnValue] ASC)
 );
 
 
