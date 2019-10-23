@@ -61,7 +61,7 @@
             this.lbSewingInline = new Sci.Win.UI.Label();
             this.dateSewingInline = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.txtStyle = new Sci.Production.Class.txtstyle();
             this.SuspendLayout();
             // 
             // print
@@ -512,11 +512,14 @@
             // txtStyle
             // 
             this.txtStyle.BackColor = System.Drawing.Color.White;
+            this.txtStyle.BrandObjectName = null;
             this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtStyle.Location = new System.Drawing.Point(115, 258);
             this.txtStyle.Name = "txtStyle";
-            this.txtStyle.Size = new System.Drawing.Size(124, 23);
+            this.txtStyle.Size = new System.Drawing.Size(186, 23);
             this.txtStyle.TabIndex = 8;
+            this.txtStyle.tarBrand = null;
+            this.txtStyle.tarSeason = null;
             // 
             // R15
             // 
@@ -639,6 +642,6 @@
         private Win.UI.Label lbSewingInline;
         private Win.UI.DateRange dateSewingInline;
         private Win.UI.Label label2;
-        private Win.UI.TextBox txtStyle;
+        private Class.txtstyle txtStyle;
     }
 }
