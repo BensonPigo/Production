@@ -47,8 +47,12 @@
 	[ARKServerName] VARCHAR(20) NULL, 
     [ARKDatabaseName] VARCHAR(20) NULL, 
     [ARKLoginId] VARCHAR(20) NULL, 
-    [ARKLoginPwd] VARCHAR(20) NULL
+    [ARKLoginPwd] VARCHAR(20) NULL,
+    [MarkerInputPath]            NVARCHAR (80)  NULL,
+    [MarkerOutputPath]           NVARCHAR (80)  NULL
 );
+
+
 
 
 
