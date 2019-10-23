@@ -110,7 +110,7 @@
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
             this.txtcdcode = new Sci.Production.Class.txtcdcode();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelFabricType = new Sci.Win.UI.Label();
             this.displayFabricType = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -130,7 +130,7 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayFabricType);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.labelFabricType);
             this.detailcont.Controls.Add(this.displayStyleApprove2);
             this.detailcont.Controls.Add(this.comboGender);
             this.detailcont.Controls.Add(this.btnComboType);
@@ -1089,13 +1089,13 @@
             this.txtcdcode.TabIndex = 9;
             this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);
             // 
-            // label1
+            // labelFabricType
             // 
-            this.label1.Location = new System.Drawing.Point(492, 196);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(85, 23);
-            this.label1.TabIndex = 72;
-            this.label1.Text = "Fabric Type";
+            this.labelFabricType.Location = new System.Drawing.Point(492, 196);
+            this.labelFabricType.Name = "labelFabricType";
+            this.labelFabricType.Size = new System.Drawing.Size(85, 23);
+            this.labelFabricType.TabIndex = 72;
+            this.labelFabricType.Text = "Fabric Type";
             // 
             // displayFabricType
             // 
@@ -1222,6 +1222,6 @@
         private Class.txtdropdownlist comboGender;
         private Win.UI.DisplayBox displayStyleApprove2;
         private Win.UI.DisplayBox displayFabricType;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelFabricType;
     }
 }
