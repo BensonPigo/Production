@@ -11,7 +11,8 @@ RETURNS
 @table TABLE 
 (
 	Date date,
-	StdQ int
+	StdQ int,
+	SewingScheduleID bigint 
 )
 AS
 Begin
@@ -168,6 +169,7 @@ group by APSNo,WorkDate,ComboType
 Insert into @table
 select Date = cast(WorkDate as Date)
 	, stdQty = iif(s.AlloQty>sum(x.perDayQty) over (partition by s.id) and b.WorkDate = max(b.WorkDate) over (partition by s.id),s.AlloQty,x.perDayQty)
+	, s.ID
 from @APSListWorkDay s
 inner join @APSExtendWorkDate_step1 b on s.APSNo = b.APSNo
 outer apply(select perDayQty = CEILING(cast(s.StandardOutput as decimal)*(cast(DATEDIFF(mi ,b.[SewingStart], b.[SewingEnd])as decimal)/60)))x
