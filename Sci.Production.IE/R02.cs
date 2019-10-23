@@ -130,7 +130,8 @@ end
 select distinct FactoryID,SewingLineID, d.dday
 into #tmp
 from ChgOver c, @dayTable d
-where c.Inline between '{0}' and '{1}'
+where c.Inline >= '{0}' 
+and c.Inline < dateadd(day,1,'{1}')
 ",
                 this.monthS,
                 this.monthE));
@@ -147,13 +148,20 @@ where c.Inline between '{0}' and '{1}'
 
             sqlCmd.Append(string.Format(
                 @"
+
 select t.FactoryID
 	,[SewingLineID] = right('00' + t.SewingLineID, 2)
 	,[dayInline] = t.dday	
 	,[dayCount] = count(c.Inline)
 into #tmp_ChgOver
 from #tmp t
-left join ChgOver c on t.FactoryID = c.FactoryID and t.SewingLineID = c.SewingLineID and t.dday = convert(nvarchar(8),c.Inline,112)
+left join (
+	select FactoryID, SewingLineID, Inline
+	from ChgOver
+	where Inline >= '{0}' 
+	and Inline < dateadd(day,1,'{1}') 
+	group by FactoryID, SewingLineID, Inline
+)c on t.FactoryID = c.FactoryID and t.SewingLineID = c.SewingLineID and t.dday = convert(nvarchar(8),c.Inline,112)
 group by t.FactoryID, t.SewingLineID, t.dday
 
 select FactoryID, SewingLineID, [totalDayCount] = sum(dayCount)
@@ -198,7 +206,9 @@ set @sql = '
 --select @sql
 exec (@sql)  
 
-drop table #tmp, #tmp_ChgOver ,#tmp_ChgOver_sumDayCount,#tmp_ChgOver_GroupbyDayInline"));
+drop table #tmp, #tmp_ChgOver ,#tmp_ChgOver_sumDayCount,#tmp_ChgOver_GroupbyDayInline",
+                this.monthS,
+                this.monthE));
 
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printDataSummary);
             if (!result)
