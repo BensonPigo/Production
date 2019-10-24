@@ -39,12 +39,14 @@
             this.txtLocation = new Sci.Win.UI.TextBox();
             this.labelLocation = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.dateDead = new Sci.Win.UI.DateRange();
+            this.label1 = new Sci.Win.UI.Label();
             this.txtSeq = new Sci.Production.Class.txtSeq();
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateDead = new Sci.Win.UI.DateRange();
+            this.displayTotal = new Sci.Win.UI.DisplayBox();
+            this.labelTotal = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -107,6 +109,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.displayTotal);
+            this.groupBox2.Controls.Add(this.labelTotal);
             this.groupBox2.Controls.Add(this.btnUpdateAllLocation);
             this.groupBox2.Controls.Add(this.txtLocation);
             this.groupBox2.Controls.Add(this.labelLocation);
@@ -168,6 +172,35 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
+            // dateDead
+            // 
+            // 
+            // 
+            // 
+            this.dateDead.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateDead.DateBox1.Name = "";
+            this.dateDead.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateDead.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateDead.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateDead.DateBox2.Name = "";
+            this.dateDead.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateDead.DateBox2.TabIndex = 1;
+            this.dateDead.Location = new System.Drawing.Point(361, 19);
+            this.dateDead.Name = "dateDead";
+            this.dateDead.Size = new System.Drawing.Size(280, 23);
+            this.dateDead.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(282, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(76, 23);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Dead Line";
+            // 
             // txtSeq
             // 
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -212,34 +245,22 @@
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
-            // label1
+            // displayTotal
             // 
-            this.label1.Location = new System.Drawing.Point(282, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 23);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Dead Line";
+            this.displayTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTotal.Location = new System.Drawing.Point(603, 21);
+            this.displayTotal.Name = "displayTotal";
+            this.displayTotal.Size = new System.Drawing.Size(100, 23);
+            this.displayTotal.TabIndex = 13;
             // 
-            // dateDead
+            // labelTotal
             // 
-            // 
-            // 
-            // 
-            this.dateDead.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateDead.DateBox1.Name = "";
-            this.dateDead.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateDead.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateDead.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateDead.DateBox2.Name = "";
-            this.dateDead.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateDead.DateBox2.TabIndex = 1;
-            this.dateDead.Location = new System.Drawing.Point(361, 19);
-            this.dateDead.Name = "dateDead";
-            this.dateDead.Size = new System.Drawing.Size(280, 23);
-            this.dateDead.TabIndex = 4;
+            this.labelTotal.Location = new System.Drawing.Point(505, 21);
+            this.labelTotal.Name = "labelTotal";
+            this.labelTotal.Size = new System.Drawing.Size(95, 23);
+            this.labelTotal.TabIndex = 12;
+            this.labelTotal.Text = "Total Qty";
             // 
             // P24_Import
             // 
@@ -248,6 +269,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P24_Import";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P24. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -278,5 +300,7 @@
         private Win.UI.Label labelLocation;
         private Win.UI.DateRange dateDead;
         private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayTotal;
+        private Win.UI.Label labelTotal;
     }
 }
