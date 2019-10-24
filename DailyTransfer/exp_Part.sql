@@ -267,6 +267,56 @@ drop table #TPI_MachIn1
 drop table #TPI_PartPO1
 ---------------------------------------------------------------------------------------------------
 
+----MachinePending----
+select [ID]
+    ,[cDate]
+    ,[MDivisionID]
+    ,[FtyApvName]
+    ,[FtyApvDate]
+    ,[CyApvName]
+    ,[CyApvDate]
+    ,[ReasonID]
+    ,[Remark]
+    ,[Status]
+    ,[AddName]
+    ,[AddDate]
+    ,[EditName]
+    ,[EditDate]
+    ,[TPEComplete]
+into MachinePending
+from Machine.dbo.MachinePending
+where MachinePending.Status='Confirmed'
+and MachinePending.CyApvDate between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())
+and MachinePending.SendToTPE is null
+and MachinePending.TPEComplete=0
+
+update s set
+	SendToTPE=getdate()
+from Machine.dbo.MachinePending s
+inner join Pms_To_Trade.dbo.MachinePending b on b.id = s.ID
+
+
+----MachinePending_Detail----
+select 
+	MachinePending_Detail.ID
+	,MachinePending_Detail.Seq
+	,MachinePending_Detail.MachineID
+	,MachinePending_Detail.OldStatus
+	,MachinePending_Detail.Results
+	,MachinePending_Detail.Remark
+	,MasterGroupID=Machine.MasterGroupID+Machine.MachineGroupID
+	,Machine.MachineBrandID
+	,Machine.Model
+	,Machine.SerialNo
+	,Machine.LocationM
+	,Machine.ArriveDate
+	,UsageTime = concat(ym.UsageTime/360,'Y',(ym.UsageTime%360)/30,'M')
+into MachinePending_Detail
+from Machine.dbo.MachinePending_Detail
+inner join MachinePending on MachinePending.ID = MachinePending_Detail.ID
+left join Machine.dbo.Machine with (nolock) on Machine.ID = MachinePending_Detail.MachineID
+outer apply(select UsageTime=DATEDIFF(DAY,Machine.ArriveDate,MachinePending.cDate)+1)ym
+
 END
 
 
