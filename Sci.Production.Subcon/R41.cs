@@ -220,6 +220,14 @@ Select
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
     [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
+    [AllocatedSubcon]=Stuff((SELECT concat(',',QU.LocalSuppId)
+                    FROM Style_Artwork SA WITH (NOLOCK) 
+                    INNER JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
+                    WHERE O.StyleUkey = SA.StyleUkey AND SA.ArtworkTypeID =s.Id
+					group by QU.LocalSuppId
+					order by QU.LocalSuppId
+					for xml path('')
+					),1,1,''),
 	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,''))/24.0,2))
 					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,''))/24.0,2))
 					when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then null
@@ -351,6 +359,7 @@ select
     r.[InComing],
     r.[Out (Time)],
     r.[POSupplier],
+    r.[AllocatedSubcon],
 	r.AvgTime,
     [TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
                         when AvgTime < 0 then 'Not Valid'
