@@ -738,7 +738,7 @@ update t
 		from Trade_To_Pms.dbo.MachinePending_Detail md
 		inner join Machine.dbo.MachinePending m on m.id = md.id
 	)as s 
-	on t.id=s.id and t.[MachineID] = s.[MachineID]
+	on t.id=s.id and t.seq = s.seq
 	when matched and s.status = 'Confirmed' and s.TPEApvDate is not null then update set 
 		t.TPEReject = s.TPEReject
 	output inserted.ID,inserted.MachineID,inserted.TPEReject
