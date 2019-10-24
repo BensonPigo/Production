@@ -119,7 +119,8 @@ where s.Status = 'Approved'");
             }
             else if (this.radioByInvWK.Checked)
             {
-                sqlCmd.Append(@"select	s.Type,
+                sqlCmd.Append(@"select	DISTINCT
+        s.Type,
         s.SubType,
 		Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,''),
 		s.ID,
@@ -138,16 +139,28 @@ where s.Status = 'Approved'");
                             when sh.WKNo != '' and sh.InvNo = '' then sh.WKNo
                             when sh.WKNo != '' and sh.InvNo != '' then Concat (sh.WKNo, '/', sh.InvNo)
                             else ''
-                        end,
-		sh.[CurrencyID],
-		sh.Amount,
-		sh.[AccountID],
-		[AccountName]=an.Name
+                        end
+		,[CurrencyID]= ISNULL(sh.CurrencyID , ShippingAP_Deatai.CurrencyID)
+		,[Amount]= ISNULL(sh.Amount , ShippingAP_Deatai.Amount)
+		,[AccountID]= ISNULL(sh.AccountID , ShippingAP_Deatai.AccountID)
+		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
 from ShippingAP s WITH (NOLOCK)
 left join ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
                                            and sh.Junk != 1
 left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID 
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
+
+OUTER APPLY(
+	SELECT se.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
+	FROM ShippingAP_Detail sd
+	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
+	left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
+	WHERE sd.ID=s.ID
+	----若外面的ShareExpense沒有有資料，才需要找這邊
+	AND (sh.CurrencyID IS NULL OR sh.Amount IS NULL OR sh.AccountID  IS NULL)
+	GROUP BY se.AccountID,a.Name,sd.CurrencyID
+)ShippingAP_Deatai
+
 where s.Status = 'Approved'");
             }
             else
