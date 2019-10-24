@@ -443,7 +443,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                     decimal decPrice = bPrice ? 0 : MyUtility.Convert.GetDecimal(dr["Price"]);
 
                     worksheet.Cells[rownum, 1] = MyUtility.Convert.GetString(dr["OrderNumber"]);
-                    worksheet.Cells[rownum, 2] = MyUtility.Convert.GetInt(dr["CategoryNameFromDD"]);
+                    worksheet.Cells[rownum, 2] = MyUtility.Convert.GetString(dr["CategoryNameFromDD"]);
                     bool isnDescription = false;
                     worksheet.Cells[rownum, 3] = this.GetDescription(iCategory, dr, out isnDescription);
                     if (isnDescription)
