@@ -72,6 +72,10 @@ where ed.ID = '{0}'", masterID);
                     string sqlcmd = $@"select ID from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 1";
                     this.displayDeclarationID.Text = MyUtility.GetValue.Lookup(sqlcmd);
                 }
+                else
+                {
+                    this.displayDeclarationID.Text = string.Empty;
+                }
 
                 if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
                 {
@@ -84,6 +88,10 @@ where ed.ID = '{0}'", masterID);
                 {
                     string sqlcmd = $@"select DeclareNo from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 1";
                     this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
+                }
+                else
+                {
+                    this.displayCustomsDeclareNo.Text = string.Empty;
                 }
 
                 if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
