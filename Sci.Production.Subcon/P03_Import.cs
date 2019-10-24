@@ -235,6 +235,7 @@ select	distinct sel = 0
 		, [Style] = O.StyleID 
 		, [CutPartID] = BD.Patterncode
         , bind = Concat (BIO.BundleNo, '-', BD.Patterncode)
+into #tmp_BundleInOut
 from BundleInOut BIO
 left join Bundle_Detail BD		on	BD.BundleNo = BIO.BundleNo
 left join Bundle B				on	BD.Id = B.ID
@@ -245,28 +246,33 @@ left join ArtworkPO_Detail APD	on  APD.OrderID = B.Orderid
 left join ArtworkPO AP			on	AP.ID = APD.ID
 left join Orders O				on	O.ID = B.Orderid and o.MDivisionID  = b.MDivisionID 
 where	BIO.SubProcessId = @SubProcessID
-		and BIO.OutGoing is not null  
+        {0}
+        --SP#查詢條件    
+        {1}
         and isnull(BIO.RFIDProcessLocationID,'') = ''
-		{0}
-		--SP#查詢條件
-		{1}
-		--登入M
+		and BIO.OutGoing is not null 
 		and AP.MDivisionID = @M
 		--@ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
 		and AP.ApvName IS NOT NULL	
-		and AP.Closed = 0
-		--若BundleNo已確認且存在，則不用撈出來
-		and BIO.BundleNo not in (select BundleNo     
-								 from FarmOut_Detail FOD  --若為[Subcon][P04]呼叫，則改為Farmin
-								 left join FarmOut FO			on FO.Id = FOD.ID
-								 left join ArtworkPO_Detail APD on FOD.ArtworkPo_DetailUkey = APD.ukey
-								 where	FO.Status = 'Confirmed' 
-										--登入M  @ArtworkType
-										and MDivisionID = @M
-										and APD.ArtworkTypeID = @ArtworkType)  
+		and AP.Closed = 0 
+
+select t.*
+from #tmp_BundleInOut t
+--若BundleNo已確認且存在，則不用撈出來
+where not exists (select FOD.BundleNo     
+				from FarmOut_Detail FOD  --若為[Subcon][P04]呼叫，則改為Farmin
+				left join FarmOut FO			on FO.Id = FOD.ID
+				left join ArtworkPO_Detail APD on FOD.ArtworkPo_DetailUkey = APD.ukey
+				where FOD.BundleNo = t.BundleNo
+					and FO.Status = 'Confirmed' 
+					--登入M  @ArtworkType
+					and MDivisionID = @M
+					and APD.ArtworkTypeID = @ArtworkType) 
 --若為[Subcon][P04]呼叫，則改為InComing
-order by BIO.OutGoing  
+order by t.OutGoing  
+
+drop table #tmp_BundleInOut
 ", dictionaryFilte["FarmDate"]
  , dictionaryFilte["SPnum"]));
                     #endregion
@@ -287,6 +293,8 @@ select	sel = 0
 		, BD.Qty
         , APD.Ukey
         , bind = Concat (BIO.BundleNo, '-', BD.Patterncode)
+        , BIO.OutGoing
+into #tmp_BundleInOut
 from BundleInOut BIO
 left join Bundle_Detail BD		on	BD.BundleNo = BIO.BundleNo
 left join Bundle B				on	BD.Id = B.ID
@@ -296,30 +304,36 @@ left join ArtworkPO_Detail APD	on	APD.OrderID = B.Orderid
 									and APD.PoQty > APD.Farmout
 left join ArtworkPO AP			on AP.ID = APD.ID
 where	BIO.SubProcessId = @SubProcessID
-        and isnull(BIO.RFIDProcessLocationID,'') = ''
-        --若為[Subcon][P04] => InComing
-		and BIO.OutGoing is not null 
-		--Farm Out Datet查詢條件
-		{0}
+        --Farm Out Datet查詢條件
+        {0}
 		--SP#查詢條件
 		{1}
+        and isnull(BIO.RFIDProcessLocationID,'') = ''
+        --若為[Subcon][P04] => InComing
+		and BIO.OutGoing is not null
 		--登入M
 		and AP.MDivisionID = @M
 		--畫面上ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
 		and AP.ApvName IS NOT NULL	
 		and AP.Closed = 0
+
+select t.*
+from #tmp_BundleInOut t
 		--若BundleNo已確認且存在，則不用撈出來
-		and BIO.BundleNo not in (select BundleNo     
-								 from FarmOut_Detail FOD
-                                 --若為[Subcon][P04]呼叫，則改為 FarmIn
-								 left join FarmOut FO			on FO.Id=FOD.ID
-								 left join ArtworkPO_Detail APD on FOD.ArtworkPo_DetailUkey = APD.ukey
-								 where	FO.Status = 'Confirmed' 
-										and MDivisionID = @M
-										and APD.ArtworkTypeID = @ArtworkType)
+where not Exists (select FOD.BundleNo     
+							from FarmOut_Detail FOD
+                            --若為[Subcon][P04]呼叫，則改為 FarmIn
+							left join FarmOut FO			on FO.Id=FOD.ID
+							left join ArtworkPO_Detail APD on FOD.ArtworkPo_DetailUkey = APD.ukey
+							where	FOD.BundleNo = t.BundleNo
+                                    and FO.Status = 'Confirmed' 
+									and MDivisionID = @M
+									and APD.ArtworkTypeID = @ArtworkType)
 --若為[Subcon][P04]呼叫，則改為 InComing  
-order by BIO.OutGoing
+order by t.OutGoing
+
+drop table #tmp_BundleInOut
 ", dictionaryFilte["FarmDate"]
  , dictionaryFilte["SPnum"]));
                     #endregion
@@ -344,6 +358,7 @@ select	distinct sel = 0
 		, [Style] = O.StyleID 
 		, [CutPartID] = BD.Patterncode
         , bind = Concat (BIO.BundleNo, '-', BD.Patterncode)
+into #tmp_BundleInOut
 from BundleInOut BIO
 left join Bundle_Detail BD		on	BD.BundleNo = BIO.BundleNo
 left join Bundle B				on	BD.Id = B.ID
@@ -354,30 +369,37 @@ left join ArtworkPO_Detail APD	on  APD.OrderID = B.Orderid
 left join ArtworkPO AP			on	AP.ID = APD.ID
 left join Orders O				on	O.ID = B.Orderid  and o.MDivisionID  = b.MDivisionID 
 where	BIO.SubProcessId = @SubProcessID
-		--若為[Subcon][P03] => OutGoing
-		and BIO.InComing is not null  
-        and isnull(BIO.RFIDProcessLocationID,'') = ''
 		{0}
 		--SP#查詢條件
 		{1}
+		--若為[Subcon][P03] => OutGoing		
+        and isnull(BIO.RFIDProcessLocationID,'') = ''
+        and BIO.InComing is not null  
 		--登入M
 		and AP.MDivisionID = @M
 		--@ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
 		and AP.ApvName IS NOT NULL	
 		and AP.Closed = 0
+
+
+select t.*
+from #tmp_BundleInOut t
 		--若BundleNo已確認且存在，則不用撈出來
-		and BIO.BundleNo not in (select BundleNo     
-								 from FarmOut_Detail FOD  
-								 --若為[Subcon][P03]呼叫，則改為FarmOut
-								 left join FarmIn FI			on FI.Id = FOD.ID
-								 left join ArtworkPO_Detail APD on FOD.ArtworkPo_DetailUkey = APD.ukey
-								 where	FI.Status = 'Confirmed' 
-										--登入M  @ArtworkType
-										and MDivisionID = @M
-										and APD.ArtworkTypeID = @ArtworkType)  
+where not Exists (select FOD.BundleNo     
+			      from FarmOut_Detail FOD  
+			      --若為[Subcon][P03]呼叫，則改為FarmOut
+			      left join FarmIn FI			on FI.Id = FOD.ID
+			      left join ArtworkPO_Detail APD on FOD.ArtworkPo_DetailUkey = APD.ukey
+			      where FOD.BundleNo = t.BundleNo
+                        and FI.Status = 'Confirmed' 
+			      		--登入M  @ArtworkType
+			      		and MDivisionID = @M
+			      		and APD.ArtworkTypeID = @ArtworkType)  
 --若為[Subcon][P03]呼叫，則改為 OutGoing  
-order by BIO.InComing
+order by t.InComing
+
+drop table #tmp_BundleInOut
 ", dictionaryFilte["FarmDate"]
  , dictionaryFilte["SPnum"]));
                     #endregion
@@ -398,6 +420,8 @@ select	sel = 0
 		, BD.Qty
         , APD.Ukey
         , bind = Concat (BIO.BundleNo, '-', BD.Patterncode)
+        , BIO.InComing
+into #tmp_BundleInOut
 from BundleInOut BIO
 left join Bundle_Detail BD		on	BD.BundleNo = BIO.BundleNo
 left join Bundle B				on	BD.Id = B.ID
@@ -407,30 +431,38 @@ left join ArtworkPO_Detail APD	on	APD.OrderID = B.Orderid
 									and APD.Farmout > APD.Farmin
 left join ArtworkPO AP			on AP.ID = APD.ID
 where	BIO.SubProcessId = @SubProcessID
-		--若為[Subcon][P03] => OutGoing
-		and BIO.InComing is not null  
-        and isnull(BIO.RFIDProcessLocationID,'') = ''
 		--Farm Out Datet查詢條件
 		{0}
 		--SP#查詢條件
 		{1}
+        and isnull(BIO.RFIDProcessLocationID,'') = ''
+		--若為[Subcon][P03] => OutGoing
+		and BIO.InComing is not null  
 		--登入M
 		and AP.MDivisionID = @M
 		--畫面上ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
 		and AP.ApvName IS NOT NULL	
 		and AP.Closed = 0
-		--若BundleNo已確認且存在，則不用撈出來
-		and BIO.BundleNo not in (select BundleNo     
-								 from FarmOut_Detail FOD
-								 --若為[Subcon][P03]呼叫，則改為FarmOut
-								 left join FarmIn FI			on FI.Id=FOD.ID
-								 left join ArtworkPO_Detail APD on FOD.ArtworkPo_DetailUkey = APD.ukey
-								 where	FI.Status = 'Confirmed' 
-										and MDivisionID = @M
-										and APD.ArtworkTypeID = @ArtworkType)
+
+select t.*
+from #tmp_BundleInOut t
+--若BundleNo已確認且存在，則不用撈出來
+where not Exists (select BundleNo     
+				  from FarmOut_Detail FOD
+				  --若為[Subcon][P03]呼叫，則改為FarmOut
+				  left join FarmIn FI			on FI.Id=FOD.ID
+				  left join ArtworkPO_Detail APD on FOD.ArtworkPo_DetailUkey = APD.ukey
+				  where	FOD.BundleNo = t.BundleNo
+                    and FI.Status = 'Confirmed' 
+				  	and MDivisionID = @M
+				  	and APD.ArtworkTypeID = @ArtworkType)
 --若為[Subcon][P03]呼叫，則改為 OutGoing  
-order by BIO.InComing", dictionaryFilte["FarmDate"]
+order by t.InComing
+
+drop table #tmp_BundleInOut
+"
+, dictionaryFilte["FarmDate"]
 , dictionaryFilte["SPnum"]));
                     #endregion
                     break;
@@ -575,6 +607,7 @@ order by BIO.InComing", dictionaryFilte["FarmDate"]
                     insertDr["Qty"] = childDr["Qty"];
                     insertDr["BalQty"] = Convert.ToDecimal(childDr["PoQty"]) - Convert.ToDecimal(childDr["Farm"]) - Convert.ToDecimal(childDr["Qty"]);
                     insertDr["artworkPo_detailukey"] = childDr["ukey"];
+                    insertDr["importData"] = 1;
                     SubconDetailDT.Rows.Add(insertDr);
                 }
             }
