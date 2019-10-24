@@ -1429,6 +1429,16 @@ where POID = @poid group by POID,b.spno";
                 }
             }
 
+            if (this.CurrentMaintain["Category"].EqualString("A"))
+            {
+                DualResult resultCheckOrderCategoryTypeA = P01_Utility.CheckOrderCategoryTypeA(this.CurrentMaintain["ID"].ToString());
+                if (!resultCheckOrderCategoryTypeA)
+                {
+                    MyUtility.Msg.WarningBox(resultCheckOrderCategoryTypeA.Description);
+                    return;
+                }
+            }
+
             DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to finish shipment?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)
             {

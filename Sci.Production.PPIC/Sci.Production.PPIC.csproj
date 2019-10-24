@@ -349,6 +349,7 @@
     <Compile Include="P01_ShippingMark.Designer.cs">
       <DependentUpon>P01_ShippingMark.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_Utility.cs" />
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
     </Compile>

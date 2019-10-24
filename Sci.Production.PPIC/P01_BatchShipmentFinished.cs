@@ -226,6 +226,16 @@ select SP = (select ID + ','
                         return;
                     }
                 }
+
+                if (MyUtility.Convert.GetString(item["Category"]) == "A")
+                {
+                    DualResult resultCheckOrderCategoryTypeA = P01_Utility.CheckOrderCategoryTypeA(item["POID"].ToString());
+                    if (!resultCheckOrderCategoryTypeA)
+                    {
+                        MyUtility.Msg.WarningBox(resultCheckOrderCategoryTypeA.Description);
+                        return;
+                    }
+                }
             }
 
             #region 更新Orders, Chgover資料
@@ -336,7 +346,7 @@ from (
 	where o.Finished = 0 
 		  and o.MDivisionID = '{0}'
 		  and (o.Junk = 1 or o.PulloutComplete = 1)
-		  and (o.Category = 'B' or o.Category = 'S')
+		  and (o.Category = 'B' or o.Category = 'S' or o.Category = 'A')
 	union all
 	select distinct A.ID
 	from PO_Supp_Detail A WITH (NOLOCK) 

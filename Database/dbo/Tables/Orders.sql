@@ -154,6 +154,7 @@
     [SubconInType] VARCHAR NULL, 
     [LastProductionDate] DATE NULL, 
     [EstPODD] DATE NULL, 
+    [AllowanceComboID] VARCHAR(13) NOT NULL CONSTRAINT [DF_Orders_AllowanceComboID] DEFAULT (''), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
