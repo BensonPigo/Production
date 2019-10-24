@@ -763,7 +763,7 @@
             // 
             this.labelLocateSPNo.Location = new System.Drawing.Point(5, 310);
             this.labelLocateSPNo.Name = "labelLocateSPNo";
-            this.labelLocateSPNo.Size = new System.Drawing.Size(89, 23);
+            this.labelLocateSPNo.Size = new System.Drawing.Size(114, 23);
             this.labelLocateSPNo.TabIndex = 44;
             this.labelLocateSPNo.Text = "Locate SP#";
             // 
@@ -771,7 +771,7 @@
             // 
             this.txtLocateSP.BackColor = System.Drawing.Color.White;
             this.txtLocateSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateSP.Location = new System.Drawing.Point(98, 310);
+            this.txtLocateSP.Location = new System.Drawing.Point(122, 310);
             this.txtLocateSP.Name = "txtLocateSP";
             this.txtLocateSP.Size = new System.Drawing.Size(100, 23);
             this.txtLocateSP.TabIndex = 45;
@@ -779,7 +779,7 @@
             // label23
             // 
             this.label23.BackColor = System.Drawing.Color.Transparent;
-            this.label23.Location = new System.Drawing.Point(200, 310);
+            this.label23.Location = new System.Drawing.Point(224, 310);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(10, 23);
             this.label23.TabIndex = 46;
@@ -793,7 +793,7 @@
             // 
             this.txtLocateSP2.BackColor = System.Drawing.Color.White;
             this.txtLocateSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateSP2.Location = new System.Drawing.Point(213, 310);
+            this.txtLocateSP2.Location = new System.Drawing.Point(237, 310);
             this.txtLocateSP2.Mask = "AA-00";
             this.txtLocateSP2.Name = "txtLocateSP2";
             this.txtLocateSP2.Size = new System.Drawing.Size(50, 23);
@@ -801,7 +801,7 @@
             // 
             // btnFind
             // 
-            this.btnFind.Location = new System.Drawing.Point(272, 306);
+            this.btnFind.Location = new System.Drawing.Point(296, 306);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(58, 30);
             this.btnFind.TabIndex = 48;
@@ -876,7 +876,7 @@
             this.chkImportChange.AutoSize = true;
             this.chkImportChange.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoImportCharges", true));
             this.chkImportChange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkImportChange.Location = new System.Drawing.Point(570, 282);
+            this.chkImportChange.Location = new System.Drawing.Point(567, 282);
             this.chkImportChange.Name = "chkImportChange";
             this.chkImportChange.Size = new System.Drawing.Size(138, 21);
             this.chkImportChange.TabIndex = 55;
@@ -899,7 +899,7 @@
             this.chkReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Replacement", true));
             this.chkReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkReplacement.IsSupportEditMode = false;
-            this.chkReplacement.Location = new System.Drawing.Point(570, 309);
+            this.chkReplacement.Location = new System.Drawing.Point(567, 306);
             this.chkReplacement.Name = "chkReplacement";
             this.chkReplacement.Size = new System.Drawing.Size(110, 21);
             this.chkReplacement.TabIndex = 56;
@@ -912,7 +912,7 @@
             this.chkDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
             this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkDelay.IsSupportEditMode = false;
-            this.chkDelay.Location = new System.Drawing.Point(733, 282);
+            this.chkDelay.Location = new System.Drawing.Point(730, 282);
             this.chkDelay.Name = "chkDelay";
             this.chkDelay.Size = new System.Drawing.Size(63, 21);
             this.chkDelay.TabIndex = 57;
@@ -1002,7 +1002,7 @@
             this.chkNonDeclare.AutoSize = true;
             this.chkNonDeclare.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NonDeclare", true));
             this.chkNonDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNonDeclare.Location = new System.Drawing.Point(733, 306);
+            this.chkNonDeclare.Location = new System.Drawing.Point(730, 307);
             this.chkNonDeclare.Name = "chkNonDeclare";
             this.chkNonDeclare.Size = new System.Drawing.Size(106, 21);
             this.chkNonDeclare.TabIndex = 58;
