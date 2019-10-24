@@ -790,5 +790,10 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
             return true;
         }
+
+        private void BtnDownload_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
