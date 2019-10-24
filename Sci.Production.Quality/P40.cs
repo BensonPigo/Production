@@ -202,15 +202,23 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 string suppID = e.FormattedValue.ToString();
                 if (MyUtility.Check.Empty(suppID)) return;
                 if (suppID == dr["SuppID"].ToString()) return;
-
-                string sqlGetSupplier = GetSupplierSql(suppID);
-                bool isExistsSupp = MyUtility.Check.Seek(sqlGetSupplier);
-                if (!isExistsSupp)
+                if (suppID == "N/A")
                 {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox($"<Supplier>{suppID} not exists");
-                    return;
+                    dr["SuppID"] = suppID;
                 }
+                else
+                {
+                    string sqlGetSupplier = GetSupplierSql(suppID);
+                    bool isExistsSupp = MyUtility.Check.Seek(sqlGetSupplier);
+                    if (!isExistsSupp)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox($"<Supplier>{suppID} not exists");
+                        return;
+                    }
+                    dr["SuppID"] = suppID;
+                }
+                dr.EndEdit();
             };
 
             textSuppID.EditingMouseUp = (s, e) =>
@@ -242,14 +250,23 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 if (MyUtility.Check.Empty(refno)) return;
                 if (refno == dr["Refno"].ToString()) return;
 
-                string sqlGetRefno = GetRefnoSql(refno);
-                bool isExistsRefno = MyUtility.Check.Seek(sqlGetRefno);
-                if (!isExistsRefno)
+                if (refno == "N/A")
                 {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox($"<Refno>{refno} not exists");
-                    return;
+                    dr["Refno"] = refno;
                 }
+                else
+                {
+                    string sqlGetRefno = GetRefnoSql(refno);
+                    bool isExistsRefno = MyUtility.Check.Seek(sqlGetRefno);
+                    if (!isExistsRefno)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox($"<Refno>{refno} not exists");
+                        return;
+                    }
+                    dr["Refno"] = refno;
+                }
+                dr.EndEdit();
             };
 
             textRefno.EditingMouseUp = (s, e) =>
