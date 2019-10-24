@@ -431,7 +431,13 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[4, 10] = MyUtility.Convert.GetDecimal(this.masterData["NW"]) + MyUtility.Convert.GetDecimal(this.masterData["CTNNW"]);
 
                 int rownum = 6;
-                this.detailData = this.detailData.AsEnumerable().OrderBy(o => Convert.ToInt16(o["OrderNumber"])).CopyToDataTable();
+
+                // 表身有資料才需要重新排序 ISP20191502
+                if (this.detailData.Rows.Count > 0)
+                {
+                    this.detailData = this.detailData.AsEnumerable().OrderBy(o => Convert.ToInt16(o["OrderNumber"])).CopyToDataTable();
+                }
+
                 foreach (DataRow dr in this.detailData.Rows)
                 {
                     //string sSeq1 = MyUtility.Convert.GetString(dr["Seq1"]);
