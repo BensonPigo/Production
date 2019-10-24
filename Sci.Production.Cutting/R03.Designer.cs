@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.dateActCuttingDate = new Sci.Win.UI.DateRange();
+            this.label8 = new Sci.Win.UI.Label();
             this.dateSewingInline = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
@@ -54,8 +56,6 @@
             this.labelCuttingSP = new Sci.Win.UI.Label();
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.dateActCuttingDate = new Sci.Win.UI.DateRange();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -107,6 +107,36 @@
             this.panel1.Size = new System.Drawing.Size(472, 381);
             this.panel1.TabIndex = 0;
             // 
+            // dateActCuttingDate
+            // 
+            // 
+            // 
+            // 
+            this.dateActCuttingDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateActCuttingDate.DateBox1.Name = "";
+            this.dateActCuttingDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateActCuttingDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateActCuttingDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateActCuttingDate.DateBox2.Name = "";
+            this.dateActCuttingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateActCuttingDate.DateBox2.TabIndex = 1;
+            this.dateActCuttingDate.IsRequired = false;
+            this.dateActCuttingDate.Location = new System.Drawing.Point(166, 105);
+            this.dateActCuttingDate.Name = "dateActCuttingDate";
+            this.dateActCuttingDate.Size = new System.Drawing.Size(280, 23);
+            this.dateActCuttingDate.TabIndex = 3;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(16, 105);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(147, 23);
+            this.label8.TabIndex = 105;
+            this.label8.Text = "Act. Cutting Date";
+            // 
             // dateSewingInline
             // 
             // 
@@ -127,7 +157,7 @@
             this.dateSewingInline.Location = new System.Drawing.Point(166, 221);
             this.dateSewingInline.Name = "dateSewingInline";
             this.dateSewingInline.Size = new System.Drawing.Size(280, 23);
-            this.dateSewingInline.TabIndex = 7;
+            this.dateSewingInline.TabIndex = 8;
             // 
             // dateSCIDelivery
             // 
@@ -149,7 +179,7 @@
             this.dateSCIDelivery.Location = new System.Drawing.Point(166, 192);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateSCIDelivery.TabIndex = 6;
+            this.dateSCIDelivery.TabIndex = 7;
             // 
             // dateBuyerDelivery
             // 
@@ -171,7 +201,7 @@
             this.dateBuyerDelivery.Location = new System.Drawing.Point(166, 163);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateBuyerDelivery.TabIndex = 5;
+            this.dateBuyerDelivery.TabIndex = 6;
             // 
             // txtstyle1
             // 
@@ -181,7 +211,7 @@
             this.txtstyle1.Location = new System.Drawing.Point(166, 250);
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 8;
+            this.txtstyle1.TabIndex = 9;
             this.txtstyle1.tarBrand = null;
             this.txtstyle1.tarSeason = null;
             // 
@@ -237,7 +267,7 @@
             this.dateEarliestBuyerDelivery.Location = new System.Drawing.Point(166, 279);
             this.dateEarliestBuyerDelivery.Name = "dateEarliestBuyerDelivery";
             this.dateEarliestBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateEarliestBuyerDelivery.TabIndex = 9;
+            this.dateEarliestBuyerDelivery.TabIndex = 10;
             // 
             // label1
             // 
@@ -255,7 +285,7 @@
             this.txtCuttingSPEnd.MaxLength = 13;
             this.txtCuttingSPEnd.Name = "txtCuttingSPEnd";
             this.txtCuttingSPEnd.Size = new System.Drawing.Size(126, 23);
-            this.txtCuttingSPEnd.TabIndex = 4;
+            this.txtCuttingSPEnd.TabIndex = 5;
             // 
             // label9
             // 
@@ -294,7 +324,7 @@
             this.txtCuttingSPStart.MaxLength = 13;
             this.txtCuttingSPStart.Name = "txtCuttingSPStart";
             this.txtCuttingSPStart.Size = new System.Drawing.Size(126, 23);
-            this.txtCuttingSPStart.TabIndex = 3;
+            this.txtCuttingSPStart.TabIndex = 4;
             // 
             // comboFactory
             // 
@@ -340,7 +370,7 @@
             this.dateEarliestSewingInline.Location = new System.Drawing.Point(166, 337);
             this.dateEarliestSewingInline.Name = "dateEarliestSewingInline";
             this.dateEarliestSewingInline.Size = new System.Drawing.Size(280, 23);
-            this.dateEarliestSewingInline.TabIndex = 11;
+            this.dateEarliestSewingInline.TabIndex = 12;
             // 
             // dateEarliestSCIDelivery
             // 
@@ -362,7 +392,7 @@
             this.dateEarliestSCIDelivery.Location = new System.Drawing.Point(166, 308);
             this.dateEarliestSCIDelivery.Name = "dateEarliestSCIDelivery";
             this.dateEarliestSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateEarliestSCIDelivery.TabIndex = 10;
+            this.dateEarliestSCIDelivery.TabIndex = 11;
             // 
             // dateEstCutDate
             // 
@@ -425,36 +455,6 @@
             this.label7.Size = new System.Drawing.Size(97, 22);
             this.label7.TabIndex = 97;
             this.label7.Text = "Paper Size A4";
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(16, 105);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(147, 23);
-            this.label8.TabIndex = 105;
-            this.label8.Text = "Act. Cutting Date";
-            // 
-            // dateActCuttingDate
-            // 
-            // 
-            // 
-            // 
-            this.dateActCuttingDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateActCuttingDate.DateBox1.Name = "";
-            this.dateActCuttingDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateActCuttingDate.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateActCuttingDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateActCuttingDate.DateBox2.Name = "";
-            this.dateActCuttingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateActCuttingDate.DateBox2.TabIndex = 1;
-            this.dateActCuttingDate.IsRequired = false;
-            this.dateActCuttingDate.Location = new System.Drawing.Point(166, 105);
-            this.dateActCuttingDate.Name = "dateActCuttingDate";
-            this.dateActCuttingDate.Size = new System.Drawing.Size(280, 23);
-            this.dateActCuttingDate.TabIndex = 106;
             // 
             // R03
             // 
