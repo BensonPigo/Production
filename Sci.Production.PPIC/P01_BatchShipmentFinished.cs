@@ -339,7 +339,7 @@ select SP = (select ID + ','
             string sqlCmd = string.Format(
                 @"
 select *
-into #wantToClose
+into #wantToClose_step1
 from (
 	select distinct POID
 	from Orders o WITH (NOLOCK) 
@@ -363,6 +363,13 @@ from (
 	      and o.Finished = 0 
 		  and o.Category = 'M'
 ) wantToClose
+
+--將category = 'A' 底下有未finish的單子排除
+select w.POID
+into #wantToClose
+from #wantToClose_step1 w
+inner join Orders o with (nolock) on w.POID = o.ID
+where not exists (select 1 from Orders where o.Category = 'A' and AllowanceComboID  = w.POID and Finished = 0) 
 
 select *
 into #canNotClose
