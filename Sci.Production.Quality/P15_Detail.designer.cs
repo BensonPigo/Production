@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.panelup = new Sci.Win.UI.Panel();
+            this.txtCT = new Sci.Win.UI.TextBox();
             this.label26 = new Sci.Win.UI.Label();
             this.label21 = new Sci.Win.UI.Label();
-            this.numCT = new Sci.Win.UI.NumericBox();
             this.num2Pr = new Sci.Win.UI.NumericBox();
             this.num2Pnr = new Sci.Win.UI.NumericBox();
             this.txtPOff = new Sci.Win.UI.TextBox();
@@ -116,9 +116,9 @@
             // 
             // panelup
             // 
+            this.panelup.Controls.Add(this.txtCT);
             this.panelup.Controls.Add(this.label26);
             this.panelup.Controls.Add(this.label21);
-            this.panelup.Controls.Add(this.numCT);
             this.panelup.Controls.Add(this.num2Pr);
             this.panelup.Controls.Add(this.num2Pnr);
             this.panelup.Controls.Add(this.txtPOff);
@@ -170,6 +170,17 @@
             this.panelup.Size = new System.Drawing.Size(995, 415);
             this.panelup.TabIndex = 98;
             // 
+            // txtCT
+            // 
+            this.txtCT.BackColor = System.Drawing.Color.White;
+            this.txtCT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCT.Location = new System.Drawing.Point(537, 379);
+            this.txtCT.MaxLength = 10;
+            this.txtCT.Name = "txtCT";
+            this.txtCT.Size = new System.Drawing.Size(84, 23);
+            this.txtCT.TabIndex = 72;
+            this.txtCT.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // label26
             // 
             this.label26.AutoSize = true;
@@ -189,26 +200,6 @@
             this.label21.Size = new System.Drawing.Size(192, 23);
             this.label21.TabIndex = 70;
             this.label21.Text = "Pressure(kg/cm   )";
-            // 
-            // numCT
-            // 
-            this.numCT.BackColor = System.Drawing.Color.White;
-            this.numCT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numCT.Location = new System.Drawing.Point(537, 379);
-            this.numCT.MaxLength = 10;
-            this.numCT.Name = "numCT";
-            this.numCT.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numCT.Size = new System.Drawing.Size(84, 23);
-            this.numCT.TabIndex = 69;
-            this.numCT.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
             // 
             // num2Pr
             // 
@@ -740,7 +731,6 @@
         private ComboxBoxEx comboTestingMethod;
         private Win.UI.TextBox txtOther;
         private Win.UI.CheckBox chkOtherMethod;
-        private Win.UI.NumericBox numCT;
         private Win.UI.NumericBox num2Pr;
         private Win.UI.NumericBox num2Pnr;
         private Win.UI.TextBox txtPOff;
@@ -758,5 +748,6 @@
         private Win.UI.Label label17;
         private Win.UI.Label label26;
         private Win.UI.Label label21;
+        private Win.UI.TextBox txtCT;
     }
 }
