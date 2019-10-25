@@ -119,7 +119,7 @@ where s.Status = 'Approved'");
             }
             else if (this.radioByInvWK.Checked)
             {
-                sqlCmd.Append(@"select	DISTINCT
+                sqlCmd.Append(@"select
         s.Type,
         s.SubType,
 		Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,''),
@@ -156,8 +156,8 @@ OUTER APPLY(
 	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 	left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
 	WHERE sd.ID=s.ID
-	----若外面的ShareExpense沒有有資料，才需要找這邊
-	AND (sh.CurrencyID IS NULL OR sh.Amount IS NULL OR sh.AccountID  IS NULL)
+	----若ShareExpense有資料，就不必取表身加總的值
+	AND NOT EXISTS (SELECT 1 FROM ShareExpense WHERE ShippingAPID=sd.ID and Junk != 1)
 	GROUP BY se.AccountID,a.Name,sd.CurrencyID
 )ShippingAP_Deatai
 
