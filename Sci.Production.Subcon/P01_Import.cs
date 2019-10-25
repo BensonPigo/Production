@@ -337,8 +337,8 @@ select  Selected = 0
         , qtygarment = IIF(ot.Qty IS NULL OR ot.Qty = 0 ,1 ,ot.Qty) --isnull (ot.Qty, 1)
         , Cost = ot.Price
         , unitprice = ot.Price
-        , price = ot.Price * isnull (ot.Qty, 1)
-        , amount = iif(o.qty-IssueQty.IssueQty < 0, 0, (o.qty-IssueQty.IssueQty) * ot.Price * isnull (ot.Qty, 1)) 
+        , price = ot.Price * IIF(ot.Qty IS NULL OR ot.Qty = 0 ,1 ,ot.Qty) 
+        , amount = iif(o.qty-IssueQty.IssueQty < 0, 0, (o.qty-IssueQty.IssueQty) * ot.Price * IIF(ot.Qty IS NULL OR ot.Qty = 0 ,1 ,ot.Qty)   ) 
         , Style = o.StyleID
 from orders o WITH (NOLOCK) 
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
