@@ -104,6 +104,7 @@ Select
             [Article] = b.Article,
             [Color] = b.ColorId,
             [Line] = b.SewinglineId,
+			bt.SewingLineID,
             [Cell] = b.SewingCell,
             [Pattern] = bd.PatternCode,
             [PtnDesc] = bd.PatternDesc,
@@ -208,7 +209,7 @@ Select
 
                 sqlCmd.Append(@"
 SELECT 
-RFIDProcessLocationID ,Type ,TagId ,TransferDate ,PanelNo ,BundleNo ,RFIDReaderId ,SubprocessId ,LocationID ,CutCellID
+RFIDProcessLocationID ,Type ,TagId ,TransferDate ,PanelNo ,BundleNo ,RFIDReaderId ,SubprocessId ,LocationID ,CutCellID,SewingLineID
 INTO #BundleTransfer
 FROM BundleTransfer bt WITH (NOLOCK)
 WHERE 1=1
@@ -282,6 +283,7 @@ Select
             [Article] = ba.Article,
             [Color] = ba.ColorId,
             [Line] = ba.SewinglineId,
+            bt.SewingLineID,
             [Cell] = ba.SewingCell,
             [Pattern] = ba.PatternCode,
             [PtnDesc] = ba.PatternDesc,
@@ -300,10 +302,10 @@ Select
             ,ba.item
 			,bt.PanelNo
 			,bt.CutCellID
-            from #BundleTransfer  bt WITH (NOLOCK)
-			inner JOIN #BundleAll ba WITH (NOLOCK) on bt.BundleNo = ba.BundleNo
-            left join orders o WITH (NOLOCK) on o.Id = ba.OrderId and o.MDivisionID  = ba.MDivisionID 
-            where 1=1
+from #BundleTransfer  bt WITH (NOLOCK)
+inner JOIN #BundleAll ba WITH (NOLOCK) on bt.BundleNo = ba.BundleNo
+left join orders o WITH (NOLOCK) on o.Id = ba.OrderId and o.MDivisionID  = ba.MDivisionID 
+where 1=1
 ");
                 if (!MyUtility.Check.Empty(Factory))
                 {
