@@ -195,6 +195,7 @@
             this.numCT.BackColor = System.Drawing.Color.White;
             this.numCT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numCT.Location = new System.Drawing.Point(537, 379);
+            this.numCT.MaxLength = 10;
             this.numCT.Name = "numCT";
             this.numCT.NullValue = new decimal(new int[] {
             0,
