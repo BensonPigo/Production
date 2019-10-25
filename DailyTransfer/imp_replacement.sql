@@ -40,7 +40,21 @@ BEGIN
 		t.TotalRequest = s.TotalRequest, 
 		t.AfterCuttingRequest = s.AfterCuttingRequest;
 
-
+	Merge Production.dbo.Clip as t
+	Using Trade_To_Pms.dbo.Clip as s
+	on t.Pkey=s.Pkey
+	when matched then
+		update set
+			 t.[TableName]	=s.[TableName]
+			,t.[UniqueKey]	=s.[UniqueKey]
+			,t.[SourceFile]	=s.[SourceFile]
+			,t.[Description]=s.[Description]
+			,t.[AddName]	=s.[AddName]
+			,t.[AddDate]	=s.[AddDate]
+	when not matched by target then
+	insert ([PKey],[TableName],[UniqueKey],[SourceFile],[Description],[AddName],[AddDate]	)
+	values(s.[PKey],s.[TableName],s.[UniqueKey],s.[SourceFile],s.[Description],s.[AddName],s.[AddDate])
+	;
 END
 
 

@@ -98,5 +98,14 @@ namespace Sci.Production.Basic
                 this.txtMarkerOutputPath.Text = dir;
             }
         }
+
+        private void BtnReplacementReport_Click(object sender, EventArgs e)
+        {
+            string dir = this.GetDir();
+            if (!MyUtility.Check.Empty(dir))
+            {
+                this.txtReplacementReport.Text = dir;
+            }
+        }
     }
 }

@@ -84,6 +84,13 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.chkMtlAutoLock = new Sci.Win.UI.CheckBox();
+            this.btnMarkerOutputPath = new Sci.Win.UI.Button();
+            this.btnMarkerInputPath = new Sci.Win.UI.Button();
+            this.txtMarkerOutputPath = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtMarkerInputPath = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.btnPicFilesPath = new Sci.Win.UI.Button();
             this.txtPicFilesPath = new Sci.Win.UI.TextBox();
             this.labPicFilesPath = new Sci.Win.UI.Label();
@@ -94,13 +101,9 @@
             this.txtUserPOApproved = new Sci.Production.Class.txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.chkMtlAutoLock = new Sci.Win.UI.CheckBox();
-            this.txtMarkerInputPath = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtMarkerOutputPath = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.btnMarkerInputPath = new Sci.Win.UI.Button();
-            this.btnMarkerOutputPath = new Sci.Win.UI.Button();
+            this.btnReplacementReport = new Sci.Win.UI.Button();
+            this.txtReplacementReport = new Sci.Win.UI.TextBox();
+            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -624,16 +627,16 @@
             this.lineShape9.X1 = 726;
             this.lineShape9.X2 = 726;
             this.lineShape9.Y1 = 7;
-            this.lineShape9.Y2 = 529;
+            this.lineShape9.Y2 = 562;
             // 
             // lineShape8
             // 
             this.lineShape8.BorderColor = System.Drawing.Color.DarkGray;
             this.lineShape8.Name = "lineShape8";
             this.lineShape8.X1 = 8;
-            this.lineShape8.X2 = 7;
+            this.lineShape8.X2 = 8;
             this.lineShape8.Y1 = 7;
-            this.lineShape8.Y2 = 529;
+            this.lineShape8.Y2 = 562;
             // 
             // lineShape7
             // 
@@ -641,8 +644,8 @@
             this.lineShape7.Name = "lineShape7";
             this.lineShape7.X1 = 8;
             this.lineShape7.X2 = 726;
-            this.lineShape7.Y1 = 529;
-            this.lineShape7.Y2 = 529;
+            this.lineShape7.Y1 = 563;
+            this.lineShape7.Y2 = 563;
             // 
             // lineShape6
             // 
@@ -700,6 +703,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnReplacementReport);
+            this.panel1.Controls.Add(this.txtReplacementReport);
+            this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.chkMtlAutoLock);
             this.panel1.Controls.Add(this.btnMarkerOutputPath);
             this.panel1.Controls.Add(this.btnMarkerInputPath);
@@ -764,8 +770,80 @@
             this.panel1.Controls.Add(this.shapeContainer2);
             this.panel1.Location = new System.Drawing.Point(10, 38);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(737, 543);
+            this.panel1.Size = new System.Drawing.Size(737, 577);
             this.panel1.TabIndex = 50;
+            // 
+            // chkMtlAutoLock
+            // 
+            this.chkMtlAutoLock.AutoSize = true;
+            this.chkMtlAutoLock.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MtlAutoLock", true));
+            this.chkMtlAutoLock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkMtlAutoLock.Location = new System.Drawing.Point(342, 197);
+            this.chkMtlAutoLock.Name = "chkMtlAutoLock";
+            this.chkMtlAutoLock.Size = new System.Drawing.Size(219, 21);
+            this.chkMtlAutoLock.TabIndex = 50;
+            this.chkMtlAutoLock.Text = "Auto lock all received material.";
+            this.chkMtlAutoLock.UseVisualStyleBackColor = true;
+            // 
+            // btnMarkerOutputPath
+            // 
+            this.btnMarkerOutputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnMarkerOutputPath.Location = new System.Drawing.Point(643, 499);
+            this.btnMarkerOutputPath.Name = "btnMarkerOutputPath";
+            this.btnMarkerOutputPath.Size = new System.Drawing.Size(30, 25);
+            this.btnMarkerOutputPath.TabIndex = 55;
+            this.btnMarkerOutputPath.Text = "...";
+            this.btnMarkerOutputPath.UseVisualStyleBackColor = true;
+            this.btnMarkerOutputPath.Click += new System.EventHandler(this.BtnMarkerOutputPath_Click);
+            // 
+            // btnMarkerInputPath
+            // 
+            this.btnMarkerInputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnMarkerInputPath.Location = new System.Drawing.Point(643, 471);
+            this.btnMarkerInputPath.Name = "btnMarkerInputPath";
+            this.btnMarkerInputPath.Size = new System.Drawing.Size(30, 25);
+            this.btnMarkerInputPath.TabIndex = 54;
+            this.btnMarkerInputPath.Text = "...";
+            this.btnMarkerInputPath.UseVisualStyleBackColor = true;
+            this.btnMarkerInputPath.Click += new System.EventHandler(this.BtnMarkerInputPath_Click);
+            // 
+            // txtMarkerOutputPath
+            // 
+            this.txtMarkerOutputPath.BackColor = System.Drawing.Color.White;
+            this.txtMarkerOutputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMarkerOutputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerOutputPath", true));
+            this.txtMarkerOutputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerOutputPath.Location = new System.Drawing.Point(178, 500);
+            this.txtMarkerOutputPath.Name = "txtMarkerOutputPath";
+            this.txtMarkerOutputPath.Size = new System.Drawing.Size(460, 23);
+            this.txtMarkerOutputPath.TabIndex = 52;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(16, 500);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(159, 23);
+            this.label3.TabIndex = 53;
+            this.label3.Text = "Marker Files Output Path";
+            // 
+            // txtMarkerInputPath
+            // 
+            this.txtMarkerInputPath.BackColor = System.Drawing.Color.White;
+            this.txtMarkerInputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMarkerInputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerInputPath", true));
+            this.txtMarkerInputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerInputPath.Location = new System.Drawing.Point(178, 471);
+            this.txtMarkerInputPath.Name = "txtMarkerInputPath";
+            this.txtMarkerInputPath.Size = new System.Drawing.Size(460, 23);
+            this.txtMarkerInputPath.TabIndex = 50;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(16, 471);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(159, 23);
+            this.label1.TabIndex = 51;
+            this.label1.Text = "Marker Files Input Path";
             // 
             // btnPicFilesPath
             // 
@@ -878,7 +956,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(737, 543);
+            this.shapeContainer2.Size = new System.Drawing.Size(737, 577);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
@@ -891,80 +969,39 @@
             this.lineShape10.Y1 = 227;
             this.lineShape10.Y2 = 227;
             // 
-            // chkMtlAutoLock
+            // btnReplacementReport
             // 
-            this.chkMtlAutoLock.AutoSize = true;
-            this.chkMtlAutoLock.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MtlAutoLock", true));
-            this.chkMtlAutoLock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkMtlAutoLock.Location = new System.Drawing.Point(342, 197);
-            this.chkMtlAutoLock.Name = "chkMtlAutoLock";
-            this.chkMtlAutoLock.Size = new System.Drawing.Size(219, 21);
-            this.chkMtlAutoLock.TabIndex = 50;
-            this.chkMtlAutoLock.Text = "Auto lock all received material.";
-            this.chkMtlAutoLock.UseVisualStyleBackColor = true;
-            // txtMarkerInputPath
+            this.btnReplacementReport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnReplacementReport.Location = new System.Drawing.Point(644, 528);
+            this.btnReplacementReport.Name = "btnReplacementReport";
+            this.btnReplacementReport.Size = new System.Drawing.Size(30, 25);
+            this.btnReplacementReport.TabIndex = 58;
+            this.btnReplacementReport.Text = "...";
+            this.btnReplacementReport.UseVisualStyleBackColor = true;
+            this.btnReplacementReport.Click += new System.EventHandler(this.BtnReplacementReport_Click);
             // 
-            this.txtMarkerInputPath.BackColor = System.Drawing.Color.White;
-            this.txtMarkerInputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtMarkerInputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerInputPath", true));
-            this.txtMarkerInputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerInputPath.Location = new System.Drawing.Point(178, 471);
-            this.txtMarkerInputPath.Name = "txtMarkerInputPath";
-            this.txtMarkerInputPath.Size = new System.Drawing.Size(460, 23);
-            this.txtMarkerInputPath.TabIndex = 50;
+            // txtReplacementReport
             // 
-            // label1
+            this.txtReplacementReport.BackColor = System.Drawing.Color.White;
+            this.txtReplacementReport.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtReplacementReport.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ReplacementReport", true));
+            this.txtReplacementReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReplacementReport.Location = new System.Drawing.Point(179, 529);
+            this.txtReplacementReport.Name = "txtReplacementReport";
+            this.txtReplacementReport.Size = new System.Drawing.Size(460, 23);
+            this.txtReplacementReport.TabIndex = 56;
             // 
-            this.label1.Location = new System.Drawing.Point(16, 471);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(159, 23);
-            this.label1.TabIndex = 51;
-            this.label1.Text = "Marker Files Input Path";
+            // label4
             // 
-            // txtMarkerOutputPath
-            // 
-            this.txtMarkerOutputPath.BackColor = System.Drawing.Color.White;
-            this.txtMarkerOutputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtMarkerOutputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerOutputPath", true));
-            this.txtMarkerOutputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerOutputPath.Location = new System.Drawing.Point(178, 500);
-            this.txtMarkerOutputPath.Name = "txtMarkerOutputPath";
-            this.txtMarkerOutputPath.Size = new System.Drawing.Size(460, 23);
-            this.txtMarkerOutputPath.TabIndex = 52;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(16, 500);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(159, 23);
-            this.label3.TabIndex = 53;
-            this.label3.Text = "Marker Files Output Path";
-            // 
-            // btnMarkerInputPath
-            // 
-            this.btnMarkerInputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnMarkerInputPath.Location = new System.Drawing.Point(643, 471);
-            this.btnMarkerInputPath.Name = "btnMarkerInputPath";
-            this.btnMarkerInputPath.Size = new System.Drawing.Size(30, 25);
-            this.btnMarkerInputPath.TabIndex = 54;
-            this.btnMarkerInputPath.Text = "...";
-            this.btnMarkerInputPath.UseVisualStyleBackColor = true;
-            this.btnMarkerInputPath.Click += new System.EventHandler(this.BtnMarkerInputPath_Click);
-            // 
-            // btnMarkerOutputPath
-            // 
-            this.btnMarkerOutputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnMarkerOutputPath.Location = new System.Drawing.Point(643, 499);
-            this.btnMarkerOutputPath.Name = "btnMarkerOutputPath";
-            this.btnMarkerOutputPath.Size = new System.Drawing.Size(30, 25);
-            this.btnMarkerOutputPath.TabIndex = 55;
-            this.btnMarkerOutputPath.Text = "...";
-            this.btnMarkerOutputPath.UseVisualStyleBackColor = true;
-            this.btnMarkerOutputPath.Click += new System.EventHandler(this.BtnMarkerOutputPath_Click);
+            this.label4.Location = new System.Drawing.Point(17, 529);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(159, 23);
+            this.label4.TabIndex = 57;
+            this.label4.Text = "Replacement Report ";
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(759, 593);
+            this.ClientSize = new System.Drawing.Size(759, 629);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "numSample";
             this.DefaultControlForEdit = "numSample";
@@ -1059,5 +1096,8 @@
         private Win.UI.Label label1;
         private Win.UI.Button btnMarkerOutputPath;
         private Win.UI.Button btnMarkerInputPath;
+        private Win.UI.Button btnReplacementReport;
+        private Win.UI.TextBox txtReplacementReport;
+        private Win.UI.Label label4;
     }
 }
