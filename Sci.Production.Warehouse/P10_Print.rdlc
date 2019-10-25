@@ -6,12 +6,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>7.95168in</Width>
+              <Width>7.94794in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.40949in</Height>
+              <Height>0.25in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -24,7 +24,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Issue Qty</Value>
+                                  <Value>QTY</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -35,9 +35,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Qty</rd:DefaultName>
                           <Top>0.07041cm</Top>
-                          <Left>16.33814cm</Left>
+                          <Left>17.60814cm</Left>
                           <Height>0.56459cm</Height>
-                          <Width>1.7cm</Width>
+                          <Width>2.14345cm</Width>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -71,9 +71,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Dyelot</rd:DefaultName>
                           <Top>0.07041cm</Top>
-                          <Left>14.61503cm</Left>
+                          <Left>16.00012cm</Left>
                           <Height>0.56459cm</Height>
-                          <Width>1.72311cm</Width>
+                          <Width>1.60795cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -111,9 +111,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Roll</rd:DefaultName>
                           <Top>0.07041cm</Top>
-                          <Left>13.01503cm</Left>
+                          <Left>13.96753cm</Left>
                           <Height>0.56459cm</Height>
-                          <Width>1.6cm</Width>
+                          <Width>2.0326cm</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
                             <Border>
@@ -151,9 +151,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Unit</rd:DefaultName>
                           <Top>0.07041cm</Top>
-                          <Left>11.81729cm</Left>
+                          <Left>12.35704cm</Left>
                           <Height>0.56459cm</Height>
-                          <Width>1.21049cm</Width>
+                          <Width>1.61049cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
@@ -191,9 +191,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Location</rd:DefaultName>
                           <Top>0.07041cm</Top>
-                          <Left>9.64224cm</Left>
+                          <Left>10.21863cm</Left>
                           <Height>0.56459cm</Height>
-                          <Width>2.15889cm</Width>
+                          <Width>2.13841cm</Width>
                           <ZIndex>4</ZIndex>
                           <Style>
                             <Border>
@@ -233,7 +233,7 @@
                           <Top>0.07041cm</Top>
                           <Left>5.39443cm</Left>
                           <Height>0.56459cm</Height>
-                          <Width>4.24781cm</Width>
+                          <Width>4.8242cm</Width>
                           <ZIndex>5</ZIndex>
                           <Style>
                             <Border>
@@ -378,45 +378,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <Textbox Name="Qty7">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Balance Qty</Value>
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Right</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Qty</rd:DefaultName>
-                          <Top>0.07041cm</Top>
-                          <Left>18.01697cm</Left>
-                          <Height>0.56459cm</Height>
-                          <Width>2.1cm</Width>
-                          <ZIndex>9</ZIndex>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <TopBorder>
-                              <Style>Solid</Style>
-                              <Width>1.5pt</Width>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Style>Solid</Style>
-                            </BottomBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
                       </ReportItems>
                       <KeepTogether>true</KeepTogether>
                       <ZIndex>1</ZIndex>
@@ -432,7 +393,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.35417in</Height>
+              <Height>0.20845in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -487,7 +448,7 @@
                           <rd:DefaultName>Desc</rd:DefaultName>
                           <Left>5.38961cm</Left>
                           <Height>0.52946cm</Height>
-                          <Width>4.25263cm</Width>
+                          <Width>4.82422cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -514,9 +475,9 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Location</rd:DefaultName>
-                          <Left>9.64224cm</Left>
+                          <Left>10.21383cm</Left>
                           <Height>0.52946cm</Height>
-                          <Width>2.15409cm</Width>
+                          <Width>2.13839cm</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
                             <Border>
@@ -543,9 +504,9 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Unit</rd:DefaultName>
-                          <Left>11.81247cm</Left>
+                          <Left>12.35222cm</Left>
                           <Height>0.52946cm</Height>
-                          <Width>1.21052cm</Width>
+                          <Width>1.61052cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
@@ -572,9 +533,9 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Roll</rd:DefaultName>
-                          <Left>13.01024cm</Left>
+                          <Left>13.96274cm</Left>
                           <Height>0.52946cm</Height>
-                          <Width>1.6cm</Width>
+                          <Width>2.03263cm</Width>
                           <ZIndex>4</ZIndex>
                           <Style>
                             <Border>
@@ -603,9 +564,9 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Qty</rd:DefaultName>
-                          <Left>16.33332cm</Left>
+                          <Left>17.60332cm</Left>
                           <Height>0.52946cm</Height>
-                          <Width>1.7cm</Width>
+                          <Width>2.14347cm</Width>
                           <ZIndex>5</ZIndex>
                           <Style>
                             <Border>
@@ -632,9 +593,9 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Dyelot</rd:DefaultName>
-                          <Left>14.61503cm</Left>
+                          <Left>15.99537cm</Left>
                           <Height>0.52946cm</Height>
-                          <Width>1.72311cm</Width>
+                          <Width>1.60795cm</Width>
                           <ZIndex>6</ZIndex>
                           <Style>
                             <Border>
@@ -707,37 +668,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <Textbox Name="BalanceQty">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!BalanceQty.Value</Value>
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Right</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>BalanceQty</rd:DefaultName>
-                          <Left>7.10668in</Left>
-                          <Height>0.52946cm</Height>
-                          <Width>0.82in</Width>
-                          <ZIndex>9</ZIndex>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
                       </ReportItems>
                       <KeepTogether>true</KeepTogether>
                       <Style>
@@ -761,7 +691,7 @@
                           <Top>0.78493cm</Top>
                           <Left>0.36787cm</Left>
                           <Height>0cm</Height>
-                          <Width>13.62476cm</Width>
+                          <Width>14.54736cm</Width>
                           <Style>
                             <Border>
                               <Style>Dotted</Style>
@@ -788,9 +718,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.52946cm</Top>
-                          <Left>13.96276cm</Left>
+                          <Left>14.91526cm</Left>
                           <Height>0.55591cm</Height>
-                          <Width>1.39757cm</Width>
+                          <Width>2.03257cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -820,9 +750,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Total</rd:DefaultName>
                           <Top>0.52946cm</Top>
-                          <Left>15.36033cm</Left>
+                          <Left>16.94782cm</Left>
                           <Height>0.55591cm</Height>
-                          <Width>2.67781cm</Width>
+                          <Width>2.79897cm</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
                             <Border>
@@ -885,10 +815,9 @@
         </TablixRowHierarchy>
         <RepeatColumnHeaders>true</RepeatColumnHeaders>
         <RepeatRowHeaders>true</RepeatRowHeaders>
-        <DataSetName>DataSet1</DataSetName>
         <Left>0.05292cm</Left>
-        <Height>1.19097in</Height>
-        <Width>7.95168in</Width>
+        <Height>0.88576in</Height>
+        <Width>7.94794in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -896,10 +825,10 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.19097in</Height>
+    <Height>0.88576in</Height>
     <Style />
   </Body>
-  <Width>8.04042in</Width>
+  <Width>7.96878in</Width>
   <Page>
     <PageHeader>
       <Height>3.23509in</Height>
@@ -1548,6 +1477,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox39</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>0.36787cm</Left>
           <Height>0.58208cm</Height>
           <Width>5.02176cm</Width>
@@ -1581,6 +1511,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox40</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>5.38963cm</Left>
           <Height>0.58208cm</Height>
           <Width>5.4592cm</Width>
@@ -1615,6 +1546,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox41</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>10.84883cm</Left>
           <Height>0.58208cm</Height>
           <Width>4.06637cm</Width>
@@ -1649,6 +1581,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>14.9152cm</Left>
           <Height>0.58208cm</Height>
           <Width>5.27256cm</Width>
@@ -1711,10 +1644,6 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="BalanceQty">
-          <DataField>BalanceQty</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Desc">
           <DataField>Desc</DataField>
           <rd:TypeName>System.String</rd:TypeName>

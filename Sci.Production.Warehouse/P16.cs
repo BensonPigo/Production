@@ -845,29 +845,10 @@ where id = @MDivision", pars, out dt);
             #endregion
 
             #region -- 撈表身資料 --
-            string strsql = $@"select distinct poid,seq1,seq2 from IssueLack_detail where id='{id}'";
-            DataTable dttmp;
-            if (!(result = DBProxy.Current.Select(null, strsql, out dttmp)))
-            {
-                ShowErr(result);
-                return false;
-            }
-
-            DataTable dtRollTrans = new DataTable();
-            foreach (DataRow dr in dttmp.Rows)
-            {
-                DataTable dttmp1 = new DataTable();
-                dttmp1 = Sci.Production.PublicPrg.Prgs.RollTranscation(dr["Poid"].ToString(),
-                dr["Seq1"].ToString(),
-                dr["Seq2"].ToString());
-
-                dtRollTrans.Merge(dttmp1);
-            }
-
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
-            result = MyUtility.Tool.ProcessWithDatatable(dtRollTrans, "", @"
+            result = DBProxy.Current.Select("", @"
 select  a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
         ,a.Roll
@@ -879,19 +860,12 @@ select  a.POID
         ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[Description]
         ,b.StockUnit
         ,a.Qty
-        ,[BalanceQty] = RollTrans.balance
         ,dbo.Getlocation(fi.ukey)[Location] 
 from dbo.IssueLack_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-outer apply(
-	select convert(float,balance) as balance from #tmp
-	where id = a.Id
-	and Roll = a.Roll and Dyelot = a.Dyelot
-	and Seq1 = a.Seq1 and Seq2 = a.Seq2
-)RollTrans
-where a.id= @ID", out dtDetail, paramters: pars);
+where a.id= @ID", pars, out dtDetail);
             if (!result) { this.ShowErr(result); }
 
             if (dtDetail == null || dtDetail.Rows.Count == 0)
@@ -911,7 +885,6 @@ where a.id= @ID", out dtDetail, paramters: pars);
                     DESC = row1["Description"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     QTY = Convert.ToDecimal(row1["QTY"]),
-                    BalanceQty = row1["BalanceQty"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim()
                 }).ToList();
             #endregion
