@@ -301,7 +301,7 @@ Select
 			,bt.PanelNo
 			,bt.CutCellID
             from #BundleTransfer  bt WITH (NOLOCK)
-			LEFT JOIN #BundleAll ba WITH (NOLOCK) on bt.BundleNo = ba.BundleNo
+			inner JOIN #BundleAll ba WITH (NOLOCK) on bt.BundleNo = ba.BundleNo
             left join orders o WITH (NOLOCK) on o.Id = ba.OrderId and o.MDivisionID  = ba.MDivisionID 
             where 1=1
 ");
