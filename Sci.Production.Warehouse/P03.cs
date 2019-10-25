@@ -391,6 +391,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1)  //3
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //4
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //5
+            .Text("FabricCombo", header: "Fabric" + Environment.NewLine + "Combo", iseditingreadonly: true)  
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33))  //8
             .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6))  //7  
@@ -518,7 +519,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
                 = @"
 declare @id varchar(20) = @sp1		
 
-select distinct StyleID,BrandID,POID,FtyGroup 
+select distinct StyleID,BrandID,POID,FtyGroup ,CuttingSP
 into #tmpOrder
 from orders where id like @id
 
@@ -659,6 +660,7 @@ from(
             , From_Program
             , GarmentSize
 			, Article
+            , FabricCombo
     from (
         select  *
                 , -len(description) as len_D 
@@ -748,6 +750,7 @@ from(
                     , [From_Program] = 'P03'
                     , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
 					, [Article] = aft.Article
+					, EachCons.FabricCombo 
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -760,6 +763,19 @@ from(
 												aft.SCIRefNo   = a.SCIRefNo	and
 												aft.ColorID	   = a.ColorID	and
 												a.SEQ1 like 'T%' 
+
+			LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
+			OUTER APPLY(
+			SELECT [FabricCombo]=STUFF((
+				SELECT 
+				(
+					SELECT DISTINCT ','+oe.FabricCombo
+					FROM Order_EachCons oe
+					WHERE oe.FabricCode=ob.FabricCode  AND oe.Id=orders.CuttingSP
+					FOR XML PATH('')
+				))
+				,1,1,'')
+			)EachCons
 --很重要要看到,修正欄位要上下一起改
             union
 
@@ -842,6 +858,7 @@ from(
                     , [From_Program] = 'P03'
                     , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
 					, [Article] = aft.Article
+					, EachCons.FabricCombo 
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -854,6 +871,18 @@ from(
 									aft.SCIRefNo   = a.SCIRefNo	and
 									aft.ColorID	   = a.ColorID	and
 									a.SEQ1 like 'T%' 
+		LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
+		OUTER APPLY(
+		SELECT [FabricCombo]=STUFF((
+			SELECT 
+			(
+				SELECT DISTINCT ','+oe.FabricCombo
+				FROM Order_EachCons oe
+				WHERE oe.FabricCode=ob.FabricCode  AND oe.Id=o.CuttingSP
+				FOR XML PATH('')
+			))
+			,1,1,'')
+		)EachCons
         where   1=1 
                 AND a.id IS NOT NULL  
                ) as xxx
@@ -913,6 +942,7 @@ select ROW_NUMBER_D = 1
        , [From_Program] = 'P04'
        , [GarmentSize] = ''
 	   , [Article] = ''
+       , [FabricCombo] = ''
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo
