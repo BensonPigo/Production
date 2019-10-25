@@ -79,7 +79,7 @@ namespace Sci.Production.Centralized
             #endregion
 
             #region 設定Where 條件
-            sqlWheres.Add("pod.Category != 'G'");
+            sqlWheres.Add("pod.Category NOT IN ( 'G','A') ");
             if (!this.dateOutputDateStart.Value.Empty() && !this.dateOutputDateEnd.Value.Empty())
             {
                 sqlWheres.Add(string.Format(

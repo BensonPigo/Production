@@ -96,38 +96,82 @@ select
 	o.StyleID,
 	o.SeasonID,
 	o.Qty,
-	ChargeableQty =o.Qty-o.FOCQty,
+	ChargeableQty = o.Qty - o.FOCQty,
 	o.FOCQty,
-	ChargeablePulloutQty = isnull(c.value,0),
-	FOCPulloutQty = isnull(c.value2,0),
-	FinishedFOCStockinQty =o.FOCQty - isnull(c.value2,0)
+	ChargeablePulloutQty = isnull(ShipQty_ByType.TotalNotFocShipQty,0),
+	FOCPulloutQty = isnull(ShipQty_ByType.TotalFocShipQty,0),
+	FinishedFOCStockinQty = ISNULL(FocStockQty.Value ,0)    -- Function 取得 FOC 庫存
 from orders o with(nolock)
+inner join Factory f with(nolock) on f.id = o.FactoryID and f.IsProduceFty = 1
 outer apply(
-	select sum(value) as value , sum(value2) as value2 
+	select sum(TotalNotFocShipQty) as TotalNotFocShipQty , sum(TotalFocShipQty) as TotalFocShipQty 
 	from
 	(	
 		select 
-		value = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
-		value2=iif( pl.Type='F',sum(pod.ShipQty),0)
+		[TotalNotFocShipQty] = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
+		[TotalFocShipQty]=iif( pl.Type='F',sum(pod.ShipQty),0)
 		from Pullout_Detail pod with(nolock)
 		inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
 		where pod.OrderID = o.ID
 		group by pl.Type
 	) a
-)c
+)ShipQty_ByType
+
+OUTER APPLY(
+	--判斷FOC 是否建立 PackingList
+	SELECT [Result]=IIF(COUNT(p.ID) > 0 ,'true' , 'false') 
+	FROM PackingList p
+	INNER JOIN PackingList_Detail pd ON p.ID=pd.ID 
+	WHERE p.Type = 'F' AND pd.OrderID=o.ID
+)PackingList_Chk_HasFoc
+
+OUTER APPLY(
+	--
+	--如果 FOC 沒建立 PackingList，不需判斷出貨
+	--如果 FOC 已建立了 PackingList，判斷是否『所有』的 FOC PackingList 都完成出貨（出貨的Pullout Stauts != New）。
+	SELECT  [Result]=IIF( PackingList_Chk_HasFoc.Result='false','true'
+			,IIF( COUNT(p.ID) > 0,'true','false' )) -- 有New的話表示不是全部都完成出貨
+	FROM PackingList p
+	INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+	WHERE   p.Type = 'F' AND pd.OrderID=o.ID --AND pu.Status = 'New'
+			AND EXISTS 
+			(	--判斷有無建立 Pullout
+				SELECT 1 FROM Pullout pu WHERE  p.PulloutID=pu.ID
+			)
+			AND NOT EXISTS 
+			(	--若有建立 Pullout，判斷是不是全部出貨
+				SELECT 1 FROM Pullout pu WHERE  p.PulloutID=pu.ID AND pu.Status = 'New'
+			)
+
+)PackingList_Chk_IsAllPullout
+
+OUTER APPLY(
+	SELECT Value=dbo.GetFocStockByOrder(o.ID)
+)FocStockQty
+
 where o.Junk = 0
-and not exists(select 1 from Order_Finish ox where ox.id = o.ID)
-and o.FOCQty > isnull(c.value2,0)
-and exists (
-	select 1
-	from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' 
-	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode 
-	where oqd.Id = o.id
-	and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
-)--有一筆Price為0表示此Orderid有Foc
-and o.MDivisionID = '{Sci.Env.User.Keyword}'
-{where}
+        and o.MDivisionID = '{Sci.Env.User.Keyword}'
+        AND o.FOCQty > 0  --訂單有 FOC 數量
+        AND FocStockQty.Value > 0  -- FOC 還有未出貨的數量
+        and not exists(
+            select 1 
+            from Order_Finish ox 
+            where ox.id = o.ID
+        )  --訂單尚未執行 FOC 入庫
+        and exists (
+	        select 1
+	        from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	        left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' 
+	        left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode 
+	        where oqd.Id = o.id
+	        and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
+        )-- 有一筆 Price 為 0 表示此 Orderid 有Foc
+        AND (	
+		        PackingList_Chk_HasFoc.Result='false' 
+		        OR 
+		        (PackingList_Chk_HasFoc.Result='true' AND PackingList_Chk_IsAllPullout.Result = 'true')
+	    ) -- 排除 FOC 已建立 FOC PL 但是還沒出貨
+        {where}
 order by o.ID
 ";
             DataTable dt;
@@ -147,20 +191,60 @@ order by o.ID
             this.listControlBindingSource1.DataSource = dt;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
-            DataTable dt = ((DataTable)listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
-            string insertOrderFinished = $@"
-insert Order_Finish(ID,FOCQty,CurrentFOCQty,AddName,AddDate)
-select OrderID,FinishedFOCStockinQty,(FinishedFOCStockinQty -FOCPulloutQty) ,'{Sci.Env.User.UserID}',getdate()
-from #tmp
-";
+            if (((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Any(dr => dr["selected"].EqualDecimal(1)))
+            {
+                return;
+            }
+
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(dr => MyUtility.Convert.GetBool(dr["selected"])).CopyToDataTable();
+            DataTable dt2 = dt.Copy();
             DataTable odt;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, insertOrderFinished, out odt);
+            DualResult result;
+
+            string sqlchk = $@"
+select t.OrderID
+from #tmp t
+inner join Order_Finish ox with(nolock) on ox.id = t.OrderID
+";
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlchk, out odt);
             if (!result)
             {
                 this.ShowErr(result);
                 return;
+            }
+
+            if (odt.Rows.Count > 0)
+            {
+                var idList = odt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["OrderID"])).ToList();
+                string msg = $@"SP# already extsis Finished FOC
+SP# : {string.Join(",", idList)}";
+                MyUtility.Msg.WarningBox(msg);
+                if (dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).Count() > 0)
+                {
+                    dt2 = dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).CopyToDataTable();
+                }
+
+                if (dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).Count() == 0)
+                {
+                    dt2.Clear();
+                }
+            }
+
+            if (dt2.Rows.Count > 0)
+            {
+                string insertOrderFinished = $@"
+insert Order_Finish(ID,FOCQty,AddName,AddDate)
+select OrderID,FinishedFOCStockinQty ,'{Sci.Env.User.UserID}',getdate()
+from #tmp
+";
+                result = MyUtility.Tool.ProcessWithDatatable(dt2, string.Empty, insertOrderFinished, out odt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
             }
 
             this.Find();

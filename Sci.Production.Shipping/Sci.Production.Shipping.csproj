@@ -149,6 +149,12 @@
     <Compile Include="B03_BatchApprove.Designer.cs">
       <DependentUpon>B03_BatchApprove.cs</DependentUpon>
     </Compile>
+    <Compile Include="B03_Quotation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03_Quotation.Designer.cs">
+      <DependentUpon>B03_Quotation.cs</DependentUpon>
+    </Compile>
     <Compile Include="B05.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -214,12 +220,6 @@
     </Compile>
     <Compile Include="B03.Designer.cs">
       <DependentUpon>B03.cs</DependentUpon>
-    </Compile>
-    <Compile Include="B03_CanvassRecord.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="B03_CanvassRecord.Designer.cs">
-      <DependentUpon>B03_CanvassRecord.cs</DependentUpon>
     </Compile>
     <Compile Include="B03_PaymentHistory.cs">
       <SubType>Form</SubType>
@@ -571,6 +571,12 @@
     <Compile Include="P12.Designer.cs">
       <DependentUpon>P12.cs</DependentUpon>
     </Compile>
+    <Compile Include="P14.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P14.Designer.cs">
+      <DependentUpon>P14.cs</DependentUpon>
+    </Compile>
     <Compile Include="P40.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -744,6 +750,12 @@
     <Compile Include="R16.designer.cs">
       <DependentUpon>R16.cs</DependentUpon>
     </Compile>
+    <Compile Include="R18.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R18.Designer.cs">
+      <DependentUpon>R18.cs</DependentUpon>
+    </Compile>
     <Compile Include="R40.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -767,6 +779,12 @@
     </Compile>
     <Compile Include="R42.Designer.cs">
       <DependentUpon>R42.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R43.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R43.Designer.cs">
+      <DependentUpon>R43.cs</DependentUpon>
     </Compile>
     <Compile Include="Shipping.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -802,6 +820,9 @@
     <EmbeddedResource Include="B03_BatchApprove.resx">
       <DependentUpon>B03_BatchApprove.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B03_Quotation.resx">
+      <DependentUpon>B03_Quotation.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B05.resx">
       <DependentUpon>B05.cs</DependentUpon>
     </EmbeddedResource>
@@ -835,9 +856,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="B03_CanvassRecord.resx">
-      <DependentUpon>B03_CanvassRecord.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B03_PaymentHistory.resx">
       <DependentUpon>B03_PaymentHistory.cs</DependentUpon>
@@ -1031,6 +1049,9 @@
     <EmbeddedResource Include="P12.resx">
       <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P14.resx">
+      <DependentUpon>P14.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P40.resx">
       <DependentUpon>P40.cs</DependentUpon>
     </EmbeddedResource>
@@ -1107,6 +1128,9 @@
     <EmbeddedResource Include="R16.resx">
       <DependentUpon>R16.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R18.resx">
+      <DependentUpon>R18.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R40.resx">
       <DependentUpon>R40.cs</DependentUpon>
     </EmbeddedResource>
@@ -1124,6 +1148,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R12.resx">
       <DependentUpon>R12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R43.resx">
+      <DependentUpon>R43.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -152,8 +152,8 @@
     [ForecastSampleGroup]  VARCHAR (1)    CONSTRAINT [DF_Orders_ForecastSampleGroup] DEFAULT ('') NULL,
     [DyeingLoss] NUMERIC(3) NULL DEFAULT ((0)), 
     [SubconInType] VARCHAR NULL, 
-    [FirstProduction] DATE NULL, 
     [LastProductionDate] DATE NULL, 
+    [EstPODD] DATE NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

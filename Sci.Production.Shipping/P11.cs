@@ -262,13 +262,14 @@ select
 	E=sum(pd.ShipQty),
 	F='PCS',
 	G=o.CurrencyID,
-	H=round(o.PoPrice,2),
-	J=sum(pd.ShipQty)*round(o.PoPrice,2),
-	M=sum(pd.ShipQty)*Round((((isnull(o.CPU,0) + isnull(s1.Price,0)) * isnull(f.CpuCost,0)) + isnull(s2.Price,0) + isnull(s3.Price,0)), 3)
+	H=std.FtyCMP,
+	J=sum(pd.ShipQty)*isnull(std.FtyCMP,0)
 from orders o with(nolock)
 inner join PackingList_Detail pd with(nolock) on pd.OrderID = o.id
 inner join PackingList p with(nolock) on p.id = pd.id
 left join Style s with(nolock) on s.Ukey = o.StyleUkey
+outer apply(select SubProcessCPU= sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.id,'CPU'))a
+outer apply(select subProcessAMT= sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.id,'AMT'))b
 outer apply(
 	select fd.CpuCost
 	from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
@@ -278,26 +279,28 @@ outer apply(
 	and fsd.ShipperID = fd.ShipperID
 	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 	and o.OrigBuyerDelivery is not null
+    and fsd.seasonID = o.seasonID
+)f1
+outer apply(
+	select fd.CpuCost
+	from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+	where fsd.BrandID = o.BrandID
+	and fsd.FactoryID = o.FactoryID
+	and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+	and fsd.ShipperID = fd.ShipperID
+	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and o.OrigBuyerDelivery is not null
+    and fsd.seasonID = ''
 )f
-outer apply(
-	select Price = sum(ot.Price)
-	from Order_TmsCost ot WITH (NOLOCK) 
-	left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
-	where ot.ID = o.id and a.Classify = 'I'and a.IsTtlTMS <> 1
-)s1
-outer apply(
-	select Price = sum(ot.Price)
-	from Order_TmsCost ot WITH (NOLOCK) 
-	left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
-	where ot.ID = o.id and a.Classify = 'A'
-)s2
 outer apply(
 	select dbo.GetLocalPurchaseStdCost(o.id) price
 )s3
+outer apply(
+	select FtyCMP = Round((isnull(round(o.CPU,3,1),0) + isnull(round(a.SubProcessCPU,3,1),0)) * 
+	isnull(round(isnull(f1.CpuCost,f.CpuCost),3,1),0) + isnull(round(b.subProcessAMT,3,1),0) + isnull(round(s3.price,3,1),0), 3)
+)std
 where p.INVNo in({string.Join(",", ids)})
-group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,
-o.id,o.CPU,isnull(f.CpuCost,0),isnull(s1.Price,0)+isnull(s2.Price,0),isnull(s3.Price,0)
-,s1.Price,s2.Price,s3.price,f.CpuCost,o.CurrencyID
+group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,o.id,o.CPU,o.CurrencyID,std.FtyCMP
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
@@ -357,12 +360,12 @@ where a.id = '{top1id}'
             }
 
             // 頁尾
-            decimal sumI = MyUtility.Convert.GetDecimal(dt.Compute("sum(J)", null));
-            decimal sumM = MyUtility.Convert.GetDecimal(dt.Compute("sum(M)", null));
-            decimal sumF = MyUtility.Convert.GetDecimal(dt.Compute("sum(E)", null));
+            decimal sumJ = MyUtility.Convert.GetDecimal(dt.Compute("sum(J)", null));
+            decimal sumM = sumJ;
+            decimal sumE = MyUtility.Convert.GetDecimal(dt.Compute("sum(E)", null));
 
             //worksheet.Cells[48, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
-            worksheet.Cells[57, 3] = MyUtility.Convert.USDMoney(sumI);
+            worksheet.Cells[57, 3] = MyUtility.Convert.USDMoney(sumJ);
 
             string sumGW = $@"
 select sumGW = Sum (p.GW),sumNW=sum(p.NW),sumCBM=sum(p.CBM)
@@ -377,10 +380,10 @@ where p.INVNo in ({string.Join(",", ids)})
                 worksheet.Cells[68, 3] = drsum["sumCBM"];
             }
 
-            worksheet.Cells[63, 10] = sumI;
-            worksheet.Cells[65, 10] = sumI - sumM;
+            worksheet.Cells[63, 10] = sumJ;
+            worksheet.Cells[65, 10] = 0;
             worksheet.Cells[66, 10] = sumM;
-            worksheet.Cells[60, 2] = sumF;
+            worksheet.Cells[60, 2] = sumE;
             worksheet.Cells[1, 10] = $@"InvSerial: {this.CurrentMaintain["InvSerial"]}";
             #endregion
 

@@ -13,7 +13,8 @@
     [AddName] VARCHAR(10) CONSTRAINT [DF_ShippingMarkPicture_AddName] DEFAULT ('') NULL, 
     [EditDate] DATETIME NULL, 
     [EditName] VARCHAR(10) CONSTRAINT [DF_ShippingMarkPicture_EditName] DEFAULT ('') NULL,
-	[IsRotate] bit NOT NULL DEFAULT ((0)),
+	[IsHorizontal] bit NOT NULL DEFAULT ((0)),
+    [IsSSCC] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ShippingMarkPicture] PRIMARY KEY CLUSTERED ([BrandID],[CustCD],[CTNRefno],[Side],[Seq] ASC)
 )
 

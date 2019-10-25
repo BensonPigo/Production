@@ -675,7 +675,6 @@ WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
                 return;
             }
 
-            this.UpOrderFinish_CurrentFOCQty(true);
         }
 
         /// <inheritdoc/>
@@ -751,50 +750,6 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
                 return;
             }
 
-            this.UpOrderFinish_CurrentFOCQty(false);
-        }
-
-        private void UpOrderFinish_CurrentFOCQty(bool isConfirmed)
-        {
-            #region 調整Order_Finish CurrentFOCQty
-            DataTable dtPullout;
-            IList<string> updateCmds = new List<string>();
-            DualResult result;
-
-            string sqlcmd = $@"	
-select OrderID,sum(ShipQty) as ShipQty from Pullout_Detail 
-where id = '{this.CurrentMaintain["id"]}'
-and exists(select 1 from Order_Finish where id = Pullout_Detail.OrderID)
-group by OrderID";
-
-            if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtPullout)))
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            string chart = isConfirmed ? "-" : "+";
-
-            if (!MyUtility.Check.Empty(dtPullout) && dtPullout.Rows.Count > 0)
-            {
-                foreach (DataRow dr in dtPullout.Rows)
-                {
-                    updateCmds.Add($@"	
-update Order_Finish
-set CurrentFOCQty = CurrentFOCQty {chart} {dr["ShipQty"]}
-,EditDate = Getdate()
-where id='{dr["OrderID"]}'");
-                }
-
-                result = DBProxy.Current.Executes(null, updateCmds);
-                if (!result)
-                {
-                    MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
-                    return;
-                }
-            }
-
-            #endregion
         }
 
         // History
@@ -1172,11 +1127,15 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     #endregion
 
                     // shipQty,OrderQty,InvNo 修改過才會更換資料
-                    if (MyUtility.Convert.GetString(dr["ShipmodeID"]).EqualString(MyUtility.Convert.GetString(packData[0]["ShipmodeID"])) == false || MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"]) || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"]) || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"]))
+                    if (MyUtility.Convert.GetString(dr["ShipmodeID"]).EqualString(MyUtility.Convert.GetString(packData[0]["ShipmodeID"])) == false
+                        || MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"])
+                        || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"])
+                        || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"])
+                        || MyUtility.Convert.GetString(dr["ShipModeSeqQty"]) != MyUtility.Convert.GetString(packData[0]["OrderShipQty"]))
                     {
                         dr["ShipQty"] = packData[0]["ShipQty"];
                         dr["OrderQty"] = packData[0]["OrderQty"];
-                        dr["ShipModeSeqQty"] = packData[0]["OrderShipmodeSeq"];
+                        dr["ShipModeSeqQty"] = packData[0]["OrderShipQty"];
                         dr["Status"] = newStatus;
                         dr["StatusExp"] = this.GetStatusName(newStatus);
                         dr["INVNo"] = packData[0]["INVNo"];

@@ -138,6 +138,25 @@ where id = @MDivision", pars, out dt);
 
             #endregion
             #region -- 撈表身資料 --
+            string strsql = $@"select distinct poid,seq1,seq2 from issue_detail where id='{id}'";
+            DataTable dttmp;
+            if (!(result = DBProxy.Current.Select(null, strsql, out dttmp)))
+            {
+                ShowErr(result);
+                return false;
+            }
+
+            DataTable dtRollTrans = new DataTable();
+            foreach (DataRow dr in dttmp.Rows)
+            {
+                DataTable dttmp1 = new DataTable();
+                dttmp1 = Sci.Production.PublicPrg.Prgs.RollTranscation(dr["Poid"].ToString(),
+                dr["Seq1"].ToString(),
+                dr["Seq2"].ToString());
+
+                dtRollTrans.Merge(dttmp1);
+            }
+
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
@@ -154,6 +173,7 @@ select t.POID,
 	    t.Roll,
 	    t.Dyelot,
 	    t.Qty,
+        [BalanceQty] = RollTrans.balance,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
 	    [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
@@ -161,10 +181,16 @@ from dbo.Issue_Detail t WITH (NOLOCK)
 left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
 left join FtyInventory FI on t.poid = fi.poid and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.Dyelot = fi.Dyelot
     and t.roll = fi.roll and t.stocktype = fi.stocktype
+outer apply(
+	select convert(float,balance) as balance from #tmp
+	where id = t.Id
+	and Roll=t.Roll and Dyelot=t.Dyelot
+	and Seq1=t.Seq1 and Seq2=t.Seq2
+)RollTrans
 where t.id= @ID
 order by t.POID,SEQ, t.Dyelot,t.Roll
 ";
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+            result = MyUtility.Tool.ProcessWithDatatable(dtRollTrans, "", sqlcmd, out dtDetail, paramters: pars);
             if (!result) { this.ShowErr(sqlcmd, result); }
 
             if (dtDetail == null || dtDetail.Rows.Count == 0)
@@ -185,6 +211,7 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["Dyelot"].ToString().Trim(),
                     QTY = row1["Qty"].ToString().Trim(),
+                    BalanceQty = row1["BalanceQty"].ToString().Trim(),
                     TotalQTY = row1["Total"].ToString().Trim()
                 }).ToList();
 

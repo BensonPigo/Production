@@ -26,6 +26,7 @@ namespace Sci.Production.Subcon
             comboload();
             this.comboFactory.setDataSource();
             this.comboRFIDProcessLocation.setDataSource();
+            this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
         private void comboload()
@@ -137,7 +138,7 @@ namespace Sci.Production.Subcon
                 sqlWhere.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
             }
 
-            if (!MyUtility.Check.Empty(this.processLocation))
+            if (this.processLocation != "ALL")
             {
                 sqlWhere.Append(string.Format(@" and bio.RFIDProcessLocationID = '{0}'", this.processLocation));
             }
@@ -235,7 +236,7 @@ Select
 	,b.Item
 	,bio.PanelNo
 	,bio.CutCellID
-	,[SpreadingNo] = iif(wk.SpreadingNo='','', substring(wk.SpreadingNo,0,len(wk.SpreadingNo)))
+	,[SpreadingNo] = wk.SpreadingNo
 into #result
 from Bundle b WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
@@ -281,11 +282,13 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 ) PoSuppFromPOID
 outer apply(
 	 select SpreadingNo = stuff((
-		    Select distinct concat(wo.SpreadingNoID,',')
+		    Select distinct concat(',', wo.SpreadingNoID)
 		    from WorkOrder wo WITH (NOLOCK) 
 		    where   wo.CutRef = b.CutRef 
                     and wo.ID = b.POID
                     and wo.MDivisionID = b.MDivisionID
+            and wo.SpreadingNoID is not null
+            and wo.SpreadingNoID != ''
 		    for xml path('')
 	    ),1,1,'')
 )wk

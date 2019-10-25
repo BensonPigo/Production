@@ -22,6 +22,7 @@ namespace Sci.Production.Shipping
         private Ict.Win.DataGridViewGeneratorTextColumnSettings brand = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings refno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings fabricType = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings usageUnit = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// P42
@@ -58,7 +59,7 @@ namespace Sci.Production.Shipping
             string masterID = (e.Master == null) ? "1=0" : "v.ID = " + MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
-select v.id,vdd.Refno,vdd.FabricType,vdd.NLCode,vdd.Qty,c.HSCode,c.UnitID,vdd.BrandID
+select v.id,vdd.Refno,vdd.FabricType,vdd.NLCode,vdd.Qty,c.HSCode,c.UnitID,vdd.BrandID,vdd.UsageUnit
 from VNContractQtyAdjust v WITH (NOLOCK) 
 inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID = vd.ID
 left join VNContractQtyAdjust_Detail_Detail vdd WITH (NOLOCK) on v.ID = vdd.ID and vd.NLCode = vdd.NLCode
@@ -175,6 +176,35 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                     {
                         dr["fabricType"] = e.FormattedValue;
                         dr.EndEdit();
+                        if (!(MyUtility.Convert.GetString(dr["FabricType"]) == "F" || MyUtility.Convert.GetString(dr["FabricType"]) == "A"))
+                        {
+                            dr["usageUnit"] = string.Empty;
+                            dr.EndEdit();
+                        }
+                        this.BRT(dr, e);
+                    }
+                }
+            };
+            #endregion
+            #region usageUnit的Validating
+            this.usageUnit.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!(MyUtility.Convert.GetString(dr["FabricType"]) == "F" || MyUtility.Convert.GetString(dr["FabricType"]) == "A"))
+                {
+                    e.IsEditable = false;
+                }
+            };
+
+            this.usageUnit.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["usageUnit"] = e.FormattedValue;
+                        dr.EndEdit();
                         this.BRT(dr, e);
                     }
                 }
@@ -189,6 +219,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), settings: this.brand)
                 .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(10), settings: this.refno)
                 .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), settings: this.fabricType)
+                .Text("UsageUnit", header: "UsageUnit", width: Widths.AnsiChars(8), settings: this.usageUnit)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode)
                 .Numeric("Qty", header: "Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: stockQtySetting)
@@ -198,18 +229,24 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
         private void BRT(DataRow dr, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
         {
             string type = MyUtility.Convert.GetString(dr["FabricType"]);
-            bool isNeedInputBrand = !MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]);
+            bool isNeedInputBrand = !MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]) && !MyUtility.Check.Empty(dr["usageUnit"]);
             bool isNoNeedInputBrand = (type.EqualString("L") || type.EqualString("Misc")) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]);
 
             if (isNeedInputBrand ||
                 isNoNeedInputBrand)
             {
+                string usageUnit = string.Empty;
                 if (type.EqualString("Misc") || type.EqualString("L"))
                 {
                     dr["BrandID"] = string.Empty;
                 }
 
-                DataRow seekData = this.GetNLCodeInfo(dr["Refno"].ToString(), type);
+                if (type.EqualString("F") || type.EqualString("A"))
+                {
+                    usageUnit = MyUtility.Convert.GetString(dr["usageUnit"]);
+                }
+
+                DataRow seekData = this.GetNLCodeInfo(dr["Refno"].ToString(), type, usageUnit);
                 if (seekData == null)
                 {
                     dr["HSCode"] = string.Empty;
@@ -545,7 +582,8 @@ order by vaqd.NLCode
                 DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
                 string type = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C"));
                 newRow["Refno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
-                seekData = this.GetNLCodeInfo(newRow["Refno"].ToString(), type);
+                newRow["usageUnit"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
+                seekData = this.GetNLCodeInfo(newRow["Refno"].ToString(), type, MyUtility.Convert.GetString(newRow["usageUnit"]));
                 if (seekData == null)
                 {
                     errNLCode.Append(string.Format("Customs Code: {0}\r\n", MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"))));
@@ -597,13 +635,15 @@ select
 	f1.BrandId,
 	f1.HSCode,
 	UnitID=f1.CustomsUnit,
-	qty=sum(ad.QtyBefore-ad.QtyAfter)
+	qty=sum(ad.QtyBefore-ad.QtyAfter),
+	UsageUnit = FabricUsage.v
 into #tmp
 from Adjust a with(nolock)
 inner join Adjust_Detail ad with(nolock) on ad.ID=a.ID
 inner join PO_Supp_Detail psd with(nolock) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd .seq2 = ad. seq2
 left join orders o with(nolock) on o.id = ad.POID
 left join brand b with(nolock) on b.id = o.BrandID
+left join fabric f with(nolock) on psd.SCIRefno = f.SCIRefno
 outer apply(
 	select top 1 f.*
 	from Fabric f with(nolock)
@@ -611,10 +651,13 @@ outer apply(
 	where f.Refno = psd.Refno and b2.BrandGroup = b.BrandGroup
 	order by f.NLCodeEditDate desc
 )f1
+outer apply (
+    select v = isnull (f.UsageUnit, f1.SCIRefno)
+) FabricUsage
 where a.Type = 'R' and a.id = '{this.txtWKNo.Text}'
-group by psd.Refno,f1.type,f1.NLCode,f1.BrandId,f1.HSCode,f1.CustomsUnit
+group by psd.Refno,f1.type,f1.NLCode,f1.BrandId,f1.HSCode,f1.CustomsUnit,FabricUsage.v
 
-select Refno,FabricType,NLCode,BrandId,HSCode,UnitID,qty = case when FabricType = 'A' then A.Qty when FabricType = 'F' then F.Qty end
+select Refno,FabricType,NLCode,BrandId,HSCode,UnitID,qty = case when FabricType = 'A' then A.Qty when FabricType = 'F' then F.Qty end, t.UsageUnit
 from #tmp t
 outer apply(
 	select top 1
@@ -664,7 +707,7 @@ left join orders o with(nolock) on o.id = ald.POID
 where al.Type = 'R' and al.id = '{this.txtWKNo.Text}'
 group by ald.Refno,li.NLCode,o.BrandID,li.HSCode,li.CustomsUnit
 
-select Refno,FabricType='L',NLCode,BrandId,HSCode,UnitID,L.Qty
+select Refno,FabricType='L',NLCode,BrandId,HSCode,UnitID,L.Qty,UsageUnit=''
 from #tmp t
 outer apply(
 	select  
@@ -703,7 +746,8 @@ select
 	Qty = case when fed.FabricType = 'A' then a.Qty
 			            when fed.FabricType = 'F' then FF.Qty
 			            when fed.FabricType = '' then L.Qty
-					end
+					end,
+	f1.UsageUnit
 into #tmp
 from FtyExport fe WITH (NOLOCK)
 inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id	
@@ -749,9 +793,9 @@ outer apply(
 )L
 where fe.Type = 3 and fe.id='{this.txtWKNo.Text}'
 
-select Refno,FabricType,NLCode,BrandId,HSCode,UnitID, qty = sum(qty)
+select Refno,FabricType,NLCode,BrandId,HSCode,UnitID,UsageUnit, qty = sum(qty)
 from #tmp
-group by Refno,FabricType,NLCode,BrandId,HSCode,UnitID
+group by Refno,FabricType,NLCode,BrandId,HSCode,UnitID,UsageUnit
 
 drop table #tmp
 ";
@@ -789,20 +833,20 @@ drop table #tmp
             excel.Visible = true;
         }
 
-        private DataRow GetNLCodeInfo(string refno, string fabricType)
+        private DataRow GetNLCodeInfo(string refno, string fabricType, string usageUnit)
         {
             string nlCode = string.Empty;
             if (fabricType.EqualString("A") || fabricType.EqualString("F"))
             {
-                nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{refno}' and Type='{fabricType}' ");
+                nlCode = MyUtility.GetValue.Lookup($"select top 1 NLCode from Fabric with(nolock) where refno = '{refno}' and Type='{fabricType}' and usageUnit = '{usageUnit}' ");
             }
             else if (fabricType.EqualString("L"))
             {
-                nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where ltrim(refno) = '{refno}'");
+                nlCode = MyUtility.GetValue.Lookup($"select top 1 NLCode from LocalItem with(nolock) where ltrim(refno) = '{refno}'");
             }
             else if (fabricType.EqualString("Misc"))
             {
-                nlCode = MyUtility.GetValue.Lookup($"select NLCode from SciMachine_Misc with(nolock) where ltrim(ID) = '{refno}'");
+                nlCode = MyUtility.GetValue.Lookup($"select top 1 NLCode from SciMachine_Misc with(nolock) where ltrim(ID) = '{refno}'");
             }
 
             StringBuilder errNLCode = new StringBuilder();

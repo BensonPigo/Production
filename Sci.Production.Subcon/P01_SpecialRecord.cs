@@ -110,6 +110,7 @@ Select  0 as Selected
         , aaa.StyleID
         , sewinline = aaa.Sewinline
         , scidelivery = aaa.Scidelivery
+		, aaa.POID
 from orders aaa WITH (NOLOCK) 
 inner join order_qty bbb WITH (NOLOCK) on aaa.id = bbb.id
 left join dbo.View_Order_Artworks oa on oa.ID = aaa.ID AND OA.Article = bbb.Article AND OA.SizeCode=bbb.SizeCode and oa.ArtworkTypeID='{0}' 
@@ -144,7 +145,7 @@ inner join (
 ) as aa on aaa.ID = aa.orderid
 left join artworktype  ccc WITH (NOLOCK) on  ccc.ID = aa.artworktypeid
 outer apply(select ott.price from Order_TmsCost ott where ott.artworktypeid = aa.artworktypeid and ott.id = aa.orderid)bb
-group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc.isArtwork ,oa.Cost,bb.Price";
+group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc.isArtwork ,oa.Cost,bb.Price,aaa.POID ";
 
 
                 Ict.DualResult result;

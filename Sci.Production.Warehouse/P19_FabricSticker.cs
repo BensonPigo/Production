@@ -18,11 +18,13 @@ namespace Sci.Production.Warehouse
     public partial class P19_FabricSticker : Sci.Win.Subs.Base
     {
         private object strSubTransferID;
+        private string remark;
 
-        public P19_FabricSticker(object strSubTransferID)
+        public P19_FabricSticker(object strSubTransferID, string remark)
         {
             InitializeComponent();
             this.strSubTransferID = strSubTransferID;
+            this.remark = remark;
         }
 
         protected override void OnFormLoaded()
@@ -121,6 +123,7 @@ order by NewRowNo";
                     Color = row["Color"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
+                    Remark = this.remark,
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition();

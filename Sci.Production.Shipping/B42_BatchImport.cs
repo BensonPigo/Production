@@ -72,6 +72,7 @@ from VNConsumption where 1=0";
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("UsageUnit", header: "Usage Unit", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(9), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(100), iseditingreadonly: true);
@@ -115,7 +116,7 @@ from VNConsumption where 1=0";
             {
                 intRowsRead++;
 
-                range = worksheet.Range[string.Format("A{0}:E{0}", intRowsRead)];
+                range = worksheet.Range[string.Format("A{0}:F{0}", intRowsRead)];
                 objCellArray = range.Value;
 
                 DataRow newRow = this.dtBatchImport.NewRow();
@@ -124,6 +125,7 @@ from VNConsumption where 1=0";
                 string usageQty = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N"));
                 string customSP = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C"));
                 string contractID = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C"));
+                string usageUnit = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C"));
                 string remark = string.Empty;
 
                 string b42checkSQL = string.Format(@"select * from VNConsumption  with(nolock) where VNContractID = '{0}' and CustomSP = '{1}'", contractID, customSP);
@@ -144,11 +146,11 @@ from VNConsumption where 1=0";
                     }
                     else
                     {
-                        drNLCode = Prgs.GetNLCodeDataByRefno(refno, usageQty, drc["BrandID"].ToString(), type);
+                        drNLCode = Prgs.GetNLCodeDataByRefno(refno, usageQty, drc["BrandID"].ToString(), type, usageUnit: usageUnit);
 
                         if (drNLCode == null)
                         {
-                            remark += "Refno not found." + Environment.NewLine;
+                            remark += "Refno not found." + Environment.NewLine + "Fabric / Accessory need input usage unit." + Environment.NewLine;
                         }
                         else if (MyUtility.Check.Empty(drNLCode["NLCode"]))
                         {
@@ -183,6 +185,7 @@ from VNConsumption where 1=0";
                 newRow["Type"] = type;
                 newRow["Refno"] = refno;
                 newRow["UsageQty"] = usageQty;
+                newRow["UsageUnit"] = usageUnit;
                 newRow["checks"] = 0;
 
                 this.dtBatchImport.Rows.Add(newRow);
@@ -365,6 +368,18 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void BtnDownloadExcel_Click(object sender, EventArgs e)
+        {
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_B42_Batch Import.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null)
+            {
+                return;
+            }
+
+            excel.Visible = true;
         }
     }
 }

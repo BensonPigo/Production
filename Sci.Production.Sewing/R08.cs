@@ -178,7 +178,7 @@ left join SCIFty sf WITH (NOLOCK) on sf.ID = s.SubconOutFty
 --left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --											 and sl.Location = sd.ComboType
 left join factory f WITH (NOLOCK) on f.id=s.FactoryID
-where s.OutputDate between '{0}' and '{1}' and (o.CateGory != 'G' or s.Category='M')",
+where s.OutputDate between '{0}' and '{1}' and (o.CateGory NOT IN ('G','A') or s.Category='M')",
                 Convert.ToDateTime(this.date1).ToString("d"),
                 Convert.ToDateTime(this.date2).ToString("d")));
 
@@ -513,7 +513,7 @@ tmpAllSubprocess as(
            , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
             --排除 subcon in non sister的數值
           and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
@@ -552,7 +552,7 @@ tmpAllSubprocess as(
            , a.Program 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
 --	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
@@ -592,7 +592,7 @@ tmpAllSubprocess as(
            , a.SubconOutFty 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
 --	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 

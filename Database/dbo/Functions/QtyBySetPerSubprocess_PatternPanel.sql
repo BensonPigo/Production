@@ -1,6 +1,20 @@
 ﻿Create FUNCTION [dbo].[QtyBySetPerSubprocess_PatternPanel]
 (
 	/*
+	
+	請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！
+	請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！
+	請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！
+	請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！
+	請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！
+
+	這邊如果有修改，Planning R15用到的共用Function [QtyBySetPerSubprocess]要一起修改，這兩個是做同樣的事情
+	
+	請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！
+	請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！請注意！！！！
+	*/
+
+	/*
 	 * @Order
 		訂單號碼
 	 * @SubprocessID
@@ -213,6 +227,7 @@ BEGIN
 					bunD.ID
 					, bunD.BundleGroup
 			from Bundle bun
+			INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
 			inner join Bundle_Detail bunD on bunD.Id = bun.ID
 			where bun.Orderid = st1.Orderid
 				  and bun.PatternPanel = st1.PatternPanel

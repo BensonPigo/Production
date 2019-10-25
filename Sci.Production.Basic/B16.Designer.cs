@@ -33,6 +33,8 @@
             this.displayCode = new Sci.Win.UI.DisplayBox();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.chkIncludeSeaShipping = new Sci.Win.UI.CheckBox();
+            this.checkBoxNeedCreateAPP = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,6 +49,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBoxNeedCreateAPP);
+            this.detailcont.Controls.Add(this.chkIncludeSeaShipping);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayDescription);
             this.detailcont.Controls.Add(this.displayCode);
@@ -82,7 +86,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(38, 36);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(75, 23);
@@ -91,8 +94,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
-            this.labelDescription.Location = new System.Drawing.Point(38, 84);
+            this.labelDescription.Location = new System.Drawing.Point(38, 65);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
             this.labelDescription.TabIndex = 1;
@@ -113,7 +115,7 @@
             this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDescription.Location = new System.Drawing.Point(129, 84);
+            this.displayDescription.Location = new System.Drawing.Point(129, 65);
             this.displayDescription.Name = "displayDescription";
             this.displayDescription.Size = new System.Drawing.Size(433, 23);
             this.displayDescription.TabIndex = 3;
@@ -123,7 +125,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkJunk.Location = new System.Drawing.Point(342, 36);
+            this.checkJunk.Location = new System.Drawing.Point(584, 36);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.ReadOnly = true;
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
@@ -131,16 +133,44 @@
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
+            // chkIncludeSeaShipping
+            // 
+            this.chkIncludeSeaShipping.AutoSize = true;
+            this.chkIncludeSeaShipping.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IncludeSeaShipping", true));
+            this.chkIncludeSeaShipping.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIncludeSeaShipping.Location = new System.Drawing.Point(584, 67);
+            this.chkIncludeSeaShipping.Name = "chkIncludeSeaShipping";
+            this.chkIncludeSeaShipping.ReadOnly = true;
+            this.chkIncludeSeaShipping.Size = new System.Drawing.Size(160, 21);
+            this.chkIncludeSeaShipping.TabIndex = 5;
+            this.chkIncludeSeaShipping.Text = "Include Sea Shipping";
+            this.chkIncludeSeaShipping.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxNeedCreateAPP
+            // 
+            this.checkBoxNeedCreateAPP.AutoSize = true;
+            this.checkBoxNeedCreateAPP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedCreateAPP", true));
+            this.checkBoxNeedCreateAPP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBoxNeedCreateAPP.Location = new System.Drawing.Point(584, 94);
+            this.checkBoxNeedCreateAPP.Name = "checkBoxNeedCreateAPP";
+            this.checkBoxNeedCreateAPP.ReadOnly = true;
+            this.checkBoxNeedCreateAPP.Size = new System.Drawing.Size(185, 21);
+            this.checkBoxNeedCreateAPP.TabIndex = 6;
+            this.checkBoxNeedCreateAPP.Text = "Need create Air Pre-Paid";
+            this.checkBoxNeedCreateAPP.UseVisualStyleBackColor = true;
+            // 
             // B16
             // 
             this.ClientSize = new System.Drawing.Size(834, 402);
             this.EnableGridJunkColor = true;
+            this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B16";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B16. Shipping Mode";
             this.UniqueExpress = "Id";
             this.WorkAlias = "ShipMode";
@@ -164,5 +194,7 @@
         private Win.UI.DisplayBox displayDescription;
         private Win.UI.DisplayBox displayCode;
         private Win.UI.Label labelDescription;
+        private Win.UI.CheckBox chkIncludeSeaShipping;
+        private Win.UI.CheckBox checkBoxNeedCreateAPP;
     }
 }

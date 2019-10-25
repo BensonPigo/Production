@@ -411,13 +411,6 @@ order by ld.Seq1,ld.Seq2", masterID);
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
-            {
-                MyUtility.Msg.WarningBox("Sewing Line can't empty");
-                this.txtsewingline.Focus();
-                return false;
-            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["ApplyName"]))
             {
                 MyUtility.Msg.WarningBox("Handle can't empty");

@@ -15,6 +15,7 @@ namespace Sci.Production.Warehouse
         public string DESC { get; set; }
         public string StockUnit { get; set; }
         public decimal QTY { get; set; }
+        public string BalanceQty { get; set; }
         public string Location { get; set; }
         public string TotalQTY { get; set; }
     }

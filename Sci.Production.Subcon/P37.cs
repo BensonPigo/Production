@@ -118,7 +118,7 @@ from debit_detail WITH (NOLOCK) Where debit_detail.id = '{0}' order by orderid "
         private void btnDebitSchedule_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
-            var frm = new Sci.Production.Subcon.P37_DebitSchedule(false, dr["ID"].ToString(), null, null,this.CurrentMaintain);
+            var frm = new Sci.Production.Subcon.P37_DebitSchedule(false, dr["ID"].ToString(), null, null,this.CurrentMaintain,"P37");
             frm.ShowDialog(this);
             this.RenewData();
 

@@ -211,7 +211,7 @@ with tmp1stData as (
 		   , CPUFactor
 		   , StyleID
 		   , Rate
-		   , IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
+		   , IIF(Shift <> 'O' and Category NOT IN ('M','A') and LocalOrder = 1, 'I',Shift) as LastShift
 		   , MDivisionID
 	from tmp1stData
 	group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType, SCategory, LocalOrder, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID

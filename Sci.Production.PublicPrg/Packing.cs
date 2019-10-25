@@ -276,6 +276,18 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             }
 
             // 依CtnStart#排序 來計算混尺碼重量 
+            if (PackingListDetaildata.Columns.Contains("tmpKey") == false) {
+                PackingListDetaildata.Columns.Add("tmpKey", typeof(decimal));
+            }
+
+            int tmpkey = 0;
+            foreach (DataRow dr in PackingListDetaildata.Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+                dr["tmpKey"] = tmpkey;
+                tmpkey++;
+            }
             PackingListDetaildata.DefaultView.Sort = "CTNStartNo,CTNQty desc";
             DataTable dtSort = PackingListDetaildata.DefaultView.ToTable();
             foreach (DataRow dr in dtSort.Rows)
@@ -283,7 +295,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                 if(dr.RowState == DataRowState.Deleted)
                     continue;
 
-                if (!MyUtility.Check.Empty(dr["CTNQty"]))
+                if (!MyUtility.Check.Empty(dr["CTNQty"]) || ctnNo != dr["CTNStartNo"].ToString())
                 {
                     if (ctnNo != dr["CTNStartNo"].ToString())
                     {
@@ -324,7 +336,14 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                         dr["NWPerPcs"] = 0;
                     }
                 }
+                PackingListDetaildata.Select($"tmpkey = {dr["tmpkey"]}")[0]["NWPerPcs"] = dr["NWPerPcs"];
             }
+
+            if (PackingListDetaildata.Columns.Contains("tmpKey") == true)
+            {
+                PackingListDetaildata.Columns.Remove("tmpKey");
+            }
+
             //最後一筆資料也要寫入
             tmpPacklistRow = tmpPacklistWeight.NewRow();
             tmpPacklistRow["CTNStartNo"] = ctnNo;
@@ -2513,6 +2532,37 @@ where CustCD.value != @CustCD
 
                 #endregion
 
+                #region 重新計算表身每一個紙箱的材積重
+                DataRow drLocalitem;
+                string sqlLocalItem = $@"
+select 
+[BookingVW] = isnull(round(
+	(CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /6000
+,2),0)
+,[APPEstAmtVW] = isnull(round(
+	(CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /5000
+,2),0)
+from LocalItem
+outer apply(
+	select value = ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)
+) rate
+where RefNo='{dr["Refno"]}'";
+                if (MyUtility.Check.Empty(dr["CTNQty"]) || MyUtility.Convert.GetInt(dr["CTNQty"]) > 0)
+                {
+                    if (MyUtility.Check.Seek(sqlLocalItem, out drLocalitem))
+                    {
+                        dr["AppBookingVW"] = MyUtility.Convert.GetDecimal(drLocalitem["BookingVW"]) * MyUtility.Convert.GetInt(dr["CTNQty"]);
+                        dr["APPEstAmtVW"] = MyUtility.Convert.GetDecimal(drLocalitem["APPEstAmtVW"]) * MyUtility.Convert.GetInt(dr["CTNQty"]);
+                    }
+                }
+                else
+                {
+                    dr["AppBookingVW"] = 0;
+                    dr["APPEstAmtVW"] = 0;
+                }
+
+                #endregion
+
                 #region 重算表身Grid的Bal. Qty
 
                 // 目前還有多少衣服尚未裝箱
@@ -2696,13 +2746,20 @@ into g
             return true;
         }
 
-        public static DualResult P03_UpdateGMT(DataRow currentMaintain)
+        public static DualResult P03_UpdateGMT(DataRow currentMaintain, DataTable detailDatas)
         {
             DualResult result = new DualResult(true);
             if (!MyUtility.Check.Empty(currentMaintain["INVNo"]))
             {
                 string sqlCmd = string.Format(
-                    @"select isnull(sum(ShipQty),0) as ShipQty,isnull(sum(CTNQty),0) as CTNQty,isnull(sum(NW),0) as NW,isnull(sum(GW),0) as GW,isnull(sum(NNW),0) as NNW,isnull(sum(CBM),0) as CBM
+                    @"
+select 
+ isnull(sum(ShipQty),0) as ShipQty
+,isnull(sum(CTNQty),0) as CTNQty
+,isnull(sum(NW),0) as NW
+,isnull(sum(GW),0) as GW
+,isnull(sum(NNW),0) as NNW
+,isnull(sum(CBM),0) as CBM
 from PackingList WITH (NOLOCK) 
 where INVNo = '{0}'
 and ID != '{1}'",
@@ -2768,6 +2825,40 @@ where ID = @INVNo";
                     DualResult failResult = new DualResult(false, "Select PackingList fail!!\r\n" + result.ToString());
                     return failResult;
                 }
+
+                #region 重新計算同Garment Booking 紙箱的材積總重
+                DataRow dr;
+                decimal BookingVW = 0;
+                decimal APPEstAmtVW = 0;
+                string sqlcmd = $@"
+select [BookingVW] = isnull(sum(p2.APPBookingVW),0)
+,[APPEstAmtVW] = isnull(sum(p2.APPEstAmtVW),0)
+from PackingList p1
+inner join PackingList_Detail p2 on p1.ID=p2.ID
+where p1.INVNo='{currentMaintain["INVNo"]}'
+and p1.id !='{currentMaintain["ID"]}'";
+                if (MyUtility.Check.Seek(sqlcmd, out dr))
+                {
+                    BookingVW = MyUtility.Convert.GetDecimal(dr["BookingVW"]);
+                    APPEstAmtVW = MyUtility.Convert.GetDecimal(dr["APPEstAmtVW"]);
+                }
+
+                BookingVW += MyUtility.Convert.GetDecimal(detailDatas.Compute("sum(APPBookingVW)", string.Empty));
+                APPEstAmtVW += MyUtility.Convert.GetDecimal(detailDatas.Compute("sum(APPEstAmtVW)", string.Empty));
+
+                string updateSqlCmd = $@"
+update GMTBooking
+set TotalAPPBookingVW = {BookingVW}
+,TotalAPPEstAmtVW = {APPEstAmtVW}
+where ID = '{currentMaintain["INVNo"]}'";
+
+                if (!(result = DBProxy.Current.Execute(string.Empty, updateSqlCmd)))
+                {
+                    DualResult failResult = new DualResult(false, "Update Garment Booking fail!\r\n" + result.ToString());
+                    return failResult;
+                }
+                #endregion
+
             }
             return result;
         }

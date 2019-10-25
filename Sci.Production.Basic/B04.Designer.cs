@@ -57,6 +57,8 @@
             this.chkisSubcon = new Sci.Win.UI.CheckBox();
             this.chkisMisc = new Sci.Win.UI.CheckBox();
             this.chkIsSintexSubcon = new Sci.Win.UI.CheckBox();
+            this.txtEmail = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -67,10 +69,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(893, 407);
+            this.detail.Size = new System.Drawing.Size(893, 439);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.txtEmail);
             this.detailcont.Controls.Add(this.chkIsSintexSubcon);
             this.detailcont.Controls.Add(this.chkisMisc);
             this.detailcont.Controls.Add(this.chkisSubcon);
@@ -100,12 +104,12 @@
             this.detailcont.Controls.Add(this.labelNationality);
             this.detailcont.Controls.Add(this.labelAbbreviation);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(893, 369);
+            this.detailcont.Size = new System.Drawing.Size(893, 401);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 369);
+            this.detailbtm.Location = new System.Drawing.Point(0, 401);
             this.detailbtm.Size = new System.Drawing.Size(893, 38);
             // 
             // browse
@@ -114,7 +118,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(901, 436);
+            this.tabs.Size = new System.Drawing.Size(901, 468);
             // 
             // createby
             // 
@@ -188,7 +192,7 @@
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Location = new System.Drawing.Point(28, 263);
+            this.labelCurrency.Location = new System.Drawing.Point(28, 294);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(125, 23);
             this.labelCurrency.TabIndex = 7;
@@ -196,7 +200,7 @@
             // 
             // labelPaymentTerm
             // 
-            this.labelPaymentTerm.Location = new System.Drawing.Point(28, 290);
+            this.labelPaymentTerm.Location = new System.Drawing.Point(28, 321);
             this.labelPaymentTerm.Name = "labelPaymentTerm";
             this.labelPaymentTerm.Size = new System.Drawing.Size(125, 23);
             this.labelPaymentTerm.TabIndex = 8;
@@ -204,7 +208,7 @@
             // 
             // labelWHoldingRate
             // 
-            this.labelWHoldingRate.Location = new System.Drawing.Point(28, 317);
+            this.labelWHoldingRate.Location = new System.Drawing.Point(28, 348);
             this.labelWHoldingRate.Name = "labelWHoldingRate";
             this.labelWHoldingRate.Size = new System.Drawing.Size(125, 23);
             this.labelWHoldingRate.TabIndex = 9;
@@ -336,7 +340,7 @@
             // 
             this.txtpayterm_ftyPaymentTerm.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermID", true));
             this.txtpayterm_ftyPaymentTerm.DisplayBox1Binding = "";
-            this.txtpayterm_ftyPaymentTerm.Location = new System.Drawing.Point(156, 290);
+            this.txtpayterm_ftyPaymentTerm.Location = new System.Drawing.Point(156, 321);
             this.txtpayterm_ftyPaymentTerm.Name = "txtpayterm_ftyPaymentTerm";
             this.txtpayterm_ftyPaymentTerm.Size = new System.Drawing.Size(384, 23);
             this.txtpayterm_ftyPaymentTerm.TabIndex = 11;
@@ -348,7 +352,7 @@
             this.txtCurrency.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID", true));
             this.txtCurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCurrency.IsSupportSytsemContextMenu = false;
-            this.txtCurrency.Location = new System.Drawing.Point(156, 263);
+            this.txtCurrency.Location = new System.Drawing.Point(156, 294);
             this.txtCurrency.Name = "txtCurrency";
             this.txtCurrency.Size = new System.Drawing.Size(40, 23);
             this.txtCurrency.TabIndex = 10;
@@ -368,7 +372,7 @@
             this.numWHoldingTerm.BackColor = System.Drawing.Color.White;
             this.numWHoldingTerm.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WithHoldingRate", true));
             this.numWHoldingTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numWHoldingTerm.Location = new System.Drawing.Point(156, 317);
+            this.numWHoldingTerm.Location = new System.Drawing.Point(156, 348);
             this.numWHoldingTerm.Name = "numWHoldingTerm";
             this.numWHoldingTerm.NullValue = new decimal(new int[] {
             0,
@@ -431,9 +435,28 @@
             this.chkIsSintexSubcon.Text = "Is Sintex Subcon";
             this.chkIsSintexSubcon.UseVisualStyleBackColor = true;
             // 
+            // txtEmail
+            // 
+            this.txtEmail.BackColor = System.Drawing.Color.White;
+            this.txtEmail.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtEmail.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Email", true));
+            this.txtEmail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtEmail.Location = new System.Drawing.Point(156, 265);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(317, 23);
+            this.txtEmail.TabIndex = 19;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(28, 265);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(125, 23);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "E-mail";
+            // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(901, 469);
+            this.ClientSize = new System.Drawing.Size(901, 501);
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "txtTel";
             this.DefaultOrder = "ID";
@@ -492,5 +515,7 @@
         private Win.UI.CheckBox chkisSubcon;
         private Win.UI.CheckBox chkIsShipping;
         private Win.UI.CheckBox chkIsSintexSubcon;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtEmail;
     }
 }

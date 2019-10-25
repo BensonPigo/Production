@@ -86,7 +86,11 @@ select
 	,[Destination] = (select id+'-'+Alias from Country where Id=o.Dest)
 	,o.GMTComplete
 	,ShortageQty=iif(o.GMTComplete='S', isnull(o.Qty,0)-isnull(o.FOCQty,0)-isnull(PulloutQty.OrderQty,0)+isnull(inv.DiffQty,0),null)
-	,p.Remark
+	,[Category]=Category.Value--**
+    ,[OutstandingReason]=OutstandingRemark.Value
+	,[EstPODD]=o.EstPODD
+	,[ReasonRemark]=o.OutstandingRemark
+	,[PackingListRemark]=p.Remark
 from Orders o
 inner join Order_QtyShip oq on o.ID=oq.Id
 left join Brand b on b.id=o.BrandID
@@ -103,6 +107,15 @@ outer apply(
 	where oq.BuyerDelivery between BeginDate and EndDate 
 	and FactoryId = o.FactoryID 
 	and BrandID = o.BrandID
+	and SeasonID = o.SeasonID
+)fs1
+outer apply(
+	Select ShipperID =isnull(fs1.ShipperID,ShipperID)
+	from FtyShipper_Detail  
+	where oq.BuyerDelivery between BeginDate and EndDate 
+	and FactoryId = o.FactoryID 
+	and BrandID = o.BrandID
+	and SeasonID = ''
 )fs
 outer apply(
 	select sum(CTNQty) CTNQty , sum(GW) gw
@@ -148,6 +161,16 @@ outer apply(
 	where exists(select 1 from GMTBooking where id = ia.GarmentInvoiceID)
 	and ia.OrderID = o.ID and ia.OrderShipmodeSeq = oq.Seq
 )inv
+outer apply(
+	select[Value]=d.Name
+	from DropDownList d
+	where d.Type='Category' AND d.ID = o.Category
+)Category
+outer apply(
+	select[Value]=d.Name
+	from Reason d
+	where d.ReasonTypeID = 'Delivery_OutStand' AND d.ID = o.OutstandingReason
+)OutstandingRemark
 where o.localOrder = 0
 and (p.INVNo ='' or p.INVNo is null)
 and not exists(
@@ -214,6 +237,7 @@ and f.IsProduceFty = 1
             if (!this.GMTCompleteShortage)
             {
                 sqlcmd += $@" and isnull(o.GMTComplete,'') <> 'S' ";
+                sqlcmd += $@" and isnull(o.GMTComplete,'') <> 'C' ";
             }
 
             if (!this.FOC)

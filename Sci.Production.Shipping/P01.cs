@@ -691,6 +691,7 @@ select o.FactoryID
        , o.MRHandle
        , o.SMR
        , b.ShipLeader
+       , o.Category
 from Orders o WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 left join PO p WITH (NOLOCK) on p.ID = o.POID
@@ -795,6 +796,20 @@ where Id = '{orderID}'
                             this.numOrderQty.Value = MyUtility.Convert.GetInt(orderQtyData.Rows[0]["Qty"]);
                             this.CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyData.Rows[0]["Qty"]);
                             this.dateBuyerDelivery.Value = Convert.ToDateTime(orderQtyData.Rows[0]["BuyerDelivery"]);
+                            if (string.Compare(orderData["Category"].ToString(), "S", true) != 0)
+                            {
+                                DataRow drPacking;
+                                string sqlcmd = $@"
+select GW = ISNULL(sum(gw),0),APPEstAmtVW = ISNULL(sum(APPEstAmtVW),0)  
+from PackingList_Detail
+where OrderID = '{orderID}' and OrderShipmodeSeq = '{orderQtyData.Rows[0]["Seq"]}'
+";
+                                if (MyUtility.Check.Seek(sqlcmd, out drPacking))
+                                {
+                                    this.CurrentMaintain["GW"] = drPacking["GW"];
+                                    this.CurrentMaintain["VW"] = drPacking["APPEstAmtVW"];
+                                }
+                            }
                         }
                         else
                         {
@@ -817,6 +832,21 @@ where Id = '{orderID}'
                                 this.numOrderQty.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
                                 this.CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
                                 this.dateBuyerDelivery.Value = Convert.ToDateTime(orderQtyShipData[0]["BuyerDelivery"]);
+
+                                if (string.Compare(orderData["Category"].ToString(), "S", true) != 0)
+                                {
+                                    DataRow drPacking;
+                                    string sqlcmd = $@"
+select GW = ISNULL(sum(gw),0),APPEstAmtVW = ISNULL(sum(APPEstAmtVW),0)  
+from PackingList_Detail
+where OrderID = '{orderID}' and OrderShipmodeSeq = '{item.GetSelectedString()}'
+";
+                                    if (MyUtility.Check.Seek(sqlcmd, out drPacking))
+                                    {
+                                        this.CurrentMaintain["GW"] = drPacking["GW"];
+                                        this.CurrentMaintain["VW"] = drPacking["APPEstAmtVW"];
+                                    }
+                                }
                             }
                         }
                     }

@@ -218,7 +218,7 @@ and Factory.IsProduceFty=1", this.txtFOCPL.Text);
                 }
 
                 insertCmds.Add(string.Format(
-                    @"insert into Express_Detail(ID,OrderID,Seq1,SeasonID,StyleID,Description,Qty,NW,CTNNo,Category,DutyNo,Price,UnitID,Receiver,BrandID,Leader,InCharge,AddName,AddDate)
+                    @"insert into Express_Detail(ID,OrderID,Seq1,SeasonID,StyleID,Description,Qty,NW,CTNNo,Category,PackingListID,Price,UnitID,Receiver,BrandID,Leader,InCharge,AddName,AddDate)
  values('{0}','{1}',(select ISNULL(RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3),'001')
 from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{7}','1','{8}',{9},'{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
                                             MyUtility.Convert.GetString(this.masterData["ID"]),

@@ -28,6 +28,7 @@ namespace Sci.Production.Subcon
             comboload();
             this.comboFactory.setDataSource();
             this.comboRFIDProcessLocation.setDataSource();
+            this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
         //string date = "";
@@ -176,7 +177,7 @@ Select
                 {
                     sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
                 }
-                if (!MyUtility.Check.Empty(this.processLocation))
+                if (this.processLocation != "ALL")
                 {
                     sqlCmd.Append(string.Format(@" and bt.RFIDProcessLocationID = '{0}'", this.processLocation));
                 }
@@ -191,7 +192,7 @@ Select
                     BundleTransfer_Where += $@" and (bt.SubprocessId in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')" + Environment.NewLine;
                 }
 
-                if (!MyUtility.Check.Empty(this.processLocation))
+                if (this.processLocation != "ALL")
                 {
                     BundleTransfer_Where += $@" and bt.RFIDProcessLocationID = '{this.processLocation}'" + Environment.NewLine;
                 }
@@ -209,7 +210,7 @@ Select
 SELECT 
 RFIDProcessLocationID ,Type ,TagId ,TransferDate ,PanelNo ,BundleNo ,RFIDReaderId ,SubprocessId ,LocationID ,CutCellID
 INTO #BundleTransfer
-FROM BundleTransfer bt
+FROM BundleTransfer bt WITH (NOLOCK)
 WHERE 1=1
 ");
 
@@ -232,7 +233,7 @@ SELECT
 			,item
 			,bd.PatternCode,bd.PatternDesc,bd.BundleGroup,bd.SizeCode,b.Qty
 INTO #BundleAll
-FROM Bundle b
+FROM Bundle b WITH (NOLOCK)
 LEFT JOIN Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
 WHERE 1=1
 AND  EXISTS(SELECT 1 FROM #BundleTransfer WHERE BundleNo=bd.bundleNo)
@@ -308,30 +309,6 @@ Select
                 {
                     sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
                 }
-
-                #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(CutRef1) && (!MyUtility.Check.Empty(CutRef1)))
-                {
-                    sqlCmd.Append(string.Format(@" and ba.CutRef between '{0}' and '{1}'", CutRef1, CutRef2));
-                }
-                if (!MyUtility.Check.Empty(SP))
-                {
-                    sqlCmd.Append(string.Format(@" and ba.Orderid = '{0}'", SP));
-                }
-                if (!MyUtility.Check.Empty(dateBundle1))
-                {
-                    sqlCmd.Append(string.Format(@" and ba.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(dateBundle2))
-                {
-                    sqlCmd.Append(string.Format(@" and ba.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(M))
-                {
-                    sqlCmd.Append(string.Format(@" and ba.MDivisionid = '{0}'", M));
-                }
-                #endregion
-
 
                 sqlCmd.Append("--Replace2 " + Environment.NewLine + "DROP TABLE #BundleTransfer,#BundleAll");
             }

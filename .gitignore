@@ -97,5 +97,14 @@ SNPAutoTransferToSewingOutput.Daily/obj/
 obj/Debug
 ImportSewingDailyOutput.Daily/ImportSewingDailyOutput.Daily/bin
 ImportSewingDailyOutput.Daily/ImportSewingDailyOutput.Daily/obj
+<<<<<<< HEAD
 db.lock
 storage.ide
+ImportSewingLineSchedule.Daily/.vs/
+ImportSewingLineSchedule.Daily/ImportSewingLineSchedule.Daily/bin/
+ImportSewingLineSchedule.Daily/ImportSewingLineSchedule.Daily/obj/
+=======
+MarkerFile.Hourly/bin/Debug
+MarkerFile.Hourly/bin/obj
+MarkerFile.Hourly/obj/
+>>>>>>> HotFix/ISP20191110

@@ -153,6 +153,12 @@
     <Compile Include="B03.Designer.cs">
       <DependentUpon>B03.cs</DependentUpon>
     </Compile>
+    <Compile Include="B04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B04.Designer.cs">
+      <DependentUpon>B04.cs</DependentUpon>
+    </Compile>
     <Compile Include="B40_RFIDReaderSetting.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,6 +176,12 @@
     </Compile>
     <Compile Include="B41.Designer.cs">
       <DependentUpon>B41.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P30_Qty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P30_Qty.Designer.cs">
+      <DependentUpon>P30_Qty.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_IrregularPriceReason.cs">
       <SubType>Form</SubType>
@@ -655,6 +667,9 @@
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B04.resx">
+      <DependentUpon>B04.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B40_RFIDReaderSetting.resx">
       <DependentUpon>B40_RFIDReaderSetting.cs</DependentUpon>
     </EmbeddedResource>
@@ -712,6 +727,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P30_Print.rdlc" />
     <EmbeddedResource Include="P30_Print_ByRefno.rdlc" />
+    <EmbeddedResource Include="P30_Qty.resx">
+      <DependentUpon>P30_Qty.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P32.resx">
       <DependentUpon>P32.cs</DependentUpon>
     </EmbeddedResource>

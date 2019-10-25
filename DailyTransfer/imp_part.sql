@@ -94,7 +94,8 @@ t.AddName= s.AddName,
 t.AddDate= s.AddDate,
 t.EditName= s.EditName,
 t.EditDate= s.EditDate,
-t.DescriptionDetail = s.DescriptionDetail
+t.DescriptionDetail = s.DescriptionDetail,
+t.PurchaseBatchQty = s.BatchQty
 
 	when not matched by target and s.type='O' then 
 		insert ( ID
@@ -116,7 +117,8 @@ t.DescriptionDetail = s.DescriptionDetail
 ,AddDate
 ,EditName
 ,EditDate
-,DescriptionDetail	)
+,DescriptionDetail
+,PurchaseBatchQty	)
 
 values(s.refno,
 s.Model,
@@ -137,7 +139,8 @@ s.AddName,
 s.AddDate,
 s.EditName,
 s.EditDate,
-s.DescriptionDetail
+s.DescriptionDetail,
+s.BatchQty
  );
 
  
@@ -356,6 +359,12 @@ s.DescriptionDetail
 	INNER JOIN  Trade_To_Pms.DBO.MmsPO C ON B.ID=C.ID
 	WHERE C.Type ='O'
 	and C.FactoryID in (select id from @Sayfty)
+
+	UPDATE a
+	SET Junk = b.Cancel
+	FROM Machine.dbo.MiscPO_Detail a
+	INNER JOIN Trade_To_Pms.dbo.MmsReq_Detail b ON a.ID = b.ID
+
 	-- ------------MachinePO--------------------
 	declare @T table (id varchar(13))
 
@@ -420,7 +429,8 @@ update t
 		t.Foc=s.Foc,
 		t.ShipQty=s.ShipQty,
 		t.ShipFoc=s.ShipFoc,
-		t.ShipETA=s.ShipETA
+		t.ShipETA=s.ShipETA,
+		t.Junk = s.Junk
 		from  Machine.dbo.MiscPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
