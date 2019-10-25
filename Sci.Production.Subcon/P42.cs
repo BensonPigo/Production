@@ -340,26 +340,66 @@ select
 	b.Orderid,
 	b.BundleNo,
 	b.subProcessid,
-	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
-					when b.InOutRule = 2 and bio.OutGoing is not null then 1
-					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
-						and bio.InComing is not null and bio.OutGoing is not null then 1
-					else 0
-				end
-into #tmpBundleNo_Complete
+	b.InOutRule 
+	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
+	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+into #tmpBundleNo_Complete2
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+
+
+SELECT Orderid,	BundleNo,InOutRule,SubProcessID
+,[CompleteCount]=CompleteCount.Value
+,[NotYetCount]=NotYetCount.Value
+,[OnGoingCount]=OnGoingCount.Value
+INTO #tmpBundleNo_Complete
+FROM #tmpBundleNo_Complete2 t
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND (
+			(HasInComing='true' AND HasOutGoing='true') OR
+			(InOutRule = '1' AND HasInComing='true') OR
+			(InOutRule = '2' AND HasOutGoing='true')
+		)
+)CompleteCount
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND (
+			(HasInComing!='true' AND HasOutGoing!='true') OR
+			(InOutRule = '1' AND HasInComing='false') OR
+			(InOutRule = '2' AND HasOutGoing='false')
+		)
+)NotYetCount
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND ( (HasInComing='true' AND HasOutGoing!='true') OR (HasInComing!='true' AND HasOutGoing='true'))
+	AND InOutRule NOT IN ('1','2')
+)OnGoingCount
 
 select
 	t.Orderid,
 	t.SubProcessID,
-	Status=case when MIN(isComplete)=1 then 'Complete'
-				when sum(isComplete)>0 then 'OnGoing'
-				when sum(isComplete)=0 then 'Not Yet Load'
+	Status=case when CompleteCount > 0 AND OnGoingCount=0 AND NotYetCount=0 then 'Complete'
+				when NotYetCount > 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
+				ELSE 'OnGoing'
 				end
 into #tmp
 from #tmpBundleNo_Complete t
-group by t.SubProcessID,t.Orderid
 
 declare @sql nvarchar(max)=N'
 select Orderid,'+@Col+N'
@@ -388,7 +428,7 @@ outer apply(
 '
 exec(@sql)
 
-drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2
 ";
             }
             else
@@ -487,28 +527,73 @@ select
 	b.Sizecode,
 	b.BundleNo,
 	b.subProcessid,
-	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
-					when b.InOutRule = 2 and bio.OutGoing is not null then 1
-					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
-						and bio.InComing is not null and bio.OutGoing is not null then 1
-					else 0
-				end
-into #tmpBundleNo_Complete
+	b.InOutRule 
+	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
+	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+into #tmpBundleNo_Complete2
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+
+SELECT Orderid,	Article,Sizecode,BundleNo,InOutRule,SubProcessID
+,[CompleteCount]=CompleteCount.Value
+,[NotYetCount]=NotYetCount.Value
+,[OnGoingCount]=OnGoingCount.Value
+INTO #tmpBundleNo_Complete
+FROM #tmpBundleNo_Complete2 t
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND Article=t.Article
+	AND Sizecode=t.Sizecode
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND (
+			(HasInComing='true' AND HasOutGoing='true') OR
+			(InOutRule = '1' AND HasInComing='true') OR
+			(InOutRule = '2' AND HasOutGoing='true')
+		)
+)CompleteCount
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND Article=t.Article
+	AND Sizecode=t.Sizecode
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND (
+			(HasInComing!='true' AND HasOutGoing!='true') OR
+			(InOutRule = '1' AND HasInComing='false') OR
+			(InOutRule = '2' AND HasOutGoing='false')
+		)
+)NotYetCount
+OUTER APPLY(
+	SELECT Value=COUNT(Orderid)
+	FROM #tmpBundleNo_Complete2 
+	WHERE Orderid=t.Orderid 
+	AND Article=t.Article
+	AND Sizecode=t.Sizecode
+	AND SubProcessID=t.SubProcessID
+	AND InOutRule=t.InOutRule
+	AND SubProcessID=t.SubProcessID
+	AND ( (HasInComing='true' AND HasOutGoing!='true') OR (HasInComing!='true' AND HasOutGoing='true'))
+	AND InOutRule NOT IN ('1','2')
+)OnGoingCount
 
 select
 	t.Orderid,
 	t.Article,
 	t.Sizecode,
 	t.SubProcessID,
-	Status=case when MIN(isComplete)=1 then 'Complete'
-				when sum(isComplete)>0 then 'OnGoing'
-				when sum(isComplete)=0 then 'Not Yet Load'
+	Status=case when CompleteCount > 0 AND OnGoingCount=0 AND NotYetCount=0 then 'Complete'
+				when NotYetCount > 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
+				ELSE 'OnGoing'
 				end
 into #tmp
 from #tmpBundleNo_Complete t
-group by t.SubProcessID,t.Orderid,t.Article,t.Sizecode
 
 declare @sql nvarchar(max)=N'
 select Orderid,Article,Sizecode,'+@Col+N'
@@ -538,7 +623,7 @@ outer apply(
 '
 exec(@sql)
 
-drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2
 ";
             }
             DataTable dt;
@@ -598,7 +683,17 @@ outer apply(
 )w
 where o.ID ='{drSelected["OrderID"]}'
 
-select b.Orderid,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
+select   b.Orderid
+        ,bd.BundleNo
+        ,s.SubProcessID
+        ,s.ShowSeq
+        ,s.InOutRule
+        ,s.IsRFIDDefault
+        ,b.IsEXCESS
+        ,bd.PatternDesc
+        ,b.Article
+        ,bd.BundleGroup
+        ,bd.SizeCode
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
@@ -609,13 +704,33 @@ cross join(
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
 )s
 
-select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
+select   Orderid
+        ,BundleNo
+        ,SubProcessID
+        ,ShowSeq
+        ,InOutRule
+        ,IsRFIDDefault
+        ,IsEXCESS
+        ,PatternDesc
+        ,Article
+        ,BundleGroup
+        ,SizeCode
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo
 
 union
 
-select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
+select   Orderid
+        ,bda.BundleNo
+        ,bda.SubProcessID
+        ,s.ShowSeq
+        ,s.InOutRule
+        ,s.IsRFIDDefault
+        ,IsEXCESS
+        ,PatternDesc
+        ,Article
+        ,BundleGroup
+        ,SizeCode
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -624,33 +739,41 @@ select
 	b.Orderid,
 	b.BundleNo,
 	b.subProcessid,
-	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
-					when b.InOutRule = 2 and bio.OutGoing is not null then 1
-					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
-						and bio.InComing is not null and bio.OutGoing is not null then 1
-					else 0
-				end,
+
 	IsEXCESS
+    ,PatternDesc
+    ,Article
+    ,BundleGroup
+    ,SizeCode
+	,b.InOutRule 
+	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
+	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
 where b.subProcessid='{subProcess}'
 
 select
-	t.BundleNo,
-	b.Qty,
-	EXCESS=iif(IsEXCESS=1,'Y',''),
-	Status=case when MIN(isComplete)=1 then 'Complete'
-				when sum(isComplete)>0 then 'OnGoing'
-				when sum(isComplete)=0 then 'Not Yet Load'
-				end
+	t.BundleNo
+	,b.Qty
+	,EXCESS=iif(IsEXCESS=1,'Y','')
+    ,PatternDesc
+    ,Article
+    ,BundleGroup
+    ,SizeCode
+	,Status=case when (HasInComing='true' AND HasOutGoing='true') OR (InOutRule = '1' AND HasInComing='true' ) OR (InOutRule = '2' AND HasOutGoing='true' )then 'Complete'		
+			  	 when (HasInComing='false' AND HasOutGoing='false') OR (InOutRule = '1' AND HasInComing='false' ) OR (InOutRule = '2' AND HasOutGoing='false' )then 'Not Yet Load'
+			 	 when InOutRule='3' AND HasInComing='true' AND HasOutGoing='false' then 'OnGoing'				
+				 when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				
+				 ELSE 'Not Valid'
+			 end
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
 	from Bundle_Detail bd with(nolock)
 	where bd.BundleNo = t.BundleNo
 )b
-group by t.SubProcessID,t.Orderid,t.BundleNo,b.qty,IsEXCESS
+
 order by t.BundleNo
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
@@ -700,7 +823,18 @@ outer apply(
 where o.ID ='{drSelected["OrderID"]}' and oq.Article='{drSelected["Article"]}' and oq.SizeCode='{drSelected["SizeCode"]}'
 
 
-select b.Orderid,b.Article,b.Sizecode,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
+select   b.Orderid
+        ,b.Article
+        ,b.Sizecode
+        ,bd.BundleNo
+        ,s.SubProcessID
+        ,s.ShowSeq
+        ,s.InOutRule
+        ,s.IsRFIDDefault
+        ,b.IsEXCESS
+        ,bd.PatternDesc
+        ,bd.BundleGroup
+        ,[BD_SizeCode]=bd.SizeCode
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
@@ -713,12 +847,18 @@ cross join(
 
 
 select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
+    ,PatternDesc
+    ,BundleGroup
+    ,[BD_SizeCode]
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo
 
 union
 
 select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
+    ,PatternDesc
+    ,BundleGroup
+    ,[BD_SizeCode]
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -729,26 +869,32 @@ select
 	b.Sizecode,
 	b.BundleNo,
 	b.subProcessid,
-	isComplete=case when b.InOutRule = 1 and bio.InComing is not null then 1
-					when b.InOutRule = 2 and bio.OutGoing is not null then 1
-					when (b.InOutRule = 0 or b.InOutRule = 3 or b.InOutRule = 4 )
-						and bio.InComing is not null and bio.OutGoing is not null then 1
-					else 0
-				end,
 	IsEXCESS
+    ,PatternDesc
+    ,BundleGroup
+    ,[BD_SizeCode]
+	,b.InOutRule 
+	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
+	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
 where b.subProcessid='{subProcess}'
 
 select
-	[Bundle#]=t.BundleNo,
-	b.Qty,
-	EXCESS=iif(IsEXCESS=1,'Y',''),
-	Status=case when MIN(isComplete)=1 then 'Complete'
-				when sum(isComplete)>0 then 'OnGoing'
-				when sum(isComplete)=0 then 'Not Yet Load'
-				end
+	[Bundle#]=t.BundleNo
+	,b.Qty
+	,EXCESS=iif(IsEXCESS=1,'Y','')
+    ,PatternDesc
+    ,Article
+    ,BundleGroup
+    ,SizeCode
+	,Status=case when (HasInComing='true' AND HasOutGoing='true') OR (InOutRule = '1' AND HasInComing='true' ) OR (InOutRule = '2' AND HasOutGoing='true' )then 'Complete'		
+			  	 when (HasInComing='false' AND HasOutGoing='false') OR (InOutRule = '1' AND HasInComing='false' ) OR (InOutRule = '2' AND HasOutGoing='false' )then 'Not Yet Load'
+			 	 when InOutRule='3' AND HasInComing='true' AND HasOutGoing='false' then 'OnGoing'				
+				 when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				
+				 ELSE 'Not Valid'
+			 end
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
@@ -756,7 +902,6 @@ outer apply(
 	inner join Bundle b WITH (NOLOCK) on b.id = bd.Id
 	where bd.BundleNo = t.BundleNo and b.Article = t.Article and b.Sizecode = t.Sizecode
 )b
-group by t.SubProcessID,t.Orderid,t.BundleNo,t.Article,t.Sizecode,b.qty,IsEXCESS
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 ";
@@ -771,7 +916,48 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
                 return;
             }
 
-            MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: caption);
+            #region 準備要傳入元件的Grid
+
+
+            this.listControlBindingSource2.DataSource = dt;
+            this.grid2.Columns.Clear();
+            //準備Grid 2
+            this.Helper.Controls.Grid.Generator(this.grid2)
+            .Text("Bundle#", header: "BundleNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("EXCESS", header: "EXCESS", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("PatternDesc", header: "PatternDesc", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("BundleGroup", header: "BundleGroup", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SizeCode", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            ;
+            this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
+
+            #endregion
+
+
+            MyUtility.Msg.ShowMsgGrid_LockScreen(this.grid2, caption: caption,eventname:new string[] { "CellFormatting" });
         }
+        
+        private void grid2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+
+
+            switch (MyUtility.Convert.GetString(e.Value))
+            {
+                case "OnGoing":
+                    e.CellStyle.BackColor = Color.Yellow;
+                    break;
+                case "Not Valid":
+                    e.CellStyle.BackColor = Color.Red;
+                    break;
+                default:
+                    break;
+            }
+
+            
+        }
+        
     }
 }
