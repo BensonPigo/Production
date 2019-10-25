@@ -30,6 +30,9 @@ namespace Sci.Production.Warehouse
                 case "I":
                     this.Text = "P03_StockLocation";
                     break;
+                case "O":
+                    this.Text = "P03_CrapLocation";
+                    break;
             }
 
             this.Text += string.Format(" ({0}-{1}- {2})", dr["id"].ToString()
@@ -80,7 +83,7 @@ order by EditName,ID"
             
             Helper.Controls.Grid.Generator(this.gridBulkLocationTransaction)
                 .Date("issuedate", header: "Date", width: Widths.AnsiChars(10))
-                 .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
+                 .Text("id", header: "Transaction ID", width: Widths.AnsiChars(14))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Text("FromLocation", header: "Original Loc.", width: Widths.AnsiChars(15))
                  .Text("ToLocation", header: "New Loc.", width: Widths.AnsiChars(15))

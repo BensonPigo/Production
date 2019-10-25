@@ -52,7 +52,7 @@ namespace Sci.Production.Shipping
             .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Numeric("Amount", header: "Expense", decimal_places: 2, iseditingreadonly: true)
             .Text("ShippingAPID", header: "A/P No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("DebitID", header: "Debit Note", width: Widths.AnsiChars(15))
+            .Text("DebitID", header: "SD/ICR/DB #", width: Widths.AnsiChars(15))
             ;
             this.Query();
         }
@@ -110,12 +110,12 @@ where se.WKNo = '{0}' and se.junk=0", this.id);
                 bool checkResult = true;
                 for (int i = 0; i <= this.gridExpenseData.Rows.Count-1; i++)
                 {
-                    string DebitNote = this.gridExpenseData.Rows[i].Cells[4].Value.ToString();
+                    string DebitNote = this.gridExpenseData.Rows[i].Cells[5].Value.ToString();
                     if (MyUtility.Check.Empty(DebitNote))
                     {
                         continue;
                     }
-                    if (DebitNote.Length != 13 || !DebitNote.StartsWith("SD") )
+                    if (DebitNote.Length != 13 || !(DebitNote.StartsWith("SD") || DebitNote.StartsWith("IC") || DebitNote.StartsWith("DB")))
                     {
                         checkResult = false;
                     }

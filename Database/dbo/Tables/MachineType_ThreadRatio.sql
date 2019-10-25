@@ -2,8 +2,7 @@
     [ID]              VARCHAR (10)   CONSTRAINT [DF_MachineType_ThreadRatio_ID] DEFAULT ('') NOT NULL,
     [SEQ]             VARCHAR (2)    CONSTRAINT [DF_MachineType_ThreadRatio_SEQ] DEFAULT ('') NOT NULL,
     [ThreadLocation]  VARCHAR (20)   CONSTRAINT [DF_MachineType_ThreadRatio_ThreadLocation] DEFAULT ('') NULL,
-    [UseRatio]        VARCHAR (15)   CONSTRAINT [DF_MachineType_ThreadRatio_UseRatio] DEFAULT ('') NULL,
-    [UseRatioNumeric] NUMERIC (5, 2) CONSTRAINT [DF_MachineType_ThreadRatio_UseRatioNumeric] DEFAULT ((0)) NULL,
+    [UseRatio] NUMERIC (5, 2) CONSTRAINT [DF_MachineType_ThreadRatio_UseRatioNumeric] DEFAULT ((0)) NULL,
     [Allowance]       NUMERIC (4, 2) NULL,
     CONSTRAINT [PK_MachineType_ThreadRatio] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ] ASC)
 );

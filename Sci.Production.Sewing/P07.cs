@@ -74,7 +74,8 @@ o.BuyerDelivery,
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
-pu.Status
+pu.Status,
+pd.SCICtnNo
 from  Orders o with (nolock)
 left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID
 left join PackingList p with (nolock) on p.id = pd.ID
@@ -136,7 +137,8 @@ o.BuyerDelivery,
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
-pu.Status
+pu.Status,
+pd.SCICtnNo
 from  Orders o with (nolock)
 left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID 
 left join PackingList p with (nolock) on p.id = pd.ID
@@ -210,13 +212,31 @@ where	pd.CTNStartNo != '' and
         private PackDataResult GetPackData(string PackNo, bool fromCustCTN = false)
         {
             string keyWhere = string.Empty;
+            string PackingListID = string.Empty;
+            string CTNStarNo = string.Empty;
+
+            if (PackNo.Length > 13)
+            {
+                PackingListID = PackNo.Substring(0, 13);
+                CTNStarNo = PackNo.Substring(13, PackNo.Length - 13);
+            }
+
             if (fromCustCTN == true)
             {
                 keyWhere = $"CustCTN = '{PackNo}'";
             }
             else
             {
-                keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
+                //keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
+
+                if (PackNo.Length > 13)
+                {
+                    keyWhere = $" ID = '{PackingListID}' AND CTNStartNo ='{CTNStarNo}' ";
+                }
+                else
+                {
+                    keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
+                }
             }
 
             PackDataResult packDataResult = new PackDataResult();
@@ -237,7 +257,8 @@ o.BuyerDelivery,
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
-pu.Status
+pu.Status,
+pd.SCICtnNo
 from  (select * from PackingList_Detail with (nolock) where {keyWhere} and CTNQty = 1 and DisposeFromClog= 0) pd
 inner join Orders o with (nolock) on pd.OrderID = o.ID
 left join PackingList p with (nolock) on p.id = pd.ID
@@ -386,8 +407,8 @@ where	pd.CTNStartNo != '' and
                 updSql = $@"
 update PackingList_Detail set DRYReceiveDate = null where ID = '{item["ID"]}' 
 and CTNStartNo = '{item["CTNStartNo"]}' and DisposeFromClog= 0;
-insert into DRYTransfer(TransferDate, MDivisionID, OrderID, PackingListID, CTNStartNo, TransferTo, AddName, AddDate)
-            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}', '{item["TransferTo"]}','{Env.User.UserID}',GETDATE());
+insert into DRYTransfer(TransferDate, MDivisionID, OrderID, PackingListID, CTNStartNo, TransferTo, AddName, AddDate, SCICtnNo)
+            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}', '{item["TransferTo"]}','{Env.User.UserID}',GETDATE(),'{item["SCICtnNo"]}');
 ";
                 result = DBProxy.Current.Execute(null, updSql);
                 if (result == false)

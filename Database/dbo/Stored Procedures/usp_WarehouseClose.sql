@@ -93,7 +93,7 @@ BEGIN
            ,[FromDyelot]           
 		   ,[ToMDivisionID]    ,[ToFactoryID]						,[ToPOID]					,[ToSeq1]
            ,[ToSeq2]           ,[ToRoll]							,[ToStockType]				,[ToDyelot]
-           ,[Qty])
+           ,[Qty]			   ,[ToLocation])
 		 SELECT [POID]
 			,Ukey
 			,'' [FromMDivisionID] 
@@ -113,8 +113,16 @@ BEGIN
 			,'O'	[ToStock]
 			,[Dyelot]
 			,(InQty - OutQty + AdjustQty) [Qty]
+			,[ToLocation]=( 
+							SELECT TOP 1 ID 
+							FROM MtlLocation 
+							WHERE ID = dbo.Getlocation(sd.Ukey) AND (StockType='B'  OR StockType='O' ) AND Junk=0
+							GROUP BY ID 
+							HAVING Count(StockType)=2
+						  )
 			FROM DBO.FtyInventory sd WITH (NOLOCK)
-			WHERE sd.poid = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0;
+			WHERE sd.poid = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 
+					and lock=0;
 
 		-- 更新庫存 MDivisionPoDetail & FtyInventory
 		Select sd.POID,sd.seq1,sd.Seq2,sum(ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0)) ScrapQty into #tmpScrap
@@ -142,24 +150,50 @@ BEGIN
 		drop table #tmpScrap;
 		
 		-- Insert Update FtyInventory (Scrap) 要先做Scrap倉再更新Bulk！！
-		MERGE INTO dbo.FtyInventory AS t
-		USING (SELECT poid,seq1,seq2,roll,dyelot,ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0),'O' 
+		SELECT poid,seq1,seq2,roll,dyelot,qty=ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0),stocktype='O' ,sd.Ukey
+		into #tmpFtyInventory
 		FROM dbo.FtyInventory sd WITH (NOLOCK)
-		WHERE sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0 ) 
-		AS s (poid,seq1,seq2,roll,dyelot,qty,stocktype)
-		ON ( t.poid = s.poid 
+		WHERE sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0 
+
+		declare @TB table(Ukey bigint, sourceUkey bigint)
+		
+		MERGE INTO dbo.FtyInventory AS t
+		USING #tmpFtyInventory s
+		ON  t.poid = s.poid 
 		and t.seq1 = s.seq1 
 		and t.seq2 = s.seq2 
 		and t.roll = s.roll
 		and t.dyelot = s.dyelot
-		and t.stocktype = s.stocktype)
+		and t.stocktype = s.stocktype
 		WHEN MATCHED THEN
 		UPDATE
 		SET inqty = isnull(inqty,0) + s.qty
+		;
+
+		--update insert拆開, 輸出的@TB才不會有update部分
+		MERGE INTO dbo.FtyInventory AS t
+		USING #tmpFtyInventory s
+		ON  t.poid = s.poid 
+		and t.seq1 = s.seq1 
+		and t.seq2 = s.seq2 
+		and t.roll = s.roll
+		and t.dyelot = s.dyelot
+		and t.stocktype = s.stocktype
 		WHEN NOT MATCHED THEN
 		INSERT
 		(poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty,lock )
-		VALUES (s.poid,s.seq1,s.seq2,s.roll,s.stocktype,s.dyelot,s.qty,0,0,0);
+		VALUES (s.poid,s.seq1,s.seq2,s.roll,s.stocktype,s.dyelot,s.qty,0,0,0)		
+		output inserted.Ukey,s.Ukey into @TB ;
+		--寫入Scrap的FtyInventory時一併寫入Location資訊進FtyInventory_Detail
+		Insert into FtyInventory_Detail(Ukey, MtlLocationID)
+		select f.Ukey,ToLocation=isnull(sd.ToLocation,'')
+		from @TB f
+		inner join dbo.SubTransfer_Detail sd 
+		on sd.id = @poid  and  sd.FromFtyInventoryUkey = f.sourceUkey
+		where not exists(select 1 from FtyInventory_Detail fd where f.Ukey = fd.Ukey and sd.ToLocation = fd.MtlLocationID)
+		and isnull(sd.ToLocation,'') <> ''
+		drop table #tmpFtyInventory
+
 
 		-- 更新 FtyInventory (Bulk)
 		update dbo.FtyInventory 

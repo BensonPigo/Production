@@ -18,12 +18,18 @@ namespace Sci.Production.PublicForm
         private DataTable headertb;
         private string patternukey;
         private string _cutref;
-        public GarmentList(string ukey,string cid,string cutref)
+        private string sizes;
+
+        public GarmentList(string ukey,string cid,string cutref,List<string> sizeList = null)
         {
             InitializeComponent();
             Styleyukey = ukey;
             id = cid;
             _cutref = cutref;
+            if (sizeList != null)
+            {
+                sizes = "'" + string.Join("','", sizeList) + "'";
+            }
             requery();
             gridSetup();
             this.gridGarment.AutoResizeColumns();
@@ -32,50 +38,14 @@ namespace Sci.Production.PublicForm
         {
             string patidsql ;
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
-            if (MyUtility.Check.Empty(_cutref))
+            string sizeGroup = string.Empty;
+            if (!MyUtility.Check.Empty(sizes))
             {
-                patidsql = String.Format(
-                            @"
-SELECT ukey
-FROM [Production].[dbo].[Pattern] a WITH (NOLOCK) 
-outer apply(
-	SELECT EditDate = MAX(p.EditDate)
-	from pattern p WITH (NOLOCK) 
-	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
-	where styleukey = '{0}' and Status = 'Completed' and s.PhaseID = 'Bulk'
-)b
-outer apply(
-	SELECT EditDate = MAX(p.EditDate)
-	from pattern p WITH (NOLOCK) 
-	where styleukey = '{0}' and Status = 'Completed' 
-)c
-WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
-AND a.EDITdATE = iif(b.EditDate is null,c.EditDate,b.EditDate)
-             ", Styleyukey);
+                string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{this.id}' and SizeCode IN ({this.sizes})";
+                sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
             }
-            else
-            {
-                patidsql = String.Format(
-                            @"
-select Ukey = isnull((
-	select top 1 Ukey 
-	from Pattern p WITH (NOLOCK)
-	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
-	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-	and Status = 'Completed' and s.PhaseID = 'bulk'
-	order by ActFinDate Desc
-),
-(
-	select top 1 Ukey 
-	from Pattern p WITH (NOLOCK)
-	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-	and Status = 'Completed'
-	order by ActFinDate Desc
-))
-                            ", _cutref, id);
-            }
-            
 
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{id}','{_cutref}','',{Styleyukey},'{sizeGroup}')s";
             patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion
             #region 找ArticleGroup 當Table Header

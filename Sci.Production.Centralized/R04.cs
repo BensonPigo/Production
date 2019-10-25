@@ -84,7 +84,12 @@ namespace Sci.Production.Centralized
 select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
 	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour,sd.QAQty,sd.InlineQty
 	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,''), CASE WHEN ot.IsDevSample =1 THEN 'Y' ELSE 'N' END AS IsDevSample
-	,OrderBrandID = isnull(o.BrandID,'')    ,OrderCdCodeID = isnull(o.CdCodeID,'')
+	,OrderBrandID = case 
+		when o.BrandID != 'SUBCON-I' then o.BrandID
+		when Order2.BrandID is not null then Order2.BrandID
+		when StyleBrand.BrandID is not null then StyleBrand.BrandID
+		else o.BrandID end  
+    ,OrderCdCodeID = isnull(o.CdCodeID,'')
 	,OrderProgram = isnull(o.ProgramID,'')  ,OrderCPU = isnull(o.CPU,0) ,OrderCPUFactor = isnull(o.CPUFactor,0) ,OrderStyle = isnull(o.StyleID,'') ,OrderSeason = isnull(o.SeasonID,'')
 	,MockupBrandID= isnull(mo.BrandID,'')   ,MockupCDCodeID= isnull(mo.MockupID,'')
 	,MockupProgram= isnull(mo.ProgramID,'') ,MockupCPU= isnull(mo.Cpu,0),MockupCPUFactor= isnull(mo.CPUFactor,0),MockupStyle= isnull(mo.StyleID,''),MockupSeason= isnull(mo.SeasonID,'')	
@@ -94,9 +99,10 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,OrderQty = o.Qty
     ,s.SubconOutFty
     ,s.SubConOutContractNumber
-    ,o.SubconInSisterFty
-    ,[SewingReasonDesc]=sr.SewingReasonDesc
-	,sd.Remark
+    ,o.SubconInType
+    ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'')
+	,Remark=isnull(sd.Remark,'')
+    ,o.SciDelivery
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -121,9 +127,13 @@ outer apply
 		for xml path('')
 	),1,1,'')
 )sr
+outer apply( select BrandID from orders o1 where o.CustPONo = o1.id) Order2
+outer apply( select top 1 BrandID from Style where id = o.StyleID 
+    and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
 where 1=1 
+and s.Shift <>'O'
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
-and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))
+and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and o.SubconInType in ('0','3')))
 "));
 
             if (!MyUtility.Check.Empty(this.date1))
@@ -170,53 +180,21 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
 	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
 	,Rate,StdTMS,InspectQty,RejectQty
     ,BuyerDelivery
+    ,SciDelivery
     ,OrderQty
     ,SubconOutFty
     ,SubConOutContractNumber
-    ,SubconInSisterFty
+    ,SubconInType
     ,SewingReasonDesc
     ,Remark
 into #tmpSewingGroup
 from #tmpSewingDetail
---↓計算累計天數 function table太慢直接寫在這
-select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.SewingReasonDesc
-into #stmp
-from #tmpSewingGroup t
-inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID
-inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID 
---INNER JOIN SewingReason sr ON sd.SewingReasonID=sr.ID AND sr.Type='SO'
-left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
-left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
---
-select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.SewingReasonDesc
-into #wtmp
-from #tmpSewingGroup t
-inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate and isnull(w.Hours,0) != 0
---
-select s.scOutputDate,cumulate = IIF(Count(1)=0, 1, Count(1)over(partition by s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType order by s.scOutputDate)),
-s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
-into #cl
-from #stmp s
-where s.scOutputDate >
-isnull((
-	select date = max(Date)
-	from #wtmp w 
-	left join #stmp s2 on s2.scOutputDate = w.Date and w.style = s2.style and w.SewingLineID = s2.SewingLineID and w.FactoryID = s2.FactoryID and w.Shift = s2.Shift and w.Team = s2.Team
-	and w.OrderId = s2.OrderId and w.ComboType = s2.ComboType
-	where s2.scOutputDate is null
-	and w.style = s.style and w.SewingLineID = s.SewingLineID and w.FactoryID = s.FactoryID and w.Shift = s.Shift and w.Team = s.Team and w.OrderId = s.OrderId 
-	and w.ComboType = s.ComboType
-),'1900/01/01')
-group by s.scOutputDate,s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
---↑計算累計天數
+
 select t.*,IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,
 f.Type as FtyType,f.CountryID as FtyCountry
-,CumulateDate=c.cumulate
+,CumulateDate = (select cumulate from dbo.getSewingOutputCumulateOfDays(IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.OutputDate,t.FactoryID))
 into #tmp1stFilter
 from #tmpSewingGroup t
-left join #cl c on c.style = IIF(t.Category <> 'M',OrderStyle,MockupStyle) and c.SewingLineID = t.SewingLineID and c.FactoryID = t.FactoryID 
-				and c.Shift = t.Shift and c.Team = t.Team and c.OrderId = t.OrderId and c.ComboType = t.ComboType and c.scOutputDate = t.OutputDate
 left join Factory f on t.FactoryID = f.ID
 where 1=1");
             if (!MyUtility.Check.Empty(this.category))
@@ -307,7 +285,7 @@ select * from(
 		,Shift =    CASE    WHEN t.LastShift=''D'' then ''Day''
                             WHEN t.LastShift=''N'' then ''Night''
                             WHEN t.LastShift=''O'' then ''Subcon-Out''
-                            WHEN t.LastShift=''I'' and SubconInSisterFty = 1 then ''Subcon-In(Sister)''
+                            WHEN t.LastShift=''I'' and SubconInType in (''1'',''2'') then ''Subcon-In(Sister)''
                             else ''Subcon-In(Non Sister)'' end
 		,t.SubconOutFty
         ,t.SubConOutContractNumber
@@ -315,6 +293,7 @@ select * from(
         ,t.OrderId
         ,CustPONo
         ,t.BuyerDelivery
+        ,t.SciDelivery
         ,t.OrderQty
 		,Brand = IIF(t.Category=''M'',MockupBrandID,OrderBrandID)
 		,Category = IIF(t.OrderCategory=''M'',''Mockup'',IIF(LocalOrder = 1,''Local Order'',IIF(t.OrderCategory=''B'',''Bulk'',IIF(t.OrderCategory=''S'',''Sample'',IIF(t.OrderCategory=''G'',''Garment'','''')))))
@@ -454,12 +433,12 @@ EXEC sp_executesql @lastSql
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
             {
-                start_column = 41;
+                start_column = 42;
             }
             else
             {
-                start_column = 39;
-                objSheets.get_Range("AK:AL").EntireColumn.Delete();
+                start_column = 40;
+                objSheets.get_Range("AM:AN").EntireColumn.Delete();
             }
 
             for (int i = start_column; i < this.dtAllData.Columns.Count; i++)

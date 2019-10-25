@@ -778,10 +778,13 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             this.detailgridbs.EndEdit();
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
-                if (MyUtility.Check.Empty(dr["TotalRequest"]) && MyUtility.Check.Empty(dr["AfterCuttingRequest"]))
+                if (dr.RowState != DataRowState.Deleted)
                 {
-                    MyUtility.Msg.WarningBox("The request Qty cannot all be 0!");
-                    return false;
+                    if (MyUtility.Check.Empty(dr["TotalRequest"]) && MyUtility.Check.Empty(dr["AfterCuttingRequest"]))
+                    {
+                        MyUtility.Msg.WarningBox("The request Qty cannot all be 0!");
+                        return false;
+                    }
                 }
             }
 

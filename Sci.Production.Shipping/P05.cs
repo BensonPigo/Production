@@ -30,6 +30,7 @@ namespace Sci.Production.Shipping
         private string emptyDTMask = string.Empty;
         private string empmask;
         private string dtmask;
+        private DateTime? FBDate_Ori;
 
         /// <summary>
         /// P05
@@ -83,6 +84,7 @@ select  p.GMTBookingLock
                                 where pd.ID = p.id
                                 group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
                             ) a 
+							order by a.OrderID
                             for xml path('')
                           ), 1, 1, '') 
         , OrderShipmodeSeq = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
@@ -164,7 +166,38 @@ select  p.GMTBookingLock
                                 and pd.ReceiveDate is not null)
         , p.InspDate
         , p.ShipModeID
+        , P.pulloutid
+        , OrderQty = STUFF ((select CONCAT (',', cast (a.Qty as nvarchar)) 
+                            from (
+                                select distinct o.id,o.Qty
+                                from PackingList_Detail pd WITH (NOLOCK) 
+                                inner join orders o with(nolock) on o.id= pd.orderid
+                                where pd.ID = p.id
+                            ) a 
+							order by a.id
+                            for xml path('')
+                          ), 1, 1, '') 
+         , SewingOutputQty = STUFF ((select CONCAT (',', cast (sum(sod.qaqty) as nvarchar)) 
+                            from (
+                                select pd.OrderID
+                                from PackingList_Detail pd WITH (NOLOCK) 
+                                where pd.ID = p.id
+                                group by pd.OrderID
+                            ) a 
+                            inner join SewingOutput_Detail_Detail sod with(nolock) on sod.orderid= a.orderid
+							group by sod.OrderId
+							order by sod.OrderId
+                            for xml path('')
+                          ), 1, 1, '')         , Pullout.sendtotpe
+    ,pl2.APPBookingVW,pl2.APPEstAmtVW
 from PackingList p WITH (NOLOCK) 
+left join Pullout WITH (NOLOCK) on Pullout.id=p.Pulloutid
+outer apply(
+	select APPBookingVW = ISNULL(sum(p2.APPBookingVW),0) 
+	,APPEstAmtVW = ISNULL(sum(p2.APPEstAmtVW),0)
+	from PackingList_Detail p2
+	where p2.ID=p.ID
+) pl2
 where {0}", this.masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -182,7 +215,8 @@ where {0}", this.masterID);
             base.OnDetailEntered();
 
             this.txtTerminalWhse.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(this.CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
-
+            this.displayBoxDeclarationID.Text = MyUtility.GetValue.Lookup("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
+            this.displayBoxCustomsNo.Text = MyUtility.GetValue.Lookup("DeclareNo", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
             #region AirPP List按鈕變色
             if (!this.EditMode)
             {
@@ -230,6 +264,15 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 this.btnCFM.Enabled = false;
             }
             #endregion
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["FBDate"]))
+            {
+                this.FBDate_Ori = DateTime.Parse(this.CurrentMaintain["FBDate"].ToString());
+            }
+            else
+            {
+                this.FBDate_Ori = null;
+            }
         }
 
         /// <inheritdoc/>
@@ -260,8 +303,11 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("PONo", header: "PO No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
-                .Date("SDPDate", header: "SDP Date", iseditingreadonly: true)
+                .Text("OrderQty", header: "Order Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SewingOutputQty", header: "Prod. Output Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("PulloutID", header: "Pullout ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("PulloutDate", header: "Pull out Date", iseditingreadonly: true)
+                .Date("SendToTPE", header: "Send to SCI", iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Q'ty", iseditingreadonly: true, settings: this.shipqty)
                 .Numeric("CTNQty", header: "CTN Q'ty", iseditingreadonly: true)
                 .Numeric("GW", header: "G.W.", decimal_places: 3, iseditingreadonly: true)
@@ -270,6 +316,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("Dest", header: "Destination", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Numeric("NW", header: "ttl N.W.", decimal_places: 3, iseditingreadonly: true)
                 .Numeric("NNW", header: "ttl N.N.W.", decimal_places: 3, iseditingreadonly: true)
+                .Numeric("APPBookingVW", header: "V.W. for APP booking", decimal_places: 2, iseditingreadonly: true)
+                .Numeric("APPEstAmtVW", header: "V.W for APP est. Amt", decimal_places: 2, iseditingreadonly: true)
                 .Text("Status", header: "Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Numeric("ClogCTNQty", header: "CTN in C-Logs", iseditingreadonly: true)
                 .Date("InspDate", header: "Est. Inspection date", iseditingreadonly: true)
@@ -631,57 +679,23 @@ order by fwd.WhseNo",
             if (!MyUtility.Check.Empty(CurrentMaintain["FBDate"]))
             {
                 DateTime FBDate = DateTime.Parse(this.CurrentMaintain["FBDate"].ToString());
-                if (DateTime.Compare(FBDate, DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd")).AddMonths(-1)) < 0 ||
-                    DateTime.Compare(FBDate, DateTime.Now) > 0)
+                if (this.FBDate_Ori != FBDate)
                 {
-                    MyUtility.Msg.WarningBox("<Forward Booking Date> cannot be later than today or one month earlier !");
-                    return false;
+                    if (DateTime.Compare(FBDate, DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd")).AddMonths(-1)) < 0 ||
+                        DateTime.Compare(FBDate, DateTime.Now) > 0)
+                    {
+                        MyUtility.Msg.WarningBox("<Forward Booking Date> cannot be later than today or one month earlier !");
+                        return false;
+                    }
                 }
             }
 
             #endregion
 
             #region 檢查Shipper
-
-            // 帶資料到Shipper
-            string SP = string.Empty;
-            DataTable dtShipper;
-            if (this.DetailDatas.Count > 0)
+            if (!this.CheckShipper())
             {
-                foreach (DataRow dr in this.DetailDatas)
-                {
-                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
-                }
-
-                string sqlcmd = $@"
-select distinct f.ShipperID from Orders o
-left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
-where ID in ({SP.Substring(0, SP.Length - 1)})
-and f.BrandID='{this.txtbrand.Text}'
-and GETDATE() between f.BeginDate and f.EndDate";
-
-                if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
-                {
-                    if (dtShipper.Rows.Count > 1)
-                    {
-                        MyUtility.Msg.WarningBox("The shipper for those SP are not the same, please check Packing # and SP No. again! ");
-                        return false;
-                    }
-                    else if (dtShipper.Rows.Count == 1)
-                    {
-                        this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
-                    }
-                    else
-                    {
-                        MyUtility.Msg.WarningBox("Shipper not found! ");
-                        return false;
-                    }
-                }
-                else
-                {
-                    this.ShowErr(sqlcmd, result);
-                    return false;
-                }
+                return false;
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
@@ -714,7 +728,7 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
             #region 組出表身所有的PackingListID與加總ShipQty,CTNQty,NW,GW,NNW,CBM 
             StringBuilder allPackID = new StringBuilder();
             int ttlshipqty = 0, ttlctnqty = 0;
-            double ttlnw = 0.0, ttlgw = 0.0, ttlnnw = 0.0, ttlcbm = 0.0;
+            double ttlnw = 0.0, ttlgw = 0.0, ttlnnw = 0.0, ttlcbm = 0.0, ttlAPPBookingVW =0.0, ttlAPPEstAmtVW = 0.0;
             foreach (DataRow dr in this.DetailDatas)
             {
                 allPackID.Append(string.Format("'{0}',", MyUtility.Convert.GetString(dr["ID"])));
@@ -724,6 +738,8 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
                 ttlgw = MyUtility.Math.Round(ttlgw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
                 ttlnnw = MyUtility.Math.Round(ttlnnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
                 ttlcbm = MyUtility.Math.Round(ttlcbm + MyUtility.Convert.GetDouble(dr["CBM"]), 4);
+                ttlAPPBookingVW = MyUtility.Math.Round(ttlAPPBookingVW + MyUtility.Convert.GetDouble(dr["APPBookingVW"]), 2);
+                ttlAPPEstAmtVW = MyUtility.Math.Round(ttlAPPEstAmtVW + MyUtility.Convert.GetDouble(dr["APPEstAmtVW"]), 2);
             }
             #endregion
 
@@ -857,7 +873,8 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             this.CurrentMaintain["TotalGW"] = MyUtility.Math.Round(ttlgw, 3);
             this.CurrentMaintain["TotalNNW"] = MyUtility.Math.Round(ttlnnw, 3);
             this.CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 4);
-
+            this.CurrentMaintain["TotalAPPBookingVW"] = ttlAPPBookingVW;
+            this.CurrentMaintain["TotalAPPEstAmtVW"] = ttlAPPEstAmtVW;
             return base.ClickSaveBefore();
         }
 
@@ -1438,46 +1455,41 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
                 return;
             }
 
-            // 帶資料到Shipper
-            string SP = string.Empty;
-            DualResult result;
-            DataTable dtShipper;
-            if (this.DetailDatas.Count > 0)
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "A/P" ||
+                MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "S-A/P" ||
+                MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "E/P"
+                )
             {
-                foreach (DataRow dr in this.DetailDatas)
+                DataTable tmp = (DataTable)this.detailgridbs.DataSource;
+                string sqlcmdchk = $@"
+SELECT AirPP.Forwarder,t.id
+From #tmp t
+inner join PackingList_Detail pd with(nolock) on pd.id = t.id
+inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipmodeSeq = pd.OrderShipmodeSeq
+";
+                DataTable dt;
+                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlcmdchk, out dt);
+                if (!dualResult)
                 {
-                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
+                    this.ShowErr(dualResult);
                 }
 
-                string sqlcmd = $@"
-select distinct f.ShipperID from Orders o
-left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
-where ID in ({SP.Substring(0, SP.Length - 1)})
-and f.BrandID='{this.txtbrand.Text}'
-and GETDATE() between f.BeginDate and f.EndDate";
+                if (dt.Rows.Count > 0)
+                {
+                    List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"])).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                    if (packingListID.Count > 0)
+                    {
+                        string pid = string.Join(",", packingListID);
+                        string msg = $@"Forwarder is different from APP request, please double check.
+Packing List : {pid}";
+                        MyUtility.Msg.WarningBox(msg);
+                    }
+                }
+            }
 
-                if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
-                {
-                    if (dtShipper.Rows.Count > 1)
-                    {
-                        MyUtility.Msg.WarningBox("The shipper for those SP are not the same, please check Packing # and SP No. again! ");
-                        return;
-                    }
-                    else if (dtShipper.Rows.Count == 1)
-                    {
-                        this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
-                    }
-                    else
-                    {
-                        MyUtility.Msg.WarningBox("Shipper not found! ");
-                        return;
-                    }
-                }
-                else
-                {
-                    this.ShowErr(sqlcmd, result);
-                    return;
-                }
+            if (!this.CheckShipper())
+            {
+                return;
             }
 
             // shipper 不可為空
@@ -1487,7 +1499,7 @@ and GETDATE() between f.BeginDate and f.EndDate";
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return;
             }
-
+            DualResult result;
             // 當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
             {
@@ -1626,13 +1638,83 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
                 return;
             }
 
-            string updateCmd = string.Format("update GMTBooking set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
-            DualResult result = DBProxy.Current.Execute(null, updateCmd);
-            if (!result)
+            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("GMTBooking_UnCFM", true);
+            DialogResult dResult = callReason.ShowDialog(this);
+            if (dResult == System.Windows.Forms.DialogResult.OK)
             {
-                MyUtility.Msg.WarningBox("UnConfirm fail !\r\n" + result.ToString());
+                if (callReason.ReturnReason == string.Empty)
+                {
+                    MyUtility.Msg.WarningBox("Reason can not be empty."); return;
+                }
+                else
+                { 
+
+                    string insertCmd = string.Format(
+                        @"insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
+                    values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                        "Status",
+                        "Locked",
+                        "New",
+                        callReason.ReturnReason,
+                        callReason.ReturnRemark,
+                        Sci.Env.User.UserID);
+
+                    string insert = $@"
+    INSERT INTO GMTBooking_History  ([ID],[HisType],[OldValue],[NewValue],[ReasonID],[Remark],[AddName],[AddDate])
+         VALUES
+               (    '{this.CurrentMaintain["ID"]}'
+                   ,'GBUnCFM'
+                   ,'CFM'
+                   ,'Un CFM'
+                   ,'{callReason.ReturnReason}'
+                   ,'{callReason.ReturnRemark}'
+                   ,'{Sci.Env.User.UserID}'
+                   ,GETDATE()
+                )
+
+    ";
+                    string updateCmd = string.Format("update GMTBooking set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+                    using (TransactionScope transactionScope = new TransactionScope())
+                    {
+                        try
+                        {
+                            DualResult result2 = DBProxy.Current.Execute(null, insert);
+                            DualResult result3 = DBProxy.Current.Execute(null, updateCmd);
+
+                            if (result2 && result3)
+                            {
+                                transactionScope.Complete();
+                            }
+                            else
+                            {
+                                transactionScope.Dispose();
+                                MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                                return;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            transactionScope.Dispose();
+                            this.ShowErr("Commit transaction error.", ex);
+                            return;
+                        }
+                    }
+                }
             }
+            else
+            {
+                return;
+            }
+
+
+            //DualResult result = DBProxy.Current.Execute(null, updateCmd);
+            //if (!result)
+            //{
+            //    MyUtility.Msg.WarningBox("UnConfirm fail !\r\n" + result.ToString());
+            //}
         }
 
         // Terminal/Whse#
@@ -1803,10 +1885,78 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                 this.CurrentMaintain["SOCFMDate"] = upSOCFMDate;
             }
         }
+
         private void btnBatchImportSO_Click_1(object sender, EventArgs e)
         {
             P05_BatchImportSO form = new P05_BatchImportSO();
             form.ShowDialog();
+        }
+
+        private void btnUnCfmHis_Click(object sender, EventArgs e)
+        {
+            Production.Shipping.P05_UnconfirmHistory dialog = new P05_UnconfirmHistory(this.CurrentMaintain["ID"].ToString());
+            dialog.ShowDialog(this);
+        }
+
+        private bool CheckShipper()
+        {
+            DataTable dtShipper;
+            DualResult result;
+            string SP = string.Empty;
+
+            if (this.DetailDatas.Count > 0)
+            {
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
+                }
+
+                DataTable tmpdt = this.DetailDatas.CopyToDataTable();
+                string sqlcmd = $@"
+select distinct ShipperID=isnull(f1.ShipperID, f2.ShipperID)
+from Orders o
+outer apply(
+    select ShipperID 
+    from FtyShipper_Detail f 
+    where o.FactoryID = f.FactoryID 
+          and o.SeasonID = f.SeasonID 
+          and  f.BrandID = '{this.txtbrand.Text}' 
+          and GETDATE() between f.BeginDate and f.EndDate
+)f1
+outer apply(
+    select ShipperID 
+    from FtyShipper_Detail f 
+    where o.FactoryID = f.FactoryID 
+          and f.SeasonID = '' 
+          and f.BrandID = '{this.txtbrand.Text}' 
+          and GETDATE() between f.BeginDate and f.EndDate
+)f2
+where o.ID in ({SP.Substring(0, SP.Length - 1)})
+";
+                result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper);
+                if (!result)
+                {
+                    this.ShowErr(sqlcmd, result);
+                    return false;
+                }
+
+                if (dtShipper.Rows.Count > 1)
+                {
+                    MyUtility.Msg.WarningBox("The shipper for those SP are not the same, please check Packing # and SP No. again! ");
+                    return false;
+                }
+                else if (dtShipper.Rows.Count == 1)
+                {
+                    this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Shipper not found! ");
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

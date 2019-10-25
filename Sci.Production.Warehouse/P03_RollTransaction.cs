@@ -100,186 +100,14 @@ namespace Sci.Production.Warehouse
                 , Sci.Env.User.Keyword);
             #endregion
 
-            #region Grid2 - Sql Command
-            
-            string selectCommand2
-                = string.Format(@"select tmp.Roll,
-[stocktype] = case when stocktype = 'B' then 'Bulk'
-                   when stocktype = 'I' then 'Invertory'
-			       when stocktype = 'O' then 'Scrap' End
-,Dyelot,IssueDate,ID,name,inqty,outqty,adjust,Remark,location,
-sum(TMP.inqty - TMP.outqty+tmp.adjust) 
-over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD ) as [balance] 
-from (
-	select b.roll,b.stocktype,b.dyelot,a.IssueDate, a.id
-,Case type when 'A' then 'P35. Adjust Bulk Qty' 
-                when 'B' then 'P34. Adjust Stock Qty' end as name
-,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, a.remark ,'' location
-from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,type,b.roll,b.stocktype,b.dyelot
+            #region Grid2 
+            // 因為需求ISP20191233 要抓到BalanceQty, 故將sql command 移到共用function: "RollTranscation"
+             dtTrans = Sci.Production.PublicPrg.Prgs.RollTranscation(dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
 
-union all
-	select b.FromRoll,b.FromStockType,b.FromDyelot,a.IssueDate, a.id
-,case type when 'A' then 'P31. Material Borrow From' 
-                when 'B' then 'P32. Material Give Back From' end as name
-,0 as inqty, sum(qty) released,0 as adjust, a.remark ,'' location
-from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id 
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-group by a.id, FromPoId, FromSeq1,FromSeq2, a.remark,a.IssueDate,b.FromRoll,b.FromStockType,b.FromDyelot,a.type
-union all
-	select b.ToRoll,b.ToStockType,b.ToDyelot,issuedate, a.id
-,case type when 'A' then 'P31. Material Borrow To' 
-                when 'B' then 'P32. Material Give Back To' end as name
-, sum(qty) arrived,0 as ouqty,0 as adjust, a.remark ,'' location
-from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id 
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-group by a.id, ToPoid, ToSeq1,ToSeq2, a.remark,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type
-union all
-	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
-	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
-			when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
-			when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
-			when 'D' then 'P13. Issue Material by Item'
-			when 'E' then 'P72. Transfer Inventory to Bulk (Confirm)'
-			when 'F' then 'P75. Material Borrow cross M (Confirm)'
-			when 'G' then 'P77. Material Return Back cross M (Request)'  end name
-	,0 as inqty, sum(Qty) released,0 as adjust, a.remark,'' location
-from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type                                                             
-union all
-	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
-	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
-                              when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
-	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, a.remark ,'' location
-from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
-where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-    and a.type != 'L'  --新增MDivisionID條件，避免下面DataRelation出錯 1026新增排除Lacking
-group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot                        
-
-
-
-union all
-
-	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
-	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
-                              when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
-	, 0 as inqty,0 outqty ,0 as adjust, a.remark ,'' location
-from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
-where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-and a.type = 'L'  --20190305 新增Type= Lacking,則OutQty = 0
-group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot   
-                                       
-union all
-	select b.roll,b.stocktype,b.dyelot,issuedate, a.id,'P17. R/Mtl Return' name, 0 as inqty, sum(0.00 - b.Qty) released,0 as adjust, remark,'' location
-from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
-where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-group by a.Id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
-union all
-	select b.roll,b.stocktype,b.dyelot
-        ,case type when 'A' then a.ETA else a.WhseArrival end as issuedate
-        , a.id
-	    ,case type when 'A' then 'P07. Material Receiving' 
-                        when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
-	    , sum(b.StockQty) inqty,0 as outqty,0 as adjust,'' remark ,'' location
-    from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
-    where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-        --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-    group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,b.roll,b.stocktype,b.dyelot,a.eta
-union all
-	select b.roll,b.stocktype,b.dyelot,issuedate
-, a.id,'P37. Return Receiving Material' name, sum(-Qty) inqty,0 as released,0 as adjust, a.remark,'' location
-from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯 
-group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
-union all
-	select b.FromRoll,b.FromStockType,b.FromDyelot,issuedate, a.id
-	,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
-                    when 'A' then 'P22. Transfer Bulk to Inventory' 
-                    when 'C' then 'P36. Transfer Scrap to Inventory' 
-                    when 'D' then 'P25. Transfer Bulk to Scrap' 
-                    when 'E' then 'P24. Transfer Inventory to Scrap'
-    end as name
-	, 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location
-from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' and FromSeq2 = '{2}'  and a.id = b.id
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-    and a.type <> 'C'  --排除C to B 的轉出紀錄，因目前不需要C倉交易紀錄，避免下面DataRelation出錯
-group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark
-                                                                             
-union all
-	select b.ToRoll,b.ToStockType,b.ToDyelot,issuedate, a.id
-	,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
-                    when 'A' then 'P22. Transfer Bulk to Inventory' 
-                    when 'C' then 'P36. Transfer Scrap to Inventory' end as name
-	        , sum(Qty) arrived,0 as ouqty,0 as adjust, a.remark
-	        ,isnull((Select cast(tmp.ToLocation as nvarchar)+',' 
-                        from (select b1.ToLocation 
-                                    from SubTransfer a1 WITH (NOLOCK) 
-                                    inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
-                                    where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
-                                        and b1.ToPoid = b.ToPoid
-                                        and b1.ToSeq1 = b.ToSeq1
-                                        and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
-                        for XML PATH('')),'') as ToLocation
-from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id  
-    AND TYPE not in ('D','E')  --570: WAREHOUSE_P03_RollTransaction。C倉不用算，所以要把TYPE為D及E的資料濾掉
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-group by a.id, ToPoid, ToSeq1,ToSeq2, a.remark ,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type	    
-
-union all
-	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
-            ,'P18. Transfer In' name
-            , sum(Qty) arrived,0 as ouqty,0 as adjust, a.remark
-	,(Select cast(tmp.Location as nvarchar)+',' 
-                        from (select b1.Location 
-                                    from TransferIn a1 WITH (NOLOCK) 
-                                    inner join TransferIn_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
-                                    where a1.status = 'Confirmed' and (b1.Location is not null or b1.Location !='')
-                                        and b1.Poid = b.Poid
-                                        and b1.Seq1 = b.Seq1
-                                        and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
-                        for XML PATH('')) as Location
-from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                        
-union all
-	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
-            ,'P19. Transfer Out' name
-            , 0 as inqty, sum(Qty) released,0 as adjust, a.remark,'' location
-from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-group by a.id, poid, Seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot
-
-union all
-select b.roll,b.stocktype,b.dyelot,issuedate, a.id
-    ,case type when 'B' then 'P73. Transfer Inventory to Bulk cross M (Receive)' 
-	when 'D' then 'P76. Material Borrow cross M (Receive)' 
-	when 'G' then 'P78. Material Return Back cross M (Receive)'  end name
-    , sum(Qty) as inqty, 0 released,0 as adjust, a.remark,'' location
-from RequestCrossM a WITH (NOLOCK) , RequestCrossM_Receive b WITH (NOLOCK) 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-    --and a.ToMDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type 
-
-) tmp where stocktype <> 'O'
-group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
-"
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword);
-
+            if (dtTrans == null)
+            {
+                return;
+            }
             #endregion
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out dtFtyinventory);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
@@ -289,8 +117,6 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             dtSummary.Columns.Add("DTM", typeof(decimal));
             bindingSource3.DataSource = dtSummary;
 
-            DualResult selectResult2 = DBProxy.Current.Select(null, selectCommand2, out dtTrans);
-            if (selectResult2 == false) ShowErr(selectCommand2, selectResult2);
             dtTrans.TableName = "dtTrans";
             data.Tables.Add(dtFtyinventory);
             data.Tables.Add(dtTrans);
@@ -461,7 +287,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                            outQty = m.Sum(w => w.Field<decimal>("outqty")),
                            AdjustQty = m.Sum(i => i.Field<decimal>("AdjustQty")),
                            balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty")),
-                           DTM = m.Sum(w => w.Field<decimal>("inqty")) / numArrivedQtyBySeq.Value * useQty
+                           DTM = numArrivedQtyBySeq.Value == 0 ? 0 : m.Sum(w => w.Field<decimal>("inqty")) / numArrivedQtyBySeq.Value * useQty
                        };
 
             dtSummary.Rows.Clear();

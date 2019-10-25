@@ -19,6 +19,8 @@ namespace Sci.Production.Subcon
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
         string processLocation;
         DateTime? dateBundle1, dateBundle2, dateBundleTransDate1, dateBundleTransDate2;
+
+
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -26,6 +28,7 @@ namespace Sci.Production.Subcon
             comboload();
             this.comboFactory.setDataSource();
             this.comboRFIDProcessLocation.setDataSource();
+            this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
         //string date = "";
@@ -77,10 +80,15 @@ namespace Sci.Production.Subcon
         //非同步讀取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            #region sqlcmd
             this.sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
-Select distinct
+
+            // 因為BundleTransfer 的table太肥，如果有用到這個條件則修改寫法
+            if (dateBundleTransDate1 == null && dateBundleTransDate2 == null)
+            {
+                #region sqlcmd
+
+                sqlCmd.Append(@"
+Select
             [Bundle#] = bt.BundleNo,
             [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
             [Cut Ref#] = b.CutRef,
@@ -96,12 +104,13 @@ Select distinct
             [Article] = b.Article,
             [Color] = b.ColorId,
             [Line] = b.SewinglineId,
+			bt.SewingLineID,
             [Cell] = b.SewingCell,
             [Pattern] = bd.PatternCode,
             [PtnDesc] = bd.PatternDesc,
             [Group] = bd.BundleGroup,
             [Size] = bd.SizeCode,
-            [Artwork] = stuff(sub.sub,1,1,''),
+            --[Artwork] = stuff(sub.sub,1,1,''),
             [Qty] = bd.Qty,
             [RFID Reader] = bt.RFIDReaderId,
             [Sub-process] = bt.SubprocessId,
@@ -120,62 +129,203 @@ Select distinct
             left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
             left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
             left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
-            outer apply(
+            /*outer apply(
 	             select sub= (
 		             Select distinct concat('+', bda.SubprocessId)
 		             from Bundle_Detail_Art bda WITH (NOLOCK) 
 		             where bda.Bundleno = bd.Bundleno
 		             for xml path('')
 	             )
-            ) as sub
+            ) as sub*/
             where 1=1
             ");
-            #endregion
-            #region Append畫面上的條件
-            if (!MyUtility.Check.Empty(SubProcess))
-            {//();
-                sqlCmd.Append($@" and (bt.SubprocessId in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
+                #endregion
+                #region Append畫面上的條件
+                if (!MyUtility.Check.Empty(SubProcess))
+                {//();
+                    sqlCmd.Append($@" and (bt.SubprocessId in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
+                }
+                if (!MyUtility.Check.Empty(CutRef1) && (!MyUtility.Check.Empty(CutRef1)))
+                {
+                    sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", CutRef1, CutRef2));
+                }
+                if (!MyUtility.Check.Empty(SP))
+                {
+                    sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", SP));
+                }
+                if (!MyUtility.Check.Empty(dateBundle1))
+                {
+                    sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(dateBundle2))
+                {
+                    sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(dateBundleTransDate1))
+                {
+                    sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'", Convert.ToDateTime(dateBundleTransDate1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(dateBundleTransDate2))
+                {
+                    // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
+                    sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'", Convert.ToDateTime(((DateTime)dateBundleTransDate2).AddDays(1)).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(M))
+                {
+                    sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
+                }
+                if (!MyUtility.Check.Empty(Factory))
+                {
+                    sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+                }
+                if (this.processLocation != "ALL")
+                {
+                    sqlCmd.Append(string.Format(@" and bt.RFIDProcessLocationID = '{0}'", this.processLocation));
+                }
+                #endregion
             }
-            if (!MyUtility.Check.Empty(CutRef1) && (!MyUtility.Check.Empty(CutRef1)))
+            else
             {
-                sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", CutRef1, CutRef2));
-            }
-            if (!MyUtility.Check.Empty(SP))
-            {
-                sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", SP));
-            }
-            if (!MyUtility.Check.Empty(dateBundle1))
-            {
-                sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateBundle2))
-            {
-                sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateBundleTransDate1))
-            {
-                sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'", Convert.ToDateTime(dateBundleTransDate1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateBundleTransDate2))
-            {
-                // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
-                sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'", Convert.ToDateTime(((DateTime)dateBundleTransDate2).AddDays(1)).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(M))
-            {
-                sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
-            }
-            if (!MyUtility.Check.Empty(Factory))
-            {
-                sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
-            }
-            if (!MyUtility.Check.Empty(this.processLocation))
-            {
-                sqlCmd.Append(string.Format(@" and bt.RFIDProcessLocationID = '{0}'", this.processLocation));
-            }
-            #endregion
+                string BundleTransfer_Where = string.Empty;
 
-            string result_cnt_cmd = "select [resultcnt] = count(*) from  (" + sqlCmd.ToString() + ") resultCnt";
+                if (!MyUtility.Check.Empty(SubProcess))
+                {//();
+                    BundleTransfer_Where += $@" and (bt.SubprocessId in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')" + Environment.NewLine;
+                }
+
+                if (this.processLocation != "ALL")
+                {
+                    BundleTransfer_Where += $@" and bt.RFIDProcessLocationID = '{this.processLocation}'" + Environment.NewLine;
+                }
+                if (!MyUtility.Check.Empty(dateBundleTransDate1))
+                {
+                    BundleTransfer_Where += $@" and bt.TransferDate >= '{Convert.ToDateTime(dateBundleTransDate1).ToString("d")}'" + Environment.NewLine;
+                }
+                if (!MyUtility.Check.Empty(dateBundleTransDate2))
+                {
+                    // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
+                    BundleTransfer_Where += $@" and bt.TransferDate <= '{Convert.ToDateTime(((DateTime)dateBundleTransDate2).AddDays(1)).ToString("d")}'" + Environment.NewLine + Environment.NewLine;
+                }
+
+                sqlCmd.Append(@"
+SELECT 
+RFIDProcessLocationID ,Type ,TagId ,TransferDate ,PanelNo ,BundleNo ,RFIDReaderId ,SubprocessId ,LocationID ,CutCellID,SewingLineID
+INTO #BundleTransfer
+FROM BundleTransfer bt WITH (NOLOCK)
+WHERE 1=1
+");
+
+                sqlCmd.Append(BundleTransfer_Where);
+
+                sqlCmd.Append($@"
+
+SELECT 
+			bd.BundleNo
+			,b.CutRef
+			,POID
+			,Orderid
+			,MDivisionid
+			,PatternPanel
+			,Cutno
+			,Article
+			,ColorId
+			,SewinglineId
+			,SewingCell
+			,item
+			,bd.PatternCode,bd.PatternDesc,bd.BundleGroup,bd.SizeCode,b.Qty
+INTO #BundleAll
+FROM Bundle b WITH (NOLOCK)
+LEFT JOIN Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+WHERE 1=1
+AND  EXISTS(SELECT 1 FROM #BundleTransfer WHERE BundleNo=bd.bundleNo)
+");
+
+                #region Append畫面上的條件
+                if (!MyUtility.Check.Empty(CutRef1) && (!MyUtility.Check.Empty(CutRef1)))
+                {
+                    sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", CutRef1, CutRef2));
+                }
+                if (!MyUtility.Check.Empty(SP))
+                {
+                    sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", SP));
+                }
+                if (!MyUtility.Check.Empty(dateBundle1))
+                {
+                    sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(dateBundle2))
+                {
+                    sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(M))
+                {
+                    sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
+                }
+                #endregion
+
+                sqlCmd.Append($@"
+
+--Replace1
+
+Select 
+            [Bundle#] = bt.BundleNo,
+            [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
+            [Cut Ref#] = ba.CutRef,
+            [SP#] = ba.Orderid,
+            [Master SP#] = ba.POID,
+            [M] = ba.MDivisionid,
+            [Factory] = o.FtyGroup,
+            [Style] = o.StyleID,
+            [Season] = o.SeasonID,
+            [Brand] = o.BrandID,
+            [Comb] = ba.PatternPanel,
+            [Cutno] = ba.Cutno,
+            [Article] = ba.Article,
+            [Color] = ba.ColorId,
+            [Line] = ba.SewinglineId,
+            bt.SewingLineID,
+            [Cell] = ba.SewingCell,
+            [Pattern] = ba.PatternCode,
+            [PtnDesc] = ba.PatternDesc,
+            [Group] = ba.BundleGroup,
+            [Size] = ba.SizeCode,
+            [Qty] = ba.Qty,
+            [RFID Reader] = bt.RFIDReaderId,
+            [Sub-process] = bt.SubprocessId,
+            [Type] = case when bt.Type = '1' then 'IN'
+			              when bt.Type = '2' then 'Out'
+			              when bt.Type = '3' then 'In/Out' end,
+            [TagId] = bt.TagId,
+            [TransferDate] = CAST(bt.TransferDate AS DATE),
+            [TransferTime] = bt.TransferDate,
+            bt.LocationID
+            ,ba.item
+			,bt.PanelNo
+			,bt.CutCellID
+from #BundleTransfer  bt WITH (NOLOCK)
+inner JOIN #BundleAll ba WITH (NOLOCK) on bt.BundleNo = ba.BundleNo
+left join orders o WITH (NOLOCK) on o.Id = ba.OrderId and o.MDivisionID  = ba.MDivisionID 
+where 1=1
+");
+                if (!MyUtility.Check.Empty(Factory))
+                {
+                    sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+                }
+
+                sqlCmd.Append("--Replace2 " + Environment.NewLine + "DROP TABLE #BundleTransfer,#BundleAll");
+            }
+
+            string result_cnt_cmd = string.Empty;
+
+
+            if (dateBundleTransDate1 == null && dateBundleTransDate2 == null)
+            {
+                result_cnt_cmd = "select [resultcnt] = count(*) from  (" + sqlCmd.ToString() + ") resultCnt" + Environment.NewLine + "DROP TABLE #BundleTransfer,#BundleAll";
+            }
+            else
+            {
+                result_cnt_cmd = sqlCmd.ToString().Replace("--Replace1", "select [resultcnt] = count(*) from  (").Replace("--Replace2", ") resultCnt");
+            }
 
             DBProxy.Current.DefaultTimeout = 1200;  //加長時間為30分鐘，避免timeout
             DualResult result = DBProxy.Current.Select(null, result_cnt_cmd, out printData);

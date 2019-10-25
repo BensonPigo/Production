@@ -139,7 +139,7 @@ isnull(v.SubConAddress,'') as SubConAddress,isnull(v.TotalQty,0) as TotalQty,
 vc.CustomSP,vc.Qty as GMTQty,isnull(vn.DescVI,'') as DescVI,isnull(vcd.NLCode,'') as NLCode,
 isnull(vn.UnitVI,'') as UnitVI,isnull(vcd.Qty,0) as Qty,isnull(vcd.Waste,0)*100 as Waste,
 isnull(IIF(vd.LocalPurchase = 1,(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'VNBUY'),(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'NOVNBUY')),'') as Original,
-isnull(s.Picture1,'') as Picture1,isnull(s.Picture2,'') as Picture2,(select PicPath from System WITH (NOLOCK) ) as PicPath,vc.StyleID
+isnull(s.Picture1,'') as Picture1,isnull(s.Picture2,'') as Picture2,(select StyleSketch from System WITH (NOLOCK) ) as StyleSketch,vc.StyleID
 from VNConsumption vc WITH (NOLOCK) 
 left join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID = vc.ID
 left join VNContract v WITH (NOLOCK) on v.ID = vc.VNContractID
@@ -258,7 +258,7 @@ and 1=1"));
                 worksheet.Name = MyUtility.Convert.GetString(this.printData.Rows[0]["CustomSP"]) + "-" + MyUtility.Convert.GetString(this.printData.Rows[0]["StyleID"]); // 更改Sheet Name
                 int customSPCount = 1;
                 int stt = 0;
-                string picPath = string.Empty, pic1 = string.Empty, pic2 = string.Empty;
+                string StyleSketch = string.Empty, pic1 = string.Empty, pic2 = string.Empty;
                 object[,] objArray = new object[1, 10];
                 foreach (DataRow dr in this.printData.Rows)
                 {
@@ -269,7 +269,7 @@ and 1=1"));
                         rngToDelete.Delete(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
 
                         // 貼圖
-                        if (!MyUtility.Check.Empty(pic1) && File.Exists(picPath + pic1))
+                        if (!MyUtility.Check.Empty(pic1) && File.Exists(StyleSketch + pic1))
                         {
                             string excelRng1 = string.Format("B{0}", MyUtility.Convert.GetString(stt + 20));
                             Microsoft.Office.Interop.Excel.Range rngToInsert1 = worksheet.get_Range(excelRng1, Type.Missing);
@@ -277,12 +277,12 @@ and 1=1"));
                             float picLeft, picTop;
                             picLeft = Convert.ToSingle(rngToInsert1.Left);
                             picTop = Convert.ToSingle(rngToInsert1.Top);
-                            string targetFile = picPath + pic1;
+                            string targetFile = StyleSketch + pic1;
                             worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, picLeft, picTop, 450, 400);
                             Marshal.ReleaseComObject(rngToInsert1);
                         }
 
-                        if (!MyUtility.Check.Empty(pic2) && File.Exists(picPath + pic2))
+                        if (!MyUtility.Check.Empty(pic2) && File.Exists(StyleSketch + pic2))
                         {
                             string excelRng2 = string.Format("F{0}", MyUtility.Convert.GetString(stt + 20));
                             Microsoft.Office.Interop.Excel.Range rngToInsert2 = worksheet.get_Range(excelRng2, Type.Missing);
@@ -290,7 +290,7 @@ and 1=1"));
                             float picLeft1, picTop1;
                             picLeft1 = Convert.ToSingle(rngToInsert2.Left);
                             picTop1 = Convert.ToSingle(rngToInsert2.Top);
-                            string targetFile = picPath + pic2;
+                            string targetFile = StyleSketch + pic2;
                             worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, picLeft1, picTop1, 450, 400);
                             Marshal.ReleaseComObject(rngToInsert2);
                         }
@@ -338,7 +338,7 @@ and 1=1"));
                     worksheet.Range[string.Format("A{0}:J{0}", stt + 13)].Value2 = objArray;
                     pic1 = MyUtility.Convert.GetString(dr["Picture1"]);
                     pic2 = MyUtility.Convert.GetString(dr["Picture2"]);
-                    picPath = MyUtility.Convert.GetString(dr["PicPath"]);
+                    StyleSketch = MyUtility.Convert.GetString(dr["StyleSketch"]);
                 }
 
                 // 刪除多的一行
@@ -347,7 +347,7 @@ and 1=1"));
                 Marshal.ReleaseComObject(rngToDelete1);
 
                 // 貼圖
-                if (!MyUtility.Check.Empty(pic1) && File.Exists(picPath + pic1))
+                if (!MyUtility.Check.Empty(pic1) && File.Exists(StyleSketch + pic1))
                 {
                     string excelRng1 = string.Format("B{0}", MyUtility.Convert.GetString(stt + 20));
                     Microsoft.Office.Interop.Excel.Range rngToInsert1 = worksheet.get_Range(excelRng1, Type.Missing);
@@ -355,11 +355,11 @@ and 1=1"));
                     float picLeft2, picTop2;
                     picLeft2 = Convert.ToSingle(rngToInsert1.Left);
                     picTop2 = Convert.ToSingle(rngToInsert1.Top);
-                    string targetFile = picPath + pic1;
+                    string targetFile = StyleSketch + pic1;
                     worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, picLeft2, picTop2, 450, 400);
                 }
 
-                if (!MyUtility.Check.Empty(pic2) && File.Exists(picPath + pic2))
+                if (!MyUtility.Check.Empty(pic2) && File.Exists(StyleSketch + pic2))
                 {
                     string excelRng2 = string.Format("F{0}", MyUtility.Convert.GetString(stt + 20));
                     Microsoft.Office.Interop.Excel.Range rngToInsert2 = worksheet.get_Range(excelRng2, Type.Missing);
@@ -367,7 +367,7 @@ and 1=1"));
                     float picLeft3, picTop3;
                     picLeft3 = Convert.ToSingle(rngToInsert2.Left);
                     picTop3 = Convert.ToSingle(rngToInsert2.Top);
-                    string targetFile = picPath + pic2;
+                    string targetFile = StyleSketch + pic2;
                     worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, picLeft3, picTop3, 450, 400);
                 }
 

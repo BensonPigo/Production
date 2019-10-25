@@ -98,8 +98,6 @@ select
 into #tMachineInfo
 from Machine.dbo.Machine m with (nolock)
 inner join Machine.dbo.MachineGroup mg with (nolock) on m.MachineGroupID = mg.id and m.MasterGroupID = mg.MasterGroupID
-where exists (select distinct MachineGroupID from Production.dbo.MachineType
-				where ArtworkTypeID = 'SEWING' and MachineType.MachineGroupID = m.MachineGroupID and MachineType.MasterGroupID = m.MasterGroupID)
 
 --tSeqBase(基本工序表)
 select 

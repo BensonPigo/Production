@@ -20,6 +20,7 @@
     [CanReceive]   BIT           CONSTRAINT [DF_Pass2_CanReceive] DEFAULT ((0)) NULL,
     [CanReturn]    BIT           CONSTRAINT [DF_Pass2_CanReturn] DEFAULT ((0)) NULL,
     [CanJunk]      BIT           CONSTRAINT [DF_Pass2_CanJunk] DEFAULT ((0)) NULL,
+    [CanUnJunk] BIT  CONSTRAINT [DF_Pass2_CanUnJunk] DEFAULT ((0)) NOT NULL, 
     CONSTRAINT [PK_Pass2] PRIMARY KEY CLUSTERED ([PKey] ASC)
 );
 

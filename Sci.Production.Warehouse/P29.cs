@@ -174,9 +174,32 @@ WHERE   StockType='{0}'
                 if (gridRel.Columns[e.ColumnIndex].Name == col_chk2.Name)
                 {
                     DataRow dr = gridRel.GetDataRow(e.RowIndex);
-                    if(Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0){
+                    if (Convert.ToBoolean(dr["selected"]) == true)
+                    {   
+                        if (MyUtility.Check.Seek($@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{dr["tostocktype"]}'
+        and junk != '1'
+        and  id ='{dr["fromlocation"]}'
+"))
+                        {
+                            dr["tolocation"] = dr["fromlocation"];
+                        }
+                        else
+                        {
+                            dr["tolocation"] = string.Empty;
+                        }
+                    }
+
+                    if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+                    {
                         dr["qty"] = dr["balanceQty"];
-                    }else if(Convert.ToBoolean(dr["selected"]) == false){
+                    }                    
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
                         dr["qty"] = 0;
                     }
                     dr.EndEdit();
@@ -263,11 +286,13 @@ WHERE   StockType='{0}'
 
             int selectindex = comboCategory.SelectedIndex;
             int selectindex2 = comboFabricType.SelectedIndex;
-            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e, SP1, SP2, StockSP1, StockSP2, ProjectID, factory;
+            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e,InvCfmDate_s, InvCfmDate_e, SP1, SP2, StockSP1, StockSP2, ProjectID, factory;
             CuttingInline_b = null;
             CuttingInline_e = null;
             OrderCfmDate_b = null;
             OrderCfmDate_e = null;
+            InvCfmDate_s = null;
+            InvCfmDate_e = null;
             SP1 = this.txtIssueSP1.Text;
             SP2 = this.txtIssueSP2.Text;
             StockSP1 = this.txtStockSP1.Text;
@@ -281,9 +306,72 @@ WHERE   StockType='{0}'
             if (dateOrderCfmDate.Value1 != null) { OrderCfmDate_b = this.dateOrderCfmDate.Text1; }
             if (dateOrderCfmDate.Value2 != null) { OrderCfmDate_e = this.dateOrderCfmDate.Text2; }
 
+            if (dateInventoryCfm.Value1 != null) { InvCfmDate_s = this.dateInventoryCfm.Value1.Value.ToAppDateTimeFormatString(); }
+            if (dateInventoryCfm.Value2 != null) { InvCfmDate_e = this.dateInventoryCfm.Value2.Value.AddDays(1).AddSeconds(-1).ToAppDateTimeFormatString(); }
+
+            #region ConfirmDate條件才會使用的SQL
+            string sqlcmdInv = $@"
+SELECT  DISTINCT 
+         InventoryPOID
+        ,InventorySeq1
+        ,InventorySeq2
+        ,POID
+        ,Type
+        ,Seq70Poid
+        ,Seq70Seq1
+        ,Seq70Seq2
+        ,qty
+INTO #tmpInvtrans
+FROM dbo.Invtrans i WITH (NOLOCK) 
+WHERE 1=1
+";
+
+            string InvCfmDate_Where = string.Empty;
+            string sqlcmdInMainSQL = $@"
+            AND pd.ID IN (SELECT POID FROM #tmpInvtrans)
+			AND pd.StockPOID IN (SELECT InventoryPOID FROM #tmpInvtrans)";
+
+            if (!string.IsNullOrEmpty(InvCfmDate_s))
+            {
+                InvCfmDate_Where += $"      AND i.ConfirmDate >= '{InvCfmDate_s}'" + Environment.NewLine;
+            }
+
+            if (!string.IsNullOrEmpty(InvCfmDate_e))
+            {
+                InvCfmDate_Where += $"      AND i.ConfirmDate <= '{InvCfmDate_e}'" + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(SP1))
+            {
+                if (!MyUtility.Check.Empty(SP2))
+                {
+                    InvCfmDate_Where += $"      AND POID BETWEEN '{SP1}' and '{SP2}'" + Environment.NewLine;
+                }
+                else
+                {
+                    InvCfmDate_Where += $"      AND POID = '{SP1}' " + Environment.NewLine;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(StockSP1))
+            {
+                if (!MyUtility.Check.Empty(StockSP2))
+                {
+                    InvCfmDate_Where += $"      AND InventoryPOID BETWEEN '{StockSP1}' and '{StockSP2}'" + Environment.NewLine;
+                }
+                else
+                {
+                    InvCfmDate_Where += $"      AND InventoryPOID = '{StockSP1}'" + Environment.NewLine;
+                }
+            }
+
+            #endregion
+
             if ((CuttingInline_b == null && CuttingInline_e == null) &&
                  MyUtility.Check.Empty(SP1) && MyUtility.Check.Empty(StockSP1) && MyUtility.Check.Empty(ProjectID) &&
-                (OrderCfmDate_b == null && OrderCfmDate_e == null))
+                (OrderCfmDate_b == null && OrderCfmDate_e == null) &&
+                (InvCfmDate_s == null && InvCfmDate_e == null)
+                )
             {
                 MyUtility.Msg.WarningBox("< Project ID >\r\n< Cutting Inline >\r\n< Order Confirm Date >\r\n< Issue SP# >\r\n< Stock SP# >\r\ncan't be empty!!");
                 txtIssueSP1.Focus();
@@ -292,7 +380,10 @@ WHERE   StockType='{0}'
 
             StringBuilder sqlcmd = new StringBuilder();
             #region -- sql command --
-            sqlcmd.Append(string.Format(@"
+            sqlcmd.Append($@"
+
+{(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? sqlcmdInv+ InvCfmDate_Where : string .Empty)}
+
 ;with cte as (
     select  convert(bit,0) as selected
             , iif(y.cnt > 0 ,'Y','') complete
@@ -331,7 +422,8 @@ WHERE   StockType='{0}'
     ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
     cross apply (
         select  sum(iif(i.type='2',i.qty,0-i.qty)) taipei_qty 
-        from dbo.Invtrans i WITH (NOLOCK) 
+        from {(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? "#tmpInvtrans" : "dbo.Invtrans")}
+                i WITH (NOLOCK) 
         where   i.InventoryPOID = pd.StockPOID 
                 and i.InventorySeq1 = pd.StockSeq1 
                 and i.PoID = pd.ID 
@@ -339,7 +431,7 @@ WHERE   StockType='{0}'
                 and (i.type='2' or i.type='6')
                 and Seq70Poid = rtrim(o.id)
                 and Seq70Seq1 = rtrim(pd.seq1)
-                and Seq70Seq2 = pd.seq2
+                and Seq70Seq2 = pd.seq2                
     ) x -- 需要轉的數量
     cross apply (
 	    select sum(s2.Qty) as InQty 
@@ -353,8 +445,10 @@ WHERE   StockType='{0}'
                 and s2.ToSeq2 = pd.seq2 
     ) xx --已轉的數量
     where   pd.seq1 like '7%' 
-            and f.MDivisionID = '{0}'
-            and checkProduceFty.IsProduceFty = '1'", Env.User.Keyword));
+            and f.MDivisionID = '{Env.User.Keyword}'
+            and checkProduceFty.IsProduceFty = '1'            
+			{(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? sqlcmdInMainSQL : string.Empty)}
+            ");
 
             #region -- 條件 --
             switch (selectindex)
@@ -436,7 +530,7 @@ WHERE   StockType='{0}'
             and o.CFMDate between '{0}' and '{1}'", OrderCfmDate_b, OrderCfmDate_e));
             }
             #endregion
-            sqlcmd.Append(@"
+            sqlcmd.Append($@"
 )
 select  *
         , 0.00 qty 
@@ -478,7 +572,9 @@ where   fi.StockType = 'I'
         and fi.Lock = 0
         and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 order by topoid, toseq1, toseq2, GroupQty DESC, fi.Dyelot, BalanceQty DESC
-drop table #tmp");
+
+drop table #tmp  {(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? ",#tmpInvtrans" : string.Empty)}
+");
 
             this.ShowWaitMessage("Data Loading....");
             #endregion
@@ -554,6 +650,22 @@ drop table #tmp");
                         {
                             findrow[0]["qty"] = dr2["qty"];
                             findrow[0]["selected"] = true;
+                            if (MyUtility.Check.Seek($@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{findrow[0]["tostocktype"]}'
+        and junk != '1'
+        and  id ='{findrow[0]["fromlocation"]}'
+"))
+                            {
+                                findrow[0]["tolocation"] = findrow[0]["fromlocation"];
+                            }
+                            else
+                            {
+                                findrow[0]["tolocation"] = string.Empty;
+                            }
                         }
                     }
                     var tempchildrows = dr.GetChildRows("rel1");
@@ -787,45 +899,18 @@ from #tmp";
                 MyUtility.Msg.WarningBox("Did not finish Inventory To Bulk");
                 return;
             }
-            // 新增Excel物件
-            Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
-            // 新增workbook
-            Microsoft.Office.Interop.Excel.Workbook workbook = excel.Application.Workbooks.Add(true);
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = workbook.Worksheets[1];
-            // 固定視窗
-            worksheet.Application.ActiveWindow.SplitRow = 2;
-            worksheet.Application.ActiveWindow.FreezePanes = true;
-            // 合併儲存格
-            Excel.Range range = worksheet.get_Range((Excel.Range)worksheet.Cells[1, 1], (Excel.Range)worksheet.Cells[1, Exceldt.Columns.Count]);
-            range.Merge(false);
+            string excelName = "Warehouse_P29";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            //excelApp.DisplayAlerts = false;
+            MyUtility.Excel.CopyToXls(Exceldt, "", $"{excelName}.xltx", 2, false, null, excelApp, wSheet: excelApp.Sheets[1], DisplayAlerts_ForSaveFile: false);
 
-            worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", Sci.Env.User.Keyword));
-            ((Excel.Range)worksheet.Cells[1, 1]).HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
-
-            for (int i = 0; i < Exceldt.Columns.Count; i++)
-            {
-                worksheet.Cells[2, i + 1] = Exceldt.Columns[i].ColumnName;
-            }
-
-            int index = 0;
-            foreach (DataRow dr in Exceldt.Rows)
-            {
-                for (int i = 0; i < dr.Table.Columns.Count; i++)
-                {
-                    worksheet.Cells[3 + index, i + 1] = dr[i];
-                }
-                index++;
-            }
-            worksheet.Columns.AutoFit();
+            excelApp.Sheets[1].Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P29");
-            excel.ActiveWorkbook.SaveAs(strExcelName);
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
-            Marshal.ReleaseComObject(range);
-            Marshal.ReleaseComObject(worksheet);
-            Marshal.ReleaseComObject(workbook);
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelName);
+            excelApp.ActiveWorkbook.SaveAs(strExcelName);
+            excelApp.Quit();
+            Marshal.ReleaseComObject(excelApp);
 
             strExcelName.OpenFile();
             #endregion

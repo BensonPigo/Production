@@ -29,7 +29,11 @@
         private void InitializeComponent()
         {
             this.radioGroup2 = new Sci.Win.UI.RadioGroup();
+            this.txtZone = new Sci.Win.UI.TextBox();
+            this.labZone = new Sci.Win.UI.Label();
             this.radioProductionStatus = new Sci.Win.UI.RadioButton();
+            this.txtFactory = new Sci.Production.Class.txtfactory();
+            this.txtM = new Sci.Production.Class.txtMdivision();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.checkFty = new Sci.Win.UI.CheckBox();
@@ -37,6 +41,7 @@
             this.checkOrder = new Sci.Win.UI.CheckBox();
             this.comboReport = new Sci.Win.UI.ComboBox();
             this.comboDate = new Sci.Win.UI.ComboBox();
+            this.txtBrand = new Sci.Production.Class.txtbrand();
             this.numMonth = new System.Windows.Forms.NumericUpDown();
             this.numYear = new System.Windows.Forms.NumericUpDown();
             this.labelMonth = new Sci.Win.UI.Label();
@@ -48,9 +53,6 @@
             this.radioSemimonthlyReport = new System.Windows.Forms.RadioButton();
             this.radioMonthlyReport = new System.Windows.Forms.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtFactory = new Sci.Production.Class.txtfactory();
-            this.txtM = new Sci.Production.Class.txtMdivision();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
             this.radioGroup2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
@@ -58,21 +60,23 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(371, 24);
+            this.print.Location = new System.Drawing.Point(366, 27);
             this.print.TabIndex = 0;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(371, 60);
+            this.toexcel.Location = new System.Drawing.Point(366, 63);
             this.toexcel.TabIndex = 1;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(371, 96);
+            this.close.Location = new System.Drawing.Point(366, 99);
             this.close.TabIndex = 2;
             // 
             // radioGroup2
             // 
+            this.radioGroup2.Controls.Add(this.txtZone);
+            this.radioGroup2.Controls.Add(this.labZone);
             this.radioGroup2.Controls.Add(this.radioProductionStatus);
             this.radioGroup2.Controls.Add(this.txtFactory);
             this.radioGroup2.Controls.Add(this.txtM);
@@ -96,9 +100,29 @@
             this.radioGroup2.Controls.Add(this.radioMonthlyReport);
             this.radioGroup2.Location = new System.Drawing.Point(12, 14);
             this.radioGroup2.Name = "radioGroup2";
-            this.radioGroup2.Size = new System.Drawing.Size(348, 385);
+            this.radioGroup2.Size = new System.Drawing.Size(348, 407);
             this.radioGroup2.TabIndex = 0;
             this.radioGroup2.TabStop = false;
+            // 
+            // txtZone
+            // 
+            this.txtZone.BackColor = System.Drawing.Color.White;
+            this.txtZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtZone.Location = new System.Drawing.Point(150, 201);
+            this.txtZone.Name = "txtZone";
+            this.txtZone.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtZone.Size = new System.Drawing.Size(94, 23);
+            this.txtZone.TabIndex = 21;
+            this.txtZone.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtZone_PopUp);
+            this.txtZone.Validating += new System.ComponentModel.CancelEventHandler(this.TxtZone_Validating);
+            // 
+            // labZone
+            // 
+            this.labZone.Location = new System.Drawing.Point(64, 200);
+            this.labZone.Name = "labZone";
+            this.labZone.Size = new System.Drawing.Size(83, 23);
+            this.labZone.TabIndex = 20;
+            this.labZone.Text = "Zone";
             // 
             // radioProductionStatus
             // 
@@ -106,16 +130,39 @@
             this.radioProductionStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioProductionStatus.Location = new System.Drawing.Point(17, 76);
             this.radioProductionStatus.Name = "radioProductionStatus";
-            this.radioProductionStatus.Size = new System.Drawing.Size(130, 21);
+            this.radioProductionStatus.Size = new System.Drawing.Size(138, 21);
             this.radioProductionStatus.TabIndex = 18;
             this.radioProductionStatus.TabStop = true;
-            this.radioProductionStatus.Text = "Prouction Status";
+            this.radioProductionStatus.Text = "Production Status";
             this.radioProductionStatus.UseVisualStyleBackColor = true;
             this.radioProductionStatus.CheckedChanged += new System.EventHandler(this.RadioProductionStatus_CheckedChanged);
             // 
+            // txtFactory
+            // 
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.boolFtyGroupList = false;
+            this.txtFactory.FilteMDivision = false;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsProduceFty = true;
+            this.txtFactory.IssupportJunk = true;
+            this.txtFactory.Location = new System.Drawing.Point(150, 232);
+            this.txtFactory.MDivision = null;
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(94, 23);
+            this.txtFactory.TabIndex = 6;
+            // 
+            // txtM
+            // 
+            this.txtM.BackColor = System.Drawing.Color.White;
+            this.txtM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtM.Location = new System.Drawing.Point(150, 169);
+            this.txtM.Name = "txtM";
+            this.txtM.Size = new System.Drawing.Size(94, 23);
+            this.txtM.TabIndex = 5;
+            // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(64, 207);
+            this.labelFactory.Location = new System.Drawing.Point(64, 232);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(83, 23);
             this.labelFactory.TabIndex = 17;
@@ -123,7 +170,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(64, 172);
+            this.labelM.Location = new System.Drawing.Point(64, 169);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(83, 23);
             this.labelM.TabIndex = 16;
@@ -135,7 +182,7 @@
             this.checkFty.Checked = true;
             this.checkFty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkFty.Location = new System.Drawing.Point(150, 355);
+            this.checkFty.Location = new System.Drawing.Point(150, 380);
             this.checkFty.Name = "checkFty";
             this.checkFty.Size = new System.Drawing.Size(125, 21);
             this.checkFty.TabIndex = 11;
@@ -148,7 +195,7 @@
             this.checkForecast.Checked = true;
             this.checkForecast.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkForecast.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkForecast.Location = new System.Drawing.Point(150, 328);
+            this.checkForecast.Location = new System.Drawing.Point(150, 353);
             this.checkForecast.Name = "checkForecast";
             this.checkForecast.Size = new System.Drawing.Size(82, 21);
             this.checkForecast.TabIndex = 10;
@@ -161,7 +208,7 @@
             this.checkOrder.Checked = true;
             this.checkOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkOrder.Location = new System.Drawing.Point(150, 304);
+            this.checkOrder.Location = new System.Drawing.Point(150, 329);
             this.checkOrder.Name = "checkOrder";
             this.checkOrder.Size = new System.Drawing.Size(64, 21);
             this.checkOrder.TabIndex = 9;
@@ -174,7 +221,7 @@
             this.comboReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboReport.FormattingEnabled = true;
             this.comboReport.IsSupportUnselect = true;
-            this.comboReport.Location = new System.Drawing.Point(150, 270);
+            this.comboReport.Location = new System.Drawing.Point(150, 295);
             this.comboReport.Name = "comboReport";
             this.comboReport.OldText = "";
             this.comboReport.Size = new System.Drawing.Size(190, 24);
@@ -186,11 +233,20 @@
             this.comboDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDate.FormattingEnabled = true;
             this.comboDate.IsSupportUnselect = true;
-            this.comboDate.Location = new System.Drawing.Point(150, 239);
+            this.comboDate.Location = new System.Drawing.Point(150, 264);
             this.comboDate.Name = "comboDate";
             this.comboDate.OldText = "";
             this.comboDate.Size = new System.Drawing.Size(190, 24);
             this.comboDate.TabIndex = 7;
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(150, 137);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(94, 23);
+            this.txtBrand.TabIndex = 4;
             // 
             // numMonth
             // 
@@ -241,7 +297,7 @@
             // 
             // labelSource
             // 
-            this.labelSource.Location = new System.Drawing.Point(64, 302);
+            this.labelSource.Location = new System.Drawing.Point(64, 327);
             this.labelSource.Name = "labelSource";
             this.labelSource.Size = new System.Drawing.Size(83, 23);
             this.labelSource.TabIndex = 6;
@@ -249,7 +305,7 @@
             // 
             // labelReport
             // 
-            this.labelReport.Location = new System.Drawing.Point(64, 270);
+            this.labelReport.Location = new System.Drawing.Point(64, 295);
             this.labelReport.Name = "labelReport";
             this.labelReport.Size = new System.Drawing.Size(83, 23);
             this.labelReport.TabIndex = 5;
@@ -257,7 +313,7 @@
             // 
             // labelDate
             // 
-            this.labelDate.Location = new System.Drawing.Point(64, 239);
+            this.labelDate.Location = new System.Drawing.Point(64, 264);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(83, 23);
             this.labelDate.TabIndex = 4;
@@ -265,7 +321,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(64, 138);
+            this.labelBrand.Location = new System.Drawing.Point(64, 137);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(83, 23);
             this.labelBrand.TabIndex = 3;
@@ -285,10 +341,10 @@
             this.radioSemimonthlyReport.ForeColor = System.Drawing.Color.Red;
             this.radioSemimonthlyReport.Location = new System.Drawing.Point(17, 49);
             this.radioSemimonthlyReport.Name = "radioSemimonthlyReport";
-            this.radioSemimonthlyReport.Size = new System.Drawing.Size(153, 21);
+            this.radioSemimonthlyReport.Size = new System.Drawing.Size(158, 21);
             this.radioSemimonthlyReport.TabIndex = 1;
             this.radioSemimonthlyReport.TabStop = true;
-            this.radioSemimonthlyReport.Text = "Semimonthly Report";
+            this.radioSemimonthlyReport.Text = "Semi-monthly Report";
             this.radioSemimonthlyReport.UseVisualStyleBackColor = true;
             this.radioSemimonthlyReport.CheckedChanged += new System.EventHandler(this.RadioSemimonthlyReport_CheckedChanged);
             // 
@@ -315,43 +371,12 @@
             this.label1.Text = "Paper Size A4";
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // txtFactory
-            // 
-            this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.boolFtyGroupList = false;
-            this.txtFactory.FilteMDivision = false;
-            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactory.IsProduceFty = true;
-            this.txtFactory.IssupportJunk = true;
-            this.txtFactory.Location = new System.Drawing.Point(150, 207);
-            this.txtFactory.Name = "txtFactory";
-            this.txtFactory.Size = new System.Drawing.Size(94, 23);
-            this.txtFactory.TabIndex = 6;
-            // 
-            // txtM
-            // 
-            this.txtM.BackColor = System.Drawing.Color.White;
-            this.txtM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtM.Location = new System.Drawing.Point(150, 172);
-            this.txtM.Name = "txtM";
-            this.txtM.Size = new System.Drawing.Size(94, 23);
-            this.txtM.TabIndex = 5;
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(150, 138);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(94, 23);
-            this.txtBrand.TabIndex = 4;
-            // 
             // R10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(467, 430);
+            this.ClientSize = new System.Drawing.Size(459, 480);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGroup2);
             this.DefaultControl = "numYear";
@@ -360,6 +385,9 @@
             this.Name = "R10";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R10. Factory Capacity by Month Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -399,5 +427,7 @@
         private Class.txtfactory txtFactory;
         private Class.txtMdivision txtM;
         private Win.UI.RadioButton radioProductionStatus;
+        private Win.UI.Label labZone;
+        private Win.UI.TextBox txtZone;
     }
 }

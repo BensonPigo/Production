@@ -10,6 +10,9 @@ using Ict;
 using Sci.Data;
 using System.Transactions;
 using Sci.Production.PublicPrg;
+using System.Linq;
+using System.Configuration;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -21,18 +24,22 @@ namespace Sci.Production.Shipping
         private DataRow apData;
         private DataTable SEData;
         private DataTable SEGroupData;
+        private bool Apflag;
+        private string LocalSuppID;
 
         /// <summary>
         /// P08_ShareExpense
         /// </summary>
         /// <param name="aPData">aPData</param>
-        public P08_ShareExpense(DataRow aPData)
+        public P08_ShareExpense(DataRow aPData, bool apflag)
         {
             this.InitializeComponent();
             this.apData = aPData;
+            this.Apflag = apflag;
             this.displayCurrency.Value = MyUtility.Convert.GetString(this.apData["CurrencyID"]);
             this.numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(this.apData["CurrencyID"]), "Currency", "ID"));
             this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(this.apData["Amount"]);
+            this.LocalSuppID = MyUtility.Convert.GetString(this.apData["LocalSuppID"]);
             this.ControlButton();
         }
 
@@ -205,7 +212,7 @@ select * from Expt", e.FormattedValue.ToString());
                     e.Cancel = true; // 不進入RowIndex判斷
                 }
             };
-#endregion
+            #endregion
             #region BL2No
             bL2No.CellValidating += (s, e) =>
             {
@@ -299,7 +306,7 @@ from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
                     e.Cancel = true; // 不進入RowIndex判斷
                 }
             };
-#endregion
+            #endregion
             #region WKNO
             wKNO.CellValidating += (s, e) =>
             {
@@ -376,7 +383,7 @@ SELECT * FROM FTY
                         }
                         else
                         {
-                             string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
+                            string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
                             for (int i = 0; i < dtExp.Rows.Count; i++)
                             {
                                 string strSqlcmd = $@"
@@ -392,7 +399,8 @@ SELECT * FROM FTY
                                 (dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
                                     dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
                                     dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
-                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0))
+                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0) &&
+                                    !dtExp.Rows[i]["FtyWK"].ToString().EqualString("1"))
                                 {
                                     MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
                                     return;
@@ -445,7 +453,7 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                         }
                         else
                         {
-                             string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
+                            string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
                             for (int i = 0; i < dtImp.Rows.Count; i++)
                             {
                                 string strSqlcmd = $@"
@@ -460,7 +468,8 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                                 (dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
                                     dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
                                     dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
-                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0))
+                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0) &&
+                                    !dtImp.Rows[i]["FtyWK"].ToString().EqualString("1"))
                                 {
                                     MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
                                     return;
@@ -520,16 +529,19 @@ select * from FtyExportData ", e.FormattedValue.ToString());
 
             string strCheckSql = $@"select 1 from ShareExpense WITH (NOLOCK)  where ShippingAPID = '{this.apData["ID"]}' and (Junk=0 or junk is null)";
 
-            if (
-                this.apData["SubType"].ToString().ToUpper() == "GARMENT" &&
-                this.apData["Type"].ToString().ToUpper() == "EXPORT" &&
-                !MyUtility.Check.Seek(strCheckSql))
+            if (this.apData["SubType"].ToString().ToUpper() == "GARMENT"
+                && this.apData["Type"].ToString().ToUpper() == "EXPORT"
+                && !MyUtility.Check.Seek(strCheckSql))
             {
-                this.AppendData();
+                if (ConfigurationManager.AppSettings["TaipeiServer"] == string.Empty
+                    || (ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty
+                        && DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false))
+                {
+                    this.AppendData();
+                }
             }
 
             this.QueryData();
-
         }
 
         private void AppendData()
@@ -793,15 +805,17 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             {
                 this.gridBLNo.ValidateControl();
                 bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(this.apData["ID"])));
-                bool haveSea = false, noExistNotSea = true, noAirpp = false;
+                bool haveSea = false, noExistNotSea = true;
+                DualResult resultCheckShareExpense;
                 bool bolNoImportCharges = true;
                 string exportID = string.Empty;
                 DataTable duplicData;
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
 
                 // 取得AccountNo
-                  string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
+                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
 
+                List<CheckResult> listCheckResult = new List<CheckResult>();
                 StringBuilder msg = new StringBuilder();
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).ToList<DataRow>())
                 {
@@ -811,6 +825,12 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                         {
                             dr.Delete();
                             continue;
+                        }
+
+                        if (dr["BLNo"].ToString().IndexOf("'") > -1 || dr["WKNo"].ToString().IndexOf("'") > -1 || dr["InvNo"].ToString().IndexOf("'") > -1)
+                        {
+                            MyUtility.Msg.WarningBox("Can not save! Because value includes ' word in <BL/MAWB No.>, <FCR/BL/HAWB> or <WK#/Fty WK#>.");
+                            return;
                         }
 
                         // 檢查重複值
@@ -871,23 +891,12 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                             return;
                         }
 
-                        // Account Name含Air-Prepaid (6105/5912) 時, GB上的Ship Mode必須為A/P或E/P或 E/P-C,且該GB項下的SP須有APP No.
-                        string strSqlcmd = $@"
-select 1 from AirPP
-where exists(	select 1 
-from PackingList pl
-	inner join PackingList_Detail pld on pl.id=pld.ID
-	 where INVNo='{dr["InvNo"]}'
-	 and pld.OrderID=AirPP.OrderID)";
-
-                        if (!MyUtility.Check.Seek(strSqlcmd) &&
-                            (dr["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
-                             dr["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
-                             dr["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
-                             (accNo.Substring(0, 4).CompareTo("6105") == 0 ||
-                              accNo.Substring(0, 4).CompareTo("5912") == 0))
+                        // ISP20191331 檢查ShareExpense項目正確性
+                        resultCheckShareExpense = this.CheckShareExpenseItem(dr, ref listCheckResult);
+                        if (!resultCheckShareExpense)
                         {
-                            noAirpp = true;
+                            this.ShowErr(resultCheckShareExpense);
+                            return;
                         }
                     }
                 }
@@ -904,10 +913,38 @@ from PackingList pl
                     return;
                 }
 
-                if (noAirpp)
+                if (listCheckResult.Count > 0)
                 {
-                    MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
-                    return;
+                    Func<List<CheckResult>, string, string, bool> showResultMsg = (inListCheckResult, msgType, mainMsg) =>
+                        {
+                            var isGMTBookingFail = listCheckResult.Where(s => s.resultType == msgType).Any();
+                            if (isGMTBookingFail)
+                            {
+                                string gmtBookingIDs = listCheckResult.Where(s => s.resultType == msgType).Select(s => s.resultValue).Distinct().JoinToString(",");
+                                MyUtility.Msg.WarningBox(mainMsg + gmtBookingIDs);
+                                return true;
+                            }
+
+                            return false;
+                        };
+
+                    if (showResultMsg(listCheckResult, "GB", "Garment Booking must confirm first." + Environment.NewLine + "GB :"))
+                    {
+                        return;
+                    }
+
+                    if (showResultMsg(listCheckResult, "PL", "Packing List must import to Pullout Report and send to TPE." + Environment.NewLine + "PL :"))
+                    {
+                        return;
+                    }
+
+                    string shipModeAirPP = Prgs.GetNeedCreateAppShipMode();
+                    string msgAirPP = $@"Please maintain Air Pre-Paid first (and GM Team must already locked APP), if shipping mode is {shipModeAirPP}
+Orders (Seq) :";
+                    if (showResultMsg(listCheckResult, "AirPP", msgAirPP))
+                    {
+                        return;
+                    }
                 }
 
                 #region 將資料寫入Table
@@ -1056,11 +1093,161 @@ where   ShippingAPID = '{3}'
                 }
                 #endregion
 
+                if (this.Apflag)
+                {
+                    DataTable tmp = (DataTable)this.listControlBindingSource1.DataSource;
+                    DataTable dt;
+                    string sqlGBchk = $@"
+select distinct g.Forwarder,g.id
+from GMTBooking g
+inner join #tmp t on g.id=t.InvNo
+";
+                    DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlGBchk, out dt);
+                    if (!dualResult)
+                    {
+                        this.ShowErr(dualResult);
+                    }
+
+                    string msgs = string.Empty;
+                    List<string> listID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != this.LocalSuppID).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                    if (listID.Count > 0)
+                    {
+                        string gid = string.Join(",", listID);
+                        msgs += $@"Garment Booking : {gid}
+";
+                    }
+
+                    sqlGBchk = $@"
+select distinct AirPP.Forwarder,p.id
+from GMTBooking g with(nolock)
+inner join #tmp t on g.id=t.InvNo
+inner join PackingList p with(nolock) on p.INVNo = g.id
+inner join PackingList_Detail pd with(nolock) on pd.id = p.id
+inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipmodeSeq = pd.OrderShipmodeSeq
+";
+                    dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlGBchk, out dt);
+                    if (!dualResult)
+                    {
+                        this.ShowErr(dualResult);
+                    }
+
+                    List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != this.LocalSuppID).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                    if (packingListID.Count > 0)
+                    {
+                        string pid = string.Join(",", packingListID);
+                        msgs += $@"Packing List : {pid}";
+                    }
+
+                    if (!MyUtility.Check.Empty(msgs))
+                    {
+                        msgs = @"Forwarder is different from APP request, please double check.
+" + msgs;
+                        MyUtility.Msg.WarningBox(msgs);
+                    }
+                }
+
                 this.EditMode = false;
             }
 
             this.ControlButton();
             this.QueryData();
+        }
+
+        private class CheckResult
+        {
+            public string resultType { get; set; }
+
+            public string resultValue { get; set; }
+        }
+
+        private DualResult CheckShareExpenseItem(DataRow shareExpenseItem, ref List<CheckResult> listCheckResult)
+        {
+            if (MyUtility.Check.Empty(shareExpenseItem["InvNo"]))
+            {
+                return new DualResult(true);
+            }
+
+            string sqlCheckGarmentBookingAndPackingList = $@"
+declare @Status varchar(15) = ''
+declare @invNo varchar(25) = @inputInvNo
+
+--檢查GarmentBooking是否confirm
+select @Status = Status
+    from GMTBooking with (nolock) where ID = @invNo
+
+if(@Status not in ('','Confirmed'))
+begin
+
+    select [resultType] = 'GB', [resultValue] = @invNo 
+    return
+end
+
+--檢查PackingList 必須存在 Pullout Report 並且有 Send to TPE 的日期
+Create Table #tmpPackingListCheck(
+[resultType] varchar(2),
+[resultValue] varchar(13)
+)
+
+insert into #tmpPackingListCheck
+select [resultType] = 'PL',
+       [resultValue] = p.ID
+from PackingList p with (nolock) 
+where   p.InvNo = @invNo and 
+        not exists (select 1 from Pullout pul with (nolock)
+                                  inner join Pullout_Detail pd with (nolock) on pul.ID = pd.ID
+                                  where pd.PackingListID = p.ID and pul.SendToTPE is not null)
+
+if exists (select 1 from #tmpPackingListCheck)
+begin
+    select * from #tmpPackingListCheck
+    return
+end
+
+--檢查PL ShipMode 屬於必須建立 APP（請至資料表 : ShipMode 確認是否需要建立 APP : NeedCreateAPP）
+Create Table #tmpAirPPCheck(
+[resultType] varchar(5),
+[resultValue] varchar(800)
+)
+
+insert into #tmpAirPPCheck
+select [resultType] = 'AirPP',
+       [resultValue] = pd.OrderID + '(' + pd.OrderShipmodeSeq + ')'
+from PackingList p with (nolock) 
+inner join ShipMode sm with (nolock) on p.ShipModeID = sm.ID and sm.NeedCreateAPP = 1
+inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+where p.InvNo = @invNo and  not exists (select 1 from AirPP app with (nolock) where app.OrderID = pd.OrderID and app.OrderShipmodeSeq = pd.OrderShipmodeSeq and Status = 'Locked')
+
+
+if exists (select 1 from #tmpAirPPCheck)
+begin
+    select * from #tmpAirPPCheck
+    return
+end
+
+select [resultType] = 'OK',
+       [resultValue] = ''
+";
+
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlCheckGarmentBookingAndPackingList,  new List<SqlParameter>() { new SqlParameter("@inputInvNo", shareExpenseItem["InvNo"]) }, out dtResult);
+            if (!result)
+            {
+                return result;
+            }
+
+            bool isCheckNotPass = dtResult.Rows[0]["resultType"].ToString() != "OK";
+            if (isCheckNotPass)
+            {
+                foreach (DataRow item in dtResult.Rows)
+                {
+                    listCheckResult.Add(new CheckResult() {
+                        resultType = item["resultType"].ToString(),
+                        resultValue = item["resultValue"].ToString()
+                    });
+                }
+            }
+
+            return new DualResult(true);
         }
 
         // Close / Undo

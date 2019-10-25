@@ -31,14 +31,14 @@ namespace Sci.Production.Shipping
         {
             base.OnDetailEntered();
 
-            // 按鈕Canvass Record變色
+            // 按鈕Quotation Record變色
             if (MyUtility.Check.Seek(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "ShipExpense_CanVass", "ID"))
             {
-                this.btnCanvassRecord.ForeColor = Color.Blue;
+                this.btnQuotationRecord.ForeColor = Color.Blue;
             }
             else
             {
-                this.btnCanvassRecord.ForeColor = Color.Black;
+                this.btnQuotationRecord.ForeColor = Color.Black;
             }
 
             // 按鈕Payment History變色
@@ -175,7 +175,7 @@ namespace Sci.Production.Shipping
 
         private void BtnCanvassRecord_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.B03_CanvassRecord callNextForm = new Sci.Production.Shipping.B03_CanvassRecord(Prgs.GetAuthority(Sci.Env.User.UserID, "B03. Shipping Expense", "CanEdit"), this.CurrentMaintain, this.Perm.Confirm);
+            Sci.Production.Shipping.B03_Quotation callNextForm = new Sci.Production.Shipping.B03_Quotation(Prgs.GetAuthority(Sci.Env.User.UserID, "B03. Shipping Expense", "CanEdit"), this.CurrentMaintain, this.Perm.Confirm);
             callNextForm.ShowDialog(this);
             this.RenewData();
         }

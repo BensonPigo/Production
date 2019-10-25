@@ -295,7 +295,9 @@ namespace Sci.Production.Subcon
                                               } into m
                                               select new
                                               {
-                                                  amount = m.Sum(n => n.Field<int?>("poqty") * n.Field<decimal?>("unitprice") * n.Field<decimal?>("qtygarment"))
+                                                  amount = m.Sum(n => n.Field<int?>("poqty") * n.Field<decimal?>("unitprice") * 
+                                                                            (n.Field<decimal?>("qtygarment") == 0 || n.Field<decimal?>("qtygarment") == null ? 1: n.Field<decimal?>("qtygarment"))
+                                                                )
                                               });
                                 foreach (var q3 in query3)
                                 {
@@ -322,7 +324,7 @@ namespace Sci.Production.Subcon
                                              t7 = row.Field<int>("stitch"),
                                              t8 = row.Field<decimal>("cost"),
                                              t9 = row.Field<decimal>("unitprice"),
-                                             t10 = row.Field<decimal>("QtyGarment"),
+                                             t10 = (row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment")),
                                          } into m
                                          select new
                                          {
@@ -536,10 +538,10 @@ SELECT 	Selected = 0
 		, v.PatternCode
 		, v.PatternDesc
 		, LocalSuppID = rtrim(order_tmscost.LocalSuppID) 
-		, [Cost] = iif(awt.isArtwork = 1,vsa.Cost,sao.Price)
+        , [Cost] = isnull(cost.value,0)
 		, costStitch = v.qty
 		, stitch = v.qty
-		, unitprice = sao.Price
+		, unitprice = isnull(unitprice.value,0)
 		, qtygarment = 1.0
 		, poqty = sum(v.poqty) 
 		, Order_TmsCost.ArtworkInLine
@@ -553,10 +555,19 @@ inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 inner join view_order_artworks v on v.id = Order_TmsCost.id 
 									and v.artworktypeid = Order_TmsCost.artworktypeid
-inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey and vsa.Article = v.Article and vsa.ArtworkID = v.ArtworkID and
+left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey and vsa.Article = v.Article and vsa.ArtworkID = v.ArtworkID and
 														vsa.ArtworkName = v.ArtworkName and vsa.ArtworkTypeID = v.ArtworkTypeID and vsa.PatternCode = v.PatternCode and
 														vsa.PatternDesc = v.PatternDesc 
-inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.LocalSuppID = order_tmscost.LocalSuppID  and sao.Price > 0  and sao.PriceApv = 'Y'
+left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.LocalSuppID = order_tmscost.LocalSuppID  and sao.Price > 0  and sao.PriceApv = 'Y'
+left join LocalSupp ls with (nolock) on ls.id = order_tmscost.LocalSuppID
+outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), v.Cost,sao.Price))unitprice
+outer apply (
+    select value = 
+        case when ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1) then v.Cost
+             when awt.isArtwork = 1 then vsa.Cost
+             else sao.Price
+             end
+)cost
 WHERE 	not exists(
 			select 1
 			from artworkpo a WITH (NOLOCK) 
@@ -571,8 +582,11 @@ WHERE 	not exists(
 		AND factory.mdivisionid = '{1}'
 		AND factory.IsProduceFty = 1
 		AND Order_TmsCost.localsuppid !=''
-        AND Orders.PulloutComplete = 0
+        --AND Orders.PulloutComplete = 0
         AND (orders.Category ='s' or (orders.Category='B' AND Order_TmsCost.Price > 0) AND Order_TmsCost.InhouseOSP = 'O')
+		--↓(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1)), ISP20190803增加IsSintexSubcon狀況
+		--↓或是sao.Ukey is not null, 原本存在 View_Style_Artwork, Style_Artwork_Quot
+		and ((ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1)) or sao.Ukey is not null)
 		", poType, Sci.Env.User.Keyword);
 
             if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
@@ -588,7 +602,7 @@ group by 	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.S
 			, Orders.OrderTypeId, Orders.SciDelivery, Order_TmsCost.ArtworkTypeID
 			, order_tmscost.LocalSuppID, order_tmscost.Qty, Order_TmsCost.ArtworkInLine
 			, Order_TmsCost.artworkoffline, Orders.SewInLine, Order_TmsCost.ApvDate
-			, V.ArtworkID, V.PatternCode, V.PatternDesc,   iif(awt.isArtwork = 1,vsa.Cost,sao.Price), V.ArtworkTypeID, v.qty,sao.Price";
+			, V.ArtworkID, V.PatternCode, V.PatternDesc, cost.value, V.ArtworkTypeID, v.qty,unitprice.value";
 
             return SqlCmd;
         }
@@ -617,7 +631,7 @@ SELECT 	Selected = 0
 		, costStitch = 1 
 		, stitch = 1 
 		, unitprice = Order_TmsCost.Price
-		, qtygarment = isnull(order_tmscost.Qty,1)
+		, qtygarment = IIF(order_tmscost.Qty IS NULL OR order_tmscost.Qty=0 ,1 ,order_tmscost.Qty)--  isnull(order_tmscost.Qty,1)
 		, poqty = sum(v.Qty) 
 		, Order_TmsCost.ArtworkInLine
 		, Order_TmsCost.artworkoffline
@@ -644,7 +658,7 @@ WHERE 	not exists(
 		and orders.IsForecast = 0
 		and orders.Junk = 0
 		and Order_TmsCost.localsuppid !=''		
-        and Orders.PulloutComplete = 0
+        --and Orders.PulloutComplete = 0
 		", poType, Sci.Env.User.Keyword);
             SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
             switch (poType)

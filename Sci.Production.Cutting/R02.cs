@@ -573,16 +573,18 @@ drop table #tmpall");
             }
             #endregion
 
-            #region radiobtn By Detail3
+            #region radiobtn By Summary
             if (radioBySummary.Checked)
             {
                 for (int i = 0; i < SheetsCount; i++)
                 {
-                    sqlCmd.Append(@"
+                    sqlCmd.Append($@"
 select distinct
 	[Request#] = c.ID,
+	[Factory]=o.FactoryID,
 	[Line#] = cd.SewingLineID,
 	[SP#] = cd.OrderID,
+	o.SewInline,
 	[Seq#] = Concat(w.Seq1, '-', w.Seq2),
 	[Style#] = o.StyleID,
 	[FabRef#] = pd.RefNo,
@@ -595,7 +597,10 @@ select distinct
 	[Cut Qty] = cq.SizeCode,
 	[Colorway] = woda.ac,
 	[Total Fab Cons] =sum(cd.Cons) over(partition by c.ID,cd.SewingLineID,cd.OrderID,w.Seq1,w.Seq2,w.FabricCombo),
-	[Remark] = Remark.Remark
+	[Remark] = Remark.Remark,
+	p.patternUKey,
+	w.FabricPanelCode
+into #tmp{i}
 from Cutplan c WITH (NOLOCK)
 inner join Cutting cut on c.CuttingID = cut.ID 
 inner join Cutplan_Detail cd WITH (NOLOCK) on c.ID = cd.ID
@@ -678,6 +683,24 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )remark
+outer apply(
+	SELECT TOP 1 SizeGroup=IIF(ISNULL(SizeGroup,'')='','N',SizeGroup)
+	FROM Order_SizeCode 
+	WHERE ID = o.POID and SizeCode IN 
+	(
+		Select distinct SizeCode
+		from Cutplan_Detail cd2 WITH (NOLOCK) 		
+		inner join WorkOrder w2 on cd2.WorkorderUkey = w2.Ukey
+		inner join WorkOrder_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderUKey = ws2.WorkOrderUkey
+		where cd2.ID = c.ID
+		and cd2.SewingLineID = cd.SewingLineID
+		and cd2.OrderID = cd.OrderID
+		and w2.SEQ1 = w.SEQ1 
+		and w2.SEQ2 = w.SEQ2
+	)
+) as ss
+outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',w.MarkerNo,o.StyleUkey,ss.SizeGroup) p)p
+
 where 1 = 1
 ");
                     if (!MyUtility.Check.Empty(dateR_CuttingDate1))
@@ -704,7 +727,32 @@ where 1 = 1
                     {
                         sqlCmd.Append(string.Format(" and c.SpreadingNoID = '{0}' ", Maintb.Rows[i][0].ToString()));
                     }
-                    sqlCmd.Append(" order by [Request#],[Line#],[SP#],[Seq#]");
+                    sqlCmd.Append($@"
+select 	
+	[Request#],[Factory],[Line#],[SP#],[SewInline],[Seq#],[Style#],[FabRef#],[Fab Desc],[Color],Artwork.Artwork
+	,[Comb.],[Fab_Code],[Cut#],[Size Ratio],[Cut Qty],[Colorway],[Total Fab Cons],[Remark]
+from #tmp{i} t
+outer apply(
+	select Artwork=stuff((
+	select distinct concat('+',s.data)
+	from(
+		select distinct pg.Annotation
+		from Pattern_GL_LectraCode pgl
+		inner join Pattern_GL pg on pgl.PatternUKEY = pg.PatternUKEY
+									and pgl.seq = pg.SEQ
+									and pg.Annotation is not null
+									and pg.Annotation!=''
+		where pgl.PatternUKEY = t.patternUKey and pgl.FabricPanelCode = t.FabricPanelCode
+	)a
+	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(dbo.[RemoveNumericCharacters](a.Annotation),'+'))s
+	where exists(select 1 from SubProcess where id = s.data)
+	for xml path(''))
+	,1,1,'')
+)Artwork
+order by [Request#],Factory,[Line#],[SP#],[Seq#]
+drop table #tmp{i}
+");
+
                 }
             }
             #endregion
@@ -772,9 +820,55 @@ where 1 = 1
                     printData[i].Columns.RemoveAt(printData[i].Columns.Count-1);
                 }
             }
-            
+
             #endregion
-            
+            #region By summary
+            if (radioBySummary.Checked)
+            {
+                for (int i = 0; i < printData.Count(); i++)
+                {
+                    int l = 0, q = 0;
+                    decimal dm = 0, dsum = 0;
+                    DataTable tmps = new DataTable();
+                    tmps = printData[i].Copy();
+                    printData[i].Clear();
+                    for (int j = 0; j < tmps.Rows.Count; j++)
+                    {
+                        decimal.TryParse(tmps.Rows[j]["Total Fab Cons"].ToString(), out dm);
+                        dsum += dm;
+                        DataRow drr = printData[i].NewRow();
+                        drr = tmps.Rows[j];
+                        printData[i].ImportRow(drr);
+
+                        string id = MyUtility.Convert.GetString(tmps.Rows[j]["Request#"]);
+                        string sp = MyUtility.Convert.GetString(tmps.Rows[j]["SP#"]);
+                        string seq = MyUtility.Convert.GetString(tmps.Rows[j]["Seq#"]);
+
+                        string id2 = string.Empty;
+                        string sp2 = string.Empty;
+                        string seq2 = string.Empty;
+                        if (j < tmps.Rows.Count - 1)
+                        {
+                            id2 = MyUtility.Convert.GetString(tmps.Rows[j + 1]["Request#"]);
+                            sp2 = MyUtility.Convert.GetString(tmps.Rows[j + 1]["SP#"]);
+                            seq2 = MyUtility.Convert.GetString(tmps.Rows[j + 1]["Seq#"]);
+                        }
+
+                        if (id != id2 || sp != sp2 || seq != seq2)
+                        {
+                            DataRow tabrow = printData[i].NewRow();
+                            tabrow["Colorway"] = "Subtotal";
+                            tabrow["Total Fab Cons"] = dsum;
+                            printData[i].Rows.Add(tabrow);
+
+                            dm = 0;
+                            dsum = 0;
+                        }
+                    }
+                    printData[i].Columns.RemoveAt(printData[i].Columns.Count - 1);
+                }
+            }
+            #endregion
             return Result.True;
         }
 

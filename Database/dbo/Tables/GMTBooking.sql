@@ -44,6 +44,9 @@
     [InvoiceApproveDate] DATE NULL, 
     [DocumentRefNo] VARCHAR(15) CONSTRAINT [DF_GMTBooking_DocumentRefNo] DEFAULT ('') NULL,
     [IntendDeliveryDate] DATE NULL, 
+    [TotalAPPBookingVW] NUMERIC(21, 2) NULL DEFAULT ((0)), 
+    [TotalAPPEstAmtVW] NUMERIC(21, 2) NULL DEFAULT ((0)), 
+    [NonDeclare] BIT NOT NULL DEFAULT (0), 
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

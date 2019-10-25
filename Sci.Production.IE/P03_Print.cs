@@ -191,10 +191,31 @@ order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]))
             if (!this.change)
             {
                 sqlCmd = string.Format(
-                    @"select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
+                    @"select No 
+,CT = COUNT(1)
+,[ActCycle] = Max(ld.ActCycle)
+,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
+OUTER APPLY(
+	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
+	(
+		SELECT DISTINCT No, ActCycle, TotalGSD, TotalCycle
+		FROM 
+		(
+			select  ld.*
+					, o.DescEN as Description
+					, e.Name as EmployeeName
+					, e.Skill as EmployeeSkill
+					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+			from LineMapping_Detail ld WITH (NOLOCK) 
+			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+			where ld.ID = {0} AND No <> ''
+		)a
+	)b
+)ActCycle
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-GROUP BY NO
+GROUP BY NO ,ActCycle.Value
 order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
@@ -220,11 +241,32 @@ from(
 )x
 group by ID
 
-select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
+select No
+,CT = COUNT(1)
+,[ActCycle] = Max(ld.ActCycle)
+,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
+OUTER APPLY(
+	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
+	(
+		SELECT DISTINCT No, ActCycle, TotalGSD, TotalCycle
+		FROM 
+		(
+			select  ld.*
+					, o.DescEN as Description
+					, e.Name as EmployeeName
+					, e.Skill as EmployeeSkill
+					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+			from LineMapping_Detail ld WITH (NOLOCK) 
+			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+			where ld.ID = {0} AND No <> ''
+		)a
+	)b
+)ActCycle
 where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno
-GROUP BY NO
+GROUP BY NO ,ActCycle.Value
 order by no
 
 ",
@@ -250,10 +292,30 @@ from(
 group by ID
 
 select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
+,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
+
+OUTER APPLY(
+	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
+	(
+		SELECT DISTINCT No, ActCycle, TotalGSD, TotalCycle
+		FROM 
+		(
+			select  ld.*
+					, o.DescEN as Description
+					, e.Name as EmployeeName
+					, e.Skill as EmployeeSkill
+					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+			from LineMapping_Detail ld WITH (NOLOCK) 
+			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+			where ld.ID = {0} AND No <> ''
+		)a
+	)b
+)ActCycle
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-GROUP BY NO
+GROUP BY NO ,ActCycle.Value
 order by no
 
 ",
@@ -341,7 +403,7 @@ order by no
 
             // 插圖 Picture1
             intRowsStart++;
-            string destination_path = MyUtility.GetValue.Lookup("select PicPath from System WITH (NOLOCK) ", null);
+            string destination_path = MyUtility.GetValue.Lookup("select StyleSketch from System WITH (NOLOCK) ", null);
             string picture12 = string.Format("select Picture1, Picture2 from Style where id = '{0}' and BrandID = '{1}' and SeasonID = '{2}'", style, brand, season);
             DataRow pdr;
             MyUtility.Check.Seek(picture12, out pdr);
@@ -433,6 +495,11 @@ order by no
             // Template
             worksheet.Cells[rownum, 27] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,5,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
             worksheet.Cells[rownum, 18] = $"=IF(OR(ISNA(VLOOKUP(O{rownum},Operation,5,0)),M{rownum}=\"\"),\"\",IF(VLOOKUP(O{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
+
+            // only Machine Type
+            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,3,0)),\"\",IF(VLOOKUP(D{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum},Operation,3,0)))";
+            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,3,0)),\"\",IF(VLOOKUP(O{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum},Operation,3,0)))";
+
         }
 
         private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators)
@@ -496,7 +563,7 @@ order by no
             Microsoft.Office.Interop.Excel.Series series2 = seriesCollection2.NewSeries();
             series2.Values = chartData2.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(chartDataEndRow)));
             series2.XValues = chartData2.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(chartDataEndRow)));
-            series2.Name = "TotalCycle Time";
+            series2.Name = "Total Cycle Time";
 
             // 折線圖的資料標籤不顯示
             series2.ApplyDataLabels(Microsoft.Office.Interop.Excel.XlDataLabelsType.xlDataLabelsShowNone, false, false);
@@ -526,6 +593,14 @@ order by no
             series1.XValues = chartData.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(chartDataEndRow)));
             series1.Name = "Takt time";
             series1.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
+
+            // 新增折線圖
+            Microsoft.Office.Interop.Excel.SeriesCollection seriesCollection_actTime = chartPage.SeriesCollection();
+            Microsoft.Office.Interop.Excel.Series series1_actTime = seriesCollection_actTime.NewSeries();
+            series1_actTime.Values = chartData.get_Range("D2", string.Format("D{0}", MyUtility.Convert.GetString(chartDataEndRow)));
+            series1_actTime.XValues = chartData.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(chartDataEndRow)));
+            series1_actTime.Name = "Act Cycle Time(average)";
+            series1_actTime.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
 
             // 更改圖表版面配置 && 填入圖表標題 & 座標軸標題
             chartPage.ApplyLayout(9);
@@ -672,8 +747,8 @@ order by no
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
                 string endRow = (norow + 5).ToString();
-                worksheet.Names.Add("MachineINV1", worksheet.Range["J17", "J" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineINV2", worksheet.Range["M17", "M" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV1", worksheet.Range["W17", "W" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["X17", "X" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["Z19", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["Q17", "R" + endRow], Type.Missing);
                 worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$T$17:$T${endRow}))/2,0)", Type.Missing);
@@ -694,7 +769,8 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "N")}{norow}",
-                        TaktFormula = $"=D1"
+                        ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
+                        TaktFormula = $"=E1"
                     });
 
                     if (leftDirection)
@@ -798,8 +874,8 @@ order by no
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
                 int endRow = norow + 5;
-                worksheet.Names.Add("MachineINV1", worksheet.Range["J17", "J" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineINV2", worksheet.Range["M17", "M" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV1", worksheet.Range["W17", "W" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["X17", "X" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["Z19", "AA" + endRow]);
                 worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["Q17", "R" + endRow]);
                 worksheet.Names.Add("TtlTMS", $"=(SUM('Line Mapping'!$B$17:$B${endRow})+SUM('Line Mapping'!$T$17:$T${endRow}))/2");
@@ -822,7 +898,8 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "N")}{norow}",
-                        TaktFormula = $"=D1"
+                        ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
+                        TaktFormula = $"=E1"
                     });
 
                     if (leftDirection)
@@ -895,13 +972,14 @@ order by no
             // 填act Cycle Time
             worksheet = cycleTimeSheet;
             int intRowsStart = 2;
-            object[,] objArray = new object[1, 3];
+            object[,] objArray = new object[1, 4];
             foreach (CycleTimeChart dr in list_CycleTimeChart)
             {
                 objArray[0, 0] = dr.OperatorNo;
                 objArray[0, 1] = dr.ActCycleFormula;
                 objArray[0, 2] = dr.TaktFormula;
-                worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 3] = dr.ActCycleTime;
+                worksheet.Range[string.Format("A{0}:D{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -973,6 +1051,7 @@ order by no
         {
             private string operatorNo;
             private string actCycleFormula;
+            private string actCycleTime;
             private string taktFormula;
 
             public string OperatorNo
@@ -998,6 +1077,19 @@ order by no
                 set
                 {
                     this.actCycleFormula = value;
+                }
+            }
+
+            public string ActCycleTime
+            {
+                get
+                {
+                    return this.actCycleTime;
+                }
+
+                set
+                {
+                    this.actCycleTime = value;
                 }
             }
 

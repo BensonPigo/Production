@@ -45,7 +45,9 @@ pd.PackErrTransferDate,
 pu.Status,
 [MainSP] = pd.OrderID,
 [ErrorID]='',
-[ErrorType] = ''
+[ErrorType] = '',
+pd.SCICtnNo,
+ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
@@ -95,6 +97,7 @@ where Type='TP' and Junk=0";
            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
            .Text("ID", header: "Pack ID", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+           .Numeric("ShipQty", header: "Pack Qty", iseditingreadonly: true)
            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
@@ -274,8 +277,8 @@ where Type='TP' and Junk=0";
 update PackingList_Detail 
 set PackErrTransferDate = GETDATE() 
 where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}' and DisposeFromClog= 0;
-insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,PackingErrorID)
-                    values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{dr["ErrorID"]}')
+insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,PackingErrorID,SCICtnNo)
+                    values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{dr["ErrorID"]}','{dr["SCICtnNo"]}')
 ";
                         updateResult = DBProxy.Current.Execute(null, saveSql);
                         if (!updateResult)

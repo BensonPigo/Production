@@ -367,8 +367,10 @@
             // datePullOutDate
             // 
             this.datePullOutDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
+            this.datePullOutDate.IsSupportEditMode = false;
             this.datePullOutDate.Location = new System.Drawing.Point(564, 4);
             this.datePullOutDate.Name = "datePullOutDate";
+            this.datePullOutDate.ReadOnly = true;
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
             this.datePullOutDate.TabIndex = 5;
             this.datePullOutDate.Validating += new System.ComponentModel.CancelEventHandler(this.DatePullOutDate_Validating);
@@ -413,6 +415,7 @@
             this.txtshipmode.IsSupportUnselect = true;
             this.txtshipmode.Location = new System.Drawing.Point(308, 4);
             this.txtshipmode.Name = "txtshipmode";
+            this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode.TabIndex = 1;
             this.txtshipmode.UseFunction = null;
@@ -459,6 +462,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P05";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P05. Packing FOC";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";

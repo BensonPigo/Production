@@ -91,7 +91,7 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,o.SCIDelivery
 ,o.BrandID
 ,o.FactoryID
-,fd.ShipperID
+,ShipperID=isnull(fd1.ShipperID,fd2.ShipperID)
 ,ROUND(o.CPU,3) as cpu
 ,ROUND(isnull(cpucost.cpucost,0),3) as cpucost
 ,[StdSewingCost]= ROUND(o.CPU,3)  *   ROUND(isnull(cpucost.cpucost,0),3) --Std. Sewing Cost = CPU * CPU Cost
@@ -102,12 +102,19 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,dbo.GetLocalPurchaseStdCost(o.ID),0),3)
 From Orders o
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
-Left join FtyShipper_Detail fd on o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+outer apply(select * from FtyShipper_Detail fd where o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and fd.seasonID = o.seasonID)fd1
+outer apply(select * from FtyShipper_Detail fd where o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and fd.seasonID = '')fd2
 outer apply
 (
     select top 1 ROUND(fcd.CpuCost,3) AS CpuCost
-    from dbo.FSRCpuCost_Detail fcd 
-    where fcd.ShipperID=fd.ShipperID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate	
+    from dbo.FSRCpuCost_Detail fcd     
+    where fcd.ShipperID=fd1.ShipperID and o.OrigBuyerDelivery between fd1.BeginDate and fd1.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate	
+) cpucost1
+outer apply
+(
+    select top 1 iif(fd1.ShipperID is not null,cpucost1.CpuCost, ROUND(fcd.CpuCost,3)) AS CpuCost
+    from dbo.FSRCpuCost_Detail fcd     
+    where fcd.ShipperID=fd2.ShipperID and o.OrigBuyerDelivery between fd2.BeginDate and fd2.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate	
 ) cpucost
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')   ) sub_Process_AMT
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')   ) sub_Process_CPU
@@ -140,7 +147,7 @@ Where o.LocalOrder = 0 ");
 
             if (!MyUtility.Check.Empty(this.Shipper))
             {
-                sqlCmd.Append(string.Format(" and fd.ShipperID = '{0}'", this.Shipper));
+                sqlCmd.Append(string.Format(" and isnull(fd1.ShipperID,fd2.ShipperID) = '{0}' ", this.Shipper));
             }
 
             if (!MyUtility.Check.Empty(this.factory))

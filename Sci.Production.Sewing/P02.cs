@@ -403,7 +403,7 @@ where   mo.Junk = 0
             if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
             {
                 this.txtsewinglineLine.Focus();
-                MyUtility.Msg.WarningBox("Line can't empty!!");
+                MyUtility.Msg.WarningBox("Line# can't empty!!");
                 return false;
             }
 
@@ -712,7 +712,11 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                     callReason.ReturnRemark,
                     Sci.Env.User.UserID);
 
-                string updateCmd = string.Format(@"update SewingOutput set LockDate = null, Status = 'New' where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                string updateCmd = $@"
+update SewingOutput 
+set LockDate = null, Status = 'New'
+, EditDate = GetDate(), EditName = '{Sci.Env.User.UserID}'
+where ID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'";
 
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
@@ -776,7 +780,7 @@ WHERE ID = 'SCIMIS'
 ");
 
                 #region 填寫Mail需要的資料
-                string ccAddress = string.Empty;
+                string ccAddress = "";
                 string subject = "Unlock Sewing(Mockup)";
                 string od = string.Empty;
 
@@ -802,6 +806,8 @@ Remark : {callReason.ReturnRemark}
                 // 塞進MailTo物件
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
 
+                // email畫面關閉後額外塞入CC人員
+                email.SendingBefore += this.Email_SendingBefore;
                 email.ShowDialog(this);
 
                 if (email.DialogResult == DialogResult.OK)
@@ -820,6 +826,17 @@ values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason
             }
         }
 
+        /// <summary>
+        /// email畫面關閉後額外塞入CC人員
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Email_SendingBefore(object sender, MailTo.SendMailBeforeArg e)
+        {
+            e.Mail.CC.Add("planning@sportscity.com.tw");
+            e.Mail.CC.Add("team3@sportscity.com.tw");
+        }
+
         private void BtnBatchRecall_Click(object sender, EventArgs e)
         {
             if (!this.Perm.Recall)
@@ -834,11 +851,27 @@ values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason
 
         protected override void ClickSend()
         {
+            base.ClickSend();
+            string sqlcmdChk = $@"
+select 1
+FROM SewingOutput s
+INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
+INNER JOIN MockupOrder mo ON mo.ID = sd.OrderId
+where 1=1
+    and s.OutputDate < = CAST (GETDATE() AS DATE) 
+    and s.LockDate is null 
+    and s.FactoryID  = '{Sci.Env.User.Factory}'
+";
+            if (!MyUtility.Check.Seek(sqlcmdChk))
+            {
+                MyUtility.Msg.WarningBox("Already lock now!");
+                return;
+            }
+
             if (MyUtility.Msg.QuestionBox("Lock sewing data?") == DialogResult.No)
             {
                 return;
             }
-            base.ClickSend();
 
             string sqlcmd = $@"
 update  s 
@@ -846,7 +879,7 @@ set s.LockDate = CONVERT(date, GETDATE()) , s.Status='Send'
 , s.editname='{Sci.Env.User.UserID}' 
 , s.editdate=getdate()
 FROM SewingOutput s
-INNER JOIN SewingOutput_Detail sd ON s.ID = s.ID
+INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
 INNER JOIN MockupOrder mo ON mo.ID = sd.OrderId
 where 1=1
     and s.OutputDate < = CAST (GETDATE() AS DATE) 
@@ -869,7 +902,10 @@ where 1=1
                 scope.Complete();
             }
 
-            MyUtility.Msg.InfoBox("Lock data successfully!");
+            if (MyUtility.Check.Seek($@"select 1 from Factory where type !='S' and id = '{Sci.Env.User.Factory}'"))
+            {
+                Sci.Production.Sewing.P01.SendMail();
+            }
         }
 
         protected override void ClickRecall()

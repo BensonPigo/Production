@@ -132,6 +132,11 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             }
 
             this.ComputeOrderQty();
+
+            // 加總APPBookingVW & APPEstAmtVW
+            this.numAppBookingVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPBookingVW)", string.Empty));
+            this.numAppEstAmtVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPEstAmtVW)", string.Empty));
+
             Color_Change();
         }
 
@@ -496,7 +501,8 @@ order by os.Seq", dr["OrderID"].ToString(),
                 }
                 #endregion
             };
-            Color_Change();
+
+            this.Color_Change();
         }
 
         // 清空Order相關欄位值
@@ -612,6 +618,21 @@ order by os.Seq", dr["OrderID"].ToString(),
                 return false;
             }
 
+            // 檢查 表頭的 ShipMode 是否屬於必須建立 APP（請至資料表 : ShipMode 確認是否需要建立 APP : NeedCreateAPP）
+            // 若確認必須要建立 APP 則判斷表身的 N.W. / pcs 是否都有輸入
+            bool isNeedCreateAPP = MyUtility.Check.Seek($"select 1 from ShipMode with (nolock) where ID = '{this.CurrentMaintain["ShipModeID"]}' and NeedCreateAPP = 1");
+
+            if (isNeedCreateAPP)
+            {
+                bool isNWPcsEmpty = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["NWPerPcs"])).Any();
+                if (isNWPcsEmpty)
+                {
+                    string shipModeAirPP = Prgs.GetNeedCreateAppShipMode();
+                    MyUtility.Msg.WarningBox($"Shipping mode is {shipModeAirPP} row data need input N.W./Pcs");
+                    return false;
+                }
+            }
+
             // 刪除表身SP No.或Qty為空白的資料，檢查表身的Color Way與Size不可以為空值，順便填入Seq欄位值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, needPackQty = 0, ttlShipQty = 0, count = 0, drCtnQty = 0;
             double nw = 0.0, gw = 0.0, nnw = 0.0, cbm = 0.0;
@@ -676,6 +697,37 @@ order by os.Seq", dr["OrderID"].ToString(),
                     // ISP20181015 CBM抓到小數點後4位
                     cbm = MyUtility.Math.Round(cbm + (MyUtility.Convert.GetDouble(ctnCBM) * drCtnQty), 4);
                 }
+                #endregion
+
+                #region 重新計算表身每一個紙箱的材積重
+                DataRow drLocalitem;
+                string sqlLocalItem = $@"
+select 
+[BookingVW] = isnull(round(
+	(CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /6000
+,2),0)
+,[APPEstAmtVW] = isnull(round(
+	(CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /5000
+,2),0)
+from LocalItem
+outer apply(
+	select value = ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)
+) rate
+where RefNo='{dr["Refno"]}'";
+                if (MyUtility.Check.Empty(dr["CTNQty"]) || MyUtility.Convert.GetInt(dr["CTNQty"]) > 0)
+                {
+                    if (MyUtility.Check.Seek(sqlLocalItem, out drLocalitem))
+                    {
+                        dr["AppBookingVW"] = MyUtility.Convert.GetDecimal(drLocalitem["BookingVW"]) * MyUtility.Convert.GetInt(dr["CTNQty"]);
+                        dr["APPEstAmtVW"] = MyUtility.Convert.GetDecimal(drLocalitem["APPEstAmtVW"]) * MyUtility.Convert.GetInt(dr["CTNQty"]);
+                    }
+                }
+                else
+                {
+                    dr["AppBookingVW"] = 0;
+                    dr["APPEstAmtVW"] = 0;
+                }
+
                 #endregion
 
                 #region 重算表身Grid的Bal. Qty
@@ -890,78 +942,7 @@ where InvA.OrderID = '{0}'
         /// <returns>DualResult</returns>
         protected override DualResult ClickSavePre()
         {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["INVNo"]))
-            {
-                this.sqlCmd = string.Format(
-                    @"select isnull(sum(ShipQty),0) as ShipQty,isnull(sum(CTNQty),0) as CTNQty,isnull(sum(NW),0) as NW,isnull(sum(GW),0) as GW,isnull(sum(NNW),0) as NNW,isnull(sum(CBM),0) as CBM
-from PackingList WITH (NOLOCK) 
-where INVNo = '{0}'
-and ID != '{1}'",
-                    this.CurrentMaintain["INVNo"].ToString(),
-                    this.CurrentMaintain["ID"].ToString());
-
-                DataTable summaryData;
-                if (this.result = DBProxy.Current.Select(null, this.sqlCmd, out summaryData))
-                {
-                    string updateCmd = @"update GMTBooking
-set TotalShipQty = @ttlShipQty, TotalCTNQty = @ttlCTNQty, TotalNW = @ttlNW, TotalNNW = @ttlNNW, TotalGW = @ttlGW, TotalCBM = @ttlCBM
-where ID = @INVNo";
-                    #region 準備sql參數資料
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                    sp1.ParameterName = "@ttlShipQty";
-                    sp1.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["ShipQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["ShipQty"]);
-
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                    sp2.ParameterName = "@ttlCTNQty";
-                    sp2.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["CTNQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["CTNQty"]);
-
-                    System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                    sp3.ParameterName = "@ttlNW";
-                    sp3.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["NW"].ToString()), 2);
-
-                    System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                    sp4.ParameterName = "@ttlNNW";
-                    sp4.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["NNW"].ToString()), 2);
-
-                    System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-                    sp5.ParameterName = "@ttlGW";
-                    // ISP20181015 GW抓到小數點後3位
-                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["GW"].ToString()), 3);
-
-                    System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-                    sp6.ParameterName = "@ttlCBM";
-                    // ISP20181015 CBM抓到小數點後4位
-                    sp6.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"].ToString());
-
-                    System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
-                    sp7.ParameterName = "@INVNo";
-                    sp7.Value = this.CurrentMaintain["INVNo"].ToString();
-
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                    cmds.Add(sp1);
-                    cmds.Add(sp2);
-                    cmds.Add(sp3);
-                    cmds.Add(sp4);
-                    cmds.Add(sp5);
-                    cmds.Add(sp6);
-                    cmds.Add(sp7);
-                    #endregion
-
-                    this.result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
-                    if (!this.result)
-                    {
-                        DualResult failResult = new DualResult(false, "Update Garment Booking fail!\r\n" + this.result.ToString());
-                        return failResult;
-                    }
-                }
-                else
-                {
-                    DualResult failResult = new DualResult(false, "Select PackingList fail!\r\n" + this.result.ToString());
-                    return failResult;
-                }
-            }
-
-            return Result.True;
+            return Prgs.P03_UpdateGMT(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
         }
 
         /// <summary>
@@ -1421,6 +1402,11 @@ where InvA.OrderID = '{0}'
                     else
                     {
                         this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.White;
+                    }
+
+                    if (MyUtility.Convert.GetDecimal(dr["BalanceQty"]) < 0)
+                    {
+                        this.detailgrid.Rows[index].Cells[15].Style.BackColor = Color.Red;
                     }
                 }
             }

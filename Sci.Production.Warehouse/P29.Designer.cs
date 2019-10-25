@@ -32,6 +32,14 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
+            this.dateInventoryCfm = new Sci.Win.UI.DateRange();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtStockSP2 = new Sci.Win.UI.TextBox();
+            this.txtStockSP1 = new Sci.Win.UI.TextBox();
+            this.lbStockSP = new Sci.Win.UI.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtIssueSP2 = new Sci.Win.UI.TextBox();
             this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
@@ -56,12 +64,6 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
-            this.txtIssueSP2 = new Sci.Win.UI.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lbStockSP = new Sci.Win.UI.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtStockSP2 = new Sci.Win.UI.TextBox();
-            this.txtStockSP1 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -76,6 +78,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.dateInventoryCfm);
+            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txtStockSP2);
             this.panel1.Controls.Add(this.txtStockSP1);
@@ -104,13 +108,98 @@
             this.panel1.Size = new System.Drawing.Size(1078, 107);
             this.panel1.TabIndex = 1;
             // 
+            // dateInventoryCfm
+            // 
+            // 
+            // 
+            // 
+            this.dateInventoryCfm.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateInventoryCfm.DateBox1.Name = "";
+            this.dateInventoryCfm.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateInventoryCfm.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateInventoryCfm.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateInventoryCfm.DateBox2.Name = "";
+            this.dateInventoryCfm.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateInventoryCfm.DateBox2.TabIndex = 1;
+            this.dateInventoryCfm.Location = new System.Drawing.Point(480, 75);
+            this.dateInventoryCfm.Name = "dateInventoryCfm";
+            this.dateInventoryCfm.Size = new System.Drawing.Size(280, 23);
+            this.dateInventoryCfm.TabIndex = 10;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(351, 75);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(127, 23);
+            this.label3.TabIndex = 22;
+            this.label3.Text = "Inventory Cfm Date";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(210, 44);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(16, 17);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "~";
+            // 
+            // txtStockSP2
+            // 
+            this.txtStockSP2.BackColor = System.Drawing.Color.White;
+            this.txtStockSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStockSP2.Location = new System.Drawing.Point(232, 40);
+            this.txtStockSP2.Name = "txtStockSP2";
+            this.txtStockSP2.Size = new System.Drawing.Size(117, 23);
+            this.txtStockSP2.TabIndex = 6;
+            // 
+            // txtStockSP1
+            // 
+            this.txtStockSP1.BackColor = System.Drawing.Color.White;
+            this.txtStockSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStockSP1.Location = new System.Drawing.Point(87, 41);
+            this.txtStockSP1.Name = "txtStockSP1";
+            this.txtStockSP1.Size = new System.Drawing.Size(117, 23);
+            this.txtStockSP1.TabIndex = 5;
+            // 
+            // lbStockSP
+            // 
+            this.lbStockSP.Location = new System.Drawing.Point(9, 41);
+            this.lbStockSP.Name = "lbStockSP";
+            this.lbStockSP.Size = new System.Drawing.Size(75, 23);
+            this.lbStockSP.TabIndex = 18;
+            this.lbStockSP.Text = "Stock SP#";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(210, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(16, 17);
+            this.label1.TabIndex = 17;
+            this.label1.Text = "~";
+            // 
+            // txtIssueSP2
+            // 
+            this.txtIssueSP2.BackColor = System.Drawing.Color.White;
+            this.txtIssueSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtIssueSP2.Location = new System.Drawing.Point(232, 8);
+            this.txtIssueSP2.Name = "txtIssueSP2";
+            this.txtIssueSP2.Size = new System.Drawing.Size(117, 23);
+            this.txtIssueSP2.TabIndex = 2;
+            // 
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.boolFtyGroupList = true;
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(87, 75);
+            this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(117, 23);
             this.txtmfactory.TabIndex = 9;
@@ -180,7 +269,7 @@
             this.dateOrderCfmDate.DateBox2.Name = "";
             this.dateOrderCfmDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateOrderCfmDate.DateBox2.TabIndex = 1;
-            this.dateOrderCfmDate.Location = new System.Drawing.Point(475, 42);
+            this.dateOrderCfmDate.Location = new System.Drawing.Point(480, 42);
             this.dateOrderCfmDate.Name = "dateOrderCfmDate";
             this.dateOrderCfmDate.Size = new System.Drawing.Size(280, 23);
             this.dateOrderCfmDate.TabIndex = 7;
@@ -201,7 +290,7 @@
             this.dateCuttingInline.DateBox2.Name = "";
             this.dateCuttingInline.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateCuttingInline.DateBox2.TabIndex = 1;
-            this.dateCuttingInline.Location = new System.Drawing.Point(475, 9);
+            this.dateCuttingInline.Location = new System.Drawing.Point(480, 9);
             this.dateCuttingInline.Name = "dateCuttingInline";
             this.dateCuttingInline.Size = new System.Drawing.Size(280, 23);
             this.dateCuttingInline.TabIndex = 3;
@@ -210,10 +299,10 @@
             // 
             this.txtProjectID.BackColor = System.Drawing.Color.White;
             this.txtProjectID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtProjectID.Location = new System.Drawing.Point(475, 78);
+            this.txtProjectID.Location = new System.Drawing.Point(884, 78);
             this.txtProjectID.Name = "txtProjectID";
             this.txtProjectID.Size = new System.Drawing.Size(117, 23);
-            this.txtProjectID.TabIndex = 10;
+            this.txtProjectID.TabIndex = 11;
             // 
             // txtIssueSP1
             // 
@@ -229,7 +318,7 @@
             this.btnAutoPick.Location = new System.Drawing.Point(989, 38);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
-            this.btnAutoPick.TabIndex = 12;
+            this.btnAutoPick.TabIndex = 13;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
@@ -239,7 +328,7 @@
             this.btnQuery.Location = new System.Drawing.Point(989, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 11;
+            this.btnQuery.TabIndex = 12;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -254,23 +343,23 @@
             // 
             // labelOrderCfmDate
             // 
-            this.labelOrderCfmDate.Location = new System.Drawing.Point(359, 42);
+            this.labelOrderCfmDate.Location = new System.Drawing.Point(351, 42);
             this.labelOrderCfmDate.Name = "labelOrderCfmDate";
-            this.labelOrderCfmDate.Size = new System.Drawing.Size(113, 23);
+            this.labelOrderCfmDate.Size = new System.Drawing.Size(127, 23);
             this.labelOrderCfmDate.TabIndex = 13;
             this.labelOrderCfmDate.Text = "Order Cfm Date";
             // 
             // labelCuttingInline
             // 
-            this.labelCuttingInline.Location = new System.Drawing.Point(359, 9);
+            this.labelCuttingInline.Location = new System.Drawing.Point(351, 9);
             this.labelCuttingInline.Name = "labelCuttingInline";
-            this.labelCuttingInline.Size = new System.Drawing.Size(113, 23);
+            this.labelCuttingInline.Size = new System.Drawing.Size(127, 23);
             this.labelCuttingInline.TabIndex = 12;
             this.labelCuttingInline.Text = "Cutting Inline";
             // 
             // labelProjectID
             // 
-            this.labelProjectID.Location = new System.Drawing.Point(359, 75);
+            this.labelProjectID.Location = new System.Drawing.Point(768, 75);
             this.labelProjectID.Name = "labelProjectID";
             this.labelProjectID.Size = new System.Drawing.Size(110, 23);
             this.labelProjectID.TabIndex = 10;
@@ -303,7 +392,7 @@
             this.checkOnly.Location = new System.Drawing.Point(12, 17);
             this.checkOnly.Name = "checkOnly";
             this.checkOnly.Size = new System.Drawing.Size(316, 21);
-            this.checkOnly.TabIndex = 13;
+            this.checkOnly.TabIndex = 14;
             this.checkOnly.Text = "Only show data of complete inventory location";
             this.checkOnly.UseVisualStyleBackColor = true;
             this.checkOnly.CheckedChanged += new System.EventHandler(this.checkOnly_CheckedChanged);
@@ -314,7 +403,7 @@
             this.btnClose.Location = new System.Drawing.Point(986, 11);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 16;
+            this.btnClose.TabIndex = 17;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Visible = false;
@@ -326,7 +415,7 @@
             this.btnCreate.Location = new System.Drawing.Point(833, 11);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(147, 30);
-            this.btnCreate.TabIndex = 15;
+            this.btnCreate.TabIndex = 16;
             this.btnCreate.Text = "Create && Confirm";
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
@@ -337,7 +426,7 @@
             this.btnExcel.Location = new System.Drawing.Point(747, 11);
             this.btnExcel.Name = "btnExcel";
             this.btnExcel.Size = new System.Drawing.Size(80, 30);
-            this.btnExcel.TabIndex = 14;
+            this.btnExcel.TabIndex = 15;
             this.btnExcel.Text = "Excel";
             this.btnExcel.UseVisualStyleBackColor = true;
             this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
@@ -408,59 +497,6 @@
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
             // 
-            // txtIssueSP2
-            // 
-            this.txtIssueSP2.BackColor = System.Drawing.Color.White;
-            this.txtIssueSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtIssueSP2.Location = new System.Drawing.Point(232, 8);
-            this.txtIssueSP2.Name = "txtIssueSP2";
-            this.txtIssueSP2.Size = new System.Drawing.Size(117, 23);
-            this.txtIssueSP2.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(210, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(16, 17);
-            this.label1.TabIndex = 17;
-            this.label1.Text = "~";
-            // 
-            // lbStockSP
-            // 
-            this.lbStockSP.Location = new System.Drawing.Point(9, 41);
-            this.lbStockSP.Name = "lbStockSP";
-            this.lbStockSP.Size = new System.Drawing.Size(75, 23);
-            this.lbStockSP.TabIndex = 18;
-            this.lbStockSP.Text = "Stock SP#";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(210, 44);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(16, 17);
-            this.label2.TabIndex = 21;
-            this.label2.Text = "~";
-            // 
-            // txtStockSP2
-            // 
-            this.txtStockSP2.BackColor = System.Drawing.Color.White;
-            this.txtStockSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStockSP2.Location = new System.Drawing.Point(232, 40);
-            this.txtStockSP2.Name = "txtStockSP2";
-            this.txtStockSP2.Size = new System.Drawing.Size(117, 23);
-            this.txtStockSP2.TabIndex = 6;
-            // 
-            // txtStockSP1
-            // 
-            this.txtStockSP1.BackColor = System.Drawing.Color.White;
-            this.txtStockSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStockSP1.Location = new System.Drawing.Point(87, 41);
-            this.txtStockSP1.Name = "txtStockSP1";
-            this.txtStockSP1.Size = new System.Drawing.Size(117, 23);
-            this.txtStockSP1.TabIndex = 5;
-            // 
             // P29
             // 
             this.ClientSize = new System.Drawing.Size(1078, 601);
@@ -471,6 +507,7 @@
             this.DefaultControlForEdit = "txtIssueSP";
             this.EditMode = true;
             this.Name = "P29";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P29. Batch Create Inventory to Bulk";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
@@ -526,5 +563,7 @@
         private Win.UI.Label lbStockSP;
         private System.Windows.Forms.Label label1;
         private Win.UI.TextBox txtIssueSP2;
+        private Win.UI.DateRange dateInventoryCfm;
+        private Win.UI.Label label3;
     }
 }

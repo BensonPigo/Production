@@ -11,6 +11,7 @@ using Sci.Win.UI;
 using Ict.Data;
 using Ict;
 using Sci.Win.Tools;
+using System.Linq;
 using System.Transactions;
 
 namespace Sci.Production.Cutting
@@ -31,7 +32,7 @@ namespace Sci.Production.Cutting
             else
                 this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);    
             
-            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Sci.Env.User.Factory}'";       
+            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Sci.Env.User.Factory}'";
         }
 
         protected override void OnFormLoaded()
@@ -802,8 +803,10 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
         private void btnGarmentList_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["poid"].ToString(), "Orders", "ID");
+            var Sizelist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+
             Sci.Production.PublicForm.GarmentList callNextForm =
-    new Sci.Production.PublicForm.GarmentList(ukey, CurrentMaintain["poid"].ToString(), txtCutRef.Text);
+    new Sci.Production.PublicForm.GarmentList(ukey, CurrentMaintain["poid"].ToString(), txtCutRef.Text, Sizelist);
             callNextForm.ShowDialog(this);
             OnDetailEntered();
         }
@@ -1035,6 +1038,13 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'"
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             txtLineNo.Text = item.GetSelectedString();
+        }
+
+        private void BtnBatchDelete_Click(object sender, EventArgs e)
+        {
+            var form = new P10_BatchDelete();
+            form.ShowDialog();
+            this.RenewData();
         }
 
         private void txtLineNo_Validating(object sender, CancelEventArgs e)

@@ -25,7 +25,7 @@
     [MarkerVersion]       VARCHAR (3)    CONSTRAINT [DF_Order_EachCons_MarkerVersion] DEFAULT ('') NULL,
     [Direction]           NVARCHAR(40)     CONSTRAINT [DF_Order_EachCons_Direction] DEFAULT ('') NULL,
     [CuttingWidth]        VARCHAR (8)    CONSTRAINT [DF_Order_EachCons_CuttingWidth] DEFAULT ('') NULL,
-    [Width]               VARCHAR (5)    CONSTRAINT [DF_Order_EachCons_Width] DEFAULT ('') NULL,
+    [Width]               VARCHAR (6)    CONSTRAINT [DF_Order_EachCons_Width] DEFAULT ('') NULL,
     [TYPE]                VARCHAR (1)    CONSTRAINT [DF_Order_EachCons_TYPE] DEFAULT ((0)) NULL,
     [AddName]             VARCHAR (10)   CONSTRAINT [DF_Order_EachCons_AddName] DEFAULT ('') NULL,
     [AddDate]             DATETIME       NULL,

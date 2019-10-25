@@ -16,7 +16,7 @@ namespace Sci.Production.Cutting
     {
         DataTable[] printData;
         string WorkOrder, factory, CuttingSP1, CuttingSP2,Style;
-        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2, EarliestBuyerDelivery1, EarliestBuyerDelivery2;
+        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2, EarliestBuyerDelivery1, EarliestBuyerDelivery2, ActCuttingDate1, ActCuttingDate2;
         DateTime? BuyerDelivery1, BuyerDelivery2, SCIDelivery1, SCIDelivery2, SewingInline1, SewingInline2;
         StringBuilder condition = new StringBuilder();
 
@@ -42,6 +42,8 @@ namespace Sci.Production.Cutting
             
             Est_CutDate1 = dateEstCutDate.Value1;
             Est_CutDate2 = dateEstCutDate.Value2;
+            ActCuttingDate1 = dateActCuttingDate.Value1;
+            ActCuttingDate2 = dateActCuttingDate.Value2;
             CuttingSP1 = txtCuttingSPStart.Text;
             CuttingSP2 = txtCuttingSPEnd.Text;
             BuyerDelivery1 = dateBuyerDelivery.Value1;
@@ -64,6 +66,7 @@ namespace Sci.Production.Cutting
                 && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) 
                 && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2)
                 && MyUtility.Check.Empty(EarliestBuyerDelivery1) && MyUtility.Check.Empty(EarliestBuyerDelivery2)
+                && MyUtility.Check.Empty(ActCuttingDate1) && MyUtility.Check.Empty(ActCuttingDate2)
                 )
             {
                 MyUtility.Msg.WarningBox("Can't all empty!!");
@@ -81,6 +84,7 @@ namespace Sci.Production.Cutting
 select
 	[M] = wo.MDivisionID,
 	[Factory] = o.FtyGroup,
+    [PPIC Close] = iif(c.Finished=1,'V',''),
 	[Est.Cutting Date]= wo.EstCutDate,
 	[Act.Cutting Date] = MincDate.MincoDate,
 	[Earliest Sewing Inline] = c.SewInLine,
@@ -130,7 +134,11 @@ select
 			)/60.0,0),2)as float)
 	,--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
 	[Marker Length] = wo.MarkerLength,
-	wo.ActCuttingPerimeter
+	wo.ActCuttingPerimeter,
+    o.SCIDelivery,
+    o.BuyerDelivery,
+	patternUKey=p.PatternUkey,
+    wo.FabricPanelCode
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -142,7 +150,7 @@ outer apply(
 		select min(co.cDate)
 		from CuttingOutput co WITH (NOLOCK) 
 		inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
-		where cod.WorkOrderUkey = wo.Ukey
+		where cod.WorkOrderUkey = wo.Ukey and co.Status != 'New' 
 	)
 ) as MincDate
 outer apply(
@@ -224,30 +232,22 @@ outer apply(
 	where psd.ID = wo.id and psd.SCIRefno = wo.SCIRefno
 	and fi.InQty is not null
 ) as fi
+outer apply(
+	SELECT TOP 1 SizeGroup=IIF(ISNULL(SizeGroup,'')='','N',SizeGroup)
+	FROM Order_SizeCode 
+	WHERE ID = o.POID and SizeCode IN 
+	(
+		select distinct wd.SizeCode
+		from WorkOrder_Distribute wd WITH (NOLOCK)
+		where wd.WorkOrderUkey = wo.Ukey
+	)
+) as ss
+outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',wo.MarkerNo,o.StyleUkey,ss.SizeGroup)p)p
+
 where 1=1
 
 ");
             #region Append畫面上的條件
-            if (!MyUtility.Check.Empty(WorkOrder))
-            {
-                sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", WorkOrder));
-            }
-
-            if (!MyUtility.Check.Empty(factory))
-            {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
-            }
-
-            if (!MyUtility.Check.Empty(Est_CutDate1))
-            {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ",Convert.ToDateTime(Est_CutDate1).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(Est_CutDate2))
-            {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
-            }
-
             if (!MyUtility.Check.Empty(CuttingSP1))
             {
                 sqlCmd.Append(string.Format(" and wo.ID >= '{0}'", CuttingSP1));
@@ -258,34 +258,54 @@ where 1=1
                 sqlCmd.Append(string.Format(" and wo.ID <= '{0}'", CuttingSP2));
             }
 
+            if (!MyUtility.Check.Empty(Est_CutDate1))
+            {
+                sqlCmd.Append(string.Format(" and wo.EstCutDate >= cast('{0}' as date) ", Convert.ToDateTime(Est_CutDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(Est_CutDate2))
+            {
+                sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(ActCuttingDate1))
+            {
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate >= cast('{0}' as date) ", Convert.ToDateTime(ActCuttingDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(ActCuttingDate2))
+            {
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate <= cast('{0}' as date) ", Convert.ToDateTime(ActCuttingDate2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(BuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(BuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}' ", Convert.ToDateTime(BuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= cast('{0}' as date) ", Convert.ToDateTime(BuyerDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(SCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery >= '{0}'", Convert.ToDateTime(SCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery >= cast('{0}' as date) ", Convert.ToDateTime(SCIDelivery1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(SCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery <= '{0}' ", Convert.ToDateTime(SCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery <= cast('{0}' as date)", Convert.ToDateTime(SCIDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(SewingInline1))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine >= '{0}'", Convert.ToDateTime(SewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(SewingInline1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(SewingInline2))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine <= '{0}' ", Convert.ToDateTime(SewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(SewingInline2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(Style))
@@ -295,36 +315,71 @@ where 1=1
 
             if (!MyUtility.Check.Empty(EarliestBuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= '{0}'", Convert.ToDateTime(EarliestBuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= cast('{0}' as date)", Convert.ToDateTime(EarliestBuyerDelivery1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(EarliestBuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= '{0}' ", Convert.ToDateTime(EarliestBuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= cast('{0}' as date) ", Convert.ToDateTime(EarliestBuyerDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(EarliestSCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= '{0}'", Convert.ToDateTime(EarliestSCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= cast('{0}' as date)", Convert.ToDateTime(EarliestSCIDelivery1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(EarliestSCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= '{0}' ", Convert.ToDateTime(EarliestSCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= cast('{0}' as date) ", Convert.ToDateTime(EarliestSCIDelivery2).ToString("d")));
             }
             
             if (!MyUtility.Check.Empty(EarliestSewingInline1))
             {
-                sqlCmd.Append(string.Format(@" and c.SewInLine >= '{0}' ", Convert.ToDateTime(EarliestSewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and c.SewInLine >= cast('{0}' as date) ", Convert.ToDateTime(EarliestSewingInline1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(EarliestSewingInline2))
             {
-                sqlCmd.Append(string.Format(" and c.SewInLine <= '{0}' ", Convert.ToDateTime(EarliestSewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(" and c.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(EarliestSewingInline2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(WorkOrder))
+            {
+                sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", WorkOrder));
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
             }
             #endregion
             sqlCmd.Append(@"
-select * from #tmp order by [M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Cut#]
+select 
+[M],[Factory],[PPIC Close],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
+,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
+,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
+,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,SCIDelivery,BuyerDelivery
+from #tmp t
+--因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
+outer apply(
+	select Artwork=stuff((
+	select distinct concat('+',s.data)
+	from(
+		select distinct pg.Annotation
+		from Pattern_GL_LectraCode pgl
+		inner join Pattern_GL pg on pgl.PatternUKEY = pg.PatternUKEY
+									and pgl.seq = pg.SEQ
+									and pg.Annotation is not null
+									and pg.Annotation!=''
+		where pgl.PatternUKEY = t.patternUKey and pgl.FabricPanelCode = t.FabricPanelCode
+	)a
+	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(dbo.[RemoveNumericCharacters](a.Annotation),'+'))s
+	where exists(select 1 from SubProcess where id = s.data)
+	for xml path(''))
+	,1,1,'')
+)Artwork
+
+order by [M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Cut#]
 -----------------------------------------------------------------------
 select M,Factory,Brand
 	,[# of Layer]=case when Layers between 1 and 5 then '1~5'
@@ -378,6 +433,7 @@ exec (@exT)
 
 drop table #tmp,#tmpL");
 
+            DBProxy.Current.DefaultTimeout = 900; 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
             {

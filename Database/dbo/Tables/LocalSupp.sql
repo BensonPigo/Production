@@ -16,8 +16,17 @@
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_LocalSupp_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
+    [IsShipping]      BIT            DEFAULT ((0)) NULL,
+    [IsSubcon]        BIT            DEFAULT ((0)) NULL,
+    [IsMisc]          BIT            DEFAULT ((0)) NULL,
+    [IsSintexSubcon]  BIT            CONSTRAINT [DF_LocalSupp_IsSintexSubcon] DEFAULT ((0)) NULL,
+    [email] VARCHAR(50) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_LocalSupp] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
+
+
 
 
 
@@ -92,4 +101,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��Subcon������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp', @level2type = N'COLUMN', @level2name = N'IsSubcon';
+
+
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��Shipping������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp', @level2type = N'COLUMN', @level2name = N'IsShipping';
+
+
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��Misc������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp', @level2type = N'COLUMN', @level2name = N'IsMisc';
+
+
 

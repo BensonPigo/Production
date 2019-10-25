@@ -88,14 +88,18 @@ namespace Sci.Production.Warehouse
         }
 
         // edit前檢查
-        protected override bool ClickEditBefore()
+        protected override void ClickEditAfter()
         {
-            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            base.ClickEditAfter();
+
+            if (CurrentMaintain["Status"].EqualString("Confirmed"))
             {
-                MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
-                return false;
+                this.dateIssueDate.ReadOnly = true;
+                this.txtFromFactory.ReadOnly = true;
+                this.editRemark.ReadOnly = true;
+                this.btnClearQtyIsEmpty.Enabled = false;
+                this.gridicon.Enabled = false;
             }
-            return base.ClickEditBefore();
         }
 
         //print
@@ -287,35 +291,38 @@ where a.id = @ID", pars, out dtDetail);
             warningmsg.Clear();
             foreach (DataRow row in DetailDatas)
             {
-                if (row["fabrictype"].ToString().ToUpper() == "F")
+                if (row["fabrictype"].ToString().ToUpper() != "F")
                 {
-                    if (row.RowState == DataRowState.Added)
+                    continue;
+                }
+
+                if (row.RowState == DataRowState.Added)
+                {
+                    if (MyUtility.Check.Seek(string.Format(@"select * from TransferIn_Detail where poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}' and stocktype = '{5}'"
+                        , row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"], row["stocktype"])))
                     {
-                        if (MyUtility.Check.Seek(string.Format(@"select * from TransferIn_Detail where poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}' and stocktype = '{5}'"
-                            , row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"], row["stocktype"])))
-                        {
-                            warningmsg.Append(string.Format(@"<SP>: {0} <Seq>: {1}-{2}  <ROLL> {3}<DYELOT>{4} exists, cannot be saved!", row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"]));
-                            warningmsg.Append(Environment.NewLine);
-                        }
+                        warningmsg.Append(string.Format(@"<SP>: {0} <Seq>: {1}-{2}  <ROLL> {3}<DYELOT>{4} exists, cannot be saved!", row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"]));
+                        warningmsg.Append(Environment.NewLine);
                     }
-                    if (row.RowState == DataRowState.Modified)
+                    continue;
+                }
+
+                bool isTransferIn_DetailKewordChanged = MyUtility.Convert.GetString(row["poid"]) != MyUtility.Convert.GetString(row["poid", DataRowVersion.Original]) ||
+                        MyUtility.Convert.GetString(row["seq1"]) != MyUtility.Convert.GetString(row["seq1", DataRowVersion.Original]) ||
+                        MyUtility.Convert.GetString(row["seq2"]) != MyUtility.Convert.GetString(row["seq2", DataRowVersion.Original]) ||
+                        MyUtility.Convert.GetString(row["Roll"]) != MyUtility.Convert.GetString(row["Roll", DataRowVersion.Original]) ||
+                        MyUtility.Convert.GetString(row["Dyelot"]) != MyUtility.Convert.GetString(row["Dyelot", DataRowVersion.Original]) ||
+                        MyUtility.Convert.GetString(row["stocktype"]) != MyUtility.Convert.GetString(row["stocktype", DataRowVersion.Original]);
+                if (row.RowState == DataRowState.Modified && isTransferIn_DetailKewordChanged)
+                {
+                    if (MyUtility.Check.Seek(string.Format(@"select * from TransferIn_Detail where poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}' and stocktype = '{5}'"
+                        , row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"], row["stocktype"])))
                     {
-                        if (MyUtility.Convert.GetString(row["poid"]) != MyUtility.Convert.GetString(row["poid", DataRowVersion.Original]) ||
-                            MyUtility.Convert.GetString(row["seq1"]) != MyUtility.Convert.GetString(row["seq1", DataRowVersion.Original]) ||
-                            MyUtility.Convert.GetString(row["seq2"]) != MyUtility.Convert.GetString(row["seq2", DataRowVersion.Original]) ||
-                            MyUtility.Convert.GetString(row["Roll"]) != MyUtility.Convert.GetString(row["Roll", DataRowVersion.Original]) ||
-                            MyUtility.Convert.GetString(row["Dyelot"]) != MyUtility.Convert.GetString(row["Dyelot", DataRowVersion.Original]) ||
-                            MyUtility.Convert.GetString(row["stocktype"]) != MyUtility.Convert.GetString(row["stocktype", DataRowVersion.Original]))
-                        {
-                            if (MyUtility.Check.Seek(string.Format(@"select * from TransferIn_Detail where poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}' and stocktype = '{5}'"
-                                , row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"], row["stocktype"])))
-                            {
-                                warningmsg.Append(string.Format(@"<SP>: {0} <Seq>: {1}-{2}  <ROLL> {3}<DYELOT>{4} exists, cannot be saved!", row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"]));
-                                warningmsg.Append(Environment.NewLine);
-                            }
-                        }
+                        warningmsg.Append(string.Format(@"<SP>: {0} <Seq>: {1}-{2}  <ROLL> {3}<DYELOT>{4} exists, cannot be saved!", row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"]));
+                        warningmsg.Append(Environment.NewLine);
                     }
                 }
+
             }
 
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
@@ -325,7 +332,10 @@ where a.id = @ID", pars, out dtDetail);
             }
             // Check Roll 是否有重複
             if (!checkRoll())
+            {
                 return false;
+            }
+
             #region 取單號
             if (this.IsDetailInserting)
             {
@@ -352,9 +362,19 @@ where a.id = @ID", pars, out dtDetail);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
+            if (this.CurrentMaintain["status"].EqualString("Confirmed"))
+            {
+                this.toolbar.cmdEdit.Enabled = false;
+            }
+            else
+            {
+                this.toolbar.cmdEdit.Enabled = true;
+            }
+
             #region Status Label
 
-            label25.Text = CurrentMaintain["status"].ToString();
+            label25.Text = this.CurrentMaintain["status"].ToString();
 
             #endregion Status Label
         }
@@ -451,104 +471,17 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                     }
                     else
                     {
-                        //check Seq Length
-                        string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (seq.Length < 2)
+                        DualResult result = P18_Utility.CheckDetailSeq(e.FormattedValue.ToString(), this.CurrentMaintain["FromFtyID"].ToString(), this.CurrentDetailData);
+
+                        if (!result)
                         {
                             e.Cancel = true;
-                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                            MyUtility.Msg.WarningBox(result.Description);
                             return;
                         }
-                        if (CurrentDetailData["DataFrom"].Equals("Po_Supp_Detail"))
-                        {
-                            #region check Po_Supp_Detail seq 1 2
-                            if (!MyUtility.Check.Seek(string.Format(@"
-select  pounit
-        , stockunit = dbo.GetStockUnitBySPSeq (id, seq1, seq2)
-        , fabrictype
-        , qty
-        , scirefno
-        , [description] = dbo.getmtldesc(id,seq1,seq2,2,0)
-from po_supp_detail WITH (NOLOCK) 
-where   id = '{0}' 
-        and seq1 ='{1}'
-        and seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
-                            {
-                                if (!MyUtility.Check.Seek(string.Format(@"
-select  poid = p.POID 
-        , seq = left (p.seq1 + ' ', 3) + p.seq2
-        , p.seq1
-        , p.seq2
-        , p.Refno
-        , Description = (select f.DescDetail from fabric f WITH (NOLOCK) where f.SCIRefno = p.scirefno) 
-        , p.scirefno
-from dbo.Inventory p WITH (NOLOCK) 
-where   poid = '{0}' 
-        and seq1 = '{1}'
-        and seq2 = '{2}' 
-        and factoryid = '{3}'", CurrentDetailData["poid"]
-                                  , e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
-                                  , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)
-                                  , CurrentMaintain["fromftyid"]), out dr, null))
-                                {
-                                    e.Cancel = true;
-                                    MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                                    return;
-                                }
-                                else
-                                {
-                                    CurrentDetailData["seq"] = seq[0] + " " + seq[1];
-                                    CurrentDetailData["seq1"] = seq[0];
-                                    CurrentDetailData["seq2"] = seq[1];
-                                    CurrentDetailData["Roll"] = "";
-                                    CurrentDetailData["Dyelot"] = "";
-                                    //CurrentDetailData["stockunit"] = dr["stockunit"];
-                                    CurrentDetailData["Description"] = dr["description"];
-                                    CurrentDetailData["fabrictype"] = dr["fabrictype"];
-                                }
-                            }
-                            else
-                            {
-                                CurrentDetailData["seq"] = seq[0] + " " + seq[1];
-                                CurrentDetailData["seq1"] = seq[0];
-                                CurrentDetailData["seq2"] = seq[1];
-                                CurrentDetailData["Roll"] = "";
-                                CurrentDetailData["Dyelot"] = "";
-                                CurrentDetailData["stockunit"] = dr["stockunit"];
-                                CurrentDetailData["Description"] = dr["description"];
-                                CurrentDetailData["fabrictype"] = dr["fabrictype"];
-                            }
-                            #endregion
-                        }
-                        else
-                        {
-                            #region check Invtrans seq 1 2
-                            if (!MyUtility.Check.Seek(string.Format(@"
-select    fabrictype
-from Invtrans WITH (NOLOCK) 
-where   InventoryPOID = '{0}' 
-        and InventorySeq1 ='{1}'
-        and InventorySeq2 = '{2}' and type = '3' and FactoryID = '{3}'", CurrentDetailData["poid"], seq[0], seq[1], CurrentMaintain["FromFtyID"]), out dr, null))
-                            {
-                                e.Cancel = true;
-                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                                return;
-                            }
-                            else
-                            {
-                                CurrentDetailData["seq"] = seq[0] + " " + seq[1];
-                                CurrentDetailData["seq1"] = seq[0];
-                                CurrentDetailData["seq2"] = seq[1];
-                                CurrentDetailData["Roll"] = "";
-                                CurrentDetailData["Dyelot"] = "";
-                                CurrentDetailData["stockunit"] = "";
-                                CurrentDetailData["Description"] = "";
-                                CurrentDetailData["fabrictype"] = dr["fabrictype"];
-                            }
 
-                            #endregion
-                        }
-
+                        CurrentDetailData["Roll"] = "";
+                        CurrentDetailData["Dyelot"] = "";
                     }
                 }
             };
@@ -559,42 +492,17 @@ where   InventoryPOID = '{0}'
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    CurrentDetailData["stocktype"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"
-SELECT  id
-        , Description
-        , StockType 
-FROM    DBO.MtlLocation WITH (NOLOCK) 
-WHERE   StockType='{0}'
-        and junk != '1'", CurrentDetailData["stocktype"].ToString());
-                    DataTable dt;
-                    DBProxy.Current.Select(null, sqlcmd, out dt);
-                    string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
-                    bool selectId = true;
-                    List<string> errLocation = new List<string>();
-                    List<string> trueLocation = new List<string>();
-                    foreach (string location in getLocation)
-                    {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
-                        {
-                            selectId &= false;
-                            errLocation.Add(location);
-                        }
-                        else if (!(location.EqualString("")))
-                        {
-                            trueLocation.Add(location);
-                        }
-                    }
-
-                    if (!selectId)
+                    //去除錯誤的Location將正確的Location填回
+                    string newLocation = string.Empty;
+                    DualResult result = P18_Utility.CheckDetailStockTypeLocation(e.FormattedValue.ToString(), CurrentDetailData["Location"].ToString(), out newLocation);
+                    if (!result)
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-
+                        MyUtility.Msg.WarningBox(result.Description);
                     }
-                    trueLocation.Sort();
-                    CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
-                    //去除錯誤的Location將正確的Location填回
+
+                    CurrentDetailData["stocktype"] = e.FormattedValue;
+                    CurrentDetailData["Location"] = newLocation;
                 }
             };
             #endregion
@@ -618,42 +526,16 @@ WHERE   StockType='{0}'
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    CurrentDetailData["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"
-SELECT  id
-        , Description
-        , StockType 
-FROM    DBO.MtlLocation WITH (NOLOCK) 
-WHERE   StockType='{0}'
-        and junk != '1'", CurrentDetailData["stocktype"].ToString());
-                    DataTable dt;
-                    DBProxy.Current.Select(null, sqlcmd, out dt);
-                    string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
-                    bool selectId = true;
-                    List<string> errLocation = new List<string>();
-                    List<string> trueLocation = new List<string>();
-                    foreach (string location in getLocation)
-                    {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
-                        {
-                            selectId &= false;
-                            errLocation.Add(location);
-                        }
-                        else if (!(location.EqualString("")))
-                        {
-                            trueLocation.Add(location);
-                        }
-                    }
-
-                    if (!selectId)
+                    //去除錯誤的Location將正確的Location填回
+                    string newLocation = string.Empty;
+                    DualResult result = P18_Utility.CheckDetailStockTypeLocation(CurrentDetailData["stocktype"].ToString(), e.FormattedValue.ToString(), out newLocation);
+                    if (!result)
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-
+                        MyUtility.Msg.WarningBox(result.Description);
                     }
-                    trueLocation.Sort();
-                    CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
-                    //去除錯誤的Location將正確的Location填回
+
+                    CurrentDetailData["Location"] = newLocation;
                 }
             };
             #endregion Location 右鍵開窗
@@ -677,41 +559,15 @@ WHERE   StockType='{0}'
                 if (this.EditMode == true && String.Compare(e.FormattedValue.ToString(), CurrentDetailData["poid"].ToString()) != 0)
                 {
                     string dataFrom = "Po_Supp_Detail";
-                    string strCheckOrders = string.Format(@"
-select  o.id
-from Orders o
-inner join dbo.Factory f on o.FactoryID = f.ID
-where   o.id = '{0}'
-        and f.MDivisionID = '{1}' 
-", e.FormattedValue, Sci.Env.User.Keyword);
 
-                    string strCheckInventory = string.Format(@"
-select  c.POID 
-from Inventory c WITH (NOLOCK) 
-inner join dbo.Orders o on c.POID = o.id
-inner join dbo.Factory f on o.FactoryID = f.ID
-where   c.POID = '{0}'
-        and f.MDivisionID = '{1}' 
-", e.FormattedValue, Sci.Env.User.Keyword);
+                    DualResult checkResult = P18_Utility.CheckDetailPOID(e.FormattedValue.ToString(), this.CurrentMaintain["FromFtyID"].ToString(), out dataFrom);
 
-                    string strCheckInvtrans = string.Format(@"
-select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and FactoryID = '{1}'
-", e.FormattedValue, this.CurrentMaintain["FromFtyID"]);
-
-                    if (!MyUtility.Check.Seek(strCheckOrders) && !MyUtility.Check.Seek(strCheckInventory))
+                    if (!checkResult)
                     {
-                        if (!MyUtility.Check.Seek(strCheckInvtrans))
-                        {
-                            this.CurrentDetailData["poid"] = CurrentDetailData["poid"];
-                            MyUtility.Msg.WarningBox("Data not found!", e.FormattedValue.ToString());
-                            return;
-                        }
-                        else
-                        {
-                            dataFrom = "Invtrans";
-                        }
-
+                        MyUtility.Msg.WarningBox(checkResult.Description, e.FormattedValue.ToString());
+                        return;
                     }
+
                     this.CurrentDetailData["seq"] = "";
                     this.CurrentDetailData["seq1"] = "";
                     this.CurrentDetailData["seq2"] = "";
@@ -1351,7 +1207,7 @@ Where a.id = '{0}'", masterID, fromFty);
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P18_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            var frm = new Sci.Production.Warehouse.P18_ExcelImport(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -1389,38 +1245,14 @@ Where a.id = '{0}'", masterID, fromFty);
             List<string> listDyelot = new List<string>();
             foreach (DataRow row in DetailDatas)
             {
-                DataRow dr;
-                //判斷 物料 是否為 布，布料才需要 Roll & Dyelot
-                if (row["fabrictype"].ToString().ToUpper() == "F")
-                {
-                    #region 判斷 在收料記錄 & FtyInventory 是否存在【同 Roll 不同 Dyelot】
-                    string checkSql = string.Format(@"
-select  1
-    From dbo.TransferIn TI
-	inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
-	where   POID = '{0}' 
-            and Seq1 = '{1}' 
-            and Seq2 = '{2}' 
-            and Roll = '{3}' 
-            and Dyelot = '{4}' 
-            and TI.ID != '{5}' 
-            and Status = 'Confirmed'
-", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]);
-                    if (MyUtility.Check.Seek(checkSql, out dr, null))
-                    {
-                        if (Convert.ToInt32(dr[0]) > 0)
-                        {
-                            listMsg.Add(string.Format(@"
-The Deylot of
-<SP#>:{0}, <Seq>:{1}, <Roll>:{2}, <Deylot>:{3} already exists
-", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], row["Dyelot"].ToString().Trim()));
+                DualResult result = P18_Utility.CheckRollExists(CurrentMaintain["id"].ToString(), row);
 
-                        }
-                    }
-                    #endregion
+                if (!result)
+                {
+                    listMsg.Add(result.Description);
                 }
             }
-            
+
             if (listMsg.Count > 0)
             {
                 DialogResult Dr = MyUtility.Msg.WarningBox(listMsg.JoinToString("").TrimStart());

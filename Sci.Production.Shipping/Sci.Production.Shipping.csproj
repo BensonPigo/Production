@@ -149,11 +149,23 @@
     <Compile Include="B03_BatchApprove.Designer.cs">
       <DependentUpon>B03_BatchApprove.cs</DependentUpon>
     </Compile>
+    <Compile Include="B03_Quotation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03_Quotation.Designer.cs">
+      <DependentUpon>B03_Quotation.cs</DependentUpon>
+    </Compile>
     <Compile Include="B05.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="B05.Designer.cs">
       <DependentUpon>B05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B49.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B49.Designer.cs">
+      <DependentUpon>B49.cs</DependentUpon>
     </Compile>
     <Compile Include="P03_BatchUpload.cs">
       <SubType>Form</SubType>
@@ -172,6 +184,12 @@
     </Compile>
     <Compile Include="P05_SOCFMDate.Designer.cs">
       <DependentUpon>P05_SOCFMDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_UnconfirmHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_UnconfirmHistory.Designer.cs">
+      <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="P11_BatchApprove.cs">
       <SubType>Form</SubType>
@@ -202,12 +220,6 @@
     </Compile>
     <Compile Include="B03.Designer.cs">
       <DependentUpon>B03.cs</DependentUpon>
-    </Compile>
-    <Compile Include="B03_CanvassRecord.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="B03_CanvassRecord.Designer.cs">
-      <DependentUpon>B03_CanvassRecord.cs</DependentUpon>
     </Compile>
     <Compile Include="B03_PaymentHistory.cs">
       <SubType>Form</SubType>
@@ -547,6 +559,24 @@
     <Compile Include="P10_UpdatePulloutDate.Designer.cs">
       <DependentUpon>P10_UpdatePulloutDate.cs</DependentUpon>
     </Compile>
+    <Compile Include="P13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P13.Designer.cs">
+      <DependentUpon>P13.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P12.Designer.cs">
+      <DependentUpon>P12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P14.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P14.Designer.cs">
+      <DependentUpon>P14.cs</DependentUpon>
+    </Compile>
     <Compile Include="P40.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -702,11 +732,41 @@
     <Compile Include="R14.Designer.cs">
       <DependentUpon>R14.cs</DependentUpon>
     </Compile>
+    <Compile Include="R17.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R17.Designer.cs">
+      <DependentUpon>R17.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R15.Designer.cs">
+      <DependentUpon>R15.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R16.designer.cs">
+      <DependentUpon>R16.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R18.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R18.Designer.cs">
+      <DependentUpon>R18.cs</DependentUpon>
+    </Compile>
     <Compile Include="R40.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="R40.Designer.cs">
       <DependentUpon>R40.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R40_SelectFileDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R40_SelectFileDialog.Designer.cs">
+      <DependentUpon>R40_SelectFileDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="R41.cs">
       <SubType>Form</SubType>
@@ -719,6 +779,18 @@
     </Compile>
     <Compile Include="R42.Designer.cs">
       <DependentUpon>R42.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R44.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R44.Designer.cs">
+      <DependentUpon>R44.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R43.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R43.Designer.cs">
+      <DependentUpon>R43.cs</DependentUpon>
     </Compile>
     <Compile Include="Shipping.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -754,8 +826,14 @@
     <EmbeddedResource Include="B03_BatchApprove.resx">
       <DependentUpon>B03_BatchApprove.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B03_Quotation.resx">
+      <DependentUpon>B03_Quotation.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B05.resx">
       <DependentUpon>B05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B49.resx">
+      <DependentUpon>B49.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_BatchUpload.resx">
       <DependentUpon>P03_BatchUpload.cs</DependentUpon>
@@ -765,6 +843,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05_SOCFMDate.resx">
       <DependentUpon>P05_SOCFMDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_UnconfirmHistory.resx">
+      <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P11_BatchApprove.resx">
       <DependentUpon>P11_BatchApprove.cs</DependentUpon>
@@ -781,9 +862,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="B03_CanvassRecord.resx">
-      <DependentUpon>B03_CanvassRecord.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B03_PaymentHistory.resx">
       <DependentUpon>B03_PaymentHistory.cs</DependentUpon>
@@ -971,6 +1049,15 @@
     <EmbeddedResource Include="P10_UpdatePulloutDate.resx">
       <DependentUpon>P10_UpdatePulloutDate.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P13.resx">
+      <DependentUpon>P13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P12.resx">
+      <DependentUpon>P12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P14.resx">
+      <DependentUpon>P14.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P40.resx">
       <DependentUpon>P40.cs</DependentUpon>
     </EmbeddedResource>
@@ -1038,8 +1125,23 @@
     <EmbeddedResource Include="R14.resx">
       <DependentUpon>R14.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R17.resx">
+      <DependentUpon>R17.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R15.resx">
+      <DependentUpon>R15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R16.resx">
+      <DependentUpon>R16.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R18.resx">
+      <DependentUpon>R18.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R40.resx">
       <DependentUpon>R40.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R40_SelectFileDialog.resx">
+      <DependentUpon>R40_SelectFileDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R41.resx">
       <DependentUpon>R41.cs</DependentUpon>
@@ -1052,6 +1154,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R12.resx">
       <DependentUpon>R12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R44.resx">
+      <DependentUpon>R44.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R43.resx">
+      <DependentUpon>R43.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -29,7 +29,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.destination_path = MyUtility.GetValue.Lookup("select PicPath from System WITH (NOLOCK) ", null);
+            this.destination_path = MyUtility.GetValue.Lookup("select StyleSketch from System WITH (NOLOCK) ", null);
         }
 
         /// <inheritdoc/>
@@ -37,6 +37,36 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(this.comboSizeUnit, 1, 1, "CM,INCH");
+
+            // DB 結構為int 無法使用MyUtility.Tool.SetupCombox方法寫入
+            this.comboPressing1.Add("No Pressing", 0);
+            this.comboPressing1.Add("Manual Pressing", 1);
+            this.comboPressing1.Add("Auto Pressing", 2);
+            this.comboPressing1.Add("Manual + Auto Pressing", 3);
+            this.comboPressing1.SelectedIndex = 1;
+            this.comboFolding1.Add("Manual Folding", 0);
+            this.comboFolding1.Add("Auto Folding", 1);
+            this.comboFolding1.SelectedIndex = 0;
+            this.comboFolding2.Add("0", 0);
+            this.comboFolding2.SelectedIndex = 0;
+
+            string sql = string.Format(
+                @" select distinct DM300
+                    from (
+	                    select 0 as DM300
+	                    union all
+	                    select distinct DM300 
+	                    from FinishingProcess
+                    )a ");
+            DataTable dtFinishingProcess;
+            DualResult selectResult = DBProxy.Current.Select(null, sql, out dtFinishingProcess);
+            if (!selectResult) { this.ShowErr(sql, selectResult); }
+            foreach (DataRow dr in dtFinishingProcess.Rows)
+            {
+                this.comboPressing2.Add(dr["DM300"].ToString(), dtFinishingProcess.Rows.IndexOf(dr));
+            }
+
+            this.comboPressing2.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -120,6 +150,30 @@ namespace Sci.Production.PPIC
             {
                 this.displayStyleApprove2.Text = string.Empty;
             }
+
+            #region LocalStyle Enable [Attach][Delete] Button
+            if (MyUtility.Check.Empty(this.CurrentMaintain["LocalStyle"]))
+            {
+                this.btnPicture1Attach.Visible = false;
+                this.btnPicture2Attach.Visible = false;
+                this.btnPicture1Delete.Visible = false;
+                this.btnPicture2Delete.Visible = false;
+            }
+            else
+            {
+                this.btnPicture1Attach.Visible = true;
+                this.btnPicture2Attach.Visible = true;
+                this.btnPicture1Delete.Visible = true;
+                this.btnPicture2Delete.Visible = true;
+            }
+            #endregion
+
+            // 寫入TPE Edit By
+            this.txtTPEEditBy.Text = MyUtility.GetValue.Lookup($@"
+select Name = s.TPEEditName+' '+ isnull(p.Name,'')+' '+isnull(format(s.TPEEditDate,'yyyy/MM/dd hh:mm:ss'),'') 
+from Style s
+left join Pass1 p on s.TPEEditName = p.ID
+where s.ukey = {this.CurrentMaintain["ukey"]}");
         }
 
         /// <inheritdoc/>
@@ -129,6 +183,8 @@ namespace Sci.Production.PPIC
             this.CurrentMaintain["LocalStyle"] = 1;
             this.CurrentMaintain["LocalMR"] = Sci.Env.User.UserID;
             this.displayStyleApprove2.Text = string.Empty;
+            this.ComboPressing1_SelectedIndexChanged(null, null);
+            this.ComboFolding1_SelectedIndexChanged(null, null);
         }
 
         /// <inheritdoc/>
@@ -138,6 +194,8 @@ namespace Sci.Production.PPIC
             this.txtStyleNo.ReadOnly = true;
             this.txtSeason.ReadOnly = true;
             this.txtBrand.ReadOnly = true;
+            this.ComboPressing1_SelectedIndexChanged(null, null);
+            this.ComboFolding1_SelectedIndexChanged(null, null);
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "FALSE")
             {
@@ -218,7 +276,6 @@ namespace Sci.Production.PPIC
                 }
             }
             #endregion
-
             if (this.IsDetailInserting)
             {
                 // 檢查Style+Brand+Season是否已存在
@@ -723,6 +780,75 @@ where a.Article is null",
                         return;
                     }
                 }
+            }
+        }
+
+        private void ComboPressing1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            int selectValue = MyUtility.Convert.GetInt(this.comboPressing1.SelectedValue2);
+            if (string.IsNullOrEmpty(MyUtility.Convert.GetString(this.CurrentMaintain["Pressing1"])))
+            {
+                this.comboPressing1.SelectedValue2 = 0;
+            }
+            else
+            {
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["Pressing1"]) == selectValue)
+                {
+                    return;
+                }
+            }
+
+            this.comboPressing1.DataBindings["SelectedValue2"].WriteValue();
+            this.comboPressing2.SelectedValue2 = 0;
+            this.comboPressing2.DataBindings["SelectedValue2"].WriteValue();
+            switch (selectValue)
+            {
+                case 2:
+                case 3:
+                    this.comboPressing2.Enabled = true;
+                    break;
+                default:
+                    this.comboPressing2.Enabled = false;
+                    break;
+            }
+        }
+
+        private void ComboFolding1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            int selectValue = MyUtility.Convert.GetInt(this.comboFolding1.SelectedValue2);
+            if (string.IsNullOrEmpty(MyUtility.Convert.GetString(this.CurrentMaintain["Folding1"])))
+            {
+                this.comboFolding1.SelectedIndex = 0;
+            }
+            else
+            {
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["Folding1"]) == selectValue)
+                {
+                    return;
+                }
+            }
+
+            this.comboFolding1.DataBindings["SelectedValue2"].WriteValue();
+            this.comboFolding2.SelectedIndex = 0;
+            this.comboFolding2.DataBindings["SelectedValue2"].WriteValue();
+            switch (selectValue)
+            {
+                case 1:
+                    this.comboFolding2.Enabled = true;
+                    break;
+                default:
+                    this.comboFolding2.Enabled = false;
+                    break;
             }
         }
     }

@@ -41,7 +41,6 @@
             this.txtPONo = new Sci.Win.UI.TextBox();
             this.txtStyleNo = new Sci.Win.UI.TextBox();
             this.checkLocalOrder = new Sci.Win.UI.CheckBox();
-            this.checkSubconInFromSisterFactory = new Sci.Win.UI.CheckBox();
             this.checkForecast = new Sci.Win.UI.CheckBox();
             this.checkCancelledOrder = new Sci.Win.UI.CheckBox();
             this.checkPullForwardOrder = new Sci.Win.UI.CheckBox();
@@ -117,7 +116,6 @@
             this.editFtyRemark = new Sci.Win.UI.EditBox();
             this.labelCuttingCombo = new Sci.Win.UI.Label();
             this.editCuttingCombo = new Sci.Win.UI.EditBox();
-            this.checkIsMixMarker = new Sci.Win.UI.CheckBox();
             this.displayBuyMonth = new Sci.Win.UI.DisplayBox();
             this.txtcountryDestination = new Sci.Production.Class.txtcountry();
             this.txtuserMCHandle = new Sci.Production.Class.txtuser();
@@ -171,7 +169,7 @@
             this.dateCRDDate = new Sci.Win.UI.DateBox();
             this.labelSDPDate = new Sci.Win.UI.Label();
             this.dateSDPDate = new Sci.Win.UI.DateBox();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.btnTrimCard = new Sci.Win.UI.Button();
             this.btnCloseMTL = new Sci.Win.UI.Button();
             this.btnMeterialStatus = new Sci.Win.UI.Button();
@@ -179,6 +177,8 @@
             this.btnReCalculate = new Sci.Win.UI.Button();
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
             this.btnPFHistory = new Sci.Win.UI.Button();
+            this.displayIsMixMarker = new Sci.Win.UI.DisplayBox();
+            this.comboSubconInType = new Ict.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -194,6 +194,9 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboSubconInType);
+            this.detailcont.Controls.Add(this.txtdropdownlistCategory);
+            this.detailcont.Controls.Add(this.displayIsMixMarker);
             this.detailcont.Controls.Add(this.btnPFHistory);
             this.detailcont.Controls.Add(this.btnExpectionFormRemark);
             this.detailcont.Controls.Add(this.btnReCalculate);
@@ -201,7 +204,6 @@
             this.detailcont.Controls.Add(this.btnMeterialStatus);
             this.detailcont.Controls.Add(this.btnCloseMTL);
             this.detailcont.Controls.Add(this.btnTrimCard);
-            this.detailcont.Controls.Add(this.comboCategory);
             this.detailcont.Controls.Add(this.labelSDPDate);
             this.detailcont.Controls.Add(this.dateSDPDate);
             this.detailcont.Controls.Add(this.labelCFMDate);
@@ -235,7 +237,6 @@
             this.detailcont.Controls.Add(this.btnMaterialImport);
             this.detailcont.Controls.Add(this.txtmfactory);
             this.detailcont.Controls.Add(this.displayBuyMonth);
-            this.detailcont.Controls.Add(this.checkIsMixMarker);
             this.detailcont.Controls.Add(this.editCuttingCombo);
             this.detailcont.Controls.Add(this.labelCuttingCombo);
             this.detailcont.Controls.Add(this.editFtyRemark);
@@ -287,12 +288,12 @@
             this.detailcont.Controls.Add(this.numOrderQty);
             this.detailcont.Controls.Add(this.labelFOCQty);
             this.detailcont.Controls.Add(this.labelOrderQty);
-            this.detailcont.Controls.Add(this.txtuserLocalMR);
             this.detailcont.Controls.Add(this.txtuserMCHandle);
-            this.detailcont.Controls.Add(this.txttpeuserPOSMR);
-            this.detailcont.Controls.Add(this.txttpeuserPOHandle);
+            this.detailcont.Controls.Add(this.txtuserLocalMR);
             this.detailcont.Controls.Add(this.txttpeuserHandle);
+            this.detailcont.Controls.Add(this.txttpeuserPOHandle);
             this.detailcont.Controls.Add(this.txttpeuserSMR);
+            this.detailcont.Controls.Add(this.txttpeuserPOSMR);
             this.detailcont.Controls.Add(this.labelBuyMonth);
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.labelLocalMR);
@@ -327,7 +328,6 @@
             this.detailcont.Controls.Add(this.checkPullForwardOrder);
             this.detailcont.Controls.Add(this.checkCancelledOrder);
             this.detailcont.Controls.Add(this.checkForecast);
-            this.detailcont.Controls.Add(this.checkSubconInFromSisterFactory);
             this.detailcont.Controls.Add(this.checkLocalOrder);
             this.detailcont.Controls.Add(this.txtStyleNo);
             this.detailcont.Controls.Add(this.txtPONo);
@@ -494,18 +494,6 @@
             this.checkLocalOrder.TabIndex = 14;
             this.checkLocalOrder.Text = "Local order";
             this.checkLocalOrder.UseVisualStyleBackColor = true;
-            // 
-            // checkSubconInFromSisterFactory
-            // 
-            this.checkSubconInFromSisterFactory.AutoSize = true;
-            this.checkSubconInFromSisterFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SubconInSisterFty", true));
-            this.checkSubconInFromSisterFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSubconInFromSisterFactory.Location = new System.Drawing.Point(275, 31);
-            this.checkSubconInFromSisterFactory.Name = "checkSubconInFromSisterFactory";
-            this.checkSubconInFromSisterFactory.Size = new System.Drawing.Size(180, 19);
-            this.checkSubconInFromSisterFactory.TabIndex = 15;
-            this.checkSubconInFromSisterFactory.Text = "Subcon-in from sister factory";
-            this.checkSubconInFromSisterFactory.UseVisualStyleBackColor = true;
             // 
             // checkForecast
             // 
@@ -1261,20 +1249,6 @@
             this.editCuttingCombo.Size = new System.Drawing.Size(347, 51);
             this.editCuttingCombo.TabIndex = 129;
             // 
-            // checkIsMixMarker
-            // 
-            this.checkIsMixMarker.AutoSize = true;
-            this.checkIsMixMarker.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsMixMarker", true));
-            this.checkIsMixMarker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkIsMixMarker.IsSupportEditMode = false;
-            this.checkIsMixMarker.Location = new System.Drawing.Point(729, 416);
-            this.checkIsMixMarker.Name = "checkIsMixMarker";
-            this.checkIsMixMarker.ReadOnly = true;
-            this.checkIsMixMarker.Size = new System.Drawing.Size(100, 19);
-            this.checkIsMixMarker.TabIndex = 131;
-            this.checkIsMixMarker.Text = "Is Mix Marker";
-            this.checkIsMixMarker.UseVisualStyleBackColor = true;
-            // 
             // displayBuyMonth
             // 
             this.displayBuyMonth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -1338,11 +1312,14 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.boolFtyGroupList = true;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(278, 197);
+            this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 133;
@@ -1582,7 +1559,7 @@
             // 
             this.dateEstPullout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
             this.dateEstPullout.IsSupportEditMode = false;
-            this.dateEstPullout.Location = new System.Drawing.Point(610, 333);
+            this.dateEstPullout.Location = new System.Drawing.Point(593, 355);
             this.dateEstPullout.Name = "dateEstPullout";
             this.dateEstPullout.ReadOnly = true;
             this.dateEstPullout.Size = new System.Drawing.Size(100, 21);
@@ -1590,7 +1567,7 @@
             // 
             // labelEstPullout
             // 
-            this.labelEstPullout.Location = new System.Drawing.Point(509, 334);
+            this.labelEstPullout.Location = new System.Drawing.Point(492, 356);
             this.labelEstPullout.Name = "labelEstPullout";
             this.labelEstPullout.Size = new System.Drawing.Size(98, 21);
             this.labelEstPullout.TabIndex = 160;
@@ -1600,7 +1577,7 @@
             // 
             this.displayActPullout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayActPullout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayActPullout.Location = new System.Drawing.Point(711, 441);
+            this.displayActPullout.Location = new System.Drawing.Point(694, 439);
             this.displayActPullout.Name = "displayActPullout";
             this.displayActPullout.Size = new System.Drawing.Size(27, 21);
             this.displayActPullout.TabIndex = 164;
@@ -1609,7 +1586,7 @@
             // 
             this.dateActPullout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActPulloutDate", true));
             this.dateActPullout.IsSupportEditMode = false;
-            this.dateActPullout.Location = new System.Drawing.Point(610, 441);
+            this.dateActPullout.Location = new System.Drawing.Point(593, 439);
             this.dateActPullout.Name = "dateActPullout";
             this.dateActPullout.ReadOnly = true;
             this.dateActPullout.Size = new System.Drawing.Size(100, 21);
@@ -1617,7 +1594,7 @@
             // 
             // labelActPullout
             // 
-            this.labelActPullout.Location = new System.Drawing.Point(509, 441);
+            this.labelActPullout.Location = new System.Drawing.Point(492, 439);
             this.labelActPullout.Name = "labelActPullout";
             this.labelActPullout.Size = new System.Drawing.Size(97, 21);
             this.labelActPullout.TabIndex = 162;
@@ -1627,7 +1604,7 @@
             // 
             this.dateEachConsApv.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EachConsApv", true));
             this.dateEachConsApv.IsSupportEditMode = false;
-            this.dateEachConsApv.Location = new System.Drawing.Point(610, 412);
+            this.dateEachConsApv.Location = new System.Drawing.Point(593, 410);
             this.dateEachConsApv.Name = "dateEachConsApv";
             this.dateEachConsApv.ReadOnly = true;
             this.dateEachConsApv.Size = new System.Drawing.Size(100, 21);
@@ -1635,7 +1612,7 @@
             // 
             // labelEachConsApv
             // 
-            this.labelEachConsApv.Location = new System.Drawing.Point(509, 414);
+            this.labelEachConsApv.Location = new System.Drawing.Point(492, 412);
             this.labelEachConsApv.Name = "labelEachConsApv";
             this.labelEachConsApv.Size = new System.Drawing.Size(97, 21);
             this.labelEachConsApv.TabIndex = 165;
@@ -1645,7 +1622,7 @@
             // 
             this.dateMNtoiceApv.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MnorderApv", true));
             this.dateMNtoiceApv.IsSupportEditMode = false;
-            this.dateMNtoiceApv.Location = new System.Drawing.Point(610, 387);
+            this.dateMNtoiceApv.Location = new System.Drawing.Point(593, 385);
             this.dateMNtoiceApv.Name = "dateMNtoiceApv";
             this.dateMNtoiceApv.ReadOnly = true;
             this.dateMNtoiceApv.Size = new System.Drawing.Size(100, 21);
@@ -1653,7 +1630,7 @@
             // 
             // labelMNtoiceApv
             // 
-            this.labelMNtoiceApv.Location = new System.Drawing.Point(509, 388);
+            this.labelMNtoiceApv.Location = new System.Drawing.Point(492, 386);
             this.labelMNtoiceApv.Name = "labelMNtoiceApv";
             this.labelMNtoiceApv.Size = new System.Drawing.Size(97, 21);
             this.labelMNtoiceApv.TabIndex = 169;
@@ -1765,18 +1742,22 @@
             this.dateSDPDate.Size = new System.Drawing.Size(100, 21);
             this.dateSDPDate.TabIndex = 182;
             // 
-            // comboCategory
+            // txtdropdownlistCategory
             // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "category", true));
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(346, 83);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(121, 23);
-            this.comboCategory.TabIndex = 183;
+            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtdropdownlistCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "category", true));
+            this.txtdropdownlistCategory.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtdropdownlistCategory.FormattingEnabled = true;
+            this.txtdropdownlistCategory.IsSupportUnselect = true;
+            this.txtdropdownlistCategory.Location = new System.Drawing.Point(346, 83);
+            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
+            this.txtdropdownlistCategory.OldText = "";
+            this.txtdropdownlistCategory.ReadOnly = true;
+            this.txtdropdownlistCategory.Size = new System.Drawing.Size(121, 23);
+            this.txtdropdownlistCategory.TabIndex = 183;
+            this.txtdropdownlistCategory.TabStop = false;
+            this.txtdropdownlistCategory.Type = "Category";
             // 
             // btnTrimCard
             // 
@@ -1853,6 +1834,29 @@
             this.btnPFHistory.UseVisualStyleBackColor = true;
             this.btnPFHistory.Click += new System.EventHandler(this.btnPFHistory_Click);
             // 
+            // displayIsMixMarker
+            // 
+            this.displayIsMixMarker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayIsMixMarker.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrderTypeID", true));
+            this.displayIsMixMarker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayIsMixMarker.Location = new System.Drawing.Point(729, 415);
+            this.displayIsMixMarker.Name = "displayIsMixMarker";
+            this.displayIsMixMarker.Size = new System.Drawing.Size(126, 21);
+            this.displayIsMixMarker.TabIndex = 196;
+            // 
+            // comboSubconInType
+            // 
+            this.comboSubconInType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboSubconInType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "SubconInType", true));
+            this.comboSubconInType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboSubconInType.FormattingEnabled = true;
+            this.comboSubconInType.IsSupportUnselect = true;
+            this.comboSubconInType.Location = new System.Drawing.Point(275, 29);
+            this.comboSubconInType.Name = "comboSubconInType";
+            this.comboSubconInType.ReadOnly = true;
+            this.comboSubconInType.Size = new System.Drawing.Size(293, 23);
+            this.comboSubconInType.TabIndex = 226;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 721);
@@ -1864,6 +1868,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "P01. Warehouse Master List";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Orders";
@@ -1885,7 +1890,6 @@
         private Win.UI.CheckBox checkPullForwardOrder;
         private Win.UI.CheckBox checkCancelledOrder;
         private Win.UI.CheckBox checkForecast;
-        private Win.UI.CheckBox checkSubconInFromSisterFactory;
         private Win.UI.CheckBox checkLocalOrder;
         private Win.UI.TextBox txtStyleNo;
         private Win.UI.TextBox txtPONo;
@@ -1973,7 +1977,6 @@
         private Win.UI.Label labelSpecialMark;
         private Win.UI.Button btnArtwork;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape4;
-        private Win.UI.CheckBox checkIsMixMarker;
         private Win.UI.EditBox editCuttingCombo;
         private Win.UI.Label labelCuttingCombo;
         private Win.UI.DisplayBox displayBuyMonth;
@@ -2016,7 +2019,7 @@
         private Win.UI.Label labelPOSMR;
         private Class.txttpeuser txttpeuserPOHandle;
         private Class.txttpeuser txttpeuserPOSMR;
-        private Win.UI.ComboBox comboCategory;
+        private Class.txtdropdownlist txtdropdownlistCategory;
         private Win.UI.Label labelSDPDate;
         private Win.UI.DateBox dateSDPDate;
         private Win.UI.Label labelCFMDate;
@@ -2033,5 +2036,7 @@
         private Win.UI.Button btnReCalculate;
         private Win.UI.Button btnExpectionFormRemark;
         private Win.UI.Button btnPFHistory;
+        private Win.UI.DisplayBox displayIsMixMarker;
+        private Ict.Win.UI.ComboBox comboSubconInType;
     }
 }

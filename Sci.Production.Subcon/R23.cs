@@ -259,6 +259,7 @@ namespace Sci.Production.Subcon
 
             sqlCmd.Append(string.Format(@"
 select  O.FactoryID
+		, o.MDivisionID
 		, s.Category
 		, opid=iif(o.id is null,s.OrderId,o.poid)
         , O.StyleID
@@ -266,6 +267,7 @@ select  O.FactoryID
 		, SMR = dbo.getTPEPass1(O.SMR)
 		, y.Order_Qty
 		, [Po_Qty] = sum (s.Po_Qty)
+		, [Caron_Qty] = sum(s.CartonQty)
 		, [Po_amt] = ROUND(sum (s.Po_amt), 3)
 		, Po_price = round(sum (s.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) 
 		, std_price = round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3) 
@@ -284,9 +286,11 @@ from (
 			, Po_Qty = sum(LPD.Qty)
 			, Po_amt = sum(LPD.Qty * LPD.Price * dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
 			, Rate = sum(dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
+			, [CartonQty] = sum(iif(li.IsCarton=1,LPD.Qty,0))
 	from dbo.LocalPO LP
 	inner join dbo.LocalPO_Detail LPD on LP.Id = LPD.Id
     left join Orders O on lpd.OrderId = o.id
+	left join LocalItem li on li.RefNo=lpd.Refno
 	where 1 = 1
           {1}
 	group by LP.Category, LPD.OrderId, o.poid
@@ -309,6 +313,7 @@ outer apply(
 )IrregularPrice 
 where 1=1 {2} 
 group by O.FactoryID
+		, o.MDivisionID
 		, s.Category
 		, iif(o.id is null,s.OrderId,o.poid)
         , O.StyleID

@@ -798,7 +798,7 @@ where a.id= @ID", pars, out dd);
 
         private void btnPrintFabricSticker_Click(object sender, EventArgs e)
         {
-            new P19_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+            new P19_FabricSticker(this.CurrentMaintain["ID"], MyUtility.Convert.GetString(this.CurrentMaintain["remark"])).ShowDialog();
         }
     }
 }

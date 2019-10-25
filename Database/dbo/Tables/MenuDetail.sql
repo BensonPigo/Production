@@ -23,6 +23,7 @@
     [CanReturn]     BIT           CONSTRAINT [DF_MenuDetail_CanReturn] DEFAULT ((0)) NULL,
     [CanJunk]       BIT           CONSTRAINT [DF_MenuDetail_CanJunk] DEFAULT ((0)) NULL,
     [OldKey] VARCHAR(10) NULL DEFAULT (''), 
+    [CanUnJunk] BIT NOT NULL CONSTRAINT [DF_MenuDetail_CanUnJunk] DEFAULT ((0)) , 
     CONSTRAINT [PK_MenuDetail] PRIMARY KEY CLUSTERED ([PKey] ASC)
 );
 

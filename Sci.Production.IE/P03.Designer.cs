@@ -1369,11 +1369,14 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.boolFtyGroupList = true;
             this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsProduceFty = false;
             this.txtFactory.IssupportJunk = true;
             this.txtFactory.Location = new System.Drawing.Point(58, 35);
+            this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(66, 21);
             this.txtFactory.TabIndex = 75;
@@ -1394,6 +1397,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P03";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P03. Line Mapping";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";

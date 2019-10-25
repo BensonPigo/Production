@@ -29,6 +29,7 @@ namespace Sci.Production.Planning
         private int sheetStart = 6;
 
         private string M;
+        private string Zone;
         private string Fty;
 
         private string title = string.Empty;
@@ -99,6 +100,7 @@ namespace Sci.Production.Planning
             this.isSCIDelivery = (this.comboDate.SelectedItem.ToString() == "SCI Delivery") ? true : false;
             this.M = this.txtM.Text;
             this.Fty = this.txtFactory.Text;
+            this.Zone = this.txtZone.Text;
 
             this.intYear = Convert.ToInt32(this.numYear.Value);
             this.intMonth = Convert.ToInt32(this.numMonth.Value);
@@ -344,6 +346,16 @@ namespace Sci.Production.Planning
                     }
                 }
 
+                if (!this.txtZone.Text.Empty())
+                {
+                    sqlWheres.Add(" f.Zone = '" + this.Zone + "'");
+                    loadingWheres.Add(" f.Zone ='" + this.Zone + "'");
+                    if (this.txtM.Text.Empty())
+                    {
+                        workWheres.Add(" exists (select 1 from Factory WITH (NOLOCK) where zone = '" + this.Zone + "' and ID = w.FactoryID)");
+                    }
+                }
+
                 if (!this.txtBrand.Text.Empty())
                 {
                     loadingWheres.Add("o.BrandID = '" + this.BrandID + "'");
@@ -368,7 +380,7 @@ namespace Sci.Production.Planning
                 }
                 #endregion
 
-                #region --Prouction Status Excel第一個頁籤SQL
+                #region --Production Status Excel第一個頁籤SQL
                 this.cmd = string.Format(
                     @"
                             -- 先撈出工廠的Capacity
@@ -394,10 +406,11 @@ namespace Sci.Production.Planning
                 	              Left Join Order_TmsCost ot WITH (NOLOCK) on o.ID = ot.ID and ot.ArtworkTypeID = 'SEWING'
                 	              Left Join #tmpFtyCapacity t on t.ID = o.FactoryID
                 	              Left Join Country c WITH (NOLOCK) on c.ID = t.CountryID
+                                  Left Join Factory f WITH (NOLOCK) on f.id = o.factoryID
                 	              Cross Apply getOutputInformation(o.ID, '{3}') si
                 	              Where o.BuyerDelivery between '{2}' and '{3}'
                 	              And o.Junk = 0
-                	              And o.SubconInSisterFty = 0
+                	              And o.SubconInType in ('1','2')
                 	              " + load + @"
                 	              ) a
                             Group by a.CountryID, a.Alias, a.MDivisionID, a.FactoryID, a.Capacity
@@ -411,7 +424,7 @@ namespace Sci.Production.Planning
                 
                             Select a.*, DATENAME(weekday,a. MaxOutputDate) as DateName,
                                    IIF(a.CountDay=0,0,round(a.LoadCPU/a.CountDay,0)) as DailyCPU,
-                                   IIF(AccuHours* MonthHours=0,0,round(a.LoadCPU/AccuHours* MonthHours,0)) as AccuLoad
+                                   IIF(AccuHours* MonthHours=0,0,round(a.LoadCPU/AccuHours* MonthHours,10)) as AccuLoad
                             into  #printdata
                             From (Select t.*, 
                                         isnull((select sum(AVGHours) 
@@ -517,7 +530,7 @@ namespace Sci.Production.Planning
                     this.s += this.o + Environment.NewLine;
                 }
 
-                #region --Prouction Status Excel第二個頁籤SQL
+                #region --Production Statuss Excel第二個頁籤SQL
                 this.cmd2 = string.Format(
                     @"
                             --	撈出各工廠每天的平均工時 
@@ -578,7 +591,8 @@ namespace Sci.Production.Planning
                                 new SqlParameter("@Month", this.intMonth),
                                 new SqlParameter("@SourceStr", this.SourceStr),
                                 new SqlParameter("@M", this.M),
-                                new SqlParameter("@Fty", this.Fty)
+                                new SqlParameter("@Fty", this.Fty),
+                                new SqlParameter("@Zone", this.Zone)
                             };
         }
 
@@ -629,6 +643,7 @@ namespace Sci.Production.Planning
                 this.SetColumnToBack(dtMDVList, "MDivisionID", "Sample");
                 this.SetColumnToBack(dtMDVList, "MDivisionID", string.Empty);
                 bool isSample = false;
+                int shortageStart = 0;
                 for (int idxMDV = 0; idxMDV < dtMDVList.Rows.Count; idxMDV++)
                 {
                     lisBold.Add(this.sheetStart.ToString());
@@ -654,11 +669,28 @@ namespace Sci.Production.Planning
 
                         for (int mon = 1; mon < 13; mon++)
                         {
+                            string Capacity = "0";
+
                             DataRow[] rows = dtFactory.Select(string.Format("Month = '{0}' and FactoryID = '{1}'", this.intYear.ToString() + mon.ToString("00"), factoryID));
-                            wks.Cells[this.sheetStart, mon + 1].Value = (rows.Length > 0) ? rows[0]["Capacity"] : 0;
+                            if (rows.Length > 0)
+                            {
+                                Capacity = rows[0]["str_Capacity"].ToString();
+                            }
+
+                            wks.Cells[this.sheetStart, mon + 1].Value = Capacity;
+
+                            // Change Color
+                            if (string.Compare(Capacity.Substring(0, 1), "=") == 0)
+                            {
+                                wks.Cells[this.sheetStart, mon + 1].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#f9f900"));
+                            }
                         }
 
                         wks.Cells[this.sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), this.sheetStart);
+                        if (MyUtility.Convert.GetDecimal(dtFactory.Compute("Sum(Capacity)", $"FactoryID = '{factoryID}'")) == 0)
+                        {
+                            wks.Rows[$"{this.sheetStart}:{this.sheetStart}", System.Type.Missing].Hidden = true;
+                        }
 
                         DataRow[] tmprows = dtFactory.Select(string.Format("FactoryID = '{0}'", factoryID));
                         wks.Cells[this.sheetStart, 15].Value = tmprows.Length > 0 && tmprows[0]["Tms"] != DBNull.Value ? tmprows[0]["Tms"] : 0;
@@ -672,6 +704,13 @@ namespace Sci.Production.Planning
                     this.DrawBottomLine(wks, this.sheetStart, 1);
                     this.sheetStart += 1;
 
+                    // Shortage
+                    shortageStart = this.sheetStart;
+                    DataTable dtByShortage = this.SafeGetDt(dt1, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
+                    this.SetTableToRow(wks, this.sheetStart, "Shortage", dtByShortage, "OrderShortage");
+                    this.DrawBottomLine(wks, this.sheetStart, 1);
+                    this.sheetStart += 1;
+
                     if (isSample)
                     {
                         continue;
@@ -679,7 +718,7 @@ namespace Sci.Production.Planning
 
                     // MDV total
                     mDVTotalIdx = this.sheetStart;
-                    this.SetFormulaToRow(wks, this.sheetStart, mDivisionID + " total", string.Format("=SUM({{0}}{0}:{{0}}{1})", ftyStart, nonSisStart));
+                    this.SetFormulaToRow(wks, this.sheetStart, mDivisionID + " total", string.Format("=SUM({{0}}{0}:{{0}}{1}) - {{0}}{2}", ftyStart, nonSisStart, shortageStart));
 
                     this.DrawBottomLine(wks, this.sheetStart, 1);
                     this.sheetStart += 1;
@@ -735,7 +774,7 @@ namespace Sci.Production.Planning
                 string sumFtyStr = "=";
                 foreach (string str in lisSumFtyNonSis)
                 {
-                    sumFtyStr += string.Format("+SUM({{0}}{0}:{{0}}{1})", str.Split(',')[0], str.Split(',')[1]);
+                    sumFtyStr += string.Format("+SUM({{0}}{0}:{{0}}{1})- {{0}}{2}", str.Split(',')[0], str.Split(',')[1], shortageStart);
                 }
 
                 this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Grand TTL", countryID), sumFtyStr);
@@ -1001,16 +1040,28 @@ namespace Sci.Production.Planning
                         for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
                         {
                             DataRow[] rows = dtLoadCPU.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon)));
-                            decimal capacity12 = 0;
-                            decimal capacity22 = 0;
+                            string capacity12 = "0";
+                            string capacity22 = "0";
                             if (rows.Length > 0)
                             {
-                                capacity12 = rows[0]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity1"]) : 0;
-                                capacity22 = rows[0]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity2"]) : 0;
+                                capacity12 = rows[0]["str_Capacity1"] != DBNull.Value ? Convert.ToString(rows[0]["str_Capacity1"]) : "0";
+                                capacity22 = rows[0]["str_Capacity2"] != DBNull.Value ? Convert.ToString(rows[0]["str_Capacity2"]) : "0";
                             }
 
                             wks.Cells[this.sheetStart, 5 + (idx * 2)].Value = capacity12;
                             wks.Cells[this.sheetStart, 5 + (idx * 2) + 1].Value = capacity22;
+
+                            // Change Color
+                            if (string.Compare(capacity12.Substring(0, 1), "=") == 0)
+                            {
+                                wks.Cells[this.sheetStart, 5 + (idx * 2)].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#f9f900"));
+                            }
+
+                            if (string.Compare(capacity22.Substring(0, 1), "=") == 0)
+                            {
+                                wks.Cells[this.sheetStart, 5 + (idx * 2) + 1].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#f9f900"));
+                            }
+
                             idx += 1;
                         }
 
@@ -1026,6 +1077,13 @@ namespace Sci.Production.Planning
                         }
 
                         this.DrawBottomLine(wks, this.sheetStart, 4, 3, 17);
+
+                        if (MyUtility.Convert.GetDecimal(dt1.Compute("Sum(Capacity1)+Sum(Capacity2)", $"FactoryID = '{factoryID}'")) == 0 &&
+                            MyUtility.Convert.GetDecimal(dtFactory.Compute("Sum(Capacity1)+Sum(Capacity2)", $"FactoryID = '{factoryID}'")) == 0
+                            )
+                        {
+                            wks.Rows[$"{this.sheetStart - 2}:{this.sheetStart}", System.Type.Missing].Hidden = true;
+                        }
 
                         this.sheetStart += 1;
                     }
@@ -1267,7 +1325,7 @@ namespace Sci.Production.Planning
             }
         }
 
-        private void SetTableToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, DataTable dt)
+        private void SetTableToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, DataTable dt, string valueCol = "Capacity")
         {
             wks.Cells[sheetStart, 1].Value = cell1Str;
             for (int mon = 1; mon < 13; mon++)
@@ -1278,9 +1336,7 @@ namespace Sci.Production.Planning
                 {
                     for (int i = 0; i < rows.Length; i++)
                     {
-                        decimal decCapacity;
-                        decimal.TryParse(rows[i]["Capacity"].ToString(), out decCapacity);
-                        v += decCapacity;
+                        v += MyUtility.Convert.GetDecimal(rows[i][valueCol]);
                     }
                 }
 
@@ -1288,6 +1344,11 @@ namespace Sci.Production.Planning
             }
 
             wks.Cells[sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), sheetStart);
+        }
+
+        private void VisivleRow()
+        {
+
         }
 
         private void SetFormulaToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, string formula, EnuDrawColor color = EnuDrawColor.None)
@@ -1472,6 +1533,30 @@ namespace Sci.Production.Planning
             /// 正數紫色、負數綠色
             /// </summary>
             Normal,
+        }
+
+        private void TxtZone_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select distinct zone from Factory WITH (NOLOCK) where isSCI=1 and junk=0 ", "8", this.Text, false, ",");
+            item.Size = new System.Drawing.Size(300, 250);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.txtZone.Text = item.GetSelectedString();
+        }
+
+        private void TxtZone_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string strZone = this.txtZone.Text;
+            if (!string.IsNullOrWhiteSpace(strZone) && strZone != this.txtZone.OldValue)
+            {
+                if (MyUtility.Check.Seek(string.Format("select distinct zone from Factory WITH (NOLOCK) where Zone = '{0}'", strZone)) == false)
+                {
+                    this.txtZone.Text = string.Empty;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Zone : {0} > not found!!!", strZone));
+                    return;
+                }
+            }
         }
     }
 }

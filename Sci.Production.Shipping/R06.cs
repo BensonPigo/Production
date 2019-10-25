@@ -21,6 +21,8 @@ namespace Sci.Production.Shipping
         private DateTime? date2;
         private DateTime? apvDate1;
         private DateTime? apvDate2;
+        private DateTime? VoucherDate1;
+        private DateTime? VoucherDate2;
         private string blno1;
         private string blno2;
         private string supplier;
@@ -63,6 +65,8 @@ namespace Sci.Production.Shipping
             this.date2 = this.dateDate.Value2;
             this.apvDate1 = this.dateApvDate.Value1;
             this.apvDate2 = this.dateApvDate.Value2;
+            this.VoucherDate1 = this.dateVoucherDate.Value1;
+            this.VoucherDate2 = this.dateVoucherDate.Value2;
             this.blno1 = this.txtBLNoStart.Text;
             this.blno2 = this.txtBLNoEnd.Text;
             this.supplier = this.txtSubconSupplier.TextBox1.Text;
@@ -79,7 +83,7 @@ namespace Sci.Production.Shipping
             {
                 sqlCmd.Append(@"select	s.Type,
         s.SubType,
-		Supplier = s.LocalSuppID + ls.Abb,
+		Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,''),
 		s.ID,
 		s.VoucherID,
 		s.CDate,
@@ -90,7 +94,11 @@ namespace Sci.Production.Shipping
 		s.[BLNo],
 		s.[Remark],
 		s.[InvNo],
-		ExportINV =  Stuff((select iif(WKNo = '','',concat( '/',WKNo)) + iif(InvNo = '','',concat( '/',InvNo) )   from ShareExpense she where she.ShippingAPID = s.ID FOR XML PATH('')),1,1,'') ,
+		ExportINV =  Stuff((select distinct iif(WKNo = '','',concat( '/',WKNo)) + iif(InvNo = '','',concat( '/',InvNo) )   
+                            from ShareExpense she 
+                            where she.ShippingAPID = s.ID 
+                                  and she.Junk != 1
+                            FOR XML PATH('')),1,1,'') ,
 		sd.[ShipExpenseID],
 		se.Description,
 		sd.[Qty],
@@ -109,11 +117,76 @@ left join [FinanceEN].dbo.AccountNo an on an.ID = se.AccountID
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
 where s.Status = 'Approved'");
             }
+            else if (this.radioByInvWK.Checked)
+            {
+                sqlCmd.Append(@"select
+        s.Type,
+        s.SubType,
+		Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,''),
+		s.ID,
+		s.VoucherID,
+        s.VoucherDate,
+		[APDate]=s.CDate,
+		s.[ApvDate],
+		s.[MDivisionID],
+		s.[CurrencyID],
+		[APAmt]=s.[Amount],
+		s.[BLNo],
+		s.[Remark],
+		[Invoice ]= s.InvNo,
+		[ExportINV] =  case
+                            when sh.WKNo = '' and sh.InvNo != '' then sh.InvNo
+                            when sh.WKNo != '' and sh.InvNo = '' then sh.WKNo
+                            when sh.WKNo != '' and sh.InvNo != '' then Concat (sh.WKNo, '/', sh.InvNo)
+                            else ''
+                        end
+		,[CurrencyID]= ISNULL(sh.CurrencyID , ShippingAP_Deatai.CurrencyID)
+		,[Amount]= ISNULL(sh.Amount , ShippingAP_Deatai.Amount)
+		,[AccountID]= ISNULL(sh.AccountID , ShippingAP_Deatai.AccountID)
+		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
+from ShippingAP s WITH (NOLOCK)
+left join ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
+                                           and sh.Junk != 1
+left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID 
+left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
+
+OUTER APPLY(
+	SELECT se.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
+	FROM ShippingAP_Detail sd
+	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
+	left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
+	WHERE sd.ID=s.ID
+	----若ShareExpense有資料，就不必取表身加總的值
+	AND NOT EXISTS (SELECT 1 FROM ShareExpense WHERE ShippingAPID=sd.ID and Junk != 1)
+	GROUP BY se.AccountID,a.Name,sd.CurrencyID
+)ShippingAP_Deatai
+
+where s.Status = 'Approved'");
+            }
             else
             {
-                sqlCmd.Append(@"select s.Type,s.SubType,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherID,
-s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amt,s.BLNo,s.Remark,s.InvNo,
-isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense WITH (NOLOCK) where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
+                sqlCmd.Append(@"
+select s.Type
+        ,s.SubType
+        ,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier
+        ,s.ID
+        ,s.VoucherID
+        ,s.CDate
+        ,CONVERT(DATE,s.ApvDate) as ApvDate
+        ,s.MDivisionID
+        ,s.CurrencyID
+        ,s.Amount+s.VAT as Amt
+        ,s.BLNo
+        ,s.Remark
+        ,s.InvNo
+        ,isnull((select CONCAT(InvNo,'/') 
+                 from (
+                        select distinct InvNo 
+                        from ShareExpense WITH (NOLOCK) 
+                        where ShippingAPID = s.ID
+                              and junk != 1
+                 ) a 
+                for xml path('')),'') as ExportInv
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 where s.Status = 'Approved'");
@@ -137,6 +210,16 @@ where s.Status = 'Approved'");
             if (!MyUtility.Check.Empty(this.apvDate2))
             {
                 sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apvDate2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.VoucherDate1))
+            {
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.VoucherDate) >= '{0}'", Convert.ToDateTime(this.VoucherDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.VoucherDate2))
+            {
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.VoucherDate) <= '{0}'", Convert.ToDateTime(this.VoucherDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.blno1))
@@ -191,7 +274,20 @@ where s.Status = 'Approved'");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = this.radioDetail.Checked == true ? Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx" : Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentList.xltx";
+            string strXltName = string.Empty;
+
+            if (this.radioDetail.Checked)
+            {
+                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx";
+            }
+            else if (this.radioSummary.Checked)
+            {
+                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentList.xltx";
+            }
+            else
+            {
+                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx";
+            }
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
@@ -204,6 +300,12 @@ where s.Status = 'Approved'");
             if (this.radioDetail.Checked == true)
             {
                 Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx", excel);
+                com.WriteTable(this.printData, 2);
+            }
+            else
+            if (this.radioByInvWK.Checked == true)
+            {
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx", excel);
                 com.WriteTable(this.printData, 2);
             }
             else

@@ -48,6 +48,11 @@ namespace Sci.Production.Shipping
 
             Ict.Win.DataGridViewGeneratorTextColumnSettings id = new DataGridViewGeneratorTextColumnSettings();
 
+            // 限制最大字數，避免寫入DB錯誤
+            DataGridViewGeneratorTextColumnSettings CTNRNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20};
+            DataGridViewGeneratorTextColumnSettings SealNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 15 };
+            DataGridViewGeneratorTextColumnSettings TruckNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
+
             id.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -59,8 +64,9 @@ namespace Sci.Production.Shipping
 select [GB#]=g.ID,LoadingType=g.CYCFS,b.BrandGroup,g.Forwarder,g.CutOffDate
 from GMTBooking g WITH(NOLOCK)
 inner join Brand b with(nolock) on b.ID = g.BrandID
+inner join ShipMode s with(nolock) on s.id = g.ShipModeID 
 where g.shipPlanID = '{this.ShipPlanID}'
-and g.ShipModeID = 'Sea'
+and s.IncludeSeaShipping = 1
 and g.CYCFS = 'CY-CY'";
                     DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
@@ -87,8 +93,9 @@ and g.CYCFS = 'CY-CY'";
 select g.id,g.CYCFS ,b.BrandGroup,g.Forwarder,g.CutOffDate
 from GMTBooking g WITH (NOLOCK) 
 inner join Brand b with(nolock) on b.ID = g.BrandID
+inner join ShipMode s with(nolock) on s.id = g.ShipModeID 
 where g.shipPlanID = '{this.ShipPlanID}' and g.id = '{e.FormattedValue}'
-and g.ShipModeID = 'Sea'
+and s.IncludeSeaShipping = 1
 and g.CYCFS = 'CY-CY'
 ";
                 DataRow dr;
@@ -113,9 +120,9 @@ and g.CYCFS = 'CY-CY'
             .ComboBox("Type", header: "Container Type", width: Widths.AnsiChars(20)).Get(out cbb_CYCFS)
             .Text("ID", header: "GB#", width: Widths.AnsiChars(20), settings: id)
             .Text("CYCFS", header: "Loading Type", iseditable: false)
-            .Text("CTNRNo", header: "Container#", width: Widths.AnsiChars(10))
-            .Text("SealNo", header: "Seal#", width: Widths.AnsiChars(10))
-            .Text("TruckNo", header: "Truck#/Traile#", width: Widths.AnsiChars(10))
+            .Text("CTNRNo", header: "Container#", width: Widths.AnsiChars(20), settings: CTNRNo)
+            .Text("SealNo", header: "Seal#", width: Widths.AnsiChars(15), settings: SealNo)
+            .Text("TruckNo", header: "Truck#/Traile#", width: Widths.AnsiChars(20), settings: TruckNo)
             .Text("AddBy", header: "Add by", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Text("EditBy", header: "Edit by", width: Widths.AnsiChars(30), iseditingreadonly: true);
 

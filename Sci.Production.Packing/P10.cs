@@ -79,6 +79,7 @@ select	ID
 		, Customize1
 		, Alias
 		, BuyerDelivery 
+        , SCICtnNo
 from (
     Select  Distinct ID = ''
             , selected = 1
@@ -93,6 +94,7 @@ from (
             , d.Alias
             , c.BuyerDelivery 
             , orderByCTNStartNo = TRY_CONVERT(int, CTNStartNo)
+            , b.SCICtnNo
     from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
     where b.OrderId = c.Id 
     and a.Id = b.Id 
@@ -166,7 +168,7 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 // 先將Grid的結構給開出來
-                string selectCommand = @"Select distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery ,b.CustCTN
+                string selectCommand = @"Select distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery ,b.CustCTN,b.SCICtnNo
                                                              from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                 DataTable selectDataTable;
                 DualResult selectResult;
@@ -215,6 +217,7 @@ select  pd.OrderID
         , pd.OrderShipmodeSeq  
         , o.MDivisionID
         , pd.TransferDate
+        , pd.SCICtnNo
 from    PackingList_Detail pd WITH (NOLOCK) 
 inner join Orders o on pd.OrderID = o.id
 where   pd.ID = '{0}' 
@@ -243,6 +246,7 @@ where   pd.ID = '{0}'
                                     #endregion
 
                                     dr["OrderID"] = seekData["OrderID"].ToString().Trim();
+                                    dr["SCICtnNo"] = seekData["SCICtnNo"].ToString().Trim();
                                     string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
                                     sqlCmd = string.Format(
                                         @"
@@ -291,6 +295,7 @@ select  pd.OrderID
         , o.MDivisionID
         , pd.TransferDate
 		,pd.id,pd.CTNStartNo
+        ,pd.SCICtnNo
 from    PackingList_Detail pd WITH (NOLOCK) 
 inner join Orders o on pd.OrderID = o.id
 where   pd.CustCTN= '{dr["CustCTN"]}' 
@@ -315,6 +320,7 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
                                             #endregion
 
                                             dr["OrderID"] = seekData["OrderID"].ToString().Trim();
+                                            dr["SCICtnNo"] = seekData["SCICtnNo"].ToString().Trim();
                                             string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
                                             string packinglistid = seekData["id"].ToString().Trim();
                                             string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
@@ -379,6 +385,7 @@ select  pd.OrderID
         , pd.TransferDate
         , pd.TransferDate
 		,pd.id,pd.CTNStartNo
+        ,pd.SCICtnNo
 from    PackingList_Detail pd WITH (NOLOCK) 
 inner join Orders o on pd.OrderID = o.id
 where   pd.CustCTN= '{dr["CustCTN"]}' 
@@ -403,6 +410,7 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
                                         #endregion
 
                                         dr["OrderID"] = seekData["OrderID"].ToString().Trim();
+                                        dr["SCICtnNo"] = seekData["SCICtnNo"].ToString().Trim();
                                         string packinglistid = seekData["id"].ToString().Trim();
                                         string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                         string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
@@ -509,6 +517,7 @@ where   a.ID = '{0}'",
                 }
             }
         }
+
         // Save
         private void BtnSave_Click(object sender, EventArgs e)
         {
@@ -535,13 +544,14 @@ where   a.ID = '{0}'",
             foreach (DataRow dr in selectedData)
             {
                 insertCmds.Add(string.Format(
-                    @"insert into TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName)
-values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}');",
+                    @"insert into TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo)
+values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}','{5}');",
                     Sci.Env.User.Keyword,
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
-                    Sci.Env.User.UserID));
+                    Sci.Env.User.UserID,
+                    MyUtility.Convert.GetString(dr["SCICtnNo"])));
 
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(

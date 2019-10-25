@@ -12,6 +12,8 @@ using System.Linq;
 using Ict.Win;
 using System.Linq.Dynamic;
 using Sci.Win.Tools;
+using System.Transactions;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Packing
 {
@@ -24,7 +26,8 @@ namespace Sci.Production.Packing
         private SelectCartonDetail selecedPK;
         private P09_IDX_CTRL IDX;
         private bool UseAutoScanPack = false;
-
+        private string PackingListID = string.Empty;
+        private string CTNStarNo = string.Empty;
         /// <summary>
         /// P18
         /// </summary>
@@ -72,6 +75,8 @@ namespace Sci.Production.Packing
         private void TxtScanCartonSP_Validating(object sender, CancelEventArgs e)
         {
             DualResult result;
+            this.PackingListID = string.Empty;
+            this.CTNStarNo = string.Empty;
 
             if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
             {
@@ -97,6 +102,12 @@ namespace Sci.Production.Packing
                 }
             }
 
+            if (this.txtScanCartonSP.Text.Length > 13)
+            {
+                this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+            }
+
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
             this.ClearAll("SCAN");
             #region 檢查是否有資料，三個角度
@@ -106,7 +117,7 @@ namespace Sci.Production.Packing
             // 3.=Orders.CustPoNo
             string[] aLLwhere = new string[]
             {
-                $" and  (pd.ID + pd.CTNStartNo) = '{this.txtScanCartonSP.Text}'",
+                this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
                 $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
                 $@" and pd.CustCTN = '{this.txtScanCartonSP.Text}'"
@@ -121,7 +132,9 @@ namespace Sci.Production.Packing
                                            pd.Color,
                                            pd.SizeCode  ,
                                            pd.QtyPerCTN,
-                                          ScanQty = isnull(pd.ScanQty,0),
+                                           ScanQty = pd.ScanQty,
+                                           pd.ScanEditDate,
+                                           pd.ScanName,
                                            pd.barcode,
                                            p.BrandID,
                                            o.StyleID,
@@ -195,8 +208,7 @@ namespace Sci.Production.Packing
                     {
                         dr["barcode"] = DBNull.Value;
                     }
-
-                    DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{this.txtScanCartonSP.Text}'");
+                    DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'  ");
                 }
 
                 DualResult result_load = this.LoadScanDetail(0);
@@ -248,9 +260,17 @@ namespace Sci.Production.Packing
 
             if (this.selecedPK != null && this.numBoxScanQty.Value > 0)
             {
-                if (dr.ID == this.selecedPK.ID && dr.CTNStartNo == this.selecedPK.CTNStartNo && dr.Article == this.selecedPK.Article)
+                // 這邊加try catch 是為了ISP20191449 補充說明的bug 2 當user殺生問題可以keep當時情況
+                try
                 {
-                    return result;
+                    if (dr.ID == this.selecedPK.ID && dr.CTNStartNo == this.selecedPK.CTNStartNo && dr.Article == this.selecedPK.Article)
+                    {
+                        return result;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new DualResult(false, ex);
                 }
 
                 if (!this.LackingClose())
@@ -283,7 +303,7 @@ namespace Sci.Production.Packing
                     seledr["barcode"] = DBNull.Value;
                 }
 
-                DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{MyUtility.Convert.GetString(dr.ID) + MyUtility.Convert.GetString(dr.CTNStartNo)}'");
+                DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' ");
             }
 
             this.scanDetailBS.DataSource = dr_scanDetail.OrderBy(s => s["Article"]).ThenBy(s => s["Seq"]).CopyToDataTable();
@@ -317,12 +337,14 @@ namespace Sci.Production.Packing
         /// <returns>result</returns>
         private DualResult ClearScanQty(DataRow[] tmp, string clearType)
         {
-            DualResult result = new DualResult(true);
+            DualResult result1 = new DualResult(true);
+            DualResult result2 = new DualResult(true);
+            short oriScanQty = (short)tmp[0]["ScanQty"];
             if (tmp.Length == 0)
             {
-                result = new DualResult(false, new BaseResult.MessageInfo("ClearScanQty Error"));
+                result1 = new DualResult(false, new BaseResult.MessageInfo("ClearScanQty Error"));
 
-                return result;
+                return result1;
             }
 
             foreach (DataRow dr in tmp)
@@ -334,11 +356,66 @@ namespace Sci.Production.Packing
             {
                 string upd_sql = $@"update PackingList_Detail set ScanQty = 0,ScanEditDate = NULL , ActCTNWeight = 0
 where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Article = '{tmp[0]["Article"]}'";
-                result = DBProxy.Current.Execute(null, upd_sql);
+
+                string insertCmds = $@"
+
+INSERT INTO [dbo].[PackingScan_History]
+           ([MDivisionID]
+           ,[PackingListID]
+           ,[OrderID]
+           ,[CTNStartNo]
+           ,[SCICtnNo]
+           ,[DeleteFrom]
+           ,[ScanQty]
+           ,[ScanEditDate]
+           ,[ScanName]
+           ,[AddName]
+           ,[AddDate])
+     VALUES
+           ('{Sci.Env.User.Keyword}'
+           ,'{tmp[0]["ID"]}'
+           ,'{tmp[0]["OrderID"]}'
+           ,'{tmp[0]["CTNStartNo"]}'
+           ,(SELECt TOP 1 SCICtnNo FROm PackingList_Detail WHERE ID = '{tmp[0]["ID"]}' AND CTNStartNo='{tmp[0]["CTNStartNo"]}')
+           ,'Packing P18'
+           ,{oriScanQty}
+           ,'{Convert.ToDateTime(tmp[0]["ScanEditDate"]).ToAppDateTimeFormatString()}'
+           ,'{tmp[0]["ScanName"]}'
+           ,'{Sci.Env.User.UserID}'
+           ,GETDATE()
+            )
+";
+
+                result1 = DBProxy.Current.Execute(null, upd_sql);
+
+                using (TransactionScope transactionScope = new TransactionScope())
+                {
+                    try
+                    {
+                        result2 = DBProxy.Current.Execute(null, insertCmds);
+                        result1 = DBProxy.Current.Execute(null, upd_sql);
+
+                        if (result1 && result2)
+                        {
+                            transactionScope.Complete();
+                            transactionScope.Dispose();
+                        }
+                        else
+                        {
+                            transactionScope.Dispose();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        transactionScope.Dispose();
+                        this.ShowErr("Commit transaction error.", ex);
+                    }
+                }
+
                 this.LoadSelectCarton();
             }
 
-            return result;
+            return new DualResult(result1 && result2);
         }
 
         /// <summary>
@@ -398,7 +475,16 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                 default_where += $" and ID = \"{this.comboPKFilter.SelectedValue}\"";
             }
 
-            this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
+            var selectCartonFilterResult = list_selectCarton.Where(default_where);
+
+            if (selectCartonFilterResult.Any())
+            {
+                this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
+            }
+            else
+            {
+                this.selcartonBS.DataSource = null;
+            }
 
             var queryTotal = from c in list_selectCarton
                              group c by c.ID into g
@@ -591,6 +677,16 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     }
                 }
 
+                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
+
+                if (isNeedShowWeightInputWindow)
+                {
+                    P18_InputWeight p18_InputWeight = new P18_InputWeight();
+                    p18_InputWeight.ShowDialog();
+                    this.numWeight.Value = p18_InputWeight.ActWeight;
+                    this.numWeight.ValidateControl();
+                }
+
                 string upd_sql = $@"
 update PackingList_Detail 
 set ScanQty = QtyPerCTN 
@@ -601,48 +697,14 @@ set ScanQty = QtyPerCTN
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 and Article = '{this.selecedPK.Article}'";
-                if (sql_result = DBProxy.Current.Execute(null, upd_sql))
-                {
-                    // 回壓DataTable
-                    DataRow drPassName;
-                    string passName = string.Empty;
-                    string sql = $@"
-select isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
-from PackingList_Detail pd
-left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
-where pd.id = '{this.selecedPK.ID}' 
-and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-and pd.Article = '{this.selecedPK.Article}'
-";
-
-                    if (MyUtility.Check.Seek(sql, out drPassName))
-                    {
-                        passName = MyUtility.Convert.GetString(drPassName["PassName"]);
-                    }
-
-                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
-                    foreach (DataRow dr in dt_scanDetailrow)
-                    {
-                        dr["PassName"] = passName;
-                    }
-
-                    // 檢查下方carton列表是否都掃完
-                    int carton_complete = this.dt_scanDetail.AsEnumerable().Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count();
-                    if (carton_complete == 0)
-                    {
-                        this.ClearAll("ALL");
-                    }
-                    else
-                    {
-                        this.ClearAll("SCAN");
-                        this.LoadSelectCarton();
-                    }
-                }
-                else
+                sql_result = DBProxy.Current.Execute(null, upd_sql);
+                if (!sql_result)
                 {
                     this.ShowErr(sql_result);
                     return;
                 }
+
+                this.AfterCompleteScanCarton();
             }
             else
             {
@@ -976,10 +1038,10 @@ and pd.Article = '{this.selecedPK.Article}'
 
         private void btnLacking_Click(object sender, EventArgs e)
         {
-            this.updateLackingStatus();
+            this.UpdateLackingStatus();
         }
 
-        private void updateLackingStatus()
+        private void UpdateLackingStatus()
         {
             DualResult sql_result;
             DataTable dt = (DataTable)this.scanDetailBS.DataSource;
@@ -1005,47 +1067,14 @@ ScanQty = {this.numBoxScanQty.Value}
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 and Article = '{this.selecedPK.Article}'";
-                if (sql_result = DBProxy.Current.Execute(null, upd_sql))
-                {
-                    // 回壓DataTable
-                    DataRow drPassName;
-                    string passName = string.Empty;
-                    string sql = $@"
-select isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
-from PackingList_Detail pd
-left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
-where pd.id = '{this.selecedPK.ID}' 
-and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-and pd.Article = '{this.selecedPK.Article}'
-";
-                    if (MyUtility.Check.Seek(sql, out drPassName))
-                    {
-                        passName = MyUtility.Convert.GetString(drPassName["PassName"]);
-                    }
-
-                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
-                    foreach (DataRow dr in dt_scanDetailrow)
-                    {
-                        dr["PassName"] = passName;
-                    }
-
-                    // 檢查下方carton列表是否都掃完
-                    int carton_complete = this.dt_scanDetail.AsEnumerable().Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count();
-                    if (carton_complete == 0)
-                    {
-                        this.ClearAll("ALL");
-                    }
-                    else
-                    {
-                        this.ClearAll("SCAN");
-                        this.LoadSelectCarton();
-                    }
-                }
-                else
+                sql_result = DBProxy.Current.Execute(null, upd_sql);
+                if (!sql_result)
                 {
                     this.ShowErr(sql_result);
                     return;
                 }
+
+                this.AfterCompleteScanCarton();
 
                 MyUtility.Msg.InfoBox("Lacking successfully!!");
             }
@@ -1053,6 +1082,46 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 // 讓遊標停留在原地
                 this.txtScanEAN.Select();
+            }
+        }
+
+        private void AfterCompleteScanCarton()
+        {
+            // 回壓DataTable
+            DataRow drPassName;
+            string passName = string.Empty;
+            string sql = $@"
+select  isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName,
+        pd.ScanEditDate
+from PackingList_Detail pd
+left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+where pd.id = '{this.selecedPK.ID}' 
+and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+and pd.Article = '{this.selecedPK.Article}'
+";
+
+            if (MyUtility.Check.Seek(sql, out drPassName))
+            {
+                passName = MyUtility.Convert.GetString(drPassName["PassName"]);
+            }
+
+            DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+            foreach (DataRow dr in dt_scanDetailrow)
+            {
+                dr["PassName"] = passName;
+                dr["ScanEditDate"] = drPassName["ScanEditDate"];
+            }
+
+            // 檢查下方carton列表是否都掃完
+            int carton_complete = this.dt_scanDetail.AsEnumerable().Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count();
+            if (carton_complete == 0)
+            {
+                this.ClearAll("ALL");
+            }
+            else
+            {
+                this.ClearAll("SCAN");
+                this.LoadSelectCarton();
             }
         }
 
@@ -1075,7 +1144,7 @@ and pd.Article = '{this.selecedPK.Article}'
                 DialogResult resultLacking = questionBox.ShowDialog();
                 if (resultLacking == DialogResult.Yes)
                 {
-                    this.updateLackingStatus();
+                    this.UpdateLackingStatus();
                     return true;
                 }
                 else

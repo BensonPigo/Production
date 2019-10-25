@@ -22,6 +22,8 @@ namespace Sci.Production.Shipping
     public partial class P01 : Sci.Win.Tems.Input1
     {
         private string excelFile;
+        private decimal numVWeightOldValue;
+        private decimal numForwarderNQuotationOldValue;
 
         /// <summary>
         /// P01
@@ -487,7 +489,8 @@ values ('{0}','Status','','New','{1}',GETDATE())",
         // V.Weight(Kgs)
         private void NumVWeight_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && this.numVWeight.OldValue != this.numVWeight.Value)
+            //if (this.EditMode && this.numVWeight.OldValue != this.numVWeight.Value)\
+            if (this.EditMode && this.numVWeightOldValue != this.numVWeight.Value)
             {
                 this.CalculateEstAmt();
             }
@@ -496,7 +499,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
         // Quotation(USD/Kgs)
         private void NumForwarderNQuotation_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && this.numForwarderNQuotation.OldValue != this.numForwarderNQuotation.Value)
+            if (this.EditMode && this.numForwarderNQuotationOldValue != this.numForwarderNQuotation.Value)
             {
                 this.CalculateEstAmt();
             }
@@ -688,6 +691,7 @@ select o.FactoryID
        , o.MRHandle
        , o.SMR
        , b.ShipLeader
+       , o.Category
 from Orders o WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 left join PO p WITH (NOLOCK) on p.ID = o.POID
@@ -792,6 +796,20 @@ where Id = '{orderID}'
                             this.numOrderQty.Value = MyUtility.Convert.GetInt(orderQtyData.Rows[0]["Qty"]);
                             this.CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyData.Rows[0]["Qty"]);
                             this.dateBuyerDelivery.Value = Convert.ToDateTime(orderQtyData.Rows[0]["BuyerDelivery"]);
+                            if (string.Compare(orderData["Category"].ToString(), "S", true) != 0)
+                            {
+                                DataRow drPacking;
+                                string sqlcmd = $@"
+select GW = ISNULL(sum(gw),0),APPEstAmtVW = ISNULL(sum(APPEstAmtVW),0)  
+from PackingList_Detail
+where OrderID = '{orderID}' and OrderShipmodeSeq = '{orderQtyData.Rows[0]["Seq"]}'
+";
+                                if (MyUtility.Check.Seek(sqlcmd, out drPacking))
+                                {
+                                    this.CurrentMaintain["GW"] = drPacking["GW"];
+                                    this.CurrentMaintain["VW"] = drPacking["APPEstAmtVW"];
+                                }
+                            }
                         }
                         else
                         {
@@ -814,6 +832,21 @@ where Id = '{orderID}'
                                 this.numOrderQty.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
                                 this.CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
                                 this.dateBuyerDelivery.Value = Convert.ToDateTime(orderQtyShipData[0]["BuyerDelivery"]);
+
+                                if (string.Compare(orderData["Category"].ToString(), "S", true) != 0)
+                                {
+                                    DataRow drPacking;
+                                    string sqlcmd = $@"
+select GW = ISNULL(sum(gw),0),APPEstAmtVW = ISNULL(sum(APPEstAmtVW),0)  
+from PackingList_Detail
+where OrderID = '{orderID}' and OrderShipmodeSeq = '{item.GetSelectedString()}'
+";
+                                    if (MyUtility.Check.Seek(sqlcmd, out drPacking))
+                                    {
+                                        this.CurrentMaintain["GW"] = drPacking["GW"];
+                                        this.CurrentMaintain["VW"] = drPacking["APPEstAmtVW"];
+                                    }
+                                }
                             }
                         }
                     }
@@ -1394,7 +1427,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]
         private void ChangeQuotationAVG()
         {
             string strSqlCmd = $@"
-select [QuotationAVG] = ISNULL(iIf(sum(a.GW)=0 , 0, convert(float, ROUND(sum(a.ActualAmount) / sum(a.GW) ,2))),0)
+select [QuotationAVG] = ISNULL(iIf(sum(a.CW)=0 , 0, convert(float, ROUND(sum(a.ActualAmount) / sum(a.CW) ,2))),0)
 from AirPP a
 left join orders o on a.OrderID = o.ID
 where DATEPART(YEAR,a.CDate) = DATEPART(year, DATEADD(year,-1,getdate()))
@@ -1416,6 +1449,18 @@ and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
             {
                 this.ChangeQuotationAVG();
             }
+        }
+
+        private void numVWeight_ValueChanged(object sender, EventArgs e)
+        {
+            this.numVWeightOldValue = this.numVWeight.OldValue.HasValue ? this.numVWeight.OldValue.Value : 0 ;
+        }
+
+        private void numForwarderNQuotation_VisibleChanged(object sender, EventArgs e)
+        {
+            
+            this.numForwarderNQuotationOldValue = this.numForwarderNQuotation.OldValue.HasValue ? this.numForwarderNQuotation.OldValue.Value : 0;
+
         }
     }
 }

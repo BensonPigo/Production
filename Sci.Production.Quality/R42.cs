@@ -122,7 +122,7 @@ order by M desc");
                 sqlWhere = " where " + sqlWhere;
             }
 
-            gb = "group by a.StartDate,b.supplier,b.StyleID,b.refno";
+            gb = "group by a.StartDate,b.SuppID,b.StyleID,b.refno";
             ob = "order by Month";
             string sqlcmd = string.Format(@"create table #dRanges(starts int , ends int, name varchar(20))
                                                  insert into #dRanges values
@@ -139,7 +139,7 @@ order by M desc");
                                                   (11,11,'November'),
                                                   (12,12,'December')
 
-                                    SELECT iif(B.Supplier<>'',B.Supplier,'Other') as supplier  
+                                    SELECT iif(B.SuppID<>'',B.SuppID,'Other') as supplier  
                                     ,format(a.startdate,'MMMMM')[m]
                                     ,b.StyleID
                                     ,b.refno
@@ -424,7 +424,7 @@ from
                     DBO.ADIDASComplain A WITH (NOLOCK) 
                     INNER JOIN DBO.ADIDASComplain_Detail B WITH (NOLOCK) ON B.ID = A.ID
                     left join dbo.ADIDASComplainDefect c WITH (NOLOCK) on c.ID=b.DefectMainID
-                    left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.id=b.DefectMainID and d.SubID=b.DefectSubID" + " " + sqlWhere + "and supplier='{0}'" + rt + " " + ob, sss == "Other" ? "" : sss);
+                    left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.id=b.DefectMainID and d.SubID=b.DefectSubID" + " " + sqlWhere + "and b.SuppID='{0}'" + rt + " " + ob, sss == "Other" ? "" : sss);
 
                     result = DBProxy.Current.SelectByConn(conn, scmd, out dat);
                     dicSUP.Add(sss, dat);

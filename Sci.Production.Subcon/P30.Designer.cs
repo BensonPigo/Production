@@ -70,12 +70,12 @@
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.btnBatchApprove = new System.Windows.Forms.Button();
+            this.txtLocalPurchaseItem = new Sci.Production.Class.txtLocalPurchaseItem();
             this.txtuserClose = new Sci.Production.Class.txtuser();
             this.txtuserLock = new Sci.Production.Class.txtuser();
             this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtuserApprove = new Sci.Production.Class.txtuser();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
-            this.txtLocalPurchaseItem = new Sci.Production.Class.txtLocalPurchaseItem();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -169,7 +169,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numttlqty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnIrrPriceReason, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayLockDate, 0);
@@ -179,6 +178,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayCloseDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuserClose, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocalPurchaseItem, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
@@ -701,6 +701,18 @@
             this.btnBatchApprove.UseVisualStyleBackColor = true;
             this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
             // 
+            // txtLocalPurchaseItem
+            // 
+            this.txtLocalPurchaseItem.BackColor = System.Drawing.Color.White;
+            this.txtLocalPurchaseItem.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "category", true));
+            this.txtLocalPurchaseItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocalPurchaseItem.Location = new System.Drawing.Point(117, 68);
+            this.txtLocalPurchaseItem.Name = "txtLocalPurchaseItem";
+            this.txtLocalPurchaseItem.Size = new System.Drawing.Size(164, 23);
+            this.txtLocalPurchaseItem.TabIndex = 58;
+            this.txtLocalPurchaseItem.TextChanged += new System.EventHandler(this.txtLocalPurchaseItem_TextChanged);
+            this.txtLocalPurchaseItem.Validated += new System.EventHandler(this.txtLocalPurchaseItem_Validated);
+            // 
             // txtuserClose
             // 
             this.txtuserClose.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CloseName", true));
@@ -730,8 +742,10 @@
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(357, 13);
+            this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 4;
@@ -753,23 +767,14 @@
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.isMisc = false;
+            this.txtsubconSupplier.isShipping = false;
+            this.txtsubconSupplier.isSubcon = true;
             this.txtsubconSupplier.Location = new System.Drawing.Point(117, 39);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(167, 23);
             this.txtsubconSupplier.TabIndex = 0;
             this.txtsubconSupplier.TextBox1Binding = "";
-            // 
-            // txtLocalPurchaseItem
-            // 
-            this.txtLocalPurchaseItem.BackColor = System.Drawing.Color.White;
-            this.txtLocalPurchaseItem.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "category", true));
-            this.txtLocalPurchaseItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocalPurchaseItem.Location = new System.Drawing.Point(117, 68);
-            this.txtLocalPurchaseItem.Name = "txtLocalPurchaseItem";
-            this.txtLocalPurchaseItem.Size = new System.Drawing.Size(164, 23);
-            this.txtLocalPurchaseItem.TabIndex = 58;
-            this.txtLocalPurchaseItem.TextChanged += new System.EventHandler(this.txtLocalPurchaseItem_TextChanged);
-            this.txtLocalPurchaseItem.Validated += new System.EventHandler(this.txtLocalPurchaseItem_Validated);
             // 
             // P30
             // 

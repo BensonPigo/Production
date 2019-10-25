@@ -26,6 +26,7 @@ namespace Sci.Production.Subcon
             comboload();
             this.comboFactory.setDataSource();
             this.comboRFIDProcessLocation.setDataSource();
+            this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
         private void comboload()
@@ -137,7 +138,7 @@ namespace Sci.Production.Subcon
                 sqlWhere.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
             }
 
-            if (!MyUtility.Check.Empty(this.processLocation))
+            if (this.processLocation != "ALL")
             {
                 sqlWhere.Append(string.Format(@" and bio.RFIDProcessLocationID = '{0}'", this.processLocation));
             }
@@ -204,6 +205,7 @@ Select
     [Article] = b.Article,
     [Color] = b.ColorId,
     [Line] = b.SewinglineId,
+    bio.SewingLineID,
     [Cell] = b.SewingCell,
     [Pattern] = bd.PatternCode,
     [PtnDesc] = bd.PatternDesc,
@@ -235,6 +237,7 @@ Select
 	,b.Item
 	,bio.PanelNo
 	,bio.CutCellID
+	,[SpreadingNo] = wk.SpreadingNo
 into #result
 from Bundle b WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
@@ -263,7 +266,9 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' then Stuff
 	                                                            from ArtworkPO ap with (nolock)
 	                                                            inner join ArtworkPO_Detail apd with (nolock) on ap.ID = apd.ID
 	                                                            inner join LocalSupp ls with (nolock) on ap.LocalSuppID = ls.ID
-	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = b.OrderId FOR XML PATH('')),1,1,'')  
+	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = b.OrderId 
+	                                                            AND (ap.Status ='Approved' OR (ap.Status ='Closed' AND apd.Farmout > 0))                        
+	                                                            FOR XML PATH('')),1,1,'')  
                     else '' end
 ) PoSuppFromOrderID
 outer apply (
@@ -271,9 +276,23 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 	                                                            from ArtworkPO ap with (nolock)
 	                                                            inner join ArtworkPO_Detail apd with (nolock) on ap.ID = apd.ID
 	                                                            inner join LocalSupp ls with (nolock) on ap.LocalSuppID = ls.ID
-	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = o.POID FOR XML PATH('')),1,1,'')  
+	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = o.POID 
+	                                                            AND (ap.Status ='Approved' OR (ap.Status ='Closed' AND apd.Farmout > 0))                        
+	                                                            FOR XML PATH('')),1,1,'')  
                     else '' end
 ) PoSuppFromPOID
+outer apply(
+	 select SpreadingNo = stuff((
+		    Select distinct concat(',', wo.SpreadingNoID)
+		    from WorkOrder wo WITH (NOLOCK) 
+		    where   wo.CutRef = b.CutRef 
+                    and wo.ID = b.POID
+                    and wo.MDivisionID = b.MDivisionID
+            and wo.SpreadingNoID is not null
+            and wo.SpreadingNoID != ''
+		    for xml path('')
+	    ),1,1,'')
+)wk
 ";
             if (sqlWhereWorkOrder.Length > 0)
             {
@@ -292,7 +311,7 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 			[EstCutDate] = MAX(w.EstCutDate),
 			[CuttingOutputDate] = MAX(co.cDate)
 	from #result r
-	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.MDivisionId = r.M
+	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.MDivisionId = r.M and w.id = r.[Master SP#]
 	left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
 	left join CuttingOutput co  with (nolock) on co.ID = cod.ID
     where r.[Cut Ref#] <> ''
@@ -318,6 +337,7 @@ select
     r.[Article],
     r.[Color],
     r.[Line],
+    r.SewingLineID,
     r.[Cell],
     r.[Pattern],
     r.[PtnDesc],
@@ -353,6 +373,7 @@ select
 	,r.Item
 	,r.PanelNo
 	,r.CutCellID
+    ,r.SpreadingNo
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 

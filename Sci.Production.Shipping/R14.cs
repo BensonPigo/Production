@@ -134,13 +134,13 @@ outer apply(
 	where p.ShipPlanID = s.ID and p.InvNo = g.ID
 )pp
 outer apply(
-	select ct = count(1)
-	from (
-		select distinct pd.CTNStartNo
-		from PackingList p with(nolock)
-		inner join PackingList_Detail pd with(nolock) on pd.id = p.id
-		where p.ShipPlanID = s.ID and p.InvNo = g.ID and pd.ReceiveDate is not null and ReturnDate is null
-	)a
+	select ct = sum(pd.ctnQty)
+	from PackingList p with(nolock)
+	inner join PackingList_Detail pd with(nolock) on pd.id = p.id
+	where p.ShipPlanID = s.ID 
+            and p.InvNo = g.ID 
+            and pd.ReceiveDate is not null 
+            and ReturnDate is null
 )pc
 outer apply(
 	select ct = count(1)

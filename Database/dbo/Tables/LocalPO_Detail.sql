@@ -16,6 +16,7 @@
     [Remark]        VARCHAR (MAX)   NULL,
     [POID] VARCHAR(13) NULL, 
     [BuyerID] VARCHAR(8) CONSTRAINT [DF_LocalPO_Detail_BuyerID] DEFAULT ('') NULL,
+    [ReasonID] VARCHAR(10) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_LocalPO_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
 );
 
@@ -82,10 +83,9 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'OldSeq2', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalPO_Detail', @level2type = N'COLUMN', @level2name = N'OldSeq2';
 
 GO
-CREATE NONCLUSTERED INDEX [Index_LocalPO_Detail_OrderIdRefnoReqID] ON [dbo].[LocalPO_Detail]
+CREATE NONCLUSTERED INDEX [IDX_LocalPO_Detail_OrderIdRefno] ON [dbo].[LocalPO_Detail]
 (
 	[OrderId] ASC,
-	[Refno] ASC,
-	[RequestID] ASC
+	[Refno] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 

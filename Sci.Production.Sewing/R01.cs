@@ -113,7 +113,7 @@ select  s.OutputDate
 		, s.Category
 		, s.Shift
 		, s.SewingLineID
-		, [ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty)
+		, [ActManPower] = s.Manpower
 		, s.Team
 		, sd.OrderId
 		, sd.ComboType
@@ -137,7 +137,7 @@ select  s.OutputDate
 		, System.StdTMS
 		, [InspectQty] = isnull(r.InspectQty,0)
 		, [RejectQty] = isnull(r.RejectQty,0)
-        , [SubconInSisterFty] = isnull(o.SubconInSisterFty,0)
+        , [SubconInType] = isnull(o.SubconInType,0)
 into #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -158,7 +158,7 @@ outer apply(
 ) as r
 where s.OutputDate = '{0}'
 	  and s.FactoryID = '{1}'
-      and (o.CateGory != 'G' or s.Category='M')  ",
+      and (o.CateGory NOT IN ( 'G' ,'A') or s.Category='M')  ",
                 Convert.ToDateTime(this._date).ToString("d"),
                 this._factory));
 
@@ -172,7 +172,7 @@ select OutputDate
 	   , Category
 	   , Shift
 	   , SewingLineID
-	   , ActManPower = Round(Sum(ActManPower),2)
+	   , ActManPower = ActManPower
 	   , Team
 	   , OrderId
 	   , ComboType
@@ -196,7 +196,7 @@ select OutputDate
 	   , StdTMS
 	   , InspectQty
 	   , RejectQty
-       , SubconInSisterFty
+       , SubconInType
 into #tmpSewingGroup
 from #tmpSewingDetail
 group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
@@ -204,7 +204,7 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
 		 , MockupCDCodeID, FactoryID, OrderCPU, OrderCPUFactor
 		 , MockupCPU, MockupCPUFactor, OrderStyle, MockupStyle
 		 , OrderSeason, MockupSeason, Rate, StdTMS, InspectQty
-		 , RejectQty, SubconInSisterFty
+		 , RejectQty, SubconInType,ActManPower
 ----↓計算累計天數 function table太慢直接寫在這
 select distinct scOutputDate = s.OutputDate 
 	   , style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
@@ -272,12 +272,13 @@ group by s.style, s.SewingLineID, s.FactoryID, s.Shift, s.Team
 		 , s.OrderId, s.ComboType
 -----↑計算累計天數
 select t.*
-	   , LastShift = CASE WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInSisterFty = 1 then 'I'
-                          WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInSisterFty = 0 then 'IN'
+	   , LastShift = CASE WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 
+        and t.SubconInType in ('1','2') then 'I'
+                          WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInType IN ('0','3') then 'IN'
                      ELSE t.Shift END
 	   , FtyType = f.Type
 	   , FtyCountry = f.CountryID
-	   , CumulateDate = c.cumulate
+	   , CumulateDate = isnull(c.cumulate,1)
 into #tmp1stFilter
 from #tmpSewingGroup t
 left join #cl c on c.style = IIF(t.Category <> 'M', OrderStyle, MockupStyle) 
@@ -300,32 +301,27 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
 	   , CDNo = IIF(Category = 'M', MockupCDCodeID, OrderCdCodeID) + '-' + ComboType
 	   , ActManPower = IIF(SHIFT = 'O'
-                            ,MAX(IIF(QAQty > 0, ActManPower / QAQty, ActManPower)) OVER (PARTITION BY SHIFT,Team,SewingLineID)
-                            ,IIF(QAQty > 0, ActManPower / QAQty, ActManPower))
+                            ,MAX(ActManPower) OVER (PARTITION BY SHIFT,Team,SewingLineID)
+                            ,ActManPower)
 	   , WorkHour
-	   , ManHour = IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour
-	   , TargetCPU = ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 3) * 3600 / StdTMS, 3) 
+	   , ManHour = ActManPower * WorkHour
+	   , TargetCPU = ROUND(ROUND(ActManPower * WorkHour, 3) * 3600 / StdTMS, 3) 
 	   , TMS = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * StdTMS
 	   , CPUPrice = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
 	   , TargetQty = IIF(IIF(Category = 'M', MockupCPU * MockupCPUFactor
 	   									   , OrderCPU * OrderCPUFactor * Rate) > 0
-	   					    , ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   					    						   , ActManPower) * WorkHour, 2) * 3600 / StdTMS, 2) / IIF(Category = 'M', MockupCPU * MockupCPUFactor
+	   					    , ROUND(ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS, 2) / IIF(Category = 'M', MockupCPU * MockupCPUFactor
 	   					    																							     , OrderCPU * OrderCPUFactor * Rate)
 						    , 0) 
 	   , QAQty
 	   , TotalCPU = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * QAQty
-	   , CPUSewer = IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   									   , ActManPower) * WorkHour, 2) > 0
+	   , CPUSewer = IIF(ROUND(ActManPower * WorkHour, 2) > 0
    							     , ROUND((IIF(Category = 'M', MockupCPU * MockupCPUFactor
-   							     						    , OrderCPU * OrderCPUFactor * Rate) * QAQty), 3) / ROUND(IIF(QAQty > 0, ActManPower / QAQty
-   							     																								  , ActManPower) * WorkHour, 3)
+   							     						    , OrderCPU * OrderCPUFactor * Rate) * QAQty), 3) / ROUND(ActManPower * WorkHour, 3)
      						     , 0) 
-	   , EFF = ROUND(IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   										, ActManPower) * WorkHour, 2) > 0
+	   , EFF = ROUND(IIF(ROUND(ActManPower * WorkHour, 2) > 0
 	   						      , (ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor
-	   						      							 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   						      							 																	   , ActManPower) * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
+	   						      							 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
 	   							  , 1) 
 	   , RFT = IIF(InspectQty > 0, ROUND((InspectQty - RejectQty) / InspectQty * 100, 2), 0)
 	   , CumulateDate
@@ -565,7 +561,7 @@ tmpAllSubprocess as (
            , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), ta.DecimalNumber) 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
 	inner join tmpArtwork ta on ta.ID = ot.ArtworkTypeID
 --	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --												 and sl.Location = a.ComboType
@@ -623,7 +619,9 @@ order by ArtworkTypeID"),
             }
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
+#if DEBUG
+            excel.Visible = true;
+#endif
             worksheet.Cells[1, 1] = this._factoryName;
             worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", this._factory, Convert.ToDateTime(this._date).ToString("MM/dd"),  "(Included Subcon-IN)");
 

@@ -2352,6 +2352,61 @@
     <Build Include="dbo\Tables\ShippingMarkPic.sql" />
     <Build Include="dbo\Views\View_Style_Artwork.sql" />
     <Build Include="dbo\Tables\ShippingMarkPicture.sql" />
+    <Build Include="dbo\Tables\VNContractQtyAdjust_Detail_Detail.sql" />
+    <Build Include="dbo\Tables\VNImportDeclaration_Detail_Detail.sql" />
+    <Build Include="dbo\Functions\GetMaterialTypeDesc.sql" />
+    <Build Include="dbo\Stored Procedures\CreateVNConsumption_Detail.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo_Operation.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo_Detail.sql" />
+    <Build Include="dbo\Tables\Brand_ThreadCalculateRules.sql" />
+    <Build Include="dbo\Tables\MachineType_ThreadRatio_Regular.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo.sql" />
+    <Build Include="dbo\Functions\GetGarmentSizeByOrderIDSeq.sql" />
+    <Build Include="dbo\Stored Procedures\exp_finishingprocess.sql" />
+    <Build Include="dbo\Functions\getPassEmail.sql" />
+    <Build Include="dbo\Functions\QtyBySetPerSubprocess.sql" />
+    <Build Include="dbo\Stored Procedures\imp_Trade_PulseCheck.sql" />
+    <Build Include="dbo\Functions\GetOrderLocation_Rate_ByLinked.sql" />
+    <Build Include="dbo\Tables\GarmentTest_Detail_Apperance.sql" />
+    <Build Include="dbo\Functions\GetPatternUkey.sql" />
+    <Build Include="dbo\Functions\getGCD.sql" />
+    <Build Include="dbo\Functions\getFractional.sql" />
+    <Build Include="dbo\Functions\getROF.sql" />
+    <Build Include="dbo\Functions\getDecimal.sql" />
+    <Build Include="dbo\Functions\getSizeSpecTrans.sql" />
+    <Build Include="dbo\Tables\ClogReason.sql" />
+    <Build Include="dbo\Stored Procedures\Send_SewingDailyOutput.sql" />
+    <Build Include="dbo\Tables\StandardReport_Detail.sql" />
+    <Build Include="dbo\Tables\StandardReport.sql" />
+    <Build Include="dbo\Tables\CustomizedReport_Detail.sql" />
+    <Build Include="dbo\Tables\CustomizedReport.sql" />
+    <Build Include="dbo\Tables\ADIDASComplain_History.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ADIDASComplain_Detail_History.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Functions\CalculateSchdeuleDate.sql" />
+    <Build Include="dbo\Tables\Order_Finish.sql" />
+    <Build Include="dbo\Functions\getFOCInvAdjQty.sql" />
+    <Build Include="dbo\Tables\FreightCollectByCustomer.sql" />
+    <Build Include="dbo\Tables\Carrier_Detail_Freight.sql" />
+    <Build Include="dbo\Functions\QtyBySetPerSubprocess_PatternPanel.sql" />
+    <Build Include="dbo\Tables\FinishingProcess.sql" />
+    <Build Include="dbo\Functions\RemoveNumericCharacters.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\PackingScan_History.sql" />
+    <Build Include="dbo\Tables\CertOfOrigin.sql" />
+    <Build Include="dbo\Stored Procedures\GetSewingLineScheduleData.sql" />
+    <Build Include="dbo\Tables\LineLocation.sql" />
+    <Build Include="dbo\Tables\ProductionLineAllocation.sql" />
+    <Build Include="dbo\Tables\ProductionLineAllocation_Detail.sql" />
+    <Build Include="dbo\Functions\GetFocStockByOrder.sql" />
+    <Build Include="dbo\Tables\MarkerFileNameSwitchRecord.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

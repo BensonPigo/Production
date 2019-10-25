@@ -53,7 +53,8 @@ BEGIN
                 oq.qty ,
 				o.BrandID ,	
 				o.Dest ,
-				o.BuyerDelivery		 				
+				o.BuyerDelivery,
+				c.Kit		 				
          FROM   orders o WITH (nolock) 
                 INNER JOIN order_qty oq WITH (nolock) 
                         ON o.id = oq.id 
@@ -63,8 +64,10 @@ BEGIN
 				left join order_colorcombo oc
 				 ON oa.article = oc.article 
                  AND oc.patternpanel = ''FA'' 
-                 AND oc.id = o.poid 
+                 AND oc.id = o.poid 	
+				 LEFT JOIN CustCD c ON c.ID=o.CustCDID AND c.BrandID= o.BrandID
          WHERE  o.poid = '''+@PoID+N'''
+		        and o.Junk != 1
 	), 
     subtotal AS (
 		SELECT	''''       AS ID, 
@@ -78,7 +81,8 @@ BEGIN
 				Sum(qty) AS Qty,
 				'''' as BrandID,
 				'''' as Dest,
-				null as BuyerDelivery
+				null as BuyerDelivery,
+				''''		 as KIT
          FROM   tmpdata 
          GROUP  BY sizecode,Article,colorid
 	), 
@@ -94,10 +98,11 @@ BEGIN
 				Sum(qty) AS Qty,
 				'''' as BrandID,
 				'''' as Dest,
-				null as BuyerDelivery
+				null as BuyerDelivery,
+				''''		 as KIT
          FROM   tmpdata 
          GROUP  BY sizecode
-		 	 ),
+		 	),
     uniondata AS (
 		SELECT * 
         FROM   tmpdata 
@@ -113,7 +118,7 @@ BEGIN
 	select * 
 	into #tmpUniondata
 	from uniondata
-
+	
 	SELECT * 
 	into #tmpAll
     FROM   #tmpUniondata 
@@ -131,6 +136,7 @@ BEGIN
 				  WHERE  Orderid = p.Orderid
 						 AND article = p.article) 	
 	, [SPNO] = SUBSTRING(p.Orderid,9,LEN(p.orderid)) + '' - ''+ country.NameEN
+	, [KIT] = p.Kit
 	, [OrderNo] = p.OrderNo
 	, [P.O.No] = p.PONo
 	, [CUST CD] = p.CustCD
@@ -164,6 +170,7 @@ BEGIN
 	, '+@cols+N'
 	, [TOTAL] 
 	, [SPNO]
+	, [KIT]
 	, [OrderNo]
 	, [P.O.No] 
 	, [CUST CD] 

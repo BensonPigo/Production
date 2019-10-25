@@ -173,8 +173,8 @@ where sd.id='{0}' order by sd.No
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
 
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
-            ResultCombo.Add("P", "Pass");
-            ResultCombo.Add("F", "Fail");
+            ResultCombo.Add("Pass", "Pass");
+            ResultCombo.Add("Fail", "Fail");
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
@@ -313,8 +313,9 @@ where sd.id='{0}' order by sd.No
                 CurrentDetailData["ReportNo"] = tmpId;
                 ReportNoCount++;
 
-            }
-
+            } 
+            CurrentDetailData["Result"] = "";
+            CurrentDetailData["Remark"] = "";
         }
 
         protected override bool ClickSaveBefore()
@@ -484,23 +485,21 @@ ELSE ''
 END from #Location2
 
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
-values (@ID,@NO,'Print / Heat Transfer',1)
+values (@ID,@NO,'Printing / Heat Transfer',1)
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
-values (@ID,@NO,'Embroidery',2)
+values (@ID,@NO,'Label',2)
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
-values (@ID,@NO,'Label',3)
+values (@ID,@NO,'Zipper / Snap Button / Button / Tie Cord',3)
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
-values (@ID,@NO,'Zipper/ snap button/ button/tie cord/etc.',4)
+values (@ID,@NO,'Discoloration (colour change )',4)
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
-values (@ID,@NO,'Discoloration (colour change )',5)
+values (@ID,@NO,'Colour Staining',5)
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
-values (@ID,@NO,'Colour Staining',6)
+values (@ID,@NO,'Pilling',6)
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
-values (@ID,@NO,'Pilling',7)
+values (@ID,@NO,'Shrinkage & Twisting',7)
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
-values (@ID,@NO,'Shrinkage & Twisting',8)
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
-values (@ID,@NO,'Appearance of garment after wash',9)
+values (@ID,@NO,'Appearance of garment after wash',8)
 ";
                         DBProxy.Current.Execute(null, insertShrinkage, spam);
                     }
@@ -517,17 +516,16 @@ values (@ID,@NO,'Appearance of garment after wash',9)
                 if (dt.Select(where).Count()>0)
                 {
                     DataRow DetailRow = dt.Select(where)[0];
-
-                    if (DetailRow["Result"].ToString()=="Fail")
-                        DetailRow["Result"] = "F";
-
-                    if (DetailRow["Result"].ToString() == "Pass")
-                        DetailRow["Result"] = "P";
-
                     CurrentMaintain["Result"] = DetailRow["Result"];
                     CurrentMaintain["Inspdate"] = DetailRow["Inspdate"];
                     CurrentMaintain["Remark"] = DetailRow["remark"];
+                }
 
+                if (string.IsNullOrEmpty(CurrentMaintain["AddDate"].ToString()) && dt.Select("NO='1'").Count() > 0)
+                {
+                    DataRow DetailRow = dt.Select(where)[0];
+                    CurrentMaintain["AddDate"] = DetailRow["AddDate"];
+                    CurrentMaintain["AddName"] = DetailRow["AddName"];
                 }
             }
             else

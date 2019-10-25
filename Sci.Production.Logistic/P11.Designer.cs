@@ -36,6 +36,10 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnImport = new Sci.Win.UI.Button();
             this.lblStatus = new Sci.Win.UI.Label();
+            this.txtClogReason = new Sci.Production.Class.txtClogReason();
+            this.labReason = new Sci.Win.UI.Label();
+            this.btnDownloadExcel = new Sci.Win.UI.Button();
+            this.btnExcelImport = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -52,6 +56,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnExcelImport);
+            this.masterpanel.Controls.Add(this.btnDownloadExcel);
+            this.masterpanel.Controls.Add(this.labReason);
+            this.masterpanel.Controls.Add(this.txtClogReason);
             this.masterpanel.Controls.Add(this.lblStatus);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.editRemark);
@@ -60,7 +68,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateDisposeDate);
-            this.masterpanel.Size = new System.Drawing.Size(963, 131);
+            this.masterpanel.Size = new System.Drawing.Size(963, 200);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDisposeDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -70,19 +78,24 @@
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtClogReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownloadExcel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnExcelImport, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 131);
-            this.detailpanel.Size = new System.Drawing.Size(963, 240);
+            this.detailpanel.Location = new System.Drawing.Point(0, 200);
+            this.detailpanel.Size = new System.Drawing.Size(963, 227);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(855, 93);
+            this.gridicon.Location = new System.Drawing.Point(855, 162);
+            this.gridicon.TabIndex = 5;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(963, 240);
+            this.detailgridcont.Size = new System.Drawing.Size(963, 227);
             // 
             // detail2
             // 
@@ -98,31 +111,31 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(963, 409);
+            this.detail.Size = new System.Drawing.Size(963, 465);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(963, 371);
+            this.detailcont.Size = new System.Drawing.Size(963, 427);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 371);
+            this.detailbtm.Location = new System.Drawing.Point(0, 427);
             this.detailbtm.Size = new System.Drawing.Size(963, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(963, 409);
+            this.browse.Size = new System.Drawing.Size(963, 465);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(971, 438);
+            this.tabs.Size = new System.Drawing.Size(971, 494);
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(19, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 6;
             this.label1.Text = "ID";
             // 
             // label2
@@ -130,15 +143,15 @@
             this.label2.Location = new System.Drawing.Point(255, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 9;
             this.label2.Text = "Date";
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(19, 45);
+            this.label3.Location = new System.Drawing.Point(19, 72);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 8;
             this.label3.Text = "Remark";
             // 
             // displayID
@@ -149,7 +162,7 @@
             this.displayID.Location = new System.Drawing.Point(97, 13);
             this.displayID.Name = "displayID";
             this.displayID.Size = new System.Drawing.Size(136, 23);
-            this.displayID.TabIndex = 4;
+            this.displayID.TabIndex = 0;
             // 
             // dateDisposeDate
             // 
@@ -158,27 +171,27 @@
             this.dateDisposeDate.Name = "dateDisposeDate";
             this.dateDisposeDate.ReadOnly = true;
             this.dateDisposeDate.Size = new System.Drawing.Size(130, 23);
-            this.dateDisposeDate.TabIndex = 5;
+            this.dateDisposeDate.TabIndex = 1;
             // 
             // editRemark
             // 
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(97, 45);
+            this.editRemark.Location = new System.Drawing.Point(97, 72);
             this.editRemark.MaxLength = 100;
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(586, 78);
-            this.editRemark.TabIndex = 6;
+            this.editRemark.Size = new System.Drawing.Size(586, 122);
+            this.editRemark.TabIndex = 3;
             // 
             // btnImport
             // 
             this.btnImport.Enabled = false;
-            this.btnImport.Location = new System.Drawing.Point(875, 57);
+            this.btnImport.Location = new System.Drawing.Point(875, 46);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(80, 30);
-            this.btnImport.TabIndex = 7;
+            this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
@@ -194,12 +207,52 @@
             this.lblStatus.TabIndex = 45;
             this.lblStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
+            // txtClogReason
+            // 
+            this.txtClogReason.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ClogReasonID", true));
+            this.txtClogReason.DisplayBox1Binding = "";
+            this.txtClogReason.Location = new System.Drawing.Point(97, 38);
+            this.txtClogReason.Name = "txtClogReason";
+            this.txtClogReason.Size = new System.Drawing.Size(386, 27);
+            this.txtClogReason.TabIndex = 2;
+            this.txtClogReason.TextBox1Binding = "";
+            this.txtClogReason.Type = "GD";
+            // 
+            // labReason
+            // 
+            this.labReason.Location = new System.Drawing.Point(19, 42);
+            this.labReason.Name = "labReason";
+            this.labReason.Size = new System.Drawing.Size(75, 23);
+            this.labReason.TabIndex = 7;
+            this.labReason.Text = "Reason ";
+            // 
+            // btnDownloadExcel
+            // 
+            this.btnDownloadExcel.Location = new System.Drawing.Point(820, 119);
+            this.btnDownloadExcel.Name = "btnDownloadExcel";
+            this.btnDownloadExcel.Size = new System.Drawing.Size(135, 30);
+            this.btnDownloadExcel.TabIndex = 6;
+            this.btnDownloadExcel.Text = "Download Excel";
+            this.btnDownloadExcel.UseVisualStyleBackColor = true;
+            this.btnDownloadExcel.Click += new System.EventHandler(this.btnDownloadExcel_Click);
+            // 
+            // btnExcelImport
+            // 
+            this.btnExcelImport.Enabled = false;
+            this.btnExcelImport.Location = new System.Drawing.Point(829, 83);
+            this.btnExcelImport.Name = "btnExcelImport";
+            this.btnExcelImport.Size = new System.Drawing.Size(126, 30);
+            this.btnExcelImport.TabIndex = 5;
+            this.btnExcelImport.Text = "Excel Import";
+            this.btnExcelImport.UseVisualStyleBackColor = true;
+            this.btnExcelImport.Click += new System.EventHandler(this.btnExcelImport_Click);
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(971, 471);
+            this.ClientSize = new System.Drawing.Size(971, 527);
             this.GridAlias = "ClogGarmentDispose_Detail";
             this.GridUniqueKey = "ID,PackingListID,CTNStartNO";
             this.IsSupportClip = false;
@@ -209,6 +262,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P11";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P11. Clog Garment Dispose";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "ClogGarmentDispose";
@@ -242,5 +296,9 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Label lblStatus;
+        private Win.UI.Label labReason;
+        private Class.txtClogReason txtClogReason;
+        private Win.UI.Button btnExcelImport;
+        private Win.UI.Button btnDownloadExcel;
     }
 }

@@ -359,7 +359,7 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                                 }
                             }
 
-                            if (t)
+                            if (t || dr["ShipModeID", DataRowVersion.Original].EqualString(dr["ShipModeID"]) == false)
                             {
                                 result = this.WriteRevise("Revise", dr);
 
@@ -536,6 +536,12 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 return;
             }
 
+            // 判斷 Packing List 的 Ship Mode 是否與業務設定的一致
+            if (!this.CheckShipMode())
+            {
+                return;
+            }
+
             // 模擬按Edit行為
             this.toolbar.cmdEdit.PerformClick();
 
@@ -631,31 +637,34 @@ and c.ClogReceiveCFADate is null
             {
                 updateCmds.Add(string.Format(
                     @"
-UPDATE orders 
-SET    actpulloutdate = (SELECT Max(p.pulloutdate) 
-FROM   pullout_detail pd, 
-    pullout p 
-WHERE  pd.orderid = orders.id 
-    AND pd.id = p.id 
-    AND (pd.status = 'C' or pd.ShipQty > 0)
-    AND p.status = 'Confirmed'), 
-pulloutcomplete = Iif((
-	SELECT Count(p.id)
-	FROM   pullout_detail pd, 
-			pullout p 
-	WHERE  pd.orderid = orders.id 
-			AND pd.id = p.id 
-			AND p.status = 'Confirmed' 
-			AND pd.status = 'C'
-) > 0, 1,iif((
-SELECT Count(p.id)
-	FROM   pullout_detail pd, 
-			pullout p 
-	WHERE  pd.orderid = orders.id 
-			AND pd.id = p.id 
-			AND p.status = 'Confirmed' 
-			AND pd.status = 'S')>0,1,0)
-)
+UPDATE orders SET
+	actpulloutdate = (
+		SELECT Max(p.pulloutdate)
+		FROM pullout_detail pd inner join pullout p on pd.id = p.id 
+		WHERE  pd.orderid = orders.id 
+		AND (pd.status = 'C' or pd.ShipQty > 0)
+		AND p.status = 'Confirmed'
+	)
+	,pulloutcomplete = 
+		case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) then pulloutcomplete
+			when(
+				SELECT Count(p.id)
+				FROM pullout_detail pd inner join pullout p on pd.id = p.id
+				WHERE pd.orderid = orders.id 
+				AND p.status = 'Confirmed' 
+				AND pd.status = 'C'
+				) > 0
+			then 1
+			when(
+				SELECT Count(p.id)
+				FROM pullout_detail pd inner join pullout p on pd.id = p.id 
+				WHERE  pd.orderid = orders.id 
+				AND p.status = 'Confirmed' 
+				AND pd.status = 'S'
+				)>0
+			then 1
+			else 0
+			end
 WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
             }
 
@@ -665,6 +674,7 @@ WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
                 MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
                 return;
             }
+
         }
 
         /// <inheritdoc/>
@@ -728,7 +738,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
             foreach (DataRow dr in updateOrderData.Rows)
             {
                 sqlCmds.Add(string.Format(
-                    "update Orders set ActPulloutDate = {0}, PulloutComplete = 0 where ID = '{1}';",
+                    "update Orders set ActPulloutDate = {0}, PulloutComplete = case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) then pulloutcomplete else 0 end where ID = '{1}';",
                     MyUtility.Check.Empty(dr["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["PulloutDate"]).ToString("d") + "'",
                     MyUtility.Convert.GetString(dr["OrderID"])));
             }
@@ -739,6 +749,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
                 MyUtility.Msg.WarningBox("Amend fail!!\r\n" + result.ToString());
                 return;
             }
+
         }
 
         // History
@@ -757,7 +768,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
             callNextForm.ShowDialog(this);
         }
 
-        private string updatePackinglist; // 用來先在ReviseData()準備更新Packinglist.pulloutid的SQL, 在save才執行
+        private string updatePackinglist = string.Empty; // 用來先在ReviseData()準備更新Packinglist.pulloutid的SQL, 在save才執行
 
         // Revise from ship plan and FOC/LO packing list
         private bool ReviseData()
@@ -791,13 +802,43 @@ and (Type = 'F' or Type = 'L')",
 
             sqlCmd = string.Format(
                 @"
+select distinct p.ID from PackingList p WITH (NOLOCK) where p.PulloutDate = '{0}' and p.MDivisionID = '{1}'and p.ShipPlanID != ''and p.Status = 'New'",
+                Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
+                Sci.Env.User.Keyword);
+
+            DataTable packDataconfirm;
+            result = DBProxy.Current.Select(null, sqlCmd, out packDataconfirm);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query ship plan fail!\r\n" + result.ToString());
+                return false;
+            }
+
+            if (packDataconfirm != null && packDataconfirm.Rows.Count > 0)
+            {
+                if (msgString.Length > 0)
+                {
+                    msgString.Append("\r\n");
+                }
+
+                msgString.Append("Packing List ID:" + string.Join(", ", packDataconfirm.AsEnumerable().Select(row => row["ID"].ToString())));
+            }
+
+            if (msgString.Length > 0)
+            {
+                MyUtility.Msg.WarningBox(string.Format("Below data not yet confirm!!\r\n{0}", msgString.ToString()));
+                return false;
+            }
+
+            sqlCmd = string.Format(
+                @"
 select distinct p.ShipPlanID
 from PackingList p WITH (NOLOCK) 
 left join ShipPlan s WITH (NOLOCK) on s.ID = p.ShipPlanID
 where p.PulloutDate = '{0}' 
 and p.MDivisionID = '{1}'
 and p.ShipPlanID != ''
-and (s.Status != 'Confirmed' or p.Status = 'New')",
+and s.Status != 'Confirmed' ",
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
                 Sci.Env.User.Keyword);
 
@@ -1086,11 +1127,15 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     #endregion
 
                     // shipQty,OrderQty,InvNo 修改過才會更換資料
-                    if (MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"]) || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"]) || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"]))
+                    if (MyUtility.Convert.GetString(dr["ShipmodeID"]).EqualString(MyUtility.Convert.GetString(packData[0]["ShipmodeID"])) == false
+                        || MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"])
+                        || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"])
+                        || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"])
+                        || MyUtility.Convert.GetString(dr["ShipModeSeqQty"]) != MyUtility.Convert.GetString(packData[0]["OrderShipQty"]))
                     {
                         dr["ShipQty"] = packData[0]["ShipQty"];
                         dr["OrderQty"] = packData[0]["OrderQty"];
-                        dr["ShipModeSeqQty"] = packData[0]["OrderShipmodeSeq"];
+                        dr["ShipModeSeqQty"] = packData[0]["OrderShipQty"];
                         dr["Status"] = newStatus;
                         dr["StatusExp"] = this.GetStatusName(newStatus);
                         dr["INVNo"] = packData[0]["INVNo"];
@@ -1438,6 +1483,7 @@ from SummaryData",
             reviseRow["Remark"] = dr["Remark"];
             reviseRow["Pullout_DetailUKey"] = dr["UKey"]; // Pullout_Revise沒有ukey
             reviseRow["INVNo"] = dr["INVNo"];
+            reviseRow["OldShipModeID"] = type == "Missing" ? string.Empty : dr["ShipModeID", DataRowVersion.Original];
             reviseRow["ShipModeID"] = dr["ShipModeID"];
             reviseRow["AddName"] = Sci.Env.User.UserID;
             reviseRow["AddDate"] = DateTime.Now;
@@ -1469,6 +1515,68 @@ from SummaryData",
             }
 
             return Result.True;
+        }
+
+        // 檢查表身的ShipMode與表頭的ShipMode要相同 & ShipModeID 不存在Order_QtyShip 就return
+        private bool CheckShipMode()
+        {
+            StringBuilder msg = new StringBuilder();
+
+            var dtShipMode = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
+            if (dtShipMode == null || dtShipMode.Count() == 0)
+            {
+                return true;
+            }
+
+            DualResult result;
+            DataTable dtCheckResult;
+            string strSql;
+            DataRow drPackingShipModeCheckResult;
+            foreach (DataRow dr in dtShipMode)
+            {
+                #region 檢查Packing List 的ship mode
+                strSql = $"select ShipModeID from PackingList with (nolock) where ID = '{dr["PackingListID"]}' and ShipModeID <> '{dr["ShipModeID"]}'";
+                bool isPackListShipModeInconsistent = MyUtility.Check.Seek(strSql, out drPackingShipModeCheckResult);
+                if (isPackListShipModeInconsistent)
+                {
+                    msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(drPackingShipModeCheckResult["ShipModeID"])));
+                    continue;
+                }
+                #endregion
+
+                #region 檢查Order_QtyShip 的ship mode
+                strSql = $@"
+select distinct oq.ID,oq.Seq,oq.ShipmodeID
+from PackingList p  with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID=pd.ID
+inner join Order_QtyShip oq with (nolock) on oq.id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+inner join Orders o with (nolock) on oq.ID = o.ID
+where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
+";
+                result = DBProxy.Current.Select(null, strSql, out dtCheckResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return result;
+                }
+
+                if (dtCheckResult.Rows.Count > 0)
+                {
+                    foreach (DataRow drError in dtCheckResult.Rows)
+                    {
+                        msg.Append($"Order ID : {drError["ID"]},   Seq : {drError["Seq"]},   Shipping Mode : {drError["ShipmodeID"]}\r\n");
+                    }
+                }
+                #endregion
+            }
+
+            if (msg.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!\r\n" + msg.ToString());
+                return false;
+            }
+
+            return true;
         }
     }
 }

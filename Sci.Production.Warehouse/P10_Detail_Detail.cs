@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
 
-            this.displaySciRefno.Text = dr_master["scirefno"].ToString();
+            this.displayRefno.Text = dr_master["refno"].ToString();
             this.displaySPNo.Text = dr_master["poid"].ToString();
             this.displayColorID.Text = dr_master["colorid"].ToString();
             this.displaySizeSpec.Text = dr_master["sizespec"].ToString();
@@ -64,7 +64,7 @@ with cte as
       where poid = '{0}' 
             and Stocktype = 'B' 
             and inqty-OutQty+AdjustQty > 0
-            and p.SCIRefno = '{2}' 
+            and p.Refno = '{2}' 
             and p.ColorID = '{3}' 
             and a.Seq1 BETWEEN '00' AND '99'
       Group by Dyelot
@@ -92,10 +92,10 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
-and a.scirefno='{2}' and a.colorid='{3}' and ltrim(a.seq1) between '01' and '99'
+and a.Refno='{2}' and a.colorid='{3}' and ltrim(a.seq1) between '01' and '99'
 order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", dr_master["poid"]
                                                   , Sci.Env.User.Keyword
-                                                  , dr_master["scirefno"]
+                                                  , dr_master["Refno"]
                                                   , dr_master["colorid"]));
             #endregion
 

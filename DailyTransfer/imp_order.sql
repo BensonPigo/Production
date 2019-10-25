@@ -291,6 +291,10 @@ BEGIN
 						, N_LETA			= IIF(isnull(A.LETA, '') != isnull(B.LETA, ''), b.LETA, null)
 						, O_Style			= IIF(isnull(a.StyleID, '') != isnull(b.StyleID, '') , a.StyleID, '')
 						, N_Style			= IIF(isnull(a.StyleID, '') != isnull(b.StyleID, '') , b.StyleID, '')
+						, O_CustPONo		= IIF(isnull(a.CustPONo, '') != isnull(b.CustPONo, '') , a.CustPONo, '')
+						, N_CustPONo		= IIF(isnull(a.CustPONo, '') != isnull(b.CustPONo, '') , b.CustPONo, '')
+						, O_ShipModeList	= IIF(isnull(a.ShipModeList, '') != isnull(b.ShipModeList, '') , a.ShipModeList, '')
+						, N_ShipModeList	= IIF(isnull(a.ShipModeList, '') != isnull(b.ShipModeList, '') , b.ShipModeList, '')
 				from Production.dbo.Orders a WITH (NOLOCK)
 				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
 				where	(isnull(A.QTY, 0) != isnull(B.QTY, 0) 
@@ -305,6 +309,8 @@ BEGIN
 						OR isnull(A.Junk, '') != isnull(B.Junk, '') 
 						OR isnull(A.KPILETA, '') != isnull(B.KPILETA, '')
 						OR isnull(A.LETA, '') != isnull(B.LETA, '')	
+						OR isnull(A.CustPONo, '') != isnull(B.CustPONo, '')	
+						OR isnull(A.ShipModeList, '') != isnull(B.ShipModeList, '')	
 						)
 						and b.FactoryID in (select ID from Factory)) s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToday
@@ -323,6 +329,8 @@ BEGIN
 				, t.OriginalMnorderApv		= s.O_MnorderApv
 				, t.OriginalSMnorderApv		= s.O_SmnorderApv
 				, t.OriginalLETA			= s.O_LETA
+				, t.OriginalCustPONo		= s.O_CustPONo
+				, t.OriginalShipModeList	= s.O_ShipModeList
 				, t.NewQty					= s.N_Qty
 				, t.NewBuyerDelivery		= s.N_BuyerDelivery
 				, t.NewSciDelivery			= s.N_SciDelivery
@@ -332,6 +340,8 @@ BEGIN
 				, t.NewMnorderApv			= s.N_MnorderApv
 				, t.NewSMnorderApv			= s.N_SMnorderApv
 				, t.NewLETA					= s.N_LETA
+				, t.NewCustPONo      		= s.N_CustPONo
+				, t.NewShipModeList			= s.N_ShipModeList
 				, t.KPILETA					= s.N_KPILETA
 				, t.MnorderApv2				= s.N_MnorderApv2
 				, t.JunkOrder				= s.N_Junk
@@ -341,17 +351,23 @@ BEGIN
 			insert (
 				OrderID					, FactoryID			, MDivisionID		, OriginalQty			, OriginalBuyerDelivery
 				, OriginalSciDelivery	, OriginalStyleID	, OriginalCMPQDate	, OriginalEachConsApv	, OriginalMnorderApv
-				, OriginalSMnorderApv	, OriginalLETA		, NewQty			, NewBuyerDelivery		, NewSciDelivery
+				, OriginalSMnorderApv	, OriginalLETA		, OriginalCustPONo
+				, NewQty			    , NewBuyerDelivery	, NewSciDelivery
 				, NewStyleID			, NewCMPQDate		, NewEachConsApv	, NewMnorderApv			, NewSMnorderApv
-				, NewLETA				, KPILETA			, MnorderApv2		, JunkOrder				, UpdateDate
-				, TransferDate			, BrandID
+				, NewLETA				, NewCustPONo		 
+				, KPILETA			    , MnorderApv2		, JunkOrder			, UpdateDate
+				, TransferDate			, BrandID			
+				, OriginalShipModeList	, NewShipModeList
 			) values (
 				s.ID					, s.FactoryID		, s.MDivisionID		, s.O_Qty				, s.O_BuyerDelivery
 				, s.O_SciDelivery		, s.O_Style			, s.O_CMPQDate		, s.O_EachConsApv		, s.O_MnorderApv
-				, s.O_SMnorderApv		, s.O_LETA			, s.N_Qty			, s.N_BuyerDelivery		, s.N_SciDelivery
-				, s.N_Style				, s.N_CMPQDate		, s.N_EachConsApv	, s.N_MnorderApv		, s.N_SMNorderApv
-				, s.N_LETA				, s.N_KPILETA		, s.N_MnorderApv2	, s.N_Junk				, @dToday
+				, s.O_SMnorderApv		, s.O_LETA			, s.O_CustPONo
+				, s.N_Qty			    , s.N_BuyerDelivery	, s.N_SciDelivery
+				, s.N_Style			  	, s.N_CMPQDate		, s.N_EachConsApv	, s.N_MnorderApv		, s.N_SMNorderApv
+				, s.N_LETA				, s.N_CustPONo
+				, s.N_KPILETA		    , s.N_MnorderApv2	, s.N_Junk			, @dToday
 				, @OldDate				, s.BrandID
+				, s.O_ShipModeList		, s.N_ShipModeList
 			);
 
         ----5.No Change!
@@ -502,7 +518,12 @@ BEGIN
 				t.AddName				= s.AddName, 
 				t.AddDate				= s.AddDate,
 				t.FtyGroup              = s.FTY_Group,
-				t.ForecastSampleGroup   = s.ForecastSampleGroup
+				t.ForecastSampleGroup   = s.ForecastSampleGroup,				
+				t.DyeingLoss			= s.DyeingLoss,
+				t.SubconInType = '0',
+				t.LastProductionDate       = s.LastProductionDate,				
+				t.EstPODD       = s.EstPODD,
+				t.AirFreightByBrand    = s.AirFreightByBrand
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -530,7 +551,8 @@ BEGIN
 			, MDivisionID			, MCHandle				, KPIChangeReason		, MDClose				, CPUFactor				
 			, SizeUnit				, CuttingSP				, IsMixMarker			, EachConsSource		, KPIEachConsApprove	
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
-			, SewINLINE				, FtyGroup				, ForecastSampleGroup
+			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
+			, LastProductionDate	, EstPODD				, AirFreightByBrand
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
 			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
@@ -557,7 +579,8 @@ BEGIN
 			, s.MDivisionID 		, S.MCHandle			, s.KPIChangeReason		, S.MDClose				, s.CPUFactor			
 			, s.SizeUnit			, s.CuttingSP			, s.IsMixMarker			, s.EachConsSource		, s.KPIEachConsApprove	
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
-			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup
+			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
+			, s.LastProductionDate	, EstPODD				, s.AirFreightByBrand
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
@@ -1473,24 +1496,25 @@ BEGIN
 		------------Order_BOA_CustCD----------Bill of Other - 用量展開
 		Merge Production.dbo.Order_BOA_CustCD as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_CustCD a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.Order_BOAUkey=s.Order_BOAUkey and t.custcdid=s.custcdid and t.refno=s.refno
+		on t.Order_BOAUkey=s.Order_BOAUkey and t.ColumnValue=s.ColumnValue
 		when matched then 
 			update set 
-				t.id		= s.id,
-				t.CustCDID	= s.CustCDID,
-				t.Refno		= s.Refno,
-				t.SCIRefno	= s.SCIRefno,
-				t.AddName	= s.AddName,
-				t.AddDate	= s.AddDate,
-				t.EditName	= s.EditName,
-				t.EditDate	= s.EditDate
+				t.id			= s.id,
+				t.CustCDID		= s.CustCDID,
+				t.Refno			= s.Refno,
+				t.SCIRefno		= s.SCIRefno,
+				t.AddName		= s.AddName,
+				t.AddDate		= s.AddDate,
+				t.EditName		= s.EditName,
+				t.EditDate		= s.EditDate,
+				t.ColumnValue	= s.ColumnValue
 		when not matched by target then
 			insert (
 				Id			, Order_BOAUkey		, CustCDID		, Refno		, SCIRefno
-				, AddName	, AddDate			, EditName		, EditDate
+				, AddName	, AddDate			, EditName		, EditDate	, ColumnValue
 			) values (
 				s.Id		, s.Order_BOAUkey	, s.CustCDID	, s.Refno	, s.SCIRefno
-				, s.AddName	, s.AddDate			, s.EditName	, s.EditDate
+				, s.AddName	, s.AddDate			, s.EditName	, s.EditDate, s.ColumnValue
 			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;

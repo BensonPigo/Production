@@ -10,6 +10,7 @@ using System.Transactions;
 using Sci.Win.Tools;
 using Sci.Production.PublicForm;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Sci.Production.IE
 {
@@ -28,6 +29,30 @@ namespace Sci.Production.IE
         private string seasonID;
         private string brandID;
         private string comboType;
+
+        /// <summary>
+        /// 將目前DetailGrid裡面，使用者所選擇的Row，將它們綁定的資料列取出
+        /// </summary>
+        public IEnumerable<DataRow> SelectedDetailGridDataRow
+        {
+            get
+            {
+                if (this.detailgrid == null ||
+                    this.detailgrid.DataSource == null ||
+                    this.detailgrid.SelectedRows.Count == 0)
+                {
+                    return Enumerable.Empty<DataRow>();
+                }
+                else
+                {
+                    return this.detailgrid
+                        .GetTable().AsEnumerable()
+                        .Where(o => o.RowState!= DataRowState.Deleted)
+                        .Where(o => o["Selected"].ToString() == "1")
+                        .ToList();
+                }
+            }
+        }
 
         /// <summary>
         /// P01
@@ -100,7 +125,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.[Ukey] 
       ,o.DescEN as OperationDescEN
       ,td.MtlFactorID
-      , m.DescEN
+      ,td.Template
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
@@ -167,6 +192,7 @@ select IETMSVersion from Style
 where id= '{this.CurrentMaintain["StyleID"]}'
 and SeasonID= '{this.CurrentMaintain["SeasonID"]}'
 and BrandID = '{this.CurrentMaintain["BrandID"]}'
+and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 ");
             if (styleVersion != this.CurrentMaintain["IETMSVersion"].ToString() && this.EditMode == false)
             {
@@ -175,6 +201,16 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             else
             {
                 this.labVersionWarning.Visible = false;
+            }
+
+            if (this.EditMode)
+            {
+                this.txtInsertPosition.Text = string.Empty;
+                this.ui_pnlBatchUpdate.Visible = true;
+            }
+            else
+            {
+                this.ui_pnlBatchUpdate.Visible = false;
             }
         }
 
@@ -185,6 +221,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
         {
             base.OnDetailGridSetup();
             Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             #region Seq & Operation Code & Frequency & SMV & M/C & Attachment按右鍵與Validating
             #region Seq的Valid
             seq.CellValidating += (s, e) =>
@@ -222,7 +259,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                     dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                     dr["Mold"] = callNextForm.P01SelectOperationCode["MoldID"].ToString();
-                                    dr["DescEN"] = string.Empty;  // 將[Attachment Description]清空
+                                    dr["Template"] = string.Empty;  // 將[Template]清空
                                     dr["MtlFactorID"] = callNextForm.P01SelectOperationCode["MtlFactorID"].ToString();
                                     dr["SeamLength"] = callNextForm.P01SelectOperationCode["SeamLength"].ToString();
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
@@ -240,7 +277,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                 dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                 dr["Mold"] = callNextForm.P01SelectOperationCode["MoldID"].ToString();
-                                dr["DescEN"] = string.Empty;  // 將[Attachment Description]清空
+                                dr["Template"] = string.Empty;  // 將[Template]清空
                                 dr["MtlFactorID"] = callNextForm.P01SelectOperationCode["MtlFactorID"].ToString();
                                 dr["SeamLength"] = callNextForm.P01SelectOperationCode["SeamLength"].ToString();
                                 dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
@@ -273,7 +310,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             dr["OperationDescEN"] = string.Empty;
                             dr["MachineTypeID"] = string.Empty;
                             dr["Mold"] = string.Empty;
-                            dr["DescEN"] = string.Empty;  // 將[Attachment Description]清空
+                            dr["Template"] = string.Empty;  // 將[Template]清空
                             dr["MtlFactorID"] = string.Empty;
                             dr["Frequency"] = 0;
                             dr["SeamLength"] = 0;
@@ -307,8 +344,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                     dr["OperationDescEN"] = opData.Rows[0]["DescEN"].ToString();
                                     dr["MachineTypeID"] = opData.Rows[0]["MachineTypeID"].ToString();
 
-                                    // dr["Mold"] = opData.Rows[0]["MoldID"].ToString();  //目前看到的都是空，先不塞資料
-                                    // dr["DescEN"] = string.Empty;  //目前看到的都是空，先不塞資料
                                     dr["MtlFactorID"] = opData.Rows[0]["MtlFactorID"].ToString();
                                     dr["Frequency"] = 1;
                                     dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
@@ -463,7 +498,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
                             IList<DataRow> selectData = item.GetSelecteds();
                             dr["Mold"] = selectData[0]["ID"];
-                            dr["DescEN"] = selectData[0]["DescEN"];
+                            //dr["DescEN"] = selectData[0]["DescEN"];
                         }
                     }
                 }
@@ -492,7 +527,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             if (moldData.Rows.Count <= 0)
                             {
                                 dr["Mold"] = string.Empty;
-                                dr["DescEN"] = string.Empty;
+                                //dr["DescEN"] = string.Empty;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox(string.Format("< Attachment: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
                                 return;
@@ -500,21 +535,77 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             else
                             {
                                 dr["Mold"] = MyUtility.Convert.GetString(e.FormattedValue);
-                                dr["DescEN"] = MyUtility.Convert.GetString(moldData.Rows[0]["DescEN"]);
+                                //dr["DescEN"] = MyUtility.Convert.GetString(moldData.Rows[0]["DescEN"]);
                             }
                         }
                         else
                         {
                             dr["Mold"] = string.Empty;
-                            dr["DescEN"] = string.Empty;
+                            //dr["DescEN"] = string.Empty;
                             MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                         }
                     }
                 }
             };
             #endregion
+            #region template
+            template.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
 
+                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null);
+                    item.Width = 666;
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.CurrentDetailData["Template"] = item.GetSelectedString();
+                }
+            };
+
+            template.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    this.CurrentDetailData["Template"] = e.FormattedValue;
+                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = this.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errTemplate = new List<string>();
+                    List<string> trueTemplate = new List<string>();
+                    foreach (string item in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(item)) && !item.EqualString(string.Empty))
+                        {
+                            selectId &= false;
+                            errTemplate.Add(item);
+                        }
+                        else if (!item.EqualString(string.Empty))
+                        {
+                            trueTemplate.Add(item);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errTemplate.ToArray()) + "  Data not found !!", "Data not found");
+                    }
+
+                    trueTemplate.Sort();
+                    this.CurrentDetailData["Template"] = string.Join(",", trueTemplate.ToArray());
+                }
+            };
             #endregion
+            #endregion
+
+            template.MaxLength = 100;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -527,7 +618,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
                 .Text("MachineTypeID", header: "M/C", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)
-                .Text("DescEN", header: "Attachment Description", width: Widths.AnsiChars(8))
+                .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true)
@@ -541,7 +632,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             dr["OperationDescEN"] = string.Empty;
             dr["MachineTypeID"] = string.Empty;
             dr["Mold"] = string.Empty;
-            dr["DescEN"] = string.Empty;
+            dr["Template"] = string.Empty;
             dr["MtlFactorID"] = string.Empty;
             dr["Frequency"] = 0;
             dr["SeamLength"] = 0;
@@ -1380,6 +1471,217 @@ where ID = {0}",
 
             var dlg = new CIPF(MyUtility.Convert.GetLong(ietmsUKEY));
             dlg.Show();
+        }
+
+        private void BtnLocationBatchUpdate_Click(object sender, EventArgs e)
+        {
+            //if (this.EditMode == false)
+            //{
+            //    return;
+            //}
+
+            //this.detailgrid.ValidateControl();
+
+            //this.SelectedDetailGridDataRow
+            //    .Where(row => !string.IsNullOrEmpty(row.Field<string>("OperationID")) && row.Field<string>("OperationID").StartsWith("--") == false)
+            //    .ToList()
+            //    .ForEach(row =>
+            //    {
+            //        row["Location"] = this.ui_cbxLocationBatchUpdate.SelectedValue;
+            //    });
+        }
+
+        private void BtnBatchDelete_Click(object sender, EventArgs e)
+        {
+            this.detailgrid.ValidateControl();
+            var dt = (DataTable)this.detailgridbs.DataSource;
+
+            if (this.detailgrid.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("no data for delete");
+                return;
+            }
+
+            this.SelectedDetailGridDataRow
+                .ToList()
+                .ForEach(row =>
+                {
+                    row.Delete();
+                });
+        }
+
+        private void BtnBatchCopy_Click(object sender, EventArgs e)
+        {
+            this.detailgrid.ValidateControl();
+            var dt = (DataTable)this.detailgridbs.DataSource;
+            if (this.SelectedDetailGridDataRow.Count() == 0)
+            {
+                MyUtility.Msg.WarningBox("no data for copy");
+                return;
+            }
+
+
+            // Deleted資料列會影響Index抓取，故擋掉
+            var deletedDatas = dt.AsEnumerable().Where(o => o.RowState == DataRowState.Deleted).ToList();
+
+            if (deletedDatas.Any())
+            {
+                MyUtility.Msg.WarningBox("There is data be deleted, please save first.");
+                return;
+            }
+
+            int insertPosition;
+
+            // 取得要放置的Index
+            if (MyUtility.Check.Empty(this.txtInsertPosition.Text))
+            {
+                insertPosition = dt.Rows.Count;
+            }
+            else
+            {
+                var seqTarget = this.txtInsertPosition.Text; // .Value.ToString("0000");
+                var targetRowToInsertReplace = dt.Select("SEQ = '" + seqTarget + "'").FirstOrDefault();
+
+                if (targetRowToInsertReplace == null)
+                {
+                    if (MyUtility.Msg.QuestionBox("there is no " + seqTarget + " exists, can't locate insert position, append to the last. \r\n\r\ncontinue?") != System.Windows.Forms.DialogResult.Yes)
+                    {
+                        return;
+                    }
+
+                    insertPosition = dt.Rows.Count;
+                }
+                else
+                {
+                    insertPosition = dt.Rows.IndexOf(targetRowToInsertReplace);
+                }
+            }
+
+            // 複製並插入
+            var copyRow = this.SelectedDetailGridDataRow.OrderBy(o => o["Seq"]);
+
+
+            bool isAllNum = true;
+
+            // 勾選了幾筆
+            int insertStartIndex = insertPosition;
+            int insertEndIndex = this.SelectedDetailGridDataRow.Count() + insertPosition - 1;
+
+            int t = 0;
+            if (copyRow.Any())
+            {
+                #region 直接塞最後面的情況
+
+                // 直接塞最後面的情況
+                if (insertPosition == dt.Rows.Count)
+                {
+                    // 若最後一筆Seq包含文字，則不自動編碼
+                    if (int.TryParse(dt.Rows[dt.Rows.Count - 1]["Seq"].ToString(), out t))
+                    {
+                        int i = 1;
+                        int maxSeq = Convert.ToInt32(dt.Rows[dt.Rows.Count - 1]["Seq"]);
+                        copyRow.ToList().ForEach(row =>
+                        {
+                            var newRow = dt.NewRow();
+                            newRow.ItemArray = row.ItemArray;
+                            newRow["Selected"] = "0";
+                            newRow["Seq"] = (maxSeq + (i * 10)).ToString().PadLeft(4, '0');
+                            dt.Rows.InsertAt(newRow, insertPosition++);
+                            i++;
+                        });
+
+                    }
+                    else
+                    {
+                        copyRow.ToList().ForEach(row =>
+                        {
+                            var newRow = dt.NewRow();
+                            newRow.ItemArray = row.ItemArray;
+                            newRow["Selected"] = "0";
+                            dt.Rows.InsertAt(newRow, insertPosition++);
+                        });
+
+                    }
+
+                    return;
+                }
+
+                #endregion
+
+                #region 重新編碼範圍內是否有不是數字的情況
+                int x;
+
+                // 判斷勾選的是否都是數字
+                copyRow.ToList().ForEach(row =>
+                {
+                    if (!int.TryParse(row["Seq"].ToString() , out x))
+                    {
+                        isAllNum = false;
+                    }
+                });
+
+                // 判斷後續要異動Seq的是否都是數字
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dt.Rows.IndexOf(dr) > insertEndIndex)
+                    {
+                        if (dt.Rows[dt.Rows.IndexOf(dr) - 1].RowState == DataRowState.Deleted)
+                        {
+                            continue;
+                        }
+
+                        if (!int.TryParse(dt.Rows[dt.Rows.IndexOf(dr) - 1]["Seq"].ToString(), out x))
+                        {
+                            isAllNum = false;
+                        }
+                    }
+                }
+
+                // 判斷被塞的位置是否為數字
+                if (!int.TryParse(dt.Rows[insertPosition]["Seq"].ToString(), out x))
+                {
+                    isAllNum = false;
+                }
+                #endregion
+
+                if (isAllNum)
+                {
+                    // 編碼範圍內都是數字，則自動編碼
+                    int i = 0;
+                    copyRow.ToList().ForEach(row =>
+                    {
+                        var newRow = dt.NewRow();
+                        newRow.ItemArray = row.ItemArray;
+                        newRow["Selected"] = "0";
+                        newRow["Seq"] = (Convert.ToInt32(dt.Rows[insertPosition]["Seq"]) + (i * 10)).ToString().PadLeft(4, '0');  // 取代原本的Seq
+                        dt.Rows.InsertAt(newRow, insertPosition++);
+                        i++;
+                    });
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        if (dt.Rows.IndexOf(dr) > insertEndIndex)
+                        {
+                            // 前一個Seq
+                            int preSeq = Convert.ToInt32(dt.Rows[dt.Rows.IndexOf(dr) - 1]["Seq"]);
+                            dr["Seq"] = MyUtility.Convert.GetString(preSeq + 10).PadLeft(4, '0');
+                        }
+                    }
+                }
+                else
+                {
+                    // 編碼範圍內有文字，則塞入就好
+                    copyRow.ToList().ForEach(row =>
+                    {
+                        var newRow = dt.NewRow();
+                        newRow.ItemArray = row.ItemArray;
+                        newRow["Selected"] = "0";
+                        dt.Rows.InsertAt(newRow, insertPosition++);
+                    });
+                }
+
+            }
+
         }
     }
 }

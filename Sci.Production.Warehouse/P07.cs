@@ -247,7 +247,34 @@ where x.value > 1
                 MyUtility.Msg.WarningBox(resultCheck.Description);
                 return false;
             }
-            #endregion 
+            #endregion
+
+            #region 表身的資料存在Po_Supp_Detail中但是已被Junk，就要跳出訊息告知且不做任何動作
+            string sqlchkPSDJunk = $@"
+select distinct concat('SP#: ',p.id,', Seq#: ',Ltrim(Rtrim(p.seq1)), '-', p.seq2) as seq
+from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+inner join #tmp t on p.id =t.poid and p.SEQ1 = t.SEQ1 and p.SEQ2 = t.SEQ2
+where p.junk = 1
+";
+
+            DataTable junkdt;
+            DualResult dualResult = MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, string.Empty, sqlchkPSDJunk, out junkdt);
+            if (!dualResult)
+            {
+                this.ShowErr(dualResult);
+                return false;
+            }
+
+            if (junkdt.Rows.Count > 0)
+            {
+                var v = junkdt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["seq"])).ToList();
+                string msgjunk = @"Below item already junk can't be receive.
+" + string.Join("\r\n", v);
+
+                MyUtility.Msg.WarningBox(msgjunk);
+                return false;
+            }
+            #endregion
 
             DateTime ArrivePortDate;
             DateTime WhseArrival;
@@ -776,7 +803,9 @@ WHERE   StockType='{0}'
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //11
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype)   //12
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out Col_Location)    //13
-            .Text("remark", header: "Remark")    //14
+            .Text("remark", header: "Remark")
+            .Text("RefNo", header: "Ref#")
+            .Text("ColorID", header: "Color")    
             .Text("FactoryID", header: "Prod. Factory", iseditingreadonly: true)    //11
             .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(15), iseditingreadonly: true)    //11
             ;     //
@@ -1405,6 +1434,8 @@ select  a.id
         , a.Poid + concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as PoidSeq
         , a.Poid + Ltrim(Rtrim(a.seq1)) as PoidSeq1
         , (select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
+        , [RefNo]=p.RefNo
+		, [ColorID]=Color.Value
         , a.shipqty
         , a.Weight
         , a.ActualWeight
@@ -1422,6 +1453,15 @@ select  a.id
         ,o.OrderTypeID
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 left join orders o WITH (NOLOCK) on o.id = a.PoId
+LEFT JOIN PO_Supp_Detail p  WITH (NOLOCK) ON p.ID=a.PoId AND p.SEQ1=a.Seq1 AND p.SEQ2 = a.Seq2
+LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
+		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 END
+)Color
+
 Where a.id = '{0}'
 order by ukey", masterID);
 

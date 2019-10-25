@@ -260,10 +260,10 @@ where  ap.status = 'New'
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             string cmdsql = string.Format(@"
 select a.* 
-, b.PoQty
+, PoQty=isnull(b.PoQty,0)
 , [balance]=a.Farmin-a.AccumulatedQty
 from ArtworkAP_detail a
-inner join artworkpo_detail b on a.ArtworkPo_DetailUkey=b.Ukey
+left join artworkpo_detail b on a.ArtworkPo_DetailUkey=b.Ukey
 where a.id='{0}'
 ", masterID);
             this.DetailSelectCommand = cmdsql;

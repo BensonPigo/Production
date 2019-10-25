@@ -51,6 +51,16 @@ namespace Sci.Production.PPIC
             this.dataType = type;
             this.btnShipmentFinished.Visible = this.dataType == "1"; // Shipment Finished
             this.btnBacktoPPICMasterList.Visible = this.dataType != "1"; // Back to P01. PPIC Master List
+
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add("0", "");
+            comboBox1_RowSource.Add("1", "Subcon-in from sister factory (same M division)");
+            comboBox1_RowSource.Add("2", "Subcon-in from sister factory (different M division)");
+            comboBox1_RowSource.Add("3", "Subcon-in from non-sister factory");
+            comboBox1_RowSource.Add(string.Empty, string.Empty);
+            this.comboSubconInType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.comboSubconInType.ValueMember = "Key";
+            this.comboSubconInType.DisplayMember = "Value";
         }
 
         /// <inheritdoc/>
@@ -132,6 +142,25 @@ namespace Sci.Production.PPIC
             if (!this.EditMode)
             {
                 this.ControlButton();
+            }
+
+            switch (this.CurrentMaintain["IsMixMarker"].ToString())
+            {
+                case "0":
+                    this.displayIsMixMarker.Text = "Is Single Marker";
+                    break;
+
+                case "1":
+                    this.displayIsMixMarker.Text = "Is Mix Marker";
+                    break;
+
+                case "2":
+                    this.displayIsMixMarker.Text = "Is Mix Marker - SCI";
+                    break;
+
+                default:
+                    this.displayIsMixMarker.Text = this.CurrentMaintain["IsMixMarker"].ToString();
+                    break;
             }
 
             this.displaySampleReason2.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_reMakeSample' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["SampleReason"])));
@@ -406,6 +435,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.CurrentMaintain["CtnType"] = "1";
             this.CurrentMaintain["CPUFactor"] = 1;
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["SubconInType"] = "0";
         }
 
         /// <inheritdoc/>
@@ -423,7 +453,6 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 this.txtSpecialId1.ReadOnly = true;
                 this.txtSpecialId2.ReadOnly = true;
                 this.txtSpecialId3.ReadOnly = true;
-                this.checkSubconInFromSisterFactory.ReadOnly = true;
                 this.checkCancelledOrder.ReadOnly = true;
                 this.checkFOC.ReadOnly = true;
                 this.checkSP.ReadOnly = true;
@@ -542,20 +571,34 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 #endregion
 
                 // 檢查是否幫姊妹廠代工
-                if (MyUtility.Convert.GetString(this.CurrentMaintain["SubconInSisterFty"]).ToUpper() == "FALSE")
+                List<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                cmds.Add(new SqlParameter("@ProgramID", this.CurrentMaintain["ProgramID"].ToString()));
+                cmds.Add(new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"].ToString()));
+                cmds.Add(new SqlParameter("@M", this.CurrentMaintain["MDivisionID"].ToString()));
+                System.Data.DataTable sCIFtyData;
+                string sqlCmd = @"select ID from SCIFty WITH (NOLOCK) where ID = @programid";
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out sCIFtyData);
+                if (result && sCIFtyData.Rows.Count < 1)
                 {
-                    // sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@programid", MyUtility.Convert.GetString(this.CurrentMaintain["ProgramID"]));
-
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                    cmds.Add(sp1);
-                    System.Data.DataTable sCIFtyData;
-                    string sqlCmd = "select ID from SCIFty WITH (NOLOCK) where ID = @programid";
-                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out sCIFtyData);
-                    if (result && sCIFtyData.Rows.Count > 0)
+                    this.CurrentMaintain["SubconInType"] = 3;
+                    this.CurrentMaintain["SubconInSisterFty"] = 0;
+                }
+                else
+                {
+                    if (MyUtility.Check.Seek(@"
+select ID from SCIFty s WITH (NOLOCK)
+where id = @ProgramID
+and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)
+", cmds, null))
                     {
-                        this.CurrentMaintain["SubconInSisterFty"] = 1;
+                        this.CurrentMaintain["SubconInType"] = 1;
                     }
+                    else
+                    {
+                        this.CurrentMaintain["SubconInType"] = 2;
+                    }
+
+                    this.CurrentMaintain["SubconInSisterFty"] = 1;
                 }
 
                 string strUpd_QtyShip_BuyerDelivery = string.Format(

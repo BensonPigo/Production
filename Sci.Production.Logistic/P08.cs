@@ -128,6 +128,7 @@ select distinct
 ,o.BuyerDelivery
 ,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, p2.ClogLocationID)
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -189,7 +190,7 @@ order by p2.ID,p2.CTNStartNo";
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
 Select distinct  0 as selected, b.ID , b.OrderID, 
-b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery, b.ClogLocationID, b.Remark 
+b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery, b.ClogLocationID, b.Remark ,b.SCICtnNo
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                 int intChkUpdateOriLocation = 0;
                 if (this.chkUpdateOriLocation.Checked)
@@ -243,6 +244,7 @@ select distinct
 ,o.BuyerDelivery
 ,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, cl.ID)
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -282,6 +284,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["ID"] = seekData["ID"].ToString().Trim();
                                     dr["CTNStartNo"] = seekData["CTNStartNo"];
                                     dr["OrderID"] = seekData["OrderID"];
+                                    dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["CustPONo"] = seekData["CustPONo"];
                                     dr["StyleID"] = seekData["StyleID"];
                                     dr["SeasonID"] = seekData["SeasonID"];
@@ -309,6 +312,7 @@ select distinct
 ,o.BuyerDelivery
 ,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, cl.ID)
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -347,6 +351,7 @@ order by p2.ID,p2.CTNStartNo
                                         dr["ID"] = seekData["ID"].ToString().Trim();
                                         dr["CTNStartNo"] = seekData["CTNStartNo"];
                                         dr["OrderID"] = seekData["OrderID"];
+                                        dr["SCICtnNo"] = seekData["SCICtnNo"];
                                         dr["CustPONo"] = seekData["CustPONo"];
                                         dr["StyleID"] = seekData["StyleID"];
                                         dr["SeasonID"] = seekData["SeasonID"];
@@ -380,6 +385,7 @@ select distinct
 ,o.BuyerDelivery
 ,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, cl.ID)
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -418,6 +424,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["ID"] = seekData["ID"].ToString().Trim();
                                     dr["CTNStartNo"] = seekData["CTNStartNo"];
                                     dr["OrderID"] = seekData["OrderID"];
+                                    dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["CustPONo"] = seekData["CustPONo"];
                                     dr["StyleID"] = seekData["StyleID"];
                                     dr["SeasonID"] = seekData["SeasonID"];
@@ -531,8 +538,8 @@ and DisposeFromClog= 0
 ");
 
                         insertCmds.Add($@"
-insert into ClogReceiveCFA ( ReceiveDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate)
-values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Sci.Env.User.UserID}',GETDATE())
+insert into ClogReceiveCFA ( ReceiveDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,SCICtnNo)
+values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Sci.Env.User.UserID}',GETDATE(),'{dr["SCICtnNo"].ToString()}')
 ");
                     }
                 }

@@ -130,7 +130,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateScanDate.Value2))
             {
-                this._scanDate2 = Convert.ToDateTime(this.dateScanDate.Value2).ToString("d");
+                this._scanDate2 = this.dateScanDate.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd hh:mm:ss");
             }
             else
             {
@@ -275,7 +275,7 @@ select
 	o.StyleID,
 	o.Category,
 	VasShas=iif(o.VasShas = 0,'N','Y'),
-	o.SeasonID,o.ProgramID,o.CdCodeID,o.Qty,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
+	o.SeasonID,o.ProgramID,o.CdCodeID,o.Qty,o.CustCDID,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
 	o.BuyerDelivery,
 	ScanQty=sum(pld.ScanQty),
 	BalanceQty=o.Qty-sum(pld.ScanQty),
@@ -287,12 +287,12 @@ where 1=1
 {where}
 group by o.MDivisionID,o.FactoryID,o.SewLine,o.CustPONo,o.ID,o.Junk,o.StyleID,o.Category,o.VasShas,
 o.SeasonID,o.ProgramID,o.CdCodeID,o.Qty,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
-o.BuyerDelivery
+o.BuyerDelivery,o.CustCDID
 {having}
 order by o.CustPONo
 
 select	MDivisionID,FactoryID,SewLine,CustPONo,ID,Junk,StyleID,Category,VasShas,
-		SeasonID,ProgramID,CdCodeID,Qty,Dest,SewInLine,SewOffLine,ShipModeList,SciDelivery,
+		SeasonID,ProgramID,CdCodeID,Qty,CustCDID,Dest,SewInLine,SewOffLine,ShipModeList,SciDelivery,
 		BuyerDelivery,carton.TtlCtnQty,carton.TtlRemainCtnQty,ScanQty,BalanceQty,POCompletion
 from #tmp t
 outer apply( select [TtlCtnQty] = sum(p.CTNQty),[TtlRemainCtnQty] = sum(iif(p.ScanEditDate is null or p.Lacking = 1,p.CTNQty,0))
@@ -301,7 +301,9 @@ outer apply( select [TtlCtnQty] = sum(p.CTNQty),[TtlRemainCtnQty] = sum(iif(p.Sc
 		  ) carton
 
 select 
-	o.CustPONo,o.id,pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,[CTN Barcode] = pld.ID+pld.CTNStartNo
+    o.SewLine,o.BuyerDelivery,
+	o.CustPONo,o.id,o.StyleID,
+    pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,[CTN Barcode] = pld.ID+pld.CTNStartNo
     ,[Barcode] = isnull(c7.Barcode,'')
     ,[PC/CTN] = pld.QtyPerCTN
 	,[Scanned Qty] = pld.ScanQty
@@ -358,15 +360,15 @@ drop table #tmp
             worksheet.Cells[2, 5] = this._po1 + "~" + this._po2;
             worksheet.Cells[2, 8] = this._bdate1 + "~" + this._bdate2;
             worksheet.Cells[2, 11] = this._scidate1 + "~" + this._scidate2;
-            worksheet.Cells[2, 14] = this._offdate1 + "~" + this._offdate2;
-            worksheet.Cells[2, 17] = this._scanDate1 + "~" + this._scanDate2;
-            worksheet.Cells[2, 20] = this._brand;
-            worksheet.Cells[2, 24] = this._mDivision;
-            worksheet.Cells[2, 26] = this._factory;
-            worksheet.Cells[2, 28] = this.cmbPOcompletion.Text;
+            worksheet.Cells[2, 15] = this._offdate1 + "~" + this._offdate2;
+            worksheet.Cells[2, 18] = this._scanDate1 + "~" + this._scanDate2;
+            worksheet.Cells[2, 21] = this._brand;
+            worksheet.Cells[2, 25] = this._mDivision;
+            worksheet.Cells[2, 27] = this._factory;
+            worksheet.Cells[2, 29] = this.cmbPOcompletion.Text;
 
             string strcategory = (this.chkBulk.Checked ? "Bulk," : string.Empty) + (this.chkSample.Checked ? "Sample," : string.Empty) + (this.chkGarment.Checked ? "Garment," : string.Empty);
-            worksheet.Cells[2, 30] = strcategory.Substring(0, strcategory.Length - 1);
+            worksheet.Cells[2, 31] = strcategory.Substring(0, strcategory.Length - 1);
 
             MyUtility.Excel.CopyToXls(this._printData[0], string.Empty, $"{excelName}.xltx", 3, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             excelApp.DisplayAlerts = false;
@@ -384,6 +386,8 @@ drop table #tmp
             worksheet.Cells[4, 8] = this.cmbPOcompletion.Text;
             worksheet.Cells[4, 10] = strcategory.Substring(0, strcategory.Length - 1);
             MyUtility.Excel.CopyToXls(this._printData[1], string.Empty, $"{excelName}.xltx", 5, false, null, excelApp, wSheet: excelApp.Sheets[2]);
+            worksheet = excelApp.Sheets[1];
+            worksheet.Columns.AutoFit();
             #region 釋放上面開啟過excel物件
             string strExcelName = Class.MicrosoftFile.GetName(excelName);
             Excel.Workbook workbook = excelApp.ActiveWorkbook;

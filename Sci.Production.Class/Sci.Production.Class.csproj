@@ -90,6 +90,9 @@
       <DependentUpon>comboRFIDProcessLocation.cs</DependentUpon>
     </Compile>
     <Compile Include="Command\UserPrg.cs" />
+    <Compile Include="MergeRowGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MicrosoftFileName.cs">
       <Generator>r</Generator>
     </Compile>
@@ -134,6 +137,18 @@
     </Compile>
     <Compile Include="txtcdcode.Designer.cs">
       <DependentUpon>txtcdcode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtClogReason.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtClogReason.designer.cs">
+      <DependentUpon>txtClogReason.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtShippingReason.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtShippingReason.Designer.cs">
+      <DependentUpon>txtShippingReason.cs</DependentUpon>
     </Compile>
     <Compile Include="txtCuttingMachineID.cs">
       <SubType>Component</SubType>
@@ -544,9 +559,15 @@
     <EmbeddedResource Include="PictureSubPage.resx">
       <DependentUpon>PictureSubPage.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="txtClogReason.resx">
+      <DependentUpon>txtClogReason.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="txtcountry.resx">
       <DependentUpon>txtcountry.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtShippingReason.resx">
+      <DependentUpon>txtShippingReason.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtcutReason.resx">
       <DependentUpon>txtcutReason.cs</DependentUpon>

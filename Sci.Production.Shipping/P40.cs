@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -17,6 +18,10 @@ namespace Sci.Production.Shipping
     public partial class P40 : Sci.Win.Tems.Input6
     {
         private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings brand = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings refno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings usageUnit = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings fabricType = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_nlcode;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
@@ -35,9 +40,9 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
 
             // 建立NoNLCode, NotInPO, UnitNotFound的結構
-            string sqlCmd = "select '' as SCIRefno,'' as Refno,'' as BrandID,'' as Type,'' as Description,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare from VNImportDeclaration WITH (NOLOCK) where 1=0";
+            string sqlCmd = "select '' as SCIRefno,'' as Refno,'' as BrandID,'' as Type,'' as Description,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare,UsageUnit='' from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out this.NoNLCode);
-            sqlCmd = "select '' as ID,'' as POID,'' as Seq1,'' as Seq2,'' as Seq,'' as Description,'' as Type,'' as OriUnit,0.0 as OriImportQty,0.0 as Width,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare,0.0000 as Price  from VNImportDeclaration WITH (NOLOCK) where 1=0";
+            sqlCmd = "select '' as ID,'' as POID,'' as Seq1,'' as Seq2,'' as Seq,'' as Description,'' as Type,'' as OriUnit,0.0 as OriImportQty,0.0 as Width,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare,0.0000 as Price,UsageUnit=''   from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out this.NotInPO);
             sqlCmd = "select '' as OriUnit,'' as CustomsUnit,'' as RefNo from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out this.UnitNotFound);
@@ -113,7 +118,13 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select v.id,v.HSCode,v.NLCode,Qty = Round(v.Qty,2),v.UnitID,v.Remark,v.Price from VNImportDeclaration_Detail v WITH (NOLOCK) where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
+            this.DetailSelectCommand = $@"
+select vdd.ID,vdd.Refno,vdd.FabricType,vdd.NLCode,Qty = Round(vdd.Qty,2),vdd.Remark,vd.HSCode,vd.UnitID,vd.Price,vdd.BrandID,vdd.UsageUnit
+from VNImportDeclaration_Detail_Detail vdd with(nolock)
+inner join VNImportDeclaration_Detail vd with(nolock) on vd.id = vdd.ID and vd.NLCode = vdd.NLCode
+where vdd.id = '{masterID}'
+order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -165,6 +176,82 @@ namespace Sci.Production.Shipping
             };
             #endregion
 
+            #region brand的Validating
+            this.brand.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["BrandID"] = e.FormattedValue;
+                        dr.EndEdit();
+                        this.BRT(dr);
+                    }
+                }
+            };
+            #endregion
+            #region refno的Validating
+            this.refno.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["refno"] = e.FormattedValue;
+                        dr.EndEdit();
+                        this.BRT(dr);
+                    }
+                }
+            };
+            #endregion
+            #region fabricType的Validating
+            this.fabricType.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["fabricType"] = e.FormattedValue;
+                        dr.EndEdit();
+                        if (!(MyUtility.Convert.GetString(dr["FabricType"]) == "F" || MyUtility.Convert.GetString(dr["FabricType"]) == "A"))
+                        {
+                            dr["usageUnit"] = string.Empty;
+                            dr.EndEdit();
+                        }
+
+                        this.BRT(dr);
+                    }
+                }
+            };
+            #endregion
+            #region usageUnit的Validating
+            this.usageUnit.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!(MyUtility.Convert.GetString(dr["FabricType"]) == "F" || MyUtility.Convert.GetString(dr["FabricType"]) == "A"))
+                {
+                    e.IsEditable = false;
+                }
+            };
+
+            this.usageUnit.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["usageUnit"] = e.FormattedValue;
+                        dr.EndEdit();
+                        this.BRT(dr);
+                    }
+                }
+            };
+            #endregion
+
             this.qty.CellMouseDoubleClick += (s, e) =>
                 {
                     if (!this.EditMode)
@@ -178,13 +265,17 @@ namespace Sci.Production.Shipping
                         }
                     }
                 };
-                base.OnDetailGridSetup();
-                this.Helper.Controls.Grid.Generator(this.detailgrid)
-                    .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                    .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
-                    .Numeric("Qty", header: "Stock Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
-                    .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                    .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
+            base.OnDetailGridSetup();
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("BrandId", header: "Brand", width: Widths.AnsiChars(10), settings: this.brand)
+                .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), settings: this.refno)
+                .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), settings: this.fabricType)
+                .Text("UsageUnit", header: "UsageUnit", width: Widths.AnsiChars(8), settings: this.usageUnit)
+                .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
+                .Numeric("Qty", header: "Customs Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
+                .Text("UnitID", header: "Customs Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
         }
 
         /// <inheritdoc/>
@@ -268,6 +359,29 @@ namespace Sci.Production.Shipping
             }
             #endregion
 
+            #region 檢查畫面上的Refno在[Fabric], 是否能找到對應的[Fabric].NLCode
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string fabricType = MyUtility.Convert.GetString(dr["FabricType"]);
+                if (fabricType.EqualString("A") || fabricType.EqualString("F"))
+                {
+                    if (!MyUtility.Check.Seek($"select 1 from Fabric with(nolock) where Refno = '{dr["Refno"].ToString().Replace("'", "''")}' and NLCode = '{dr["NLcode"]}'"))
+                    {
+                        MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (!MyUtility.Check.Seek($"select 1 from LocalItem with(nolock) where ltrim(Refno) = '{dr["Refno"].ToString().Replace("'", "''")}' and NLCode = '{dr["NLcode"]}'"))
+                    {
+                        MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
+                        return false;
+                    }
+                }
+            }
+            #endregion
+
             // Get ID
             if (this.IsDetailInserting)
             {
@@ -282,6 +396,61 @@ namespace Sci.Production.Shipping
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            string insertuUdataDetail = $@"
+select ID,HSCode,NLCode,UnitID,a.Remark,Qty = sum(Qty),Price = Sum(Price)
+into #tmps
+from #tmp t
+outer apply(select Remark=stuff((
+		select concat(',',Remark)
+		from #tmp t2
+		where t.ID = t2.ID and t.NLCode = t2.NLCode and isnull(Remark,'') <> ''
+		for xml path(''))
+	,1,1,'')
+)a
+group by ID,HSCode,NLCode,UnitID,a.Remark
+
+merge VNImportDeclaration_Detail t
+using #tmps s
+on t.ID = s.ID and t.NLCode = s.NLCode
+when matched then update set
+	t.HSCode = s.HSCode,
+	t.UnitID = s.UnitID,
+	t.Remark = s.Remark,
+	t.Qty = s.Qty,
+	t.Price = s.Price
+when not matched by target then
+	insert(ID,HSCode,NLCode,UnitID,Remark,Qty,Price)
+	values(s.ID,s.HSCode,s.NLCode,s.UnitID,s.Remark,s.Qty,s.Price)
+when not matched by source and t.id in(select id from #tmps) then
+	delete
+;
+";
+            DataTable dt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, insertuUdataDetail, out dt);
+            if (!result)
+            {
+                return Result.F(result.ToString());
+            }
+
+            return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDelete()
+        {
+            string sqldelete = $@"Delete VNImportDeclaration_Detail where id = '{this.CurrentMaintain["ID"]}' ";
+            DualResult reslut = DBProxy.Current.Execute(null, sqldelete);
+            if (!reslut)
+            {
+                return Result.F(reslut.ToString());
+            }
+
+            return base.ClickDelete();
         }
 
         /// <inheritdoc/>
@@ -331,6 +500,94 @@ namespace Sci.Production.Shipping
             Sci.Production.Shipping.P40_Print callPurchaseForm = new Sci.Production.Shipping.P40_Print(this.CurrentMaintain);
             callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
+        }
+
+        private void BRT(DataRow dr)
+        {
+            if ((!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]) && !MyUtility.Check.Empty(dr["usageUnit"])) ||
+                (MyUtility.Convert.GetString(dr["FabricType"]).EqualString("L") && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"])))
+            {
+                string type = MyUtility.Convert.GetString(dr["FabricType"]);
+                if (type.EqualString("A") || type.EqualString("F"))
+                {
+                    string sql = $@"
+select f.HSCode,f.CustomsUnit,f.NLCode
+from brand b with(nolock)
+outer apply(
+	select top 1 f1.* 
+	from Fabric f1 with(nolock) 
+	inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+	where f1.Refno = '{dr["Refno"].ToString().Replace("'", "''")}' and b2.BrandGroup = b.BrandGroup and f1.Type = '{dr["FabricType"]}' and f1.Junk = 0 and f1.usageUnit = '{dr["usageUnit"]}'
+	order by f1.NLCodeEditDate desc
+)f
+where b.id = '{dr["BrandID"]}'
+";
+                    DataRow row;
+                    if (MyUtility.Check.Seek(sql, out row))
+                    {
+                        dr["NLCode"] = row["NLCode"];
+                        dr["HSCode"] = row["HSCode"];
+
+                        DataRow seekData;
+                        string sqlunit = $@"
+select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) 
+where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}'";
+                        if (!MyUtility.Check.Seek(sqlunit, out seekData))
+                        {
+                            dr["Qty"] = 0;
+                            dr["UnitID"] = string.Empty;
+                            MyUtility.Msg.WarningBox("Customs Code not found!!");
+                            return;
+                        }
+                        else
+                        {
+                            dr["UnitID"] = seekData["UnitID"];
+                        }
+                    }
+                    else
+                    {
+                        dr["HSCode"] = string.Empty;
+                        dr["NLCode"] = string.Empty;
+                        dr["Qty"] = 0;
+                        dr["UnitID"] = string.Empty;
+                    }
+                }
+                else if (type.EqualString("L"))
+                {
+                    string sql = $@"select li.HSCode,li.NLCode,li.CustomsUnit,li.NLCode from LocalItem li where ltrim(li.RefNo) = '{dr["RefNo"].ToString().Replace("'", "''")}' ";
+                    DataRow row;
+                    if (MyUtility.Check.Seek(sql, out row))
+                    {
+                        dr["BrandID"] = string.Empty;
+                        dr["NLCode"] = row["NLCode"];
+                        dr["HSCode"] = row["HSCode"];
+                        DataRow seekData;
+                        string sqlunit = $@"
+select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) 
+where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}'";
+                        if (!MyUtility.Check.Seek(sqlunit, out seekData))
+                        {
+                            dr["Qty"] = 0;
+                            dr["UnitID"] = string.Empty;
+                            MyUtility.Msg.WarningBox("Customs Code not found!!");
+                            return;
+                        }
+                        else
+                        {
+                            dr["UnitID"] = seekData["UnitID"];
+                        }
+                    }
+                    else
+                    {
+                        dr["HSCode"] = string.Empty;
+                        dr["NLCode"] = string.Empty;
+                        dr["Qty"] = 0;
+                        dr["UnitID"] = string.Empty;
+                    }
+                }
+
+                dr.EndEdit();
+            }
         }
 
         // Contract No.
@@ -394,6 +651,7 @@ namespace Sci.Production.Shipping
                         this.CurrentMaintain["IsLocalPO"] = 0;
                         this.CurrentMaintain["ShipModeID"] = string.Empty;
                         this.CurrentMaintain["FromSite"] = string.Empty;
+                        this.CurrentMaintain["FromSite"] = string.Empty;
                     }
                     else
                     {
@@ -445,25 +703,25 @@ namespace Sci.Production.Shipping
                     return;
                 }
 
-                 if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
+                if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
+                {
+                    Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
+                    DialogResult result = callNextForm.ShowDialog(this);
+                    if (result == System.Windows.Forms.DialogResult.OK)
                     {
-                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
-                        DialogResult result = callNextForm.ShowDialog(this);
-                        if (result == System.Windows.Forms.DialogResult.OK)
-                        {
-                            this.NotInPO = callNextForm.NotInPo;
-                            callNextForm.Dispose();
-                            this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
-                        }
-                        else
-                        {
-                            callNextForm.Dispose();
-                        }
+                        this.NotInPO = callNextForm.NotInPo;
+                        callNextForm.Dispose();
+                        this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
                     }
                     else
                     {
-                        this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
+                        callNextForm.Dispose();
                     }
+                }
+                else
+                {
+                    this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
+                }
             }
         }
 
@@ -660,7 +918,7 @@ select e.ID
 	   , OriUnit = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID)
 	   , SCIRefno = ed.RefNo
 	   , ed.RefNo
-	   , BrandID = ''
+	   , BrandID = isnull(f.BrandID,'')
 	   , Type = ed.MtlTypeID
 	   , li.Description
 	   , DescDetail = ''
@@ -681,10 +939,19 @@ select e.ID
 	   						  where UnitFrom = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
 	   						  		and UnitTo = 'M'),'') 
 	   , POSeq = '01'
+	   , f.UsageUnit
 from FtyExport e WITH (NOLOCK) 
 inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo 
-										and li.LocalSuppid = ed.SuppID
+left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
+left join orders o with(nolock) on o.id = ed.POID
+left join brand b with(nolock) on b.id = o.BrandID
+outer apply(
+    select top 1 f1.* 
+    from Fabric f1 with(nolock) 
+    inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+    where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+    order by f1.NLCodeEditDate desc
+)f
 where {0}", sqlWhere);
                 }
                 else
@@ -720,12 +987,19 @@ select e.ID
 	   						  where UnitFrom = ed.UnitId 
 	   						  		and UnitTo = 'M'), '') 
 	   , POSeq = isnull(psd.Seq1, '') 
+	   , f.UsageUnit
 from FtyExport e WITH (NOLOCK) 
 inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
-										  	  and psd.SEQ1 = ed.Seq1 
-										  	  and psd.SEQ2 = ed.Seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join orders o with(nolock) on o.id = ed.POID
+left join brand b with(nolock) on b.id = o.BrandID
+outer apply(
+    select top 1 f1.* 
+    from Fabric f1 with(nolock) 
+    inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+    where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+    order by f1.NLCodeEditDate desc
+)f
 where {0}", sqlWhere);
                 }
             }
@@ -762,13 +1036,22 @@ select e.ID
 	   						  where UnitFrom = ed.UnitId 
 	   						  		and UnitTo = 'M'), '') 
 	   , POSeq = isnull(psd.Seq1, '') 
+	   , f.UsageUnit
 from Export e WITH (NOLOCK) 
 inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join orders o with(nolock) on o.id = ed.POID
+left join brand b with(nolock) on b.id = o.BrandID
+outer apply(
+    select top 1 f1.* 
+    from Fabric f1 with(nolock) 
+    inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+    where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+    order by f1.NLCodeEditDate desc
+)f
 where {0}", sqlWhere);
             }
-                #endregion
+            #endregion
             DataTable tmpData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out tmpData);
             if (!result)
@@ -798,6 +1081,7 @@ where {0}", sqlWhere);
                     newRow["PcsKg"] = dr["PcsKg"];
                     newRow["NoDeclare"] = dr["NoDeclare"];
                     newRow["Price"] = dr["Price"];
+                    newRow["UsageUnit"] = dr["UsageUnit"];
                     this.NotInPO.Rows.Add(newRow);
                 }
                 else
@@ -820,15 +1104,31 @@ where {0}", sqlWhere);
                             newRow["PcsLength"] = dr["PcsLength"];
                             newRow["PcsKg"] = dr["PcsKg"];
                             newRow["NoDeclare"] = dr["NoDeclare"];
+                            newRow["UsageUnit"] = dr["UsageUnit"];
                             this.NoNLCode.Rows.Add(newRow);
                         }
                     }
                 }
 
-                if ((MyUtility.Convert.GetString(dr["Type"]) == "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2" && MyUtility.Check.Empty(dr["M2UnitRate"])) ||
-                    (MyUtility.Convert.GetString(dr["Type"]) == "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M2" && MyUtility.Check.Empty(dr["UnitRate"])) ||
-                    (MyUtility.Convert.GetString(dr["Type"]) == "A" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M" && dr["PcsLength"].ToString().EqualDecimal(0)) ||
-                    (MyUtility.Convert.GetString(dr["Type"]) == "A" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2" && MyUtility.Convert.GetString(dr["OriUnit"]).ToUpper() != "M" && MyUtility.Check.Empty(dr["UnitRate"]) && dr["PcsLength"].ToString().EqualDecimal(0)))
+                if (MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) &&
+                        (
+                            (MyUtility.Convert.GetString(dr["Type"]) == "F"
+                                && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2"
+                                && MyUtility.Check.Empty(dr["M2UnitRate"])) ||
+                            (MyUtility.Convert.GetString(dr["Type"]) == "F"
+                                && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M2"
+                                && MyUtility.Check.Empty(dr["UnitRate"])) ||
+                            (MyUtility.Convert.GetString(dr["Type"]) == "A"
+                                && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M"
+                                && dr["PcsLength"].ToString().EqualDecimal(0)
+                                && MyUtility.Check.Empty(dr["UnitRate"])) ||
+                            (MyUtility.Convert.GetString(dr["Type"]) == "A"
+                                && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2"
+                                && MyUtility.Convert.GetString(dr["OriUnit"]).ToUpper() != "M"
+                                && MyUtility.Check.Empty(dr["UnitRate"])
+                                && dr["PcsLength"].ToString().EqualDecimal(0))
+                        )
+                    )
                 {
                     DataRow[] findrow = this.UnitNotFound.Select(string.Format("OriUnit = '{0}' and CustomsUnit = '{1}'", MyUtility.Convert.GetString(dr["OriUnit"]), MyUtility.Convert.GetString(dr["CustomsUnit"])));
                     if (findrow.Length == 0)
@@ -903,10 +1203,21 @@ with ExportDetail as (
 	   						      from Unit_Rate WITH (NOLOCK) 
 	   						      where UnitFrom = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
 	   						  		    and UnitTo = 'M'),'')
+            , ed.RefNo 
+            , f.Brandid
+	        , f.UsageUnit
     from FtyExport e WITH (NOLOCK) 
     inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-    left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo 
-										    and li.LocalSuppid = ed.SuppID
+    left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
+    left join orders o with(nolock) on o.id = ed.POID
+    left join brand b with(nolock) on b.id = o.BrandID
+    outer apply(
+        select top 1 f1.* 
+        from Fabric f1 with(nolock) 
+        inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+        where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+        order by f1.NLCodeEditDate desc
+    )f
     where {0}", sqlWhere));
                 }
                 else
@@ -947,12 +1258,21 @@ with ExportDetail as (
 	   						      from Unit_Rate WITH (NOLOCK) 
 	   						      where UnitFrom = ed.UnitId 
 	   						  		    and UnitTo = 'M'),'') 
+            , f.RefNo 
+            , f.BrandID
+	        , f.UsageUnit
     from FtyExport e WITH (NOLOCK) 
     inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
-											      and psd.SEQ1 = ed.Seq1 
-											      and psd.SEQ2 = ed.Seq2
-    left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+    left join orders o with(nolock) on o.id = ed.POID
+    left join brand b with(nolock) on b.id = o.BrandID
+    outer apply(
+        select top 1 f1.* 
+        from Fabric f1 with(nolock) 
+        inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+        where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+        order by f1.NLCodeEditDate desc
+    )f
     where {0}", sqlWhere));
                 }
             }
@@ -994,12 +1314,22 @@ with ExportDetail as (
 	   						      from Unit_Rate WITH (NOLOCK) 
 	   						      where UnitFrom = ed.UnitId 
 	   						  		    and UnitTo = 'M'), '') 
+            , f.RefNo 
+            , f.BrandID
+	        , f.UsageUnit
     from Export e WITH (NOLOCK) 
     inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
-											      and psd.SEQ1 = ed.Seq1 
-											      and psd.SEQ2 = ed.Seq2
-    left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+    left join orders o with(nolock) on o.id = ed.POID
+    left join brand b with(nolock) on b.id = o.BrandID
+    outer apply(
+        select top 1 f1.* 
+        from Fabric f1 with(nolock) 
+        inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+        where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+        order by f1.NLCodeEditDate desc
+    )f
+
     where {0}", sqlWhere));
             }
             #endregion
@@ -1024,11 +1354,20 @@ NotInPo as (
            , RateValue = RateValue.value
            , M2UnitRate = M2UnitRate.value
            , UnitRate = UnitRate.value
+           , f.RefNo
+           , f.BrandID
+	       , f.UsageUnit
 	from #tmp
-    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = #tmp.POID 
-											    and psd.SEQ1 = #tmp.Seq1 
-											    and psd.SEQ2 = #tmp.Seq2
-    left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = #tmp.POID and psd.SEQ1 = #tmp.Seq1 and psd.SEQ2 = #tmp.Seq2
+    left join orders o with(nolock) on o.id = psd.ID
+    left join brand b with(nolock) on b.id = o.BrandID
+    outer apply(
+        select top 1 f1.* 
+        from Fabric f1 with(nolock) 
+        inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+        where f1.Refno = psd.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = psd.FabricType
+        order by f1.NLCodeEditDate desc
+    )f
     outer apply (
         select value = (select RateValue 
 	   					from dbo.View_Unitrate 
@@ -1059,6 +1398,10 @@ NotInPo as (
 select NLCode
 	   , HSCode
 	   , CustomsUnit
+       , RefNo
+       , Type
+       , BrandID
+       , UsageUnit
 	   , sum(NewQty) as NewQty
 	   , sum(NewQty * Price) as Price 
 from (
@@ -1066,7 +1409,11 @@ from (
 	       , HSCode
 	       , CustomsUnit
            , Price
-		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate))
+           , RefNo
+           , Type
+           , BrandID
+           , UsageUnit
+		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate),Refno)
     from ExportDetail WITH (NOLOCK) 
     where NoDeclare = 0
           and not exists (select 1
@@ -1080,10 +1427,14 @@ from (
 	       , HSCode
 	       , CustomsUnit
            , Price
-		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate))
+           , RefNo
+           , Type
+           , BrandID
+           , UsageUnit
+		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate),Refno)
     from NotInPo WITH (NOLOCK) 
 ) a
-group by NLCode, HSCode, CustomsUnit");
+group by NLCode, HSCode, CustomsUnit, RefNo,Type,BrandID,UsageUnit");
 
             DataTable selectedData;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.NotInPO, null, sqlCmd.ToString(), out selectedData);
@@ -1099,12 +1450,16 @@ group by NLCode, HSCode, CustomsUnit");
             // 將資料做排序
             result = MyUtility.Tool.ProcessWithDatatable(
                     selectedData,
-                    @"NLCode,HSCode,CustomsUnit,NewQty,Price",
+                    @"NLCode,HSCode,CustomsUnit,NewQty,Price,RefNo,Type,BrandID,UsageUnit",
                     string.Format(@"
 select NLCode
 	   , HSCode
 	   , CustomsUnit
 	   , NewQty
+       , RefNo
+       , Type
+       , BrandID = isnull(BrandID,'')
+       , UsageUnit
 	   , Price = iif(NewQty=0,0,Price / NewQty)
 from #tmp
 order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
@@ -1126,11 +1481,15 @@ order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
             {
                 DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
                 newRow["ID"] = string.Empty;
+                newRow["Refno"] = dr["Refno"];
+                newRow["BrandID"] = dr["BrandID"];
+                newRow["FabricType"] = dr["Type"];
                 newRow["NLCode"] = dr["NLCode"];
                 newRow["HSCode"] = dr["HSCode"];
                 newRow["Qty"] = dr["NewQty"];
                 newRow["UnitID"] = dr["CustomsUnit"];
                 newRow["Price"] = dr["Price"];
+                newRow["UsageUnit"] = dr["UsageUnit"];
                 newRow["Remark"] = string.Empty;
                 ((DataTable)this.detailgridbs.DataSource).Rows.Add(newRow);
             }

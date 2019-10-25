@@ -159,10 +159,10 @@ FROM Pms_To_Trade.dbo.MachinePO, Machine.dbo.MachinePO_Detail  pod
 WHERE MachinePO.id= pod.id  
 ORDER BY MachinePO.id 
 
-SELECT pod.ID,pod.SEQ1, pod.SEQ2, pod.MiscID, pod.UnitID, pod.PRICE, pod.QTY,pod.MiscBrandID, pod.suppid,pod.MiscReqID,pod.DepartmentID
-	,MiscReqApv =m.Approve,pod.InQty,md.Reason
+SELECT pod.ID, pod.SEQ1, pod.SEQ2, pod.MiscID, pod.UnitID, pod.PRICE, pod.QTY, pod.MiscBrandID, pod.suppid, pod.MiscReqID, pod.DepartmentID
+	,MiscReqApv =m.Approve, pod.InQty,md.Reason, m.DeptApprove, m.DeptApproveDate, m.Approve, m.ApproveDate
 INTO  MiscPO_Detail
-FROM Pms_To_Trade.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod,Machine.dbo.MiscReq m,Machine.dbo.MiscReq_Detail md
+FROM Pms_To_Trade.dbo.MiscPO, Machine.dbo.MiscPO_Detail pod, Machine.dbo.MiscReq m, Machine.dbo.MiscReq_Detail md
 WHERE MiscPO.id= pod.id  and pod.MiscReqID = m.ID and m.id = md.id and md.MiscID = pod.MiscID
 ORDER BY MiscPO.id 
 --------------------------------------------------------------
@@ -266,6 +266,56 @@ group by LocationM, MachineGroupID
 drop table #TPI_MachIn1
 drop table #TPI_PartPO1
 ---------------------------------------------------------------------------------------------------
+
+----MachinePending----
+select [ID]
+    ,[cDate]
+    ,[MDivisionID]
+    ,[FtyApvName]
+    ,[FtyApvDate]
+    ,[CyApvName]
+    ,[CyApvDate]
+    ,[ReasonID]
+    ,[Remark]
+    ,[Status]
+    ,[AddName]
+    ,[AddDate]
+    ,[EditName]
+    ,[EditDate]
+    ,[TPEComplete]
+into MachinePending
+from Machine.dbo.MachinePending
+where MachinePending.Status='Confirmed'
+and MachinePending.CyApvDate between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())
+and MachinePending.SendToTPE is null
+and MachinePending.TPEComplete=0
+
+update s set
+	SendToTPE=getdate()
+from Machine.dbo.MachinePending s
+inner join Pms_To_Trade.dbo.MachinePending b on b.id = s.ID
+
+
+----MachinePending_Detail----
+select 
+	MachinePending_Detail.ID
+	,MachinePending_Detail.Seq
+	,MachinePending_Detail.MachineID
+	,MachinePending_Detail.OldStatus
+	,MachinePending_Detail.Results
+	,MachinePending_Detail.Remark
+	,MasterGroupID=Machine.MasterGroupID+Machine.MachineGroupID
+	,Machine.MachineBrandID
+	,Machine.Model
+	,Machine.SerialNo
+	,Machine.LocationM
+	,Machine.ArriveDate
+	,UsageTime = concat(ym.UsageTime/360,'Y',(ym.UsageTime%360)/30,'M')
+into MachinePending_Detail
+from Machine.dbo.MachinePending_Detail
+inner join MachinePending on MachinePending.ID = MachinePending_Detail.ID
+left join Machine.dbo.Machine with (nolock) on Machine.ID = MachinePending_Detail.MachineID
+outer apply(select UsageTime=DATEDIFF(DAY,Machine.ArriveDate,MachinePending.cDate)+1)ym
 
 END
 

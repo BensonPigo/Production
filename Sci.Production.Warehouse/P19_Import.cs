@@ -74,37 +74,42 @@ namespace Sci.Production.Warehouse
             sbSQLCmd.Append(string.Format(@"
 select  0 as selected 
         , '' id
-        , c.PoId
-        , c.Seq1
-        , c.Seq2
-        , concat(Ltrim(Rtrim(c.seq1)), ' ', c.Seq2) as seq
-        , export.FabricType
-        , rd.stockunit
-        , dbo.getmtldesc(c.POID,c.seq1,c.seq2,2,0) Description
-        , c.Roll
-        , c.Dyelot
+		, [ExportID] = Export.ExportID
+        , FI.PoId
+        , FI.Seq1
+        , FI.Seq2
+        , concat(Ltrim(Rtrim(FI.seq1)), ' ', FI.Seq2) as seq
+        , [FabricType]= (SELECT Name FROM DropDownList WHERE Type='FabricType_Condition' AND ID = PSD.FabricType )
+        , [stockunit] = dbo.GetStockUnitBySPSeq(FI.Poid,FI.Seq1,FI.Seq2)		
+        , dbo.getmtldesc(FI.POID,FI.seq1,FI.seq2,2,0) Description
+        , FI.Roll
+        , FI.Dyelot
         , 0.00 as Qty
-        , c.inqty-c.outqty + c.adjustqty as Balance
-        , c.StockType
-        , c.ukey as ftyinventoryukey
-        , dbo.Getlocation(c.ukey) location
-        , c.inqty-c.outqty + c.adjustqty as stockqty
-from ftyinventory c WITH (NOLOCK) 
-left join Receiving_Detail rd WITH (NOLOCK) on c.POID=rd.PoId
-    and c.Seq1=rd.Seq1 and c.Seq2=rd.Seq2 and c.Roll=rd.Roll and c.Dyelot=rd.Dyelot
-LEFT JOIN Orders o ON o.id =c.poid
+        , FI.inqty-FI.outqty + FI.adjustqty as Balance
+        , FI.StockType
+        , FI.ukey as ftyinventoryukey
+        , dbo.Getlocation(FI.ukey) location
+        , FI.inqty - FI.outqty + FI.adjustqty as stockqty
+FROM FtyInventory FI 
+LEFT JOIN Orders O ON O.ID = FI.POID
+LEFT JOIN Factory F ON F.ID = O.FactoryID
+LEFT JOIN PO_Supp_Detail PSD ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
 outer apply(
-	select top 1 ed.FabricType,f.MDivisionID 
-    from Export e WITH (NOLOCK)
-	inner join Export_Detail ed WITH (NOLOCK) on e.ID=ed.ID
-	left join Factory f WITH (NOLOCK) on f.ID=e.FactoryID
-	where ed.PoID=c.POID and ed.Seq1=c.Seq1 and ed.Seq2=c.Seq2
-)export
-Where   c.lock = 0 
-and ( export.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
-        and c.inqty-c.outqty + c.adjustqty > 0 
-        and c.Poid = @sp 
-        and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
+	select ExportID = Stuff((
+		select concat(',',id)
+		from (
+				select 	distinct id
+				from dbo.Export_Detail d
+				where d.PoID=fi.POID and d.Seq1=fi.Seq1 and d.Seq2=fi.Seq2
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+)Export
+Where FI.lock = 0 
+and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
+        and FI.inqty - FI.outqty + FI.adjustqty > 0 
+        and FI.Poid = @sp 
+        and FI.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
 
             sp_seq1.Value = txtSeq1.seq1;
             sp_seq2.Value = txtSeq1.seq2;
@@ -113,14 +118,23 @@ and ( export.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             if (!txtSeq1.checkSeq1Empty() && txtSeq1.checkSeq2Empty())
             {
                 sbSQLCmd.Append(@"
-        and c.seq1 = @seq1 ");
+        and FI.seq1 = @seq1 ");
             }else if (!txtSeq1.checkEmpty(showErrMsg: false))
             {
                 sbSQLCmd.Append(@" 
-        and c.seq1 = @seq1 and c.seq2 = @seq2");
+        and FI.seq1 = @seq1 and FI.seq2 = @seq2");
                 sp_seq1.Value = txtSeq1.seq1;
                 sp_seq2.Value = txtSeq1.seq2;
+            }
 
+            if (!MyUtility.Check.Empty(this.txtWKno.Text))
+            {
+                sbSQLCmd.Append($" AND ExportID like '%{this.txtWKno.Text}%'");
+            }
+
+            if (this.comboFabric.SelectedValue.ToString().ToUpper() != "ALL")
+            {
+                sbSQLCmd.Append($" AND PSD.FabricType= '{this.comboFabric.SelectedValue.ToString() }' ");
             }
 
             Ict.DualResult result;
@@ -133,8 +147,6 @@ and ( export.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
                 }
                 else
                 {
-                    //dtImportData.Columns.Add("Balance", typeof(decimal));
-                   // dtImportData.Columns["Balance"].Expression = "stockqty - qty";
                     dtImportData.DefaultView.Sort = "poid,seq1,seq2,location,dyelot,roll";
                 }
                 listControlBindingSource1.DataSource = dtImportData;
@@ -201,9 +213,12 @@ and ( export.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             this.gridImport.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+                .Text("ExportID", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(20)) //3
+                .Text("PoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //3
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(10)) //2
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //3
+                .Text("FabricType", header: "Fabric Type", iseditingreadonly: true, width: Widths.AnsiChars(8)) //3
                 .EditText("Description", header: "Description", iseditingreadonly: true) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
                 .Numeric("stockqty", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //6

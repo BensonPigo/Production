@@ -51,15 +51,28 @@ Return
 				, t.ComboType
 		from temp t
 		outer apply (
-			select value = IIF(AccuStdQ > AlloQty, IIF(AccuStdQ - t.baseStdQ <= 0, t.baseStdQ
-																				 , IIF(t.baseStdQ + (AlloQty - AccuStdQ) < 0, 0
-																						  							   	    , t.baseStdQ + (AlloQty - AccuStdQ)))
-												 , t.baseStdQ)
+			select value = case when AccuStdQ > AlloQty and t.baseStdQ + (AlloQty - AccuStdQ) < 0 then 0
+								when AccuStdQ > AlloQty then t.baseStdQ + (AlloQty - AccuStdQ)
+								else t.baseStdQ end
 		) StdQ
 	)
-	--step3 計算每一天同 ComboType 的產量
-	select	t.Date
-			, StdQ = sum(StdQ)
-	from temp2 t
-	group by t.Date, t.ComboType
+
+	, temp3 as (
+		SELECT BuyerDelivery,qty = sum(qty)
+		FROM Order_QtyShip 
+		WHERE ID =@tSP
+		group by BuyerDelivery
+	), Upperlimit as(
+		select BuyerDelivery,qty = sum(qty) over(order by BuyerDelivery)
+		from temp3
+	)
+	select x.Date,StdQ=iif(x.StdQ>x2.qty,x2.qty,x.StdQ)
+	from(
+		--step3 計算每一天同 ComboType 的產量
+		select	t.Date
+				, StdQ = sum(StdQ)
+		from temp2 t
+		group by t.Date, t.ComboType
+	)x	
+	outer apply(select top 1 * from Upperlimit t where t.BuyerDelivery>x.Date)x2
 )

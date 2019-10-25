@@ -45,15 +45,15 @@
             this.panel1.Controls.Add(this.btnClose);
             this.panel1.Controls.Add(this.btnEdit);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 328);
+            this.panel1.Location = new System.Drawing.Point(0, 337);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1327, 43);
+            this.panel1.Size = new System.Drawing.Size(1000, 43);
             this.panel1.TabIndex = 1;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(1235, 6);
+            this.btnClose.Location = new System.Drawing.Point(908, 6);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 1;
@@ -64,7 +64,7 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEdit.Location = new System.Drawing.Point(1149, 6);
+            this.btnEdit.Location = new System.Drawing.Point(822, 6);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(80, 30);
             this.btnEdit.TabIndex = 0;
@@ -100,7 +100,7 @@
             this.gridgridIrregularPrice.RowTemplate.Height = 24;
             this.gridgridIrregularPrice.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridgridIrregularPrice.ShowCellToolTips = false;
-            this.gridgridIrregularPrice.Size = new System.Drawing.Size(1327, 328);
+            this.gridgridIrregularPrice.Size = new System.Drawing.Size(1000, 337);
             this.gridgridIrregularPrice.TabIndex = 2;
             // 
             // P01_IrregularPriceReason
@@ -111,6 +111,7 @@
             this.Controls.Add(this.gridgridIrregularPrice);
             this.Controls.Add(this.panel1);
             this.Name = "P01_IrregularPriceReason";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P01_Irregular Price Reason";
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridgridIrregularPrice)).EndInit();

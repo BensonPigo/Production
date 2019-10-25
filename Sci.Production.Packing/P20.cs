@@ -43,16 +43,16 @@ pd.DRYReceiveDate,
 pd.PackErrTransferDate,
 pu.Status,
 [MainSP] = pd.OrderID,
-[ErrorType] = pt.PackingErrorID+'-'+ pe.Description
+[ErrorType] = x.PackingErrorID+'-'+ pe.Description,
+pd.SCICtnNo ,
+ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
 left join Country c with (nolock) on c.ID = o.Dest
 left join Pullout pu with (nolock) on pu.ID = p.PulloutID
-left join PackErrTransfer pt with (nolock) on pd.id=pt.PackingListID
-and pt.OrderID=pd.OrderID and pt.CTNStartNo=pd.CTNStartNo
-left join PackingError pe with (nolock) on pt.PackingErrorID=pe.ID
-and pe.Type='TP'
+outer apply(select top 1 pt.* from PackErrTransfer pt with (nolock) where pd.id=pt.PackingListID and pt.OrderID=pd.OrderID and pt.CTNStartNo=pd.CTNStartNo order by pt.AddDate desc)x
+left join PackingError pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='TP' 
  ";
 
         /// <summary>
@@ -75,6 +75,7 @@ and pe.Type='TP'
            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
            .Text("ID", header: "Pack ID", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+           .Numeric("ShipQty", header: "Pack Qty", iseditingreadonly: true)
            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
@@ -242,8 +243,8 @@ update PackingList_Detail
 set PackErrTransferDate = null 
 where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}' and DisposeFromClog= 0;
 
-insert into PackErrCFM(CFMDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate)
-                    values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE())
+insert into PackErrCFM(CFMDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,SCICtnNo)
+                    values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{dr["SCICtnNo"]}')
 ";
                         updateResult = DBProxy.Current.Execute(null, saveSql);
                         if (!updateResult)

@@ -60,19 +60,16 @@
     [Gender]              VARCHAR (10)   CONSTRAINT [DF_Style_Gender1] DEFAULT ('') NULL,
     [ThreadEditname]      VARCHAR (10)   NULL,
     [ThreadEditdate]      DATETIME       NULL,
+    [ThickFabric] BIT CONSTRAINT [DF_Style_ThickFabric] DEFAULT (0) NOT NULL, 
+    [DyeingID] VARCHAR(5) NULL, 
+    [Pressing1] INT NULL DEFAULT (1), 
+    [Pressing2] INT NULL DEFAULT (0), 
+    [Folding1] INT NULL DEFAULT (0), 
+    [Folding2] INT NULL DEFAULT (0), 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
-
-
-
-
-
-
-
-
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式資料基本檔', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style';
 
 
@@ -145,10 +142,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Planning �
 
 
 GO
-
-
-
-GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'銷樣階段的訂單主管', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'SampleSMR';
 
 
@@ -182,13 +175,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺碼範�
 
 GO
 
-
-
-GO
-
-
-
-GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裝箱件數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'CTNQty';
 
 
@@ -327,11 +313,50 @@ GO
 CREATE NONCLUSTERED INDEX [StyleUkey]
     ON [dbo].[Style]([Ukey] ASC);
 
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadP01use', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'ThreadEditname';
 
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadP01use', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'ThreadEditdate';
 
+
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'整燙設定1',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'Pressing1'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'整燙設定2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'Pressing2'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'折衣設定1',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'Folding1'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'折衣設定2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'Folding2'
+GO

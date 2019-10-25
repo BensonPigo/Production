@@ -46,7 +46,10 @@ namespace Sci.Production.Sewing
             .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: true)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: true)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: true)
-            .Text("TransferBy", header: "Transfer By", width: Widths.Auto(), iseditingreadonly: true);
+            .Text("TransferBy", header: "Transfer By", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false);
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -55,7 +58,7 @@ namespace Sci.Production.Sewing
 
             string dateTransfer1 = string.Empty, dateTransfer2 = string.Empty, packid = string.Empty, sp = string.Empty, transferTo = string.Empty;
             string sqlwhere = string.Empty;
-            if (!MyUtility.Check.Empty(this.dateTransfer.Value1.Value) && !MyUtility.Check.Empty(this.dateTransfer.Value2.Value))
+            if (this.dateTransfer.HasValue)
             {
                 dateTransfer1 = this.dateTransfer.Value1.Value.ToShortDateString();
                 dateTransfer2 = this.dateTransfer.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss");
@@ -71,14 +74,16 @@ namespace Sci.Production.Sewing
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 packid = this.txtPackID.Text;
-                sqlwhere += $@" and dr.PackingListID = @packid ";
+                sqlwhere += $@" and (pd.ID = @packid or  pd.OrigID = @packid) ";
             }
 
             if (!MyUtility.Check.Empty(this.txtsp.Text))
             {
                 sp = this.txtsp.Text;
-                sqlwhere += $@" and dr.OrderID  = @sp ";
+                sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
+
+            this.ShowWaitMessage("Data Loading...");
 
             string sqlcmd = $@"
 declare @TransferDate1  datetime = '{dateTransfer1}'
@@ -87,14 +92,14 @@ declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 declare @TransferTo nvarchar(20) = '{transferTo}'
 
-select 
+select DISTINCT
 	dr.TransferTo
 	,[TransferDate]=CONVERT(varchar, dr.TransferDate, 111) +' '+ LEFT(CONVERT(varchar, dr.TransferDate, 108),5)
     --,dr.TransferDate
-	,dr.PackingListID
-	,dr.CTNStartNo
+	,[PackingListID] = iif(pd.OrigID = '' OR pd.OrigID IS NULL  ,dr.PackingListID , pd.OrigID)
+	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '' OR pd.OrigCTNStartNo IS NULL    ,dr.CTNStartNo   , pd.OrigCTNStartNo)
 	,[Qty]=ISNULL(Sum(pd.QtyPerCTN),0)
-	,dr.OrderID
+	,[OrderID] = iif(pd.OrigOrderID = '' OR pd.OrigOrderID IS NULL ,dr.OrderID, pd.OrigOrderID)
 	,o.CustPONo
 	,o.StyleID
 	,o.BrandID
@@ -102,17 +107,22 @@ select
 	,o.BuyerDelivery
 	,o.SciDelivery
 	,TransferBy = dbo.getPass1(dr.AddName)
+    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+    , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+    , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
 from DRYTransfer dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-LEFT JOIN  PackingList_Detail pd with(nolock)  ON dr.PackingListID=pd.ID AND dr.CTNStartNo=pd.CTNStartNo
+left join PackingList_Detail pd WITH (NOLOCK) on pd.SCICtnNo = dr.SCICtnNo
+													AND dr.OrderID = pd.OrderID
+													AND  pd.CTNStartNo = dr.CTNStartNo AND dr.OrderID = pd.OrderID AND dr.PackingListID=pd.id 
 where 1=1
 {sqlwhere}
 GROUP BY dr.TransferTo
 		,dr.TransferDate
-		,dr.PackingListID
-		,dr.CTNStartNo
-		,dr.OrderID
+		, iif(pd.OrigID = '' OR pd.OrigID IS NULL  ,dr.PackingListID , pd.OrigID)
+		, iif(pd.OrigCTNStartNo = '' OR pd.OrigCTNStartNo IS NULL    ,dr.CTNStartNo   , pd.OrigCTNStartNo)
+		, iif(pd.OrigOrderID = '' OR pd.OrigOrderID IS NULL ,dr.OrderID, pd.OrigOrderID)
 		,o.CustPONo
 		,o.StyleID
 		,o.BrandID
@@ -120,6 +130,11 @@ GROUP BY dr.TransferTo
 		,o.BuyerDelivery
 		,o.SciDelivery
 		,dr.AddName 
+        ,iif(pd.OrigID != '',pd.ID, pd.OrigID)
+        ,iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+        ,iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+ ORDER BY dr.TransferTo,[PackingListID],[CTNStartNo],[OrderID]
+
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -134,6 +149,7 @@ GROUP BY dr.TransferTo
                 MyUtility.Msg.WarningBox("Datas not found!");
             }
 
+            this.HideWaitMessage();
             this.listControlBindingSource1.DataSource = dt;
             this.grid1.AutoResizeColumns();
         }

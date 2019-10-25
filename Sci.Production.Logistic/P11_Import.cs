@@ -43,16 +43,16 @@ namespace Sci.Production.Logistic
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.gridImport)
             .CheckBox("selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-            .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("CTNStartNO", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Article", header: "ColorWay", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("Size", header: "Size", width: Widths.AnsiChars(18), iseditingreadonly: true)
-            .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(18), iseditingreadonly: true)
-            .CellClogLocation("ClogLocationID", header: "Location", width: Widths.AnsiChars(10), iseditingreadonly: true);
+            .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("CTNStartNO", header: "CTN#", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("Article", header: "ColorWay", width: Widths.AnsiChars(9), iseditingreadonly: true)
+            .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Size", header: "Size", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .CellClogLocation("ClogLocationID", header: "Location", width: Widths.AnsiChars(8), iseditingreadonly: true);
 
             #endregion 欄位設定
         }
@@ -158,9 +158,17 @@ pd.Color,
 					FOR XML PATH('')),1,1,'')) ,
 pd.ClogLocationID
 from PackingList_Detail pd with (nolock)
-inner join PackingList p with (nolock) on pd.ID = p.ID and p.MDivisionID  = '{Env.User.Keyword}' and p.PulloutDate is null
+inner join PackingList p with (nolock) on pd.ID = p.ID and p.MDivisionID  = '{Env.User.Keyword}' and len(p.PulloutID) = 0
 inner join Orders o with (nolock) on pd.OrderID = o.ID
 where pd.CTNQty = 1 {sqlWhere} and pd.QtyPerCTN > 0 and pd.DisposeFromClog = 0 and pd.ReceiveDate is not null and pd.TransferCFADate is null
+and not exists 
+(
+	select 1 
+	from ClogGarmentDispose a
+	inner join ClogGarmentDispose_Detail b on a.ID = b.ID
+	where b.PackingListId = pd.ID and b.CtnStartNO = pd.CTNStartNo
+)
+
 option (recompile)
 
 ";
@@ -188,6 +196,26 @@ option (recompile)
             if (!isCheckedData)
             {
                 MyUtility.Msg.WarningBox("Please select import data");
+                return;
+            }
+
+            string sql = @"
+                select top 1 b.ID
+                from ClogGarmentDispose a
+                inner join ClogGarmentDispose_Detail b on a.ID = b.ID
+                where exists (select PackingListID from #tmp t where t.PackingListID = b.PackingListId and t.CtnStartNO = b.CtnStartNO and t.selected = '1')
+            ";
+            DataTable dT;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtImport, string.Empty, sql, out dT);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dT.Rows.Count > 0)
+            {
+                MyUtility.Msg.WarningBox("This packing already exist " + dT.Rows[0]["ID"].ToString() + "(GD ID)");
                 return;
             }
 

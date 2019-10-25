@@ -42,8 +42,19 @@
     [UseAutoScanPack]            BIT            CONSTRAINT [DF_System_UseAutoScanPack] DEFAULT ((0)) NOT NULL,
     [MtlAutoLock]                BIT            CONSTRAINT [DF_System_MtlAutoLock] DEFAULT ((0)) NOT NULL,
     [InspAutoLockAcc]            BIT            DEFAULT ((0)) NOT NULL,
-    [ShippingMarkPath]           VARCHAR (80)   NULL
+    [ShippingMarkPath]           VARCHAR (80)   NULL,
+    [StyleSketch]                VARCHAR (80)   NULL,
+	[ARKServerName] VARCHAR(20) NULL, 
+    [ARKDatabaseName] VARCHAR(20) NULL, 
+    [ARKLoginId] VARCHAR(20) NULL, 
+    [ARKLoginPwd] VARCHAR(20) NULL,
+    [MarkerInputPath]            NVARCHAR (80)  NULL,
+    [MarkerOutputPath]           NVARCHAR (80)  NULL
 );
+
+
+
+
 
 
 

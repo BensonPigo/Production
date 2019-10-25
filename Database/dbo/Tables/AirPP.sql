@@ -9,6 +9,7 @@
     [ReceiveDoxDate]    DATE            NULL,
     [GW]                NUMERIC (7, 2)  CONSTRAINT [DF_AirPP_GW] DEFAULT ((0)) NULL,
     [VW]                NUMERIC (8, 2)  CONSTRAINT [DF_AirPP_VW] DEFAULT ((0)) NULL,
+    [CW]                NUMERIC (8, 2)  NULL,
     [Forwarder]         VARCHAR (6)     CONSTRAINT [DF_AirPP_Forwarder] DEFAULT ('') NULL,
     [Quotation]         NUMERIC (5, 2)  CONSTRAINT [DF_AirPP_Quotation] DEFAULT ((0)) NULL,
     [Forwarder1]        VARCHAR (6)     CONSTRAINT [DF_AirPP_Forwarder1] DEFAULT ('') NULL,
@@ -70,8 +71,11 @@
     [ActETD]            DATE            NULL,
     [ShipLeader]        VARCHAR (10)    NULL,
     [QuotationAVG]      NUMERIC (5, 2)  CONSTRAINT [DF_AirPP_QuotationAVG] DEFAULT ((0)) NOT NULL,
+    [APReceiveDoxDate] DATE NULL, 
     CONSTRAINT [PK_AirPP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -357,3 +361,17 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturi
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'報價平均價格(USD)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'QuotationAVG';
 
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'請款重量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'CW';
+
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'財務收件日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AirPP',
+    @level2type = N'COLUMN',
+    @level2name = N'APReceiveDoxDate'

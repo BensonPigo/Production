@@ -242,7 +242,7 @@ update Tcc
 	Set ConsPC = ROUND(ConsPC.ConsPC, 2)
 from ThreadColorComb Tcc
 Outer Apply(
-    Select ConsPC = sum(isnull(O.SeamLength, 0) * isnull(TccO.Frequency, 0) * isnull(MtTr.UseRatioNumeric, 0) + isnull(MtTr.Allowance, 0))
+    Select ConsPC = sum(isnull(O.SeamLength, 0) * isnull(TccO.Frequency, 0) * isnull(MtTr.UseRatio, 0) + isnull(MtTr.Allowance, 0))
     From ThreadColorComb_operation TccO
     left join Operation O on TccO.Operationid = O.ID
     left join MachineType_ThreadRatio MtTr on Tcc.Machinetypeid = MtTr.ID

@@ -62,30 +62,50 @@
             this.checkSample = new Sci.Win.UI.CheckBox();
             this.checkMaterial = new Sci.Win.UI.CheckBox();
             this.checkForecast = new Sci.Win.UI.CheckBox();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.checkGarment = new Sci.Win.UI.CheckBox();
             this.labelArticle = new Sci.Win.UI.Label();
             this.txtArticle = new Sci.Win.UI.TextBox();
             this.checkSMTL = new Sci.Win.UI.CheckBox();
+            this.txtSp1 = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtSp2 = new Sci.Win.UI.TextBox();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtcustcd = new Sci.Production.Class.txtcustcd();
+            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.checkByCPU = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(502, 12);
-            this.print.TabIndex = 24;
+            this.print.TabIndex = 29;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(502, 48);
-            this.toexcel.TabIndex = 25;
+            this.toexcel.TabIndex = 30;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(502, 84);
-            this.close.TabIndex = 26;
+            this.close.TabIndex = 31;
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(456, 120);
+            this.buttonCustomized.Visible = true;
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(475, 156);
+            this.checkUseCustomized.Visible = true;
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(475, 183);
+            this.txtVersion.Visible = true;
             // 
             // labelBuyerDelivery
             // 
@@ -137,7 +157,7 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Location = new System.Drawing.Point(13, 179);
+            this.labelStyle.Location = new System.Drawing.Point(13, 210);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(102, 23);
             this.labelStyle.TabIndex = 100;
@@ -145,7 +165,7 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Location = new System.Drawing.Point(13, 234);
+            this.labelSeason.Location = new System.Drawing.Point(13, 265);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(102, 23);
             this.labelSeason.TabIndex = 101;
@@ -153,7 +173,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(13, 262);
+            this.labelBrand.Location = new System.Drawing.Point(13, 293);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(102, 23);
             this.labelBrand.TabIndex = 102;
@@ -161,7 +181,7 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Location = new System.Drawing.Point(13, 290);
+            this.labelCustCD.Location = new System.Drawing.Point(13, 321);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(102, 23);
             this.labelCustCD.TabIndex = 103;
@@ -169,7 +189,7 @@
             // 
             // labelZone
             // 
-            this.labelZone.Location = new System.Drawing.Point(13, 318);
+            this.labelZone.Location = new System.Drawing.Point(13, 349);
             this.labelZone.Name = "labelZone";
             this.labelZone.Size = new System.Drawing.Size(102, 23);
             this.labelZone.TabIndex = 104;
@@ -177,7 +197,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 346);
+            this.labelM.Location = new System.Drawing.Point(13, 377);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(102, 23);
             this.labelM.TabIndex = 105;
@@ -185,7 +205,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 374);
+            this.labelFactory.Location = new System.Drawing.Point(13, 405);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(102, 23);
             this.labelFactory.TabIndex = 106;
@@ -193,7 +213,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(13, 402);
+            this.labelCategory.Location = new System.Drawing.Point(13, 433);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(102, 23);
             this.labelCategory.TabIndex = 107;
@@ -201,7 +221,7 @@
             // 
             // labelSubProcess
             // 
-            this.labelSubProcess.Location = new System.Drawing.Point(13, 430);
+            this.labelSubProcess.Location = new System.Drawing.Point(13, 461);
             this.labelSubProcess.Name = "labelSubProcess";
             this.labelSubProcess.Size = new System.Drawing.Size(102, 23);
             this.labelSubProcess.TabIndex = 108;
@@ -345,10 +365,11 @@
             this.comboZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboZone.FormattingEnabled = true;
             this.comboZone.IsSupportUnselect = true;
-            this.comboZone.Location = new System.Drawing.Point(119, 317);
+            this.comboZone.Location = new System.Drawing.Point(119, 348);
             this.comboZone.Name = "comboZone";
+            this.comboZone.OldText = "";
             this.comboZone.Size = new System.Drawing.Size(227, 24);
-            this.comboZone.TabIndex = 12;
+            this.comboZone.TabIndex = 14;
             // 
             // comboM
             // 
@@ -356,10 +377,11 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(119, 345);
+            this.comboM.Location = new System.Drawing.Point(119, 376);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(66, 24);
-            this.comboM.TabIndex = 13;
+            this.comboM.TabIndex = 15;
             // 
             // comboFactory
             // 
@@ -367,10 +389,11 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(119, 373);
+            this.comboFactory.Location = new System.Drawing.Point(119, 404);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(66, 24);
-            this.comboFactory.TabIndex = 14;
+            this.comboFactory.TabIndex = 16;
             // 
             // comboSubProcess
             // 
@@ -378,10 +401,11 @@
             this.comboSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSubProcess.FormattingEnabled = true;
             this.comboSubProcess.IsSupportUnselect = true;
-            this.comboSubProcess.Location = new System.Drawing.Point(119, 429);
+            this.comboSubProcess.Location = new System.Drawing.Point(119, 460);
             this.comboSubProcess.Name = "comboSubProcess";
+            this.comboSubProcess.OldText = "";
             this.comboSubProcess.Size = new System.Drawing.Size(165, 24);
-            this.comboSubProcess.TabIndex = 20;
+            this.comboSubProcess.TabIndex = 23;
             // 
             // checkIncludeHistoryOrder
             // 
@@ -389,10 +413,10 @@
             this.checkIncludeHistoryOrder.Checked = true;
             this.checkIncludeHistoryOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkIncludeHistoryOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIncludeHistoryOrder.Location = new System.Drawing.Point(13, 457);
+            this.checkIncludeHistoryOrder.Location = new System.Drawing.Point(13, 488);
             this.checkIncludeHistoryOrder.Name = "checkIncludeHistoryOrder";
             this.checkIncludeHistoryOrder.Size = new System.Drawing.Size(161, 21);
-            this.checkIncludeHistoryOrder.TabIndex = 21;
+            this.checkIncludeHistoryOrder.TabIndex = 24;
             this.checkIncludeHistoryOrder.Text = "Include History Order";
             this.checkIncludeHistoryOrder.UseVisualStyleBackColor = true;
             // 
@@ -400,10 +424,10 @@
             // 
             this.checkIncludeArtworkdata.AutoSize = true;
             this.checkIncludeArtworkdata.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIncludeArtworkdata.Location = new System.Drawing.Point(13, 485);
+            this.checkIncludeArtworkdata.Location = new System.Drawing.Point(13, 516);
             this.checkIncludeArtworkdata.Name = "checkIncludeArtworkdata";
             this.checkIncludeArtworkdata.Size = new System.Drawing.Size(155, 21);
-            this.checkIncludeArtworkdata.TabIndex = 22;
+            this.checkIncludeArtworkdata.TabIndex = 25;
             this.checkIncludeArtworkdata.Text = "Include Artwork data";
             this.checkIncludeArtworkdata.UseVisualStyleBackColor = true;
             // 
@@ -411,10 +435,10 @@
             // 
             this.checkIncludeArtworkdataKindIsPAP.AutoSize = true;
             this.checkIncludeArtworkdataKindIsPAP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIncludeArtworkdataKindIsPAP.Location = new System.Drawing.Point(13, 513);
+            this.checkIncludeArtworkdataKindIsPAP.Location = new System.Drawing.Point(13, 544);
             this.checkIncludeArtworkdataKindIsPAP.Name = "checkIncludeArtworkdataKindIsPAP";
             this.checkIncludeArtworkdataKindIsPAP.Size = new System.Drawing.Size(252, 21);
-            this.checkIncludeArtworkdataKindIsPAP.TabIndex = 23;
+            this.checkIncludeArtworkdataKindIsPAP.TabIndex = 26;
             this.checkIncludeArtworkdataKindIsPAP.Text = "Include Artwork data -- Kind is \'PAP\'";
             this.checkIncludeArtworkdataKindIsPAP.UseVisualStyleBackColor = true;
             // 
@@ -424,10 +448,10 @@
             this.checkQtyBDownByShipmode.Checked = true;
             this.checkQtyBDownByShipmode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkQtyBDownByShipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkQtyBDownByShipmode.Location = new System.Drawing.Point(13, 541);
+            this.checkQtyBDownByShipmode.Location = new System.Drawing.Point(13, 571);
             this.checkQtyBDownByShipmode.Name = "checkQtyBDownByShipmode";
             this.checkQtyBDownByShipmode.Size = new System.Drawing.Size(286, 21);
-            this.checkQtyBDownByShipmode.TabIndex = 24;
+            this.checkQtyBDownByShipmode.TabIndex = 27;
             this.checkQtyBDownByShipmode.Text = "Seperate by < Qty b\'down by shipmode >";
             this.checkQtyBDownByShipmode.UseVisualStyleBackColor = true;
             // 
@@ -435,10 +459,10 @@
             // 
             this.checkListPOCombo.AutoSize = true;
             this.checkListPOCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkListPOCombo.Location = new System.Drawing.Point(13, 569);
+            this.checkListPOCombo.Location = new System.Drawing.Point(13, 599);
             this.checkListPOCombo.Name = "checkListPOCombo";
             this.checkListPOCombo.Size = new System.Drawing.Size(121, 21);
-            this.checkListPOCombo.TabIndex = 25;
+            this.checkListPOCombo.TabIndex = 28;
             this.checkListPOCombo.Text = "List PO Combo";
             this.checkListPOCombo.UseVisualStyleBackColor = true;
             // 
@@ -446,10 +470,10 @@
             // 
             this.checkBulk.AutoSize = true;
             this.checkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBulk.Location = new System.Drawing.Point(119, 402);
+            this.checkBulk.Location = new System.Drawing.Point(119, 433);
             this.checkBulk.Name = "checkBulk";
             this.checkBulk.Size = new System.Drawing.Size(54, 21);
-            this.checkBulk.TabIndex = 15;
+            this.checkBulk.TabIndex = 17;
             this.checkBulk.Text = "Bulk";
             this.checkBulk.UseVisualStyleBackColor = true;
             // 
@@ -457,10 +481,10 @@
             // 
             this.checkSample.AutoSize = true;
             this.checkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSample.Location = new System.Drawing.Point(180, 402);
+            this.checkSample.Location = new System.Drawing.Point(180, 433);
             this.checkSample.Name = "checkSample";
             this.checkSample.Size = new System.Drawing.Size(74, 21);
-            this.checkSample.TabIndex = 16;
+            this.checkSample.TabIndex = 18;
             this.checkSample.Text = "Sample";
             this.checkSample.UseVisualStyleBackColor = true;
             // 
@@ -468,10 +492,10 @@
             // 
             this.checkMaterial.AutoSize = true;
             this.checkMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkMaterial.Location = new System.Drawing.Point(260, 402);
+            this.checkMaterial.Location = new System.Drawing.Point(260, 433);
             this.checkMaterial.Name = "checkMaterial";
             this.checkMaterial.Size = new System.Drawing.Size(77, 21);
-            this.checkMaterial.TabIndex = 17;
+            this.checkMaterial.TabIndex = 19;
             this.checkMaterial.Text = "Material";
             this.checkMaterial.UseVisualStyleBackColor = true;
             // 
@@ -479,66 +503,27 @@
             // 
             this.checkForecast.AutoSize = true;
             this.checkForecast.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkForecast.Location = new System.Drawing.Point(344, 402);
+            this.checkForecast.Location = new System.Drawing.Point(344, 433);
             this.checkForecast.Name = "checkForecast";
             this.checkForecast.Size = new System.Drawing.Size(82, 21);
-            this.checkForecast.TabIndex = 18;
+            this.checkForecast.TabIndex = 20;
             this.checkForecast.Text = "Forecast";
             this.checkForecast.UseVisualStyleBackColor = true;
-            // 
-            // txtstyle
-            // 
-            this.txtstyle.BackColor = System.Drawing.Color.White;
-            this.txtstyle.BrandObjectName = null;
-            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(119, 178);
-            this.txtstyle.Name = "txtstyle";
-            this.txtstyle.Size = new System.Drawing.Size(186, 23);
-            this.txtstyle.TabIndex = 7;
-            // 
-            // txtseason
-            // 
-            this.txtseason.BackColor = System.Drawing.Color.White;
-            this.txtseason.BrandObjectName = null;
-            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason.Location = new System.Drawing.Point(119, 234);
-            this.txtseason.Name = "txtseason";
-            this.txtseason.Size = new System.Drawing.Size(98, 23);
-            this.txtseason.TabIndex = 9;
-            // 
-            // txtcustcd
-            // 
-            this.txtcustcd.BackColor = System.Drawing.Color.White;
-            this.txtcustcd.BrandObjectName = null;
-            this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd.Location = new System.Drawing.Point(119, 288);
-            this.txtcustcd.Name = "txtcustcd";
-            this.txtcustcd.Size = new System.Drawing.Size(186, 23);
-            this.txtcustcd.TabIndex = 11;
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(119, 262);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(98, 23);
-            this.txtbrand.TabIndex = 10;
             // 
             // checkGarment
             // 
             this.checkGarment.AutoSize = true;
             this.checkGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkGarment.Location = new System.Drawing.Point(432, 402);
+            this.checkGarment.Location = new System.Drawing.Point(432, 433);
             this.checkGarment.Name = "checkGarment";
             this.checkGarment.Size = new System.Drawing.Size(82, 21);
-            this.checkGarment.TabIndex = 19;
+            this.checkGarment.TabIndex = 21;
             this.checkGarment.Text = "Garment";
             this.checkGarment.UseVisualStyleBackColor = true;
             // 
             // labelArticle
             // 
-            this.labelArticle.Location = new System.Drawing.Point(13, 206);
+            this.labelArticle.Location = new System.Drawing.Point(13, 237);
             this.labelArticle.Name = "labelArticle";
             this.labelArticle.Size = new System.Drawing.Size(102, 23);
             this.labelArticle.TabIndex = 111;
@@ -548,25 +533,117 @@
             // 
             this.txtArticle.BackColor = System.Drawing.Color.White;
             this.txtArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtArticle.Location = new System.Drawing.Point(119, 206);
+            this.txtArticle.Location = new System.Drawing.Point(119, 237);
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(100, 23);
-            this.txtArticle.TabIndex = 8;
+            this.txtArticle.TabIndex = 10;
             // 
             // checkSMTL
             // 
             this.checkSMTL.AutoSize = true;
             this.checkSMTL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSMTL.Location = new System.Drawing.Point(520, 402);
+            this.checkSMTL.Location = new System.Drawing.Point(520, 433);
             this.checkSMTL.Name = "checkSMTL";
             this.checkSMTL.Size = new System.Drawing.Size(64, 21);
-            this.checkSMTL.TabIndex = 112;
+            this.checkSMTL.TabIndex = 22;
             this.checkSMTL.Text = "SMTL";
             this.checkSMTL.UseVisualStyleBackColor = true;
             // 
+            // txtSp1
+            // 
+            this.txtSp1.BackColor = System.Drawing.Color.White;
+            this.txtSp1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSp1.Location = new System.Drawing.Point(119, 180);
+            this.txtSp1.Name = "txtSp1";
+            this.txtSp1.Size = new System.Drawing.Size(122, 23);
+            this.txtSp1.TabIndex = 7;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(13, 180);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(102, 23);
+            this.label1.TabIndex = 114;
+            this.label1.Text = "SP#";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(243, 180);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(22, 17);
+            this.label2.TabIndex = 115;
+            this.label2.Text = "～";
+            // 
+            // txtSp2
+            // 
+            this.txtSp2.BackColor = System.Drawing.Color.White;
+            this.txtSp2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSp2.Location = new System.Drawing.Point(271, 180);
+            this.txtSp2.Name = "txtSp2";
+            this.txtSp2.Size = new System.Drawing.Size(122, 23);
+            this.txtSp2.TabIndex = 8;
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(119, 293);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(98, 23);
+            this.txtbrand.TabIndex = 12;
+            // 
+            // txtcustcd
+            // 
+            this.txtcustcd.BackColor = System.Drawing.Color.White;
+            this.txtcustcd.BrandObjectName = null;
+            this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcustcd.Location = new System.Drawing.Point(119, 319);
+            this.txtcustcd.Name = "txtcustcd";
+            this.txtcustcd.Size = new System.Drawing.Size(186, 23);
+            this.txtcustcd.TabIndex = 13;
+            // 
+            // txtseason
+            // 
+            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BrandObjectName = null;
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.Location = new System.Drawing.Point(119, 265);
+            this.txtseason.Name = "txtseason";
+            this.txtseason.Size = new System.Drawing.Size(98, 23);
+            this.txtseason.TabIndex = 11;
+            // 
+            // txtstyle
+            // 
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(119, 209);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(186, 23);
+            this.txtstyle.TabIndex = 9;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
+            // 
+            // checkByCPU
+            // 
+            this.checkByCPU.AutoSize = true;
+            this.checkByCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkByCPU.Location = new System.Drawing.Point(271, 516);
+            this.checkByCPU.Name = "checkByCPU";
+            this.checkByCPU.Size = new System.Drawing.Size(75, 21);
+            this.checkByCPU.TabIndex = 116;
+            this.checkByCPU.Text = "By CPU";
+            this.checkByCPU.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(587, 617);
+            this.ClientSize = new System.Drawing.Size(587, 682);
+            this.Controls.Add(this.checkByCPU);
+            this.Controls.Add(this.txtSp2);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtSp1);
             this.Controls.Add(this.checkSMTL);
             this.Controls.Add(this.txtArticle);
             this.Controls.Add(this.labelArticle);
@@ -611,9 +688,14 @@
             this.Controls.Add(this.labelBuyerDelivery);
             this.DefaultControl = "dateBuyerDelivery";
             this.DefaultControlForEdit = "dateBuyerDelivery";
+            this.IsSupportCustomized = true;
             this.IsSupportToPrint = false;
             this.Name = "R03";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. PPIC master list report";
+            this.Controls.SetChildIndex(this.txtVersion, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -659,6 +741,11 @@
             this.Controls.SetChildIndex(this.labelArticle, 0);
             this.Controls.SetChildIndex(this.txtArticle, 0);
             this.Controls.SetChildIndex(this.checkSMTL, 0);
+            this.Controls.SetChildIndex(this.txtSp1, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.txtSp2, 0);
+            this.Controls.SetChildIndex(this.checkByCPU, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -708,5 +795,10 @@
         private Win.UI.Label labelArticle;
         private Win.UI.TextBox txtArticle;
         private Win.UI.CheckBox checkSMTL;
+        private Win.UI.TextBox txtSp1;
+        private Win.UI.Label label1;
+        private System.Windows.Forms.Label label2;
+        private Win.UI.TextBox txtSp2;
+        private Win.UI.CheckBox checkByCPU;
     }
 }

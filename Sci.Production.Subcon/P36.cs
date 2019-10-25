@@ -31,6 +31,8 @@ namespace Sci.Production.Subcon
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
         }
 
+        private bool isTaipeiDBC = false;
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -54,6 +56,9 @@ namespace Sci.Production.Subcon
             else
                 this.displayAmtReceived.Text = "";
             lblTaipeiDebitNote.Visible = (!MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]));
+
+            this.isTaipeiDBC = (!MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]));
+
             numTotalAmt.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) + decimal.Parse(CurrentMaintain["tax"].ToString());
             btnDebitSchedule.Enabled = !this.EditMode && CurrentMaintain["status"].ToString().ToUpper() == "CONFIRMED";
             // 剛好settle的 voucher# & Date 顯示
@@ -320,7 +325,7 @@ Where a.id = '{0}' order by orderid ", masterID);
         {
             DualResult result;
             string insertCmd, updateCmd;
-
+            List<SqlParameter> paraList = new List<SqlParameter>();
             if (seleReason) // 要選原因的代表狀態回復到上一個狀態或Junk。
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to do it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
@@ -328,15 +333,29 @@ Where a.id = '{0}' order by orderid ", masterID);
                 var frm = new Sci.Win.UI.SelectReason(reasonType);
                 frm.ShowDialog();
                 if (MyUtility.Check.Empty(frm.ReturnReason)) return;
-                insertCmd = string.Format(@"Insert into LocalDebit_History 
+
+                insertCmd = @"Insert into LocalDebit_History 
 (histype,id,oldvalue,newvalue,reasonid,remark,addname,adddate)
-values ('LocalDebit','{5}','{0}','{1}','{3}','{4}','{2}',getdate())", oldvalue, newValue, Sci.Env.User.UserID, frm.ReturnReason, frm.ReturnRemark, CurrentMaintain["id"]);
+values ('LocalDebit',@id,@oldvalue,@newvalue,@reasonid,@remark,@addname,getdate())";
+
+                paraList.Add(new SqlParameter("@id", CurrentMaintain["id"].ToString()));
+                paraList.Add(new SqlParameter("@oldvalue", oldvalue));
+                paraList.Add(new SqlParameter("@newvalue", newValue));
+                paraList.Add(new SqlParameter("@reasonid", frm.ReturnReason));
+                paraList.Add(new SqlParameter("@remark", frm.ReturnRemark));
+                paraList.Add(new SqlParameter("@addname", Sci.Env.User.UserID));
             }
             else
             {
-                insertCmd = string.Format(@"Insert into LocalDebit_History 
+
+                insertCmd = @"Insert into LocalDebit_History 
 (histype,id,oldvalue,newvalue,reasonid,remark,addname,adddate)
-values ('LocalDebit','{3}','{0}','{1}','','','{2}',getdate())", oldvalue, newValue, Sci.Env.User.UserID, CurrentMaintain["id"]);
+values ('LocalDebit',@id,@oldvalue,@newvalue,'','',@addname,getdate())";
+
+                paraList.Add(new SqlParameter("@id", CurrentMaintain["id"].ToString()));
+                paraList.Add(new SqlParameter("@oldvalue", oldvalue));
+                paraList.Add(new SqlParameter("@newvalue", newValue));
+                paraList.Add(new SqlParameter("@addname", Sci.Env.User.UserID));
             }
 
             updateCmd = string.Format(@"update LocalDebit set status='{0}', statuseditdate = GETDATE() , editname = '{1}' , editdate = GETDATE() "
@@ -354,7 +373,7 @@ values ('LocalDebit','{3}','{0}','{1}','','','{2}',getdate())", oldvalue, newVal
             {
                 try
                 {
-                    if (!(result = DBProxy.Current.Execute(null, insertCmd)))
+                    if (!(result = DBProxy.Current.Execute(null, insertCmd, paraList)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(insertCmd, result);
@@ -501,7 +520,7 @@ where id = '{4}'"
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
             //var frm = new Sci.Production.Subcon.P37_DebitSchedule(Production.PublicPrg.Prgs.GetAuthority(dr["cfmname"].ToString()), dr["ID"].ToString(), null, null);
-            var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null);  //調成跟舊系統一樣，不管誰都可以編輯
+            var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null,this.CurrentMaintain,"P36",(bool)this.CurrentMaintain["TaipeiDBC"]);  //調成跟舊系統一樣，不管誰都可以編輯
             frm.ShowDialog(this);
             this.RenewData();
             this.Refresh();

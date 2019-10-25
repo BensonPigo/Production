@@ -45,8 +45,6 @@
             this.btnAutoPick = new Sci.Win.UI.Button();
             this.labelNotApprove = new Sci.Win.UI.Label();
             this.btnCutRef = new Sci.Win.UI.Button();
-            this.btnPrintFabricSticker = new Sci.Win.UI.Button();
-            this.btn_printBarcode = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,7 +61,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnCutRef);
             this.masterpanel.Controls.Add(this.labelNotApprove);
             this.masterpanel.Controls.Add(this.btnAutoPick);
@@ -100,7 +97,6 @@
             this.masterpanel.Controls.SetChildIndex(this.btnAutoPick, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCutRef, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             // 
             // detailpanel
             // 
@@ -110,11 +106,11 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3827, 74);
+            this.gridicon.Location = new System.Drawing.Point(4061, 74);
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(776, 2);
+            this.refresh.Location = new System.Drawing.Point(779, 1);
             // 
             // detailgridcont
             // 
@@ -130,15 +126,8 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.btn_printBarcode);
             this.detailbtm.Location = new System.Drawing.Point(0, 443);
             this.detailbtm.Size = new System.Drawing.Size(1009, 38);
-            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
-            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
-            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
-            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
-            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btn_printBarcode, 0);
             // 
             // browse
             // 
@@ -322,28 +311,6 @@
             this.btnCutRef.UseVisualStyleBackColor = true;
             this.btnCutRef.Click += new System.EventHandler(this.btnCutRef_Click);
             // 
-            // btnPrintFabricSticker
-            // 
-            this.btnPrintFabricSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnPrintFabricSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPrintFabricSticker.Location = new System.Drawing.Point(839, 67);
-            this.btnPrintFabricSticker.Name = "btnPrintFabricSticker";
-            this.btnPrintFabricSticker.Size = new System.Drawing.Size(162, 31);
-            this.btnPrintFabricSticker.TabIndex = 65;
-            this.btnPrintFabricSticker.Text = "Print Fabric Sticker";
-            this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
-            this.btnPrintFabricSticker.Click += new System.EventHandler(this.btnPrintFabricSticker_Click);
-            // 
-            // btn_printBarcode
-            // 
-            this.btn_printBarcode.Location = new System.Drawing.Point(860, 2);
-            this.btn_printBarcode.Name = "btn_printBarcode";
-            this.btn_printBarcode.Size = new System.Drawing.Size(144, 35);
-            this.btn_printBarcode.TabIndex = 3;
-            this.btn_printBarcode.Text = "Print Barcode";
-            this.btn_printBarcode.UseVisualStyleBackColor = true;
-            this.btn_printBarcode.Click += new System.EventHandler(this.btn_printBarcode_Click);
-            // 
             // P10
             // 
             this.ApvChkValue = "New";
@@ -360,6 +327,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P10";
+            this.OnLineHelpID = "Sci.Win.Tems.Input8";
             this.SubDetailKeyField1 = "id";
             this.SubDetailKeyField2 = "Issue_SummaryUkey";
             this.SubGridAlias = "Issue_Detail";
@@ -405,7 +373,5 @@
         private Win.UI.Button btnAutoPick;
         private Win.UI.Label labelNotApprove;
         private Win.UI.Button btnCutRef;
-        private Win.UI.Button btnPrintFabricSticker;
-        private Win.UI.Button btn_printBarcode;
     }
 }

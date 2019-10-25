@@ -152,6 +152,18 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="B02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B02.Designer.cs">
+      <DependentUpon>B02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03.Designer.cs">
+      <DependentUpon>B03.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -230,6 +242,12 @@
     <Compile Include="P08.Designer.cs">
       <DependentUpon>P08.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10.Designer.cs">
+      <DependentUpon>P10.cs</DependentUpon>
+    </Compile>
     <Compile Include="P09.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -290,6 +308,12 @@
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B02.resx">
+      <DependentUpon>B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B03.resx">
+      <DependentUpon>B03.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -328,6 +352,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P08.resx">
       <DependentUpon>P08.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10.resx">
+      <DependentUpon>P10.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P09.resx">
       <DependentUpon>P09.cs</DependentUpon>

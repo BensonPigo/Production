@@ -119,6 +119,7 @@ select  F.MDivisionID
         ,[Wkno] = wk.wkno
         ,PS.id
         ,style = si.StyleID
+		,o.BrandID
         ,PSD.FinalETD
         ,supp = concat(PS.suppid,'-',S.NameEN )
         ,S.CountryID
@@ -407,6 +408,11 @@ where 1=1
             int dwr = (chkDWR.Checked) ? 1 : 0;
 
             sqlCmd.Append($@" and fabric.DWR = {dwr}");
+
+            if (chkWhseClose.Checked)
+            {
+                sqlCmd.Append(" and o.WhseClose is null");
+            }
 
             if (orderby.ToUpper().TrimEnd() == "SUPPLIER")
             {

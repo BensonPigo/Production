@@ -108,6 +108,10 @@ select distinct
 ,o.BuyerDelivery
 ,[Returnto] = '' 
 ,p2.remark
+,p2.SCICtnNo
+,p2.ScanQty
+,p2.ScanName
+,p2.ScanEditDate
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -167,7 +171,7 @@ order by p2.ID,p2.CTNStartNo";
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
 Select distinct  0 as selected, b.ID , b.OrderID, 
-b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery,'' [Returnto], '' as Remark 
+b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery,'' [Returnto], '' as Remark,b.SCICtnNo 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -217,6 +221,7 @@ select distinct
 ,o.BuyerDelivery
 ,[Returnto] = '' 
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -248,6 +253,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["ID"] = seekData["ID"].ToString().Trim();
                                     dr["CTNStartNo"] = seekData["CTNStartNo"];
                                     dr["OrderID"] = seekData["OrderID"];
+                                    dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["CustPONo"] = seekData["CustPONo"];
                                     dr["StyleID"] = seekData["StyleID"];
                                     dr["SeasonID"] = seekData["SeasonID"];
@@ -274,6 +280,7 @@ select distinct
 ,o.BuyerDelivery
 ,[Returnto] = '' 
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -304,6 +311,7 @@ order by p2.ID,p2.CTNStartNo
                                         dr["ID"] = seekData["ID"].ToString().Trim();
                                         dr["CTNStartNo"] = seekData["CTNStartNo"];
                                         dr["OrderID"] = seekData["OrderID"];
+                                        dr["SCICtnNo"] = seekData["SCICtnNo"];
                                         dr["CustPONo"] = seekData["CustPONo"];
                                         dr["StyleID"] = seekData["StyleID"];
                                         dr["SeasonID"] = seekData["SeasonID"];
@@ -336,6 +344,7 @@ select distinct
 ,o.BuyerDelivery
 ,[Returnto] = '' 
 ,p2.remark
+,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -366,6 +375,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["ID"] = seekData["ID"].ToString().Trim();
                                     dr["CTNStartNo"] = seekData["CTNStartNo"];
                                     dr["OrderID"] = seekData["OrderID"];
+                                    dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["CustPONo"] = seekData["CustPONo"];
                                     dr["StyleID"] = seekData["StyleID"];
                                     dr["SeasonID"] = seekData["SeasonID"];
@@ -486,17 +496,50 @@ set TransferCFADate = null
 , ReceiveDate = null
 , TransferDate = null
 , CFAReturnFtyDate = CONVERT(varchar(100), GETDATE(), 111)
+, ScanQty = 0 
+, ScanEditDate = null
+, ScanName = ''
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");
+                                string ScanQty = MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"].ToString();
+                                string ScanEditDate = MyUtility.Check.Empty(dr["ScanEditDate"]) ? "NULL" : "'"+Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString()+"'";
+
+                                insertCmds.Add($@"
+
+INSERT INTO [dbo].[PackingScan_History]
+           ([MDivisionID]
+           ,[PackingListID]
+           ,[OrderID]
+           ,[CTNStartNo]
+           ,[SCICtnNo]
+           ,[DeleteFrom]
+           ,[ScanQty]
+           ,[ScanEditDate]
+           ,[ScanName]
+           ,[AddName]
+           ,[AddDate])
+     VALUES
+           ('{Sci.Env.User.Keyword}'
+           ,'{dr["ID"]}'
+           ,'{dr["OrderID"]}'
+           ,'{dr["CTNStartNo"]}'
+           ,'{dr["SCICtnNo"]}'
+           ,'QA P24'
+           ,{ScanQty}
+           ,{ScanEditDate}
+           ,'{dr["ScanName"]}'
+           ,'{Sci.Env.User.UserID}'
+           ,GETDATE()
+            )");
                                 break;
                             default:
                                 break;
                         }
 
                         insertCmds.Add($@"
-insert into CFAReturn(ReturnDate,MDivisionID,OrderID,PackingListID,CTNStartNo,ReturnTo,AddName,AddDate)
-values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{dr["Returnto"].ToString()}','{Sci.Env.User.UserID}',GETDATE())
+insert into CFAReturn(ReturnDate,MDivisionID,OrderID,PackingListID,CTNStartNo,ReturnTo,AddName,AddDate,SCICtnNo)
+values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{dr["Returnto"].ToString()}','{Sci.Env.User.UserID}',GETDATE(),'{dr["SCICtnNo"].ToString()}')
 ");
                     }
                 }

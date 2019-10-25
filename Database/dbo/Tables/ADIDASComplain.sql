@@ -2,13 +2,17 @@
     [ID]          VARCHAR (13)  CONSTRAINT [DF_ADIDASComplain_ID] DEFAULT ('') NOT NULL,
     [StartDate]   DATE          NOT NULL,
     [EndDate]     DATE          NOT NULL,
-    [AGCCode]     VARCHAR (6)   CONSTRAINT [DF_ADIDASComplain_AGCCode] DEFAULT ('') NULL,
+    [AGCCode]     VARCHAR (6)   CONSTRAINT [DF_ADIDASComplain_AGCCode] DEFAULT ('') NOT NULL,
     [FactoryName] NVARCHAR (50) CONSTRAINT [DF_ADIDASComplain_FactoryName] DEFAULT ('') NOT NULL,
     [Country]     VARCHAR (2)   CONSTRAINT [DF_ADIDASComplain_Country] DEFAULT ('') NOT NULL,
-    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ADIDASComplain_AddName] DEFAULT ('') NULL,
+    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ADIDASComplain_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME      NULL,
-    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ADIDASComplain_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ADIDASComplain_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME      NULL,
+    [TPEApvName] VARCHAR(10) CONSTRAINT [DF_ADIDASComplain_TPEApvName] DEFAULT ('') NOT NULL, 
+    [TPEApvDate] DATETIME NOT NULL, 
+    [FtyApvName] VARCHAR(10) CONSTRAINT [DF_ADIDASComplain_FtyApvName] DEFAULT ('') NOT NULL, 
+    [FtyApvDate] DATETIME NULL, 
     CONSTRAINT [PK_ADIDASComplain] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

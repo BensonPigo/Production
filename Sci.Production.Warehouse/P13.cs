@@ -138,6 +138,25 @@ where id = @MDivision", pars, out dt);
 
             #endregion
             #region -- 撈表身資料 --
+            string strsql = $@"select distinct poid,seq1,seq2 from issue_detail where id='{id}'";
+            DataTable dttmp;
+            if (!(result = DBProxy.Current.Select(null, strsql, out dttmp)))
+            {
+                ShowErr(result);
+                return false;
+            }
+
+            DataTable dtRollTrans = new DataTable();
+            foreach (DataRow dr in dttmp.Rows)
+            {
+                DataTable dttmp1 = new DataTable();
+                dttmp1 = Sci.Production.PublicPrg.Prgs.RollTranscation(dr["Poid"].ToString(),
+                dr["Seq1"].ToString(),
+                dr["Seq2"].ToString());
+
+                dtRollTrans.Merge(dttmp1);
+            }
+
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
@@ -154,6 +173,7 @@ select t.POID,
 	    t.Roll,
 	    t.Dyelot,
 	    t.Qty,
+        [BalanceQty] = RollTrans.balance,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
 	    [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
@@ -161,10 +181,16 @@ from dbo.Issue_Detail t WITH (NOLOCK)
 left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
 left join FtyInventory FI on t.poid = fi.poid and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.Dyelot = fi.Dyelot
     and t.roll = fi.roll and t.stocktype = fi.stocktype
+outer apply(
+	select convert(float,balance) as balance from #tmp
+	where id = t.Id
+	and Roll=t.Roll and Dyelot=t.Dyelot
+	and Seq1=t.Seq1 and Seq2=t.Seq2
+)RollTrans
 where t.id= @ID
 order by t.POID,SEQ, t.Dyelot,t.Roll
 ";
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+            result = MyUtility.Tool.ProcessWithDatatable(dtRollTrans, "", sqlcmd, out dtDetail, paramters: pars);
             if (!result) { this.ShowErr(sqlcmd, result); }
 
             if (dtDetail == null || dtDetail.Rows.Count == 0)
@@ -185,6 +211,7 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["Dyelot"].ToString().Trim(),
                     QTY = row1["Qty"].ToString().Trim(),
+                    BalanceQty = row1["BalanceQty"].ToString().Trim(),
                     TotalQTY = row1["Total"].ToString().Trim()
                 }).ToList();
 
@@ -328,6 +355,9 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
             {
                 this.btnPrintFabricSticker.Enabled = false;
             }
+
+
+            this.DetailGridColVisibleByReason();
         }
 
         // detail 新增時設定預設值
@@ -348,11 +378,15 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)  //3
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
                 .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
+                .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
+                .Numeric("NetQty", header: "Used Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)    
+                .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)    
                 .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
                 .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
             ;     //
             #endregion 欄位設定
+
         }
 
         //Confirm
@@ -686,6 +720,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"
+
 select  o.FtyGroup
         , a.id
         , a.PoId
@@ -703,12 +738,28 @@ select  o.FtyGroup
         , dbo.Getlocation(c.ukey) location
         , a.ukey
         , a.BarcodeNo
+		, p1.NetQty
+		, p1.LossQty
+        , [Article] = case  when a.Seq1 like 'T%' then Stuff((Select distinct concat( ',',tcd.Article) 
+			                                                         From dbo.Orders as o 
+			                                                         Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+			                                                         Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+			                                                         Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey 
+			                                                         where	o.POID = a.PoId and
+			                                                         		tcd.SuppId = p.SuppId and
+			                                                         		tcd.SCIRefNo   = p1.SCIRefNo	and
+			                                                         		tcd.ColorID	   = p1.ColorID
+			                                                         FOR XML PATH('')),1,1,'') 
+                            else '' end
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join PO_Supp p WITH (NOLOCK) on p.ID = p1.ID and p1.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
 Where a.id = '{0}'", masterID);
+
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -765,10 +816,7 @@ Where a.id = '{0}'", masterID);
 
         private void txtwhseReason_Validated(object sender, EventArgs e)
         {
-            if (this.detailgridbs.DataSource != null && oldVal != txtwhseReason.TextBox1.Text)
-            {
-                ((DataTable)this.detailgridbs.DataSource).Clear();
-            }
+            this.DetailGridColVisibleByReason();
         }
 
         string oldVal = "";
@@ -776,6 +824,28 @@ Where a.id = '{0}'", masterID);
         private void txtwhseReason_Enter(object sender, EventArgs e)
         {
             oldVal = txtwhseReason.TextBox1.Text;
+        }
+        
+
+        private void txtwhseReason_Leave(object sender, EventArgs e)
+        {
+            this.DetailGridColVisibleByReason();
+        }
+
+        private void DetailGridColVisibleByReason()
+        {
+            if (this.CurrentMaintain["whseReasonID"].ToString() == "00006")
+            {
+                this.detailgrid.Columns["NetQty"].Visible = true;
+                this.detailgrid.Columns["LossQty"].Visible = true;
+                this.detailgrid.Columns["Article"].Visible = true;
+            }
+            else
+            {
+                this.detailgrid.Columns["NetQty"].Visible = false;
+                this.detailgrid.Columns["LossQty"].Visible = false;
+                this.detailgrid.Columns["Article"].Visible = false;
+            }
         }
     }
 }

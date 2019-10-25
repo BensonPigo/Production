@@ -57,7 +57,10 @@ namespace Sci.Production.Logistic
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.Auto(), iseditable: false)
                 .DateTime("AddDate", header: "Create Date", width: Widths.Auto(), iseditable: false)
-                .Text("AddName", header: "AddName", width: Widths.Auto(), iseditable: false);
+                .Text("AddName", header: "AddName", width: Widths.Auto(), iseditable: false)
+                .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -96,9 +99,78 @@ namespace Sci.Production.Logistic
         // Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.dateReceiveDate.Value1) && MyUtility.Check.Empty(this.dateReceiveDate.Value2))
+            {
+                MyUtility.Msg.WarningBox("Please input <Receive Date> first!");
+                return;
+            }
+
             this.ShowWaitMessage("Data Loading...");
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(
+            StringBuilder sqlCmdWhere = new StringBuilder();
+            StringBuilder sqlCmdWhere_Ori = new StringBuilder();
+
+            if (!MyUtility.Check.Empty(this.txtPackID.Text))
+            {
+                sqlCmdWhere.Append($"and pd.PackingListID = '{this.txtPackID.Text}'");
+                sqlCmdWhere_Ori.Append($"and pd.OrigID =  '{this.txtPackID.Text}' ");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+            {
+                sqlCmdWhere.Append($"and pd.OrderID = '{this.txtSPNo.Text}'");
+                sqlCmdWhere_Ori.Append($"and pd.OrigOrderID =  '{this.txtSPNo.Text}' ");
+            }
+
+            sqlCmd.Append($@"
+SELECT *
+INTO   #tmp_NoRepeat
+FROM
+(
+	SELECT DISTINCT ID,CTNStartNo ,OrderID,PackingListID,MDivisionID,ReceiveDate,AddDate,AddName,ClogLocationId 
+	FROM ClogReceive pd
+	WHERE 1=1
+	{sqlCmdWhere}
+
+)a
+
+SELECT DISTINCT
+[PackID]= cr.PackingListID
+, pd.OrderShipmodeSeq 
+, pd.OrigID
+, pd.OrigOrderID 
+, pd.OrigCTNStartNo 
+, cr.ID
+, cr.CTNStartNo 
+, cr.OrderID
+, cr.PackingListID
+, cr.MDivisionID
+, cr.ReceiveDate
+, cr.AddDate
+, cr.AddName
+, cr.ClogLocationId
+INTO #MainTable
+from  #tmp_NoRepeat cr WITH (NOLOCK) 
+LEFT JOIN PackingList_Detail pd  on pd.ID = cr.PackingListID and pd.CTNStartNo = cr.CTNStartNo 
+WHERE       cr.MDivisionID = '{Sci.Env.User.Keyword}'
+");
+
+            if (!MyUtility.Check.Empty(this.dateReceiveDate.Value1))
+            {
+                sqlCmd.Append(string.Format(
+                    @" 
+            and cr.ReceiveDate >= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateReceiveDate.Value2))
+            {
+                sqlCmd.Append(string.Format(
+                    @" 
+            and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value2).ToString("d")));
+            }
+
+
+            sqlCmd.Append(
                 @"
 select  1 as selected
         , ReceiveDate
@@ -131,12 +203,15 @@ select  1 as selected
         , AddDate
         , rn = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
         , AddName
+        , RepackPackID
+        , RepackOrderID
+        , RepackCtnStartNo
 from (
-    select  cr.ReceiveDate
-            , cr.PackingListID
-            , cr.OrderID
+     select  t.ReceiveDate
+            , [PackingListID] = iif(t.OrigID = '' OR t.OrigID IS NULL,t.PackID, t.OrigID)
+            , [OrderID] = iif(t.OrigOrderID = '' OR t.OrigOrderID IS NULL,t.OrderID, t.OrigOrderID)
             , oq.Seq
-            , cr.CTNStartNo
+            , [CTNStartNo] = iif(t.OrigCTNStartNo = '' OR t.OrigCTNStartNo IS NULL,t.CTNStartNo, t.OrigCTNStartNo)
             , isnull(o.StyleID,'') as StyleID
             , isnull(o.BrandID,'') as BrandID
             , isnull(o.Customize1,'') as Customize1
@@ -148,62 +223,32 @@ from (
             , oq.Qty
             , [TTQty] = (select sum (isnull(pld.CTNQty, 0)) 
                          from PackingList_Detail pld
-                         where  pld.ID = cr.PackingListID 
-                                and pld.OrderID = cr.OrderID)
+                         where  pld.ID = t.PackingListID 
+                                and pld.OrderID = t.OrderID)
             , [Rec Qty] = ( select count(*) 
                             from ClogReceive CReceive
-                            where   CReceive.PackingListID = cr.PackingListID 
-                                    and CReceive.OrderID = cr.OrderID)
+                            where   CReceive.PackingListID = t.PackingListID 
+                                    and CReceive.OrderID = t.OrderID)
             , [Ret Qty] = ( select count(*) 
                             from ClogReturn CReturn
-                            where   CReturn.PackingListID = cr.PackingListID 
-                                    and CReturn.OrderID = cr.OrderID)
-            , cr.ClogLocationId
-            , cr.AddDate
-            , pd.Id
-			, AddName = (select concat(id,'-',Name) from pass1 where id = cr.AddName)
-    from ClogReceive cr WITH (NOLOCK) 
-    left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
+                            where   CReturn.PackingListID = t.PackingListID 
+                                    and CReturn.OrderID = t.OrderID)
+            , t.ClogLocationId
+            , t.AddDate
+            , t.Id
+			, AddName = (select concat(id,'-',Name) from pass1 where id = t.AddName)
+            , [RepackPackID] = iif(t.OrigID != '',t.ID, t.OrigID)
+            , [RepackOrderID] = iif(t.OrigOrderID != '',t.OrderID, t.OrigOrderID)
+            , [RepackCtnStartNo] = iif(t.OrigCTNStartNo != '',t.CTNStartNo, t.OrigCTNStartNo)
+	FROM #MainTable t
+    left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
-    left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID 
-                                                     and pd.OrderID = cr.OrderID 
-                                                     and pd.CTNStartNo = cr.CTNStartNo 
-                                                     and pd.CTNQty > 0
-    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
-                                                and oq.Seq = pd.OrderShipmodeSeq
-    where   cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
-
-            if (!MyUtility.Check.Empty(this.dateReceiveDate.Value1))
-            {
-                sqlCmd.Append(string.Format(
-                    @" 
-            and cr.ReceiveDate >= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value1).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(this.dateReceiveDate.Value2))
-            {
-                sqlCmd.Append(string.Format(
-                    @" 
-            and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value2).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtPackID.Text))
-            {
-                sqlCmd.Append(string.Format(
-                    @" 
-            and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(this.txtPackID.Text)));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
-            {
-                sqlCmd.Append(string.Format(
-                    @" 
-            and cr.OrderID = '{0}'", MyUtility.Convert.GetString(this.txtSPNo.Text)));
-            }
-
-            sqlCmd.Append(@"
+    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = t.OrderID and oq.Seq = t.OrderShipmodeSeq
 ) X 
-order by PackingListID, OrderID, rn");
+order by PackingListID, OrderID, rn
+
+DROP TABLE  #tmp_NoRepeat,#MainTable
+    ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
             if (!result)

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +16,15 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
+
+            DualResult result;
+            DataTable dt = new DataTable();
+            string cmd = "SELECT ID, Name FROM DropDownList WITH (NOLOCK)  WHERE Type='SubProcess_InOutRule'";
+            if (result = DBProxy.Current.Select(null, cmd, out dt))
+            {
+                MyUtility.Tool.SetupCombox(this.combInOutRule, 2, dt);
+            }
+
         }
 
         protected override bool ClickSaveBefore()
@@ -23,7 +34,7 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.InfoBox("'ID' and 'Show Seq' can not empty");
                 return false;
             }
-            return base.ClickSaveBefore();            
+            return base.ClickSaveBefore();    
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P01_TrimCardPrint : Sci.Win.Tems.PrintForm
     {
-        DataTable dtPrint, dtPrint2, dtColor, dtColor2;
+        DataTable dtPrint_Content, dtPrint_LeftColumn, dtColor, dtColor2;
         DataRow rowColor;
         string sql, temp, orderID, StyleID, SeasonID, FactoryID, BrandID, POID;
         List<string> ListColor = new List<string>();
@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult result = Result.True;
-            if (dtPrint != null) dtPrint.Rows.Clear();
+            if (dtPrint_Content != null) dtPrint_Content.Rows.Clear();
 
             #region SQL
             if (radioFabric.Checked)
@@ -72,7 +72,7 @@ left join Order_BOF B WITH (NOLOCK) on B.Id=A.Id and B.FabricCode=A.FabricCode
 left join Fabric C WITH (NOLOCK) on C.SCIRefno=B.SCIRefno
 where o.ID = '{0}'
 order by FabricCode", orderID);
-                result = DBProxy.Current.Select(null, sql, out dtPrint);
+                result = DBProxy.Current.Select(null, sql, out dtPrint_Content);
                 if (!result) return result;
 
                 sql = string.Format(@"
@@ -86,7 +86,7 @@ where o.Id='{0}'
                               inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
                               inner join Order_FabricCode A WITH (NOLOCK) on allOrder.ID = a.ID
 	  						  where o.ID = '{0}')", orderID);
-                result = DBProxy.Current.Select(null, sql, out dtPrint2);
+                result = DBProxy.Current.Select(null, sql, out dtPrint_LeftColumn);
                 if (!result) return result;
 
                 sql = string.Format(@"
@@ -132,7 +132,7 @@ where o.id = '{0}'
 	  and occ.ColorId<>''
 	  and b.MtlTypeID in (select id from MtlType WITH (NOLOCK) where IsTrimcardOther=0)
 group by A.Refno, B.Description ", orderID);
-                result = DBProxy.Current.Select(null, sql, out dtPrint);
+                result = DBProxy.Current.Select(null, sql, out dtPrint_Content);
                 if (!result) return result;
 
                 sql = string.Format(@"
@@ -149,7 +149,7 @@ where o.id = '{0}'
 	  and oa.Article <> '' 
 	  and occ.ColorId<>''
 order by oa.Article", orderID);
-                result = DBProxy.Current.Select(null, sql, out dtPrint2);
+                result = DBProxy.Current.Select(null, sql, out dtPrint_LeftColumn);
                 if (!result) return result;
 
                 sql = string.Format(@"
@@ -205,42 +205,343 @@ where o.Id='{0}'
 	  and b.MtlTypeID in (select id from MtlType WITH (NOLOCK) where IsTrimcardOther=1)
 	  and not ob.SuppID = 'fty' 
 	  and not ob.SuppID = 'fty-c'", orderID);
-                result = DBProxy.Current.Select(null, sql, out dtPrint);
+                result = DBProxy.Current.Select(null, sql, out dtPrint_Content);
                 if (!result) return result;
 
                 sql = string.Format(@"select distinct orders.ID 
                                     from orders WITH (NOLOCK) 
                                     where orders.POID='{0}'", POID);
-                result = DBProxy.Current.Select(null, sql, out dtPrint2);
+                result = DBProxy.Current.Select(null, sql, out dtPrint_LeftColumn);
                 if (!result) return result;
                 #endregion
             }
             else if (radioThread.Checked)
             {
                 #region Thread
-                sql = string.Format(@"
+
+
+                // 1.判斷新舊單，判斷Article要從哪裡來
+
+                bool isNewOrder = false;
+                DataTable dt_CheckOld;
+                string sqlCmd_1 = $@"
 select distinct B.Article
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.ID = a.orderid
 left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
-where o.iD = '{0}' 
-	  and article<>''", POID);
-                result = DBProxy.Current.Select(null, sql, out dtPrint2);
+where o.iD = '{POID}' and article<>''  
+";
+
+                result = DBProxy.Current.Select(null, sqlCmd_1, out dt_CheckOld);
                 if (!result) return result;
 
-                sql = string.Format(@"
-select B.Article
-	   , A.ThreadColorID
-from Orders o WITH (NOLOCK) 
-inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
-inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
-left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
-where o.ID = '{0}' 
-	  and article<>''
-group by article, threadcolorid", POID);
-                result = DBProxy.Current.Select(null, sql, out dtPrint);
-                if (!result) return result;
+
+                // 2.區分新舊單，Article來源不同
+                if (dt_CheckOld.Rows.Count==0)
+                {
+                    isNewOrder = true;
+                    // 新單
+                    //Article要從Style_ThreadColorCombo抓取
+
+                    #region 取得新單的Article
+
+                    sql = $@"
+
+--1.從訂單串回物料
+select distinct StyleID,BrandID,POID,FtyGroup 
+into #tmpOrder
+from orders where id like '{orderID}'
+
+
+Select distinct [ID] = PO.POID
+, std.SuppId --Mapping PO_Supp
+, std.SCIRefNo, std.ColorID, std.Article --Mapping PO_Supp_Detail
+into #ArticleForThread_Detail
+From #tmpOrder PO
+Inner Join dbo.Orders as o On o.ID = po.POID 
+Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+Inner Join dbo.Style_ThreadColorCombo as st On st.StyleUkey = s.Ukey
+Inner Join dbo.Style_ThreadColorCombo_Detail as std On std.Style_ThreadColorComboUkey = st.Ukey
+
+
+
+select distinct
+a.ID,SuppId,SCIRefNo,ColorID,
+[Article] = Stuff((select distinct concat( ',',Article)   
+								from #ArticleForThread_Detail 
+								where	ID		   = a.ID		and
+										SuppId	   = a.SuppId	and
+										SCIRefNo   = a.SCIRefNo	and
+										ColorID	   = a.ColorID	
+								FOR XML PATH('')),1,1,'') 
+into #ArticleForThread
+from #ArticleForThread_Detail a
+
+
+--2.得到跟WH P03 一樣的對應方式
+SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
+		                                    from (
+			                                    select orderID from po_supp_Detail_orderList e
+			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2 AND orderID = '{orderID}'
+		                                    ) tmp for xml path(''))
+                                    ,1,1,'')
+									,[Article] = aft.Article
+INTO #tmpOrder_Article
+from #tmpOrder as orders WITH (NOLOCK) 
+inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
+left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
+left join #ArticleForThread aft on	aft.ID = m.POID		and
+									aft.SuppId	   = b.SuppId	and
+									aft.SCIRefNo   = a.SCIRefNo	and
+									aft.ColorID	   = a.ColorID	and
+									a.SEQ1 like 'T%' 
+WHERE  stuff((select concat('/',tmp.OrderID) 
+		                                    from (
+			                                    select orderID from po_supp_Detail_orderList e
+			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2 AND orderID = '{orderID}'
+		                                    ) tmp for xml path(''))
+                                    ,1,1,'') 
+IS NOT NULL 
+AND aft.Article IS NOT NULL
+
+--3.再回去Style_ThreadColorCombo串出需要的資料
+ select DISTINCT 
+ B.Article
+ from Orders o WITH (NOLOCK) 
+ inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+ inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
+ left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
+ where o.ID = '{POID}'
+ AND (
+     EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
+     OR
+     (SELECT COUNT(1) FROM #tmpOrder_Article) = 0
+ )
+--Order List如果是空，代表所有訂單都有用到這個物料
+
+
+
+DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Article
+";
+
+                    #endregion
+                    result = DBProxy.Current.Select(null, sql, out dtPrint_LeftColumn);
+                    if (!result) return result;
+                }
+
+                // 3.找出對應的Color，新單的話，由於是透過Order的StyleUkey去串出Article，母單子單都是相同StyleUkey
+                // 因此參考 WH P03 OrderList欄位，找出這個繡線被用在哪一些訂單
+                if (isNewOrder)
+                {
+                    #region 取得Article和對應的Color，只挑選出order List有的Article
+
+                    sql = $@"
+
+--1.從訂單串回物料
+select distinct StyleID,BrandID,POID,FtyGroup 
+into #tmpOrder
+from orders where id like '{orderID}'
+
+
+Select distinct [ID] = PO.POID
+, std.SuppId --Mapping PO_Supp
+, std.SCIRefNo, std.ColorID, std.Article --Mapping PO_Supp_Detail
+into #ArticleForThread_Detail
+From #tmpOrder PO
+Inner Join dbo.Orders as o On o.ID = po.POID 
+Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+Inner Join dbo.Style_ThreadColorCombo as st On st.StyleUkey = s.Ukey
+Inner Join dbo.Style_ThreadColorCombo_Detail as std On std.Style_ThreadColorComboUkey = st.Ukey
+
+
+
+select distinct
+a.ID,SuppId,SCIRefNo,ColorID,
+[Article] = Stuff((select distinct concat( ',',Article)   
+								from #ArticleForThread_Detail 
+								where	ID		   = a.ID		and
+										SuppId	   = a.SuppId	and
+										SCIRefNo   = a.SCIRefNo	and
+										ColorID	   = a.ColorID	
+								FOR XML PATH('')),1,1,'') 
+into #ArticleForThread
+from #ArticleForThread_Detail a
+
+
+--2.得到跟WH P03 一樣的對應方式
+SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
+		                                    from (
+			                                    select orderID from po_supp_Detail_orderList e
+			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2 AND orderID = '{orderID}'
+		                                    ) tmp for xml path(''))
+                                    ,1,1,'')
+									,[Article] = aft.Article
+INTO #tmpOrder_Article
+from #tmpOrder as orders WITH (NOLOCK) 
+inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
+left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
+left join #ArticleForThread aft on	aft.ID = m.POID		and
+									aft.SuppId	   = b.SuppId	and
+									aft.SCIRefNo   = a.SCIRefNo	and
+									aft.ColorID	   = a.ColorID	and
+									a.SEQ1 like 'T%' 
+WHERE  stuff((select concat('/',tmp.OrderID) 
+		                                    from (
+			                                    select orderID from po_supp_Detail_orderList e
+			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2 AND orderID = '{orderID}'
+		                                    ) tmp for xml path(''))
+                                    ,1,1,'') 
+IS NOT NULL 
+AND aft.Article IS NOT NULL
+
+--3.再回去Style_ThreadColorCombo串出需要的資料
+ select DISTINCT 
+ B.Article
+ , B.ColorID AS ThreadColorID
+ from Orders o WITH (NOLOCK) 
+ inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+ inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
+ left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
+ where o.ID = '{POID}'
+ AND (
+     EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
+     OR
+     (SELECT COUNT(1) FROM #tmpOrder_Article) = 0
+ )
+--Order List如果是空，代表所有訂單都有用到這個物料
+
+
+
+DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Article
+";
+
+                    #endregion
+                    result = DBProxy.Current.Select(null, sql, out dtPrint_Content);
+                    if (!result) return result;
+                }
+                else
+                {
+
+                    #region 重新找一次Article。Style_ThreadColorCombo的也要納入
+                    sql = $@"
+
+SELECT Article FROM
+(
+	select DISTINCT
+	  B.Article
+	, A.ThreadColorID
+	from Orders o WITH (NOLOCK) 
+	inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+	inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
+	left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
+	where o.ID = '{POID}' and article<>'' AND allOrder.ID='{orderID}'
+
+	UNION  --加上當地採購
+	SELECT DISTINCT 
+	[Artuicle] = IIF(BOA_Article.Article IS NULL 
+					,Order_Article.Article
+					,BOA_Article.Article 
+					)				
+
+	,[ThreadColorID]=PSD.SuppColor 
+	FROM PO_Supp_Detail PSD
+	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
+	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
+	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
+	OUTER APPLY(
+		SELECT oba.Article FROM Order_BOA ob
+		LEFT join Order_BOA_Article oba on oba.Order_BoAUkey = ob.Ukey
+		WHERE ob.id =psd.ID and ob.SCIRefno = psd.SCIRefno and ob.seq=psd.SEQ1
+	)BOA_Article
+	OUTER APPLY(
+		SELECT Article 
+		FROM Order_Article 
+		WHERE id =psd.ID
+	)Order_Article
+	WHERE PSD.ID ='{POID}' and f.MtltypeId like '%thread%' AND PSD.Junk=0 AND boa.Ukey IS NOT NULL AND pd.OrderID='{orderID}'
+)A
+WHERE ThreadColorID <> '' AND ThreadColorID IS NOT NULL
+
+UNION
+
+ select DISTINCT 
+ B.Article
+ from Orders o WITH (NOLOCK) 
+ inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+ inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
+ left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
+ where o.ID = '{POID}' 
+";
+
+                    result = DBProxy.Current.Select(null, sql, out dtPrint_LeftColumn);
+
+                    #endregion
+
+                    #region 找出對應的Article、Color，由於舊單的繡線物料不會直接顯示在Seq，因此無法按照新單的做法
+
+                    sql = $@"
+
+SELECT * FROM
+(
+	select 
+	  B.Article
+	, A.ThreadColorID
+	from Orders o WITH (NOLOCK) 
+	inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+	inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
+	left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
+	where o.ID = '{POID}' and article<>'' AND allOrder.ID= '{orderID}'
+	group by article, threadcolorid
+
+	UNION  --加上當地採購
+	SELECT DISTINCT 
+	[Artuicle] = IIF(BOA_Article.Article IS NULL 
+					,Order_Article.Article
+					,BOA_Article.Article 
+					)				
+
+	,[ThreadColorID]=PSD.SuppColor 
+	FROM PO_Supp_Detail PSD
+	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
+	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
+	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
+	OUTER APPLY(
+		SELECT oba.Article FROM Order_BOA ob
+		LEFT join Order_BOA_Article oba on oba.Order_BoAUkey = ob.Ukey
+		WHERE ob.id =psd.ID and ob.SCIRefno = psd.SCIRefno and ob.seq=psd.SEQ1
+	)BOA_Article
+	OUTER APPLY(
+		SELECT Article 
+		FROM Order_Article 
+		WHERE id =psd.ID
+	)Order_Article
+	WHERE PSD.ID ='{POID}' and f.MtltypeId like '%thread%' AND PSD.Junk=0 AND boa.Ukey IS NOT NULL  AND pd.OrderID='{orderID}'
+)A
+WHERE ThreadColorID <> '' AND ThreadColorID IS NOT NULL
+
+
+UNION 
+
+ select --o.ID,
+ B.Article
+ , B.ColorID AS ThreadColorID
+ from Orders o WITH (NOLOCK) 
+ inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+ inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
+ left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
+ where o.ID = '{POID}' --and article<>''
+ group by B.Article, B.ColorID-- ,o.ID
+
+
+ORDER BY ThreadColorID ASC
+";
+                    #endregion
+                    result = DBProxy.Current.Select(null, sql, out dtPrint_Content);
+                    if (!result) return result;
+                }
                 #endregion
             }
             #endregion
@@ -249,12 +550,12 @@ group by article, threadcolorid", POID);
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dtPrint.Rows.Count == 0)
+            if (dtPrint_Content.Rows.Count == 0)
             {
                 MessageBox.Show("Data not found!!");
                 return false;
             }
-            SetCount(dtPrint.Rows.Count);
+            SetCount(dtPrint_Content.Rows.Count);
             DualResult result = Result.True;
             //decimal intRowsCount = dtPrint.Rows.Count;
             //int page = Convert.ToInt16(Math.Ceiling(intRowsCount / 4));
@@ -286,8 +587,8 @@ group by article, threadcolorid", POID);
 
                 #region ROW1
                  if (radioOther.Checked)
-                    if(dtPrint2.Rows.Count > 1)
-                        tables.Cell(1, 1).Range.Text = string.Format("LABELLING & PACKAGING (SP# {0} - {1})", orderID, dtPrint2.Rows[dtPrint2.Rows.Count - 1]["id"].ToString().Substring(8));
+                    if(dtPrint_LeftColumn.Rows.Count > 1)
+                        tables.Cell(1, 1).Range.Text = string.Format("LABELLING & PACKAGING (SP# {0} - {1})", orderID, dtPrint_LeftColumn.Rows[dtPrint_LeftColumn.Rows.Count - 1]["id"].ToString().Substring(8));
                     else
                         tables.Cell(1, 1).Range.Text = string.Format("LABELLING & PACKAGING (SP# {0})", orderID);
                 else
@@ -335,8 +636,8 @@ group by article, threadcolorid", POID);
                 int CC, rC;
                 if (radioOther.Checked)
                 {
-                    CC = (dtPrint.Rows.Count - 1) / 6 + 1;
-                    rC = (dtPrint2.Rows.Count - 1) / 7 + 1;
+                    CC = (dtPrint_Content.Rows.Count - 1) / 6 + 1;
+                    rC = (dtPrint_LeftColumn.Rows.Count - 1) / 7 + 1;
                     pagecount = CC * rC;
                 }
                 else if (radioThread.Checked)
@@ -349,7 +650,7 @@ from (
     from #tmp
     group by Article
 ) tmp";
-                    DualResult resultMaxLength = MyUtility.Tool.ProcessWithDatatable(dtPrint, null, strDtPrintMaxLengthSQL, out dtMaxLength);
+                    DualResult resultMaxLength = MyUtility.Tool.ProcessWithDatatable(dtPrint_Content, null, strDtPrintMaxLengthSQL, out dtMaxLength);
                     if (resultMaxLength == false)
                     {
                         MyUtility.Msg.WarningBox(resultMaxLength.Description);
@@ -359,14 +660,14 @@ from (
                     {
                         intThreadMaxLength = Convert.ToInt32(dtMaxLength.Rows[0][0]);
                         CC = (intThreadMaxLength - 1) / 6 + 1;
-                        rC = (dtPrint2.Rows.Count - 1) / 4 + 1;
+                        rC = (dtPrint_LeftColumn.Rows.Count - 1) / 4 + 1;
                         pagecount = CC * rC;
                     }
                 }
                 else
                 {
-                    CC = (dtPrint.Rows.Count - 1) / 6 + 1;
-                    rC = (dtPrint2.Rows.Count - 1) / 4 + 1;
+                    CC = (dtPrint_Content.Rows.Count - 1) / 6 + 1;
+                    rC = (dtPrint_LeftColumn.Rows.Count - 1) / 4 + 1;
                     pagecount = CC * rC;
                 }
                 #endregion
@@ -390,11 +691,11 @@ from (
                 {
                     for (int j = 0; j < CC; j++)
                     {
-                        for (int i = 0; i < dtPrint2.Rows.Count; i++)
+                        for (int i = 0; i < dtPrint_LeftColumn.Rows.Count; i++)
                         {
                             //根據 DataRow 數量選取 Table, Dot DataRow = 4
                             tables = table[nextPage + (i / 4)];
-                            tables.Cell(4 + (i % 4), 1).Range.Text = dtPrint2.Rows[i]["Article"].ToString().Trim();
+                            tables.Cell(4 + (i % 4), 1).Range.Text = dtPrint_LeftColumn.Rows[i]["Article"].ToString().Trim();
                             //tables.Cell((i + 4 + 3 * (i / 4)) + rC * j * 7, 1).Range.Text = dtPrint2.Rows[i]["Article"].ToString().Trim();
                         }
                         nextPage += rC;
@@ -406,11 +707,11 @@ from (
                 {
                     for (int j = 0; j < CC; j++)
                     {
-                        for (int i = 0; i < dtPrint2.Rows.Count; i++)
+                        for (int i = 0; i < dtPrint_LeftColumn.Rows.Count; i++)
                         {
                             //根據 DataRow 數量選取 Table, Dot DataRow = 7
                             tables = table[nextPage + (i / 7)];
-                            tables.Cell(4 + (i % 7), 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim().Substring(8); ;
+                            tables.Cell(4 + (i % 7), 1).Range.Text = dtPrint_LeftColumn.Rows[i]["ID"].ToString().Trim().Substring(8); ;
                             //tables.Cell(i + 4 + (3 * (i / 7)) + rC * j * 10, 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim().Substring(8);
                         }
                         nextPage += rC;
@@ -426,13 +727,13 @@ from (
 
                 if (radioFabric.Checked)
                 {
-                    for (int i = 0; i < dtPrint.Rows.Count; i++)
+                    for (int i = 0; i < dtPrint_Content.Rows.Count; i++)
                     {
                         #region 準備欄位名稱
-                        temp = "Pattern Panel:" + dtPrint.Rows[i]["FabricPanelCode"].ToString() + Environment.NewLine
-                             + "Fabric Code:" + dtPrint.Rows[i]["FabricCode"].ToString().Trim() + Environment.NewLine
-                             + dtPrint.Rows[i]["Refno"].ToString().Trim() + Environment.NewLine
-                             + dtPrint.Rows[i]["Description"].ToString().Trim();
+                        temp = "Pattern Panel:" + dtPrint_Content.Rows[i]["FabricPanelCode"].ToString() + Environment.NewLine
+                             + "Fabric Code:" + dtPrint_Content.Rows[i]["FabricCode"].ToString().Trim() + Environment.NewLine
+                             + dtPrint_Content.Rows[i]["Refno"].ToString().Trim() + Environment.NewLine
+                             + dtPrint_Content.Rows[i]["Description"].ToString().Trim();
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
@@ -447,11 +748,11 @@ from (
                         #endregion
 
                         #region 填入Datas
-                        for (int k = 0; k < dtPrint2.Rows.Count; k++)
+                        for (int k = 0; k < dtPrint_LeftColumn.Rows.Count; k++)
                         {
                             //準備filter字串
                             sql = string.Format(@"FabricPanelCode='{0}' and Article='{1}'"
-                                , dtPrint.Rows[i]["FabricPanelCode"].ToString().Trim(), dtPrint2.Rows[k]["Article"].ToString().Trim());
+                                , dtPrint_Content.Rows[i]["FabricPanelCode"].ToString().Trim(), dtPrint_LeftColumn.Rows[k]["Article"].ToString().Trim());
                             if (dtColor.Select(sql).Length > 0)
                             {//找出對應的Datas組起來
                                 rowColor = dtColor.Select(sql)[0];
@@ -474,11 +775,11 @@ from (
                 }
                 else if (radioAccessory.Checked) 
                 {
-                    for (int i = 0; i < dtPrint.Rows.Count; i++)
+                    for (int i = 0; i < dtPrint_Content.Rows.Count; i++)
                     {
                         #region 準備欄位名稱
-                        temp = dtPrint.Rows[i]["Refno"].ToString() + Environment.NewLine
-                             + dtPrint.Rows[i]["Description"].ToString().Trim();
+                        temp = dtPrint_Content.Rows[i]["Refno"].ToString() + Environment.NewLine
+                             + dtPrint_Content.Rows[i]["Description"].ToString().Trim();
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
@@ -492,11 +793,11 @@ from (
                         }
                         #endregion
                         #region 填入Datas
-                        for (int k = 0; k < dtPrint2.Rows.Count; k++)
+                        for (int k = 0; k < dtPrint_LeftColumn.Rows.Count; k++)
                         {
                             //準備filter字串
                             sql = string.Format(@"Refno='{0}' and Article='{1}'"
-                                , dtPrint.Rows[i]["Refno"].ToString().Trim(), dtPrint2.Rows[k]["Article"].ToString().Trim());
+                                , dtPrint_Content.Rows[i]["Refno"].ToString().Trim(), dtPrint_LeftColumn.Rows[k]["Article"].ToString().Trim());
                             if (dtColor.Select(sql).Length > 0)
                             {
                                 rowColor = dtColor.Select(sql)[0];
@@ -519,11 +820,11 @@ from (
                 }
                 else if (radioOther.Checked)
                 {
-                    for (int i = 0; i < dtPrint.Rows.Count; i++)
+                    for (int i = 0; i < dtPrint_Content.Rows.Count; i++)
                     {
                         #region 準備欄位名稱
-                        temp = dtPrint.Rows[i]["Refno"].ToString() + Environment.NewLine
-                             + dtPrint.Rows[i]["DescDetail"].ToString().Trim();
+                        temp = dtPrint_Content.Rows[i]["Refno"].ToString() + Environment.NewLine
+                             + dtPrint_Content.Rows[i]["DescDetail"].ToString().Trim();
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
@@ -553,14 +854,14 @@ from (
                         }
                     }
                     #region 填入Datas
-                    for (int k = 0; k < dtPrint2.Rows.Count; k++)
+                    for (int k = 0; k < dtPrint_LeftColumn.Rows.Count; k++)
                     {
                         //準備filter字串
                         sql = string.Format(@"Article='{0}'"
-                            ,dtPrint2.Rows[k]["Article"].ToString().Trim());
-                        if (dtPrint.Select(sql).Length > 0)
+                            ,dtPrint_LeftColumn.Rows[k]["Article"].ToString().Trim());
+                        if (dtPrint_Content.Select(sql).Length > 0)
                         {
-                            DataRow[] rowColorA = dtPrint.Select(sql);
+                            DataRow[] rowColorA = dtPrint_Content.Select(sql);
                             for (int l = 0; l < rowColorA.Count(); l++)
                             {
                                 //填入字串

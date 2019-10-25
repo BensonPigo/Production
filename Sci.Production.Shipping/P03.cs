@@ -33,23 +33,71 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select (case when ed.PoType = 'M' and ed.FabricType = 'M' then (select TOP 1 mpo.FactoryID from [Machine].dbo.MachinePO mpo, [Machine].dbo.MachinePO_Detail mpod where mpo.ID = mpod.ID and mpod.ID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2)
-             when ed.PoType = 'M' and ed.FabricType = 'P' then (select TOP 1 ppo.FactoryID from [Machine].dbo.PartPO ppo, [Machine].dbo.PartPO_Detail ppod where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2) 
-			 when ed.PoType = 'M' and ed.FabricType = 'O' then (select TOP 1 mpo.Factoryid from [Machine].dbo.MiscPO mpo, [Machine].dbo.MiscPO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2) else o.FactoryID end) as FactoryID,
-o.ProjectID,ed.PoID,(select min(SciDelivery) from Orders WITH (NOLOCK) where POID = ed.PoID and (Category = 'B' or Category = o.Category)) as SCIDlv,
-(case when o.Category = 'B' then 'Bulk' when o.Category = 'S' then 'Sample' when o.Category = 'M' then 'Material' when o.Category = 'T' then 'Material' else '' end) as Category,
-iif(o.PFOrder = 1,dateadd(day,-10,o.SciDelivery),iif((select CountryID from Factory WITH (NOLOCK) where ID = o.factoryID)='PH',iif((select MrTeam from Brand WITH (NOLOCK) where ID = o.BrandID) = '01',dateadd(day,-15,o.SciDelivery),dateadd(day,-24,o.SciDelivery)),dateadd(day,-34,o.SciDelivery))) as InspDate,
-(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+s.AbbEN) as Supp,
-iif(ed.Description = '',isnull(f.DescDetail,''),ed.Description) as Description,
-(case when ed.PoType = 'M' and ed.FabricType = 'M' then 'Machine' when ed.PoType = 'M' and ed.FabricType = 'P' then 'Part' when ed.PoType = 'M' and ed.FabricType = 'O' then 'Miscellaneous' else '' end) as FabricType,
-ed.UnitId,isnull(psd.ColorID,'') as ColorID,isnull(psd.SizeSpec,'') as SizeSpec,ed.Qty,ed.Foc,ed.BalanceQty,
-ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey,rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as FindColumn,
-Preshrink = iif(f.Preshrink = 1, 'V' ,'')
+                @"
+select 
+[FactoryID] = (
+	case when ed.PoType = 'M' and ed.FabricType = 'M' 
+		then (
+			select TOP 1 mpo.FactoryID 
+			from [Machine].dbo.MachinePO mpo, [Machine].dbo.MachinePO_Detail mpod 
+			where mpo.ID = mpod.ID and mpod.ID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2
+		)
+        when ed.PoType = 'M' and ed.FabricType = 'P' 
+		 then (
+			select TOP 1 ppo.FactoryID 
+			from [Machine].dbo.PartPO ppo, [Machine].dbo.PartPO_Detail ppod 
+			where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2
+		) 
+		when ed.PoType = 'M' and ed.FabricType = 'O' 
+		then (
+			select TOP 1 mpo.Factoryid 
+			from [Machine].dbo.MiscPO mpo, [Machine].dbo.MiscPO_Detail mpod 
+			where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2
+		) 
+	else o.FactoryID end)
+,o.ProjectID
+,ed.PoID
+,[SCIDlv] = (select min(SciDelivery) from Orders WITH (NOLOCK) where POID = ed.PoID and (Category = 'B' or Category = o.Category))
+,[Category] = (
+	case when o.Category = 'B' then 'Bulk' 
+		 when o.Category = 'S' then 'Sample' 
+		 when o.Category = 'M' then 'Material'
+		 when o.Category = 'T' then 'Material' 
+	else '' end)
+,[InspDate] =iif(o.PFOrder = 1,dateadd(day,-10,o.SciDelivery)
+	,iif((select CountryID from Factory WITH (NOLOCK) where ID = o.factoryID)='PH'
+	,iif((select MrTeam from Brand WITH (NOLOCK) where ID = o.BrandID) = '01',dateadd(day,-15,o.SciDelivery),dateadd(day,-24,o.SciDelivery))
+	,dateadd(day,-34,o.SciDelivery)))
+,[Seq] = (SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2)
+,[Supp] = (ed.SuppID+'-'+s.AbbEN) 
+,[Description] = iif(ed.Description = '',isnull(f.DescDetail,''),ed.Description)
+,[FabricType] = (
+	case when ed.PoType = 'M' and ed.FabricType = 'M' then 'Machine' 
+		 when ed.PoType = 'M' and ed.FabricType = 'P' then 'Part' 
+		 when ed.PoType = 'M' and ed.FabricType = 'O' then 'Miscellaneous' 
+	else '' end)
+,ed.UnitId
+,isnull(psd.ColorID,'') as ColorID
+,isnull(psd.SizeSpec,'') as SizeSpec
+,ed.Qty
+,ed.Foc
+,ed.BalanceQty
+,ed.NetKg
+,ed.WeightKg
+,iif(ed.IsFormA = 1,'Y','') as IsFormA
+,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey
+,[FindColumn] = rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2)
+,[Preshrink] = iif(f.Preshrink = 1, 'V' ,'')
+,c.FormXPayINV
+,c.COName
+,c.ReceiveDate
+,c.SendDate
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join CertOfOrigin c WITH (NOLOCK) on c.SuppID=ed.SuppID and c.FormXPayINV=ed.FormXPayINV
 where ed.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -79,8 +127,48 @@ where ed.ID = '{0}'", masterID);
                     break;
             }
 
-            decimal intPrepaidFtyImportFee = MyUtility.Convert.GetDecimal(this.CurrentMaintain["PrepaidFtyImportFee"]);
+            string sqlmainPrepaidFtyImportFee = $@"
+select PrepaidFtyImportFee
+from Export
+where ID = '{this.CurrentMaintain["MainExportID08"]}'
+";
+
+            decimal intPrepaidFtyImportFee = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlmainPrepaidFtyImportFee));
             this.chkImportChange.Enabled = !(intPrepaidFtyImportFee > 0);
+            #region Declaration ID
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["Blno"]))
+            {
+                string sqlcmd = $@"select ID from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 0";
+                this.displayDeclarationID.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            else
+            {
+                this.displayDeclarationID.Text = string.Empty;
+            }
+
+            if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
+            {
+                string sqlcmd = $@"select ID from VNImportDeclaration where WKNo='{this.CurrentMaintain["ID"]}' and IsFtyExport = 0";
+                this.displayDeclarationID.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            #endregion
+            #region CustomsDeclareNo
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["Blno"]))
+            {
+                string sqlcmd = $@"select DeclareNo from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 0";
+                this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            else
+            {
+                this.displayCustomsDeclareNo.Text = string.Empty;
+            }
+
+            if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
+            {
+                string sqlcmd = $@"select DeclareNo from VNImportDeclaration where WKNo='{this.CurrentMaintain["ID"]}' and IsFtyExport = 0";
+                this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -104,14 +192,13 @@ where ed.ID = '{0}'", masterID);
                 .Numeric("Qty", header: "Export Q'ty", decimal_places: 2, width: Widths.AnsiChars(5))
                 .Numeric("Foc", header: "F.O.C.", decimal_places: 2, width: Widths.AnsiChars(2))
                 .Numeric("BalanceQty", header: "Balance", decimal_places: 2, width: Widths.AnsiChars(2))
-
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2)
-                .Text("IsFormA", header: "FormX Needed", width: Widths.AnsiChars(1))
-                .Text("FormXType", header: "FormX Type", width: Widths.AnsiChars(8))
-                .Date("FormXReceived", header: "FoemX Rcvd")
-                .Date("FormXDraftCFM", header: "FormX Sent")
-                .EditText("FormXINV", header: "FormX Invoice No.");
+                .Text("FormXPayINV", header: "Payment Invoice#", width: Widths.AnsiChars(16))
+                .Text("COName", header: "Form C/O Name", width: Widths.AnsiChars(15))
+                .Date("ReceiveDate", header: "Form Rcvd Date", width: Widths.AnsiChars(10))
+                .Date("SendDate", header: "Form Send Date", width: Widths.AnsiChars(10))
+                ;
         }
 
         /// <inheritdoc/>

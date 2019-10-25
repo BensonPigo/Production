@@ -94,7 +94,8 @@ t.AddName= s.AddName,
 t.AddDate= s.AddDate,
 t.EditName= s.EditName,
 t.EditDate= s.EditDate,
-t.DescriptionDetail = s.DescriptionDetail
+t.DescriptionDetail = s.DescriptionDetail,
+t.PurchaseBatchQty = s.BatchQty
 
 	when not matched by target and s.type='O' then 
 		insert ( ID
@@ -116,7 +117,8 @@ t.DescriptionDetail = s.DescriptionDetail
 ,AddDate
 ,EditName
 ,EditDate
-,DescriptionDetail	)
+,DescriptionDetail
+,PurchaseBatchQty	)
 
 values(s.refno,
 s.Model,
@@ -137,7 +139,8 @@ s.AddName,
 s.AddDate,
 s.EditName,
 s.EditDate,
-s.DescriptionDetail
+s.DescriptionDetail,
+s.BatchQty
  );
 
  
@@ -343,7 +346,12 @@ s.DescriptionDetail
 	SET TPEPOID = B.id,
 	SEQ1=b.Seq1,
 	SuppDelivery=b.SuppDelivery,
-	EstETA=b.EstETA
+	EstETA=b.EstETA,
+	TPEQty = B.Qty,
+	Foc = B.Foc,
+	ShipQty = B.ShipQty,
+	ShipFoc = B.ShipFoc,
+	ShipETA = B.ShipETA
 	FROM Machine.DBO.MiscPO_Detail A
 	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on  a.MiscID=b.Refno 
 													and  a.SEQ2=b.Seq2 
@@ -351,6 +359,12 @@ s.DescriptionDetail
 	INNER JOIN  Trade_To_Pms.DBO.MmsPO C ON B.ID=C.ID
 	WHERE C.Type ='O'
 	and C.FactoryID in (select id from @Sayfty)
+
+	UPDATE a
+	SET Junk = b.Cancel
+	FROM Machine.dbo.MiscPO_Detail a
+	INNER JOIN Trade_To_Pms.dbo.MmsReq_Detail b ON a.ID = b.ID
+
 	-- ------------MachinePO--------------------
 	declare @T table (id varchar(13))
 
@@ -410,7 +424,13 @@ update t
 		t.seq1=s.seq1,
 		t.SuppDelivery=s.SuppDelivery,
 		t.EstETA=s.EstETA,
-		t.Complete = isnull(s.Complete,0)
+		t.Complete = isnull(s.Complete,0),
+		t.TPEQty=s.Qty,
+		t.Foc=s.Foc,
+		t.ShipQty=s.ShipQty,
+		t.ShipFoc=s.ShipFoc,
+		t.ShipETA=s.ShipETA,
+		t.Junk = s.Junk
 		from  Machine.dbo.MiscPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
@@ -440,12 +460,71 @@ update t
 				t.DescriptionDetail = s.DescriptionDetail,
 				t.UnitID = s.UnitID,
 				t.Delivery = s.Delivery,
-				t.SuppEstETA = s.SuppEstETA
+				t.SuppEstETA = s.SuppEstETA,
+				t.Complete = s.Complete,
+				t.ShipQty = isnull(s.ShipQty,0),
+				t.ShipFOC = isnull(s.ShipFOC,0),
+				t.ShipETA = s.ShipETA 
 		when not matched by target then
 		insert  (ID ,Seq1 ,Seq2 ,MasterGroupID ,MachineGroupID ,MachineBrandID ,Model ,Description 
-				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA)
+				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA
+				,Complete , ShipQty, ShipFOC,ShipETA)
 		values	(s.ID ,s.Seq1 ,s.Seq2 ,s.MasterGroupID ,s.MachineGroupID ,s.MachineBrandID ,s.Model ,s.Description
-				 ,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA);
+				 ,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA
+				 ,s.Complete ,s.ShipQty ,s.ShipFOC ,s.ShipETA);
+
+------------------MachinePO_Detail_TPEAP----------------------
+	Merge	Machine.[dbo].[MachinePO_Detail_TPEAP] as t
+	using	(select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty), b.ExportID
+				from Machine.[dbo].[MachinePO_Detail] a
+				inner join Trade_To_PMS.dbo.MmsAP b on a.ID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
+				group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price, b.ExportID
+				) as s
+	on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2 and t.TPEPOID = s.TPEPOID and t.ExportID = s.ExportID
+	when matched then 
+		update	set	t.APDATE = s.APDATE,
+					t.VoucherID = s.VoucherID,
+					t.Price = s.Price,
+					t.Qty = s.Qty
+	when not matched by target then
+		insert	(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty,ExportID)
+			values(s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty,s.ExportID);
+
+------------------MiscPO_Detail_TPEAP----------------------
+	Merge	Machine.[dbo].[MiscPO_Detail_TPEAP] as t
+	using	(select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty) 
+				from Machine.[dbo].[MiscPO_Detail] a
+				inner join Trade_To_PMS.dbo.MmsAP b on a.ID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
+				group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price
+				) as s
+	on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
+	when matched then 
+		update	set	t.TPEPOID = s.TPEPOID,
+					t.APDATE = s.APDATE,
+					t.VoucherID = s.VoucherID,
+					t.Price = s.Price,
+					t.Qty = s.Qty
+	when not matched by target then
+		insert	(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty)
+			values(s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty);
+
+------------------PartPO_Detail_TPEAP----------------------
+	Merge	Machine.[dbo].[PartPO_Detail_TPEAP] as t
+	using	(select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty) 
+				from Machine.[dbo].[PartPO_Detail] a
+				inner join Trade_To_PMS.dbo.MmsAP b on a.ID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
+				group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price
+				) as s
+	on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
+	when matched then 
+		update	set	t.TPEPOID = s.TPEPOID,
+					t.APDATE = s.APDATE,
+					t.VoucherID = s.VoucherID,
+					t.Price = s.Price,
+					t.Qty = s.Qty
+	when not matched by target then
+		insert	(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty)
+			values(s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty);
 
 	--------------Partunit-------------------------------
 		Merge [Machine].[dbo].[MMSUnit] as t
@@ -643,4 +722,37 @@ update t
 			(s.Ukey    , s.RefNo , s.HisType 	, s.OldValue , s.NewValue 		
 			, s.Remark 	 , s.AddName , s.AddDate 		);
 	
+	------------MachinePending------------------
+	Merge Machine.dbo.MachinePending  as t
+		using Trade_To_Pms.dbo.MachinePending as s 
+		on t.id=s.id
+		when matched and t.status = 'Confirmed' then update set 
+			t.TPEComplete = s.TPEComplete
+	;
+	
+	------------MachinePending_Detail------------------
+	declare @Tdebit table(id varchar(13),MachineID varchar(16),TPEReject int)
+	Merge Machine.dbo.MachinePending_Detail  as t
+	using (
+		select md.*,m.status
+		from Trade_To_Pms.dbo.MachinePending_Detail md
+		inner join Machine.dbo.MachinePending m on m.id = md.id
+	)as s 
+	on t.id=s.id and t.seq = s.seq
+	when matched and s.status = 'Confirmed' and s.TPEApvDate is not null then update set 
+		t.TPEReject = s.TPEReject
+	output inserted.ID,inserted.MachineID,inserted.TPEReject
+	into @Tdebit
+	;
+
+	update Machine.dbo.Machine set Status = 'Pending',EstFinishRepairDate =null where ID in (select MachineID from @Tdebit where TPEReject = 0)  
+
+	update m set m.Status = 'Good'
+	from Machine.dbo.Machine m
+	where exists(select 1 from @Tdebit t where t.MachineID = m.ID and TPEReject = 1)
+
+	update md set Results = 'Reject'
+	from MachinePending_Detail md
+	where exists(select 1 from @Tdebit t where t.ID = md.ID and t.MachineID = md.MachineID and TPEReject = 1)
+
 	END

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -59,6 +60,56 @@ where ed.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            if (this.radio3rdCountry.Checked || this.radioTransferIn.Checked || this.radioLocalPurchase.Checked)
+            {
+                this.lbDeclareation.Text = "Import Declaration ID";
+                #region Declaration ID
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["Blno"]))
+                {
+                    string sqlcmd = $@"select ID from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 1";
+                    this.displayDeclarationID.Text = MyUtility.GetValue.Lookup(sqlcmd);
+                }
+                else
+                {
+                    this.displayDeclarationID.Text = string.Empty;
+                }
+
+                if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
+                {
+                    string sqlcmd = $@"select ID from VNImportDeclaration where WKNo='{this.CurrentMaintain["ID"]}' and IsFtyExport = 1";
+                    this.displayDeclarationID.Text = MyUtility.GetValue.Lookup(sqlcmd);
+                }
+                #endregion
+                #region CustomsDeclareNo
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["Blno"]))
+                {
+                    string sqlcmd = $@"select DeclareNo from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 1";
+                    this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
+                }
+                else
+                {
+                    this.displayCustomsDeclareNo.Text = string.Empty;
+                }
+
+                if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
+                {
+                    string sqlcmd = $@"select DeclareNo from VNImportDeclaration where WKNo='{this.CurrentMaintain["ID"]}' and IsFtyExport = 1";
+                    this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
+                }
+                #endregion
+            }
+            else if (this.radioTransferOut.Checked)
+            {
+                this.lbDeclareation.Text = "Export Declaration ID";
+                this.displayDeclarationID.Text = string.Empty;
+                this.displayCustomsDeclareNo.Text = string.Empty;
+            }
+
+        }
+
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
@@ -92,6 +143,8 @@ where ed.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            string sqlCmd = string.Empty;
+            DataTable _dataTable = new DataTable();
             #region 存檔不可為空判斷
 
             // Type = 3 (Transfer out) Arrive Port Date and Dox Rcv Date 可以為空
@@ -207,7 +260,7 @@ where ed.ID = '{0}'", masterID);
                     return false;
                 }
 
-                string sqlCmd = string.Format("select ID from FtyExport WITH (NOLOCK) where BLNo = '{0}' and ID != '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                sqlCmd = string.Format("select ID from FtyExport WITH (NOLOCK) where BLNo = '{0}' and ID != '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
                     this.txtBLAWBNo.Focus();
@@ -231,6 +284,25 @@ where ed.ID = '{0}'", masterID);
                 {
                     nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NetKg"]), 2);
                     gw = MyUtility.Math.Round(gw + MyUtility.Convert.GetDouble(dr["WeightKg"]), 2);
+                }
+            }
+
+            // 檢查已存在ShareExpense資料是否[Shipping Mode]是否不同
+            sqlCmd = string.Format(
+                  @"select distinct ShipModeID
+                            from ShareExpense WITH (NOLOCK) 
+                            where (InvNo = '{0}' or WKNO = '{0}')
+                            and len(ShipModeID) > 0",
+                  MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            DBProxy.Current.Select(null, sqlCmd, out _dataTable);
+            if (_dataTable.Rows.Count > 0)
+            {
+                bool bolHasValue = _dataTable.AsEnumerable().Where(x => x["ShipModeID"].Equals(this.comboShippMode.SelectedValue.ToString())).ToList().Count() > 0;
+                if (!bolHasValue)
+                {
+                    MyUtility.Msg.WarningBox("Can not revise < Shipping Mode > because share expense shipping mode is different.");
+                    this.comboShippMode.SelectedIndex = -1;
+                    return false;
                 }
             }
 

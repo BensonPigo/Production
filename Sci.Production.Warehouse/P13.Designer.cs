@@ -343,6 +343,7 @@
             this.txtwhseReason.TextBox1Binding = "";
             this.txtwhseReason.Type = "IR";
             this.txtwhseReason.Enter += new System.EventHandler(this.txtwhseReason_Enter);
+            this.txtwhseReason.Leave += new System.EventHandler(this.txtwhseReason_Leave);
             this.txtwhseReason.Validated += new System.EventHandler(this.txtwhseReason_Validated);
             // 
             // P13

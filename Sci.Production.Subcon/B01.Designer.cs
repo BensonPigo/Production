@@ -84,6 +84,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.btnBatchApprove = new Sci.Win.UI.Button();
             this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
+            this.chkIsCarton = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -100,6 +101,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsCarton);
             this.detailcont.Controls.Add(this.txtAccountNo);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txtunit_ftyUnit);
@@ -862,6 +864,9 @@
             this.txtSubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtSubconSupplier.DisplayBox1Binding = "";
             this.txtSubconSupplier.IsIncludeJunk = false;
+            this.txtSubconSupplier.isMisc = false;
+            this.txtSubconSupplier.isShipping = false;
+            this.txtSubconSupplier.isSubcon = false;
             this.txtSubconSupplier.Location = new System.Drawing.Point(93, 130);
             this.txtSubconSupplier.Name = "txtSubconSupplier";
             this.txtSubconSupplier.Size = new System.Drawing.Size(159, 23);
@@ -920,6 +925,18 @@
             this.txtAccountNo.TabIndex = 23;
             this.txtAccountNo.TextBox1Binding = "";
             // 
+            // chkIsCarton
+            // 
+            this.chkIsCarton.AutoSize = true;
+            this.chkIsCarton.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsCarton", true));
+            this.chkIsCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsCarton.Location = new System.Drawing.Point(334, 41);
+            this.chkIsCarton.Name = "chkIsCarton";
+            this.chkIsCarton.Size = new System.Drawing.Size(83, 21);
+            this.chkIsCarton.TabIndex = 24;
+            this.chkIsCarton.Text = "Is Carton";
+            this.chkIsCarton.UseVisualStyleBackColor = true;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 527);
@@ -935,6 +952,7 @@
             this.IsSupportPrint = false;
             this.IsSupportUnclose = true;
             this.Name = "B01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B01. Local Purchase Item";
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "refno";
@@ -1018,5 +1036,6 @@
         private Win.UI.Button btnBatchApprove;
         private Win.UI.Button btnSetCardboardPads;
         private Class.txtAccountNo txtAccountNo;
+        private Win.UI.CheckBox chkIsCarton;
     }
 }

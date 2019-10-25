@@ -72,17 +72,21 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14))
                 .Text("OriginalStyleID", header: "Style", width: Widths.AnsiChars(14))
+                .Text("OriginalCustPONo", header: "PO No.", width: Widths.AnsiChars(14))
                 .Numeric("OriginalQty", header: "Order\r\nQty", settings: this.oriqty, width: Widths.AnsiChars(5))
                 .Text("OriginalBuyerDelivery", header: "Buyer\r\nDel", width: Widths.AnsiChars(5))
                 .Text("OriginalSCIDelivery", header: "SCI\r\nDel", width: Widths.AnsiChars(5))
                 .Text("OriginalLETA", header: "SCHD L/ETA\r\n(Master SP)")
+                .Text("OriginalShipModeList", header: "Ship Mode", width: Widths.AnsiChars(10))
                 .Text("KPILETA", header: "KPI\r\nL/ETA", width: Widths.AnsiChars(5))
                 .Text(string.Empty, header: string.Empty, width: Widths.AnsiChars(0))
                 .Text("TransferToFactory", header: "Transfer to", width: Widths.AnsiChars(8))
+                .Text("NewCustPONo", header: "PO No.", width: Widths.AnsiChars(14))
                 .Numeric("NewQty", header: "Order\r\nQty", settings: this.newqty, width: Widths.AnsiChars(5))
                 .Text("NewBuyerDelivery", header: "Buyer\r\nDel", width: Widths.AnsiChars(5))
                 .Text("NewSCIDelivery", header: "SCI\r\nDel", width: Widths.AnsiChars(5))
                 .Text("NewLETA", header: "SCHD L/ETA\r\n(Master SP)")
+                .Text("NewShipModeList", header: "Ship Mode", width: Widths.AnsiChars(10))
                 .Text("NewOrder", header: "New", width: Widths.AnsiChars(1))
                 .Text("DeleteOrder", header: "Dele", width: Widths.AnsiChars(1))
                 .Text("JunkOrder", header: "Junk", width: Widths.AnsiChars(1))
@@ -131,12 +135,16 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
 select FactoryID
 	   , OrderId
 	   , OriginalStyleID
+       , OriginalCustPONo
 	   , OriginalQty
 	   , OriginalBuyerDelivery = RIGHT(CONVERT(VARCHAR(20),OriginalBuyerDelivery,111),5)
 	   , OriginalSCIDelivery = RIGHT(CONVERT(VARCHAR(20),OriginalSCIDelivery,111),5)
 	   , OriginalLETA = RIGHT(CONVERT(VARCHAR(20),OriginalLETA,111),5)
+	   , OriginalShipModeList
+       , NewShipModeList
 	   , KPILETA = RIGHT(CONVERT(VARCHAR(20),KPILETA,111),5)
 	   , TransferToFactory
+       , NewCustPONo
 	   , NewQty
 	   , NewBuyerDelivery = RIGHT(CONVERT(VARCHAR(20),NewBuyerDelivery,111),5)
 	   , NewSCIDelivery = RIGHT(CONVERT(VARCHAR(20),NewSCIDelivery,111),5)
@@ -198,7 +206,7 @@ order by FactoryID,OrderId";
             DataTable excelTable;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "FactoryID,OrderId,OriginalStyleID,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,KPILETA,TransferToFactory,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewOrder,DeleteOrder,JunkOrder,CMPQDate,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out excelTable);
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "FactoryID,OrderId,OriginalStyleID,OriginalCustPONo,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,OriginalShipModeList,KPILETA,TransferToFactory,NewCustPONo,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewShipModeList,NewOrder,DeleteOrder,JunkOrder,CMPQDate,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out excelTable);
             }
             catch (Exception ex)
             {
@@ -222,34 +230,48 @@ order by FactoryID,OrderId";
                 number++;
             }
 
-            objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].LineStyle 
+                = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].Weight = 2;
+
             objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
             objApp.get_Range("B" + 4, "B" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("B" + 4, "B" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("H" + 4, "H" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("H" + 4, "H" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("M" + 4, "M" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("M" + 4, "M" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("N" + 4, "N" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("N" + 4, "N" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("O" + 4, "O" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("O" + 4, "O" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("P" + 4, "P" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("P" + 4, "P" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
+            objApp.get_Range("J" + 4, "J" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("J" + 4, "J" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
             objApp.get_Range("Q" + 4, "Q" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("Q" + 4, "Q" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
             objApp.get_Range("R" + 4, "R" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("R" + 4, "R" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
             objApp.get_Range("S" + 4, "S" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("S" + 4, "S" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
             objApp.get_Range("T" + 4, "T" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("T" + 4, "T" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
             objApp.get_Range("U" + 4, "U" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("U" + 4, "U" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("A" + number, "U" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("A" + number, "U" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
+
+            objApp.get_Range("V" + 4, "V" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("V" + 4, "V" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
+            objApp.get_Range("W" + 4, "W" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("W" + 4, "W" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
+            objApp.get_Range("X" + 4, "X" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("X" + 4, "X" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
+            objApp.get_Range("Y" + 4, "Y" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("Y" + 4, "Y" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
+            objApp.get_Range("A" + number, "Y" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("A" + number, "Y" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P02");

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace Sci.Production.IE
 {
@@ -74,6 +75,9 @@ namespace Sci.Production.IE
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
+            bool existsChgOver_Check = MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
+            this.btnCheckList.ForeColor = existsChgOver_Check ? Color.Blue : Color.Black;
 
             string brand = string.Format(
                 @"SELECT BrandID FROM Orders WITH (NOLOCK) 
@@ -302,70 +306,62 @@ order by OutputDate
         // Check List
         private void BtnCheckList_Click(object sender, EventArgs e)
         {
+            string sqlWhere = "(UseFor = 'R' or UseFor = 'A')";
             if (this.CurrentMaintain["Type"].ToString() == "N")
             {
-                if (this.type == "1")
-                {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())))
-                    {
-                        // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                        sp1.ParameterName = "@id";
-                        sp1.Value = this.CurrentMaintain["ID"].ToString();
-                        sp2.ParameterName = "@orderid";
-                        sp2.Value = this.CurrentMaintain["OrderID"].ToString();
-
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                        cmds.Add(sp1);
-                        cmds.Add(sp2);
-
-                        string insertCmd = @"insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
-select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'N' or UseFor = 'A') and BrandID = (select BrandID from Orders where ID = @orderid) and Junk = 0";
-                        DualResult result = DBProxy.Current.Execute(null, insertCmd, cmds);
-                        if (!result)
-                        {
-                            MyUtility.Msg.ErrorBox("Insert ChgOver_CheckList fail!!\r\n" + result.ToString());
-                            return;
-                        }
-                    }
-                }
-
-                Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(this.CurrentMaintain["Status"].ToString() == "New", this.CurrentMaintain["ID"].ToString(), null, null);
-                callNextForm.ShowDialog(this);
+                sqlWhere = "(UseFor = 'N' or UseFor = 'A') ";
             }
-            else
+
+            if (this.type == "1" &&
+                   !MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())))
             {
-                if (this.type == "1")
+                // sql參數
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+                sp1.ParameterName = "@id";
+                sp1.Value = this.CurrentMaintain["ID"].ToString();
+                sp2.ParameterName = "@orderid";
+                sp2.Value = this.CurrentMaintain["OrderID"].ToString();
+                sp3.ParameterName = "@ChangeOverDate";
+                sp3.Value = this.txtInLineDate.Text;
+                sp3.DbType = DbType.Date;
+
+                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                cmds.Add(sp1);
+                cmds.Add(sp2);
+                cmds.Add(sp3);
+
+                string insertCmd = $@"
+                    declare @SCIDeliver as date, @BrandID as varchar(20), @FactoryID as varchar(20)  
+                    select @BrandID = BrandID,@SCIDeliver = SCIDelivery,@FactoryID = FactoryID from Orders where ID = @orderid
+
+                    insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID,ScheduleDate)
+                    select @id,DaysBefore,BaseOn,ID 
+                        ,	case BaseOn 
+		                        when '1' then dbo.CalculateSchdeuleDate(@ChangeOverDate,DaysBefore,@FactoryID,1)
+	                        else dbo.CalculateSchdeuleDate(@SCIDeliver,DaysBefore,@FactoryID,1)
+	                        end [SchdeuleDate]
+                    from ChgOverCheckList 
+                    where  {sqlWhere}
+                            and (
+                                BrandID = @BrandID
+                                or 
+                                BrandID is null
+                                or
+                                BrandID = ''
+                            )
+                            and Junk = 0";
+                DualResult result = DBProxy.Current.Execute(null, insertCmd, cmds);
+                if (!result)
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())))
-                    {
-                        // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                        sp1.ParameterName = "@id";
-                        sp1.Value = this.CurrentMaintain["ID"].ToString();
-                        sp2.ParameterName = "@orderid";
-                        sp2.Value = this.CurrentMaintain["OrderID"].ToString();
-
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                        cmds.Add(sp1);
-                        cmds.Add(sp2);
-
-                        string insertCmd = @"insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
-select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'R' or UseFor = 'A') and BrandID = (select BrandID from Orders where ID = @orderid) and Junk = 0";
-                        DualResult result = DBProxy.Current.Execute(null, insertCmd, cmds);
-                        if (!result)
-                        {
-                            MyUtility.Msg.ErrorBox("Insert ChgOver_CheckList fail!!\r\n" + result.ToString());
-                            return;
-                        }
-                    }
+                    MyUtility.Msg.ErrorBox("Insert ChgOver_CheckList fail!!\r\n" + result.ToString());
+                    return;
                 }
-
-                Sci.Production.IE.P02_RepeatCheckList callNextForm = new Sci.Production.IE.P02_RepeatCheckList(this.CurrentMaintain["Status"].ToString() == "New", this.CurrentMaintain["ID"].ToString(), null, null);
-                callNextForm.ShowDialog(this);
             }
+
+            Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null, this.CurrentMaintain["Type"].ToString());
+            callNextForm.ShowDialog(this);
         }
 
         // Problem
@@ -389,7 +385,10 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 }
             }
 
-            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(this.CurrentMaintain["Status"].ToString() != "Closed", this.CurrentMaintain["ID"].ToString(), null, null);
+            bool canEdit = this.CurrentMaintain["Status"].ToString() != "Closed" &&
+                           this.CurrentMaintain["Status"].ToString() != "Approved";
+
+            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
         }
 

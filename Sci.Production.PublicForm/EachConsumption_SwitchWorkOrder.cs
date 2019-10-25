@@ -26,7 +26,7 @@ namespace Sci.Production.PublicForm
 
             //589:CUTTING_P01_EachConsumption_SwitchWorkOrder，(1) 若Orders.IsMixmarker=true則只能選第1個選項，第2個選項要disable。
             string sql = string.Format("SELECT IsMixmarker FROM Orders WITH (NOLOCK) WHERE ID='{0}'", cuttingid);
-            bool IsMixmarker = Convert.ToBoolean(MyUtility.GetValue.Lookup(sql));
+            bool IsMixmarker = MyUtility.GetValue.Lookup(sql) == "1";
             if (IsMixmarker) radioBySP.Enabled = false;
 
         }

@@ -56,6 +56,8 @@ SET
       ,a. EditDate	      = b. EditDate
 	  ,a. LossSampleAccessory = b.LossSampleAccessory
 	  ,a. OTDExtension = b.OTDExtension
+	  ,a. UseRatioRule = b.UseRatioRule
+	  ,a. UseRatioRule_Thick = b.UseRatioRule_Thick
 from Production.dbo.Brand as a inner join Trade_To_Pms.dbo.Brand as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.Brand
@@ -96,6 +98,8 @@ INSERT INTO Production.dbo.Brand
       ,EditDate
 	  ,LossSampleAccessory
 	  ,OTDExtension
+	  ,UseRatioRule
+	  ,UseRatioRule_Thick
 )
 SELECT ID
       ,NameCH
@@ -133,6 +137,8 @@ SELECT ID
       ,EditDate
 	  ,LossSampleAccessory
 	  ,OTDExtension
+	  ,UseRatioRule
+	  ,UseRatioRule_Thick
 from Trade_To_Pms.dbo.Brand as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Brand as a WITH (NOLOCK) where a.id = b.id)
 
@@ -420,28 +426,7 @@ SET
 	  ,a.IsThread        = b.IsThread
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
-where b.EditDate > a.EditDate
-
-UPDATE a
-SET  
-       --a.ID	      =b.ID		
-      a.FullName	      =b.FullName		
-      ,a.Type	      =b.Type		
-      ,a.Junk	      =b.Junk		
-      ,a.IrregularCost	      =b.IrregularCost		
-      ,a.CheckZipper	      =b.CheckZipper		
-      ,a.ProductionType	      =b.ProductionType		
-      ,a.OutputUnit	      =b.OutputUnit		
-      ,a.IsExtensionUnit	      =b.IsExtensionUnit		
-      ,a.AddName	      =b.AddName		
-      ,a.AddDate	      =b.AddDate
-	  ,a.IsTrimCardOther = b.isTrimCardOther
-      --,a.EditName	      =b.EditName		
-      --,a.EditDate	      =b.EditDate		
-	  ,a.IsThread        = b.IsThread
-
-from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
-where b.EditDate <= a.EditDate
+where b.EditDate between dateadd(d,-7,getdate()) and getdate()
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.MtlType(
 ID
@@ -895,8 +880,8 @@ UPDATE a
 SET  
       -- a.ID	    =b.ID	
       -- a.MDivisionID	      =b.MDivisionID	
-      a.Junk	      =b.Junk	
-      ,a.NameCH	      =b.NameCH	
+      -- Junk 重新更新日期暫定為 2019 / 10 / 25 a.Junk	      =b.Junk 
+      a.NameCH	      =b.NameCH	
       ,a.CountryID	      =b.CountryID		
       ,a.AddressCH	      =b.AddressCH	
       ,a.CurrencyID	      =b.CurrencyID	
@@ -1155,6 +1140,7 @@ SET
       ,a.EditDate	      =b.EditDate	
 	  ,a.MiAdidasRound    =b.MiAdidasRound
 	  ,a.RoundStep        =b.RoundStep
+	  ,a.StockRound		  =b.StockRound
 
 from Production.dbo.Unit as a inner join Trade_To_Pms.dbo.Unit as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
@@ -1171,7 +1157,7 @@ INSERT INTO Production.dbo.Unit(
       ,EditDate
 	  ,MiAdidasRound
 	  ,RoundStep
-
+	  ,StockRound
 )
 select 
        ID
@@ -1186,7 +1172,7 @@ select
       ,EditDate
 	  ,MiAdidasRound
 	  ,RoundStep
-
+	  ,StockRound
 from Trade_To_Pms.dbo.Unit as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Unit as a WITH (NOLOCK) where a.id = b.id)
 
@@ -2266,7 +2252,7 @@ where not exists(select BrandID from Production.dbo.FtyShipper as a WITH (NOLOCK
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.FtyShipper_Detail
 from Production.dbo.FtyShipper_Detail as a left join Trade_To_Pms.dbo.FtyShipper_Detail as b
-on a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate
+on a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate  and a.SeasonID	=b.SeasonID 
 where b.BrandID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -2277,7 +2263,8 @@ SET
       a.EndDate	      =b.EndDate	
       ,a.ShipperID	      =b.ShipperID	
 
-from Production.dbo.FtyShipper_Detail as a inner join Trade_To_Pms.dbo.FtyShipper_Detail as b ON a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate
+from Production.dbo.FtyShipper_Detail as a
+inner join Trade_To_Pms.dbo.FtyShipper_Detail as b ON a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate  and a.SeasonID	=b.SeasonID
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.FtyShipper_Detail(
        BrandID
@@ -2285,7 +2272,7 @@ INSERT INTO Production.dbo.FtyShipper_Detail(
       ,BeginDate
       ,EndDate
       ,ShipperID
-
+	  ,SeasonID
 )
 select 
        BrandID
@@ -2293,9 +2280,10 @@ select
       ,BeginDate
       ,EndDate
       ,ShipperID
-
+	  ,SeasonID
 from Trade_To_Pms.dbo.FtyShipper_Detail as b WITH (NOLOCK)
-where not exists(select BrandID from Production.dbo.FtyShipper_Detail as a WITH (NOLOCK) where a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate)
+where not exists(select BrandID from Production.dbo.FtyShipper_Detail as a WITH (NOLOCK) 
+where a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate and a.SeasonID	=b.SeasonID)
 
 
 
@@ -2599,12 +2587,6 @@ on t.type=s.type and t.id=s.id
 			delete;
   
 		--Fabric_Supp
-		--Fabric_Supp 無多欄位
-		----------------------刪除主TABLE多的資料
-		Delete Production.dbo.Fabric_Supp
-		from Production.dbo.Fabric_Supp as a left join Trade_To_Pms.dbo.Fabric_Supp as b
-		on a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno
-		where b.SuppID is null
 		---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 		UPDATE a
 		SET  
@@ -3138,6 +3120,43 @@ when not matched by target then
 when not matched by source then 
 	delete;	
 
+--------ClogReason---------------
+
+Merge Production.dbo.ClogReason as t
+Using Trade_To_Pms.dbo.ClogReason as s
+on t.Type=s.Type and t.ID=s.ID
+when matched then
+	update set
+	t.Description= s.Description,
+	t.Remark= s.Remark,
+	t.Junk= s.Junk,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate
+when not matched by target then
+	insert(Type
+	,ID
+	,Description
+	,Remark
+	,Junk
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	)
+	values(s.Type,
+	s.ID,
+	s.Description,
+	s.Remark,
+	s.Junk,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate)
+when not matched by source then 
+	delete;	
+
 --------ThreadAllowanceScale---------------
 
 Merge Production.dbo.ThreadAllowanceScale as t
@@ -3176,10 +3195,11 @@ when matched then
 					t.AddDate		 = s.AddDate	 ,
 					t.AddName		 = s.AddName	 ,
 					t.EditDate		 = s.EditDate	 ,
-					t.EditName		 = s.EditName
+					t.EditName		 = s.EditName	 ,
+					t.Status		 = s.Status
 when not matched by target then
-      insert (Type,ID,Reason,Responsible,Junk,AddDate,AddName,EditDate,EditName
-      ) values (s.Type,s.ID,s.Reason,s.Responsible,s.Junk,s.AddDate,s.AddName,s.EditDate,s.EditName
+      insert (Type,ID,Reason,Responsible,Junk,AddDate,AddName,EditDate,EditName ,Status
+      ) values (s.Type,s.ID,s.Reason,s.Responsible,s.Junk,s.AddDate,s.AddName,s.EditDate,s.EditName ,Status
       )
 when not matched by source then 
       delete;     
@@ -3227,7 +3247,6 @@ SET
 	  ,a.ActFCRDate	   =b.ActFCRDate
 from Production.dbo.GMTBooking as a inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
 where b.InvDate is not null
-END
 
 --------SeasonSCI---------------
 truncate table SeasonSCI
@@ -3252,3 +3271,116 @@ when not matched by target then
 	  values (tsr.CountryID, tsr.ArtWorkID, tsr.CostTypeID, tsr.BeginDate, tsr.EndDate, tsr.IsJunk, tsr.AddDate, tsr.AddName, tsr.EditDate,tsr.EditName)
 when not matched by source then 
       delete;
+
+------Brand_ThreadCalculateRules---------------
+Merge Production.dbo.Brand_ThreadCalculateRules as t
+Using (select a.* from Trade_To_Pms.dbo.Brand_ThreadCalculateRules a ) as s
+on t.ID=s.ID and t.FabricType = s.FabricType
+when matched then 
+	update set	t.UseRatioRule	= s.UseRatioRule,
+				t.UseRatioRule_Thick	= s.UseRatioRule_Thick
+when not matched by target then
+	insert (ID,
+			FabricType,
+			UseRatioRule,
+			UseRatioRule_Thick
+			) 
+		values (s.ID,
+				s.FabricType,
+				s.UseRatioRule,
+				s.UseRatioRule_Thick	)
+when not matched by source then 
+	delete;
+
+------MachineType_ThreadRatio---------------
+Merge Production.dbo.MachineType_ThreadRatio as t
+Using (select a.* from Trade_To_Pms.dbo.MachineType_ThreadRatio a ) as s
+on t.ID=s.ID and t.SEQ = s.SEQ
+when matched then 
+	update set	t.ThreadLocation	   = s.ThreadLocation	 ,
+				t.UseRatio			   = s.UseRatio			 ,
+				t.Allowance			   = s.Allowance
+when not matched by target then
+	insert (ID				 ,
+			SEQ				 ,
+			ThreadLocation	 ,
+			UseRatio			 ,
+			Allowance
+			) 
+		values (s.ID				 ,
+				s.SEQ				 ,
+				s.ThreadLocation	 ,
+				s.UseRatio			 ,
+				s.Allowance	)
+when not matched by source then 
+	delete;
+
+
+------MachineType_ThreadRatio_Regular---------------
+Merge Production.dbo.MachineType_ThreadRatio_Regular as t
+Using (select a.* from Trade_To_Pms.dbo.MachineType_ThreadRatio_Regular a ) as s
+on t.ID=s.ID and t.SEQ = s.SEQ and t.UseRatioRule = s.UseRatioRule
+when matched then 
+	update set	t.UseRatio	   = s.UseRatio	 
+when not matched by target then
+	insert (ID				,
+			Seq				,
+			UseRatioRule	,
+			UseRatio
+			) 
+		values (s.ID				,
+				s.Seq				,
+				s.UseRatioRule	,
+				s.UseRatio)
+when not matched by source then 
+	delete;	
+
+
+
+------FreightCollectByCustomer---------------
+Merge Production.dbo.FreightCollectByCustomer as t
+Using (select a.* from Trade_To_Pms.dbo.FreightCollectByCustomer a ) as s
+on t.[Dest]=s.[Dest] and t.[BrandID] = s.[BrandID] and t.[CarrierID] = s.[CarrierID] and t.[Account]=s.[Account]
+when matched then 
+	update set	
+		 t.[CustCDID]		=s.[CustCDID]	
+		,t.[DestPort]		=s.[DestPort]	
+		,t.[OrderTypeID]	=s.[OrderTypeID]
+		,t.[Remarks]		=s.[Remarks]	
+		,t.[AddDate]		=s.[AddDate]	
+		,t.[AddName]		=s.[AddName]	
+		,t.[EditDate]		=s.[EditDate]	
+		,t.[EditName] 		=s.[EditName] 	
+when not matched by target then
+	insert ([BrandID],[Dest],[CarrierID],[Account],[CustCDID],[DestPort],[OrderTypeID],[Remarks],[AddDate],[AddName],[EditDate],[EditName]) 
+	values (s.[BrandID],s.[Dest],s.[CarrierID],s.[Account],s.[CustCDID],s.[DestPort],s.[OrderTypeID],s.[Remarks],s.[AddDate],s.[AddName],s.[EditDate],s.[EditName])
+when not matched by source then 
+	delete;	
+	
+------[Carrier_Detail_Freight]---------------
+Merge Production.dbo.[Carrier_Detail_Freight] as t
+Using (select a.* from Trade_To_Pms.dbo.[Carrier_Detail_Freight] a ) as s
+on t.[ID]=s.[ID] and t.[Ukey] = s.[Ukey]
+when matched then 
+	update set	
+		 t.[Payer]		=s.[Payer]
+		,t.[FromTag]	=s.[FromTag]
+		,t.[FromInclude]=s.[FromInclude]
+		,t.[FromExclude]=s.[FromExclude]
+		,t.[ToTag]		=s.[ToTag]
+		,t.[ToInclude]	=s.[ToInclude]
+		,t.[ToExclude]	=s.[ToExclude]
+		,t.[ToFty]		=s.[ToFty]
+		,t.[AddName]	=s.[AddName]
+		,t.[AddDate]	=s.[AddDate]
+		,t.[EditName]	=s.[EditName]
+		,t.[EditDate]	=s.[EditDate]	
+when not matched by target then
+	insert ([ID],[Payer],[FromTag],[FromInclude],[FromExclude],[ToTag],[ToInclude],[ToExclude],[ToFty],[AddName],[AddDate],[EditName],[EditDate])
+	values (s.[ID],s.[Payer],s.[FromTag],s.[FromInclude],s.[FromExclude],s.[ToTag],s.[ToInclude],s.[ToExclude],s.[ToFty],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+when not matched by source then 
+	delete;	
+
+END
+
+
