@@ -181,7 +181,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(5517, 163);
+            this.gridicon.Location = new System.Drawing.Point(5642, 163);
             // 
             // refresh
             // 
@@ -452,10 +452,11 @@
             // 
             // numAmount
             // 
-            this.numAmount.BackColor = System.Drawing.Color.White;
+            this.numAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numAmount.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "amount", true));
             this.numAmount.DecimalPlaces = 2;
-            this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numAmount.IsSupportEditMode = false;
             this.numAmount.Location = new System.Drawing.Point(376, 90);
             this.numAmount.MaxBytes = 12;
             this.numAmount.Name = "numAmount";
@@ -464,6 +465,7 @@
             0,
             0,
             0});
+            this.numAmount.ReadOnly = true;
             this.numAmount.Size = new System.Drawing.Size(103, 23);
             this.numAmount.TabIndex = 5;
             this.numAmount.Value = new decimal(new int[] {
