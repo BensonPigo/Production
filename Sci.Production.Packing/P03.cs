@@ -1482,6 +1482,11 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             {
                 this.ShowErr(this.result);
             }
+
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
+            }
         }
 
         /// <summary>

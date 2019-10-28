@@ -12,6 +12,7 @@ using System.Transactions;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -1499,6 +1500,12 @@ Packing List : {pid}";
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return;
             }
+
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(INVNo: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
+            }
+
             DualResult result;
             // 當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))

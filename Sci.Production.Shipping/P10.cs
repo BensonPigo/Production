@@ -11,6 +11,7 @@ using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Transactions;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -932,6 +933,11 @@ and p1.Type <> 'S'
                     MyUtility.Msg.WarningBox("Garment Booking's status not yet confirm, can't confirm!!\r\n" + msg2.ToString());
                     return;
                 }
+            }
+
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(ShipPlanID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
             }
 
             string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed',CFMDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
