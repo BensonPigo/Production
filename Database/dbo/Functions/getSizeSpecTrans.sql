@@ -12,7 +12,7 @@ RETURNS varchar(500)
 AS
 BEGIN
 	--移除多餘空白
-	set @val = LTRIM(RTRIM(@val))
+	set @val = LTRIM(RTRIM(Replace(@val,'-',' ')))
 	declare @rtnVal as varchar(500)
 
 	if @SizeUnit = 'INCH' and @val not like'%[a-zA-Z]%' 
