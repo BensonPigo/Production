@@ -452,11 +452,13 @@ BEGIN
 		group by CountryID,MDivisionID,FactoryID,OrderYYMM
 		
 		--For Output, ��Output�᭱��Max���
-		select CountryID, MDivisionID, FactoryID, max(format(SewingYYMM_Ori,'yyyy/MM/dd')) as SewingYYMM, OrderYYMM as Month, sum(Capacity) as Capacity from (
-			Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, OrderYYMM, SewCapacity as Capacity from #tmpOrder2
-			union ALL Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, SewingYYMM, SewCapacity as Capacity from #tmpFactoryOrder2
+		select CountryID, MDivisionID, FactoryID, max(format(SewingYYMM_Ori,'yyyy/MM/dd')) as SewingYYMM, OrderYYMM as Month, sum(Capacity) as Capacity 
+		from (
+			Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, OrderYYMM, SewCapacity as Capacity, SubconInType from #tmpOrder2
+			union ALL Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, SewingYYMM, SewCapacity as Capacity, SubconInType from #tmpFactoryOrder2
 		) c
 		where SewingYYMM_Ori is not null
+		and SubconInType <> 1
 		group by CountryID,MDivisionID,FactoryID,OrderYYMM
 
 	drop table #tmpByFactory
