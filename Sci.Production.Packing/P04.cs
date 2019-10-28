@@ -688,9 +688,9 @@ order by os.Seq", dr["OrderID"].ToString(),
                 drCtnQty = MyUtility.Check.Empty(dr["CTNQty"]) ? 0 : MyUtility.Convert.GetInt(dr["CTNQty"]);
                 ctnQty = ctnQty + drCtnQty;
                 shipQty = shipQty + MyUtility.Convert.GetInt(dr["ShipQty"]);
-                nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
-                gw = MyUtility.Math.Round(gw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
-                nnw = MyUtility.Math.Round(nnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
+                nw = MyUtility.Math.Round(nw + (MyUtility.Convert.GetDouble(dr["NW"]) * MyUtility.Convert.GetDouble(dr["CTNQty"])), 3);
+                gw = MyUtility.Math.Round(gw + (MyUtility.Convert.GetDouble(dr["GW"]) * MyUtility.Convert.GetDouble(dr["CTNQty"])), 3);
+                nnw = MyUtility.Math.Round(nnw + (MyUtility.Convert.GetDouble(dr["NNW"]) * MyUtility.Convert.GetDouble(dr["CTNQty"])), 3);
                 if (drCtnQty > 0)
                 {
                     ctnCBM = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
