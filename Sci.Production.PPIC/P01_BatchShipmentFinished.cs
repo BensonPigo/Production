@@ -226,6 +226,16 @@ select SP = (select ID + ','
                         return;
                     }
                 }
+
+                if (MyUtility.Convert.GetString(item["Category"]) == "A")
+                {
+                    DualResult resultCheckOrderCategoryTypeA = P01_Utility.CheckOrderCategoryTypeA(item["POID"].ToString());
+                    if (!resultCheckOrderCategoryTypeA)
+                    {
+                        MyUtility.Msg.WarningBox(resultCheckOrderCategoryTypeA.Description);
+                        return;
+                    }
+                }
             }
 
             #region 更新Orders, Chgover資料
@@ -329,14 +339,14 @@ select SP = (select ID + ','
             string sqlCmd = string.Format(
                 @"
 select *
-into #wantToClose
+into #wantToClose_step1
 from (
 	select distinct POID
 	from Orders o WITH (NOLOCK) 
 	where o.Finished = 0 
 		  and o.MDivisionID = '{0}'
 		  and (o.Junk = 1 or o.PulloutComplete = 1)
-		  and (o.Category = 'B' or o.Category = 'S')
+		  and (o.Category = 'B' or o.Category = 'S' or o.Category = 'A')
 	union all
 	select distinct A.ID
 	from PO_Supp_Detail A WITH (NOLOCK) 
@@ -353,6 +363,13 @@ from (
 	      and o.Finished = 0 
 		  and o.Category = 'M'
 ) wantToClose
+
+--將category = 'A' 底下有未finish的單子排除
+select w.POID
+into #wantToClose
+from #wantToClose_step1 w
+inner join Orders o with (nolock) on w.POID = o.ID
+where not exists (select 1 from Orders where o.Category = 'A' and AllowanceComboID  = w.POID and Finished = 0) 
 
 select *
 into #canNotClose
