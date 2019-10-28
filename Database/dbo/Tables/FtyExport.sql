@@ -28,6 +28,7 @@
     [Shipper]       VARCHAR (8)     NULL,
     [OnBoard]       DATE            NULL,
     [NoCharges]     BIT             CONSTRAINT [DF_FtyExport_NoCharges] DEFAULT ((0)) NULL,
+    [NonDeclare] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_FtyExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

@@ -135,6 +135,40 @@ where ID = '{this.CurrentMaintain["MainExportID08"]}'
 
             decimal intPrepaidFtyImportFee = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlmainPrepaidFtyImportFee));
             this.chkImportChange.Enabled = !(intPrepaidFtyImportFee > 0);
+            #region Declaration ID
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["Blno"]))
+            {
+                string sqlcmd = $@"select ID from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 0";
+                this.displayDeclarationID.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            else
+            {
+                this.displayDeclarationID.Text = string.Empty;
+            }
+
+            if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
+            {
+                string sqlcmd = $@"select ID from VNImportDeclaration where WKNo='{this.CurrentMaintain["ID"]}' and IsFtyExport = 0";
+                this.displayDeclarationID.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            #endregion
+            #region CustomsDeclareNo
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["Blno"]))
+            {
+                string sqlcmd = $@"select DeclareNo from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 0";
+                this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            else
+            {
+                this.displayCustomsDeclareNo.Text = string.Empty;
+            }
+
+            if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
+            {
+                string sqlcmd = $@"select DeclareNo from VNImportDeclaration where WKNo='{this.CurrentMaintain["ID"]}' and IsFtyExport = 0";
+                this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            #endregion
         }
 
         /// <inheritdoc/>

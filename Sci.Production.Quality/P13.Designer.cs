@@ -115,7 +115,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2258, 162);
+            this.gridicon.Location = new System.Drawing.Point(2582, 162);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
@@ -285,7 +285,7 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(113, 23);
             this.label10.TabIndex = 11;
-            this.label10.Text = "T2/SupplierName";
+            this.label10.Text = "T3/Subcon Name";
             // 
             // txtbrand
             // 
@@ -326,6 +326,9 @@
             this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "T1Subcon", true));
             this.txtT1.DisplayBox1Binding = "";
             this.txtT1.IsIncludeJunk = false;
+            this.txtT1.isMisc = false;
+            this.txtT1.isShipping = false;
+            this.txtT1.isSubcon = false;
             this.txtT1.Location = new System.Drawing.Point(124, 91);
             this.txtT1.Name = "txtT1";
             this.txtT1.Size = new System.Drawing.Size(170, 23);

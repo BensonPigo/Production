@@ -212,6 +212,12 @@
     <Compile Include="P05.Designer.cs">
       <DependentUpon>P05.cs</DependentUpon>
     </Compile>
+    <Compile Include="P18_ExcelImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P18_ExcelImport.Designer.cs">
+      <DependentUpon>P18_ExcelImport.cs</DependentUpon>
+    </Compile>
     <Compile Include="P07_ExcelImport.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -309,6 +315,7 @@
     <Compile Include="P16_PrintData.cs" />
     <Compile Include="P17_PrintData.cs" />
     <Compile Include="P18_PrintData.cs" />
+    <Compile Include="P18_Utility.cs" />
     <Compile Include="P19_FabricSticker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1173,6 +1180,9 @@
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P18_ExcelImport.resx">
+      <DependentUpon>P18_ExcelImport.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P07_ExcelImport.resx">
       <DependentUpon>P07_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
@@ -1790,13 +1800,10 @@
   <ItemGroup>
     <EmbeddedResource Include="P10_RelaxationSticker_Print.rdlc" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
-    <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />
     <None Include="Properties\DataSources\P11_Print.datasource" />
     <None Include="Properties\DataSources\P11_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
-    <None Include="Properties\DataSources\P13_PrintData.datasource" />
-    <None Include="Properties\DataSources\P16_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P22_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P23_FabricSticker_PrintData.datasource" />

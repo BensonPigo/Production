@@ -431,18 +431,25 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[4, 10] = MyUtility.Convert.GetDecimal(this.masterData["NW"]) + MyUtility.Convert.GetDecimal(this.masterData["CTNNW"]);
 
                 int rownum = 6;
+
+                // 表身有資料才需要重新排序 ISP20191502
+                if (this.detailData.Rows.Count > 0)
+                {
+                    this.detailData = this.detailData.AsEnumerable().OrderBy(o => Convert.ToInt16(o["OrderNumber"])).CopyToDataTable();
+                }
+
                 foreach (DataRow dr in this.detailData.Rows)
                 {
-                    string sSeq1 = MyUtility.Convert.GetString(dr["Seq1"]);
-                    string sSeq2 = MyUtility.Convert.GetString(dr["Seq2"]);
+                    //string sSeq1 = MyUtility.Convert.GetString(dr["Seq1"]);
+                    //string sSeq2 = MyUtility.Convert.GetString(dr["Seq2"]);
                     int iCategory = MyUtility.Convert.GetInt(dr["Category"]);
                     bool bQty = MyUtility.Check.Empty(dr["Qty"]);
                     bool bPrice = MyUtility.Check.Empty(dr["Price"]);
                     decimal decQty = bQty ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
                     decimal decPrice = bPrice ? 0 : MyUtility.Convert.GetDecimal(dr["Price"]);
 
-                    worksheet.Cells[rownum, 1] = string.Format("{0}-{1}", sSeq1, sSeq2);
-                    worksheet.Cells[rownum, 2] = this.CategoryName(iCategory);
+                    worksheet.Cells[rownum, 1] = MyUtility.Convert.GetString(dr["OrderNumber"]);
+                    worksheet.Cells[rownum, 2] = MyUtility.Convert.GetString(dr["CategoryNameFromDD"]);
                     bool isnDescription = false;
                     worksheet.Cells[rownum, 3] = this.GetDescription(iCategory, dr, out isnDescription);
                     if (isnDescription)

@@ -14,6 +14,7 @@ namespace Sci.Production.Subcon
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
         string artworktype,factory,subcon,spno,style,orderby,mdivision;
+        string brandID;
         DateTime? issuedate1, issuedate2;
         DataTable printData;
 
@@ -55,6 +56,7 @@ namespace Sci.Production.Subcon
             spno = txtSPNO.Text;
             style = txtstyle.Text;
             orderby = comboOrderBy.Text;
+            brandID = this.txtbrand.Text;
 
             return base.ValidateInput();
         }
@@ -73,6 +75,7 @@ namespace Sci.Production.Subcon
                                         ,a.Delivery
                                         ,a.InternalRemark
                                         ,b.OrderID
+                                        ,c.BrandID
                                         ,c.SewInLine
                                         ,c.SciDelivery
                                         ,c.StyleID
@@ -113,6 +116,9 @@ namespace Sci.Production.Subcon
             System.Data.SqlClient.SqlParameter sp_style = new System.Data.SqlClient.SqlParameter();
             sp_style.ParameterName = "@style";
 
+            System.Data.SqlClient.SqlParameter sp_brandID = new System.Data.SqlClient.SqlParameter();
+            sp_brandID.ParameterName = "@brandID";
+
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
 
@@ -151,6 +157,12 @@ namespace Sci.Production.Subcon
                 sqlCmd.Append(" and c.styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
+            }
+            if (!MyUtility.Check.Empty(brandID))
+            {
+                sqlCmd.Append(" and c.BrandID = @brandID");
+                sp_brandID.Value = brandID;
+                cmds.Add(sp_brandID);
             }
 
             if (checkOutstanding.Checked)
