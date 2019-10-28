@@ -95,7 +95,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 if (MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]))
                 {
                     this.numExchange.ReadOnly = true;
-                    this.numAmount.ReadOnly = false;
+                    //this.numAmount.ReadOnly = false;
                 }
                 else
                 {
@@ -136,12 +136,15 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     if (strExact == null || string.IsNullOrWhiteSpace(strExact))
                     {
                         MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , summary amout failed!", CurrentMaintain["currencyID"]), "Warning");
-                        return;
+                        //return;
                     }
-                    int exact = int.Parse(strExact);
+                    int exact = int.Parse(MyUtility.Check.Empty(strExact) ? "0" : strExact);
+                    decimal exchange = Convert.ToDecimal(CurrentMaintain["exchange"]);
                     object detail_Amount = ((DataTable)detailgridbs.DataSource).Compute("sum(AMOUNT)", "");
                     object detail_Addition = ((DataTable)detailgridbs.DataSource).Compute("sum(ADDITION)", "");
-                    CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_Amount + (decimal)detail_Addition, exact);
+
+                    CurrentMaintain["amount"] = MyUtility.Math.Round(((decimal)detail_Amount + (decimal)detail_Addition) * exchange, exact);
+                    
                     ReCalculateTax();
                     #endregion
                 }
