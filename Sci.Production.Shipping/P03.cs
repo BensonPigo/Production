@@ -169,6 +169,26 @@ where ID = '{this.CurrentMaintain["MainExportID08"]}'
                 this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
             }
             #endregion
+            #region Door to Door
+            string chkdtd = $@"
+select 1
+from Door2DoorDelivery 
+where ImportPort = '{this.CurrentMaintain["ImportPort"]}'
+and ImportCountry ='{this.CurrentMaintain["ImportCountry"]}'
+and ExportCountry = '{this.CurrentMaintain["ExportCountry"]}'
+and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
+and Vessel ='{this.CurrentMaintain["Vessel"]}'
+union 
+select 1
+from Door2DoorDelivery
+where ImportPort = '{this.CurrentMaintain["ImportPort"]}'
+and ImportCountry ='{this.CurrentMaintain["ImportCountry"]}'
+and ExportCountry = '{this.CurrentMaintain["ExportCountry"]}'
+and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
+and Vessel  =''
+";
+            this.ChkDoortoDoorDelivery.Checked = MyUtility.Check.Seek(chkdtd);
+            #endregion
         }
 
         /// <inheritdoc/>

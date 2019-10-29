@@ -553,8 +553,27 @@ with ExportData as (
 		   			  from ShareExpense WITH (NOLOCK) 
 		   			  where WKNo = e.ID)
 		   , [NoImportChg] = iif(isnull(e.NoImportCharges,0) = 0,'','V')
+		   , DoortoDoorDelivery = iif(dtd1.v = 1 or dtd2.v = 1,'Y','')
 	from Export e WITH (NOLOCK) 
 	left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
+	outer apply(
+		select v=1
+		from Door2DoorDelivery 
+		where ImportPort = e.ImportPort
+		and ImportCountry =e.ImportCountry
+		and ExportCountry = e.ExportCountry
+		and ShipModeID = e.ShipModeID
+		and Vessel =e.Vessel
+	)dtd1
+	outer apply(
+		select v=1
+		from Door2DoorDelivery 
+		where ImportPort = e.ImportPort
+		and ImportCountry =e.ImportCountry
+		and ExportCountry = e.ExportCountry
+		and ShipModeID = e.ShipModeID
+		and Vessel =''
+	)dtd2
 	where e.Junk = 0");
                 if (!MyUtility.Check.Empty(this.date1))
                 {
@@ -594,6 +613,7 @@ FtyExportData as (
 		   , f.Forwarder+'-'+isnull(l.Abb,'') as Forwarder
 		   , f.Blno
 		   , [NoImportChg] = iif(isNull(f.NoCharges,0) = 1,'V','')
+		   , DoortoDoorDelivery =''
 	from FtyExport f WITH (NOLOCK) 
 	left join LocalSupp l WITH (NOLOCK) on l.ID = f.Forwarder
 	where not exists (
@@ -645,6 +665,7 @@ select	IE
 		, Forwarder
 		, Blno
 		, NoImportChg
+		, DoortoDoorDelivery 
 from ExportData
 where (Blno <> '' and APId1 is null) 
 	  or (Blno = '' and APId2 is null)
@@ -667,6 +688,7 @@ select	IE
 		, Forwarder
 		, Blno
 		, NoImportChg
+		, DoortoDoorDelivery 
 from FtyExportData");
                 #endregion
             }
