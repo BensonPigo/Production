@@ -392,7 +392,6 @@ SELECT 	Selected = 0
 		, v.PatternCode
 		, v.PatternDesc
 		, LocalSuppID = rtrim(order_tmscost.LocalSuppID) 
-        , [Cost] = isnull(cost.value,0)
 		, costStitch = v.qty
 		, stitch = v.qty
 		, qtygarment = 1.0
@@ -407,38 +406,17 @@ inner join Orders WITH (NOLOCK) on Order_TmsCost.id = Orders.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 inner join view_order_artworks v on v.id = Order_TmsCost.id 
-									and v.artworktypeid = Order_TmsCost.artworktypeid
-left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey and vsa.Article = v.Article and vsa.ArtworkID = v.ArtworkID and
-														vsa.ArtworkName = v.ArtworkName and vsa.ArtworkTypeID = v.ArtworkTypeID and vsa.PatternCode = v.PatternCode and
-														vsa.PatternDesc = v.PatternDesc 
-left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.LocalSuppID = order_tmscost.LocalSuppID  and sao.Price > 0  and sao.PriceApv = 'Y'
+	and v.artworktypeid = Order_TmsCost.artworktypeid
+left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey 
+	and vsa.Article = v.Article and vsa.ArtworkID = v.ArtworkID 
+	and	vsa.ArtworkName = v.ArtworkName and vsa.ArtworkTypeID = v.ArtworkTypeID 
+	and vsa.PatternCode = v.PatternCode and vsa.PatternDesc = v.PatternDesc 
 left join LocalSupp ls with (nolock) on ls.id = order_tmscost.LocalSuppID
-outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), v.Cost,sao.Price))unitprice
-outer apply (
-    select value = 
-        case when ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1) then v.Cost
-             when awt.isArtwork = 1 then vsa.Cost
-             else sao.Price
-             end
-)cost
-WHERE 	not exists(
-			select 1
-			from artworkReq a WITH (NOLOCK) 
-			inner join artworkReq_detail ap WITH (NOLOCK) on ap.id = a.id 
-			where a.localsuppid = Order_TmsCost.localsuppid 
-				  and a.artworktypeid = Order_TmsCost.artworktypeid and 
-				  ap.OrderID = orders.ID) 
-	  	AND orders.Finished=0                                                                 
-		AND orders.IsForecast = 0                                                             
+WHERE   1=1
+        AND factory.IsProduceFty = 1
 		AND orders.Junk = 0 
-		AND factory.mdivisionid = '{Sci.Env.User.Keyword}'
-		AND factory.IsProduceFty = 1
-		AND Order_TmsCost.localsuppid !=''
-        --AND Orders.PulloutComplete = 0
-        AND (orders.Category ='s' or (orders.Category='B' AND Order_TmsCost.Price > 0) AND Order_TmsCost.InhouseOSP = 'O')
-		--↓(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1)), ISP20190803增加IsSintexSubcon狀況
-		--↓或是sao.Ukey is not null, 原本存在 View_Style_Artwork, Style_Artwork_Quot
-		and ((ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1)) or sao.Ukey is not null)
+		AND orders.mdivisionid = '{Sci.Env.User.Keyword}'
+        AND ((orders.Category = 'B' and  Order_TmsCost.InhouseOSP = 'O') or (orders.category = 'S'))
 		";
 
             if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
@@ -451,10 +429,10 @@ WHERE 	not exists(
             if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
             SqlCmd += @"
 group by 	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.SeasonID
-			, Orders.OrderTypeId, Orders.SciDelivery, Order_TmsCost.ArtworkTypeID
-			, order_tmscost.LocalSuppID, order_tmscost.Qty, Order_TmsCost.ArtworkInLine
-			, Order_TmsCost.artworkoffline, Orders.SewInLine, Order_TmsCost.ApvDate
-			, V.ArtworkID, V.PatternCode, V.PatternDesc, cost.value, V.ArtworkTypeID, v.qty,unitprice.value";
+	, Orders.OrderTypeId, Orders.SciDelivery, Order_TmsCost.ArtworkTypeID
+	, order_tmscost.LocalSuppID, order_tmscost.Qty, Order_TmsCost.ArtworkInLine
+	, Order_TmsCost.artworkoffline, Orders.SewInLine, Order_TmsCost.ApvDate
+	, V.ArtworkID, V.PatternCode, V.PatternDesc, V.ArtworkTypeID, v.qty";
 
             return SqlCmd;
         }
@@ -496,20 +474,11 @@ inner join order_qty v WITH (NOLOCK) on v.id = order_tmscost.id
 inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 left join View_Order_Artworks voa WITH (NOLOCK) on voa.id = Order_TmsCost.od
     and voa.artworktypeid = = Order_TmsCost.artworktypeid
-WHERE 	not exists(
-			select * 
-			from artworkReq a WITH (NOLOCK) 
-			inner join artworkReq_detail ap WITH (NOLOCK) on ap.id = a.id 
-			where a.localsuppid = Order_TmsCost.localsuppid 
-				  and a.artworktypeid = Order_TmsCost.artworktypeid 
-				  and ap.OrderID = orders.ID ) 
-		and factory.mdivisionid = '{Sci.Env.User.Keyword}' 
-		and factory.IsProduceFty = 1
-		and orders.Finished=0
-		and orders.IsForecast = 0
-		and orders.Junk = 0
-		and Order_TmsCost.localsuppid !=''		
-        --and Orders.PulloutComplete = 0
+WHERE 	1=1
+		AND factory.IsProduceFty = 1
+		AND orders.Junk = 0 
+		AND orders.mdivisionid = '{Sci.Env.User.Keyword}'
+        AND ((orders.Category = 'B' and  Order_TmsCost.InhouseOSP = 'O') or (orders.category = 'S'))
 		" ;
   
             if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }

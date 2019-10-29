@@ -57,12 +57,29 @@ namespace Sci.Production.Subcon
             }
 
             string strSQLCmd = string.Empty;
+            string tmpTable = string.Empty;
+            string tmpcurrentReq = string.Empty;
+            string tmpGroupby = string.Empty;
+            // 上一層表身有資料, 就加上表身當前ReqQty 
+            if (dt_artworkReqDetail.Rows.Count > 0)
+            {
+                tmpTable = @"
+outer apply(
+    select value = sum(ReqQty) 
+    from #tmp
+    where OrderID = o.id and ArtworkID = vsa.ArtworkID
+    and PatternDesc = oa.PatternDesc and PatternCode = oa.PatternCode
+) CurrentReq";
+                tmpcurrentReq = "+ CurrentReq.value";
+                tmpGroupby = ",CurrentReq.value";
+            }
+
             strSQLCmd = $@"
 select  Selected = 0
         , sao.LocalSuppId
 		, [orderID] = q.ID
         , OrderQty = sum(q.qty)  
-        , [AccReqQty] = ReqQty.value + PoQty.value
+        , [AccReqQty] = ReqQty.value + PoQty.value {tmpcurrentReq}
         , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value))
 		, o.SewInLIne
 		, o.SciDelivery
@@ -93,6 +110,7 @@ outer apply (
 		and a.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}' 
 		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
         and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
+        and a.id != '{dr_artworkReq["id"]}'
 ) ReqQty
 outer apply (
         select value = ISNULL(sum(PoQty),0)
@@ -103,13 +121,16 @@ outer apply (
         and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
 		and ad.ArtworkReqID=''
 ) PoQty
+{tmpTable}
 where f.IsProduceFty=1
-and o.category  in ('B','S')
+and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
 and oa.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}' 
 and sao.LocalSuppId = '{dr_artworkReq["localsuppid"]}' 
 and o.Junk=0
-and((o.Category = 'B' and  ot.InhouseOSP = 'O' and ot.price > 0) or(o.category != 'B'))
+and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
+and 
+
 ";
 
             if (!(dateSCIDelivery.Value1 == null))
@@ -137,10 +158,11 @@ and((o.Category = 'B' and  ot.InhouseOSP = 'O' and ot.price > 0) or(o.category !
                 strSQLCmd += string.Format(" and o.ID <= '{0}'",  sp_e);
             }
 
-            strSQLCmd += " group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID,iif(at.isArtwork = 1,vsa.Cost,sao.Price),sao.Price , o.POID,ot.qty,PoQty.value,ReqQty.value";
+            strSQLCmd += $@" group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID,iif(at.isArtwork = 1,vsa.Cost,sao.Price),sao.Price , o.POID,ot.qty,PoQty.value,ReqQty.value {tmpGroupby}";
 
             Ict.DualResult result;
-            if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
+            //if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
+            if(result = MyUtility.Tool.ProcessWithDatatable(dt_artworkReqDetail,"", strSQLCmd, out dtArtwork))
             {
                 if (dtArtwork.Rows.Count == 0)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
@@ -215,7 +237,7 @@ where id ='{dr_artworkReq["artworktypeid"]}'
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}'");
+                    DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and PatternDesc = '{tmp["PatternDesc"].ToString()}'");
                     decimal exceedQty = MyUtility.Convert.GetDecimal(tmp["AccReqQty"]) + MyUtility.Convert.GetDecimal(tmp["ReqQty"]) - MyUtility.Convert.GetDecimal(tmp["OrderQty"]);
 
                     decimal finalExceedQty = exceedQty < 0 ? 0 : exceedQty;
@@ -224,12 +246,12 @@ where id ='{dr_artworkReq["artworktypeid"]}'
                     {
                         findrow[0]["ReqQty"] = tmp["ReqQty"];
                         findrow[0]["qtygarment"] = tmp["qtygarment"];
-                        findrow[0]["ExceedQty"] = finalExceedQty;
+                        findrow[0]["ExceedQty"] = (exceedQty - (decimal)findrow[0]["ReqQty"]) < 0 ? 0 : (exceedQty - (decimal)findrow[0]["ReqQty"]);
                     }
                     else
                     {
                         tmp["id"] = dr_artworkReq["id"];
-                        tmp["ExceedQty"] = finalExceedQty;
+                        tmp["ExceedQty"] = exceedQty < 0 ? 0 : exceedQty;
                         tmp.AcceptChanges();
                         tmp.SetAdded();
                         dt_artworkReqDetail.ImportRow(tmp);

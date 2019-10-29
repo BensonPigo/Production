@@ -146,11 +146,14 @@ ORDER BY ap.OrderID   ", masterID);
             DataTable dtIrregular = frm.Check_Irregular_Qty();
 
             this.HideWaitMessage();
-
-            if (dtIrregular.Rows.Count > 0)
+            if (dtIrregular != null)
             {
-                this.btnIrrQtyReason.ForeColor = Color.Red;
+                if (dtIrregular.Rows.Count > 0)
+                {
+                    this.btnIrrQtyReason.ForeColor = Color.Red;
+                }
             }
+            
 
             #endregion
 
@@ -215,6 +218,52 @@ ORDER BY ap.OrderID   ", masterID);
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
+            col_ReqQty.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    string sqlcmd = $@"
+select ReqQty = ReqQty.value + PoQty.value 
+,[OrderQty] = OrderQty.value
+from ArtworkReq_Detail s
+outer apply (
+        select value = ISNULL(sum(ReqQty),0)
+        from ArtworkReq_Detail AD, ArtworkReq a
+        where ad.ID=a.ID
+		and a.ArtworkTypeID = '{CurrentMaintain["ArtworkTypeID"]}' 
+		and OrderID = s.OrderID and ad.PatternCode= s.PatternCode
+        and ad.PatternDesc = s.PatternDesc and ad.ArtworkID = s.ArtworkID
+        and AD.id ! = s.ID
+) ReqQty
+outer apply (
+        select value = ISNULL(sum(PoQty),0)
+        from ArtworkPO_Detail AD,ArtworkPO A
+        where a.ID=ad.ID
+		and a.ArtworkTypeID = '{CurrentMaintain["ArtworkTypeID"]}' 
+		and OrderID = s.OrderID and ad.PatternCode= s.PatternCode
+        and ad.PatternDesc = s.PatternDesc and ad.ArtworkID = s.ArtworkID
+		and ad.ArtworkReqID=''
+) PoQty
+outer apply(
+	select value  = sum(q.Qty)
+	from  orders o
+	inner join order_qty q WITH (NOLOCK) on q.id = o.ID
+	where o.ID = s.OrderID
+	and o.Category in ('B','S')
+	and o.Junk=0
+) OrderQty
+where uKey = '{dr["ukey"]}' ";
+                    DataRow drQty;                    
+                    if (MyUtility.Check.Seek(sqlcmd , out drQty))
+                    {
+                        CurrentDetailData["exceedqty"] = ((decimal)e.FormattedValue + (decimal)drQty["ReqQty"] - (int)drQty["OrderQty"]) < 0 ? 0 : (decimal)e.FormattedValue + (decimal)drQty["ReqQty"] - (int)drQty["OrderQty"];
+                    }
+
+                    CurrentDetailData["ReqQty"] = e.FormattedValue;
+                }
+            };
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -225,7 +274,7 @@ ORDER BY ap.OrderID   ", masterID);
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6)) // 可編輯
+            .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6) , settings: col_ReqQty) // 可編輯
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3))// 可編輯
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), maximum: 99, integer_places: 2) // 可編輯
             .Text("Farmout", header: "Farm Out", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -335,13 +384,15 @@ ORDER BY ap.OrderID   ", masterID);
             var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)detailgridbs.DataSource);
 
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
-            bool isReasonEmpty = dtIrregular.AsEnumerable().Any(s => MyUtility.Check.Empty(s["SubconReasonID"]));
-            if (isReasonEmpty)
+            if (dtIrregular != null)
             {
-                MyUtility.Msg.WarningBox("Irregular Qty Reason cannot be empty!");
-                return false;
+                bool isReasonEmpty = dtIrregular.AsEnumerable().Any(s => MyUtility.Check.Empty(s["SubconReasonID"]));
+                if (isReasonEmpty)
+                {
+                    MyUtility.Msg.WarningBox("Irregular Qty Reason cannot be empty!");
+                    return false;
+                }
             }
-
 
             if (this.IsDetailInserting)
             {
@@ -631,12 +682,13 @@ where id = '{CurrentMaintain["id"]}'";
             DataTable dtIrregular = frm.Check_Irregular_Qty();
             
             this.HideWaitMessage();
-
-            if (dtIrregular.Rows.Count > 0)
+            if (dtIrregular != null)
             {
-                this.btnIrrQtyReason.ForeColor = Color.Red;
-            }
-                
+                if (dtIrregular.Rows.Count > 0)
+                {
+                    this.btnIrrQtyReason.ForeColor = Color.Red;
+                }
+            }   
         }
 
         private void btnBatchApprove_Click(object sender, EventArgs e)
@@ -714,21 +766,21 @@ where id = '{CurrentMaintain["id"]}'";
                 }
 
             }
+
+            this.btnIrrQtyReason.ForeColor = Color.Black;
             var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
 
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
             this.HideWaitMessage();
 
-            if (dtIrregular.Rows.Count > 0)
+            if (dtIrregular != null)
             {
-                this.btnIrrQtyReason.Enabled = true;
-                this.btnIrrQtyReason.ForeColor = Color.Red;
+                if (dtIrregular.Rows.Count > 0)
+                {
+                    this.btnIrrQtyReason.Enabled = true;
+                    this.btnIrrQtyReason.ForeColor = Color.Red;
+                }
             }
-            else
-            {
-                this.btnIrrQtyReason.ForeColor = Color.Black;
-            }
-
         }
 
         private void P05_FormLoaded(object sender, EventArgs e)
