@@ -2407,6 +2407,7 @@
     <Build Include="dbo\Tables\ProductionLineAllocation_Detail.sql" />
     <Build Include="dbo\Functions\GetFocStockByOrder.sql" />
     <Build Include="dbo\Tables\MarkerFileNameSwitchRecord.sql" />
+    <Build Include="dbo\Tables\CustomizedClipPath.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
