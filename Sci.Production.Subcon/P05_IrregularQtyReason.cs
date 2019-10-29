@@ -112,22 +112,18 @@ namespace Sci.Production.Subcon
             listControlBindingSource1.DataSource = dtLoad;
         }
 
-        public bool Check_Irregular_Qty()
+        public DataTable Check_Irregular_Qty()
         {
-            bool Has_Irregular_Qty = false;
+            DataTable dtReturn;
 
             string sqlcmd = string.Empty;
             DualResult result;
             sqlcmd = strQuerySqlcmd();
 
-            result = DBProxy.Current.Select(null, sqlcmd, out dtLoad);
+            result = DBProxy.Current.Select(null, sqlcmd, out dtReturn);
             if (result == false) ShowErr(sqlcmd, result);
-            if (dtLoad.Rows.Count > 0)
-            {
-                Has_Irregular_Qty = true;
-            }
 
-            return Has_Irregular_Qty;
+            return dtReturn;
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -221,9 +217,10 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
             btnClose.Text = this.EditMode ? "Undo" : "Close";
         }
 
-        private string strQuerySqlcmd()
+        private DataTable dtQuery()
         {
             string sqlcmd = string.Empty;
+            DataTable dtReturn;
             // 計算為寫入DB的ReqQty數量
             decimal reqQty = MyUtility.Convert.GetDecimal(_detailDatas.Compute("sum(ReqQty)", ""));
 
@@ -249,15 +246,15 @@ o.FactoryID
 ,[EditDate] = ai.EditDate
 from ArtworkReq_IrregularQty ai
 inner join Orders o on o.ID = ai.OrderID
-inner join ArtworkReq_Detail aqd on ai.OrderID = aqd.OrderID
-inner join ArtworkReq aq on aqd.ID= aq.ID and ai.ArtworkTypeID = aq.ArtworkTypeID
-where aq.id = '{_ArtWorkReq_ID}'
+inner join #tmp s on s.OrderID = ai.OrderID 
+where ai.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 ";
 
-            result = DBProxy.Current.Select(null, sqlcmd, out dtLoad);
+            result = MyUtility.Tool.ProcessWithDatatable(_detailDatas, "", sqlcmd, out dtReturn);
+                // DBProxy.Current.Select(null, sqlcmd, out dtLoad);
             if (result == false) ShowErr(sqlcmd, result);
 
-            if (dtLoad.Rows.Count == 0)
+            if (dtReturn.Rows.Count == 0)
             {
                 sqlcmd = $@"
 select 
@@ -302,9 +299,12 @@ and voa.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 group by o.FactoryID,voa.ArtworkTypeID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value
 having ReqQty.value + PoQty.value + {reqQty} > sum(oq.Qty)
 ";
+
+                result = DBProxy.Current.Select(null, sqlcmd, out dtReturn);
+                if (result == false) ShowErr(sqlcmd, result);
             }
 
-            return sqlcmd;
+            return dtReturn;
         }
 
         private void btnClose_Click(object sender, EventArgs e)

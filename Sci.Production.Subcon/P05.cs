@@ -143,12 +143,14 @@ ORDER BY ap.OrderID   ", masterID);
 
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_ReqQty = frm.Check_Irregular_Qty();
+            DataTable dtIrregular = frm.Check_Irregular_Qty();
 
             this.HideWaitMessage();
 
-            if (Has_Irregular_ReqQty)
+            if (dtIrregular.Rows.Count > 0)
+            {
                 this.btnIrrQtyReason.ForeColor = Color.Red;
+            }
 
             #endregion
 
@@ -328,7 +330,19 @@ ORDER BY ap.OrderID   ", masterID);
             {
                 CurrentMaintain["Exceed"] = 0;
             }
-            
+
+            // 判斷irregular Reason沒寫不能存檔
+            var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)detailgridbs.DataSource);
+
+            DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
+            bool isReasonEmpty = dtIrregular.AsEnumerable().Any(s => MyUtility.Check.Empty(s["SubconReasonID"]));
+            if (isReasonEmpty)
+            {
+                MyUtility.Msg.WarningBox("Irregular Qty Reason cannot be empty!");
+                return false;
+            }
+
+
             if (this.IsDetailInserting)
             {
                 CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "OR", "artworkReq", (DateTime)CurrentMaintain["ReqDate"]);
@@ -591,6 +605,10 @@ where id = '{CurrentMaintain["id"]}'";
 
         private void btnIrrPriceReason_Click(object sender, EventArgs e)
         {
+            if ((DataTable)detailgridbs.DataSource == null)
+            {
+                return;
+            }
 
             DataTable detailDatas = ((DataTable)detailgridbs.DataSource).Clone();
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
@@ -608,13 +626,13 @@ where id = '{CurrentMaintain["id"]}'";
             this.btnIrrQtyReason.ForeColor = Color.Black;
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_Qty = false;
+            
 
-            Has_Irregular_Qty = frm.Check_Irregular_Qty();
+            DataTable dtIrregular = frm.Check_Irregular_Qty();
             
             this.HideWaitMessage();
 
-            if (Has_Irregular_Qty)
+            if (dtIrregular.Rows.Count > 0)
             {
                 this.btnIrrQtyReason.ForeColor = Color.Red;
             }
@@ -681,6 +699,11 @@ where id = '{CurrentMaintain["id"]}'";
         /// <param name="showMSG"></param>
         private void RefreshIrregularQtyReason(bool showMSG = false)
         {
+            if ((DataTable)detailgridbs.DataSource == null)
+            {
+                return;
+            }
+
             DataTable detailDatas = ((DataTable)detailgridbs.DataSource).Clone();
 
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
@@ -693,13 +716,10 @@ where id = '{CurrentMaintain["id"]}'";
             }
             var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
 
-
-            bool Has_Irregular_Qty = IrregularQtyReason.Check_Irregular_Qty();
-
-
+            DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
             this.HideWaitMessage();
 
-            if (Has_Irregular_Qty)
+            if (dtIrregular.Rows.Count > 0)
             {
                 this.btnIrrQtyReason.Enabled = true;
                 this.btnIrrQtyReason.ForeColor = Color.Red;
