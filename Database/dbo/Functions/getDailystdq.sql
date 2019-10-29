@@ -169,7 +169,7 @@ group by APSNo,WorkDate,ComboType
 
 Insert into @table
 select Date = cast(WorkDate as Date)
-	, stdQty = iif(s.AlloQty>sum(x.perDayQty) over (partition by s.id) and b.WorkDate = max(b.WorkDate) over (partition by s.id),s.AlloQty,x.perDayQty)
+	, stdQty = iif(s.AlloQty<sum(x.perDayQty) over (partition by s.id) and b.WorkDate = max(b.WorkDate) over (partition by s.id),s.AlloQty,x.perDayQty)
 	, s.ID
 	, s.ComboType
 from @APSListWorkDay s
