@@ -137,7 +137,7 @@ namespace Sci.Production.PPIC
         {
             if (this.radioMNotice.Checked == true)
             {
-                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
+                string ordercomboid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
 
                 DataRow drvar = this.GetTitleDataByCustCD(ordercomboid, this._id);
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -162,6 +162,7 @@ namespace Sci.Production.PPIC
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_CustCD", drvar["CustCD"].ToString());
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_delDate", drvar["delDate"]);
+                this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_ChangeMemoDate", drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
 
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", ordercomboid), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
@@ -180,7 +181,12 @@ namespace Sci.Production.PPIC
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select(string.Empty, "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 from MNOrder WITH (NOLOCK) where ordercomboid = @ordercomboid order by ID", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercomboid) }, out dt);
+                DualResult getIds = DBProxy.Current.Select(string.Empty, @"
+select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 
+,ChangeMemoDate
+from Orders WITH (NOLOCK) 
+where ordercomboid = @ordercomboid 
+order by ID", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercomboid) }, out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     DualResult failResult = new DualResult(false, "Error:" + getIds.ToString());
@@ -209,6 +215,7 @@ namespace Sci.Production.PPIC
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "CustCD" + idxStr, dt.Rows[i]["CustCD"].ToString());
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "pono" + idxStr, dt.Rows[i]["pono"].ToString());
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "delDate" + idxStr, dt.Rows[i]["delDate"]);
+                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "ChangeMemoDate" + idxStr, dt.Rows[i]["ChangeMemoDate"] == DBNull.Value ? string.Empty : dt.Rows[i]["ChangeMemoDate"]);
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "coms1" + idxStr, dt.Rows[i]["Customize1"].ToString());
 
                     sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
@@ -253,7 +260,7 @@ namespace Sci.Production.PPIC
             // M/Notict (Combo by ComboID)
             else
             {
-                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
+                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
 
                 System.Data.DataTable dtOrderCombo = this.GetDtByComboID(ordercomboid);
 
@@ -306,6 +313,7 @@ namespace Sci.Production.PPIC
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "sname1" + idxStr, orderComboID + "-1");
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "sname2" + idxStr, orderComboID + "-2");
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "sname3" + idxStr, orderComboID + "-3");
+                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_ChangeMemoDate" + idxStr, drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
 
                     // For SizeSpec
                     sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
@@ -338,6 +346,8 @@ namespace Sci.Production.PPIC
 
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "CustCD" + idxStr, drvar["CustCD"].ToString());
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "pono" + idxStr, drvar["pono"].ToString());
+                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "CustPONo" + idxStr, drvar["pono"].ToString());
+                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "ChangeMemoDate" + idxStr, drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "delDate" + idxStr, drvar["delDate"]);
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "coms1" + idxStr, drvar["Customize1"].ToString());
                     this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
@@ -373,6 +383,7 @@ namespace Sci.Production.PPIC
                         this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_PoNo" + idxStr + this.sxr.CRPrefix + sIdx, dr["CustPONO"].ToString());
                         this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_Order" + idxStr + this.sxr.CRPrefix + sIdx, dr["Customize1"].ToString());
                         this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_DELIVERY" + idxStr + this.sxr.CRPrefix + sIdx, dr["BuyerDelivery"]);
+                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_ChangeMemoDate" + idxStr + this.sxr.CRPrefix + sIdx, dr["ChangeMemoDate"] == DBNull.Value ? string.Empty : dr["ChangeMemoDate"]);
                         this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_Mark" + idxStr + this.sxr.CRPrefix + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
 
                         System.Data.DataTable[] dts2;
@@ -399,9 +410,9 @@ namespace Sci.Production.PPIC
         {
             System.Data.DataTable dt;
             string strSqlSelect = @"
-SELECT distinct OrderComboID from MNOrder
-outer apply (select 1 as cnt from MNOrder tmp where tmp.OrderComboID = MNOrder.ID) cnt
-WHERE MNOrder.ordercomboid = @POID";
+SELECT distinct OrderComboID from Orders
+outer apply (select 1 as cnt from Orders tmp where tmp.OrderComboID = Orders.ID) cnt
+WHERE Orders.ordercomboid = @POID";
 
             DualResult res = DBProxy.Current.Select(string.Empty, strSqlSelect, new List<SqlParameter> { new SqlParameter("@POID", poid) }, out dt);
 
@@ -452,12 +463,13 @@ SELECT MAKER=max(FactoryID)
 ,QTY=sum(QTY)
 --,'SPNO'=RTRIM(POID)+b.spno 
 ,'SPNO'=b.OrderComboList
-,(select CustCDID from MnOrder o where o.ID = @ID) as CustCD
-,(select CustPONo from MnOrder o where o.ID = @ID) as pono
-,(select BuyerDelivery from MnOrder o where o.ID = @ID) as delDate
-,(select Customize1 from MnOrder o where o.ID = @ID) as Customize1
-FROM MNOrder a WITH (NOLOCK) 
---OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@ordercomboid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ID
+,(select CustCDID from orders o where o.ID = @ID) as CustCD
+,(select CustPONo from orders o where o.ID = @ID) as pono
+,(select BuyerDelivery from orders o where o.ID = @ID) as delDate
+,(select Customize1 from orders o where o.ID = @ID) as Customize1
+,(select ChangeMemoDate from orders o where o.ID = @ID) as ChangeMemoDate
+FROM orders a WITH (NOLOCK) 
+--OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@ordercomboid,'') FROM orders WITH (NOLOCK) WHERE OrderComboID = @ID
 OUTER APPLY(Select Top 1 OrderComboList from dbo.Order_OrderComboList with(nolock) where ID  = @ID) b
 where OrderComboID = @ordercomboid group by POID,b.OrderComboList";
             }
@@ -470,13 +482,14 @@ MAKER=max(FactoryID)
 ,QTY=sum(QTY)
 --,'SPNO'=RTRIM(POID)+b.spno
 ,'SPNO'=b.spno
-,(select CustCDID from MnOrder o where o.ID = @ID) as CustCD
-,(select CustPONo from MnOrder o where o.ID = @ID) as pono
-,(select BuyerDelivery from MnOrder o where o.ID = @ID) as delDate
-,(select Customize1 from MnOrder o where o.ID = @ID) as Customize1 
-FROM MNOrder a WITH (NOLOCK) 
---OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@ordercomboid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ordercomboid
-OUTER APPLY(SELECT STUFF((SELECT '/'+ID FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ordercomboid
+,(select CustCDID from Orders o where o.ID = @ID) as CustCD
+,(select CustPONo from Orders o where o.ID = @ID) as pono
+,(select BuyerDelivery from Orders o where o.ID = @ID) as delDate
+,(select Customize1 from Orders o where o.ID = @ID) as Customize1 
+,(select ChangeMemoDate from orders o where o.ID = @ID) as ChangeMemoDate
+FROM Orders a WITH (NOLOCK) 
+--OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@ordercomboid,'') FROM Orders WITH (NOLOCK) WHERE OrderComboID = @ordercomboid
+OUTER APPLY(SELECT STUFF((SELECT '/'+ID FROM Orders WITH (NOLOCK) WHERE OrderComboID = @ordercomboid
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
 where OrderComboID = @ordercomboid group by POID,b.spno";
             }

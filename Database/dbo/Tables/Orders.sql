@@ -154,6 +154,7 @@
     [SubconInType] VARCHAR NULL, 
     [LastProductionDate] DATE NULL, 
     [EstPODD] DATE NULL, 
+    [ChangeMemoDate] DATE NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

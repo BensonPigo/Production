@@ -5,22 +5,24 @@ CREATE PROCEDURE [dbo].[Order_Report_AccColorCombination]
 AS
 BEGIN
 
-declare @OrderComboID varchar(13) = (select OrderComboID from MNOrder where ID = @OrderID)
-declare @tbl table (id varchar(13), Article varchar(8))
+declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @tbl table (seq bigint, id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
 else if(@ByType = 1)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID)
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where POID = @poid AND OrderComboID = @OrderID)
 else if(@ByType = 2)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID )
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where POID = @poid  )
 
-SELECT Article,c.ColorID,FabricPanelCode into #tmp FROM dbo.MNOrder_ColorCombo a
-left join dbo.MNOrder b on a.Id = b.ID
+SELECT tbl.seq,a.Article,c.ColorID,FabricPanelCode 
+into #tmp FROM dbo.Order_ColorCombo a
+left join dbo.Orders b on a.Id = b.ID
 outer apply (	
 	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = b.BrandID and d.ID = a.ColorID FOR XML PATH('')),1,1,'')
 ) c
-WHERE a.Id = @OrderComboID and a.Article in (select Article from @tbl) and a.FabricType = 'A'
+outer apply(select min(seq) seq,article from @tbl tbl where tbl.Article = a.Article group by Article ) tbl
+WHERE a.ID = @poid and a.Article in (select article from @tbl) and a.FabricType = 'A'
 
 if exists(select 1 from #tmp)
 	begin
@@ -33,7 +35,7 @@ if exists(select 1 from #tmp)
 		),1,1,'')
 		declare @sql nvarchar(max) = 'select CODE=Article,'+@rptcol+' from (
 		select * from #tmp
-		) a pivot (max(ColorID) for FabricPanelCode in ('+@rptcol+')) b'
+		) a pivot (max(ColorID) for FabricPanelCode in ('+@rptcol+')) b order by Seq,Article'
 		exec (@sql)
 	end
 else

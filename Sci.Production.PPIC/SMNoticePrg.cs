@@ -683,6 +683,7 @@ select o.BrandID, o.OrderTypeID, o.ProgramID
 , o.StyleID, o.SeasonID, o.FactoryID, Convert(varchar(10), o.BuyerDelivery, 111) as BuyerDelivery
 , s.Description, o.CdCodeID, Convert(varchar(10), o.SciDelivery, 111) as SciDelivery
 , op.POComboList as spno
+, Convert(varchar(10), o.ChangeMemoDate ,111) as ChangeMemoDate
 From Orders o 
 inner join Style s on o.StyleUkey = s.Ukey
 left join Order_POComboList op on o.POID = op.ID
@@ -707,6 +708,7 @@ where o.POID = @ID
                     sheet.GetRange("Block1StyleID_O").SetValue(row.Field<string>("StyleID"));
                     sheet.GetRange("Block1SeasonID_O").SetValue(row.Field<string>("SeasonID"));
                     sheet.GetRange("Block1Factory_O").SetValue(row.Field<string>("FactoryID"));
+                    sheet.GetRange("Block1ChangeMemoDate_O").SetValue(row.Field<string>("ChangeMemoDate"));
                     sheet.GetRange("Block1Delivery_O").SetValue(row.Field<string>("BuyerDelivery"));
 
                     // line3
