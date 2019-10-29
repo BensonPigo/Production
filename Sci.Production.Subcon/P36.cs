@@ -214,7 +214,13 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 txtuserSMR.TextBox1.Focus();
                 return false;
             }
-            
+
+            if (MyUtility.Check.Empty(CurrentMaintain["LocalSuppID"]))
+            {
+                MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!", "Warning");
+                return false;
+            }
+
             if (MyUtility.Check.Empty(CurrentMaintain["CURRENCYID"]))
             {
                 MyUtility.Msg.WarningBox("< Currency >  can't be empty!", "Warning");
