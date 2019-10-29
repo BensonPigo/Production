@@ -287,7 +287,6 @@ where f.IsProduceFty=1
 --and o.PulloutComplete = 0
 and o.category  in ('B','S')
 and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and sao.LocalSuppId = '{2}' and o.Junk=0
-and (o.category !='B')
 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
 
             if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
