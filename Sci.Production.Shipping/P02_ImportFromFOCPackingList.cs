@@ -20,6 +20,7 @@ namespace Sci.Production.Shipping
     public partial class P02_ImportFromFOCPackingList : Sci.Win.Subs.Base
     {
         private DataRow masterData;
+        private string chkPackingListID = string.Empty;
 
         /// <summary>
         /// P02_ImportFromFOCPackingList
@@ -56,7 +57,7 @@ namespace Sci.Production.Shipping
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Category", header: "Category", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), settings: ctnno)
-                .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 2, maximum: 99999.99m, minimum: 0m)
+                .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 3, maximum: 99999.99m, minimum: 0m)
                 .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m)
                 .Numeric("ShipQty", header: "Q'ty", decimal_places: 2, iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8))
@@ -109,12 +110,26 @@ and Factory.IsProduceFty=1
 
             string sqlCmd = string.Format(
                 @"select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
-'' as CTNNo, 0.0 as NW, 0.0 as Price,pd.ShipQty,o.StyleUnit as UnitID,'' as Receiver,o.SMR as LeaderID,
-t.Name as Leader, o.BrandID, [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
+    '' as CTNNo
+    , [NW] = TtlGW.GW * ( (pd.ShipQty * 1.0) / (TtlShipQty.Value *1.0))
+    , 0.0 as Price
+    ,pd.ShipQty
+    ,o.StyleUnit as UnitID
+    ,'' as Receiver
+    ,o.SMR as LeaderID,
+    t.Name as Leader
+    , o.BrandID
+    , [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
 from PackingList_Detail pd WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
 left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
+OUTER APPLY(
+	SELECT Value=SUM(ShipQty) FROM PackingList_Detail WHERE ID = pd.ID 
+)TtlShipQty
+OUTER APPLY(
+	SELECT GW FROM PackingList WHERE ID = pd.ID 
+)TtlGW
 where pd.ID = '{0}'
 and Factory.IsProduceFty=1", this.txtFOCPL.Text);
             DataTable selectData;
@@ -130,6 +145,7 @@ and Factory.IsProduceFty=1", this.txtFOCPL.Text);
                 MyUtility.Msg.WarningBox("Data not found!!!");
             }
 
+            this.chkPackingListID = this.txtFOCPL.Text;
             this.listControlBindingSource1.DataSource = selectData;
         }
 
@@ -189,6 +205,15 @@ and Factory.IsProduceFty=1", this.txtFOCPL.Text);
                 return;
             }
 
+            decimal ttlNW = Convert.ToDecimal(dt.Compute("SUM(NW)", string.Empty));
+            decimal packingListGW = Convert.ToDecimal(MyUtility.GetValue.Lookup($"SELECT GW FROM  PackingList WHERE ID = '{this.chkPackingListID}'"));
+
+            // 總 N.W. 是否超過 PL 總 G.W.
+            if (ttlNW > packingListGW)
+            {
+                MyUtility.Msg.WarningBox("Total <N.W.> cannot be more than <G.W.> of the Packing List.");
+                return;
+            }
             IList<string> insertCmds = new List<string>();
 
             foreach (DataRow dr in dt.Rows)

@@ -21,6 +21,7 @@ namespace Sci.Production.Shipping
     {
         // 宣告Context Menu Item
         private ToolStripMenuItem focpl;
+        private ToolStripMenuItem samplepl;
         private ToolStripMenuItem purchase;
         private ToolStripMenuItem poitem;
         private ToolStripMenuItem newitem;
@@ -71,6 +72,7 @@ namespace Sci.Production.Shipping
 
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from FOC PL# (Garment FOC)", onclick: (s, e) => this.ImportFromFOCPL()).Get(out this.focpl);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Sample PL#", onclick: (s, e) => this.ImportFromSamplePL()).Get(out this.samplepl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Purchase (Material)", onclick: (s, e) => this.ImportFromPurchase()).Get(out this.purchase);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add by PO# item (Garment Chargeable)", onclick: (s, e) => this.AddByPOItem()).Get(out this.poitem);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
@@ -87,6 +89,7 @@ namespace Sci.Production.Shipping
         private void SetContextMenuStatus(bool status)
         {
             this.focpl.Enabled = status;
+            this.samplepl.Enabled = status; 
             this.purchase.Enabled = status;
             this.poitem.Enabled = status;
             this.newitem.Enabled = status;
@@ -129,6 +132,18 @@ namespace Sci.Production.Shipping
         private void ImportFromFOCPL()
         {
             Sci.Production.Shipping.P02_ImportFromFOCPackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromFOCPackingList(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
+            callFOCPLForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+        }
+
+        // Context Menu選擇Import from FOC PL# (Garment FOC)
+        private void ImportFromSamplePL()
+        {
+            Sci.Production.Shipping.P02_ImportFromSamplePackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromSamplePackingList(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
             this.RenewData();
@@ -619,7 +634,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(15))
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15))
                 .Text("CTNNo", header: "C/No.", width: Widths.AnsiChars(5))
-                .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 2)
+                .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 3)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(10), decimal_places: 4)
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(7), decimal_places: 2)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(5))
@@ -664,6 +679,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved")
                 {
                     this.focpl.Enabled = false;
+                    this.samplepl.Enabled = false;
                     this.purchase.Enabled = false;
                     this.poitem.Enabled = false;
                     this.newitem.Enabled = false;
