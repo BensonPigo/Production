@@ -1466,6 +1466,11 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         {
             base.ClickConfirm();
 
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
+            }
+
             string sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{this.CurrentMaintain["ID"]}','{Sci.Env.User.Factory}','{Sci.Env.User.UserID}','1'";
             DataTable dtSP = new DataTable();
             if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtSP))
@@ -1481,11 +1486,6 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             else
             {
                 this.ShowErr(this.result);
-            }
-
-            if (!Prgs.CheckExistsOrder_QtyShip_Detail(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
-            {
-                return;
             }
         }
 
