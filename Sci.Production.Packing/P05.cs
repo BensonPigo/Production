@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using Ict.Win.UI;
+using System.Linq;
 
 namespace Sci.Production.Packing
 {
@@ -1042,6 +1043,36 @@ where oqd.Id = '{0}'
 
             // 檢查Sewing Output Qty是否有超過Packing Qty
             if (!Prgs.CheckPackingQtyWithSewingOutput(this.CurrentMaintain["ID"].ToString()))
+            {
+                return;
+            }
+
+            string sqlchk = $@"
+select msg=concat(pd.OrderID,'(',pd.OrderShipmodeSeq,')')
+from PackingList p with(nolock)
+inner join PackingList_detail pd with(nolock) on p.id = pd.id
+left join Order_QtyShip oqs with(nolock) on oqs.id = pd.OrderID
+where  oqs.ShipmodeID <> p.ShipModeID
+and p.id = '{this.CurrentMaintain["ID"]}'";
+
+            DataTable dtchk;
+            DualResult dualResult = DBProxy.Current.Select(null, sqlchk, out dtchk);
+            if (!dualResult)
+            {
+                this.ShowErr(dualResult);
+                return;
+            }
+
+            if (dtchk.Rows.Count > 0)
+            {
+                var os = dtchk.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).Distinct().ToList();
+                string msg = @"Ship Mode are different, please check!
+" + string.Join(",", os);
+                MyUtility.Msg.WarningBox(msg);
+                return;
+            }
+
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
                 return;
             }
