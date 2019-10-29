@@ -31,9 +31,9 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             this.Query();
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Text("ImportPort", header: "Loading Port", width: Widths.AnsiChars(20))
-            .Text("ImportCountry", header: "Origin", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("ExportCountry", header: "Destination", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("ExportPort", header: "Loading Port", width: Widths.AnsiChars(20))
+            .Text("ExportCountry", header: "Origin", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("ImportCountry", header: "Destination", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Vessel", header: "Vessel Name", width: Widths.AnsiChars(30), iseditingreadonly: true)
             ;

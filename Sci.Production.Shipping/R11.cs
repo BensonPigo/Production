@@ -553,26 +553,27 @@ with ExportData as (
 		   			  from ShareExpense WITH (NOLOCK) 
 		   			  where WKNo = e.ID)
 		   , [NoImportChg] = iif(isnull(e.NoImportCharges,0) = 0,'','V')
+		   , LoadingOrigin = Concat (e.ExportPort, '-', e.ExportCountry)
 		   , DoortoDoorDelivery = iif(dtd1.v = 1 or dtd2.v = 1,'Y','')
 	from Export e WITH (NOLOCK) 
 	left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
 	outer apply(
 		select v=1
 		from Door2DoorDelivery 
-		where ImportPort = e.ImportPort
-		and ImportCountry =e.ImportCountry
-		and ExportCountry = e.ExportCountry
-		and ShipModeID = e.ShipModeID
-		and Vessel =e.Vessel
+		where ExportPort = e.ExportPort
+		      and ExportCountry = e.ExportCountry
+		      and ImportCountry =e.ImportCountry
+		      and ShipModeID = e.ShipModeID
+		      and Vessel =e.Vessel
 	)dtd1
 	outer apply(
 		select v=1
 		from Door2DoorDelivery 
-		where ImportPort = e.ImportPort
-		and ImportCountry =e.ImportCountry
-		and ExportCountry = e.ExportCountry
-		and ShipModeID = e.ShipModeID
-		and Vessel =''
+		where ExportPort = e.ExportPort
+		      and ExportCountry = e.ExportCountry
+		      and ImportCountry =e.ImportCountry
+		      and ShipModeID = e.ShipModeID
+		      and Vessel =''
 	)dtd2
 	where e.Junk = 0");
                 if (!MyUtility.Check.Empty(this.date1))
@@ -613,6 +614,7 @@ FtyExportData as (
 		   , f.Forwarder+'-'+isnull(l.Abb,'') as Forwarder
 		   , f.Blno
 		   , [NoImportChg] = iif(isNull(f.NoCharges,0) = 1,'V','')
+		   , LoadingOrigin = Concat (f.ExportPort, '-', f.ExportCountry)
 		   , DoortoDoorDelivery =''
 	from FtyExport f WITH (NOLOCK) 
 	left join LocalSupp l WITH (NOLOCK) on l.ID = f.Forwarder
@@ -654,7 +656,7 @@ select	IE
 		, '' as BrandID
 		, '' as Category
 		, 0 as OrderQty
-		, '' as CustCDID
+		, LoadingOrigin
 		, ImportCountry
 		, ShipModeID
 		, PortArrival
@@ -677,7 +679,7 @@ select	IE
 		, BrandID = '' 
 		, Category = '' 
 		, OrderQty = 0 
-		, CustCDID = ''
+		, LoadingOrigin
 		, ImportCountry
 		, ShipModeID
 		, PortArrival

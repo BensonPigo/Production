@@ -173,19 +173,19 @@ where ID = '{this.CurrentMaintain["MainExportID08"]}'
             string chkdtd = $@"
 select 1
 from Door2DoorDelivery 
-where ImportPort = '{this.CurrentMaintain["ImportPort"]}'
-and ImportCountry ='{this.CurrentMaintain["ImportCountry"]}'
-and ExportCountry = '{this.CurrentMaintain["ExportCountry"]}'
-and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
-and Vessel ='{this.CurrentMaintain["Vessel"]}'
+where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
+      and ExportCountry ='{this.CurrentMaintain["ExportCountry"]}'
+      and ImportCountry = '{this.CurrentMaintain["ImportCountry"]}'
+      and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
+      and Vessel ='{this.CurrentMaintain["Vessel"]}'
 union 
 select 1
 from Door2DoorDelivery
-where ImportPort = '{this.CurrentMaintain["ImportPort"]}'
-and ImportCountry ='{this.CurrentMaintain["ImportCountry"]}'
-and ExportCountry = '{this.CurrentMaintain["ExportCountry"]}'
-and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
-and Vessel  =''
+where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
+      and ExportCountry ='{this.CurrentMaintain["ExportCountry"]}'
+      and ImportCountry = '{this.CurrentMaintain["ImportCountry"]}'
+      and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
+      and Vessel  =''
 ";
             this.ChkDoortoDoorDelivery.Checked = MyUtility.Check.Seek(chkdtd);
             #endregion
