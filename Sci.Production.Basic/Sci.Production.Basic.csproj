@@ -82,9 +82,6 @@
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
@@ -189,17 +186,17 @@
     <Compile Include="B04_AccountNo.Designer.cs">
       <DependentUpon>B04_AccountNo.cs</DependentUpon>
     </Compile>
-    <Compile Include="B04_BankDetail.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="B04_BankDetail.Designer.cs">
-      <DependentUpon>B04_BankDetail.cs</DependentUpon>
-    </Compile>
     <Compile Include="B04_BankData_Input.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="B04_BankData_Input.Designer.cs">
       <DependentUpon>B04_BankData_Input.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B04_BankDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B04_BankDetail.Designer.cs">
+      <DependentUpon>B04_BankDetail.cs</DependentUpon>
     </Compile>
     <Compile Include="B04_BatchApprove.cs">
       <SubType>Form</SubType>
@@ -315,12 +312,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="R01.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="R01.Designer.cs">
-      <DependentUpon>R01.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -357,11 +348,11 @@
     <EmbeddedResource Include="B04_AccountNo.resx">
       <DependentUpon>B04_AccountNo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="B04_BankDetail.resx">
-      <DependentUpon>B04_BankDetail.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="B04_BankData_Input.resx">
       <DependentUpon>B04_BankData_Input.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B04_BankDetail.resx">
+      <DependentUpon>B04_BankDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B04_BatchApprove.resx">
       <DependentUpon>B04_BatchApprove.cs</DependentUpon>
@@ -420,9 +411,6 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="R01.resx">
-      <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

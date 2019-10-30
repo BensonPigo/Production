@@ -40,7 +40,8 @@
             this.displayPrice = new Sci.Win.UI.DisplayBox();
             this.numPrice = new Sci.Win.UI.NumericBox();
             this.dateCanvassDate = new Sci.Win.UI.DateBox();
-            this.btnCanvassRecord = new Sci.Win.UI.Button();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.btnQuotationRecord = new Sci.Win.UI.Button();
             this.btnPaymentHistory = new Sci.Win.UI.Button();
             this.labelUnit = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -67,7 +68,8 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.btnPaymentHistory);
-            this.detailcont.Controls.Add(this.btnCanvassRecord);
+            this.detailcont.Controls.Add(this.btnQuotationRecord);
+            this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.dateCanvassDate);
             this.detailcont.Controls.Add(this.numPrice);
             this.detailcont.Controls.Add(this.displayPrice);
@@ -156,7 +158,7 @@
             this.labelCanvassDate.Name = "labelCanvassDate";
             this.labelCanvassDate.Size = new System.Drawing.Size(90, 23);
             this.labelCanvassDate.TabIndex = 9;
-            this.labelCanvassDate.Text = "Canvass Date";
+            this.labelCanvassDate.Text = "Quot. Date";
             // 
             // labelAccountNo
             // 
@@ -231,17 +233,29 @@
             this.dateCanvassDate.Size = new System.Drawing.Size(130, 23);
             this.dateCanvassDate.TabIndex = 13;
             // 
-            // btnCanvassRecord
+            // checkBox1
             // 
-            this.btnCanvassRecord.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCanvassRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCanvassRecord.Location = new System.Drawing.Point(683, 57);
-            this.btnCanvassRecord.Name = "btnCanvassRecord";
-            this.btnCanvassRecord.Size = new System.Drawing.Size(138, 30);
-            this.btnCanvassRecord.TabIndex = 16;
-            this.btnCanvassRecord.Text = "Canvass Record";
-            this.btnCanvassRecord.UseVisualStyleBackColor = true;
-            this.btnCanvassRecord.Click += new System.EventHandler(this.BtnCanvassRecord_Click);
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(316, 22);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(57, 21);
+            this.checkBox1.TabIndex = 3;
+            this.checkBox1.Text = "Junk";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // btnQuotationRecord
+            // 
+            this.btnQuotationRecord.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnQuotationRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnQuotationRecord.Location = new System.Drawing.Point(683, 57);
+            this.btnQuotationRecord.Name = "btnQuotationRecord";
+            this.btnQuotationRecord.Size = new System.Drawing.Size(138, 30);
+            this.btnQuotationRecord.TabIndex = 16;
+            this.btnQuotationRecord.Text = "Quotation Record";
+            this.btnQuotationRecord.UseVisualStyleBackColor = true;
+            this.btnQuotationRecord.Click += new System.EventHandler(this.BtnCanvassRecord_Click);
             // 
             // btnPaymentHistory
             // 
@@ -340,16 +354,12 @@
             this.ExpressQuery = true;
             this.IsSupportClose = true;
             this.IsSupportDelete = false;
-            this.IsSupportJunk = true;
             this.IsSupportUnclose = true;
-            this.IsSupportUnJunk = true;
-            this.JunkChkValue = "New";
             this.Name = "B03";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B03. Shipping Expense";
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "ID";
-            this.UnjunkChkValue = "Junked";
             this.WorkAlias = "ShipExpense";
             this.FormLoaded += new System.EventHandler(this.B03_FormLoaded);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.B03_FormClosing);
@@ -384,7 +394,8 @@
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
         private Win.UI.Button btnPaymentHistory;
-        private Win.UI.Button btnCanvassRecord;
+        private Win.UI.Button btnQuotationRecord;
+        private Win.UI.CheckBox checkBox1;
         private Win.UI.Label labelUnit;
         private Class.txtunit_local txtUnit;
         private Win.UI.Label label2;
