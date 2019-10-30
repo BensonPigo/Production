@@ -274,13 +274,13 @@ order by ID
             // 表頭Pay by Check沒打勾 = 表身Default打勾不能超過一筆
 
             // 表頭Pay by Check打勾時, 表身Default全不勾
-            foreach (DataRow dr in dt.Rows)
-            {
-                if (this.chkPaybyCheck.Checked)
-                {
-                    dr["IsDefault"] = false;
-                }
-            }
+            //foreach (DataRow dr in dt.Rows)
+            //{
+            //    if (this.chkPaybyCheck.Checked)
+            //    {
+            //        dr["IsDefault"] = false;
+            //    }
+            //}
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -373,17 +373,17 @@ order by ID
 
         private void chkPaybyCheck_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.detailgridbs.DataSource != null)
-            {
-                DataTable dt = (DataTable)this.detailgridbs.DataSource;
-                foreach (DataRow dr in dt.Rows)
-                {
-                    if (this.chkPaybyCheck.Checked)
-                    {
-                        dr["IsDefault"] = false;
-                    }
-                }
-            }
+            //if (this.detailgridbs.DataSource != null)
+            //{
+            //    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            //    foreach (DataRow dr in dt.Rows)
+            //    {
+            //        if (this.chkPaybyCheck.Checked)
+            //        {
+            //            dr["IsDefault"] = false;
+            //        }
+            //    }
+            //}
         }
 
 
@@ -401,17 +401,18 @@ order by ID
                     }
                 }
             }
+            // 表頭[Pay by Check] 和表身的Default可同時被勾選 2019/10/30
+            //if (this.chkPaybyCheck.Checked || defaultCount == 1)
+            //{
+            //    DBProxy.Current.Execute(null , $"UPDATE LocalSupp_Bank SET Status='Confirmed',ApproveName='{Sci.Env.User.UserID}' ,ApproveDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' AND PKey = '{this.CurrentMaintain["PKey"]}' ");
+            //}
+            //else
+            //{
+            //    MyUtility.Msg.InfoBox("Can not Confirm because of [Pay by Check] or any detail [Default] is checked.");
+            //    return;
+            //}
 
-            if (this.chkPaybyCheck.Checked || defaultCount == 1)
-            {
-                DBProxy.Current.Execute(null , $"UPDATE LocalSupp_Bank SET Status='Confirmed',ApproveName='{Sci.Env.User.UserID}' ,ApproveDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' AND PKey = '{this.CurrentMaintain["PKey"]}' ");
-            }
-            else
-            {
-                MyUtility.Msg.InfoBox("Can not Confirm because of [Pay by Check] or any detail [Default] is checked.");
-                return;
-            }
-
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp_Bank SET Status='Confirmed',ApproveName='{Sci.Env.User.UserID}' ,ApproveDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' AND PKey = '{this.CurrentMaintain["PKey"]}' ");
             base.ClickConfirm();
         }
 
