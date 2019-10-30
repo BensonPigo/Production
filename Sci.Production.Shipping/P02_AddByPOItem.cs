@@ -374,62 +374,23 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         /// <inheritdoc/>
         protected override DualResult OnDeletePre()
         {
-
-            DualResult failResult;
-            string cmd_PL = string.Empty;
-            string cmd_Express = string.Empty;
-
-            // Sample、SMS - 刪除By PackingList OrderID，如果是刪除該PackingList的最後一筆才需要去除PackingList的 HC#
             if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1" || MyUtility.Convert.GetString(this.CurrentData["Category"]) == "2")
             {
+                DualResult failResult;
 
-                cmd_PL = $@"
-declare @count int = 0
+                DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '',pulloutdate=null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentData["PackingListID"])));
+                if (!result)
+                {
+                    failResult = new DualResult(false, "Update packing list fail!! Pls try again.\r\n" + result.ToString());
+                    return failResult;
+                }
 
-SELECT @count=COUNT(ID) 
-FROM Express_Detail
-WHERE ID = '{this.CurrentData["ID"]}'
-AND PackingListID='{this.CurrentData["PackingListID"]}'
-
-update PackingList set ExpressID = '',pulloutdate=null 
-where ID = '{this.CurrentData["PackingListID"]}'
-      AND @count <= 1
-";
-
-                cmd_Express = $@"
-delete Express_Detail where ID = '{this.CurrentData["ID"]}' 
-and PackingListID = '{this.CurrentData["PackingListID"]}'
-AND OrderID = '{this.CurrentData["OrderID"]}'
-";
-            }
-            else
-            {
-                // 其他 - 刪除By PackingList
-                // if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1")
-                cmd_PL = $@"
-
-update PackingList set ExpressID = '',pulloutdate=null 
-where ID = '{this.CurrentData["PackingListID"]}'
-";
-
-                cmd_Express = $@"
-delete Express_Detail where ID = '{this.CurrentData["ID"]}' 
-and PackingListID = '{this.CurrentData["PackingListID"]}'
-";
-            }
-
-            DualResult result = DBProxy.Current.Execute(null, cmd_PL);
-            if (!result)
-            {
-                failResult = new DualResult(false, "Update packing list fail!! Pls try again.\r\n" + result.ToString());
-                return failResult;
-            }
-
-            result = DBProxy.Current.Execute(null, cmd_Express);
-            if (!result)
-            {
-                failResult = new DualResult(false, "Delete fail!! Pls try again.\r\n" + result.ToString());
-                return failResult;
+                result = DBProxy.Current.Execute(null, string.Format("delete Express_Detail where ID = '{0}' and PackingListID = '{1}'", MyUtility.Convert.GetString(this.CurrentData["ID"]), MyUtility.Convert.GetString(this.CurrentData["PackingListID"])));
+                if (!result)
+                {
+                    failResult = new DualResult(false, "Delete fail!! Pls try again.\r\n" + result.ToString());
+                    return failResult;
+                }
             }
 
             return Result.True;
