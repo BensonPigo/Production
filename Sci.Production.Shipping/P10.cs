@@ -954,12 +954,12 @@ AND EXISTS (SELECT 1 FROM Express e WHERE  p.ExpressID=e.ID AND p.PulloutDate <>
                 StringBuilder msg2 = new StringBuilder();
                 if (dt.Rows.Count > 0)
                 {
-                    //foreach (DataRow dr in dt.Rows)
-                    //{
-                    //    msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
-                    //}
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
+                    }
 
-                    MyUtility.Msg.WarningBox("HC Ship Date is different with Pull Out Date.");
+                    MyUtility.Msg.WarningBox("HC Ship Date is different with Pull Out Date." + Environment.NewLine + msg2.ToString());
                     return;
                 }
             }
@@ -993,12 +993,22 @@ AND e.ID IS NULL
                 StringBuilder msg2 = new StringBuilder();
                 if (dt.Rows.Count > 0)
                 {
-                    //foreach (DataRow dr in dt.Rows)
-                    //{
-                    //    msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
-                    //}
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
+                    }
 
-                    MyUtility.Msg.WarningBox("Ship mode Needs to Create HC. Please create data at [Shippping P02].");
+                    string strCmdFindShipmode = @"
+select STUFF((
+            SELECT Concat (',', ID )
+            FROM ShipMode
+            WHERE NeedCreateIntExpress = 1
+            for xml path(''))
+        , 1, 1, '')";
+
+                    string strListShipmode = MyUtility.GetValue.Lookup(strCmdFindShipmode);
+
+                    MyUtility.Msg.WarningBox($"Ship mode ({strListShipmode}) needs to Create International Express. Please create data at [Shippping P02]." + Environment.NewLine + msg2.ToString());
                     return;
                 }
             }

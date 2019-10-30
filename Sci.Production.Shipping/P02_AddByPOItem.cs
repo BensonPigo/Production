@@ -230,13 +230,14 @@ GROUP BY pd.OrderID ,o.StyleUnit,pd.ShipQty ,TtlShipQty.Value ,p.GW
 
         private string ChkPackingListID()
         {
+            string plType = this.CurrentData["Category"].EqualDecimal(1) ? "'F'" : "'B','S'";
             string packingListType = string.Empty;
             string sqlchk = $@"
 select DISTINCT pl.Type
 from PackingList pl WITH (NOLOCK)
 inner join PackingList_Detail pld WITH (NOLOCK) on pld.id = pl.id
 where pl.ID = '{this.txtPackingListID.Text}'
-and pl.Type in ('B','S')
+and pl.Type in ({plType})
 and pld.OrderID = '{this.txtSPNo.Text}'
 ";
             packingListType = MyUtility.GetValue.Lookup(sqlchk);
@@ -327,6 +328,11 @@ and pld.OrderID = '{this.txtSPNo.Text}'
                     return false;
                 }
 
+                if (!this.HcImportCheck(this.CurrentData["PackingListID"].ToString(), this.CurrentData["OrderID"].ToString(), packingListTyp))
+                {
+                    return false;
+                }
+
                 DataRow seq;
                 if (!MyUtility.Check.Seek(
                     string.Format(
@@ -339,11 +345,6 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
 
                 this.CurrentData["Seq1"] = seq["Seq1"];
                 this.CurrentData["InCharge"] = Sci.Env.User.UserID;
-            }
-
-            if (!this.HcImportCheck(this.CurrentData["PackingListID"].ToString(), this.CurrentData["OrderID"].ToString(), packingListTyp))
-            {
-                return false;
             }
 
             return true;

@@ -110,34 +110,38 @@ and Factory.IsProduceFty=1
             #endregion
 
             string sqlCmd = string.Format(
-                @"select 
-    pd.ID
-    ,pd.OrderID
-    ,o.SeasonID
-    ,o.StyleID
-    ,'SMS' as Category
-    ,'' as CTNNo
-    , [NW] = ROUND( TtlGW.GW * ( (pd.ShipQty * 1.0) / (TtlShipQty.Value *1.0)) ,3 ,1)  ----無條件捨去到小數點後第三位
-    , 0.0 as Price
-    ,pd.ShipQty
-    ,o.StyleUnit as UnitID
-    ,'' as Receiver
-    ,o.SMR as LeaderID
-    ,t.Name as Leader
-    , o.BrandID
-    , [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
-from PackingList_Detail pd WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
-left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
-left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
-OUTER APPLY(
-	SELECT Value=SUM(ShipQty) FROM PackingList_Detail WHERE ID = pd.ID 
-)TtlShipQty
-OUTER APPLY(
-	SELECT GW FROM PackingList WHERE ID = pd.ID 
-)TtlGW
-where pd.ID = '{0}'
-and Factory.IsProduceFty=1", this.txtSamplePL.Text);
+                @"
+select *
+		, [NW] = ROUND( GW * ((ShipQty * 1.0) / (TtlShipQty *1.0)), 3, 1)  ----無條件捨去到小數點後第三位
+        , Description = [dbo].[getBOFMtlDesc](StyleUkey)
+from (
+    select 
+        pd.ID
+        , pd.OrderID
+        , o.SeasonID
+        , o.StyleID
+        , Category = 'SMS'
+        , CTNNo = '' 
+        , GW = p.GW
+		, TtlShipQty = p.ShipQty
+        , Price = 0.0
+        , ShipQty = Sum (pd.ShipQty)
+        , UnitID = o.StyleUnit
+        , Receiver = '' 
+        , LeaderID = o.SMR 
+        , Leader = t.Name 
+        , o.BrandID
+		, o.StyleUkey
+    from PackingList p WITH (NOLOCK) 
+	inner join PackingList_Detail pd WITH (NOLOCK) on p.id = pd.ID
+    left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+    left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
+    left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
+    where pd.ID = '{0}'
+          and Factory.IsProduceFty=1
+    group by pd.ID, pd.OrderID, o.SeasonID, o.StyleID, p.ShipQty, p.GW, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey
+) getSamplePL
+", this.txtSamplePL.Text);
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
