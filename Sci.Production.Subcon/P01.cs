@@ -78,6 +78,8 @@ namespace Sci.Production.Subcon
             CurrentMaintain["VatRate"] = 0;
             CurrentMaintain["Status"] = "New";
             ((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
+            txtartworktype_ftyArtworkType.ReadOnly = false;
+            txtmfactory.ReadOnly = false;
         }
 
         // delete前檢查 CurrentMaintain["id"]的FarmOut_Detail/FarmIn_Detail有data則不能刪除
@@ -165,6 +167,9 @@ where  apd.id = '{CurrentMaintain["id"]}'
                 txtsubconSupplier.TextBox1.ReadOnly = true;
             }
             #endregion
+
+            txtartworktype_ftyArtworkType.ReadOnly = true;
+            txtmfactory.ReadOnly = true;
         }
 
         // save前檢查 & 取id
@@ -463,8 +468,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             }
             #endregion
             numTotal.Text = (Convert.ToDecimal(numVat.Text) + Convert.ToDecimal(numAmount.Text)).ToString();
-            txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
-            txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
+          
             if (this.CurrentMaintain["ID"] == DBNull.Value)
             {
                 btnIrrPriceReason.Enabled = false;
@@ -1060,7 +1064,7 @@ select 1
 from orders with (nolock)
 where id = '{spNo}' and Category = 'S'
 ";
-            return MyUtility.Check.Seek(sqlCheckSampleOrder, "Production");
+            return MyUtility.Check.Seek(sqlCheckSampleOrder, null);
         }
 
         /// <summary>
@@ -1113,6 +1117,11 @@ where id = '{spNo}' and Category = 'S'
                 this.btnIrrPriceReason.ForeColor = Color.Black;
             }
 
+        }
+
+        private void txtartworktype_ftyArtworkType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            this.txtartworktype_ftyArtworkType.ValidateControl();
         }
     }
 

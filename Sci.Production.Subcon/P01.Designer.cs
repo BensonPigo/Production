@@ -619,7 +619,7 @@
             this.txtuserApproveName.Location = new System.Drawing.Point(107, 170);
             this.txtuserApproveName.Name = "txtuserApproveName";
             this.txtuserApproveName.Size = new System.Drawing.Size(300, 23);
-            this.txtuserApproveName.TabIndex = 11;
+            this.txtuserApproveName.TabIndex = 10;
             this.txtuserApproveName.TextBox1Binding = "";
             // 
             // txtuserHandle
@@ -643,6 +643,7 @@
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(165, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
+            this.txtartworktype_ftyArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtartworktype_ftyArtworkType_PopUp);
             this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
             // 
             // txtsubconSupplier
@@ -761,7 +762,7 @@
             this.txtuserCloseName.Location = new System.Drawing.Point(107, 196);
             this.txtuserCloseName.Name = "txtuserCloseName";
             this.txtuserCloseName.Size = new System.Drawing.Size(300, 23);
-            this.txtuserCloseName.TabIndex = 13;
+            this.txtuserCloseName.TabIndex = 11;
             this.txtuserCloseName.TextBox1Binding = "";
             // 
             // dateLockDate
