@@ -35,6 +35,8 @@
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.displayTotal = new Sci.Win.UI.DisplayBox();
+            this.labelTotal = new Sci.Win.UI.Label();
             this.btnUpdateAllLocation = new Sci.Win.UI.Button();
             this.txtLocation = new Sci.Win.UI.TextBox();
             this.labelLocation = new Sci.Win.UI.Label();
@@ -45,8 +47,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.displayTotal = new Sci.Win.UI.DisplayBox();
-            this.labelTotal = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -122,6 +122,25 @@
             this.groupBox2.Size = new System.Drawing.Size(1008, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
+            // 
+            // displayTotal
+            // 
+            this.displayTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.displayTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTotal.Location = new System.Drawing.Point(603, 21);
+            this.displayTotal.Name = "displayTotal";
+            this.displayTotal.Size = new System.Drawing.Size(100, 23);
+            this.displayTotal.TabIndex = 13;
+            // 
+            // labelTotal
+            // 
+            this.labelTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelTotal.Location = new System.Drawing.Point(505, 21);
+            this.labelTotal.Name = "labelTotal";
+            this.labelTotal.Size = new System.Drawing.Size(95, 23);
+            this.labelTotal.TabIndex = 12;
+            this.labelTotal.Text = "Total Qty";
             // 
             // btnUpdateAllLocation
             // 
@@ -244,23 +263,6 @@
             this.gridImport.Size = new System.Drawing.Size(1008, 419);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
-            // 
-            // displayTotal
-            // 
-            this.displayTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotal.Location = new System.Drawing.Point(603, 21);
-            this.displayTotal.Name = "displayTotal";
-            this.displayTotal.Size = new System.Drawing.Size(100, 23);
-            this.displayTotal.TabIndex = 13;
-            // 
-            // labelTotal
-            // 
-            this.labelTotal.Location = new System.Drawing.Point(505, 21);
-            this.labelTotal.Name = "labelTotal";
-            this.labelTotal.Size = new System.Drawing.Size(95, 23);
-            this.labelTotal.TabIndex = 12;
-            this.labelTotal.Text = "Total Qty";
             // 
             // P24_Import
             // 
