@@ -402,7 +402,7 @@ SELECT @count=Count(ID)
 FROM Express_Detail
 WHERE PackingListID='{this.CurrentData["PackingListID"]}'
 
-update PackingList set ExpressID = '',pulloutdate=null 
+update PackingList set ExpressID = ''
 FROM PackingList
 WHERE ID='{this.CurrentData["PackingListID"]}' AND @count <= 1
 ");
