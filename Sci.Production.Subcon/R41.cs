@@ -220,12 +220,11 @@ Select
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
     [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
-    [AllocatedSubcon]=Stuff((SELECT concat(',',QU.LocalSuppId)
-                    FROM Style_Artwork SA WITH (NOLOCK) 
-                    INNER JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
-                    WHERE O.StyleUkey = SA.StyleUkey AND SA.ArtworkTypeID =s.Id
-					group by QU.LocalSuppId
-					order by QU.LocalSuppId
+    [AllocatedSubcon]=Stuff((					
+					select concat(',',ls.abb)
+					from order_tmscost ot
+					inner join LocalSupp ls on ls.id = ot.LocalSuppID
+					 where ot.id = o.id and ot.ArtworkTypeID=s.ArtworkTypeId 
 					for xml path('')
 					),1,1,''),
 	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,''))/24.0,2))
