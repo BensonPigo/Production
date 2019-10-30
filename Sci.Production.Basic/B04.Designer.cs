@@ -507,7 +507,7 @@ namespace Sci.Production.Basic
             this.label2.Location = new System.Drawing.Point(28, 439);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(125, 23);
-            this.label2.TabIndex = 21;
+            this.label2.TabIndex = 210;
             this.label2.Text = "Bank Detail";
             // 
             // chkPayByChk
@@ -518,7 +518,7 @@ namespace Sci.Production.Basic
             this.chkPayByChk.Location = new System.Drawing.Point(156, 439);
             this.chkPayByChk.Name = "chkPayByChk";
             this.chkPayByChk.Size = new System.Drawing.Size(114, 21);
-            this.chkPayByChk.TabIndex = 22;
+            this.chkPayByChk.TabIndex = 11;
             this.chkPayByChk.Text = "Pay By Check";
             this.chkPayByChk.UseVisualStyleBackColor = true;
             // 
