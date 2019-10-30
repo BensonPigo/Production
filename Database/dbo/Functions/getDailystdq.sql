@@ -169,12 +169,13 @@ group by APSNo,WorkDate,ComboType
 
 Insert into @table
 select Date = cast(WorkDate as Date)
-	, stdQty = iif(s.AlloQty<sum(x.perDayQty) over (partition by s.id) and b.WorkDate = max(b.WorkDate) over (partition by s.id),s.AlloQty,x.perDayQty)
+	, stdQty = iif(s.AlloQty>sum(s1.std1) over (partition by s.id) and b.WorkDate = max(b.WorkDate) over (partition by s.id),s.AlloQty,s1.std1)
 	, s.ID
 	, s.ComboType
 from @APSListWorkDay s
-inner join @APSExtendWorkDate_step1 b on s.APSNo = b.APSNo and s.ComboType = b.ComboType
+inner join @APSExtendWorkDate_step1 b on s.APSNo = b.APSNo  and s.ComboType = b.ComboType
 outer apply(select perDayQty = CEILING(cast(s.StandardOutput as decimal)*(cast(DATEDIFF(mi ,b.[SewingStart], b.[SewingEnd])as decimal)/60)))x
+outer apply(select std1 = iif(s.AlloQty<x.perDayQty,s.AlloQty,x.perDayQty))s1
 
 Return;
 
