@@ -25,6 +25,7 @@
     [BulkMR]         VARCHAR (10)  NOT NULL DEFAULT (''),
     [SampleMR]       VARCHAR (10)  NOT NULL DEFAULT (''),
     [IsEM] BIT CONSTRAINT [DF_ADIDASComplain_Detail_History_IsEM] DEFAULT (0) NOT NULL, 
+    [Responsibility] VARCHAR(2) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_ADIDASComplain_Detail_History] PRIMARY KEY CLUSTERED ([UKEY],[Version] ASC)
 );
 
@@ -96,3 +97,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'OrderID', @
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Rule No', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ADIDASComplain_Detail_History', @level2type = N'COLUMN', @level2name = N'RuleNo';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'責任歸屬',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ADIDASComplain_Detail_History',
+    @level2type = N'COLUMN',
+    @level2name = N'Responsibility'
