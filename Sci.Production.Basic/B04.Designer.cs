@@ -1,4 +1,6 @@
-﻿namespace Sci.Production.Basic
+﻿using System.Drawing;
+
+namespace Sci.Production.Basic
 {
     partial class B04
     {
@@ -28,6 +30,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCode = new Sci.Win.UI.Label();
             this.labelAbbreviation = new Sci.Win.UI.Label();
             this.labelNationality = new Sci.Win.UI.Label();
@@ -59,16 +63,29 @@
             this.label1 = new Sci.Win.UI.Label();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnBatchApprove = new Sci.Win.UI.Button();
+            this.gridBankDetail = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label2 = new Sci.Win.UI.Label();
+            this.chkPayByChk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBankDetail)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(945, 671);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkPayByChk);
+            this.detailcont.Controls.Add(this.label2);
+            this.detailcont.Controls.Add(this.gridBankDetail);
             this.detailcont.Controls.Add(this.editRemark);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.chkIsSintexSubcon);
@@ -99,15 +116,21 @@
             this.detailcont.Controls.Add(this.labelNationality);
             this.detailcont.Controls.Add(this.labelAbbreviation);
             this.detailcont.Controls.Add(this.labelCode);
+            this.detailcont.Size = new System.Drawing.Size(945, 633);
             this.detailcont.TabIndex = 0;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 633);
+            this.detailbtm.Size = new System.Drawing.Size(945, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(945, 483);
+            this.browse.Size = new System.Drawing.Size(945, 671);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(953, 512);
+            this.tabs.Size = new System.Drawing.Size(953, 700);
             // 
             // createby
             // 
@@ -443,9 +466,65 @@
             this.btnBatchApprove.UseVisualStyleBackColor = true;
             this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
             // 
+            // gridBankDetail
+            // 
+            this.gridBankDetail.AllowUserToAddRows = false;
+            this.gridBankDetail.AllowUserToDeleteRows = false;
+            this.gridBankDetail.AllowUserToResizeRows = false;
+            this.gridBankDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridBankDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBankDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBankDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBankDetail.DataSource = this.listControlBindingSource1;
+            this.gridBankDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBankDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBankDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBankDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBankDetail.Location = new System.Drawing.Point(28, 465);
+            this.gridBankDetail.Name = "gridBankDetail";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBankDetail.RowTemplate.Height = 24;
+            this.gridBankDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBankDetail.ShowCellToolTips = false;
+            this.gridBankDetail.Size = new System.Drawing.Size(896, 150);
+            this.gridBankDetail.TabIndex = 20;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.White;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label2.Location = new System.Drawing.Point(28, 439);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(125, 23);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "Bank Detail";
+            // 
+            // chkPayByChk
+            // 
+            this.chkPayByChk.AutoSize = true;
+            this.chkPayByChk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSintexSubcon", true));
+            this.chkPayByChk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkPayByChk.Location = new System.Drawing.Point(156, 439);
+            this.chkPayByChk.Name = "chkPayByChk";
+            this.chkPayByChk.Size = new System.Drawing.Size(114, 21);
+            this.chkPayByChk.TabIndex = 22;
+            this.chkPayByChk.Text = "Pay By Check";
+            this.chkPayByChk.UseVisualStyleBackColor = true;
+            // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(953, 545);
+            this.ClientSize = new System.Drawing.Size(953, 733);
             this.Controls.Add(this.btnBatchApprove);
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "txtTel";
@@ -475,6 +554,8 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridBankDetail)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -513,5 +594,9 @@
         private Win.UI.EditBox editRemark;
         private Win.UI.Label label1;
         private Win.UI.Button btnBatchApprove;
+        private Win.UI.Grid gridBankDetail;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Label label2;
+        private Win.UI.CheckBox chkPayByChk;
     }
 }

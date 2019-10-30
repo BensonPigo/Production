@@ -58,7 +58,7 @@
             this.masterpanel.Controls.Add(this.chkPaybyCheck);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Size = new System.Drawing.Size(892, 102);
+            this.masterpanel.Size = new System.Drawing.Size(876, 102);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkPaybyCheck, 0);
@@ -70,7 +70,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 102);
-            this.detailpanel.Size = new System.Drawing.Size(892, 247);
+            this.detailpanel.Size = new System.Drawing.Size(876, 316);
             // 
             // gridicon
             // 
@@ -78,7 +78,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 247);
+            this.detailgridcont.Size = new System.Drawing.Size(876, 316);
             // 
             // detail2
             // 
@@ -92,14 +92,24 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(876, 456);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayCode);
             this.detailcont.Controls.Add(this.labelCode);
+            this.detailcont.Size = new System.Drawing.Size(876, 418);
             this.detailcont.Controls.SetChildIndex(this.labelCode, 0);
             this.detailcont.Controls.SetChildIndex(this.displayCode, 0);
             this.detailcont.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailcont.Controls.SetChildIndex(this.detailpanel, 0);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 418);
+            this.detailbtm.Size = new System.Drawing.Size(876, 38);
             // 
             // browse
             // 

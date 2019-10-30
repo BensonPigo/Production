@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Transactions;
 using Sci.Data;
 using Ict.Win;
+using System.Linq;
 
 namespace Sci.Production.Basic
 {
@@ -61,7 +62,7 @@ namespace Sci.Production.Basic
 
             hasNotConfirm = MyUtility.Check.Seek($"SELECT 1 FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.LocalSupp_Bank_ID}' AND Status <> 'Confirmed'");
 
-            if (!hasNotConfirm)
+            if (!hasNotConfirm && !this.EditMode)
             {
                 this.toolbar.cmdCopy.Enabled = true;
             }
@@ -216,10 +217,11 @@ order by ID
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 dr["IsDefault"] = e.FormattedValue;
 
-                if (Convert.ToBoolean(dr["IsDefault"]))
-                {
-                    this.CurrentMaintain["ByCheck"] = false;
-                }
+                // 表頭[Pay by Check] 和表身的Default可同時被勾選 2019/10/30
+                //if (Convert.ToBoolean(dr["IsDefault"]))
+                //{
+                //    this.CurrentMaintain["ByCheck"] = false;
+                //}
             };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -295,6 +297,12 @@ order by ID
             //        dr["IsDefault"] = false;
             //    }
             //}
+
+            if (dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Count() == 0)
+            {
+                MyUtility.Msg.InfoBox("Detail can not be empty.");
+                return false;
+            }
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -441,9 +449,34 @@ order by ID
             return base.ClickEditBefore();
         }
 
-        protected override bool ClickCopy()
+        protected override void ClickCopyAfter()
         {
-            return base.ClickCopy();
+            base.ClickCopyAfter();
+
+            DataTable dt;
+            DataTable dtDetail;
+            DualResult result = DBProxy.Current.Select(null, $"SELECT TOP 1 * FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND Status = 'Confirmed'ORDER BY ApproveDate DESC", out dt);
+
+            if (result)
+            {
+                DataRow dr = dt.Rows[0];
+
+                this.CurrentMaintain["ID"] = this.LocalSupp_Bank_ID;
+                this.CurrentMaintain["ByCheck"] = dr["ByCheck"];
+                this.CurrentMaintain["Status"] = "New";
+                this.labelStatus.Text = this.CurrentMaintain["Status"].ToString();
+                this.CurrentMaintain["ApproveName"] = string.Empty;
+                this.CurrentMaintain["ApproveDate"] = DBNull.Value;
+
+                this.CurrentMaintain["AddName"] = string.Empty;
+                this.CurrentMaintain["AddDate"] = DBNull.Value;
+                this.CurrentMaintain["EditName"] = string.Empty;
+                this.CurrentMaintain["EditDate"] = DBNull.Value;
+
+                DBProxy.Current.Select(null, $"SELECT * FROM LocalSupp_Bank_Detail WHERE Pkey={dr["Pkey"]} ", out dtDetail);
+                this.detailgridbs.DataSource = dtDetail;
+            }
+
         }
     }
 }
