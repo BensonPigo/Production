@@ -36,6 +36,7 @@ namespace Sci.Production.Basic
             this.toolbar.cmdEdit.Enabled = this._canedit && !this.EditMode;
             this.toolbar.cmdNew.Enabled = this._canedit && !this.EditMode;
             this.toolbar.cmdConfirm.Visible = true;
+            this.toolbar.cmdCopy.Visible = true;
 
             if (this.CurrentMaintain != null)
             {
@@ -54,6 +55,19 @@ namespace Sci.Production.Basic
             {
                 this.toolbar.cmdConfirm.Enabled = false;
                 this.toolbar.cmdSave.Enabled = false;
+            }
+
+            bool hasNotConfirm = false;
+
+            hasNotConfirm = MyUtility.Check.Seek($"SELECT 1 FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.LocalSupp_Bank_ID}' AND Status <> 'Confirmed'");
+
+            if (!hasNotConfirm)
+            {
+                this.toolbar.cmdCopy.Enabled = true;
+            }
+            else
+            {
+                this.toolbar.cmdCopy.Enabled = false;
             }
         }
 
@@ -425,6 +439,11 @@ order by ID
             }
 
             return base.ClickEditBefore();
+        }
+
+        protected override bool ClickCopy()
+        {
+            return base.ClickCopy();
         }
     }
 }
