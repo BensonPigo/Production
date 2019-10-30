@@ -313,7 +313,7 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
                     objArray[0, 15] = dr["reason"];
                 }
 
-                worksheet.Range[string.Format("A{0}:O{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:P{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
