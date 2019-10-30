@@ -374,9 +374,9 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         /// <inheritdoc/>
         protected override DualResult OnDeletePre()
         {
-            if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1" || MyUtility.Convert.GetString(this.CurrentData["Category"]) == "2")
+            DualResult failResult;
+            if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1")
             {
-                DualResult failResult;
 
                 DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '',pulloutdate=null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentData["PackingListID"])));
                 if (!result)
@@ -389,6 +389,26 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 if (!result)
                 {
                     failResult = new DualResult(false, "Delete fail!! Pls try again.\r\n" + result.ToString());
+                    return failResult;
+                }
+            }
+            else
+            {
+                // 刪除最後一筆才清空PL的HC#
+                DualResult result = DBProxy.Current.Execute(null, $@"
+declare @count int = 0;
+
+SELECT @count=Count(ID)
+FROM Express_Detail
+WHERE PackingListID='PM4PS19020039'
+
+update PackingList set ExpressID = '',pulloutdate=null 
+FROM PackingList
+WHERE ID='{this.CurrentData["PackingListID"]}' AND @count <= 1
+");
+                if (!result)
+                {
+                    failResult = new DualResult(false, "Update packing list fail!! Pls try again.\r\n" + result.ToString());
                     return failResult;
                 }
             }
