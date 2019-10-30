@@ -173,7 +173,7 @@ select Date = cast(WorkDate as Date)
 	, s.ID
 	, s.ComboType
 from @APSListWorkDay s
-inner join @APSExtendWorkDate_step1 b on s.APSNo = b.APSNo
+inner join @APSExtendWorkDate_step1 b on s.APSNo = b.APSNo and s.ComboType = b.ComboType
 outer apply(select perDayQty = CEILING(cast(s.StandardOutput as decimal)*(cast(DATEDIFF(mi ,b.[SewingStart], b.[SewingEnd])as decimal)/60)))x
 
 Return;
