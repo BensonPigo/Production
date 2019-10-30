@@ -752,7 +752,7 @@ update t
 	where exists(select 1 from @Tdebit t where t.MachineID = m.ID and TPEReject = 1)
 
 	update md set Results = 'Reject'
-	from MachinePending_Detail md
+	from Machine.dbo.MachinePending_Detail md
 	where exists(select 1 from @Tdebit t where t.ID = md.ID and t.MachineID = md.MachineID and TPEReject = 1)
 
 	END
