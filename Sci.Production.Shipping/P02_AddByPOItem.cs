@@ -400,7 +400,7 @@ declare @count int = 0;
 
 SELECT @count=Count(ID)
 FROM Express_Detail
-WHERE PackingListID='PM4PS19020039'
+WHERE PackingListID='{this.CurrentData["PackingListID"]}'
 
 update PackingList set ExpressID = '',pulloutdate=null 
 FROM PackingList
