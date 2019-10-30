@@ -111,7 +111,7 @@ and Factory.IsProduceFty=1
             string sqlCmd = string.Format(
                 @"select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
     '' as CTNNo
-    , [NW] = TtlGW.GW * ( (pd.ShipQty * 1.0) / (TtlShipQty.Value *1.0))
+    , [NW] = ROUND( TtlGW.GW * ( (pd.ShipQty * 1.0) / (TtlShipQty.Value *1.0)) ,3 ,1)  ----無條件捨去到小數點後第三位
     , 0.0 as Price
     ,pd.ShipQty
     ,o.StyleUnit as UnitID
