@@ -138,7 +138,7 @@ inner join ClogGarmentDispose c WITH (NOLOCK) on cd.ID =c.ID
 inner join ClogReason cr WITH (NOLOCK) on c.ClogReasonID = cr.ID and cr.Type = 'GD'
 inner join PackingList_Detail pd WITH (NOLOCK) on cd.PackingListID = pd.ID and cd.CTNStartNO = pd.CTNStartNo
 inner join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
-inner join Order_QtyShip oqs WITH (NOLOCK) on pd.OrderID = oqs.Id and pd.OrderShipmodeSeq = oqs.Seq
+left join Order_QtyShip oqs WITH (NOLOCK) on pd.OrderID = oqs.Id and pd.OrderShipmodeSeq = oqs.Seq
 outer apply(
 	select ShipQty = sum(podd.ShipQty) 
 	from Pullout_Detail_Detail podd WITH (NOLOCK) 
