@@ -58,13 +58,13 @@ namespace Sci.Production.Subcon
                 this.CurrentMaintain["localsuppid"] = txtsubconSupplier.TextBox1.Text;
             };
 
-            this.detailgrid.RowPostPaint += Detailgrid_RowPostPaint;
         }
 
         private void Detailgrid_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             this.DetalGridCellEditChange(e.RowIndex);
         }
+
 
         // 新增時預設資料
         protected override void ClickNewAfter()
@@ -122,8 +122,16 @@ where  apd.id = '{CurrentMaintain["id"]}'
                 MyUtility.Msg.WarningBox("Some SP# already have Subcon AP data.");
                 return false;
             }
-
+            this.detailgrid.RowsAdded += Detailgrid_RowsAdded;
             return base.ClickDeleteBefore();
+        }
+
+        private void Detailgrid_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.DetalGridCellEditChange(e.RowIndex);
+            }
         }
 
         protected override DualResult ClickDeletePre()
@@ -170,6 +178,11 @@ where  apd.id = '{CurrentMaintain["id"]}'
 
             txtartworktype_ftyArtworkType.ReadOnly = true;
             txtmfactory.ReadOnly = true;
+
+            foreach (DataGridViewRow dr in this.detailgrid.Rows)
+            {
+                this.DetalGridCellEditChange(dr.Index);
+            }
         }
 
         // save前檢查 & 取id
