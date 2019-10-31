@@ -60,6 +60,7 @@
             this.txtuserPreparedby = new Sci.Production.Class.txtuser();
             this.txttpeuserPOHandle = new Sci.Production.Class.txttpeuser();
             this.txttpeuserPOSMR = new Sci.Production.Class.txttpeuser();
+            this.btnDownload = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -76,6 +77,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnDownload);
             this.masterpanel.Controls.Add(this.btnMailto);
             this.masterpanel.Controls.Add(this.label15);
             this.masterpanel.Controls.Add(this.label14);
@@ -143,6 +145,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.label15, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnMailto, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownload, 0);
             // 
             // detailpanel
             // 
@@ -431,7 +434,7 @@
             // 
             // btnMailto
             // 
-            this.btnMailto.Location = new System.Drawing.Point(726, 115);
+            this.btnMailto.Location = new System.Drawing.Point(747, 115);
             this.btnMailto.Name = "btnMailto";
             this.btnMailto.Size = new System.Drawing.Size(80, 30);
             this.btnMailto.TabIndex = 18;
@@ -505,6 +508,17 @@
             this.txttpeuserPOSMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserPOSMR.TabIndex = 7;
             // 
+            // btnDownload
+            // 
+            this.btnDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnDownload.Location = new System.Drawing.Point(574, 151);
+            this.btnDownload.Name = "btnDownload";
+            this.btnDownload.Size = new System.Drawing.Size(253, 30);
+            this.btnDownload.TabIndex = 24;
+            this.btnDownload.Text = "Download Replacement Report";
+            this.btnDownload.UseVisualStyleBackColor = true;
+            this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
+            // 
             // P08
             // 
             this.ApvChkValue = "Checked";
@@ -526,6 +540,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P08";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P08. Replacement Report (Fabric)";
             this.UnApvChkValue = "Approved";
             this.UncheckChkValue = "Checked";
@@ -586,5 +601,6 @@
         private Win.UI.Label labelPOSMR;
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelID;
+        private Win.UI.Button btnDownload;
     }
 }

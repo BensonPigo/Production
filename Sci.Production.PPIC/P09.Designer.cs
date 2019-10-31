@@ -60,6 +60,7 @@
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
             this.btnMailto = new Sci.Win.UI.Button();
+            this.btnDownload = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -76,6 +77,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnDownload);
             this.masterpanel.Controls.Add(this.btnMailto);
             this.masterpanel.Controls.Add(this.label15);
             this.masterpanel.Controls.Add(this.label14);
@@ -108,7 +110,7 @@
             this.masterpanel.Controls.Add(this.labelPOSMR);
             this.masterpanel.Controls.Add(this.labelSPNo);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(892, 222);
+            this.masterpanel.Size = new System.Drawing.Size(917, 222);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPOSMR, 0);
@@ -142,11 +144,12 @@
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.label15, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnMailto, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownload, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 222);
-            this.detailpanel.Size = new System.Drawing.Size(892, 127);
+            this.detailpanel.Size = new System.Drawing.Size(917, 230);
             // 
             // gridicon
             // 
@@ -159,7 +162,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 127);
+            this.detailgridcont.Size = new System.Drawing.Size(917, 230);
             // 
             // detail2
             // 
@@ -175,16 +178,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(917, 490);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(917, 452);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 452);
+            this.detailbtm.Size = new System.Drawing.Size(917, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -496,13 +499,24 @@
             // 
             // btnMailto
             // 
-            this.btnMailto.Location = new System.Drawing.Point(726, 115);
+            this.btnMailto.Location = new System.Drawing.Point(747, 115);
             this.btnMailto.Name = "btnMailto";
             this.btnMailto.Size = new System.Drawing.Size(80, 30);
             this.btnMailto.TabIndex = 3;
             this.btnMailto.Text = "Mail to";
             this.btnMailto.UseVisualStyleBackColor = true;
             this.btnMailto.Click += new System.EventHandler(this.BtnMailto_Click);
+            // 
+            // btnDownload
+            // 
+            this.btnDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnDownload.Location = new System.Drawing.Point(574, 151);
+            this.btnDownload.Name = "btnDownload";
+            this.btnDownload.Size = new System.Drawing.Size(253, 30);
+            this.btnDownload.TabIndex = 31;
+            this.btnDownload.Text = "Download Replacement Report";
+            this.btnDownload.UseVisualStyleBackColor = true;
+            this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
             // 
             // P09
             // 
@@ -525,6 +539,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P09";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P09. Replacement Report (Accessory)";
             this.UnApvChkValue = "Approved";
             this.UncheckChkValue = "Checked";
@@ -585,5 +600,6 @@
         private Win.UI.Label labelPOSMR;
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelID;
+        private Win.UI.Button btnDownload;
     }
 }

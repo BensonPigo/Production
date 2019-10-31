@@ -93,6 +93,7 @@
             this.displayCustomsDeclareNo = new Sci.Win.UI.DisplayBox();
             this.label6 = new Sci.Win.UI.Label();
             this.chkNonDeclare = new Sci.Win.UI.CheckBox();
+            this.ChkDoortoDoorDelivery = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -109,6 +110,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.ChkDoortoDoorDelivery);
             this.masterpanel.Controls.Add(this.chkNonDeclare);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.displayCustomsDeclareNo);
@@ -239,6 +241,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayCustomsDeclareNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkNonDeclare, 0);
+            this.masterpanel.Controls.SetChildIndex(this.ChkDoortoDoorDelivery, 0);
             // 
             // detailpanel
             // 
@@ -912,7 +915,7 @@
             this.chkDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
             this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkDelay.IsSupportEditMode = false;
-            this.chkDelay.Location = new System.Drawing.Point(730, 282);
+            this.chkDelay.Location = new System.Drawing.Point(721, 282);
             this.chkDelay.Name = "chkDelay";
             this.chkDelay.Size = new System.Drawing.Size(63, 21);
             this.chkDelay.TabIndex = 57;
@@ -1002,12 +1005,25 @@
             this.chkNonDeclare.AutoSize = true;
             this.chkNonDeclare.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NonDeclare", true));
             this.chkNonDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNonDeclare.Location = new System.Drawing.Point(730, 307);
+            this.chkNonDeclare.Location = new System.Drawing.Point(721, 307);
             this.chkNonDeclare.Name = "chkNonDeclare";
             this.chkNonDeclare.Size = new System.Drawing.Size(106, 21);
             this.chkNonDeclare.TabIndex = 58;
             this.chkNonDeclare.Text = "Non Declare";
             this.chkNonDeclare.UseVisualStyleBackColor = true;
+            // 
+            // ChkDoortoDoorDelivery
+            // 
+            this.ChkDoortoDoorDelivery.AutoSize = true;
+            this.ChkDoortoDoorDelivery.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ChkDoortoDoorDelivery.IsSupportEditMode = false;
+            this.ChkDoortoDoorDelivery.Location = new System.Drawing.Point(828, 282);
+            this.ChkDoortoDoorDelivery.Name = "ChkDoortoDoorDelivery";
+            this.ChkDoortoDoorDelivery.ReadOnly = true;
+            this.ChkDoortoDoorDelivery.Size = new System.Drawing.Size(164, 21);
+            this.ChkDoortoDoorDelivery.TabIndex = 65;
+            this.ChkDoortoDoorDelivery.Text = "Door to Door Delivery";
+            this.ChkDoortoDoorDelivery.UseVisualStyleBackColor = true;
             // 
             // P03
             // 
@@ -1118,5 +1134,6 @@
         private Win.UI.Label label6;
         private Win.UI.DisplayBox displayCustomsDeclareNo;
         private Win.UI.CheckBox chkNonDeclare;
+        private Win.UI.CheckBox ChkDoortoDoorDelivery;
     }
 }

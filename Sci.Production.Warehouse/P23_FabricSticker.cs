@@ -39,7 +39,8 @@ namespace Sci.Production.Warehouse
                 .Text("BulkSPNo", header: "Bulk" + Environment.NewLine + "SP#", iseditingreadonly: true)
                 .Text("BulkSeq", header: "Bulk" + Environment.NewLine + "Seq", iseditingreadonly: true)
                 .Text("Roll", header: "Roll", iseditingreadonly: true)
-                .Text("Dyelot", header: "Dyelot", iseditingreadonly: true);
+                .Text("Dyelot", header: "Dyelot", iseditingreadonly: true)
+                .Text("FromLocation", header: "From Location",  iseditingreadonly: true, width: Widths.AnsiChars(18));
 
             for (int i = 0; i < this.grid1.Columns.Count; i++) {
                 this.grid1.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -64,11 +65,18 @@ select Sel = 0
 	   , Color = isnull (dbo.GetColorMultipleID (o.BrandID, psd.ColorID), '')
 	   , StockUnit = isnull (dbo.GetStockUnitBySPSeq (std.FromPOID, std.FromSeq1, std.FromSeq2), '')
 	   , Qty = std.Qty
+	   , [FromLocation]= dbo.Getlocation (fi.ukey)
 from SubTransfer_Detail std
 left join Orders o on std.FromPOID = o.ID
 left join Po_Supp_Detail psd on std.FromPOID = psd.ID
 								and std.FromSeq1 = psd.SEQ1
 								and std.FromSeq2 = psd.SEQ2
+left join FtyInventory FI on std.FromPoid = fi.poid 
+                             and std.fromSeq1 = fi.seq1 
+                             and std.fromSeq2 = fi.seq2
+                             and std.fromRoll = fi.roll 
+                             and std.fromStocktype = fi.stocktype
+                             and std.fromDyelot = fi.Dyelot
 where std.ID = @ID
 order by RowNo";
 
@@ -120,6 +128,7 @@ order by NewRowNo";
                     Color = row["Color"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
+                    FromLocation= row["FromLocation"].ToString().Trim()
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition();

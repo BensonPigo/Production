@@ -17,6 +17,7 @@
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_SCIFty_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
+    [Type] VARCHAR NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_SCIFty] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

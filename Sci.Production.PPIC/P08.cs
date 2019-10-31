@@ -116,6 +116,25 @@ order by rd.Seq1,rd.Seq2", masterID);
                 this.txttpeuserPCSMR.DisplayBox1Binding = string.Empty;
                 this.txttpeuserPCHandle.DisplayBox1Binding = string.Empty;
             }
+
+            string sqlcmd = $@"select 1
+from Clip where TableName = 'ReplacementReport' AND UniqueKey = '{this.CurrentMaintain["ID"]}'";
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                this.btnDownload.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnDownload.ForeColor = Color.Black;
+            }
         }
 
         /// <inheritdoc/>
@@ -789,6 +808,12 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
 
             return true;
+        }
+
+        private void BtnDownload_Click(object sender, EventArgs e)
+        {
+            P08_Download callInputDataForm = new P08_Download(this.CurrentMaintain);
+            callInputDataForm.ShowDialog(this);
         }
     }
 }

@@ -605,6 +605,47 @@ order by a.Seq ASC,a.CTNQty DESC", packingListID);
         }
         #endregion
 
+        public static bool CheckExistsOrder_QtyShip_Detail(string packingListID = "", string INVNo = "", string ShipPlanID = "", string PulloutID = "")
+        {
+            string where = string.Empty;
+            if (!MyUtility.Check.Empty(packingListID))
+                where = $@"and p.id ='{packingListID}'";
+            else if (!MyUtility.Check.Empty(INVNo))
+                where = $@"and p.INVNo ='{INVNo}'";
+            else if (!MyUtility.Check.Empty(ShipPlanID))
+                where = $@"and p.ShipPlanID ='{ShipPlanID}'";
+            else if (!MyUtility.Check.Empty(PulloutID))
+                where = $@"and p.PulloutID ='{PulloutID}'";
+
+            string sqlCmd = $@"
+select distinct msg=concat(pd.OrderID,'(',pd.OrderShipmodeSeq,')')
+from PackingList p with(nolock)
+inner join PackingList_detail pd with(nolock) on p.id = pd.id
+where not exists(
+	select 1 from Order_QtyShip_Detail oqd with(nolock)
+	where oqd.id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and pd.Article = oqd.Article and pd.SizeCode = oqd.SizeCode)
+" + where;
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd,out dt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                var os = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).ToList();
+                string msg = @"[ColorWay] and [Size] not exists in Order ship mode seq/breakdown.
+" + string.Join(",", os);
+
+                MyUtility.Msg.WarningBox(msg);
+                return false;
+            }
+
+            return true;
+        }
+
         #region Query Packing List Print out Pacging List Report Data
         /// <summary>
         /// QueryPackingListReportData(string,DataTable,DataTable,DataTable,DataTable,DataTable,DataTable,string)

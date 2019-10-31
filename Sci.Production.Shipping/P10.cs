@@ -11,6 +11,7 @@ using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Transactions;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -933,6 +934,92 @@ and p1.Type <> 'S'
                     return;
                 }
             }
+
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(ShipPlanID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
+            }
+
+            #region 一張 HC 的出貨日期都必須與 PL 上的出貨日期一致  ISP20191473
+            sqlCmd = $@"
+
+select DISTINCT p.ID ,p.ExpressID ,p.PulloutDate 
+from PackingList p
+inner join PackingList_Detail p2 on p.ID=p2.ID
+WHERE p.ShipPlanID='{this.CurrentMaintain["ID"]}' AND p.ExpressID <> ''
+AND EXISTS (SELECT 1 FROM Express e WHERE  p.ExpressID=e.ID AND p.PulloutDate <> e.ShipDate)
+";
+            result = DBProxy.Current.Select(null, sqlCmd, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Check Express error:\r\n" + result.ToString());
+                return;
+            }
+            else
+            {
+                StringBuilder msg2 = new StringBuilder();
+                if (dt.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox("HC Ship Date is different with Pull Out Date." + Environment.NewLine + msg2.ToString());
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region 檢查ShipMode，是否被設定「必須建立HC」ISP20191473
+            sqlCmd = $@"
+
+select 
+	 p.INVNo
+    ,p.ShipModeID
+	,p.ID
+	,p.ShipPlanID
+	,e.ID
+from PackingList p WITH (NOLOCK) 
+LEFT JOIN GMTBooking g WITH (NOLOCK)  ON p.INVNo=g.ID
+LEFT JOIN Express e ON e.ID=p.ExpressID
+where p.ShipPlanID ='{this.CurrentMaintain["ID"]}'
+AND p.ShipModeID IN ( SELECT ID FROM ShipMode WHERE NeedCreateIntExpress=1 )
+AND e.ID IS NULL 
+";
+            result = DBProxy.Current.Select(null, sqlCmd, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Check Express error:\r\n" + result.ToString());
+                return;
+            }
+            else
+            {
+                StringBuilder msg2 = new StringBuilder();
+                if (dt.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
+                    }
+
+                    string strCmdFindShipmode = @"
+select STUFF((
+            SELECT Concat (',', ID )
+            FROM ShipMode
+            WHERE NeedCreateIntExpress = 1
+            for xml path(''))
+        , 1, 1, '')";
+
+                    string strListShipmode = MyUtility.GetValue.Lookup(strCmdFindShipmode);
+
+                    MyUtility.Msg.WarningBox($"Ship mode ({strListShipmode}) needs to Create International Express. Please create data at [Shippping P02]." + Environment.NewLine + msg2.ToString());
+                    return;
+                }
+            }
+
+            #endregion
 
             string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed',CFMDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
