@@ -418,7 +418,7 @@ select	OrderID = cbs.OrderID
 						end
 into #QtyBySetPerSubprocess{subprocessIDtmp}
 from #CutpartBySet{subprocessIDtmp} cbs
-left join Order_Qty oq  WITH (NOLOCK) on oq.id = cbs.OrderID and oq.SizeCode = cbs.SizeCode and oq.Article = cbs.Article
+inner join Order_Qty oq  WITH (NOLOCK) on oq.id = cbs.OrderID and oq.SizeCode = cbs.SizeCode and oq.Article = cbs.Article   --ISP20191573 SizeCode和Article 的資料都必須從Trade來，不是Bundle有的全部都用
 left join #FinalQtyBySet{subprocessIDtmp} sub on cbs.Orderid = sub.Orderid and cbs.Sizecode = sub.size and cbs.Article = sub.Article
 outer apply (
 	select	InQtyByPcs = sum (isnull (bunIO.OriInQty, 0))
