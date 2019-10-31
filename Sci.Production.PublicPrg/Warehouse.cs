@@ -303,7 +303,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
         //(整批)
-        public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded, int MtlAutoLock=0)
+        public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded, int MtlAutoLock = 0)
         {
             string sqlcmd = "";
             switch (type)
@@ -1776,7 +1776,7 @@ inner join FtyInventory f WITH (NOLOCK)
        and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", SubTransfer_ID);
                 if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-                {   
+                {
                     return result2;
                 }
                 else
@@ -1810,7 +1810,7 @@ left join FtyInventory f WITH (NOLOCK)
 	   and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", SubTransfer_ID);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-            {   
+            {
                 return result2;
             }
             else
@@ -1865,7 +1865,7 @@ from dbo.SubTransfer_Detail a WITH (NOLOCK)
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
 Where a.id = '{SubTransfer_ID}'";
-            
+
             result = DBProxy.Current.Select(null, sqlSubTransfer_Detail, out dtSubTransfer_Detail);
             if (!result)
             {
@@ -1874,21 +1874,21 @@ Where a.id = '{SubTransfer_ID}'";
 
             #region -- 更新mdivisionpodetail Inventory 數 --
             var data_MD_4T = (from b in dtSubTransfer_Detail.AsEnumerable()
-                   group b by new
-                   {
-                       poid = b.Field<string>("frompoid"),
-                       seq1 = b.Field<string>("fromseq1"),
-                       seq2 = b.Field<string>("fromseq2"),
-                       stocktype = b.Field<string>("fromstocktype")
-                   } into m
-                       select new Prgs_POSuppDetailData
-                   {
-                       poid = m.First().Field<string>("frompoid"),
-                       seq1 = m.First().Field<string>("fromseq1"),
-                       seq2 = m.First().Field<string>("fromseq2"),
-                       stocktype = m.First().Field<string>("fromstocktype"),
-                       qty = m.Sum(w => w.Field<decimal>("qty"))
-                   }).ToList();
+                              group b by new
+                              {
+                                  poid = b.Field<string>("frompoid"),
+                                  seq1 = b.Field<string>("fromseq1"),
+                                  seq2 = b.Field<string>("fromseq2"),
+                                  stocktype = b.Field<string>("fromstocktype")
+                              } into m
+                              select new Prgs_POSuppDetailData
+                              {
+                                  poid = m.First().Field<string>("frompoid"),
+                                  seq1 = m.First().Field<string>("fromseq1"),
+                                  seq2 = m.First().Field<string>("fromseq2"),
+                                  stocktype = m.First().Field<string>("fromstocktype"),
+                                  qty = m.Sum(w => w.Field<decimal>("qty"))
+                              }).ToList();
 
             var data_MD_8T = data_MD_4T.Select(data => new Prgs_POSuppDetailData
             {
@@ -1896,7 +1896,7 @@ Where a.id = '{SubTransfer_ID}'";
                 seq1 = data.seq1,
                 seq2 = data.seq2,
                 stocktype = data.stocktype,
-                qty = - (data.qty)
+                qty = -(data.qty)
             }).ToList();
 
             var data_MD_0F = data_MD_4T.Select(data => new Prgs_POSuppDetailData
@@ -1911,36 +1911,36 @@ Where a.id = '{SubTransfer_ID}'";
             #endregion 
             #region -- 更新mdivisionpodetail Scrap數 --
             var data_MD_16T = (from b in dtSubTransfer_Detail.AsEnumerable()
-                       group b by new
-                       {
-                           poid = b.Field<string>("topoid"),
-                           seq1 = b.Field<string>("toseq1"),
-                           seq2 = b.Field<string>("toseq2"),
-                           stocktype = b.Field<string>("tostocktype")
-                       } into m
-                       select new
-                       {
-                           poid = m.First().Field<string>("topoid"),
-                           seq1 = m.First().Field<string>("toseq1"),
-                           seq2 = m.First().Field<string>("toseq2"),
-                           stocktype = m.First().Field<string>("tostocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
-                       }).ToList();
+                               group b by new
+                               {
+                                   poid = b.Field<string>("topoid"),
+                                   seq1 = b.Field<string>("toseq1"),
+                                   seq2 = b.Field<string>("toseq2"),
+                                   stocktype = b.Field<string>("tostocktype")
+                               } into m
+                               select new
+                               {
+                                   poid = m.First().Field<string>("topoid"),
+                                   seq1 = m.First().Field<string>("toseq1"),
+                                   seq2 = m.First().Field<string>("toseq2"),
+                                   stocktype = m.First().Field<string>("tostocktype"),
+                                   qty = m.Sum(w => w.Field<decimal>("qty"))
+                               }).ToList();
 
             #endregion
             #region -- 更新庫存數量  ftyinventory --
             var data_Fty_4T = (from m in dtSubTransfer_Detail.AsEnumerable()
-                         select new
-                         {
-                             poid = m.Field<string>("frompoid"),
-                             seq1 = m.Field<string>("fromseq1"),
-                             seq2 = m.Field<string>("fromseq2"),
-                             stocktype = m.Field<string>("fromstocktype"),
-                             qty = m.Field<decimal>("qty"),
-                             location = m.Field<string>("tolocation"),
-                             roll = m.Field<string>("fromroll"),
-                             dyelot = m.Field<string>("fromdyelot"),
-                         }).ToList();
+                               select new
+                               {
+                                   poid = m.Field<string>("frompoid"),
+                                   seq1 = m.Field<string>("fromseq1"),
+                                   seq2 = m.Field<string>("fromseq2"),
+                                   stocktype = m.Field<string>("fromstocktype"),
+                                   qty = m.Field<decimal>("qty"),
+                                   location = m.Field<string>("tolocation"),
+                                   roll = m.Field<string>("fromroll"),
+                                   dyelot = m.Field<string>("fromdyelot"),
+                               }).ToList();
 
             DataTable newDt = dtSubTransfer_Detail.Clone();
             foreach (DataRow dtr in dtSubTransfer_Detail.Rows)
@@ -1967,17 +1967,17 @@ Where a.id = '{SubTransfer_ID}'";
             }
 
             var data_Fty_2T = (from m in newDt.AsEnumerable()
-                           select new
-                           {
-                               poid = m.Field<string>("topoid"),
-                               seq1 = m.Field<string>("toseq1"),
-                               seq2 = m.Field<string>("toseq2"),
-                               stocktype = m.Field<string>("tostocktype"),
-                               qty = m.Field<decimal>("qty"),
-                               location = m.Field<string>("tolocation"),
-                               roll = m.Field<string>("toroll"),
-                               dyelot = m.Field<string>("todyelot"),
-                           }).ToList();
+                               select new
+                               {
+                                   poid = m.Field<string>("topoid"),
+                                   seq1 = m.Field<string>("toseq1"),
+                                   seq2 = m.Field<string>("toseq2"),
+                                   stocktype = m.Field<string>("tostocktype"),
+                                   qty = m.Field<decimal>("qty"),
+                                   location = m.Field<string>("tolocation"),
+                                   roll = m.Field<string>("toroll"),
+                                   dyelot = m.Field<string>("todyelot"),
+                               }).ToList();
             upd_Fty_4T = Prgs.UpdateFtyInventory_IO(4, null, true);
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量  ftyinventory
@@ -2065,9 +2065,9 @@ Where a.id = '{SubTransfer_ID}'";
             int nCount = 0;
             int drcount = result.Count;
             IList<string> cListBarcodeNo;
-            cListBarcodeNo = GetBatchID("", "Issue_Detail", default(DateTime), 3, "BarcodeNo", batchNumber: drcount, sequenceMode: 2,sequenceLength: 4, ignoreSeq: 3, orderByCol: "Ukey");
             try
             {
+                cListBarcodeNo = GetBatchID("", "Issue_Detail", default(DateTime), 3, "BarcodeNo", batchNumber: drcount, sequenceMode: 2, sequenceLength: 4, ignoreSeq: 3, orderByCol: "Ukey");
                 foreach (DataRow dr in result)
                 {
                     if (dr.RowState == DataRowState.Deleted)
@@ -2091,7 +2091,7 @@ Where a.id = '{SubTransfer_ID}'";
             return new DualResult(true);
         }
 
-        public static List<string> GetBatchID(string keyWord, string tableName, DateTime refDate = default(DateTime), int format = 2, string checkColumn = "ID", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0, int batchNumber = 1,int ignoreSeq = 0,string orderByCol = "")
+        public static List<string> GetBatchID(string keyWord, string tableName, DateTime refDate = default(DateTime), int format = 2, string checkColumn = "ID", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0, int batchNumber = 1, int ignoreSeq = 0, string orderByCol = "")
         {
             List<string> IDList = new List<string>();
 
@@ -2132,7 +2132,7 @@ Where a.id = '{SubTransfer_ID}'";
             }
 
             //判斷schema欄位的結構長度
-         
+
             DualResult result = null;
             DataTable dtID = null;
             int columnTypeLength = 0;
@@ -2292,6 +2292,200 @@ Where a.id = '{SubTransfer_ID}'";
                 returnValue = new String(charValue);
             }
             return returnValue;
+        }
+        public static DataTable RollTranscation(string PoID, string Seq1, string Seq2)
+        {
+            DataTable dt = new DataTable();
+            DualResult result;
+            string sqlcmd = string.Format(@"select tmp.Roll,
+[stocktype] = case when stocktype = 'B' then 'Bulk'
+                   when stocktype = 'I' then 'Invertory'
+			       when stocktype = 'O' then 'Scrap' End
+,Dyelot,IssueDate,ID,name,inqty,outqty,adjust,Remark,location,
+sum(TMP.inqty - TMP.outqty+tmp.adjust) 
+over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD ) as [balance] 
+,poid = '{0}',Seq1 = '{1}' , Seq2 = '{2}'
+from (
+	select b.roll,b.stocktype,b.dyelot,a.IssueDate, a.id
+,Case type when 'A' then 'P35. Adjust Bulk Qty' 
+                when 'B' then 'P34. Adjust Stock Qty' end as name
+,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, a.remark ,'' location
+from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,type,b.roll,b.stocktype,b.dyelot
+
+union all
+	select b.FromRoll,b.FromStockType,b.FromDyelot,a.IssueDate, a.id
+,case type when 'A' then 'P31. Material Borrow From' 
+                when 'B' then 'P32. Material Give Back From' end as name
+,0 as inqty, sum(qty) released,0 as adjust, a.remark ,'' location
+from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+where Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id 
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+group by a.id, FromPoId, FromSeq1,FromSeq2, a.remark,a.IssueDate,b.FromRoll,b.FromStockType,b.FromDyelot,a.type
+union all
+	select b.ToRoll,b.ToStockType,b.ToDyelot,issuedate, a.id
+,case type when 'A' then 'P31. Material Borrow To' 
+                when 'B' then 'P32. Material Give Back To' end as name
+, sum(qty) arrived,0 as ouqty,0 as adjust, a.remark ,'' location
+from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id 
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+group by a.id, ToPoid, ToSeq1,ToSeq2, a.remark,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type
+union all
+	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
+	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
+			when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
+			when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
+			when 'D' then 'P13. Issue Material by Item'
+			when 'E' then 'P72. Transfer Inventory to Bulk (Confirm)'
+			when 'F' then 'P75. Material Borrow cross M (Confirm)'
+			when 'G' then 'P77. Material Return Back cross M (Request)' 
+			when 'H' then 'P14. Issue Thread Allowance' 
+            end name
+	,0 as inqty, sum(Qty) released,0 as adjust, a.remark,'' location
+from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type                                                             
+union all
+	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
+	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
+                              when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
+	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, a.remark ,'' location
+from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
+where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    and a.type != 'L'  --新增MDivisionID條件，避免下面DataRelation出錯 1026新增排除Lacking
+group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot                        
+
+
+
+union all
+
+	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
+	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
+                              when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
+	, 0 as inqty,0 outqty ,0 as adjust, a.remark ,'' location
+from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
+where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+and a.type = 'L'  --20190305 新增Type= Lacking,則OutQty = 0
+group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot   
+                                       
+union all
+	select b.roll,b.stocktype,b.dyelot,issuedate, a.id,'P17. R/Mtl Return' name, 0 as inqty, sum(0.00 - b.Qty) released,0 as adjust, remark,'' location
+from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
+where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+group by a.Id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
+union all
+	select b.roll,b.stocktype,b.dyelot
+        ,case type when 'A' then a.ETA else a.WhseArrival end as issuedate
+        , a.id
+	    ,case type when 'A' then 'P07. Material Receiving' 
+                        when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
+	    , sum(b.StockQty) inqty,0 as outqty,0 as adjust,'' remark ,'' location
+    from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
+    where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+        --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+    group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,b.roll,b.stocktype,b.dyelot,a.eta
+union all
+	select b.roll,b.stocktype,b.dyelot,issuedate
+, a.id,'P37. Return Receiving Material' name, sum(-Qty) inqty,0 as released,0 as adjust, a.remark,'' location
+from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯 
+group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
+union all
+	select b.FromRoll,b.FromStockType,b.FromDyelot,issuedate, a.id
+	,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
+                    when 'A' then 'P22. Transfer Bulk to Inventory' 
+                    when 'C' then 'P36. Transfer Scrap to Inventory' 
+                    when 'D' then 'P25. Transfer Bulk to Scrap' 
+                    when 'E' then 'P24. Transfer Inventory to Scrap'
+    end as name
+	, 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location
+from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
+where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' and FromSeq2 = '{2}'  and a.id = b.id
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+    and a.type <> 'C'  --排除C to B 的轉出紀錄，因目前不需要C倉交易紀錄，避免下面DataRelation出錯
+group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark
+                                                                             
+union all
+	select b.ToRoll,b.ToStockType,b.ToDyelot,issuedate, a.id
+	,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
+                    when 'A' then 'P22. Transfer Bulk to Inventory' 
+                    when 'C' then 'P36. Transfer Scrap to Inventory' end as name
+	        , sum(Qty) arrived,0 as ouqty,0 as adjust, a.remark
+	        ,isnull((Select cast(tmp.ToLocation as nvarchar)+',' 
+                        from (select b1.ToLocation 
+                                    from SubTransfer a1 WITH (NOLOCK) 
+                                    inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
+                                    where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
+                                        and b1.ToPoid = b.ToPoid
+                                        and b1.ToSeq1 = b.ToSeq1
+                                        and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
+                        for XML PATH('')),'') as ToLocation
+from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
+where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id  
+    AND TYPE not in ('D','E')  --570: WAREHOUSE_P03_RollTransaction。C倉不用算，所以要把TYPE為D及E的資料濾掉
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+group by a.id, ToPoid, ToSeq1,ToSeq2, a.remark ,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type	    
+
+union all
+	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
+            ,'P18. Transfer In' name
+            , sum(Qty) arrived,0 as ouqty,0 as adjust, a.remark
+	,(Select cast(tmp.Location as nvarchar)+',' 
+                        from (select b1.Location 
+                                    from TransferIn a1 WITH (NOLOCK) 
+                                    inner join TransferIn_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
+                                    where a1.status = 'Confirmed' and (b1.Location is not null or b1.Location !='')
+                                        and b1.Poid = b.Poid
+                                        and b1.Seq1 = b.Seq1
+                                        and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
+                        for XML PATH('')) as Location
+from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                        
+union all
+	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
+            ,'P19. Transfer Out' name
+            , 0 as inqty, sum(Qty) released,0 as adjust, a.remark,'' location
+from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    --and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+group by a.id, poid, Seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot
+
+union all
+select b.roll,b.stocktype,b.dyelot,issuedate, a.id
+    ,case type when 'B' then 'P73. Transfer Inventory to Bulk cross M (Receive)' 
+	when 'D' then 'P76. Material Borrow cross M (Receive)' 
+	when 'G' then 'P78. Material Return Back cross M (Receive)'  end name
+    , sum(Qty) as inqty, 0 released,0 as adjust, a.remark,'' location
+from RequestCrossM a WITH (NOLOCK) , RequestCrossM_Receive b WITH (NOLOCK) 
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    --and a.ToMDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type 
+
+) tmp where stocktype <> 'O'
+group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
+"
+                , PoID
+                , Seq1
+                , Seq2
+                , Sci.Env.User.Keyword);
+
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt)))
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return null;
+            }
+            else
+            {
+                return dt;
+            }
         }
     }
     public class Prgs_POSuppDetailData
