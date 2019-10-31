@@ -15,7 +15,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
-        string season, mdivision, orderby, spno1, spno2, fabrictype, refno1, refno2, style, country, supp, factory, wkNo1, wkNo2;
+        string season, mdivision, orderby, spno1, spno2, fabrictype, refno1, refno2, style, country, supp, factory, wkNo1, wkNo2 ,brand;
         //string season, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp, factory;
         DateTime? sciDelivery1, sciDelivery2, suppDelivery1, suppDelivery2, eta1, eta2, ata1, ata2;
         DataTable printData;
@@ -70,6 +70,7 @@ namespace Sci.Production.Warehouse
             factory = txtfactory.Text;
             fabrictype = comboFabricType.SelectedValue.ToString();
             orderby = comboOrderBy.Text;
+            brand = txtbrand.Text;
 
             return base.ValidateInput();
         }
@@ -95,6 +96,9 @@ namespace Sci.Production.Warehouse
 
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
             sp_factory.ParameterName = "@FactoryID";
+            
+            System.Data.SqlClient.SqlParameter sp_brand = new System.Data.SqlClient.SqlParameter();
+            sp_brand.ParameterName = "@BrandID";
 
             System.Data.SqlClient.SqlParameter sp_refno1 = new System.Data.SqlClient.SqlParameter();
             sp_refno1.ParameterName = "@refno1";
@@ -350,6 +354,14 @@ where 1=1
                 sqlCmd.Append(" and O.FactoryID = @FactoryID");
                 sp_factory.Value = factory;
                 cmds.Add(sp_factory);
+            }
+
+
+            if (!MyUtility.Check.Empty(brand))
+            {
+                sqlCmd.Append(" and O.BrandID = @BrandID");
+                sp_brand.Value = brand;
+                cmds.Add(sp_brand);
             }
 
             if (!MyUtility.Check.Empty(fabrictype))
