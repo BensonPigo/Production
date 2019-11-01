@@ -20,7 +20,7 @@ namespace Sci.Production.Subcon
         DataTable _detailDatas;
         DataTable dtLoad;
         string _ArtWorkReq_ID = string.Empty;
-        Ict.Win.UI.DataGridViewComboBoxColumn comb_SubReason;
+        Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
 
         public P05_IrregularQtyReason(string ArtWorkReq_ID,DataRow masterData, DataTable detailDatas)
         {
@@ -33,25 +33,26 @@ namespace Sci.Production.Subcon
 
         protected override void OnFormLoaded()
         {
+
+            cellSubconReason txtSubReason = (cellSubconReason)cellSubconReason.GetGridtxtCell("SQ");
+
+            //comboSubReason.EditingControlShowing += (s, e) =>
+            // {
+            //     if (s==null || e == null)
+            //     {
+            //         return;
+            //     }
+
+            //     var eventArgs = (Ict.Win.UI.DataGridViewEditingControlShowingEventArgs)e;
+            //     ComboBox cb = eventArgs.Control as ComboBox;
+            //     if (cb != null)
+            //     {
+            //         cb.SelectionChangeCommitted -= this.combo_SelectionChangeCommitted;
+            //         cb.SelectionChangeCommitted += this.combo_SelectionChangeCommitted;
+            //     }
+            //};
+
             Query();
-            cellSubconReason comboSubReason = (cellSubconReason)cellSubconReason.GetGridCell("SQ");
-
-            comboSubReason.EditingControlShowing += (s, e) =>
-             {
-                 if (s==null || e == null)
-                 {
-                     return;
-                 }
-
-                 var eventArgs = (Ict.Win.UI.DataGridViewEditingControlShowingEventArgs)e;
-                 ComboBox cb = eventArgs.Control as ComboBox;
-                 if (cb != null)
-                 {
-                     cb.SelectionChangeCommitted -= this.combo_SelectionChangeCommitted;
-                     cb.SelectionChangeCommitted += this.combo_SelectionChangeCommitted;
-                 }
-             };
-
             this.gridIrregularQty.IsEditingReadOnly = false;
             this.gridIrregularQty.DataSource = listControlBindingSource1;
 
@@ -63,9 +64,9 @@ namespace Sci.Production.Subcon
                 .Text("OrderID", header: "SP", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("BrandID", header: "Brand", iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .Numeric("StandardQty", header: "Std. Qty", decimal_places: 6, iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .Numeric("ReqQty", header: "Req. Qty", decimal_places: 6, iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .ComboBox("SubconReasonID", header: "Reason# ", width: Widths.AnsiChars(15), settings: comboSubReason, iseditable: false).Get(out comb_SubReason)
+                .Numeric("StandardQty", header: "Std. Qty", decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Numeric("ReqQty", header: "Req. Qty", decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Text("SubconReasonID", header: "Reason# ", width: Widths.AnsiChars(15), iseditable: false, settings: txtSubReason).Get(out txt_SubReason)
                 .Text("ReasonDesc", header: "Reason Desc.", iseditingreadonly: true, width: Widths.AnsiChars(15))
 
                 .DateTime("CreateDate", header: "Create" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(16))
@@ -108,7 +109,7 @@ namespace Sci.Production.Subcon
         public DataTable Check_Irregular_Qty()
         {
             DataTable dt = getData();
-            listControlBindingSource1.DataSource = getData();
+            listControlBindingSource1.DataSource =dt;
 
             return dt;
         }
@@ -194,11 +195,11 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
             this.EditMode = !this.EditMode;
             if (EditMode)
             {
-                comb_SubReason.IsEditable = true;
+                txt_SubReason.IsEditable = true;
             }
             else
             {
-                comb_SubReason.IsEditable = false;
+                txt_SubReason.IsEditable = false;
             }
             btnEdit.Text = this.EditMode ? "Save" : "Edit";
             btnClose.Text = this.EditMode ? "Undo" : "Close";
@@ -207,15 +208,11 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
         private DataTable getData()
         {
             string sqlcmd = string.Empty;
-            // 計算為寫入DB的ReqQty數量
-            decimal reqQty = MyUtility.Convert.GetDecimal(_detailDatas.Compute("sum(ReqQty)", ""));
-
-            // 取的表身OrderID
-            var OrderIDList = _detailDatas.AsEnumerable().Select(x => x.Field<string>("OrderID")).Distinct();
-
 
             DualResult result;
             sqlcmd = $@"
+
+-- exists DB
 select distinct
 o.FactoryID
 ,ai.ArtworkTypeID
@@ -230,18 +227,13 @@ o.FactoryID
 ,[CreateDate] = ai.AddDate
 ,[EditBy] = (select name from pass1 where id=ai.EditName)
 ,[EditDate] = ai.EditDate
+into #tmpDB
 from ArtworkReq_IrregularQty ai
 inner join Orders o on o.ID = ai.OrderID
 inner join #tmp s on s.OrderID = ai.OrderID 
 where ai.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
-";
 
-            result = MyUtility.Tool.ProcessWithDatatable(_detailDatas, "", sqlcmd, out dtLoad);
-            if (result == false) ShowErr(sqlcmd, result);
-
-            if (dtLoad.Rows.Count == 0)
-            {
-                sqlcmd = $@"
+-- not exists DB
 select 
 o.FactoryID
 ,voa.ArtworkTypeID
@@ -249,20 +241,19 @@ o.FactoryID
 ,o.StyleID
 ,o.BrandID
 ,[StandardQty] = sum(oq.Qty)
-,[ReqQty] = ReqQty.value + PoQty.value + {reqQty}
+,[ReqQty] = ReqQty.value + PoQty.value + s.ReqQty
 ,[SubconReasonID] = ''
 ,[ReasonDesc] = ''
 ,[CreateBy] = ''
 ,[CreateDate] = null
 ,[EditBy] = ''
 ,[EditDate] = null
-,id = ''
-,row = ROW_NUMBER() over(partition by voa.ArtworkTypeID order by  ReqQty.value + PoQty.value + {reqQty} desc)
-into #tmp
+into #tmpCurrent
 from Orders o
 inner join Order_Qty oq on o.ID=oq.ID
 inner join View_Order_Artworks voa on oq.Article = voa.Article
 and voa.id=o.ID and voa.SizeCode = oq.SizeCode
+inner join #tmp s on s.OrderID = o.ID and voa.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 outer apply(
 	select value = ISNULL(sum(PoQty),0)
     from ArtworkPO_Detail AD, ArtworkPO a
@@ -270,7 +261,7 @@ outer apply(
 	and OrderID = voa.ID and ad.PatternCode= voa.PatternCode
 	and ad.PatternDesc = voa.PatternDesc and ad.ArtworkId = voa.ArtworkID
 	and ad.ArtworkReqID=''
-	and a.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+	and a.ArtworkTypeID = voa.ArtworkTypeID
 ) PoQty
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
@@ -280,21 +271,33 @@ outer apply(
 	and aq2.PatternCode = voa.PatternCode and aq2.PatternDesc = voa.PatternDesc
 	and aq2.id !=  '{_ArtWorkReq_ID}'
 	and aq.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+    and aq.status != 'Closed' and aq2.ArtworkPOID =''
 )ReqQty
-where o.id in ('{string.Join("','", OrderIDList.ToList())}')
-and voa.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
-group by o.FactoryID,voa.ArtworkTypeID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value
-having ReqQty.value + PoQty.value + {reqQty} > sum(oq.Qty)
+where not exists(
+	select 1 from #tmpDB
+	where orderID = o.ID and ArtworkTypeID = voa.ArtworkTypeID
+)
+group by o.FactoryID,voa.ArtworkTypeID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
+having ReqQty.value + PoQty.value + s.ReqQty > sum(oq.Qty) 
 
-select * from #tmp
-where row = 1
+select * 
+,row = ROW_NUMBER() over(partition by orderid,ArtworkTypeID order by  ReqQty desc)
+into #tmpFinal
+from
+(
+	select * from #tmpCurrent
+	union all 
+	select * from #tmpDB
+) a
 
-drop table #tmp
+select * from #tmpFinal where row = 1
+
+drop table #tmpCurrent,#tmpFinal,#tmpDB
+
 ";
 
-                result = DBProxy.Current.Select(null, sqlcmd, out dtLoad);
-                if (result == false) ShowErr(sqlcmd, result);
-            }
+            result = MyUtility.Tool.ProcessWithDatatable(_detailDatas, "", sqlcmd, out dtLoad);
+            if (result == false) ShowErr(sqlcmd, result);
 
             return dtLoad;
         }
@@ -310,11 +313,11 @@ drop table #tmp
                 btnClose.Text = "Close";
                 if (EditMode)
                 {
-                    comb_SubReason.IsEditable = true;
+                    txt_SubReason.IsEditable = true;
                 }
                 else
                 {
-                    comb_SubReason.IsEditable = false;
+                    txt_SubReason.IsEditable = false;
                 }
 
                 //回到檢視模式，並且重新取得資料

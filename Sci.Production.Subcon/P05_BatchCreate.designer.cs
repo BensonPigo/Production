@@ -32,11 +32,9 @@
             this.gridBatchCreateFromSubProcessData = new Sci.Win.UI.Grid();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.dateApproveDate = new Sci.Win.UI.DateRange();
             this.labelInlineDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
-            this.labelApproveDate = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -80,7 +78,7 @@
             this.gridBatchCreateFromSubProcessData.RowTemplate.Height = 24;
             this.gridBatchCreateFromSubProcessData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBatchCreateFromSubProcessData.ShowCellToolTips = false;
-            this.gridBatchCreateFromSubProcessData.Size = new System.Drawing.Size(1024, 379);
+            this.gridBatchCreateFromSubProcessData.Size = new System.Drawing.Size(1024, 399);
             this.gridBatchCreateFromSubProcessData.TabIndex = 0;
             this.gridBatchCreateFromSubProcessData.TabStop = false;
             // 
@@ -101,7 +99,7 @@
             this.dateInlineDate.DateBox2.Size = new System.Drawing.Size(111, 23);
             this.dateInlineDate.DateBox2.TabIndex = 1;
             this.dateInlineDate.IsRequired = false;
-            this.dateInlineDate.Location = new System.Drawing.Point(433, 15);
+            this.dateInlineDate.Location = new System.Drawing.Point(89, 52);
             this.dateInlineDate.Name = "dateInlineDate";
             this.dateInlineDate.Size = new System.Drawing.Size(245, 23);
             this.dateInlineDate.TabIndex = 3;
@@ -123,36 +121,14 @@
             this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(110, 23);
             this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(107, 45);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(435, 15);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(243, 23);
-            this.dateSCIDelivery.TabIndex = 6;
-            // 
-            // dateApproveDate
-            // 
-            // 
-            // 
-            // 
-            this.dateApproveDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateApproveDate.DateBox1.Name = "";
-            this.dateApproveDate.DateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateApproveDate.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateApproveDate.DateBox2.Location = new System.Drawing.Point(132, 0);
-            this.dateApproveDate.DateBox2.Name = "";
-            this.dateApproveDate.DateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateApproveDate.DateBox2.TabIndex = 1;
-            this.dateApproveDate.IsRequired = false;
-            this.dateApproveDate.Location = new System.Drawing.Point(107, 15);
-            this.dateApproveDate.Name = "dateApproveDate";
-            this.dateApproveDate.Size = new System.Drawing.Size(243, 23);
-            this.dateApproveDate.TabIndex = 1;
+            this.dateSCIDelivery.TabIndex = 2;
             // 
             // labelInlineDate
             // 
-            this.labelInlineDate.Location = new System.Drawing.Point(353, 15);
+            this.labelInlineDate.Location = new System.Drawing.Point(9, 52);
             this.labelInlineDate.Name = "labelInlineDate";
             this.labelInlineDate.Size = new System.Drawing.Size(77, 23);
             this.labelInlineDate.TabIndex = 8;
@@ -160,9 +136,9 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Location = new System.Drawing.Point(9, 45);
+            this.labelSCIDelivery.Location = new System.Drawing.Point(346, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
-            this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
+            this.labelSCIDelivery.Size = new System.Drawing.Size(86, 23);
             this.labelSCIDelivery.TabIndex = 7;
             this.labelSCIDelivery.Text = "SCI  Delivery";
             // 
@@ -170,26 +146,18 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(571, 44);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(227, 14);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(107, 23);
-            this.txtSPNoEnd.TabIndex = 8;
-            // 
-            // labelApproveDate
-            // 
-            this.labelApproveDate.Location = new System.Drawing.Point(9, 15);
-            this.labelApproveDate.Name = "labelApproveDate";
-            this.labelApproveDate.Size = new System.Drawing.Size(95, 23);
-            this.labelApproveDate.TabIndex = 5;
-            this.labelApproveDate.Text = "Approve Date";
+            this.txtSPNoEnd.TabIndex = 1;
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.gridBatchCreateFromSubProcessData);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 109);
+            this.panel1.Location = new System.Drawing.Point(0, 89);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1024, 379);
+            this.panel1.Size = new System.Drawing.Size(1024, 399);
             this.panel1.TabIndex = 23;
             // 
             // groupBox1
@@ -199,25 +167,23 @@
             this.groupBox1.Controls.Add(this.txtartworktype_ftyArtworkType);
             this.groupBox1.Controls.Add(this.dateInlineDate);
             this.groupBox1.Controls.Add(this.dateSCIDelivery);
-            this.groupBox1.Controls.Add(this.dateApproveDate);
             this.groupBox1.Controls.Add(this.labelInlineDate);
             this.groupBox1.Controls.Add(this.labelSCIDelivery);
             this.groupBox1.Controls.Add(this.txtSPNoEnd);
-            this.groupBox1.Controls.Add(this.labelApproveDate);
             this.groupBox1.Controls.Add(this.btnFindNow);
             this.groupBox1.Controls.Add(this.txtSPNoStart);
             this.groupBox1.Controls.Add(this.labelSPNo);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1024, 109);
+            this.groupBox1.Size = new System.Drawing.Size(1024, 89);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(545, 47);
+            this.label8.Location = new System.Drawing.Point(201, 17);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(22, 17);
             this.label8.TabIndex = 15;
@@ -225,9 +191,9 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Location = new System.Drawing.Point(682, 15);
+            this.labelArtworkType.Location = new System.Drawing.Point(346, 52);
             this.labelArtworkType.Name = "labelArtworkType";
-            this.labelArtworkType.Size = new System.Drawing.Size(88, 23);
+            this.labelArtworkType.Size = new System.Drawing.Size(86, 23);
             this.labelArtworkType.TabIndex = 12;
             this.labelArtworkType.Text = "Artwork Type";
             // 
@@ -237,9 +203,9 @@
             this.txtartworktype_ftyArtworkType.cClassify = "";
             this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(773, 15);
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(435, 52);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
-            this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(132, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
             this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
             // 
@@ -250,7 +216,7 @@
             this.btnFindNow.Location = new System.Drawing.Point(919, 15);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
-            this.btnFindNow.TabIndex = 9;
+            this.btnFindNow.TabIndex = 5;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
             this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
@@ -259,14 +225,14 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(432, 44);
+            this.txtSPNoStart.Location = new System.Drawing.Point(88, 14);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(107, 23);
-            this.txtSPNoStart.TabIndex = 7;
+            this.txtSPNoStart.TabIndex = 0;
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(353, 45);
+            this.labelSPNo.Location = new System.Drawing.Point(9, 15);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(77, 23);
             this.labelSPNo.TabIndex = 0;
@@ -294,7 +260,7 @@
             this.btnCancel.Location = new System.Drawing.Point(946, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(74, 30);
-            this.btnCancel.TabIndex = 4;
+            this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -306,7 +272,7 @@
             this.btnImport.Location = new System.Drawing.Point(864, 15);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(79, 30);
-            this.btnImport.TabIndex = 3;
+            this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
@@ -332,7 +298,7 @@
             this.btnToExcel.Location = new System.Drawing.Point(776, 15);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(84, 30);
-            this.btnToExcel.TabIndex = 2;
+            this.btnToExcel.TabIndex = 1;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
@@ -362,11 +328,9 @@
         private Win.UI.Grid gridBatchCreateFromSubProcessData;
         private Win.UI.DateRange dateInlineDate;
         private Win.UI.DateRange dateSCIDelivery;
-        private Win.UI.DateRange dateApproveDate;
         private Win.UI.Label labelInlineDate;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.TextBox txtSPNoEnd;
-        private Win.UI.Label labelApproveDate;
         private Win.UI.Panel panel1;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Button btnFindNow;

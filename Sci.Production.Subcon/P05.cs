@@ -24,7 +24,6 @@ namespace Sci.Production.Subcon
     public partial class P05 : Sci.Win.Tems.Input6
     {
         string artworkunit;
-        bool isNeedPlanningP03Quote = false;
         Form batchapprove;
 
 
@@ -37,7 +36,31 @@ namespace Sci.Production.Subcon
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
-            
+        }
+
+        
+
+        /// <summary>
+        /// Change Browse Color 
+        /// 變更Browse 整行顏色
+        /// </summary>
+        private void ChangeBrowseColor()
+        {
+            for (int i = 0; i < grid.Rows.Count; i++)
+            {
+                DataTable dt = (DataTable)this.gridbs.DataSource;
+                DataRow dataRow = dt.Rows[i];
+                if (!MyUtility.Check.Empty(dataRow["exceed"]))
+                {
+                    this.grid.Rows[i].DefaultCellStyle.BackColor = Color.Yellow;
+                }
+                else
+                {
+                    this.grid.Rows[i].DefaultCellStyle.BackColor = Color.White;
+                }
+
+            }
+            grid.Columns["exceed"].Visible = false;
         }
 
         protected override void OnFormLoaded()
@@ -51,13 +74,21 @@ namespace Sci.Production.Subcon
                     case "1":
                     this.DefaultWhere = "Exceed = 1";
                         this.grid.RowsDefaultCellStyle.BackColor = Color.Yellow;
+                        this.ReloadDatas();
                         break;
                     default:
                         this.DefaultWhere = string.Empty;
-                        this.grid.RowsDefaultCellStyle.BackColor = Color.White;
+                        this.ReloadDatas();
+                        ChangeBrowseColor();
                         break;
                 }
-                this.ReloadDatas();
+                
+            };
+            ChangeBrowseColor();
+
+            this.reloaddata.Click += (s, e) =>
+            {
+                ChangeBrowseColor();
             };
         }
 
@@ -97,13 +128,7 @@ ORDER BY ap.OrderID   ", masterID);
         {
             base.OnDetailEntered();
             ChangeDetailHeader();
-            #region 判斷Artwork 是否需要在 Planning B03 報價
-            this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.CurrentMaintain["artworktypeid"].ToString());
-            #endregion
-
-
-            //txtartworktype_ftyArtworkType.Enabled = !this.EditMode;
-            //txtmfactory.Enabled = !this.EditMode;
+            
             if (this.CurrentMaintain["ID"] == DBNull.Value)
             {
                 btnIrrQtyReason.Enabled = false;
@@ -127,34 +152,7 @@ ORDER BY ap.OrderID   ", masterID);
             #endregion
 
             #region Irregular 判斷
-            
-            this.btnIrrQtyReason.ForeColor = Color.Black;
-
-            DataTable detailDatas = ((DataTable)detailgridbs.DataSource).Clone();
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-            {
-                if (dr.RowState != DataRowState.Deleted)
-                {
-                    detailDatas.ImportRow(dr);
-                }
-
-            }
-            var frm = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
-
-            this.ShowWaitMessage("Data Loading...");
-
-            DataTable dtIrregular = frm.Check_Irregular_Qty();
-
-            this.HideWaitMessage();
-            if (dtIrregular != null)
-            {
-                if (dtIrregular.Rows.Count > 0)
-                {
-                    this.btnIrrQtyReason.ForeColor = Color.Red;
-                }
-            }
-            
-
+            RefreshIrregularQtyReason();
             #endregion
 
             #region 表尾
@@ -225,44 +223,60 @@ ORDER BY ap.OrderID   ", masterID);
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     string sqlcmd = $@"
-select ReqQty = ReqQty.value + PoQty.value 
-,[OrderQty] = OrderQty.value
-from ArtworkReq_Detail s
+select  OrderQty = sum(q.qty)  
+, [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) + {e.FormattedValue}
+from  orders o WITH (NOLOCK) 
+inner join order_qty q WITH (NOLOCK) on q.id = o.ID
+inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
+inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
+	and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID 
+	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
+	and vsa.PatternCode = oa.PatternCode and vsa.PatternDesc = oa.PatternDesc 
+inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
+left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
+inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
-		and a.ArtworkTypeID = '{CurrentMaintain["ArtworkTypeID"]}' 
-		and OrderID = s.OrderID and ad.PatternCode= s.PatternCode
-        and ad.PatternDesc = s.PatternDesc and ad.ArtworkID = s.ArtworkID
-        and AD.id ! = s.ID
+		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}' 
+		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
+        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
+        and a.status != 'Closed' and ad.ArtworkPOID =''
+        and a.id != '{dr["id"]}'
 ) ReqQty
 outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = '{CurrentMaintain["ArtworkTypeID"]}' 
-		and OrderID = s.OrderID and ad.PatternCode= s.PatternCode
-        and ad.PatternDesc = s.PatternDesc and ad.ArtworkID = s.ArtworkID
+		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}' 
+		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
+        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
 		and ad.ArtworkReqID=''
 ) PoQty
-outer apply(
-	select value  = sum(q.Qty)
-	from  orders o
-	inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-	where o.ID = s.OrderID
-	and o.Category in ('B','S')
-	and o.Junk=0
-) OrderQty
-where uKey = '{dr["ukey"]}' ";
+where f.IsProduceFty=1
+and o.category in ('B','S')
+and o.MDivisionID='{Sci.Env.User.Keyword}' 
+and oa.ArtworkTypeID = '{CurrentMaintain["artworktypeid"]}' 
+and sao.LocalSuppId = '{CurrentMaintain["localsuppid"]}' 
+and o.Junk=0
+and o.id = '{dr["OrderID"]}'
+and oa.PatternCode = '{dr["PatternCode"]}'
+and oa.PatternDesc = '{dr["PatternDesc"]}'
+and vsa.ArtworkID = '{dr["ArtworkId"]}'
+and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
+group by ReqQty.value,PoQty.value";
                     DataRow drQty;                    
                     if (MyUtility.Check.Seek(sqlcmd , out drQty))
                     {
-                        CurrentDetailData["exceedqty"] = ((decimal)e.FormattedValue + (decimal)drQty["ReqQty"] - (int)drQty["OrderQty"]) < 0 ? 0 : (decimal)e.FormattedValue + (decimal)drQty["ReqQty"] - (int)drQty["OrderQty"];
+                        CurrentDetailData["exceedqty"] = ((decimal)drQty["AccReqQty"] - (int)drQty["OrderQty"]) < 0 ? 0 : (decimal)drQty["AccReqQty"] - (int)drQty["OrderQty"];
                     }
 
                     CurrentDetailData["ReqQty"] = e.FormattedValue;
+                    RefreshIrregularQtyReason();
                 }
+
             };
 
             #region 欄位設定
@@ -271,7 +285,7 @@ where uKey = '{dr["ukey"]}' ";
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("sewinline", header: "Sewing Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("scidelivery", header: "SCI Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(17), iseditingreadonly: true)
             .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6) , settings: col_ReqQty) // 可編輯
@@ -339,7 +353,7 @@ where uKey = '{dr["ukey"]}' ";
             if (CurrentMaintain["LocalSuppID"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Supplier >  canot be empty!", "Warning");
-                txtartworktype_ftyArtworkType.Focus();
+                txtsubconSupplier.TextBox1.Focus();
                 return false;
             }
 
@@ -359,7 +373,7 @@ where uKey = '{dr["ukey"]}' ";
            
             #endregion
 
-            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("QtyGarment = 0"))
+            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("ReqQty = 0"))
             {
                 row.Delete();
             }
@@ -639,7 +653,6 @@ where id = '{CurrentMaintain["id"]}'";
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();
             }
-            this.isNeedPlanningP03Quote = Prgs.CheckNeedPlanningP03Quote(this.txtartworktype_ftyArtworkType.Text);
             ChangeDetailHeader();
 
         }
@@ -674,21 +687,8 @@ where id = '{CurrentMaintain["id"]}'";
             frm.ShowDialog(this);
 
             //畫面關掉後，再檢查一次有無價格異常
-            this.btnIrrQtyReason.ForeColor = Color.Black;
             this.ShowWaitMessage("Data Loading...");
-
-            
-
-            DataTable dtIrregular = frm.Check_Irregular_Qty();
-            
-            this.HideWaitMessage();
-            if (dtIrregular != null)
-            {
-                if (dtIrregular.Rows.Count > 0)
-                {
-                    this.btnIrrQtyReason.ForeColor = Color.Red;
-                }
-            }   
+            RefreshIrregularQtyReason();
         }
 
         private void btnBatchApprove_Click(object sender, EventArgs e)
@@ -749,7 +749,7 @@ where id = '{CurrentMaintain["id"]}'";
         /// 異常價格紀錄重新整理
         /// </summary>
         /// <param name="showMSG"></param>
-        private void RefreshIrregularQtyReason(bool showMSG = false)
+        private void RefreshIrregularQtyReason()
         {
             if ((DataTable)detailgridbs.DataSource == null)
             {

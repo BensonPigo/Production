@@ -25,7 +25,9 @@ namespace Sci.Production.Subcon
 
         protected override void OnFormLoaded()
         {
-            base.OnFormLoaded();            
+
+            base.OnFormLoaded();
+            Query();
 
             this.gridArtworkReq.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridArtworkReq.DataSource = listControlBindingSource1;
@@ -41,6 +43,11 @@ namespace Sci.Production.Subcon
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 ;
 
+            for (int i = 0; i < this.gridArtworkReq.Columns.Count; i++)
+            {
+                this.gridArtworkReq.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
             this.gridArtworkReqDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridArtworkReqDetail.DataSource = listControlBindingSource2;
             Helper.Controls.Grid.Generator(this.gridArtworkReqDetail)                 
@@ -52,7 +59,10 @@ namespace Sci.Production.Subcon
                  .Numeric("QtyGarment", header: "Qty/GMT", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0, iseditingreadonly: true)
                  ;
 
-            Query();
+            for (int i = 0; i < this.gridArtworkReqDetail.Columns.Count; i++)
+            {
+                this.gridArtworkReqDetail.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -157,7 +167,7 @@ or
             }
 
             Query();
-            MyUtility.Msg.WarningBox("Sucessful");
+            MyUtility.Msg.InfoBox("Sucessful");
             this.delegateAct();
         }
 
@@ -189,10 +199,6 @@ or
     (aq.Status = 'New' and Exceed = 0)
 )
 order by aq.ID, aqd.OrderID 
-
-
-
-
 ");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (printData.Rows.Count <= 0)

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict.Win;
 using Sci.Data;
+using Ict;
 
 namespace Sci.Production.Class
 {
@@ -122,30 +123,91 @@ namespace Sci.Production.Class
         }
     }
 
-    public class cellSubconReason : DataGridViewGeneratorComboBoxColumnSettings
+    public class cellSubconReason : DataGridViewGeneratorTextColumnSettings
     {
-        public static DataGridViewGeneratorComboBoxColumnSettings GetGridCell(string Type)
+//        public static DataGridViewGeneratorComboBoxColumnSettings GetGridCell(string Type)
+//        {
+//            cellSubconReason cellcombo = new cellSubconReason();
+//            if (!Env.DesignTime)
+//            {
+//                string sqlcmd = $@"
+//Select ID as SubconReasonID, Reason 
+//from SubconReason WITH (NOLOCK) 
+//where type='{Type}'
+//order by id
+//";
+//                Ict.DualResult result;
+//                DataTable dt = new DataTable();
+//                Dictionary<string, string> dict_SubReason = new Dictionary<string, string>();
+//                if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
+//                {
+//                    cellcombo.DataSource = dt;
+//                    cellcombo.DisplayMember = "SubconReasonID";
+//                    cellcombo.ValueMember = "SubconReasonID";
+//                }
+//            }
+//            return cellcombo;
+//        }
+
+        public static DataGridViewGeneratorTextColumnSettings GetGridtxtCell(string Type)
         {
-            cellSubconReason cellcombo = new cellSubconReason();
-            if (!Env.DesignTime)
+            cellSubconReason celltextbox = new cellSubconReason();
+
+            celltextbox.EditingMouseDown += (s, e) =>
             {
-                string sqlcmd = $@"
-Select ID as SubconReasonID, Reason 
-from SubconReason WITH (NOLOCK) 
-where type='{Type}'
-order by id
-";
-                Ict.DualResult result;
-                DataTable dt = new DataTable();
-                Dictionary<string, string> dict_SubReason = new Dictionary<string, string>();
-                if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
+                if (e.Button == MouseButtons.Right)
                 {
-                    cellcombo.DataSource = dt;
-                    cellcombo.DisplayMember = "SubconReasonID";
-                    cellcombo.ValueMember = "SubconReasonID";
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                    string sqlcmd = $@"select id,Reason from SubconReason where Type='{Type}'";
+                    Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "10,20", string.Empty, "id,SubConReason");
+                    DialogResult returnResult = item.ShowDialog();
+                    if (returnResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        row["SubconReasonID"] = item.GetSelectedString();
+                        row["ReasonDesc"] = item.GetSelecteds()[0]["Reason"].ToString();
+                        row.EndEdit();
+                    }
                 }
-            }
-            return cellcombo;
+            };
+
+            celltextbox.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                // Parent form 若是非編輯狀態就 return 
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                // 右鍵彈出功能
+                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                String oldValue = row["SubconReasonID"].ToString();
+                String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                string sql;
+                DataRow dr;
+                sql = $@"select id,Reason from SubconReason where Type='{Type}' and id ='{newValue}' and junk=0";
+                if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
+                {
+                    if (!MyUtility.Check.Seek(sql, out dr))
+                    {
+                        row["SubconReasonID"] = "";
+                        row.EndEdit();
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox($"< Reason# : {newValue}> not found.");
+                        return;
+                    }
+                    else
+                    {
+                        row["SubconReasonID"] = dr["id"].ToString();
+                        row["ReasonDesc"] = dr["Reason"].ToString();
+                        row.EndEdit();
+                    }
+                }
+            };
+
+            return celltextbox;
         }
     }
 }

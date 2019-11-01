@@ -70,7 +70,7 @@ outer apply(
     where OrderID = o.id and ArtworkID = vsa.ArtworkID
     and PatternDesc = oa.PatternDesc and PatternCode = oa.PatternCode
 ) CurrentReq";
-                tmpcurrentReq = "+ CurrentReq.value";
+                tmpcurrentReq = "+ isnull(CurrentReq.value,0)";
                 tmpGroupby = ",CurrentReq.value";
             }
 
@@ -79,7 +79,7 @@ select  Selected = 0
         , sao.LocalSuppId
 		, [orderID] = q.ID
         , OrderQty = sum(q.qty)  
-        , [AccReqQty] = ReqQty.value + PoQty.value {tmpcurrentReq}
+        , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) {tmpcurrentReq}
         , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value))
 		, o.SewInLIne
 		, o.SciDelivery
@@ -87,7 +87,7 @@ select  Selected = 0
 		, stitch = oa.qty
 		, oa.PatternCode
 		, oa.PatternDesc
-		, [qtygarment] = iif(isnull(ot.qty,0) = 0,1,ot.qty)
+		, [qtygarment] = 1
         , o.StyleID
 		, o.POID
         , id = ''
@@ -107,16 +107,17 @@ outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
-		and a.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}' 
+		and a.ArtworkTypeID = oa.ArtworkTypeID
 		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
         and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
         and a.id != '{dr_artworkReq["id"]}'
+        and a.status != 'Closed' and ad.ArtworkPOID =''
 ) ReqQty
 outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}' 
+		and a.ArtworkTypeID = oa.ArtworkTypeID
 		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
         and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
 		and ad.ArtworkReqID=''
@@ -129,8 +130,6 @@ and oa.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
 and sao.LocalSuppId = '{dr_artworkReq["localsuppid"]}' 
 and o.Junk=0
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
-and 
-
 ";
 
             if (!(dateSCIDelivery.Value1 == null))
@@ -143,11 +142,11 @@ and
             }
             if (!(dateInlineDate.Value1 == null))
             {
-                strSQLCmd += string.Format(" and ot.ArtworkInLine <= '{0}' ", Inline_b);
+                strSQLCmd += string.Format(" and ot.ArtworkInLine >= '{0}' ", Inline_b);
             }
             if (!(dateInlineDate.Value2 == null))
             {
-                strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e);
+                strSQLCmd += string.Format(" and ot.ArtworkOffLine <= '{0}' ", Inline_e);
             }
             if (!(string.IsNullOrWhiteSpace(sp_b)))
             {
@@ -158,7 +157,9 @@ and
                 strSQLCmd += string.Format(" and o.ID <= '{0}'",  sp_e);
             }
 
-            strSQLCmd += $@" group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID,iif(at.isArtwork = 1,vsa.Cost,sao.Price),sao.Price , o.POID,ot.qty,PoQty.value,ReqQty.value {tmpGroupby}";
+            strSQLCmd += $@" 
+            group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
+            ,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ReqQty.value  {tmpGroupby}";
 
             Ict.DualResult result;
             //if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
@@ -244,9 +245,9 @@ where id ='{dr_artworkReq["artworktypeid"]}'
 
                     if (findrow.Length > 0)
                     {
-                        findrow[0]["ReqQty"] = tmp["ReqQty"];
-                        findrow[0]["qtygarment"] = tmp["qtygarment"];
                         findrow[0]["ExceedQty"] = (exceedQty - (decimal)findrow[0]["ReqQty"]) < 0 ? 0 : (exceedQty - (decimal)findrow[0]["ReqQty"]);
+                        findrow[0]["ReqQty"] = tmp["ReqQty"];
+                        findrow[0]["qtygarment"] = 1;
                     }
                     else
                     {
