@@ -588,7 +588,15 @@ insert into subtransfer_detail
  , ToPOID  , ToSeq1              , ToSeq2       , ToRoll    , ToStockType
  , ToDyelot, Qty                 , ToLocation)
 select *
-from #tmp";
+from #tmp
+;
+UPDATE m
+SET m.CLocation = t.ToLocation
+FROM MDivisionPODetail m
+INNER JOIN #tmp t ON t.FromPOID=m.POID AND t.FromSeq1=m.Seq1 AND t.FromSeq2=m.Seq2
+;
+
+";
 
             DataTable dtMaster = new DataTable();
             dtMaster.Columns.Add("Poid");

@@ -68,6 +68,7 @@ alter table #Tmp alter column stocktype varchar(1)
 
 select poid,seq1,seq2,qty,stocktype
 ,[location] = isnull(stuff(L.locationid,1,1,'' ), '')
+,[CLocation]=t.CLocation
 from #tmp t
 OUTER APPLY(
 	SELECT locationid=(
@@ -96,6 +97,7 @@ OUTER APPLY(
                                     stocktype = w.Field<string>("stocktype"),
                                     qty = w.Field<decimal>("qty"),
                                     location = w.Field<string>("location"),
+                                    CLocation = w.Field<string>("CLocation"),
                                 }).ToList();
                         datas.Clear();
                         datas.AddRange(newDatas);
@@ -119,7 +121,7 @@ using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched and src.stocktype = 'I' then
 	update 
-	set target.blocation = src.location;
+	set target.blocation = src.location ,target.CLocation=src.CLocation;
 
 merge dbo.mdivisionpodetail as target
 using  #TmpSource as src
@@ -1887,7 +1889,9 @@ Where a.id = '{SubTransfer_ID}'";
                                   seq1 = m.First().Field<string>("fromseq1"),
                                   seq2 = m.First().Field<string>("fromseq2"),
                                   stocktype = m.First().Field<string>("fromstocktype"),
-                                  qty = m.Sum(w => w.Field<decimal>("qty"))
+                                  qty = m.Sum(w => w.Field<decimal>("qty")),
+                                  location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
+                                  CLocation = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct())
                               }).ToList();
 
             var data_MD_8T = data_MD_4T.Select(data => new Prgs_POSuppDetailData
@@ -1905,7 +1909,8 @@ Where a.id = '{SubTransfer_ID}'";
                 seq1 = data.seq1,
                 seq2 = data.seq2,
                 stocktype = data.stocktype,
-                qty = 0
+                qty = 0,
+                CLocation = data.CLocation
             }).ToList();
 
             #endregion 
@@ -2496,5 +2501,6 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
         public string stocktype { get; set; }
         public decimal qty { get; set; }
         public string location { get; set; }
+        public string CLocation { get; set; }
     }
 }
