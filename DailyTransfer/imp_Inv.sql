@@ -436,9 +436,9 @@ where	not exists(
 		AND b.Confirmed=1
 --InReason  InvtransReason
 
-update invtrans
+update Production.dbo.invtrans
 set TransferMDivisionID = isnull(c.MDivisionID ,'')
-from invtrans b
+from Production.dbo.invtrans b
 left JOIN Production.dbo.SCIFty c on b.TransferFactory=c.ID
 where b.TransferMDivisionID is null
 
