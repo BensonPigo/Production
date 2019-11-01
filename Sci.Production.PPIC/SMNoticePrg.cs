@@ -1588,7 +1588,7 @@ Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
 --Inner Join MtlType mt on mt.ID = f.MtltypeId and (mt.ID like '%TAPE' or mt.ID like '%ELASTIC%')
 Where 1 = 1
 And sm.ID = @ID 
-And boa.PatternPanel <> '' 
+And boa.FabricPanelCode <> '' 
 And IsNull(boa.ProvidedPatternRoom, 0) = 1
 And IsNull(f.BomTypeCalculate, 0) = 1
 Order by boa.PatternPanel
@@ -1604,7 +1604,7 @@ Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
 --Inner Join MtlType mt on mt.ID = f.MtltypeId and (mt.ID like '%TAPE' or mt.ID like '%ELASTIC%')
 Where 1 = 1
 And o.ID = @ID 
-And boa.PatternPanel <> '' 
+And boa.FabricPanelCode <> '' 
 And IsNull(boa.ProvidedPatternRoom, 0) = 1
 And IsNull(f.BomTypeCalculate, 0) = 1
 Order by boa.PatternPanel

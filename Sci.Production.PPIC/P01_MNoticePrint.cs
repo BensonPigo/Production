@@ -137,9 +137,9 @@ namespace Sci.Production.PPIC
         {
             if (this.radioMNotice.Checked == true)
             {
-                string ordercomboid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
+                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
 
-                DataRow drvar = this.GetTitleDataByCustCD(ordercomboid, this._id);
+                DataRow drvar = this.GetTitleDataByCustCD(poid, this._id);
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
                 if (drvar == null)
                 {
@@ -158,14 +158,14 @@ namespace Sci.Production.PPIC
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_MAKER", drvar["MAKER"].ToString());
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_STYLENO", drvar["sty"].ToString());
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_QTY", drvar["QTY"].ToString());
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "POID", ordercomboid);
+                this.sxr.DicDatas.Add(this.sxr.VPrefix + "POID", poid);
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_CustCD", drvar["CustCD"].ToString());
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_delDate", drvar["delDate"]);
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_ChangeMemoDate", drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
 
                 System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", ordercomboid), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
 
                 sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
@@ -181,12 +181,15 @@ namespace Sci.Production.PPIC
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select(string.Empty, @"
-select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 
+                DualResult getIds = DBProxy.Current.Select(
+string.Empty,
+@"select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 
 ,ChangeMemoDate
 from Orders WITH (NOLOCK) 
-where ordercomboid = @ordercomboid 
-order by ID", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercomboid) }, out dt);
+where poid = @poid
+order by ID"
+, new List<SqlParameter> { new SqlParameter("poid", poid) }
+, out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     DualResult failResult = new DualResult(false, "Error:" + getIds.ToString());
@@ -260,9 +263,9 @@ order by ID", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercom
             // M/Notict (Combo by ComboID)
             else
             {
-                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
+                string poid = MyUtility.GetValue.Lookup("select poid FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
 
-                System.Data.DataTable dtOrderCombo = this.GetDtByComboID(ordercomboid);
+                System.Data.DataTable dtOrderCombo = this.GetDtByComboID(poid);
 
                 if (dtOrderCombo == null)
                 {
@@ -288,7 +291,7 @@ order by ID", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercom
 
                     string orderComboID = row["OrderComboID"].ToString();
 
-                    DataRow drvar = this.GetTitleDataByCustCD(ordercomboid, orderComboID);
+                    DataRow drvar = this.GetTitleDataByCustCD(poid, orderComboID);
 
                     System.Data.DataTable[] dts;
                     DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", orderComboID), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@ByType", 1) }, out dts);
@@ -412,7 +415,7 @@ order by ID", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercom
             string strSqlSelect = @"
 SELECT distinct OrderComboID from Orders
 outer apply (select 1 as cnt from Orders tmp where tmp.OrderComboID = Orders.ID) cnt
-WHERE Orders.ordercomboid = @POID";
+WHERE Orders.POID = @POID";
 
             DualResult res = DBProxy.Current.Select(string.Empty, strSqlSelect, new List<SqlParameter> { new SqlParameter("@POID", poid) }, out dt);
 
@@ -451,7 +454,7 @@ WHERE Orders.ordercomboid = @POID";
             }
         }
 
-        private DataRow GetTitleDataByCustCD(string ordercomboid, string id, bool byCustCD = true)
+        private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
         {
             DataRow drvar;
             string cmd = string.Empty;
@@ -461,40 +464,51 @@ WHERE Orders.ordercomboid = @POID";
 SELECT MAKER=max(FactoryID)
 ,sty=max(StyleID)+'-'+max(SeasonID)
 ,QTY=sum(QTY)
---,'SPNO'=RTRIM(POID)+b.spno 
-,'SPNO'=b.OrderComboList
+,'SPNO'=RTRIM(POID)+b.spno 
 ,(select CustCDID from orders o where o.ID = @ID) as CustCD
 ,(select CustPONo from orders o where o.ID = @ID) as pono
 ,(select BuyerDelivery from orders o where o.ID = @ID) as delDate
 ,(select Customize1 from orders o where o.ID = @ID) as Customize1
 ,(select ChangeMemoDate from orders o where o.ID = @ID) as ChangeMemoDate
 FROM orders a WITH (NOLOCK) 
---OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@ordercomboid,'') FROM orders WITH (NOLOCK) WHERE OrderComboID = @ID
-OUTER APPLY(Select Top 1 OrderComboList from dbo.Order_OrderComboList with(nolock) where ID  = @ID) b
-where OrderComboID = @ordercomboid group by POID,b.OrderComboList";
+OUTER APPLY(
+    SELECT spno = 
+    substring(
+        (SELECT '/'+REPLACE(ID,@poid,'') 
+        FROM dbo.Orders 
+        WHERE POID = @poid AND OrderComboID = 
+        (select top 1 OrderComboID from Orders where id = @ID)
+	        order by ID FOR XML PATH(''))
+     ,2,999) 
+) b
+where POID = @poid 
+group by POID,b.spno";
             }
             else
             {
                 cmd = @"
 SELECT 
-MAKER=max(FactoryID)
+    MAKER=max(FactoryID)
 ,sty=max(StyleID)+'-'+max(SeasonID)
 ,QTY=sum(QTY)
---,'SPNO'=RTRIM(POID)+b.spno
-,'SPNO'=b.spno
+,'SPNO'=RTRIM(POID)+b.spno
 ,(select CustCDID from Orders o where o.ID = @ID) as CustCD
 ,(select CustPONo from Orders o where o.ID = @ID) as pono
 ,(select BuyerDelivery from Orders o where o.ID = @ID) as delDate
 ,(select Customize1 from Orders o where o.ID = @ID) as Customize1 
 ,(select ChangeMemoDate from orders o where o.ID = @ID) as ChangeMemoDate
 FROM Orders a WITH (NOLOCK) 
---OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@ordercomboid,'') FROM Orders WITH (NOLOCK) WHERE OrderComboID = @ordercomboid
-OUTER APPLY(SELECT STUFF((SELECT '/'+ID FROM Orders WITH (NOLOCK) WHERE OrderComboID = @ordercomboid
-	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
-where OrderComboID = @ordercomboid group by POID,b.spno";
+OUTER APPLY(
+    SELECT substring((SELECT '/'+REPLACE(ID,@poid,'') 
+    FROM Trade.dbo.Orders 
+    WHERE POID = @poid
+	order by ID FOR XML PATH('')),2,999) as spno
+) b
+where OrderComboID = @poid 
+group by POID,b.spno";
             }
 
-            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@ordercomboid", ordercomboid), new SqlParameter("@ID", id) }, out drvar, null);
+            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@poid", poid), new SqlParameter("@ID", id) }, out drvar, null);
             if (res)
             {
                 return drvar;
@@ -510,7 +524,5 @@ where OrderComboID = @ordercomboid group by POID,b.spno";
             this.checkAdditionally.Visible = false;
             this.checkAdditionally.Visible = this.radioMNotice.Checked || this.radioByOrderCombo.Checked;
         }
-
-
     }
 }
