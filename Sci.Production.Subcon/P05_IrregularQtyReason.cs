@@ -227,6 +227,9 @@ o.FactoryID
 ,[CreateDate] = ai.AddDate
 ,[EditBy] = (select name from pass1 where id=ai.EditName)
 ,[EditDate] = ai.EditDate
+,ArtworkID=''
+,PatternCode=''
+,PatternDesc=''
 into #tmpDB
 from ArtworkReq_IrregularQty ai
 inner join Orders o on o.ID = ai.OrderID
@@ -248,6 +251,7 @@ o.FactoryID
 ,[CreateDate] = null
 ,[EditBy] = ''
 ,[EditDate] = null
+,voa.ArtworkID,voa.PatternCode,voa.PatternDesc
 into #tmpCurrent
 from Orders o
 inner join Order_Qty oq on o.ID=oq.ID
@@ -278,6 +282,7 @@ where not exists(
 	where orderID = o.ID and ArtworkTypeID = voa.ArtworkTypeID
 )
 group by o.FactoryID,voa.ArtworkTypeID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
+,voa.ArtworkID,voa.PatternCode,voa.PatternDesc
 having ReqQty.value + PoQty.value + s.ReqQty > sum(oq.Qty) 
 
 select * 

@@ -36,9 +36,14 @@ namespace Sci.Production.Subcon
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
+
+            txtsubconSupplier.TextBox1.Validated += (s, e) =>
+            {
+                this.CurrentMaintain["localsuppid"] = txtsubconSupplier.TextBox1.Text;
+            };
         }
 
-        
+
 
         /// <summary>
         /// Change Browse Color 
@@ -432,6 +437,20 @@ group by ReqQty.value,PoQty.value";
                 strStatus = "Locked";
             }
 
+            // 判斷irregular Reason沒寫不能存檔
+            var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)detailgridbs.DataSource);
+
+            DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
+            if (dtIrregular != null)
+            {
+                bool isReasonEmpty = dtIrregular.AsEnumerable().Any(s => MyUtility.Check.Empty(s["SubconReasonID"]));
+                if (isReasonEmpty)
+                {
+                    MyUtility.Msg.WarningBox("Irregular Qty Reason cannot be empty!");
+                    return;
+                }
+            }
+
             sqlcmd = $@"
 update artworkReq 
 set status='{strStatus}'
@@ -642,6 +661,7 @@ where id = '{CurrentMaintain["id"]}'";
             var frm = new Sci.Production.Subcon.P05_BatchCreate();
             frm.ShowDialog(this);
             ReloadDatas();
+            ChangeBrowseColor();
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
@@ -725,6 +745,7 @@ where id = '{CurrentMaintain["id"]}'";
                 }
                 this.ReloadDatas();
                 this.RenewData();
+                ChangeBrowseColor();
                 if (!MyUtility.Check.Empty(idIndex)) this.gridbs.Position = this.gridbs.Find("ID", idIndex);
             }
         }
@@ -742,6 +763,10 @@ where id = '{CurrentMaintain["id"]}'";
             if (MyUtility.Check.Empty(this.txtsubconSupplier.TextBox1.Text))
             {
                 this.CurrentMaintain["LocalSuppID"] = DBNull.Value;
+            }
+            else
+            {
+                this.CurrentMaintain["LocalSuppID"] = this.txtsubconSupplier.TextBox1.Text;
             }
         }
 
