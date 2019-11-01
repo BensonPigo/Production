@@ -344,7 +344,7 @@ OUTER APPLY(
 	SELECT  [Value]=sum(ISNULL(pd.QtyPerCTN,0))
 	FROM ClogGarmentDispose cd  with (nolock) 
 	INNER JOIN ClogGarmentDispose_Detail cdd with (nolock) ON  cd.ID=cdd.ID
-	left join PackingList_Detail pd with (nolock) on  pd.ID = cdd.PackingListID and pd.CTNStartNO = cdd.CTNStartNO and CTNQty = 1
+	left join PackingList_Detail pd with (nolock) on  pd.ID = cdd.PackingListID and pd.CTNStartNO = cdd.CTNStartNO
 	where cd.Status='Confirmed' AND pd.OrderID=t.id 
 )DisposeQty
 
