@@ -377,7 +377,7 @@ select	b.ID
 		, ConfirmHandle
 		, ISNULL(Confirmed,0)
 		, ISNULL(Qty,0)
-		, ISNULL(Type,'')
+		, ISNULL(b.Type,'')
 		, b.OrderFactory      
 		, isnull(c.MDivisionID,'')
 		, InventoryUkey
