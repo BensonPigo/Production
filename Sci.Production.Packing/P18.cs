@@ -144,6 +144,7 @@ namespace Sci.Production.Packing
                                            o.Dest,
                                            isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
                                            isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+                                           ,p.Remark
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -439,7 +440,8 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               Article = c.Field<string>("Article"),
                                                               BrandID = c.Field<string>("BrandID"),
                                                               StyleID = c.Field<string>("StyleID"),
-                                                              Dest = c.Field<string>("Dest")
+                                                              Dest = c.Field<string>("Dest"),
+                                                              Remark = c.Field<string>("Remark")
                                                           }
                                                           into g
                                                           select new SelectCartonDetail
@@ -451,6 +453,7 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               BrandId = g.Key.BrandID,
                                                               StyleId = g.Key.StyleID,
                                                               Dest = g.Key.Dest,
+                                                              Remark = g.Key.Remark,
                                                               OrderID = string.Join("/", g.Select(st => st.Field<string>("OrderID")).Distinct().ToArray()),
                                                               SizeCode = string.Join("/", g.Select(st => st.Field<string>("SizeCode")).ToArray()),
                                                               QtyPerCTN = string.Join("/", g.Select(st => st.Field<int>("QtyPerCTN").ToString()).ToArray()),
@@ -532,6 +535,12 @@ INSERT INTO [dbo].[PackingScan_History]
             this.displayCustomize1.Text = MyUtility.GetValue.Lookup($"select Customize1 from orders with(nolock) where id = '{dr.OrderID}'");
             this.displayCustomize2.Text = MyUtility.GetValue.Lookup($"select Customize2 from orders with(nolock) where id = '{dr.OrderID}'");
             this.displayCustomize3.Text = MyUtility.GetValue.Lookup($"select Customize3 from orders with(nolock) where id = '{dr.OrderID}'");
+            this.displayKIT.Text = MyUtility.GetValue.Lookup($@"
+SELECT TOP 1 cc.Kit
+FROM Orders o 
+LEFT JOIN CustCD cc ON o.BrandID=cc.BrandID AND o.CustCDID=cc.ID
+WHERE o.ID='{dr.OrderID}'");
+            this.boxPackingRemark.Text = dr.Remark;
         }
 
         private void ChkBoxNotScan_CheckedChanged(object sender, EventArgs e)
@@ -827,6 +836,8 @@ and Article = '{this.selecedPK.Article}'";
             private string passName;
             private decimal actCTNWeight;
 
+            private string _remark;
+
             public string ID
             {
                 get
@@ -1032,6 +1043,20 @@ and Article = '{this.selecedPK.Article}'";
                 set
                 {
                     this.actCTNWeight = value;
+                }
+            }
+
+
+            public string Remark
+            {
+                get
+                {
+                    return this._remark;
+                }
+
+                set
+                {
+                    this._remark = value;
                 }
             }
         }

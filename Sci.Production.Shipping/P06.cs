@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -541,7 +542,11 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             {
                 return;
             }
-
+            
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(PulloutID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
+            }
             // 模擬按Edit行為
             this.toolbar.cmdEdit.PerformClick();
 

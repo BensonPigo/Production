@@ -66,22 +66,24 @@
             this.txtWKNo1 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.chkWhseClose = new Sci.Win.UI.CheckBox();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.labelBrand = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(436, 12);
-            this.print.TabIndex = 19;
+            this.print.TabIndex = 21;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(436, 48);
-            this.toexcel.TabIndex = 20;
+            this.toexcel.TabIndex = 22;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(436, 84);
-            this.close.TabIndex = 21;
+            this.close.TabIndex = 23;
             // 
             // labelSCIDelivery
             // 
@@ -301,7 +303,7 @@
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Location = new System.Drawing.Point(13, 409);
+            this.labelFabricType.Location = new System.Drawing.Point(13, 441);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(98, 23);
             this.labelFabricType.TabIndex = 98;
@@ -311,14 +313,14 @@
             // 
             this.txtMdivision.BackColor = System.Drawing.Color.White;
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(115, 352);
+            this.txtMdivision.Location = new System.Drawing.Point(115, 384);
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 14;
+            this.txtMdivision.TabIndex = 15;
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 351);
+            this.labelM.Location = new System.Drawing.Point(13, 383);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
             this.labelM.TabIndex = 103;
@@ -337,14 +339,14 @@
             // comboFabricType
             // 
             this.comboFabricType.FormattingEnabled = true;
-            this.comboFabricType.Location = new System.Drawing.Point(114, 409);
+            this.comboFabricType.Location = new System.Drawing.Point(114, 441);
             this.comboFabricType.Name = "comboFabricType";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
-            this.comboFabricType.TabIndex = 16;
+            this.comboFabricType.TabIndex = 17;
             // 
             // labelCountry
             // 
-            this.labelCountry.Location = new System.Drawing.Point(13, 290);
+            this.labelCountry.Location = new System.Drawing.Point(13, 322);
             this.labelCountry.Name = "labelCountry";
             this.labelCountry.Size = new System.Drawing.Size(98, 23);
             this.labelCountry.TabIndex = 113;
@@ -353,10 +355,10 @@
             // txtcountry
             // 
             this.txtcountry.DisplayBox1Binding = "";
-            this.txtcountry.Location = new System.Drawing.Point(115, 290);
+            this.txtcountry.Location = new System.Drawing.Point(115, 322);
             this.txtcountry.Name = "txtcountry";
             this.txtcountry.Size = new System.Drawing.Size(232, 30);
-            this.txtcountry.TabIndex = 12;
+            this.txtcountry.TabIndex = 13;
             this.txtcountry.TextBox1Binding = "";
             // 
             // labelRefno
@@ -394,15 +396,15 @@
             // txtsupplier
             // 
             this.txtsupplier.DisplayBox1Binding = "";
-            this.txtsupplier.Location = new System.Drawing.Point(114, 321);
+            this.txtsupplier.Location = new System.Drawing.Point(114, 353);
             this.txtsupplier.Name = "txtsupplier";
             this.txtsupplier.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier.TabIndex = 13;
+            this.txtsupplier.TabIndex = 14;
             this.txtsupplier.TextBox1Binding = "";
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Location = new System.Drawing.Point(13, 321);
+            this.labelSupplier.Location = new System.Drawing.Point(13, 353);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(98, 23);
             this.labelSupplier.TabIndex = 135;
@@ -417,15 +419,15 @@
             this.comboOrderBy.Items.AddRange(new object[] {
             "Issue Date",
             "Supplier"});
-            this.comboOrderBy.Location = new System.Drawing.Point(114, 438);
+            this.comboOrderBy.Location = new System.Drawing.Point(114, 470);
             this.comboOrderBy.Name = "comboOrderBy";
             this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
-            this.comboOrderBy.TabIndex = 17;
+            this.comboOrderBy.TabIndex = 18;
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Location = new System.Drawing.Point(13, 439);
+            this.labelOrderBy.Location = new System.Drawing.Point(13, 471);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(98, 23);
             this.labelOrderBy.TabIndex = 137;
@@ -433,7 +435,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 380);
+            this.labelFactory.Location = new System.Drawing.Point(13, 412);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
             this.labelFactory.TabIndex = 138;
@@ -447,19 +449,20 @@
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
-            this.txtfactory.Location = new System.Drawing.Point(115, 380);
+            this.txtfactory.Location = new System.Drawing.Point(115, 412);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 15;
+            this.txtfactory.TabIndex = 16;
             // 
             // chkDWR
             // 
             this.chkDWR.AutoSize = true;
             this.chkDWR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkDWR.Location = new System.Drawing.Point(12, 470);
+            this.chkDWR.Location = new System.Drawing.Point(12, 502);
             this.chkDWR.Name = "chkDWR";
             this.chkDWR.Size = new System.Drawing.Size(183, 21);
-            this.chkDWR.TabIndex = 18;
+            this.chkDWR.TabIndex = 19;
             this.chkDWR.Text = "Durable Water Repellent";
             this.chkDWR.UseVisualStyleBackColor = true;
             // 
@@ -505,16 +508,35 @@
             // 
             this.chkWhseClose.AutoSize = true;
             this.chkWhseClose.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkWhseClose.Location = new System.Drawing.Point(13, 497);
+            this.chkWhseClose.Location = new System.Drawing.Point(13, 529);
             this.chkWhseClose.Name = "chkWhseClose";
             this.chkWhseClose.Size = new System.Drawing.Size(142, 21);
-            this.chkWhseClose.TabIndex = 145;
+            this.chkWhseClose.TabIndex = 20;
             this.chkWhseClose.Text = "exclude closed SP";
             this.chkWhseClose.UseVisualStyleBackColor = true;
             // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(114, 289);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(98, 23);
+            this.txtbrand.TabIndex = 12;
+            // 
+            // labelBrand
+            // 
+            this.labelBrand.Location = new System.Drawing.Point(13, 289);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(98, 23);
+            this.labelBrand.TabIndex = 147;
+            this.labelBrand.Text = "Brand";
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(528, 548);
+            this.ClientSize = new System.Drawing.Size(528, 582);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.chkWhseClose);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtWKNo2);
@@ -557,6 +579,8 @@
             this.Name = "R03";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. Material Delivery Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.labelSeason, 0);
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
@@ -599,6 +623,8 @@
             this.Controls.SetChildIndex(this.txtWKNo2, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.chkWhseClose, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -644,5 +670,7 @@
         private Win.UI.TextBox txtWKNo1;
         private Win.UI.Label label2;
         private Win.UI.CheckBox chkWhseClose;
+        private Class.txtbrand txtbrand;
+        private Win.UI.Label labelBrand;
     }
 }
