@@ -81,6 +81,8 @@ BEGIN
 	[SunriseUpdated]	[bit] NOT NULL DEFAULT ((0)),
 	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
 	[PackingCTN]        [varchar](19) NOT NULL,
+	[HTMLSetting]       bit NOT NULL DEFAULT ((0)),
+	[PicSetting]        bit NOT NULL DEFAULT ((0))
  CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED 
 (
 	[SCICtnNo] ASC,
@@ -161,7 +163,7 @@ BEGIN
 	[Length]		 [int] NOT NULL,
 	[Width]			 [int] NOT NULL,
 	[Is2Side]		 [bit] NOT NULL,
-	[FileName]		 [varchar](25) NULL,
+	[FileName]		 [varchar](25) NOT NULL DEFAULT (('')),
 	[CmdTime]		 [dateTime] NOT NULL,
 	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
 	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0)),
@@ -366,7 +368,101 @@ INSERT(  id,   Seq,   ShipmodeID,   BuyerDelivery,   Qty,   EstPulloutDate,   Re
 VALUES(s.id, s.Seq, s.ShipmodeID, s.BuyerDelivery, s.Qty, s.EstPulloutDate, s.ReadyDate,
 	   s.SunriseUpdated, s.GenSongUpdated, s.CmdTime)	;
 
---03. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
+--03. 轉出區間 當AddDate or EditDate =今天
+MERGE ShippingMark AS T
+USING(
+	SELECT 
+	BrandID,CustCD,CTNRefno,Side
+	,[Seq]=1,[Category] = 'HTML'
+	,FromLeft,FromTop,[Length] = StampLength,[Width] = StampWidth
+	,[Is2Side] = 0 ,FileName
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.ShippingMarkStamp 
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+) as S
+on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq
+WHEN MATCHED THEN
+UPDATE SET
+	t.FromLeft = s.FromLeft,
+	t.FromTop = s.FromTop,
+	t.Length = s.Length,
+	t.Width = s.Width,
+	t.Is2Side = s.Is2Side,
+	t.FileName = s.FileName,
+	t.CmdTime = s.CmdTime,
+	t.SunriseUpdated = 0,
+	t.GenSongUpdated = 0
+WHEN NOT MATCHED BY TARGET THEN
+INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
+		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated])
+Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
+		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
+
+--04. 轉出區間 當AddDate or EditDate =今天
+MERGE ShippingMark AS T
+USING(
+	SELECT 
+	BrandID,CustCD,CTNRefno,Side
+	,Seq,[Category] = 'PIC'
+	,FromLeft,FromTop,[Length] = PicLength,[Width] = PicWidth
+	,[Is2Side] = Is2Side ,[FileName]=''
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	,[IsHorizontal]
+	,[FilePath] = (select TOP 1 ShippingMarkPath from Production.dbo.System)
+	,IsSSCC
+	FROM Production.dbo.ShippingMarkpicture 
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+) as S
+on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq
+WHEN MATCHED THEN
+UPDATE SET
+	t.FromLeft = s.FromLeft,
+	t.FromTop = s.FromTop,
+	t.Length = s.Length,
+	t.Width = s.Width,
+	t.Is2Side = s.Is2Side,
+	t.FileName = s.FileName,
+	t.CmdTime = s.CmdTime,
+	t.SunriseUpdated = 0,
+	t.GenSongUpdated = 0,
+	t.IsHorizontal = s.IsHorizontal,
+	t.FilePath = s.FilePath,
+	t.IsSSCC = s.IsSSCC
+WHEN NOT MATCHED BY TARGET THEN
+INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
+		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[IsHorizontal] ,[FilePath],[IsSSCC])
+
+Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
+		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[IsHorizontal] ,s.[FilePath],s.[IsSSCC]);
+
+--05. 轉出區間 當AddDate or EditDate =今天
+MERGE ShippingMarkPic_Detail AS T
+USING(
+	SELECT 
+	s1.SCICtnNo,s2.Side,s2.Seq
+	,[FilePath] = (select ShippingMarkPath from Production.dbo.System)
+	,s1.FileName	
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	FROM Production.dbo.ShippingMarkPic_Detail s1
+	inner join Production.dbo.ShippingMarkPic s2 on s2.ukey = s1.ShippingMarkPicUkey
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+) as S
+on t.SCICtnNo = s.SCICtnNo and t.Side=s.Side and t.Seq=s.Seq
+WHEN MATCHED THEN
+UPDATE SET
+	t.FilePath = s.FilePath,
+	t.FileName = s.FileName,
+	t.CmdTime = s.CmdTime,
+	t.SunriseUpdated = 0,
+	t.GenSongUpdated = 0
+WHEN NOT MATCHED BY TARGET THEN
+INSERT([SCICtnNo],[Side],[Seq],[FilePath],[FileName],[CmdTime],[SunriseUpdated],[GenSongUpdated])
+VALUES(s.[SCICtnNo],s.[Side],s.[Seq],s.[FilePath],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
+
+--06. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
 MERGE PackingList AS T
 USING(
 	SELECT p.ID, p.AddDate, p.EditDate
@@ -397,7 +493,7 @@ on t.id=s.ID
 where ( CONVERT(date, t.AddDate) > CONVERT(date, DATEADD(MONTH,-3, GETDATE()))
 	or (CONVERT(date, t.EditDate) > CONVERT(date, DATEADD(MONTH,-3, GETDATE()))))
 
---04. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
+--07. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
 MERGE PackingList_Detail AS T
 USING(
 	SELECT pd.ID, pd.SCICtnNo, pd.CustCTN, p.PulloutDate, pd.OrderID, pd.OrderShipmodeSeq
@@ -457,17 +553,130 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 , s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
 		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
 	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN)	;
+		
+		----寫入HTMLSetting和PicSetting
+		-- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
+		update t
+		set t.Junk= 1
+		,t.SunriseUpdated = 0
+		,t.GenSongUpdated = 0
+		from PackingList_Detail t 
+		inner join PackingList s on t.ID=s.id
+		where s.junk=1
 
--- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
-update t
-set t.Junk= 1
-,t.SunriseUpdated = 0
-,t.GenSongUpdated = 0
-from PackingList_Detail t 
-inner join PackingList s on t.ID=s.id
-where s.junk=1
+		-------------------------------------------------------------HTMLSetting Update-------------------------------------------------------------
+		----FileName有資料，或沒設定的都是HTMLSetting = 1 的狀況，其他都是0
+		SELECT DISTINCT 
+				pd.SCICtnNo
+				,pd.OrderID
+				,pd.OrderShipmodeSeq
+				,pd.Article
+				,pd.SizeCode
+				,s.FileName
+		INTO #tmp
+		FROM [Production].[dbo].PackingList p 
+		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
+		LEFT  JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+		WHERE s.FileName <> ''  AND s.Category='HTML'
 
---05. 轉出區間 [Production].[dbo]. [ClogReturn].AddDate=今天
+		----因此有對應到的：FileName有值或空白都會是1，沒對應到的：FileName=NULL 為0
+		UPDATE pd
+		SET pd.HTMLSetting = IIF(t.FileName IS NULL ,0 , 1)
+		FROM [FPS].[dbo].PackingList_Detail pd
+		LEFT JOIN #tmp t ON    pd.SCICtnNo =t.SCICtnNo
+							AND pd.OrderID=t.OrderID
+							AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
+							AND pd.Article=t.Article
+							AND pd.SizeCode=t.SizeCode
+
+		DROP TABLE #tmp
+		-------------------------------------------------------------HTMLSetting Update-------------------------------------------------------------
+
+		-------------------------------------------------------------PicSetting Update-------------------------------------------------------------
+		
+		----以PackingList_Detail為出發點
+
+		----PicSetting = 1 有設定對應的Packing B03 且有上傳圖片至Packing P24
+		SELECT DISTINCT 
+				pd.SCICtnNo
+				,pd.OrderID
+				,pd.OrderShipmodeSeq
+				,pd.Article
+				,pd.SizeCode
+				,s.FileName
+		INTO #tmp_HasSetting_File
+		FROM [Production].[dbo].PackingList p 
+		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
+		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+		WHERE s.Category='PIC' AND EXISTS(
+			SELECT 1
+			FROM [FPS].[dbo].ShippingMark sm
+			INNER JOIN [FPS].[dbo].ShippingMarkPic_Detail spd ON sm.Side=spd.Side AND sm.Seq = spd.Seq
+			INNER JOIN [FPS].[dbo].[PackingList_Detail] pld ON pld.SCICtnNo=spd.SCICtnNo
+			WHERE pld.SCICtnNo=pd.SCICtnNo AND pld.OrderID=pd.OrderID AND pd.OrderShipmodeSeq=pld.OrderShipmodeSeq AND pd.Article=pld.Article AND pd.SizeCode=pld.SizeCode
+		)
+
+		----找不到 PicSetting = 1 表示沒有設定對應的Packing B03, 不需考慮貼標
+		SELECT DISTINCT 
+				pd.SCICtnNo
+				,pd.OrderID
+				,pd.OrderShipmodeSeq
+				,pd.Article
+				,pd.SizeCode
+		INTO #tmp_NoSetting
+		FROM [Production].[dbo].PackingList p 
+		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
+		INNER  JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+
+		----PicSetting = 0 表示需貼標 但沒有上傳圖片至Packing P24
+		SELECT DISTINCT 
+				pd.SCICtnNo
+				,pd.OrderID
+				,pd.OrderShipmodeSeq
+				,pd.Article
+				,pd.SizeCode
+		INTO #tmp_HasSetting_NoFile
+		FROM [Production].[dbo].PackingList p 
+		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
+		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+		WHERE s.Category='PIC' AND NOT EXISTS(
+			SELECT 1
+			FROM [FPS].[dbo].[PackingList_Detail] pld
+			INNER JOIN [FPS].[dbo].ShippingMarkPic_Detail spd ON pld.SCICtnNo=spd.SCICtnNo
+			WHERE pld.SCICtnNo=pd.SCICtnNo AND pld.OrderID=pd.OrderID AND pd.OrderShipmodeSeq=pld.OrderShipmodeSeq AND pd.Article=pld.Article AND pd.SizeCode=pld.SizeCode
+		)
+
+		UPDATE pd
+		SET pd.PicSetting = 1
+		FROM [FPS].dbo.PackingList_Detail pd
+		INNER JOIN #tmp_HasSetting_File t ON    pd.SCICtnNo =t.SCICtnNo
+							AND pd.OrderID=t.OrderID
+							AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
+							AND pd.Article=t.Article
+							AND pd.SizeCode=t.SizeCode
+					
+		UPDATE pd
+		SET pd.PicSetting = 1
+		FROM [FPS].dbo.PackingList_Detail pd
+		WHERE NOT EXISTS ( SELECT * FROM #tmp_NoSetting t WHERE pd.SCICtnNo =t.SCICtnNo
+													AND pd.OrderID=t.OrderID
+													AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
+													AND pd.Article=t.Article
+													AND pd.SizeCode=t.SizeCode) 
+
+		UPDATE pd
+		SET pd.PicSetting = 0
+		FROM [FPS].dbo.PackingList_Detail pd
+		INNER JOIN #tmp_HasSetting_NoFile t ON    pd.SCICtnNo =t.SCICtnNo
+							AND pd.OrderID=t.OrderID
+							AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
+							AND pd.Article=t.Article
+							AND pd.SizeCode=t.SizeCode
+
+		DROP TABLE #tmp_HasSetting_File,#tmp_NoSetting ,#tmp_HasSetting_NoFile
+		-------------------------------------------------------------PicSetting Update-------------------------------------------------------------
+
+--08. 轉出區間 [Production].[dbo]. [ClogReturn].AddDate=今天
 MERGE ClogReturn AS T
 USING(
 	SELECT distinct c.ID,c.SCICtnNo,c.ReturnDate,c.OrderID,c.PackingListID
@@ -486,7 +695,7 @@ INSERT(  id,   SCICtnNo,   ReturnDate,   OrderID,   PackingListID,   CustCTN,
 VALUES(s.id, s.SCICtnNo, s.ReturnDate, s.OrderID, s.PackingListID, s.CustCTN,
 		s.CmdTime, s.SunriseUpdated, s.GenSongUpdated)	;
 
---06. 轉出區間 [Production].[dbo].[TransferToCFA].AddDate =今天
+--09. 轉出區間 [Production].[dbo].[TransferToCFA].AddDate =今天
 MERGE TransferToCFA AS T
 USING(
 	SELECT distinct t.ID, t.SCICtnNo, t.TransferDate, t.OrderID, t.PackingListID
@@ -504,100 +713,6 @@ INSERT(  id,   SCICtnNo,   TransferDate,   OrderID,   PackingListID,   CustCTN,
 		  CmdTime,   SunriseUpdated,   GenSongUpdated) 
 VALUES(s.id, s.SCICtnNo, s.TransferDate, s.OrderID, s.PackingListID, s.CustCTN,
 		s.CmdTime, s.SunriseUpdated, s.GenSongUpdated);
-
---07. 轉出區間 當AddDate or EditDate =今天
-MERGE ShippingMark AS T
-USING(
-	SELECT 
-	BrandID,CustCD,CTNRefno,Side
-	,[Seq]=1,[Category] = 'HTML'
-	,FromLeft,FromTop,[Length] = StampLength,[Width] = StampWidth
-	,[Is2Side] = 0 ,FileName
-	,[CmdTime] = GetDate()
-	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
-	FROM Production.dbo.ShippingMarkStamp 
-	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
-) as S
-on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq
-WHEN MATCHED THEN
-UPDATE SET
-	t.FromLeft = s.FromLeft,
-	t.FromTop = s.FromTop,
-	t.Length = s.Length,
-	t.Width = s.Width,
-	t.Is2Side = s.Is2Side,
-	t.FileName = s.FileName,
-	t.CmdTime = s.CmdTime,
-	t.SunriseUpdated = 0,
-	t.GenSongUpdated = 0
-WHEN NOT MATCHED BY TARGET THEN
-INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
-		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated])
-Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
-		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
-
---08. 轉出區間 當AddDate or EditDate =今天
-MERGE ShippingMark AS T
-USING(
-	SELECT 
-	BrandID,CustCD,CTNRefno,Side
-	,Seq,[Category] = 'PIC'
-	,FromLeft,FromTop,[Length] = PicLength,[Width] = PicWidth
-	,[Is2Side] = Is2Side ,[FileName]=''
-	,[CmdTime] = GetDate()
-	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
-	,[IsHorizontal]
-	,[FilePath] = (select TOP 1 ShippingMarkPath from Production.dbo.System)
-	,IsSSCC
-	FROM Production.dbo.ShippingMarkpicture 
-	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
-) as S
-on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq
-WHEN MATCHED THEN
-UPDATE SET
-	t.FromLeft = s.FromLeft,
-	t.FromTop = s.FromTop,
-	t.Length = s.Length,
-	t.Width = s.Width,
-	t.Is2Side = s.Is2Side,
-	t.FileName = s.FileName,
-	t.CmdTime = s.CmdTime,
-	t.SunriseUpdated = 0,
-	t.GenSongUpdated = 0,
-	t.IsHorizontal = s.IsHorizontal,
-	t.FilePath = s.FilePath,
-	t.IsSSCC = s.IsSSCC
-WHEN NOT MATCHED BY TARGET THEN
-INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
-		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[IsHorizontal] ,[FilePath],[IsSSCC])
-
-Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
-		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[IsHorizontal] ,s.[FilePath],s.[IsSSCC]);
-
---09. 轉出區間 當AddDate or EditDate =今天
-MERGE ShippingMarkPic_Detail AS T
-USING(
-	SELECT 
-	s1.SCICtnNo,s2.Side,s2.Seq
-	,[FilePath] = (select ShippingMarkPath from Production.dbo.System)
-	,s1.FileName	
-	,[CmdTime] = GetDate()
-	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
-	FROM Production.dbo.ShippingMarkPic_Detail s1
-	inner join Production.dbo.ShippingMarkPic s2 on s2.ukey = s1.ShippingMarkPicUkey
-	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
-) as S
-on t.SCICtnNo = s.SCICtnNo and t.Side=s.Side and t.Seq=s.Seq
-WHEN MATCHED THEN
-UPDATE SET
-	t.FilePath = s.FilePath,
-	t.FileName = s.FileName,
-	t.CmdTime = s.CmdTime,
-	t.SunriseUpdated = 0,
-	t.GenSongUpdated = 0
-WHEN NOT MATCHED BY TARGET THEN
-INSERT([SCICtnNo],[Side],[Seq],[FilePath],[FileName],[CmdTime],[SunriseUpdated],[GenSongUpdated])
-VALUES(s.[SCICtnNo],s.[Side],s.[Seq],s.[FilePath],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
 
 
 --10. 轉出區間 當AddDate or EditDate =今天
