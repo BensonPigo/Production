@@ -163,6 +163,17 @@ WHERE   StockType='{dr["tostocktype"]}'
         currentrow.EndEdit();
     }
 };
+
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr = gridRel.GetDataRow(e.RowIndex);
+                    dr["tolocation"] = e.FormattedValue;
+                    dr.EndEdit();
+                }
+            };
+
             #region -- Grid2 設定 --
             this.gridRel.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridRel.DataSource = listControlBindingSource2;
