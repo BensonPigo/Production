@@ -55,7 +55,9 @@ namespace Sci.Production.Warehouse
 	,[Refno] = psd.Refno
 	,[SCI Refno] = psd.SCIRefno
 	,[Description] = d.Description
-	,[Color] = psd.ColorID
+	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' THEN psd.SuppColor 
+					ELSE psd.ColorID  
+			   END
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty)
@@ -112,7 +114,9 @@ namespace Sci.Production.Warehouse
 	,[Refno] = psd.Refno
 	,[SCI Refno] = psd.SCIRefno
     ,[Description] = d.Description
-	,[Color] = psd.ColorID
+	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' THEN psd.SuppColor 
+					ELSE psd.ColorID  
+			   END
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = round(ISNULL(r.RateValue,1) * psd.Qty,2)
@@ -217,6 +221,7 @@ from Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
+left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 outer apply
 (
 	select MtlLocationID = stuff(
@@ -245,6 +250,7 @@ from Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
 left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
+left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 outer apply
 (
 	select Description ,WeaveTypeID

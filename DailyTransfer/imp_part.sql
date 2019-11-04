@@ -373,7 +373,7 @@ s.AssetTypeID
 
 		Merge Machine.dbo.MachinePO as t
 	Using (select a.*,b.MdivisionID from Trade_To_Pms.DBO.MmsPO a WITH (NOLOCK) left join Production.dbo.scifty b WITH (NOLOCK) on a.factoryid = b.id
-	 where a.factoryid in (select id from @Sayfty) and type = 'M')  as s
+	 where a.factoryid in (select id from @Sayfty) and a.type = 'M')  as s
 	on t.id=s.id
 	when matched  then
 		update set
