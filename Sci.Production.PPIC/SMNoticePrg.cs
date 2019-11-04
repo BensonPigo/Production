@@ -1244,7 +1244,7 @@ Where o.ID = @ID and IsNull(boa.FabricPanelCode, '') <> ''
 union 
 Select distinct color.FabricPanelCode
 From Orders o
-	inner Join Order_ColorCombo color on color.Id = o.ID and FabricCode = 'A'
+	inner Join Order_ColorCombo color on color.Id = o.ID and FabricType = 'A'
 Where o.POID = @ID)x
 order by case when x.FabricPanelCode like 'A%' then 1 else 2 end, x.FabricPanelCode
 ";
@@ -1259,7 +1259,7 @@ Select distinct article.Article
 Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID, color.PatternPanel
 , Cast(iif(xc.VividCnt is null, 0, iif(xc.VividCnt > 0, 1, 0)) as bit) as VIVID
 	From Orders o
-	Left Join Order_ColorCombo color on color.Id = o.ID and FabricCode = 'A'
+	Left Join Order_ColorCombo color on color.Id = o.ID and FabricType = 'A'
     Left Join Color c on c.ID = color.ColorID and c.BrandId = o.BrandID
     outer apply (
 	    Select Count(*) as VividCnt 

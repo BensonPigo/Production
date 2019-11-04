@@ -22,8 +22,9 @@ namespace Sci.Production.PPIC
         private const bool Excel = true;
         private const bool PDF = false;
         private bool Print_type = true;
+        private string strFileName = string.Empty;
+        private string strPDFFileName = string.Empty;
         private string _id;
-        private sxrc sxr;
 
         // private string _username;
         // private string _userid;
@@ -76,39 +77,16 @@ namespace Sci.Production.PPIC
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.ShowWaitMessage("Excel processing, please wait ...");
-            string strFileName = string.Empty;
-            string strPDFFileName = string.Empty;
-
-            if (this.radioMNotice.Checked == true)
-            {
-                strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice");
-                strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice", Sci.Production.Class.PDFFileNameExtension.PDF);
-                this.sxr.AllowRangeTransferToString = false;
-                this.sxr.Save(strFileName);
-                this.sxr.FinishSave();
-            }
-            else
-            {
-                // for CustCD
-                // #if DEBUG
-                //                sxr.ExcelApp.Visible = true;
-                // #endif
-                strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04");
-                strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04", Sci.Production.Class.PDFFileNameExtension.PDF);
-
-                this.sxr.Save(strFileName);
-                this.sxr.FinishSave();
-            }
 
             switch (this.Print_type)
             {
                 case Excel:
-                    strFileName.OpenFile();
+                    this.strFileName.OpenFile();
                     break;
                 case PDF:
-                    if (ConvertToPDF.ExcelToPDF(strFileName, strPDFFileName))
+                    if (ConvertToPDF.ExcelToPDF(this.strFileName, this.strPDFFileName))
                     {
-                        ProcessStartInfo startInfo = new ProcessStartInfo(strPDFFileName);
+                        ProcessStartInfo startInfo = new ProcessStartInfo(this.strPDFFileName);
                         Process.Start(startInfo);
                     }
 
@@ -143,26 +121,26 @@ namespace Sci.Production.PPIC
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
                 if (drvar == null)
                 {
-                    DualResult failResult = new DualResult(false, "data not found!!" );
+                    DualResult failResult = new DualResult(false, "data not found!!");
                     return failResult;
                 }
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
-                this.sxr = new sxrc(xltPath, true);
-                this.sxr.BoOpenFile = false;
-                this.sxr.AddPrintRange = true;
-                this.sxr.SetPrinterAtLocal = true;
-                this.sxr.FontName = "Times New Roman";
-                this.sxr.FontSize = 14;
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_NOW", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_MAKER", drvar["MAKER"].ToString());
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_STYLENO", drvar["sty"].ToString());
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_QTY", drvar["QTY"].ToString());
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "POID", poid);
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_CustCD", drvar["CustCD"].ToString());
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_delDate", drvar["delDate"]);
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_ChangeMemoDate", drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
+                sxrc sxr = new sxrc(xltPath, true);
+                sxr.BoOpenFile = false;
+                sxr.AddPrintRange = true;
+                sxr.SetPrinterAtLocal = true;
+                sxr.FontName = "Times New Roman";
+                sxr.FontSize = 14;
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_NOW", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_MAKER", drvar["MAKER"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO", drvar["sty"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_QTY", drvar["QTY"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "POID", poid);
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_CustCD", drvar["CustCD"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate", drvar["delDate"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_ChangeMemoDate", drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
 
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
@@ -175,10 +153,10 @@ namespace Sci.Production.PPIC
                     xltTbl.LisColumnInfo.Add(xcinfo);
                 }
 
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "S1_Tbl1", xltTbl);
+                sxr.DicDatas.Add(sxr.VPrefix + "S1_Tbl1", xltTbl);
                 this.intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; // 起始位置加一、格線加二
                 sxrc.ReplaceAction ra = this.ForSizeSpec;
-                this.sxr.DicDatas.Add(this.sxr.VPrefix + "ExtraAction", ra);
+                sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
                 DualResult getIds = DBProxy.Current.Select(
@@ -196,8 +174,8 @@ order by ID"
                     return failResult;
                 }
 
-                this.sxr.CopySheet.Add(2, dt.Rows.Count - 1);
-                this.sxr.VarToSheetName = this.sxr.VPrefix + "SP";
+                sxr.CopySheet.Add(2, dt.Rows.Count - 1);
+                sxr.VarToSheetName = sxr.VPrefix + "SP";
 
                 // 顯示筆數於PrintForm上Count欄位
                 this.SetCount(dt.Rows.Count);
@@ -209,17 +187,17 @@ order by ID"
 
                     res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", id), new SqlParameter("@WithZ", this.checkAdditionally.Checked) }, out dts);
 
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "SP" + idxStr, id);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "QTY" + idxStr, dt.Rows[i]["QTY"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                    sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, id);
+                    sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, dt.Rows[i]["QTY"].ToString());
 
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "CustCD" + idxStr, dt.Rows[i]["CustCD"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "pono" + idxStr, dt.Rows[i]["pono"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "delDate" + idxStr, dt.Rows[i]["delDate"]);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "ChangeMemoDate" + idxStr, dt.Rows[i]["ChangeMemoDate"] == DBNull.Value ? string.Empty : dt.Rows[i]["ChangeMemoDate"]);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "coms1" + idxStr, dt.Rows[i]["Customize1"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "CustCD" + idxStr, dt.Rows[i]["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "pono" + idxStr, dt.Rows[i]["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "delDate" + idxStr, dt.Rows[i]["delDate"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "ChangeMemoDate" + idxStr, dt.Rows[i]["ChangeMemoDate"] == DBNull.Value ? string.Empty : dt.Rows[i]["ChangeMemoDate"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, dt.Rows[i]["Customize1"].ToString());
 
                     sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
                     sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[1], 1, 3);
@@ -228,36 +206,42 @@ order by ID"
                     this.SetColumn1toText(tbl2);
                     this.SetColumn1toText(tbl3);
 
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl2" + idxStr, tbl2);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl4" + idxStr, dts[3]); // COLOR list
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl5" + idxStr, dts[4]); // Fabric list
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl6" + idxStr, dts[5]); // Accessories list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl2" + idxStr, tbl2);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl4" + idxStr, dts[3]); // COLOR list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl5" + idxStr, dts[4]); // Fabric list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[5]); // Accessories list
                     if (dts[6].Rows.Count > 0)
                     {
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2SHIPINGMARK" + idxStr, new sxrc.XltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2SHIPINGMARK" + idxStr, new sxrc.XltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
                     }
 
                     if (dts[7].Rows.Count > 0)
                     {
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
                     }
 
                     if (dts[8].Rows.Count > 0)
                     {
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
                     }
 
                     if (dts[9].Rows[0].Field<bool?>("VasShas").GetValueOrDefault(false) == true)
                     {
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2VS" + idxStr, new sxrc.XltLongString(dts[9].Rows[0]["Packing2"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XltLongString(dts[9].Rows[0]["Packing2"].ToString()));
                     }
                     else
                     {
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2VS" + idxStr, new sxrc.XlsPrivateCommand() { UpDelete = 2 });
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XlsPrivateCommand() { UpDelete = 2 });
                     }
                 }
+
+                this.strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice");
+                this.strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice", Sci.Production.Class.PDFFileNameExtension.PDF);
+                sxr.AllowRangeTransferToString = false;
+                sxr.Save(this.strFileName);
+                sxr.FinishSave();
             }
 
             // M/Notict (Combo by ComboID)
@@ -274,15 +258,16 @@ order by ID"
                 }
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
-                this.sxr = new sxrc(xltPath);
-                this.sxr.BoOpenFile = false;
-                this.sxr.AddPrintRange = true;
-                this.sxr.SetPrinterAtLocal = true;
-                this.sxr.FontName = "Times New Roman";
-                this.sxr.FontSize = 14;
-                this.sxr.CopySheets.Add("1,2,3", dtOrderCombo.Rows.Count - 1);
-                this.sxr.VarToSheetName = this.sxr.VPrefix + "sname";
+                sxrc sxr = new sxrc(xltPath);
+                sxr.BoOpenFile = false;
+                sxr.AddPrintRange = true;
+                sxr.SetPrinterAtLocal = true;
+                sxr.FontName = "Times New Roman";
+                sxr.FontSize = 14;
+                sxr.CopySheets.Add("1,2,3", dtOrderCombo.Rows.Count - 1);
+                sxr.VarToSheetName = sxr.VPrefix + "sname";
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+
                 int ii = 0;
                 foreach (DataRow row in dtOrderCombo.Rows)
                 {
@@ -305,18 +290,18 @@ order by ID"
                         return failResult;
                     }
 
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_MAKER" + idxStr, drvar["MAKER"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_STYLENO" + idxStr, drvar["sty"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_QTY" + idxStr, drvar["QTY"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "POID" + idxStr, drvar["SPNO"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_CustCD" + idxStr, drvar["CustCD"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_pono" + idxStr, drvar["pono"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_delDate" + idxStr, drvar["delDate"]);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "sname1" + idxStr, orderComboID + "-1");
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "sname2" + idxStr, orderComboID + "-2");
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "sname3" + idxStr, orderComboID + "-3");
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_ChangeMemoDate" + idxStr, drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_MAKER" + idxStr, drvar["MAKER"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO" + idxStr, drvar["sty"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_QTY" + idxStr, drvar["QTY"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "POID" + idxStr, drvar["SPNO"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_CustCD" + idxStr, drvar["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_pono" + idxStr, drvar["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate" + idxStr, drvar["delDate"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname1" + idxStr, orderComboID + "-1");
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname2" + idxStr, orderComboID + "-2");
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname3" + idxStr, orderComboID + "-3");
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_ChangeMemoDate" + idxStr, drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
 
                     // For SizeSpec
                     sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
@@ -329,10 +314,10 @@ order by ID"
 
                     xltTbl.Separator1 = "'- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
                     xltTbl.Separator2 = "'= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =";
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S1_Tbl1" + idxStr, xltTbl);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S1_Tbl1" + idxStr, xltTbl);
                     this.intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; // 起始位置加一、格線加二
                     sxrc.ReplaceAction ra = this.ForSizeSpec;
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "ExtraAction" + idxStr, ra);
+                    sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction" + idxStr, ra);
 
                     sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[1], 1, 2, true);
                     sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[2], 1, 3);
@@ -341,37 +326,37 @@ order by ID"
                     this.SetColumn1toText(tbl2);
                     this.SetColumn1toText(tbl3);
 
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "SP" + idxStr, drvar["SPNO"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "MAKER" + idxStr, drvar["MAKER"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "STYLENO" + idxStr, drvar["sty"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "QTY" + idxStr, drvar["QTY"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                    sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, drvar["SPNO"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, drvar["MAKER"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, drvar["sty"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, drvar["QTY"].ToString());
 
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "CustCD" + idxStr, drvar["CustCD"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "pono" + idxStr, drvar["pono"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "CustPONo" + idxStr, drvar["pono"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "ChangeMemoDate" + idxStr, drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "delDate" + idxStr, drvar["delDate"]);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "coms1" + idxStr, drvar["Customize1"].ToString());
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl2" + idxStr, tbl2);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3); // COLOR list
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl4" + idxStr, dts[4]); // Fabric list
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl5" + idxStr, dts[5]); // Accessories list
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2_Tbl6" + idxStr, dts[6]);
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
+                    sxr.DicDatas.Add(sxr.VPrefix + "CustCD" + idxStr, drvar["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "pono" + idxStr, drvar["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "CustPONo" + idxStr, drvar["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "ChangeMemoDate" + idxStr, drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "delDate" + idxStr, drvar["delDate"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, drvar["Customize1"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl2" + idxStr, tbl2);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3); // COLOR list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl4" + idxStr, dts[4]); // Fabric list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl5" + idxStr, dts[5]); // Accessories list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[6]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
                     if (dts[9].Rows[0].Field<bool?>("VasShas").GetValueOrDefault(false) == true)
                     {
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2VS" + idxStr, new sxrc.XltLongString(dts[9].Rows[0]["Packing2"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XltLongString(dts[9].Rows[0]["Packing2"].ToString()));
                     }
                     else
                     {
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S2VS" + idxStr, new sxrc.XlsPrivateCommand() { UpDelete = 2 });
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XlsPrivateCommand() { UpDelete = 2 });
                     }
 
                     // 新增Range Repeat數
-                    this.sxr.DicDatas.Add(this.sxr.VPrefix + "CR" + idxStr, dts[10].Rows.Count);
+                    sxr.DicDatas.Add(sxr.VPrefix + "CR" + idxStr, dts[10].Rows.Count);
 
                     int idx = 0;
                     foreach (DataRow dr in dts[10].Rows)
@@ -379,15 +364,15 @@ order by ID"
                         string sIdx = idx.ToString();
                         idx += 1;
 
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_SP" + idxStr + this.sxr.CRPrefix + sIdx, dr["ID"].ToString());
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_Style" + idxStr + this.sxr.CRPrefix + sIdx, dr["sty"].ToString());
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_QTY" + idxStr + this.sxr.CRPrefix + sIdx, dr["QTY"].ToString());
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_CUSTCD" + idxStr + this.sxr.CRPrefix + sIdx, dr["CustCDID"].ToString());
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_PoNo" + idxStr + this.sxr.CRPrefix + sIdx, dr["CustPONO"].ToString());
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_Order" + idxStr + this.sxr.CRPrefix + sIdx, dr["Customize1"].ToString());
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_DELIVERY" + idxStr + this.sxr.CRPrefix + sIdx, dr["BuyerDelivery"]);
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_ChangeMemoDate" + idxStr + this.sxr.CRPrefix + sIdx, dr["ChangeMemoDate"] == DBNull.Value ? string.Empty : dr["ChangeMemoDate"]);
-                        this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_Mark" + idxStr + this.sxr.CRPrefix + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_SP" + idxStr + sxr.CRPrefix + sIdx, dr["ID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Style" + idxStr + sxr.CRPrefix + sIdx, dr["sty"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_QTY" + idxStr + sxr.CRPrefix + sIdx, dr["QTY"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_CUSTCD" + idxStr + sxr.CRPrefix + sIdx, dr["CustCDID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_PoNo" + idxStr + sxr.CRPrefix + sIdx, dr["CustPONO"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Order" + idxStr + sxr.CRPrefix + sIdx, dr["Customize1"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_DELIVERY" + idxStr + sxr.CRPrefix + sIdx, dr["BuyerDelivery"]);
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_ChangeMemoDate" + idxStr + sxr.CRPrefix + sIdx, dr["ChangeMemoDate"] == DBNull.Value ? string.Empty : dr["ChangeMemoDate"]);
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Mark" + idxStr + sxr.CRPrefix + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
 
                         System.Data.DataTable[] dts2;
                         List<SqlParameter> lis2 = new List<SqlParameter>();
@@ -400,10 +385,16 @@ order by ID"
                         {
                             sxrc.XltRptTable stbl = new sxrc.XltRptTable(dts2[0], 1, 2, true);
                             this.SetColumn1toText(stbl);
-                            this.sxr.DicDatas.Add(this.sxr.VPrefix + "S3_Tbl" + idxStr + this.sxr.CRPrefix + sIdx, stbl);
+                            sxr.DicDatas.Add(sxr.VPrefix + "S3_Tbl" + idxStr + sxr.CRPrefix + sIdx, stbl);
                         }
                     }
                 }
+
+                this.strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04");
+                this.strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04", Sci.Production.Class.PDFFileNameExtension.PDF);
+
+                sxr.Save(this.strFileName);
+                sxr.FinishSave();
             }
 
             return new DualResult(true);
@@ -482,6 +473,7 @@ OUTER APPLY(
      ,2,999) 
 ) b
 where POID = @poid 
+and OrderComboID = (select top 1 OrderComboID from Orders where id = @ID) 
 group by POID,b.spno";
             }
             else
@@ -504,7 +496,7 @@ OUTER APPLY(
     WHERE POID = @poid
 	order by ID FOR XML PATH('')),2,999) as spno
 ) b
-where OrderComboID = @poid 
+where POID = @poid 
 group by POID,b.spno";
             }
 
