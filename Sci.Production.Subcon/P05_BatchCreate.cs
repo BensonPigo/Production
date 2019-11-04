@@ -428,24 +428,24 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey
 	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
 	and vsa.PatternCode = oa.PatternCode and vsa.PatternDesc = oa.PatternDesc 
 left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
-left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
+left join ArtworkType at WITH (NOLOCK) on at.id = ot.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
-		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{artworktype}')
+		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{artworktype}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
 ) ReqQty
 outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{artworktype}')
+		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{artworktype}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 where f.IsProduceFty=1
@@ -462,8 +462,8 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  o.SciDelivery <= '{0}' ", sciDelivery_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
             SqlCmd += @" 
-group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ReqQty.value,o.FtyGroup,ot.ArtworkTypeID
+group by q.id,sao.LocalSuppID,ot.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
+,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ReqQty.value,o.FtyGroup
 order by orderID,ArtworkID,PatternCode,PatternDesc			
 			";
             #endregion

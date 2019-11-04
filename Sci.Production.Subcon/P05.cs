@@ -248,7 +248,7 @@ outer apply (
         where ad.ID=a.ID
 		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}' 
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
         and a.id != '{dr["id"]}'
 ) ReqQty
@@ -256,9 +256,9 @@ outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{CurrentMaintain["ArtworktypeId"]}')
+		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{CurrentMaintain["ArtworktypeId"]}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 where f.IsProduceFty=1

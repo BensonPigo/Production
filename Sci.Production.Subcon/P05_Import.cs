@@ -67,7 +67,7 @@ namespace Sci.Production.Subcon
 outer apply(
     select value = sum(ReqQty) 
     from #tmp
-    where OrderID = o.id and ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
+    where OrderID = o.id and ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
     and PatternDesc = isnull(oa.PatternDesc,'') and PatternCode = isnull(oa.PatternCode,'')
 ) CurrentReq";
                 tmpcurrentReq = "+ isnull(CurrentReq.value,0)";
@@ -108,9 +108,10 @@ outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
-		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
+		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') 
+        and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
         and a.id != '{dr_artworkReq["id"]}'
         and a.status != 'Closed' and ad.ArtworkPOID =''
 ) ReqQty
@@ -118,9 +119,10 @@ outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
+		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') 
+        and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 {tmpTable}

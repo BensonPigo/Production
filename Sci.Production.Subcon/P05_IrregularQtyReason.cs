@@ -270,7 +270,7 @@ outer apply(
 	and ad.PatternDesc = isnull(voa.PatternDesc,'') 
     and ad.ArtworkID = iif(voa.ArtworkID is null,ot.ArtworkTypeID,voa.ArtworkID)
 	and ad.ArtworkReqID=''
-	and a.ArtworkTypeID = voa.ArtworkTypeID
+	and a.ArtworkTypeID = ot.ArtworkTypeID
 ) PoQty
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
