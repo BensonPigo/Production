@@ -230,15 +230,16 @@ ORDER BY ap.OrderID   ", masterID);
                     string sqlcmd = $@"
 select  OrderQty = sum(q.qty)  
 , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) + {e.FormattedValue}
-from  orders o WITH (NOLOCK) 
+from  Order_TmsCost ot
+inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
-inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
+left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
 	and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID 
 	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
 	and vsa.PatternCode = oa.PatternCode and vsa.PatternDesc = oa.PatternDesc 
-inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
+left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
+and sao.LocalSuppId = '{CurrentMaintain["localsuppid"]}' 
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
@@ -246,8 +247,8 @@ outer apply (
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
 		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}' 
-		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
+		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
         and a.id != '{dr["id"]}'
 ) ReqQty
@@ -255,21 +256,20 @@ outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}' 
-		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
+		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{CurrentMaintain["ArtworktypeId"]}')
+		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 where f.IsProduceFty=1
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and oa.ArtworkTypeID = '{CurrentMaintain["artworktypeid"]}' 
-and sao.LocalSuppId = '{CurrentMaintain["localsuppid"]}' 
+and ot.ArtworkTypeID like '{CurrentMaintain["artworktypeid"]}%' 
 and o.Junk=0
 and o.id = '{dr["OrderID"]}'
-and oa.PatternCode = '{dr["PatternCode"]}'
-and oa.PatternDesc = '{dr["PatternDesc"]}'
-and vsa.ArtworkID = '{dr["ArtworkId"]}'
+and isnull(oa.PatternCode,'') = '{dr["PatternCode"]}'
+and isnull(oa.PatternDesc,'') = '{dr["PatternDesc"]}'
+and isnull(oa.ArtworkID,ot.ArtworkTypeID) = '{dr["ArtworkId"]}'
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 group by ReqQty.value,PoQty.value";
                     DataRow drQty;                    

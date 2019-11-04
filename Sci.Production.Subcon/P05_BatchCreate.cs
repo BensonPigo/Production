@@ -402,7 +402,7 @@ namespace Sci.Production.Subcon
             #region -- 非ArtworK類 的sql command --
             SqlCmd = $@"
 select distinct Selected = 0
-        , LocalSuppID = rtrim(sao.LocalSuppId)
+        , LocalSuppID = isnull(rtrim(sao.LocalSuppId),'')
         , o.FTYGroup
 		, [orderID] = q.ID
         , OrderQty = sum(q.qty)  
@@ -410,42 +410,42 @@ select distinct Selected = 0
         , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value))
 		, o.SewInLIne
 		, o.SciDelivery
-		, oa.ArtworkID
+		, [ArtworkID] = case when oa.ArtworkID is null then ot.ArtworkTypeID else oa.ArtworkID end 
 		, stitch = 1
-		, oa.PatternCode
-		, oa.PatternDesc
+		, [PatternCode] = isnull(oa.PatternCode,'')
+		, [PatternDesc] = isnull(oa.PatternDesc,'')
 		, [qtygarment] = CONVERT(decimal, 1)
         , o.StyleID
 		, o.POID
         , [ExceedQty] = 0
-        , oa.ArtworkTypeID
-from  orders o WITH (NOLOCK) 
+        , [ArtworkTypeID] = '{artworktype}'
+from  Order_TmsCost ot
+inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
-inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
+left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
 	and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID 
 	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
 	and vsa.PatternCode = oa.PatternCode and vsa.PatternDesc = oa.PatternDesc 
-inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
+left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
+		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{artworktype}')
+		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
 ) ReqQty
 outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
+		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{artworktype}')
+		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 where f.IsProduceFty=1
@@ -455,7 +455,7 @@ and o.Junk=0
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 		" ;
   
-            if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and ot.ArtworkTypeID = '{0}'", artworktype); }
+            if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and ot.ArtworkTypeID like '{0}%'", artworktype); }
             if (!(string.IsNullOrWhiteSpace(Inline_b))) { SqlCmd += string.Format(" and ot.ArtworkInLine >= '{0}' ", Inline_b); }
             if (!(string.IsNullOrWhiteSpace(Inline_e))) { SqlCmd += string.Format(" and ot.ArtworkOffLine <= '{0}' ", Inline_e); }
             if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format("and  o.SciDelivery >= '{0}' ", sciDelivery_b); }
@@ -463,7 +463,7 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
             SqlCmd += @" 
 group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ReqQty.value,o.FtyGroup
+,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ReqQty.value,o.FtyGroup,ot.ArtworkTypeID
 order by orderID,ArtworkID,PatternCode,PatternDesc			
 			";
             #endregion

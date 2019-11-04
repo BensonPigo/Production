@@ -215,7 +215,7 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
 -- exists DB
 select distinct
 o.FactoryID
-,ai.ArtworkTypeID
+,ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 ,ai.OrderID
 ,o.StyleID
 ,o.BrandID
@@ -234,12 +234,12 @@ into #tmpDB
 from ArtworkReq_IrregularQty ai
 inner join Orders o on o.ID = ai.OrderID
 inner join #tmp s on s.OrderID = ai.OrderID 
-where ai.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+where ai.ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
 
 -- not exists DB
 select 
 o.FactoryID
-,voa.ArtworkTypeID
+,ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 ,[OrderID] = o.ID
 ,o.StyleID
 ,o.BrandID
@@ -253,35 +253,42 @@ o.FactoryID
 ,[EditDate] = null
 ,voa.ArtworkID,voa.PatternCode,voa.PatternDesc
 into #tmpCurrent
-from Orders o
-inner join Order_Qty oq on o.ID=oq.ID
-inner join View_Order_Artworks voa on oq.Article = voa.Article
+from  Order_TmsCost ot
+inner join orders o WITH (NOLOCK) on ot.ID = o.ID
+inner join order_qty oq WITH (NOLOCK) on oq.id = o.ID
+left join View_Order_Artworks voa on oq.Article = voa.Article
 and voa.id=o.ID and voa.SizeCode = oq.SizeCode
-inner join #tmp s on s.OrderID = o.ID and voa.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+inner join #tmp s  on s.OrderID = o.ID 
+	and isnull(voa.ArtworkID,ot.ArtworkTypeID) = s.ArtworkID
+	and isnull(voa.PatternCode,'') = isnull(s.PatternCode,'')
+	and isnull(voa.PatternDesc,'') = isnull(s.PatternDesc,'')
 outer apply(
 	select value = ISNULL(sum(PoQty),0)
-    from ArtworkPO_Detail AD, ArtworkPO a
+    from ArtworkPO_Detail ad, ArtworkPO a
 	where ad.ID = a.ID
-	and OrderID = voa.ID and ad.PatternCode= voa.PatternCode
-	and ad.PatternDesc = voa.PatternDesc and ad.ArtworkId = voa.ArtworkID
+    and OrderID = o.ID and ad.PatternCode= isnull(voa.PatternCode,'')
+	and ad.PatternDesc = isnull(voa.PatternDesc,'') 
+    and ad.ArtworkID = iif(voa.ArtworkID is null,ot.ArtworkTypeID,voa.ArtworkID)
 	and ad.ArtworkReqID=''
 	and a.ArtworkTypeID = voa.ArtworkTypeID
 ) PoQty
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
-	from ArtworkReq_Detail aq2 , ArtworkReq aq
-	where aq2.ID = aq.ID
-	and aq2.OrderID = voa.id and aq2.ArtworkID = voa.ArtworkID
-	and aq2.PatternCode = voa.PatternCode and aq2.PatternDesc = voa.PatternDesc
-	and aq2.id !=  '{_ArtWorkReq_ID}'
-	and aq.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
-    and aq.status != 'Closed' and aq2.ArtworkPOID =''
+	from ArtworkReq_Detail ad , ArtworkReq a
+	where ad.ID = a.ID
+	and OrderID = o.ID and ad.PatternCode= isnull(voa.PatternCode,'')
+	and ad.PatternDesc = isnull(voa.PatternDesc,'') 
+    and ad.ArtworkID = iif(voa.ArtworkID is null,ot.ArtworkTypeID,voa.ArtworkID)
+	and ad.id !=  '{_ArtWorkReq_ID}'
+	and a.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+    and a.status != 'Closed' and ad.ArtworkPOID =''
 )ReqQty
 where not exists(
 	select 1 from #tmpDB
-	where orderID = o.ID and ArtworkTypeID = voa.ArtworkTypeID
+	where orderID = o.ID and ot.ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
 )
-group by o.FactoryID,voa.ArtworkTypeID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
+and ot.ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
+group by o.FactoryID,ot.ArtworkTypeID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
 ,voa.ArtworkID,voa.PatternCode,voa.PatternDesc
 having ReqQty.value + PoQty.value + s.ReqQty > sum(oq.Qty) 
 

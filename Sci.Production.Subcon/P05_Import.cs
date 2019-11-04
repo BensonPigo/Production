@@ -67,8 +67,8 @@ namespace Sci.Production.Subcon
 outer apply(
     select value = sum(ReqQty) 
     from #tmp
-    where OrderID = o.id and ArtworkID = vsa.ArtworkID
-    and PatternDesc = oa.PatternDesc and PatternCode = oa.PatternCode
+    where OrderID = o.id and ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
+    and PatternDesc = isnull(oa.PatternDesc,'') and PatternCode = isnull(oa.PatternCode,'')
 ) CurrentReq";
                 tmpcurrentReq = "+ isnull(CurrentReq.value,0)";
                 tmpGroupby = ",CurrentReq.value";
@@ -83,8 +83,8 @@ select  Selected = 0
         , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value))
 		, o.SewInLIne
 		, o.SciDelivery
-		, oa.ArtworkID
-		, stitch = oa.qty
+		, [ArtworkID] = case when oa.ArtworkID is null then ot.ArtworkTypeID else oa.ArtworkID end 
+		, stitch = 1
 		, oa.PatternCode
 		, oa.PatternDesc
 		, [qtygarment] = 1
@@ -92,24 +92,25 @@ select  Selected = 0
 		, o.POID
         , id = ''
         , ExceedQty = 0
-from  orders o WITH (NOLOCK) 
+from  Order_TmsCost ot
+inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
-inner join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
+left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
 	and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID 
 	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
 	and vsa.PatternCode = oa.PatternCode and vsa.PatternDesc = oa.PatternDesc 
-inner join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
+left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
+and sao.LocalSuppId = '{dr_artworkReq["localsuppid"]}' 
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
+		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
+		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
         and a.id != '{dr_artworkReq["id"]}'
         and a.status != 'Closed' and ad.ArtworkPOID =''
 ) ReqQty
@@ -117,17 +118,16 @@ outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID and ad.PatternCode= oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc and vsa.ArtworkID = ad.ArtworkID
+		and a.ArtworkTypeID = isnull(oa.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
+		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(vsa.ArtworkID is null,ot.ArtworkTypeID,vsa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 {tmpTable}
 where f.IsProduceFty=1
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and oa.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}' 
-and sao.LocalSuppId = '{dr_artworkReq["localsuppid"]}' 
+and ot.ArtworkTypeID like '{dr_artworkReq["artworktypeid"]}%' 
 and o.Junk=0
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 ";
@@ -159,7 +159,7 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 
             strSQLCmd += $@" 
             group by q.id,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-            ,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ReqQty.value  {tmpGroupby}";
+            ,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ot.ArtworkTypeID,ReqQty.value  {tmpGroupby}";
 
             Ict.DualResult result;
             //if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
