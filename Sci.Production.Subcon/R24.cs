@@ -232,19 +232,6 @@ where c.Classify='P'
                 cmds.Add(sp_artworktype);
             }
 
-            if (!MyUtility.Check.Empty(mdivision))
-            {
-                sqlCmd.Append(" and a.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
-                cmds.Add(sp_mdivision);
-            }
-
-            if (!MyUtility.Check.Empty(factory))
-            {
-                sqlCmd.Append(" and a.factoryid = @factory");
-                sp_factory.Value = factory;
-                cmds.Add(sp_factory);
-            }
 
             #endregion
 
@@ -309,7 +296,9 @@ select distinct t.FactoryID
     ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  ,NULL											 ,round(y.order_amt/y.order_qty,3) )    
     ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL	 ,round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty),2)  )
 
-    ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,''))into #tmp_final
+    ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,''))
+
+into #tmp_final
 from #tmp t
 left join orders aa WITH (NOLOCK) on t.poid =aa.poid  
 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
@@ -376,6 +365,19 @@ where 1=1
                 cmds.Add(sp_brandid);
             }
 
+            if (!MyUtility.Check.Empty(mdivision))
+            {
+                sqlCmd.Append(" and aa.mdivisionid = @MDivision");
+                sp_mdivision.Value = mdivision;
+                cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and aa.factoryid = @factory");
+                sp_factory.Value = factory;
+                cmds.Add(sp_factory);
+            }
 
             sqlCmd.Append(@" 
 select * from #tmp_final
