@@ -141,13 +141,21 @@ namespace Sci.Production.Subcon
             if (dt == null || dt.Rows.Count == 0) return;
 
             DataRow[] find;
+            find = dt.Select("Selected = 1");
 
-            find = dt.Select("Selected = 1 and ReqQty > 0");
             if (find.Length == 0)
             {
-                MyUtility.Msg.WarningBox("Please select rows and Req.Qty cannot be zero", "Warnning");
+                MyUtility.Msg.WarningBox("Please select rows first", "Warnning");
                 return;
             }
+
+            find = dt.Select("Selected = 1 and ReqQty <= 0");
+            if (find.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("<Req. Qty> cannot be zero", "Warnning");
+                return;
+            }
+
 
             #region -- 表頭資料 query --- LINQ
             var query = (from row in dt.AsEnumerable()

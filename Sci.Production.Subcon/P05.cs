@@ -41,6 +41,11 @@ namespace Sci.Production.Subcon
             {
                 this.CurrentMaintain["localsuppid"] = txtsubconSupplier.TextBox1.Text;
             };
+
+            grid.ColumnHeaderMouseClick += (s, e) =>
+            {
+                ChangeBrowseColor();
+            };
         }
 
 
@@ -587,6 +592,16 @@ where id = '{CurrentMaintain["id"]}'";
         {
             base.ClickUndo();
             this.RenewData();
+        }
+
+        protected override bool ClickDeleteBefore()
+        {
+            if (CurrentMaintain["Status"].ToString() != "New")
+            {
+                MyUtility.Msg.WarningBox("Data is Approved or Closed cannot delete.", "Warning");
+                return false;
+            }
+            return base.ClickDeleteBefore();
         }
 
         //print
