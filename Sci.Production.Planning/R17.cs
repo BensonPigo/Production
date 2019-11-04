@@ -938,9 +938,9 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                     worksheet.Columns.AutoFit();
                     worksheet.Cells[rc + 2, 2] = "Total:";
-                    worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
                     worksheet.Cells[rc + 2, 12] = string.Format("=SUM(L2:L{0})", MyUtility.Convert.GetString(rc + 1));
                     worksheet.Cells[rc + 2, 13] = string.Format("=SUM(M2:M{0})", MyUtility.Convert.GetString(rc + 1));
+                    worksheet.Cells[rc + 2, 14] = string.Format("=SUM(N2:N{0})", MyUtility.Convert.GetString(rc + 1));
 
                     // 設定分割列數
                     excel.ActiveWindow.SplitRow = 1;
@@ -983,9 +983,9 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 12] = string.Format("=SUM(L2:L{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 13] = string.Format("=SUM(M2:M{0})", MyUtility.Convert.GetString(rc + 1));
+                        worksheet.Cells[rc + 2, 14] = string.Format("=SUM(N2:N{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
@@ -1026,8 +1026,8 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
+                        worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
@@ -1111,9 +1111,9 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
-
                         worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
+
+                        worksheet.Cells[rc + 2, 12] = string.Format("=SUM(L2:L{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
