@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -378,6 +379,38 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                         MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
                         return false;
                     }
+                }
+            }
+            #endregion
+
+            #region
+            var detailList = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted);
+            if (detailList.Count() > 0)
+            {
+                var duplicateList = detailList
+                    .GroupBy(g => new { ID = g["ID"].ToString(), NLCode = g["NLCode"].ToString(), HSCode = g["HSCode"].ToString() })
+                    .GroupBy(g => new { g.Key.ID, g.Key.NLCode })
+                    .Select(g => new { g.Key.ID, g.Key.NLCode, ct = g.Count() })
+                    .Where(w => w.ct > 1);
+                if (duplicateList.Count() > 1)
+                {
+                    string msg = @"
+There have different HS Code in the same customs code.
+Please check below material some HS Code need to update.
+Brand, RefNo, HSCode, Customs Code
+";
+                    var dl = detailList.
+                        Where(w => duplicateList.Select(s => s.NLCode).Contains(MyUtility.Convert.GetString(w["NLCode"]))).
+                        OrderBy(o => MyUtility.Convert.GetString(o["NLCode"])).
+                        Select(s => new
+                        {
+                            list = MyUtility.Convert.GetString(s["BrandID"]) + "," +
+                                MyUtility.Convert.GetString(s["RefNo"]) + "," +
+                                MyUtility.Convert.GetString(s["HSCode"]) + "," +
+                                MyUtility.Convert.GetString(s["NLCode"])
+                        }).Select(s => s.list.ToString()).ToList();
+                    MyUtility.Msg.WarningBox(msg + string.Join("\r\n", dl));
+                    return false;
                 }
             }
             #endregion
