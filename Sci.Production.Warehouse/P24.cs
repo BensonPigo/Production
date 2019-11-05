@@ -262,6 +262,107 @@ WHERE   StockType='{0}'
             }
             else
             {
+                string Update = string.Empty;
+
+                foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o=> o["ToLocation"].ToString() != "").ToList())
+                {
+                    string POID = item["FromPOID"].ToString();
+                    string Seq1 = item["FromSeq1"].ToString();
+                    string Seq2 = item["FromSeq2"].ToString();
+
+                    List<string> New_CLocationList = this.DetailDatas.AsEnumerable().Where(o=> o["FromPOID"].ToString()== POID && o["FromSeq1"].ToString()== Seq1 && o["FromSeq2"].ToString()== Seq2 && o["ToLocation"].ToString() != "")
+                        .Select(o => o["ToLocation"].ToString())
+                        .Distinct().ToList();
+
+                    //從SubTransfer_Detail取出現有的Location
+                    DataTable DT_MDivisionPoDetail;
+                    DBProxy.Current.Select(null, $@"
+SELECT CLocation = ISNULL(   STUFF( (
+	SELECT ToLocations=ISNULL((
+		SELECT DISTINCT ',' +ToLocation
+		FROM SubTransfer s
+		INNER JOIN  SubTransfer_Detail sd On s.id=sd.ID
+		WHERE FromPOID='{POID}'
+		AND FromSeq1='{Seq1}' AND FromSeq2='{Seq2}'
+		AND s.Status='Confirmed' AND sd.FromStockType='I' AND sd.ToStockType='O' 
+		FOR XML PATH('')
+	) ,'')
+), 1, 1, '')  ,'')
+", out DT_MDivisionPoDetail);
+
+                    List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
+
+                    List<string> Fincal = new List<string>();
+
+                    foreach (var New_CLocation in New_CLocationList)
+                    {
+                        if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
+                        {
+                            DB_CLocations.Add(New_CLocation);
+                        }
+                    }
+
+                    foreach (var CLocation in DB_CLocations.Distinct().ToList())
+                    {
+                        foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
+                        {
+                            if (!Fincal.Contains(a))
+                            {
+                                Fincal.Add(a);
+                            }
+                        } 
+                    }
+
+                    string cmd = $@"
+UPDATE MDivisionPoDetail
+SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
+WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+
+";
+                    Update += cmd;
+                }
+
+
+                foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["ToLocation"].ToString() == "").ToList())
+                {
+                    string POID = item["FromPOID"].ToString();
+                    string Seq1 = item["FromSeq1"].ToString();
+                    string Seq2 = item["FromSeq2"].ToString();
+
+                    //從SubTransfer_Detail取出現有的Location
+                    DataTable DT_MDivisionPoDetail;
+                    DBProxy.Current.Select(null, $@"
+SELECT CLocation = ISNULL(   STUFF( (
+	SELECT ToLocations=ISNULL((
+		SELECT DISTINCT ',' +ToLocation
+		FROM SubTransfer s
+		INNER JOIN  SubTransfer_Detail sd On s.id=sd.ID
+		WHERE FromPOID='{POID}'
+		AND FromSeq1='{Seq1}' AND FromSeq2='{Seq2}'
+		AND s.Status='Confirmed' 
+		AND ( (sd.FromStockType='I' AND sd.ToStockType='O' ) OR (sd.FromStockType='B' AND sd.ToStockType='O' ) )
+		FOR XML PATH('')
+	) ,'')
+), 1, 1, '')  ,'')
+", out DT_MDivisionPoDetail);
+
+                    string DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString();
+
+                    if (MyUtility.Check.Empty(DB_CLocations))
+                    {
+
+                        string cmd = $@"
+UPDATE MDivisionPoDetail
+SET CLocation=''
+WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+
+";
+                        Update += cmd;
+                    }
+                }
+
+                DBProxy.Current.Execute(null, Update);
+
                 MyUtility.Msg.InfoBox("Confirmed successful");
             }
         }

@@ -121,8 +121,7 @@ using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched and src.stocktype = 'I' then
 	update 
-	set target.blocation = src.location ,target.CLocation= IIF( target.CLocation = '' , src.CLocation , target.CLocation + ',' + src.CLocation );
-
+	set target.blocation = src.location ;
 merge dbo.mdivisionpodetail as target
 using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
