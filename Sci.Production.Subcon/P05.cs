@@ -239,6 +239,7 @@ from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
 left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+    and oa.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}' 
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
 	and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID 
 	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
@@ -253,7 +254,8 @@ outer apply (
         where ad.ID=a.ID
 		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}' 
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') 
+        and ad.ArtworkID = iif(oa.ArtworkID is null,'{CurrentMaintain["ArtworktypeId"]}' ,oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
         and a.id != '{dr["id"]}'
 ) ReqQty
@@ -263,7 +265,8 @@ outer apply (
         where a.ID=ad.ID
 		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{CurrentMaintain["ArtworktypeId"]}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') 
+        and ad.ArtworkID = iif(oa.ArtworkID is null, '{CurrentMaintain["ArtworktypeId"]}' , oa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 where f.IsProduceFty=1

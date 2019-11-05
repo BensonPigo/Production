@@ -418,7 +418,7 @@ select distinct Selected = 0
         , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value))
 		, o.SewInLIne
 		, o.SciDelivery
-		, [ArtworkID] = case when oa.ArtworkID is null then ot.ArtworkTypeID else oa.ArtworkID end 
+		, [ArtworkID] = case when oa.ArtworkID is null then '{artworktype}' else oa.ArtworkID end 
 		, stitch = 1
 		, [PatternCode] = isnull(oa.PatternCode,'')
 		, [PatternDesc] = isnull(oa.PatternDesc,'')
@@ -430,7 +430,7 @@ select distinct Selected = 0
 from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode and oa.ArtworkTypeID = '{artworktype}'
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
 	and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID 
 	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
@@ -444,7 +444,8 @@ outer apply (
         where ad.ID=a.ID
 		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{artworktype}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') 
+        and ad.ArtworkID = iif(oa.ArtworkID is null,'{artworktype}',oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
 ) ReqQty
 outer apply (
@@ -453,7 +454,8 @@ outer apply (
         where a.ID=ad.ID
 		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{artworktype}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
-        and ad.PatternDesc = isnull(oa.PatternDesc,'') and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
+        and ad.PatternDesc = isnull(oa.PatternDesc,'') 
+        and ad.ArtworkID = iif(oa.ArtworkID is null,'{artworktype}',oa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 where f.IsProduceFty=1

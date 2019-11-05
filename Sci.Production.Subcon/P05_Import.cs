@@ -83,7 +83,8 @@ select  Selected = 0
         , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value))
 		, o.SewInLIne
 		, o.SciDelivery
-		, [ArtworkID] = case when oa.ArtworkID is null then ot.ArtworkTypeID else oa.ArtworkID end 
+		, [ArtworkID] = case when oa.ArtworkID is null then '{dr_artworkReq["artworktypeid"]}' 
+                        else oa.ArtworkID end 
 		, stitch = 1
 		, oa.PatternCode
 		, oa.PatternDesc
@@ -95,7 +96,7 @@ select  Selected = 0
 from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode and oa.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
 	and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID 
 	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
@@ -111,7 +112,7 @@ outer apply (
 		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
-        and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
+        and ad.ArtworkID = iif(oa.ArtworkID is null,'{dr_artworkReq["artworktypeid"]}' ,oa.ArtworkID)
         and a.id != '{dr_artworkReq["id"]}'
         and a.status != 'Closed' and ad.ArtworkPOID =''
 ) ReqQty
@@ -122,7 +123,7 @@ outer apply (
 		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
-        and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
+        and ad.ArtworkID = iif(oa.ArtworkID is null,'{dr_artworkReq["artworktypeid"]}' ,oa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 {tmpTable}
