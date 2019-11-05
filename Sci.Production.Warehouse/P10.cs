@@ -383,9 +383,26 @@ outer apply(
             {
                 return resultBarcodeNo;
             }
-            
+
+            //將Issue_Detail的數量更新Issue_Summary
+            DataTable subDetail;
+            foreach (DataRow detailRow in this.DetailDatas)
+            {
+                this.GetSubDetailDatas(detailRow, out subDetail);
+                if (subDetail.Rows.Count == 0)
+                {
+                    detailRow["Qty"] = 0;
+                }
+                else
+                {
+                    decimal detailQty = subDetail.AsEnumerable().Sum(s => s.RowState != DataRowState.Deleted ? (decimal)s["Qty"] : 0);
+                }
+            }
+
             return base.ClickSaveBefore();
         }
+
+
 
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
@@ -608,7 +625,7 @@ select distinct FabricCombo ,(select convert(varchar,CutNo)+','
 from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by CutNo for xml path('')) cutnos from cte a
 ", CurrentMaintain["cutplanid"]), out dt);
                 editCutNo.Text = String.Join(" / ", dt.AsEnumerable().Select(row => row["FabricCombo"].ToString() + "-" + row["cutnos"].ToString())
-       );
+        );
 
             }
 
@@ -645,7 +662,7 @@ where id = '{0}'", CurrentMaintain["ID"]);
                 MyUtility.Msg.WarningBox("All Issue_Qty are zero", "Warning");
                 return;
             }
-            #endregion 
+            #endregion
 
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
@@ -950,7 +967,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         protected override bool ClickPrint()
         {
             Sci.Production.Warehouse.P10_Print callForm;
-            callForm = new P10_Print(CurrentMaintain, this.editCutNo.Text,this.CurrentMaintain);
+            callForm = new P10_Print(CurrentMaintain, this.editCutNo.Text, this.CurrentMaintain);
             callForm.ShowDialog(this);
 
             return true;
