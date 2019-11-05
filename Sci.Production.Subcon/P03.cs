@@ -394,10 +394,8 @@ order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"], Sci.Env.User.Ke
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
             if (datacheck.Rows.Count > 0)
             {
-                foreach (DataRow dr in datacheck.Rows)
-                {
-                    ids += dr[0].ToString() + ",";
-                }
+                List<string> queryID = datacheck.AsEnumerable().Select(x => x.Field<string>("id")).Distinct().ToList();
+                ids = String.Join(", ", queryID.ToArray()); 
                 MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't Confirmed", ids));
                 return;
             }

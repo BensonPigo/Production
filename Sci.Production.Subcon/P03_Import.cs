@@ -95,6 +95,11 @@ namespace Sci.Production.Subcon
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
+            DataTable dt = new DataTable();
+            string sql = string.Empty;
+            DualResult result;
+            bool bolIntoOut = false;
+            string subProcessID = string.Empty;
             #region set Data
             /*
              * Farm Out Datet查詢條件，結束日期須加23:59:59
@@ -124,11 +129,20 @@ where ArtworkTypeID = '{0}'", strArtworkType), null))
                 return;
             }
             #endregion
+
+            sql = string.Format("select ID, [IntoOut] = cast(case InOutRule when 3 then 1 else 0 end as bit) from SubProcess where ArtworkTypeID = '{0}'", strArtworkType);
+            result = DBProxy.Current.Select(null, sql, out dt);
+            foreach(DataRow dataRow in dt.Rows)
+            {
+                subProcessID = MyUtility.Convert.GetString(dataRow["ID"]);
+                bolIntoOut = MyUtility.Convert.GetBool(dataRow["IntoOut"]);
+            }
+
             #region SQL parameter
             List<SqlParameter> listSQLParameter = new List<SqlParameter>();
             listSQLParameter.Add(new SqlParameter("@M", Sci.Env.User.Keyword));
             listSQLParameter.Add(new SqlParameter("@ArtworkType", strArtworkType));
-            listSQLParameter.Add(new SqlParameter("@SubProcessID", MyUtility.GetValue.Lookup(string.Format("select ID from SubProcess where ArtworkTypeID = '{0}'", strArtworkType))));
+            listSQLParameter.Add(new SqlParameter("@SubProcessID", subProcessID));
             listSQLParameter.Add(new SqlParameter("@FarmStart", strFarmOutDateStart));
             listSQLParameter.Add(new SqlParameter("@FarmEnd", strFarmOutDateEnd));
             listSQLParameter.Add(new SqlParameter("@SPnum", strSPnum));
@@ -155,15 +169,14 @@ where ArtworkTypeID = '{0}'", strArtworkType), null))
             #endregion
             #region SQL Command
             #region Master
-            string sqlMasterData = (Subcon == Subcon_P03) ? getDataSubconP03(MasterData, dictionaryFilte) : getDataSubconP04(MasterData, dictionaryFilte);
+            string sqlMasterData = (Subcon == Subcon_P03) ? getDataSubconP03(MasterData, dictionaryFilte, bolIntoOut) : getDataSubconP04(MasterData, dictionaryFilte, bolIntoOut);
             #endregion
             #region Detail
-            string sqlDetailData = (Subcon == Subcon_P03) ? getDataSubconP03(DetailData, dictionaryFilte) : getDataSubconP04(DetailData, dictionaryFilte);
+            string sqlDetailData = (Subcon == Subcon_P03) ? getDataSubconP03(DetailData, dictionaryFilte, bolIntoOut) : getDataSubconP04(DetailData, dictionaryFilte, bolIntoOut);
             #endregion
             #endregion
             this.ShowWaitMessage("SQL Processing...");
-            #region SQL Process
-            DualResult result;
+            #region SQL Process 
             #region Master
             result = DBProxy.Current.Select(null, sqlMasterData, listSQLParameter, out masterDT);
             if (!result)
@@ -219,9 +232,10 @@ where ArtworkTypeID = '{0}'", strArtworkType), null))
             #endregion    
         }
 
-        private string getDataSubconP03(int getData, Dictionary<string, string> dictionaryFilte)
+        private string getDataSubconP03(int getData, Dictionary<string, string> dictionaryFilte, bool IntoOut)
         {
             StringBuilder strReturn = new StringBuilder("");
+            string strIntoOut = IntoOut ? "and APD.Farmin > APD.Farmout" : "and APD.PoQty > APD.Farmout";
             switch (getData)
             {
                 case MasterData:
@@ -242,7 +256,7 @@ left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on  APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
 									--若為[Subcon][P04]呼叫，則改為Farmin
-									and APD.PoQty > APD.Farmout  
+									{2}
 left join ArtworkPO AP			on	AP.ID = APD.ID
 left join Orders O				on	O.ID = B.Orderid and o.MDivisionID  = b.MDivisionID 
 where	BIO.SubProcessId = @SubProcessID
@@ -254,7 +268,7 @@ where	BIO.SubProcessId = @SubProcessID
 		and AP.MDivisionID = @M
 		--@ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
-		and AP.ApvName IS NOT NULL	
+		and AP.ApvDate IS NOT NULL	
 		and AP.Closed = 0 
 
 select t.*
@@ -274,7 +288,8 @@ order by t.OutGoing
 
 drop table #tmp_BundleInOut
 ", dictionaryFilte["FarmDate"]
- , dictionaryFilte["SPnum"]));
+ , dictionaryFilte["SPnum"]
+ ,strIntoOut));
                     #endregion
                     break;
                 case DetailData:
@@ -301,7 +316,7 @@ left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on	APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
                                     --若為[Subcon][P04]呼叫，則改為Farmin 
-									and APD.PoQty > APD.Farmout
+									{2}
 left join ArtworkPO AP			on AP.ID = APD.ID
 where	BIO.SubProcessId = @SubProcessID
         --Farm Out Datet查詢條件
@@ -315,7 +330,7 @@ where	BIO.SubProcessId = @SubProcessID
 		and AP.MDivisionID = @M
 		--畫面上ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
-		and AP.ApvName IS NOT NULL	
+		and AP.ApvDate IS NOT NULL	
 		and AP.Closed = 0
 
 select t.*
@@ -335,16 +350,18 @@ order by t.OutGoing
 
 drop table #tmp_BundleInOut
 ", dictionaryFilte["FarmDate"]
- , dictionaryFilte["SPnum"]));
+ , dictionaryFilte["SPnum"]
+ , strIntoOut));
                     #endregion
                     break;
             }
             return strReturn.ToString();
         }
 
-        private string getDataSubconP04(int getData, Dictionary<string, string> dictionaryFilte)
+        private string getDataSubconP04(int getData, Dictionary<string, string> dictionaryFilte, bool IntoOut)
         {
             StringBuilder strReturn = new StringBuilder("");
+            string strIntoOut = IntoOut ? "and APD.PoQty > APD.Farmin" : "and APD.Farmout > APD.Farmin";
             switch (getData)
             {
                 case MasterData:
@@ -365,7 +382,7 @@ left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on  APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
 									--若為[Subcon][P03]呼叫，則改為Farmout 
-									and APD.Farmout > APD.Farmin
+									{2}
 left join ArtworkPO AP			on	AP.ID = APD.ID
 left join Orders O				on	O.ID = B.Orderid  and o.MDivisionID  = b.MDivisionID 
 where	BIO.SubProcessId = @SubProcessID
@@ -379,7 +396,7 @@ where	BIO.SubProcessId = @SubProcessID
 		and AP.MDivisionID = @M
 		--@ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
-		and AP.ApvName IS NOT NULL	
+		and AP.ApvDate IS NOT NULL	
 		and AP.Closed = 0
 
 
@@ -401,7 +418,8 @@ order by t.InComing
 
 drop table #tmp_BundleInOut
 ", dictionaryFilte["FarmDate"]
- , dictionaryFilte["SPnum"]));
+ , dictionaryFilte["SPnum"]
+ , strIntoOut));
                     #endregion
                     break;
                 case DetailData:
@@ -428,7 +446,7 @@ left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on	APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
 									--若為[Subcon][P03]呼叫，則改為Farmout 
-									and APD.Farmout > APD.Farmin
+									{2}
 left join ArtworkPO AP			on AP.ID = APD.ID
 where	BIO.SubProcessId = @SubProcessID
 		--Farm Out Datet查詢條件
@@ -442,7 +460,7 @@ where	BIO.SubProcessId = @SubProcessID
 		and AP.MDivisionID = @M
 		--畫面上ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
-		and AP.ApvName IS NOT NULL	
+		and AP.ApvDate IS NOT NULL	
 		and AP.Closed = 0
 
 select t.*
@@ -463,7 +481,8 @@ order by t.InComing
 drop table #tmp_BundleInOut
 "
 , dictionaryFilte["FarmDate"]
-, dictionaryFilte["SPnum"]));
+, dictionaryFilte["SPnum"]
+, strIntoOut));
                     #endregion
                     break;
             }
