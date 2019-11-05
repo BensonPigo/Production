@@ -27,7 +27,7 @@ namespace MarkerFile.Hourly
         DataRow mailTo;
         TransferPms transferPMS = new TransferPms();
         StringBuilder sqlmsg = new StringBuilder();
-        bool isTestJobLog = true;
+        bool isTestJobLog = false;
         string tpeMisMail = string.Empty;
         private string MarkerInputPath;
         private string MarkerOutputPath;
