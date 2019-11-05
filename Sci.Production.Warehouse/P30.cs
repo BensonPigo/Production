@@ -601,11 +601,6 @@ insert into subtransfer_detail
 select *
 from #tmp
 ;
-UPDATE m
-SET m.CLocation = t.ToLocation
-FROM MDivisionPODetail m
-INNER JOIN #tmp t ON t.FromPOID=m.POID AND t.FromSeq1=m.Seq1 AND t.FromSeq2=m.Seq2
-;
 
 ";
 
