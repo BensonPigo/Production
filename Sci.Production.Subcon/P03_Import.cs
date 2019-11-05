@@ -268,8 +268,9 @@ where	BIO.SubProcessId = @SubProcessID
 		and AP.MDivisionID = @M
 		--@ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
-		and AP.ApvDate IS NOT NULL	
+		and AP.Status = 'Approved'
 		and AP.Closed = 0 
+        
 
 select t.*
 from #tmp_BundleInOut t
@@ -330,7 +331,7 @@ where	BIO.SubProcessId = @SubProcessID
 		and AP.MDivisionID = @M
 		--畫面上ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
-		and AP.ApvDate IS NOT NULL	
+		and AP.Status = 'Approved'
 		and AP.Closed = 0
 
 select t.*
@@ -396,7 +397,7 @@ where	BIO.SubProcessId = @SubProcessID
 		and AP.MDivisionID = @M
 		--@ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
-		and AP.ApvDate IS NOT NULL	
+		and AP.Status = 'Approved'
 		and AP.Closed = 0
 
 
@@ -460,7 +461,7 @@ where	BIO.SubProcessId = @SubProcessID
 		and AP.MDivisionID = @M
 		--畫面上ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
-		and AP.ApvDate IS NOT NULL	
+		and AP.Status = 'Approved'	
 		and AP.Closed = 0
 
 select t.*
