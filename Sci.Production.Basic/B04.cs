@@ -27,8 +27,8 @@ namespace Sci.Production.Basic
         {
             this.InitializeComponent();
 
-            this.label2.ForeColor = Color.Red;
-            this.label2.BackColor = Color.White;
+            this.label2.ForeColor = Color.Black;
+            //this.label2.BackColor = Color.White;
         }
 
         /// <summary>

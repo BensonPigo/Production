@@ -31,7 +31,7 @@ namespace Sci.Production.Basic
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCode = new Sci.Win.UI.Label();
             this.labelAbbreviation = new Sci.Win.UI.Label();
             this.labelNationality = new Sci.Win.UI.Label();
@@ -484,14 +484,14 @@ namespace Sci.Production.Basic
             this.gridBankDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBankDetail.Location = new System.Drawing.Point(28, 465);
             this.gridBankDetail.Name = "gridBankDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBankDetail.RowTemplate.Height = 24;
@@ -502,21 +502,24 @@ namespace Sci.Production.Basic
             // 
             // label2
             // 
-            this.label2.BackColor = System.Drawing.Color.White;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.label2.Location = new System.Drawing.Point(28, 439);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(125, 23);
             this.label2.TabIndex = 210;
             this.label2.Text = "Bank Detail";
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // chkPayByChk
             // 
             this.chkPayByChk.AutoSize = true;
             this.chkPayByChk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSintexSubcon", true));
-            this.chkPayByChk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkPayByChk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkPayByChk.IsSupportEditMode = false;
             this.chkPayByChk.Location = new System.Drawing.Point(156, 439);
             this.chkPayByChk.Name = "chkPayByChk";
+            this.chkPayByChk.ReadOnly = true;
             this.chkPayByChk.Size = new System.Drawing.Size(114, 21);
             this.chkPayByChk.TabIndex = 11;
             this.chkPayByChk.Text = "Pay By Check";

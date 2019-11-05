@@ -297,14 +297,9 @@ order by ID
             //        dr["IsDefault"] = false;
             //    }
             //}
+            
 
-            if (dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Count() == 0)
-            {
-                MyUtility.Msg.InfoBox("Detail can not be empty.");
-                return false;
-            }
-
-            foreach (DataRow dr in dt.Rows)
+            foreach (DataRow dr in dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted))
             {
                 if (dr["IsDefault"] == DBNull.Value)
                 {
@@ -473,7 +468,30 @@ order by ID
                 this.CurrentMaintain["EditName"] = string.Empty;
                 this.CurrentMaintain["EditDate"] = DBNull.Value;
 
-                DBProxy.Current.Select(null, $"SELECT * FROM LocalSupp_Bank_Detail WHERE Pkey={dr["Pkey"]} ", out dtDetail);
+                string cmd = $@"
+SELECT  lbd.IsDefault
+	,lbd.AccountNo
+	,lbd.SWIFTCode
+	,lbd.AccountName
+	,lbd.BankName
+	,lbd.BranchCode
+	,lbd.BranchName
+	,lbd.CountryID
+	,c.Alias
+	,lbd.City
+	,lbd.MidSWIFTCode
+	,lbd.MidBankName
+	,lbd.Remark
+	,lbd.ID
+	,lb.PKey
+	,lbd.Ukey
+FROM LocalSupp_Bank lb WITH (NOLOCK)  
+INNER JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND  lb.PKey=lbd.PKey 
+LEFT JOIN Country c WITH (NOLOCK)  ON c.ID=lbd.CountryID
+WHERE lb.ID='{this.LocalSupp_Bank_ID}' AND lb.PKey='{dr["Pkey"]}'
+";
+
+                DBProxy.Current.Select(null, cmd, out dtDetail);
                 this.detailgridbs.DataSource = dtDetail;
             }
 
