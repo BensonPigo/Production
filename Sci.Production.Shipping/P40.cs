@@ -392,7 +392,7 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                     .GroupBy(g => new { g.Key.ID, g.Key.NLCode })
                     .Select(g => new { g.Key.ID, g.Key.NLCode, ct = g.Count() })
                     .Where(w => w.ct > 1);
-                if (duplicateList.Count() > 1)
+                if (duplicateList.Count() > 0)
                 {
                     string msg = @"
 There have different HS Code in the same customs code.
