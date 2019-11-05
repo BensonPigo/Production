@@ -63,11 +63,11 @@ namespace Sci.Production.Subcon
             // 上一層表身有資料, 就加上表身當前ReqQty 
             if (dt_artworkReqDetail.Rows.Count > 0)
             {
-                tmpTable = @"
+                tmpTable = $@"
 outer apply(
     select value = sum(ReqQty) 
     from #tmp
-    where OrderID = o.id and ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
+    where OrderID = o.id and ArtworkID = iif(oa.ArtworkID is null,'{dr_artworkReq["artworktypeid"]}',oa.ArtworkID)
     and PatternDesc = isnull(oa.PatternDesc,'') and PatternCode = isnull(oa.PatternCode,'')
 ) CurrentReq";
                 tmpcurrentReq = "+ isnull(CurrentReq.value,0)";
@@ -80,7 +80,7 @@ select  Selected = 0
 		, [orderID] = q.ID
         , OrderQty = sum(q.qty)  
         , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) {tmpcurrentReq}
-        , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value))
+        , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value {tmpcurrentReq}) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value {tmpcurrentReq}))
 		, o.SewInLIne
 		, o.SciDelivery
 		, [ArtworkID] = case when oa.ArtworkID is null then '{dr_artworkReq["artworktypeid"]}' 
