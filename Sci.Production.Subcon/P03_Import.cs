@@ -235,7 +235,7 @@ where ArtworkTypeID = '{0}'", strArtworkType), null))
         private string getDataSubconP03(int getData, Dictionary<string, string> dictionaryFilte, bool IntoOut)
         {
             StringBuilder strReturn = new StringBuilder("");
-            string strIntoOut = IntoOut ? "and APD.Farmin > APD.Farmout" : "and APD.PoQty > APD.Farmout";
+            //string strIntoOut = IntoOut ? "and APD.Farmin > APD.Farmout" : "and APD.PoQty > APD.Farmout";
             switch (getData)
             {
                 case MasterData:
@@ -255,8 +255,9 @@ left join Bundle_Detail BD		on	BD.BundleNo = BIO.BundleNo
 left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on  APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
+                                    and APD.PatternDesc = BD.PatternDesc
 									--若為[Subcon][P04]呼叫，則改為Farmin
-									{2}
+									and APD.PoQty > APD.Farmout
 left join ArtworkPO AP			on	AP.ID = APD.ID
 left join Orders O				on	O.ID = B.Orderid and o.MDivisionID  = b.MDivisionID 
 where	BIO.SubProcessId = @SubProcessID
@@ -269,7 +270,7 @@ where	BIO.SubProcessId = @SubProcessID
 		--@ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
 		and AP.Status = 'Approved'
-		and AP.Closed = 0 
+		--and AP.Closed = 0 
         
 
 select t.*
@@ -289,8 +290,7 @@ order by t.OutGoing
 
 drop table #tmp_BundleInOut
 ", dictionaryFilte["FarmDate"]
- , dictionaryFilte["SPnum"]
- ,strIntoOut));
+ , dictionaryFilte["SPnum"]));
                     #endregion
                     break;
                 case DetailData:
@@ -316,8 +316,9 @@ left join Bundle_Detail BD		on	BD.BundleNo = BIO.BundleNo
 left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on	APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
+                                    and APD.PatternDesc = BD.PatternDesc
                                     --若為[Subcon][P04]呼叫，則改為Farmin 
-									{2}
+									and APD.PoQty > APD.Farmout
 left join ArtworkPO AP			on AP.ID = APD.ID
 where	BIO.SubProcessId = @SubProcessID
         --Farm Out Datet查詢條件
@@ -332,7 +333,7 @@ where	BIO.SubProcessId = @SubProcessID
 		--畫面上ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
 		and AP.Status = 'Approved'
-		and AP.Closed = 0
+		--and AP.Closed = 0
 
 select t.*
 from #tmp_BundleInOut t
@@ -351,8 +352,7 @@ order by t.OutGoing
 
 drop table #tmp_BundleInOut
 ", dictionaryFilte["FarmDate"]
- , dictionaryFilte["SPnum"]
- , strIntoOut));
+ , dictionaryFilte["SPnum"]));
                     #endregion
                     break;
             }
@@ -362,7 +362,7 @@ drop table #tmp_BundleInOut
         private string getDataSubconP04(int getData, Dictionary<string, string> dictionaryFilte, bool IntoOut)
         {
             StringBuilder strReturn = new StringBuilder("");
-            string strIntoOut = IntoOut ? "and APD.PoQty > APD.Farmin" : "and APD.Farmout > APD.Farmin";
+            //string strIntoOut = IntoOut ? "and APD.PoQty > APD.Farmin" : "and APD.Farmout > APD.Farmin";
             switch (getData)
             {
                 case MasterData:
@@ -382,8 +382,9 @@ left join Bundle_Detail BD		on	BD.BundleNo = BIO.BundleNo
 left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on  APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
+                                    and APD.PatternDesc = BD.PatternDesc
 									--若為[Subcon][P03]呼叫，則改為Farmout 
-									{2}
+									and APD.Farmout > APD.Farmin
 left join ArtworkPO AP			on	AP.ID = APD.ID
 left join Orders O				on	O.ID = B.Orderid  and o.MDivisionID  = b.MDivisionID 
 where	BIO.SubProcessId = @SubProcessID
@@ -398,7 +399,7 @@ where	BIO.SubProcessId = @SubProcessID
 		--@ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
 		and AP.Status = 'Approved'
-		and AP.Closed = 0
+		--and AP.Closed = 0
 
 
 select t.*
@@ -419,8 +420,7 @@ order by t.InComing
 
 drop table #tmp_BundleInOut
 ", dictionaryFilte["FarmDate"]
- , dictionaryFilte["SPnum"]
- , strIntoOut));
+ , dictionaryFilte["SPnum"]));
                     #endregion
                     break;
                 case DetailData:
@@ -446,8 +446,9 @@ left join Bundle_Detail BD		on	BD.BundleNo = BIO.BundleNo
 left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on	APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
+                                    and APD.PatternDesc = BD.PatternDesc
 									--若為[Subcon][P03]呼叫，則改為Farmout 
-									{2}
+									and APD.Farmout > APD.Farmin
 left join ArtworkPO AP			on AP.ID = APD.ID
 where	BIO.SubProcessId = @SubProcessID
 		--Farm Out Datet查詢條件
@@ -462,7 +463,7 @@ where	BIO.SubProcessId = @SubProcessID
 		--畫面上ArtworkType
 		and AP.ArtworkTypeID = @ArtworkType
 		and AP.Status = 'Approved'	
-		and AP.Closed = 0
+		--and AP.Closed = 0
 
 select t.*
 from #tmp_BundleInOut t
@@ -482,8 +483,7 @@ order by t.InComing
 drop table #tmp_BundleInOut
 "
 , dictionaryFilte["FarmDate"]
-, dictionaryFilte["SPnum"]
-, strIntoOut));
+, dictionaryFilte["SPnum"]));
                     #endregion
                     break;
             }
