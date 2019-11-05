@@ -60,12 +60,6 @@ namespace Sci.Production.Subcon
 
         }
 
-        private void Detailgrid_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
-        {
-            this.DetalGridCellEditChange(e.RowIndex);
-        }
-
-
         // 新增時預設資料
         protected override void ClickNewAfter()
         {

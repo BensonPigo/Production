@@ -52,6 +52,8 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
+            this.labelNoQuoteHint = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreateFromSubProcessData)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -164,6 +166,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.labelNoQuoteHintColor);
+            this.groupBox1.Controls.Add(this.labelNoQuoteHint);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.labelArtworkType);
             this.groupBox1.Controls.Add(this.txtartworktype_ftyArtworkType);
@@ -323,6 +327,24 @@
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
+            // labelNoQuoteHintColor
+            // 
+            this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
+            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(10, 81);
+            this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
+            this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
+            this.labelNoQuoteHintColor.TabIndex = 16;
+            // 
+            // labelNoQuoteHint
+            // 
+            this.labelNoQuoteHint.BackColor = System.Drawing.Color.Transparent;
+            this.labelNoQuoteHint.Location = new System.Drawing.Point(32, 80);
+            this.labelNoQuoteHint.Name = "labelNoQuoteHint";
+            this.labelNoQuoteHint.Size = new System.Drawing.Size(395, 23);
+            this.labelNoQuoteHint.TabIndex = 15;
+            this.labelNoQuoteHint.Text = "No quote record, please check with Planning Team";
+            this.labelNoQuoteHint.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P01_BatchCreate
             // 
             this.ClientSize = new System.Drawing.Size(1024, 541);
@@ -368,5 +390,7 @@
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
+        private Win.UI.Label labelNoQuoteHintColor;
+        private Win.UI.Label labelNoQuoteHint;
     }
 }

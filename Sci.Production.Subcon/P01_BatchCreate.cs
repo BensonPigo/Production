@@ -48,12 +48,6 @@ namespace Sci.Production.Subcon
             dateIssueDate.Value = DateTime.Today;
             dateDelivery.Value = DateTime.Today;
 
-            this.gridBatchCreateFromSubProcessData.RowPostPaint += GridBatchCreateFromSubProcessData_RowPostPaint;
-        }
-
-        private void GridBatchCreateFromSubProcessData_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
-        {
-            this.DetalGridCellEditChange(e.RowIndex);
         }
 
         //Find Now Button
@@ -61,6 +55,11 @@ namespace Sci.Production.Subcon
         {
             this.FindData(true);
             this.gridBatchCreateFromSubProcessData.AutoResizeColumns();
+
+            foreach (DataGridViewRow dr in this.gridBatchCreateFromSubProcessData.Rows)
+            {
+                this.DetalGridCellEditChange(dr.Index);
+            }
         }
 
         private void FindData(bool showNoDataMsg)
@@ -212,7 +211,7 @@ namespace Sci.Production.Subcon
                         dr["message"] = "Unit price = 0 or Price not approved";
                     }
                     MyUtility.Msg.WarningBox("Unit Price can't be zero or empty or Price still not approved", "Warning");
-                    gridBatchCreateFromSubProcessData.Sort(gridBatchCreateFromSubProcessData.Columns[17], ListSortDirection.Descending);
+                    gridBatchCreateFromSubProcessData.Sort(gridBatchCreateFromSubProcessData.Columns[16], ListSortDirection.Descending);
                     return;
                 }
             }
@@ -533,7 +532,7 @@ namespace Sci.Production.Subcon
         {
             string SqlCmd;
             SqlCmd = string.Format(@"
-SELECT 	Selected = 0 
+SELECT distinct	Selected = 0 
 		, orders.FTYGroup
 		, orderid = Orders.ID
 		, article = rtrim(v.article) 
@@ -557,6 +556,8 @@ SELECT 	Selected = 0
         , IsArtwork = 1
 		, [ArtworkReq_DetailUkey] = ard.Ukey
 		, [ArtworkReqID] = ar.ID
+        , Orders.Category
+into    #quoteDetail
 FROM Orders WITH (NOLOCK) 
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join ArtworkType awt WITH (NOLOCK) on awt.ID like '{1}%'
@@ -573,7 +574,7 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = orders.StyleUkey and vsa
 														vsa.PatternDesc = v.PatternDesc 
 left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.LocalSuppID = ar.LocalSuppID  and sao.Price > 0  and sao.PriceApv = 'Y'
 left join LocalSupp ls with (nolock) on ls.id = ar.LocalSuppID
-outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), v.Cost,sao.Price))unitprice
+outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), v.Cost,sao.Price)) unitprice
 outer apply (
     select value = 
         case when ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1) then v.Cost
@@ -587,9 +588,6 @@ WHERE 	 orders.IsForecast = 0
 		AND factory.mdivisionid = '{0}'
 		AND factory.IsProduceFty = 1
         AND orders.Category in ('S','B')
-		--↓(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1)), ISP20190803增加IsSintexSubcon狀況
-		--↓或是sao.Ukey is not null, 原本存在 View_Style_Artwork, Style_Artwork_Quot
-		and ((ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1)) or sao.Ukey is not null)
 		", Sci.Env.User.Keyword, artworktype);
 
             if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
@@ -597,11 +595,45 @@ WHERE 	 orders.IsForecast = 0
             if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format("and  Orders.SciDelivery >= '{0}' ", sciDelivery_b); }
             if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", sciDelivery_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
+
             SqlCmd += @"
-group by 	orders.FTYGroup, orders.ID, v.article, Orders.Styleid, Orders.SeasonID
-			, Orders.OrderTypeId, Orders.SciDelivery
-			, ar.LocalSuppID, Orders.SewInLine, sao.PriceApv 
-			, ard.ArtworkID, ard.PatternCode, ard.PatternDesc, cost.value, ar.ArtworkTypeID, v.qty,unitprice.value, ard.Ukey, ar.ID,ard.Stitch,ard.QtyGarment,ard.ReqQty";
+--將報價相同的Article資料合併
+select distinct
+        Selected = 0 
+		, FTYGroup
+		, orderid
+		, Styleid
+		, ordertypeid
+		, SeasonID
+		, SciDelivery
+		, ArtworkTypeID
+		, ArtworkID  
+		, PatternCode
+		, PatternDesc
+		, LocalSuppID 
+        , Cost
+		, costStitch
+		, stitch
+		, unitprice
+		, qtygarment
+		, poqty
+		, PriceApv 
+		, message
+        , IsArtwork
+		, ArtworkReq_DetailUkey
+		, ArtworkReqID
+        , [Article] = (SELECT Stuff((select concat( ',',Article)   
+                            from #quoteDetail 
+                            where   orderid = main.orderid and 
+                                    ArtworkID = main.ArtworkID and
+                                    PatternCode = main.PatternCode and 
+                                    PatternDesc = main.PatternDesc and
+                                    unitprice = main.unitprice FOR XML PATH('')),1,1,'') )
+        , Category
+from #quoteDetail main
+
+";
+
 
             return SqlCmd;
         }
@@ -638,19 +670,20 @@ SELECT 	Selected = 0
         , IsArtwork = 0
 		, [ArtworkReq_DetailUkey] = ard.Ukey
 		, [ArtworkReqID] = ar.ID
+        , Orders.Category
 FROM Order_TmsCost WITH (NOLOCK) 
 inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 inner join ArtworkReq_Detail ard with (nolock) on ard.OrderId = Orders.ID and ard.ArtworkPOID = ''
-inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = Order_TmsCost.ArtworkTypeID  and ar.Status = 'Approved'
+inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = '{2}'  and ar.Status = 'Approved'
 WHERE 	factory.mdivisionid = '{1}' 
 		and factory.IsProduceFty = 1
 		and orders.IsForecast = 0
 		and orders.Junk = 0
 		and Order_TmsCost.localsuppid !=''		
         --and Orders.PulloutComplete = 0
-		", poType, Sci.Env.User.Keyword);
+		", poType, Sci.Env.User.Keyword, artworktype);
             SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
             switch (poType)
             {
@@ -672,11 +705,7 @@ WHERE 	factory.mdivisionid = '{1}'
             if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format("and  Orders.SciDelivery >= '{0}' ", sciDelivery_b); }
             if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", sciDelivery_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
-            SqlCmd += @" 
-group by	orders.FTYGroup, Order_TmsCost.ID, Orders.Styleid, Orders.SeasonID
-			, Orders.OrderTypeId, Orders.SciDelivery, ar.ArtworkTypeID
-			, Order_TmsCost.LocalSuppID, Orders.SewInLine, Order_TmsCost.ApvDate
-			, Order_TmsCost.Price,ard.Ukey,ar.ID,ard.PatternCode ,ard.PatternDesc ,ard.stitch, ard.QtyGarment,ard.ArtworkID,ard.ReqQty ";
+
             #endregion
 
             return SqlCmd;
@@ -686,20 +715,21 @@ group by	orders.FTYGroup, Order_TmsCost.ID, Orders.Styleid, Orders.SeasonID
         {
 
             #region 檢查Qty欄位是否可編輯
-            string spNo = this.gridBatchCreateFromSubProcessData.GetDataRow(index)["orderid"].ToString();
+            string orderCategory = this.gridBatchCreateFromSubProcessData.GetDataRow(index)["Category"].ToString();
 
-            string sqlCheckSampleOrder = $@"
-select 1
-from orders with (nolock)
-where id = '{spNo}' and Category = 'S'
-";
-            bool isSampleOrder = MyUtility.Check.Seek(sqlCheckSampleOrder);
-
-            if (!isSampleOrder && this.isNeedPlanningB03Quote)
+            if (orderCategory != "S" && this.isNeedPlanningB03Quote)
             {
                 this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].ReadOnly = true;
                 this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.ForeColor = Color.Black;
                 this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.BackColor = Color.White; //Unit Price
+
+                decimal unitPrice = (decimal)this.gridBatchCreateFromSubProcessData.GetDataRow(index)["unitprice"];
+                if (unitPrice == 0)
+                {
+                    this.gridBatchCreateFromSubProcessData.Rows[index].Cells["Selected"].ReadOnly = true;
+                    this.gridBatchCreateFromSubProcessData.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(229, 108, 126);
+                    this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.BackColor = Color.FromArgb(229, 108, 126); //Unit Price
+                }
             }
             else
             {

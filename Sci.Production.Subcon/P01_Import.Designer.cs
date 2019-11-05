@@ -35,6 +35,7 @@
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.labelNoQuoteHint = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
@@ -45,6 +46,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -108,6 +110,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelNoQuoteHintColor);
+            this.groupBox2.Controls.Add(this.labelNoQuoteHint);
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -116,6 +120,16 @@
             this.groupBox2.Size = new System.Drawing.Size(936, 53);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
+            // 
+            // labelNoQuoteHint
+            // 
+            this.labelNoQuoteHint.BackColor = System.Drawing.Color.Transparent;
+            this.labelNoQuoteHint.Location = new System.Drawing.Point(45, 18);
+            this.labelNoQuoteHint.Name = "labelNoQuoteHint";
+            this.labelNoQuoteHint.Size = new System.Drawing.Size(395, 23);
+            this.labelNoQuoteHint.TabIndex = 3;
+            this.labelNoQuoteHint.Text = "No quote record, please check with Planning Team";
+            this.labelNoQuoteHint.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // groupBox1
             // 
@@ -247,6 +261,14 @@
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
             // 
+            // labelNoQuoteHintColor
+            // 
+            this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
+            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(23, 19);
+            this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
+            this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
+            this.labelNoQuoteHintColor.TabIndex = 4;
+            // 
             // P01_Import
             // 
             this.ClientSize = new System.Drawing.Size(936, 530);
@@ -285,5 +307,7 @@
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
+        private Win.UI.Label labelNoQuoteHint;
+        private Win.UI.Label labelNoQuoteHintColor;
     }
 }
