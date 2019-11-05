@@ -442,7 +442,7 @@ outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
-		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{artworktype}')
+		and a.ArtworkTypeID = '{artworktype}'
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{artworktype}',oa.ArtworkID)
@@ -452,7 +452,7 @@ outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{artworktype}')
+		and a.ArtworkTypeID = '{artworktype}'
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{artworktype}',oa.ArtworkID)

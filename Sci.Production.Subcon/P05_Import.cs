@@ -86,8 +86,8 @@ select  Selected = 0
 		, [ArtworkID] = case when oa.ArtworkID is null then '{dr_artworkReq["artworktypeid"]}' 
                         else oa.ArtworkID end 
 		, stitch = 1
-		, oa.PatternCode
-		, oa.PatternDesc
+		, PatternCode = isnull(oa.PatternCode,'')
+		, PatternDesc = isnull(oa.PatternDesc,'')
 		, [qtygarment] = 1
         , o.StyleID
 		, o.POID
@@ -109,8 +109,9 @@ outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
-		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
-		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+		and a.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
+		and OrderID = o.ID 
+        and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{dr_artworkReq["artworktypeid"]}' ,oa.ArtworkID)
         and a.id != '{dr_artworkReq["id"]}'
@@ -120,7 +121,7 @@ outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{dr_artworkReq["artworktypeid"]}')
+		and a.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{dr_artworkReq["artworktypeid"]}' ,oa.ArtworkID)
@@ -241,14 +242,15 @@ where id ='{dr_artworkReq["artworktypeid"]}'
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and PatternDesc = '{tmp["PatternDesc"].ToString()}'");
+                    //DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and PatternDesc = '{tmp["PatternDesc"].ToString()}'");
+                    DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"]}' and ArtworkId = '{tmp["ArtworkId"]}' and patterncode = '{tmp["patterncode"]}' and PatternDesc = '{tmp["PatternDesc"]}'");
                     decimal exceedQty = MyUtility.Convert.GetDecimal(tmp["AccReqQty"]) + MyUtility.Convert.GetDecimal(tmp["ReqQty"]) - MyUtility.Convert.GetDecimal(tmp["OrderQty"]);
 
                     decimal finalExceedQty = exceedQty < 0 ? 0 : exceedQty;
 
                     if (findrow.Length > 0)
                     {
-                        findrow[0]["ExceedQty"] = (exceedQty - (decimal)findrow[0]["ReqQty"]) < 0 ? 0 : (exceedQty - (decimal)findrow[0]["ReqQty"]);
+                        findrow[0]["ExceedQty"] = finalExceedQty;//(exceedQty - (decimal)findrow[0]["ReqQty"]) < 0 ? 0 : (exceedQty - (decimal)findrow[0]["ReqQty"]);
                         findrow[0]["ReqQty"] = tmp["ReqQty"];
                         findrow[0]["qtygarment"] = 1;
                     }

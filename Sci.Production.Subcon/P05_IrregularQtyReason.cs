@@ -257,20 +257,21 @@ from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 inner join order_qty oq WITH (NOLOCK) on oq.id = o.ID
 left join View_Order_Artworks voa on oq.Article = voa.Article
-and voa.id=o.ID and voa.SizeCode = oq.SizeCode
+    and voa.id=o.ID and voa.SizeCode = oq.SizeCode and voa.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 inner join #tmp s  on s.OrderID = o.ID 
-	and isnull(voa.ArtworkID,ot.ArtworkTypeID) = s.ArtworkID
+	and isnull(voa.ArtworkID,'{_masterData["ArtworkTypeID"]}') = s.ArtworkID
 	and isnull(voa.PatternCode,'') = isnull(s.PatternCode,'')
 	and isnull(voa.PatternDesc,'') = isnull(s.PatternDesc,'')
 outer apply(
 	select value = ISNULL(sum(PoQty),0)
     from ArtworkPO_Detail ad, ArtworkPO a
 	where ad.ID = a.ID
-    and OrderID = o.ID and ad.PatternCode= isnull(voa.PatternCode,'')
+    and OrderID = o.ID 
+    and ad.PatternCode = isnull(voa.PatternCode,'')
 	and ad.PatternDesc = isnull(voa.PatternDesc,'') 
-    and ad.ArtworkID = iif(voa.ArtworkID is null,ot.ArtworkTypeID,voa.ArtworkID)
+    and ad.ArtworkID = iif(voa.ArtworkID is null,'{_masterData["ArtworkTypeID"]}',voa.ArtworkID)
 	and ad.ArtworkReqID=''
-	and a.ArtworkTypeID = ot.ArtworkTypeID
+	and a.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 ) PoQty
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
@@ -278,7 +279,7 @@ outer apply(
 	where ad.ID = a.ID
 	and OrderID = o.ID and ad.PatternCode= isnull(voa.PatternCode,'')
 	and ad.PatternDesc = isnull(voa.PatternDesc,'') 
-    and ad.ArtworkID = iif(voa.ArtworkID is null,ot.ArtworkTypeID,voa.ArtworkID)
+    and ad.ArtworkID = iif(voa.ArtworkID is null,'{_masterData["ArtworkTypeID"]}',voa.ArtworkID)
 	and ad.id !=  '{_ArtWorkReq_ID}'
 	and a.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
     and a.status != 'Closed' and ad.ArtworkPOID =''

@@ -277,7 +277,7 @@ and o.Junk=0
 and o.id = '{dr["OrderID"]}'
 and isnull(oa.PatternCode,'') = '{dr["PatternCode"]}'
 and isnull(oa.PatternDesc,'') = '{dr["PatternDesc"]}'
-and isnull(oa.ArtworkID,ot.ArtworkTypeID) = '{dr["ArtworkId"]}'
+and isnull(oa.ArtworkID,ot.ArtworkTypeID) like '{dr["ArtworkId"]}%'
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 group by ReqQty.value,PoQty.value";
                     DataRow drQty;                    
