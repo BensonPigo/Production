@@ -385,7 +385,7 @@ select  Selected = 0
 from ArtworkReq ar WITH (NOLOCK) 
 inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID and ard.ArtworkPOID = ''
 inner join orders o WITH (NOLOCK) on ard.OrderID = o.ID
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.ArtworkTypeID = ar.ArtworkTypeID
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.ArtworkTypeID like ar.ArtworkTypeID + '%'
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select IssueQty = ISNULL(sum(PoQty),0)
@@ -446,8 +446,8 @@ select distinct  Selected = 0
         , [Article] = (SELECT Stuff((select concat( ',',Article)   from Order_Article with (nolock) where ID = o.ID FOR XML PATH('')),1,1,'') )
         , o.Category
 from  orders o WITH (NOLOCK)
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID 
-inner join ArtworkReq ar WITH (NOLOCK) on ar.ArtworkTypeID = ot.ArtworkTypeID  and ar.Status = 'Approved'
+inner join ArtworkReq ar WITH (NOLOCK) on ar.Status = 'Approved'
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.ArtworkTypeID like ar.ArtworkTypeID + '%'
 inner join ArtworkReq_Detail ard with (nolock) on   ard.ID = ar.ID  and
                                                     ard.OrderId = o.ID and 
                                                     ard.ArtworkPOID = ''
@@ -466,7 +466,7 @@ outer apply (
 ) IssueQty
 where f.IsProduceFty=1
 and o.category  in ('B','S')
-and o.MDivisionID='{0}' and ot.ArtworkTypeID like '{1}%' and ot.LocalSuppId = '{2}' and o.Junk=0
+and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and ot.LocalSuppId = '{2}' and o.Junk=0
 and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))
 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
 

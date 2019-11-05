@@ -671,13 +671,13 @@ SELECT 	Selected = 0
 		, [ArtworkReq_DetailUkey] = ard.Ukey
 		, [ArtworkReqID] = ar.ID
         , Orders.Category
-FROM Order_TmsCost WITH (NOLOCK) 
+FROM ArtworkReq_Detail ard WITH (NOLOCK) 
+inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = '{2}'  and ar.Status = 'Approved'
+inner join Order_TmsCost WITH (NOLOCK) on ard.OrderID = Order_TmsCost.ID and Order_TmsCost.ArtworkTypeID like ar.ArtworkTypeID + '%'
 inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
-inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
-inner join ArtworkReq_Detail ard with (nolock) on ard.OrderId = Orders.ID and ard.ArtworkPOID = ''
-inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = '{2}'  and ar.Status = 'Approved'
-WHERE 	factory.mdivisionid = '{1}' 
+WHERE 	ard.ArtworkPOID = '' and
+        factory.mdivisionid = '{1}' 
 		and factory.IsProduceFty = 1
 		and orders.IsForecast = 0
 		and orders.Junk = 0
@@ -699,7 +699,7 @@ WHERE 	factory.mdivisionid = '{1}'
         and orders.Category in ('S','B') ";
                     break;
             }
-            if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID like '{0}%'", artworktype); }
+            if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and ar.ArtworkTypeID = '{0}'", artworktype); }
             if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
             if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
             if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format("and  Orders.SciDelivery >= '{0}' ", sciDelivery_b); }
