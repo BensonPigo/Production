@@ -214,21 +214,7 @@ namespace Sci.Production.Subcon
                 sp_artworktype.Value = artworktype;
                 cmds.Add(sp_artworktype);
             }
-
-            if (!MyUtility.Check.Empty(mdivision))
-            {
-                sqlCmd.Append(" and a.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
-                cmds.Add(sp_mdivision);
-            }
-
-            if (!MyUtility.Check.Empty(factory))
-            {
-                sqlCmd.Append(" and a.factoryid = @factory");
-                sp_factory.Value = factory;
-                cmds.Add(sp_factory);
-            }
-
+            
             #endregion
 
             sqlCmd.Append(@"
@@ -484,6 +470,21 @@ namespace Sci.Production.Subcon
                 sqlCmd.Append(" and styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
+            }
+
+
+            if (!MyUtility.Check.Empty(mdivision))
+            {
+                sqlCmd.Append(" and aa.mdivisionid = @MDivision");
+                sp_mdivision.Value = mdivision;
+                cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and aa.factoryid = @factory");
+                sp_factory.Value = factory;
+                cmds.Add(sp_factory);
             }
 
             //ORDER BY

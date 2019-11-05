@@ -18,6 +18,8 @@
     [Combo] BIT NOT NULL DEFAULT ('0'), 
     [PrintDate] DATETIME NULL, 
     [PrintName] VARCHAR(10) CONSTRAINT [DF_Issue_PrintName] DEFAULT ('') NULL,
+    [ToSisterFty] BIT NOT NULL DEFAULT ((0)), 
+    [ToFactory] VARCHAR(8) NULL, 
     CONSTRAINT [PK_Issue] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -89,3 +91,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'記錄這項物料是否是要給姊妹場的',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Issue',
+    @level2type = N'COLUMN',
+    @level2name = N'ToSisterFty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'發給姊妹廠的哪間工廠',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Issue',
+    @level2type = N'COLUMN',
+    @level2name = N'ToFactory'

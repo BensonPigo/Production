@@ -74,6 +74,7 @@ where ID = '{0}'"
         // Context Menu選擇Edit This Record's Detail
         private void EditThisDetail()
         {
+            if (this.CurrentDetailData == null) return;
             Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(true, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Edit");
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
@@ -215,11 +216,11 @@ where ID = '{0}'"
                 MyUtility.Msg.WarningBox("<Article / Colorway> can not be empty.");
                 return false;
             }
-            if (MyUtility.Check.Empty(this.CurrentMaintain["T1Subcon"]))
-            {
-                MyUtility.Msg.WarningBox("<T1/SubconName> can not be empty.");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(this.CurrentMaintain["T1Subcon"]))
+            //{
+            //    MyUtility.Msg.WarningBox("<T1/SubconName> can not be empty.");
+            //    return false;
+            //}
             #endregion
 
             #region 檢查欄位正確性

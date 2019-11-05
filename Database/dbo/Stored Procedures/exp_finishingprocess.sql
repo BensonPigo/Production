@@ -26,6 +26,7 @@ BEGIN
 	[CmdTime]			[datetime] NOT NULL,
 	[SunriseUpdated]	[bit] NOT NULL DEFAULT ((0)),
 	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
+	[CustPONo]			[varchar](30) NULL
  CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -296,7 +297,7 @@ USING(
 	SELECT id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
 	,[SetQty] = (select count(1) cnt from Production.dbo.Style_Location where o.StyleUkey=StyleUkey)
 	,[Location] = sl.Location , o.PulloutComplete, o.Junk,[CmdTime] = GETDATE()
-	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0, [CustPONo]
 	FROM Production.dbo.Orders o
 	outer apply(	
 	select Location = STUFF((
@@ -327,14 +328,15 @@ UPDATE SET
 	t.Junk = s.Junk,
 	t.CmdTime = GetDate(),
 	t.SunriseUpdated = s.SunriseUpdated,
-	t.GenSongUpdated = s.GenSongUpdated
+	t.GenSongUpdated = s.GenSongUpdated,
+	t.CustPONo = s.CustPONo
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  id,   BrandID,   ProgramID,   StyleID,   SeasonID,   ProjectID,   Category,   OrderTypeID
 	,  Dest,   CustCDID,   StyleUnit,   SetQty,   Location,   PulloutComplete,   Junk
-	,  CmdTime,   SunriseUpdated,   GenSongUpdated) 
+	,  CmdTime,   SunriseUpdated,   GenSongUpdated, CustPONo) 
 VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Category, s.OrderTypeID
 	,s.Dest, s.CustCDID, s.StyleUnit, s.SetQty, s.Location, s.PulloutComplete, s.Junk
-	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated)	;
+	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo)	;
 
 --02. 轉出區間 [Production].[dbo].[Order_QtyShip].AddDate or EditDate= 今天
 MERGE Order_QtyShip AS T

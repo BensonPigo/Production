@@ -39,8 +39,20 @@ namespace Sci.Production.Quality
                 "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
                 "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
                 "c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle,c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle,d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle");
+                "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle,d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
+                "e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
+                "f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
+                "g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry),g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)," +
+                "h. 10 continuous washes at 30 degree on sensitive setting followed by line dry,h. 10 continuous washes at 30 degree on sensitive setting followed by line dry");
 
+            string selectCommand = "select '' ID, '' Name union all select ID, Name from DropdownList where type = 'PMS_MockupWash_Range'";
+
+            Ict.DualResult returnResult;
+            DataTable dt = new DataTable();
+            if (returnResult = DBProxy.Current.Select(null, selectCommand, null, out dt))
+            {
+                MyUtility.Tool.SetupCombox(this.comboBoxRange, 2, dt);
+            } 
             this.comboTestingMethod.DrawMode = DrawMode.OwnerDrawVariable;
             this.comboTestingMethod.DrawItem += new DrawItemEventHandler(comboBox2_DrawItem);
             this.comboTestingMethod.MeasureItem += new MeasureItemEventHandler(comboBox2_MeasureItem);
@@ -155,7 +167,11 @@ namespace Sci.Production.Quality
                 if (TestMethod != @"a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" &&
                     TestMethod != @"b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" &&
                     TestMethod != @"c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle" &&
-                    TestMethod != @"d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle"
+                    TestMethod != @"d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle" &&
+                    TestMethod != @"e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" &&
+                    TestMethod != @"f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" &&
+                    TestMethod != @"g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)" &&
+                    TestMethod != @"h. 10 continuous washes at 30 degree on sensitive setting followed by line dry"
                     )
                 {
                     this.txtOther.Text = Detaildr["TestingMethod"].ToString();
@@ -713,6 +729,38 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             {
                 this.txtOther.Visible = false;
                 this.comboTestingMethod.Visible = true;
+            }
+        }
+
+        private void ComboBoxRange_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxRange.SelectedItem == null) return;
+            switch (this.comboBoxRange.SelectedIndex)
+            {
+                case 1:
+                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,                        
+                        "e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle");
+                    break;
+                case 2:
+                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,
+                        "f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle");
+                    break;
+                case 3:
+                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,
+                        "g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry),g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)," +
+                        "h. 10 continuous washes at 30 degree on sensitive setting followed by line dry,h. 10 continuous washes at 30 degree on sensitive setting followed by line dry");
+                    break;
+                default:
+                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,
+                        "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
+                        "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
+                        "c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle,c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
+                        "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle,d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
+                        "e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
+                        "f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
+                        "g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry),g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)," +
+                        "h. 10 continuous washes at 30 degree on sensitive setting followed by line dry,h. 10 continuous washes at 30 degree on sensitive setting followed by line dry");
+                    break;
             }
         }
     }

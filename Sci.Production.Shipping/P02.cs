@@ -21,6 +21,7 @@ namespace Sci.Production.Shipping
     {
         // 宣告Context Menu Item
         private ToolStripMenuItem focpl;
+        private ToolStripMenuItem samplepl;
         private ToolStripMenuItem purchase;
         private ToolStripMenuItem poitem;
         private ToolStripMenuItem newitem;
@@ -71,6 +72,7 @@ namespace Sci.Production.Shipping
 
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from FOC PL# (Garment FOC)", onclick: (s, e) => this.ImportFromFOCPL()).Get(out this.focpl);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Sample PL#", onclick: (s, e) => this.ImportFromSamplePL()).Get(out this.samplepl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Purchase (Material)", onclick: (s, e) => this.ImportFromPurchase()).Get(out this.purchase);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add by PO# item (Garment Chargeable)", onclick: (s, e) => this.AddByPOItem()).Get(out this.poitem);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
@@ -87,6 +89,7 @@ namespace Sci.Production.Shipping
         private void SetContextMenuStatus(bool status)
         {
             this.focpl.Enabled = status;
+            this.samplepl.Enabled = status; 
             this.purchase.Enabled = status;
             this.poitem.Enabled = status;
             this.newitem.Enabled = status;
@@ -132,7 +135,19 @@ namespace Sci.Production.Shipping
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+        }
+
+        // Context Menu選擇Import from FOC PL# (Garment FOC)
+        private void ImportFromSamplePL()
+        {
+            Sci.Production.Shipping.P02_ImportFromSamplePackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromSamplePackingList(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
+            callFOCPLForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
@@ -144,7 +159,7 @@ namespace Sci.Production.Shipping
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callPurchaseForm.ShowDialog(this);
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
@@ -159,7 +174,7 @@ namespace Sci.Production.Shipping
             callPOItemForm.ShowDialog(this);
 
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
@@ -173,7 +188,7 @@ namespace Sci.Production.Shipping
             callNewItemForm.SetInsert(dr);
             callNewItemForm.ShowDialog(this);
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
@@ -279,7 +294,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
             DBProxy.Current.Execute(null, sqlcmd);
             #endregion
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             DataRow[] after_row = ((DataTable)this.detailgridbs.DataSource).Select(string.Format(" OrderId = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Category = '{3}' ", before_orderid, before_seq1, before_seq2, before_category));
             if (after_row.Length == 0)
@@ -392,7 +407,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             #endregion
 
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
         }
 
         // Context Menu選擇Print
@@ -470,7 +485,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                 }
             }
 
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.displayCarrier.Value = MyUtility.GetValue.Lookup(string.Format("select c.SuppID + '-' + s.AbbEN from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["CarrierID"])));
             if (MyUtility.Check.Empty(this.CurrentMaintain["StatusUpdateDate"]))
             {
@@ -523,43 +538,53 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
-select ed.*
-	,case when ed.Category in ('4','9') then ed.MtlDesc else ed.Description end nDescription
-	,AirPPno=iif(isnull(ed.PackingListID,'') = '',ed.DutyNo , airpp.AirPPno)
-from
-(
-	select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
-		dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
-		isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
-		isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
-		isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
-		isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Leader)),ed.Leader) as LeaderName,
-		CASE ed.Category
-			WHEN '1' THEN N'Sample'
-			WHEN '2' THEN N'SMS'
-			WHEN '3' THEN N'Bulk'
-			WHEN '4' THEN N'Material'
-			WHEN '5' THEN N'Dox'
-			WHEN '6' THEN N'Machine/Parts'
-			WHEN '7' THEN N'Mock Up'
-			WHEN '8' THEN N'Other Sample'
-			WHEN '9' THEN N'Other Material'
-			ELSE N''
-		END as CategoryName
-	from Express_Detail ed WITH (NOLOCK) 
-	left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
-	left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
-	left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
-	where ed.ID = '{0}'
-)ed
-outer apply(
-	select top 1 AirPPno = AirPP.ID
-	from PackingList_Detail pld with(nolock)
-	inner join AirPP with(nolock) on AirPP.OrderID = pld.OrderID and AirPP.OrderShipmodeSeq = pld.OrderShipmodeSeq
-	where pld.id = ed.PackingListID and pld.OrderID = ed.OrderID
-	order by AirPP.AddDate desc
-)airpp
-Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
+SELECT OrderNumber = ROW_NUMBER() over (order by   TRY_CONVERT (int, CTNNo )
+										    , (RIGHT (REPLICATE ('0', 10) + rtrim (ltrim (CTNNo)), 10))
+										    , DropDownListSeq
+							    )        
+      ,allData.* 
+FROM(
+    select ed.*
+	    ,case when ed.Category in ('4','9') then ed.MtlDesc else ed.Description end nDescription
+	    ,AirPPno=iif(isnull(ed.PackingListID,'') = '',ed.DutyNo , airpp.AirPPno)
+    from
+    (
+	    select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
+		    dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
+		    isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
+		    isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
+		    isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
+		    isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Leader)),ed.Leader) as LeaderName,
+		    CASE ed.Category
+			    WHEN '1' THEN N'Sample'
+			    WHEN '2' THEN N'SMS'
+			    WHEN '3' THEN N'Bulk'
+			    WHEN '4' THEN N'Material'
+			    WHEN '5' THEN N'Dox'
+			    WHEN '6' THEN N'Machine/Parts'
+			    WHEN '7' THEN N'Mock Up'
+			    WHEN '8' THEN N'Other Sample'
+			    WHEN '9' THEN N'Other Material'
+			    ELSE N''
+		    END as CategoryName
+		    ,[DropDownListSeq]=dp.Seq
+			,[CategoryNameFromDD]=dp.Description
+	    from Express_Detail ed WITH (NOLOCK) 
+	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
+	    left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
+	    left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
+        LEFT JOIN DropDownList dp ON dp.Type='Pms_Sort_HC_DHL_Cate' AND ed.Category = dp.ID
+	    where ed.ID = '{0}'
+    )ed
+    outer apply(
+	    select top 1 AirPPno = AirPP.ID
+	    from PackingList_Detail pld with(nolock)
+	    inner join AirPP with(nolock) on AirPP.OrderID = pld.OrderID and AirPP.OrderShipmodeSeq = pld.OrderShipmodeSeq
+	    where pld.id = ed.PackingListID and pld.OrderID = ed.OrderID
+	    order by AirPP.AddDate desc
+    )airpp
+) allData
+Order by CTNNo,Seq1,Seq2", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -609,7 +634,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(15))
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15))
                 .Text("CTNNo", header: "C/No.", width: Widths.AnsiChars(5))
-                .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 2)
+                .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 3)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(10), decimal_places: 4)
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(7), decimal_places: 2)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(5))
@@ -654,6 +679,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved")
                 {
                     this.focpl.Enabled = false;
+                    this.samplepl.Enabled = false;
                     this.purchase.Enabled = false;
                     this.poitem.Enabled = false;
                     this.newitem.Enabled = false;
@@ -847,7 +873,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             base.ClickSaveAfter();
         }
 
@@ -1372,7 +1398,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
 (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Manager"]))), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
                 callNextForm.ShowDialog(this);
                 this.RenewData();
-                this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+                this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
         }
 
         /// <inheritdoc/>

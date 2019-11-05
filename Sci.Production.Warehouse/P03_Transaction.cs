@@ -251,7 +251,9 @@ namespace Sci.Production.Warehouse
 			            when 'D' then 'P13. Issue Material by Item'
 			            when 'E' then 'P72. Transfer Inventory to Bulk (Confirm)'
 			            when 'F' then 'P75. Material Borrow cross M (Confirm)'
-			            when 'G' then 'P77. Material Return Back cross M (Request)'  end name
+			            when 'G' then 'P77. Material Return Back cross M (Request)'  
+			            when 'H' then 'P14. Issue Thread Allowance'  
+                        end name
 	            ,0 as inqty
                 , sum(Qty) released
                 ,0 as adjust, remark

@@ -95,7 +95,8 @@ t.AddDate= s.AddDate,
 t.EditName= s.EditName,
 t.EditDate= s.EditDate,
 t.DescriptionDetail = s.DescriptionDetail,
-t.PurchaseBatchQty = s.BatchQty
+t.PurchaseBatchQty = s.BatchQty,
+t.AssetTypeID = s.AssetTypeID
 
 	when not matched by target and s.type='O' then 
 		insert ( ID
@@ -118,7 +119,8 @@ t.PurchaseBatchQty = s.BatchQty
 ,EditName
 ,EditDate
 ,DescriptionDetail
-,PurchaseBatchQty	)
+,PurchaseBatchQty
+,AssetTypeID	)
 
 values(s.refno,
 s.Model,
@@ -140,7 +142,8 @@ s.AddDate,
 s.EditName,
 s.EditDate,
 s.DescriptionDetail,
-s.BatchQty
+s.BatchQty,
+s.AssetTypeID
  );
 
  
@@ -370,7 +373,7 @@ s.BatchQty
 
 		Merge Machine.dbo.MachinePO as t
 	Using (select a.*,b.MdivisionID from Trade_To_Pms.DBO.MmsPO a WITH (NOLOCK) left join Production.dbo.scifty b WITH (NOLOCK) on a.factoryid = b.id
-	 where a.factoryid in (select id from @Sayfty) and type = 'M')  as s
+	 where a.factoryid in (select id from @Sayfty) and a.type = 'M')  as s
 	on t.id=s.id
 	when matched  then
 		update set
@@ -460,12 +463,18 @@ update t
 				t.DescriptionDetail = s.DescriptionDetail,
 				t.UnitID = s.UnitID,
 				t.Delivery = s.Delivery,
-				t.SuppEstETA = s.SuppEstETA
+				t.SuppEstETA = s.SuppEstETA,
+				t.Complete = s.Complete,
+				t.ShipQty = isnull(s.ShipQty,0),
+				t.ShipFOC = isnull(s.ShipFOC,0),
+				t.ShipETA = s.ShipETA 
 		when not matched by target then
 		insert  (ID ,Seq1 ,Seq2 ,MasterGroupID ,MachineGroupID ,MachineBrandID ,Model ,Description 
-				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA)
+				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA
+				,Complete , ShipQty, ShipFOC,ShipETA)
 		values	(s.ID ,s.Seq1 ,s.Seq2 ,s.MasterGroupID ,s.MachineGroupID ,s.MachineBrandID ,s.Model ,s.Description
-				 ,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA);
+				 ,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA
+				 ,s.Complete ,s.ShipQty ,s.ShipFOC ,s.ShipETA);
 
 ------------------MachinePO_Detail_TPEAP----------------------
 	Merge	Machine.[dbo].[MachinePO_Detail_TPEAP] as t
@@ -716,4 +725,37 @@ update t
 			(s.Ukey    , s.RefNo , s.HisType 	, s.OldValue , s.NewValue 		
 			, s.Remark 	 , s.AddName , s.AddDate 		);
 	
+	------------MachinePending------------------
+	Merge Machine.dbo.MachinePending  as t
+		using Trade_To_Pms.dbo.MachinePending as s 
+		on t.id=s.id
+		when matched and t.status = 'Confirmed' then update set 
+			t.TPEComplete = s.TPEComplete
+	;
+	
+	------------MachinePending_Detail------------------
+	declare @Tdebit table(id varchar(13),MachineID varchar(16),TPEReject int)
+	Merge Machine.dbo.MachinePending_Detail  as t
+	using (
+		select md.*,m.status
+		from Trade_To_Pms.dbo.MachinePending_Detail md
+		inner join Machine.dbo.MachinePending m on m.id = md.id
+	)as s 
+	on t.id=s.id and t.seq = s.seq
+	when matched and s.status = 'Confirmed' and s.TPEApvDate is not null then update set 
+		t.TPEReject = s.TPEReject
+	output inserted.ID,inserted.MachineID,inserted.TPEReject
+	into @Tdebit
+	;
+
+	update Machine.dbo.Machine set Status = 'Pending',EstFinishRepairDate =null where ID in (select MachineID from @Tdebit where TPEReject = 0)  
+
+	update m set m.Status = 'Good'
+	from Machine.dbo.Machine m
+	where exists(select 1 from @Tdebit t where t.MachineID = m.ID and TPEReject = 1)
+
+	update md set Results = 'Reject'
+	from Machine.dbo.MachinePending_Detail md
+	where exists(select 1 from @Tdebit t where t.ID = md.ID and t.MachineID = md.MachineID and TPEReject = 1)
+
 	END

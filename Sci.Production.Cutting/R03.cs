@@ -16,7 +16,7 @@ namespace Sci.Production.Cutting
     {
         DataTable[] printData;
         string WorkOrder, factory, CuttingSP1, CuttingSP2,Style;
-        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2, EarliestBuyerDelivery1, EarliestBuyerDelivery2;
+        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2, EarliestBuyerDelivery1, EarliestBuyerDelivery2, ActCuttingDate1, ActCuttingDate2;
         DateTime? BuyerDelivery1, BuyerDelivery2, SCIDelivery1, SCIDelivery2, SewingInline1, SewingInline2;
         StringBuilder condition = new StringBuilder();
 
@@ -42,6 +42,8 @@ namespace Sci.Production.Cutting
             
             Est_CutDate1 = dateEstCutDate.Value1;
             Est_CutDate2 = dateEstCutDate.Value2;
+            ActCuttingDate1 = dateActCuttingDate.Value1;
+            ActCuttingDate2 = dateActCuttingDate.Value2;
             CuttingSP1 = txtCuttingSPStart.Text;
             CuttingSP2 = txtCuttingSPEnd.Text;
             BuyerDelivery1 = dateBuyerDelivery.Value1;
@@ -64,6 +66,7 @@ namespace Sci.Production.Cutting
                 && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) 
                 && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2)
                 && MyUtility.Check.Empty(EarliestBuyerDelivery1) && MyUtility.Check.Empty(EarliestBuyerDelivery2)
+                && MyUtility.Check.Empty(ActCuttingDate1) && MyUtility.Check.Empty(ActCuttingDate2)
                 )
             {
                 MyUtility.Msg.WarningBox("Can't all empty!!");
@@ -132,6 +135,7 @@ select
 	,--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
 	[Marker Length] = wo.MarkerLength,
 	wo.ActCuttingPerimeter,
+    o.SCIDelivery,
     o.BuyerDelivery,
 	patternUKey=p.PatternUkey,
     wo.FabricPanelCode
@@ -264,6 +268,16 @@ where 1=1
                 sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
             }
 
+            if (!MyUtility.Check.Empty(ActCuttingDate1))
+            {
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate >= cast('{0}' as date) ", Convert.ToDateTime(ActCuttingDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(ActCuttingDate2))
+            {
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate <= cast('{0}' as date) ", Convert.ToDateTime(ActCuttingDate2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(BuyerDelivery1))
             {
                 sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
@@ -344,7 +358,7 @@ select
 [M],[Factory],[PPIC Close],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
-,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,BuyerDelivery
+,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,SCIDelivery,BuyerDelivery
 from #tmp t
 --因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
 outer apply(

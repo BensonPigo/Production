@@ -10,6 +10,7 @@
     [EditDate]    DATETIME       NULL,
     [IncludeSeaShipping] BIT NOT NULL DEFAULT ((0)), 
     [NeedCreateAPP] BIT CONSTRAINT [DF_ShipMode_NeedCreateAPP] DEFAULT ((0)) NOT NULL,
+    [NeedCreateIntExpress] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ShipMode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -53,3 +54,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShipMode', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Need create International Express', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShipMode', @level2type = N'COLUMN', @level2name = N'NeedCreateIntExpress';
