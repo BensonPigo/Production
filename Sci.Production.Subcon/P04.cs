@@ -299,28 +299,28 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
                     return;
                 }
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Convert.GetInt(dr["importData"]) == 1)
+                if (string.IsNullOrEmpty(MyUtility.Convert.GetString(dr["BundleNo"])))
                 {
-                    e.IsEditable = false;
+                    e.IsEditable = true;
                 }
                 else
                 {
-                    e.IsEditable = true;
+                    e.IsEditable = false;
                 }
             };
             qty.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Convert.GetInt(dr["importData"]) == 1)
-                {
-                    e.CellStyle.ForeColor = Color.Black;
-                    e.CellStyle.BackColor = Color.White;
-                }
-                else
+                if (string.IsNullOrEmpty(MyUtility.Convert.GetString(dr["BundleNo"])))
                 {
                     e.CellStyle.ForeColor = Color.Red;
                     e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Color.Black;
+                    e.CellStyle.BackColor = Color.White;
                 }
             };
             #endregion
