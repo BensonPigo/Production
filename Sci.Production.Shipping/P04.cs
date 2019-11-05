@@ -283,7 +283,8 @@ where ed.ID = '{0}'", masterID);
                       @"select distinct ShipModeID
                             from ShareExpense WITH (NOLOCK) 
                             where (InvNo = '{0}' or WKNO = '{0}')
-                            and len(ShipModeID) > 0",
+                            and len(ShipModeID) > 0
+                            and Junk = 0 ",
                       MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 DBProxy.Current.Select(null, sqlCmd, out _dataTable);
                 if (_dataTable.Rows.Count > 0)
