@@ -138,6 +138,8 @@ namespace Sci.Production.PPIC
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_QTY", drvar["QTY"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "POID", poid);
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_CustCD", drvar["CustCD"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_SI", drvar["SI"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "Siname", string.IsNullOrEmpty(drvar["Customize2"].ToString()) ? string.Empty : drvar["Customize2"].ToString() + ":");
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate", drvar["delDate"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_ChangeMemoDate", drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
@@ -161,9 +163,10 @@ namespace Sci.Production.PPIC
                 System.Data.DataTable dt;
                 DualResult getIds = DBProxy.Current.Select(
 string.Empty,
-@"select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 
+@"select a.ID, a.FactoryID as MAKER, a.StyleID+'-'+ a.SeasonID as sty, a.QTY , a.CustCdID as CustCD, a.CustPONo as pono, a.BuyerDelivery as delDate, a.Customize1 , a.Customize2 as SI,Br.Customize2
 ,ChangeMemoDate
-from Orders WITH (NOLOCK) 
+from Orders a 
+LEFT JOIN Brand Br ON a.BrandID = Br.ID 
 where poid = @poid
 order by ID"
 , new List<SqlParameter> { new SqlParameter("poid", poid) }
@@ -192,8 +195,9 @@ order by ID"
                     sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, dt.Rows[i]["QTY"].ToString());
-
                     sxr.DicDatas.Add(sxr.VPrefix + "CustCD" + idxStr, dt.Rows[i]["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "SI" + idxStr, dt.Rows[i]["SI"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "Siname" + idxStr, string.IsNullOrEmpty(dt.Rows[i]["Customize2"].ToString()) ? string.Empty : dt.Rows[i]["Customize2"].ToString() + ":");
                     sxr.DicDatas.Add(sxr.VPrefix + "pono" + idxStr, dt.Rows[i]["pono"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "delDate" + idxStr, dt.Rows[i]["delDate"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "ChangeMemoDate" + idxStr, dt.Rows[i]["ChangeMemoDate"] == DBNull.Value ? string.Empty : dt.Rows[i]["ChangeMemoDate"]);
@@ -296,6 +300,8 @@ order by ID"
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_QTY" + idxStr, drvar["QTY"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "POID" + idxStr, drvar["SPNO"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_CustCD" + idxStr, drvar["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_SI" + idxStr, drvar["SI"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "Siname" + idxStr, string.IsNullOrEmpty(drvar["Customize2"].ToString()) ? string.Empty : drvar["Customize2"].ToString() + ":");
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_pono" + idxStr, drvar["pono"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate" + idxStr, drvar["delDate"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "sname1" + idxStr, orderComboID + "-1");
@@ -331,8 +337,8 @@ order by ID"
                     sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, drvar["MAKER"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, drvar["sty"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, drvar["QTY"].ToString());
-
                     sxr.DicDatas.Add(sxr.VPrefix + "CustCD" + idxStr, drvar["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "SIno" + idxStr, drvar["SI"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "pono" + idxStr, drvar["pono"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "CustPONo" + idxStr, drvar["pono"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "ChangeMemoDate" + idxStr, drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
@@ -460,8 +466,11 @@ SELECT MAKER=max(FactoryID)
 ,(select CustPONo from orders o where o.ID = @ID) as pono
 ,(select BuyerDelivery from orders o where o.ID = @ID) as delDate
 ,(select Customize1 from orders o where o.ID = @ID) as Customize1
+,(select Customize2 from Orders o where o.ID = @ID) AS SI
+,br.Customize2 
 ,(select ChangeMemoDate from orders o where o.ID = @ID) as ChangeMemoDate
 FROM orders a WITH (NOLOCK) 
+LEFT JOIN Brand Br ON a.BrandID = Br.ID
 OUTER APPLY(
     SELECT spno = 
     substring(
@@ -474,7 +483,7 @@ OUTER APPLY(
 ) b
 where POID = @poid 
 and OrderComboID = (select top 1 OrderComboID from Orders where id = @ID) 
-group by POID,b.spno";
+group by POID,b.spno,br.Customize2";
             }
             else
             {
@@ -488,8 +497,11 @@ SELECT
 ,(select CustPONo from Orders o where o.ID = @ID) as pono
 ,(select BuyerDelivery from Orders o where o.ID = @ID) as delDate
 ,(select Customize1 from Orders o where o.ID = @ID) as Customize1 
+,(select Customize2 from Orders o where o.ID = @ID) AS SI
+,br.Customize2 
 ,(select ChangeMemoDate from orders o where o.ID = @ID) as ChangeMemoDate
 FROM Orders a WITH (NOLOCK) 
+LEFT JOIN Brand Br ON a.BrandID = Br.ID
 OUTER APPLY(
     SELECT substring((SELECT '/'+REPLACE(ID,@poid,'') 
     FROM Trade.dbo.Orders 
@@ -497,7 +509,7 @@ OUTER APPLY(
 	order by ID FOR XML PATH('')),2,999) as spno
 ) b
 where POID = @poid 
-group by POID,b.spno";
+group by POID,b.spno,br.Customize2";
             }
 
             bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@poid", poid), new SqlParameter("@ID", id) }, out drvar, null);
