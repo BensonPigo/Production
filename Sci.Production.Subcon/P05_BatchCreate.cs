@@ -443,7 +443,8 @@ outer apply (
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
 		and a.ArtworkTypeID = '{artworktype}'
-		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+		and OrderID = o.ID 
+        and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{artworktype}',oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
@@ -453,7 +454,8 @@ outer apply (
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
 		and a.ArtworkTypeID = '{artworktype}'
-		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+		and OrderID = o.ID 
+        and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{artworktype}',oa.ArtworkID)
 		and ad.ArtworkReqID=''

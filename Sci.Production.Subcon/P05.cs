@@ -263,8 +263,9 @@ outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = isnull(ot.ArtworkTypeID,'{CurrentMaintain["ArtworktypeId"]}')
-		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
+		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}'
+		and OrderID = o.ID 
+        and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null, '{CurrentMaintain["ArtworktypeId"]}' , oa.ArtworkID)
 		and ad.ArtworkReqID=''

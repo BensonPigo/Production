@@ -286,7 +286,7 @@ outer apply(
 )ReqQty
 where not exists(
 	select 1 from #tmpDB
-	where orderID = o.ID and ot.ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
+	where orderID = o.ID and ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
 )
 and ot.ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
 group by o.FactoryID,ot.ArtworkTypeID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
