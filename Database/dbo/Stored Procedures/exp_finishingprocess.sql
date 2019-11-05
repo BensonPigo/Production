@@ -627,6 +627,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 		FROM [Production].[dbo].PackingList p 
 		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
 		INNER  JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+		WHERE s.Category='PIC'
 
 		----PicSetting = 0 表示需貼標 但沒有上傳圖片至Packing P24
 		SELECT DISTINCT 
