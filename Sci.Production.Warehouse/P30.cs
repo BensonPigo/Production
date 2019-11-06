@@ -794,87 +794,84 @@ from #tmp
         }
 
         /// <summary>
-        /// 將C倉資料寫入MDivisionPoDetail
+        /// 將C倉資料寫入MDivisionPoDetail   ISP20191578
         /// </summary>
         /// <param name="P24_IDs"></param>
         private void UpdateMDivisionPoDetail(List<string> P24_IDs)
         {
             string Update = string.Empty;
-
-            foreach (var P24_ID in P24_IDs)
+            try
             {
-                DataTable DT_SubTransfer_Detail;
-                DBProxy.Current.Select(null, $@"
+                foreach (var P24_ID in P24_IDs)
+                {
+                    DataTable DT_SubTransfer_Detail;
+                    DBProxy.Current.Select(null, $@"
 SELECT DISTINCT FromPOID,FromSeq1,FromSeq2,ToLocation
 FROM  SubTransfer s
 INNER JOIN  SubTransfer_Detail sd On s.id=sd.ID
 WHERE s.ID='{P24_ID}'
 ", out DT_SubTransfer_Detail);
 
-                foreach (DataRow item in DT_SubTransfer_Detail.Rows)
-                {
-                    string POID = item["FromPOID"].ToString();
-                    string Seq1 = item["FromSeq1"].ToString();
-                    string Seq2 = item["FromSeq2"].ToString();
-                    List<string> New_CLocationList = DT_SubTransfer_Detail.AsEnumerable().Where(o => o["FromPOID"].ToString() == POID && o["FromSeq1"].ToString() == Seq1 && o["FromSeq2"].ToString() == Seq2 && o["ToLocation"].ToString() != "")
-                        .Select(o => o["ToLocation"].ToString())
-                        .Distinct().ToList();
+                    foreach (DataRow item in DT_SubTransfer_Detail.Rows)
+                    {
+                        string POID = item["FromPOID"].ToString();
+                        string Seq1 = item["FromSeq1"].ToString();
+                        string Seq2 = item["FromSeq2"].ToString();
+                        List<string> New_CLocationList = DT_SubTransfer_Detail.AsEnumerable().Where(o => o["FromPOID"].ToString() == POID && o["FromSeq1"].ToString() == Seq1 && o["FromSeq2"].ToString() == Seq2 && o["ToLocation"].ToString() != "")
+                            .Select(o => o["ToLocation"].ToString())
+                            .Distinct().ToList();
 
-                    //從SubTransfer_Detail取出現有的Location
-                    DataTable DT_MDivisionPoDetail;
-                    DBProxy.Current.Select(null, $@"
-SELECT CLocation = ISNULL(   STUFF( (
-	SELECT ToLocations=ISNULL((
-		SELECT DISTINCT ',' +ToLocation
-		FROM SubTransfer s
-		INNER JOIN  SubTransfer_Detail sd On s.id=sd.ID
-		WHERE FromPOID='{POID}'
-		AND FromSeq1='{Seq1}' AND FromSeq2='{Seq2}'
-		AND s.Status='Confirmed' 
-		AND ( (sd.FromStockType='I' AND sd.ToStockType='O' ) OR (sd.FromStockType='B' AND sd.ToStockType='O' ) )
-		FOR XML PATH('')
-	) ,'')
-), 1, 1, '')  ,'')
+                        //從SubTransfer_Detail取出現有的Location
+                        DataTable DT_MDivisionPoDetail;
+                        DBProxy.Current.Select(null, $@"
+SELECt CLocation
+FROM MDivisionPoDetail
+WHERE POID='{POID}'
+AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 ", out DT_MDivisionPoDetail);
 
-                    List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
+                        List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").Distinct().ToList();
 
-                    List<string> Fincal = new List<string>();
+                        List<string> Fincal = new List<string>();
 
-                    foreach (var New_CLocation in New_CLocationList)
-                    {
-                        if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
+                        foreach (var New_CLocation in New_CLocationList)
                         {
-                            DB_CLocations.Add(New_CLocation);
-                        }
-                    }
-
-                    foreach (var CLocation in DB_CLocations.Distinct().ToList())
-                    {
-                        foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
-                        {
-                            if (!Fincal.Contains(a))
+                            if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
                             {
-                                Fincal.Add(a);
+                                DB_CLocations.Add(New_CLocation);
                             }
                         }
-                    }
-                    string cmd = $@"
+
+                        foreach (var CLocation in DB_CLocations.Distinct().ToList())
+                        {
+                            foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
+                            {
+                                if (!Fincal.Contains(a))
+                                {
+                                    Fincal.Add(a);
+                                }
+                            }
+                        }
+                        string cmd = $@"
 UPDATE MDivisionPoDetail
 SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
 WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
 ";
-                    Update += cmd;
+                        Update += cmd;
+                    }
+
                 }
 
+                DualResult result = DBProxy.Current.Execute(null, Update);
+                if (!result)
+                {
+                    ShowErr(result);
+                }
             }
-
-
-           DualResult result = DBProxy.Current.Execute(null, Update);
-            if (!result)
+            catch (Exception ex)
             {
-                ShowErr(result);
+                ShowErr("Update MDivisionPoDetail error.", ex);
             }
 
         }
