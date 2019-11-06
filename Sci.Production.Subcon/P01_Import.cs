@@ -208,22 +208,15 @@ namespace Sci.Production.Subcon
             {
                 bool yns = false;
                 StringBuilder ids = new StringBuilder();
+                
                 foreach (DataRow tmp in dr2)
                 {
-                    if (tmp["LocalSuppID"].ToString().ToUpper() != dr_artworkpo["localsuppid"].ToString().ToUpper())
-                    {
-                        yns = true;
-                        ids.Append(string.Format("{0},", tmp["orderid"].ToString()));
-                    }
-                }
-                if (yns)
-                {
-                    DialogResult dResult = MyUtility.Msg.QuestionBox(string.Format("{0} sub-process subcon supplier is different with {1}. Do you want to continue?", ids.ToString(), dr_artworkpo["localsuppid"].ToString().ToUpper()));
-                    if (dResult == System.Windows.Forms.DialogResult.No) return;
-                }
-                foreach (DataRow tmp in dr2)
-                {
-                    DataRow[] findrow = dt_artworkpoDetail.Select($@"orderid = '{tmp["orderid"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and cost='{tmp["Cost"]}'");
+                    DataRow[] findrow = dt_artworkpoDetail.Select($@"orderid = '{tmp["orderid"].ToString()}' and 
+ArtworkId = '{tmp["ArtworkId"].ToString()}' and 
+patterncode = '{tmp["patterncode"].ToString()}' and 
+cost='{tmp["Cost"]}' and
+ArtworkReqID = '{tmp["ArtworkReqID"]}'
+");
 
                     if (findrow.Length > 0)
                     {
@@ -291,8 +284,8 @@ inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = o.ID and
                                                     ard.PatternCode = oa.PatternCode and 
                                                     ard.PatternDesc = oa.PatternDesc and
                                                     ard.ArtworkPOID = ''
-inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = oa.ArtworkTypeID and ar.Status = 'Approved'
-left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0 and sao.LocalSuppId = '{2}'
+inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = oa.ArtworkTypeID and ar.Status = 'Approved' and ar.LocalSuppId = '{2}'
+left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0 and sao.LocalSuppId = ar.LocalSuppId
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
@@ -396,6 +389,7 @@ where
 f.IsProduceFty=1
 and o.category  in ('B','S')
 and ar.Status = 'Approved'
+and ar.LocalSuppID = '{dr_artworkpo["localsuppid"]}'
 ";
 
             strSQLCmd += string.Format(" and o.MDivisionID='{0}' and ar.ArtworkTypeID like '{1}%' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
@@ -466,7 +460,7 @@ outer apply (
 ) IssueQty
 where f.IsProduceFty=1
 and o.category  in ('B','S')
-and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and ot.LocalSuppId = '{2}' and o.Junk=0
+and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and ar.LocalSuppId = '{2}' and o.Junk=0
 and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))
 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
 
