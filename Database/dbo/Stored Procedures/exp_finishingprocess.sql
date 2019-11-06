@@ -608,12 +608,14 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 		FROM [Production].[dbo].PackingList p 
 		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
 		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
-		WHERE s.Category='PIC' AND EXISTS(
+		WHERE s.Category='PIC' 
+		AND NOT EXISTS( -- P24 沒有圖片FileName為空的
 			SELECT 1
 			FROM [FPS].[dbo].ShippingMark sm
 			INNER JOIN [FPS].[dbo].ShippingMarkPic_Detail spd ON sm.Side=spd.Side AND sm.Seq = spd.Seq
 			INNER JOIN [FPS].[dbo].[PackingList_Detail] pld ON pld.SCICtnNo=spd.SCICtnNo
 			WHERE pld.SCICtnNo=pd.SCICtnNo AND pld.OrderID=pd.OrderID AND pd.OrderShipmodeSeq=pld.OrderShipmodeSeq AND pd.Article=pld.Article AND pd.SizeCode=pld.SizeCode
+			AND spd.FileName = ''
 		)
 
 		----找不到 PicSetting = 1 表示沒有設定對應的Packing B03, 不需考慮貼標
@@ -626,7 +628,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 		INTO #tmp_NoSetting
 		FROM [Production].[dbo].PackingList p 
 		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
-		INNER  JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
 		WHERE s.Category='PIC'
 
 		----PicSetting = 0 表示需貼標 但沒有上傳圖片至Packing P24
@@ -640,11 +642,14 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 		FROM [Production].[dbo].PackingList p 
 		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
 		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
-		WHERE s.Category='PIC' AND NOT EXISTS(
+		WHERE s.Category='PIC' 
+		AND EXISTS( -- P24 有圖片FileName為空的
 			SELECT 1
-			FROM [FPS].[dbo].[PackingList_Detail] pld
-			INNER JOIN [FPS].[dbo].ShippingMarkPic_Detail spd ON pld.SCICtnNo=spd.SCICtnNo
+			FROM [FPS].[dbo].ShippingMark sm
+			INNER JOIN [FPS].[dbo].ShippingMarkPic_Detail spd ON sm.Side=spd.Side AND sm.Seq = spd.Seq
+			INNER JOIN [FPS].[dbo].[PackingList_Detail] pld ON pld.SCICtnNo=spd.SCICtnNo
 			WHERE pld.SCICtnNo=pd.SCICtnNo AND pld.OrderID=pd.OrderID AND pd.OrderShipmodeSeq=pld.OrderShipmodeSeq AND pd.Article=pld.Article AND pd.SizeCode=pld.SizeCode
+			AND spd.FileName = ''
 		)
 
 		UPDATE pd
