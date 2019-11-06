@@ -1928,7 +1928,7 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and o.SeasonID = f.SeasonID 
           and  f.BrandID = '{this.txtbrand.Text}' 
-          and GETDATE() between f.BeginDate and f.EndDate
+          and cast(GETDATE()as date) between f.BeginDate and f.EndDate
 )f1
 outer apply(
     select ShipperID 
@@ -1936,7 +1936,7 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and f.SeasonID = '' 
           and f.BrandID = '{this.txtbrand.Text}' 
-          and GETDATE() between f.BeginDate and f.EndDate
+          and cast(GETDATE()as date) between f.BeginDate and f.EndDate
 )f2
 where o.ID in ({SP.Substring(0, SP.Length - 1)})
 ";
