@@ -463,6 +463,7 @@ outer apply (
 where f.IsProduceFty=1
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
+and isnull(sao.LocalSuppId,'') != ''
 and o.Junk=0
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 		" ;
