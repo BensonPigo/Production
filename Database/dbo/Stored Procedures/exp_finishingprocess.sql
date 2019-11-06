@@ -377,6 +377,7 @@ USING(
 	,FromLeft,FromTop,[Length] = StampLength,[Width] = StampWidth
 	,[Is2Side] = 0 ,FileName
 	,[CmdTime] = GetDate()
+	,[FilePath] = (select TOP 1 ShippingMarkPath from Production.dbo.System)
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	FROM Production.dbo.ShippingMarkStamp 
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
@@ -392,12 +393,13 @@ UPDATE SET
 	t.FileName = s.FileName,
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = 0,
-	t.GenSongUpdated = 0
+	t.GenSongUpdated = 0,
+	t.[FilePath] = s.[FilePath]
 WHEN NOT MATCHED BY TARGET THEN
 INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
-		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated])
+		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[FilePath])
 Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
-		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
+		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[FilePath]);
 
 --04. 轉出區間 當AddDate or EditDate =今天
 MERGE ShippingMark AS T
