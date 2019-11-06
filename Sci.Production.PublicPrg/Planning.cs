@@ -272,13 +272,13 @@ select	Orderid
 		, PatternPanel
 		, FabricPanelCode
 		, PatternCode
-		, InQty = sum(iif(InComing is not null ,Qty,0)) / iif(IsPair=1,m,1)
-		, OutQty = sum(iif(OutGoing is not null ,Qty,0)) / iif(IsPair=1,m,1)
-		, OriInQty = sum(iif(InComing is not null ,Qty,0)) 
-		, OriOutQty = sum(iif(OutGoing is not null ,Qty,0)) 
-		, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null ,Qty,0))
-								when InOutRule = 2 then sum(iif(OutGoing is not null ,Qty,0))
-								else sum(iif(OutGoing is not null and InComing is not null ,Qty,0)) end) / iif(IsPair=1,m,1)
+		, InQty = sum(iif(InComing is not null ,cast(Qty as int),0)) / iif(IsPair=1,m,1)
+		, OutQty = sum(iif(OutGoing is not null ,cast(Qty as int),0)) / iif(IsPair=1,m,1)
+		, OriInQty = sum(iif(InComing is not null ,cast(Qty as int),0)) 
+		, OriOutQty = sum(iif(OutGoing is not null ,cast(Qty as int),0)) 
+		, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null ,cast(Qty as int),0))
+								when InOutRule = 2 then sum(iif(OutGoing is not null ,cast(Qty as int),0))
+								else sum(iif(OutGoing is not null and InComing is not null ,cast(Qty as int),0)) end) / iif(IsPair=1,m,1)
 		, num = count(1)
 		, num_In = sum(iif(InComing is not null ,1,0)) 
 		, num_Out= sum(iif(OutGoing is not null ,1,0))
