@@ -534,7 +534,15 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
 
             string update = "";
             update = $@"update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{loginID}' where id='{CurrentMaintain["ID"]}';
-                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'Confirm';";
+                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'Confirm';
+
+
+update CuttingOutput set ActCutRefQty =
+(select count(distinct cd.CutRef)
+from CuttingOutput_Detail cd
+where cd.id = CuttingOutput.ID)
+where id='{CurrentMaintain["ID"]}'
+";
 
             #region transaction
             DualResult upResult;
@@ -595,7 +603,11 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             #endregion
             string update = "";
             update = $@"update Cuttingoutput set status='New',editDate=getdate(),editname ='{loginID}' where id='{CurrentMaintain["ID"]}';
-                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'UnConfirm';";
+                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'UnConfirm';
+
+update CuttingOutput set ActCutRefQty =0
+where id='{CurrentMaintain["ID"]}'
+";
 
             #region transaction
             DualResult upResult;
