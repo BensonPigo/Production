@@ -189,6 +189,8 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
 ";
             this.ChkDoortoDoorDelivery.Checked = MyUtility.Check.Seek(chkdtd);
             #endregion
+
+            this.ControlColor();
         }
 
         /// <inheritdoc/>
@@ -379,6 +381,34 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
             P03_BatchUpload callNextForm = new P03_BatchUpload();
             callNextForm.ShowDialog(this);
             this.ReloadDatas();
+        }
+
+        private void ControlColor()
+        {
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+
+            sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (gridData.Rows.Count > 0)
+            {
+                this.btnExpenseData.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnExpenseData.ForeColor = Color.Black;
+            }
         }
     }
 }

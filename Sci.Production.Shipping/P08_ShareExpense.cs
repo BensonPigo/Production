@@ -654,6 +654,7 @@ select  ShippingAPID
         , FtyWK
         , isnull(sum(Amount),0) as Amount 
         , '' as SubTypeRule
+        , [NoExportCharges] = (select NoExportCharges from GMTBooking where id=se.InvNo)
 from ShareExpense se WITH (NOLOCK) 
 where   ShippingAPID = '{0}' 
         and (Junk = 0 or Junk is null)
@@ -803,6 +804,14 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             }
             else
             {
+                if (this.listControlBindingSource1.DataSource != null && ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count > 0)
+                {
+                    if (((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Any(a => MyUtility.Convert.GetBool(a["NoExportCharges"])))
+                    {
+                        MyUtility.Msg.WarningBox("No Export Charge was ticked, please double check.");
+                    }
+                }
+
                 this.gridBLNo.ValidateControl();
                 bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(this.apData["ID"])));
                 bool haveSea = false, noExistNotSea = true;
