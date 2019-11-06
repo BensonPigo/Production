@@ -32,6 +32,7 @@ namespace Sci.Production.Subcon
             base.OnDetailGridInsert(index);
             CurrentDetailData["bundleno"] = "";
             CurrentDetailData["qty"] = 0;
+            CurrentDetailData["importData"] = 0;
         }
 
         private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
@@ -192,6 +193,7 @@ select  BundleNo
         , Ukey 
         , id
         , artworkpo_detailukey
+        , [importData] = 0
 from FarmOut_Detail WITH (NOLOCK) 
 outer apply(
 	select styleID
@@ -311,6 +313,42 @@ order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"], Sci.Env.User.Ke
                 }
             };
             #endregion
+
+            #region Qty
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+            qty.CellEditable += (s, e) =>
+            {
+                if (!EditMode)
+                {
+                    return;
+                }
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (string.IsNullOrEmpty(MyUtility.Convert.GetString(dr["BundleNo"])))
+                {
+                    e.IsEditable = true; 
+                }
+                else
+                {
+                    e.IsEditable = false;
+                }
+            };
+            qty.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex); 
+                if (string.IsNullOrEmpty(MyUtility.Convert.GetString(dr["BundleNo"])))
+                {
+                    e.CellStyle.ForeColor = Color.Red;
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Color.Black;
+                    e.CellStyle.BackColor = Color.White;
+                }
+            };
+            #endregion
+
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("BundleNo", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)  //0
@@ -323,14 +361,13 @@ order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"], Sci.Env.User.Ke
             .Numeric("ArtworkPoQty", header: "P/O Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)    //7
             .Numeric("OnHand", header: "Accum. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
             .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(5), iseditingreadonly: true)   //9
-            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5))     //10
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), settings: qty)     //10
             .Numeric("BalQty", header: "Bal. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true);  //11
 
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns["OrderID"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["ArtworkPoID"].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
         }
 
@@ -357,10 +394,8 @@ order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"], Sci.Env.User.Ke
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
             if (datacheck.Rows.Count > 0)
             {
-                foreach (DataRow dr in datacheck.Rows)
-                {
-                    ids += dr[0].ToString() + ",";
-                }
+                List<string> queryID = datacheck.AsEnumerable().Select(x => x.Field<string>("id")).Distinct().ToList();
+                ids = String.Join(", ", queryID.ToArray()); 
                 MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't Confirmed", ids));
                 return;
             }

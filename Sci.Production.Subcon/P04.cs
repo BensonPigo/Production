@@ -32,6 +32,7 @@ namespace Sci.Production.Subcon
             base.OnDetailGridInsert(index);
             CurrentDetailData["bundleno"] = "";
             CurrentDetailData["qty"] = 0;
+            CurrentDetailData["importData"] = 0;
         }
 
         private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
@@ -184,6 +185,7 @@ select  BundleNo
         , (artworkpoqty - onhand - qty) BalQty 
         , Ukey 
         , ArtworkPo_DetailUkey
+        , [importData] = 0
 from FarmIn_Detail WITH (NOLOCK) 
 outer apply(
 	select styleID
@@ -287,6 +289,42 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
                 }
             };
             #endregion
+
+            #region Qty
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+            qty.CellEditable += (s, e) =>
+            {
+                if (!EditMode)
+                {
+                    return;
+                }
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (string.IsNullOrEmpty(MyUtility.Convert.GetString(dr["BundleNo"])))
+                {
+                    e.IsEditable = true;
+                }
+                else
+                {
+                    e.IsEditable = false;
+                }
+            };
+            qty.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (string.IsNullOrEmpty(MyUtility.Convert.GetString(dr["BundleNo"])))
+                {
+                    e.CellStyle.ForeColor = Color.Red;
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Color.Black;
+                    e.CellStyle.BackColor = Color.White;
+                }
+            };
+            #endregion
+
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("BundleNo", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)  //0
@@ -299,7 +337,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             .Numeric("ArtworkPoQty", header: "P/O Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)    //7
             .Numeric("OnHand", header: "Accum. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
             .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(5), iseditingreadonly: true)   //9
-            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5))     //10
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), settings: qty)     //10
             .Numeric("BalQty", header: "Bal. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true);  //11
             #endregion
 
