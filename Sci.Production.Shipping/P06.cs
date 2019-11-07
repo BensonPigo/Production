@@ -418,6 +418,7 @@ SELECT [ID]
       ,[Count]=COUNT([UKey])
 FROM Pullout_Detail WITH(NOLOCK)
 WHERE ID ='{this.CurrentMaintain["ID"]}' 
+      and [PackingListID] != ''
 GROUP BY [ID]
       ,[OrderID]
       ,[OrderShipmodeSeq]
@@ -429,7 +430,7 @@ HAVING COUNT([UKey]) > 1
             bool hasDuplicate = MyUtility.Check.Seek(cmd);
             if (hasDuplicate)
             {
-                return new DualResult(false, "Detail data is not lastest, please click <Undo> and <Refresh> button.");
+                return new DualResult(false, "Detail data is not lastest, please click <Undo> and <Refresh> data.");
             }
             #endregion
 
