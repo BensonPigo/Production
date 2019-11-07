@@ -407,6 +407,33 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
         protected override DualResult ClickSavePost()
         {
             DualResult result;
+
+            #region 存檔前檢查是否有重複的表身資料
+            string cmd = $@"
+--ClickSavePost尚未Commit，因此使用 WITH(NOLOCK) 檢視Commit後的Pullout_Detail會不會有重複的資料
+SELECT [ID]
+      ,[OrderID]
+      ,[OrderShipmodeSeq]
+      ,[PackingListID]
+      ,[Count]=COUNT([UKey])
+FROM Pullout_Detail WITH(NOLOCK)
+WHERE ID ='{this.CurrentMaintain["ID"]}' 
+      and [PackingListID] != ''
+GROUP BY [ID]
+      ,[OrderID]
+      ,[OrderShipmodeSeq]
+      ,[PackingListID]
+HAVING COUNT([UKey]) > 1
+
+";
+
+            bool hasDuplicate = MyUtility.Check.Seek(cmd);
+            if (hasDuplicate)
+            {
+                return new DualResult(false, "Detail data is not lastest, please click <Undo> and <Refresh> data.");
+            }
+            #endregion
+
             if (this.updatePackinglist.Trim() != string.Empty)
             {
                 result = DBProxy.Current.Execute(null, this.updatePackinglist);
