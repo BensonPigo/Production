@@ -459,6 +459,7 @@ where WorkOrderUkey={0}", masterID);
             sorting(comboBox1.Text);
             this.detailgrid.SelectRowTo(0);
             this.detailgrid.AutoResizeColumns();
+            col_shift.Width = 66;
             btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
             #region 檢查MarkerNo ,MarkerVersion ,MarkerDownloadID是否與Order_Eachcons不同
@@ -536,7 +537,6 @@ where WorkOrderUkey={0}", masterID);
             #endregion
 
             cellDropDownList dropdown = (cellDropDownList)cellDropDownList.GetGridCell("Pms_WorkOrderShift");
-
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6)).Get(out col_cutref)
