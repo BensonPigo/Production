@@ -19,6 +19,10 @@ namespace Sci.Production.Shipping
     public partial class R44 : Sci.Win.Tems.PrintForm
     {
         private DataTable printData;
+        private DateTime? dateOnBoardDate1;
+        private DateTime? dateOnBoardDate2;
+        private DateTime? dateArrivalPortDate1;
+        private DateTime? dateArrivalPortDate2;
 
         /// <summary>
         /// R44
@@ -33,15 +37,35 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
+            this.dateOnBoardDate1 = this.dateOnBoardDate.Value1;
+            this.dateOnBoardDate2 = this.dateOnBoardDate.Value2;
+            this.dateArrivalPortDate1 = this.dateArrivalPortDate.Value1;
+            this.dateArrivalPortDate2 = this.dateArrivalPortDate.Value2;
             return base.ValidateInput();
         }
 
         /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            string whereP03 = string.Empty;
+            string whereP04 = string.Empty;
+            if (!MyUtility.Check.Empty(this.dateOnBoardDate1))
+            {
+                whereP03 += $@" and cast(e.Eta as date) between '{((DateTime)this.dateOnBoardDate1).ToString("d")}' and '{((DateTime)this.dateOnBoardDate2).ToString("d")}'";
+                whereP04 += $@" and cast(e.OnBoard as date) between '{((DateTime)this.dateOnBoardDate1).ToString("d")}' and '{((DateTime)this.dateOnBoardDate2).ToString("d")}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.dateArrivalPortDate1))
+            {
+                whereP03 += $@" and cast(e.PortArrival as date) between '{((DateTime)this.dateArrivalPortDate1).ToString("d")}' and '{((DateTime)this.dateArrivalPortDate2).ToString("d")}'";
+                whereP04 += $@" and cast(e.PortArrival as date) between '{((DateTime)this.dateArrivalPortDate1).ToString("d")}' and '{((DateTime)this.dateArrivalPortDate2).ToString("d")}'";
+            }
+
+
+
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(
-                @"
+                $@"
 select
 	e.ID
 	,e.Consignee
@@ -61,6 +85,7 @@ outer apply(select top 1 v.ID,v.DeclareNo from VNImportDeclaration v with(nolock
 outer apply(select ID=isnull(iif(isnull(e.Blno,'')<>'',a.id,b.id),''),DeclareNo= isnull(iif(isnull(e.Blno,'')<>'',a.DeclareNo,b.DeclareNo),''))c
 where e.NonDeclare = 0
 and (isnull(c.ID,'') ='' or isnull(c.DeclareNo,'') = '')
+{whereP03}
 
 union all
 select
@@ -82,7 +107,7 @@ outer apply(select top 1 v.ID,v.DeclareNo from VNImportDeclaration v with(nolock
 outer apply(select ID=isnull(iif(isnull(e.Blno,'')<>'',a.id,b.id),''),DeclareNo= isnull(iif(isnull(e.Blno,'')<>'',a.DeclareNo,b.DeclareNo),''))c
 where e.NonDeclare = 0
 and (isnull(c.ID,'') ='' or isnull(c.DeclareNo,'') = '')
-
+{whereP04}
 ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
