@@ -45,10 +45,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(831, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkJunk);
@@ -60,12 +56,7 @@
             this.detailcont.Controls.Add(this.labelDefectcode);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelDefectType);
-            this.detailcont.Size = new System.Drawing.Size(831, 357);
             this.detailcont.MouseDown += new System.Windows.Forms.MouseEventHandler(this.detailcont_MouseDown);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(831, 38);
             // 
             // browse
             // 
@@ -189,6 +180,8 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyPreview = true;
             this.Name = "B21";
