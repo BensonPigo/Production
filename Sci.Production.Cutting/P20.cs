@@ -81,7 +81,7 @@ Select a.* , e.FabricCombo, e.FabricPanelCode,
     , LackingLayers = e.Layer -isnull(acc.AccuCuttingLayer,0)- a.layer
     , e.ConsPC,SRQ.SizeRatioQty
 From cuttingoutput_Detail a WITH (NOLOCK)
-inner join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
+left join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = e.Ukey and id <> '{0}')acc
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = e.Ukey)SRQ
 where a.id = '{0}' 
