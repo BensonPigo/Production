@@ -414,7 +414,6 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
 SELECT [ID]
       ,[OrderID]
       ,[OrderShipmodeSeq]
-      ,[ShipModeSeqQty]
       ,[PackingListID]
       ,[Count]=COUNT([UKey])
 FROM Pullout_Detail WITH(NOLOCK)
@@ -422,7 +421,6 @@ WHERE ID ='{this.CurrentMaintain["ID"]}'
 GROUP BY [ID]
       ,[OrderID]
       ,[OrderShipmodeSeq]
-      ,[ShipModeSeqQty]
       ,[PackingListID]
 HAVING COUNT([UKey]) > 1
 
