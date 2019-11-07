@@ -234,6 +234,7 @@ BEGIN
 				  and bun.FabricPanelCode = st1.FabricPanelCode
 				  and bun.Article = st1.Article
 				  and bunD.Sizecode = st1.Sizecode
+			order by bun.AddDate desc
 		) getGroupInfo
 		inner join Bundle_Detail bunD on getGroupInfo.Id = bunD.Id
 										 and getGroupInfo.BundleGroup = bunD.BundleGroup
