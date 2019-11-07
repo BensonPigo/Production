@@ -22,6 +22,7 @@ BEGIN
 	DECLARE @CBM numeric(10,4);
 	DECLARE @OtherCBM numeric(10,4);
 	DECLARE @INVNo varchar(20);
+	DECLARE @HasCancelOrder bit;
 
     -- Insert statements for procedure here
 	WITH Packing as (
@@ -33,6 +34,17 @@ BEGIN
 	into #CBM_GW_ByRefno
 	from Packing a
 	inner join LocalItem b on a.RefNo=b.RefNo
+
+	SELECT @HasCancelOrder=IIF(
+	EXISTS 
+	(
+		SELECT pd.OrderID
+		FROM PackingList_Detail pd
+		INNER JOIN Orders o ON pd.OrderID=o.ID AND  o.Junk = 1
+		WHERE pd.ID = @ID
+	)  
+	,1
+	,0);
 
 	select SUM(CTNQty)CTNQty,SUM(ShipQty)ShipQty,SUM(NW)NW,SUM(GW)GW,SUM(NNW)NNW,sum(cbm)cbm 
 	into #Chk_CBM_GW
@@ -78,7 +90,8 @@ BEGIN
 	END
 
 	-- 還沒有Invoice No就不可以做Confirm，有的話取得INVNo
-	IF EXISTS (SELECT * FROM PackingList WHERE ID=@ID AND (INVNo='' OR INVNo IS NULL))
+	-- 表身只要存在任何一張 Cancel 訂單，即可跳過『是否已建立 GB』 的驗證步驟。
+	IF EXISTS (SELECT * FROM PackingList WHERE ID=@ID AND (INVNo='' OR INVNo IS NULL)) AND @HasCancelOrder=0
 	BEGIN 
 		SET @msg += N'Shipping is not yet booking so cannot confirm!'
 	END
