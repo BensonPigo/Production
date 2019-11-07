@@ -1,4 +1,7 @@
-﻿-- =============================================
+﻿
+
+
+-- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	PackingList_P03 Confirmed
@@ -181,16 +184,16 @@ BEGIN
 		) InvadjQty on InvadjQty.OrderID=poid.OrderID and InvadjQty.Article=poid.Article and InvadjQty.SizeCode =poid.SizeCode
 		inner join (
 			select a.OrderID,a.Article,a.SizeCode,MIN(a.QAQty) as QAQty
-			from (select poid.OrderID,oq.Article,oq.SizeCode, sl.Location, isnull(sum(sodd.QAQty),0) as QAQty
+			from (select poid.OrderID,oq.Article,oq.SizeCode, ol.Location, isnull(sum(sodd.QAQty),0) as QAQty
 				 from (select distinct pld.OrderID
 							 from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
 							 where pl.ID = @ID
 							 and pld.ID = pl.ID) poid
 			   left join Orders o WITH (NOLOCK) on o.ID = poid.OrderID
 			   left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
-			   left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
-			   left join SewingOutput_Detail_Detail sodd WITH (NOLOCK) on sodd.OrderId = o.ID and sodd.Article = oq.Article  and sodd.SizeCode = oq.SizeCode and sodd.ComboType = sl.Location
-				 group by poid.OrderID,oq.Article,oq.SizeCode, sl.Location) a		
+			   left join Order_Location ol WITH (NOLOCK) on ol.OrderId = o.ID
+			   left join SewingOutput_Detail_Detail sodd WITH (NOLOCK) on sodd.OrderId = o.ID and sodd.Article = oq.Article  and sodd.SizeCode = oq.SizeCode and sodd.ComboType = ol.Location
+				 group by poid.OrderID,oq.Article,oq.SizeCode, ol.Location) a		
 			group by a.OrderID,a.Article,a.SizeCode
 		)SewingData on SewingData.OrderID=poid.OrderID and SewingData.Article=poid.Article and SewingData.SizeCode=poid.SizeCode
 		where 1=1
