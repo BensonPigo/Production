@@ -41,7 +41,7 @@ BEGIN
 		SELECT pd.OrderID
 		FROM PackingList_Detail pd
 		INNER JOIN Orders o ON pd.OrderID=o.ID AND  o.Junk = 1
-		WHERE pd.ID ='MWIPG19070333'
+		WHERE pd.ID = @ID
 	)  
 	,1
 	,0);
