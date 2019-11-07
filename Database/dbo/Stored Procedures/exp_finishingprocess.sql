@@ -368,7 +368,7 @@ INSERT(  id,   Seq,   ShipmodeID,   BuyerDelivery,   Qty,   EstPulloutDate,   Re
 VALUES(s.id, s.Seq, s.ShipmodeID, s.BuyerDelivery, s.Qty, s.EstPulloutDate, s.ReadyDate,
 	   s.SunriseUpdated, s.GenSongUpdated, s.CmdTime)	;
 
---03. 轉出區間 當AddDate or EditDate =今天
+--03. 轉出區間 當AddDate or EditDate =今天、Category = 'HTML'
 MERGE ShippingMark AS T
 USING(
 	SELECT 
@@ -382,7 +382,7 @@ USING(
 	FROM Production.dbo.ShippingMarkStamp 
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
-on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq
+on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq and t.Category=s.Category
 WHEN MATCHED THEN
 UPDATE SET
 	t.FromLeft = s.FromLeft,
@@ -401,7 +401,7 @@ INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],
 Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
 		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[FilePath]);
 
---04. 轉出區間 當AddDate or EditDate =今天
+--04. 轉出區間 當AddDate or EditDate =今天、Category = 'PIC'
 MERGE ShippingMark AS T
 USING(
 	SELECT 
@@ -417,7 +417,7 @@ USING(
 	FROM Production.dbo.ShippingMarkpicture 
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
-on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq
+on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq and t.Category=s.Category
 WHEN MATCHED THEN
 UPDATE SET
 	t.FromLeft = s.FromLeft,
@@ -567,7 +567,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 		where s.junk=1
 
 		-------------------------------------------------------------HTMLSetting Update-------------------------------------------------------------
-		----FileName有資料，或沒設定的都是HTMLSetting = 1 的狀況，其他都是0
+		----搜尋出Packing B02有設定的
 		SELECT DISTINCT 
 				pd.SCICtnNo
 				,pd.OrderID
@@ -575,23 +575,35 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 				,pd.Article
 				,pd.SizeCode
 				,s.FileName
-		INTO #tmp
+		INTO #HasSetting_HTMLSetting
 		FROM [Production].[dbo].PackingList p 
 		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
 		LEFT  JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
-		WHERE s.FileName <> ''  AND s.Category='HTML'
+		WHERE s.Category='HTML'
 
-		----因此有對應到的：FileName有值或空白都會是1，沒對應到的：FileName=NULL 為0
+		----有設定的：FileName有值=1，空白=0
 		UPDATE pd
-		SET pd.HTMLSetting = IIF(t.FileName IS NULL ,0 , 1)
+		SET pd.HTMLSetting = IIF(t.FileName = '' ,0 , 1)
 		FROM [FPS].[dbo].PackingList_Detail pd
-		LEFT JOIN #tmp t ON    pd.SCICtnNo =t.SCICtnNo
+		INNER JOIN #HasSetting_HTMLSetting t ON    pd.SCICtnNo =t.SCICtnNo
 							AND pd.OrderID=t.OrderID
 							AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
 							AND pd.Article=t.Article
 							AND pd.SizeCode=t.SizeCode
+							
+		----沒設定的：=1		
+		UPDATE pd
+		SET pd.HTMLSetting = 1
+		FROM [FPS].[dbo].PackingList_Detail pd
+		WHERE NOT EXISTS (SELECT 1 FROM #HasSetting_HTMLSetting t
+							WHERE pd.SCICtnNo =t.SCICtnNo
+												AND pd.OrderID=t.OrderID
+												AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
+												AND pd.Article=t.Article
+												AND pd.SizeCode=t.SizeCode
+						)
 
-		DROP TABLE #tmp
+		DROP TABLE #HasSetting_HTMLSetting
 		-------------------------------------------------------------HTMLSetting Update-------------------------------------------------------------
 
 		-------------------------------------------------------------PicSetting Update-------------------------------------------------------------
