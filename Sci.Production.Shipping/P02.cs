@@ -1636,14 +1636,15 @@ When first applicant's team leader approval, anyone can not do any modification.
 
         private bool CheckPullexists()
         {
+            string packingListID = this.CurrentDetailData["PackingListID"].ToString();
             #region 若該HC#下的Packing已經被拉到Pullout Report中且Pullout Status為confirm則不能刪除
             string sqlchk = $@"
-select distinct p.ID
-from Pullout_Detail pd
-inner join PackingList pl on pl.id = pd.PackingListID
-inner join Pullout p on p.id = pd.id
-where p.status = 'confirmed'
-and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
+SELECt [PackingListID]=p.ID 
+FROM PackingList p 
+INNER JOIN Pullout pu ON p.PulloutID=pu.ID 
+WHERE p.ID='{packingListID}' 
+AND Type In ('B','S','F') 
+AND pu.Status <> 'New'
 ";
             DataTable pkdt;
             DualResult result = DBProxy.Current.Select(null, sqlchk, out pkdt);
@@ -1655,7 +1656,7 @@ and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
 
             if (pkdt.Rows.Count > 0)
             {
-                string msg = "These PackingList# are existed in Pullout Report so it can't be delete!\r\nPackingList#: " + string.Join(Environment.NewLine + "PackingList#: ", pkdt.AsEnumerable().Select(row => row["ID"]).ToList());
+                string msg = "These PackingList# are existed in Pullout Report so it can't be delete!\r\nPackingList#: " + string.Join(Environment.NewLine + "PackingList#: ", pkdt.AsEnumerable().Select(row => row["PackingListID"]).ToList());
                 MyUtility.Msg.WarningBox(msg);
                 return false;
             }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -20,6 +21,13 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
         }
+
+        /*Type Category對照
+            PackingList Type    Express_Detail Category
+            Bulk                Bulk
+            Sample              SMS
+            FOC                 Sample
+        */
 
         /// <inheritdoc/>
         protected override void OnAttaching(DataRow data)
@@ -372,13 +380,27 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             return Result.True;
         }
 
+        protected override bool OnDeleteBefore()
+        {
+            if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1")
+            {
+                DialogResult DiaR = MyUtility.Msg.QuestionBox($@"All the items of PL# {this.CurrentData["PackingListID"]} will be deleted.");
+
+                if (DiaR == DialogResult.No)
+                {
+                    return false;
+                }
+            }
+
+            return base.OnDeleteBefore();
+        }
+
         /// <inheritdoc/>
         protected override DualResult OnDeletePre()
         {
             DualResult failResult;
             if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1")
             {
-
                 DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '',pulloutdate=null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentData["PackingListID"])));
                 if (!result)
                 {
