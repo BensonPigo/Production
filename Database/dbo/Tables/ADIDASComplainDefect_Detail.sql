@@ -5,7 +5,7 @@
     [MtlTypeID] VARCHAR(20) CONSTRAINT [DF_ADIDASComplainDefect_Detail_MtlTypeID] DEFAULT ('') NOT NULL, 
     [FabricType] VARCHAR(1) CONSTRAINT [DF_ADIDASComplainDefect_Detail_FabricType] DEFAULT ('') NOT NULL, 
     [Responsibility] VARCHAR(2) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_ADIDASComplainDefect_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SubID] ASC)
+    CONSTRAINT [PK_ADIDASComplainDefect_Detail] PRIMARY KEY ([ID], [SubID], [FabricType]) 
 );
 
 
