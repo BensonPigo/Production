@@ -94,5 +94,8 @@
     <Build Include="dbo\Tables\EfficiencyBI.sql" />
     <Build Include="dbo\Stored Procedures\ImportEfficiencyBI.sql" />
     <Build Include="dbo\Tables\P_SewingLineSchedule.sql" />
+    <Build Include="dbo\Tables\ForecastLoadingBI.sql" />
+    <Build Include="dbo\Tables\ForecastLoadingBI_Factory_Tms.sql" />
+    <Build Include="dbo\Stored Procedures\ImportForecastLoadingBI.sql" />
   </ItemGroup>
 </Project>
