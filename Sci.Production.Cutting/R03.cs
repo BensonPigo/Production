@@ -387,7 +387,7 @@ outer apply(
 	from (
 		select wo2.Layer,wo2.CutRef,wo2.id,wo2.EstCutDate,wo2.MarkerNo,wo2.Markername
 		from WorkOrder wo2 with(nolock)
-		where wo2.CutRef = t.[Ref#] and  wo2.id = t.[Master SP#] and wo2.EstCutDate  = t.[Est.Cutting Date] and wo2.MarkerNo = t.MarkerNo and wo2.Markername = t.Markername
+		where wo2.id = t.[Master SP#] and wo2.EstCutDate  = t.[Est.Cutting Date] and wo2.MarkerNo = t.MarkerNo and wo2.Markername = t.Markername
 		group by wo2.Layer,wo2.CutRef,wo2.id,wo2.EstCutDate,wo2.MarkerNo,wo2.Markername
 		--不同的WorkOrder.CutRef且WorkOrder.ID+EstCutDate+MarkerNo+Markername皆相同
 		--先把相同CutRef縮減為一筆 , 再sum起來
