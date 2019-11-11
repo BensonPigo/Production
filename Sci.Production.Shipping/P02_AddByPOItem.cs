@@ -1,14 +1,11 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using Sci;
 
 namespace Sci.Production.Shipping
 {
@@ -24,6 +21,13 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
         }
+
+        /*Type Category對照
+            PackingList Type    Express_Detail Category
+            Bulk                Bulk
+            Sample              SMS
+            FOC                 Sample
+        */
 
         /// <inheritdoc/>
         protected override void OnAttaching(DataRow data)
@@ -155,32 +159,103 @@ from Orders WITH (NOLOCK) where ID = '{0}'", this.txtSPNo.Text), out orderData))
         {
             if (this.EditMode && this.txtPackingListID.OldValue != this.txtPackingListID.Text)
             {
-                if (!this.ChkPackingListID())
+                string packingListTyp = this.ChkPackingListID();
+                if (MyUtility.Check.Empty(packingListTyp))
                 {
                     this.CurrentData["PackingListID"] = string.Empty;
                     e.Cancel = true;
                     return;
                 }
+                else
+                {
+                    string sqlCmd = string.Empty;
+                    DataTable dt;
+                    switch (packingListTyp)
+                    {
+                        case "B":
+                            sqlCmd = $@"
+select 
+	   pd.OrderID
+    , [CTNNo]=COUNT(pd.Ukey)
+    , [TtlQty]=SUM( ISNULL(pd.ShipQty,0) ) 
+    , [UnitID]=o.StyleUnit 
+    , [Category]= 3 ----Bulk=3
+	, [NW]=SUM(pd.GW)
+from PackingList p WITH (NOLOCK) 
+INNER JOIN PackingList_Detail pd WITH (NOLOCK) on p.id = pd.id
+left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+where  pd.ID = '{this.txtPackingListID.Text}'
+and p.Type ='B'
+and pd.OrderID = '{this.txtSPNo.Text}'
+GROUP BY pd.OrderID ,o.StyleUnit ";
+                            break;
+                        case "S":
+                            sqlCmd = $@"
+
+select 
+	   pd.OrderID
+    , [CTNNo] = ''
+    , [TtlQty]=SUM( ISNULL(pd.ShipQty,0) ) 
+    , [UnitID]=o.StyleUnit 
+    , [Category]= 2 ----SMS=2
+	, [NW] = p.GW * ( (SUM(pd.ShipQty) * 1.0) / (TtlShipQty.Value *1.0))
+from PackingList p WITH (NOLOCK) 
+INNER JOIN PackingList_Detail pd WITH (NOLOCK) on p.id = pd.id
+left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+OUTER APPLY(
+	SELECT Value=SUM(ShipQty) FROM PackingList_Detail WHERE ID = p.ID 
+)TtlShipQty
+where  pd.ID = '{this.txtPackingListID.Text}'
+and p.Type ='S'
+and pd.OrderID = '{this.txtSPNo.Text}'
+GROUP BY pd.OrderID ,o.StyleUnit,pd.ShipQty ,TtlShipQty.Value ,p.GW
+";
+                            break;
+                        default:
+                            break;
+                    }
+
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+
+                    if (result)
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            DataRow dr = dt.Rows[0];
+
+                            this.CurrentData["PackingListID"] = this.txtPackingListID.Text;
+                            this.CurrentData["CTNNo"] = dr["CTNNo"].ToString();
+                            this.CurrentData["Qty"] = Convert.ToInt32(dr["TtlQty"]);
+                            this.CurrentData["UnitID"] = dr["UnitID"].ToString();
+                            this.CurrentData["Category"] = dr["Category"].ToString();
+                            this.comboCategory.SelectedValue = Convert.ToInt32(dr["Category"]);
+                            this.CurrentData["NW"] = Convert.ToDecimal(dr["NW"]);
+                        }
+                    }
+                }
             }
         }
 
-        private bool ChkPackingListID()
+        private string ChkPackingListID()
         {
+            string plType = this.CurrentData["Category"].EqualDecimal(1) ? "'F'" : "'B','S'";
+            string packingListType = string.Empty;
             string sqlchk = $@"
-select 1
+select DISTINCT pl.Type
 from PackingList pl WITH (NOLOCK)
 inner join PackingList_Detail pld WITH (NOLOCK) on pld.id = pl.id
 where pl.ID = '{this.txtPackingListID.Text}'
-and pl.Type in ('B','S')
+and pl.Type in ({plType})
 and pld.OrderID = '{this.txtSPNo.Text}'
 ";
-            if (!MyUtility.Check.Seek(sqlchk))
+            packingListType = MyUtility.GetValue.Lookup(sqlchk);
+
+            if (MyUtility.Check.Empty(packingListType))
             {
                 MyUtility.Msg.WarningBox("PackingList No. not found!!");
-                return false;
             }
 
-            return true;
+            return packingListType;
         }
 
         /// <inheritdoc/>
@@ -251,10 +326,17 @@ and pld.OrderID = '{this.txtSPNo.Text}'
             }
             #endregion
 
+            string packingListTyp = this.ChkPackingListID();
+
             // 新增檢查
             if (this.OperationMode == 2)
             {
-                if (!this.ChkPackingListID())
+                if (MyUtility.Check.Empty(packingListTyp))
+                {
+                    return false;
+                }
+
+                if (!this.HcImportCheck(this.CurrentData["PackingListID"].ToString(), this.CurrentData["OrderID"].ToString(), packingListTyp))
                 {
                     return false;
                 }
@@ -286,17 +368,39 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 return failResult;
             }
 
-// DualResult result1 = DBProxy.Current.Execute(null,"select * from ")
+            string cmd = $"update PackingList set ExpressID = '{this.CurrentData["ID"]}' where ID = '{this.CurrentData["PackingListID"]}'";
+
+            result = DBProxy.Current.Execute(null, cmd);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Update PackingList HC No. fail!! " + result.ToString());
+                return failResult;
+            }
+
             return Result.True;
+        }
+
+        protected override bool OnDeleteBefore()
+        {
+            if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1")
+            {
+                DialogResult DiaR = MyUtility.Msg.QuestionBox($@"All the items of PL# {this.CurrentData["PackingListID"]} will be deleted.");
+
+                if (DiaR == DialogResult.No)
+                {
+                    return false;
+                }
+            }
+
+            return base.OnDeleteBefore();
         }
 
         /// <inheritdoc/>
         protected override DualResult OnDeletePre()
         {
+            DualResult failResult;
             if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1")
             {
-                DualResult failResult;
-
                 DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '',pulloutdate=null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentData["PackingListID"])));
                 if (!result)
                 {
@@ -308,6 +412,26 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 if (!result)
                 {
                     failResult = new DualResult(false, "Delete fail!! Pls try again.\r\n" + result.ToString());
+                    return failResult;
+                }
+            }
+            else
+            {
+                // 刪除最後一筆才清空PL的HC#
+                DualResult result = DBProxy.Current.Execute(null, $@"
+declare @count int = 0;
+
+SELECT @count=Count(ID)
+FROM Express_Detail
+WHERE PackingListID='{this.CurrentData["PackingListID"]}'
+
+update PackingList set ExpressID = ''
+FROM PackingList
+WHERE ID='{this.CurrentData["PackingListID"]}' AND @count <= 1
+");
+                if (!result)
+                {
+                    failResult = new DualResult(false, "Update packing list fail!! Pls try again.\r\n" + result.ToString());
                     return failResult;
                 }
             }
@@ -326,6 +450,76 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             }
 
             return Result.True;
+        }
+
+        private bool HcImportCheck(string packingListID, string orderID, string packingListTyp = "")
+        {
+            DataTable dt;
+            string sqlCmd = string.Empty;
+
+            switch (packingListTyp)
+            {
+                case "B":
+                    sqlCmd = $@"
+
+---- 訂單 + PL 是否已經存在 HC表身
+SELECT [ExistsData]=1
+FROm  Express_Detail
+WHERE PackingListID='{packingListID}'
+      AND OrderID='{orderID}' 
+";
+                    break;
+                case "S":
+                    sqlCmd = $@"
+----※ 只要以下條件任一個符合就不允許匯入 ※
+
+---- 1. 訂單 + PL 是否已經存在 HC表身
+SELECT [ExistsData]=1
+FROm  Express_Detail
+WHERE PackingListID='{packingListID}'
+      AND OrderID='{orderID}' 
+UNION 
+---- 2. 相同的 PL 是否有建立在其他的 HC
+SELECT [ExistsData]=2
+FROm PackingList
+WHERE ID='{packingListID}' AND ExpressID<>'{this.CurrentData["ID"].ToString()}' AND ExpressID <> ''  AND ExpressID IS NOT NULL
+";
+                    break;
+                default:
+                    break;
+            }
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                string msg = "Update failed, reason as below : " + Environment.NewLine;
+
+                if (dt.AsEnumerable().Any(row => row["ExistsData"].EqualString("1")) && packingListTyp == "B")
+                {
+                    msg += $"PackingList: {packingListID} has existed HC" + Environment.NewLine;
+                }
+
+                if (dt.AsEnumerable().Any(row => row["ExistsData"].EqualString("1")) && packingListTyp == "S")
+                {
+                    msg += $"PackingList: {packingListID}、SP#: {orderID} has existed HC" + Environment.NewLine;
+                }
+
+                if (dt.AsEnumerable().Any(row => row["ExistsData"].EqualString("2")))
+                {
+                    msg += $"PackingList: {packingListID} exists other HC" + Environment.NewLine;
+                }
+
+                MyUtility.Msg.WarningBox(msg);
+                return false;
+            }
+
+            return true;
         }
     }
 }

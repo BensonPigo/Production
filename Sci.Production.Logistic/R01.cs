@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Logistic
 {
@@ -81,6 +82,8 @@ namespace Sci.Production.Logistic
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
+            string chkWhere = string.Empty;
+
             sqlCmd.Append(@"
 select  o.FactoryID
         , o.MCHandle
@@ -142,7 +145,14 @@ where o.Category = 'B'");
                 sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", this.mDivision));
             }
 
-            sqlCmd.Append(@"
+            if (this.chkExcludeGMTComplete.Checked)
+            {
+                ////『勾選』請排除訂單總數量『等於』車縫總數量『等於』出貨總數量
+                chkWhere = "AND NOT ( t.OrderQty = t.sewQty AND t.sewQty = t.TtlPullGMTQty) ";
+            }
+
+            sqlCmd.Append($@"
+
 select distinct pd.OrderID,pd.OrderShipmodeSeq,pd.ClogLocationId
 into #tmp_ClogLocationId
 from PackingList_Detail pd WITH (NOLOCK) 
@@ -286,18 +296,27 @@ select
     ,t.BuyerDelivery
     ,t.ShipmodeID
     ,t.Location
-	,t.TotalCTN,DRYCTN=isnull(t.DRYCTN,0),PackErrCTN = isnull(t.PackErrCTN,0),ClogCTN=isnull(t.ClogCTN,0),CfaCTN=isnull(t.CfaCTN,0),t2.RetCtnBySP
+	,t.TotalCTN
+	,DRYCTN=isnull(t.DRYCTN,0)
+	,PackErrCTN = isnull(t.PackErrCTN,0)
+	,ClogCTN=isnull(t.ClogCTN,0)
+	,CfaCTN=isnull(t.CfaCTN,0)
+	,t2.RetCtnBySP
 	,[Bal Ctn by SP#]=isnull(t.TotalCTN,0)-isnull(t.ClogCTN,0) -isnull(t.DRYCTN,0) -isnull(t.CfaCTN,0) - isnull(t.PackErrCTN,0)
 	,[% by SP#]=iif(isnull(t.TtlGMTQty,0)=0,0,Round(1-((t.TtlGMTQty-isnull(t.TtlClogGMTQty,0))/t.TtlGMTQty),2)*100)
 	,[Ctn SDP by SP#]=iif(isnull(t.TotalCTN,0)=0, 0,ROUND(isnull(t.ClogCTN,0)/t.TotalCTN,2)*100)
 	,t.PulloutCTNQty
 	,t.OrderQty
-	,t.TtlGMTQty
+	,[Pack Qty by SP#]=t.TtlGMTQty
+	,[PackingStatus]=PackingStatus.HasNotYetConfirmed
+	,[Dispose Qty by SP#]= ISNULL(DisposeQty.Value,0)
 	,[Sewing Qty by SP#]=sewQty
 	,t.TtlClogGMTQty
 	,[Bal Qty by SP#] = isnull(t.TtlGMTQty,0)-isnull(t.TtlClogGMTQty,0)
 	,[Qty SDP by SP#]=iiF(isnull(t.TtlGMTQty,0)=0,0,ROUND(isnull(t.TtlClogGMTQty,0)/t.TtlGMTQty,2)*100)
-	,t.TtlPullGMTQty,t.CTNQty,t.ClogQty
+	,t.TtlPullGMTQty
+	,t.CTNQty
+	,t.ClogQty
 	,[Bal Ctn by Shipmode]=isnull(t.CTNQty,0)-isnull(t.ClogQty,0)
 	,[Ctn SDP by Shipmode]=iiF(isnull(t.CTNQty,0)=0,0,ROUND(isnull(t.ClogQty,0)/t.CTNQty,2)*100)
 	,t.PullQty
@@ -309,8 +328,28 @@ select
 	,[Bal Qty by Shipmode]=isnull(t.GMTQty,0)-isnull(t.PullGMTQty,0)
 	,[Qty SDP by Shipmode]=iif(isnull(t.GMTQty,0)=0,0,ROUND(isnull(t.ClogGMTQty,0)/t.GMTQty,2)*100)
 	,t.PullGMTQty
-from #tmp t,#tmp2 t2
-where t.id = t2.ID
+from #tmp t
+INNER JOIN #tmp2 t2 ON t.id = t2.ID
+OUTER APPLY(
+	SELECT [HasNotYetConfirmed]=IIF(NotYetConfirmed > 0,'N','Y')
+	FROM (
+		SELECT NotYetConfirmed=COUNT(1)
+		FROM PackingList p
+		INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+		WHERE pd.OrderID=t.id AND p.Status <> 'Confirmed'
+	)a
+)PackingStatus
+OUTER APPLY(
+    ----計算方式參照Clog P11
+	SELECT  [Value]=sum(ISNULL(pd.QtyPerCTN,0))
+	FROM ClogGarmentDispose cd  with (nolock) 
+	INNER JOIN ClogGarmentDispose_Detail cdd with (nolock) ON  cd.ID=cdd.ID
+	left join PackingList_Detail pd with (nolock) on  pd.ID = cdd.PackingListID and pd.CTNStartNO = cdd.CTNStartNO
+	where cd.Status='Confirmed' AND pd.OrderID=t.id 
+)DisposeQty
+
+where 1=1
+{chkWhere}
 order by t.FactoryID,t.ID,t.BuyerDelivery
 
 drop table #tmp,#tmp2
@@ -338,6 +377,9 @@ drop table #tmp,#tmp2
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
 
+            // 檢查是否擁有Clog R01的Confirm 權限
+            bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Clog Master List", "CanConfirm");
+
             if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
@@ -363,9 +405,17 @@ drop table #tmp,#tmp2
                 this.brand);
 
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R01_CartonStatusReport.xltx", 3, false, null, excel);// 將datatable copy to excel
+
+            ////此欄位只有 Clog R01 擁有 Confirm 權限的使用者可以『看到』，其餘的則移除該欄位。
+            if (!canConfrim)
+            {
+                worksheet.get_Range("AC:AC").EntireColumn.Delete();
+            }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             this.CreateCustomizedExcel(ref worksheet);
+
             #region Save & show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_R01_CartonStatusReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;

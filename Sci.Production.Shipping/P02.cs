@@ -21,6 +21,7 @@ namespace Sci.Production.Shipping
     {
         // 宣告Context Menu Item
         private ToolStripMenuItem focpl;
+        private ToolStripMenuItem samplepl;
         private ToolStripMenuItem purchase;
         private ToolStripMenuItem poitem;
         private ToolStripMenuItem newitem;
@@ -71,6 +72,7 @@ namespace Sci.Production.Shipping
 
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from FOC PL# (Garment FOC)", onclick: (s, e) => this.ImportFromFOCPL()).Get(out this.focpl);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Sample PL#", onclick: (s, e) => this.ImportFromSamplePL()).Get(out this.samplepl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Purchase (Material)", onclick: (s, e) => this.ImportFromPurchase()).Get(out this.purchase);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add by PO# item (Garment Chargeable)", onclick: (s, e) => this.AddByPOItem()).Get(out this.poitem);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
@@ -87,6 +89,7 @@ namespace Sci.Production.Shipping
         private void SetContextMenuStatus(bool status)
         {
             this.focpl.Enabled = status;
+            this.samplepl.Enabled = status; 
             this.purchase.Enabled = status;
             this.poitem.Enabled = status;
             this.newitem.Enabled = status;
@@ -132,7 +135,19 @@ namespace Sci.Production.Shipping
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+        }
+
+        // Context Menu選擇Import from FOC PL# (Garment FOC)
+        private void ImportFromSamplePL()
+        {
+            Sci.Production.Shipping.P02_ImportFromSamplePackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromSamplePackingList(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
+            callFOCPLForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
@@ -144,7 +159,7 @@ namespace Sci.Production.Shipping
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callPurchaseForm.ShowDialog(this);
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
@@ -159,7 +174,7 @@ namespace Sci.Production.Shipping
             callPOItemForm.ShowDialog(this);
 
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
@@ -173,7 +188,7 @@ namespace Sci.Production.Shipping
             callNewItemForm.SetInsert(dr);
             callNewItemForm.ShowDialog(this);
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
@@ -279,7 +294,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
             DBProxy.Current.Execute(null, sqlcmd);
             #endregion
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             DataRow[] after_row = ((DataTable)this.detailgridbs.DataSource).Select(string.Format(" OrderId = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Category = '{3}' ", before_orderid, before_seq1, before_seq2, before_category));
             if (after_row.Length == 0)
@@ -392,7 +407,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             #endregion
 
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
         }
 
         // Context Menu選擇Print
@@ -470,7 +485,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                 }
             }
 
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.displayCarrier.Value = MyUtility.GetValue.Lookup(string.Format("select c.SuppID + '-' + s.AbbEN from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["CarrierID"])));
             if (MyUtility.Check.Empty(this.CurrentMaintain["StatusUpdateDate"]))
             {
@@ -619,7 +634,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(15))
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15))
                 .Text("CTNNo", header: "C/No.", width: Widths.AnsiChars(5))
-                .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 2)
+                .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 3)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(10), decimal_places: 4)
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(7), decimal_places: 2)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(5))
@@ -664,6 +679,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved")
                 {
                     this.focpl.Enabled = false;
+                    this.samplepl.Enabled = false;
                     this.purchase.Enabled = false;
                     this.poitem.Enabled = false;
                     this.newitem.Enabled = false;
@@ -857,7 +873,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             base.ClickSaveAfter();
         }
 
@@ -1382,7 +1398,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
 (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Manager"]))), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
                 callNextForm.ShowDialog(this);
                 this.RenewData();
-                this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+                this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
         }
 
         /// <inheritdoc/>
@@ -1620,14 +1636,15 @@ When first applicant's team leader approval, anyone can not do any modification.
 
         private bool CheckPullexists()
         {
+            string packingListID = this.CurrentDetailData["PackingListID"].ToString();
             #region 若該HC#下的Packing已經被拉到Pullout Report中且Pullout Status為confirm則不能刪除
             string sqlchk = $@"
-select distinct p.ID
-from Pullout_Detail pd
-inner join PackingList pl on pl.id = pd.PackingListID
-inner join Pullout p on p.id = pd.id
-where p.status = 'confirmed'
-and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
+SELECt [PackingListID]=p.ID 
+FROM PackingList p 
+INNER JOIN Pullout pu ON p.PulloutID=pu.ID 
+WHERE p.ID='{packingListID}' 
+AND Type In ('B','S','F') 
+AND pu.Status <> 'New'
 ";
             DataTable pkdt;
             DualResult result = DBProxy.Current.Select(null, sqlchk, out pkdt);
@@ -1639,7 +1656,7 @@ and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
 
             if (pkdt.Rows.Count > 0)
             {
-                string msg = "These PackingList# are existed in Pullout Report so it can't be delete!\r\nPackingList#: " + string.Join(Environment.NewLine + "PackingList#: ", pkdt.AsEnumerable().Select(row => row["ID"]).ToList());
+                string msg = "These PackingList# are existed in Pullout Report so it can't be delete!\r\nPackingList#: " + string.Join(Environment.NewLine + "PackingList#: ", pkdt.AsEnumerable().Select(row => row["PackingListID"]).ToList());
                 MyUtility.Msg.WarningBox(msg);
                 return false;
             }

@@ -50,6 +50,7 @@ namespace Sci.Production.Cutting
         Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_ActCuttingPerimeterNew;
         Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_StraightLengthNew;
         Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_CurvedLengthNew;
+        Ict.Win.UI.DataGridViewComboBoxColumn col_shift;
         #endregion
 
         public P02(ToolStripMenuItem menuitem, string history)
@@ -458,6 +459,7 @@ where WorkOrderUkey={0}", masterID);
             sorting(comboBox1.Text);
             this.detailgrid.SelectRowTo(0);
             this.detailgrid.AutoResizeColumns();
+            col_shift.Width = 66;
             btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
             #region 檢查MarkerNo ,MarkerVersion ,MarkerDownloadID是否與Order_Eachcons不同
@@ -532,8 +534,9 @@ where WorkOrderUkey={0}", masterID);
 
                 setMaskString(e.FormattedValue.ToString().Replace(" ", "0"), "CurvedLength");
             };
-            #endregion 
-            
+            #endregion
+
+            cellDropDownList dropdown = (cellDropDownList)cellDropDownList.GetGridCell("Pms_WorkOrderShift");
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6)).Get(out col_cutref)
@@ -554,6 +557,7 @@ where WorkOrderUkey={0}", masterID);
                 .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(2)).Get(out col_SpreadingNoID)
                 .Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
+                .ComboBox("Shift", header: "Shift", width: Widths.AnsiChars(20), settings: dropdown).Get(out col_shift)
                 .Text("Cutplanid", header: "Cutplan#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("actcutdate", header: "Act. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Edituser", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -1013,6 +1017,31 @@ where WorkOrderUkey={0}", masterID);
                     checkCuttingWidth(dr["cutCellid"].ToString(), dr["SCIRefno"].ToString());
                 }
                 dr.EndEdit();
+            };
+            #endregion
+            #region Shift
+            col_shift.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.ComboBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.ComboBox)e.Control).ReadOnly = true;
+
+            };
+            col_shift.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
             };
             #endregion
             #region col_SpreadingNoID

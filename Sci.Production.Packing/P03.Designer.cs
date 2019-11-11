@@ -95,6 +95,8 @@
             this.numAppBookingVW = new Sci.Win.UI.NumericBox();
             this.numAppEstAmtVW = new Sci.Win.UI.NumericBox();
             this.labAppEstAmtVW = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.displayHC = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -112,6 +114,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayHC);
+            this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.numAppEstAmtVW);
             this.masterpanel.Controls.Add(this.labAppEstAmtVW);
             this.masterpanel.Controls.Add(this.numAppBookingVW);
@@ -240,6 +244,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numAppBookingVW, 0);
             this.masterpanel.Controls.SetChildIndex(this.labAppEstAmtVW, 0);
             this.masterpanel.Controls.SetChildIndex(this.numAppEstAmtVW, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayHC, 0);
             // 
             // detailpanel
             // 
@@ -341,7 +347,7 @@
             this.displayNo.Location = new System.Drawing.Point(149, 5);
             this.displayNo.Name = "displayNo";
             this.displayNo.Size = new System.Drawing.Size(120, 23);
-            this.displayNo.TabIndex = 9;
+            this.displayNo.TabIndex = 1;
             // 
             // comboSortby
             // 
@@ -354,7 +360,7 @@
             this.comboSortby.Name = "comboSortby";
             this.comboSortby.OldText = "";
             this.comboSortby.Size = new System.Drawing.Size(121, 24);
-            this.comboSortby.TabIndex = 18;
+            this.comboSortby.TabIndex = 34;
             this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.ComboSortby_SelectedIndexChanged);
             // 
             // labelShipMode
@@ -399,7 +405,7 @@
             // 
             // labelPurchaseCtn
             // 
-            this.labelPurchaseCtn.Location = new System.Drawing.Point(625, 221);
+            this.labelPurchaseCtn.Location = new System.Drawing.Point(625, 249);
             this.labelPurchaseCtn.Name = "labelPurchaseCtn";
             this.labelPurchaseCtn.Size = new System.Drawing.Size(127, 22);
             this.labelPurchaseCtn.TabIndex = 24;
@@ -412,7 +418,7 @@
             this.displayStartCtn.Location = new System.Drawing.Point(513, 5);
             this.displayStartCtn.Name = "displayStartCtn";
             this.displayStartCtn.Size = new System.Drawing.Size(67, 23);
-            this.displayStartCtn.TabIndex = 26;
+            this.displayStartCtn.TabIndex = 8;
             // 
             // numTtlCtns
             // 
@@ -429,7 +435,7 @@
             0});
             this.numTtlCtns.ReadOnly = true;
             this.numTtlCtns.Size = new System.Drawing.Size(67, 23);
-            this.numTtlCtns.TabIndex = 27;
+            this.numTtlCtns.TabIndex = 9;
             this.numTtlCtns.Value = new decimal(new int[] {
             0,
             0,
@@ -451,7 +457,7 @@
             0});
             this.numShipQty.ReadOnly = true;
             this.numShipQty.Size = new System.Drawing.Size(67, 23);
-            this.numShipQty.TabIndex = 28;
+            this.numShipQty.TabIndex = 10;
             this.numShipQty.Value = new decimal(new int[] {
             0,
             0,
@@ -474,7 +480,7 @@
             0});
             this.numTtlCBM.ReadOnly = true;
             this.numTtlCBM.Size = new System.Drawing.Size(83, 23);
-            this.numTtlCBM.TabIndex = 29;
+            this.numTtlCBM.TabIndex = 11;
             this.numTtlCBM.Value = new decimal(new int[] {
             0,
             0,
@@ -485,10 +491,10 @@
             // 
             this.displayPurchaseCtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPurchaseCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPurchaseCtn.Location = new System.Drawing.Point(755, 222);
+            this.displayPurchaseCtn.Location = new System.Drawing.Point(755, 250);
             this.displayPurchaseCtn.Name = "displayPurchaseCtn";
             this.displayPurchaseCtn.Size = new System.Drawing.Size(27, 23);
-            this.displayPurchaseCtn.TabIndex = 30;
+            this.displayPurchaseCtn.TabIndex = 23;
             // 
             // labelPullOutDate
             // 
@@ -516,7 +522,7 @@
             // 
             // labelCartonEstBooking
             // 
-            this.labelCartonEstBooking.Location = new System.Drawing.Point(625, 167);
+            this.labelCartonEstBooking.Location = new System.Drawing.Point(625, 195);
             this.labelCartonEstBooking.Name = "labelCartonEstBooking";
             this.labelCartonEstBooking.Size = new System.Drawing.Size(127, 22);
             this.labelCartonEstBooking.TabIndex = 35;
@@ -524,7 +530,7 @@
             // 
             // labelCartonEstArrived
             // 
-            this.labelCartonEstArrived.Location = new System.Drawing.Point(625, 194);
+            this.labelCartonEstArrived.Location = new System.Drawing.Point(625, 222);
             this.labelCartonEstArrived.Name = "labelCartonEstArrived";
             this.labelCartonEstArrived.Size = new System.Drawing.Size(127, 22);
             this.labelCartonEstArrived.TabIndex = 36;
@@ -538,7 +544,7 @@
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.ReadOnly = true;
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
-            this.datePullOutDate.TabIndex = 38;
+            this.datePullOutDate.TabIndex = 14;
             // 
             // displayInvoiceNo
             // 
@@ -548,7 +554,7 @@
             this.displayInvoiceNo.Location = new System.Drawing.Point(755, 59);
             this.displayInvoiceNo.Name = "displayInvoiceNo";
             this.displayInvoiceNo.Size = new System.Drawing.Size(160, 23);
-            this.displayInvoiceNo.TabIndex = 39;
+            this.displayInvoiceNo.TabIndex = 16;
             // 
             // displayShipPlanNo
             // 
@@ -558,23 +564,23 @@
             this.displayShipPlanNo.Location = new System.Drawing.Point(755, 86);
             this.displayShipPlanNo.Name = "displayShipPlanNo";
             this.displayShipPlanNo.Size = new System.Drawing.Size(120, 23);
-            this.displayShipPlanNo.TabIndex = 40;
+            this.displayShipPlanNo.TabIndex = 17;
             // 
             // dateCartonEstBooking
             // 
             this.dateCartonEstBooking.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNBooking", true));
-            this.dateCartonEstBooking.Location = new System.Drawing.Point(755, 167);
+            this.dateCartonEstBooking.Location = new System.Drawing.Point(755, 195);
             this.dateCartonEstBooking.Name = "dateCartonEstBooking";
             this.dateCartonEstBooking.Size = new System.Drawing.Size(130, 23);
-            this.dateCartonEstBooking.TabIndex = 6;
+            this.dateCartonEstBooking.TabIndex = 21;
             // 
             // dateCartonEstArrived
             // 
             this.dateCartonEstArrived.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNArrive", true));
-            this.dateCartonEstArrived.Location = new System.Drawing.Point(755, 195);
+            this.dateCartonEstArrived.Location = new System.Drawing.Point(755, 223);
             this.dateCartonEstArrived.Name = "dateCartonEstArrived";
             this.dateCartonEstArrived.Size = new System.Drawing.Size(130, 23);
-            this.dateCartonEstArrived.TabIndex = 7;
+            this.dateCartonEstArrived.TabIndex = 22;
             // 
             // editRemark
             // 
@@ -585,7 +591,7 @@
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(514, 142);
-            this.editRemark.TabIndex = 4;
+            this.editRemark.TabIndex = 7;
             // 
             // btnCartonSummary
             // 
@@ -593,7 +599,7 @@
             this.btnCartonSummary.Location = new System.Drawing.Point(919, 28);
             this.btnCartonSummary.Name = "btnCartonSummary";
             this.btnCartonSummary.Size = new System.Drawing.Size(178, 30);
-            this.btnCartonSummary.TabIndex = 48;
+            this.btnCartonSummary.TabIndex = 25;
             this.btnCartonSummary.Text = "Carton Summary";
             this.btnCartonSummary.UseVisualStyleBackColor = true;
             this.btnCartonSummary.Click += new System.EventHandler(this.BtnCartonSummary_Click);
@@ -604,7 +610,7 @@
             this.btnRecalculateWeight.Location = new System.Drawing.Point(919, 59);
             this.btnRecalculateWeight.Name = "btnRecalculateWeight";
             this.btnRecalculateWeight.Size = new System.Drawing.Size(179, 30);
-            this.btnRecalculateWeight.TabIndex = 49;
+            this.btnRecalculateWeight.TabIndex = 26;
             this.btnRecalculateWeight.Text = "Recalculate Weight";
             this.btnRecalculateWeight.UseVisualStyleBackColor = true;
             this.btnRecalculateWeight.Click += new System.EventHandler(this.BtnRecalculateWeight_Click);
@@ -615,7 +621,7 @@
             this.btnUnConfirmHistory.Location = new System.Drawing.Point(919, 90);
             this.btnUnConfirmHistory.Name = "btnUnConfirmHistory";
             this.btnUnConfirmHistory.Size = new System.Drawing.Size(179, 30);
-            this.btnUnConfirmHistory.TabIndex = 50;
+            this.btnUnConfirmHistory.TabIndex = 27;
             this.btnUnConfirmHistory.Text = "UnConfirm History";
             this.btnUnConfirmHistory.UseVisualStyleBackColor = true;
             this.btnUnConfirmHistory.Click += new System.EventHandler(this.BtnUnConfirmHistory_Click);
@@ -634,7 +640,7 @@
             this.dateLocateforTransferClog.Location = new System.Drawing.Point(530, 317);
             this.dateLocateforTransferClog.Name = "dateLocateforTransferClog";
             this.dateLocateforTransferClog.Size = new System.Drawing.Size(130, 23);
-            this.dateLocateforTransferClog.TabIndex = 52;
+            this.dateLocateforTransferClog.TabIndex = 37;
             // 
             // txtLocateforTransferClog
             // 
@@ -644,14 +650,14 @@
             this.txtLocateforTransferClog.Location = new System.Drawing.Point(530, 317);
             this.txtLocateforTransferClog.Name = "txtLocateforTransferClog";
             this.txtLocateforTransferClog.Size = new System.Drawing.Size(80, 23);
-            this.txtLocateforTransferClog.TabIndex = 53;
+            this.txtLocateforTransferClog.TabIndex = 36;
             // 
             // btnFindNow
             // 
             this.btnFindNow.Location = new System.Drawing.Point(672, 315);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(80, 30);
-            this.btnFindNow.TabIndex = 54;
+            this.btnFindNow.TabIndex = 38;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
             this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
@@ -700,7 +706,7 @@
             this.btnDownload.Location = new System.Drawing.Point(919, 183);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(179, 30);
-            this.btnDownload.TabIndex = 59;
+            this.btnDownload.TabIndex = 30;
             this.btnDownload.Text = "Download Cust# Temp";
             this.btnDownload.UseVisualStyleBackColor = true;
             this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
@@ -711,7 +717,7 @@
             this.btnImportFromExcel.Location = new System.Drawing.Point(919, 214);
             this.btnImportFromExcel.Name = "btnImportFromExcel";
             this.btnImportFromExcel.Size = new System.Drawing.Size(179, 30);
-            this.btnImportFromExcel.TabIndex = 60;
+            this.btnImportFromExcel.TabIndex = 31;
             this.btnImportFromExcel.Text = "Import Cust# File";
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
             this.btnImportFromExcel.Click += new System.EventHandler(this.BtnImportFromExcel_Click);
@@ -723,7 +729,7 @@
             this.txtcountry.Location = new System.Drawing.Point(149, 88);
             this.txtcountry.Name = "txtcountry";
             this.txtcountry.Size = new System.Drawing.Size(214, 22);
-            this.txtcountry.TabIndex = 2;
+            this.txtcountry.TabIndex = 4;
             this.txtcountry.TextBox1Binding = "";
             // 
             // txtcustcd
@@ -735,7 +741,7 @@
             this.txtcustcd.Location = new System.Drawing.Point(149, 61);
             this.txtcustcd.Name = "txtcustcd";
             this.txtcustcd.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd.TabIndex = 1;
+            this.txtcustcd.TabIndex = 3;
             this.txtcustcd.Validated += new System.EventHandler(this.Txtcustcd_Validated);
             // 
             // txtbrand
@@ -746,7 +752,7 @@
             this.txtbrand.Location = new System.Drawing.Point(149, 33);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(78, 23);
-            this.txtbrand.TabIndex = 0;
+            this.txtbrand.TabIndex = 2;
             this.txtbrand.Validated += new System.EventHandler(this.Txtbrand_Validated);
             // 
             // txtshipmode
@@ -760,7 +766,7 @@
             this.txtshipmode.Name = "txtshipmode";
             this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode.TabIndex = 3;
+            this.txtshipmode.TabIndex = 5;
             this.txtshipmode.UseFunction = "ORDER";
             this.txtshipmode.Validated += new System.EventHandler(this.Txtshipmode_Validated);
             // 
@@ -780,7 +786,7 @@
             0});
             this.numTtlGW.ReadOnly = true;
             this.numTtlGW.Size = new System.Drawing.Size(83, 23);
-            this.numTtlGW.TabIndex = 62;
+            this.numTtlGW.TabIndex = 12;
             this.numTtlGW.Value = new decimal(new int[] {
             0,
             0,
@@ -811,7 +817,7 @@
             this.displayBoxPullOutNo.Location = new System.Drawing.Point(755, 32);
             this.displayBoxPullOutNo.Name = "displayBoxPullOutNo";
             this.displayBoxPullOutNo.Size = new System.Drawing.Size(160, 23);
-            this.displayBoxPullOutNo.TabIndex = 39;
+            this.displayBoxPullOutNo.TabIndex = 15;
             // 
             // btnUpdateBarcode
             // 
@@ -819,14 +825,14 @@
             this.btnUpdateBarcode.Location = new System.Drawing.Point(919, 121);
             this.btnUpdateBarcode.Name = "btnUpdateBarcode";
             this.btnUpdateBarcode.Size = new System.Drawing.Size(179, 30);
-            this.btnUpdateBarcode.TabIndex = 63;
+            this.btnUpdateBarcode.TabIndex = 28;
             this.btnUpdateBarcode.Text = "Update Barcode";
             this.btnUpdateBarcode.UseVisualStyleBackColor = true;
             this.btnUpdateBarcode.Click += new System.EventHandler(this.BtnUpdateBarcode_Click);
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(625, 113);
+            this.label1.Location = new System.Drawing.Point(625, 141);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(127, 22);
             this.label1.TabIndex = 64;
@@ -834,7 +840,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(625, 140);
+            this.label2.Location = new System.Drawing.Point(625, 168);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(127, 22);
             this.label2.TabIndex = 65;
@@ -843,20 +849,20 @@
             // datesciDelivery
             // 
             this.datesciDelivery.IsSupportEditMode = false;
-            this.datesciDelivery.Location = new System.Drawing.Point(755, 113);
+            this.datesciDelivery.Location = new System.Drawing.Point(755, 141);
             this.datesciDelivery.Name = "datesciDelivery";
             this.datesciDelivery.ReadOnly = true;
             this.datesciDelivery.Size = new System.Drawing.Size(130, 23);
-            this.datesciDelivery.TabIndex = 66;
+            this.datesciDelivery.TabIndex = 19;
             // 
             // datekpileta
             // 
             this.datekpileta.IsSupportEditMode = false;
-            this.datekpileta.Location = new System.Drawing.Point(755, 140);
+            this.datekpileta.Location = new System.Drawing.Point(755, 168);
             this.datekpileta.Name = "datekpileta";
             this.datekpileta.ReadOnly = true;
             this.datekpileta.Size = new System.Drawing.Size(130, 23);
-            this.datekpileta.TabIndex = 7;
+            this.datekpileta.TabIndex = 20;
             // 
             // btnUPCSticker
             // 
@@ -864,7 +870,7 @@
             this.btnUPCSticker.Location = new System.Drawing.Point(919, 152);
             this.btnUPCSticker.Name = "btnUPCSticker";
             this.btnUPCSticker.Size = new System.Drawing.Size(179, 30);
-            this.btnUPCSticker.TabIndex = 67;
+            this.btnUPCSticker.TabIndex = 29;
             this.btnUPCSticker.Text = "UPC Sticker";
             this.btnUPCSticker.UseVisualStyleBackColor = true;
             this.btnUPCSticker.Click += new System.EventHandler(this.BtnUPCSticker_Click);
@@ -881,13 +887,13 @@
             this.checkCancelledOrder.Name = "checkCancelledOrder";
             this.checkCancelledOrder.ReadOnly = true;
             this.checkCancelledOrder.Size = new System.Drawing.Size(160, 21);
-            this.checkCancelledOrder.TabIndex = 68;
+            this.checkCancelledOrder.TabIndex = 35;
             this.checkCancelledOrder.Text = "Include Cancel Order";
             this.checkCancelledOrder.UseVisualStyleBackColor = true;
             // 
             // lbClogCFMStatus
             // 
-            this.lbClogCFMStatus.Location = new System.Drawing.Point(625, 248);
+            this.lbClogCFMStatus.Location = new System.Drawing.Point(625, 276);
             this.lbClogCFMStatus.Name = "lbClogCFMStatus";
             this.lbClogCFMStatus.Size = new System.Drawing.Size(127, 22);
             this.lbClogCFMStatus.TabIndex = 69;
@@ -897,10 +903,10 @@
             // 
             this.disClogCFMStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disClogCFMStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disClogCFMStatus.Location = new System.Drawing.Point(755, 249);
+            this.disClogCFMStatus.Location = new System.Drawing.Point(755, 277);
             this.disClogCFMStatus.Name = "disClogCFMStatus";
             this.disClogCFMStatus.Size = new System.Drawing.Size(27, 23);
-            this.disClogCFMStatus.TabIndex = 70;
+            this.disClogCFMStatus.TabIndex = 24;
             // 
             // btnBatchConf
             // 
@@ -944,7 +950,7 @@
             this.btnRepackCartons.Location = new System.Drawing.Point(919, 245);
             this.btnRepackCartons.Name = "btnRepackCartons";
             this.btnRepackCartons.Size = new System.Drawing.Size(179, 30);
-            this.btnRepackCartons.TabIndex = 71;
+            this.btnRepackCartons.TabIndex = 32;
             this.btnRepackCartons.Text = "Repack Cartons";
             this.btnRepackCartons.UseVisualStyleBackColor = true;
             this.btnRepackCartons.Click += new System.EventHandler(this.BtnRepackCartons_Click);
@@ -956,7 +962,7 @@
             this.btnPackScanHistory.Location = new System.Drawing.Point(917, 280);
             this.btnPackScanHistory.Name = "btnPackScanHistory";
             this.btnPackScanHistory.Size = new System.Drawing.Size(179, 30);
-            this.btnPackScanHistory.TabIndex = 72;
+            this.btnPackScanHistory.TabIndex = 33;
             this.btnPackScanHistory.Text = "Scan and Pack Deleted History";
             this.btnPackScanHistory.UseVisualStyleBackColor = true;
             this.btnPackScanHistory.Click += new System.EventHandler(this.btnPackScanHistory_Click);
@@ -984,7 +990,7 @@
             0});
             this.numAppBookingVW.ReadOnly = true;
             this.numAppBookingVW.Size = new System.Drawing.Size(120, 23);
-            this.numAppBookingVW.TabIndex = 74;
+            this.numAppBookingVW.TabIndex = 6;
             this.numAppBookingVW.Value = new decimal(new int[] {
             0,
             0,
@@ -1006,7 +1012,7 @@
             0});
             this.numAppEstAmtVW.ReadOnly = true;
             this.numAppEstAmtVW.Size = new System.Drawing.Size(109, 23);
-            this.numAppEstAmtVW.TabIndex = 76;
+            this.numAppEstAmtVW.TabIndex = 13;
             this.numAppEstAmtVW.Value = new decimal(new int[] {
             0,
             0,
@@ -1020,6 +1026,24 @@
             this.labAppEstAmtVW.Size = new System.Drawing.Size(138, 22);
             this.labAppEstAmtVW.TabIndex = 75;
             this.labAppEstAmtVW.Text = "V.M. for APP est. Amt";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(625, 113);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(127, 22);
+            this.label3.TabIndex = 77;
+            this.label3.Text = "HC No.";
+            // 
+            // displayHC
+            // 
+            this.displayHC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayHC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExpressID", true));
+            this.displayHC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayHC.Location = new System.Drawing.Point(755, 113);
+            this.displayHC.Name = "displayHC";
+            this.displayHC.Size = new System.Drawing.Size(120, 23);
+            this.displayHC.TabIndex = 18;
             // 
             // P03
             // 
@@ -1136,5 +1160,7 @@
         private Win.UI.Label labAppEstAmtVW;
         private Win.UI.NumericBox numAppBookingVW;
         private Win.UI.Label labAppBookingVW;
+        private Win.UI.DisplayBox displayHC;
+        private Win.UI.Label label3;
     }
 }

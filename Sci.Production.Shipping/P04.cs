@@ -108,6 +108,7 @@ where ed.ID = '{0}'", masterID);
                 this.displayCustomsDeclareNo.Text = string.Empty;
             }
 
+            this.ControlColor();
         }
 
         /// <inheritdoc/>
@@ -276,6 +277,29 @@ where ed.ID = '{0}'", masterID);
                 return false;
             }
 
+            if (!this.IsDetailInserting)
+            {
+                // 檢查已存在ShareExpense資料是否[Shipping Mode]是否不同
+                sqlCmd = string.Format(
+                      @"select distinct ShipModeID
+                            from ShareExpense WITH (NOLOCK) 
+                            where (InvNo = '{0}' or WKNO = '{0}')
+                            and len(ShipModeID) > 0
+                            and Junk = 0 ",
+                      MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                DBProxy.Current.Select(null, sqlCmd, out _dataTable);
+                if (_dataTable.Rows.Count > 0)
+                {
+                    bool bolHasValue = _dataTable.AsEnumerable().Distinct().Where(x => !x["ShipModeID"].Equals(this.comboShippMode.SelectedValue.ToString())).ToList().Count() > 0;
+                    if (bolHasValue)
+                    {
+                        MyUtility.Msg.WarningBox("Can not revise < Shipping Mode > because share expense shipping mode is different.");
+                        this.comboShippMode.SelectedIndex = -1;
+                        return false;
+                    }
+                }
+            }
+
             // 加總表身欄位回寫表頭
             double nw = 0.0, gw = 0.0;
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
@@ -284,25 +308,6 @@ where ed.ID = '{0}'", masterID);
                 {
                     nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NetKg"]), 2);
                     gw = MyUtility.Math.Round(gw + MyUtility.Convert.GetDouble(dr["WeightKg"]), 2);
-                }
-            }
-
-            // 檢查已存在ShareExpense資料是否[Shipping Mode]是否不同
-            sqlCmd = string.Format(
-                  @"select distinct ShipModeID
-                            from ShareExpense WITH (NOLOCK) 
-                            where (InvNo = '{0}' or WKNO = '{0}')
-                            and len(ShipModeID) > 0",
-                  MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DBProxy.Current.Select(null, sqlCmd, out _dataTable);
-            if (_dataTable.Rows.Count > 0)
-            {
-                bool bolHasValue = _dataTable.AsEnumerable().Where(x => x["ShipModeID"].Equals(this.comboShippMode.SelectedValue.ToString())).ToList().Count() > 0;
-                if (!bolHasValue)
-                {
-                    MyUtility.Msg.WarningBox("Can not revise < Shipping Mode > because share expense shipping mode is different.");
-                    this.comboShippMode.SelectedIndex = -1;
-                    return false;
                 }
             }
 
@@ -466,6 +471,50 @@ where ed.ID = '{0}'", masterID);
             else
             {
                 this.txtSisFtyWK.ReadOnly = true;
+            }
+        }
+
+        private void ControlColor()
+        {
+            string col = MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) == "3" ? "InvNo" : "WKNo";
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+
+            switch (col)
+            {
+                case "InvNo":
+                    sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                    break;
+                case "WKNo":
+                    sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                    break;
+                default:
+                    sqlCmd = "select 1 from ShareExpense WITH (NOLOCK) where 1=2";
+                    break;
+            }
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (gridData.Rows.Count > 0)
+            {
+                this.btnExpenseData.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnExpenseData.ForeColor = Color.Black;
             }
         }
     }

@@ -81,7 +81,7 @@ Select a.* , e.FabricCombo, e.FabricPanelCode,
     , LackingLayers = e.Layer -isnull(acc.AccuCuttingLayer,0)- a.layer
     , e.ConsPC,SRQ.SizeRatioQty
 From cuttingoutput_Detail a WITH (NOLOCK)
-inner join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
+left join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = e.Ukey and id <> '{0}')acc
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = e.Ukey)SRQ
 where a.id = '{0}' 
@@ -499,7 +499,10 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 }
             }
             #endregion
-
+            int cutrefCount = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.
+   GetString(s["Cutref"])).Distinct().Count();
+            this.CurrentMaintain["ActCutRefQty"] = cutrefCount;
+            this.CurrentMaintain.EndEdit();
             return base.ClickSaveBefore();
         }
         protected override void ClickConfirm()
@@ -534,7 +537,8 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
 
             string update = "";
             update = $@"update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{loginID}' where id='{CurrentMaintain["ID"]}';
-                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'Confirm';";
+                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'Confirm';
+";
 
             #region transaction
             DualResult upResult;
@@ -595,7 +599,8 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             #endregion
             string update = "";
             update = $@"update Cuttingoutput set status='New',editDate=getdate(),editname ='{loginID}' where id='{CurrentMaintain["ID"]}';
-                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'UnConfirm';";
+                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'UnConfirm';
+";
 
             #region transaction
             DualResult upResult;

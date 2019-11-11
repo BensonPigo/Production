@@ -95,7 +95,8 @@ t.AddDate= s.AddDate,
 t.EditName= s.EditName,
 t.EditDate= s.EditDate,
 t.DescriptionDetail = s.DescriptionDetail,
-t.PurchaseBatchQty = s.BatchQty
+t.PurchaseBatchQty = s.BatchQty,
+t.AssetTypeID = s.AssetTypeID
 
 	when not matched by target and s.type='O' then 
 		insert ( ID
@@ -118,7 +119,8 @@ t.PurchaseBatchQty = s.BatchQty
 ,EditName
 ,EditDate
 ,DescriptionDetail
-,PurchaseBatchQty	)
+,PurchaseBatchQty
+,AssetTypeID	)
 
 values(s.refno,
 s.Model,
@@ -140,7 +142,8 @@ s.AddDate,
 s.EditName,
 s.EditDate,
 s.DescriptionDetail,
-s.BatchQty
+s.BatchQty,
+s.AssetTypeID
  );
 
  
@@ -370,7 +373,7 @@ s.BatchQty
 
 		Merge Machine.dbo.MachinePO as t
 	Using (select a.*,b.MdivisionID from Trade_To_Pms.DBO.MmsPO a WITH (NOLOCK) left join Production.dbo.scifty b WITH (NOLOCK) on a.factoryid = b.id
-	 where a.factoryid in (select id from @Sayfty) and type = 'M')  as s
+	 where a.factoryid in (select id from @Sayfty) and a.type = 'M')  as s
 	on t.id=s.id
 	when matched  then
 		update set
@@ -752,7 +755,7 @@ update t
 	where exists(select 1 from @Tdebit t where t.MachineID = m.ID and TPEReject = 1)
 
 	update md set Results = 'Reject'
-	from MachinePending_Detail md
+	from Machine.dbo.MachinePending_Detail md
 	where exists(select 1 from @Tdebit t where t.ID = md.ID and t.MachineID = md.MachineID and TPEReject = 1)
 
 	END

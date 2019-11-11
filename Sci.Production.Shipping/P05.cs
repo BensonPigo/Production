@@ -12,6 +12,7 @@ using System.Transactions;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -273,6 +274,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             {
                 this.FBDate_Ori = null;
             }
+
+            this.ControlColor();
         }
 
         /// <inheritdoc/>
@@ -705,8 +708,14 @@ order by fwd.WhseNo",
                 return false;
             }
             #endregion
+            #region 若 No Export Charge 有勾選，同時 Expense Data 也有資料，
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["NoExportCharges"]) && this.ControlColor())
+            {
+                MyUtility.Msg.WarningBox("This record have expense data, please double check.");
+            }
+            #endregion
 
-            #region 新增單狀態下，取ID且檢查此ID是否存在 
+            #region 新增單狀態下，取ID且檢查此ID是否存在
             if (this.IsDetailInserting)
             {
                 string fac = MyUtility.GetValue.Lookup($@"
@@ -1499,6 +1508,12 @@ Packing List : {pid}";
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return;
             }
+
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(INVNo: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
+            }
+
             DualResult result;
             // 當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
@@ -1921,7 +1936,7 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and o.SeasonID = f.SeasonID 
           and  f.BrandID = '{this.txtbrand.Text}' 
-          and GETDATE() between f.BeginDate and f.EndDate
+          and cast(GETDATE()as date) between f.BeginDate and f.EndDate
 )f1
 outer apply(
     select ShipperID 
@@ -1929,7 +1944,7 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and f.SeasonID = '' 
           and f.BrandID = '{this.txtbrand.Text}' 
-          and GETDATE() between f.BeginDate and f.EndDate
+          and cast(GETDATE()as date) between f.BeginDate and f.EndDate
 )f2
 where o.ID in ({SP.Substring(0, SP.Length - 1)})
 ";
@@ -1957,6 +1972,35 @@ where o.ID in ({SP.Substring(0, SP.Length - 1)})
             }
 
             return true;
+        }
+
+        private bool ControlColor()
+        {
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+            sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (gridData.Rows.Count > 0)
+            {
+                this.btnExpenseData.ForeColor = Color.Blue;
+                return true;
+            }
+            else
+            {
+                this.btnExpenseData.ForeColor = Color.Black;
+                return false;
+            }
         }
     }
 }

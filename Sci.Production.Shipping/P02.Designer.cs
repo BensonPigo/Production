@@ -65,7 +65,7 @@
             this.labelttlCartonWeight = new Sci.Win.UI.Label();
             this.numttlCartonWeight = new Sci.Win.UI.NumericBox();
             this.labelttlGW = new Sci.Win.UI.Label();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
+            this.numericBoxttlGW = new Sci.Win.UI.NumericBox();
             this.labelVolumnWeight = new Sci.Win.UI.Label();
             this.numVolumnWeight = new Sci.Win.UI.NumericBox();
             this.labelCarrier = new Sci.Win.UI.Label();
@@ -144,7 +144,7 @@
             this.masterpanel.Controls.Add(this.labelCarrier);
             this.masterpanel.Controls.Add(this.numVolumnWeight);
             this.masterpanel.Controls.Add(this.labelVolumnWeight);
-            this.masterpanel.Controls.Add(this.numericBox4);
+            this.masterpanel.Controls.Add(this.numericBoxttlGW);
             this.masterpanel.Controls.Add(this.labelttlGW);
             this.masterpanel.Controls.Add(this.numttlCartonWeight);
             this.masterpanel.Controls.Add(this.labelttlCartonWeight);
@@ -220,7 +220,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelttlCartonWeight, 0);
             this.masterpanel.Controls.SetChildIndex(this.numttlCartonWeight, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelttlGW, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numericBoxttlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelVolumnWeight, 0);
             this.masterpanel.Controls.SetChildIndex(this.numVolumnWeight, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCarrier, 0);
@@ -673,7 +673,7 @@
             // 
             this.numttlNW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numttlNW.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NW", true));
-            this.numttlNW.DecimalPlaces = 2;
+            this.numttlNW.DecimalPlaces = 3;
             this.numttlNW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numttlNW.IsSupportEditMode = false;
             this.numttlNW.Location = new System.Drawing.Point(65, 148);
@@ -733,21 +733,21 @@
             // 
             // numericBox4
             // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DecimalPlaces = 2;
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(500, 148);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
+            this.numericBoxttlGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBoxttlGW.DecimalPlaces = 3;
+            this.numericBoxttlGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBoxttlGW.IsSupportEditMode = false;
+            this.numericBoxttlGW.Location = new System.Drawing.Point(500, 148);
+            this.numericBoxttlGW.Name = "numericBox4";
+            this.numericBoxttlGW.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(90, 23);
-            this.numericBox4.TabIndex = 38;
-            this.numericBox4.Value = new decimal(new int[] {
+            this.numericBoxttlGW.ReadOnly = true;
+            this.numericBoxttlGW.Size = new System.Drawing.Size(90, 23);
+            this.numericBoxttlGW.TabIndex = 38;
+            this.numericBoxttlGW.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -1187,7 +1187,7 @@
 
         private Win.UI.NumericBox numVolumnWeight;
         private Win.UI.Label labelVolumnWeight;
-        private Win.UI.NumericBox numericBox4;
+        private Win.UI.NumericBox numericBoxttlGW;
         private Win.UI.Label labelttlGW;
         private Win.UI.NumericBox numttlCartonWeight;
         private Win.UI.Label labelttlCartonWeight;

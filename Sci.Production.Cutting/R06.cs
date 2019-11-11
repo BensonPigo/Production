@@ -190,6 +190,7 @@ select Readydate,Factory=ID,SewOffLine,BuyerDelivery,CutGapDay into #tmp2 from #
 --從orders撈資料
 select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Category,c.Alias,o.StyleID,o.CustPONo,o.BrandID,o.ProgramID,o.Qty
 	,o.SewInLine,o.SewOffLine,o.SewLine,o.ShipModeList,a.Article,t.Readydate,o.MDivisionid,t.CutGapDay
+    , [CutGapDatetime] = (cast(t.CutGapDay as datetime)+cast(@CutGapTime as datetime))
 into #orderOffline
 from Orders o with(nolock)
 inner join #tmp2 t on t.SewOffLine = o.SewOffLine and t.Factory = o.FtyGroup--推算的SewOffLine找orders, 以符合SewOffLine
@@ -202,6 +203,7 @@ and o.BuyerDelivery >= t.BuyerDelivery--BuyerDelivery要大於等於推算出來
 
 select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Category,c.Alias,o.StyleID,o.CustPONo,o.BrandID,o.ProgramID,o.Qty
 	,o.SewInLine,o.SewOffLine,o.SewLine,o.ShipModeList,a.Article,t.Readydate,o.MDivisionid,t.CutGapDay
+    , [CutGapDatetime] = (cast(t.CutGapDay as datetime)+cast(@CutGapTime as datetime))
 into #orderBuyer
 from Orders o with(nolock)
 inner join #tmp2 t on t.BuyerDelivery = o.BuyerDelivery and t.Factory = o.FtyGroup--推算的BuyerDelivery
@@ -222,17 +224,35 @@ inner join WorkOrder_Distribute wd WITH (NOLOCK) on o.id = wd.OrderID
 inner join Order_ColorCombo occ on o.poid = occ.id and occ.Article = wd.Article
 inner join order_Eachcons cons on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
 where occ.FabricCode !='' and occ.FabricCode is not null 
+
 --以及這趟撈的資料sum(Qty) by SizeCode,Article,PatternPanel,sp
-select Qty= sum(wd.Qty),wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,sp = a.id,Readydate
-into #tmpc
+select wd.Qty
+	,wd.SizeCode
+	,wd.Article
+	,wp.PatternPanel
+	,co.MDivisionid
+	,[sp] = a.id
+	,a.Readydate 
+	, [canDO] =case when co.EditDate <= a.CutGapDatetime then 1 else 0 end 
+into #tmp_orderOffline_canDO
 from #orderOffline a
-inner join WorkOrder_Distribute wd on wd.orderid = a.ID 
-inner join workorder w on w.Ukey = wd.WorkOrderUkey
-left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
-inner join CuttingOutput_Detail cod on cod.CutRef = w.CutRef
-inner join CuttingOutput co on co.id = cod.id and co.MDivisionid = w.MDivisionId and co.Status <> 'New'
-where co.EditDate <= (cast(CutGapDay as datetime)+cast(@CutGapTime as datetime))---CuttingOutput最後編輯時間小於readtday+CutGay
-group by wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,a.id,Readydate
+inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.orderid = a.ID 
+inner join workorder w WITH (NOLOCK) on w.Ukey = wd.WorkOrderUkey 
+inner join CuttingOutput_Detail cod WITH (NOLOCK)on cod.CutRef = w.CutRef
+inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.MDivisionid = w.MDivisionId and co.Status <> 'New' and  co.EditDate is not null
+left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey  
+
+select Qty= sum(a.Qty)
+	,a.SizeCode
+	,a.Article
+	,a.PatternPanel
+	,a.MDivisionid
+	,a.sp
+	,a.Readydate
+into #tmpc
+from #tmp_orderOffline_canDO a
+where a.canDO = 1 
+group by a.SizeCode,a.Article,a.PatternPanel,a.MDivisionid,a.sp,a.Readydate
 
 --缺的部位null為0
 select a.sp,a.SizeCode,a.Article,a.PatternPanel,a.MDivisionID,Qty=isnull(b.Qty,0),a.Readydate
@@ -253,16 +273,34 @@ inner join Order_ColorCombo occ on o.poid = occ.id and occ.Article = wd.Article
 inner join order_Eachcons cons on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
 where occ.FabricCode !='' and occ.FabricCode is not null 
 
-select Qty= sum(wd.Qty),wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,sp = a.id,Readydate
-into #tmpcB
+
+select wd.Qty
+	,wd.SizeCode
+	,wd.Article
+	,wp.PatternPanel
+	,co.MDivisionid
+	,[sp] = a.id
+	,a.Readydate 
+	, [canDO] =case when co.EditDate <= a.CutGapDatetime then 1 else 0 end 
+into #tmp_orderBuyer_canDO
 from #orderBuyer a
-inner join WorkOrder_Distribute wd on wd.orderid = a.ID 
-inner join workorder w on w.Ukey = wd.WorkOrderUkey
+inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.orderid = a.ID 
+inner join workorder w WITH (NOLOCK) on w.Ukey = wd.WorkOrderUkey 
+inner join CuttingOutput_Detail cod WITH (NOLOCK)on cod.CutRef = w.CutRef
+inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.MDivisionid = w.MDivisionId and co.Status <> 'New' and  co.EditDate is not null
 left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
-inner join CuttingOutput_Detail cod on cod.CutRef = w.CutRef
-inner join CuttingOutput co on co.id = cod.id and co.MDivisionid = w.MDivisionId and co.Status <> 'New'
-where co.EditDate <= (cast(CutGapDay as datetime)+cast(@CutGapTime as datetime))---CuttingOutput最後編輯時間小於readtday+CutGay
-group by wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,a.id,Readydate
+
+select Qty= sum(a.Qty)
+	,a.SizeCode
+	,a.Article
+	,a.PatternPanel
+	,a.MDivisionid
+	,a.sp
+	,a.Readydate
+into #tmpcB
+from #tmp_orderBuyer_canDO a
+where a.canDO = 1 
+group by a.SizeCode,a.Article,a.PatternPanel,a.MDivisionid,a.sp,a.Readydate
 
 --缺的部位null為0
 select a.sp,a.SizeCode,a.Article,a.PatternPanel,a.MDivisionID,Qty=isnull(b.Qty,0),a.Readydate
@@ -300,7 +338,7 @@ select t.MDivisionID,t.FtyGroup,ct=count(1) from #tmplast t group by t.FtyGroup,
 select t.MDivisionID,t.FtyGroup,ct=count(1),closed = sum(iif(t.CuttingStatus='Y',1,0)),Failed = sum(iif(t.CuttingStatus='Y',0,1)),p=cast(sum(iif(t.CuttingStatus='Y',1,0))as float)/count(1)
 from #tmplast t group by t.FtyGroup,t.MDivisionID
 
-drop table #dateranges,#df,#DHoliday,#tmp1,#tmp2,#orderOffline
+drop table #dateranges,#df,#DHoliday,#tmp1,#tmp2,#orderOffline,#tmp_orderOffline_canDO,#tmp_orderBuyer_canDO
 drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmpP,#pBuyerB,#tmpPB,#tmplast
 
 ";

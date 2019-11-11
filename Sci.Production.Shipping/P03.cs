@@ -169,6 +169,28 @@ where ID = '{this.CurrentMaintain["MainExportID08"]}'
                 this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
             }
             #endregion
+            #region Door to Door
+            string chkdtd = $@"
+select 1
+from Door2DoorDelivery 
+where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
+      and ExportCountry ='{this.CurrentMaintain["ExportCountry"]}'
+      and ImportCountry = '{this.CurrentMaintain["ImportCountry"]}'
+      and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
+      and Vessel ='{this.CurrentMaintain["Vessel"]}'
+union 
+select 1
+from Door2DoorDelivery
+where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
+      and ExportCountry ='{this.CurrentMaintain["ExportCountry"]}'
+      and ImportCountry = '{this.CurrentMaintain["ImportCountry"]}'
+      and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
+      and Vessel  =''
+";
+            this.ChkDoortoDoorDelivery.Checked = MyUtility.Check.Seek(chkdtd);
+            #endregion
+
+            this.ControlColor();
         }
 
         /// <inheritdoc/>
@@ -359,6 +381,34 @@ where ID = '{this.CurrentMaintain["MainExportID08"]}'
             P03_BatchUpload callNextForm = new P03_BatchUpload();
             callNextForm.ShowDialog(this);
             this.ReloadDatas();
+        }
+
+        private void ControlColor()
+        {
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+
+            sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (gridData.Rows.Count > 0)
+            {
+                this.btnExpenseData.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnExpenseData.ForeColor = Color.Black;
+            }
         }
     }
 }

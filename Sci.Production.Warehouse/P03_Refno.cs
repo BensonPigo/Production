@@ -36,6 +36,9 @@ namespace Sci.Production.Warehouse
                 = string.Format(@"
 Select  a.FtyGroup
         ,b.id
+        ,a.StyleID
+        ,a.SeasonID
+        ,a.BrandID
         , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq --left(b.seq1+' ',3)+b.Seq2 as seq
         --, colorid = isnull(dbo.GetColorMultipleID(a.BrandID,b.colorid),'')
 		, [ColorID]= IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' ,b.SuppColor,dbo.GetColorMultipleID(a.BrandID,b.ColorID)) 
@@ -181,6 +184,9 @@ drop table #tmp
             Helper.Controls.Grid.Generator(this.gridRefNo)
                  .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(13))
                  .Text("id", header: "SP#", width: Widths.AnsiChars(13))
+                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(13))
+                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(13))
+                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(13))
                  .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
                  .Text("colorid", header: "Color", width: Widths.AnsiChars(6))
                  .Text("sizespec", header: "Size", width: Widths.AnsiChars(15))
