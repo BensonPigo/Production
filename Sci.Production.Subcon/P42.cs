@@ -924,12 +924,12 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             //準備Grid 2
             this.Helper.Controls.Grid.Generator(this.grid2)
             .Text("Bundle#", header: "BundleNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Text("EXCESS", header: "EXCESS", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PatternDesc", header: "PatternDesc", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("BundleGroup", header: "BundleGroup", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("EXCESS", header: "EXCESS", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
