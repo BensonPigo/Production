@@ -490,10 +490,18 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             {
                 if (datacheck.Rows.Count > 0)
                 {
+                    // 資料量太多，超過20筆的話訊息不要全部跑完
+                    int index = 0;
                     foreach (DataRow tmp in datacheck.Rows)
                     {
                         ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than Adjust qty: {5}" + Environment.NewLine
                             , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                        if (index > 20 )
+                        {
+                            ids += "......and more.";
+                            break;
+                        }
+                        index++;
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
