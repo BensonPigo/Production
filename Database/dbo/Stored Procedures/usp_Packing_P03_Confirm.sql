@@ -1,7 +1,4 @@
-﻿
-
-
--- =============================================
+﻿-- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	PackingList_P03 Confirmed
@@ -73,6 +70,7 @@ BEGIN
 		) c on a.ID = c.OrderID
 		left join PackingList_Detail b on a.ID = b.OrderID and a.Article = b.Article and a.SizeCode = b.SizeCode
 		where b.ID is null
+			  and a.Qty > 0
 	)
 	BEGIN
 		SET @msg += N'There is no [ColorWay] and [Size] in SP#.'			
