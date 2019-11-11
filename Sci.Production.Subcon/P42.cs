@@ -754,7 +754,7 @@ left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.Sub
 where b.subProcessid='{subProcess}'
 
 select
-	t.BundleNo
+	[Bundle#]=t.BundleNo
 	,b.Qty
 	,EXCESS=iif(IsEXCESS=1,'Y','')
     ,PatternDesc
@@ -929,7 +929,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             .Text("PatternDesc", header: "PatternDesc", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("BundleGroup", header: "BundleGroup", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("SizeCode", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
