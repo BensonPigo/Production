@@ -118,6 +118,8 @@
             this.comboFolding1 = new Sci.Win.UI.ComboBox();
             this.comboFolding2 = new Sci.Win.UI.ComboBox();
             this.comboPressing1 = new Sci.Win.UI.ComboBox();
+            this.labelFabricType = new Sci.Win.UI.Label();
+            this.displayFabricType = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -141,6 +143,8 @@
             this.detailcont.Controls.Add(this.comboFolding1);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.displayFabricType);
+            this.detailcont.Controls.Add(this.labelFabricType);
             this.detailcont.Controls.Add(this.displayStyleApprove2);
             this.detailcont.Controls.Add(this.comboGender);
             this.detailcont.Controls.Add(this.btnComboType);
@@ -1197,6 +1201,23 @@
             this.comboPressing1.Size = new System.Drawing.Size(122, 24);
             this.comboPressing1.TabIndex = 80;
             this.comboPressing1.SelectedIndexChanged += new System.EventHandler(this.ComboPressing1_SelectedIndexChanged);
+            // labelFabricType
+            // 
+            this.labelFabricType.Location = new System.Drawing.Point(492, 196);
+            this.labelFabricType.Name = "labelFabricType";
+            this.labelFabricType.Size = new System.Drawing.Size(85, 23);
+            this.labelFabricType.TabIndex = 72;
+            this.labelFabricType.Text = "Fabric Type";
+            // 
+            // displayFabricType
+            // 
+            this.displayFabricType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricType", true));
+            this.displayFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricType.Location = new System.Drawing.Point(580, 196);
+            this.displayFabricType.Name = "displayFabricType";
+            this.displayFabricType.Size = new System.Drawing.Size(111, 23);
+            this.displayFabricType.TabIndex = 73;
             // 
             // P04
             // 
@@ -1320,5 +1341,7 @@
         private Win.UI.ComboBox comboFolding1;
         private Win.UI.ComboBox comboPressing2;
         private Win.UI.ComboBox comboPressing1;
+        private Win.UI.DisplayBox displayFabricType;
+        private Win.UI.Label labelFabricType;
     }
 }
