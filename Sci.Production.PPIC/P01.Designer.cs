@@ -302,6 +302,8 @@
             this.shapeContainer6 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.comboSubconInType = new Ict.Win.UI.ComboBox();
             this.chkAFbyAdidas = new Sci.Win.UI.CheckBox();
+            this.dateBoxChangeMemo = new Sci.Win.UI.DateBox();
+            this.labChangeMemoDate = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -498,6 +500,8 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.dateBoxChangeMemo);
+            this.tabPage1.Controls.Add(this.labChangeMemoDate);
             this.tabPage1.Controls.Add(this.dateLastProductionDate);
             this.tabPage1.Controls.Add(this.labLastProductionDate);
             this.tabPage1.Controls.Add(this.btnPFHistory);
@@ -619,10 +623,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser3);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser5);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1289,10 +1293,10 @@
             // 
             this.dateFirstProductionDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FirstProduction", true));
             this.dateFirstProductionDate.IsSupportEditMode = false;
-            this.dateFirstProductionDate.Location = new System.Drawing.Point(659, 194);
+            this.dateFirstProductionDate.Location = new System.Drawing.Point(671, 194);
             this.dateFirstProductionDate.Name = "dateFirstProductionDate";
             this.dateFirstProductionDate.ReadOnly = true;
-            this.dateFirstProductionDate.Size = new System.Drawing.Size(100, 21);
+            this.dateFirstProductionDate.Size = new System.Drawing.Size(98, 21);
             this.dateFirstProductionDate.TabIndex = 53;
             // 
             // dateOrigBuyerDel
@@ -1345,9 +1349,9 @@
             // 
             // labFirstProductionDate
             // 
-            this.labFirstProductionDate.Location = new System.Drawing.Point(535, 194);
+            this.labFirstProductionDate.Location = new System.Drawing.Point(527, 194);
             this.labFirstProductionDate.Name = "labFirstProductionDate";
-            this.labFirstProductionDate.Size = new System.Drawing.Size(120, 21);
+            this.labFirstProductionDate.Size = new System.Drawing.Size(142, 21);
             this.labFirstProductionDate.TabIndex = 48;
             this.labFirstProductionDate.Text = "First Production Date";
             // 
@@ -1387,7 +1391,7 @@
             // 
             this.displayActPullout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayActPullout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayActPullout.Location = new System.Drawing.Point(718, 143);
+            this.displayActPullout.Location = new System.Drawing.Point(705, 146);
             this.displayActPullout.Name = "displayActPullout";
             this.displayActPullout.Size = new System.Drawing.Size(27, 21);
             this.displayActPullout.TabIndex = 43;
@@ -1396,7 +1400,7 @@
             // 
             this.dateActPullout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActPulloutDate", true));
             this.dateActPullout.IsSupportEditMode = false;
-            this.dateActPullout.Location = new System.Drawing.Point(617, 143);
+            this.dateActPullout.Location = new System.Drawing.Point(604, 146);
             this.dateActPullout.Name = "dateActPullout";
             this.dateActPullout.ReadOnly = true;
             this.dateActPullout.Size = new System.Drawing.Size(100, 21);
@@ -1406,7 +1410,7 @@
             // 
             this.dateDetailsCutOffDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SDPDate", true));
             this.dateDetailsCutOffDate.IsSupportEditMode = false;
-            this.dateDetailsCutOffDate.Location = new System.Drawing.Point(617, 116);
+            this.dateDetailsCutOffDate.Location = new System.Drawing.Point(604, 119);
             this.dateDetailsCutOffDate.Name = "dateDetailsCutOffDate";
             this.dateDetailsCutOffDate.ReadOnly = true;
             this.dateDetailsCutOffDate.Size = new System.Drawing.Size(100, 21);
@@ -1416,7 +1420,7 @@
             // 
             this.dateReadyDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReadyDate", true));
             this.dateReadyDate.IsSupportEditMode = false;
-            this.dateReadyDate.Location = new System.Drawing.Point(617, 89);
+            this.dateReadyDate.Location = new System.Drawing.Point(604, 92);
             this.dateReadyDate.Name = "dateReadyDate";
             this.dateReadyDate.ReadOnly = true;
             this.dateReadyDate.Size = new System.Drawing.Size(100, 21);
@@ -1426,7 +1430,7 @@
             // 
             this.dateEstPullout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
             this.dateEstPullout.IsSupportEditMode = false;
-            this.dateEstPullout.Location = new System.Drawing.Point(617, 62);
+            this.dateEstPullout.Location = new System.Drawing.Point(604, 65);
             this.dateEstPullout.Name = "dateEstPullout";
             this.dateEstPullout.ReadOnly = true;
             this.dateEstPullout.Size = new System.Drawing.Size(100, 21);
@@ -1434,7 +1438,7 @@
             // 
             // labelActPullout
             // 
-            this.labelActPullout.Location = new System.Drawing.Point(540, 143);
+            this.labelActPullout.Location = new System.Drawing.Point(527, 146);
             this.labelActPullout.Name = "labelActPullout";
             this.labelActPullout.Size = new System.Drawing.Size(73, 21);
             this.labelActPullout.TabIndex = 38;
@@ -1442,7 +1446,7 @@
             // 
             // labelDetailsCutOffDate
             // 
-            this.labelDetailsCutOffDate.Location = new System.Drawing.Point(540, 116);
+            this.labelDetailsCutOffDate.Location = new System.Drawing.Point(527, 119);
             this.labelDetailsCutOffDate.Name = "labelDetailsCutOffDate";
             this.labelDetailsCutOffDate.Size = new System.Drawing.Size(73, 21);
             this.labelDetailsCutOffDate.TabIndex = 37;
@@ -1450,7 +1454,7 @@
             // 
             // labelReadyDate
             // 
-            this.labelReadyDate.Location = new System.Drawing.Point(540, 89);
+            this.labelReadyDate.Location = new System.Drawing.Point(527, 92);
             this.labelReadyDate.Name = "labelReadyDate";
             this.labelReadyDate.Size = new System.Drawing.Size(73, 21);
             this.labelReadyDate.TabIndex = 36;
@@ -1458,7 +1462,7 @@
             // 
             // labelEstPullout
             // 
-            this.labelEstPullout.Location = new System.Drawing.Point(540, 62);
+            this.labelEstPullout.Location = new System.Drawing.Point(527, 65);
             this.labelEstPullout.Name = "labelEstPullout";
             this.labelEstPullout.Size = new System.Drawing.Size(73, 21);
             this.labelEstPullout.TabIndex = 35;
@@ -1483,7 +1487,7 @@
             this.displaySewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displaySewingLine.Location = new System.Drawing.Point(391, 170);
             this.displaySewingLine.Name = "displaySewingLine";
-            this.displaySewingLine.Size = new System.Drawing.Size(349, 21);
+            this.displaySewingLine.Size = new System.Drawing.Size(121, 21);
             this.displaySewingLine.TabIndex = 33;
             // 
             // datePlanDate
@@ -1763,7 +1767,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(990, 649);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -3390,6 +3394,24 @@
             this.chkAFbyAdidas.Text = "AF by adidas";
             this.chkAFbyAdidas.UseVisualStyleBackColor = true;
             // 
+            // dateBoxChangeMemo
+            // 
+            this.dateBoxChangeMemo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ChangeMemoDate", true));
+            this.dateBoxChangeMemo.IsSupportEditMode = false;
+            this.dateBoxChangeMemo.Location = new System.Drawing.Point(671, 170);
+            this.dateBoxChangeMemo.Name = "dateBoxChangeMemo";
+            this.dateBoxChangeMemo.ReadOnly = true;
+            this.dateBoxChangeMemo.Size = new System.Drawing.Size(98, 21);
+            this.dateBoxChangeMemo.TabIndex = 197;
+            // 
+            // labChangeMemoDate
+            // 
+            this.labChangeMemoDate.Location = new System.Drawing.Point(527, 170);
+            this.labChangeMemoDate.Name = "labChangeMemoDate";
+            this.labChangeMemoDate.Size = new System.Drawing.Size(142, 21);
+            this.labChangeMemoDate.TabIndex = 196;
+            this.labChangeMemoDate.Text = "Last Change Memo Date";
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3696,5 +3718,7 @@
         private Win.UI.DateBox dateLastProductionDate;
         private Win.UI.Label labLastProductionDate;
         private Win.UI.CheckBox chkAFbyAdidas;
+        private Win.UI.DateBox dateBoxChangeMemo;
+        private Win.UI.Label labChangeMemoDate;
     }
 }

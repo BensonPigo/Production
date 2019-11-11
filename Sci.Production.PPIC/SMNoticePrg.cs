@@ -683,6 +683,7 @@ select o.BrandID, o.OrderTypeID, o.ProgramID
 , o.StyleID, o.SeasonID, o.FactoryID, Convert(varchar(10), o.BuyerDelivery, 111) as BuyerDelivery
 , s.Description, o.CdCodeID, Convert(varchar(10), o.SciDelivery, 111) as SciDelivery
 , op.POComboList as spno
+, Convert(varchar(10), o.ChangeMemoDate ,111) as ChangeMemoDate
 From Orders o 
 inner join Style s on o.StyleUkey = s.Ukey
 left join Order_POComboList op on o.POID = op.ID
@@ -707,6 +708,7 @@ where o.POID = @ID
                     sheet.GetRange("Block1StyleID_O").SetValue(row.Field<string>("StyleID"));
                     sheet.GetRange("Block1SeasonID_O").SetValue(row.Field<string>("SeasonID"));
                     sheet.GetRange("Block1Factory_O").SetValue(row.Field<string>("FactoryID"));
+                    sheet.GetRange("Block1ChangeMemoDate_O").SetValue(row.Field<string>("ChangeMemoDate"));
                     sheet.GetRange("Block1Delivery_O").SetValue(row.Field<string>("BuyerDelivery"));
 
                     // line3
@@ -1235,14 +1237,14 @@ Select color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID, co
             {
                 sqlX = @"
 Select * from (
-select distinct boa.PatternPanel as FabricPanelCode
+select distinct boa.FabricPanelCode as FabricPanelCode
 From Orders o
 Left Join Order_BOA boa on boa.Id = o.ID
-Where o.ID = @ID and IsNull(boa.PatternPanel, '') <> ''
+Where o.ID = @ID and IsNull(boa.FabricPanelCode, '') <> ''
 union 
 Select distinct color.FabricPanelCode
 From Orders o
-	inner Join Order_ColorCombo color on color.Id = o.ID and FabricCode = ''
+	inner Join Order_ColorCombo color on color.Id = o.ID and FabricType = 'A'
 Where o.POID = @ID)x
 order by case when x.FabricPanelCode like 'A%' then 1 else 2 end, x.FabricPanelCode
 ";
@@ -1257,7 +1259,7 @@ Select distinct article.Article
 Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID, color.PatternPanel
 , Cast(iif(xc.VividCnt is null, 0, iif(xc.VividCnt > 0, 1, 0)) as bit) as VIVID
 	From Orders o
-	Left Join Order_ColorCombo color on color.Id = o.ID and FabricCode = ''
+	Left Join Order_ColorCombo color on color.Id = o.ID and FabricType = 'A'
     Left Join Color c on c.ID = color.ColorID and c.BrandId = o.BrandID
     outer apply (
 	    Select Count(*) as VividCnt 
@@ -1586,26 +1588,26 @@ Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
 --Inner Join MtlType mt on mt.ID = f.MtltypeId and (mt.ID like '%TAPE' or mt.ID like '%ELASTIC%')
 Where 1 = 1
 And sm.ID = @ID 
-And boa.PatternPanel <> '' 
+And boa.FabricPanelCode <> '' 
 And IsNull(boa.ProvidedPatternRoom, 0) = 1
 And IsNull(f.BomTypeCalculate, 0) = 1
-Order by boa.PatternPanel
+Order by boa.FabricPanelCode
 ";
             }
             else
             {
                 sql = @"
-Select Concat(boa.PatternPanel, '[', IsNull(boa.SizeItem, ''), ']:') as Mix1, Concat(IsNull(boa.Refno, ''), ' ', IsNull(f.Description, '')) as Mix2
+Select Concat(boa.FabricPanelCode, '[', IsNull(boa.SizeItem, ''), ']:') as Mix1, Concat(IsNull(boa.Refno, ''), ' ', IsNull(f.Description, '')) as Mix2
 From Orders o
 Inner join Order_BOA boa on boa.Id = o.ID
 Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
 --Inner Join MtlType mt on mt.ID = f.MtltypeId and (mt.ID like '%TAPE' or mt.ID like '%ELASTIC%')
 Where 1 = 1
 And o.ID = @ID 
-And boa.PatternPanel <> '' 
+And boa.FabricPanelCode <> '' 
 And IsNull(boa.ProvidedPatternRoom, 0) = 1
 And IsNull(f.BomTypeCalculate, 0) = 1
-Order by boa.PatternPanel
+Order by boa.FabricPanelCode
 ";
             }
 
@@ -1689,14 +1691,14 @@ Order by boa.PatternPanel
             else
             {
                 sql = @"
-Select boa.PatternPanel + iif(boa.SizeItem <> '', '[' + IsNull(boa.SizeItem, '') + ']:', '') as PatternPanel, Concat(IsNull(boa.Refno + ' ', ''), IsNull(f.Description, '')) as MixInfo
+Select boa.FabricPanelCode + iif(boa.SizeItem <> '', '[' + IsNull(boa.SizeItem, '') + ']:', '') as PatternPanel, Concat(IsNull(boa.Refno + ' ', ''), IsNull(f.Description, '')) as MixInfo
 From Orders o
 Inner join Order_BOA boa on boa.Id = o.ID
 Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
 --Inner Join MtlType mt on mt.ID = f.MtltypeId and not (mt.ID like '%TAPE' or mt.ID  like '%ELASTIC%')
 Where o.ID = @ID 
-and boa.PatternPanel <> '' 
-and boa.ProvidedPatternRoom = 1
+and boa.FabricPanelCode <> '' 
+and IsNull(boa.ProvidedPatternRoom, 0) = 1
 And IsNull(f.BomTypeCalculate, 0) = 0
 Order by boa.PatternPanel
 ";
