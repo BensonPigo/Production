@@ -15,6 +15,7 @@
     [PPH]         NUMERIC (8, 2)  CONSTRAINT [DF_CuttingOutput_PPH] DEFAULT ((0)) NULL,
     [FactoryID]   VARCHAR (8)     NULL,
     [ActTTCPU]    NUMERIC (10, 3) CONSTRAINT [DF_CuttingOutput_ActTTCPU] DEFAULT ((0)) NULL,
+    [ActCutRefQty] SMALLINT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_CuttingOutput] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

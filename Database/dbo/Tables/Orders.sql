@@ -155,13 +155,9 @@
     [LastProductionDate] DATE NULL, 
     [EstPODD] DATE NULL, 
     [AllowanceComboID] VARCHAR(13) NULL, 
+    [ChangeMemoDate] DATE NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
-
-
-
-
-
 
 
 

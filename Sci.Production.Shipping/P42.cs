@@ -341,6 +341,21 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ReasonID"]))
+            {
+                this.txtShippingReason1.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Reason cannot be empty.");
+                return false;
+            }
+
+            if (MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select IsFtyWk from ShippingReason where id = '{this.CurrentMaintain["ReasonID"]}'")) &&
+                MyUtility.Check.Empty(this.CurrentMaintain["WKNo"]))
+            {
+                MyUtility.Msg.WarningBox($"Reason '{this.txtShippingReason1.DisplayBox1.Text}' need input Fty WK# on adjustment memo.");
+                return false;
+            }
+
             #endregion
             #region
             foreach (DataRow dr in this.DetailDatas)

@@ -274,6 +274,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             {
                 this.FBDate_Ori = null;
             }
+
+            this.ControlColor();
         }
 
         /// <inheritdoc/>
@@ -706,8 +708,14 @@ order by fwd.WhseNo",
                 return false;
             }
             #endregion
+            #region 若 No Export Charge 有勾選，同時 Expense Data 也有資料，
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["NoExportCharges"]) && this.ControlColor())
+            {
+                MyUtility.Msg.WarningBox("This record have expense data, please double check.");
+            }
+            #endregion
 
-            #region 新增單狀態下，取ID且檢查此ID是否存在 
+            #region 新增單狀態下，取ID且檢查此ID是否存在
             if (this.IsDetailInserting)
             {
                 string fac = MyUtility.GetValue.Lookup($@"
@@ -1964,6 +1972,35 @@ where o.ID in ({SP.Substring(0, SP.Length - 1)})
             }
 
             return true;
+        }
+
+        private bool ControlColor()
+        {
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+            sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (gridData.Rows.Count > 0)
+            {
+                this.btnExpenseData.ForeColor = Color.Blue;
+                return true;
+            }
+            else
+            {
+                this.btnExpenseData.ForeColor = Color.Black;
+                return false;
+            }
         }
     }
 }

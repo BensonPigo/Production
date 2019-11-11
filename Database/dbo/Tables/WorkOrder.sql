@@ -37,6 +37,7 @@
     [StraightLength]      VARCHAR (15)   NULL,
     [CurvedLength]        VARCHAR (15)   NULL,
     [SpreadingNoID]       VARCHAR (3)    NULL,
+    [Shift] VARCHAR NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

@@ -22,6 +22,7 @@ BEGIN
 	DECLARE @CBM numeric(10,4);
 	DECLARE @OtherCBM numeric(10,4);
 	DECLARE @INVNo varchar(20);
+	DECLARE @HasCancelOrder bit;
 
     -- Insert statements for procedure here
 	WITH Packing as (
@@ -33,6 +34,17 @@ BEGIN
 	into #CBM_GW_ByRefno
 	from Packing a
 	inner join LocalItem b on a.RefNo=b.RefNo
+
+	SELECT @HasCancelOrder=IIF(
+	EXISTS 
+	(
+		SELECT pd.OrderID
+		FROM PackingList_Detail pd
+		INNER JOIN Orders o ON pd.OrderID=o.ID AND  o.Junk = 1
+		WHERE pd.ID = @ID
+	)  
+	,1
+	,0);
 
 	select SUM(CTNQty)CTNQty,SUM(ShipQty)ShipQty,SUM(NW)NW,SUM(GW)GW,SUM(NNW)NNW,sum(cbm)cbm 
 	into #Chk_CBM_GW
@@ -58,6 +70,7 @@ BEGIN
 		) c on a.ID = c.OrderID
 		left join PackingList_Detail b on a.ID = b.OrderID and a.Article = b.Article and a.SizeCode = b.SizeCode
 		where b.ID is null
+			  and a.Qty > 0
 	)
 	BEGIN
 		SET @msg += N'There is no [ColorWay] and [Size] in SP#.'			
@@ -78,7 +91,8 @@ BEGIN
 	END
 
 	-- 還沒有Invoice No就不可以做Confirm，有的話取得INVNo
-	IF EXISTS (SELECT * FROM PackingList WHERE ID=@ID AND (INVNo='' OR INVNo IS NULL))
+	-- 表身只要存在任何一張 Cancel 訂單，即可跳過『是否已建立 GB』 的驗證步驟。
+	IF EXISTS (SELECT * FROM PackingList WHERE ID=@ID AND (INVNo='' OR INVNo IS NULL)) AND @HasCancelOrder=0
 	BEGIN 
 		SET @msg += N'Shipping is not yet booking so cannot confirm!'
 	END
@@ -168,16 +182,16 @@ BEGIN
 		) InvadjQty on InvadjQty.OrderID=poid.OrderID and InvadjQty.Article=poid.Article and InvadjQty.SizeCode =poid.SizeCode
 		inner join (
 			select a.OrderID,a.Article,a.SizeCode,MIN(a.QAQty) as QAQty
-			from (select poid.OrderID,oq.Article,oq.SizeCode, sl.Location, isnull(sum(sodd.QAQty),0) as QAQty
+			from (select poid.OrderID,oq.Article,oq.SizeCode, ol.Location, isnull(sum(sodd.QAQty),0) as QAQty
 				 from (select distinct pld.OrderID
 							 from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
 							 where pl.ID = @ID
 							 and pld.ID = pl.ID) poid
 			   left join Orders o WITH (NOLOCK) on o.ID = poid.OrderID
 			   left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
-			   left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
-			   left join SewingOutput_Detail_Detail sodd WITH (NOLOCK) on sodd.OrderId = o.ID and sodd.Article = oq.Article  and sodd.SizeCode = oq.SizeCode and sodd.ComboType = sl.Location
-				 group by poid.OrderID,oq.Article,oq.SizeCode, sl.Location) a		
+			   left join Order_Location ol WITH (NOLOCK) on ol.OrderId = o.ID
+			   left join SewingOutput_Detail_Detail sodd WITH (NOLOCK) on sodd.OrderId = o.ID and sodd.Article = oq.Article  and sodd.SizeCode = oq.SizeCode and sodd.ComboType = ol.Location
+				 group by poid.OrderID,oq.Article,oq.SizeCode, ol.Location) a		
 			group by a.OrderID,a.Article,a.SizeCode
 		)SewingData on SewingData.OrderID=poid.OrderID and SewingData.Article=poid.Article and SewingData.SizeCode=poid.SizeCode
 		where 1=1

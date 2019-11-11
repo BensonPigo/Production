@@ -36,19 +36,23 @@
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.chkExcludeGMTComplete = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(463, 12);
+            this.print.TabIndex = 6;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(463, 48);
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(463, 84);
+            this.close.TabIndex = 8;
             // 
             // buttonCustomized
             // 
@@ -72,7 +76,7 @@
             this.txtbrand.Location = new System.Drawing.Point(110, 120);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
-            this.txtbrand.TabIndex = 99;
+            this.txtbrand.TabIndex = 4;
             // 
             // comboM
             // 
@@ -84,7 +88,7 @@
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(75, 24);
-            this.comboM.TabIndex = 98;
+            this.comboM.TabIndex = 3;
             // 
             // dateBuyerDelivery
             // 
@@ -106,7 +110,7 @@
             this.dateBuyerDelivery.Location = new System.Drawing.Point(110, 12);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateBuyerDelivery.TabIndex = 97;
+            this.dateBuyerDelivery.TabIndex = 1;
             // 
             // labelBrand
             // 
@@ -152,7 +156,7 @@
             this.dateSCIDelivery.Location = new System.Drawing.Point(110, 48);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateSCIDelivery.TabIndex = 101;
+            this.dateSCIDelivery.TabIndex = 2;
             // 
             // labelSCIDelivery
             // 
@@ -162,9 +166,21 @@
             this.labelSCIDelivery.TabIndex = 100;
             this.labelSCIDelivery.Text = "SCI Delivery";
             // 
+            // chkExcludeGMTComplete
+            // 
+            this.chkExcludeGMTComplete.AutoSize = true;
+            this.chkExcludeGMTComplete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludeGMTComplete.Location = new System.Drawing.Point(9, 156);
+            this.chkExcludeGMTComplete.Name = "chkExcludeGMTComplete";
+            this.chkExcludeGMTComplete.Size = new System.Drawing.Size(174, 21);
+            this.chkExcludeGMTComplete.TabIndex = 5;
+            this.chkExcludeGMTComplete.Text = "Exclude GMT Complete";
+            this.chkExcludeGMTComplete.UseVisualStyleBackColor = true;
+            // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(555, 317);
+            this.Controls.Add(this.chkExcludeGMTComplete);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.labelSCIDelivery);
             this.Controls.Add(this.txtbrand);
@@ -192,6 +208,7 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.chkExcludeGMTComplete, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -207,6 +224,6 @@
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Label labelSCIDelivery;
-
+        private Win.UI.CheckBox chkExcludeGMTComplete;
     }
 }

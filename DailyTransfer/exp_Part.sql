@@ -17,6 +17,11 @@ BEGIN
   DROP TABLE PartPO
 END
 
+IF OBJECT_ID(N'dbo.Part') IS NOT NULL
+BEGIN
+  DROP TABLE Part
+END
+
 IF OBJECT_ID(N'dbo.RepairPO') IS NOT NULL
 BEGIN
   DROP TABLE RepairPO
@@ -111,6 +116,11 @@ WHERE Approve IS NOT NULL
 AND (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
 And Status = 'Approved'
 AND PurchaseFrom = 'T'
+
+SELECT ID ,Minstock ,Consumable
+INTO  Part
+FROM Machine.dbo.Part 
+WHERE (EditDate >= DATEADD(DAY,-7,GETDATE()))
 
 SELECT * 
 INTO  RepairPO

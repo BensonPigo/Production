@@ -108,6 +108,7 @@ where ed.ID = '{0}'", masterID);
                 this.displayCustomsDeclareNo.Text = string.Empty;
             }
 
+            this.ControlColor();
         }
 
         /// <inheritdoc/>
@@ -470,6 +471,50 @@ where ed.ID = '{0}'", masterID);
             else
             {
                 this.txtSisFtyWK.ReadOnly = true;
+            }
+        }
+
+        private void ControlColor()
+        {
+            string col = MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) == "3" ? "InvNo" : "WKNo";
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+
+            switch (col)
+            {
+                case "InvNo":
+                    sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                    break;
+                case "WKNo":
+                    sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                    break;
+                default:
+                    sqlCmd = "select 1 from ShareExpense WITH (NOLOCK) where 1=2";
+                    break;
+            }
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (gridData.Rows.Count > 0)
+            {
+                this.btnExpenseData.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnExpenseData.ForeColor = Color.Black;
             }
         }
     }
