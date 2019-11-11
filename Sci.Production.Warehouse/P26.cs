@@ -20,6 +20,14 @@ namespace Sci.Production.Warehouse
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
 
+        private class NowDetail
+        {
+            public string POID { get; set; }
+            public string Seq1 { get; set; }
+            public string Seq2 { get; set; }
+            public List<string> DB_CLocations { get; set; }
+        }
+
         public P26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -284,10 +292,42 @@ WHERE   StockType='{0}'
             if (null == dr) return;
 
             StringBuilder sqlupd2 = new StringBuilder();
+            List<NowDetail> NowDetails = new List<NowDetail>();
             string sqlupd3 = "";
             DualResult result;//, result2;
             string upd_MD_2T = "";
             string upd_Fty_26F = "";
+
+
+            //先把表身POID Seq1 2原本的MDivisionPoDetail CLocation記下來  ISP20191578
+            foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != "").ToList())
+            {
+                string POID = item["POID"].ToString();
+                string Seq1 = item["Seq"].ToString().Split(' ')[0];
+                string Seq2 = item["Seq"].ToString().Split(' ')[1];
+
+                DataTable DT_MDivisionPoDetail;
+                //從MDivisionPoDetail出現有的Location
+                DBProxy.Current.Select(null, $@"
+SELECt CLocation
+FROM MDivisionPoDetail
+WHERE POID='{POID}'
+AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+", out DT_MDivisionPoDetail);
+
+                List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
+
+                NowDetail nData = new NowDetail()
+                {
+                    POID= POID,
+                    Seq1=Seq1,
+                    Seq2=Seq2,
+                    DB_CLocations= DB_CLocations
+                };
+                NowDetails.Add(nData);
+
+            }
+
 
             #region 更新表頭狀態資料
 
@@ -384,6 +424,8 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                     #endregion
 
                     #region MDivisionPoDetail
+
+
                     upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, "", upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
@@ -403,7 +445,7 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Confirmed successful");
+
                 }
                 catch (Exception ex)
                 {
@@ -413,7 +455,69 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                 }
 
             }
-           
+
+            ////ISP20191578
+            try
+            {
+                string Update = string.Empty;
+
+                foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != "").ToList())
+                {
+                    string POID = item["POID"].ToString();
+                    string Seq1 = item["Seq"].ToString().Split(' ')[0];
+                    string Seq2 = item["Seq"].ToString().Split(' ')[1];
+
+                    List<string> New_CLocationList = this.DetailDatas.AsEnumerable().Where(o => o["POID"].ToString() == POID && o["Seq"].ToString() == (Seq1 + " " + Seq2) && o["ToLocation"].ToString() != "")
+                        .Select(o => o["ToLocation"].ToString())
+                        .Distinct().ToList();                    
+
+                    //List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
+                    List<string> DB_CLocations = NowDetails.Where(o => o.POID == POID && o.Seq1 == Seq1 && o.Seq2 == Seq2).FirstOrDefault().DB_CLocations;
+
+                    List<string> Fincal = new List<string>();
+
+                    foreach (var New_CLocation in New_CLocationList)
+                    {
+                        if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
+                        {
+                            DB_CLocations.Add(New_CLocation);
+                        }
+                    }
+
+                    foreach (var CLocation in DB_CLocations.Distinct().ToList())
+                    {
+                        foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
+                        {
+                            if (!Fincal.Contains(a))
+                            {
+                                Fincal.Add(a);
+                            }
+                        }
+                    }
+
+                    string cmd = $@"
+UPDATE MDivisionPoDetail
+SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
+WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+
+";
+                    Update += cmd;
+                }
+
+                DualResult result2 = DBProxy.Current.Execute(null, Update);
+
+                if (!result2)
+                {
+                    ShowErr(result2);
+                }
+
+                MyUtility.Msg.InfoBox("Confirmed successful");
+            }
+            catch (Exception ex)
+            {
+                ShowErr("Update MDivisionPoDetail error.", ex);
+            }
+
         }
 
         //寫明細撈出的sql command
