@@ -142,6 +142,7 @@ namespace Sci.Production.Subcon
             sqlCmd.Append(@"
 select distinct o.poid 
         , a.FactoryID
+		, a.MDivisionID
 		, artworktypeid = a.Category
 into #tmp
 from dbo.localap a WITH (NOLOCK) 
@@ -232,6 +233,19 @@ where c.Classify='P'
                 cmds.Add(sp_artworktype);
             }
 
+            if (!MyUtility.Check.Empty(mdivision))
+            {
+                sqlCmd.Append(" and a.mdivisionid = @MDivision");
+                sp_mdivision.Value = mdivision;
+                cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and a.factoryid = @factory");
+                sp_factory.Value = factory;
+                cmds.Add(sp_factory);
+            }
 
             #endregion
 
@@ -281,9 +295,9 @@ group by  bb.ArtworkTypeID,t.poid
 
 -- #tmp_final 
 select distinct t.FactoryID
-	,aa.MDivisionID
+	,t.MDivisionID
     ,t.artworktypeid
-    ,aa.POID
+    ,t.POID
     ,aa.StyleID
     ,cc.BuyerID
     ,aa.BrandID 
@@ -365,19 +379,6 @@ where 1=1
                 cmds.Add(sp_brandid);
             }
 
-            if (!MyUtility.Check.Empty(mdivision))
-            {
-                sqlCmd.Append(" and aa.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
-                cmds.Add(sp_mdivision);
-            }
-
-            if (!MyUtility.Check.Empty(factory))
-            {
-                sqlCmd.Append(" and aa.factoryid = @factory");
-                sp_factory.Value = factory;
-                cmds.Add(sp_factory);
-            }
 
             sqlCmd.Append(@" 
 select * from #tmp_final
