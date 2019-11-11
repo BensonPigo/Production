@@ -141,6 +141,7 @@ select  operation = case a.type
         ,b.ColorID
         ,b.SizeSpec
         ,Qty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, a.Qty), 2)
+		,[InventoryQty]=IIF((a.type='2' or a.type='6'), ISNULL( Inventory70.LInvQty ,0)  ,ISNULL( InventoryInv.LInvQty ,0) )
         ,a.UnitID
         ,e.BLocation
         ,reason = a.ReasonID +'-'+(select ReasonEN from InvtransReason WITH (NOLOCK) where id = a.ReasonID) 
@@ -171,6 +172,16 @@ Outer Apply(
 	where id = iif((a.type='2' or a.type='6') , a.seq70poid    
 												, a.InventoryPOID)
 )BulkFty1
+OUTER APPLY(
+	SELECT LInvQty
+	FROM MDivisionPoDetail
+	WHERE POID=a.seq70poid  AND SEQ1=a.seq70seq1 AND SEQ2=a.seq70seq2
+)Inventory70
+OUTER APPLY(
+	SELECT LInvQty
+	FROM MDivisionPoDetail
+	WHERE POID=a.InventoryPOID  AND SEQ1=a.InventorySeq1 AND SEQ2=a.InventorySeq2
+)InventoryInv
 
 where 1=1 "
  ));
