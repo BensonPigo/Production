@@ -142,6 +142,7 @@ ORDER BY ID, StockType", "15,5", row["tolocation"].ToString(), false, ",");
                         return;
                     }
                     e.EditingControl.Text = sele.GetSelectedString();
+                    row["tolocation"] = sele.GetSelectedString();
                 }
             };
 
