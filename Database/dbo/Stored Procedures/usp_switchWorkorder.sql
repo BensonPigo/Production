@@ -1,12 +1,4 @@
-﻿-- Batch submitted through debugger: SQLQuery2.sql|7|0|C:\Users\SPIN~1.YAN\AppData\Local\Temp\~vsF77B.sql
--- Batch submitted through debugger: SQLQuery4.sql|7|0|C:\Users\SPIN~1.YAN\AppData\Local\Temp\~vs14CF.sql
--- Batch submitted through debugger: SQLQuery33.sql|7|0|C:\Users\SPIN~1.YAN\AppData\Local\Temp\~vs3FAA.sql
--- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
--- =============================================F
-CREATE PROCEDURE [dbo].[usp_switchWorkorder]
+﻿CREATE PROCEDURE [dbo].[usp_switchWorkorder]
 	-- Add the parameters for the stored procedure here
 	(
 	 @WorkType  varChar(1),
@@ -321,7 +313,7 @@ BEGIN
 					SET @Cons = @Layer * @SizeRatioQty * @ConsPC
 					if(@oldWorkerordernum != @newWorkerordernum)
 					Begin--byworkorder的Group與前一筆不一樣,則新增一筆
-						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength,Shift)
+						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength,[Shift])
 						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey,@ActCuttingPerimeter,@StraightLength,@CurvedLength,'')
 						SET @NewKey += 1--這邊就先加了,下面同筆insert的要減1才會對應到
 						set @oldWorkerordernum = @newWorkerordernum
@@ -468,7 +460,7 @@ BEGIN
 	Begin
 		insert into WorkOrder(id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 						EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
-						AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode,ActCuttingPerimeter,StraightLength,CurvedLength,Shift)
+						AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode,ActCuttingPerimeter,StraightLength,CurvedLength,[Shift])
 						(Select id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 						EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
 						AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode ,ActCuttingPerimeter,StraightLength,CurvedLength,''
