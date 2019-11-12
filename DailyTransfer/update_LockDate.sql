@@ -16,7 +16,7 @@ declare @PullOutLock date = (select PullOutLock from Trade_To_Pms.dbo.TradeSyste
 update SewingOutput 
 set LockDate = CONVERT(date, GETDATE()), Status='Locked'
 where (OutputDate < = @Lockdate and LockDate is null)
-   or (OutputDate < = @Lockdate and Status = 'Send')
+   or (OutputDate < = @Lockdate and Status = 'Sent')
 
 update CuttingOutput 
 set Lock = CONVERT(date, GETDATE()), Status='Locked'
@@ -25,6 +25,11 @@ and Lock is null and Status='Confirmed'
 
 
 update System set SewLock=@Lockdate
+
+update SewingMonthlyLock
+   set LockDate=@Lockdate
+     , EditName = 'SCIMIS'
+	, EditDate = getdate() 
 
 --PullOut
 update PullOut

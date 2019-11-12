@@ -398,5 +398,11 @@
     <Property Name="ParentElementName" Value="[dbo].[Door2DoorDelivery]" />
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ImportPort" />
+  <Operation Name="Rename Refactor" Key="1b3fed77-9a0e-45c6-bb4c-d85d09ab4be7" ChangeDateTime="10/03/2019 07:13:16">
+    <Property Name="ElementName" Value="[dbo].[SewingMonthlyLock].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SewingMonthlyLock]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FactoryID" />
   </Operation>
 </Operations>
