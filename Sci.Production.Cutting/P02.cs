@@ -2223,19 +2223,19 @@ END";
             string ukey = CurrentDetailData["Ukey"].ToString() == "" ? "0" : CurrentDetailData["Ukey"].ToString();
             int NewKey = Convert.ToInt32(CurrentDetailData["NewKey"]);
             DataRow[] drar = sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
-            foreach (DataRow dr in drar)
+            for (int i = drar.Count() - 1; i >= 0; i--)
             {
-                dr.Delete();
+                drar[i].Delete();
             }
             drar = distqtyTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
-            foreach (DataRow dr in drar)
+            for (int i = drar.Count() - 1; i >= 0; i--)
             {
-                dr.Delete();
+                drar[i].Delete();
             }
             drar = PatternPanelTb.Select(string.Format("WorkOrderUkey = {0} and NewKey = {1}", ukey, NewKey));
-            foreach (DataRow dr in drar)
+            for (int i = drar.Count() - 1; i >= 0; i--)
             {
-                dr.Delete();
+                drar[i].Delete();
             }
             base.OnDetailGridDelete();
         }
@@ -2419,26 +2419,21 @@ END";
 
             #region 刪除Qty 為0 
             DataRow[] deledr;
-            foreach (DataRow dr in sizeratioTb.AsEnumerable().Where(
+            DataRow[] sizeratioTbrow = sizeratioTb.AsEnumerable().Where(
                                 x => x.RowState != DataRowState.Deleted &&
-                                (Convert.ToInt32(x["Qty"]) == 0 || MyUtility.Check.Empty(x["SizeCode"]))))
+                                (MyUtility.Convert.GetInt(x["Qty"]) == 0 || MyUtility.Check.Empty(x["SizeCode"]))).ToArray();
+            for (int i = sizeratioTbrow.Count() - 1 ; i >=  0 ; i--)
             {
-                deledr = sizeratioTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}'", dr["WorkOrderUkey"], dr["NewKey"], dr["SizeCode"]));
-                if (deledr.Length > 0)
-                {
-                    deledr[0].Delete();
-                }
+                sizeratioTbrow[i].Delete();
             }
-            foreach (DataRow dr2 in distqtyTb.AsEnumerable().Where(
+
+            DataRow[] distqtyTbrow = distqtyTb.AsEnumerable().Where(
                                 x => x.RowState != DataRowState.Deleted &&
-                                (MyUtility.Convert.GetInt(x["Qty"]) == 0 || MyUtility.Check.Empty(x["SizeCode"]) || MyUtility.Check.Empty(x["Article"])) && 
-                               MyUtility.Convert.GetString(x["OrderID"]).ToUpper() != "EXCESS"))
+                                (MyUtility.Convert.GetInt(x["Qty"]) == 0 || MyUtility.Check.Empty(x["SizeCode"]) || MyUtility.Check.Empty(x["Article"])) &&
+                               MyUtility.Convert.GetString(x["OrderID"]).ToUpper() != "EXCESS").ToArray();
+            for (int i = distqtyTbrow.Count() - 1 ; i >= 0 ; i--)
             {
-                deledr = distqtyTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}' and Article = '{3}' and OrderID = '{4}'", dr2["WorkOrderUkey"], dr2["NewKey"], dr2["SizeCode"], dr2["Article"], dr2["OrderID"]));
-                if (deledr.Length > 0)
-                {
-                    deledr[0].Delete();
-                }
+                distqtyTbrow[i].Delete();
             }
             #endregion
 
