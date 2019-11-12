@@ -158,6 +158,7 @@ select	distinct
 		, bun.FabricPanelCode
 		, bun.Article
 		, bd.Sizecode
+		, bd.PatternDesc
 into #AllOrders
 from Bundle_Detail bd
 inner join Bundle bun on bun.id = bd.id
@@ -180,7 +181,7 @@ inner join {tempTable} t on t.OrderID = bun.Orderid
                 // --b.QtyBySubprocess
                 // --  部位有須要用 X 外加工計算
                 sqlcmd += $@"
-select	st1.OrderID,
+select distinct	st1.OrderID,
 		st1.POID,
 		st1.PatternPanel,
 		st1.FabricPanelCode,
@@ -196,18 +197,44 @@ outer apply (
 			, QtyBySet = count (1)
 			, QtyBySubprocess = sum (isnull (QtyBySubprocess.v, 0))
 	from (
-		select	top 1
-				bunD.ID
-				, bunD.BundleGroup
-		from Bundle_Detail bunD WITH (NOLOCK) 
-		inner join Bundle bun  WITH (NOLOCK) on bunD.Id = bun.ID
-		INNER JOIn Orders o ON bun.Orderid = o.ID AND bun.MDivisionid = o.MDivisionID 
-		where bun.Orderid = st1.Orderid
-				and bun.PatternPanel = st1.PatternPanel
-				and bun.FabricPanelCode = st1.FabricPanelCode
-				and bun.Article = st1.Article
-				and bunD.Sizecode = st1.Sizecode
-		order by bun.AddDate desc
+		select top 1 ID = iif(x1.ID is null,x2.ID ,x1.ID),BundleGroup = iif(x1.ID is null,x2.BundleGroup ,x1.BundleGroup)
+		from (select st1.Orderid,st1.PatternPanel,st1.FabricPanelCode,st1.Article,st1.Sizecode,st1.PatternDesc)x0
+		outer apply (
+			select	top 1
+					bunD.ID
+					, bunD.BundleGroup
+					, bunD.BundleNo
+			from Bundle bun
+			INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
+			inner join Bundle_Detail bunD on bunD.Id = bun.ID
+			where bun.Orderid = x0.Orderid
+					and bun.PatternPanel = x0.PatternPanel
+					and bun.FabricPanelCode = x0.FabricPanelCode
+					and bun.Article = x0.Article
+					and bunD.Sizecode = x0.Sizecode
+				    and bunD.PatternDesc = x0.PatternDesc
+					and exists (select 1
+									from Bundle_Detail_Art BunDArt
+									where BunDArt.Bundleno = bunD.BundleNo
+										and BunDArt.SubprocessId = '{subprocessID}')
+			order by bun.AddDate desc
+		)x1
+		outer apply(
+			select	top 1
+					bunD.ID
+					, bunD.BundleGroup
+					, bunD.BundleNo
+			from Bundle bun
+			INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
+			inner join Bundle_Detail bunD on bunD.Id = bun.ID
+			where bun.Orderid = x0.Orderid
+					and bun.PatternPanel = x0.PatternPanel
+					and bun.FabricPanelCode = x0.FabricPanelCode
+					and bun.Article = x0.Article
+					and bunD.Sizecode = x0.Sizecode
+					and bunD.PatternDesc = x0.PatternDesc
+			order by bun.AddDate desc
+		)x2
 	) getGroupInfo
 	inner join Bundle_Detail bunD on getGroupInfo.Id = bunD.Id and getGroupInfo.BundleGroup = bunD.BundleGroup
 	outer apply (
