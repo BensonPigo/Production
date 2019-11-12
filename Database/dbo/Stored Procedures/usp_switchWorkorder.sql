@@ -321,8 +321,8 @@ BEGIN
 					SET @Cons = @Layer * @SizeRatioQty * @ConsPC
 					if(@oldWorkerordernum != @newWorkerordernum)
 					Begin--byworkorder的Group與前一筆不一樣,則新增一筆
-						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength)
-						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey,@ActCuttingPerimeter,@StraightLength,@CurvedLength)
+						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength,Shift)
+						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey,@ActCuttingPerimeter,@StraightLength,@CurvedLength,'')
 						SET @NewKey += 1--這邊就先加了,下面同筆insert的要減1才會對應到
 						set @oldWorkerordernum = @newWorkerordernum
 					End						
