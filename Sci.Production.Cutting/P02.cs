@@ -2431,8 +2431,8 @@ END";
             }
             foreach (DataRow dr2 in distqtyTb.AsEnumerable().Where(
                                 x => x.RowState != DataRowState.Deleted &&
-                                (Convert.ToInt32(x["Qty"]) == 0 || MyUtility.Check.Empty(x["SizeCode"]) || MyUtility.Check.Empty(x["Article"])) && 
-                                x["OrderID"].ToString().ToUpper() != "EXCESS"))
+                                (MyUtility.Convert.GetInt(x["Qty"]) == 0 || MyUtility.Check.Empty(x["SizeCode"]) || MyUtility.Check.Empty(x["Article"])) && 
+                               MyUtility.Convert.GetString(x["OrderID"]).ToUpper() != "EXCESS"))
             {
                 deledr = distqtyTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}' and Article = '{3}' and OrderID = '{4}'", dr2["WorkOrderUkey"], dr2["NewKey"], dr2["SizeCode"], dr2["Article"], dr2["OrderID"]));
                 if (deledr.Length > 0)
