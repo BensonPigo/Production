@@ -138,7 +138,10 @@ select
     o.SCIDelivery,
     o.BuyerDelivery,
 	patternUKey=p.PatternUkey,
-    wo.FabricPanelCode
+    wo.FabricPanelCode,
+	wo.MarkerNo,
+	wo.Markername,
+	wo.SCIRefno
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -359,6 +362,7 @@ select
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
 ,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
+,[To be combined]=cl.v
 from #tmp t
 --因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
 outer apply(
@@ -378,6 +382,23 @@ outer apply(
 	for xml path(''))
 	,1,1,'')
 )Artwork
+outer apply(
+	select v = sum(Layer)
+	from (
+		select wo2.Layer,wo2.CutRef,wo2.id,wo2.EstCutDate,wo2.MarkerNo,wo2.Markername
+		from WorkOrder wo2 with(nolock)
+		where wo2.id = t.[Master SP#] and wo2.EstCutDate  = t.[Est.Cutting Date] and wo2.MarkerNo = t.MarkerNo and wo2.Markername = t.Markername
+		group by wo2.Layer,wo2.CutRef,wo2.id,wo2.EstCutDate,wo2.MarkerNo,wo2.Markername
+		--不同的WorkOrder.CutRef且WorkOrder.ID+EstCutDate+MarkerNo+Markername皆相同
+		--先把相同CutRef縮減為一筆 , 再sum起來
+	)x
+)cly
+outer apply(
+	select v=iif( cly.v <= con.CuttingLayer,'Y','')
+	from Construction con with(nolock)
+	inner join Fabric fb with(nolock) on fb.ConstructionID = con.id
+	where fb.SCIRefno = t.SCIRefno
+)cl
 
 order by [M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Cut#]
 -----------------------------------------------------------------------
