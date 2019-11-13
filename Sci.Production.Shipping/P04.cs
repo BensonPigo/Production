@@ -104,8 +104,9 @@ where ed.ID = '{0}'", masterID);
             else if (this.radioTransferOut.Checked)
             {
                 this.lbDeclareation.Text = "Export Declaration ID";
+                string sqlcmd = $@"select DeclareNo from VNContractQtyAdjust where WKNo='{this.CurrentMaintain["ID"]}'";
                 this.displayDeclarationID.Text = string.Empty;
-                this.displayCustomsDeclareNo.Text = string.Empty;
+                this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
             }
 
             this.ControlColor();
