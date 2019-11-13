@@ -177,6 +177,8 @@ AND ot.IsGMTMaster=1
 
             #endregion
 
+            #region SQL
+
             sqlcmd.Append($@"
 
 SELECT 
@@ -231,6 +233,7 @@ ORDER BY O.ID
 DROP TABLE #tmp
 
 ");
+            #endregion
 
             DBProxy.Current.Select(string.Empty, sqlcmd.ToString(), out this.printData);
 
