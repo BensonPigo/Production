@@ -19,6 +19,10 @@ namespace Sci.Production.Shipping
     public partial class R43 : Sci.Win.Tems.PrintForm
     {
         private DataTable printData;
+        private DateTime? dateOnBoardDate1;
+        private DateTime? dateOnBoardDate2;
+        private DateTime? dateFCRDate1;
+        private DateTime? dateFCRDate2;
 
         /// <summary>
         /// R43
@@ -33,6 +37,10 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
+            this.dateOnBoardDate1 = this.dateOnBoardDate.Value1;
+            this.dateOnBoardDate2 = this.dateOnBoardDate.Value2;
+            this.dateFCRDate1 = this.dateFCRDate.Value1;
+            this.dateFCRDate2 = this.dateFCRDate.Value2;
             return base.ValidateInput();
         }
 
@@ -40,34 +48,71 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
+            string sqlwhere_GMTBooking = string.Empty;
+            string sqlwhere_FtyExport = string.Empty;
+
+            if (!MyUtility.Check.Empty(this.dateOnBoardDate1))
+            {
+                sqlwhere_GMTBooking += $@" and G.ETD between '{((DateTime)this.dateOnBoardDate1).ToString("yyyyMMdd")}' and '{((DateTime)this.dateOnBoardDate2).ToString("yyyyMMdd")}'";
+                sqlwhere_FtyExport += $@" and f.OnBoard between '{((DateTime)this.dateOnBoardDate1).ToString("yyyyMMdd")}' and '{((DateTime)this.dateOnBoardDate2).ToString("yyyyMMdd")}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.dateFCRDate1))
+            {
+                sqlwhere_GMTBooking += $@" and G.FCRDate between '{((DateTime)this.dateFCRDate1).ToString("yyyyMMdd")}' and '{((DateTime)this.dateFCRDate2).ToString("yyyyMMdd")}'";
+                sqlwhere_FtyExport += $@" and f.PortArrival between '{((DateTime)this.dateFCRDate1).ToString("yyyyMMdd")}' and '{((DateTime)this.dateFCRDate2).ToString("yyyyMMdd")}'";
+            }
+
             sqlCmd.Append(string.Format(
-                @"
-SELECT 
-	[InvoiceNo] = G.ID
-	, [Shipper] = G.Shipper
-	, [CustCD] = G.CustCDID
-	, [Destination] = G.Dest + '-' + C.Alias
-	, [ShipMode] = G.ShipModeID
-	, [BLNo] = G.BLNo
-	, [VesselName] = G.Vessel
-	, [SOCFMDate] = G.SOCFMDate
-	, [CutOffDate] = G.CutOffDate
-	, [PulloutDate] = STUFF ((select CONCAT (',', format(a.PulloutDate,'yyyy/MM/dd')) 
-                            from (
-                                select distinct p.PulloutDate
-                                from PackingList p WITH (NOLOCK)
-                                where G.ID = p.INVNo
-                            ) a 
-							order by a.PulloutDate
-                            for xml path('')
-                          ), 1, 1, '') 
-	, [FCRDate] = G.FCRDate
-	, [OnBoardDate] = G.ETD
-FROM GMTBooking G
-LEFT JOIN VNExportDeclaration V ON G.ID = V.InvNo
-LEFT JOIN Country C ON G.Dest = C.ID
-WHERE G.NonDeclare = 0
-AND (ISNULL(V.InvNo,'') ='' OR (LEN(V.InvNo) > 0 AND ISNULL(V.DeclareNo,'') = ''))"));
+                @"SELECT 
+	                [InvoiceNo] = G.ID
+	                , [Shipper] = G.Shipper
+	                , [CustCD] = G.CustCDID
+	                , [Destination] = G.Dest + '-' + C.Alias
+	                , [ShipMode] = G.ShipModeID
+	                , [BLNo] = G.BLNo
+	                , [VesselName] = G.Vessel
+	                , [SOCFMDate] = G.SOCFMDate
+	                , [CutOffDate] = G.CutOffDate
+	                , [PulloutDate] = STUFF ((select CONCAT (',', format(a.PulloutDate,'yyyy/MM/dd')) 
+                                            from (
+                                                select distinct p.PulloutDate
+                                                from PackingList p WITH (NOLOCK)
+                                                where G.ID = p.INVNo
+                                            ) a 
+							                order by a.PulloutDate
+                                            for xml path('')
+                                          ), 1, 1, '') 
+	                , [FCRDate] = G.FCRDate
+	                , [OnBoardDate] = G.ETD
+                FROM GMTBooking G
+                LEFT JOIN VNExportDeclaration V ON G.ID = V.InvNo
+                LEFT JOIN Country C ON G.Dest = C.ID
+                WHERE G.NonDeclare = 0
+                AND (ISNULL(V.InvNo,'') ='' OR (LEN(V.InvNo) > 0 AND ISNULL(V.DeclareNo,'') = ''))
+                {0}
+                union all
+                select
+	                [InvoiceNo] = f.ID
+	                , [Shipper] = f.Shipper
+	                , [CustCD] = null
+	                , [Destination] = f.ImportPort
+	                , [ShipMode] = f.ShipModeID
+	                , [BLNo] = f.Blno
+	                , [VesselName] = f.Vessel
+	                , [SOCFMDate] = null
+	                , [CutOffDate] = null
+	                , [PulloutDate] = format(f.PortArrival, 'yyyy/MM/dd')
+	                , [FCRDate] = null
+	                , [OnBoardDate] = f.OnBoard
+                from FtyExport f
+                left join VNContractQtyAdjust v on f.ID = v.WKNo 
+                where f.Type = 3
+                and isnull(v.DeclareNo,'') = ''
+                and f.NonDeclare = 0
+                {1} ",
+                sqlwhere_GMTBooking,
+                sqlwhere_FtyExport));
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
