@@ -190,7 +190,7 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
             this.DetailSelectCommand = string.Format(
                 @"
 select  sd.*
-        , [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  )
+        , [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0 or rft.InspectQty-rft.RejectQty <= 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  )
         , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
 		, [SewingReasonID]=sr.id
