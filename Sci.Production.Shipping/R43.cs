@@ -96,17 +96,18 @@ namespace Sci.Production.Shipping
 	                [InvoiceNo] = f.ID
 	                , [Shipper] = f.Shipper
 	                , [CustCD] = null
-	                , [Destination] = f.ImportPort
+	                , [Destination] = f.ImportCountry + '-' + c.Alias
 	                , [ShipMode] = f.ShipModeID
 	                , [BLNo] = f.Blno
 	                , [VesselName] = f.Vessel
 	                , [SOCFMDate] = null
 	                , [CutOffDate] = null
 	                , [PulloutDate] = format(f.PortArrival, 'yyyy/MM/dd')
-	                , [FCRDate] = null
+	                , [FCRDate] = format(f.PortArrival, 'yyyy/MM/dd')
 	                , [OnBoardDate] = f.OnBoard
                 from FtyExport f
                 left join VNContractQtyAdjust v on f.ID = v.WKNo 
+                left join Country C ON f.ImportCountry = C.ID
                 where f.Type = 3
                 and isnull(v.DeclareNo,'') = ''
                 and f.NonDeclare = 0
