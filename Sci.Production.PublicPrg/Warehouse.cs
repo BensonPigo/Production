@@ -531,12 +531,21 @@ select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
         , p.seq2
         , p.scirefno
         , Qty = Round (p.qty * v.Ratevalue, 2)
+        ,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
 from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 inner join Orders o on p.id = o.id
 inner join Factory f on o.FtyGroup = f.id
 left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
 inner join View_unitrate v on v.FROM_U = p.POUnit 
 	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+OUTER APPLY(
+	SELECT [LockCount]=COUNT(UKEY)
+	FROM FtyInventory
+	WHERE POID='{0}'
+	AND Seq1=p.Seq1
+	AND Seq2=p.Seq2
+	AND Lock = 1
+)LockStatus
 where p.id ='{0}'
 " + (junk ? "and p.Junk = 0" : string.Empty);
         }
