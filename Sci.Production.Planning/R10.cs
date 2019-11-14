@@ -968,6 +968,7 @@ namespace Sci.Production.Planning
             DataTable dt0 = datas[1]; // [0] By Factory 最細的上下半月Capacity
             DataTable dt1 = datas[2]; // [1] By Factory Loading CPU
             DataTable dt2 = datas[3]; // [2] For Forecast shared
+            DataTable dt4 = datas[5]; // [4] For Output, 及Output後面的Max日期
 
             DataTable dtCountryList = dtList.DefaultView.ToTable(true, "CountryID");
             List<string> lisPercent = new List<string>();
