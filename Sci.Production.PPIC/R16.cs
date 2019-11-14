@@ -140,7 +140,7 @@ OUTER APPLY(
 	)Tmp
 )LastDQSOutputDate
 WHERE o.Category IN ('B','G') 
-AND ot.IsGMTMaster=1
+AND ot.IsGMTMaster=0
 ");
             #endregion
 
