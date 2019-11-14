@@ -516,9 +516,10 @@ where IsTMS =1 or IsPrice = 1
             }
             #endregion
 
-            #region SummaryBy SP#
             string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT" };
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+
+            #region SummaryBy SP#
             sqlCmd.Append($@"
 
 -- 依撈出來的order資料(cte)去找各製程的WIP
@@ -877,14 +878,18 @@ outer apply(
 )PackDetail
 ");
 
-            sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
-            sqlCmd.Append(@"
-declare @sql nvarchar(max)
-select @sql = isnull(@sql+';', '') + 'drop table ' + quotename(name)
-from tempdb..sysobjects
-where name like '#%'
-exec (@sql)
-");
+            sqlCmd.Append(string.Format(@" order by {0}" + Environment.NewLine, this.orderby));
+            sqlCmd.Append(" drop table #cte, #cte2, #imp_LastSewnDate;" + Environment.NewLine);
+            foreach (string subprocess in subprocessIDs)
+            {
+                string whereSubprocess = subprocess;
+                if (subprocess.Equals("PAD-PRT"))
+                {
+                    whereSubprocess = "PADPRT";
+                }
+                sqlCmd.Append(string.Format(@" drop table #QtyBySetPerSubprocess{0}, #{0};" + Environment.NewLine, whereSubprocess));
+            }
+
             #endregion
 
             return sqlCmd;
@@ -1459,20 +1464,18 @@ outer apply(
 )PackDetail
 ");
 
-            sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode", this.orderby));
+            sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode" + Environment.NewLine, this.orderby)); 
+            sqlCmd.Append(" drop table #cte, #cte2, #imp_LastSewnDate;" + Environment.NewLine);
+            foreach (string subprocess in subprocessIDs)
+            {
+                string whereSubprocess = subprocess;
+                if (subprocess.Equals("PAD-PRT"))
+                {
+                    whereSubprocess = "PADPRT";
+                }
 
-            sqlCmd.Append(@"
-declare @sql nvarchar(max)
-select @sql = isnull(@sql+';', '') + 'drop table ' + quotename(name)
-from tempdb..sysobjects
-where name like '#%'
-exec (@sql)
-");
-            //if (this.isArtwork)
-            //{
-            //    sqlCmd.Append(@";drop table #rawdata_tmscost,#tmscost_pvt");
-            //}
-
+                sqlCmd.Append(string.Format(@" drop table #QtyBySetPerSubprocess{0};" + Environment.NewLine, whereSubprocess));
+            }
             #endregion
 
             return sqlCmd;
