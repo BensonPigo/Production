@@ -61,6 +61,8 @@
             this.txttpeuserPOHandle = new Sci.Production.Class.txttpeuser();
             this.txttpeuserPOSMR = new Sci.Production.Class.txttpeuser();
             this.btnDownload = new Sci.Win.UI.Button();
+            this.comboDefectResponsibilityExplanation = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -78,6 +80,8 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.btnDownload);
+            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.comboDefectResponsibilityExplanation);
             this.masterpanel.Controls.Add(this.btnMailto);
             this.masterpanel.Controls.Add(this.label15);
             this.masterpanel.Controls.Add(this.label14);
@@ -146,6 +150,8 @@
             this.masterpanel.Controls.SetChildIndex(this.label15, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnMailto, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnDownload, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboDefectResponsibilityExplanation, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             // 
             // detailpanel
             // 
@@ -154,7 +160,7 @@
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(711, 187);
+            this.gridicon.Location = new System.Drawing.Point(808, 187);
             this.gridicon.TabIndex = 3;
             // 
             // refresh
@@ -518,6 +524,26 @@
             this.btnDownload.Text = "Download Replacement Report";
             this.btnDownload.UseVisualStyleBackColor = true;
             this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
+            // comboDefectResponsibilityExplanation
+            // 
+            this.comboDefectResponsibilityExplanation.BackColor = System.Drawing.Color.White;
+            this.comboDefectResponsibilityExplanation.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Responsibility", true));
+            this.comboDefectResponsibilityExplanation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDefectResponsibilityExplanation.FormattingEnabled = true;
+            this.comboDefectResponsibilityExplanation.IsSupportUnselect = true;
+            this.comboDefectResponsibilityExplanation.Location = new System.Drawing.Point(504, 193);
+            this.comboDefectResponsibilityExplanation.Name = "comboDefectResponsibilityExplanation";
+            this.comboDefectResponsibilityExplanation.OldText = "";
+            this.comboDefectResponsibilityExplanation.Size = new System.Drawing.Size(190, 24);
+            this.comboDefectResponsibilityExplanation.TabIndex = 145;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(276, 193);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(224, 23);
+            this.label1.TabIndex = 147;
+            this.label1.Text = "Defect Responsibility & Explanation";
             // 
             // P08
             // 
@@ -537,7 +563,6 @@
             this.IsSupportDelete = false;
             this.IsSupportJunk = true;
             this.IsSupportUncheck = true;
-            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P08";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
@@ -602,5 +627,7 @@
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelID;
         private Win.UI.Button btnDownload;
+        private Win.UI.Label label1;
+        private Win.UI.ComboBox comboDefectResponsibilityExplanation;
     }
 }
