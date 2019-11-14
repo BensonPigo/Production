@@ -456,7 +456,7 @@ from Clip where TableName = 'ReplacementReport' AND UniqueKey = '{this.CurrentMa
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
-                    string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid  AND Category !='A'";
+                    string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where  FtyGroup  = @factoryid  AND POID IN ( SELECT ID FROM Orders WHERE ID=@poid AND Category !='A' )";
                     DataTable ordersData;
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ordersData);
 

@@ -675,7 +675,8 @@ where a.RequestQty > a.StockQty",
                     if (!MyUtility.Check.Empty(this.txtSPNo.Text))
                     {
                         // sql參數
-                        string poid = MyUtility.GetValue.Lookup("poid", this.txtSPNo.Text, "orders", "id");
+                        string poid = MyUtility.GetValue.Lookup($"select poid from orders where id= '{this.txtSPNo.Text}'  AND Category !='A'");
+
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", poid);
 
                         // 用登入的Factory 抓取對應的FtyGroup
@@ -698,7 +699,7 @@ where a.RequestQty > a.StockQty",
                         cmds.Add(sp2);
 
                         DataTable orderPOID;
-                        string sqlCmd = "select POID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid  AND Category !='A'";
+                        string sqlCmd = "select POID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid ";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderPOID);
                         if (result && orderPOID.Rows.Count > 0)
                         {
