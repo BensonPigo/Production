@@ -92,7 +92,7 @@ namespace Sci.Production.Subcon
             StringBuilder sqlWhereWorkOrder = new StringBuilder();
             if (!MyUtility.Check.Empty(SubProcess))
             {
-                sqlWhere.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
+                sqlWhere.Append($@" and s.id in ('{SubProcess.Replace(",", "','")}') ");
             }
             if (!MyUtility.Check.Empty(CutRef1))
             {
@@ -140,7 +140,7 @@ namespace Sci.Production.Subcon
 
             if (this.processLocation != "ALL")
             {
-                sqlWhere.Append(string.Format(@" and bio.RFIDProcessLocationID = '{0}'", this.processLocation));
+                sqlWhere.Append(string.Format(@" and isnull(bio.RFIDProcessLocationID,'') = '{0}'", this.processLocation));
             }
 
             if (!MyUtility.Check.Empty(dateBDelivery1))
