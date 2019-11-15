@@ -315,7 +315,7 @@ BEGIN
 			select 	
 			  [ID]
 			, [OutputDate]=CAST([OutputDate] AS DATE)
-			, [SewingLineID]
+			, [SewingLineID]=ISNULL(ProductionLineAllocation.SewingLineID,ts.[SewingLineID])
 			, [QAQty]
 			, [DefectQty]
 			, [InlineQty]
@@ -338,7 +338,20 @@ BEGIN
 			, [EditDate]=CAST([EditDate] AS DATETIME)
 			, [SubconOutFty]
 			, [SubConOutContractNumber]
-			FROM #tmp_SewingOutput
+			FROM #tmp_SewingOutput ts
+			OUTER APPLY(			
+				SELECT t2.SewingLineID
+				FROM 
+				(
+					SELECT TOP 1 *
+					FROM ProductionLineAllocation
+					WHERE ProductionDate <=CAST(ts.[OutputDate] AS DATE)
+					AND FactoryID=ts.[FactoryID]
+					ORDER BY ProductionDate DESC
+				) t
+				INNER JOIN ProductionLineAllocation_Detail t2 ON t.FactoryID=t2.FactoryID AND t.ProductionDate=t2.ProductionDate
+				WHERE t2.LineLocationID= ts.[SewingLineID] AND t2.Team=ts.[Team]
+			)ProductionLineAllocation
 		
 			--insert SewingOutput_Detail
 			INSERT INTO SewingOutput_Detail
