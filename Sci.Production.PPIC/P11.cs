@@ -293,7 +293,7 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                         {
                             dr["RequestQty"] = e.FormattedValue;
                             dr["RejectQty"] = e.FormattedValue;
-                                dr.EndEdit();
+                            dr.EndEdit();
                         }
                     }
                 }
@@ -675,8 +675,7 @@ where a.RequestQty > a.StockQty",
                     if (!MyUtility.Check.Empty(this.txtSPNo.Text))
                     {
                         // sql參數
-                        string poid = MyUtility.GetValue.Lookup($"select poid from orders where id= '{this.txtSPNo.Text}'  AND Category !='A'");
-
+                        string poid = MyUtility.GetValue.Lookup("poid", this.txtSPNo.Text, "orders", "id");
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", poid);
 
                         // 用登入的Factory 抓取對應的FtyGroup
@@ -699,7 +698,7 @@ where a.RequestQty > a.StockQty",
                         cmds.Add(sp2);
 
                         DataTable orderPOID;
-                        string sqlCmd = "select POID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid ";
+                        string sqlCmd = "select POID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid  AND Category !='A'";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderPOID);
                         if (result && orderPOID.Rows.Count > 0)
                         {
