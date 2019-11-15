@@ -873,7 +873,10 @@ BEGIN
 		   , pd.EFFICIENCY
 		   , sewer = p.WorkerNumber 
 		   , p.LNCSERIALNumber 
-		   , isnull(p.SwitchTime,0)
+		   , SwitchTime = case 
+							  when p.SwitchType is null or p.SwitchType < 0 then 0
+							  else isnull(p.SwitchTime,0)
+						  end
 	from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT p
 		,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f
 		,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa
