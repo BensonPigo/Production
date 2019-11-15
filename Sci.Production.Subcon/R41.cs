@@ -391,23 +391,15 @@ drop table #result
 
             #endregion
 
-            string cmdct = $@"
-{sqlCmd}
-
-select ct = count(1)
-from #result
-
-drop table #result
-";
             DataTable groupByDt;
-            DualResult result = DBProxy.Current.Select(null, cmdct, out groupByDt);
+            DualResult result = DBProxy.Current.Select(null, sqlResult, out groupByDt);
             if (!result)
             {
                 this.ShowErr(result);
                 return false;
-            }
-            var groupByLinq = groupByDt.AsEnumerable();
-            int ct = groupByLinq.Sum(s => (int)s["ct"]);
+            }            
+
+            int ct = groupByDt.Rows.Count;
             SetCount(ct);
             if (ct <= 0)
             {
@@ -423,42 +415,24 @@ drop table #result
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx");
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
-            int num = 200000;
-            
-            using (var cn = new SqlConnection(Env.Cfg.GetConnection("", DBProxy.Current.DefaultModuleName).ConnectionString))
-            using (var cm = cn.CreateCommand())
+            int num = 100000; 
+            int start = 0; 
+            DataTable dt = groupByDt.AsEnumerable().Skip(start).Take(num).CopyToDataTable(); 
+            while (dt.Rows.Count > 0)
             {
-                cm.CommandText = sqlResult;
-                cm.CommandTimeout = 1200;
-                var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
-                adp.SelectCommand.CommandTimeout = 1200; // 設定TSQL select record TimeOut
-                var cnt = 0;
-                var start = 0;
-                using (var ds = new DataSet())
+                System.Diagnostics.Debug.WriteLine("load {0} records", dt.Rows.Count);
+
+                //do some jobs        
+                MyUtility.Excel.CopyToXls(dt, string.Empty, "Subcon_R41_Bundle tracking list (RFID).xltx", 1 + start, false, null, objApp, wSheet: objSheets);
+                start += num;
+                if (start > ct)
                 {
-                    while ((cnt = adp.Fill(ds, start, num, "Bundle_Detail")) > 0)
-                    {
-                        System.Diagnostics.Debug.WriteLine("load {0} records", cnt);
-
-                        //do some jobs        
-                        if (MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1 + start, false, null, objApp, wSheet: objSheets) == false)
-                        {
-                            break;
-                        }  
-                                                
-                        start += num;
-
-                        //if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                        ds.Tables[0].Dispose();
-                        ds.Tables.Clear();
-                    }
+                    break;
                 }
+                dt = groupByDt.AsEnumerable().Skip(start).Take(num).CopyToDataTable();
             }
-            //if (Cpage > 0)
-            //{
-            //    objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit();//這頁需要重新調整欄寬                
-            //}
-                        
+
+
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
