@@ -20,12 +20,15 @@
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_SewingSchedule_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
-    [LearnCurveID] INT NULL, 
-    [OriEff] NUMERIC(5, 2) NULL, 
-    [SewLineEff] NUMERIC(5, 2) NULL, 
-    [LNCSERIALNumber] INT NULL, 
+    [LearnCurveID]    INT            NULL,
+    [OriEff]          NUMERIC (5, 2) NULL,
+    [SewLineEff]      NUMERIC (5, 2) NULL,
+    [LNCSERIALNumber] INT            NULL,
+    [SwitchTime]      INT            DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_SewingSchedule] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -144,5 +147,11 @@ CREATE NONCLUSTERED INDEX [OrderID_ComboType]
 GO
 CREATE NONCLUSTERED INDEX [Index_Offline]
     ON [dbo].[SewingSchedule]([Offline] ASC)
+    INCLUDE([OrderID]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [APSNoforP_SewingLineSchedule]
+    ON [dbo].[SewingSchedule]([APSNo] ASC)
     INCLUDE([OrderID]);
 
