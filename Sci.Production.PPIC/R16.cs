@@ -92,30 +92,29 @@ SELECT
 	,[LastDQSOutputDate]=LastDQSOutputDate.Value
 	,[OST Clog Carton]= ISNULL(PackingCarton.Value,0) - ISNULL(ClogReceivedCarton.Value,0)
 INTO #tmp
-FROM Orders o
-LEFT JOIN Order_QtyShip oq ON o.ID=oq.ID
-LEFT JOIN OrderType ot ON o.OrderTypeID=ot.ID AND o.BrandID = ot.BrandID
+FROM Orders o WITH(NOLOCK)
+LEFT JOIN Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
+LEFT JOIN OrderType ot WITH(NOLOCK) ON o.OrderTypeID=ot.ID AND o.BrandID = ot.BrandID
 OUTER APPLY(
-	SELECT [Count] = COUNT(ID) FROM Order_QtyShip oqq WHERE oqq.Id=o.ID
+	SELECT [Count] = COUNT(ID) FROM Order_QtyShip oqq WITH(NOLOCK) WHERE oqq.Id=o.ID
 )PartialShipment
 OUTER APPLY(
-	SELECT Qty FROM Order_QtyShip oqq WHERE oqq.Id=o.ID AND oqq.Seq=oq.Seq
+	SELECT Qty FROM Order_QtyShip oqq WITH(NOLOCK) WHERE oqq.Id=o.ID AND oqq.Seq=oq.Seq
 )OrderQty
 OUTER APPLY(
-	SELECT [Value]=COUNT(Ukey) FROM PackingList_Detail pd
+	SELECT [Value]=COUNT(Ukey) FROM PackingList_Detail pd WITH(NOLOCK)
 	WHERE pd.OrderID=o.ID
 	AND pd.OrderShipmodeSeq=oq.Seq
 	AND pd.CTNQty=1
 )PackingCarton
 OUTER APPLY(
 	SELECT [Value]=Sum(pd.ShipQty)
-	FROM PackingList_Detail pd
+	FROM PackingList_Detail pd WITH(NOLOCK)
 	WHERE pd.OrderID=o.ID
 	AND pd.OrderShipmodeSeq=oq.Seq
-	AND pd.CTNQty=1
 )PackingQty
 OUTER APPLY(
-	SELECT [Value]=COUNT(Ukey) FROM PackingList_Detail pd
+	SELECT [Value]=COUNT(Ukey) FROM PackingList_Detail pd WITH(NOLOCK)
 	WHERE pd.OrderID=o.ID
 	AND pd.OrderShipmodeSeq=oq.Seq
 	AND pd.CTNQty=1
@@ -123,19 +122,19 @@ OUTER APPLY(
 )ClogReceivedCarton
 OUTER APPLY(
 	SELECT [Value]=MAX(s.OutputDate)
-	FROM SewingOutput s
-	INNER JOIN SewingOutput_Detail sd ON s.ID=sd.ID
+	FROM SewingOutput s WITH(NOLOCK)
+	INNER JOIN SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
 	WHERE sd.OrderId=o.ID AND sd.QAQty > 0
 )LastCMPOutputDate
 OUTER APPLY(
 	SELECT [Value]=MAX(Date)
 	FROM(
 		SELECT [Date]=MAX(AddDate) 
-		FROM [ManufacturingExecution].[dbo].[Inspection]
+		FROM [ManufacturingExecution].[dbo].[Inspection] WITH(NOLOCK)
 		WHERE OrderId=o.ID AND Status='Pass'
 		UNION 
 		SELECT [Date]=MAX(EditDate)
-		FROM [ManufacturingExecution].[dbo].[Inspection]
+		FROM [ManufacturingExecution].[dbo].[Inspection] WITH(NOLOCK)
 		WHERE OrderId=o.ID AND Status='Fixed'
 	)Tmp
 )LastDQSOutputDate
@@ -213,19 +212,32 @@ SELECT
 FROM #tmp o
 OUTER APPLY(
 	SELECT [Value]=Sum(pd.ShipQty) 
-	FROM PackingList_Detail pd
+	FROM PackingList_Detail pd WITH(NOLOCK)
 	WHERE pd.OrderID=o.ID
 	AND pd.OrderShipmodeSeq=o.Seq
-	AND pd.CTNQty=1
 	AND ( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL)
 )ClogReceivedQty
 OUTER APPLY(
 	 SELECT [Value]=[dbo].[getMinCompleteSewQty](o.ID,NULL,NULL) 
 )CMPQty
 OUTER APPLY(
-	SELECT [Value]= SUM( DISTINCT  [dbo].[getMinCompleteSewQty](i.OrderId,i.Article,i.Size))
-	FROM [ManufacturingExecution].[dbo].[Inspection] i
-	WHERE i.OrderId=o.ID AND (i.Status='Pass' OR i.Status='Fixed')
+	SELECT  [Value]=CASE WHEN (select StyleUnit from Orders WITH (NOLOCK) where ID = o.ID) LIKE '%SETS%' 
+				 THEN 
+					 (			 
+						SELECT [Value]=MIN(Value) FROM (
+							SELECT Location,[Value]=COUNT(iD)
+							FROM [ManufacturingExecution].[dbo].[Inspection]  WITH(NOLOCK)
+							WHERE OrderID =o.ID
+							GROUP BY Location
+						)tmp
+					 )
+				 ELSE 
+						(
+							SELECT COUNT(i.iD)
+							FROM [ManufacturingExecution].[dbo].[Inspection]  i WITH(NOLOCK)
+							WHERE i.OrderID=o.ID
+						)
+				 END
 )DQSQty
 
 ORDER BY O.ID
