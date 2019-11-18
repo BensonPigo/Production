@@ -88,11 +88,9 @@
             this.numTotalReplacementRequestYds = new Sci.Win.UI.NumericBox();
             this.labelDamageSampleSendDate = new Sci.Win.UI.Label();
             this.labelReplacementETA = new Sci.Win.UI.Label();
-            this.labelDefectResponsibilityExplanation = new Sci.Win.UI.Label();
             this.labelFactorySuggesteSolutionAsideFromReplacement = new Sci.Win.UI.Label();
             this.dateDamageSampleSendDate = new Sci.Win.UI.DateBox();
             this.dateReplacementETA = new Sci.Win.UI.DateBox();
-            this.comboDefectResponsibilityExplanation = new Sci.Win.UI.ComboBox();
             this.txtFactorySuggesteSolutionAsideFromReplacement = new Sci.Win.UI.TextBox();
             this.labelAWBofDamageSample = new Sci.Win.UI.Label();
             this.labelCostOccurred = new Sci.Win.UI.Label();
@@ -139,7 +137,6 @@
             // labelSEQ
             // 
             this.labelSEQ.BackColor = System.Drawing.Color.Transparent;
-            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(14, 20);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(75, 23);
@@ -153,7 +150,6 @@
             // labelInvoice
             // 
             this.labelInvoice.BackColor = System.Drawing.Color.Transparent;
-            this.labelInvoice.Lines = 0;
             this.labelInvoice.Location = new System.Drawing.Point(14, 47);
             this.labelInvoice.Name = "labelInvoice";
             this.labelInvoice.Size = new System.Drawing.Size(75, 23);
@@ -167,7 +163,6 @@
             // labelDescription
             // 
             this.labelDescription.BackColor = System.Drawing.Color.Transparent;
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(14, 74);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
@@ -205,7 +200,6 @@
             // labelRefNo
             // 
             this.labelRefNo.BackColor = System.Drawing.Color.Transparent;
-            this.labelRefNo.Lines = 0;
             this.labelRefNo.Location = new System.Drawing.Point(206, 20);
             this.labelRefNo.Name = "labelRefNo";
             this.labelRefNo.Size = new System.Drawing.Size(47, 23);
@@ -229,7 +223,6 @@
             // labelWKNo
             // 
             this.labelWKNo.BackColor = System.Drawing.Color.Transparent;
-            this.labelWKNo.Lines = 0;
             this.labelWKNo.Location = new System.Drawing.Point(334, 47);
             this.labelWKNo.Name = "labelWKNo";
             this.labelWKNo.Size = new System.Drawing.Size(52, 23);
@@ -253,7 +246,6 @@
             // labelETA
             // 
             this.labelETA.BackColor = System.Drawing.Color.Transparent;
-            this.labelETA.Lines = 0;
             this.labelETA.Location = new System.Drawing.Point(550, 20);
             this.labelETA.Name = "labelETA";
             this.labelETA.Size = new System.Drawing.Size(107, 23);
@@ -267,7 +259,6 @@
             // labelColorCode
             // 
             this.labelColorCode.BackColor = System.Drawing.Color.Transparent;
-            this.labelColorCode.Lines = 0;
             this.labelColorCode.Location = new System.Drawing.Point(550, 47);
             this.labelColorCode.Name = "labelColorCode";
             this.labelColorCode.Size = new System.Drawing.Size(107, 23);
@@ -281,7 +272,6 @@
             // labelEstRcedQty
             // 
             this.labelEstRcedQty.BackColor = System.Drawing.Color.Transparent;
-            this.labelEstRcedQty.Lines = 0;
             this.labelEstRcedQty.Location = new System.Drawing.Point(550, 74);
             this.labelEstRcedQty.Name = "labelEstRcedQty";
             this.labelEstRcedQty.Size = new System.Drawing.Size(107, 23);
@@ -295,7 +285,6 @@
             // labelActualRcedQty
             // 
             this.labelActualRcedQty.BackColor = System.Drawing.Color.Transparent;
-            this.labelActualRcedQty.Lines = 0;
             this.labelActualRcedQty.Location = new System.Drawing.Point(550, 101);
             this.labelActualRcedQty.Name = "labelActualRcedQty";
             this.labelActualRcedQty.Size = new System.Drawing.Size(107, 23);
@@ -391,7 +380,6 @@
             // label10
             // 
             this.label10.BackColor = System.Drawing.Color.Transparent;
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(14, 208);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(118, 61);
@@ -406,7 +394,6 @@
             // 
             this.label11.BackColor = System.Drawing.Color.Transparent;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label11.Lines = 0;
             this.label11.Location = new System.Drawing.Point(150, 138);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(151, 51);
@@ -581,7 +568,6 @@
             // 
             this.label12.BackColor = System.Drawing.Color.Transparent;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label12.Lines = 0;
             this.label12.Location = new System.Drawing.Point(330, 138);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(143, 51);
@@ -596,7 +582,6 @@
             // 
             this.labelNarrowWidth.BackColor = System.Drawing.Color.Transparent;
             this.labelNarrowWidth.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.labelNarrowWidth.Lines = 0;
             this.labelNarrowWidth.Location = new System.Drawing.Point(511, 138);
             this.labelNarrowWidth.Name = "labelNarrowWidth";
             this.labelNarrowWidth.Size = new System.Drawing.Size(95, 51);
@@ -611,7 +596,6 @@
             // 
             this.labelOther.BackColor = System.Drawing.Color.Transparent;
             this.labelOther.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.labelOther.Lines = 0;
             this.labelOther.Location = new System.Drawing.Point(677, 138);
             this.labelOther.Name = "labelOther";
             this.labelOther.Size = new System.Drawing.Size(75, 51);
@@ -625,7 +609,6 @@
             // labelTotalDefectPoints
             // 
             this.labelTotalDefectPoints.BackColor = System.Drawing.Color.Transparent;
-            this.labelTotalDefectPoints.Lines = 0;
             this.labelTotalDefectPoints.Location = new System.Drawing.Point(146, 208);
             this.labelTotalDefectPoints.Name = "labelTotalDefectPoints";
             this.labelTotalDefectPoints.Size = new System.Drawing.Size(120, 50);
@@ -639,7 +622,6 @@
             // labelNoOfRollsOver50
             // 
             this.labelNoOfRollsOver50.BackColor = System.Drawing.Color.Transparent;
-            this.labelNoOfRollsOver50.Lines = 0;
             this.labelNoOfRollsOver50.Location = new System.Drawing.Point(324, 208);
             this.labelNoOfRollsOver50.Name = "labelNoOfRollsOver50";
             this.labelNoOfRollsOver50.Size = new System.Drawing.Size(127, 50);
@@ -653,7 +635,6 @@
             // labelWidthNoOfRollsWith
             // 
             this.labelWidthNoOfRollsWith.BackColor = System.Drawing.Color.Transparent;
-            this.labelWidthNoOfRollsWith.Lines = 0;
             this.labelWidthNoOfRollsWith.Location = new System.Drawing.Point(504, 208);
             this.labelWidthNoOfRollsWith.Name = "labelWidthNoOfRollsWith";
             this.labelWidthNoOfRollsWith.Size = new System.Drawing.Size(168, 50);
@@ -667,7 +648,6 @@
             // labelReason
             // 
             this.labelReason.BackColor = System.Drawing.Color.Transparent;
-            this.labelReason.Lines = 0;
             this.labelReason.Location = new System.Drawing.Point(681, 208);
             this.labelReason.Name = "labelReason";
             this.labelReason.Size = new System.Drawing.Size(71, 50);
@@ -695,7 +675,6 @@
             // labelReplacementRequestYds
             // 
             this.labelReplacementRequestYds.BackColor = System.Drawing.Color.Transparent;
-            this.labelReplacementRequestYds.Lines = 0;
             this.labelReplacementRequestYds.Location = new System.Drawing.Point(141, 316);
             this.labelReplacementRequestYds.Name = "labelReplacementRequestYds";
             this.labelReplacementRequestYds.Size = new System.Drawing.Size(175, 23);
@@ -709,7 +688,6 @@
             // label100ReplacementYds
             // 
             this.label100ReplacementYds.BackColor = System.Drawing.Color.Transparent;
-            this.label100ReplacementYds.Lines = 0;
             this.label100ReplacementYds.Location = new System.Drawing.Point(320, 316);
             this.label100ReplacementYds.Name = "label100ReplacementYds";
             this.label100ReplacementYds.Size = new System.Drawing.Size(153, 23);
@@ -723,7 +701,6 @@
             // labelNarrowReplacementRequestYds
             // 
             this.labelNarrowReplacementRequestYds.BackColor = System.Drawing.Color.Transparent;
-            this.labelNarrowReplacementRequestYds.Lines = 0;
             this.labelNarrowReplacementRequestYds.Location = new System.Drawing.Point(497, 316);
             this.labelNarrowReplacementRequestYds.Name = "labelNarrowReplacementRequestYds";
             this.labelNarrowReplacementRequestYds.Size = new System.Drawing.Size(175, 23);
@@ -737,7 +714,6 @@
             // labelOtherReplacementRequestYds
             // 
             this.labelOtherReplacementRequestYds.BackColor = System.Drawing.Color.Transparent;
-            this.labelOtherReplacementRequestYds.Lines = 0;
             this.labelOtherReplacementRequestYds.Location = new System.Drawing.Point(677, 316);
             this.labelOtherReplacementRequestYds.Name = "labelOtherReplacementRequestYds";
             this.labelOtherReplacementRequestYds.Size = new System.Drawing.Size(177, 23);
@@ -879,7 +855,6 @@
             // labelTotalReplacementQty
             // 
             this.labelTotalReplacementQty.BackColor = System.Drawing.Color.Transparent;
-            this.labelTotalReplacementQty.Lines = 0;
             this.labelTotalReplacementQty.Location = new System.Drawing.Point(14, 379);
             this.labelTotalReplacementQty.Name = "labelTotalReplacementQty";
             this.labelTotalReplacementQty.Size = new System.Drawing.Size(160, 23);
@@ -916,7 +891,6 @@
             // label24
             // 
             this.label24.BackColor = System.Drawing.Color.Transparent;
-            this.label24.Lines = 0;
             this.label24.Location = new System.Drawing.Point(14, 416);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(118, 49);
@@ -930,7 +904,6 @@
             // labelReplacementReason
             // 
             this.labelReplacementReason.BackColor = System.Drawing.Color.Transparent;
-            this.labelReplacementReason.Lines = 0;
             this.labelReplacementReason.Location = new System.Drawing.Point(141, 415);
             this.labelReplacementReason.Name = "labelReplacementReason";
             this.labelReplacementReason.Size = new System.Drawing.Size(144, 23);
@@ -944,7 +917,6 @@
             // labelTotalReplacementRequestYds
             // 
             this.labelTotalReplacementRequestYds.BackColor = System.Drawing.Color.Transparent;
-            this.labelTotalReplacementRequestYds.Lines = 0;
             this.labelTotalReplacementRequestYds.Location = new System.Drawing.Point(141, 442);
             this.labelTotalReplacementRequestYds.Name = "labelTotalReplacementRequestYds";
             this.labelTotalReplacementRequestYds.Size = new System.Drawing.Size(177, 23);
@@ -1002,7 +974,6 @@
             // labelDamageSampleSendDate
             // 
             this.labelDamageSampleSendDate.BackColor = System.Drawing.Color.Transparent;
-            this.labelDamageSampleSendDate.Lines = 0;
             this.labelDamageSampleSendDate.Location = new System.Drawing.Point(14, 478);
             this.labelDamageSampleSendDate.Name = "labelDamageSampleSendDate";
             this.labelDamageSampleSendDate.Size = new System.Drawing.Size(175, 23);
@@ -1016,7 +987,6 @@
             // labelReplacementETA
             // 
             this.labelReplacementETA.BackColor = System.Drawing.Color.Transparent;
-            this.labelReplacementETA.Lines = 0;
             this.labelReplacementETA.Location = new System.Drawing.Point(14, 505);
             this.labelReplacementETA.Name = "labelReplacementETA";
             this.labelReplacementETA.Size = new System.Drawing.Size(175, 23);
@@ -1027,24 +997,9 @@
             this.labelReplacementETA.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.labelReplacementETA.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // labelDefectResponsibilityExplanation
-            // 
-            this.labelDefectResponsibilityExplanation.BackColor = System.Drawing.Color.Transparent;
-            this.labelDefectResponsibilityExplanation.Lines = 0;
-            this.labelDefectResponsibilityExplanation.Location = new System.Drawing.Point(14, 532);
-            this.labelDefectResponsibilityExplanation.Name = "labelDefectResponsibilityExplanation";
-            this.labelDefectResponsibilityExplanation.Size = new System.Drawing.Size(220, 23);
-            this.labelDefectResponsibilityExplanation.TabIndex = 144;
-            this.labelDefectResponsibilityExplanation.Text = "Defect Responsibility & Explanation";
-            this.labelDefectResponsibilityExplanation.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelDefectResponsibilityExplanation.TextStyle.Color = System.Drawing.Color.Black;
-            this.labelDefectResponsibilityExplanation.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.labelDefectResponsibilityExplanation.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
             // labelFactorySuggesteSolutionAsideFromReplacement
             // 
             this.labelFactorySuggesteSolutionAsideFromReplacement.BackColor = System.Drawing.Color.Transparent;
-            this.labelFactorySuggesteSolutionAsideFromReplacement.Lines = 0;
             this.labelFactorySuggesteSolutionAsideFromReplacement.Location = new System.Drawing.Point(13, 559);
             this.labelFactorySuggesteSolutionAsideFromReplacement.Name = "labelFactorySuggesteSolutionAsideFromReplacement";
             this.labelFactorySuggesteSolutionAsideFromReplacement.Size = new System.Drawing.Size(333, 23);
@@ -1071,19 +1026,6 @@
             this.dateReplacementETA.Size = new System.Drawing.Size(110, 23);
             this.dateReplacementETA.TabIndex = 20;
             // 
-            // comboDefectResponsibilityExplanation
-            // 
-            this.comboDefectResponsibilityExplanation.BackColor = System.Drawing.Color.White;
-            this.comboDefectResponsibilityExplanation.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Responsibility", true));
-            this.comboDefectResponsibilityExplanation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDefectResponsibilityExplanation.FormattingEnabled = true;
-            this.comboDefectResponsibilityExplanation.IsSupportUnselect = true;
-            this.comboDefectResponsibilityExplanation.Location = new System.Drawing.Point(238, 532);
-            this.comboDefectResponsibilityExplanation.Name = "comboDefectResponsibilityExplanation";
-            this.comboDefectResponsibilityExplanation.OldText = "";
-            this.comboDefectResponsibilityExplanation.Size = new System.Drawing.Size(190, 24);
-            this.comboDefectResponsibilityExplanation.TabIndex = 22;
-            // 
             // txtFactorySuggesteSolutionAsideFromReplacement
             // 
             this.txtFactorySuggesteSolutionAsideFromReplacement.BackColor = System.Drawing.Color.White;
@@ -1098,7 +1040,6 @@
             // labelAWBofDamageSample
             // 
             this.labelAWBofDamageSample.BackColor = System.Drawing.Color.Transparent;
-            this.labelAWBofDamageSample.Lines = 0;
             this.labelAWBofDamageSample.Location = new System.Drawing.Point(390, 478);
             this.labelAWBofDamageSample.Name = "labelAWBofDamageSample";
             this.labelAWBofDamageSample.Size = new System.Drawing.Size(165, 23);
@@ -1112,7 +1053,6 @@
             // labelCostOccurred
             // 
             this.labelCostOccurred.BackColor = System.Drawing.Color.Transparent;
-            this.labelCostOccurred.Lines = 0;
             this.labelCostOccurred.Location = new System.Drawing.Point(390, 505);
             this.labelCostOccurred.Name = "labelCostOccurred";
             this.labelCostOccurred.Size = new System.Drawing.Size(93, 23);
@@ -1126,7 +1066,6 @@
             // labelDefectReason
             // 
             this.labelDefectReason.BackColor = System.Drawing.Color.Transparent;
-            this.labelDefectReason.Lines = 0;
             this.labelDefectReason.Location = new System.Drawing.Point(431, 532);
             this.labelDefectReason.Name = "labelDefectReason";
             this.labelDefectReason.Size = new System.Drawing.Size(51, 23);
@@ -1269,11 +1208,9 @@
             this.Controls.Add(this.labelCostOccurred);
             this.Controls.Add(this.labelAWBofDamageSample);
             this.Controls.Add(this.txtFactorySuggesteSolutionAsideFromReplacement);
-            this.Controls.Add(this.comboDefectResponsibilityExplanation);
             this.Controls.Add(this.dateReplacementETA);
             this.Controls.Add(this.dateDamageSampleSendDate);
             this.Controls.Add(this.labelFactorySuggesteSolutionAsideFromReplacement);
-            this.Controls.Add(this.labelDefectResponsibilityExplanation);
             this.Controls.Add(this.labelReplacementETA);
             this.Controls.Add(this.labelDamageSampleSendDate);
             this.Controls.Add(this.numTotalReplacementRequestYds);
@@ -1321,6 +1258,7 @@
             this.Controls.Add(this.shapeContainer1);
             this.DefaultControl = "txtSEQ";
             this.Name = "P08_InputData";
+            this.OnLineHelpID = "Sci.Win.Subs.Input6A";
             this.Text = "Replacement Report - Fabric";
             this.WorkAlias = "ReplacementReport_Detail";
             this.Controls.SetChildIndex(this.shapeContainer1, 0);
@@ -1368,12 +1306,10 @@
             this.Controls.SetChildIndex(this.numTotalReplacementRequestYds, 0);
             this.Controls.SetChildIndex(this.labelDamageSampleSendDate, 0);
             this.Controls.SetChildIndex(this.labelReplacementETA, 0);
-            this.Controls.SetChildIndex(this.labelDefectResponsibilityExplanation, 0);
             this.Controls.SetChildIndex(this.labelFactorySuggesteSolutionAsideFromReplacement, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.dateDamageSampleSendDate, 0);
             this.Controls.SetChildIndex(this.dateReplacementETA, 0);
-            this.Controls.SetChildIndex(this.comboDefectResponsibilityExplanation, 0);
             this.Controls.SetChildIndex(this.txtFactorySuggesteSolutionAsideFromReplacement, 0);
             this.Controls.SetChildIndex(this.labelAWBofDamageSample, 0);
             this.Controls.SetChildIndex(this.labelCostOccurred, 0);
@@ -1454,11 +1390,9 @@
         private Win.UI.NumericBox numTotalReplacementRequestYds;
         private Win.UI.Label labelDamageSampleSendDate;
         private Win.UI.Label labelReplacementETA;
-        private Win.UI.Label labelDefectResponsibilityExplanation;
         private Win.UI.Label labelFactorySuggesteSolutionAsideFromReplacement;
         private Win.UI.DateBox dateDamageSampleSendDate;
         private Win.UI.DateBox dateReplacementETA;
-        private Win.UI.ComboBox comboDefectResponsibilityExplanation;
         private Win.UI.TextBox txtFactorySuggesteSolutionAsideFromReplacement;
         private Win.UI.Label labelAWBofDamageSample;
         private Win.UI.Label labelCostOccurred;
