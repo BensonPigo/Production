@@ -384,40 +384,48 @@ from (
 
 union all
 
-select distinct
-	 [HSCode] = isnull(li.HSCode,'') 
-	,[NLCode] = isnull(li.NLCode,'') 
-	,[POID] = l.OrderID
-	,[Seq] = ''
-	,[RefNo] = l.Refno
-    ,[MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
-	,[Description] = li.Description
-	,[Roll] = '' 
-	,[Dyelot] = '' 
-	,[StockType] = 'B'
-	,[Location] = '' 
-	,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
-		,l.UnitId
-		,li.CustomsUnit
-		,(l.InQty-l.OutQty+l.AdjustQty)
-		,0
-		,li.PcsWidth
-		,li.PcsLength
-		,li.PcsKg
-		,isnull(IIF(li.CustomsUnit = 'M2',
-			(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
-		,isnull(IIF(li.CustomsUnit = 'M2',
-			(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
-            ,li.Refno)
-		,0)
-	,[W/House Unit] = li.CustomsUnit
-	,[W/House Qty(Usage Unit)] =l.InQty-l.OutQty+l.AdjustQty
-	,[Customs Unit] = l.UnitId
-	from LocalInventory l WITH (NOLOCK) 	
-	inner join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-	where l.InQty-l.OutQty+l.AdjustQty > 0	
+    select HSCode,NLCode,POID,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location
+        ,Qty=sum(Qty)
+        ,[W/House Unit]
+        ,[W/House Qty(Usage Unit)]=sum([W/House Qty(Usage Unit)])
+        ,[Customs Unit]
+    from(
+        select
+	         [HSCode] = isnull(li.HSCode,'') 
+	        ,[NLCode] = isnull(li.NLCode,'') 
+	        ,[POID] = l.OrderID
+	        ,[Seq] = ''
+	        ,[RefNo] = l.Refno
+            ,[MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
+	        ,[Description] = li.Description
+	        ,[Roll] = '' 
+	        ,[Dyelot] = '' 
+	        ,[StockType] = 'B'
+	        ,[Location] = '' 
+	        ,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+		        ,l.UnitId
+		        ,li.CustomsUnit
+		        ,(l.InQty-l.OutQty+l.AdjustQty)
+		        ,0
+		        ,li.PcsWidth
+		        ,li.PcsLength
+		        ,li.PcsKg
+		        ,isnull(IIF(li.CustomsUnit = 'M2',
+			        (select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			        ,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
+		        ,isnull(IIF(li.CustomsUnit = 'M2',
+			        (select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			        ,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
+                    ,li.Refno)
+		        ,0)
+	        ,[W/House Unit] = li.CustomsUnit
+	        ,[W/House Qty(Usage Unit)] =l.InQty-l.OutQty+l.AdjustQty
+	        ,[Customs Unit] = l.UnitId
+        from LocalInventory l WITH (NOLOCK) 	
+        inner join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
+        where l.InQty-l.OutQty+l.AdjustQty > 0	
+    )x
+	group by HSCode,NLCode,POID,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location,[W/House Unit],[Customs Unit]
 ) a
 
 
