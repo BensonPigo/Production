@@ -19,6 +19,8 @@
     [EditDate]    DATETIME     NULL,
     [TPEEditName] VARCHAR (10) CONSTRAINT [DF_ReplacementReport_TPEEditName] DEFAULT ('') NULL,
     [TPEEditDate] DATETIME     NULL,
+    [Responsibility] VARCHAR NULL, 
+    [SendToTrade] BIT NOT NULL CONSTRAINT [DF_ReplacementReport_SendToTrade] DEFAULT (0), 
     CONSTRAINT [PK_ReplacementReport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

@@ -18,12 +18,13 @@ BEGIN
 	Merge Production.dbo.ReplacementReport as t
 	Using (select * from Trade_To_Pms.dbo.ReplacementReport WITH (NOLOCK) where factoryid in (select id from @Sayfty))as s
 	on t.id=s.id 
-		When matched and t.TPECFMDate <> s.TPECFMDate then
+		When matched then
 		update set
 		t.TPECFMName = s.TPECFMName,
 		t.TPECFMDate =s.TPECFMDate,
 		t.TPEEditName=s.EditName,
-		t.TPEEditDate=s.EditDate
+		t.TPEEditDate=s.EditDate,
+		t.Status = s.Status
 	output inserted.id into @tReplace;
 
 	--Merge Replace2
@@ -38,7 +39,8 @@ BEGIN
 		t.BGradeRequest = s.BGradeRequest, 
 		t.NarrowRequest = s.NarrowRequest, 
 		t.TotalRequest = s.TotalRequest, 
-		t.AfterCuttingRequest = s.AfterCuttingRequest;
+		t.AfterCuttingRequest = s.AfterCuttingRequest,
+		t.Junk = s.Junk;
 
 	Merge Production.dbo.Clip as t
 	Using Trade_To_Pms.dbo.Clip as s
