@@ -384,7 +384,7 @@ from (
 
 union all
 
-select distinct
+select
 	 [HSCode] = isnull(li.HSCode,'') 
 	,[NLCode] = isnull(li.NLCode,'') 
 	,[POID] = l.OrderID
