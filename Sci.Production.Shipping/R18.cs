@@ -80,7 +80,7 @@ namespace Sci.Production.Shipping
             }
             else
             {
-                this.Status_Where = "AND s.Status <> 'Junked'";
+                this.Status_Where = "AND s.junk = 0";
             }
 
             return base.ValidateInput();
