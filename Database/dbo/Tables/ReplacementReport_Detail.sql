@@ -32,6 +32,7 @@
     [UKey]                 BIGINT         IDENTITY (1, 1) NOT NULL,
     [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
     [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
+    [Junk] BIT NOT NULL CONSTRAINT [DF_ReplacementReport_Detail_Junk] DEFAULT ((0)), 
     CONSTRAINT [PK_ReplacementReport_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 

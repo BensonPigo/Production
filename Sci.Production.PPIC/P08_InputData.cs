@@ -25,7 +25,6 @@ namespace Sci.Production.PPIC
         public P08_InputData(DataRow masterData)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboDefectResponsibilityExplanation, 2, 1, "F,Factory,M,Mill,S,Subcon in Local,T,SCI dep. (purchase/s. mrs/sample room)");
             this.masterData = masterData;
         }
 
