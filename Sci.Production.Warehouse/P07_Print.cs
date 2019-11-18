@@ -103,6 +103,10 @@ select
 	,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
 	,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 	,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+	,[TotalReceivingQty]=IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2)  
+			AND (p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))  
+			AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+				,null,sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ))
 	,[SubVaniance]=R.ShipQty - R.ActualQty
 	,R.Remark		
 from dbo.Receiving_Detail R WITH (NOLOCK) 
@@ -185,29 +189,21 @@ where R.id = @ID";
 
         private void radioGroup1_ValueChanged(object sender, EventArgs e)
         {
-
-
-
             this.ReportResourceNamespace = typeof(P07_PrintData);
             this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
             this.ReportResourceName = this.radioPanel1.Value == this.radioPLRcvReport.Value ? "P07_Report1.rdlc" : "P07_Report2.rdlc";
-
         }
 
         private void radioPLRcvReport_CheckedChanged(object sender, EventArgs e)
         {
-
             CheckControlEnable();
-
         }
 
         private void CheckControlEnable()
         {
             if (radioPLRcvReport.Checked == true)
             {
-               
                 txtSPNo.Enabled = false;
-               
             }
             else
             {              
@@ -222,7 +218,6 @@ where R.id = @ID";
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-           
 
             if (ReportResourceName == "P07_Report2.rdlc")
             {
@@ -250,8 +245,10 @@ where R.id = @ID";
                     objSheets.Cells[nRow, 11] = dr["ShipQty"].ToString()+" " + dr["POUnit"].ToString();
                     objSheets.Cells[nRow, 12] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
                     objSheets.Cells[nRow, 13] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
-                    objSheets.Cells[nRow, 14] = dr["QtyVaniance"].ToString();
-                    objSheets.Cells[nRow, 15] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 14] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
+                        string.Empty : dr["TotalReceivingQty"].ToString() + " " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 15] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 16] = dr["Remark"].ToString();
                     nRow++;
                 }
 

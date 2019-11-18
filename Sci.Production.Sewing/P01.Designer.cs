@@ -670,7 +670,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P01";
-            this.RecallChkValue = "Send";
+            this.RecallChkValue = "Sent";
             this.SubDetailKeyField1 = "id,ukey";
             this.SubDetailKeyField2 = "id,SewingOutput_DetailUKey";
             this.SubGridAlias = "SewingOutput_Detail_Detail";

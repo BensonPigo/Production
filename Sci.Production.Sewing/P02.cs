@@ -20,7 +20,7 @@ namespace Sci.Production.Sewing
         private Ict.Win.DataGridViewGeneratorNumericColumnSettings qaqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
         private Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
 
-        private DateTime systemLockDate;
+        private DateTime? SewingMonthlyLockDate;
         private decimal systemTMS = 0;
         private decimal? oldttlqaqty;
         private decimal? oldManHour;
@@ -34,11 +34,9 @@ namespace Sci.Production.Sewing
         {
             this.InitializeComponent();
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "' and Category = 'M'";
-
             DataRow sysData;
-            if (MyUtility.Check.Seek("select SewLock,StdTMS from System WITH (NOLOCK) ", out sysData))
+            if (MyUtility.Check.Seek("select StdTMS from System WITH (NOLOCK) ", out sysData))
             {
-                this.systemLockDate = (DateTime)MyUtility.Convert.GetDate(sysData["SewLock"]);
                 this.systemTMS = MyUtility.Convert.GetDecimal(sysData["StdTMS"]);
             }
             else
@@ -62,7 +60,7 @@ namespace Sci.Production.Sewing
 where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                 if (MyUtility.Check.Seek(strSqlcmd) &&
                     this.Perm.Recall &&
-                    string.Compare(this.CurrentMaintain["Status"].ToString(), "Send") == 0)
+                    string.Compare(this.CurrentMaintain["Status"].ToString(), "Sent") == 0)
                 {
                     this.toolbar.cmdRecall.Enabled = true;
                 }
@@ -381,7 +379,7 @@ where   mo.Junk = 0
 
             this.dateDate.ReadOnly = true;
 
-            if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate)
+            if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.SewingMonthlyLockDate)
             {
                 this.txtsewinglineLine.ReadOnly = true;
                 this.numManpower.ReadOnly = true;
@@ -476,11 +474,9 @@ where   mo.Junk = 0
                 return false;
             }
 
-            #region 若sewingoutput.outputDate <= system.sewlock 表身Qty要等於表頭的Qty
-            DataTable sys;
-            DBProxy.Current.Select(null, "select sewlock from system WITH (NOLOCK) ", out sys);
+            #region 若sewingoutput.outputDate <= SewingMonthlyLock.LockDate 表身Qty要等於表頭的Qty
             DateTime? sod = MyUtility.Convert.GetDate(this.CurrentMaintain["outputDate"]);
-            DateTime? sl = MyUtility.Convert.GetDate(sys.Rows[0][0]);
+            DateTime? sl = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($"select LockDate from SewingMonthlyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'"));
             if (sod <= sl)
             {
                 decimal nQ = 0;
@@ -501,9 +497,9 @@ where   mo.Junk = 0
             #endregion
 
 
-            #region 若status = send ，表身[QA Qty]總和與[Manhours]必為相同
+            #region 若status = Sent ，表身[QA Qty]總和與[Manhours]必為相同
 
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send"))
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Sent"))
             {
                 decimal totalQAQty = 0;
                 decimal manhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]);
@@ -557,9 +553,9 @@ where   mo.Junk = 0
                 return false;
             }
 
-            if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate)
+            if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.SewingMonthlyLockDate)
             {
-                MyUtility.Msg.WarningBox("The date less then System.sewLock date, can't deleted.");
+                MyUtility.Msg.WarningBox($"The date less then {this.SewingMonthlyLockDate} , can't deleted.");
                 return false;
             }
 
@@ -579,11 +575,12 @@ where   mo.Junk = 0
                     return;
                 }
 
-                if (this.dateDate.Value <= this.systemLockDate)
+                this.SewingMonthlyLockDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($"select LockDate from SewingMonthlyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'"));
+                if (this.dateDate.Value <= this.SewingMonthlyLockDate)
                 {
                     this.dateDate.Value = null;
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox("< Date > can't early than System Lock Date:" + this.systemLockDate.ToString("d"));
+                    MyUtility.Msg.WarningBox("< Date > can't early than System Lock Date:" + ((DateTime)this.SewingMonthlyLockDate).ToString("d"));
                     return;
                 }
             }
@@ -597,13 +594,14 @@ where   mo.Junk = 0
                 return;
             }
 
+            this.SewingMonthlyLockDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($"select LockDate from SewingMonthlyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'"));
             base.OnDetailEntered();
             this.oldttlqaqty = this.numQAOutput.Value;
-            bool isSend = this.CurrentMaintain["Status"].ToString() == "Send";
+            bool isSend = this.CurrentMaintain["Status"].ToString() == "Sent";
 
             switch (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]))
             {
-                case "Send":
+                case "Sent":
                     this.lbstatus.Text = "Daily Lock";
                     break;
                 case "Locked":
@@ -875,7 +873,7 @@ where 1=1
 
             string sqlcmd = $@"
 update  s 
-set s.LockDate = CONVERT(date, GETDATE()) , s.Status='Send'
+set s.LockDate = CONVERT(date, GETDATE()) , s.Status='Sent'
 , s.editname='{Sci.Env.User.UserID}' 
 , s.editdate=getdate()
 FROM SewingOutput s
@@ -945,9 +943,9 @@ FROM SewingOutput_DailyUnlock
 WHERE SewingOutputID = '{this.CurrentMaintain["ID"]}' 
 ORDER by Ukey DESC
 
---Recall 一律是從Send改回New
+--Recall 一律是從Sent改回New
 INSERT INTO SewingOutput_History (ID ,HisType ,OldValue ,NewValue ,ReasonID ,Remark ,AddName ,AddDate)
-VALUES ('{this.CurrentMaintain["ID"]}','Status' ,'Send' ,'New' ,isnull(@reasonID,''),isnull(@remark,''),'{Sci.Env.User.UserID}' ,GETDATE())
+VALUES ('{this.CurrentMaintain["ID"]}','Status' ,'Sent' ,'New' ,isnull(@reasonID,''),isnull(@remark,''),'{Sci.Env.User.UserID}' ,GETDATE())
 
 Update SewingOutput_DailyUnlock SET 
 UnLockDate = GETDATE() ,UnLockName= '{Sci.Env.User.UserID}'

@@ -21,6 +21,7 @@
     [ToLocation]           VARCHAR (60)    CONSTRAINT [DF_SubTransfer_Detail_ToLocation] DEFAULT ('') NULL,
     [ToCTNNo]              VARCHAR (10)    NULL,
     [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CompleteTime] DATETIME NULL, 
     CONSTRAINT [PK_SubTransfer_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

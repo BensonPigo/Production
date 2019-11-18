@@ -138,6 +138,18 @@
     <Compile Include="txtcdcode.Designer.cs">
       <DependentUpon>txtcdcode.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtCentralizedmulitM.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCentralizedmulitM.Designer.cs">
+      <DependentUpon>txtCentralizedmulitM.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtCentralizedmulitFactory.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCentralizedmulitFactory.Designer.cs">
+      <DependentUpon>txtCentralizedmulitFactory.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtClogReason.cs">
       <SubType>UserControl</SubType>
     </Compile>

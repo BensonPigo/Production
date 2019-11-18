@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnUpdate = new Sci.Win.UI.Button();
             this.txtCutRefNo = new Sci.Win.UI.TextBox();
             this.txtSEQ = new Sci.Win.UI.TextBox();
@@ -54,6 +54,8 @@
             this.txtfactoryByM = new Sci.Production.Class.txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.txtShift = new Sci.Production.Class.txtDropDownList();
+            this.label5 = new Sci.Win.UI.Label();
             this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
             this.label4 = new Sci.Win.UI.Label();
             this.txtCell1 = new Sci.Production.Class.txtCell();
@@ -227,22 +229,22 @@
             this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridDetail.Location = new System.Drawing.Point(8, 121);
+            this.gridDetail.Location = new System.Drawing.Point(8, 162);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(994, 278);
+            this.gridDetail.Size = new System.Drawing.Size(994, 303);
             this.gridDetail.TabIndex = 9;
             this.gridDetail.TabStop = false;
             // 
@@ -263,7 +265,7 @@
             this.groupBox1.Controls.Add(this.labelSEQ);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(655, 109);
+            this.groupBox1.Size = new System.Drawing.Size(655, 150);
             this.groupBox1.TabIndex = 37;
             this.groupBox1.TabStop = false;
             // 
@@ -287,10 +289,13 @@
             // txtfactoryByM
             // 
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM.boolFtyGroupList = true;
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.IsProduceFty = false;
             this.txtfactoryByM.IssupportJunk = false;
             this.txtfactoryByM.Location = new System.Drawing.Point(564, 13);
+            this.txtfactoryByM.MDivision = null;
             this.txtfactoryByM.Name = "txtfactoryByM";
             this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM.TabIndex = 28;
@@ -305,6 +310,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.txtShift);
+            this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.txtSpreadingNo1);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.txtCell1);
@@ -313,9 +320,27 @@
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Location = new System.Drawing.Point(662, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(337, 109);
+            this.groupBox2.Size = new System.Drawing.Size(337, 150);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
+            // 
+            // txtShift
+            // 
+            this.txtShift.BackColor = System.Drawing.Color.White;
+            this.txtShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShift.Location = new System.Drawing.Point(100, 115);
+            this.txtShift.Name = "txtShift";
+            this.txtShift.Size = new System.Drawing.Size(100, 23);
+            this.txtShift.TabIndex = 43;
+            this.txtShift.Type = "Pms_WorkOrderShift";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(7, 115);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(89, 23);
+            this.label5.TabIndex = 42;
+            this.label5.Text = "Sfit";
             // 
             // txtSpreadingNo1
             // 
@@ -367,7 +392,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(812, 405);
+            this.btnSave.Location = new System.Drawing.Point(812, 471);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(92, 30);
             this.btnSave.TabIndex = 9;
@@ -378,7 +403,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(910, 405);
+            this.btnClose.Location = new System.Drawing.Point(910, 471);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(92, 30);
             this.btnClose.TabIndex = 10;
@@ -388,7 +413,7 @@
             // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 439);
+            this.ClientSize = new System.Drawing.Size(1008, 505);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnUpdate);
@@ -405,6 +430,7 @@
             this.DefaultControlForEdit = "txtCuttingSPNo";
             this.EditMode = true;
             this.Name = "P03";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P03.Change Est. Cut Date after finished Cutting Daily Plan";
             this.Controls.SetChildIndex(this.groupBox2, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
@@ -463,5 +489,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Class.txtSpreadingNo txtSpreadingNo1;
+        private Class.txtDropDownList txtShift;
+        private Win.UI.Label label5;
     }
 }

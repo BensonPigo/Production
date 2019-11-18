@@ -93,7 +93,7 @@ OUTER APPLY (
 	GROUP BY a.SewingOutputID
 )sodd
 WHERE 1=1
-    AND so.Status = 'Send' 
+    AND so.Status = 'Sent' 
     AND so.FactoryID = '{Sci.Env.User.Factory}'
     AND sod.Ukey = sodd.Ukey
     {where}
@@ -132,7 +132,7 @@ ORDER BY sod.ukey desc,so.LockDate,so.SewingLineID,so.Team,so.Shift
             DataTable dt = query.CopyToDataTable();
             string sqlcmd = $@"
 insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-select t.id ,'Status' ,'Send' ,'New' ,sod.ReasonID ,sod.Remark ,'{Sci.Env.User.UserID}' ,GETDATE()
+select t.id ,'Status' ,'Sent' ,'New' ,sod.ReasonID ,sod.Remark ,'{Sci.Env.User.UserID}' ,GETDATE()
 from #tmp t
 inner join SewingOutput_DailyUnlock  sod 
 on t.id = sod.SewingOutputID AND sod.UnLockDate is null
