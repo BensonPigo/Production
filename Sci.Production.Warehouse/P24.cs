@@ -261,72 +261,9 @@ WHERE   StockType='{0}'
                 if (!result)
                 {
                     this.ShowErr(result);
+                    return;
                 }
-                else
-                {
-                    string Update = string.Empty;
-
-                    ////ISP20191578
-                    foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["ToLocation"].ToString() != "").ToList())
-                    {
-                        string POID = item["FromPOID"].ToString();
-                        string Seq1 = item["FromSeq1"].ToString();
-                        string Seq2 = item["FromSeq2"].ToString();
-
-                        List<string> New_CLocationList = this.DetailDatas.AsEnumerable().Where(o => o["FromPOID"].ToString() == POID && o["FromSeq1"].ToString() == Seq1 && o["FromSeq2"].ToString() == Seq2 && o["ToLocation"].ToString() != "")
-                            .Select(o => o["ToLocation"].ToString())
-                            .Distinct().ToList();
-
-                        //從MDivisionPoDetail出現有的Location
-                        DataTable DT_MDivisionPoDetail;
-                        DBProxy.Current.Select(null, $@"
-SELECt CLocation
-FROM MDivisionPoDetail
-WHERE POID='{POID}'
-AND Seq1='{Seq1}' AND Seq2='{Seq2}'
-", out DT_MDivisionPoDetail);
-
-                        List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
-
-                        List<string> Fincal = new List<string>();
-
-                        foreach (var New_CLocation in New_CLocationList)
-                        {
-                            if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
-                            {
-                                DB_CLocations.Add(New_CLocation);
-                            }
-                        }
-
-                        foreach (var CLocation in DB_CLocations.Distinct().ToList())
-                        {
-                            foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
-                            {
-                                if (!Fincal.Contains(a))
-                                {
-                                    Fincal.Add(a);
-                                }
-                            }
-                        }
-
-                        string cmd = $@"
-UPDATE MDivisionPoDetail
-SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
-WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
-
-";
-                        Update += cmd;
-                    }
-
-                    DualResult result2 = DBProxy.Current.Execute(null, Update);
-
-                    if (!result2)
-                    {
-                        ShowErr(result2);
-                    }
-
-                    MyUtility.Msg.InfoBox("Confirmed successful");
-                }
+                MyUtility.Msg.InfoBox("Confirmed successful");
             }
             catch (Exception ex)
             {

@@ -398,7 +398,61 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                            qty = 0,
                            stocktype = m.First().Field<string>("stocktype")
                        }).ToList();
-            #endregion            
+            #endregion
+
+            #region ISP20191578 ToLocation的資料一併更新回MDivisionPODetail.CLocation欄位
+            string updateMDivisionPODetailCLocation = string.Empty;
+            try
+            {
+                foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != "").ToList())
+                {
+                    string POID = item["POID"].ToString();
+                    string Seq1 = item["Seq"].ToString().Split(' ')[0];
+                    string Seq2 = item["Seq"].ToString().Split(' ')[1];
+
+                    List<string> New_CLocationList = this.DetailDatas.AsEnumerable().Where(o => o["POID"].ToString() == POID && o["Seq"].ToString() == (Seq1 + " " + Seq2) && o["ToLocation"].ToString() != "")
+                        .Select(o => o["ToLocation"].ToString())
+                        .Distinct().ToList();
+
+                    //List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
+                    List<string> DB_CLocations = NowDetails.Where(o => o.POID == POID && o.Seq1 == Seq1 && o.Seq2 == Seq2).FirstOrDefault().DB_CLocations;
+
+                    List<string> Fincal = new List<string>();
+
+                    foreach (var New_CLocation in New_CLocationList)
+                    {
+                        if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
+                        {
+                            DB_CLocations.Add(New_CLocation);
+                        }
+                    }
+
+                    foreach (var CLocation in DB_CLocations.Distinct().ToList())
+                    {
+                        foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
+                        {
+                            if (!Fincal.Contains(a))
+                            {
+                                Fincal.Add(a);
+                            }
+                        }
+                    }
+
+                    string cmd = $@"
+UPDATE MDivisionPoDetail
+SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
+WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+
+";
+                    updateMDivisionPODetailCLocation += cmd;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr("Update MDivisionPoDetail error.", ex);
+                return;
+            }
+            #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
@@ -443,6 +497,18 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                         return;
                     }
 
+                    if (!MyUtility.Check.Empty(updateMDivisionPODetailCLocation))
+                    {
+                        result = DBProxy.Current.Execute(null, updateMDivisionPODetailCLocation);
+
+                        if (!result)
+                        {
+                            _transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
 
@@ -456,68 +522,7 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
 
             }
 
-            ////ISP20191578
-            try
-            {
-                string Update = string.Empty;
-
-                foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != "").ToList())
-                {
-                    string POID = item["POID"].ToString();
-                    string Seq1 = item["Seq"].ToString().Split(' ')[0];
-                    string Seq2 = item["Seq"].ToString().Split(' ')[1];
-
-                    List<string> New_CLocationList = this.DetailDatas.AsEnumerable().Where(o => o["POID"].ToString() == POID && o["Seq"].ToString() == (Seq1 + " " + Seq2) && o["ToLocation"].ToString() != "")
-                        .Select(o => o["ToLocation"].ToString())
-                        .Distinct().ToList();                    
-
-                    //List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
-                    List<string> DB_CLocations = NowDetails.Where(o => o.POID == POID && o.Seq1 == Seq1 && o.Seq2 == Seq2).FirstOrDefault().DB_CLocations;
-
-                    List<string> Fincal = new List<string>();
-
-                    foreach (var New_CLocation in New_CLocationList)
-                    {
-                        if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
-                        {
-                            DB_CLocations.Add(New_CLocation);
-                        }
-                    }
-
-                    foreach (var CLocation in DB_CLocations.Distinct().ToList())
-                    {
-                        foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
-                        {
-                            if (!Fincal.Contains(a))
-                            {
-                                Fincal.Add(a);
-                            }
-                        }
-                    }
-
-                    string cmd = $@"
-UPDATE MDivisionPoDetail
-SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
-WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
-
-";
-                    Update += cmd;
-                }
-
-                DualResult result2 = DBProxy.Current.Execute(null, Update);
-
-                if (!result2)
-                {
-                    ShowErr(result2);
-                }
-
-                MyUtility.Msg.InfoBox("Confirmed successful");
-            }
-            catch (Exception ex)
-            {
-                ShowErr("Update MDivisionPoDetail error.", ex);
-            }
-
+            MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
         //寫明細撈出的sql command
