@@ -241,7 +241,7 @@ select * INTO #Final from(
     from #tmp1stFilter t )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
 
-drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup,#cl,#stmp,#wtmp 
+drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup
 
 
 MERGE INTO EfficiencyBI t --要被insert/update/delete的表
