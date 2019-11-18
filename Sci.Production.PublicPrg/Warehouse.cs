@@ -1981,6 +1981,82 @@ Where a.id = '{SubTransfer_ID}'";
             upd_Fty_4T = Prgs.UpdateFtyInventory_IO(4, null, true);
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量  ftyinventory
+            #region ISP20191578 ToLocation的資料一併更新回MDivisionPODetail.CLocation欄位
+            string updateMDivisionPODetailCLocation = string.Empty;
+            var listMDivisionPODetailCLocation = dtSubTransfer_Detail.AsEnumerable()
+                                                .Where(s => s["ToLocation"].ToString() != "")
+                                                .Select(s => new
+                                                {
+                                                    FromPOID = s["FromPOID"].ToString(),
+                                                    FromSeq1 = s["FromSeq1"].ToString(),
+                                                    FromSeq2 = s["FromSeq2"].ToString(),
+                                                    ToLocation = s["ToLocation"].ToString()
+                                                });
+
+            var listDistinctPoIdSeq = listMDivisionPODetailCLocation
+                .Select(s => new
+                {
+                    s.FromPOID,
+                    s.FromSeq1,
+                    s.FromSeq2
+                }
+            ).Distinct();
+
+            foreach (var updItem in listDistinctPoIdSeq)
+            {
+                string POID = updItem.FromPOID;
+                string Seq1 = updItem.FromSeq1;
+                string Seq2 = updItem.FromSeq2;
+
+                List<string> New_CLocationList = listMDivisionPODetailCLocation
+                            .Where( o => o.FromPOID == POID && 
+                                         o.FromSeq1 == Seq1 && 
+                                         o.FromSeq2 == Seq2)
+                            .Select(o => o.ToLocation)
+                            .Distinct().ToList();
+
+                //從MDivisionPoDetail出現有的Location
+                DataTable DT_MDivisionPoDetail;
+                DBProxy.Current.Select(null, $@"
+SELECt CLocation
+FROM MDivisionPoDetail
+WHERE POID='{POID}'
+AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+", out DT_MDivisionPoDetail);
+
+                List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
+
+                List<string> Fincal = new List<string>();
+
+                foreach (var New_CLocation in New_CLocationList)
+                {
+                    if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
+                    {
+                        DB_CLocations.Add(New_CLocation);
+                    }
+                }
+
+                foreach (var CLocation in DB_CLocations.Distinct().ToList())
+                {
+                    foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
+                    {
+                        if (!Fincal.Contains(a))
+                        {
+                            Fincal.Add(a);
+                        }
+                    }
+                }
+
+                string cmd = $@"
+UPDATE MDivisionPoDetail
+SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
+WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+
+";
+                updateMDivisionPODetailCLocation += cmd;
+            }
+            #endregion
+
 
             TransactionScope _transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
@@ -2045,6 +2121,17 @@ Where a.id = '{SubTransfer_ID}'";
                         _transactionscope.Dispose();
                         return result;
                     }
+
+                    if (!MyUtility.Check.Empty(updateMDivisionPODetailCLocation))
+                    {
+                        result = DBProxy.Current.Execute(null, updateMDivisionPODetailCLocation);
+                        if (!result)
+                        {
+                            _transactionscope.Dispose();
+                            return result;
+                        }
+                    }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     //MyUtility.Msg.InfoBox("Confirmed successful");
