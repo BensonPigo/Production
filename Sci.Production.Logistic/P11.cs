@@ -211,16 +211,15 @@ where c.Status = 'Confirmed' and c.ID <> '{this.CurrentMaintain["ID"]}'";
                 try
                 {
                     string updateCMD = $@"
-update ClogGarmentDispose set Status = 'Confirmed' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
+update ClogGarmentDispose set Status = 'Confirmed' , EditName = '{Env.User.UserName}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
 
 update pd set pd.DisposeFromClog = 1
 , pd.DisposeDate = Getdate()
 from PackingList_Detail pd
-where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
+where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.CurrentMaintain["ID"]}' and t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
 ";
-                    DataTable dtResult;
-                    DataTable dtDetail = this.DetailDatas.CopyToDataTable();
-                    result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, updateCMD, out dtResult);
+
+                    result = DBProxy.Current.Execute(null, updateCMD);
                     if (!result)
                     {
                         this.ShowErr(result);
@@ -228,6 +227,9 @@ where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartN
                         return;
                     }
 
+                    DataColumn dtDetailCol = new DataColumn("OrderID", typeof(string));
+                    DataTable dtDetail = new DataTable();
+                    dtDetail.Columns.Add(dtDetailCol);
                     DataTable dtOrderID = this.DetailDatas.GroupBy(s => s["OrderID"]).Select(s =>
                     {
                         DataRow dr = dtDetail.NewRow();
@@ -263,23 +265,24 @@ where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartN
                 try
                 {
                     string updateCMD = $@"
-update ClogGarmentDispose set Status = 'New' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
+update ClogGarmentDispose set Status = 'New' , EditName = '{Env.User.UserName}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
 
 update pd set pd.DisposeFromClog = 0
 ,pd.DisposeDate = null
 from PackingList_Detail pd
-where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
+where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.CurrentMaintain["ID"]}' and t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
 ";
-                    DataTable dtResult;
-                    DataTable dtDetail = this.DetailDatas.CopyToDataTable();
-                    DualResult result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, updateCMD, out dtResult);
+                    DualResult result = DBProxy.Current.Execute(null, updateCMD);
                     if (!result)
                     {
-                        this.ShowErr(result);
                         transactionScope.Dispose();
+                        this.ShowErr(result);
                         return;
                     }
 
+                    DataColumn dtDetailCol = new DataColumn("OrderID", typeof(string));
+                    DataTable dtDetail = new DataTable();
+                    dtDetail.Columns.Add(dtDetailCol);
                     DataTable dtOrderID = this.DetailDatas.GroupBy(s => s["OrderID"]).Select(s =>
                     {
                         DataRow dr = dtDetail.NewRow();
@@ -290,8 +293,8 @@ where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartN
                     result = Prgs.UpdateOrdersCTN(dtOrderID);
                     if (!result)
                     {
-                        this.ShowErr(result);
                         transactionScope.Dispose();
+                        this.ShowErr(result);
                         return;
                     }
 
