@@ -116,7 +116,7 @@ namespace Sci
                     {
                         if (CheckMDivisionID)
                         {
-                            if (!MyUtility.Check.Seek(string.Format("select * from dbo.orders inner join dbo.factory on orders.FtyGroup=factory.id where orders.ID='{0}' and factory.MDivisionID='{1}'", e.FormattedValue.ToString(),Sci.Env.User.Keyword), null))
+                            if (!MyUtility.Check.Seek(string.Format("select * from dbo.orders inner join dbo.factory on orders.FtyGroup=factory.id where orders.ID='{0}' and factory.MDivisionID='{1}' AND orders.Category!='A'", e.FormattedValue.ToString(),Sci.Env.User.Keyword), null))
                             {
                                 dr["poid"] = "";
                                 e.Cancel = true;

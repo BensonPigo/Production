@@ -750,6 +750,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check requestid is Accessory.", "Data not found!!");
+                this.txtRequest.Text = string.Empty;
                 return;
             }
             else

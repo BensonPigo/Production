@@ -60,7 +60,10 @@ select poid = rtrim(a.POID)
 	   , b.RequestQty
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
-where a.id = '{0}';", dr_master["requestid"]));
+LEFT JOIN Orders o ON o.ID = a.POID
+where a.id = '{0}'
+AND o.Category <> 'A';
+", dr_master["requestid"]));
             strSQLCmd.Append(Environment.NewLine); // 換行
 
             //grid2
@@ -90,8 +93,11 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID
 											   and c.seq1 = a.seq1 
 											   and c.seq2  = a.seq2 
 											   and c.stocktype = 'B'
+LEFT JOIN Orders o ON o.ID=c.PoId
 Where a.id = '{0}' 
-	  and c.lock = 0 ", dr_master["requestid"])); // 
+	  and c.lock = 0 
+	  AND o.Category!='A'
+", dr_master["requestid"])); // 
            //判斷LACKING
             //
             if (Type != "Lacking")

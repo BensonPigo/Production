@@ -73,7 +73,10 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID
 											   and c.seq1 = b.seq1 
 											   and c.seq2  = b.seq2 
 											   and c.stocktype = 'B'
-where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"]));
+LEFT join Orders o ON o.ID=a.POID
+where a.id = '{0}' 
+and o.Category != 'A'
+and c.lock = 0 ", dr_master["requestid"]));
             strSQLCmd.Append(Environment.NewLine); // 換行
 
            //判斷LACKING
