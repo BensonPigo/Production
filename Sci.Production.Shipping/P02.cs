@@ -1659,7 +1659,7 @@ AND pu.Status <> 'New'
             else
             {
                 sqlchk = $@"
-select distinct p.ID
+select distinct [PackingListID]= pl.ID
 from Pullout_Detail pd
 inner join PackingList pl on pl.id = pd.PackingListID
 inner join Pullout p on p.id = pd.id
