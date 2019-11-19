@@ -489,41 +489,6 @@ where sd.ID = '{0}'", masterID);
                 return false;
             }
             #endregion
-            DataTable tmpdt;
-            string sqlchkforisapp = $@"
-select a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
-from #tmp sd
-left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
-left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
-";
-            DataTable dDt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlchkforisapp, out tmpdt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
-            // 有標記IsAPP就是APP
-            var hasisapp = tmpdt.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["IsAPP"]));
-            if (hasisapp.Count() > 0)
-            {
-                // 沒標記IsAPP,不是IsShippingVAT(稅),不是AdvancePaymentTPE(代墊台北), 則不是IsAPP
-                var notapp = tmpdt.AsEnumerable().
-                    Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]) &&
-                                !MyUtility.Convert.GetBool(w["IsShippingVAT"]) &&
-                                !MyUtility.Convert.GetBool(w["AdvancePaymentTPE"]));
-
-                if (notapp.Count() > 0)
-                {
-                    MyUtility.Msg.WarningBox(@"Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.
-
-If the application is for Air - Prepaid Invoice, please ensure that all item codes are linked to the correct Account Name -
-6105 - Air prepaid apparel - FTY and / or 5912 - Disburz for SCI Adm Expz, Thank You.");
-                    return false;
-                }
-            }
 
             // Supplier與B/L No 如果重複才需要填寫原因, Reason 不可為空
             if (!MyUtility.Check.Empty(this.txtBLNo.Text))
@@ -640,6 +605,46 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                 }
 
                 this.CurrentMaintain["ID"] = newID;
+            }
+
+            DataTable tmpdt;
+            string sqlchkforisapp = $@"
+select a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
+from #tmp sd
+left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
+left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
+";
+            var dtldt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted);
+            if (dtldt.Count() > 0)
+            {
+                DataTable dDt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlchkforisapp, out tmpdt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                // 有標記IsAPP就是APP
+                var hasisapp = tmpdt.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["IsAPP"]));
+                if (hasisapp.Count() > 0)
+                {
+                    // 沒標記IsAPP,不是IsShippingVAT(稅),不是AdvancePaymentTPE(代墊台北), 則不是IsAPP
+                    var notapp = tmpdt.AsEnumerable().
+                        Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]) &&
+                                    !MyUtility.Convert.GetBool(w["IsShippingVAT"]) &&
+                                    !MyUtility.Convert.GetBool(w["AdvancePaymentTPE"]));
+
+                    if (notapp.Count() > 0)
+                    {
+                        MyUtility.Msg.WarningBox(@"Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.
+
+If the application is for Air - Prepaid Invoice, please ensure that all item codes are linked to the correct Account Name -
+6105 - Air prepaid apparel - FTY and / or 5912 - Disburz for SCI Adm Expz, Thank You.");
+                        return false;
+                    }
+                }
             }
 
             return base.ClickSaveBefore();
