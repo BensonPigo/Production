@@ -1,8 +1,15 @@
+<<<<<<< HEAD
+=======
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+>>>>>>> ISP20191302 - 調整畫面，部分操作流程
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+<<<<<<< HEAD
 using System.Text;
 using System.Windows.Forms;
 <<<<<<< HEAD
@@ -23,6 +30,14 @@ using Ict.Win;
 using System.Drawing;
 using System.Net;
 >>>>>>> ISP20191302 - 完成至Part 3
+=======
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Windows.Forms;
+>>>>>>> ISP20191302 - 調整畫面，部分操作流程
 
 namespace Sci.Production.Packing
 {
@@ -40,11 +55,16 @@ namespace Sci.Production.Packing
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         /// <inheritdoc/>
         protected override void OnFormLoaded()
 =======
         private void btnSelecPath_Click(object sender, EventArgs e)
 =======
+=======
+        public List<ZPL> zPL_Objectss = new List<ZPL>();
+
+>>>>>>> ISP20191302 - 調整畫面，部分操作流程
         private void BtnSelecPath_Click(object sender, EventArgs e)
 >>>>>>> ISP20191302 - 暫時commit
         {
@@ -61,7 +81,7 @@ namespace Sci.Production.Packing
             {
                 dirPath = @"D:\TestPath";
             }
-            
+
         }
 
 <<<<<<< HEAD
@@ -210,6 +230,7 @@ namespace Sci.Production.Packing
                     // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
                     List<ZPL> zPL_Objects = this.Analysis_ZPL(dataList, custCTN_List);
 
+<<<<<<< HEAD
                     // 開始Mapping(沒有混碼的情況才執行這段)
                     this.Mapping_PackingList_Detal(zPL_Objects);
 >>>>>>> ISP20191302 - 完成至Part 3
@@ -254,6 +275,29 @@ WHERE p.MDivisionID = @MDivisionID
             else
             {
                 if (this.gridData.Rows.Count <= 0)
+=======
+                    // 5.將拆解後的檔名放在表格
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn() { ColumnName = "ZPLFileName", DataType = typeof(string) });
+                    dt.Columns.Add(new DataColumn() { ColumnName = "Result", DataType = typeof(string) });
+
+                    custCTN_List.ForEach(FileName =>
+                    {
+                        DataRow nDr = dt.NewRow();
+                        nDr["ZPLFileName"] = FileName;
+                        nDr["Result"] = string.Empty;
+                        dt.Rows.Add(nDr);
+                    });
+
+                    this.listControlBindingSource1.DataSource = dt;
+
+                    // 開始Mapping(沒有混碼的情況才執行這段)
+                    //this.Mapping_PackingList_Detal(zPL_Objects);
+                    zPL_Objectss.AddRange(zPL_Objects);
+                    MyUtility.Msg.InfoBox("Success!!");
+                }
+                catch (Exception ex)
+>>>>>>> ISP20191302 - 調整畫面，部分操作流程
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
@@ -274,22 +318,28 @@ WHERE p.MDivisionID = @MDivisionID
         {
             base.OnFormLoaded();
             this.grid1.IsEditingReadOnly = true;
+            //this.Helper.Controls.Grid.Generator(this.grid1)
+            //.Text("PackingListID", header: "Packing No. ", width: Widths.AnsiChars(15))
+            //.Text("OrderID", header: "SP No.", width: Widths.AnsiChars(15))
+            //.Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(5))
+            //.Text("SCICtnNo", header: "SCI Ctn No.", width: Widths.AnsiChars(20))
+            //.Text("Article", header: "Color Way ", width: Widths.AnsiChars(10))
+            //.Text("SizeCode", header: "Size ", width: Widths.AnsiChars(10))
+            //.Text("CustCTN", header: "Cust #", width: Widths.AnsiChars(30))
+            //.Text("ZPL_StyleID", header: "ZPL Style No.", width: Widths.AnsiChars(15))
+            //.Text("ZPL_Article", header: "ZPL ColorWay", width: Widths.AnsiChars(10))
+            //.Text("ZPL_SizeCode", header: "ZPL Size", width: Widths.AnsiChars(10))
+            //.Text("ZPL_CTNStartNo", header: "ZPL CTN#", width: Widths.AnsiChars(5))
+            //.Text("ZPL_ShipQty", header: "ZPL Ship Qty", width: Widths.AnsiChars(5))
+            //;
+
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Text("PackingListID", header: "Packing No. ", width: Widths.AnsiChars(15))
-            .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(15))
-            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(5))
-            .Text("SCICtnNo", header: "SCI Ctn No.", width: Widths.AnsiChars(20))
-            .Text("Article", header: "Color Way ", width: Widths.AnsiChars(10))
-            .Text("SizeCode", header: "Size ", width: Widths.AnsiChars(10))
-            .Text("CustCTN", header: "Cust #", width: Widths.AnsiChars(30))
-            .Text("ZPL_StyleID", header: "ZPL Style No.", width: Widths.AnsiChars(15))
-            .Text("ZPL_Article", header: "ZPL ColorWay", width: Widths.AnsiChars(10))
-            .Text("ZPL_SizeCode", header: "ZPL Size", width: Widths.AnsiChars(10))
-            .Text("ZPL_CTNStartNo", header: "ZPL CTN#", width: Widths.AnsiChars(5))
-            .Text("ZPL_ShipQty", header: "ZPL Ship Qty", width: Widths.AnsiChars(5))
-            ;
-            this.grid1.Columns["CustCTN"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["CustCTN"].DefaultCellStyle.ForeColor = Color.Red;
+.Text("ZPLFileName", header: "ZPL File Name ", width: Widths.AnsiChars(25))
+.Text("Result", header: "Result", width: Widths.AnsiChars(10))
+;
+
+            //this.grid1.Columns["CustCTN"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.grid1.Columns["CustCTN"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
         /// <summary>
@@ -469,11 +519,11 @@ AND (
 
                             DBProxy.Current.Select(null, sqlCmd, out tmpDt);
 
-                            // 找不到的話記錄下來，做為提示訊息
-                            //if (tmpDt.Rows.Count == 0)
-                            //{
-                            //    notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
-                            //}
+                            // 找不到的話記錄下來
+                            if (tmpDt.Rows.Count == 0)
+                            {
+                                notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
+                            }
 
                             resutDt = this.InsertResultDt(resutDt, tmpDt);
                             #endregion
@@ -503,6 +553,7 @@ INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON pd.OrderID=o.ID 
 WHERE 1=1
 AND p.Type = 'B'
+AND pd.CustCTN=''
 AND pd.Article = '{singleZPL.Article}'
 AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
 AND pd.ShipQty = {singleZPL.ShipQty}
@@ -523,11 +574,11 @@ AND pd.OrderID ='{orderID}'
 
                             DBProxy.Current.Select(null, sqlCmd, out tmpDt);
 
-                            // 找不到的話記錄下來，做為提示訊息
-                            //if (tmpDt.Rows.Count == 0)
-                            //{
-                            //    notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
-                            //}
+                            // 找不到的話記錄下來
+                            if (tmpDt.Rows.Count == 0)
+                            {
+                                notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
+                            }
 
                             resutDt = this.InsertResultDt(resutDt, tmpDt);
                             #endregion
@@ -660,6 +711,7 @@ INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON pd.OrderID=o.ID 
 WHERE 1=1
 AND p.Type = 'B'
+AND pd.CustCTN=''
 AND pd.Article = '{singleZPL.Article}'
 AND pd.CTNStartNo = '{singleZPL.CTNStartNo}'
 AND pd.ShipQty = {singleZPL.ShipQty}
@@ -680,11 +732,11 @@ DROP TABLE #tmoOrders
 
                         DBProxy.Current.Select(null, sqlCmd, out tmpDt);
 
-                        //// 找不到的話記錄下來，做為提示訊息
-                        //if (tmpDt.Rows.Count == 0)
-                        //{
-                        //    notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
-                        //}
+                        // 找不到的話記錄下來
+                        if (tmpDt.Rows.Count == 0)
+                        {
+                            notMappingList.Add($"<PO#: {singleZPL.CustPONo}、StyleID: {singleZPL.StyleID}、Color Way: {singleZPL.Article}、Size: {singleZPL.SizeCode}、CTN#: {singleZPL.CTNStartNo}>");
+                        }
 
                         resutDt = this.InsertResultDt(resutDt, tmpDt);
                         #endregion
@@ -692,17 +744,25 @@ DROP TABLE #tmoOrders
                 }
             });
 
-            // 沒有Mapping到的提供清單
+            // 如果有沒有Mapping到的，把資料帶到下一個視窗顯示
             if (notMappingList.Count > 0)
             {
-                string msg = "Not Mapping :" + Environment.NewLine;
-                msg += notMappingList.JoinToString("、");
-                MyUtility.Msg.WarningBox(msg);
+                //string msg = "Not Mapping :" + Environment.NewLine;
+                //msg += notMappingList.JoinToString("、");
+                //MyUtility.Msg.WarningBox(msg);
+
+                Sci.Production.Packing.P25_AssignPackingList form = new P25_AssignPackingList();
+                form.ShowDialog();
 
                 // ShowErr(msg);
             }
+            else
+            {
+                // 全部Mapping到，直接開始Update PackingList_Detail
 
-            this.listControlBindingSource1.DataSource = resutDt;
+                //this.listControlBindingSource1.DataSource = resutDt;
+            }
+
         }
 
         private DataTable InsertResultDt(DataTable target, DataTable source)
@@ -996,7 +1056,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
         /// <param name="zplFileName">CustCTN</param>
         /// <param name="zplContentString">ZPL文字內容</param>
         /// <param name="shippingMarkPath">指定下載到哪裡</param>
-        private void CallAPI(string zplFileName , string zplContentString , string shippingMarkPath)
+        private void CallAPI(string zplFileName, string zplContentString, string shippingMarkPath)
         {
             // 一份ZPL有兩張圖片，因此再拆一次
             string[] stringSeparators = new string[] { "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH0,0^LRN" };
@@ -1269,6 +1329,14 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
         }
 
         #endregion
+<<<<<<< HEAD
 >>>>>>> ISP20191302
+=======
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Mapping_PackingList_Detal(this.zPL_Objectss);
+        }
+>>>>>>> ISP20191302 - 調整畫面，部分操作流程
     }
 }
