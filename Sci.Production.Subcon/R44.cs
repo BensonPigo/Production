@@ -153,7 +153,7 @@ OrderQty
 into #print0
 from #tsp t
 cross join #CBDate cb
-outer apply(SELECT val = isnull(sum(FinishedQtyBySet),0) FROM DBO.QtyBySetPerSubprocess(t.orderID,'LOADING',DEFAULT ,cb.SewDate,DEFAULT,DEFAULT,1,1)) as AccuLoad
+outer apply(SELECT val = isnull(sum(FinishedQtyBySet),0) FROM DBO.QtyBySetPerSubprocess(t.orderID,'LOADING',DEFAULT ,cast(cb.SewDate as datetime)+cast('23:59:59' as datetime),DEFAULT,DEFAULT,1,1)) as AccuLoad
 
 select FactoryID
 		, SP
