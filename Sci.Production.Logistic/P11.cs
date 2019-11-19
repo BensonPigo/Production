@@ -211,7 +211,7 @@ where c.Status = 'Confirmed' and c.ID <> '{this.CurrentMaintain["ID"]}'";
                 try
                 {
                     string updateCMD = $@"
-update ClogGarmentDispose set Status = 'Confirmed' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
+update ClogGarmentDispose set Status = 'Confirmed' , EditName = '{Env.User.UserName}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
 
 update pd set pd.DisposeFromClog = 1
 , pd.DisposeDate = Getdate()
@@ -265,7 +265,7 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
                 try
                 {
                     string updateCMD = $@"
-update ClogGarmentDispose set Status = 'New' , EditName = '{Env.User.Keyword}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
+update ClogGarmentDispose set Status = 'New' , EditName = '{Env.User.UserName}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
 
 update pd set pd.DisposeFromClog = 0
 ,pd.DisposeDate = null
