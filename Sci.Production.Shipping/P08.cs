@@ -145,10 +145,13 @@ and FKMenu= (select PKey from MenuDetail where FormName='Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account,se.UnitID,a.IsAPP 
+                @"
+select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account,se.UnitID
+    ,a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
 from ShippingAP_Detail sd WITH (NOLOCK) 
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -488,10 +491,11 @@ where sd.ID = '{0}'", masterID);
             #endregion
             DataTable tmpdt;
             string sqlchkforisapp = $@"
-select a.isapp 
+select a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
 from #tmp sd
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-left join [FinanceEN].dbo.AccountNO a on a.ID = substring(se.AccountID,1,4)
+left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
 ";
             DataTable dDt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
             DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlchkforisapp, out tmpdt);
@@ -501,10 +505,16 @@ left join [FinanceEN].dbo.AccountNO a on a.ID = substring(se.AccountID,1,4)
                 return false;
             }
 
+            // 有標記IsAPP就是APP
             var hasisapp = tmpdt.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["IsAPP"]));
             if (hasisapp.Count() > 0)
             {
-                var notapp = tmpdt.AsEnumerable().Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]));
+                // 沒標記IsAPP,不是IsShippingVAT(稅),不是AdvancePaymentTPE(代墊台北), 則不是IsAPP
+                var notapp = tmpdt.AsEnumerable().
+                    Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]) &&
+                                !MyUtility.Convert.GetBool(w["IsShippingVAT"]) &&
+                                !MyUtility.Convert.GetBool(w["AdvancePaymentTPE"]));
+
                 if (notapp.Count() > 0)
                 {
                     MyUtility.Msg.WarningBox(@"Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.
@@ -526,7 +536,7 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                     return false;
                 }
             }
-             
+
             // InvNo + B/L No不可以重複建立
             if (!MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
             {
