@@ -235,6 +235,7 @@ select distinct
     [Layer] = WorkOrder.Layer,
     [FabLength] = iif(WorkOrder.Layer = 0, '', STR(Cutplan_Detail.Cons / WorkOrder.Layer, 12, 2) ),
 	[Fab Desc] = [Production].dbo.getMtlDesc(Cutplan_Detail.POID, WorkOrder.Seq1, WorkOrder.Seq2,2,0),
+    [Shift]=WorkOrder.Shift,
 	[Remark] = Cutplan_Detail.Remark,
 	[SCI Delivery] = o.SciDelivery,
 	[ms] = ms.Seq,
@@ -359,6 +360,8 @@ select
 [Fab Desc1] = case when ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color],[Fab Desc]
 	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
 	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Fab Desc] end,
+
+[Shift]=[Shift],
 [Remark] = [Remark],
 [SCI Delivery] = [SCI Delivery],
 [total_qty1] = [total_qty]
@@ -401,6 +404,7 @@ select	distinct
     [Layer] = WorkOrder.Layer,
     [Length] = iif(WorkOrder.Layer = 0, '', STR(Cutplan_Detail.Cons / WorkOrder.Layer, 12, 2) ),
 	[Fab Refno] = FabRefno.Refno,
+    [Shift]=WorkOrder.Shift,
 	[Remark] = Cutplan_Detail.Remark,
 	[SCI Delivery] = o.SciDelivery,
 	[ms] = ms.Seq,    
@@ -560,6 +564,7 @@ select
 [Layer] = [Layer],
 [Length] = [Length],
 [Fab Refno] = [Fab Refno],
+[Shift]=[Shift],
 [Remark] = [Remark],
 [SCI Delivery] = [SCI Delivery],
 [total_qty1] = [total_qty]
@@ -597,6 +602,7 @@ select distinct
 	[Cut Qty] = cq.SizeCode,
 	[Colorway] = woda.ac,
 	[Total Fab Cons] =sum(cd.Cons) over(partition by c.ID,cd.SewingLineID,cd.OrderID,w.Seq1,w.Seq2,w.FabricCombo),
+    [Shift]=w.Shift,
 	[Remark] = Remark.Remark,
 	p.patternUKey,
 	w.FabricPanelCode
@@ -730,7 +736,7 @@ where 1 = 1
                     sqlCmd.Append($@"
 select 	
 	[Request#],[Factory],[Line#],[SP#],[SewInline],[Seq#],[Style#],[FabRef#],[Fab Desc],[Color],Artwork.Artwork
-	,[Comb.],[Fab_Code],[Cut#],[Size Ratio],[Cut Qty],[Colorway],[Total Fab Cons],[Remark]
+	,[Comb.],[Fab_Code],[Cut#],[Size Ratio],[Cut Qty],[Colorway],[Total Fab Cons],[Shift],[Remark]
 from #tmp{i} t
 outer apply(
 	select Artwork=stuff((
@@ -930,8 +936,8 @@ drop table #tmp{i}
                     {
                         if (!printData[i].Rows[j]["Request#1"].Empty())
                         {
-                            objSheets.get_Range("A" + (7 + j), "B" + (7 + j)).Merge(false);//合併欄位
-                            objSheets.get_Range("A" + (7 + j), "A" + (7 + j)).Font.Bold = true;//指定粗體
+                            objSheets.get_Range("A" + (8 + j), "B" + (8 + j)).Merge(false);//合併欄位
+                            objSheets.get_Range("A" + (8 + j), "A" + (8 + j)).Font.Bold = true;//指定粗體
                             if (!MyUtility.Check.Empty(printData[i].Rows[j]["SCI Delivery"]))
                                 objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(printData[i].Rows[j]["SCI Delivery"]).ToString("d");
                         }
@@ -942,7 +948,7 @@ drop table #tmp{i}
                             objSheets.Cells[6 + j, 14] = "Total Cons.";
                         }
                     }
-                    objSheets.Columns["T"].Clear();
+                    objSheets.Columns["U"].Clear();
                     objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
@@ -967,7 +973,7 @@ drop table #tmp{i}
                     objSheets.get_Range("P1").ColumnWidth = 12.13;
                     objSheets.get_Range("Q1").ColumnWidth = 20.3;
                     objSheets.get_Range("R1").ColumnWidth = 50;
-                    objSheets.get_Range("S1").ColumnWidth = 41;
+                    objSheets.get_Range("T1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
 
                     Marshal.ReleaseComObject(objSheets); //釋放sheet                    
@@ -1018,8 +1024,8 @@ drop table #tmp{i}
                     {
                         if (!printData[i].Rows[j]["Request#1"].Empty())
                         {
-                            objSheets.get_Range("A" + (7 + j), "B" + (7 + j)).Merge(false);//合併欄位
-                            objSheets.get_Range("A" + (7 + j), "A" + (7 + j)).Font.Bold = true;//指定粗體
+                            objSheets.get_Range("A" + (8 + j), "B" + (8 + j)).Merge(false);//合併欄位
+                            objSheets.get_Range("A" + (8 + j), "A" + (8 + j)).Font.Bold = true;//指定粗體
                             objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(printData[i].Rows[j]["SCI Delivery"]).ToString("d");
                         }
 
@@ -1029,7 +1035,7 @@ drop table #tmp{i}
                             objSheets.Cells[6 + j, 16] = "Total Cons.";
                         }
                     }
-                    objSheets.Columns["V"].Clear();
+                    objSheets.Columns["W"].Clear();
                     objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d"); //查詢日期
                     objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
@@ -1056,7 +1062,7 @@ drop table #tmp{i}
                     objSheets.get_Range("R1").ColumnWidth = 9.25;
                     objSheets.get_Range("S1").ColumnWidth = 21.38;
                     objSheets.get_Range("T1").ColumnWidth = 12.88;
-                    objSheets.get_Range("U1").ColumnWidth = 41;
+                    objSheets.get_Range("V1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
                     
                     Marshal.ReleaseComObject(objSheets); //釋放sheet                     
