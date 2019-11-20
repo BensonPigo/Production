@@ -52,16 +52,29 @@ namespace Sci.Production.PPIC
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(
-                @"select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
-isnull(p.Description,'') as PPICReasonDesc
+            this.DetailSelectCommand = $@"
+select ld.*
+,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq
+,[Refno]=isnull(psd.Refno,'') 
+,[Description]=dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) 
+,isnull(p.Description,'') as PPICReasonDesc
+,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
 left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 left join PPICReason p WITH (NOLOCK) on p.Type = 'FL' and ld.PPICReasonID = p.ID
-where l.ID = '{0}'
-order by ld.Seq1,ld.Seq2", masterID);
+OUTER APPLY(
+	SELECT [LockCount]=COUNT(UKEY)
+	FROM FtyInventory
+	WHERE POID=l.OrderID
+	AND Seq1=ld.Seq1
+	AND Seq2=ld.Seq2
+	AND Lock = 1
+)LockStatus
+
+where l.ID = '{masterID}'
+order by ld.Seq1,ld.Seq2";
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -199,10 +212,25 @@ order by ld.Seq1,ld.Seq2", masterID);
                         }
 
                         string sqlCmd = string.Format(
-                            @"select left(psd.seq1+' ',3)+psd.seq2 as Seq, psd.Refno,isnull(m.InQty,0) as InQty,isnull(m.OutQty,0) as OutQty,psd.seq1,psd.seq2, dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0) as Description 
-                        from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
-                        left join MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2
-                        inner join dbo.Factory F WITH (NOLOCK) on F.id=psd.factoryid and F.MDivisionID='{3}'
+                            @"select 
+left(psd.seq1+' ',3)+psd.seq2 as Seq
+, psd.Refno,isnull(m.InQty,0) as InQty
+,isnull(m.OutQty,0) as OutQty
+,psd.seq1
+,psd.seq2
+, dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0) as Description 
+,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+left join MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2
+inner join dbo.Factory F WITH (NOLOCK) on F.id=psd.factoryid and F.MDivisionID='{3}'
+OUTER APPLY(
+	SELECT [LockCount]=COUNT(UKEY)
+	FROM FtyInventory
+	WHERE POID='{0}'
+	AND Seq1=psd.Seq1
+	AND Seq2=psd.Seq2
+	AND Lock = 1
+)LockStatus
                         where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'F'",
                             MyUtility.Convert.GetString(this.CurrentMaintain["POID"]),
                             inputString[0],
@@ -225,6 +253,7 @@ order by ld.Seq1,ld.Seq2", masterID);
                             dr["Description"] = poData["Description"];
                             dr["WhseInQty"] = MyUtility.Convert.GetDecimal(poData["InQty"]);
                             dr["FTYInQty"] = MyUtility.Convert.GetDecimal(poData["OutQty"]);
+                            dr["Status"] = MyUtility.Convert.GetString(poData["Status"]);
                             DateTime? maxIssueDate = this.MaxIssueDate(MyUtility.Convert.GetString(poData["Seq1"]), MyUtility.Convert.GetString(poData["Seq2"]));
                             if (MyUtility.Check.Empty(maxIssueDate))
                             {
@@ -335,7 +364,8 @@ order by ld.Seq1,ld.Seq2", masterID);
                 .Numeric("IssueQty", header: "Issue Qty upon request", decimal_places: 2, iseditingreadonly: true, settings: issueqty)
                 .ComboBox("Process", header: "Process", width: Widths.AnsiChars(15), settings: process)
                 .Text("PPICReasonID", header: "Reason Id", width: Widths.AnsiChars(5), settings: reason)
-                .EditText("PPICReasonDesc", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true);
+                .EditText("PPICReasonDesc", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("Status", header: "Status", width: Widths.AnsiChars(8), iseditingreadonly: true);
         }
 
         private void ClearGridData(DataRow dr)
