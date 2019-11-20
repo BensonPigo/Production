@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -52,8 +55,6 @@
             this.gridAccountID = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel10 = new Sci.Win.UI.Panel();
-            this.panel8 = new Sci.Win.UI.Panel();
-            this.labelDetails = new Sci.Win.UI.Label();
             this.panel5 = new Sci.Win.UI.Panel();
             this.btnDeleteAll = new Sci.Win.UI.Button();
             this.btnAppend = new Sci.Win.UI.Button();
@@ -62,6 +63,11 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
             this.btnDelete = new Sci.Win.UI.Button();
+            this.tabControl1 = new Sci.Win.UI.TabControl();
+            this.tabDetails = new System.Windows.Forms.TabPage();
+            this.tabSAPP = new System.Windows.Forms.TabPage();
+            this.gridSAPP = new Sci.Win.UI.Grid();
+            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -72,8 +78,12 @@
             this.panel11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridAccountID)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
-            this.panel8.SuspendLayout();
             this.panel5.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabDetails.SuspendLayout();
+            this.tabSAPP.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSAPP)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -294,7 +304,6 @@
             // panel6
             // 
             this.panel6.Controls.Add(this.panel9);
-            this.panel6.Controls.Add(this.panel8);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel6.Location = new System.Drawing.Point(0, 292);
             this.panel6.Name = "panel6";
@@ -306,18 +315,18 @@
             this.panel9.Controls.Add(this.panel11);
             this.panel9.Controls.Add(this.panel10);
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel9.Location = new System.Drawing.Point(0, 35);
+            this.panel9.Location = new System.Drawing.Point(0, 0);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(723, 174);
+            this.panel9.Size = new System.Drawing.Size(723, 209);
             this.panel9.TabIndex = 1;
             // 
             // panel11
             // 
-            this.panel11.Controls.Add(this.gridAccountID);
+            this.panel11.Controls.Add(this.tabControl1);
             this.panel11.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel11.Location = new System.Drawing.Point(0, 0);
             this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(723, 169);
+            this.panel11.Size = new System.Drawing.Size(723, 204);
             this.panel11.TabIndex = 2;
             // 
             // gridAccountID
@@ -334,7 +343,7 @@
             this.gridAccountID.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridAccountID.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridAccountID.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridAccountID.Location = new System.Drawing.Point(0, 0);
+            this.gridAccountID.Location = new System.Drawing.Point(3, 3);
             this.gridAccountID.Name = "gridAccountID";
             this.gridAccountID.RowHeadersVisible = false;
             this.gridAccountID.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
@@ -342,34 +351,17 @@
             this.gridAccountID.RowTemplate.Height = 24;
             this.gridAccountID.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAccountID.ShowCellToolTips = false;
-            this.gridAccountID.Size = new System.Drawing.Size(723, 169);
+            this.gridAccountID.Size = new System.Drawing.Size(709, 169);
             this.gridAccountID.TabIndex = 0;
             this.gridAccountID.TabStop = false;
             // 
             // panel10
             // 
             this.panel10.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel10.Location = new System.Drawing.Point(0, 169);
+            this.panel10.Location = new System.Drawing.Point(0, 204);
             this.panel10.Name = "panel10";
             this.panel10.Size = new System.Drawing.Size(723, 5);
             this.panel10.TabIndex = 1;
-            // 
-            // panel8
-            // 
-            this.panel8.Controls.Add(this.labelDetails);
-            this.panel8.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel8.Location = new System.Drawing.Point(0, 0);
-            this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(723, 35);
-            this.panel8.TabIndex = 0;
-            // 
-            // labelDetails
-            // 
-            this.labelDetails.Location = new System.Drawing.Point(4, 8);
-            this.labelDetails.Name = "labelDetails";
-            this.labelDetails.Size = new System.Drawing.Size(49, 23);
-            this.labelDetails.TabIndex = 0;
-            this.labelDetails.Text = "Details";
             // 
             // panel5
             // 
@@ -461,6 +453,85 @@
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabDetails);
+            this.tabControl1.Controls.Add(this.tabSAPP);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(723, 204);
+            this.tabControl1.TabIndex = 1;
+            // 
+            // tabDetails
+            // 
+            this.tabDetails.Controls.Add(this.gridAccountID);
+            this.tabDetails.Location = new System.Drawing.Point(4, 25);
+            this.tabDetails.Name = "tabDetails";
+            this.tabDetails.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDetails.Size = new System.Drawing.Size(715, 175);
+            this.tabDetails.TabIndex = 0;
+            this.tabDetails.Text = "Details";
+            // 
+            // tabSAPP
+            // 
+            this.tabSAPP.Controls.Add(this.gridSAPP);
+            this.tabSAPP.Location = new System.Drawing.Point(4, 25);
+            this.tabSAPP.Name = "tabSAPP";
+            this.tabSAPP.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSAPP.Size = new System.Drawing.Size(715, 175);
+            this.tabSAPP.TabIndex = 1;
+            this.tabSAPP.Text = "Shared Amt  by APP";
+            // 
+            // gridSAPP
+            // 
+            this.gridSAPP.AllowUserToAddRows = false;
+            this.gridSAPP.AllowUserToDeleteRows = false;
+            this.gridSAPP.AllowUserToResizeRows = false;
+            this.gridSAPP.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSAPP.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSAPP.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridSAPP.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSAPP.DataSource = this.listControlBindingSource3;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridSAPP.DefaultCellStyle = dataGridViewCellStyle2;
+            this.gridSAPP.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridSAPP.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSAPP.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSAPP.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSAPP.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSAPP.Location = new System.Drawing.Point(3, 3);
+            this.gridSAPP.Name = "gridSAPP";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSAPP.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridSAPP.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSAPP.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSAPP.RowTemplate.Height = 24;
+            this.gridSAPP.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSAPP.ShowCellToolTips = false;
+            this.gridSAPP.Size = new System.Drawing.Size(709, 169);
+            this.gridSAPP.TabIndex = 0;
+            // 
             // P08_ShareExpense
             // 
             this.ClientSize = new System.Drawing.Size(859, 539);
@@ -471,6 +542,7 @@
             this.EditMode = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "P08_ShareExpense";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Share Expense";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -483,8 +555,12 @@
             this.panel11.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridAccountID)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
-            this.panel8.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabDetails.ResumeLayout(false);
+            this.tabSAPP.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridSAPP)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -512,8 +588,6 @@
         private Win.UI.Panel panel9;
         private Win.UI.Grid gridAccountID;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
-        private Win.UI.Panel panel8;
-        private Win.UI.Label labelDetails;
         private Win.UI.Panel panel5;
         private Win.UI.Button btnReCalculate;
         private Win.UI.Button btnUndo;
@@ -524,5 +598,10 @@
         private Win.UI.Panel panel10;
         private Win.UI.Button btnDeleteAll;
         private Win.UI.Button btnAppend;
+        private Win.UI.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabDetails;
+        private System.Windows.Forms.TabPage tabSAPP;
+        private Win.UI.Grid gridSAPP;
+        private Win.UI.ListControlBindingSource listControlBindingSource3;
     }
 }
