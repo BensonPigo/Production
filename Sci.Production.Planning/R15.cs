@@ -547,6 +547,11 @@ inner join dbo.WorkOrder_Distribute c WITH (NOLOCK) on c.WorkOrderUkey = b.WorkO
 inner join (select distinct OrderID from #cte) t on c.OrderID = t.OrderID
 group by c.OrderID
 
+select pd.OrderId, pd.ScanQty
+into #tmp_PackingList_Detail
+from PackingList_Detail pd
+inner join #cte t on pd.OrderID = t.OrderID
+
 select t.OrderID
        , cut_qty = (SELECT SUM(CWIP.Qty) 
                     FROM DBO.CuttingOutput_WIP CWIP WITH (NOLOCK) 
@@ -873,13 +878,13 @@ outer apply(
 outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
 outer apply(
     select ScanQty = sum(pd.ScanQty)
-    from PackingList_Detail pd
+    from #tmp_PackingList_Detail pd
     where pd.OrderId = t.OrderID
 )PackDetail
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}" + Environment.NewLine, this.orderby));
-            sqlCmd.Append(" drop table #cte, #cte2, #imp_LastSewnDate;" + Environment.NewLine);
+            sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine);
             foreach (string subprocess in subprocessIDs)
             {
                 string whereSubprocess = subprocess;
@@ -887,6 +892,7 @@ outer apply(
                 {
                     whereSubprocess = "PADPRT";
                 }
+
                 sqlCmd.Append(string.Format(@" drop table #QtyBySetPerSubprocess{0}, #{0};" + Environment.NewLine, whereSubprocess));
             }
 
@@ -1116,6 +1122,11 @@ inner join dbo.CuttingOutput_Detail b WITH (NOLOCK) on b.id = a.id
 inner join dbo.WorkOrder_Distribute c WITH (NOLOCK) on c.WorkOrderUkey = b.WorkOrderUkey
 inner join (select distinct OrderID,Article,SizeCode from #cte) t on c.OrderID = t.OrderID and c.Article = t.Article and c.SizeCode = t.SizeCode
 group by c.OrderID,c.Article,c.SizeCode  
+
+select pd.OrderId,  pd.Article, pd.SizeCode, pd.ScanQty
+into #tmp_PackingList_Detail
+from PackingList_Detail pd
+inner join #cte t on pd.OrderId = t.OrderID and pd.Article = t.Article and pd.SizeCode = t.SizeCode
 
 select t.OrderID,t.Article,t.SizeCode
        , cut_qty = (SELECT SUM(CWIP.Qty) 
@@ -1457,7 +1468,7 @@ outer apply(
 outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
 outer apply(
     select ScanQty = sum(pd.ScanQty)
-    from PackingList_Detail pd
+    from #tmp_PackingList_Detail pd
     where pd.OrderId = t.OrderID
     and pd.Article = t.Article
 	and pd.SizeCode = t.SizeCode
@@ -1465,7 +1476,7 @@ outer apply(
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode" + Environment.NewLine, this.orderby)); 
-            sqlCmd.Append(" drop table #cte, #cte2, #imp_LastSewnDate;" + Environment.NewLine);
+            sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine);
             foreach (string subprocess in subprocessIDs)
             {
                 string whereSubprocess = subprocess;
