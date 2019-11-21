@@ -48,30 +48,32 @@ namespace Sci.Production.Packing
 
         private void btnProcessing_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            DualResult result;
-            bool packingListError = false;
-
-            foreach (DataRow dr in dt.Rows)
+            try
             {
-                string fileName = dr["ZPLFileName"].ToString();
-                string packingListID = dr["PackingListID"].ToString();
-                string updateCmd = string.Empty;
+                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                DualResult result;
+                bool packingListError = false;
 
-                MappingModel current = this._MappingModels.Where(o => o.FileName == fileName).FirstOrDefault();
-
-                string cmd = string.Empty;
-                int i = 0;
-                foreach (var ZPL in current.ZPL_Content)
+                foreach (DataRow dr in dt.Rows)
                 {
-                    // 檢查Usee是否有輸入不對的PackingList ID
-                    if (!this.checkPackingList_Exists(ZPL.CustPONo, ZPL.StyleID, packingListID, ZPL.Article, ZPL.CTNStartNo, ZPL.ShipQty, ZPL.SizeCode))
-                    {
-                        packingListError = true;
-                        break;
-                    }
+                    string fileName = dr["ZPLFileName"].ToString();
+                    string packingListID = dr["PackingListID"].ToString();
+                    string updateCmd = string.Empty;
 
-                    cmd += $@"
+                    MappingModel current = this._MappingModels.Where(o => o.FileName == fileName).FirstOrDefault();
+
+                    string cmd = string.Empty;
+                    int i = 0;
+                    foreach (var ZPL in current.ZPL_Content)
+                    {
+                        // 檢查Usee是否有輸入不對的PackingList ID
+                        if (!this.checkPackingList_Exists(ZPL.CustPONo, ZPL.StyleID, packingListID, ZPL.Article, ZPL.CTNStartNo, ZPL.ShipQty, ZPL.SizeCode))
+                        {
+                            packingListError = true;
+                            break;
+                        }
+
+                        cmd += $@"
 
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders{i}
@@ -108,38 +110,43 @@ INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
-                    i++;
-                }
+                        i++;
+                    }
 
-                updateCmd += Environment.NewLine + "---------" + Environment.NewLine + cmd;
+                    updateCmd += Environment.NewLine + "---------" + Environment.NewLine + cmd;
 
-                // 失敗狀況
-                if (packingListError)
-                {
-                    MyUtility.Msg.InfoBox("PackingList# does not Mapping.");
-                    this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Fail";
-                    return;
-                }
-
-                // 成功狀況
-                using (TransactionScope transactionscope = new TransactionScope())
-                {
-                    if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
+                    // 失敗狀況
+                    if (packingListError)
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
+                        MyUtility.Msg.InfoBox("PackingList# does not Mapping.");
+                        this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Fail";
                         return;
                     }
 
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
+                    // 成功狀況
+                    using (TransactionScope transactionscope = new TransactionScope())
+                    {
+                        if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
 
-                    this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
+                        transactionscope.Complete();
+                        transactionscope.Dispose();
+
+                        this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
+                    }
                 }
-            }
 
-            MyUtility.Msg.InfoBox("Mapping successful!");
-            this.Close();
+                MyUtility.Msg.InfoBox("Mapping successful!");
+                this.Close();
+            }
+            catch (Exception exp)
+            {
+                this.ShowErr(exp);
+            }
         }
 
         /// <summary>
