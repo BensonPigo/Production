@@ -94,8 +94,8 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
             string editDate = MyUtility.Check.Empty(this.CurrentMaintain["EditDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
 
             string tpeApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["TPEApvName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["TPEApvName"]}'");
-            string addBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["AddName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["AddName"]}'");
-            string editBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["EditName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["EditName"]}'");
+            string addBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["AddName"]}' + '-' + Name + ' ' + '{addDate}' from TPEPass1 where ID = '{this.CurrentMaintain["AddName"]}'");
+            string editBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["EditName"]}' + '-' + Name + ' ' + '{editDate}' from TPEPass1 where ID = '{this.CurrentMaintain["EditName"]}'");
             string ftyApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["FtyApvName"]}' + '-' + Name + ' ' + '{ftyApvDate}' from Pass1 where ID = '{this.CurrentMaintain["FtyApvName"]}'");
             if (MyUtility.Check.Empty(tpeApv))
             {
@@ -104,12 +104,12 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
 
             if (MyUtility.Check.Empty(addBy))
             {
-                tpeApv = $"{this.CurrentMaintain["AddName"]} {addDate}";
+                addBy = $"{this.CurrentMaintain["AddName"]} {addDate}";
             }
 
             if (MyUtility.Check.Empty(editBy))
             {
-                tpeApv = $"{this.CurrentMaintain["EditName"]} {editDate}";
+                editBy = $"{this.CurrentMaintain["EditName"]} {editDate}";
             }
 
             if (MyUtility.Check.Empty(ftyApv))
