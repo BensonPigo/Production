@@ -1108,30 +1108,36 @@ where InvA.OrderID = '{0}'
                 return;
             }
 
-//            string sqlchk = $@"
-//select msg=concat(pd.OrderID,'(',pd.OrderShipmodeSeq,')')
-//from PackingList p with(nolock)
-//inner join PackingList_detail pd with(nolock) on p.id = pd.id
-//left join Order_QtyShip oqs with(nolock) on oqs.id = pd.OrderID
-//where  oqs.ShipmodeID <> p.ShipModeID
-//and p.id = '{this.CurrentMaintain["ID"]}'";
+            string sqlchk = $@"
+SELECT  msg=concat(pd.OrderID,'(',pd.OrderShipmodeSeq,')')
+FROm PackingList p
+INNER JOIN PackingList_Detail pd On p.ID=pd.ID
+INNER JOIN  Order_QtyShip oq ON pd.OrderID=oq.Id
+LEFt JOIN ShipMode s ON oq.ShipModeID=s.ID
+WHERE p.ID='{this.CurrentMaintain["ID"]}'
+AND s.ShipGroup <> (
+	SELECT TOP 1 sm.ShipGroup
+	FROm PackingList p
+	LEFt JOIN ShipMode sm ON p.ShipModeID=sm.ID
+	WHERE p.ID='{this.CurrentMaintain["ID"]}'
+)";
 
-//            DataTable dtchk;
-//            DualResult dualResult = DBProxy.Current.Select(null, sqlchk, out dtchk);
-//            if (!dualResult)
-//            {
-//                this.ShowErr(dualResult);
-//                return;
-//            }
+            DataTable dtchk;
+            DualResult dualResult = DBProxy.Current.Select(null, sqlchk, out dtchk);
+            if (!dualResult)
+            {
+                this.ShowErr(dualResult);
+                return;
+            }
 
-//            if (dtchk.Rows.Count > 0)
-//            {
-//                var os = dtchk.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).Distinct().ToList();
-//                string msg = @"Ship Mode are different, please check!
-//" + string.Join(",", os);
-//                MyUtility.Msg.WarningBox(msg);
-//                return;
-//            }
+            if (dtchk.Rows.Count > 0)
+            {
+                var os = dtchk.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).Distinct().ToList();
+                string msg = @"Ship Mode are different, please check!
+" + string.Join(",", os);
+                MyUtility.Msg.WarningBox(msg);
+                return;
+            }
 
             if (!Prgs.CheckExistsOrder_QtyShip_Detail(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
