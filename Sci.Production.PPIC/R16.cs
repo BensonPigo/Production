@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -262,8 +263,26 @@ DROP TABLE #tmp
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R16.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R16.xltx", 1, false, null, objApp);// 將datatable copy to excel
 
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R16.xltx", 1);
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.get_Range("K:O").ColumnWidth = 8;
+            objSheets.get_Range("S:X").ColumnWidth = 8;
+            objSheets.get_Range("E:E").ColumnWidth = 10;
+            objSheets.get_Range("P:P").ColumnWidth = 10;
+            objSheets.get_Range("R:R").ColumnWidth = 10;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R16");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion
+
             return true;
         }
     }
