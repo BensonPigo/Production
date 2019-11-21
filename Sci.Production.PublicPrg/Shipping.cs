@@ -226,8 +226,10 @@ select *,
 into #PLSharedAmt
 from #PLSharedAmtStep2
 
-select  t.InvNo,pld.ID,AirPPID=app.ID,t.AccountID,pld.OrderID,pld.OrderShipmodeSeq, t.PLSharedAmtFin, [TtlNW] = TtlNW.Value, [OrderSharedAmt] =iif(TtlNW.Value = 0,0,ROUND(t.PLSharedAmtFin / TtlNW.Value * sum(pld.NWPerPcs * pld.ShipQty),2))  , 
-		[QtyPerCTN] = sum(QtyPerCTN), [RatioFty] = isnull(app.RatioFty,0)		
+select  t.InvNo,pld.ID,AirPPID=app.ID,t.AccountID,pld.OrderID,pld.OrderShipmodeSeq, t.PLSharedAmtFin
+    , [TtlNW] = sum(pld.NWPerPcs * pld.ShipQty)
+    , [OrderSharedAmt] =iif(TtlNW.Value = 0,0,ROUND(t.PLSharedAmtFin / TtlNW.Value * sum(pld.NWPerPcs * pld.ShipQty),2))  
+    , [QtyPerCTN] = sum(QtyPerCTN), [RatioFty] = isnull(app.RatioFty,0)		
 into #OrderSharedAmtStep1
 from #PLSharedAmt t
 inner join PackingList_Detail pld with (nolock) on t.PackID = pld.ID
