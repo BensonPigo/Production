@@ -554,7 +554,7 @@ select * from FtyExportData ", e.FormattedValue.ToString());
             .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(16))
             .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(3))
             .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(16))
-            .Numeric("GW", header: "G.W.", decimal_places: 2)
+            .Numeric("GW", header: "G.W.", decimal_places: 3)
             .Text("AccountID", header: "Account No", width: Widths.AnsiChars(10))
             .Text("Name", header: "Account Name", width: Widths.AnsiChars(20))
             .Numeric("RatioFty", header: "Factory Ratio", decimal_places: 2)

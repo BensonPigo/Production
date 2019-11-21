@@ -5,7 +5,7 @@
     [AirPPID]       VARCHAR (13)    NOT NULL,
     [AccountID]     VARCHAR (8)     NOT NULL,
     [CurrencyID]    VARCHAR (3)     CONSTRAINT [DF_ShareExpense_APP_CurrencyID] DEFAULT ('') NOT NULL,
-    [GW]            NUMERIC (10, 2) CONSTRAINT [DF_ShareExpense_APP_GW] DEFAULT ((0)) NOT NULL,
+    [GW]            NUMERIC (10, 3) CONSTRAINT [DF_ShareExpense_APP_GW] DEFAULT ((0)) NOT NULL,
     [RatioFty]      NUMERIC (5, 2)  CONSTRAINT [DF_ShareExpense_APP_RatioFty] DEFAULT ((0)) NOT NULL,
     [AmtFty]        NUMERIC (12, 2) CONSTRAINT [DF_ShareExpense_APP_AmtFty] DEFAULT ((0)) NOT NULL,
     [RatioOther]    NUMERIC (5, 2)  CONSTRAINT [DF_ShareExpense_APP_RatioOther] DEFAULT ((0)) NOT NULL,
