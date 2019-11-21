@@ -79,9 +79,9 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnDownload);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.comboDefectResponsibilityExplanation);
+            this.masterpanel.Controls.Add(this.btnDownload);
             this.masterpanel.Controls.Add(this.btnMailto);
             this.masterpanel.Controls.Add(this.label15);
             this.masterpanel.Controls.Add(this.label14);
@@ -114,7 +114,7 @@
             this.masterpanel.Controls.Add(this.labelPOSMR);
             this.masterpanel.Controls.Add(this.labelSPNo);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(917, 222);
+            this.masterpanel.Size = new System.Drawing.Size(950, 222);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPOSMR, 0);
@@ -155,7 +155,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 222);
-            this.detailpanel.Size = new System.Drawing.Size(917, 230);
+            this.detailpanel.Size = new System.Drawing.Size(950, 230);
             // 
             // gridicon
             // 
@@ -168,7 +168,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(917, 230);
+            this.detailgridcont.Size = new System.Drawing.Size(950, 230);
             // 
             // detail2
             // 
@@ -184,16 +184,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(917, 490);
+            this.detail.Size = new System.Drawing.Size(950, 490);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(917, 452);
+            this.detailcont.Size = new System.Drawing.Size(950, 452);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 452);
-            this.detailbtm.Size = new System.Drawing.Size(917, 38);
+            this.detailbtm.Size = new System.Drawing.Size(950, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -202,7 +202,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(925, 519);
+            this.tabs.Size = new System.Drawing.Size(958, 519);
             // 
             // createby
             // 
@@ -481,9 +481,10 @@
             this.label14.BackColor = System.Drawing.Color.Transparent;
             this.label14.Location = new System.Drawing.Point(429, 4);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(350, 23);
+            this.label14.Size = new System.Drawing.Size(520, 23);
             this.label14.TabIndex = 30;
-            this.label14.Text = "Data will be transferred to Trade system every night auto.";
+            this.label14.Text = "Data will be transferred to Trade system directly when PPIC/Factory Mgr approved." +
+    "";
             this.label14.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label14.TextStyle.Color = System.Drawing.Color.Blue;
             this.label14.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
@@ -523,6 +524,7 @@
             this.btnDownload.Text = "Download Replacement Report";
             this.btnDownload.UseVisualStyleBackColor = true;
             this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
+            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(276, 193);
@@ -548,7 +550,7 @@
             // 
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(925, 552);
+            this.ClientSize = new System.Drawing.Size(958, 552);
             this.DefaultControl = "txtSPNo";
             this.DefaultControlForEdit = "txtSPNo";
             this.DefaultDetailOrder = "Seq1,Seq2";
