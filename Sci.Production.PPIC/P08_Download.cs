@@ -85,8 +85,10 @@ where TableName = 'ReplacementReport' AND UniqueKey = '{this.Master["ID"]}'";
                 return;
             }
 
-            string fullpath = Path.Combine(this.ClipPath, dr["FileName"].ToString());
-            if (!File.Exists(fullpath))
+            //string fullpath = Path.Combine(this.ClipPath, dr["FileName"].ToString());
+            FileInfo[] filelist = this.GetFile(diInfo, dr["FileName"].ToString()).ToArray();
+            //if (!File.Exists(fullpath))
+            if (filelist.Length == 0)
             {
                 MyUtility.Msg.WarningBox("File not Exists!");
                 return;
@@ -101,13 +103,28 @@ where TableName = 'ReplacementReport' AND UniqueKey = '{this.Master["ID"]}'";
             {
                 try
                 {
-                    System.IO.File.Copy(fullpath, saveFileDialog1.FileName, true);
+                    System.IO.File.Copy(filelist[0].FullName, saveFileDialog1.FileName, true);
                 }
                 catch (System.IO.IOException exception)
                 {
                     MyUtility.Msg.ErrorBox("Error: Download file fail. Original error: " + exception.Message);
                 }
             }
+        }
+
+        // 抓出子資料夾中所有符合filename的檔案資訊
+        private List<FileInfo> GetFile(DirectoryInfo di, string filename)
+        {
+            List<FileInfo> listFile = new List<FileInfo>();
+
+            foreach (DirectoryInfo sub_di in di.GetDirectories())
+            {
+                // Call itself to process any sub directories
+                listFile.AddRange(this.GetFile(sub_di, filename));
+            }
+
+            listFile.AddRange(di.GetFiles($@"{filename}").Where(file => !file.StrStartsWith("~$")).ToList());
+            return listFile;
         }
     }
 }
