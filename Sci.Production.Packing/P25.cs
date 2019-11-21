@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+<<<<<<< HEAD
 using System.Drawing;
 <<<<<<< HEAD
 using System.Text;
@@ -31,11 +32,14 @@ using System.Drawing;
 using System.Net;
 >>>>>>> ISP20191302 - 完成至Part 3
 =======
+=======
+>>>>>>> ISP20191302 - 調整P25功能
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Transactions;
 using System.Windows.Forms;
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
 
@@ -44,15 +48,24 @@ namespace Sci.Production.Packing
     /// <inheritdoc/>
     public partial class P25 : Sci.Win.Tems.QueryForm
     {
+<<<<<<< HEAD
         private DataTable gridData;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+=======
+        private DataTable GridDt = new DataTable();
+        private Dictionary<string, List<ZPL>> File_Name_ZPL = new Dictionary<string, List<ZPL>>();
+        private List<MappingModel> MappingModels = new List<MappingModel>();
+>>>>>>> ISP20191302 - 調整P25功能
 
         public P25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.GridDt.Columns.Add(new DataColumn() { ColumnName = "ZPLFileName", DataType = typeof(string) });
+            this.GridDt.Columns.Add(new DataColumn() { ColumnName = "Result", DataType = typeof(string) });
         }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -63,6 +76,18 @@ namespace Sci.Production.Packing
 =======
 =======
         public List<ZPL> zPL_Objectss = new List<ZPL>();
+=======
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.grid1.IsEditingReadOnly = true;
+            this.Helper.Controls.Grid.Generator(this.grid1)
+.Text("ZPLFileName", header: "ZPL File Name ", width: Widths.AnsiChars(35))
+.Text("Result", header: "Result", width: Widths.AnsiChars(10))
+;
+        }
+>>>>>>> ISP20191302 - 調整P25功能
 
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
         private void BtnSelecPath_Click(object sender, EventArgs e)
@@ -112,6 +137,7 @@ namespace Sci.Production.Packing
         /// <inheritdoc/>
         private void BtnClose_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             this.Close();
         }
 
@@ -154,6 +180,11 @@ namespace Sci.Production.Packing
 =======
                     List<ZPL> zPL_Object = this.Get_ZPL_Object(dataList_String, custCTN_List);
 >>>>>>> ISP20191302
+=======
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "ZPL files (*.zpl)|*.zpl";
+            openFileDialog1.Multiselect = true;
+>>>>>>> ISP20191302 - 調整P25功能
 
 <<<<<<< HEAD
             if (!MyUtility.Check.Empty(this.txtSP_s.Text))
@@ -175,7 +206,12 @@ namespace Sci.Production.Packing
             }
 =======
                 this.ShowWaitMessage("Processing....");
-                string file = openFileDialog1.FileName;
+
+                this.GridDt.Rows.Clear();
+                this.listControlBindingSource1.DataSource = null;
+                this.File_Name_ZPL.Clear();
+
+                string[] files = openFileDialog1.FileNames;
                 string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
 
                 if (MyUtility.Check.Empty(shippingMarkPath))
@@ -186,50 +222,53 @@ namespace Sci.Production.Packing
 
                 try
                 {
-                    #region 1.若上傳的ZPL檔，包含多張ZPL，先拆成個別ZPL
-
-                    using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), System.Text.Encoding.UTF8))
+                    int i = 0;
+                    foreach (string file in files)
                     {
+                        // 取得CustCTN，作為檔名
+                        List<string> custCTN_List = new List<string>();
 
-                        // 1-1.讀取內容
-                        oriZplConten = reader.ReadToEnd();
+                        string oriZplConten; // 原始的ZPL檔內容
+                        string tmpzplContent; // 將原始內容去除換行符號
 
-                        // 1-2.去除換行符號
-                        tmpzplContent = oriZplConten.Replace("\r\n", string.Empty);
+                        string[] custCTNArray; // 取得CustCTN過程中，暫存用
+                        string[] contentsOfZPL; // 從原始ZPL檔拆出來的多個ZPL檔
 
-                        // 1-3.先取得檔名，CustCTN被包在 ^FD>;>8 和 ^FS之間，取得CustCTN，作為檔名
-                        custCTNArray = tmpzplContent.Split(new string[] { "^FD>;>8", "^FS" }, StringSplitOptions.RemoveEmptyEntries);
-                        custCTN_List = custCTNArray.Where(o => !o.Contains("^")).Distinct().ToList();
+                        // 用於顯示在表格的檔名
+                        DataRow newDr = this.GridDt.NewRow();
+                        newDr["ZPLFileName"] = openFileDialog1.SafeFileNames[i];
+                        newDr["Result"] = string.Empty;
+                        this.GridDt.Rows.Add(newDr);
 
-                        // 1-4.拆出多個ZPL檔的內容，每一個ZPL都是以 ^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0 開頭
-                        tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0");
+                        #region 1.若上傳的ZPL檔，包含多張ZPL，先拆成個別ZPL
 
-                        string[] stringSeparators = new string[] { "\r\n" };
+                        using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), System.Text.Encoding.UTF8))
+                        {
 
-                        // 1-5.最後拆出來的每一個ZPL，包含兩張圖片
-                        contentsOfZPL = tmpzplContent.Split(stringSeparators, StringSplitOptions.None);
-                    }
-                    #endregion
+                            // 1-1.讀取內容
+                            oriZplConten = reader.ReadToEnd();
 
-                    // 2.根據ZPL檔名，取得對應的內容
-                    Dictionary<string, string> dataList = new Dictionary<string, string>();
+                            // 1-2.去除換行符號
+                            tmpzplContent = oriZplConten.Replace("\r\n", string.Empty);
 
-                    foreach (string singleFileName in custCTN_List)
-                    {
-                        string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
-                        dataList.Add(singleFileName, contentString);
-                    }
+                            // 1-3.先取得檔名，CustCTN被包在 ^FD>;>8 和 ^FS之間，取得CustCTN，作為檔名
+                            custCTNArray = tmpzplContent.Split(new string[] { "^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0^FO80,50^BY4^BCN,200,N,N,^FD>;>8", "^FS^FT115,280^A0N,34,47^FD" }, StringSplitOptions.RemoveEmptyEntries);
+                            custCTN_List = custCTNArray.Where(o => !o.Contains("^")).Distinct().ToList();
 
-                    // 3.透過API將ZPL檔轉成PDF，並存到指定路徑
-                    foreach (string singleFileName in custCTN_List)
-                    {
-                        string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
-                        this.CallAPI(singleFileName, contentString, shippingMarkPath);
-                    }
+                            // 1-4.拆出多個ZPL檔的內容，每一個ZPL都是以 ^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0 開頭
+                            tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0");
 
-                    // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
-                    List<ZPL> zPL_Objects = this.Analysis_ZPL(dataList, custCTN_List);
+                            string[] stringSeparators = new string[] { "\r\n" };
 
+                            // 1-5.最後拆出來的每一個ZPL，包含兩張圖片
+                            contentsOfZPL = tmpzplContent.Split(stringSeparators, StringSplitOptions.None);
+                        }
+                        #endregion
+
+                        // 2.根據ZPL檔名，取得對應的內容
+                        Dictionary<string, string> dataList = new Dictionary<string, string>();
+
+<<<<<<< HEAD
 <<<<<<< HEAD
                     // 開始Mapping(沒有混碼的情況才執行這段)
                     this.Mapping_PackingList_Detal(zPL_Objects);
@@ -280,21 +319,30 @@ WHERE p.MDivisionID = @MDivisionID
                     DataTable dt = new DataTable();
                     dt.Columns.Add(new DataColumn() { ColumnName = "ZPLFileName", DataType = typeof(string) });
                     dt.Columns.Add(new DataColumn() { ColumnName = "Result", DataType = typeof(string) });
+=======
+                        foreach (string singleFileName in custCTN_List)
+                        {
+                            string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                            dataList.Add(singleFileName, contentString);
+                        }
+>>>>>>> ISP20191302 - 調整P25功能
 
-                    custCTN_List.ForEach(FileName =>
-                    {
-                        DataRow nDr = dt.NewRow();
-                        nDr["ZPLFileName"] = FileName;
-                        nDr["Result"] = string.Empty;
-                        dt.Rows.Add(nDr);
-                    });
+                        // 3.透過API將ZPL檔轉成PDF，並存到指定路徑
+                        foreach (string singleFileName in custCTN_List)
+                        {
+                            string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                            this.CallAPI(singleFileName, contentString, shippingMarkPath);
+                        }
 
-                    this.listControlBindingSource1.DataSource = dt;
+                        // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
+                        List<ZPL> zPL_Objects = this.Analysis_ZPL(dataList, custCTN_List);
 
-                    // 開始Mapping(沒有混碼的情況才執行這段)
-                    //this.Mapping_PackingList_Detal(zPL_Objects);
-                    zPL_Objectss.AddRange(zPL_Objects);
-                    MyUtility.Msg.InfoBox("Success!!");
+                        this.File_Name_ZPL.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
+                        i++;
+                    }
+
+                    this.listControlBindingSource1.DataSource = this.GridDt;
+                    MyUtility.Msg.InfoBox("ZPL convert to image Success!!");
                 }
                 catch (Exception ex)
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
@@ -306,6 +354,7 @@ WHERE p.MDivisionID = @MDivisionID
             this.listControlBindingSource.DataSource = this.gridData;
         }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         /// <inheritdoc/>
@@ -342,6 +391,8 @@ WHERE p.MDivisionID = @MDivisionID
             //this.grid1.Columns["CustCTN"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
+=======
+>>>>>>> ISP20191302 - 調整P25功能
         /// <summary>
         /// 將上傳的ZPL檔，與PackingList_Detail對應，若有對上的則放上Grid
         /// </summary>
@@ -743,26 +794,6 @@ DROP TABLE #tmoOrders
                     }
                 }
             });
-
-            // 如果有沒有Mapping到的，把資料帶到下一個視窗顯示
-            if (notMappingList.Count > 0)
-            {
-                //string msg = "Not Mapping :" + Environment.NewLine;
-                //msg += notMappingList.JoinToString("、");
-                //MyUtility.Msg.WarningBox(msg);
-
-                Sci.Production.Packing.P25_AssignPackingList form = new P25_AssignPackingList();
-                form.ShowDialog();
-
-                // ShowErr(msg);
-            }
-            else
-            {
-                // 全部Mapping到，直接開始Update PackingList_Detail
-
-                //this.listControlBindingSource1.DataSource = resutDt;
-            }
-
         }
 
         private DataTable InsertResultDt(DataTable target, DataTable source)
@@ -1088,7 +1119,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
                     var response = (HttpWebResponse)request.GetResponse();
                     var responseStream = response.GetResponseStream();
                     // 存入[System].ShippingMarkPath 路徑下
-                    var fileStream = File.Create($@"{shippingMarkPath + zplFileName}_{(i + 1).ToString()}.png"); // 如果要PDF，把副檔名改成pdf
+                    var fileStream = File.Create($@"{shippingMarkPath}\{zplFileName}_{(i + 1).ToString()}.png"); // 如果要PDF，把副檔名改成pdf
 
                     responseStream.CopyTo(fileStream);
                     responseStream.Close();
@@ -1098,6 +1129,174 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
                 {
                     throw ex;
                 }
+            }
+        }
+
+        private void btnProcessing_Click(object sender, EventArgs e)
+        {
+            this.MappingModels.Clear();
+            foreach (var item in this.File_Name_ZPL)
+            {
+                // 根據上傳的ZPL展開
+                string fileName = item.Key;
+                List<ZPL> ZPLs = item.Value;
+                DataTable tmpDt;
+
+                foreach (var zpl in ZPLs)
+                {
+
+                    // 確認一個ZPL檔，對應到幾個PackingList
+                    string sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{zpl.CustPONo}' AND StyleID='{zpl.StyleID}'
+
+
+
+SELECT DISTINCT [PackingListID] = pd.ID
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' AND pd.CustCTN = ''
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND CTNStartNo='{zpl.CTNStartNo}' 
+    AND Article = '{zpl.Article}'
+    AND pd.CustCTN='' 
+    AND pd.ShipQty={zpl.ShipQty}
+    AND (
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{zpl.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{zpl.SizeCode}'
+        )
+
+DROP TABLE #tmoOrders
+";
+
+                    DBProxy.Current.Select(null, sqlCmd, out tmpDt);
+
+                    if (tmpDt.Rows.Count > 1 || tmpDt.Rows.Count == 0)
+                    {
+                        if (!this.MappingModels.Where(o => o.FileName == fileName).Any())
+                        {
+                            // 1個以上PackingList
+                            MappingModel model = new MappingModel()
+                            {
+                                FileName = fileName,
+                                ZPL_Content = ZPLs,
+                                PackingListID = string.Empty
+                            };
+                            this.MappingModels.Add(model);
+                        }
+                    }
+                    else
+                    {
+                        if (!this.MappingModels.Where(o => o.FileName == fileName).Any())
+                        {
+                            // 只有1個
+                            MappingModel model = new MappingModel()
+                            {
+                                FileName = fileName,
+                                ZPL_Content = ZPLs,
+                                PackingListID = tmpDt.Rows[0]["PackingListID"].ToString()
+                            };
+                            this.MappingModels.Add(model);
+                        }
+                    }
+                }
+            }
+
+            bool notMapping = this.MappingModels.Where(o => o.PackingListID == string.Empty).Any();
+
+            // 如果有Mapping失敗的，則到下一個視窗
+            if (notMapping)
+            {
+                Sci.Production.Packing.P25_AssignPackingList form = new P25_AssignPackingList(this.MappingModels, (DataTable)this.listControlBindingSource1.DataSource);
+                form.ShowDialog();
+            }
+            else
+            {
+                // 如果全部Mapping成功，直接修改
+                DualResult result;
+
+                foreach (var item in this.MappingModels)
+                {
+
+                    string updateCmd = string.Empty;
+                    string fileName = item.FileName;
+                    string packingListID = item.PackingListID;
+
+                    MappingModel current = this.MappingModels.Where(o => o.FileName == fileName).FirstOrDefault();
+
+                    string cmd = string.Empty;
+                    int i = 0;
+                    foreach (var ZPL in current.ZPL_Content)
+                    {
+                        cmd += $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmpOrders{i}
+FROM Orders 
+WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
+
+SELECT DISTINCT 
+        pd.*
+INTO #tmp{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' AND pd.CustCTN = ''
+	AND p.ID='{packingListID}'
+    AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
+    AND CTNStartNo='{ZPL.CTNStartNo}' 
+    AND Article = '{ZPL.Article}'
+    AND pd.ShipQty={ZPL.ShipQty}
+    AND (
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{ZPL.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{ZPL.SizeCode}'
+        )
+
+UPDATE pd
+SET pd.CustCTN='{ZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+
+DROP TABLE #tmpOrders{i},#tmp{i}
+";
+                        i++;
+                    }
+
+                    updateCmd += cmd + Environment.NewLine + "---------" ;
+
+                    using (TransactionScope transactionscope = new TransactionScope())
+                    {
+                        if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        transactionscope.Complete();
+                        transactionscope.Dispose();
+
+                        DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                        dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
+                    }
+                }
+                MyUtility.Msg.InfoBox("Data Mapping successful!");
             }
         }
 
@@ -1328,15 +1527,28 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(item["OrderID"]));
             public string CTNStartNo { get; set; }
         }
 
+<<<<<<< HEAD
         #endregion
 <<<<<<< HEAD
 >>>>>>> ISP20191302
 =======
 
         private void button1_Click(object sender, EventArgs e)
+=======
+        public class MappingModel
+>>>>>>> ISP20191302 - 調整P25功能
         {
-            this.Mapping_PackingList_Detal(this.zPL_Objectss);
+            public string FileName { get; set; }
+
+            public List<ZPL> ZPL_Content { get; set; }
+
+            public string PackingListID { get; set; }
         }
+<<<<<<< HEAD
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
+=======
+
+        #endregion
+>>>>>>> ISP20191302 - 調整P25功能
     }
 }

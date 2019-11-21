@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
 <<<<<<< HEAD
+<<<<<<< HEAD
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -69,15 +70,18 @@
 =======
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
+=======
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+>>>>>>> ISP20191302 - 調整P25功能
             this.btnSelectFile = new Sci.Win.UI.Button();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.btnProcessing = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.button1 = new Sci.Win.UI.Button();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -372,13 +376,24 @@
 >>>>>>> ISP20191302 - 完成至Part 3
             // panel1
             // 
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.btnProcessing);
             this.panel1.Controls.Add(this.btnSelectFile);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(499, 61);
+            this.panel1.Size = new System.Drawing.Size(574, 61);
             this.panel1.TabIndex = 5;
+            // 
+            // btnProcessing
+            // 
+            this.btnProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnProcessing.Location = new System.Drawing.Point(450, 21);
+            this.btnProcessing.Name = "btnProcessing";
+            this.btnProcessing.Size = new System.Drawing.Size(101, 30);
+            this.btnProcessing.TabIndex = 2;
+            this.btnProcessing.Text = "Processing";
+            this.btnProcessing.UseVisualStyleBackColor = true;
+            this.btnProcessing.Click += new System.EventHandler(this.btnProcessing_Click);
             // 
             // panel2
             // 
@@ -391,7 +406,7 @@
             // panel3
             // 
             this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel3.Location = new System.Drawing.Point(476, 61);
+            this.panel3.Location = new System.Drawing.Point(551, 61);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(23, 405);
             this.panel3.TabIndex = 7;
@@ -401,7 +416,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(23, 456);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(453, 10);
+            this.panel4.Size = new System.Drawing.Size(528, 10);
             this.panel4.TabIndex = 8;
             // 
             // panel5
@@ -410,7 +425,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(23, 61);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(453, 395);
+            this.panel5.Size = new System.Drawing.Size(528, 395);
             this.panel5.TabIndex = 9;
             // 
             // grid1
@@ -429,37 +444,27 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(453, 395);
+            this.grid1.Size = new System.Drawing.Size(528, 395);
             this.grid1.TabIndex = 0;
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(375, 21);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Processing";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // P25
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -473,6 +478,9 @@
 =======
             this.ClientSize = new System.Drawing.Size(499, 466);
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
+=======
+            this.ClientSize = new System.Drawing.Size(574, 466);
+>>>>>>> ISP20191302 - 調整P25功能
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -549,9 +557,13 @@
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> ISP20191302
 =======
         private Win.UI.Button button1;
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
+=======
+        private Win.UI.Button btnProcessing;
+>>>>>>> ISP20191302 - 調整P25功能
     }
 }

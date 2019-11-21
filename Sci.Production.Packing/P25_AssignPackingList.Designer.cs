@@ -28,20 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnProcessing = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid2 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel4
@@ -49,13 +52,13 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(23, 440);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(492, 10);
+            this.panel4.Size = new System.Drawing.Size(539, 10);
             this.panel4.TabIndex = 13;
             // 
             // panel3
             // 
             this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel3.Location = new System.Drawing.Point(515, 61);
+            this.panel3.Location = new System.Drawing.Point(562, 61);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(23, 389);
             this.panel3.TabIndex = 12;
@@ -70,22 +73,23 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.btnProcessing);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(538, 61);
+            this.panel1.Size = new System.Drawing.Size(585, 61);
             this.panel1.TabIndex = 10;
             // 
-            // button1
+            // btnProcessing
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(414, 21);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Processing";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnProcessing.Location = new System.Drawing.Point(461, 21);
+            this.btnProcessing.Name = "btnProcessing";
+            this.btnProcessing.Size = new System.Drawing.Size(101, 30);
+            this.btnProcessing.TabIndex = 2;
+            this.btnProcessing.Text = "Processing";
+            this.btnProcessing.UseVisualStyleBackColor = true;
+            this.btnProcessing.Click += new System.EventHandler(this.btnProcessing_Click);
             // 
             // grid1
             // 
@@ -115,7 +119,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(538, 450);
+            this.grid1.Size = new System.Drawing.Size(585, 450);
             this.grid1.TabIndex = 9;
             // 
             // panel5
@@ -124,7 +128,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(23, 61);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(492, 379);
+            this.panel5.Size = new System.Drawing.Size(539, 379);
             this.panel5.TabIndex = 14;
             // 
             // grid2
@@ -135,6 +139,7 @@
             this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid2.DataSource = this.listControlBindingSource1;
             this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -155,14 +160,14 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(492, 379);
+            this.grid2.Size = new System.Drawing.Size(539, 379);
             this.grid2.TabIndex = 0;
             // 
             // P25_AssignPackingList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(538, 450);
+            this.ClientSize = new System.Drawing.Size(585, 450);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -183,6 +188,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -193,9 +199,10 @@
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel1;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnProcessing;
         private Win.UI.Grid grid1;
         private Win.UI.Panel panel5;
         private Win.UI.Grid grid2;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }

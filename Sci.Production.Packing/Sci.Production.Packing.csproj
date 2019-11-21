@@ -468,6 +468,12 @@
     <Compile Include="P25.Designer.cs">
       <DependentUpon>P25.cs</DependentUpon>
     </Compile>
+    <Compile Include="P25_AssignPackingList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P25_AssignPackingList.Designer.cs">
+      <DependentUpon>P25_AssignPackingList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -663,6 +669,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P25.resx">
       <DependentUpon>P25.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P25_AssignPackingList.resx">
+      <DependentUpon>P25_AssignPackingList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
