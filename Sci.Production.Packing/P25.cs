@@ -220,6 +220,11 @@ namespace Sci.Production.Packing
                     return;
                 }
 
+                if (!Directory.Exists(shippingMarkPath))
+                {
+                    Directory.CreateDirectory(shippingMarkPath);
+                }
+
                 try
                 {
                     int i = 0;
