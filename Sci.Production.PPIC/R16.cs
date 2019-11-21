@@ -42,6 +42,12 @@ namespace Sci.Production.PPIC
             this.BuyerDev_S = null;
             this.BuyerDev_E = null;
 
+            if (!this.dateRangeByerDev.Value1.HasValue || !this.dateRangeByerDev.Value2.HasValue)
+            {
+                MyUtility.Msg.InfoBox("Buyer Delivery Date can not be empty.");
+                return false;
+            }
+
             if (this.dateRangeByerDev.Value1.HasValue)
             {
                 this.BuyerDev_S = this.dateRangeByerDev.Value1.Value;
