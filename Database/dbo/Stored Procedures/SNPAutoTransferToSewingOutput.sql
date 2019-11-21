@@ -463,9 +463,9 @@ BEGIN
 						ELSE MONo
 						END
 			, [CDate] = dDate
-			, [SewingLineID] = WorkLine
+			, [SewingLineID] = ISNULL(ProductionLineAllocation.SewingLineID, WorkLine)
 			, [FactoryID] = 'SNP'
-			, [InspectQty] = (
+			, [InspectQty] =ISNULL( (
 							select sum(OutputQty) 
 							from  #tOutputTotal tOT
 							where 
@@ -473,7 +473,7 @@ BEGIN
 							= 
 							SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
 							AND tOT.dDate  = mainTable.dDate  AND tOT.WorkLine  = mainTable.WorkLine 
-						)
+						),0)
 
 			, [RejectQty] = (
 							select count(*) 
@@ -493,8 +493,21 @@ BEGIN
 	
 			INTO #tmp_Into_RFT
 			from #tReworkTotal mainTable
+			OUTER APPLY(			
+				SELECT t2.SewingLineID
+				FROM 
+				(
+					SELECT TOP 1 *
+					FROM ProductionLineAllocation
+					WHERE ProductionDate <=CAST( @DateStart AS DATE)
+					AND FactoryID='SNP'
+					ORDER BY ProductionDate DESC
+				) t
+				INNER JOIN ProductionLineAllocation_Detail t2 ON t.FactoryID=t2.FactoryID AND t.ProductionDate=t2.ProductionDate
+				WHERE t2.LineLocationID= mainTable.WorkLine AND t2.Team='A'
+			)ProductionLineAllocation
 			where dDate = @DateStart
-			group by MONo, dDate, WorkLine
+			group by MONo, dDate, WorkLine ,ProductionLineAllocation.SewingLineID
 			
 			SELECT 
 			[OrderID]
@@ -544,8 +557,10 @@ BEGIN
 			INTO #RFT_With_ID
 			FROM Production.dbo.RFT
 			WHERE OrderID  IN ( SELECT OrderID FROM #RFT)
-			AND AddDate > @DateStart
+			AND CDate = @DateStart
+			AND AddDate < GETDATE()
 
+			----由於Line可能會切換，因此要把換過去的也算進去
 			SELECT 
 			[ID] = a.ID
 			, [GarmentDefectCodeID] = CASE WHEN  NOT EXISTS (select ID from Production.dbo.GarmentDefectCode  where ID = CAST(FailCode  AS VARCHAR))
@@ -562,7 +577,36 @@ BEGIN
 			INNER JOIN #tReworkTotal b
 			ON a.[OrderId]  = SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
 			   AND a.[CDate]=b.[dDate] 
-			   AND a.[SewingLineID]  = b.workLine 
+			   AND a.[SewingLineID]  = b.workLine 			
+			UNION ALL
+			SELECT 
+			[ID] = a.ID
+			, [GarmentDefectCodeID] = CASE WHEN  NOT EXISTS (select ID from Production.dbo.GarmentDefectCode  where ID = CAST(FailCode  AS VARCHAR))
+									THEN '200'
+									ELSE FailCode 
+									END
+			, [GarmentDefectTypeid] = CASE WHEN NOT EXISTS (select ID from Production.dbo.GarmentDefectCode  where ID  = CAST(FailCode  AS VARCHAR)) 
+									THEN '2'
+									ELSE  (select GarmentDefectTypeid from Production.dbo.GarmentDefectCode where ID  = CAST(FailCode  AS VARCHAR))
+									END
+			, [Qty] = Qty 
+			FROM #RFT_With_ID a
+			INNER JOIN #tReworkTotal b ON a.[OrderId]  = SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
+										AND a.[CDate]=b.[dDate] 
+										AND a.[SewingLineID]  <> b.workLine 
+			INNER JOIN (				
+				SELECT t2.SewingLineID , t2.LineLocationID ,t2.Team
+				FROM 
+				(
+					SELECT TOP 1 *
+					FROM ProductionLineAllocation
+					WHERE ProductionDate <=CAST( @DateStart AS DATE)
+					AND FactoryID='SNP'
+					ORDER BY ProductionDate DESC
+				) t
+				INNER JOIN ProductionLineAllocation_Detail t2 ON t.FactoryID=t2.FactoryID AND t.ProductionDate=t2.ProductionDate
+			)  tt
+			ON tt.LineLocationID= b.workLine AND tt.SewingLineID=a.SewinglineID AND tt.Team= a.Team
 
 			--INSERT  RFT_Detail
 			INSERT INTO RFT_Detail
