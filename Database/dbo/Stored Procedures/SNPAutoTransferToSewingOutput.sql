@@ -442,18 +442,20 @@ BEGIN
 			,[OldDetailKey]=NULL
 			FROM #tmp_Into_SewingOutput_Detail_Detail a
 			INNER JOIN #tmp_SewingOutput_Detail b ON a.OrderID=b.OrderID AND a.ComboType=b.ComboType  AND a.Article=b.Article  
+			INNER JOIN SewingOutput sop ON  sop.ID=b.ID
 			OUTER APPLY(
 			 SELECT Ukey 
 			 FROM SewingOutput s WITH(NOLOCK)
 			 INNER JOIN SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
-			 WHERE s.ID=b.ID 
+			 WHERE s.ID=sop.ID 
 					AND sd.OrderID = b.OrderID  
 					AND sd.ComboType=b.ComboType   
 					AND sd.Article=b.Article   
-					AND s.SewingLineID=a.WorkLine 
+					AND s.SewingLineID=sop.SewingLineID
 			)Now_SewingOutput_Detail	
 			WHERE Now_SewingOutput_Detail.ukey IS NOT NULL	
 			And a.QAQty > 0
+
 			-------------Prepare RFT
 			select 
 			[OrderId] =	CASE WHEN MONo LIKE '%-%'
