@@ -345,7 +345,7 @@ declare @APSMain TABLE(
 	[OriEff] [numeric](5, 2) NULL,
 	[SewLineEff] [numeric](5, 2) NULL,
 	[TotalSewingTime] int NULL,
-	[BrandID] [nvarchar](8) NULL
+	[BrandID] [nvarchar](500) NULL
 )
 insert into @APSMain
 select
