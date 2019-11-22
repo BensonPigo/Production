@@ -2491,6 +2491,7 @@ on t.id=s.id
 		,AddDate
 		,EditName
 		,EditDate
+		, shipgroup
 		)
 				values(s.ID,
 		s.Description,
@@ -2500,7 +2501,8 @@ on t.id=s.id
 		s.AddName,
 		s.AddDate,
 		s.EditName,
-		s.EditDate
+		s.EditDate,
+		s.ID
 		)
 	when not matched by source then
 		delete;
