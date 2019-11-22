@@ -551,10 +551,11 @@ select * from FtyExportData ", e.FormattedValue.ToString());
             this.gridSAPP.DataSource = this.listControlBindingSource3;
             this.Helper.Controls.Grid.Generator(this.gridSAPP)
             .Text("PackingListID", header: "Packing#", width: Widths.AnsiChars(16))
+
             .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(16))
             .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(3))
+            .Numeric("NW", header: "N.W.", decimal_places: 3)
             .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(16))
-            .Numeric("GW", header: "G.W.", decimal_places: 3)
             .Text("AccountID", header: "Account No", width: Widths.AnsiChars(10))
             .Text("Name", header: "Account Name", width: Widths.AnsiChars(20))
             .Numeric("RatioFty", header: "Factory Ratio", decimal_places: 2)
@@ -671,7 +672,7 @@ select
 	AirPP.OrderID,
 	AirPP.OrderShipmodeSeq,
 	sa.AirPPID,
-	sa.GW,
+	sa.NW,
 	sa.AccountID,
 	Name = (select Name from FinanceEN.dbo.AccountNo a with(Nolock) where a.ID = sa.AccountID),
 	sa.RatioFty,

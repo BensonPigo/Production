@@ -263,7 +263,7 @@ using #source s
 on @id = t.ShippingAPID and s.InvNo=t.InvNo and s.ID = t.PackingListID and s.AirPPID = t.AirPPID and s.AccountID = t.AccountID
 when matched then update set 
 	t.[CurrencyID]	  =@CurrencyID
-	,t.[GW]			  =s.ttlNw
+	,t.[NW]			  =s.ttlNw
 	,t.[RatioFty]	  =s.[RatioFty]
 	,t.[AmtFty]		  =s.SharedAmtFactory
 	,t.[RatioOther]	  =s.[RatioOther]
@@ -272,7 +272,7 @@ when matched then update set
 	,t.[EditName]	  =@login
 	,t.[EditDate]	  =getdate()
 when not matched by target then
-insert([ShippingAPID],[InvNo],[PackingListID],[AirPPID],[AccountID],[CurrencyID],[GW],[RatioFty],[AmtFty],[RatioOther],[AmtOther],[Junk])
+insert([ShippingAPID],[InvNo],[PackingListID],[AirPPID],[AccountID],[CurrencyID],[NW],[RatioFty],[AmtFty],[RatioOther],[AmtOther],[Junk])
 VALUES(@id,s.[InvNo],s.id,s.[AirPPID],s.[AccountID],@CurrencyID,s.ttlNw,s.[RatioFty],s.SharedAmtFactory,s.[RatioOther],s.SharedAmtOther,0)
 ;
 
