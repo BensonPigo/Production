@@ -36,6 +36,7 @@ namespace Sci.Production.Shipping
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("Qty", header: "Order Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -101,6 +102,7 @@ select
 	ChargeablePulloutQty = isnull(ShipQty_ByType.TotalNotFocShipQty,0),
 	FOCPulloutQty = isnull(ShipQty_ByType.TotalFocShipQty,0),
 	FinishedFOCStockinQty = ISNULL(FocStockQty.Value ,0)    -- Function 取得 FOC 庫存
+	,o.OrderTypeID
 from orders o with(nolock)
 inner join Factory f with(nolock) on f.id = o.FactoryID and f.IsProduceFty = 1
 outer apply(
