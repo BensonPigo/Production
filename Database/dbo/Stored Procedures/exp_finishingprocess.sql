@@ -784,7 +784,7 @@ USING(
 	FROM Production.dbo.Style 
 	where (convert(date,AddDate) = @cDate or convert(date,TPEEditDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as s
-on t.StyleID=s.StyleID
+on t.StyleID=s.StyleID and t.SeasonID=s.SeasonID and t.BrandID=s.BrandID
 WHEN MATCHED THEN
 UPDATE SET
    t.[StyleID]		=s.[StyleID],               
