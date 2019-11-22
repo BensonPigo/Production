@@ -669,6 +669,9 @@ select t.MDivisionID
        , t.SewETA
        , t.PackETA
        , t.CPU
+	   , [TTL CPU] = t.CPU * t.Qty
+	   , [CPU Closed]= t.CPU * #cte2.sewing_output
+	   , [CPU bal]= t.CPU * (t.qty + t.FOCQty - #cte2.sewing_output )
        , article_list = (select article + ',' 
                          from (
                               select distinct q.Article  
@@ -1241,6 +1244,9 @@ select t.MDivisionID
        , t.SewETA
        , t.PackETA
        , t.CPU
+	   , [TTL CPU] = t.CPU * t.Qty
+	   , [CPU Closed]= t.CPU * #cte2.sewing_output
+	   , [CPU bal]= t.CPU * (t.qty + t.FOCQty - #cte2.sewing_output)
        , t.Article
 	   , t.SizeCode
 -----------------------------------------------------------------------------------------------------------------------------------------
