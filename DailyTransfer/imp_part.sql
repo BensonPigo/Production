@@ -96,7 +96,8 @@ t.EditName= s.EditName,
 t.EditDate= s.EditDate,
 t.DescriptionDetail = s.DescriptionDetail,
 t.PurchaseBatchQty = s.BatchQty,
-t.AssetTypeID = s.AssetTypeID
+t.AssetTypeID = s.AssetTypeID,
+t.Improvement = s.Improvement
 
 	when not matched by target and s.type='O' then 
 		insert ( ID
@@ -120,7 +121,9 @@ t.AssetTypeID = s.AssetTypeID
 ,EditDate
 ,DescriptionDetail
 ,PurchaseBatchQty
-,AssetTypeID	)
+,AssetTypeID
+,Improvement
+)
 
 values(s.refno,
 s.Model,
@@ -143,7 +146,8 @@ s.EditName,
 s.EditDate,
 s.DescriptionDetail,
 s.BatchQty,
-s.AssetTypeID
+s.AssetTypeID,
+s.Improvement
  );
 
  
