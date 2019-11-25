@@ -305,12 +305,14 @@ left join[Production].[dbo].ftyinventory a WITH(NOLOCK) on b.id = a.POID
                                                              and b.seq2 = a.Seq2
                                                              and stocktype = 'B'
                                                           --   and a.Roll = ''
+LEFT JOIN Orders o ON o.ID = b.ID
 where   b.ID = '{0}'
         and b.FabricType = 'A'
         and b.seq1 = '{1}' 
         and b.seq2 = '{2}' 
         and m.IssueType = 'Sewing'
         and b.Junk != 1
+		and o.Category <> 'A'
 order by b.ID, b.seq1, b.seq2"
                             , CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
                         {
@@ -694,7 +696,12 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             txtOrderID.Text = "";
             CurrentMaintain["orderid"] = "";
             this.displayPOID.Text = "";
-            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
+            this.poid = MyUtility.GetValue.Lookup(string.Format(@"
+select Cutplan.poid 
+from dbo.cutplan WITH (NOLOCK) 
+LEFT JOIN Orders o ON Cutplan.POID = o.ID
+where Cutplan.id='{0}' and Cutplan.Mdivisionid = '{1}' AND o.Category != 'A' 
+", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
 
             if (MyUtility.Check.Empty(txtRequest.Text))
             {
@@ -1683,7 +1690,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
 select orders.poid 
 from dbo.orders WITH (NOLOCK) 
 left join dbo.Factory on orders.FtyGroup = Factory.ID 
-where   orders.id='{0}' 
+where   orders.id='{0}' and Category !='A'
         and Factory.mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(txtOrderID.Text))
             {

@@ -24,6 +24,7 @@ namespace Sci.Production.Shipping
         private DataRow apData;
         private DataTable SEData;
         private DataTable SEGroupData;
+        private DataTable SAPP;
         private bool Apflag;
         private string LocalSuppID;
 
@@ -507,6 +508,7 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                     {
                         string filter = "ShippingAPID = ''";
                         this.SEData.DefaultView.RowFilter = filter;
+                        this.SAPP.DefaultView.RowFilter = filter;
                     }
                 }
                 else
@@ -515,6 +517,9 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                     {
                         string filter = string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"]));
                         this.SEData.DefaultView.RowFilter = filter;
+
+                        string filter2 = $" InvNo = '{dr["InvNo"]}'";
+                        this.SAPP.DefaultView.RowFilter = filter2;
                     }
                 }
             };
@@ -541,6 +546,24 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                 }
             }
 
+            #region tab Shared Amt by App grid
+            this.gridSAPP.IsEditingReadOnly = true;
+            this.gridSAPP.DataSource = this.listControlBindingSource3;
+            this.Helper.Controls.Grid.Generator(this.gridSAPP)
+            .Text("PackingListID", header: "Packing#", width: Widths.AnsiChars(16))
+
+            .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(16))
+            .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(3))
+            .Numeric("NW", header: "N.W.", decimal_places: 3)
+            .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(16))
+            .Text("AccountID", header: "Account No", width: Widths.AnsiChars(10))
+            .Text("Name", header: "Account Name", width: Widths.AnsiChars(20))
+            .Numeric("RatioFty", header: "Factory Ratio", decimal_places: 2)
+            .Numeric("AmtFty", header: "Share Amt - Fty", decimal_places: 2)
+            .Numeric("RatioOther", header: "Other Ratio", decimal_places: 2)
+            .Numeric("AmtOther", header: "Share Amt - Other", decimal_places: 2)
+            ;
+            #endregion
             this.QueryData();
         }
 
@@ -638,6 +661,40 @@ order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
 
             this.listControlBindingSource2.DataSource = this.SEData;
 
+            List<string> ilist = this.SEData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
+            string invNos = "'" + string.Join("','", ilist) + "'";
+            #region Shared Amt by APP
+            sqlCmd = $@"
+select
+    sa.ShippingAPID,
+    sa.InvNo,
+	sa.PackingListID,
+	AirPP.OrderID,
+	AirPP.OrderShipmodeSeq,
+	sa.AirPPID,
+	sa.NW,
+	sa.AccountID,
+	Name = (select Name from FinanceEN.dbo.AccountNo a with(Nolock) where a.ID = sa.AccountID),
+	sa.RatioFty,
+	sa.AmtFty,
+	sa.RatioOther,
+	sa.AmtOther
+from ShareExpense_APP sa with(nolock)
+inner join AirPP with(nolock) on AirPP.id = sa.AirPPID
+where sa.Junk = 0
+and sa.ShippingAPID = '{this.apData["ID"]}' 
+and sa.InvNo in ({invNos})
+";
+            result = DBProxy.Current.Select(null, sqlCmd, out this.SAPP);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.listControlBindingSource3.DataSource = this.SAPP;
+            #endregion
+
             sqlCmd = string.Format(
                 @"
 select  ShippingAPID
@@ -668,6 +725,7 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             }
 
             this.listControlBindingSource1.DataSource = this.SEGroupData;
+
         }
 
         private void ControlButton()
@@ -1074,6 +1132,11 @@ where   ShippingAPID = '{3}'
                                 }
                             }
 
+                            if (!this.JunkShareExpense_APP())
+                            {
+                                return;
+                            }
+
                             bool returnValue = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]));
                             if (!returnValue)
                             {
@@ -1356,13 +1419,15 @@ and (
 	and s.InvNo not in (select INVNo from PackingList where INVNo = s.InvNo and INVNo is not null) 
 	and s.InvNo not in (select ID from FtyExport  where ID = s.InvNo and ID is not null)
 	and s.invno not in (select id from Export where id=s.InvNo and id is not null)
-)", MyUtility.Convert.GetString(this.apData["ID"]));
+)
+", MyUtility.Convert.GetString(this.apData["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
                     return;
                 }
+
                 #region 組Update Sql
                 string updateCmd = string.Format(
                     @"
@@ -1445,6 +1510,11 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(this.apData["ID"]));
                 }
             }
 
+            if (!this.JunkShareExpense_APP())
+            {
+                return;
+            }
+
             bool returnValue = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]));
             if (!returnValue)
             {
@@ -1489,6 +1559,27 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(this.apData["ID"]));
             {
                 grid1DT.Rows[i].Delete();
             }
+        }
+
+        private bool JunkShareExpense_APP()
+        {
+            string deleteCmd = $@"
+update s
+set s.Junk = 1
+from ShareExpense_APP s
+inner join #tmp t on s.ShippingAPID = t.ShippingAPID and s.InvNo=t.InvNo and s.PackingListID = t.PackingListID and s.AirPPID = t.AirPPID and s.AccountID = t.AccountID
+where s.ShippingAPID = '{this.apData["ID"]}'
+
+";
+            DataTable dt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.SAPP, string.Empty, deleteCmd, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Re-Calculate delete ShareExpense_APP faile\r\n" + result.ToString());
+                return false;
+            }
+
+            return true;
         }
     }
 }

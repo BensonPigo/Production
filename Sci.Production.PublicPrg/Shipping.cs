@@ -33,10 +33,12 @@ DECLARE @id VARCHAR(13),
 		@accno VARCHAR(8),
 		@login VARCHAR(10),
 		@adddate DATETIME,
-		@exact TINYINT
+		@exact TINYINT,
+		@CurrencyID VARCHAR(3)
 
 --設定變數值
 SET @id = '{0}'
+set @CurrencyID=(select CurrencyID from ShippingAP where id = @id)
 SET @login = '{1}'
 SET @adddate = GETDATE()
 SELECT @ttlgw = isnull(sum(GW),0), @ttlcbm = isnull(sum(CBM),0), @ttlcount = isnull(count(ShippingAPID),0) 
@@ -199,61 +201,86 @@ CLOSE cursor_ttlAmount
 
 --以下為Airpp 拆分Factory與Other部分
 --只有AirPP的資料需要在往下分攤
-select se.InvNo,[Amount] = sum(se.Amount)
+select se.InvNo,se.AccountID,[Amount] = sum(se.Amount)
 into #InvNoSharedAmt
 from ShareExpense se with (nolock)
-where	se.ShippingAPID = '{0}' and se.Junk = 0 and
+where	se.ShippingAPID = @ID and se.Junk = 0 and
 		exists(select 1 from GMTBooking gmt with (nolock)
 							 inner join ShipMode sm with (nolock) on gmt.ShipModeID = sm.ID
 						     where gmt.ID = se.InvNo and sm.NeedCreateAPP = 1)
-group by se.InvNo
+group by se.InvNo,se.AccountID
 
-select	t.InvNo,[PackID] = pl.ID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo) * pl.GW,2)
+select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)
 into #PLSharedAmtStep1
 from #InvNoSharedAmt t
 inner join PackingList pl with (nolock) on pl.INVNo = t.InvNo
 
-select * ,[AccuPLSharedAmt] = SUM(PLSharedAmt) over(PARTITION BY InvNo order BY InvNo,PackID )
+select * ,[AccuPLSharedAmt] = SUM(PLSharedAmt) over(PARTITION BY InvNo,AccountID order BY InvNo,PackID,AccountID )
 into #PLSharedAmtStep2
 from #PLSharedAmtStep1
 
 select *,
-	  [PLSharedAmtFin] = case	when count(1) over(partition by invno ) = 1 then Amount
-								when ROW_NUMBER() over(partition by invno order BY InvNo,PackID) < count(1) over(partition by invno ) then PLSharedAmt
-								else Amount -  LAG(AccuPLSharedAmt) over(partition by invno order by invno,PackID) end
+	  [PLSharedAmtFin] = case	when count(1) over(partition by invno,AccountID ) = 1 then Amount
+								when ROW_NUMBER() over(partition by invno,AccountID order BY InvNo,PackID,AccountID) < count(1) over(partition by invno,AccountID ) then PLSharedAmt
+								else Amount -  LAG(AccuPLSharedAmt) over(partition by invno,AccountID order by invno,PackID,AccountID) end
 into #PLSharedAmt
 from #PLSharedAmtStep2
 
-select  pld.ID,pld.OrderID,pld.OrderShipmodeSeq, t.PLSharedAmtFin, [TtlNW] = TtlNW.Value, [OrderSharedAmt] =iif(TtlNW.Value = 0,0,ROUND(t.PLSharedAmtFin / TtlNW.Value * sum(pld.NWPerPcs * pld.ShipQty),2))  , 
-		[QtyPerCTN] = sum(QtyPerCTN), [RatioFty] = isnull(app.RatioFty,0)
+select  t.InvNo,pld.ID,AirPPID=app.ID,t.AccountID,pld.OrderID,pld.OrderShipmodeSeq, t.PLSharedAmtFin
+    , [TtlNW] = ROUND(sum(pld.NWPerPcs * pld.ShipQty),3)
+    , [OrderSharedAmt] =iif(TtlNW.Value = 0,0,ROUND(t.PLSharedAmtFin / TtlNW.Value * sum(pld.NWPerPcs * pld.ShipQty),2))  
+    , [QtyPerCTN] = sum(QtyPerCTN), [RatioFty] = isnull(app.RatioFty,0)		
 into #OrderSharedAmtStep1
 from #PLSharedAmt t
 inner join PackingList_Detail pld with (nolock) on t.PackID = pld.ID
 inner join AirPP app with (nolock) on pld.OrderID = app.OrderID and pld.OrderShipmodeSeq = app.OrderShipmodeSeq
 outer apply (select [Value] = isnull(sum(NWPerPcs * ShipQty),0) from PackingList_Detail where ID = t.PackID) TtlNW
-group by pld.ID, pld.OrderID, pld.OrderShipmodeSeq, TtlNW.Value, t.PLSharedAmtFin, app.RatioFty
+group by t.InvNo,pld.ID,app.ID,t.AccountID, pld.OrderID, pld.OrderShipmodeSeq, TtlNW.Value, t.PLSharedAmtFin, app.RatioFty
 
-select * ,[AccuOrderSharedAmt] = SUM(OrderSharedAmt) over(PARTITION BY ID order BY OrderID,OrderShipmodeSeq )
+select * ,[AccuOrderSharedAmt] = SUM(OrderSharedAmt) over(PARTITION BY ID,AccountID order BY AccountID,OrderID,OrderShipmodeSeq )
 into #OrderSharedAmtStep2
 from #OrderSharedAmtStep1
 
-
 select	*,
 		[OrderSharedAmtFin] =  case	when OrderSharedAmt = 0 then 0
-                                    when count(1) over(partition by ID ) = 1 then PLSharedAmtFin
-									when ROW_NUMBER() over(partition by ID order BY OrderID,OrderShipmodeSeq) < count(1) over(partition by ID ) then OrderSharedAmt
-									else PLSharedAmtFin -  LAG(AccuOrderSharedAmt) over(partition by ID order by OrderID,OrderShipmodeSeq) end
+                                    when count(1) over(partition by ID,AccountID ) = 1 then PLSharedAmtFin
+									when ROW_NUMBER() over(partition by ID,AccountID order BY AccountID,OrderID,OrderShipmodeSeq) < count(1) over(partition by ID,AccountID ) then OrderSharedAmt
+									else PLSharedAmtFin -  LAG(AccuOrderSharedAmt) over(partition by ID,AccountID order by AccountID,OrderID,OrderShipmodeSeq) end
 into #OrderSharedAmt
 from #OrderSharedAmtStep2
 
 declare @SharedAmtFactory numeric (12, 2) 
 declare @SharedAmtOther numeric (12, 2) 
 
+select *,RatioOther=100-RatioFty,
+	SharedAmtFactory=ROUND(OrderSharedAmtFin / 100 * RatioFty,2),
+	SharedAmtOther=OrderSharedAmtFin - ROUND(OrderSharedAmtFin / 100 * RatioFty,2)
+into #source
+from #OrderSharedAmt
+
+merge ShareExpense_APP t
+using #source s
+on @id = t.ShippingAPID and s.InvNo=t.InvNo and s.ID = t.PackingListID and s.AirPPID = t.AirPPID and s.AccountID = t.AccountID
+when matched then update set 
+	t.[CurrencyID]	  =@CurrencyID
+	,t.[NW]			  =s.ttlNw
+	,t.[RatioFty]	  =s.[RatioFty]
+	,t.[AmtFty]		  =s.SharedAmtFactory
+	,t.[RatioOther]	  =s.[RatioOther]
+	,t.[AmtOther]	  =s.SharedAmtOther
+	,t.[Junk]		  =0
+	,t.[EditName]	  =@login
+	,t.[EditDate]	  =getdate()
+when not matched by target then
+insert([ShippingAPID],[InvNo],[PackingListID],[AirPPID],[AccountID],[CurrencyID],[NW],[RatioFty],[AmtFty],[RatioOther],[AmtOther],[Junk])
+VALUES(@id,s.[InvNo],s.id,s.[AirPPID],s.[AccountID],@CurrencyID,s.ttlNw,s.[RatioFty],s.SharedAmtFactory,s.[RatioOther],s.SharedAmtOther,0)
+;
+
 select	@SharedAmtFactory = isnull(sum(ROUND(OrderSharedAmtFin / 100 * RatioFty,2)),0),
 		@SharedAmtOther = isnull(sum(OrderSharedAmtFin - ROUND(OrderSharedAmtFin / 100 * RatioFty,2)),0)
 from #OrderSharedAmt
 
-update ShippingAP set SharedAmtFactory = @SharedAmtFactory,SharedAmtOther = @SharedAmtOther where ID = '{0}'
+update ShippingAP set SharedAmtFactory = @SharedAmtFactory,SharedAmtOther = @SharedAmtOther where ID = @id
  
 
 drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmtStep2,#PLSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#OrderSharedAmt

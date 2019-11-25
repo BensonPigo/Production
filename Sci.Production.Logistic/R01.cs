@@ -308,7 +308,10 @@ select
 	,t.PulloutCTNQty
 	,t.OrderQty
 	,[Pack Qty by SP#]=t.TtlGMTQty
-	,[PackingStatus]=PackingStatus.HasNotYetConfirmed
+	,[PackingStatus]= iif(
+		(select cnt = count(1) FROM PackingList p
+		INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+		WHERE pd.OrderID=t.id ) = 0,'N',PackingStatus.HasNotYetConfirmed) 
 	,[Dispose Qty by SP#]= ISNULL(DisposeQty.Value,0)
 	,[Sewing Qty by SP#]=sewQty
 	,t.TtlClogGMTQty

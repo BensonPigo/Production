@@ -67,7 +67,7 @@ namespace Sci.Production.Warehouse
     from borrowback_detail bd WITH (NOLOCK) 
 	inner join Orders orders on bd.FromPOID = orders.ID
 	inner join Factory factory on orders.FtyGroup = factory.ID
-    where bd.id = '{0}' and factory.MDivisionID = '{1}'
+    where bd.id = '{0}' and factory.MDivisionID = '{1}'  and orders.Category <> 'A'
     group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype
     )
 ,cte2 as(
@@ -170,7 +170,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
     from borrowback_detail bd WITH (NOLOCK) 
       inner join Orders orders on bd.FromPOID = orders.ID
       inner join Factory factory on orders.FtyGroup = factory.ID
-    where bd.id = '{0}' and factory.MDivisionID = '{1}'
+    where bd.id = '{0}' and factory.MDivisionID = '{1}' and orders.Category <> 'A'
     group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype, orders.FactoryID ,bd.ToPOID
     )
 ,cte2 as(
@@ -242,7 +242,7 @@ OUTER apply(
 			and Roll = c.Roll
             and Dyelot = c.Dyelot
 ) toSP
-where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}'
+where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}' and orders.Category <> 'A'
       and  c.StockType='B'
 drop table #tmp,#tmp2
 ", dr_master["BorrowId"], Sci.Env.User.Keyword);
