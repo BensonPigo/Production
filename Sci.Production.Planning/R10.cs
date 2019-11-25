@@ -970,8 +970,19 @@ namespace Sci.Production.Planning
             DataTable dt0 = datas[1]; // [0] By Factory 最細的上下半月Capacity
             DataTable dt1 = datas[2]; // [1] By Factory Loading CPU
             DataTable dt2 = datas[3]; // [2] For Forecast shared
-            DataTable dt4 = datas[4].Select("SubconInType <> '2'").CopyToDataTable(); // [4] For Output, 及Output後面的Max日期
-            DataTable dt5 = datas[4].Select("SubconInType = '2'").CopyToDataTable();
+            DataTable dt4 = new DataTable(); // [4] For Output, 及Output後面的Max日期
+            DataTable dt5 = new DataTable();
+
+            if (datas[4].Select("SubconInType <> '2'").Any())
+            {
+                dt4 = datas[4].Select("SubconInType <> '2'").CopyToDataTable();
+            }
+
+            dt5 = dt4.Clone();
+            if (datas[4].Select("SubconInType = '2'").Any())
+            {
+                dt5 = datas[4].Select("SubconInType = '2'").CopyToDataTable();
+            }
 
             DataTable dtCountryList = dtList.DefaultView.ToTable(true, "CountryID");
             List<string> lisPercent = new List<string>();
