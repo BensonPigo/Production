@@ -71,6 +71,7 @@ Where a.id = '{0}'
       and c.lock = 0 
       and upper(dbo.mtltype.Issuetype) = 'PACKING' 
       and factory.MDivisionID = '{1}'
+      and Orders.category != 'A'
 ", sp_b, Sci.Env.User.Keyword);
 
                 Ict.DualResult result;
@@ -78,6 +79,7 @@ Where a.id = '{0}'
                 {
                     if (dtArtwork.Rows.Count == 0)
                     { MyUtility.Msg.WarningBox("Data not found!!"); }
+                    this.txtSPNo.Text = string.Empty;
                     listControlBindingSource1.DataSource = dtArtwork;
                 }
                 else { ShowErr(strSQLCmd, result); }

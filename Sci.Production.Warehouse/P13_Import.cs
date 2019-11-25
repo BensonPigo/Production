@@ -90,7 +90,7 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1
 inner join dbo.Orders on c.poid = orders.id
 inner join dbo.Factory on orders.FactoryID = factory.ID
 INNER JOIN Fabric f on a.SCIRefNo=f.SCIRefNo
-Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
+Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Orders.category!='A'
     and factory.MDivisionID = '{1}'
 ", sp, Sci.Env.User.Keyword)); // 
                 if (!txtSeq1.checkSeq1Empty() && txtSeq1.checkSeq2Empty())
@@ -124,6 +124,9 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                     if (dtArtwork.Rows.Count == 0)
                     { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtArtwork;
+                    this.txtSPNo.Text = string.Empty;
+                    this.txtSeq1.seq1 = string.Empty;
+                    this.txtSeq1.seq2 = string.Empty;
                     dtArtwork.DefaultView.Sort = "seq1,seq2,location,dyelot,balance desc";
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
