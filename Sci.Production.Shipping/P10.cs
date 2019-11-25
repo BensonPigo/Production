@@ -134,6 +134,7 @@ select g.ID
 , [TotalCTNQty] = isnull(g.TotalCTNQty,0)
 , g.TotalCBM
 , g.TotalGW
+, G.FCRDate
 , ClogCTNQty = (
 	select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 	where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null
@@ -255,6 +256,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
                 .Text("CYCFS", header: "Loading Type", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("SONo", header: "S/O No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .DateTime("CutOffdate", header: "Cut-off Date/Time", iseditingreadonly: true)
+                .Date("FCRDate", header: "FCR Date", iseditingreadonly: true)
                 .Numeric("WhseNo", header: "Container Terminals", iseditingreadonly: true)
                 .Text("Status", header: "GB Status", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Numeric("TotalShipQty", header: "TTL Qty", iseditingreadonly: true)
