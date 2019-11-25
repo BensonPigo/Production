@@ -3278,7 +3278,7 @@ when not matched by source then
 ------Brand_ThreadCalculateRules---------------
 Merge Production.dbo.Brand_ThreadCalculateRules as t
 Using (select a.* from Trade_To_Pms.dbo.Brand_ThreadCalculateRules a ) as s
-on t.ID=s.ID and t.FabricType = s.FabricType
+on t.ID=s.ID and t.FabricType = s.FabricType and t.ProgramID = s.ProgramID
 when matched then 
 	update set	t.UseRatioRule	= s.UseRatioRule,
 				t.UseRatioRule_Thick	= s.UseRatioRule_Thick
@@ -3286,12 +3286,14 @@ when not matched by target then
 	insert (ID,
 			FabricType,
 			UseRatioRule,
-			UseRatioRule_Thick
+			UseRatioRule_Thick,
+			ProgramID
 			) 
 		values (s.ID,
 				s.FabricType,
 				s.UseRatioRule,
-				s.UseRatioRule_Thick	)
+				s.UseRatioRule_Thick,
+				s.ProgramID	)
 when not matched by source then 
 	delete;
 
