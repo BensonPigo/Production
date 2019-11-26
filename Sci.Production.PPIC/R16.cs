@@ -83,7 +83,7 @@ SELECT
 	,oq.Seq
 	,oq.ShipmodeID
 	,[Category] =  CASE WHEN o.Category='B' THEN 'Bulk' 
-						WHEN o.Category='G' THEN 'Bulk' 
+						WHEN o.Category='G' THEN 'Garment' 
 						ELSE ''
 				   END
 	,[PartialShipment]=IIF(PartialShipment.Count > 1 ,'Y','')
