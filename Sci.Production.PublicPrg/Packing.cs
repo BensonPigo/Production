@@ -517,49 +517,49 @@ order by poid.OrderID,oq.Article,oq.SizeCode", packingListID);
         public static string QueryPackingListSQLCmd(string packingListID)
         {
             return string.Format(@"
-with AllOrderID as (
-    select  Distinct OrderID
-            , OrderShipmodeSeq
-    from PackingList_Detail WITH (NOLOCK) 
-    where ID = '{0}'
-), 
-AccuPKQty as (
-    select  pd.OrderID
-            , pd.OrderShipmodeSeq
-            , pd.Article
-            , pd.SizeCode
-            , sum(pd.ShipQty) as TtlShipQty
-    from     PackingList_Detail pd WITH (NOLOCK) 
-            , AllOrderID a
-    where   ID != '{0}'
-            and a.OrderID = pd.OrderID
-            and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
-    group by pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode
-),
-PulloutAdjQty as (
-    select  ia.OrderID
-            , ia.OrderShipmodeSeq
-            , iaq.Article
-            , iaq.SizeCode
-            , sum(iaq.DiffQty) as TtlDiffQty
-    from    InvAdjust ia WITH (NOLOCK) 
-            , InvAdjust_Qty iaq WITH (NOLOCK) 
-            , AllOrderID a
-    where   ia.OrderID = a.OrderID
-            and ia.OrderShipmodeSeq = a.OrderShipmodeSeq
-            and ia.ID = iaq.ID
-    group by ia.OrderID, ia.OrderShipmodeSeq, iaq.Article, iaq.SizeCode
-),
-PackQty as (
-    select  OrderID
-            , OrderShipmodeSeq
-            , Article
-            , SizeCode
-            , sum(ShipQty) as ShipQty
-    from    PackingList_Detail WITH (NOLOCK) 
-    where   ID = '{0}'
-    group by OrderID, OrderShipmodeSeq, Article, SizeCode
-)
+select  Distinct OrderID
+        , OrderShipmodeSeq
+into #AllOrderID
+from PackingList_Detail WITH (NOLOCK) 
+where ID = '{0}'
+
+select  pd.OrderID
+        , pd.OrderShipmodeSeq
+        , pd.Article
+        , pd.SizeCode
+        , sum(pd.ShipQty) as TtlShipQty
+into #AccuPKQty
+from     PackingList_Detail pd WITH (NOLOCK) 
+        , #AllOrderID a
+where   ID != '{0}'
+        and a.OrderID = pd.OrderID
+        and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
+group by pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode
+
+select  ia.OrderID
+        , ia.OrderShipmodeSeq
+        , iaq.Article
+        , iaq.SizeCode
+        , sum(iaq.DiffQty) as TtlDiffQty
+into #PulloutAdjQty
+from    InvAdjust ia WITH (NOLOCK) 
+        , InvAdjust_Qty iaq WITH (NOLOCK) 
+        , #AllOrderID a
+where   ia.OrderID = a.OrderID
+        and ia.OrderShipmodeSeq = a.OrderShipmodeSeq
+        and ia.ID = iaq.ID
+group by ia.OrderID, ia.OrderShipmodeSeq, iaq.Article, iaq.SizeCode
+
+select  OrderID
+        , OrderShipmodeSeq
+        , Article
+        , SizeCode
+        , sum(ShipQty) as ShipQty
+into #PackQty
+from    PackingList_Detail WITH (NOLOCK) 
+where   ID = '{0}'
+group by OrderID, OrderShipmodeSeq, Article, SizeCode
+
 select  a.*
         , b.Description
         , isnull(oqd.Qty,0)-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty
@@ -583,15 +583,15 @@ select  a.*
         ,o.OrderTypeID
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
-left join AccuPKQty pd on a.OrderID = pd.OrderID 
+left join #AccuPKQty pd on a.OrderID = pd.OrderID 
                           and a.OrderShipmodeSeq = pd.OrderShipmodeSeq 
                           and pd.Article = a.Article 
                           and pd.SizeCode = a.SizeCode
-left join PulloutAdjQty paq on a.OrderID = paq.OrderID 
+left join #PulloutAdjQty paq on a.OrderID = paq.OrderID 
                                and a.OrderShipmodeSeq = paq.OrderShipmodeSeq 
                                and paq.Article = a.Article 
                                and paq.SizeCode = a.SizeCode
-left join PackQty pk on a.OrderID = pk.OrderID 
+left join #PackQty pk on a.OrderID = pk.OrderID 
                         and a.OrderShipmodeSeq = pk.OrderShipmodeSeq 
                         and pk.Article = a.Article 
                         and pk.SizeCode = a.SizeCode
@@ -601,7 +601,9 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID
                                                     and oqd.SizeCode = a.SizeCode
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 where a.id = '{0}'
-order by a.Seq ASC,a.CTNQty DESC", packingListID);
+order by a.Seq ASC,a.CTNQty DESC
+
+drop table #AccuPKQty, #AllOrderID, #PackQty, #PulloutAdjQty", packingListID);
         }
         #endregion
 
@@ -640,13 +642,13 @@ from(
 inner join Order_QtyShip_Detail oqd with(nolock) on oqd.ID = x.OrderID and oqd.Seq =x.OrderShipmodeSeq
 ";
             string sqlA = sqlCmd + $@"
-select distinct msg=concat(p.OrderID,'(',p.OrderShipmodeSeq,')',' ColorWay:',p.Article,' Size:',p.SizeCode)
+select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
 from #tmpPacking p
 left join #tmpOrderShip oqd with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
 where isnull(p.ShipQty,0) > isnull(oqd.Qty,0)
 ";
             string sqlB = sqlCmd + $@"
-select distinct msg=concat(oqd.ID,'(',oqd.Seq,')',' ColorWay:',oqd.Article,' Size:',oqd.SizeCode)
+select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
 from #tmpOrderShip oqd
 left join #tmpPacking p with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
 where isnull(p.ShipQty,0) < isnull(oqd.Qty,0)
@@ -666,7 +668,7 @@ where isnull(p.ShipQty,0) < isnull(oqd.Qty,0)
             {
                 var os = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).ToList();
                 string msg = @"Ship Qty>Order Qty, please check Q'ty Breakdown by Shipmode (Seq).
-" + string.Join(",", os);
+" + string.Join("\t", os);
 
                 if (showmsg)
                     MyUtility.Msg.WarningBox(msg);
@@ -687,7 +689,7 @@ where isnull(p.ShipQty,0) < isnull(oqd.Qty,0)
             {
                 var os = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).ToList();
                 string msg = @"Ship Qty<Order Qty, please be sure this is Short Shipment before Save/Confirm the Packing List.
-" + string.Join(",", os);
+" + string.Join("\t", os);
                 
                 MyUtility.Msg.WarningBox(msg);
                 return Result.True;
