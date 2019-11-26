@@ -80,21 +80,18 @@ SELECT
 	,o.CustPONo
 	,o.StyleID
 	,oq.BuyerDelivery
-
 	,oq.Seq
 	,oq.ShipmodeID
 	,[Category] =  CASE WHEN o.Category='B' THEN 'Bulk' 
-						WHEN o.Category='G' THEN 'Bulk' 
+						WHEN o.Category='G' THEN 'Garment' 
 						ELSE ''
 				   END
 	,[PartialShipment]=IIF(PartialShipment.Count > 1 ,'Y','')
 	,[Cancelled]=IIF(o.Junk=1,'Y','N')
-
 	,[OrderQty]=OrderQty.Qty
 	,[PackingCarton] = PackingCarton.Value
 	,[PackingQty]=PackingQty.Value
 	,[ClogReceivedCarton]=ISNULL(ClogReceivedCarton.Value ,0)
-
 	,[LastCMPOutputDate]=LastCMPOutputDate.Value
 	,[LastDQSOutputDate]=LastDQSOutputDate.Value
 	,[OST Clog Carton]= ISNULL(PackingCarton.Value,0) - ISNULL(ClogReceivedCarton.Value,0)
@@ -115,7 +112,7 @@ OUTER APPLY(
 	AND pd.CTNQty=1
 )PackingCarton
 OUTER APPLY(
-	SELECT [Value]=Sum(pd.ShipQty)
+	SELECT [Value]=isnull(Sum(pd.ShipQty),0)
 	FROM PackingList_Detail pd WITH(NOLOCK)
 	WHERE pd.OrderID=o.ID
 	AND pd.OrderShipmodeSeq=oq.Seq
@@ -145,8 +142,8 @@ OUTER APPLY(
 		WHERE OrderId=o.ID AND Status='Fixed'
 	)Tmp
 )LastDQSOutputDate
-WHERE o.Category IN ('B','G') 
-AND ot.IsGMTMaster=0
+WHERE o.Category IN ('B','G') and
+      isnull(ot.IsGMTMaster,0) = 0
 ");
             #endregion
 
@@ -193,25 +190,21 @@ SELECT
 	,CustPONo
 	,StyleID
 	,BuyerDelivery
-
 	,Seq
 	,ShipmodeID
 	,Category
 	,PartialShipment
 	,Cancelled
-
 	,[OrderQty]
 	,[PackingCarton]
 	,[PackingQty]
 	,[ClogReceivedCarton]	
 	,[ClogReceivedQty]=IIF(PartialShipment='Y' ,'NA' ,CAST( ISNULL( ClogReceivedQty.Value,0)  as varchar))
-
 	,[LastCMPOutputDate]
 	,[CMPQty]=IIF(PartialShipment='Y' ,'NA', CAST(ISNULL( CMPQty.Value,0)  as varchar))
 	,[LastDQSOutputDate]
 	,[DQSQty]=IIF(PartialShipment='Y' , 'NA' , CAST( ISNULL( DQSQty.Value,0)  as varchar))
 	,[OST Packing Qty]=IIF(PartialShipment='Y' , 'NA' , CAST(( ISNULL(OrderQty,0) -  ISNULL(PackingQty,0)) as varchar))
-
 	,[OST CMP Qty]=IIF(PartialShipment='Y' , 'NA' , CAST((  ISNULL(OrderQty,0) -  ISNULL(CMPQty.Value,0))  as varchar))
 	,[OST DQS Qty]=IIF(PartialShipment='Y' , 'NA' ,  CAST(( ISNULL(OrderQty,0) -  ISNULL(DQSQty.Value,0))  as varchar))
 	,[OST Clog Qty]=IIF(PartialShipment='Y' , 'NA' , CAST((  ISNULL(OrderQty,0) -  ISNULL(ClogReceivedQty.Value,0))  as varchar))
