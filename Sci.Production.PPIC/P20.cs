@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -461,6 +462,8 @@ order by ASeq",
                 return;
             }
 
+            this.SendMail("Confirmed");
+
             this.OnDetailEntered();
             this.RenewData();
         }
@@ -483,6 +486,8 @@ order by ASeq",
                 return;
             }
 
+            this.SendMail("Reject");
+
             this.OnDetailEntered();
             this.RenewData();
         }
@@ -491,6 +496,16 @@ order by ASeq",
         {
             this.OnDetailEntered();
             this.RenewData();
+        }
+
+        private void SendMail(string status)
+        {
+            string toAddress = "";
+            string ccAddress = "";
+            string subject = "";
+            string description = @"";
+            var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
+            email.ShowDialog(this);
         }
     }
 }
