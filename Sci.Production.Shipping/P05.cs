@@ -1436,6 +1436,35 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+            string sqlorderIDSeq = $@"
+select pd.orderid,pd.OrderShipmodeSeq
+from #tmp t
+inner join packinglist_detail pd with(nolock) on t.id = pd.id
+";
+            DataTable osdt;
+            DualResult dualResult1 = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "id", sqlorderIDSeq, out osdt);
+            if (!dualResult1)
+            {
+                this.ShowErr(dualResult1);
+                return;
+            }
+
+            List<string> orderIDlist = new List<string>();
+            var x = osdt.AsEnumerable().Select(s => new { OrderID = MyUtility.Convert.GetString(s["OrderID"]), seq = MyUtility.Convert.GetString(s["OrderShipmodeSeq"]) }).Distinct().ToList();
+            foreach (var item in x)
+            {
+                if (!Prgs.CheckOrderChangeConfirmed(item.OrderID, item.seq))
+                {
+                    orderIDlist.Add(item.OrderID + " " + item.seq);
+                }
+            }
+
+            if (orderIDlist.Count > 0)
+            {
+                string msg = @"This order had been changed, but not been confirmed yet. Please check Order Change first!";
+                MyUtility.Msg.WarningBox(msg);
+                return;
+            }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["CYCFS"]))
             {

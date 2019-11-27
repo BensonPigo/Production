@@ -558,6 +558,23 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+            List<string> orderIDlist = new List<string>();
+            var x = this.DetailDatas.AsEnumerable().Select(s => new { OrderID = MyUtility.Convert.GetString(s["OrderID"]), seq = MyUtility.Convert.GetString(s["OrderShipmodeSeq"]) }).Distinct().ToList();
+            foreach (var item in x)
+            {
+                if (!Prgs.CheckOrderChangeConfirmed(item.OrderID, item.seq))
+                {
+                    orderIDlist.Add(item.OrderID + " " + item.seq);
+                }
+            }
+
+            if (orderIDlist.Count > 0)
+            {
+                string msg = @"This order had been changed, but not been confirmed yet. Please check Order Change first!";
+                MyUtility.Msg.WarningBox(msg);
+                return;
+            }
+
             if (MyUtility.Convert.GetDate(this.CurrentMaintain["PulloutDate"]) > DateTime.Today)
             {
                 MyUtility.Msg.WarningBox("Pullout date can't greater than today!");

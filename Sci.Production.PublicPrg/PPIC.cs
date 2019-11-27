@@ -130,5 +130,46 @@ ID
             result = callTPEWebAPI.CallWebApiPost("/api/ReplacementReport/UpdateReplacement", postBody);
             return result;
         }
+        public static DualResult PostOrderChange(string ID, string status)
+        {
+            string sqlOrderChange = $@"
+SELECT [ID]
+      ,[ReasonID]
+      ,[OrderID]
+      ,[Status]='{status}'
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]='{Env.User.UserID}'
+      ,[EditDate]=GETDATE()
+from OrderChangeApplication where ID = '{ID}'
+";
+
+            DataTable dtOrderChange;
+            DualResult result;
+            result = DBProxy.Current.Select(null, sqlOrderChange, out dtOrderChange);
+            if (!result)
+            {
+                return result;
+            }
+
+            var postBody = new { ReplacementReport = dtOrderChange};
+            string tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"];
+
+            CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
+
+            result = callTPEWebAPI.CallWebApiPost("api/OrderChange/Receive", postBody);
+            return result;
+        }
+
+        public static bool CheckOrderChangeConfirmed(string orderid, string seq)
+        {
+            string sqlcmd = $@"select 1 from OrderChangeApplication where OrderID = '{orderid}' and status <> 'Confirmed'
+select * 
+from OrderChangeApplication o with(nolock)
+inner join OrderChangeApplication_Detail od with(nolock) on o.ID = od.id
+where OrderID = '{orderid}' and od.Seq = '{seq}' and status <> 'confirmed' 
+";
+            return !MyUtility.Check.Seek(sqlcmd);
+        }
     }
 }
