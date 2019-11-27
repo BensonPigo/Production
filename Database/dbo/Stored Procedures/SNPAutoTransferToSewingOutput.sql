@@ -442,7 +442,7 @@ BEGIN
 			,[OldDetailKey]=NULL
 			FROM #tmp_Into_SewingOutput_Detail_Detail a
 			INNER JOIN #tmp_SewingOutput_Detail b ON a.OrderID=b.OrderID AND a.ComboType=b.ComboType  AND a.Article=b.Article  
-			INNER JOIN SewingOutput sop ON  sop.ID=b.ID
+			INNER JOIN SewingOutput sop ON  sop.ID=b.ID AND a.WorkLine=sop.SewingLineID
 			OUTER APPLY(
 			 SELECT Ukey 
 			 FROM SewingOutput s WITH(NOLOCK)
