@@ -2411,9 +2411,13 @@
     <Build Include="dbo\Tables\Door2DoorDelivery.sql" />
     <Build Include="dbo\Tables\ShippingReason.sql" />
     <Build Include="dbo\Tables\SewingMonthlyLock.sql" />
-	<Build Include="dbo\Stored Procedures\Update_FabricLocation.sql" />
-	<Build Include="dbo\Stored Procedures\imp_AutoFabric.sql" />
-	<Build Include="dbo\Stored Procedures\exp_AutoFabric.sql" />
+    <Build Include="dbo\Stored Procedures\Update_FabricLocation.sql" />
+    <Build Include="dbo\Stored Procedures\imp_AutoFabric.sql" />
+    <Build Include="dbo\Stored Procedures\exp_AutoFabric.sql" />
+    <Build Include="dbo\Tables\OrderChangeApplication_Seq.sql" />
+    <Build Include="dbo\Tables\OrderChangeApplication_History.sql" />
+    <Build Include="dbo\Tables\OrderChangeApplication_Detail.sql" />
+    <Build Include="dbo\Tables\OrderChangeApplication.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
