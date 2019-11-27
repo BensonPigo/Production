@@ -2512,9 +2512,12 @@ and pd2.[SizeCode]			=pd.[SizeCode]
             #region 刪除表身SP No.或Qty為空白的資料
             for (int j = detailDatas.Rows.Count - 1; j >= 0; j--)
             {
-                if (MyUtility.Check.Empty(detailDatas.Rows[j]["OrderID"]) || MyUtility.Check.Empty(detailDatas.Rows[j]["ShipQty"]))
+                if (detailDatas.Rows[j].RowState != DataRowState.Deleted)
                 {
-                    detailDatas.Rows[j].Delete();
+                    if (MyUtility.Check.Empty(detailDatas.Rows[j]["OrderID"]) || MyUtility.Check.Empty(detailDatas.Rows[j]["ShipQty"]))
+                    {
+                        detailDatas.Rows[j].Delete();
+                    }
                 }
             }
             #endregion
