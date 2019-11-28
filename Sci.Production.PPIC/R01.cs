@@ -1426,11 +1426,12 @@ OriWorkHour,
 CPU,
 TotalSewingTime,
 Sewer,
-LNCSERIALNumber
+LNCSERIALNumber,
+Orderid
 into #APSExtendWorkDate_step1
 from #Workhour_step2 
 group by APSNo,LearnCurveID,WorkDate,HourOutput,
-OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID,LNCSERIALNumber,ComboType
+OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID,LNCSERIALNumber,ComboType,Orderid
 
 --欄位 LNCSERIALNumber 
 --    第一天學習曲線計算方式 = 最後一天對應的工作天數 『減去』（該計畫總生產天數 『減去』一天因為要推出第一天）
@@ -1455,7 +1456,8 @@ OriWorkHour,
 CPU,
 TotalSewingTime,
 Sewer,
-LNCSERIALNumber
+LNCSERIALNumber,
+Orderid
 into #APSExtendWorkDate
 from #APSExtendWorkDate_step1
 
@@ -1475,7 +1477,8 @@ select  awd.APSNo
         , [SewingOutput] = isnull(apo.SewingOutput,0)
         , awd.WorkingTime
         , [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))
-        , [StdOutput] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
+		, StdOutput=s.StdQ
+        --, [StdOutput] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
         , [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
         , [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.WorkingTime * awd.Sewer * 3600.0)
 into #APSExtendWorkDateFin
@@ -1484,13 +1487,14 @@ inner join #OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 left join #APSSewingOutput apo on awd.APSNo = apo.APSNo and awd.WorkDate = apo.OutputDate
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
+outer  apply(select * from dbo.[getDailystdq](OrderID)x where x.APSNo=awd.APSNo and x.Date = cast(awd.SewingStart as date))s
 group by awd.APSNo,
 		 awd.SewingStart,
 		 awd.SewingEnd,
 		 isnull(apo.SewingOutput,0),
 		 awd.WorkingTime,
 		 ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
-		 awd.Sewer
+		 awd.Sewer,s.StdQ
 
 --計算這一天的標準產量
 --= (工作時數 / 車縫一件成衣需要花費的秒數) * 工人數 * 效率
