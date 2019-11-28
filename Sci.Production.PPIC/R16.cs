@@ -140,7 +140,7 @@ pd.OrderShipmodeSeq,
 [PackingQty] = sum(isnull(pd.ShipQty,0)),
 [PackingCarton] = sum(iif(pd.CTNQty = 1,1,0)),
 [ClogReceivedCarton] = sum(iif(pd.CTNQty = 1 AND ( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL),1,0)),
-[ClogReceivedQty] = sum(iif(pd.CTNQty = 1 AND ( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL),pd.ShipQty,0))
+[ClogReceivedQty] = sum(iif( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL,pd.ShipQty,0))
 into #tmpPackingList_Detail
 from PackingList_Detail pd with (nolock)
 where exists(select 1 from #tmpOrderMain main where pd.OrderID = main.ID and 
