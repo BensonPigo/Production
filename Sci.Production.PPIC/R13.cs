@@ -170,12 +170,13 @@ from Orders o with (nolock)
 inner join #WorkDate w on w.Factory = o.FtyGroup 
 and w.WorkDate = o.SewOffLine
 outer apply(
-select ShipStatus = stuff((
-	select distinct concat(',', format(os.SewOffLine,'yyyy/MM/dd') + ' - ' + convert(varchar(10), os.Qty))
-	from orders os with(nolock)
-	where os.id = o.ID 
-	and os.SewOffLine = w.WorkDate
-		for xml path('')
+    select ShipStatus = 
+	stuff((
+	        select concat(',', format(os.BuyerDelivery,'yyyy/MM/dd') + ' - ' + convert(varchar(10), sum (os.Qty)))
+	        from order_QtyShip os with(nolock)
+	        where os.id = o.ID 
+            group by os.BuyerDelivery
+		    for xml path('')
 	),1,1,'')
 )Shipmode
 where 1=1
@@ -185,40 +186,40 @@ select *
 into #orders_tmp
 from	
 (
+    select * 
+    from #tmpOrderOffLine
+
+    union
+
     select o.*
-    ,[WorkDate] = oq.WorkDate
-    ,[WorkTime] = convert(datetime, oq.WorkDate) + convert(datetime,@time)
-    ,[OriReadyDate] = oq.ReadyDate
-    ,[ShipModeStatus] = oq.ShipModeStatus
+            , [WorkDate] = oq.WorkDate
+            , [WorkTime] = convert(datetime, oq.WorkDate) + convert(datetime,@time)
+            , [OriReadyDate] = oq.ReadyDate
+            , [ShipModeStatus] = Shipmode.ShipStatus
     from (
 	    select oq.Id
-	    ,[BuyerDelivery] = min(oq.BuyerDelivery)
-	    , w.ReadyDate,w.WorkDate	
-	    ,[ShipModeStatus] = Shipmode.ShipStatus
+	            , [BuyerDelivery] = min(oq.BuyerDelivery)
+	            , w.ReadyDate
+                , w.WorkDate
 	    from Order_QtyShip oq with (nolock)
 	    inner join Orders o with (nolock) on o.ID = oq.Id
 	    inner join #WorkDate w on w.Factory = o.FtyGroup
-	    and w.WorkDate = oq.BuyerDelivery
-	    outer apply(
-	    select ShipStatus = stuff((
-		    select distinct concat(',', convert(varchar(20), oqs.BuyerDelivery) + ' - ' + convert(varchar(10), oqs.Qty))
-		    from Order_QtyShip oqs with(nolock)
-		    where oqs.id = o.ID 
-		    and oqs.BuyerDelivery = oq.BuyerDelivery
-			    for xml path('')
-		    ),1,1,'')
-	    )Shipmode
-	    where 1=1
-	    and o.id not in (select id from #tmpOrderOffLine)
-	    group by oq.Id,w.ReadyDate,w.WorkDate,Shipmode.ShipStatus
+	                              and w.WorkDate = oq.BuyerDelivery
+	    where o.id not in (select id from #tmpOrderOffLine)
+              {whereBuyer}
+	    group by oq.Id, w.ReadyDate, w.WorkDate
     ) oq
     inner join orders o with (nolock) on oq.id=o.id
-    where not exists(select 1 from #tmpOrderOffLine where id = o.ID)
-    {whereBuyer}
-
-    union 
-
-    select * from #tmpOrderOffLine
+	outer apply(
+        select ShipStatus = 
+			stuff((
+	            select concat(',', format(os.BuyerDelivery,'yyyy/MM/dd') + ' - ' + convert(varchar(10), sum (os.Qty)))
+	            from order_QtyShip os with(nolock)
+	            where os.id = o.ID 
+                group by os.BuyerDelivery
+		        for xml path('')
+	    ),1,1,'')
+	) Shipmode  
 ) as a 
 where Category = 'B' and Junk = 0 
 {where1}
@@ -406,12 +407,14 @@ order by FtyGroup
 select t.Factory
 , t.SubProcessID
 , [BySubProcessCnt] = count(*)
-, [BySubProcessClose] = sum(IIF(t.FinishedQtyBySet >= s.Qty and s.LoadingStatus = 'Y',1,0))
-, [BySubProcessfail] = sum(IIF(t.FinishedQtyBySet < s.Qty and s.LoadingStatus = 'Y',1,0))
+, [BySubProcessClose] = case when t.SubProcessID = 'Loading' then sum(IIF([LoadingStatus] = 'Y', 1, 0))
+	else sum(IIF(t.FinishedQtyBySet >= s.Qty ,1,0)) end
+, [BySubProcessfail] = case when t.SubProcessID = 'Loading' then sum(IIF([LoadingStatus] = 'Y', 0, 1))
+	else sum(IIF(t.FinishedQtyBySet < s.Qty ,1,0)) end
 from #tmpInOut t
 inner join #detailResult s on s.ID = t.SP
 and t.Factory = s.FtyGroup
-where t.SubProcessID in ('Emb','BO','PRT','AT','PAD-PRT','HT')
+where t.SubProcessID in ('Emb','BO','PRT','AT','PAD-PRT','HT','Loading')
 group by t.Factory,t.SubProcessID
 order by t.Factory,t.SubProcessID
 
