@@ -97,6 +97,11 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                 MyUtility.Msg.WarningBox("Can't delete autocreate Item.");
                 return;
             }
+            if (this.CurrentDetailData["ImportFromDQS"].EqualString("True"))
+            {
+                MyUtility.Msg.WarningBox("Cannot delete this record because it is import from DQS!");
+                return;
+            }
 
             if (this.CheckRemoveRow() == false)
             {
@@ -3691,10 +3696,12 @@ with AllQty as (
     where oq.ID = '{item["Orderid"]}'
           and oq.Article = '{item["Article"]}'
 )
-select a.*
+select a.ID,a.SewingOutput_DetailUkey,a.OrderId,a.ComboType,a.Article,a.SizeCode,a.OrderQty
+       , Last.QAQty
+       , a.AccumQty
        , OrderQty.OrderQtyUpperlimit
        , a.OrderQty - a.AccumQty as Variance
-       , a.OrderQty - a.AccumQty - a.QAQty as BalQty
+       , a.OrderQty - a.AccumQty - Last.QAQty as BalQty
        , isnull(os.Seq,0) as Seq
        , OldDetailKey = ''
 from AllQty a
@@ -3710,6 +3717,7 @@ outer apply(
 	and o.LocalOrder<>1
 )b
 outer apply(select OrderQtyUpperlimit=iif(b.value is not null,round(cast(a.OrderQty as decimal)* (1+ isnull(o.DyeingLoss,0)/100),0),a.OrderQty))OrderQty
+outer apply(select QAQty=iif(OrderQty.OrderQtyUpperlimit - a.AccumQty < a.QAQty, OrderQty.OrderQtyUpperlimit - a.AccumQty, a.QAQty))Last
 order by a.OrderId,os.Seq
 ";
                 result = MyUtility.Tool.ProcessWithDatatable(sewDt2, string.Empty, sqlcmd, out sewDt2);
