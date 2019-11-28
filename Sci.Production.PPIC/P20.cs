@@ -487,8 +487,8 @@ order by ASeq",
 
             this.SendMail("Reject");
 
-            this.OnDetailEntered();
             this.RenewData();
+            this.OnDetailEntered();
         }
 
         private void BtnRefresh_Click(object sender, EventArgs e)
