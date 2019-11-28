@@ -433,7 +433,10 @@ where   o.FtyGroup = @factoryid
                             this.GetRFT(dr);
 
                             #region 若此SP是套裝的話，就跳出視窗讓使用者選擇部位
-                            sqlCmd = string.Format(
+
+                            if (MyUtility.Check.Seek($@"select 1 from Order_Location where OrderId= '{dr["OrderID"]}'"))
+                            {
+                                sqlCmd = string.Format(
                                 @"
 select Location
 ,Rate = isnull([dbo].[GetOrderLocation_Rate]('{0}',Location)
@@ -441,9 +444,21 @@ select Location
 from Order_Location WITH (NOLOCK) 
 where OrderId = '{0}'
 ", MyUtility.Convert.GetString(dr["OrderID"]));
+                            }
+                            else
+                            {
+                                sqlCmd = string.Format(
+                                    @"
+select Location
+,Rate = isnull([dbo].[GetOrderLocation_Rate]('{1}',Location)
+,[dbo].[GetStyleLocation_Rate]('{0}',Location)) 
+from Style_Location WITH (NOLOCK) 
+where StyleUkey = {0}", MyUtility.Convert.GetString(ordersData.Rows[0]["StyleUkey"]), MyUtility.Convert.GetString(dr["OrderID"]));
+                            }
+
                             DataTable orderLocation;
                             result = DBProxy.Current.Select(null, sqlCmd, out orderLocation);
-                            if (!result || orderLocation.Rows.Count < 0)
+                            if (!result || orderLocation.Rows.Count <= 0)
                             {
                                 if (!result)
                                 {
@@ -495,14 +510,32 @@ where OrderId = '{0}'
                                 return;
                             }
 
+                            string sqlCmd = string.Empty;
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format(@"
+
+                            if (MyUtility.Check.Seek($@"select 1 from Order_Location where OrderId= '{dr["OrderID"]}'"))
+                            {
+                                sqlCmd = string.Format(
+                                    @"
 select ol.Location
 ,Rate = isnull([dbo].[GetOrderLocation_Rate]('{0}' ,ol.Location)
 ,[dbo].[GetStyleLocation_Rate](o.StyleUkey ,ol.Location)),o.CPU,o.CPUFactor
 ,(select StdTMS from System WITH (NOLOCK) ) as StdTMS 
 from Orders o WITH (NOLOCK) , Order_Location ol WITH (NOLOCK) 
 where o.ID = '{0}' and o.ID = ol.OrderId", MyUtility.Convert.GetString(dr["OrderID"]));
+                            }
+                            else
+                            {
+                                sqlCmd = string.Format(
+                                    @"
+select sl.Location
+,Rate = isnull([dbo].[GetOrderLocation_Rate]('{0}' ,sl.Location)
+,[dbo].[GetStyleLocation_Rate](o.StyleUkey ,sl.Location))
+,o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS 
+from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) 
+where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
+                            }
+
                             DataTable locationData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, out locationData);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(locationData, "Location", "10", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");
