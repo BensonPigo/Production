@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -322,6 +323,12 @@ and pld.OrderID = '{this.txtSPNo.Text}'
             {
                 this.txtPackingListID.Focus();
                 MyUtility.Msg.WarningBox("PackingListID No. can't empty!");
+                return false;
+            }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
                 return false;
             }
             #endregion

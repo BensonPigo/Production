@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci;
 using System.Data.SqlClient;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -209,6 +210,12 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
                     MyUtility.Msg.WarningBox("Style can't empty!");
                     return false;
                 }
+            }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
+                return false;
             }
             #endregion
 
