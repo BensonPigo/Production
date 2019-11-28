@@ -162,7 +162,7 @@
             this.txtFactory.boolFtyGroupList = true;
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactory.IsProduceFty = false;
+            this.txtFactory.IsProduceFty = true;
             this.txtFactory.IssupportJunk = false;
             this.txtFactory.Location = new System.Drawing.Point(125, 125);
             this.txtFactory.MDivision = null;
