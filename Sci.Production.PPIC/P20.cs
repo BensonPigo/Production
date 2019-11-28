@@ -109,10 +109,9 @@ from(
 	select h.Status,StatusDate=max(h.StatusDate)
 	from OrderChangeApplication_History h
 	where id = '{this.CurrentMaintain["ID"]}'
-
     group by h.Status
 )x
-inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusDate = x.StatusDate
+inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusDate = x.StatusDate and h.id = '{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlHdata, out dtSign);
             if (!result)
@@ -130,8 +129,8 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
 
                 if (rowSign != null)
                 {
-                    tbName.TextBox1Binding = rowSign["AddName"].ToString();
-                    tbDate.Text = rowSign["AddDate"].ToString();
+                    tbName.TextBox1Binding = rowSign["StatusUser"].ToString();
+                    tbDate.Text = rowSign["StatusDate"].ToString();
                 }
 
                 return true;
@@ -500,10 +499,18 @@ order by ASeq",
 
         private void SendMail(string status)
         {
-            string toAddress = "";
+            string sqlcmd = string.Empty;
+            List<string> emailList = new List<string>();
+            sqlcmd = $@"select p.EMail from orders o left join pass1 p on p.id = o.MRHandle where o.id = '{this.CurrentMaintain["Orderid"]}'";
+            emailList.Add(MyUtility.GetValue.Lookup(sqlcmd));
+            sqlcmd = $@"select p.EMail from orders o left join pass1 p on p.id = o.SMR where o.id = '{this.CurrentMaintain["Orderid"]}'";
+            emailList.Add(MyUtility.GetValue.Lookup(sqlcmd));
+            var x = emailList.Where(w => !MyUtility.Check.Empty(w)).ToList();
+            string toAddress = string.Join(";", x);
             string ccAddress = "";
             string subject = "";
             string description = @"";
+
             var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
             email.ShowDialog(this);
         }

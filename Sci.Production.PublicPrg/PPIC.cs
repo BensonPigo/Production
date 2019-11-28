@@ -163,11 +163,11 @@ from OrderChangeApplication where ID = '{ID}'
 
         public static bool CheckOrderChangeConfirmed(string orderid, string seq)
         {
-            string sqlcmd = $@"select 1 from OrderChangeApplication where OrderID = '{orderid}' and status <> 'Confirmed'
-select * 
+            string sqlcmd = $@"
+select 1
 from OrderChangeApplication o with(nolock)
 inner join OrderChangeApplication_Detail od with(nolock) on o.ID = od.id
-where OrderID = '{orderid}' and od.Seq = '{seq}' and status <> 'confirmed' 
+where OrderID = '{orderid}' and od.Seq = '{seq}' and status != 'Confirmed' and status != 'Closed' 
 ";
             return !MyUtility.Check.Seek(sqlcmd);
         }
