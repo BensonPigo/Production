@@ -1296,27 +1296,33 @@ where POID = @poid group by POID,b.spno";
         }
 
         // M/Notice Sheet
-     private void BtnMNoticeSheet_Click(object sender, EventArgs e)
-     {
-         if (this.CurrentMaintain["SMnorderApv"].ToString() == null || this.CurrentMaintain["SMnorderApv"].ToString() == string.Empty)
-         {
-             var dr = this.CurrentMaintain;
-            if (dr == null)
+        private void BtnMNoticeSheet_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SMnorderApv"]) && MyUtility.Check.Empty(this.CurrentMaintain["MnorderApv"]))
             {
+                MyUtility.Msg.WarningBox("M/Notice did not approve yet, you cannot print M/Notice.");
                 return;
             }
 
-            var frm = new Sci.Production.PPIC.P01_MNoticePrint(null, dr["ID"].ToString());
-             frm.ShowDialog(this);
-             this.RenewData();
-             return;
-         }
-         else
-         {
-             string poid = this.CurrentMaintain["POID"].ToString();
-             SMNoticePrg.PrintSMNotice(poid, SMNoticePrg.EnuPrintSMType.Order);
-         }
-     }
+            if (this.CurrentMaintain["SMnorderApv"].ToString() == null || this.CurrentMaintain["SMnorderApv"].ToString() == string.Empty)
+            {
+                var dr = this.CurrentMaintain;
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new Sci.Production.PPIC.P01_MNoticePrint(null, dr["ID"].ToString());
+                frm.ShowDialog(this);
+                this.RenewData();
+                return;
+            }
+            else
+            {
+                string poid = this.CurrentMaintain["POID"].ToString();
+                SMNoticePrg.PrintSMNotice(poid, SMNoticePrg.EnuPrintSMType.Order);
+            }
+        }
 
         /// <summary>
         /// MoveSubBlockIntoMainSheet
