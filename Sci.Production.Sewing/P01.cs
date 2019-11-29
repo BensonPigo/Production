@@ -35,7 +35,7 @@ namespace Sci.Production.Sewing
         private decimal? oldManHour;
         private string loginFactory;
         private DateTime? dateYesterday;
-
+        private DataTable rftDT;
         /// <summary>
         /// P01
         /// </summary>
@@ -95,6 +95,11 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
             if (this.CurrentDetailData["AutoCreate"].EqualString("True"))
             {
                 MyUtility.Msg.WarningBox("Can't delete autocreate Item.");
+                return;
+            }
+            if (this.CurrentDetailData["ImportFromDQS"].EqualString("True"))
+            {
+                MyUtility.Msg.WarningBox("Cannot delete this record because it is import from DQS!");
                 return;
             }
 
@@ -178,8 +183,6 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                         this.txtSubConOutContractNumber.ReadOnly = false;
                     }
                 }
-
-
             }
         }
 
@@ -955,6 +958,8 @@ and Team = @team";
             {
                 dr["RFT"] = "0.00%";
             }
+
+            dr.EndEdit();
         }
 
         // 刪除SubDetail資料
@@ -1662,6 +1667,68 @@ where not exists (select 1
                 return new DualResult(false, $"SP# {loseSubDetailOrderID} <QA Output> can not be empty");
             }
             #endregion
+
+            #region
+            if (this.rftDT != null && this.rftDT.Rows.Count > 0)
+            {
+                string insertRFT = $@"
+select *,MDivisionid=(select MDivisionID from Factory where id=t.FactoryID)
+into #tmp1
+from #tmp t
+
+create  table #td(id varchar(13))
+merge RFT t
+using #tmp1 s
+on t.orderid = s.orderid and t.Cdate = s.CDate and t.SewinglineID = s.SewinglineID 
+and t.FactoryID = s.FactoryID and t.MDivisionid = s.MDivisionid and t.Shift = s.Shift and t.Team = s.Team 
+when not matched by target then 
+insert([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty]
+,[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[MDivisionid])
+values(s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty],s.[DefectQty]
+,s.[Shift],s.[Team],s.[Status],s.[Remark],'SCIMIS',getdate(),s.[MDivisionid])
+output inserted.id into #td 
+;
+select * from RFT with(nolock) where id in(select id from #td)
+";
+                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(this.rftDT, string.Empty, insertRFT, out this.rftDT);
+                if (!dualResult)
+                {
+                    return dualResult;
+                }
+
+                string rdfdetail = $@"
+select t.id
+	, GarmentDefectTypeID
+	, GarmentDefectCodeID
+	, Qty=count(*)
+from #tmp t
+inner join inspection i with(nolock) on t.Cdate = i.InspectionDate and t.FactoryID = i.FactoryID 
+	and t.SewinglineID = i.Line and t.Team = i.Team and t.Shift = iif(i.Shift='Day','D','N')and t.OrderId = i.OrderId
+inner join Inspection_Detail id with(nolock) on i.id= id.id
+group by t.id,GarmentDefectTypeID, GarmentDefectCodeID
+";
+                DataTable rftDT_Detail;
+                SqlConnection sqlConn = null;
+                DBProxy.Current.OpenConnection("ManufacturingExecution", out sqlConn);
+                dualResult = MyUtility.Tool.ProcessWithDatatable(this.rftDT, string.Empty, rdfdetail, out rftDT_Detail, conn: sqlConn);
+                if (!dualResult)
+                {
+                    return dualResult;
+                }
+
+                string insetRFTDetail = $@"
+INSERT INTO [dbo].[Rft_Detail]([ID],[GarmentDefectCodeID],[GarmentDefectTypeid],[Qty])
+select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
+
+                dualResult = MyUtility.Tool.ProcessWithDatatable(rftDT_Detail, string.Empty, insetRFTDetail, out rftDT_Detail);
+                if (!dualResult)
+                {
+                    return dualResult;
+                }
+
+                this.rftDT = null;
+            }
+            #endregion
             return base.ClickSavePost();
         }
 
@@ -1968,24 +2035,6 @@ and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
                 }
             }
 
-            // List<DataRow> newUpdate.d = new List<DataRow>();
-            // if (updated.Count > 0 && false)
-            // {
-            //    var newT = updated[0].Table.Clone();
-            //    for (int i = 0; i < updated.Count; i++)
-            //    {
-            //        var newOne = newT.NewRow();
-            //        newOne.ItemArray = updated[i].ItemArray;
-            //        newUpdated.Add(newOne);
-            //        newT.Rows.Add(newOne);
-            //    }
-
-            // newT.AcceptChanges();
-            //    for (int i = 0; i < updated.Count; i++)
-            //    {
-            //        newUpdated[i]["QaQty"] = updated[i]["qaqty"];
-            //    }
-            // }
             List<DataRow> newDelete = new List<DataRow>();
             if (deleteList.Count > 0)
             {
@@ -2069,6 +2118,10 @@ and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
                     MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(sewingMonthlyLockDate).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                     return;
                 }
+
+                this.CurrentMaintain["OutputDate"] = this.dateDate.Value;
+                this.CurrentMaintain.EndEdit();
+                this.FromDQS();
             }
         }
 
@@ -2390,6 +2443,12 @@ WHERE sewqty < (packqty + adjQty)",
                     this.CurrentMaintain["Shift"] = this.txtdropdownlistShift.SelectedValue;
                     this.CurrentMaintain["SubconOutFty"] = string.Empty;
                     this.CurrentMaintain["SubConOutContractNumber"] = string.Empty;
+                    this.CurrentMaintain.EndEdit();
+                }
+
+                if (MyUtility.Convert.GetString(this.txtdropdownlistShift.SelectedValue) != MyUtility.Convert.GetString(this.txtdropdownlistShift.OldValue))
+                {
+                    this.FromDQS();
                 }
             }
         }
@@ -3519,6 +3578,346 @@ Hi all,
             #endregion
 
             MyUtility.Msg.InfoBox("Lock data successfully!");
+        }
+
+        private void FromDQS()
+        {
+            if (this.CurrentMaintain == null || !this.EditMode || !this.IsDetailInserting)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OutputDate"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["Team"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["Shift"]))
+            {
+                return;
+            }
+
+            this.CurrentMaintain.EndEdit();
+            string frommes = $@"
+select
+	OrderId
+	, Article
+	, ComboType=Location 
+	, ColorID=''
+	, TMS=0
+	, HourlyStandardOutput = 0
+	, [QAQty] = ct1.v
+	, [DefectQty] = ct2.v
+	, [InlineQty] = ct1.v + ct2.v
+	, [ImportFromDQS] = 1
+	, [AutoCreate] = 0
+from inspection ins WITH (NOLOCK)
+outer apply(select v=count(1)from inspection i WITH (NOLOCK) 
+	where i.InspectionDate = ins.InspectionDate and i.FactoryID = ins.FactoryID 
+	and i.Line = ins.Line and i.Team = ins.Team and i.Shift = ins.Shift 
+	and i.OrderId = ins.OrderId and i.Article = ins.Article and i.Location = ins.Location 
+	and i.Status in ('Pass','Fixed'))ct1
+outer apply(select v=count(1)from inspection i WITH (NOLOCK)
+	where i.InspectionDate = ins.InspectionDate and i.FactoryID = ins.FactoryID 
+	and i.Line = ins.Line and i.Team = ins.Team and i.Shift = ins.Shift 
+	and i.OrderId = ins.OrderId and i.Article = ins.Article and i.Location = ins.Location 
+	and i.Status in ('Reject'))ct2
+where 1=1
+and InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+and Line = '{this.CurrentMaintain["SewingLineID"]}'
+and Team = '{this.CurrentMaintain["Team"]}'
+and Shift = iif('{this.CurrentMaintain["Shift"]}'='D','Day',iif('{this.CurrentMaintain["Shift"]}'='N','Night',''))
+group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location,ct1.v,ct2.v
+";
+            DataTable sewDt1;
+            DualResult result = DBProxy.Current.Select("ManufacturingExecution", frommes, out sewDt1);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            string sqlcmd = $@"
+select t.OrderId,t.Article,t.ComboType
+    ,Color=(select ColorID from View_OrderFAColor vof with(nolock) where vof.id=t.OrderId and vof.Article=t.Article)
+    ,TMS=ROUND(isnull(o.cpu,0) * isnull(o.CPUFactor,0) * 
+			isnull((select Rate = isnull([dbo].[GetOrderLocation_Rate](t.OrderId,sl.Location),[dbo].[GetStyleLocation_Rate](sl.StyleUkey,sl.Location))
+			from Style_Location sl WITH (NOLOCK) where sl.StyleUkey = o.StyleUkey and sl.Location = t.ComboType),0)
+			/100 * (select StdTMS from System WITH (NOLOCK)),0)
+    ,HourlyStandardOutput=(select top 1 ss.StandardOutput from SewingSchedule ss WITH (NOLOCK) where ss.OrderID = t.OrderID and ss.ComboType = t.ComboType and ss.SewingLineID = '{this.CurrentMaintain["SewingLineID"]}')
+    ,t.QAQty,t.DefectQty,t.InlineQty,t.ImportFromDQS,t.AutoCreate
+    ,ukey = 0
+    ,RFT = ''
+    ,ID = '{this.CurrentMaintain["ID"]}'
+from #tmp t
+left join orders o  with(nolock) on o.id = t.OrderId
+";
+            result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            // 先用刪除原本表身下的第3層, 不用.Clear()
+            DataTable subDetailData;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                this.GetSubDetailDatas(dr, out subDetailData);
+                for (int i = subDetailData.Rows.Count - 1; i >= 0; i--)
+                {
+                    subDetailData.Rows[i].Delete();
+                }
+            }
+
+            // 刪除表身, 不用.Clear()
+            for (int i = this.DetailDatas.Count - 1; i >= 0; i--)
+            {
+                this.DetailDatas[i].Delete();
+            }
+
+            // 加入表身
+            foreach (DataRow row in sewDt1.Rows)
+            {
+                this.GetRFT(row);
+                ((DataTable)this.detailgridbs.DataSource).ImportRow(row);
+            }
+
+            foreach (DataRow item in this.DetailDatas)
+            {
+                frommes = $@"
+select
+    ID = '{this.CurrentMaintain["ID"]}'
+    , SewingOutput_DetailUKey='{item["ukey"]}'
+	, OrderId
+	, ComboType=Location 
+	, Article
+	, SizeCode=Size
+	, [QAQty] = ct1.v
+from inspection ins WITH (NOLOCK)
+outer apply(select v=count(1)from inspection i WITH (NOLOCK) 
+	where i.InspectionDate = ins.InspectionDate and i.FactoryID = ins.FactoryID 
+	and i.Line = ins.Line and i.Team = ins.Team and i.Shift = ins.Shift 
+	and i.OrderId = ins.OrderId and i.Article = ins.Article and i.Location = ins.Location  and i.Size = ins.Size 
+	and i.Status in ('Pass','Fixed'))ct1
+where 1=1
+and InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+and Line = '{this.CurrentMaintain["SewingLineID"]}'
+and Team = '{this.CurrentMaintain["Team"]}'
+and Shift = iif('{this.CurrentMaintain["Shift"]}'='D','Day',iif('{this.CurrentMaintain["Shift"]}'='N','Night',''))
+and Article = '{item["Article"]}'
+and Location = '{item["ComboType"]}'
+and OrderId = '{item["OrderId"]}'
+group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location,ct1.v,Size
+";
+                DataTable sewDt2;
+                result = DBProxy.Current.Select("ManufacturingExecution", frommes, out sewDt2);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                sqlcmd = $@"
+with AllQty as (
+    select 
+            ID = '{this.CurrentMaintain["ID"]}'
+           , SewingOutput_DetailUkey = '{item["UKey"]}'
+           , oq.ID as OrderId
+           , ComboType = '{item["ComboType"]}'
+           , oq.Article
+           , oq.SizeCode
+           , oq.Qty as OrderQty
+           , QAQty  = isnull(t.QAQty,0)
+           , AccumQty = isnull((select sum(QAQty) 
+                                from SewingOutput_Detail_Detail WITH (NOLOCK) 
+                                where OrderId = oq.ID 
+                                      and ComboType = '{item["ComboType"]}'
+                                      and Article = oq.Article 
+                                      and SizeCode = oq.SizeCode
+                                      and ID != '{this.CurrentMaintain["ID"]}'), 0) 
+    from Order_Qty oq WITH (NOLOCK) 
+    left join #tmp t on oq.id = t.Orderid and oq.Article = t.Article and oq.SizeCode = t.SizeCode
+    where oq.ID = '{item["Orderid"]}'
+          and oq.Article = '{item["Article"]}'
+)
+select a.ID,a.SewingOutput_DetailUkey,a.OrderId,a.ComboType,a.Article,a.SizeCode,a.OrderQty
+       , Last.QAQty
+       , a.AccumQty
+       , OrderQty.OrderQtyUpperlimit
+       , a.OrderQty - a.AccumQty as Variance
+       , a.OrderQty - a.AccumQty - Last.QAQty as BalQty
+       , isnull(os.Seq,0) as Seq
+       , OldDetailKey = ''
+from AllQty a
+left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
+left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID 
+    and os.SizeCode = a.SizeCode
+outer apply(
+	select value=1
+	from Order_TmsCost ot with(nolock)
+	inner join Order_Qty oq WITH (NOLOCK) on ot.id = oq.ID
+	where ot.ArtworkTypeID = 'Garment Dye' and ot.Price > 0
+	and oq.SizeCode=os.SizeCode and oq.Article=a.Article and ot.id=o.id
+	and o.LocalOrder<>1
+)b
+outer apply(select OrderQtyUpperlimit=iif(b.value is not null,round(cast(a.OrderQty as decimal)* (1+ isnull(o.DyeingLoss,0)/100),0),a.OrderQty))OrderQty
+outer apply(select QAQty=iif(OrderQty.OrderQtyUpperlimit - a.AccumQty < a.QAQty, OrderQty.OrderQtyUpperlimit - a.AccumQty, a.QAQty))Last
+order by a.OrderId,os.Seq
+";
+                result = MyUtility.Tool.ProcessWithDatatable(sewDt2, string.Empty, sqlcmd, out sewDt2);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                this.GetSubDetailDatas(item, out subDetailData);
+                foreach (DataRow ddr in sewDt2.Rows)
+                {
+                    if (!subDetailData.AsEnumerable().Any(row => row["ID"].EqualString(ddr["ID"])
+                                                                && row["SewingOutput_DetailUkey"].EqualString(ddr["SewingOutput_DetailUkey"])
+                                                                && row["OrderID"].EqualString(ddr["OrderID"])
+                                                                && row["ComboType"].EqualString(ddr["ComboType"])
+                                                                && row["Article"].EqualString(ddr["Article"])
+                                                                && row["SizeCode"].EqualString(ddr["SizeCode"])))
+                    {
+                        DataRow newDr = subDetailData.NewRow();
+                        for (int i = 0; i < subDetailData.Columns.Count; i++)
+                        {
+                            newDr[subDetailData.Columns[i].ColumnName] = ddr[subDetailData.Columns[i].ColumnName];
+                        }
+
+                        subDetailData.Rows.Add(newDr);
+                    }
+                }
+
+                StringBuilder qAOutput = new StringBuilder();
+                int qAQty = 0;
+
+                // 新建DataTable 用來存放第三層資料
+                DataTable dtQAQtyCheck = new DataTable();
+                dtQAQtyCheck.Columns.Add("OrderID", typeof(string));
+                dtQAQtyCheck.Columns.Add("Article", typeof(string));
+                dtQAQtyCheck.Columns.Add("SizeCode", typeof(string));
+                dtQAQtyCheck.Columns.Add("QAQty", typeof(int));
+
+                foreach (DataRow dr in subDetailData.Rows)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        if (MyUtility.Convert.GetString(dr["SewingOutput_DetailUKey"]) == MyUtility.Convert.GetString(item["UKey"]) && !MyUtility.Check.Empty(dr["QAQty"]))
+                        {
+                            qAOutput.Append(string.Format("{0}*{1},", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["QAQty"])));
+                            qAQty = qAQty + MyUtility.Convert.GetInt(dr["QAQty"]);
+                        }
+
+                        DataRow dr1 = dtQAQtyCheck.NewRow();
+                        dr1["OrderID"] = dr["Orderid"];
+                        dr1["Article"] = dr["Article"];
+                        dr1["SizeCode"] = dr["SizeCode"];
+                        dr1["QAQty"] = MyUtility.Convert.GetInt(dr["AccumQty"]) + MyUtility.Convert.GetInt(dr["QAQty"]);
+                        dtQAQtyCheck.Rows.Add(dr1);
+                    }
+                }
+
+                // 將第三層資料丟進DataTable
+                this.dtQACheck = dtQAQtyCheck.Copy();
+
+                item["QAOutput"] = qAOutput.Length > 0 ? qAOutput.ToString() : string.Empty;
+
+                // 總計第三層 Qty 填入第二層 QAQty
+                item["QAQty"] = qAQty;
+
+                if (qAQty == 0)
+                {
+                    item["InlineQty"] = 0;
+                }
+                else
+                {
+                    item["InlineQty"] = item["RFT"].ToString().Substring(0, 4) == "0.00" ? qAQty : qAQty /
+                        (decimal.Parse(item["RFT"].ToString().Substring(0, 4)) / 100);
+                }
+
+                this.CalculateDefectQty(item);
+
+                // 總計第二層 Qty 填入第一層 QAQty
+                this.CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                                                                                     && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(QAQty)", string.Empty);
+                this.CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(this.CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["DefectQty"]);
+
+                // 將第2層重新設定為新增狀態
+                item.AcceptChanges();
+                item.SetAdded();
+            }
+
+            string rftfrommes = $@"
+select OrderId
+	, CDate=InspectionDate
+	, SewinglineID=Line
+	, FactoryID
+	, InspectQty= isnull(ct1.v,0)+isnull(ct2.v,0)
+	, RejectQty= isnull(ct2.v,0)
+	, DefectQty= isnull(ct3.Qty,0)
+	, Shift=iif(Shift='Day','D','N')
+	, Team
+	, Status='New'
+	, Remark=''
+from inspection ins
+outer apply(select v=count(1)from inspection i WITH (NOLOCK) 
+	where i.InspectionDate = ins.InspectionDate and i.FactoryID = ins.FactoryID 
+	and i.Line = ins.Line and i.Team = ins.Team and i.Shift = ins.Shift 
+	and i.OrderId = ins.OrderId 
+	and i.Status in ('Pass','Fixed'))ct1
+outer apply(select v=count(1)from inspection i WITH (NOLOCK)
+	where i.InspectionDate = ins.InspectionDate and i.FactoryID = ins.FactoryID 
+	and i.Line = ins.Line and i.Team = ins.Team and i.Shift = ins.Shift 
+	and i.OrderId = ins.OrderId 
+	and i.Status in ('Reject'))ct2
+outer apply(
+	select Qty=count(*)
+	from Inspection_Detail id with(nolock)
+	inner join inspection i with(nolock) on i.id= id.id
+	where i.InspectionDate = ins.InspectionDate and i.FactoryID = ins.FactoryID 
+	and i.Line = ins.Line and i.Team = ins.Team and i.Shift = ins.Shift 
+	and i.OrderId = ins.OrderId 
+	group by GarmentDefectTypeID, GarmentDefectCodeID
+)ct3
+where 1=1
+and InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+and Line = '{this.CurrentMaintain["SewingLineID"]}'
+and Team = '{this.CurrentMaintain["Team"]}'
+and Shift = iif('{this.CurrentMaintain["Shift"]}'='D','Day',iif('{this.CurrentMaintain["Shift"]}'='N','Night',''))
+group by InspectionDate, FactoryID, Line, Shift, Team, OrderId,ct1.v,ct2.v,ct3.Qty
+";
+            result = DBProxy.Current.Select("ManufacturingExecution", rftfrommes, out this.rftDT);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+        }
+
+        private void TxtsewinglineLine_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode && this.txtsewinglineLine.Text != this.txtsewinglineLine.OldValue)
+            {
+                this.CurrentMaintain["SewingLineID"] = this.txtsewinglineLine.Text;
+                this.CurrentMaintain.EndEdit();
+                this.FromDQS();
+            }
+        }
+
+        private void ComboTeam_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.EditMode && this.comboTeam.Text != MyUtility.Convert.GetString(this.comboTeam.OldValue))
+            {
+                this.CurrentMaintain["Team"] = this.comboTeam.Text;
+                this.CurrentMaintain.EndEdit();
+                this.FromDQS();
+            }
         }
     }
 }

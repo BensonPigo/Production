@@ -1,22 +1,25 @@
 ﻿CREATE TABLE [dbo].[SewingOutput_Detail] (
-    [ID]                   VARCHAR (13)   CONSTRAINT [DF_SewingOutput_Detail_ID] DEFAULT ('') NOT NULL,
-    [OrderId]              VARCHAR (13)   CONSTRAINT [DF_SewingOutput_Detail_OrderId] DEFAULT ('') NOT NULL,
-    [ComboType]            VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Detail_ComboType] DEFAULT ('') NULL,
-    [Article]              VARCHAR (8)    CONSTRAINT [DF_SewingOutput_Detail_Article] DEFAULT ('') NULL,
-    [Color]                VARCHAR (6)    CONSTRAINT [DF_SewingOutput_Detail_Color] DEFAULT ('') NULL,
-    [TMS]                  INT            CONSTRAINT [DF_SewingOutput_Detail_TMS] DEFAULT ((0)) NULL,
-    [HourlyStandardOutput] INT            CONSTRAINT [DF_SewingOutput_Detail_HourlyStandardOutput] DEFAULT ((0)) NULL,
-    [WorkHour]             NUMERIC (6, 3) CONSTRAINT [DF_SewingOutput_Detail_WorkHour] DEFAULT ((0)) NOT NULL,
-    [UKey]                 BIGINT         IDENTITY (1, 1) NOT NULL,
-    [QAQty]                INT            CONSTRAINT [DF_SewingOutput_Detail_QAQty] DEFAULT ((0)) NULL,
-    [DefectQty]            INT            CONSTRAINT [DF_SewingOutput_Detail_DefectQty] DEFAULT ((0)) NULL,
-    [InlineQty]            INT            CONSTRAINT [DF_SewingOutput_Detail_InlineQty] DEFAULT ((0)) NULL,
-    [OldDetailKey]         VARCHAR (13)   CONSTRAINT [DF_SewingOutput_Detail_OldDetailKey] DEFAULT ('') NULL,
-    [AutoCreate]           BIT            NULL,
-    [SewingReasonID] VARCHAR(5) NOT NULL DEFAULT (''), 
-    [Remark] NVARCHAR(1000) NULL DEFAULT (''), 
+    [ID]                   VARCHAR (13)    CONSTRAINT [DF_SewingOutput_Detail_ID] DEFAULT ('') NOT NULL,
+    [OrderId]              VARCHAR (13)    CONSTRAINT [DF_SewingOutput_Detail_OrderId] DEFAULT ('') NOT NULL,
+    [ComboType]            VARCHAR (1)     CONSTRAINT [DF_SewingOutput_Detail_ComboType] DEFAULT ('') NULL,
+    [Article]              VARCHAR (8)     CONSTRAINT [DF_SewingOutput_Detail_Article] DEFAULT ('') NULL,
+    [Color]                VARCHAR (6)     CONSTRAINT [DF_SewingOutput_Detail_Color] DEFAULT ('') NULL,
+    [TMS]                  INT             CONSTRAINT [DF_SewingOutput_Detail_TMS] DEFAULT ((0)) NULL,
+    [HourlyStandardOutput] INT             CONSTRAINT [DF_SewingOutput_Detail_HourlyStandardOutput] DEFAULT ((0)) NULL,
+    [WorkHour]             NUMERIC (6, 3)  CONSTRAINT [DF_SewingOutput_Detail_WorkHour] DEFAULT ((0)) NOT NULL,
+    [UKey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
+    [QAQty]                INT             CONSTRAINT [DF_SewingOutput_Detail_QAQty] DEFAULT ((0)) NULL,
+    [DefectQty]            INT             CONSTRAINT [DF_SewingOutput_Detail_DefectQty] DEFAULT ((0)) NULL,
+    [InlineQty]            INT             CONSTRAINT [DF_SewingOutput_Detail_InlineQty] DEFAULT ((0)) NULL,
+    [OldDetailKey]         VARCHAR (13)    CONSTRAINT [DF_SewingOutput_Detail_OldDetailKey] DEFAULT ('') NULL,
+    [AutoCreate]           BIT             NULL,
+    [SewingReasonID]       VARCHAR (5)     DEFAULT ('') NOT NULL,
+    [Remark]               NVARCHAR (1000) DEFAULT ('') NULL,
+    [ImportFromDQS]        BIT             DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_SewingOutput_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 
@@ -104,4 +107,8 @@ CREATE NONCLUSTERED INDEX [id]
 GO
 CREATE NONCLUSTERED INDEX [OrderID_ComboType]
     ON [dbo].[SewingOutput_Detail]([OrderId] ASC, [ComboType] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際產出日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail', @level2type = N'COLUMN', @level2name = N'ImportFromDQS';
 
