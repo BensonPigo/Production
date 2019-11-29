@@ -460,8 +460,26 @@ where Ltrim(Misc.ID)  = @Refno";
             return MyUtility.GetValue.Lookup("SELECT Stuff((select concat( ', ',ID)   from ShipMode where NeedCreateAPP = 1 FOR XML PATH('')),1,1,'') ");
         }
 
-        #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
-        public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)
+        #region P02 檢查狀態是否為Approved/Junk
+        public static bool checkP02Status(string HCNo)
+        {  // 該單Approved / Junk都不允許調整資料
+            if (MyUtility.Check.Seek($@"select 1 from Express where id='{HCNo}' and status in ('Junk','Approved')"))
+            {
+                MyUtility.Msg.WarningBox($@"HC# {HCNo} already Approved or Junked, 
+please check again.");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+          
+    #endregion
+
+    #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+    public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)
         {
             var listDupNLCodeData = checkList
                                    .GroupBy(s => new { ID = s["ID"], NLCode = s["NLCode"], HSCode = s["HSCode"], UnitID = s["UnitID"] })
@@ -1271,5 +1289,7 @@ drop table #tmpThreadData");
         }
 
         #endregion
+
+
     }
 }

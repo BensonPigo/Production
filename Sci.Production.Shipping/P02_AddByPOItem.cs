@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -324,6 +325,12 @@ and pld.OrderID = '{this.txtSPNo.Text}'
                 MyUtility.Msg.WarningBox("PackingListID No. can't empty!");
                 return false;
             }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
+                return false;
+            }
             #endregion
 
             string packingListTyp = this.ChkPackingListID();
@@ -390,6 +397,12 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 {
                     return false;
                 }
+            }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
+                return false;
             }
 
             return base.OnDeleteBefore();

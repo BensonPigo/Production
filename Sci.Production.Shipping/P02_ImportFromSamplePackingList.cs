@@ -12,6 +12,7 @@ using Sci;
 using System.Transactions;
 using System.Data.SqlClient;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -212,6 +213,12 @@ from (
 
             // 檢查Sapmle PL#是否正確
             if (!this.CheckPLNo(MyUtility.Convert.GetString(dt.Rows[0]["ID"])))
+            {
+                return;
+            }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.masterData["ID"].ToString()))
             {
                 return;
             }
