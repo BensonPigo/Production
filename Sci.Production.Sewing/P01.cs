@@ -99,7 +99,7 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
             }
             if (this.CurrentDetailData["ImportFromDQS"].EqualString("True"))
             {
-                MyUtility.Msg.WarningBox("Cannot delete this record because it is import from DQS!");
+                MyUtility.Msg.WarningBox("If DQS record is inaccurate,please update QA Qty to zero manually");
                 return;
             }
 
