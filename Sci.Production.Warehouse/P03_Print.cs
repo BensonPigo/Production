@@ -246,7 +246,9 @@ namespace Sci.Production.Warehouse
 	                                                , [WK#]
 	                                                , [Order List]
 	                                                , [Arrived Qty]
-	                                                , [Received Rate(%)]=IIF(val IS NOT NULL , CAST(ROUND( ([Arrived Qty] / REPLACE([Ship Qty],',','') * 100),2) AS varchar) , '-')
+	                                                , [Received Rate(%)]=IIF( CanINT.val IS NOT NULL AND CanINT2.val IS NOT NULL
+													                        , CAST(ROUND( ([Arrived Qty] / REPLACE([Ship Qty],',','') * 100),2) AS varchar) 
+													                        , '-')
 	                                                , [StockUnit] 
 	                                                , [Released Qty]
 	                                                , [Adjust Qty]
@@ -262,6 +264,9 @@ namespace Sci.Production.Warehouse
                                                 OUTER APPLY(
 	                                                SELECT val= (TRY_CONVERT(decimal, REPLACE([Ship Qty],',','')))
                                                 )CanINT
+                                                OUTER APPLY(
+	                                                SELECT val= (TRY_CONVERT(decimal, [Arrived Qty]))
+                                                )CanINT2
 
 
                                                 DROP TABLE #tmp"
