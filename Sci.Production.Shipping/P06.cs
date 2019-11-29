@@ -667,37 +667,40 @@ and c.ClogReceiveCFADate is null
 
             foreach (DataRow dr in pullOrder.Rows)
             {
-                updateCmds.Add(string.Format(
-                    @"
-UPDATE orders SET
-	actpulloutdate = (
+                updateCmds.Add(
+                    $@"
+UPDATE Orders SET
+	ActPulloutDate = (
 		SELECT Max(p.pulloutdate)
 		FROM pullout_detail pd inner join pullout p on pd.id = p.id 
 		WHERE  pd.orderid = orders.id 
 		AND (pd.status = 'C' or pd.ShipQty > 0)
 		AND p.status = 'Confirmed'
 	)
-	,pulloutcomplete = 
-		case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) then pulloutcomplete
-			when(
-				SELECT Count(p.id)
-				FROM pullout_detail pd inner join pullout p on pd.id = p.id
-				WHERE pd.orderid = orders.id 
-				AND p.status = 'Confirmed' 
-				AND pd.status = 'C'
-				) > 0
-			then 1
-			when(
-				SELECT Count(p.id)
-				FROM pullout_detail pd inner join pullout p on pd.id = p.id 
-				WHERE  pd.orderid = orders.id 
-				AND p.status = 'Confirmed' 
-				AND pd.status = 'S'
-				)>0
-			then 1
-			else 0
-			end
-WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
+	,PulloutComplete =  CASE
+		                WHEN
+		                (
+			                SELECT SUM(ShipQty)
+			                FROM
+			                (
+                                ---- 自己這張以外的已出貨數 加總
+				                SELECT [ShipQty]=ISNULL( SUM(pd.ShipQty),0)
+				                FROM Pullout p
+				                INNER JOIN Pullout_Detail pd ON pd.ID=p.ID
+				                WHERE OrderID = Orders.ID
+				                AND p.Status <> 'New'
+				                UNION ALL
+                                ---- 當下這筆，因為還沒confirm，在上面 <> 'New'的條件下找不到，要額外列進來計算
+				                SELECT [ShipQty]=ISNULL( SUM(pd.ShipQty),0)
+				                FROM Pullout p
+				                INNER JOIN Pullout_Detail pd ON pd.ID=p.ID
+				                WHERE OrderID = Orders.ID
+				                AND p.ID='{this.CurrentMaintain["ID"]}'
+			                ) t
+			                ) >= Orders.Qty THEN 1
+		                ELSE 0 
+		                END
+WHERE  ID = '{MyUtility.Convert.GetString(dr["OrderID"])}' ");
             }
 
             result = DBProxy.Current.Executes(null, updateCmds);
