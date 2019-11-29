@@ -252,6 +252,17 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             return Result.True;
         }
 
+        protected override bool OnDeleteBefore()
+        {
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
+                return false;
+            }
+
+            return base.OnDeleteBefore();
+        }
+
         /// <inheritdoc/>
         protected override DualResult OnDeletePost()
         {

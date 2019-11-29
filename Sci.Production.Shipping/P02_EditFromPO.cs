@@ -93,6 +93,17 @@ namespace Sci.Production.Shipping
             return Result.True;
         }
 
+        protected override bool OnDeleteBefore()
+        {
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
+                return false;
+            }
+
+            return base.OnDeleteBefore();
+        }
+
         /// <inheritdoc/>
         protected override DualResult OnDeletePost()
         {
