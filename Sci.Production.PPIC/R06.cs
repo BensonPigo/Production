@@ -132,19 +132,18 @@ Category =
     isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 1 for XML PATH('')),'') as Seq3rd
     , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
     , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
-    , Order_Article.Article  
+    , Order_Qty.Article  
 from Orders o WITH (NOLOCK) 
 left join PO p WITH (NOLOCK) on p.ID = o.POID
-left join Order_article oa WITH (NOLOCK) on oa.id=o.id
 outer apply(
     select Article = 
 	stuff((
-	        select concat(',', Article)
-	        from Order_article oa with(nolock)
-	        where oa.id = o.ID             
+	        select distinct concat(',', Article)
+	        from Order_Qty oq with(nolock)
+	        where oq.id = o.ID             
 		    for xml path('')
 	),1,1,'')
-)Order_Article
+)Order_Qty
 where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '69'" : string.Empty));
 
             if (!MyUtility.Check.Empty(this._sciDate1))
