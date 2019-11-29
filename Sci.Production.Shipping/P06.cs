@@ -656,30 +656,22 @@ and c.ClogReceiveCFADate is null
                         Sci.Env.User.UserID));
             }
 
-            string sqlCmd = string.Format("select distinct OrderID from Pullout_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DataTable pullOrder;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out pullOrder);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
-                return;
-            }
-
-            foreach (DataRow dr in pullOrder.Rows)
-            {
-                updateCmds.Add(
+            updateCmds.Add(
                     $@"
-UPDATE Orders SET
-	ActPulloutDate = (
-		SELECT Max(p.pulloutdate)
-		FROM pullout_detail pd inner join pullout p on pd.id = p.id 
-		WHERE  pd.orderid = orders.id 
-		AND (pd.status = 'C' or pd.ShipQty > 0)
-		AND p.status = 'Confirmed'
-	)
-	,PulloutComplete =  CASE
-		                WHEN
-		                (
+update o
+set ActPulloutDate = ActPulloutDate.value
+	, PulloutComplete = PulloutComplete.value
+from Orders o
+outer apply (
+	SELECT value =  Max(p.pulloutdate)
+	FROM pullout_detail pd inner join pullout p on pd.id = p.id 
+	WHERE  pd.orderid = o.id 
+			AND (pd.status = 'C' or pd.ShipQty > 0)
+			AND p.status != 'New'
+) ActPulloutDate
+outer apply (
+	select value = CASE
+						WHEN (
 			                SELECT SUM(ShipQty)
 			                FROM
 			                (
@@ -687,23 +679,29 @@ UPDATE Orders SET
 				                SELECT [ShipQty]=ISNULL( SUM(pd.ShipQty),0)
 				                FROM Pullout p
 				                INNER JOIN Pullout_Detail pd ON pd.ID=p.ID
-				                WHERE OrderID = Orders.ID
-				                AND p.Status <> 'New'
+				                WHERE OrderID = o.ID
+				                        AND p.Status <> 'New'
+				                        AND p.ID != '{this.CurrentMaintain["ID"]}'
 				                UNION ALL
                                 ---- 當下這筆，因為還沒confirm，在上面 <> 'New'的條件下找不到，要額外列進來計算
 				                SELECT [ShipQty]=ISNULL( SUM(pd.ShipQty),0)
 				                FROM Pullout p
 				                INNER JOIN Pullout_Detail pd ON pd.ID=p.ID
-				                WHERE OrderID = Orders.ID
-				                AND p.ID='{this.CurrentMaintain["ID"]}'
+				                WHERE OrderID = o.ID
+				                        AND p.ID='{this.CurrentMaintain["ID"]}'
 			                ) t
-			                ) >= Orders.Qty THEN 1
+			                ) >= o.Qty THEN 1
 		                ELSE 0 
 		                END
-WHERE  ID = '{MyUtility.Convert.GetString(dr["OrderID"])}' ");
-            }
+) PulloutComplete
+where	exists (
+			select 1
+			from Pullout_Detail pd
+			where pd.ID = '{this.CurrentMaintain["ID"]}'
+				  and pd.OrderID = o.ID 
+		)");
 
-            result = DBProxy.Current.Executes(null, updateCmds);
+            DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
