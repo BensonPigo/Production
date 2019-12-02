@@ -35,7 +35,7 @@ namespace Sci.Production.Logistic
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
-                int sint = MyUtility.Convert.GetInt(((DataTable)this.listControlBindingSource1.DataSource).Compute("sum(ShipQty)", "selected=1"));
+                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected=1").Count();
                 this.numSelectedCTNQty.Value = sint;
             };
 
@@ -61,6 +61,12 @@ namespace Sci.Production.Logistic
             .Text("PulloutTransportNo", header: "Transport No", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
+            this.grid1.ColumnHeaderMouseClick += (s, e) =>
+            {
+                this.grid1.ValidateControl();
+                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected=1").Count();
+                this.numSelectedCTNQty.Value = sint;
+            };
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
@@ -137,7 +143,7 @@ order by pld.ID,pld.CTNStartNo
             this.listControlBindingSource1.DataSource = dt;
 
             this.numSelectedCTNQty.Value = 0;
-            this.numTTLQty.Value = MyUtility.Convert.GetInt(dt.Compute("sum(ShipQty)", string.Empty));
+            this.numTTLQty.Value = dt.Rows.Count;
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -295,7 +301,7 @@ outer apply(
                 this.listControlBindingSource1.DataSource = lastable;
 
                 this.numSelectedCTNQty.Value = 0;
-                this.numTTLQty.Value = MyUtility.Convert.GetInt(lastable.Compute("sum(ShipQty)", string.Empty));
+                this.numTTLQty.Value = lastable.Rows.Count;
             }
         }
 
@@ -362,6 +368,15 @@ outer apply(
             }
 
             DataTable seleDt = selectedData.CopyToDataTable();
+
+            foreach (DataRow dr in seleDt.Rows)
+            {
+                if (MyUtility.Check.Empty(dr["PulloutTransport"])|| MyUtility.Check.Empty(dr["PulloutTransportNo"]))
+                {
+                    MyUtility.Msg.WarningBox("Transport & Transport No cannot be empty.");
+                    return;
+                }
+            }
 
             string sqlupdate = $@"
 update pld set
