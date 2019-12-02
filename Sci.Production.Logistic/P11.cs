@@ -174,7 +174,7 @@ where cdd.ID = '{masterID}'
             bool isPackingAlreadyPullout = false;
             foreach (string packingID in listDistinctPKID)
             {
-                isPackingAlreadyPullout = MyUtility.Check.Seek($"select 1 from PackingList where ID = '{packingID}' and PulloutDate is not null");
+                isPackingAlreadyPullout = MyUtility.Check.Seek($"select 1 from PackingList where ID = '{packingID}' AND PulloutID <> '' AND PulloutID IS NOT NULL ");
                 if (isPackingAlreadyPullout)
                 {
                     MyUtility.Msg.WarningBox($"<{packingID}> already pullout, cannot confirm!!");
