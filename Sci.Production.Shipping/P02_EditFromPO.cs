@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Sci;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -68,6 +69,12 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Receiver can't empty!");
                 return false;
             }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
+                return false;
+            }
             #endregion
 
             return true;
@@ -84,6 +91,17 @@ namespace Sci.Production.Shipping
             }
 
             return Result.True;
+        }
+
+        protected override bool OnDeleteBefore()
+        {
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
+                return false;
+            }
+
+            return base.OnDeleteBefore();
         }
 
         /// <inheritdoc/>

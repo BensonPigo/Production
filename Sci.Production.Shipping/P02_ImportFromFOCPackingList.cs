@@ -11,6 +11,7 @@ using Sci.Data;
 using Sci;
 using System.Transactions;
 using System.Data.SqlClient;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -201,6 +202,12 @@ and Factory.IsProduceFty=1", this.txtFOCPL.Text);
 
             // 檢查FOC PL#是否正確
             if (!this.CheckPLNo(MyUtility.Convert.GetString(dt.Rows[0]["ID"])))
+            {
+                return;
+            }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.masterData["ID"].ToString()))
             {
                 return;
             }

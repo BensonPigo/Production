@@ -132,8 +132,18 @@ Category =
     isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 1 for XML PATH('')),'') as Seq3rd
     , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
     , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
+    , Order_Qty.Article  
 from Orders o WITH (NOLOCK) 
 left join PO p WITH (NOLOCK) on p.ID = o.POID
+outer apply(
+    select Article = 
+	stuff((
+	        select distinct concat(',', Article)
+	        from Order_Qty oq with(nolock)
+	        where oq.id = o.ID             
+		    for xml path('')
+	),1,1,'')
+)Order_Qty
 where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '69'" : string.Empty));
 
             if (!MyUtility.Check.Empty(this._sciDate1))
@@ -216,47 +226,48 @@ where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Cells[2, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(this._sciDate1) ? string.Empty : Convert.ToDateTime(this._sciDate1).ToString("d"), MyUtility.Check.Empty(this._sciDate2) ? string.Empty : Convert.ToDateTime(this._sciDate2).ToString("d"));
 
-            worksheet.Cells[2, 6] = this._mDivision;
-            worksheet.Cells[2, 8] = this._factory;
-            worksheet.Cells[2, 10] = this._category;
-            worksheet.Cells[2, 13] = this._excludeReplacement == 1 ? "True" : "False";
-            worksheet.Cells[2, 15] = this._complection == 1 ? "True" : "False";
+            worksheet.Cells[2, 7] = this._mDivision;
+            worksheet.Cells[2, 9] = this._factory;
+            worksheet.Cells[2, 11] = this._category;
+            worksheet.Cells[2, 14] = this._excludeReplacement == 1 ? "True" : "False";
+            worksheet.Cells[2, 16] = this._complection == 1 ? "True" : "False";
 
             // 填內容值
             int intRowsStart = 4;
-            object[,] objArray = new object[1, 29];
+            object[,] objArray = new object[1, 30];
             foreach (DataRow dr in this._printData.Rows)
             {
                 objArray[0, 0] = dr["ID"];
                 objArray[0, 1] = dr["StyleID"];
                 objArray[0, 2] = dr["Category"];
                 objArray[0, 3] = dr["SeasonID"];
-                objArray[0, 4] = dr["SewInLine"];
-                objArray[0, 5] = dr["LETA"];
-                objArray[0, 6] = dr["KPILETA"];
-                objArray[0, 7] = dr["BuyerDelivery"];
-                objArray[0, 8] = dr["SciDelivery"];
-                objArray[0, 9] = dr["BrandID"];
-                objArray[0, 10] = dr["CPU"];
-                objArray[0, 11] = dr["SeqNo"];
-                objArray[0, 12] = dr["Seq3rd"];
-                objArray[0, 13] = dr["SewETA"];
-                objArray[0, 14] = dr["PackETA"];
-                objArray[0, 15] = dr["Fab_ETA"];
-                objArray[0, 16] = dr["Acc_ETA"];
-                objArray[0, 17] = dr["MDivisionID"];
-                objArray[0, 18] = dr["FactoryID"];
-                objArray[0, 19] = dr["LocalMR"];
-                objArray[0, 20] = dr["MCHandle"];
-                objArray[0, 21] = dr["MRHandle"];
-                objArray[0, 22] = dr["SMR"];
-                objArray[0, 23] = dr["POHandle"];
-                objArray[0, 24] = dr["POSMR"];
-                objArray[0, 25] = dr["Qty"];
-                objArray[0, 26] = dr["tCPU"];
-                objArray[0, 27] = this._complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Check.Empty(dr["SeqNo"]) && MyUtility.Check.Empty(dr["Seq3rd"]) ? "Y" : "N";
-                objArray[0, 28] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "FALSE" ? string.Empty : "Y";
-                worksheet.Range[string.Format("A{0}:AA{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 4] = dr["Article"];
+                objArray[0, 5] = dr["SewInLine"];
+                objArray[0, 6] = dr["LETA"];
+                objArray[0, 7] = dr["KPILETA"];
+                objArray[0, 8] = dr["BuyerDelivery"];
+                objArray[0, 9] = dr["SciDelivery"];
+                objArray[0, 10] = dr["BrandID"];
+                objArray[0, 11] = dr["CPU"];
+                objArray[0, 12] = dr["SeqNo"];
+                objArray[0, 13] = dr["Seq3rd"];
+                objArray[0, 14] = dr["SewETA"];
+                objArray[0, 15] = dr["PackETA"];
+                objArray[0, 16] = dr["Fab_ETA"];
+                objArray[0, 17] = dr["Acc_ETA"];
+                objArray[0, 18] = dr["MDivisionID"];
+                objArray[0, 19] = dr["FactoryID"];
+                objArray[0, 20] = dr["LocalMR"];
+                objArray[0, 21] = dr["MCHandle"];
+                objArray[0, 22] = dr["MRHandle"];
+                objArray[0, 23] = dr["SMR"];
+                objArray[0, 24] = dr["POHandle"];
+                objArray[0, 25] = dr["POSMR"];
+                objArray[0, 26] = dr["Qty"];
+                objArray[0, 27] = dr["tCPU"];
+                objArray[0, 28] = this._complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Check.Empty(dr["SeqNo"]) && MyUtility.Check.Empty(dr["Seq3rd"]) ? "Y" : "N";
+                objArray[0, 29] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "FALSE" ? string.Empty : "Y";
+                worksheet.Range[string.Format("A{0}:AB{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 

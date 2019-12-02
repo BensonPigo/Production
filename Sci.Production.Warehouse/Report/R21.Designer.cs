@@ -56,32 +56,42 @@
             this.dateETA = new Sci.Win.UI.DateRange();
             this.label4 = new Sci.Win.UI.Label();
             this.dateArriveDate = new Sci.Win.UI.DateRange();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtWorkNo = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(412, 79);
-            this.print.TabIndex = 17;
+            this.print.Location = new System.Drawing.Point(424, 79);
+            this.print.TabIndex = 18;
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(412, 9);
-            this.toexcel.TabIndex = 15;
+            this.toexcel.Location = new System.Drawing.Point(424, 9);
+            this.toexcel.TabIndex = 16;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(412, 45);
-            this.close.TabIndex = 16;
+            this.close.Location = new System.Drawing.Point(424, 45);
+            this.close.TabIndex = 17;
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(378, 122);
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(394, 122);
             // 
             // rdbtnSummary
             // 
             this.rdbtnSummary.AutoSize = true;
             this.rdbtnSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnSummary.Location = new System.Drawing.Point(194, 297);
+            this.rdbtnSummary.Location = new System.Drawing.Point(194, 329);
             this.rdbtnSummary.Name = "rdbtnSummary";
             this.rdbtnSummary.Size = new System.Drawing.Size(85, 21);
-            this.rdbtnSummary.TabIndex = 13;
+            this.rdbtnSummary.TabIndex = 14;
             this.rdbtnSummary.Text = "Summary";
             this.rdbtnSummary.UseVisualStyleBackColor = true;
             // 
@@ -90,10 +100,10 @@
             this.rdbtnDetail.AutoSize = true;
             this.rdbtnDetail.Checked = true;
             this.rdbtnDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnDetail.Location = new System.Drawing.Point(126, 297);
+            this.rdbtnDetail.Location = new System.Drawing.Point(126, 329);
             this.rdbtnDetail.Name = "rdbtnDetail";
             this.rdbtnDetail.Size = new System.Drawing.Size(62, 21);
-            this.rdbtnDetail.TabIndex = 12;
+            this.rdbtnDetail.TabIndex = 13;
             this.rdbtnDetail.TabStop = true;
             this.rdbtnDetail.Text = "Detail";
             this.rdbtnDetail.UseVisualStyleBackColor = true;
@@ -104,11 +114,11 @@
             this.cmbStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbStockType.FormattingEnabled = true;
             this.cmbStockType.IsSupportUnselect = true;
-            this.cmbStockType.Location = new System.Drawing.Point(126, 267);
+            this.cmbStockType.Location = new System.Drawing.Point(126, 299);
             this.cmbStockType.Name = "cmbStockType";
             this.cmbStockType.OldText = "";
             this.cmbStockType.Size = new System.Drawing.Size(117, 24);
-            this.cmbStockType.TabIndex = 11;
+            this.cmbStockType.TabIndex = 12;
             // 
             // cmbMaterialType
             // 
@@ -116,15 +126,15 @@
             this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbMaterialType.FormattingEnabled = true;
             this.cmbMaterialType.IsSupportUnselect = true;
-            this.cmbMaterialType.Location = new System.Drawing.Point(126, 237);
+            this.cmbMaterialType.Location = new System.Drawing.Point(126, 269);
             this.cmbMaterialType.Name = "cmbMaterialType";
             this.cmbMaterialType.OldText = "";
             this.cmbMaterialType.Size = new System.Drawing.Size(117, 24);
-            this.cmbMaterialType.TabIndex = 10;
+            this.cmbMaterialType.TabIndex = 11;
             // 
             // labelReportType
             // 
-            this.labelReportType.Location = new System.Drawing.Point(8, 297);
+            this.labelReportType.Location = new System.Drawing.Point(8, 329);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(114, 23);
             this.labelReportType.TabIndex = 130;
@@ -132,7 +142,7 @@
             // 
             // labelStockType
             // 
-            this.labelStockType.Location = new System.Drawing.Point(8, 267);
+            this.labelStockType.Location = new System.Drawing.Point(8, 299);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(114, 23);
             this.labelStockType.TabIndex = 129;
@@ -140,7 +150,7 @@
             // 
             // labelMaterialType
             // 
-            this.labelMaterialType.Location = new System.Drawing.Point(8, 237);
+            this.labelMaterialType.Location = new System.Drawing.Point(8, 269);
             this.labelMaterialType.Name = "labelMaterialType";
             this.labelMaterialType.Size = new System.Drawing.Size(114, 23);
             this.labelMaterialType.TabIndex = 128;
@@ -150,15 +160,15 @@
             // 
             this.textColor.BackColor = System.Drawing.Color.White;
             this.textColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textColor.Location = new System.Drawing.Point(126, 208);
+            this.textColor.Location = new System.Drawing.Point(126, 240);
             this.textColor.MaxLength = 6;
             this.textColor.Name = "textColor";
             this.textColor.Size = new System.Drawing.Size(66, 23);
-            this.textColor.TabIndex = 9;
+            this.textColor.TabIndex = 10;
             // 
             // labelColor
             // 
-            this.labelColor.Location = new System.Drawing.Point(8, 208);
+            this.labelColor.Location = new System.Drawing.Point(8, 240);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(114, 23);
             this.labelColor.TabIndex = 126;
@@ -170,21 +180,24 @@
             this.checkQty.Checked = true;
             this.checkQty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkQty.Location = new System.Drawing.Point(8, 326);
+            this.checkQty.Location = new System.Drawing.Point(8, 358);
             this.checkQty.Name = "checkQty";
             this.checkQty.Size = new System.Drawing.Size(73, 21);
-            this.checkQty.TabIndex = 14;
+            this.checkQty.TabIndex = 15;
             this.checkQty.Text = "Qty > 0";
             this.checkQty.UseVisualStyleBackColor = true;
             // 
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.boolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
             this.txtfactory1.IssupportJunk = false;
             this.txtfactory1.Location = new System.Drawing.Point(126, 149);
             this.txtfactory1.MaxLength = 8;
+            this.txtfactory1.MDivision = null;
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtfactory1.TabIndex = 6;
@@ -400,9 +413,29 @@
             this.dateArriveDate.Size = new System.Drawing.Size(280, 23);
             this.dateArriveDate.TabIndex = 3;
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(9, 208);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(114, 23);
+            this.label5.TabIndex = 141;
+            this.label5.Text = "WK#";
+            // 
+            // txtWorkNo
+            // 
+            this.txtWorkNo.BackColor = System.Drawing.Color.White;
+            this.txtWorkNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWorkNo.Location = new System.Drawing.Point(126, 208);
+            this.txtWorkNo.MaxLength = 13;
+            this.txtWorkNo.Name = "txtWorkNo";
+            this.txtWorkNo.Size = new System.Drawing.Size(121, 23);
+            this.txtWorkNo.TabIndex = 9;
+            // 
             // R21
             // 
-            this.ClientSize = new System.Drawing.Size(514, 381);
+            this.ClientSize = new System.Drawing.Size(514, 431);
+            this.Controls.Add(this.txtWorkNo);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.dateArriveDate);
             this.Controls.Add(this.label3);
@@ -432,10 +465,8 @@
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelSPNo);
             this.Name = "R21";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R21 Stock List Report (Inventory)";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
@@ -464,6 +495,14 @@
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.dateArriveDate, 0);
             this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.txtWorkNo, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -499,5 +538,7 @@
         private Win.UI.DateRange dateETA;
         private Win.UI.Label label4;
         private Win.UI.DateRange dateArriveDate;
+        private Win.UI.Label label5;
+        private Win.UI.TextBox txtWorkNo;
     }
 }

@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci;
 using System.Data.SqlClient;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -210,6 +211,12 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
                     return false;
                 }
             }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
+                return false;
+            }
             #endregion
 
             // 新增帶值
@@ -243,6 +250,17 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             }
 
             return Result.True;
+        }
+
+        protected override bool OnDeleteBefore()
+        {
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            {
+                return false;
+            }
+
+            return base.OnDeleteBefore();
         }
 
         /// <inheritdoc/>

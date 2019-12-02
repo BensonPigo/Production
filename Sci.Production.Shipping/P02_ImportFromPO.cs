@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci;
 using System.Transactions;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -156,6 +157,12 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
             {
                 this.txtRemark.Focus();
                 MyUtility.Msg.WarningBox("Remark can't empty!!");
+                return;
+            }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.checkP02Status(this.masterData["ID"].ToString()))
+            {
                 return;
             }
 
