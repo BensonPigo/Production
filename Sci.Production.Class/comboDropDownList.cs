@@ -219,7 +219,7 @@ order by Seq";
 
                     if (!MyUtility.Check.Seek(sqlcmd))
                     {
-                        row["NewShift"] = "";
+                        row[colName] = "";
                         row.EndEdit();
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< Return TO : {0} > not found!!!", newValue));
