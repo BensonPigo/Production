@@ -16,8 +16,8 @@ namespace Sci.Production.Basic
         private bool _canconfirm;
         private bool _canedit;
         private string LocalSupp_Bank_ID;
-        private ToolStripMenuItem newitem;
-        private ToolStripMenuItem edit;
+        //private ToolStripMenuItem newitem;
+        //private ToolStripMenuItem edit;
 
         public class LocalSupp_Bank_Detail
         {
@@ -55,36 +55,39 @@ namespace Sci.Production.Basic
             this.InitializeComponent();
 
             // 按右鍵開啟選單，這一定要加！
-            this.detailgrid.ContextMenuStrip = this.detailgridmenus;
+            // this.detailgrid.ContextMenuStrip = this.detailgridmenus;
 
             // 表身點兩下事件
-            //this.detailgrid.MouseDoubleClick += (s, e) =>
-            //{
-            //    if (this.EditMode)
-            //    {
-            //        // 新增
-            //        if (this.detailgrid.CurrentRow == null)
-            //        {
-            //            this.BankDetail_Insert_OpenForm();
-            //        }
-            //        else
-            //        {
-            //            DataRow currenRow = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.CurrentRow.Index);
-            //            int currentIndex = this.detailgrid.CurrentRow.Index;
+            this.detailgrid.MouseDoubleClick += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    // 新增
+                    if (this.detailgrid.CurrentRow == null)
+                    {
+                        this.AddNewItem();
+                    }
+                    else
+                    {
+                        //DataRow currenRow = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.CurrentRow.Index);
+                        //int currentIndex = this.detailgrid.CurrentRow.Index;
 
-            //            if (currenRow["IsDefault"] == DBNull.Value)
-            //            { 
-            //                // 新增
-            //                this.BankDetail_Insert_OpenForm();
-            //            }
-            //            else
-            //            {
-            //                // 修改
-            //                this.BankDetail_Edit_OpenForm(currenRow);
-            //            }
-            //        }
-            //    }
-            //};
+                        //if (currenRow["IsDefault"] == DBNull.Value)
+                        //{
+                        //    // 新增
+                        //    this.AddNewItem();
+                        //}
+                        //else
+                        //{
+                        //    // 修改
+                        //    this.EditItem(currenRow);
+                        //}
+
+                        // 修改
+                        this.EditItem();
+                    }
+                }
+            };
 
             // 關閉表身點兩下，自動Insert新Row的功能
             this.InsertDetailGridOnDoubleClick = false;
@@ -222,24 +225,27 @@ namespace Sci.Production.Basic
             base.OnFormLoaded();
 
             // 按右鍵開啟選單
-            this.detailgrid.CellToolTipTextNeeded += (s, e) =>
-            {
-                e.ToolTipText = "You can show the function form to press the right key under inquiring the state.";
+            #region 按右鍵開啟選單
 
-            };
-            this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
-            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
-            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Item ", onclick: (s, e) => this.EditItem()).Get(out this.edit);
+            //this.detailgrid.CellToolTipTextNeeded += (s, e) =>
+            //{
+            //    e.ToolTipText = "You can show the function form to press the right key under inquiring the state.";
 
-            this.SetContextMenuStatus(false); // 預設先將Context ment設定為disable
+            //};
+            //this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
+            //this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
+            //this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Item ", onclick: (s, e) => this.EditItem()).Get(out this.edit);
+
+            //this.SetContextMenuStatus(false); // 預設先將Context ment設定為disable
+            #endregion
 
         }
 
         // 設定Context Menu的Enable/Disable
         private void SetContextMenuStatus(bool status)
         {
-            this.newitem.Enabled = status;
-            this.edit.Enabled = status;
+            //this.newitem.Enabled = status;
+            //this.edit.Enabled = status;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
