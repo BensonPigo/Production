@@ -169,6 +169,7 @@ BEGIN
 	--#tmpFactoryOrder1
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 		,iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
+	, iif(f2.Type = 'S', 'Sample', f2.MDivisionID) as MDivisionID2
 	, Factory.CountryID
 	,Style.CPU, cTms, cCPU
 	,Style_TmsCost.ArtworkTypeID 
@@ -179,12 +180,13 @@ BEGIN
 	,FactoryOrder.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,OrderDate
-	,FactorySort
+	,Factory.FactorySort
 	,SubconInType
 	,FactoryOrder.ProgramID
 	into #tmpFactoryOrder1 
 	from #FactoryOrder FactoryOrder
 	inner join Factory on FactoryOrder.FactoryID = Factory.ID
+	LEFT join Factory f2 on FactoryOrder.ProgramID = f2.ID
 	left join Style on Style.Ukey = FactoryOrder.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
@@ -584,7 +586,16 @@ group by FactoryID,OrderYYMM
 		) c on a.CountryID = c.CountryID and a.FactoryID = c.FactoryID and a.OrderYYMM = c.OrderYYMM and a.MDivisionID = c.MDivisionID
 		--WHERE a.COUNTRYID = 'PH' AND a.MDivisionID = 'Zone 1' and a.OrderYYMM like '201707'
 		group by a.CountryID,a.MDivisionID,a.OrderYYMM,a.FactoryID
-
+		
+		--For Output, 及Output後面的Max日期
+		select CountryID, MDivisionID,MDivisionID2, FactoryID,SubconInType, max(format(SewingYYMM_Ori,'yyyy/MM/dd')) as SewingYYMM, OrderYYMM as Month, sum(Capacity) as Capacity 
+		from (
+			Select CountryID, MDivisionID, '' as MDivisionID2,FactoryID, SewingYYMM_Ori, OrderYYMM, SewCapacity as Capacity, SubconInType from #tmpOrder2
+			union ALL 
+			Select CountryID, MDivisionID, MDivisionID2,FactoryID, SewingYYMM_Ori, OrderYYMM, SewCapacity as Capacity, SubconInType from #tmpFactoryOrder2
+		) c
+		where SewingYYMM_Ori is not null
+		group by CountryID,MDivisionID,FactoryID,OrderYYMM,MDivisionID2,SubconInType
 	End
 
 

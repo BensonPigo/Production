@@ -8,6 +8,7 @@ using Sci.Data;
 using Ict;
 using Sci.Win;
 using Sci.Utility.Excel;
+using System.Drawing;
 
 // 此程式前兩個用統計和半月統計是複製Trade Planning R02
 namespace Sci.Production.Planning
@@ -940,6 +941,7 @@ namespace Sci.Production.Planning
         private DualResult TransferReport2(DataTable[] datas, Microsoft.Office.Interop.Excel.Worksheet wks)
         {
             int artworkStart = this.sheetStart;
+            int mdvTotalIdx = 0;
 
             // Set Header
             DateTime startDate = new DateTime(this.intYear, this.intMonth, 1);
@@ -968,6 +970,19 @@ namespace Sci.Production.Planning
             DataTable dt0 = datas[1]; // [0] By Factory 最細的上下半月Capacity
             DataTable dt1 = datas[2]; // [1] By Factory Loading CPU
             DataTable dt2 = datas[3]; // [2] For Forecast shared
+            DataTable dt4 = new DataTable(); // [4] For Output, 及Output後面的Max日期
+            DataTable dt5 = new DataTable();
+
+            if (datas[4].Select("SubconInType <> '2'").Any())
+            {
+                dt4 = datas[4].Select("SubconInType <> '2'").CopyToDataTable();
+            }
+
+            dt5 = dt4.Clone();
+            if (datas[4].Select("SubconInType = '2'").Any())
+            {
+                dt5 = datas[4].Select("SubconInType = '2'").CopyToDataTable();
+            }
 
             DataTable dtCountryList = dtList.DefaultView.ToTable(true, "CountryID");
             List<string> lisPercent = new List<string>();
@@ -1105,6 +1120,7 @@ namespace Sci.Production.Planning
                     this.sheetStart += 1;
 
                     // Total Load.
+                    mdvTotalIdx = sheetStart;
                     wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Load.", mDivisionID);
                     string totalLoad = "=";
                     for (int i = 0; i < lisLoading.Count; i++)
@@ -1161,6 +1177,97 @@ namespace Sci.Production.Planning
                     wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Fill Rate", mDivisionID);
                     strColor = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", "{0}", this.sheetStart - 3, this.sheetStart - 4);
                     this.SetFormulaToRow(wks, this.sheetStart, $@"{mDivisionID} Total Fill Rate", strColor, EnuDrawColor.Normal);
+
+                    this.sheetStart += 1;
+
+                    // MDivision Output
+                    DataTable dtOutputMDV = this.SafeGetDt(dt4, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
+                    DataTable dtOutputMDVSB2 = this.SafeGetDt(dt5, string.Format("CountryID = '{0}'", countryID, mDivisionID));
+
+                    string maxSewOutPut = dtOutputMDV.Compute("MAX(SewingYYMM)", string.Empty).ToString();
+                    maxSewOutPut = maxSewOutPut.Length > 0 ? maxSewOutPut.Substring(5, maxSewOutPut.Length - 5) : string.Empty;
+                    wks.Cells[this.sheetStart, 3].Value = $"{mDivisionID} Output ({maxSewOutPut})";
+                    string zoneFilter = this.txtZone.Text == string.Empty ? string.Empty : $" And Zone = '{this.txtZone.Text}'";
+
+                    idx = 0;
+                    for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
+                    {
+                        DataRow[] rows1 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "1") + zoneFilter);
+                        DataRow[] rows2 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "2") + zoneFilter);
+                        DataRow[] rowsSB2add1 = dtOutputMDVSB2.Select(string.Format("MdivisionID = '{0}' and Month = '{1}'", mDivisionID, this.GetCurrMonth(this.intYear, mon) + "1"));
+                        DataRow[] rowsSB2add2 = dtOutputMDVSB2.Select(string.Format("MdivisionID = '{0}' and Month = '{1}'", mDivisionID, this.GetCurrMonth(this.intYear, mon) + "2"));
+                        DataRow[] rowsSB2diff1 = dtOutputMDVSB2.Select(string.Format("MdivisionID2 = '{0}' and Month = '{1}'", mDivisionID, this.GetCurrMonth(this.intYear, mon) + "1"));
+                        DataRow[] rowsSB2diff2 = dtOutputMDVSB2.Select(string.Format("MdivisionID2 = '{0}' and Month = '{1}'", mDivisionID, this.GetCurrMonth(this.intYear, mon) + "2"));
+                        decimal? capacity1 = (rows1.Length > 0) ? rows1.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                        decimal? capacity2 = (rows2.Length > 0) ? rows2.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                        decimal? vSB2add1 = (rowsSB2add1.Length > 0) ? rowsSB2add1.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                        decimal? vSB2add2 = (rowsSB2add2.Length > 0) ? rowsSB2add2.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                        decimal? vSB2diff1 = (rowsSB2diff1.Length > 0) ? rowsSB2diff1.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                        decimal? vSB2diff2 = (rowsSB2diff2.Length > 0) ? rowsSB2diff2.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                        int colIdx1 = 5 + (idx * 2);
+                        int colIdx2 = 5 + (idx * 2) + 1;
+                        string sb2Str1 = string.Empty;
+                        string sb2Str2 = string.Empty;
+
+                        if (vSB2add1 > 0)
+                        {
+                            sb2Str1 += $" + {vSB2add1}";
+                        }
+
+                        if (vSB2diff1 > 0)
+                        {
+                            sb2Str1 += $" - {vSB2diff1}";
+                        }
+
+                        if (sb2Str1 != string.Empty)
+                        {
+                            wks.Cells[sheetStart, colIdx1].Interior.Color = Color.Yellow;
+                        }
+
+                        if (vSB2add2 > 0)
+                        {
+                            sb2Str2 += $" + {vSB2add2}";
+                        }
+
+                        if (vSB2diff2 > 0)
+                        {
+                            sb2Str2 += $" - {vSB2diff2}";
+                        }
+
+                        if (sb2Str2 != string.Empty)
+                        {
+                            wks.Cells[sheetStart, colIdx2].Interior.Color = Color.Yellow;
+                        }
+
+                        wks.Cells[sheetStart, colIdx1].Value = $"= {capacity1}{sb2Str1}";
+                        wks.Cells[sheetStart, colIdx2].Value = $"= {capacity2}{sb2Str2}";
+                        idx += 1;
+                    }
+
+                    decimal capacity1Total = 0;
+                    if (dtOutputMDV.Rows.Count > 0)
+                    {
+                        foreach (DataRow row in dtOutputMDV.Rows)
+                        {
+                            capacity1Total += row.Field<decimal?>("Capacity").GetValueOrDefault(0);
+                        }
+                    }
+
+                    //wks.Cells[this.sheetStart, 17].Value = capacity1Total;
+                    wks.Cells[this.sheetStart, 17] = $"=SUM({MyExcelPrg.GetExcelColumnName(5)}{this.sheetStart}:P{this.sheetStart})";
+
+                    this.sheetStart += 1;
+
+                    // MDivision Output Rate
+                    lisPercent.Add(this.sheetStart.ToString());
+
+                    wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Output  Rate", mDivisionID);
+                    for (int i = 5; i <= 17; i++)
+                    {
+                        string str = string.Format("=IF({0}{1} > 0, {0}{2} / {0}{1},0)", MyExcelPrg.GetExcelColumnName(i), mdvTotalIdx, this.sheetStart - 1);
+                        wks.Cells[this.sheetStart, i] = str;
+                    }
+
                     this.DrawBottomLine(wks, this.sheetStart, 4, 2, 17);
 
                     this.sheetStart += 1;
@@ -1179,6 +1286,7 @@ namespace Sci.Production.Planning
                 this.sheetStart += 1;
 
                 // Country Total Load.
+                mdvTotalIdx = this.sheetStart;
                 wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Load.", countryID);
                 string totalLoadCty = "={0}";
                 totalLoadCty += string.Join("+{0}", lisLoadingCty);
@@ -1227,6 +1335,97 @@ namespace Sci.Production.Planning
                 wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Fill Rate", countryID);
                 string strRate = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", "{0}", this.sheetStart - 3, this.sheetStart - 4);
                 this.SetFormulaToRow(wks, this.sheetStart, $@"{countryID} Total Fill Rate", strRate, EnuDrawColor.Normal);
+
+                this.sheetStart += 1;
+
+                // Country Output
+                DataTable dtOutputCty = this.SafeGetDt(dt4, string.Format("CountryID = '{0}'", countryID));
+                DataTable dtOutputCtySB2 = this.SafeGetDt(dt5, string.Format("CountryID = '{0}'", countryID));
+                string maxSewOutPutCty = dtOutputCty.Compute("MAX(SewingYYMM)", string.Empty).ToString();
+                maxSewOutPutCty = maxSewOutPutCty.Length > 0 ? maxSewOutPutCty.Substring(5, maxSewOutPutCty.Length - 5) : string.Empty;
+                string zoneFilterCty = this.txtZone.Text == string.Empty ? string.Empty : $" And Zone = '{this.txtZone.Text}'";
+                wks.Cells[this.sheetStart, 3].Value = $"{countryID} Output ({maxSewOutPutCty})";
+                idx = 0;
+
+                for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
+                {
+                    DataRow[] rows1 = dtOutputCty.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "1") + zoneFilterCty);
+                    DataRow[] rows2 = dtOutputCty.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "2") + zoneFilterCty);
+
+                    DataRow[] rowsSB2add1 = dtOutputCtySB2.Select(string.Format("Month = '{0}'", this.GetCurrMonth(this.intYear, mon) + "1"));
+                    DataRow[] rowsSB2add2 = dtOutputCtySB2.Select(string.Format("Month = '{0}'", this.GetCurrMonth(this.intYear, mon) + "2"));
+                    DataRow[] rowsSB2diff1 = dtOutputCtySB2.Select(string.Format("Month = '{0}'", this.GetCurrMonth(this.intYear, mon) + "1"));
+                    DataRow[] rowsSB2diff2 = dtOutputCtySB2.Select(string.Format("Month = '{0}'", this.GetCurrMonth(this.intYear, mon) + "2"));
+                    decimal? capacity1 = (rows1.Length > 0) ? rows1.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                    decimal? capacity2 = (rows2.Length > 0) ? rows2.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                    decimal? vSB2add1 = (rowsSB2add1.Length > 0) ? rowsSB2add1.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                    decimal? vSB2add2 = (rowsSB2add2.Length > 0) ? rowsSB2add2.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                    decimal? vSB2diff1 = (rowsSB2diff1.Length > 0) ? rowsSB2diff1.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                    decimal? vSB2diff2 = (rowsSB2diff2.Length > 0) ? rowsSB2diff2.Sum(rr => rr.Field<decimal?>("Capacity").GetValueOrDefault(0)) : 0;
+                    int colIdx1 = 5 + (idx * 2);
+                    int colIdx2 = 5 + (idx * 2) + 1;
+
+                    string sb2Str1 = string.Empty;
+                    string sb2Str2 = string.Empty;
+
+                    if (vSB2add1 > 0)
+                    {
+                        sb2Str1 += $" + {vSB2add1}";
+                    }
+
+                    if (vSB2diff1 > 0)
+                    {
+                        sb2Str1 += $" - {vSB2diff1}";
+                    }
+
+                    if (sb2Str1 != string.Empty)
+                    {
+                        wks.Cells[sheetStart, colIdx1].Interior.Color = Color.Yellow;
+                    }
+
+                    if (vSB2add2 > 0)
+                    {
+                        sb2Str2 += $" + {vSB2add2}";
+                    }
+
+                    if (vSB2diff2 > 0)
+                    {
+                        sb2Str2 += $" - {vSB2diff2}";
+                    }
+
+                    if (sb2Str2 != string.Empty)
+                    {
+                        wks.Cells[this.sheetStart, colIdx2].Interior.Color = Color.Yellow;
+                    }
+
+                    wks.Cells[this.sheetStart, colIdx1].Value = $"= {capacity1}{sb2Str1}";
+                    wks.Cells[this.sheetStart, colIdx2].Value = $"= {capacity2}{sb2Str2}";
+                    idx += 1;
+                }
+
+                decimal capacity1CtyTotal = 0;
+                if (dtOutputCty.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dtOutputCty.Rows)
+                    {
+                        capacity1CtyTotal += row.Field<decimal?>("Capacity").GetValueOrDefault(0);
+                    }
+                }
+
+                wks.Cells[this.sheetStart, 17].Value = capacity1CtyTotal;
+                wks.Cells[this.sheetStart, 17] = $"=SUM({MyExcelPrg.GetExcelColumnName(5)}{this.sheetStart}:P{this.sheetStart})";
+
+                this.sheetStart += 1;
+
+                // CountryID Output Rate
+                lisPercent.Add(this.sheetStart.ToString());
+                wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Output  Rate", countryID);
+                for (int i = 5; i <= 17; i++)
+                {
+                    string str = string.Format("=IF({0}{1} > 0, {0}{2} / {0}{1},0)", MyExcelPrg.GetExcelColumnName(i), mdvTotalIdx, this.sheetStart - 1);
+                    wks.Cells[this.sheetStart, i] = str;
+                }
+
                 this.DrawBottomLine(wks, this.sheetStart, 5, 1, 17);
 
                 this.sheetStart += 1;
