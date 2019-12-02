@@ -343,10 +343,17 @@ s.Improvement
 	A.Foc=B.Foc,
 	A.ShipQty=B.ShipQty,
 	A.ShipFoc=B.ShipFoc,
-	A.ShipETA=B.ShipETA
+	A.ShipETA=B.ShipETA,
+	A.TPECurrencyID = B1.CurrencyID,
+	A.TPEPrice = B.Price
 	FROM Machine.DBO.PartPO_Detail A
-	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno AND a.SEQ2=b.Seq2 and a.id = b.MmsReqID and b.Junk=0 AND b.ID=a.TPEPOID
-	INNER JOIN  Machine.DBO.PartPO C ON A.ID=C.ID
+	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno 
+											   AND a.SEQ2=b.Seq2 
+											   and a.id = b.MmsReqID 
+											   and b.Junk=0 
+											   AND b.ID=a.TPEPOID
+	INNER JOIN Trade_To_Pms.dbo.MmsPO B1 on B1.ID = B.ID
+	INNER JOIN Machine.DBO.PartPO C ON A.ID=C.ID
 	WHERE C.FactoryID in (select id from @Sayfty)
 
 	UPDATE Machine.DBO.MiscPO_Detail
@@ -358,7 +365,9 @@ s.Improvement
 	Foc = B.Foc,
 	ShipQty = B.ShipQty,
 	ShipFoc = B.ShipFoc,
-	ShipETA = B.ShipETA
+	ShipETA = B.ShipETA,
+	TPECurrencyID = c.CurrencyID,
+	TPEPrice = b.Price
 	FROM Machine.DBO.MiscPO_Detail A
 	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on  a.MiscID=b.Refno 
 													and  a.SEQ2=b.Seq2 
@@ -418,9 +427,12 @@ update t
 		t.Foc=s.Foc,
 		t.ShipQty=s.ShipQty,
 		t.ShipFoc=s.ShipFoc,
-		t.ShipETA=s.ShipETA
+		t.ShipETA=s.ShipETA,
+		t.TPECurrencyID = s1.CurrencyID,
+		t.TPEPrice = s.Price
 		from  Machine.dbo.PartPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID and t.seq2=s.seq2 and s.Junk=0 AND s.ID=t.TPEPOID
+		inner join Trade_To_Pms.dbo.MmsPO s1 on s1.ID=s.ID
 		inner join Machine.dbo.PartPO a on t.id=a.ID
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
 		where 1=1
@@ -437,9 +449,11 @@ update t
 		t.ShipQty=s.ShipQty,
 		t.ShipFoc=s.ShipFoc,
 		t.ShipETA=s.ShipETA,
-		t.Junk = s.Junk
+		t.Junk = s.Junk,
+		t.TPECurrencyID = a.CurrencyID,
+		t.TPEPrice = s.Price
 		from  Machine.dbo.MiscPO_Detail as  t
-		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
+		inner join Trade_To_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
 		where a.Type='O'
