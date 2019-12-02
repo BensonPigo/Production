@@ -191,6 +191,12 @@
     <Compile Include="B04_AccountNo.Designer.cs">
       <DependentUpon>B04_AccountNo.cs</DependentUpon>
     </Compile>
+    <Compile Include="B04_BankData_DetailInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B04_BankData_DetailInput.Designer.cs">
+      <DependentUpon>B04_BankData_DetailInput.cs</DependentUpon>
+    </Compile>
     <Compile Include="B04_BankData_Input.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -358,6 +364,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B04_AccountNo.resx">
       <DependentUpon>B04_AccountNo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B04_BankData_DetailInput.resx">
+      <DependentUpon>B04_BankData_DetailInput.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B04_BankData_Input.resx">
       <DependentUpon>B04_BankData_Input.cs</DependentUpon>

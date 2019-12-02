@@ -16,10 +16,79 @@ namespace Sci.Production.Basic
         private bool _canconfirm;
         private bool _canedit;
         private string LocalSupp_Bank_ID;
+        private ToolStripMenuItem newitem;
+        private ToolStripMenuItem edit;
 
-        public B04_BankDetail(bool canedit, string ID, string keyvalue2, string keyvalue3, bool cancomfirmed)
+        public class LocalSupp_Bank_Detail
         {
-            InitializeComponent();
+            public string AccountNo { get; set; }
+
+            public string AccountName { get; set; }
+
+            public string BankName { get; set; }
+
+            public string BranchCode { get; set; }
+
+            public string BranchName { get; set; }
+
+            public string CountryID { get; set; }
+
+            public string Alias { get; set; }
+
+            public string City { get; set; }
+
+            public string SWIFTCode { get; set; }
+
+            public string MidSWIFTCode { get; set; }
+
+            public string MidBankName { get; set; }
+
+            public string Remark { get; set; }
+
+            public bool IsDefault { get; set; }
+
+        }
+
+        public B04_BankDetail(bool canedit, string ID, string keyvalue2, string keyvalue3, bool cancomfirmed, ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+
+            // 按右鍵開啟選單，這一定要加！
+            this.detailgrid.ContextMenuStrip = this.detailgridmenus;
+
+            // 表身點兩下事件
+            //this.detailgrid.MouseDoubleClick += (s, e) =>
+            //{
+            //    if (this.EditMode)
+            //    {
+            //        // 新增
+            //        if (this.detailgrid.CurrentRow == null)
+            //        {
+            //            this.BankDetail_Insert_OpenForm();
+            //        }
+            //        else
+            //        {
+            //            DataRow currenRow = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.CurrentRow.Index);
+            //            int currentIndex = this.detailgrid.CurrentRow.Index;
+
+            //            if (currenRow["IsDefault"] == DBNull.Value)
+            //            { 
+            //                // 新增
+            //                this.BankDetail_Insert_OpenForm();
+            //            }
+            //            else
+            //            {
+            //                // 修改
+            //                this.BankDetail_Edit_OpenForm(currenRow);
+            //            }
+            //        }
+            //    }
+            //};
+
+            // 關閉表身點兩下，自動Insert新Row的功能
+            this.InsertDetailGridOnDoubleClick = false;
+
             this._canconfirm = cancomfirmed;
             this._canedit = canedit;
             this.DefaultFilter = "ID = '" + ID.Trim() + "'";
@@ -30,6 +99,82 @@ namespace Sci.Production.Basic
             }
         }
 
+        private void AddNewItem()
+        {
+            LocalSupp_Bank_Detail detail = new LocalSupp_Bank_Detail();
+            B04_BankData_DetailInput form = new B04_BankData_DetailInput(detail);
+            form.ShowDialog();
+
+            if (detail.AccountNo != null)
+            {
+                DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                DataRow nRow = dt.NewRow();
+
+                nRow["IsDefault"] = detail.IsDefault;
+                nRow["AccountNo"] = detail.AccountNo;
+                nRow["AccountName"] = detail.AccountName;
+                nRow["BankName"] = detail.BankName;
+                nRow["BranchCode"] = detail.BranchCode;
+                nRow["BranchName"] = detail.BranchName;
+                nRow["CountryID"] = detail.CountryID;
+                nRow["Alias"] = detail.Alias;
+                nRow["City"] = detail.City;
+                nRow["SWIFTCode"] = detail.SWIFTCode;
+                nRow["MidSWIFTCode"] = detail.MidSWIFTCode;
+                nRow["MidBankName"] = detail.MidBankName;
+                nRow["Remark"] = detail.Remark;
+                dt.Rows.Add(nRow);
+            }
+        }
+
+        private void EditItem()
+        {
+            if (this.detailgrid.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("There is no selected item !!");
+                return;
+            }
+
+            DataRow currenRow = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.CurrentRow.Index);
+            int currentIndex = this.detailgrid.CurrentRow.Index;
+
+            LocalSupp_Bank_Detail detail = new LocalSupp_Bank_Detail()
+            {
+                IsDefault = MyUtility.Check.Empty(currenRow["IsDefault"]) ? false : Convert.ToBoolean(currenRow["IsDefault"]),
+                AccountNo = currenRow["AccountNo"].ToString(),
+                AccountName = currenRow["AccountName"].ToString(),
+                BankName = currenRow["BankName"].ToString(),
+                BranchCode = currenRow["BranchCode"].ToString(),
+                BranchName = currenRow["BranchName"].ToString(),
+                CountryID = currenRow["CountryID"].ToString(),
+                Alias = currenRow["Alias"].ToString(),
+                City = currenRow["City"].ToString(),
+                SWIFTCode = currenRow["SWIFTCode"].ToString(),
+                MidSWIFTCode = currenRow["MidSWIFTCode"].ToString(),
+                MidBankName = currenRow["MidBankName"].ToString(),
+                Remark = currenRow["Remark"].ToString(),
+            };
+
+            B04_BankData_DetailInput form = new B04_BankData_DetailInput(detail);
+            form.ShowDialog();
+
+            if (detail.AccountNo != null)
+            {
+                currenRow["IsDefault"] = detail.IsDefault;
+                currenRow["AccountNo"] = detail.AccountNo;
+                currenRow["AccountName"] = detail.AccountName;
+                currenRow["BankName"] = detail.BankName;
+                currenRow["BranchCode"] = detail.BranchCode;
+                currenRow["BranchName"] = detail.BranchName;
+                currenRow["CountryID"] = detail.CountryID;
+                currenRow["Alias"] = detail.Alias;
+                currenRow["City"] = detail.City;
+                currenRow["SWIFTCode"] = detail.SWIFTCode;
+                currenRow["MidSWIFTCode"] = detail.MidSWIFTCode;
+                currenRow["MidBankName"] = detail.MidBankName;
+                currenRow["Remark"] = detail.Remark;
+            }
+        }
 
         protected override void EnsureToolbarExt()
         {
@@ -75,6 +220,26 @@ namespace Sci.Production.Basic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            // 按右鍵開啟選單
+            this.detailgrid.CellToolTipTextNeeded += (s, e) =>
+            {
+                e.ToolTipText = "You can show the function form to press the right key under inquiring the state.";
+
+            };
+            this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Item ", onclick: (s, e) => this.EditItem()).Get(out this.edit);
+
+            this.SetContextMenuStatus(false); // 預設先將Context ment設定為disable
+
+        }
+
+        // 設定Context Menu的Enable/Disable
+        private void SetContextMenuStatus(bool status)
+        {
+            this.newitem.Enabled = status;
+            this.edit.Enabled = status;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -250,6 +415,16 @@ order by ID
                 this.txtAbb.Text = MyUtility.GetValue.Lookup($"SELECT TOP 1 Abb FROM LocalSupp WHERE ID='{this.CurrentMaintain["ID"]}'");
             }
             base.OnDetailEntered();
+
+            if (this.EditMode)
+            {
+                // 先將Menu狀態全打開
+                this.SetContextMenuStatus(true);
+            }
+            else
+            {
+                this.SetContextMenuStatus(false);
+            }
         }
 
         protected override bool ClickNewBefore()
@@ -402,7 +577,6 @@ order by ID
             //    }
             //}
         }
-
 
         protected override void ClickConfirm()
         {

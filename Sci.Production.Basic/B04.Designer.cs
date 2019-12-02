@@ -31,7 +31,7 @@ namespace Sci.Production.Basic
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCode = new Sci.Win.UI.Label();
             this.labelAbbreviation = new Sci.Win.UI.Label();
             this.labelNationality = new Sci.Win.UI.Label();
@@ -67,6 +67,8 @@ namespace Sci.Production.Basic
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label2 = new Sci.Win.UI.Label();
             this.chkPayByChk = new Sci.Win.UI.CheckBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtEmail = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -79,10 +81,12 @@ namespace Sci.Production.Basic
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(945, 671);
+            this.detail.Size = new System.Drawing.Size(945, 708);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtEmail);
+            this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.chkPayByChk);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.gridBankDetail);
@@ -116,12 +120,12 @@ namespace Sci.Production.Basic
             this.detailcont.Controls.Add(this.labelNationality);
             this.detailcont.Controls.Add(this.labelAbbreviation);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(945, 633);
+            this.detailcont.Size = new System.Drawing.Size(945, 670);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 633);
+            this.detailbtm.Location = new System.Drawing.Point(0, 670);
             this.detailbtm.Size = new System.Drawing.Size(945, 38);
             // 
             // browse
@@ -130,7 +134,7 @@ namespace Sci.Production.Basic
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(953, 700);
+            this.tabs.Size = new System.Drawing.Size(953, 737);
             // 
             // createby
             // 
@@ -204,7 +208,7 @@ namespace Sci.Production.Basic
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Location = new System.Drawing.Point(28, 263);
+            this.labelCurrency.Location = new System.Drawing.Point(28, 293);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(125, 23);
             this.labelCurrency.TabIndex = 7;
@@ -212,7 +216,7 @@ namespace Sci.Production.Basic
             // 
             // labelPaymentTerm
             // 
-            this.labelPaymentTerm.Location = new System.Drawing.Point(28, 290);
+            this.labelPaymentTerm.Location = new System.Drawing.Point(28, 320);
             this.labelPaymentTerm.Name = "labelPaymentTerm";
             this.labelPaymentTerm.Size = new System.Drawing.Size(125, 23);
             this.labelPaymentTerm.TabIndex = 8;
@@ -220,7 +224,7 @@ namespace Sci.Production.Basic
             // 
             // labelWHoldingRate
             // 
-            this.labelWHoldingRate.Location = new System.Drawing.Point(28, 317);
+            this.labelWHoldingRate.Location = new System.Drawing.Point(28, 347);
             this.labelWHoldingRate.Name = "labelWHoldingRate";
             this.labelWHoldingRate.Size = new System.Drawing.Size(125, 23);
             this.labelWHoldingRate.TabIndex = 9;
@@ -340,10 +344,10 @@ namespace Sci.Production.Basic
             // 
             this.txtpayterm_ftyPaymentTerm.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermID", true));
             this.txtpayterm_ftyPaymentTerm.DisplayBox1Binding = "";
-            this.txtpayterm_ftyPaymentTerm.Location = new System.Drawing.Point(156, 290);
+            this.txtpayterm_ftyPaymentTerm.Location = new System.Drawing.Point(156, 320);
             this.txtpayterm_ftyPaymentTerm.Name = "txtpayterm_ftyPaymentTerm";
             this.txtpayterm_ftyPaymentTerm.Size = new System.Drawing.Size(384, 23);
-            this.txtpayterm_ftyPaymentTerm.TabIndex = 8;
+            this.txtpayterm_ftyPaymentTerm.TabIndex = 9;
             this.txtpayterm_ftyPaymentTerm.TextBox1Binding = "";
             // 
             // txtCurrency
@@ -352,10 +356,10 @@ namespace Sci.Production.Basic
             this.txtCurrency.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID", true));
             this.txtCurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCurrency.IsSupportSytsemContextMenu = false;
-            this.txtCurrency.Location = new System.Drawing.Point(156, 263);
+            this.txtCurrency.Location = new System.Drawing.Point(156, 293);
             this.txtCurrency.Name = "txtCurrency";
             this.txtCurrency.Size = new System.Drawing.Size(40, 23);
-            this.txtCurrency.TabIndex = 7;
+            this.txtCurrency.TabIndex = 8;
             // 
             // txtCountryNationality
             // 
@@ -372,7 +376,7 @@ namespace Sci.Production.Basic
             this.numWHoldingTerm.BackColor = System.Drawing.Color.White;
             this.numWHoldingTerm.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WithHoldingRate", true));
             this.numWHoldingTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numWHoldingTerm.Location = new System.Drawing.Point(156, 317);
+            this.numWHoldingTerm.Location = new System.Drawing.Point(156, 347);
             this.numWHoldingTerm.Name = "numWHoldingTerm";
             this.numWHoldingTerm.NullValue = new decimal(new int[] {
             0,
@@ -380,7 +384,7 @@ namespace Sci.Production.Basic
             0,
             0});
             this.numWHoldingTerm.Size = new System.Drawing.Size(40, 23);
-            this.numWHoldingTerm.TabIndex = 9;
+            this.numWHoldingTerm.TabIndex = 10;
             this.numWHoldingTerm.Value = new decimal(new int[] {
             0,
             0,
@@ -437,7 +441,7 @@ namespace Sci.Production.Basic
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(28, 343);
+            this.label1.Location = new System.Drawing.Point(28, 373);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(125, 23);
             this.label1.TabIndex = 19;
@@ -448,11 +452,11 @@ namespace Sci.Production.Basic
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(156, 346);
+            this.editRemark.Location = new System.Drawing.Point(156, 376);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(400, 82);
-            this.editRemark.TabIndex = 10;
+            this.editRemark.TabIndex = 11;
             // 
             // btnBatchApprove
             // 
@@ -482,29 +486,29 @@ namespace Sci.Production.Basic
             this.gridBankDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridBankDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridBankDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridBankDetail.Location = new System.Drawing.Point(28, 465);
+            this.gridBankDetail.Location = new System.Drawing.Point(28, 492);
             this.gridBankDetail.Name = "gridBankDetail";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBankDetail.RowTemplate.Height = 24;
             this.gridBankDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBankDetail.ShowCellToolTips = false;
-            this.gridBankDetail.Size = new System.Drawing.Size(896, 150);
+            this.gridBankDetail.Size = new System.Drawing.Size(923, 286);
             this.gridBankDetail.TabIndex = 20;
             // 
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(28, 439);
+            this.label2.Location = new System.Drawing.Point(28, 469);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(125, 23);
             this.label2.TabIndex = 210;
@@ -517,17 +521,36 @@ namespace Sci.Production.Basic
             this.chkPayByChk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSintexSubcon", true));
             this.chkPayByChk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkPayByChk.IsSupportEditMode = false;
-            this.chkPayByChk.Location = new System.Drawing.Point(156, 439);
+            this.chkPayByChk.Location = new System.Drawing.Point(156, 469);
             this.chkPayByChk.Name = "chkPayByChk";
             this.chkPayByChk.ReadOnly = true;
             this.chkPayByChk.Size = new System.Drawing.Size(114, 21);
-            this.chkPayByChk.TabIndex = 11;
+            this.chkPayByChk.TabIndex = 99;
             this.chkPayByChk.Text = "Pay By Check";
             this.chkPayByChk.UseVisualStyleBackColor = true;
             // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(28, 263);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(125, 23);
+            this.label3.TabIndex = 211;
+            this.label3.Text = "E-mail";
+            // 
+            // txtEmail
+            // 
+            this.txtEmail.BackColor = System.Drawing.Color.White;
+            this.txtEmail.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtEmail.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Email", true));
+            this.txtEmail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtEmail.Location = new System.Drawing.Point(156, 264);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(317, 23);
+            this.txtEmail.TabIndex = 7;
+            // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(953, 733);
+            this.ClientSize = new System.Drawing.Size(953, 770);
             this.Controls.Add(this.btnBatchApprove);
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "txtTel";
@@ -547,8 +570,8 @@ namespace Sci.Production.Basic
             this.UnjunkChkValue = "Junked";
             this.WorkAlias = "LocalSupp";
             this.Load += new System.EventHandler(this.B04_FormLoaded);
-            this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatchApprove, 0);
+            this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -601,5 +624,7 @@ namespace Sci.Production.Basic
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Label label2;
         private Win.UI.CheckBox chkPayByChk;
+        private Win.UI.TextBox txtEmail;
+        private Win.UI.Label label3;
     }
 }
