@@ -2389,6 +2389,8 @@ WHERE sewqty < (packqty + adjQty)",
                 {
                     this.txtSubconOutFty.TextBox1.ReadOnly = false;
                     this.txtSubConOutContractNumber.ReadOnly = false;
+                    this.CurrentMaintain["Shift"] = this.txtdropdownlistShift.SelectedValue;
+                    this.CurrentMaintain.EndEdit();
                 }
                 else
                 {
@@ -3541,6 +3543,8 @@ Hi all,
                 return;
             }
 
+            this.CurrentMaintain.EndEdit();
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["OutputDate"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]) ||
@@ -3550,7 +3554,6 @@ Hi all,
                 return;
             }
 
-            this.CurrentMaintain.EndEdit();
             string frommes = $@"
 select
 	OrderId
