@@ -46,8 +46,8 @@ namespace Sci.Production.Logistic
             .Numeric("ScanQty", header: "Scan Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("ScanName", header: "Scan Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .DateTime("ScanEditDate", header: "Scan Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("ClogPulloutName", header: "Transport", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Date("ClogPulloutDate", header: "Scan Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("ClogPulloutName", header: "Clog Pullout Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("ClogPulloutDate", header: "Clog Pullout Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Name", header: "Transport", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PulloutTransportNo", header: "Transport No", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;

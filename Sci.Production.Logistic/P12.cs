@@ -24,6 +24,7 @@ namespace Sci.Production.Logistic
             this.InitializeComponent();
         }
 
+        private int s;
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -33,6 +34,14 @@ namespace Sci.Production.Logistic
             col_chk.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["remark"]))
+                {
+                    MyUtility.Msg.WarningBox(dr["remark"].ToString());
+                    dr["selected"] = 0;
+                    dr.EndEdit();
+                    return;
+                }
+
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
                 int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected=1").Count();
@@ -61,9 +70,29 @@ namespace Sci.Production.Logistic
             .Text("PulloutTransportNo", header: "Transport No", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
+
             this.grid1.ColumnHeaderMouseClick += (s, e) =>
             {
-                this.grid1.ValidateControl();
+                if (this.s == this.numSelectedCTNQty.Value)
+                {
+                    foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+                    {
+                        dr["selected"] = 0;
+                        dr.EndEdit();
+                    }
+                }
+                else
+                {
+                    foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+                    {
+                        if (!MyUtility.Check.Empty(dr["remark"]))
+                        {
+                            dr["selected"] = 0;
+                            dr.EndEdit();
+                        }
+                    }
+                }
+
                 int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected=1").Count();
                 this.numSelectedCTNQty.Value = sint;
             };
@@ -76,6 +105,8 @@ namespace Sci.Production.Logistic
 
         private void Find()
         {
+            this.numSelectedCTNQty.Value = 0;
+            this.numTTLQty.Value = 0;
             this.listControlBindingSource1.DataSource = null;
             if (MyUtility.Check.Empty(this.txtSP.Text) && MyUtility.Check.Empty(this.txtPO.Text) &&
                 MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.dateBuyer.Value1))
@@ -144,12 +175,15 @@ order by pld.ID,pld.CTNStartNo
 
             this.numSelectedCTNQty.Value = 0;
             this.numTTLQty.Value = dt.Rows.Count;
+            this.s = ((DataTable)this.listControlBindingSource1.DataSource).Select("remark is null ").Count();
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
             // 設定只能選txt檔
             this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
+            this.numSelectedCTNQty.Value = 0;
+            this.numTTLQty.Value = 0;
 
             // 開窗且有選擇檔案
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -302,6 +336,7 @@ outer apply(
 
                 this.numSelectedCTNQty.Value = 0;
                 this.numTTLQty.Value = lastable.Rows.Count;
+                this.s = ((DataTable)this.listControlBindingSource1.DataSource).Select("remark is null").Count();
             }
         }
 
@@ -360,18 +395,11 @@ outer apply(
                 return;
             }
 
-            selectedData = dt.Select("Selected = 1 and (remark = '' or remark is null)");
-            if (selectedData.Length == 0)
-            {
-                MyUtility.Msg.WarningBox("Please choose data first! With no remark");
-                return;
-            }
-
             DataTable seleDt = selectedData.CopyToDataTable();
 
             foreach (DataRow dr in seleDt.Rows)
             {
-                if (MyUtility.Check.Empty(dr["PulloutTransport"])|| MyUtility.Check.Empty(dr["PulloutTransportNo"]))
+                if (MyUtility.Check.Empty(dr["PulloutTransport"]) || MyUtility.Check.Empty(dr["PulloutTransportNo"]))
                 {
                     MyUtility.Msg.WarningBox("Transport & Transport No cannot be empty.");
                     return;
