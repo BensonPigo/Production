@@ -88,7 +88,7 @@ namespace Sci.Production.Subcon
             datas.Columns.Add("VOUCHERDATE");
             foreach (DataRow dr in datas.Rows)
             {
-                dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from [FinanceEN].[dbo].[Voucher] WITH (NOLOCK) where id = '{0}'", dr["voucherid"]));
+                dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from SciFMS_Voucher WITH (NOLOCK) where id = '{0}'", dr["voucherid"]));
 
                 //根據Debit是否為台北建立的，修改自動帶入的幣別
                 /*if (_isTaipeiDBC)

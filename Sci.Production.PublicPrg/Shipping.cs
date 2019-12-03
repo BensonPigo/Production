@@ -53,7 +53,7 @@ DECLARE cursor_ttlAmount CURSOR FOR
 		  from (select isnull(se.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID
 				from ShippingAP_Detail sd WITH (NOLOCK) 
 				left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-				left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+				left join SciFMS_AccountNo a on a.ID = se.AccountID
 				left join ShippingAP s WITH (NOLOCK) on s.ID = sd.ID
 				where sd.ID = @id
 				group by se.AccountID, a.Name, s.CurrencyID) a,

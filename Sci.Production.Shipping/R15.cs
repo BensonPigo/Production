@@ -50,7 +50,7 @@ sc.ID
 ,s.BrandID
 ,s.UnitID
 ,s.AccountID
-,[AccountName] = (select name from [FinanceEN].dbo.AccountNO where id = s.AccountID)
+,[AccountName] = (select name from SciFMS_AccountNO where id = s.AccountID)
 ,sc.Status
 ,s.Junk
 ,sc.AddDate

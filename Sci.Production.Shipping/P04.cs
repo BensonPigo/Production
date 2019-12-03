@@ -487,14 +487,14 @@ where ed.ID = '{0}'", masterID);
                     sqlCmd = string.Format(
                         @"select 1
 from ShareExpense se WITH (NOLOCK) 
-LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     break;
                 case "WKNo":
                     sqlCmd = string.Format(
                         @"select 1
 from ShareExpense se WITH (NOLOCK) 
-LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     break;
                 default:

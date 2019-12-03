@@ -23,7 +23,7 @@ Select *  into Pass1
 from(
      Select * from [Production].dbo.Pass1
      Union all 
-     Select * from [Machine].dbo.Pass1 as m
+     Select * from Production.dbo.SciMachine_Pass1 as m
      where not exists (Select ID from [Production].dbo.Pass1 a where a.ID = m.ID)
          
 ) as s

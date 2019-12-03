@@ -247,7 +247,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 				 Amount=sum(ds.Amount) 
 					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 			FROM debit_schedule ds WITH (NOLOCK) 
-			left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+			left join SciFMS_Voucher as v on v.id = ds.VoucherID
 			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''		
 		) as tmpSum
 		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
@@ -280,7 +280,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 				 Amount=sum(ds.Amount) 
 					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 			FROM debit_schedule ds WITH (NOLOCK) 
-			left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+			left join SciFMS_Voucher as v on v.id = ds.VoucherID
 			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''			
 		) as tmpSum
 		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
@@ -297,7 +297,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 		from DBO.LocalDebit a WITH (NOLOCK) 
 			inner join dbo.debit_schedule c WITH (NOLOCK) on a.id = c.id
             outer apply(select * from LocalSupp s WITH (NOLOCK) where a.localsuppid = s.ID)s
-		    outer apply (select VoucherDate from FinanceEn.dbo.Voucher Fv where Fv.id = c.VoucherID ) V
+		    outer apply (select VoucherDate from SciFMS_Voucher Fv where Fv.id = c.VoucherID ) V
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) vs3
@@ -313,7 +313,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 				 Amount=sum(ds.Amount) 
 					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 			FROM debit_schedule ds WITH (NOLOCK) 
-			left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+			left join SciFMS_Voucher as v on v.id = ds.VoucherID
 			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''			
 		) as tmpSum
 		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax

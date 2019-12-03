@@ -135,7 +135,7 @@ namespace Sci.Production.Subcon
 						            ds.VoucherID,v.VoucherDate,
 						             Amount=sum(ds.Amount) over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 					            FROM debit_schedule ds WITH (NOLOCK) 
-					            left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+					            left join dbo.SciFMS_voucher as v on v.id = ds.VoucherID
 					            WHERE  isnull(ds.VoucherID,'')!=''			
 				            )tmpSum
 				            on a.ID = LocDeb.id 
@@ -169,7 +169,7 @@ namespace Sci.Production.Subcon
 						                ds.VoucherID,v.VoucherDate,
 						                 Amount=sum(ds.Amount) over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 					                FROM debit_schedule ds WITH (NOLOCK) 
-					                left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+					                left join dbo.SciFMS_voucher as v on v.id = ds.VoucherID
 					                WHERE  isnull(ds.VoucherID,'')!=''			
 				                )tmpSum
 				                on a.ID = LocDeb.id 
