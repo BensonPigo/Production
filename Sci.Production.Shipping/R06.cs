@@ -113,7 +113,7 @@ namespace Sci.Production.Shipping
 from ShippingAP s WITH (NOLOCK)
 inner join ShippingAP_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
 left join ShipExpense se  WITH (NOLOCK) ON sd.ShipExpenseID = se.ID
-left join [FinanceEN].dbo.AccountNo an on an.ID = se.AccountID 
+left join SciFMS_AccountNo an on an.ID = se.AccountID 
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
 where s.Status = 'Approved'");
             }
@@ -147,14 +147,14 @@ where s.Status = 'Approved'");
 from ShippingAP s WITH (NOLOCK)
 left join ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
                                            and sh.Junk != 1
-left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID 
+left join SciFMS_AccountNo an on an.ID = sh.AccountID 
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
 
 OUTER APPLY(
 	SELECT se.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
 	FROM ShippingAP_Detail sd
 	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-	left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
+	left join SciFMS_AccountNO a on a.ID = se.AccountID
 	WHERE sd.ID=s.ID
 	----若ShareExpense有資料，就不必取表身加總的值
 	AND NOT EXISTS (SELECT 1 FROM ShareExpense WHERE ShippingAPID=sd.ID and Junk != 1)

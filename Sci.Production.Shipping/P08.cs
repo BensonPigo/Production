@@ -150,8 +150,8 @@ select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') +
     ,a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
 from ShippingAP_Detail sd WITH (NOLOCK) 
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
-left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
+left join SciFMS_AccountNO a on a.ID = se.AccountID
+left join SciFMS_AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

@@ -66,7 +66,7 @@ namespace Sci.Production.Subcon
             lblSubconDebitNote.Visible = (!MyUtility.Check.Empty(CurrentMaintain["isSubcon"]));
             numBalance.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) - decimal.Parse(CurrentMaintain["received"].ToString());
             DataRow ftyVD;
-           MyUtility.Check.Seek(string.Format(@"SELECT VoucherDate FROM [FinanceEN].[dbo].[Voucher] WHERE ID=(SELECT VoucherFactory FROM Debit WHERE ID='{0}')"
+           MyUtility.Check.Seek(string.Format(@"SELECT VoucherDate FROM SciFMS_Voucher WHERE ID=(SELECT VoucherFactory FROM Debit WHERE ID='{0}')"
  , displayDebitNo.Text), out ftyVD);
            if (ftyVD != null)
            {

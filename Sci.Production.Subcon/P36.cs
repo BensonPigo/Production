@@ -64,7 +64,7 @@ namespace Sci.Production.Subcon
             // 剛好settle的 voucher# & Date 顯示
             DataRow dr;
             MyUtility.Check.Seek(string.Format(@";WITH cte as 
-(select t.VoucherID,(select a.voucherdate from FinanceEN.dbo.voucher a where a.id = t.VoucherID) voucherdate , sum(amount ) 
+(select t.VoucherID,(select a.voucherdate from dbo.SciFMS_voucher a where a.id = t.VoucherID) voucherdate , sum(amount ) 
 over (order by issuedate
       rows between unbounded preceding and current row) as running_total 
 												 from dbo.Debit_Schedule T WITH (NOLOCK) where id='{0}' and voucherid !='' and voucherid is not null 

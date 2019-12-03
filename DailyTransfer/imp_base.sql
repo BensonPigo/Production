@@ -819,7 +819,6 @@ select
       ,EditName
       ,EditDate
       ,Junk
-
 from Trade_To_Pms.dbo.Reason as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Reason as a WITH (NOLOCK) where a.id = b.id and a.ReasonTypeID = b.ReasonTypeID)
 
@@ -1033,11 +1032,8 @@ select
       ,Month
       ,HalfMonth1
       ,HalfMonth2
-
 from Trade_To_Pms.dbo.Factory_WorkHour as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Factory_WorkHour as a WITH (NOLOCK) where a.id = b.id and a.Year=b.Year and a.Month=b.Month)
-
-
 
 
 --SCI_FTY
@@ -1220,7 +1216,6 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.Unit_Rate as b WITH (NOLOCK)
 where not exists(select UnitFrom from Production.dbo.Unit_Rate as a WITH (NOLOCK) where a.UnitFrom = b.UnitFrom  and a.UnitTo = b.UnitTo)
 
@@ -1306,7 +1301,6 @@ select
       ,EditName
       ,EditDate
 	  ,ukey
-
 from Trade_To_Pms.dbo.Color as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Color as a WITH (NOLOCK) where a.id = b.id and a.BrandId = b.BrandId)
 
@@ -1361,7 +1355,6 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.Currency as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Currency as a WITH (NOLOCK) where a.id = b.id)
 
@@ -1471,7 +1464,6 @@ MtltypeId
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.LossRateAccessory as b WITH (NOLOCK)
 where not exists(select MtltypeId from Production.dbo.LossRateAccessory as a WITH (NOLOCK) where a.MtltypeId = b.MtltypeId)
 
@@ -1499,7 +1491,6 @@ select
 	  ,AddDate
 	  ,EditName
 	  ,EditDate
-
 from Trade_To_Pms.dbo.LossRateAccessory_Limit as b WITH (NOLOCK)
 where not exists(select MtltypeId from Production.dbo.LossRateAccessory_Limit as a WITH (NOLOCK)
 				 where a.MtltypeId = b.MtltypeId and a.UsageUnit = b.UsageUnit)
@@ -1592,7 +1583,6 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.Carrier as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Carrier as a WITH (NOLOCK) where a.id = b.id)
 
@@ -1668,7 +1658,6 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.PayTermAP as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.PayTermAP as a WITH (NOLOCK) where a.id = b.id)
 
@@ -1742,66 +1731,6 @@ s.EditDate
 	 delete;
 
 
-
-
-
-
---Mtype
---MachineGroup
---MACHINE 多一個 [InspLeadTime]
-----------------------刪除主TABLE多的資料
-Delete Machine.dbo.MachineGroup
-from Machine.dbo.MachineGroup as a left join Trade_To_Pms.dbo.MachineGroup as b
-on a.id = b.id and a.MasterGroupID = b.MasterGroupID
-where b.id is null and b.MasterGroupID is null
----------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
-UPDATE a
-SET  
-       --a.ID	      =b.ID	
-      a.Description	      =b.Description	
-      ,a.DescCH	      =b.DescriptionCH	
-      ,a.Substitute	      =b.Substitute	
-      ,a.Junk	      =b.Junk	
-      ,a.Picture1	      =b.Picture1	
-      ,a.Picture2	      =b.Picture2	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-
-from Machine.dbo.MachineGroup as a inner join Trade_To_Pms.dbo.MachineGroup as b ON a.id=b.id and a.MasterGroupID = b.MasterGroupID
--------------------------- INSERT INTO 抓
-INSERT INTO Machine.dbo.MachineGroup(
-ID
-      ,Description
-      ,DescCH
-      ,Substitute
-      ,Junk
-      ,Picture1
-      ,Picture2
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,MasterGroupID
-)
-select 
-ID
-      ,Description
-      ,DescriptionCH
-      ,Substitute
-      ,Junk
-      ,Picture1
-      ,Picture2
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,MasterGroupID
-from Trade_To_Pms.dbo.MachineGroup as b WITH (NOLOCK)
-where not exists(select id from Machine.dbo.MachineGroup as a WITH (NOLOCK) where a.id = b.id and a.MasterGroupID = b.MasterGroupID)
-
-
 --Mockup
 --Mockup
 ----------------------刪除主TABLE多的資料
@@ -1843,7 +1772,6 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.Mockup as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Mockup as a WITH (NOLOCK) where a.id = b.id)
 
@@ -1963,7 +1891,6 @@ select
       ,EditName
       ,EditDate
 	  ,MiAdidas
-
 from Trade_To_Pms.dbo.Program as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Program as a WITH (NOLOCK) where a.id = b.id and a.BrandID = b.BrandID)
 
@@ -2024,7 +1951,6 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.MtlFactor as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.MtlFactor as a WITH (NOLOCK) where a.id = b.id and a.Type = b.Type)
 
@@ -2070,7 +1996,6 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.Construction as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Construction as a WITH (NOLOCK) where a.id = b.id)
 
@@ -2116,15 +2041,8 @@ ID
       ,EditName
       ,EditDate
       ,Junk
-
 from Trade_To_Pms.dbo.Port as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Port as a WITH (NOLOCK) where a.id = b.id)
-
-
-
-
-
-
 
 --Formlist 跳過 目前無轉出TABLE
 --DO releasememvar WITH 'FS_CMTPlus'
@@ -2158,7 +2076,6 @@ select
       ,AddName
       ,EditDate
       ,EditName
-
 from Trade_To_Pms.dbo.FSRCpuCost as b WITH (NOLOCK)
 where not exists(select ShipperID from Production.dbo.FSRCpuCost as a WITH (NOLOCK) where a.ShipperID = b.ShipperID)
 
@@ -2203,7 +2120,6 @@ select
       ,AddName
       ,EditDate
       ,EditName
-
 from Trade_To_Pms.dbo.FSRCpuCost_Detail as b WITH (NOLOCK)
 where not exists(select ShipperID from Production.dbo.FSRCpuCost_Detail as a WITH (NOLOCK) where a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate)
 
@@ -2244,7 +2160,6 @@ select
       ,AddName
       ,EditDate
       ,EditName
-
 from Trade_To_Pms.dbo.FtyShipper as b WITH (NOLOCK)
 where not exists(select BrandID from Production.dbo.FtyShipper as a WITH (NOLOCK) where a.BrandID = b.BrandID and a.FactoryID=b.FactoryID	)
 
@@ -2285,8 +2200,6 @@ select
 from Trade_To_Pms.dbo.FtyShipper_Detail as b WITH (NOLOCK)
 where not exists(select BrandID from Production.dbo.FtyShipper_Detail as a WITH (NOLOCK) 
 where a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate and a.SeasonID	=b.SeasonID)
-
-
 
 --Phrase1
 --Phrase 無多欄位
@@ -2335,7 +2248,6 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.Phrase as b WITH (NOLOCK)
 where not exists(select PhraseTypeName from Production.dbo.Phrase as a WITH (NOLOCK) where a.PhraseTypeName = b.PhraseTypeName and a.Name = b.Name)
 
@@ -2414,10 +2326,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.Company as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Company as a WITH (NOLOCK) where a.id = b.id)
-
 
 --MiFabCode
 --ADIDASMiSetup_ColorComb 無多給欄位
@@ -2460,7 +2370,6 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
-
 from Trade_To_Pms.dbo.ADIDASMiSetup_ColorComb as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ADIDASMiSetup_ColorComb as a WITH (NOLOCK) where a.id = b.id)
 
@@ -2541,7 +2450,6 @@ on t.type=s.type and t.id=s.id
 		delete;
 
 	---------KeyWord--------------
-	select * from Trade_To_Pms..KeyWord
 
 	Merge Production.dbo.KeyWord as t
 	Using Trade_To_Pms.dbo.KeyWord as s

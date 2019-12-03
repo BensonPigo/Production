@@ -23,7 +23,7 @@ BEGIN
 		update ArtworkPO set LockName = @poapprovename, LockDate = GETDATE(),ApvName = @poapprovename, ApvDate = GETDATE(), Status = 'Approved'
 		where ApvDate is null and IssueDate <= DATEADD(DAY,0-@poapproveday,GETDATE()) and Status in ('NEW','Locked')
 
-		update Machine.dbo.MiscPO set LockName = @poapprovename, LockDate = GETDATE(),Approve = @poapprovename, ApproveDate = GETDATE(), Status = 'Approved'
+		update SciMachine_MiscPO set LockName = @poapprovename, LockDate = GETDATE(),Approve = @poapprovename, ApproveDate = GETDATE(), Status = 'Approved'
 		where ApproveDate is null and CDate <= DATEADD(DAY,0-@poapproveday,GETDATE()) and PurchaseFrom = 'L' and Status in ('NEW','Locked')
 	END
 

@@ -39,19 +39,19 @@ select
 	case when ed.PoType = 'M' and ed.FabricType = 'M' 
 		then (
 			select TOP 1 mpo.FactoryID 
-			from [Machine].dbo.MachinePO mpo, [Machine].dbo.MachinePO_Detail mpod 
+			from SciMachine_MachinePO mpo, SciMachine_MachinePO_Detail mpod 
 			where mpo.ID = mpod.ID and mpod.ID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2
 		)
         when ed.PoType = 'M' and ed.FabricType = 'P' 
 		 then (
 			select TOP 1 ppo.FactoryID 
-			from [Machine].dbo.PartPO ppo, [Machine].dbo.PartPO_Detail ppod 
+			from SciMachine_PartPO ppo, SciMachine_PartPO_Detail ppod 
 			where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2
 		) 
 		when ed.PoType = 'M' and ed.FabricType = 'O' 
 		then (
 			select TOP 1 mpo.Factoryid 
-			from [Machine].dbo.MiscPO mpo, [Machine].dbo.MiscPO_Detail mpod 
+			from SciMachine_MiscPO mpo, SciMachine_MiscPO_Detail mpod 
 			where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2
 		) 
 	else o.FactoryID end)
@@ -391,7 +391,7 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
             sqlCmd = string.Format(
                         @"select 1
 from ShareExpense se WITH (NOLOCK) 
-LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);

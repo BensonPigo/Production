@@ -405,4 +405,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="FactoryID" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="9b5ca427-2e68-4baf-bbc7-5d3cb1db4862" ChangeDateTime="11/21/2019 04:00:54">
+    <Property Name="ElementName" Value="[dbo].[TransImport].[ConnectionName]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[TransImport]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ImportConnectionName" />
+  </Operation>
 </Operations>

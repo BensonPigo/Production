@@ -13,7 +13,7 @@ BEGIN
 		declare @Sayfty table(id varchar(10)) --?u?t?N?X
 		insert @Sayfty select id from Production.dbo.Factory
 					   union
-					   select id from Machine.dbo.Factory	
+					   select id from Production.dbo.SciMachine_Factory	
 
 	---create temp table---------
 

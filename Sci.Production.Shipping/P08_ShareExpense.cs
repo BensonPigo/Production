@@ -648,7 +648,7 @@ select  sh.Junk,sh.ShippingAPID,sh.WKNo,sh.InvNo,sh.Type,sh.GW,sh.CBM,sh.Amount,
             else ' Number of Deliver Sheets' 
           end as ShareRule 
 from ShareExpense sh WITH (NOLOCK) 
-left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID
+left join SciFMS_AccountNo an on an.ID = sh.AccountID
 where   sh.ShippingAPID = '{0}' 
         and (sh.Junk = 0 or sh.Junk is null)
 order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
