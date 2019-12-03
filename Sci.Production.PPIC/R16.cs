@@ -147,34 +147,24 @@ where exists(select 1 from #tmpOrderMain main where pd.OrderID = main.ID and
 													pd.OrderShipmodeSeq = main.Seq)
 group by pd.OrderID,pd.OrderShipmodeSeq
 
---資料庫拆分時要改成以下
---select 
---*
---into #tmpInspection
---from openquery([ExtendServer],'
---select ins.OrderId,
---ins.Location,
---[DQSQty] = count(1),
---[LastDQSOutputDate] = MAX(iif(ins.Status in ('Pass','Fixed'), ins.AddDate, null))
---from [ManufacturingExecution].[dbo].[Inspection] ins WITH(NOLOCK)
---where exists( select 1 
---from 
---Orders o WITH(NOLOCK)
---LEFT JOIN Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
---where o.ID = ins.OrderID--and 同#tmpOrderMain條件
---)
---group by ins.OrderId,ins.Location
---')
+
 select 
-ins.OrderId,
-ins.Location,
-[DQSQty] = count(1),
-[LastDQSOutputDate] = MAX(iif(ins.Status in ('Pass','Fixed'), ins.AddDate, null))
+*
 into #tmpInspection_Step1
-from [ManufacturingExecution].[dbo].[Inspection] ins WITH(NOLOCK)
-where exists(select 1 from #tmpOrderMain main where main.ID = ins.OrderId)
-group by ins.OrderId,ins.Location
---
+from openquery([ExtendServer],'select   ins.OrderId,
+                                        ins.Location,
+                                        [DQSQty] = count(1),
+                                        [LastDQSOutputDate] = MAX(iif(ins.Status in (''Pass'',''Fixed''), ins.AddDate, null))
+                                from [ManufacturingExecution].[dbo].[Inspection] ins WITH(NOLOCK)
+                                where exists( select 1 
+                                                from 
+                                                [Production].[dbo].Orders o WITH(NOLOCK)
+                                                LEFT JOIN  [Production].[dbo].Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
+                                                where o.ID = ins.OrderID 
+                                                      {sqlWhere.ToString().Replace("'", "''")}
+                                                )
+                                group by ins.OrderId,ins.Location
+                                ')
 
 select OrderId,
 [DQSQty] = MIN(DQSQty),

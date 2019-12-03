@@ -159,8 +159,8 @@ inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t
 inner join orders o with(nolock) on o.id = w.ID
 left join Fabric f with(nolock) on f.SCIRefno = w.SCIRefno
 left join SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
-left join ManufacturingExecution.dbo.RefnoRelaxtime rr WITH (NOLOCK) on rr.Refno = w.Refno
-left join ManufacturingExecution.dbo.FabricRelaxation fr WITH (NOLOCK) on rr.FabricRelaxationID = fr.ID
+left join dbo.SciMES_RefnoRelaxtime rr WITH (NOLOCK) on rr.Refno = w.Refno
+left join dbo.SciMES_FabricRelaxation fr WITH (NOLOCK) on rr.FabricRelaxationID = fr.ID
 left join CuttingTime ct WITH (NOLOCK) on ct.WeaveTypeID = f.WeaveTypeID
 outer apply(
 	select SubSP = stuff((
@@ -249,8 +249,8 @@ from #tmp2a2 t
 inner join orders o with(nolock) on o.id = t.ID
 left join Fabric f with(nolock) on f.SCIRefno = t.SCIRefno
 left join SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
-left join ManufacturingExecution.dbo.RefnoRelaxtime rr WITH (NOLOCK) on rr.Refno = t.Refno
-left join ManufacturingExecution.dbo.FabricRelaxation fr WITH (NOLOCK) on rr.FabricRelaxationID = fr.ID
+left join dbo.SciMES_RefnoRelaxtime rr WITH (NOLOCK) on rr.Refno = t.Refno
+left join dbo.SciMES_FabricRelaxation fr WITH (NOLOCK) on rr.FabricRelaxationID = fr.ID
 left join CuttingTime ct WITH (NOLOCK) on ct.WeaveTypeID = f.WeaveTypeID
 outer apply(
 	select 
