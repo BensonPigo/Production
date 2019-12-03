@@ -38,34 +38,35 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.chkExcludeSis = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(450, 12);
+            this.print.Location = new System.Drawing.Point(460, 12);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(450, 48);
-            this.toexcel.TabIndex = 6;
+            this.toexcel.Location = new System.Drawing.Point(460, 48);
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(450, 84);
-            this.close.TabIndex = 7;
+            this.close.Location = new System.Drawing.Point(460, 84);
+            this.close.TabIndex = 8;
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(259, 132);
+            this.buttonCustomized.Location = new System.Drawing.Point(386, 138);
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(285, 132);
+            this.checkUseCustomized.Location = new System.Drawing.Point(412, 138);
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(303, 130);
+            this.txtVersion.Location = new System.Drawing.Point(430, 136);
             // 
             // lbBrand
             // 
@@ -174,11 +175,23 @@
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 2;
             // 
+            // chkExcludeSis
+            // 
+            this.chkExcludeSis.AutoSize = true;
+            this.chkExcludeSis.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludeSis.Location = new System.Drawing.Point(257, 84);
+            this.chkExcludeSis.Name = "chkExcludeSis";
+            this.chkExcludeSis.Size = new System.Drawing.Size(191, 21);
+            this.chkExcludeSis.TabIndex = 6;
+            this.chkExcludeSis.Text = "Exclude sister transfer out";
+            this.chkExcludeSis.UseVisualStyleBackColor = true;
+            // 
             // R16
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(542, 254);
+            this.ClientSize = new System.Drawing.Size(552, 254);
+            this.Controls.Add(this.chkExcludeSis);
             this.Controls.Add(this.chkOutstanding);
             this.Controls.Add(this.dateRangeByerDev);
             this.Controls.Add(this.label1);
@@ -209,6 +222,7 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.dateRangeByerDev, 0);
             this.Controls.SetChildIndex(this.chkOutstanding, 0);
+            this.Controls.SetChildIndex(this.chkExcludeSis, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -226,5 +240,6 @@
         private System.Windows.Forms.Label label1;
         private Win.UI.DateRange dateRangeByerDev;
         private Win.UI.CheckBox chkOutstanding;
+        private Win.UI.CheckBox chkExcludeSis;
     }
 }
