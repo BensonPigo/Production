@@ -183,16 +183,16 @@ order by pld.ID,pld.CTNStartNo
                             return;
                         }
 
-                        if (sl[1].Length < 14)
-                        {
-                            MyUtility.Msg.WarningBox("Format is not correct!");
-                            return;
-                        }
-
                         DataRow dr = readdt.NewRow();
                         string custCtn = sl[1];
-                        string packinglistID = sl[1].Substring(0, 13);
-                        string cTNStartNo = MyUtility.Convert.GetInt(sl[1].Substring(13)).ToString();
+                        string packinglistID = string.Empty;
+                        string cTNStartNo = string.Empty;
+                        if (sl[1].Length >= 14)
+                        {
+                            packinglistID = sl[1].Substring(0, 13);
+                            cTNStartNo = MyUtility.Convert.GetInt(sl[1].Substring(13)).ToString();
+                        }
+
                         dr["custCtn"] = custCtn;
                         dr["packinglistID"] = packinglistID;
                         dr["cTNStartNo"] = cTNStartNo;
