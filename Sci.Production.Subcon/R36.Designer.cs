@@ -64,15 +64,30 @@
             // 
             // print
             // 
-            this.print.TabIndex = 2;
+            this.print.Location = new System.Drawing.Point(527, 12);
+            this.print.TabIndex = 15;
             // 
             // toexcel
             // 
-            this.toexcel.TabIndex = 3;
+            this.toexcel.Location = new System.Drawing.Point(527, 48);
+            this.toexcel.TabIndex = 16;
             // 
             // close
             // 
-            this.close.TabIndex = 4;
+            this.close.Location = new System.Drawing.Point(527, 84);
+            this.close.TabIndex = 17;
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(485, 309);
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(485, 289);
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(516, 291);
             // 
             // panel1
             // 
@@ -117,8 +132,9 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(134, 195);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
-            this.comboFactory.TabIndex = 20;
+            this.comboFactory.TabIndex = 8;
             // 
             // comboOrderBy
             // 
@@ -132,11 +148,26 @@
             "By SD"});
             this.comboOrderBy.Location = new System.Drawing.Point(134, 330);
             this.comboOrderBy.Name = "comboOrderBy";
+            this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
             this.comboOrderBy.TabIndex = 13;
             // 
             // dateReceiveddate
             // 
+            // 
+            // 
+            // 
+            this.dateReceiveddate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateReceiveddate.DateBox1.Name = "";
+            this.dateReceiveddate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateReceiveddate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateReceiveddate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateReceiveddate.DateBox2.Name = "";
+            this.dateReceiveddate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateReceiveddate.DateBox2.TabIndex = 1;
             this.dateReceiveddate.IsRequired = false;
             this.dateReceiveddate.Location = new System.Drawing.Point(134, 304);
             this.dateReceiveddate.Name = "dateReceiveddate";
@@ -145,6 +176,20 @@
             // 
             // dateAmtRevised
             // 
+            // 
+            // 
+            // 
+            this.dateAmtRevised.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateAmtRevised.DateBox1.Name = "";
+            this.dateAmtRevised.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateAmtRevised.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateAmtRevised.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateAmtRevised.DateBox2.Name = "";
+            this.dateAmtRevised.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateAmtRevised.DateBox2.TabIndex = 1;
             this.dateAmtRevised.IsRequired = false;
             this.dateAmtRevised.Location = new System.Drawing.Point(134, 279);
             this.dateAmtRevised.Name = "dateAmtRevised";
@@ -163,6 +208,7 @@
             "Not Settled"});
             this.comboPaymentSettled.Location = new System.Drawing.Point(134, 249);
             this.comboPaymentSettled.Name = "comboPaymentSettled";
+            this.comboPaymentSettled.OldText = "";
             this.comboPaymentSettled.Size = new System.Drawing.Size(121, 24);
             this.comboPaymentSettled.TabIndex = 10;
             // 
@@ -175,14 +221,12 @@
             this.comboStatus.Items.AddRange(new object[] {
             " ",
             "New",
-            "Sent",
-            "Approve",
-            "Reject",
             "Junked",
-            "Encode",
-            "Received"});
+            "Confirmed",
+            "Sent"});
             this.comboStatus.Location = new System.Drawing.Point(134, 222);
             this.comboStatus.Name = "comboStatus";
+            this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(121, 24);
             this.comboStatus.TabIndex = 9;
             // 
@@ -217,15 +261,14 @@
             // 
             this.txtSDNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSDNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSDNoEnd.Location = new System.Drawing.Point(291, 87);
+            this.txtSDNoEnd.Location = new System.Drawing.Point(287, 88);
             this.txtSDNoEnd.Name = "txtSDNoEnd";
-            this.txtSDNoEnd.Size = new System.Drawing.Size(100, 23);
+            this.txtSDNoEnd.Size = new System.Drawing.Size(127, 23);
             this.txtSDNoEnd.TabIndex = 4;
             // 
             // label15
             // 
             this.label15.BackColor = System.Drawing.SystemColors.Control;
-            this.label15.Lines = 0;
             this.label15.Location = new System.Drawing.Point(264, 87);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(24, 23);
@@ -244,7 +287,6 @@
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Lines = 0;
             this.labelOrderBy.Location = new System.Drawing.Point(16, 331);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(115, 23);
@@ -253,7 +295,6 @@
             // 
             // labelReceiveddate
             // 
-            this.labelReceiveddate.Lines = 0;
             this.labelReceiveddate.Location = new System.Drawing.Point(16, 304);
             this.labelReceiveddate.Name = "labelReceiveddate";
             this.labelReceiveddate.Size = new System.Drawing.Size(115, 23);
@@ -262,7 +303,6 @@
             // 
             // labelAmtRevised
             // 
-            this.labelAmtRevised.Lines = 0;
             this.labelAmtRevised.Location = new System.Drawing.Point(16, 277);
             this.labelAmtRevised.Name = "labelAmtRevised";
             this.labelAmtRevised.Size = new System.Drawing.Size(115, 23);
@@ -271,34 +311,30 @@
             // 
             // labelPaymentSettled
             // 
-            this.labelPaymentSettled.Lines = 0;
             this.labelPaymentSettled.Location = new System.Drawing.Point(16, 250);
             this.labelPaymentSettled.Name = "labelPaymentSettled";
             this.labelPaymentSettled.Size = new System.Drawing.Size(115, 23);
             this.labelPaymentSettled.TabIndex = 14;
-            this.labelPaymentSettled.Text = "Payment Settled:";
+            this.labelPaymentSettled.Text = "Payment Settled";
             // 
             // labelStatus
             // 
-            this.labelStatus.Lines = 0;
             this.labelStatus.Location = new System.Drawing.Point(16, 223);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(115, 23);
             this.labelStatus.TabIndex = 13;
-            this.labelStatus.Text = "Status:";
+            this.labelStatus.Text = "Status";
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(16, 196);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(115, 23);
             this.labelFactory.TabIndex = 12;
-            this.labelFactory.Text = "Factory:";
+            this.labelFactory.Text = "Factory";
             // 
             // labelSMR
             // 
-            this.labelSMR.Lines = 0;
             this.labelSMR.Location = new System.Drawing.Point(16, 169);
             this.labelSMR.Name = "labelSMR";
             this.labelSMR.Size = new System.Drawing.Size(115, 23);
@@ -307,33 +343,44 @@
             // 
             // labelHandle
             // 
-            this.labelHandle.Lines = 0;
             this.labelHandle.Location = new System.Drawing.Point(16, 142);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(115, 23);
             this.labelHandle.TabIndex = 10;
-            this.labelHandle.Text = "Handle:";
+            this.labelHandle.Text = "Handle";
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(16, 115);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(115, 23);
             this.labelSupplier.TabIndex = 9;
-            this.labelSupplier.Text = "Supplier:";
+            this.labelSupplier.Text = "Supplier";
             // 
             // labelSDNo
             // 
-            this.labelSDNo.Lines = 0;
             this.labelSDNo.Location = new System.Drawing.Point(16, 88);
             this.labelSDNo.Name = "labelSDNo";
             this.labelSDNo.Size = new System.Drawing.Size(115, 23);
             this.labelSDNo.TabIndex = 8;
-            this.labelSDNo.Text = "SD No.:";
+            this.labelSDNo.Text = "SD No.";
             // 
             // dateSettledDate
             // 
+            // 
+            // 
+            // 
+            this.dateSettledDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSettledDate.DateBox1.Name = "";
+            this.dateSettledDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSettledDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSettledDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSettledDate.DateBox2.Name = "";
+            this.dateSettledDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSettledDate.DateBox2.TabIndex = 1;
             this.dateSettledDate.IsRequired = false;
             this.dateSettledDate.Location = new System.Drawing.Point(134, 61);
             this.dateSettledDate.Name = "dateSettledDate";
@@ -342,15 +389,28 @@
             // 
             // labelSettledDate
             // 
-            this.labelSettledDate.Lines = 0;
             this.labelSettledDate.Location = new System.Drawing.Point(16, 61);
             this.labelSettledDate.Name = "labelSettledDate";
             this.labelSettledDate.Size = new System.Drawing.Size(115, 23);
             this.labelSettledDate.TabIndex = 6;
-            this.labelSettledDate.Text = "Settled Date:";
+            this.labelSettledDate.Text = "Settled Date";
             // 
             // dateApprovedDate
             // 
+            // 
+            // 
+            // 
+            this.dateApprovedDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateApprovedDate.DateBox1.Name = "";
+            this.dateApprovedDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateApprovedDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateApprovedDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateApprovedDate.DateBox2.Name = "";
+            this.dateApprovedDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateApprovedDate.DateBox2.TabIndex = 1;
             this.dateApprovedDate.IsRequired = false;
             this.dateApprovedDate.Location = new System.Drawing.Point(134, 34);
             this.dateApprovedDate.Name = "dateApprovedDate";
@@ -359,15 +419,28 @@
             // 
             // labelApprovedDate
             // 
-            this.labelApprovedDate.Lines = 0;
             this.labelApprovedDate.Location = new System.Drawing.Point(16, 34);
             this.labelApprovedDate.Name = "labelApprovedDate";
             this.labelApprovedDate.Size = new System.Drawing.Size(115, 23);
             this.labelApprovedDate.TabIndex = 4;
-            this.labelApprovedDate.Text = "Approved Date:";
+            this.labelApprovedDate.Text = "Approved Date";
             // 
             // dateDebitDate
             // 
+            // 
+            // 
+            // 
+            this.dateDebitDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateDebitDate.DateBox1.Name = "";
+            this.dateDebitDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateDebitDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateDebitDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateDebitDate.DateBox2.Name = "";
+            this.dateDebitDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateDebitDate.DateBox2.TabIndex = 1;
             this.dateDebitDate.IsRequired = false;
             this.dateDebitDate.Location = new System.Drawing.Point(134, 7);
             this.dateDebitDate.Name = "dateDebitDate";
@@ -376,21 +449,19 @@
             // 
             // labelDebitDate
             // 
-            this.labelDebitDate.Lines = 0;
             this.labelDebitDate.Location = new System.Drawing.Point(16, 7);
             this.labelDebitDate.Name = "labelDebitDate";
             this.labelDebitDate.Size = new System.Drawing.Size(115, 23);
             this.labelDebitDate.TabIndex = 0;
-            this.labelDebitDate.Text = "Debit Date:";
+            this.labelDebitDate.Text = "Debit Date";
             // 
             // labelReportType
             // 
-            this.labelReportType.Lines = 0;
             this.labelReportType.Location = new System.Drawing.Point(473, 164);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(94, 23);
             this.labelReportType.TabIndex = 4;
-            this.labelReportType.Text = "Report Type:";
+            this.labelReportType.Text = "Report Type";
             // 
             // comboReportType
             // 
@@ -405,8 +476,9 @@
             "Debit Schedule Detail"});
             this.comboReportType.Location = new System.Drawing.Point(473, 190);
             this.comboReportType.Name = "comboReportType";
+            this.comboReportType.OldText = "";
             this.comboReportType.Size = new System.Drawing.Size(143, 24);
-            this.comboReportType.TabIndex = 1;
+            this.comboReportType.TabIndex = 14;
             // 
             // R36
             // 
@@ -417,7 +489,11 @@
             this.DefaultControl = "dateDebitDate";
             this.DefaultControlForEdit = "dateDebitDate";
             this.Name = "R36";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R36. Debit Note List Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
