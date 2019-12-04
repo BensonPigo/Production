@@ -1187,13 +1187,12 @@ namespace Sci.Production.Planning
                     string maxSewOutPut = dtOutputMDV.Compute("MAX(SewingYYMM)", string.Empty).ToString();
                     maxSewOutPut = maxSewOutPut.Length > 0 ? maxSewOutPut.Substring(5, maxSewOutPut.Length - 5) : string.Empty;
                     wks.Cells[this.sheetStart, 3].Value = $"{mDivisionID} Output ({maxSewOutPut})";
-                    string zoneFilter = this.txtZone.Text == string.Empty ? string.Empty : $" And Zone = '{this.txtZone.Text}'";
 
                     idx = 0;
                     for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
                     {
-                        DataRow[] rows1 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "1") + zoneFilter);
-                        DataRow[] rows2 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "2") + zoneFilter);
+                        DataRow[] rows1 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "1"));
+                        DataRow[] rows2 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "2"));
                         DataRow[] rowsSB2add1 = dtOutputMDVSB2.Select(string.Format("MdivisionID = '{0}' and Month = '{1}'", mDivisionID, this.GetCurrMonth(this.intYear, mon) + "1"));
                         DataRow[] rowsSB2add2 = dtOutputMDVSB2.Select(string.Format("MdivisionID = '{0}' and Month = '{1}'", mDivisionID, this.GetCurrMonth(this.intYear, mon) + "2"));
                         DataRow[] rowsSB2diff1 = dtOutputMDVSB2.Select(string.Format("MdivisionID2 = '{0}' and Month = '{1}'", mDivisionID, this.GetCurrMonth(this.intYear, mon) + "1"));
@@ -1343,14 +1342,13 @@ namespace Sci.Production.Planning
                 DataTable dtOutputCtySB2 = this.SafeGetDt(dt5, string.Format("CountryID = '{0}'", countryID));
                 string maxSewOutPutCty = dtOutputCty.Compute("MAX(SewingYYMM)", string.Empty).ToString();
                 maxSewOutPutCty = maxSewOutPutCty.Length > 0 ? maxSewOutPutCty.Substring(5, maxSewOutPutCty.Length - 5) : string.Empty;
-                string zoneFilterCty = this.txtZone.Text == string.Empty ? string.Empty : $" And Zone = '{this.txtZone.Text}'";
                 wks.Cells[this.sheetStart, 3].Value = $"{countryID} Output ({maxSewOutPutCty})";
                 idx = 0;
 
                 for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
                 {
-                    DataRow[] rows1 = dtOutputCty.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "1") + zoneFilterCty);
-                    DataRow[] rows2 = dtOutputCty.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "2") + zoneFilterCty);
+                    DataRow[] rows1 = dtOutputCty.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "1") );
+                    DataRow[] rows2 = dtOutputCty.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon) + "2") );
 
                     DataRow[] rowsSB2add1 = dtOutputCtySB2.Select(string.Format("Month = '{0}'", this.GetCurrMonth(this.intYear, mon) + "1"));
                     DataRow[] rowsSB2add2 = dtOutputCtySB2.Select(string.Format("Month = '{0}'", this.GetCurrMonth(this.intYear, mon) + "2"));
