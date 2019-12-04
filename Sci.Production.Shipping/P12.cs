@@ -44,6 +44,7 @@ namespace Sci.Production.Shipping
                 .Numeric("FOCQty", header: "FOC Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("ChargeablePulloutQty", header: "Chargeable Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FOCPulloutQty", header: "FOC Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("SewingOutputQty", header: "Sewing Output Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FinishedFOCStockinQty", header: "Finished FOC Stock-in Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 ;
         }
@@ -101,6 +102,7 @@ select
 	o.FOCQty,
 	ChargeablePulloutQty = isnull(ShipQty_ByType.TotalNotFocShipQty,0),
 	FOCPulloutQty = isnull(ShipQty_ByType.TotalFocShipQty,0),
+    SewingOutputQty = Sewing.QAQty,
 	FinishedFOCStockinQty = ISNULL(FocStockQty.Value ,0)    -- Function 取得 FOC 庫存
 	,o.OrderTypeID
 from orders o with(nolock)
@@ -118,7 +120,22 @@ outer apply(
 		group by pl.Type
 	) a
 )ShipQty_ByType
-
+outer apply(	
+	select QAQty = isnull(min(QAQty),0) 
+    from (
+		select	ComboType = sl.Location
+				, QAQty = sum(sdd.QAQty)
+		from Orders o1 WITH (NOLOCK) 
+		inner join Order_Location  sl WITH (NOLOCK) on sl.OrderId = o1.id
+		inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o1.ID
+		left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o1.ID 
+																  and sdd.Article = oq.Article 
+																  and sdd.SizeCode = oq.SizeCode 
+																  and sdd.ComboType = sl.Location
+		where o1.ID = o.ID
+		group by sl.Location
+	) a
+) Sewing
 OUTER APPLY(
 	--判斷FOC 是否建立 PackingList
 	SELECT [Result]=IIF(COUNT(p.ID) > 0 ,'true' , 'false') 
@@ -204,6 +221,26 @@ order by o.ID
             DataTable dt2 = dt.Copy();
             DataTable odt;
             DualResult result;
+
+            #region SewingOutput總產出不可少於訂單總數量
+            string msgError = string.Empty;
+            DataRow[] drlist = dt2.Select("SewingOutputQty < Qty");
+            if (drlist.Length > 0)
+            {
+                msgError = "Sewing output q'ty less than order q'ty, those SP# cannot do FOC stock-in. ";
+            }
+
+            foreach (DataRow dr in drlist)
+            {
+                msgError += Environment.NewLine + dr["OrderID"];
+            }
+
+            if (!MyUtility.Check.Empty(msgError))
+            {
+                MyUtility.Msg.WarningBox(msgError);
+                return;
+            }
+            #endregion
 
             string sqlchk = $@"
 select t.OrderID
