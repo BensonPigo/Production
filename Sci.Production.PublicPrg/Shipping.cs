@@ -280,7 +280,7 @@ select	@SharedAmtFactory = isnull(sum(ROUND(OrderSharedAmtFin / 100 * RatioFty,2
 		@SharedAmtOther = isnull(sum(OrderSharedAmtFin - ROUND(OrderSharedAmtFin / 100 * RatioFty,2)),0)
 from #OrderSharedAmt
 
-update ShippingAP set SharedAmtFactory = @SharedAmtFactory,SharedAmtOther = @SharedAmtOther where ID = @id
+update ShippingAP set SharedAmtFactory = @SharedAmtFactory,SharedAmtOther = @SharedAmtOther, EditName = @login, EditDate = getdate() where ID = @id
  
 
 drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmtStep2,#PLSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#OrderSharedAmt
