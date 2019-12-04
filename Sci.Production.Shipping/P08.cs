@@ -702,6 +702,20 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                 return failResult;
             }
 
+            sqlCmd = $@"
+update ShareExpense_APP
+set Junk = 1
+    , EditDate = getdate()
+    , EditName = '{Env.User.UserID}'
+where ShippingAPID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'";
+
+            result = DBProxy.Current.Execute(null, sqlCmd);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Delete ShareExpense_APP false.\r\n" + result.ToString());
+                return failResult;
+            }
+
             return Result.True;
         }
 

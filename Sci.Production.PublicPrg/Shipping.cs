@@ -272,8 +272,8 @@ when matched then update set
 	,t.[EditName]	  =@login
 	,t.[EditDate]	  =getdate()
 when not matched by target then
-insert([ShippingAPID],[InvNo],[PackingListID],[AirPPID],[AccountID],[CurrencyID],[NW],[RatioFty],[AmtFty],[RatioOther],[AmtOther],[Junk])
-VALUES(@id,s.[InvNo],s.id,s.[AirPPID],s.[AccountID],@CurrencyID,s.ttlNw,s.[RatioFty],s.SharedAmtFactory,s.[RatioOther],s.SharedAmtOther,0)
+insert([ShippingAPID],[InvNo],[PackingListID],[AirPPID],[AccountID],[CurrencyID],[NW],[RatioFty],[AmtFty],[RatioOther],[AmtOther],[Junk], [EditName], [EditDate])
+VALUES(@id,s.[InvNo],s.id,s.[AirPPID],s.[AccountID],@CurrencyID,s.ttlNw,s.[RatioFty],s.SharedAmtFactory,s.[RatioOther],s.SharedAmtOther,0, @login, getdate())
 ;
 
 select	@SharedAmtFactory = isnull(sum(ROUND(OrderSharedAmtFin / 100 * RatioFty,2)),0),
