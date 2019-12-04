@@ -88,7 +88,7 @@ left join #tMOSeqM tMM on tMM.OrderID = so.OrderID and tMM.Location = sl.Locatio
 --tMachineInfo(衣車信息表)
 select 
 [MachineCode] = m.ID,
-[TypeCode] = m.MachineGroupID,
+[TypeCode] = m.MasterGroupID,
 [TypeName] =mg.Description,
 [Model] = m.Model,
 [Brand] = m.MachineBrandID,
