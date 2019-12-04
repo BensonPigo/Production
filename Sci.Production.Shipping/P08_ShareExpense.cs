@@ -1566,6 +1566,8 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(this.apData["ID"]));
             string deleteCmd = $@"
 update s
 set s.Junk = 1
+    , s.EditName = '{Env.User.UserID}'
+    , s.EditDate = getdate()
 from ShareExpense_APP s
 inner join #tmp t on s.ShippingAPID = t.ShippingAPID and s.InvNo=t.InvNo and s.PackingListID = t.PackingListID and s.AirPPID = t.AirPPID and s.AccountID = t.AccountID
 where s.ShippingAPID = '{this.apData["ID"]}'
