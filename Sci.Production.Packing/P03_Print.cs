@@ -328,9 +328,11 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     string country = this.printData.Rows[i]["CountryName"].ToString();
                     string gw = this.printData.Rows[i]["gw"].ToString();
                     string nw = this.printData.Rows[i]["nw"].ToString();
+                    string cTNStartno = this.printData.Rows[i]["CTNStartno"].ToString();
                     #endregion
 
                     tables.Cell(1, 2).Range.Text = customize1;
+                    tables.Cell(1, 3).Range.Text = cTNStartno;
                     tables.Cell(2, 2).Range.Text = custPOno;
                     tables.Cell(3, 2).Range.Text = article;
                     tables.Cell(4, 2).Range.Text = sizeCode;
