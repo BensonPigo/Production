@@ -157,7 +157,7 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
 
             // 填內容值
             int intRowsStart = 3;
-            object[,] objArray = new object[1, 100];
+            object[,] objArray = new object[1, lastCol];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["ID"];
@@ -182,7 +182,7 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
                 objArray[0, 19] = dr["Processes"];
 
                 // 先清空Subprocess值
-                for (int i = 20; i < lastCol; i++)
+                for (int i = this.printData.Columns.Count; i < lastCol; i++)
                 {
                     objArray[0, i] = string.Empty;
                 }
