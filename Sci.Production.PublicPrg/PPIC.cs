@@ -137,8 +137,6 @@ SELECT [ID]
       ,[ReasonID]
       ,[OrderID]
       ,[Status]='{status}'
-      ,[AddName]
-      ,[AddDate]
       ,[EditName]='{Env.User.UserID}'
       ,[EditDate]=GETDATE()
 from OrderChangeApplication where ID = '{ID}'
