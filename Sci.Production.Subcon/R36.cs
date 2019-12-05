@@ -15,7 +15,8 @@ namespace Sci.Production.Subcon
 {
     public partial class R36 : Sci.Win.Tems.PrintForm
     {
-        List<SqlParameter> lis;
+        string ReportType;
+        List<SqlParameter> ParameterList;
         DataTable dt; string cmd;
         DateTime? debitdate1;DateTime? debitdate2;
         DateTime? aprdate1 ; DateTime? aprdate2;
@@ -49,8 +50,19 @@ namespace Sci.Production.Subcon
 
         protected override bool ValidateInput()
         {
-            bool dateRange1_Empty = !this.dateDebitDate.HasValue, dateRange2_Empty = !this.dateApprovedDate.HasValue, dateRange3_Empty = !this.dateSettledDate.HasValue, textbox1_Empty = this.txtSDNoStart.Text.Empty(), textbox2_Empty = this.txtSDNoEnd.Text.Empty(), txtLocalSupp1_Empty =this.txtLocalSuppSupplier.TextBox1.Text.Empty()
-                , txtuser1_Empty = this.txtuserHandle.TextBox1.Text.Empty(), txtuser2_Empty = this.txtuserSMR.TextBox1.Text.Empty(), comboBox5_Empty = this.comboFactory.Text.Empty(), comboBox2_Empty = this.comboStatus.Text.Empty(), comboBox3_Empty = this.comboPaymentSettled.Text.Empty(), dateRange4_Empty = !this.dateAmtRevised.HasValue, dateRange5_Empty = !this.dateReceiveddate.HasValue;
+            bool dateRange1_Empty = !this.dateDebitDate.HasValue
+                , dateRange2_Empty = !this.dateApprovedDate.HasValue
+                , dateRange3_Empty = !this.dateSettledDate.HasValue
+                , textbox1_Empty = this.txtSDNoStart.Text.Empty()
+                , textbox2_Empty = this.txtSDNoEnd.Text.Empty()
+                , txtLocalSupp1_Empty =this.txtLocalSuppSupplier.TextBox1.Text.Empty()
+                , txtuser1_Empty = this.txtuserHandle.TextBox1.Text.Empty()
+                , txtuser2_Empty = this.txtuserSMR.TextBox1.Text.Empty()
+                , comboBox5_Empty = this.comboFactory.Text.Empty()
+                , comboBox2_Empty = this.comboStatus.Text.Empty()
+                , comboBox3_Empty = this.comboPaymentSettled.Text.Empty()
+                , dateRange4_Empty = !this.dateAmtRevised.HasValue
+                , dateRange5_Empty = !this.dateReceiveddate.HasValue;
 
             if (dateRange1_Empty && dateRange2_Empty && dateRange3_Empty && textbox1_Empty && textbox2_Empty && txtLocalSupp1_Empty && txtuser1_Empty && txtuser2_Empty && comboBox5_Empty && comboBox2_Empty && comboBox3_Empty
                && dateRange4_Empty && dateRange5_Empty)
@@ -80,95 +92,115 @@ namespace Sci.Production.Subcon
             SettledDate1 = dateSettledDate.Value1;
             SettledDate2 = dateSettledDate.Value2;
             payment = comboPaymentSettled.SelectedItem.ToString();
-           lis = new List<SqlParameter>();
-           string sqlWhere = ""; string order = "";
+
+            ReportType = this.comboReportType.Text;
+
+
+            ParameterList = new List<SqlParameter>();
+
+            string sqlWhere = "";
+            string sqlSettledDate = "";
+            string order = "";
             List<string> sqlWheres = new List<string>();
+            List<string> sqlWheresSettledDate = new List<string>();
+
             #region --組WHERE--
             if (!this.txtSDNoStart.Text.Empty())
             {
                 sqlWheres.Add("a.Id between @SDNo1 and @SDNo2");
-                lis.Add(new SqlParameter("@SDNo1", SDNo1));
-                lis.Add(new SqlParameter("@SDNo2", SDNo2));
+                ParameterList.Add(new SqlParameter("@SDNo1", SDNo1));
+                ParameterList.Add(new SqlParameter("@SDNo2", SDNo2));
             } 
             if (!this.dateDebitDate.Value1.Empty())
             {
                 sqlWheres.Add("a.Issuedate >= @debitdate1");
-                lis.Add(new SqlParameter("@debitdate1", debitdate1));
+                ParameterList.Add(new SqlParameter("@debitdate1", debitdate1));
             }
             if (!this.dateDebitDate.Value2.Empty())
             {
                 sqlWheres.Add("a.Issuedate <= @debitdate2");
-                lis.Add(new SqlParameter("@debitdate2", debitdate2));
+                ParameterList.Add(new SqlParameter("@debitdate2", debitdate2.Value.AddDays(1).AddSeconds(-1)));
             }
             if (!this.dateApprovedDate.Value1.Empty())
             {
                 sqlWheres.Add("a.CfmDate >= @aprdate1");
-                lis.Add(new SqlParameter("@aprdate1", aprdate1));
+                ParameterList.Add(new SqlParameter("@aprdate1", aprdate1));
             }
             if (!this.dateApprovedDate.Value2.Empty())
             {
                 sqlWheres.Add("a.CfmDate <= @aprdate2");
-                lis.Add(new SqlParameter("@aprdate2", aprdate2));
+                ParameterList.Add(new SqlParameter("@aprdate2", aprdate2.Value.AddDays(1).AddSeconds(-1)));
             }
             if (!this.txtLocalSuppSupplier.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.localsuppid = @localsuppid");
-                lis.Add(new SqlParameter("@localsuppid", Supplier));
-            } if (!this.txtuserHandle.TextBox1.Text.Empty())
+                ParameterList.Add(new SqlParameter("@localsuppid", Supplier));
+            }
+            if (!this.txtuserHandle.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.handle = @handle");
-                lis.Add(new SqlParameter("@handle", handle));
-            } if (!this.txtuserSMR.TextBox1.Text.Empty())
+                ParameterList.Add(new SqlParameter("@handle", handle));
+            }
+            if (!this.txtuserSMR.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.smr = @smr");
-                lis.Add(new SqlParameter("@smr", smr));
-            } if (!this.factoryid.Empty())
+                ParameterList.Add(new SqlParameter("@smr", smr));
+            }
+            if (!this.factoryid.Empty())
             {
                 sqlWheres.Add("a.factoryid = @factoryid");
-                lis.Add(new SqlParameter("@factoryid", factoryid));
-            } if (!this.comboStatus.SelectedItem.ToString().Empty())
+                ParameterList.Add(new SqlParameter("@factoryid", factoryid));
+            }
+            if (!this.comboStatus.SelectedItem.ToString().Empty())
             {
                 sqlWheres.Add("a.Status = @status");
-                lis.Add(new SqlParameter("@status", status));
+                ParameterList.Add(new SqlParameter("@status", status));
             } 
             if (!this.dateAmtRevised.Value1.Empty())
             {
                 sqlWheres.Add("a.amtrevisedate >= @amtrevisedate1");
-                lis.Add(new SqlParameter("@amtrevisedate1", amtrevisedate1));
+                ParameterList.Add(new SqlParameter("@amtrevisedate1", amtrevisedate1));
             }
             if (!this.dateAmtRevised.Value2.Empty())
             {
                 sqlWheres.Add("a.amtrevisedate <= @amtrevisedate2");
-                lis.Add(new SqlParameter("@amtrevisedate2", amtrevisedate2));
+                ParameterList.Add(new SqlParameter("@amtrevisedate2", amtrevisedate2.Value.AddDays(1).AddSeconds(-1)));
             }
             if (!this.dateReceiveddate.Value1.Empty())
             {
                 sqlWheres.Add("a.ReceiveDate >= @ReceiveDate1");
-                lis.Add(new SqlParameter("@ReceiveDate1", ReceiveDate1));
+                ParameterList.Add(new SqlParameter("@ReceiveDate1", ReceiveDate1));
             }
             if (!this.dateReceiveddate.Value2.Empty())
             {
                 sqlWheres.Add("a.ReceiveDate <= @ReceiveDate2");
-                lis.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2));
+                ParameterList.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2.Value.AddDays(1).AddSeconds(-1)));
             } 
+
             int needSettleData = 0;
+
             if (!this.dateSettledDate.Value1.Empty())
             {
-                lis.Add(new SqlParameter("@SettledDate1", SettledDate1));
+                sqlWheres.Add("cur_schedule.VoucherDate >= @SettledDate1");
+                ParameterList.Add(new SqlParameter("@SettledDate1", SettledDate1));
                 needSettleData = 1;
             }
             if (!this.dateSettledDate.Value2.Empty())
             {
-                lis.Add(new SqlParameter("@SettledDate2", SettledDate2));
+                sqlWheres.Add("cur_schedule.VoucherDate <= @SettledDate2");
+                ParameterList.Add(new SqlParameter("@SettledDate2", SettledDate2.Value.AddDays(1).AddSeconds(-1)));
                 needSettleData = 1;
             } 
             if (this.comboPaymentSettled.Text == "Settled")
             {
-                lis.Add(new SqlParameter("@payment", payment));
+                sqlWheres.Add("( (a.Amount+a.Tax) = ISNULL(Settled.Amount,0) AND ISNULL(cur_schedule.VoucherID,'') <> '' ) ");
+                ParameterList.Add(new SqlParameter("@payment", payment));
                 needSettleData = 1;
-            } if (this.comboPaymentSettled.Text == "Not Settled")
+            }
+            if (this.comboPaymentSettled.Text == "Not Settled")
             {
-                lis.Add(new SqlParameter("@payment", payment));
+                sqlWheres.Add(" ( (a.Amount+a.Tax) <> ISNULL(Settled.Amount,0) OR ISNULL(cur_schedule.VoucherID,'') = '' )");
+                ParameterList.Add(new SqlParameter("@payment", payment));
                 needSettleData = 0;
             }
             if (this.comboPaymentSettled.Text == " ")
@@ -176,7 +208,7 @@ namespace Sci.Production.Subcon
                 needSettleData = 1;
             }
           
-            lis.Add(new SqlParameter("@NeedSettleData", needSettleData));
+            ParameterList.Add(new SqlParameter("@NeedSettleData", needSettleData));
 
             if (this.comboOrderBy.Text == "By Handle")
             {
@@ -186,175 +218,365 @@ namespace Sci.Production.Subcon
             {
                 order="order by  a.localsuppid";
             }
-            else if (this.comboOrderBy.Text == "By SD#")
+            else if (this.comboOrderBy.Text == "By SD")
             {
                 order="order by  a.id";
             }
             #endregion
-sqlWhere = string.Join(" and ", sqlWheres);
+
+            sqlWhere = string.Join(" and ", sqlWheres);
+            //sqlSettledDate = string.Join(" AND ", sqlWheresSettledDate);
+
             if (!sqlWhere.Empty())
             {
                 sqlWhere = " where " + sqlWhere;
             }
+
             #region --撈ListExcel資料--
             
            cmd= string.Format(@"
-    select a.ID, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay
-        ,(SELECT Orderid + ',' from LocalDebit_Detail LDD where LDD.ID=a.id FOR XML PATH('')) [SPList]
-        ,(SELECT distinct R.Name + ',' from LocalDebit_Detail LDD 
-        left join Reason R on R.ReasonTypeID='DebitNote_Factory' and R.ID=LDD.Reasonid
-        where LDD.ID=a.id FOR XML PATH('')) [ReasonList]
-		,a.Description ,a.exchange,a.currencyid,a.amount,a.tax,a.taxrate,a.amtrevisedate,a.amtrevisename,a.receivedate
-		,a.receivename,a.cfmdate,a.cfmname,V.VoucherID,a.printdate,a.status,a.statuseditdate,
-		vs3.Name_Extno as addname,a.adddate,vs4.Name_Extno as edit,a.editdate
-        INTO #TEMP
-		from DBO.LocalDebit a WITH (NOLOCK) 
-			left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
-			left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
-		    outer apply (select * from dbo.Debit_Schedule vs WITH (NOLOCK) where a.id =  vs.ID ) V
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.addname ) vs3
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.editname ) vs4" + sqlWhere + ' ' + order + ' ' + @"SELECT DISTINCT * FROM #TEMP");
+select 
+	a.ID
+	, vs1.Name_Extno as Handle
+	, vs2.Name_Extno as SMR
+	,a.LocalSuppID+'-'+ s.Abb as SupplierByPay
+	,(SELECT Orderid + ',' from LocalDebit_Detail LDD where LDD.ID=a.id FOR XML PATH('')) [SPList]
+	,[ReasonList]=(SELECT distinct R.Name + ',' from LocalDebit_Detail LDD 
+					left join Reason R on R.ReasonTypeID='DebitNote_Factory' and R.ID=LDD.Reasonid
+					where LDD.ID=a.id FOR XML PATH('')) 
+	,a.Description 
+	,a.exchange
+	,a.currencyid
+	,a.amount
+	,a.tax
+	,a.taxrate
+	,a.amtrevisedate
+	,a.amtrevisename
+	,a.receivedate
+	,a.receivename
+	,a.cfmdate
+	,a.cfmname
+	,cur_schedule.VoucherID
+    ,cur_schedule.VoucherDate[Settled Date]
+	,a.printdate
+	,a.status
+	,a.statuseditdate
+	,vs3.Name_Extno as addname
+	,a.adddate
+	,vs4.Name_Extno as edit
+	,a.editdate
+INTO #TEMP
+from DBO.LocalDebit a WITH (NOLOCK) 
+left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
+left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.addname ) vs3
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.editname ) vs4 
+OUTER APPLY( 
+	SELECT TOP 1  --多筆的話只帶第一筆
+		ds.VoucherID
+		,v.VoucherDate
+	FROM debit_schedule ds WITH (NOLOCK) 
+	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID
+)AS cur_schedule
+OUTER APPLY(
+	SELECT [Amount]=Sum(ds.Amount) 
+	FROM Debit_Schedule ds
+	WHERE ds.ID=a.ID and ds.VoucherID <> ''
+)Settled
+
+" + Environment.NewLine 
++ sqlWhere 
++ Environment.NewLine 
++ order 
++ Environment.NewLine 
++ @"SELECT DISTINCT * FROM #TEMP
+DROP TABLE #TEMP
+");
             #endregion
-           #region --撈SummaryExcel資料--
+
+            #region --撈SummaryExcel資料--
            cmdSummary = string.Format(@"
-select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
-	   a.TaipeiAMT,a.exchange,a.currencyid,a.amount,a.Tax,a.taxrate,a.amount+a.tax as ttlAmount,vs3.Name_Extno as AmtRN,
-	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
-	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
-	   b1.ttlCA,b1.ttlAddition,ttl.ttlSA,ttl.ttlRA
-        into #tmp
-		from DBO.LocalDebit a WITH (NOLOCK) 
-			left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
-			inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
-			left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
-		   	outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) vs3
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.ReceiveName ) vs4
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfmName ) vs5
-			outer apply (Select [ttlCA] = Sum(b.amount) ,[ttlAddition] = sum(b.Addition)
-				from localdebit_detail b WITH (NOLOCK) where b.ID = a.id  ) b1
-			outer apply (Select [ttlRA] = Sum(iif(isnull(dsch.VoucherID,'')!='',dsch.amount,0)) ,
-						[ttlSA] = sum(dsch.amount)
-				from debit_schedule dsch WITH (NOLOCK) where dsch.ID = a.id  ) ttl
-	OUTER APPLY( 
-		select top 1 * 
-		from(
-			SELECT  
-				ds.VoucherID,v.VoucherDate,
-				 Amount=sum(ds.Amount) 
-					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-			FROM debit_schedule ds WITH (NOLOCK) 
-			left join SciFMS_Voucher as v on v.id = ds.VoucherID
-			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''		
-		) as tmpSum
-		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
-	)AS cur_schedule
-" + sqlWhere + ' ' + order + ' ' + @"SELECT DISTINCT * FROM #tmp");
-           #endregion
-           #region --撈DetailExcel資料--
-           cmdDetail = string.Format(@"
-select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
-	   a.TaipeiAMT,a.exchange,a.currencyid,[amount1]=a.amount,a.Tax,a.taxrate,a.amount+a.tax as ttlAmount,vs3.Name_Extno as AmtRN,
-	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
-	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
-	   b.Orderid,b.qty,b.UnitID,[amount2]=b.Amount,b.Addition,b.taipeiReason,R.name,b.Description
-        into #tmp1
-		from DBO.LocalDebit a WITH (NOLOCK) 
-			left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
-			inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
-			left join dbo.Reason R WITH (NOLOCK) on b.Reasonid = R.id and R.ReasonTypeID = 'DebitNote_Factory'
-		    outer apply (select * from dbo.Debit_Schedule vs WITH (NOLOCK) where a.id =  vs.ID ) V
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) vs3
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.ReceiveName ) vs4
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfmName ) vs5
-			OUTER APPLY( 
-		select top 1 * 
-		from(
-			SELECT  
-				ds.VoucherID,v.VoucherDate,
-				 Amount=sum(ds.Amount) 
-					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-			FROM debit_schedule ds WITH (NOLOCK) 
-			left join SciFMS_Voucher as v on v.id = ds.VoucherID
-			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''			
-		) as tmpSum
-		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
-	)AS cur_schedule
-" + sqlWhere + ' ' + order + ' ' + @"SELECT DISTINCT * FROM #tmp1");
-           #endregion
-           #region --撈ScheduleExcel資料--
-           cmdSchedule = string.Format(@"select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
-	   a.TaipeiAMT,a.exchange,a.currencyid,a.amount,a.Tax,a.taxrate,a.amount+a.tax as ttlAmount,vs3.Name_Extno as AmtRN,
-	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
-	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
-	   c.issuedate,c.amount,c.VoucherId,V.VoucherDate,c.addDate,vs6.Name_Extno as SCN,c.editdate,vs7.Name_Extno as SEN
-	  
-		from DBO.LocalDebit a WITH (NOLOCK) 
-			inner join dbo.debit_schedule c WITH (NOLOCK) on a.id = c.id
-            outer apply(select * from LocalSupp s WITH (NOLOCK) where a.localsuppid = s.ID)s
-		    outer apply (select VoucherDate from SciFMS_Voucher Fv where Fv.id = c.VoucherID ) V
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) vs3
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.ReceiveName ) vs4
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfmName ) vs5
-			outer apply (select * from dbo.View_ShowName vs where vs.id = c.addName ) vs6
-			outer apply (select * from dbo.View_ShowName vs where vs.id = c.editname ) vs7
-			OUTER APPLY( 
-		select top 1 * 
-		from(
-			SELECT  
-				ds.VoucherID,v.VoucherDate,
-				 Amount=sum(ds.Amount) 
-					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-			FROM debit_schedule ds WITH (NOLOCK) 
-			left join SciFMS_Voucher as v on v.id = ds.VoucherID
-			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''			
-		) as tmpSum
-		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
-	)AS cur_schedule" + sqlWhere + ' ' + order);
+select a.ID
+,a.Status
+,a.issuedate
+,a.factoryid
+,vs1.Name_Extno as Handle
+,vs2.Name_Extno as SMR
+,a.LocalSuppID+'-'+ s.Abb as SupplierByPay
+,a.TaipeiCurrencyID
+,a.TaipeiAMT
+,a.exchange
+,a.currencyid
+,a.amount
+,a.Tax
+,a.taxrate
+,a.amount+a.tax as ttlAmount
+,vs3.Name_Extno as AmtRN
+,a.AmtReviseDate
+,vs4.Name_Extno as AccRH
+,a.ReceiveDate
+,vs5.Name_Extno as AccAH
+,a.cfmdate
+,cur_schedule.VoucherID[VoucherNo]
+,cur_schedule.VoucherDate
+,cur_schedule.VoucherDate[Settled Date]
+,b1.ttlCA
+,b1.ttlAddition
+,ttl.ttlSA
+,ttl.ttlRA
+into #TEMP
+from DBO.LocalDebit a WITH (NOLOCK) 
+left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
+inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
+left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) vs3
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.ReceiveName ) vs4
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfmName ) vs5
+outer apply (
+    Select [ttlCA] = Sum(b.amount) ,[ttlAddition] = sum(b.Addition)
+	from localdebit_detail b WITH (NOLOCK) where b.ID = a.id  
+) b1
+OUTER APPLY( 
+	SELECT TOP 1
+		ds.VoucherID
+		,v.VoucherDate
+	FROM debit_schedule ds WITH (NOLOCK) 
+	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID
+)AS cur_schedule
+outer apply (
+    Select [ttlRA] = Sum(iif(isnull(dsch.VoucherID,'')!='',dsch.amount,0)) ,[ttlSA] = sum(dsch.amount)
+    from debit_schedule dsch WITH (NOLOCK) where dsch.ID = a.id  
+) ttl
+OUTER APPLY(
+	SELECT [Amount]=Sum(ds.Amount) 
+	FROM Debit_Schedule ds
+	WHERE ds.ID=a.ID and ds.VoucherID <> ''
+)Settled
+"
++ Environment.NewLine 
++ sqlWhere
++ Environment.NewLine
++ sqlSettledDate
++ Environment.NewLine
++ order
++ Environment.NewLine
++ @"SELECT DISTINCT * FROM #TEMP
+DROP TABLE #TEMP
+");
+
             #endregion
-           return base.ValidateInput();
+
+            #region --撈DetailExcel資料--
+            cmdDetail = string.Format(@"
+select a.ID
+,a.Status
+,a.issuedate
+,a.factoryid
+, vs1.Name_Extno as Handle
+, vs2.Name_Extno as SMR
+,a.LocalSuppID+'-'+ s.Abb as SupplierByPay
+,a.TaipeiCurrencyID
+,a.TaipeiAMT
+,a.exchange
+,a.currencyid
+,[amount1]=a.amount
+,a.Tax
+,a.taxrate
+,a.amount+a.tax as ttlAmount
+,vs3.Name_Extno as AmtRN
+,a.AmtReviseDate
+,vs4.Name_Extno as AccRH
+,a.ReceiveDate
+,vs5.Name_Extno as AccAH
+,a.cfmdate
+,cur_schedule.VoucherID[VoucherNo]
+,cur_schedule.VoucherDate
+,cur_schedule.VoucherDate[Settled Date]
+,b.Orderid
+,b.qty
+,b.UnitID
+,[amount2]=b.Amount
+,b.Addition
+,b.taipeiReason
+,R.name
+,b.Description
+into #TEMP
+from DBO.LocalDebit a WITH (NOLOCK) 
+left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
+inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
+left join dbo.Reason R WITH (NOLOCK) on b.Reasonid = R.id and R.ReasonTypeID = 'DebitNote_Factory'
+outer apply (select * from dbo.Debit_Schedule vs WITH (NOLOCK) where a.id =  vs.ID ) V
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) vs3
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.ReceiveName ) vs4
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfmName ) vs5
+OUTER APPLY( 
+	SELECT TOP 1
+		ds.VoucherID
+		,v.VoucherDate
+	FROM debit_schedule ds WITH (NOLOCK) 
+	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID
+)AS cur_schedule
+OUTER APPLY(
+	SELECT [Amount]=Sum(ds.Amount) 
+	FROM Debit_Schedule ds
+	WHERE ds.ID=a.ID and ds.VoucherID <> ''
+)Settled
+" + Environment.NewLine
++ sqlWhere
++ Environment.NewLine
++ sqlSettledDate
++ Environment.NewLine
++ order
++ Environment.NewLine
++ @"SELECT DISTINCT * FROM #TEMP
+DROP TABLE #TEMP
+");
+            #endregion
+
+            #region --撈ScheduleExcel資料--
+            cmdSchedule = string.Format(@"
+select a.ID
+,a.Status
+,a.issuedate
+,a.factoryid
+, vs1.Name_Extno as Handle
+, vs2.Name_Extno as SMR
+,a.LocalSuppID+'-'+ s.Abb as SupplierByPay
+,a.TaipeiCurrencyID
+, a.TaipeiAMT
+,a.exchange
+,a.currencyid
+,a.amount
+,a.Tax
+,a.taxrate
+,a.amount+a.tax as ttlAmount
+,vs3.Name_Extno as AmtRN
+,a.AmtReviseDate
+,vs4.Name_Extno as AccRH
+,a.ReceiveDate
+,vs5.Name_Extno as AccAH
+,a.cfmdate
+,cur_schedule.VoucherID [VoucherNo]
+,cur_schedule.VoucherDate
+,cur_schedule.VoucherDate[Settled Date]
+,c.issuedate
+,c.amount
+,c.VoucherId
+,V.VoucherDate
+,c.addDate
+,vs6.Name_Extno as SCN
+,c.editdate
+,vs7.Name_Extno as SEN
+	  
+from DBO.LocalDebit a WITH (NOLOCK) 
+inner join dbo.debit_schedule c WITH (NOLOCK) on a.id = c.id
+outer apply(select * from LocalSupp s WITH (NOLOCK) where a.localsuppid = s.ID)s
+outer apply (select VoucherDate from SciFMS_Voucher Fv where Fv.id = c.VoucherID ) V
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) vs3
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.ReceiveName ) vs4
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfmName ) vs5
+outer apply (select * from dbo.View_ShowName vs where vs.id = c.addName ) vs6
+outer apply (select * from dbo.View_ShowName vs where vs.id = c.editname ) vs7
+OUTER APPLY( 
+	SELECT TOP 1
+		ds.VoucherID
+		,v.VoucherDate
+	FROM debit_schedule ds WITH (NOLOCK) 
+	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID
+)AS cur_schedule
+OUTER APPLY(
+	SELECT [Amount]=Sum(ds.Amount) 
+	FROM Debit_Schedule ds
+	WHERE ds.ID=a.ID and ds.VoucherID <> ''
+)Settled
+"
++ Environment.NewLine
++ sqlWhere
++ Environment.NewLine
++ sqlSettledDate
++ Environment.NewLine
++ order);
+            #endregion
+
+            return base.ValidateInput();
         }
         
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
-            res = DBProxy.Current.Select("", cmd, lis, out dt);
-            if (!res)
+            switch (ReportType)
             {
-                return res;
-            }
-            res = DBProxy.Current.Select("", cmdSummary, lis, out dtSummary);
-            if (!res)
-            {
-                return res;
-            }
-           res = DBProxy.Current.Select("", cmdDetail, lis, out dtDetail);
-           if (!res)
-           {
-               return res;
-           }
-           res = DBProxy.Current.Select("", cmdSchedule, lis, out dtSchedule);
+                case "Debit Note List":
+                    res = DBProxy.Current.Select("", cmd, ParameterList, out dt);
+                    break;
+                case "Summary":
+                    res = DBProxy.Current.Select("", cmdSummary, ParameterList, out dtSummary);
+                    break;
+                case "Detail":
+                    res = DBProxy.Current.Select("", cmdDetail, ParameterList, out dtDetail);
+                    break;
+                case "Debit Schedule Detail":
+                    res = DBProxy.Current.Select("", cmdSchedule, ParameterList, out dtSchedule);
+                    break;
+                default:
+                    res = DBProxy.Current.Select("", cmd, ParameterList, out dt); //預設
+                    break;
+            }           
       
             return res;
         }
        
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dt == null || dt.Rows.Count == 0)
+            switch (ReportType)
             {
-                MyUtility.Msg.ErrorBox("Data not found");
-                return false;
-            } if (dtSummary == null || dtSummary.Rows.Count == 0)
-            {
-                MyUtility.Msg.ErrorBox("Data not found");
-                return false;
+                case "Debit Note List":
+                    if (dt == null || dt.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+                    break;
+                case "Summary":
+                    if (dtSummary == null || dtSummary.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+                    break;
+                case "Detail":
+                    if (dtDetail == null || dtDetail.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+                    break;
+                case "Debit Schedule Detail":
+                    if (dtSchedule == null || dtSchedule.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+                    break;
+                default:
+                    if (dt == null || dt.Rows.Count == 0) //預設
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+                    break;
             }
 
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
@@ -399,6 +621,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier)"));
                 return true;
             }
+
             else if ("Detail".EqualString(this.comboReportType.Text))
             {
                 
@@ -429,6 +652,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNoteDetail(LocalSupplier)"));
                 return true;
             }
+
             else if ("Debit Schedule Detail".EqualString(this.comboReportType.Text))
             {
                
@@ -459,6 +683,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitScheduleDetail(LocalSupplier)"));
                 return true;
             }
+
             return true;
         }
     }
