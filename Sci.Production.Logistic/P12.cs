@@ -408,7 +408,7 @@ outer apply(
 
             string sqlupdate = $@"
 update pld set
-    pld.ClogPulloutName='',
+    pld.ClogPulloutName='{Sci.Env.User.UserID}',
 	pld.ClogPulloutDate=getdate(),
 	pld.PulloutTransport = t.PulloutTransport,
 	pld.PulloutTransportNo = t.PulloutTransportNo
