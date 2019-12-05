@@ -1679,13 +1679,13 @@ from #tmp t
 create  table #td(id varchar(13))
 merge RFT t
 using #tmp1 s
-on t.orderid = s.orderid and t.Cdate = s.CDate and t.SewinglineID = s.SewinglineID 
-and t.FactoryID = s.FactoryID and t.MDivisionid = s.MDivisionid and t.Shift = s.Shift and t.Team = s.Team 
+on  t.orderid = s.orderid and t.Cdate = s.CDate and t.SewinglineID = s.SewinglineID and 
+    t.FactoryID = s.FactoryID and t.MDivisionid = s.MDivisionid and t.Shift = s.Shift and t.Team = s.Team 
 when not matched by target then 
 insert([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty]
-,[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[MDivisionid])
+        ,[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[MDivisionid])
 values(s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty],s.[DefectQty]
-,s.[Shift],s.[Team],s.[Status],s.[Remark],'SCIMIS',getdate(),s.[MDivisionid])
+        ,s.[Shift],s.[Team],s.[Status],s.[Remark],'{Env.User.UserID}',getdate(),s.[MDivisionid])
 output inserted.id into #td 
 ;
 select * from RFT with(nolock) where id in(select id from #td)
@@ -3860,40 +3860,25 @@ select OrderId
 	, CDate=InspectionDate
 	, SewinglineID=Line
 	, FactoryID
-	, InspectQty= isnull(ct1.v,0)+isnull(ct2.v,0)
-	, RejectQty= isnull(ct2.v,0)
-	, DefectQty= isnull(ct3.Qty,0)
+	, InspectQty= count(1)
+	, RejectQty= sum(iif(ins.status = 'Reject',1,0))
+	, DefectQty= sum(Defect.Qty)
 	, Shift=iif(Shift='Day','D','N')
 	, Team
 	, Status='New'
 	, Remark=''
 from inspection ins
-outer apply(select v=count(1)from inspection i WITH (NOLOCK) 
-	where i.InspectionDate = ins.InspectionDate and i.FactoryID = ins.FactoryID 
-	and i.Line = ins.Line and i.Team = ins.Team and i.Shift = ins.Shift 
-	and i.OrderId = ins.OrderId 
-	and i.Status in ('Pass','Fixed'))ct1
-outer apply(select v=count(1)from inspection i WITH (NOLOCK)
-	where i.InspectionDate = ins.InspectionDate and i.FactoryID = ins.FactoryID 
-	and i.Line = ins.Line and i.Team = ins.Team and i.Shift = ins.Shift 
-	and i.OrderId = ins.OrderId 
-	and i.Status in ('Reject'))ct2
 outer apply(
 	select Qty=count(*)
 	from Inspection_Detail id with(nolock)
-	inner join inspection i with(nolock) on i.id= id.id
-	where i.InspectionDate = ins.InspectionDate and i.FactoryID = ins.FactoryID 
-	and i.Line = ins.Line and i.Team = ins.Team and i.Shift = ins.Shift 
-	and i.OrderId = ins.OrderId 
-	group by GarmentDefectTypeID, GarmentDefectCodeID
-)ct3
-where 1=1
-and InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+	where id.ID = ins.ID
+) Defect
+where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
 and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
 and Shift = iif('{this.CurrentMaintain["Shift"]}'='D','Day',iif('{this.CurrentMaintain["Shift"]}'='N','Night',''))
-group by InspectionDate, FactoryID, Line, Shift, Team, OrderId,ct1.v,ct2.v,ct3.Qty
+group by InspectionDate, FactoryID, Line, Shift, Team, OrderId
 ";
             result = DBProxy.Current.Select("ManufacturingExecution", rftfrommes, out this.rftDT);
             if (!result)
