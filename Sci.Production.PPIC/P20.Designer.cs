@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.LbJunk = new Sci.Win.UI.Label();
             this.LbClose = new Sci.Win.UI.Label();
             this.LbOrderQty = new Sci.Win.UI.Label();
@@ -58,13 +58,9 @@
             this.LbSent = new Sci.Win.UI.Label();
             this.LbReason = new Sci.Win.UI.Label();
             this.LbID = new Sci.Win.UI.Label();
-            this.txtuserSent = new Sci.Production.Class.txtuser();
-            this.txtuserApprove = new Sci.Production.Class.txtuser();
             this.txtuserCFM = new Sci.Production.Class.txtuser();
             this.cmbCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.labelStatus = new System.Windows.Forms.Label();
-            this.txtuserClose = new Sci.Production.Class.txtuser();
-            this.txtuserJunk = new Sci.Production.Class.txtuser();
             this.txtuserReject = new Sci.Production.Class.txtuser();
             this.dispStyle = new Sci.Win.UI.DisplayBox();
             this.dispSeason = new Sci.Win.UI.DisplayBox();
@@ -96,6 +92,12 @@
             this.tabQtyApply = new System.Windows.Forms.TabPage();
             this.GridQtyOrder_Apply = new Sci.Win.UI.Grid();
             this.tabQtyApplyShipmode = new System.Windows.Forms.TabPage();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.gridQtyBrkApplyByShipmode = new Sci.Win.UI.Grid();
+            this.QtybrkShipApplybs1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label2 = new Sci.Win.UI.Label();
+            this.gridQtyBrkApplybyArticleSizeDetail = new Sci.Win.UI.Grid();
+            this.QtybrkShipApplybs2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.TxtAppDate = new Sci.Win.UI.TextBox();
             this.TxtSentDate = new Sci.Win.UI.TextBox();
             this.TxtCFMDate = new Sci.Win.UI.TextBox();
@@ -106,13 +108,11 @@
             this.TxtSP = new Sci.Win.UI.TextBox();
             this.CboReason = new Sci.Win.UI.ComboBox();
             this.QtybrkApplybs = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.gridQtyBrkApplyByShipmode = new Sci.Win.UI.Grid();
-            this.label2 = new Sci.Win.UI.Label();
-            this.gridQtyBrkApplybyArticleSizeDetail = new Sci.Win.UI.Grid();
-            this.QtybrkShipApplybs1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.QtybrkShipApplybs2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnRefresh = new Sci.Win.UI.Button();
+            this.txtuserSent = new Sci.Production.Class.txttpeuser();
+            this.txtuserApprove = new Sci.Production.Class.txttpeuser();
+            this.txtuserJunk = new Sci.Production.Class.txttpeuser();
+            this.txtuserClose = new Sci.Production.Class.txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -136,15 +136,15 @@
             this.tabQtyApply.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridQtyOrder_Apply)).BeginInit();
             this.tabQtyApplyShipmode.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.QtybrkApplybs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridQtyBrkApplyByShipmode)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBrkApplybyArticleSizeDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.QtybrkShipApplybs1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBrkApplybyArticleSizeDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.QtybrkShipApplybs2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.QtybrkApplybs)).BeginInit();
             this.SuspendLayout();
             // 
             // detail
@@ -153,6 +153,10 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtuserApprove);
+            this.detailcont.Controls.Add(this.txtuserClose);
+            this.detailcont.Controls.Add(this.txtuserJunk);
+            this.detailcont.Controls.Add(this.txtuserSent);
             this.detailcont.Controls.Add(this.CboReason);
             this.detailcont.Controls.Add(this.TxtSP);
             this.detailcont.Controls.Add(this.TxtID);
@@ -178,14 +182,10 @@
             this.detailcont.Controls.Add(this.dispBrand);
             this.detailcont.Controls.Add(this.dispSeason);
             this.detailcont.Controls.Add(this.dispStyle);
-            this.detailcont.Controls.Add(this.txtuserClose);
-            this.detailcont.Controls.Add(this.txtuserJunk);
             this.detailcont.Controls.Add(this.txtuserReject);
             this.detailcont.Controls.Add(this.labelStatus);
             this.detailcont.Controls.Add(this.cmbCategory);
             this.detailcont.Controls.Add(this.txtuserCFM);
-            this.detailcont.Controls.Add(this.txtuserApprove);
-            this.detailcont.Controls.Add(this.txtuserSent);
             this.detailcont.Controls.Add(this.LbJunk);
             this.detailcont.Controls.Add(this.LbClose);
             this.detailcont.Controls.Add(this.LbOrderQty);
@@ -437,24 +437,6 @@
             this.LbID.TabIndex = 765;
             this.LbID.Text = "ID#";
             // 
-            // txtuserSent
-            // 
-            this.txtuserSent.DisplayBox1Binding = "";
-            this.txtuserSent.Location = new System.Drawing.Point(68, 32);
-            this.txtuserSent.Name = "txtuserSent";
-            this.txtuserSent.Size = new System.Drawing.Size(300, 23);
-            this.txtuserSent.TabIndex = 789;
-            this.txtuserSent.TextBox1Binding = "";
-            // 
-            // txtuserApprove
-            // 
-            this.txtuserApprove.DisplayBox1Binding = "";
-            this.txtuserApprove.Location = new System.Drawing.Point(68, 55);
-            this.txtuserApprove.Name = "txtuserApprove";
-            this.txtuserApprove.Size = new System.Drawing.Size(300, 23);
-            this.txtuserApprove.TabIndex = 790;
-            this.txtuserApprove.TextBox1Binding = "";
-            // 
             // txtuserCFM
             // 
             this.txtuserCFM.DisplayBox1Binding = "";
@@ -490,30 +472,12 @@
             this.labelStatus.Text = "Status";
             this.labelStatus.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // txtuserClose
-            // 
-            this.txtuserClose.DisplayBox1Binding = "";
-            this.txtuserClose.Location = new System.Drawing.Point(514, 78);
-            this.txtuserClose.Name = "txtuserClose";
-            this.txtuserClose.Size = new System.Drawing.Size(300, 23);
-            this.txtuserClose.TabIndex = 810;
-            this.txtuserClose.TextBox1Binding = "";
-            // 
-            // txtuserJunk
-            // 
-            this.txtuserJunk.DisplayBox1Binding = "";
-            this.txtuserJunk.Location = new System.Drawing.Point(514, 55);
-            this.txtuserJunk.Name = "txtuserJunk";
-            this.txtuserJunk.Size = new System.Drawing.Size(300, 23);
-            this.txtuserJunk.TabIndex = 809;
-            this.txtuserJunk.TextBox1Binding = "";
-            // 
             // txtuserReject
             // 
             this.txtuserReject.DisplayBox1Binding = "";
             this.txtuserReject.Location = new System.Drawing.Point(514, 32);
             this.txtuserReject.Name = "txtuserReject";
-            this.txtuserReject.Size = new System.Drawing.Size(300, 23);
+            this.txtuserReject.Size = new System.Drawing.Size(302, 23);
             this.txtuserReject.TabIndex = 808;
             this.txtuserReject.TextBox1Binding = "";
             // 
@@ -730,14 +694,14 @@
             this.GridQtyOrder.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.GridQtyOrder.Location = new System.Drawing.Point(0, 0);
             this.GridQtyOrder.Name = "GridQtyOrder";
-            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GridQtyOrder.RowHeadersDefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GridQtyOrder.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.GridQtyOrder.RowHeadersVisible = false;
             this.GridQtyOrder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.GridQtyOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
@@ -754,7 +718,7 @@
             this.tabQtyShipMode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyShipMode.Name = "tabQtyShipMode";
             this.tabQtyShipMode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyShipMode.Size = new System.Drawing.Size(989, 322);
+            this.tabQtyShipMode.Size = new System.Drawing.Size(977, 100);
             this.tabQtyShipMode.TabIndex = 1;
             this.tabQtyShipMode.Text = "Q\'ty B\'Down by Shipmode";
             // 
@@ -773,8 +737,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDownbyArticleSizeDetail);
-            this.splitContainer1.Size = new System.Drawing.Size(983, 316);
-            this.splitContainer1.SplitterDistance = 94;
+            this.splitContainer1.Size = new System.Drawing.Size(971, 94);
+            this.splitContainer1.SplitterDistance = 27;
             this.splitContainer1.TabIndex = 0;
             // 
             // gridQtyBreakDownByShipmode
@@ -794,20 +758,20 @@
             this.gridQtyBreakDownByShipmode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakDownByShipmode.Location = new System.Drawing.Point(0, 0);
             this.gridQtyBreakDownByShipmode.Name = "gridQtyBreakDownByShipmode";
-            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakDownByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakDownByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakDownByShipmode.RowTemplate.Height = 24;
             this.gridQtyBreakDownByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownByShipmode.ShowCellToolTips = false;
-            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(983, 94);
+            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(971, 27);
             this.gridQtyBreakDownByShipmode.TabIndex = 1;
             this.gridQtyBreakDownByShipmode.TabStop = false;
             // 
@@ -841,14 +805,14 @@
             this.gridQtyBreakDownbyArticleSizeDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakDownbyArticleSizeDetail.Location = new System.Drawing.Point(0, 28);
             this.gridQtyBreakDownbyArticleSizeDetail.Name = "gridQtyBreakDownbyArticleSizeDetail";
-            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakDownbyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakDownbyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.Height = 24;
@@ -864,7 +828,7 @@
             this.tabQtyApply.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApply.Name = "tabQtyApply";
             this.tabQtyApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApply.Size = new System.Drawing.Size(989, 322);
+            this.tabQtyApply.Size = new System.Drawing.Size(977, 100);
             this.tabQtyApply.TabIndex = 3;
             this.tabQtyApply.Text = "Apply Q\'ty B\'Down by Order";
             // 
@@ -884,21 +848,21 @@
             this.GridQtyOrder_Apply.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.GridQtyOrder_Apply.Location = new System.Drawing.Point(3, 3);
             this.GridQtyOrder_Apply.Name = "GridQtyOrder_Apply";
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle16.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GridQtyOrder_Apply.RowHeadersDefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GridQtyOrder_Apply.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.GridQtyOrder_Apply.RowHeadersVisible = false;
             this.GridQtyOrder_Apply.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.GridQtyOrder_Apply.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.GridQtyOrder_Apply.RowTemplate.Height = 24;
             this.GridQtyOrder_Apply.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder_Apply.ShowCellToolTips = false;
-            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(983, 316);
+            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(971, 94);
             this.GridQtyOrder_Apply.TabIndex = 0;
             this.GridQtyOrder_Apply.TabStop = false;
             // 
@@ -908,16 +872,116 @@
             this.tabQtyApplyShipmode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApplyShipmode.Name = "tabQtyApplyShipmode";
             this.tabQtyApplyShipmode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(989, 322);
+            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(977, 100);
             this.tabQtyApplyShipmode.TabIndex = 4;
             this.tabQtyApplyShipmode.Text = "Apply Q\'ty B\'Down by Shipmode";
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.gridQtyBrkApplyByShipmode);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.label2);
+            this.splitContainer2.Panel2.Controls.Add(this.gridQtyBrkApplybyArticleSizeDetail);
+            this.splitContainer2.Size = new System.Drawing.Size(971, 94);
+            this.splitContainer2.SplitterDistance = 27;
+            this.splitContainer2.TabIndex = 1;
+            // 
+            // gridQtyBrkApplyByShipmode
+            // 
+            this.gridQtyBrkApplyByShipmode.AllowUserToAddRows = false;
+            this.gridQtyBrkApplyByShipmode.AllowUserToDeleteRows = false;
+            this.gridQtyBrkApplyByShipmode.AllowUserToOrderColumns = false;
+            this.gridQtyBrkApplyByShipmode.AllowUserToResizeRows = false;
+            this.gridQtyBrkApplyByShipmode.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridQtyBrkApplyByShipmode.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridQtyBrkApplyByShipmode.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQtyBrkApplyByShipmode.DataSource = this.QtybrkShipApplybs1;
+            this.gridQtyBrkApplyByShipmode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridQtyBrkApplyByShipmode.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridQtyBrkApplyByShipmode.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridQtyBrkApplyByShipmode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridQtyBrkApplyByShipmode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridQtyBrkApplyByShipmode.Location = new System.Drawing.Point(0, 0);
+            this.gridQtyBrkApplyByShipmode.Name = "gridQtyBrkApplyByShipmode";
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBrkApplyByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle11;
+            this.gridQtyBrkApplyByShipmode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridQtyBrkApplyByShipmode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridQtyBrkApplyByShipmode.RowTemplate.Height = 24;
+            this.gridQtyBrkApplyByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQtyBrkApplyByShipmode.ShowCellToolTips = false;
+            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(971, 27);
+            this.gridQtyBrkApplyByShipmode.TabIndex = 1;
+            this.gridQtyBrkApplyByShipmode.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.label2.Location = new System.Drawing.Point(0, 2);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(339, 23);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Qty breakdown by Article/Size detail";
+            this.label2.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.label2.TextStyle.Color = System.Drawing.Color.Red;
+            this.label2.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
+            this.label2.TextStyle.GradientColor = System.Drawing.Color.Red;
+            // 
+            // gridQtyBrkApplybyArticleSizeDetail
+            // 
+            this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToAddRows = false;
+            this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToDeleteRows = false;
+            this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToOrderColumns = false;
+            this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToResizeRows = false;
+            this.gridQtyBrkApplybyArticleSizeDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridQtyBrkApplybyArticleSizeDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridQtyBrkApplybyArticleSizeDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQtyBrkApplybyArticleSizeDetail.DataSource = this.QtybrkShipApplybs2;
+            this.gridQtyBrkApplybyArticleSizeDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridQtyBrkApplybyArticleSizeDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridQtyBrkApplybyArticleSizeDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridQtyBrkApplybyArticleSizeDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridQtyBrkApplybyArticleSizeDetail.Location = new System.Drawing.Point(0, 28);
+            this.gridQtyBrkApplybyArticleSizeDetail.Name = "gridQtyBrkApplybyArticleSizeDetail";
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBrkApplybyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.Height = 24;
+            this.gridQtyBrkApplybyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQtyBrkApplybyArticleSizeDetail.ShowCellToolTips = false;
+            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(983, 184);
+            this.gridQtyBrkApplybyArticleSizeDetail.TabIndex = 1;
+            this.gridQtyBrkApplybyArticleSizeDetail.TabStop = false;
             // 
             // TxtAppDate
             // 
             this.TxtAppDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtAppDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtAppDate.IsSupportEditMode = false;
-            this.TxtAppDate.Location = new System.Drawing.Point(368, 55);
+            this.TxtAppDate.Location = new System.Drawing.Point(370, 55);
             this.TxtAppDate.Name = "TxtAppDate";
             this.TxtAppDate.ReadOnly = true;
             this.TxtAppDate.Size = new System.Drawing.Size(80, 23);
@@ -928,7 +992,7 @@
             this.TxtSentDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtSentDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtSentDate.IsSupportEditMode = false;
-            this.TxtSentDate.Location = new System.Drawing.Point(368, 32);
+            this.TxtSentDate.Location = new System.Drawing.Point(370, 32);
             this.TxtSentDate.Name = "TxtSentDate";
             this.TxtSentDate.ReadOnly = true;
             this.TxtSentDate.Size = new System.Drawing.Size(80, 23);
@@ -939,7 +1003,7 @@
             this.TxtCFMDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtCFMDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtCFMDate.IsSupportEditMode = false;
-            this.TxtCFMDate.Location = new System.Drawing.Point(368, 78);
+            this.TxtCFMDate.Location = new System.Drawing.Point(370, 78);
             this.TxtCFMDate.Name = "TxtCFMDate";
             this.TxtCFMDate.ReadOnly = true;
             this.TxtCFMDate.Size = new System.Drawing.Size(80, 23);
@@ -950,7 +1014,7 @@
             this.TxtJunkDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtJunkDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtJunkDate.IsSupportEditMode = false;
-            this.TxtJunkDate.Location = new System.Drawing.Point(814, 55);
+            this.TxtJunkDate.Location = new System.Drawing.Point(816, 55);
             this.TxtJunkDate.Name = "TxtJunkDate";
             this.TxtJunkDate.ReadOnly = true;
             this.TxtJunkDate.Size = new System.Drawing.Size(80, 23);
@@ -961,7 +1025,7 @@
             this.TxtCloseDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtCloseDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtCloseDate.IsSupportEditMode = false;
-            this.TxtCloseDate.Location = new System.Drawing.Point(814, 78);
+            this.TxtCloseDate.Location = new System.Drawing.Point(816, 78);
             this.TxtCloseDate.Name = "TxtCloseDate";
             this.TxtCloseDate.ReadOnly = true;
             this.TxtCloseDate.Size = new System.Drawing.Size(80, 23);
@@ -972,7 +1036,7 @@
             this.TxtRejectDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtRejectDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtRejectDate.IsSupportEditMode = false;
-            this.TxtRejectDate.Location = new System.Drawing.Point(814, 32);
+            this.TxtRejectDate.Location = new System.Drawing.Point(816, 32);
             this.TxtRejectDate.Name = "TxtRejectDate";
             this.TxtRejectDate.ReadOnly = true;
             this.TxtRejectDate.Size = new System.Drawing.Size(80, 23);
@@ -1014,106 +1078,6 @@
             this.CboReason.Size = new System.Drawing.Size(277, 24);
             this.CboReason.TabIndex = 846;
             // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.gridQtyBrkApplyByShipmode);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.label2);
-            this.splitContainer2.Panel2.Controls.Add(this.gridQtyBrkApplybyArticleSizeDetail);
-            this.splitContainer2.Size = new System.Drawing.Size(983, 316);
-            this.splitContainer2.SplitterDistance = 94;
-            this.splitContainer2.TabIndex = 1;
-            // 
-            // gridQtyBrkApplyByShipmode
-            // 
-            this.gridQtyBrkApplyByShipmode.AllowUserToAddRows = false;
-            this.gridQtyBrkApplyByShipmode.AllowUserToDeleteRows = false;
-            this.gridQtyBrkApplyByShipmode.AllowUserToOrderColumns = false;
-            this.gridQtyBrkApplyByShipmode.AllowUserToResizeRows = false;
-            this.gridQtyBrkApplyByShipmode.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridQtyBrkApplyByShipmode.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridQtyBrkApplyByShipmode.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridQtyBrkApplyByShipmode.DataSource = this.QtybrkShipApplybs1;
-            this.gridQtyBrkApplyByShipmode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridQtyBrkApplyByShipmode.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridQtyBrkApplyByShipmode.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridQtyBrkApplyByShipmode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridQtyBrkApplyByShipmode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridQtyBrkApplyByShipmode.Location = new System.Drawing.Point(0, 0);
-            this.gridQtyBrkApplyByShipmode.Name = "gridQtyBrkApplyByShipmode";
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle17.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBrkApplyByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle17;
-            this.gridQtyBrkApplyByShipmode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridQtyBrkApplyByShipmode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridQtyBrkApplyByShipmode.RowTemplate.Height = 24;
-            this.gridQtyBrkApplyByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridQtyBrkApplyByShipmode.ShowCellToolTips = false;
-            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(983, 94);
-            this.gridQtyBrkApplyByShipmode.TabIndex = 1;
-            this.gridQtyBrkApplyByShipmode.TabStop = false;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label2.Location = new System.Drawing.Point(0, 2);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(339, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Qty breakdown by Article/Size detail";
-            this.label2.TextStyle.BorderColor = System.Drawing.Color.Red;
-            this.label2.TextStyle.Color = System.Drawing.Color.Red;
-            this.label2.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
-            this.label2.TextStyle.GradientColor = System.Drawing.Color.Red;
-            // 
-            // gridQtyBrkApplybyArticleSizeDetail
-            // 
-            this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToAddRows = false;
-            this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToDeleteRows = false;
-            this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToOrderColumns = false;
-            this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToResizeRows = false;
-            this.gridQtyBrkApplybyArticleSizeDetail.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridQtyBrkApplybyArticleSizeDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridQtyBrkApplybyArticleSizeDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridQtyBrkApplybyArticleSizeDetail.DataSource = this.QtybrkShipApplybs2;
-            this.gridQtyBrkApplybyArticleSizeDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridQtyBrkApplybyArticleSizeDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridQtyBrkApplybyArticleSizeDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridQtyBrkApplybyArticleSizeDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridQtyBrkApplybyArticleSizeDetail.Location = new System.Drawing.Point(0, 28);
-            this.gridQtyBrkApplybyArticleSizeDetail.Name = "gridQtyBrkApplybyArticleSizeDetail";
-            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle18.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBrkApplybyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle18;
-            this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.Height = 24;
-            this.gridQtyBrkApplybyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridQtyBrkApplybyArticleSizeDetail.ShowCellToolTips = false;
-            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(983, 184);
-            this.gridQtyBrkApplybyArticleSizeDetail.TabIndex = 1;
-            this.gridQtyBrkApplybyArticleSizeDetail.TabStop = false;
-            // 
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1124,6 +1088,42 @@
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
+            // 
+            // txtuserSent
+            // 
+            this.txtuserSent.DisplayBox1Binding = "";
+            this.txtuserSent.DisplayBox2Binding = "";
+            this.txtuserSent.Location = new System.Drawing.Point(68, 32);
+            this.txtuserSent.Name = "txtuserSent";
+            this.txtuserSent.Size = new System.Drawing.Size(300, 23);
+            this.txtuserSent.TabIndex = 847;
+            // 
+            // txtuserApprove
+            // 
+            this.txtuserApprove.DisplayBox1Binding = "";
+            this.txtuserApprove.DisplayBox2Binding = "";
+            this.txtuserApprove.Location = new System.Drawing.Point(68, 55);
+            this.txtuserApprove.Name = "txtuserApprove";
+            this.txtuserApprove.Size = new System.Drawing.Size(300, 23);
+            this.txtuserApprove.TabIndex = 847;
+            // 
+            // txtuserJunk
+            // 
+            this.txtuserJunk.DisplayBox1Binding = "";
+            this.txtuserJunk.DisplayBox2Binding = "";
+            this.txtuserJunk.Location = new System.Drawing.Point(514, 55);
+            this.txtuserJunk.Name = "txtuserJunk";
+            this.txtuserJunk.Size = new System.Drawing.Size(302, 23);
+            this.txtuserJunk.TabIndex = 847;
+            // 
+            // txtuserClose
+            // 
+            this.txtuserClose.DisplayBox1Binding = "";
+            this.txtuserClose.DisplayBox2Binding = "";
+            this.txtuserClose.Location = new System.Drawing.Point(514, 78);
+            this.txtuserClose.Name = "txtuserClose";
+            this.txtuserClose.Size = new System.Drawing.Size(302, 23);
+            this.txtuserClose.TabIndex = 847;
             // 
             // P20
             // 
@@ -1165,15 +1165,15 @@
             this.tabQtyApply.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GridQtyOrder_Apply)).EndInit();
             this.tabQtyApplyShipmode.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.QtybrkApplybs)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridQtyBrkApplyByShipmode)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBrkApplybyArticleSizeDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.QtybrkShipApplybs1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBrkApplybyArticleSizeDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.QtybrkShipApplybs2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.QtybrkApplybs)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1227,14 +1227,10 @@
         private Win.UI.DisplayBox dispBrand;
         private Win.UI.DisplayBox dispSeason;
         private Win.UI.DisplayBox dispStyle;
-        private Class.txtuser txtuserClose;
-        private Class.txtuser txtuserJunk;
         private Class.txtuser txtuserReject;
         private System.Windows.Forms.Label labelStatus;
         private Class.comboDropDownList cmbCategory;
         private Class.txtuser txtuserCFM;
-        private Class.txtuser txtuserApprove;
-        private Class.txtuser txtuserSent;
         private Win.UI.TextBox TxtJunkDate;
         private Win.UI.TextBox TxtCloseDate;
         private Win.UI.TextBox TxtRejectDate;
@@ -1259,5 +1255,9 @@
         private Win.UI.ListControlBindingSource QtybrkShipApplybs1;
         private Win.UI.ListControlBindingSource QtybrkShipApplybs2;
         private Win.UI.Button btnRefresh;
+        private Class.txttpeuser txtuserApprove;
+        private Class.txttpeuser txtuserClose;
+        private Class.txttpeuser txtuserJunk;
+        private Class.txttpeuser txtuserSent;
     }
 }

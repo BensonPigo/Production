@@ -136,12 +136,28 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
                 return true;
             });
 
-            setTxtbox("Sent", this.txtuserSent, this.TxtSentDate);
-            setTxtbox("Approved", this.txtuserApprove, this.TxtAppDate);
+            var setTxtbox2 = new Func<string, Sci.Production.Class.txttpeuser, Sci.Win.UI.TextBox, bool>((signAction, tbName, tbDate) =>
+            {
+                DataRow rowSign = dtSign.AsEnumerable().Where(rr => rr["Status"].ToString() == signAction).FirstOrDefault();
+
+                tbName.DisplayBox1Binding = string.Empty;
+                tbDate.Text = string.Empty;
+
+                if (rowSign != null)
+                {
+                    tbName.DisplayBox1Binding = rowSign["StatusUser"].ToString();
+                    tbDate.Text = rowSign["StatusDate"].ToString();
+                }
+
+                return true;
+            });
+
             setTxtbox("Confirmed", this.txtuserCFM, this.TxtCFMDate);
             setTxtbox("Reject", this.txtuserReject, this.TxtRejectDate);
-            setTxtbox("Junk", this.txtuserJunk, this.TxtJunkDate);
-            setTxtbox("Closed", this.txtuserClose, this.TxtCloseDate);
+            setTxtbox2("Sent", this.txtuserSent, this.TxtSentDate);
+            setTxtbox2("Approved", this.txtuserApprove, this.TxtAppDate);
+            setTxtbox2("Junk", this.txtuserJunk, this.TxtJunkDate);
+            setTxtbox2("Closed", this.txtuserClose, this.TxtCloseDate);
             #endregion
 
             #region 載入Orders欄位
@@ -461,7 +477,7 @@ order by ASeq",
                 return;
             }
 
-            this.SendMail("Confirmed");
+            //this.SendMail("Confirmed");
 
             this.OnDetailEntered();
             this.RenewData();
@@ -485,7 +501,7 @@ order by ASeq",
                 return;
             }
 
-            this.SendMail("Reject");
+            //this.SendMail("Reject");
 
             this.RenewData();
             this.OnDetailEntered();
@@ -501,9 +517,9 @@ order by ASeq",
         {
             string sqlcmd = string.Empty;
             List<string> emailList = new List<string>();
-            sqlcmd = $@"select p.EMail from orders o left join pass1 p on p.id = o.MRHandle where o.id = '{this.CurrentMaintain["Orderid"]}'";
+            sqlcmd = $@"select p.EMail from orders o left join TPEPass1 p on p.id = o.MRHandle where o.id = '{this.CurrentMaintain["Orderid"]}'";
             emailList.Add(MyUtility.GetValue.Lookup(sqlcmd));
-            sqlcmd = $@"select p.EMail from orders o left join pass1 p on p.id = o.SMR where o.id = '{this.CurrentMaintain["Orderid"]}'";
+            sqlcmd = $@"select p.EMail from orders o left join TPEPass1 p on p.id = o.SMR where o.id = '{this.CurrentMaintain["Orderid"]}'";
             emailList.Add(MyUtility.GetValue.Lookup(sqlcmd));
             var x = emailList.Where(w => !MyUtility.Check.Empty(w)).ToList();
             string toAddress = string.Join(";", x);
