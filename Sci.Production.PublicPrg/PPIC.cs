@@ -10,6 +10,7 @@ using Ict;
 using Ict.Win;
 using System.Configuration;
 using PostJobLog;
+using Newtonsoft.Json;
 
 namespace Sci.Production.PublicPrg
 {
@@ -133,13 +134,9 @@ ID
         public static DualResult PostOrderChange(string ID, string status)
         {
             string sqlOrderChange = $@"
-SELECT [ID]
-      ,[ReasonID]
-      ,[OrderID]
+SELECT [ID]= '{ID}'
       ,[Status]='{status}'
       ,[EditName]='{Env.User.UserID}'
-      ,[EditDate]=GETDATE()
-from OrderChangeApplication where ID = '{ID}'
 ";
 
             DataTable dtOrderChange;
@@ -150,7 +147,11 @@ from OrderChangeApplication where ID = '{ID}'
                 return result;
             }
 
-            var postBody = new { ReplacementReport = dtOrderChange};
+            var postBody = dtOrderChange.AsEnumerable()
+                .Select(s => new {  ID = s["ID"].ToString(),
+                    Status = s["Status"].ToString(),
+                    EditName = s["EditName"].ToString()
+            }).First();
             string tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"];
 
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
