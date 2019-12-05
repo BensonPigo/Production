@@ -54,6 +54,11 @@ namespace Sci.Production.Packing
 =======
         private DataTable GridDt = new DataTable();
         private Dictionary<string, List<ZPL>> File_Name_ZPL = new Dictionary<string, List<ZPL>>();
+        private List<string> wattingForConvert = new List<string>();
+        private string[] wattingForConvert_contentsOfZPL;
+
+        public bool canConvert = false;
+
         private List<MappingModel> MappingModels = new List<MappingModel>();
 >>>>>>> ISP20191302 - 調整P25功能
 
@@ -333,11 +338,13 @@ WHERE p.MDivisionID = @MDivisionID
 >>>>>>> ISP20191302 - 調整P25功能
 
                         // 3.透過API將ZPL檔轉成PDF，並存到指定路徑
-                        foreach (string singleFileName in custCTN_List)
-                        {
-                            string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
-                            this.CallAPI(singleFileName, contentString, shippingMarkPath);
-                        }
+                        this.wattingForConvert = custCTN_List;
+                        this.wattingForConvert_contentsOfZPL = contentsOfZPL;
+                        //foreach (string singleFileName in custCTN_List)
+                        //{
+                        //    string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                        //    this.CallAPI(singleFileName, contentString, shippingMarkPath);
+                        //}
 
                         // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
                         List<ZPL> zPL_Objects = this.Analysis_ZPL(dataList, custCTN_List);
@@ -347,7 +354,7 @@ WHERE p.MDivisionID = @MDivisionID
                     }
 
                     this.listControlBindingSource1.DataSource = this.GridDt;
-                    MyUtility.Msg.InfoBox("ZPL convert to image Success!!");
+                    //MyUtility.Msg.InfoBox("ZPL convert to image Success!!");
                 }
                 catch (Exception ex)
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
@@ -518,7 +525,7 @@ WHERE p.MDivisionID = @MDivisionID
             }
         }
 
-        private void btnProcessing_Click(object sender, EventArgs e)
+        private void BtnProcessing_Click(object sender, EventArgs e)
         {
             try
             {
@@ -546,11 +553,11 @@ WHERE CustPONo='{zpl.CustPONo}' AND StyleID='{zpl.StyleID}'
 
 
 
-SELECT DISTINCT [PackingListID] = pd.ID
+SELECT [PackingListID] = pd.ID
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' AND pd.CustCTN = ''
+WHERE p.Type ='B'
     AND pd.OrderID = (SELECT ID FROM #tmoOrders)
     AND CTNStartNo='{zpl.CTNStartNo}' 
     AND Article = '{zpl.Article}'
@@ -576,7 +583,7 @@ DROP TABLE #tmoOrders
                         {
                             if (!this.MappingModels.Where(o => o.FileName == fileName).Any())
                             {
-                                // 1個以上PackingList
+                                // 1個以上PackingList_Detail
                                 MappingModel model = new MappingModel()
                                 {
                                     FileName = fileName,
@@ -612,6 +619,7 @@ DROP TABLE #tmoOrders
                 {
                     Sci.Production.Packing.P25_AssignPackingList form = new P25_AssignPackingList(this.MappingModels, (DataTable)this.listControlBindingSource1.DataSource);
                     form.ShowDialog();
+                    this.canConvert = form.canConvert;
                 }
                 else
                 {
@@ -638,8 +646,7 @@ INTO #tmpOrders{i}
 FROM Orders 
 WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
 
-SELECT DISTINCT 
-        pd.*
+SELECT pd.*
 INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
@@ -690,6 +697,24 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                         }
                     }
                     MyUtility.Msg.InfoBox("Data Mapping successful!");
+
+                    this.canConvert = true;
+                }
+
+                if (this.canConvert)
+                {
+                    // 然後開始轉圖片
+                    this.ShowWaitMessage("Convert to Image....");
+                    string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
+
+                    foreach (string singleFileName in this.wattingForConvert)
+                    {
+                        string contentString = this.wattingForConvert_contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                        this.CallAPI(singleFileName, contentString, shippingMarkPath);
+                    }
+
+                    this.HideWaitMessage();
+
                 }
             }
             catch (Exception exp)

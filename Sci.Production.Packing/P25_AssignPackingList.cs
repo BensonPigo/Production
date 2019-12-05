@@ -15,8 +15,9 @@ namespace Sci.Production.Packing
         private List<MappingModel> _MappingModels;
         private DataTable _P25Dt;
         private DataTable GridDt = new DataTable();
+        public bool canConvert = false;
 
-        public P25_AssignPackingList(List<MappingModel> MappingModels,DataTable P25Dt)
+        public P25_AssignPackingList(List<MappingModel> MappingModels, DataTable P25Dt)
         {
             this.InitializeComponent();
             this._MappingModels = MappingModels;
@@ -42,7 +43,7 @@ namespace Sci.Production.Packing
             this.grid2.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid2)
 .Text("ZPLFileName", header: "ZPL File Name ", width: Widths.AnsiChars(35))
-.Text("PackingListID", header: "PackingList#", width: Widths.AnsiChars(15), iseditingreadonly:false)
+.Text("PackingListID", header: "PackingList#", width: Widths.AnsiChars(15), iseditingreadonly: false)
 ;
         }
 
@@ -53,35 +54,72 @@ namespace Sci.Production.Packing
                 DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
                 DualResult result;
                 bool packingListError = false;
+                List<string> notMapping_FileName = new List<string>();
 
+                #region 檢查表格內的每一個檔案，裡面的每一張ZPL有沒有Mapping
                 foreach (DataRow dr in dt.Rows)
                 {
                     string fileName = dr["ZPLFileName"].ToString();
                     string packingListID = dr["PackingListID"].ToString();
-                    string updateCmd = string.Empty;
+                    bool isAnyNotMapping = false;
 
                     MappingModel current = this._MappingModels.Where(o => o.FileName == fileName).FirstOrDefault();
 
-                    string cmd = string.Empty;
-                    int i = 0;
                     foreach (var ZPL in current.ZPL_Content)
                     {
                         // 檢查Usee是否有輸入不對的PackingList ID
                         if (!this.checkPackingList_Exists(ZPL.CustPONo, ZPL.StyleID, packingListID, ZPL.Article, ZPL.CTNStartNo, ZPL.ShipQty, ZPL.SizeCode))
                         {
-                            packingListError = true;
-                            break;
+                            isAnyNotMapping = true;
                         }
+                    }
 
-                        cmd += $@"
+                    if (isAnyNotMapping)
+                    {
+                        notMapping_FileName.Add(fileName);
+                    }
+
+                }
+                #endregion
+
+                // 失敗狀況
+                if (notMapping_FileName.Count > 0)
+                {
+
+                    // 上一層表格填入結果
+                    foreach (var fileName in notMapping_FileName.Distinct())
+                    {
+                        this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Fail";
+                    }
+
+                    MyUtility.Msg.InfoBox("PackingList# does not Mapping.");
+                    this.canConvert = false;
+                    return;
+                }
+                // 成功狀況
+                else
+                {
+                    #region 把每一個檔案，的每一張ZPL都寫入PackingList_Detail
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        string fileName = dr["ZPLFileName"].ToString();
+                        string packingListID = dr["PackingListID"].ToString();
+                        string cmd = string.Empty;
+                        string updateCmd = string.Empty;
+                        int i = 0;
+
+                        MappingModel current = this._MappingModels.Where(o => o.FileName == fileName).FirstOrDefault();
+
+                        foreach (var ZPL in current.ZPL_Content)
+                        {
+                            cmd += $@"
 
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders{i}
 FROM Orders 
 WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
 
-SELECT DISTINCT 
-        pd.*
+SELECT pd.*
 INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
@@ -110,38 +148,37 @@ INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
-                        i++;
-                    }
-
-                    updateCmd += Environment.NewLine + "---------" + Environment.NewLine + cmd;
-
-                    // 失敗狀況
-                    if (packingListError)
-                    {
-                        MyUtility.Msg.InfoBox("PackingList# does not Mapping.");
-                        this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Fail";
-                        return;
-                    }
-
-                    // 成功狀況
-                    using (TransactionScope transactionscope = new TransactionScope())
-                    {
-                        if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
+                            i++;
                         }
 
-                        transactionscope.Complete();
-                        transactionscope.Dispose();
+                        updateCmd += Environment.NewLine + "---------" + Environment.NewLine + cmd;
 
-                        this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
+                        // 成功狀況
+                        using (TransactionScope transactionscope = new TransactionScope())
+                        {
+                            if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
+                            {
+                                transactionscope.Dispose();
+                                this.canConvert = false;
+                                this.ShowErr(result);
+                            }
+                            else
+                            {
+                                transactionscope.Complete();
+                                transactionscope.Dispose();
+
+                                this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
+
+                                this.canConvert = true;
+                            }
+                        }
                     }
+                    #endregion
+                    MyUtility.Msg.InfoBox("Mapping successful!");
+                    this.Close();
+
                 }
 
-                MyUtility.Msg.InfoBox("Mapping successful!");
-                this.Close();
             }
             catch (Exception exp)
             {
@@ -152,7 +189,7 @@ DROP TABLE #tmpOrders{i},#tmp{i}
         /// <summary>
         /// 檢查User輸入的PL#是否正確
         /// </summary>
-        private bool checkPackingList_Exists(string CustPONo, string StyleID ,string PackingListID,string Article,string CTNStartNo ,string ShipQty ,string SizeCode)
+        private bool checkPackingList_Exists(string CustPONo, string StyleID, string PackingListID, string Article, string CTNStartNo, string ShipQty, string SizeCode)
         {
             string cmd = string.Empty;
             cmd = $@"
@@ -163,8 +200,7 @@ INTO #tmpOrders0
 FROM Orders 
 WHERE CustPONo='{CustPONo}' AND StyleID='{StyleID}'
 
-SELECT DISTINCT 
-        pd.*
+SELECT pd.*
 INTO #tmp0
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
@@ -193,7 +229,7 @@ INNER JOIN #tmp0 t ON t.Ukey=pd.Ukey
 DROP TABLE #tmpOrders0,#tmp0
 ";
 
-           return MyUtility.Check.Seek(cmd);
+            return MyUtility.Check.Seek(cmd);
 
         }
     }

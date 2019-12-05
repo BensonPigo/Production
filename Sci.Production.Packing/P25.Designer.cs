@@ -393,7 +393,7 @@
             this.btnProcessing.TabIndex = 2;
             this.btnProcessing.Text = "Processing";
             this.btnProcessing.UseVisualStyleBackColor = true;
-            this.btnProcessing.Click += new System.EventHandler(this.btnProcessing_Click);
+            this.btnProcessing.Click += new System.EventHandler(this.BtnProcessing_Click);
             // 
             // panel2
             // 
