@@ -148,9 +148,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	update t set
 		t.purchaseFrom='T',
-		t.suppid=s.suppid,
 		t.CurrencyID=s.CurrencyID,
-		t.PartBrandID=s.mmsBrandID,
 		t.Price=s.Price,
 		t.AddName=s.AddName,
 		t.AddDate=s.AddDate,
@@ -158,7 +156,8 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 		t.EditDate=s.EditDate,
 		T.ldefault = S.IsDefault
 	from dbo.PartQuot t
-	inner join #tmpPartQuot s on t.id=s.refno and  t.ukey=s.id 
+	inner join #tmpPartQuot s on t.id=s.refno and  t.PartBrandID = s.mmsBrandID and t.SuppID = s.SuppID
+	where t.PurchaseFrom = 'T'
 
 	insert into dbo.PartQuot(	id,
 													purchaseFrom,
@@ -183,13 +182,18 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 													s.mmsBrandID,
 													S.IsDefault
 										from #tmpPartQuot s
-										where not exists(select 1 from dbo.PartQuot t where  t.id=s.refno and  t.ukey=s.id)
+										where not exists(select 1 from dbo.PartQuot t where		t.id=s.refno and  
+																								t.PartBrandID = s.mmsBrandID and 
+																								t.SuppID = s.SuppID and 
+																								t.PurchaseFrom = 'T')
 	
 	delete t
 	from dbo.PartQuot t 
 	where	t.purchaseFrom='T' and 
 			t.id in (select refno from SciTrade_To_Pms_Part WITH (NOLOCK)) and
-			not exists(select 1 from #tmpPartQuot s where  t.id=s.refno and  t.ukey=s.id)
+			not exists(select 1 from #tmpPartQuot s where  t.id=s.refno and  
+														   t.PartBrandID = s.mmsBrandID and 
+														   t.SuppID = s.SuppID)
 
 	drop table #tmpPartQuot
 
