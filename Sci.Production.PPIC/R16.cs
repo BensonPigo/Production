@@ -19,6 +19,7 @@ namespace Sci.Production.PPIC
         private string MDivisionID;
         private string FactoryID;
         private bool IsOutstanding;
+        private bool IsExcludeSister;
         private DateTime? BuyerDev_S;
         private DateTime? BuyerDev_E;
 
@@ -62,6 +63,7 @@ namespace Sci.Production.PPIC
             this.BrandID = this.txtbrand.Text;
             this.FactoryID = this.txtfactory.Text;
             this.IsOutstanding = this.chkOutstanding.Checked;
+            this.IsExcludeSister = this.chkExcludeSis.Checked;
 
             return base.ValidateInput();
         }
@@ -103,6 +105,11 @@ namespace Sci.Production.PPIC
                 sqlWhereOutstanding.Append($" where ( main.OrderQty > ISNULL(pd.PackingQty,0) OR (ISNULL(pd.PackingCarton,0) - ISNULL(pd.ClogReceivedCarton,0)) <> 0 ) " + Environment.NewLine);
             }
 
+            if (this.IsExcludeSister)
+            {
+                sqlWhere.Append($"AND f.IsProduceFty=1" + Environment.NewLine);
+            }
+
             #endregion
 
             #region 組SQL
@@ -123,15 +130,16 @@ SELECT
 	,[PartialShipment]=IIF(PartialShipment.Count > 1 ,'Y','')
 	,[Cancelled]=IIF(o.Junk=1,'Y','N')
 	,[OrderQty]= isnull(oq.Qty,0)
-	into #tmpOrderMain
+into #tmpOrderMain
 FROM Orders o WITH(NOLOCK)
+INNER JOIN Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
 LEFT JOIN Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
 LEFT JOIN OrderType ot WITH(NOLOCK) ON o.OrderTypeID=ot.ID AND o.BrandID = ot.BrandID
 OUTER APPLY(
 	SELECT [Count] = COUNT(ID) FROM Order_QtyShip oqq WITH(NOLOCK) WHERE oqq.Id=o.ID
 )PartialShipment
-where o.Category IN ('B','G') and
-      isnull(ot.IsGMTMaster,0) = 0
+where o.Category IN ('B','G') 
+      and isnull(ot.IsGMTMaster,0) = 0
       {sqlWhere.ToString()}
 
 select 
@@ -159,6 +167,7 @@ from openquery([ExtendServer],'select   ins.OrderId,
                                 where exists( select 1 
                                                 from 
                                                 [Production].[dbo].Orders o WITH(NOLOCK)
+                                                INNER JOIN [Production].[dbo].Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
                                                 LEFT JOIN  [Production].[dbo].Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
                                                 where o.ID = ins.OrderID 
                                                       {sqlWhere.ToString().Replace("'", "''")}
