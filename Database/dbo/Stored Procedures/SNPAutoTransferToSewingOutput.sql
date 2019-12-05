@@ -219,7 +219,7 @@ BEGIN
 			--				ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --�쥻�p���k
 			--				END
 			,[DefectQty]= (sum( ISNULL(FailCount,0) ) + Sum(QAQty)) - Sum(QAQty) 
-			,[TMS] = TMS.CPU * TMS.CPUFactor * ( IIF(o.StyleUnit='PCS',100,Rate.Rate) /100  ) * TMS.StdTMS--CPU * CPUFactor * (Rate/100) * StdTMS
+			,[TMS] = TMS.CPU * TMS.CPUFactor * ( IIF(o.StyleUnit='PCS',100,IIF(Order_Rate.Rate is null,Style_Rate.Rate,Order_Rate.Rate) ) /100  ) * TMS.StdTMS--CPU * CPUFactor * (Rate/100) * StdTMS
 			into #tmp_Into_SewingOutput_Detail
 			from #tmp_Into_SewingOutput_Detail_Detail t3
 			LEFT join #tempFail t on t.OrderId = t3.OrderId 
@@ -247,10 +247,33 @@ BEGIN
 				,[Rate] = isnull([dbo].[GetOrderLocation_Rate](o.ID,Location),[dbo].[GetStyleLocation_Rate](o.StyleUkey,Location)) 
 				from Style_Location WITH (NOLOCK) 
 				where StyleUkey = o.StyleUkey AND Location =t3.ComboType
-			)Rate
-			group by dDate,t3.WorkLine, t3.OrderId, t3.ComboType, Article ,TMS.CPU ,TMS.CPUFactor ,Rate.Rate
+			)Style_Rate
+			OUTER APPLY(				
+				select Location
+				,[Rate] = isnull([dbo].[GetOrderLocation_Rate](o.ID,Location),[dbo].[GetStyleLocation_Rate](o.StyleUkey,Location)) 
+				from Order_Location WITH (NOLOCK) 
+				where OrderId = o.ID AND Location =t3.ComboType
+			)Order_Rate
+			group by dDate,t3.WorkLine, t3.OrderId, t3.ComboType, Article ,TMS.CPU ,TMS.CPUFactor ,Order_Rate.Rate,Style_Rate.Rate
 			,o.StyleUnit ,TMS.StdTMS
 
+		-- insert  Order_location when orderid not exists in Order_Location 
+		--Start
+			DECLARE CUR_SewingOutput_Detail CURSOR FOR 
+                      select distinct OrderId from #tmp_Into_SewingOutput_Detail_Detail t
+					  where not exists(select 1 from Order_Location s where s.OrderId = t.OrderId)
+
+			declare @OrderId varchar(13) 
+			OPEN CUR_SewingOutput_Detail   
+			FETCH NEXT FROM CUR_SewingOutput_Detail INTO @OrderId 
+			WHILE @@FETCH_STATUS = 0 
+			BEGIN
+			exec dbo.Ins_OrderLocation @OrderId
+			FETCH NEXT FROM CUR_SewingOutput_Detail INTO @OrderId
+			END
+			CLOSE CUR_SewingOutput_Detail
+			DEALLOCATE CUR_SewingOutput_Detail
+		--End 
 			
 			--Prepare SewingOutput_Detail For Insrt
 			select 
