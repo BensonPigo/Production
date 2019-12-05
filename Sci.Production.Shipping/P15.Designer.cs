@@ -630,7 +630,7 @@
             this.disPayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.disPayer.Location = new System.Drawing.Point(490, 63);
             this.disPayer.Name = "disPayer";
-            this.disPayer.Size = new System.Drawing.Size(93, 23);
+            this.disPayer.Size = new System.Drawing.Size(302, 23);
             this.disPayer.TabIndex = 49;
             // 
             // disShipMode
@@ -681,6 +681,7 @@
             // numTtlWeight
             // 
             this.numTtlWeight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTtlWeight.DecimalPlaces = 2;
             this.numTtlWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlWeight.IsSupportEditMode = false;
             this.numTtlWeight.Location = new System.Drawing.Point(490, 253);
@@ -732,6 +733,7 @@
             // numFobCBM
             // 
             this.numFobCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numFobCBM.DecimalPlaces = 3;
             this.numFobCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numFobCBM.IsSupportEditMode = false;
             this.numFobCBM.Location = new System.Drawing.Point(917, 9);
@@ -753,6 +755,7 @@
             // numForCBM
             // 
             this.numForCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numForCBM.DecimalPlaces = 3;
             this.numForCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numForCBM.IsSupportEditMode = false;
             this.numForCBM.Location = new System.Drawing.Point(917, 36);
@@ -774,6 +777,7 @@
             // numForCBMCY
             // 
             this.numForCBMCY.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numForCBMCY.DecimalPlaces = 3;
             this.numForCBMCY.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numForCBMCY.IsSupportEditMode = false;
             this.numForCBMCY.Location = new System.Drawing.Point(917, 62);
@@ -818,6 +822,8 @@
             this.GridAlias = "Export_Detail";
             this.GridEdit = false;
             this.IsDeleteOnBrowse = false;
+            this.IsGridIcon2Visible = false;
+            this.IsGridIconVisible = false;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

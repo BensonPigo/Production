@@ -150,12 +150,12 @@ and Junk = 0
             // 填入表頭資料
             if (dtBl != null && dtBl.Rows.Count > 0)
             {
-                this.disLoadDate.Text = Convert.ToDateTime(dtHeader.Rows[0]["LoadDate"]).ToShortDateString();
-                this.disETC.Text = Convert.ToDateTime(dtHeader.Rows[0]["CloseDate"]).ToShortDateString();
-                this.disETD.Text = Convert.ToDateTime(dtHeader.Rows[0]["ETD"]).ToShortDateString();
-                this.disETA.Text = Convert.ToDateTime(dtHeader.Rows[0]["ETA"]).ToShortDateString();
-                this.disApd.Text = Convert.ToDateTime(dtHeader.Rows[0]["PortArrival"]).ToShortDateString();
-                this.disAwd.Text = Convert.ToDateTime(dtHeader.Rows[0]["WhseArrival"]).ToShortDateString();
+                this.disLoadDate.Text = MyUtility.Check.Empty(dtHeader.Rows[0]["LoadDate"]) ? string.Empty : Convert.ToDateTime(dtHeader.Rows[0]["LoadDate"]).ToShortDateString();
+                this.disETC.Text = MyUtility.Check.Empty(dtHeader.Rows[0]["CloseDate"]) ? string.Empty : Convert.ToDateTime(dtHeader.Rows[0]["CloseDate"]).ToShortDateString();
+                this.disETD.Text = MyUtility.Check.Empty(dtHeader.Rows[0]["ETD"]) ? string.Empty : Convert.ToDateTime(dtHeader.Rows[0]["ETD"]).ToShortDateString();
+                this.disETA.Text = MyUtility.Check.Empty(dtHeader.Rows[0]["ETA"]) ? string.Empty : Convert.ToDateTime(dtHeader.Rows[0]["ETA"]).ToShortDateString();
+                this.disApd.Text = MyUtility.Check.Empty(dtHeader.Rows[0]["PortArrival"]) ? string.Empty : Convert.ToDateTime(dtHeader.Rows[0]["PortArrival"]).ToShortDateString();
+                this.disAwd.Text = MyUtility.Check.Empty(dtHeader.Rows[0]["WhseArrival"]) ? string.Empty : Convert.ToDateTime(dtHeader.Rows[0]["WhseArrival"]).ToShortDateString();
 
                 this.txtHandle.DisplayBox1Binding = dtHeader.Rows[0]["Handle"].ToString();
                 this.disPayer.Text = dtHeader.Rows[0]["Payer"].ToString();
@@ -170,14 +170,14 @@ and Junk = 0
             // BLNO 的相關資訊
             if (dtBl != null && dtBl.Rows.Count > 0)
             {
-                this.numTtlpackage.Value = Convert.ToInt32(dtBl.Rows[0]["TtlPackages"]);
-                this.numTtlWeight.Value = Convert.ToInt32(dtBl.Rows[0]["TtlWeightKg"]);
+                this.numTtlpackage.Value = MyUtility.Convert.GetInt(dtBl.Rows[0]["TtlPackages"]);
+                this.numTtlWeight.Value = MyUtility.Convert.GetDecimal(dtBl.Rows[0]["TtlWeightKg"]);
                 this.disTtl20.Text = dtBl.Rows[0]["Ttl20"].ToString();
                 this.disTtl40.Text = dtBl.Rows[0]["Ttl40"].ToString();
                 this.disTtlHQ.Text = dtBl.Rows[0]["TtlHQ"].ToString();
-                this.numFobCBM.Value = Convert.ToInt32(dtBl.Rows[0]["FOBCBM"]);
-                this.numForCBM.Value = Convert.ToInt32(dtBl.Rows[0]["FORCBM"]);
-                this.numForCBMCY.Value = Convert.ToInt32(dtBl.Rows[0]["FOR_CYCBM"]);
+                this.numFobCBM.Value = MyUtility.Convert.GetDecimal(dtBl.Rows[0]["FOBCBM"]);
+                this.numForCBM.Value = MyUtility.Convert.GetDecimal(dtBl.Rows[0]["FORCBM"]);
+                this.numForCBMCY.Value = MyUtility.Convert.GetDecimal(dtBl.Rows[0]["FOR_CYCBM"]);
             }
 
         }
@@ -254,9 +254,9 @@ order by e.ID
                 .Numeric("Count40", header: "40", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(5))
                 .Numeric("CountHQ", header: "HQ", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(5))
                 .Text("ShipmentTerm", header: "Term", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                .Numeric("CBM", header: "CBM", iseditingreadonly: true, width: Widths.AnsiChars(3))
-                .Numeric("Packages", header: "Packages", iseditingreadonly: true, width: Widths.AnsiChars(4))
-                .Numeric("WeightKg", header: "Weight", iseditingreadonly: true, width: Widths.AnsiChars(5))
+                .Numeric("CBM", header: "CBM", iseditingreadonly: true, decimal_places: 3, width: Widths.AnsiChars(3))
+                .Numeric("Packages", header: "Packages", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(4))
+                .Numeric("WeightKg", header: "Weight", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(5))
                 .CheckBox("NoImportCharges", header: "No Import Charge", iseditable: false, width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
                 .Text("ContainerNo", header: "Containers", iseditingreadonly: true, width: Widths.AnsiChars(15), settings: colContainers)
                 ;
