@@ -164,7 +164,7 @@ into #AllOrders
 from Bundle_Detail bd
 inner join Bundle bun on bun.id = bd.id
 inner join Orders os  WITH (NOLOCK) on bun.Orderid = os.ID and bun.MDivisionID = os.MDivisionID
-inner join {tempTable} t on t.OrderID = bun.Orderid
+where exists (select 1 from {tempTable} t where t.OrderID = os.ID)
 
 select distinct bunD.ID
 		, bunD.BundleGroup
@@ -183,12 +183,12 @@ into #tmp_Bundle_QtyBySubprocess
 from Bundle bun
 INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
 inner join Bundle_Detail bunD on bunD.Id = bun.ID
-inner join #AllOrders x0 on bun.Orderid = x0.Orderid
+where exists (select 1 from  #AllOrders x0 where bun.Orderid = x0.Orderid
 		and bun.PatternPanel = x0.PatternPanel
 		and bun.FabricPanelCode = x0.FabricPanelCode
 		and bun.Article = x0.Article
 		and bunD.Sizecode = x0.Sizecode
-	    and bunD.PatternDesc = x0.PatternDesc
+	    and bunD.PatternDesc = x0.PatternDesc)
 ";
 
             foreach (string subprocessID in subprocessIDs)
