@@ -226,19 +226,23 @@
             // 
             // labelSupplier
             // 
+            this.labelSupplier.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelSupplier.Location = new System.Drawing.Point(6, 49);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(97, 23);
             this.labelSupplier.TabIndex = 6;
             this.labelSupplier.Text = "Supplier";
+            this.labelSupplier.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelArtworkType
             // 
+            this.labelArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelArtworkType.Location = new System.Drawing.Point(6, 83);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(97, 23);
             this.labelArtworkType.TabIndex = 7;
             this.labelArtworkType.Text = "ArtworkType";
+            this.labelArtworkType.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelReqDate
             // 

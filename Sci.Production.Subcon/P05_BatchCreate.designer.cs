@@ -128,19 +128,23 @@
             // 
             // labSewingInline
             // 
+            this.labSewingInline.BackColor = System.Drawing.Color.SkyBlue;
             this.labSewingInline.Location = new System.Drawing.Point(9, 52);
             this.labSewingInline.Name = "labSewingInline";
             this.labSewingInline.Size = new System.Drawing.Size(77, 23);
             this.labSewingInline.TabIndex = 8;
             this.labSewingInline.Text = "Sew. Inline";
+            this.labSewingInline.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelSCIDelivery
             // 
+            this.labelSCIDelivery.BackColor = System.Drawing.Color.SkyBlue;
             this.labelSCIDelivery.Location = new System.Drawing.Point(346, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(86, 23);
             this.labelSCIDelivery.TabIndex = 7;
             this.labelSCIDelivery.Text = "SCI  Delivery";
+            this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtSPNoEnd
             // 
@@ -191,11 +195,13 @@
             // 
             // labelArtworkType
             // 
+            this.labelArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelArtworkType.Location = new System.Drawing.Point(346, 52);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(86, 23);
             this.labelArtworkType.TabIndex = 12;
             this.labelArtworkType.Text = "Artwork Type";
+            this.labelArtworkType.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtartworktype_ftyArtworkType
             // 
@@ -232,11 +238,13 @@
             // 
             // labelSPNo
             // 
+            this.labelSPNo.BackColor = System.Drawing.Color.SkyBlue;
             this.labelSPNo.Location = new System.Drawing.Point(9, 15);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(77, 23);
             this.labelSPNo.TabIndex = 0;
             this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelReqDate
             // 

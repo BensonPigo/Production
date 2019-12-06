@@ -36,6 +36,7 @@
             this.labelSPNo = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.labSewingInline = new Sci.Win.UI.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
@@ -44,7 +45,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labSewingInline = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -99,11 +99,13 @@
             // 
             // labelSPNo
             // 
+            this.labelSPNo.BackColor = System.Drawing.Color.SkyBlue;
             this.labelSPNo.Location = new System.Drawing.Point(9, 15);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
             this.labelSPNo.TabIndex = 5;
             this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // groupBox2
             // 
@@ -133,6 +135,16 @@
             this.groupBox1.Size = new System.Drawing.Size(1002, 93);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // labSewingInline
+            // 
+            this.labSewingInline.BackColor = System.Drawing.Color.SkyBlue;
+            this.labSewingInline.Location = new System.Drawing.Point(9, 51);
+            this.labSewingInline.Name = "labSewingInline";
+            this.labSewingInline.Size = new System.Drawing.Size(95, 23);
+            this.labSewingInline.TabIndex = 15;
+            this.labSewingInline.Text = "Sew. Inline";
+            this.labSewingInline.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label8
             // 
@@ -189,11 +201,13 @@
             // 
             // labelSCIDelivery
             // 
+            this.labelSCIDelivery.BackColor = System.Drawing.Color.SkyBlue;
             this.labelSCIDelivery.Location = new System.Drawing.Point(413, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
             this.labelSCIDelivery.TabIndex = 7;
             this.labelSCIDelivery.Text = "SCI  Delivery";
+            this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtSPNoEnd
             // 
@@ -237,14 +251,6 @@
             this.gridBatchImport.Size = new System.Drawing.Size(1002, 384);
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
-            // 
-            // labSewingInline
-            // 
-            this.labSewingInline.Location = new System.Drawing.Point(9, 51);
-            this.labSewingInline.Name = "labSewingInline";
-            this.labSewingInline.Size = new System.Drawing.Size(95, 23);
-            this.labSewingInline.TabIndex = 15;
-            this.labSewingInline.Text = "Sew. Inline";
             // 
             // P05_Import
             // 

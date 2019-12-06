@@ -34,7 +34,24 @@ select a.Status
 from ArtworkReq_Detail AD, ArtworkReq A
 where AD.ID = A.ID 
 and ad.OrderID ='{dr["orderID"]}'
-and ad.PatternCode = '{dr["PatternCode"]}'";
+and ad.PatternCode = '{dr["PatternCode"]}'
+and a.ID != '{dr["id"]}'
+and a.status != 'Closed' and ad.ArtworkPOID =''
+
+union 
+
+select a.Status
+,a.ID
+,ad.PoQty
+,[HandleName] = (select name from Pass1 where id = a.Handle)
+,a.Handle
+from ArtworkPO_Detail AD, ArtworkPO A
+where AD.ID = A.ID 
+and ad.OrderID ='{dr["orderID"]}'
+and ad.PatternCode = '{dr["PatternCode"]}'
+and ad.ArtworkReqID=''
+
+";
 
                                 
             DataTable selectDataTable1;
