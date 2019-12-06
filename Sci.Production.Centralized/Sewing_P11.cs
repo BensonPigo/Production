@@ -60,9 +60,20 @@ namespace Sci.Production.Centralized
             }
 
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
-            strSevers.Remove("PMSDB_TSR");
-            strSevers.Remove("PMSDB_NAI");
+            List<string> strSevers = new List<string>();
+            if (DBProxy.Current.DefaultModuleName.Contains("PMSDB"))
+            {
+                strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
+                strSevers.Remove("PMSDB_TSR");
+                strSevers.Remove("PMSDB_NAI");
+            }
+            else
+            {
+                strSevers = ConfigurationManager.AppSettings["TestingServer"].Split(',').ToList();
+                strSevers.Remove("testing_TSR");
+                strSevers.Remove("testing_NAI");
+            }
+
             DataTable ftyServerDatas = new DataTable();
             ftyServerDatas.Columns.Add("Factory", typeof(string));
             ftyServerDatas.Columns.Add("nowConnection", typeof(string));
