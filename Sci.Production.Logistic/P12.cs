@@ -24,33 +24,14 @@ namespace Sci.Production.Logistic
             this.InitializeComponent();
         }
 
-        private int s;
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_chk = new Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings();
-            col_chk.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["remark"]))
-                {
-                    MyUtility.Msg.WarningBox(dr["remark"].ToString());
-                    dr["selected"] = 0;
-                    dr.EndEdit();
-                    return;
-                }
-
-                dr["selected"] = e.FormattedValue;
-                dr.EndEdit();
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected=1").Count();
-                this.numSelectedCTNQty.Value = sint;
-            };
-
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("packinglistID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("CustCTN", header: "Cust CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -71,30 +52,28 @@ namespace Sci.Production.Logistic
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
 
-            this.grid1.ColumnHeaderMouseClick += (s, e) =>
+            this.grid1.RowsAdded += (s, e) =>
             {
-                if (this.s == this.numSelectedCTNQty.Value)
+                if (e.RowIndex < 0)
                 {
-                    foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
-                    {
-                        dr["selected"] = 0;
-                        dr.EndEdit();
-                    }
-                }
-                else
-                {
-                    foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
-                    {
-                        if (!MyUtility.Check.Empty(dr["remark"]))
-                        {
-                            dr["selected"] = 0;
-                            dr.EndEdit();
-                        }
-                    }
+                    return;
                 }
 
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected=1").Count();
-                this.numSelectedCTNQty.Value = sint;
+                int index = e.RowIndex;
+                for (int i = 0; i < e.RowCount; i++)
+                {
+                    DataGridViewRow dr = this.grid1.Rows[index];
+                    if (!MyUtility.Check.Empty(dr.Cells["Remark"].Value))
+                    {
+                        dr.Cells["Selected"].ReadOnly = true;
+                    }
+                    else
+                    {
+                        dr.Cells["Selected"].ReadOnly = false;
+                    }
+
+                    index++;
+                }
             };
         }
 
@@ -175,7 +154,6 @@ order by pld.ID,pld.CTNStartNo
 
             this.numSelectedCTNQty.Value = 0;
             this.numTTLQty.Value = dt.Rows.Count;
-            this.s = ((DataTable)this.listControlBindingSource1.DataSource).Select("remark is null ").Count();
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -271,7 +249,15 @@ where pld.id = '{item["packinglistID"]}' and pld.CTNStartNo ='{item["CTNStartNo"
                     {
                         DataRow dr = tmpdt.NewRow();
                         dr["PackingListID"] = string.Empty;
-                        dr["CTNStartNo"] = item["CTNStartNo"];
+                        if (MyUtility.Check.Empty(item["CTNStartNo"]))
+                        {
+                            dr["CTNStartNo"] = item["custCtn"];
+                        }
+                        else
+                        {
+                            dr["CTNStartNo"] = item["CTNStartNo"];
+                        }
+
                         tmpdt.Rows.Add(dr);
                     }
                     else
@@ -294,6 +280,7 @@ select t.*,
 				when b.v is not null then 'This carton not yet send to CLog.'
 				when e.DisposeFromClog = 1 then 'This carton had been dispose.'
 				when e.ClogPulloutDate is not null then 'This carton already completed Clog Pullout.'
+                else ''
 			end,
 	e.*
 from #tmp t
@@ -336,7 +323,6 @@ outer apply(
 
                 this.numSelectedCTNQty.Value = 0;
                 this.numTTLQty.Value = lastable.Rows.Count;
-                this.s = ((DataTable)this.listControlBindingSource1.DataSource).Select("remark is null").Count();
             }
         }
 
