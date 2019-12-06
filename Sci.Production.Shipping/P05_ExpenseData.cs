@@ -65,14 +65,14 @@ namespace Sci.Production.Shipping
                     this.sqlCmd = string.Format(
                         @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.DebitID,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
 from ShareExpense se WITH (NOLOCK) 
-LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+LEFT JOIN dbo.SciFMS_AccountNo a on se.AccountID = a.ID
 where se.InvNo = '{0}' and se.junk=0", this.id);
                     break;
                 case "WKNo":
                     this.sqlCmd = string.Format(
                         @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.DebitID,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
 from ShareExpense se WITH (NOLOCK) 
-LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+LEFT JOIN dbo.SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", this.id);
                     break;
                 default:

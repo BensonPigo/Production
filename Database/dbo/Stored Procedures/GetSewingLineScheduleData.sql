@@ -59,7 +59,7 @@ from SewingSchedule s  WITH (NOLOCK)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-outer apply(select [val] = iif(isnull(s.OriEff,0)=0 and isnull(s.SewLineEff,0)=0, s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
+outer apply(select [val] = iif(isnull(s.OriEff,0)=0 or isnull(s.SewLineEff,0)=0, s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
 where 1 = 1  and (s.Inline >= @Inline or (s.Inline <= @Inline and s.Offline >= @Inline)) and s.APSno <> 0
 group by	s.APSNo ,
 			s.MDivisionID,
@@ -277,7 +277,8 @@ declare @APSColumnGroup TABLE(
 	[InspDate] [date] NULL,
 	[Category] [varchar](1) NULL,
 	[SCIDelivery] [date] NULL,
-	[BuyerDelivery] [date] NULL
+	[BuyerDelivery] [date] NULL,
+	[BrandID] [nvarchar](8) NULL
 )
 insert into @APSColumnGroup
 select
@@ -295,7 +296,8 @@ o.MTLETA,
 o.InspDate,
 o.Category,
 o.SCIDelivery,
-o.BuyerDelivery
+o.BuyerDelivery,
+[BrandID] = o.BrandID
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 inner join CDCode cd with (nolock) on o.CdCodeID = cd.ID
@@ -342,48 +344,50 @@ declare @APSMain TABLE(
 	[MinBuyerDelivery] [date] NULL,
 	[OriEff] [numeric](5, 2) NULL,
 	[SewLineEff] [numeric](5, 2) NULL,
-	[TotalSewingTime] int NULL
+	[TotalSewingTime] int NULL,
+	[BrandID] [nvarchar](500) NULL
 )
 insert into @APSMain
 select
-al.APSNo,
-al.SewingLineID,
-[CustPO] = CustPO.val,
-[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算CustPO數量
-[SP] = SP.val,
-[SpCnt] = (select count(1) from SewingSchedule where APSNo = al.APSNo),
-[Colorway] = Colorway.val,
-[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算Colorway數量
-[CDCode] = CDCode.val,
-[ProductionFamilyID] = ProductionFamilyID.val,
-[Style] = Style.val,
-[StyleCnt] = iif(LEN(Style.val) > 0,(LEN(Style.val) - LEN(REPLACE(Style.val, ',', ''))) / LEN(',') + 1,0),
-aoo.OrderQty,
-al.AlloQty,
-al.LearnCurveID,
-al.Inline,
-al.Offline,
-[PFRemark] = iif(exists(select 1 from @APSColumnGroup where APSNo = al.APSNo and PFOrder = 1),'Y',''),
-[MTLComplete] = iif(exists(select 1 from @APSColumnGroup where APSNo = al.APSNo and MTLExport = ''),'','Y'),
-OrderMax.KPILETA,
-OrderMax.MTLETA,
-[ArtworkType] = ArtworkType.val,
-OrderMax.InspDate,
-[Remarks] = Remarks.val,
-[CuttingOutput] = isnull(aco.CuttingOutput,0),
-[ScannedQty] = isnull(apo.ScannedQty,0),
-[ClogQty] = isnull(apo.ClogQty,0),
-al.MDivisionID,
-al.FactoryID,
-al.Sewer,
-[Category] = Category.val,
-OrderDateInfo.MaxSCIDelivery,
-OrderDateInfo.MinSCIDelivery,
-OrderDateInfo.MaxBuyerDelivery,
-OrderDateInfo.MinBuyerDelivery,
-OriEff,
-SewLineEff,
-TotalSewingTime 
+	al.APSNo,
+	al.SewingLineID,
+	[CustPO] = CustPO.val,
+	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算CustPO數量
+	[SP] = SP.val,
+	[SpCnt] = (select count(1) from SewingSchedule where APSNo = al.APSNo),
+	[Colorway] = Colorway.val,
+	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算Colorway數量
+	[CDCode] = CDCode.val,
+	[ProductionFamilyID] = ProductionFamilyID.val,
+	[Style] = Style.val,
+	[StyleCnt] = iif(LEN(Style.val) > 0,(LEN(Style.val) - LEN(REPLACE(Style.val, ',', ''))) / LEN(',') + 1,0),
+	aoo.OrderQty,
+	al.AlloQty,
+	al.LearnCurveID,
+	al.Inline,
+	al.Offline,
+	[PFRemark] = iif(exists(select 1 from @APSColumnGroup where APSNo = al.APSNo and PFOrder = 1),'Y',''),
+	[MTLComplete] = iif(exists(select 1 from @APSColumnGroup where APSNo = al.APSNo and MTLExport = ''),'','Y'),
+	OrderMax.KPILETA,
+	OrderMax.MTLETA,
+	[ArtworkType] = ArtworkType.val,
+	OrderMax.InspDate,
+	[Remarks] = Remarks.val,
+	[CuttingOutput] = isnull(aco.CuttingOutput,0),
+	[ScannedQty] = isnull(apo.ScannedQty,0),
+	[ClogQty] = isnull(apo.ClogQty,0),
+	al.MDivisionID,
+	al.FactoryID,
+	al.Sewer,
+	[Category] = Category.val,
+	OrderDateInfo.MaxSCIDelivery,
+	OrderDateInfo.MinSCIDelivery,
+	OrderDateInfo.MaxBuyerDelivery,
+	OrderDateInfo.MinBuyerDelivery,
+	OriEff,
+	SewLineEff,
+	TotalSewingTime,
+	[BrandID] = BrandID.val
 from @APSList al
 left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
 left join @APSOrderQty aoo on al.APSNo = aoo.APSNo
@@ -401,6 +405,7 @@ outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from @A
 outer apply (SELECT MaxSCIDelivery = Max(SCIDelivery),MinSCIDelivery = Min(SCIDelivery),
                     MaxBuyerDelivery = Max(BuyerDelivery),MinBuyerDelivery = Min(BuyerDelivery)
                     from @APSColumnGroup where APSNo = al.APSNo) as OrderDateInfo
+outer apply (SELECT val =  Stuff((select distinct concat( ',',BrandID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as BrandID
 
 --組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
 Declare @StartDate date
@@ -710,7 +715,8 @@ select
 	[CuttingOutput]=round(apm.CuttingOutput,2),
 	[SewingOutput]=apf.SewingOutput,
 	[ScannedQty]=apm.ScannedQty,
-	[ClogQty]=apm.ClogQty
+	[ClogQty]=apm.ClogQty,
+	[BrandID]=apm.BrandID
 from @APSMain apm
 inner join @APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart

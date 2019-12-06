@@ -552,6 +552,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P11";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.ReceiveChkValue = "Confirmed";
             this.Text = "P11. Accessory Lacking & Replacement";
             this.UnApvChkValue = "Confirmed";

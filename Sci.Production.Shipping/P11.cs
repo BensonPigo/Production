@@ -262,8 +262,8 @@ select
 	E=sum(pd.ShipQty),
 	F='PCS',
 	G=o.CurrencyID,
-	H=std.FtyCMP,
-	J=sum(pd.ShipQty)*isnull(std.FtyCMP,0)
+	H=ROUND(std.FtyCMP,2),
+	J=sum(pd.ShipQty)*ROUND(isnull(std.FtyCMP,0),2)
 from orders o with(nolock)
 inner join PackingList_Detail pd with(nolock) on pd.OrderID = o.id
 inner join PackingList p with(nolock) on p.id = pd.id

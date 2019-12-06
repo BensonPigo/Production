@@ -383,18 +383,15 @@ outer apply(
 	,1,1,'')
 )Artwork
 outer apply(
-	select v = sum(Layer)
-	from (
-		select wo2.Layer,wo2.CutRef,wo2.id,wo2.EstCutDate,wo2.MarkerNo,wo2.Markername
-		from WorkOrder wo2 with(nolock)
-		where wo2.id = t.[Master SP#] and wo2.EstCutDate  = t.[Est.Cutting Date] and wo2.MarkerNo = t.MarkerNo and wo2.Markername = t.Markername
-		group by wo2.Layer,wo2.CutRef,wo2.id,wo2.EstCutDate,wo2.MarkerNo,wo2.Markername
-		--不同的WorkOrder.CutRef且WorkOrder.ID+EstCutDate+MarkerNo+Markername皆相同
-		--先把相同CutRef縮減為一筆 , 再sum起來
-	)x
+	select Layer=SUM(wo2.Layer)
+	from WorkOrder wo2 with(nolock)
+	where wo2.id = t.[Master SP#] and wo2.EstCutDate  = t.[Est.Cutting Date] and wo2.MarkerNo = t.MarkerNo and wo2.Markername = t.Markername
+	group by wo2.id,wo2.EstCutDate,wo2.MarkerNo,wo2.Markername
+    having count(1) > 1
+	--WorkOrder.ID+EstCutDate+MarkerNo+Markername皆相同, 但CutRef不同(必須2筆以上) 的 Layer加起來
 )cly
 outer apply(
-	select v=iif( cly.v <= con.CuttingLayer,'Y','')
+	select v=iif( cly.Layer is not null and cly.Layer <= con.CuttingLayer,'Y','')
 	from Construction con with(nolock)
 	inner join Fabric fb with(nolock) on fb.ConstructionID = con.id
 	where fb.SCIRefno = t.SCIRefno

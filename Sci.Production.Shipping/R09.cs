@@ -232,7 +232,7 @@ from ShippingAP s WITH (NOLOCK)
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
 left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
-left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+left join SciFMS_AccountNo a on a.ID = se.AccountID
 outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
 where s.Type = 'IMPORT'
       AND se.Junk <> 1
@@ -288,7 +288,7 @@ from ShippingAP s WITH (NOLOCK)
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
-left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+left join SciFMS_AccountNo a on a.ID = se.AccountID
 where fe.Type <> 3
       AND se.Junk <> 1
 ");
@@ -375,7 +375,7 @@ select * from FtyExportData");
                 foreach (DataRow dr in this.accnoData.Rows)
                 {
                     i++;
-                    worksheet.Cells[1, 19 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [FinanceEN].dbo.AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
+                    worksheet.Cells[1, 19 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from SciFMS_AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
                 }
 
                 worksheet.Cells[1, 19 + i + 1] = "Total Import Fee";

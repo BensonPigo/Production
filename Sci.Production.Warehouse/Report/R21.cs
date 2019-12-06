@@ -16,7 +16,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class R21 : Sci.Win.Tems.PrintForm
     {
-        string StartSPNo, EndSPNo, MDivision, Factory, StartRefno, EndRefno, Color, MT, ST;
+        string StartSPNo, EndSPNo, MDivision, Factory, StartRefno, EndRefno, Color, MT, ST ,WorkNo;
         DateTime? BuyerDelivery1, BuyerDelivery2;
         DateTime? ETA1, ETA2;
         DateTime? arriveWH1, arriveWH2;
@@ -193,6 +193,7 @@ namespace Sci.Production.Warehouse
             ETA2 = dateETA.Value2;
             arriveWH1 = dateArriveDate.Value1;
             arriveWH2 = dateArriveDate.Value2;
+            WorkNo = txtWorkNo.Text;
 
             if (MyUtility.Check.Empty(StartSPNo) &&
                 MyUtility.Check.Empty(EndSPNo) &&
@@ -216,10 +217,11 @@ namespace Sci.Production.Warehouse
             if (ReportType == 0)
             {
                 #region 主要sql Detail
-                sqlcmd.Append(@" 
+                sqlcmd.Append($@" 
 from Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
+{(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : "")}
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 outer apply
@@ -245,10 +247,11 @@ where 1=1
             else
             {
                 #region 主要sql summary
-                sqlcmd.Append(@"
+                sqlcmd.Append($@"
 from Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
+{(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : "")}
 left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 outer apply

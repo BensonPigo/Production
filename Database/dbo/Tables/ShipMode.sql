@@ -11,6 +11,7 @@
     [IncludeSeaShipping] BIT NOT NULL DEFAULT ((0)), 
     [NeedCreateAPP] BIT CONSTRAINT [DF_ShipMode_NeedCreateAPP] DEFAULT ((0)) NOT NULL,
     [NeedCreateIntExpress] BIT NOT NULL DEFAULT ((0)), 
+    [ShipGroup] VARCHAR(10) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_ShipMode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

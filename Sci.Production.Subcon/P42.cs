@@ -71,10 +71,10 @@ select
 	[Defect Qty (pcs)]=bi.DefectQty,
 	[Replacement Qty (pcs)]=bi.ReplacementQty,
 	Status=iif(bi.DefectQty=bi.ReplacementQty,'Complete','')
-from ManufacturingExecution.dbo.BundleInspection bi with(nolock)
+from dbo.SciMES_BundleInspection bi with(nolock)
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
 inner join Bundle b with(nolock) on b.id = bd.id
-left join ManufacturingExecution.dbo.BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID and bdr.SubProcessID = bi.SubProcessID
+left join dbo.SciMES_BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID and bdr.SubProcessID = bi.SubProcessID
 where b.Orderid = '{drSelected["OrderID"]}' 
 {where}
 ";
@@ -401,6 +401,19 @@ select
 into #tmp
 from #tmpBundleNo_Complete t
 
+select
+bi.BundleNo,
+bi.ReasonID,
+bi.DefectQty,
+bi.ReplacementQty
+into #tmpBundleInspection
+from dbo.SciMES_BundleInspection bi  with(nolock)
+where exists(select 1   from #tmpOrders o 
+						inner join Bundle b with(nolock) on o.id = b.Orderid and  b.MDivisionID = o.MDivisionID
+						inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.id
+						where bi.BundleNo = bd.BundleNo
+						)  and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
+
 declare @sql nvarchar(max)=N'
 select Orderid,'+@Col+N'
 into #right
@@ -415,20 +428,19 @@ from #tmpOrders o
 inner join #right r on r.Orderid=o.id
 outer apply(
     select RQ=stuff((
-	    select concat('','',ReasonID,''('',sum(isnull(bi.DefectQty,0)-isnull(bi.ReplacementQty,0)),'')'')
-	    from ManufacturingExecution.dbo.BundleInspection bi  with(nolock)
-        inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
+	     select concat('','',bi.ReasonID,''('',sum(isnull(bi.DefectQty,0)-isnull(bi.ReplacementQty,0)),'')'')
+	    from #tmpBundleInspection bi
+		inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
         inner join Bundle b with(nolock) on b.id = bd.id
-	    where isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
-	    and  b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
-	    group by ReasonID
+		where  o.id = b.Orderid and  o.MDivisionID = b.MDivisionID
+	    group by bi.ReasonID
 	    for xml path('''')
     ),1,1,'''')
 )BR
 '
 exec(@sql)
 
-drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2, #tmpBundleInspection
 ";
             }
             else
@@ -595,6 +607,19 @@ select
 into #tmp
 from #tmpBundleNo_Complete t
 
+select
+bi.BundleNo,
+bi.ReasonID,
+bi.DefectQty,
+bi.ReplacementQty
+into #tmpBundleInspection
+from dbo.SciMES_BundleInspection bi  with(nolock)
+where exists(select 1   from #tmpOrders o 
+						inner join Bundle b with(nolock) on o.id = b.Orderid and  b.MDivisionID = o.MDivisionID
+						inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.id 
+						where bi.BundleNo = bd.BundleNo
+						)  and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
+
 declare @sql nvarchar(max)=N'
 select Orderid,Article,Sizecode,'+@Col+N'
 into #right
@@ -610,11 +635,10 @@ inner join #right r on r.Orderid=o.id and r.Article = o.Article and r.Sizecode =
 outer apply(
     select RQ=stuff((
 	    select concat('','',ReasonID,''('',sum(isnull(bi.DefectQty,0)-isnull(bi.ReplacementQty,0)),'')'')
-	    from ManufacturingExecution.dbo.BundleInspection bi  with(nolock)
+	    from #tmpBundleInspection bi  with(nolock)
         inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
         inner join Bundle b with(nolock) on b.id = bd.id
-	    where isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
-	    and  b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
+	    where b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
 		and b.Article = o.Article and bd.SizeCode = o.Sizecode
 	    group by ReasonID
 	    for xml path('''')
@@ -623,7 +647,7 @@ outer apply(
 '
 exec(@sql)
 
-drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2
+drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2, #tmpBundleInspection
 ";
             }
             DataTable dt;

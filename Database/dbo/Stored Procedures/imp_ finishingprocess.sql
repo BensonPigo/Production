@@ -149,13 +149,14 @@ from Production.dbo.PackingList_Detail t
 inner join #tmpTransferLocation s on t.SCICtnNo=s.SCICtnNo
 
 --02. TransferToClog
-insert into Production.dbo.TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo,AddDate,OldID,TransferSlipNo,AddName)
+insert into Production.dbo.TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo,AddDate,OldID,TransferSlipNo,AddName,SCICtnNo)
 select [TransferDate] = CONVERT(date, t.Time)
 ,MDvisionID = (select top 1 ID from Production.dbo.MDivision)
 ,[PackingListID] = pd.ID
 ,[OrderID] = pd.OrderID
 ,[CtnStartNo] = pd.CTNStartNo
 ,t.Time,null,null,'SCIMIS'
+,pd.SCICtnNo
 from #tmpTransferLocation t
 inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 
@@ -166,13 +167,14 @@ from #tmpTransferLocation t
 inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 
 --03. ClogReceive
-insert into Production.dbo.ClogReceive(ReceiveDate,MDivisionID,PackingListID,OrderID,CTNStartNo,AddDate,OldID,AddName)
+insert into Production.dbo.ClogReceive(ReceiveDate,MDivisionID,PackingListID,OrderID,CTNStartNo,AddDate,OldID,AddName,SCICtnNo)
 select [ReceiveDate] = CONVERT(date, t.Time)
 ,[MDvisionID] = (select top 1 ID from Production.dbo.MDivision)
 ,[PackingListID] = pd.ID
 ,[OrderID] = pd.OrderID
 ,[CtnStartNo] = pd.CTNStartNo
 ,t.Time,null,'SCIMIS'
+,pd.SCICtnNo
 from #tmpTransferLocation t
 inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 
@@ -286,7 +288,7 @@ select *
 into #tmpCompletePullout
 from CompletePullout where SCIUpdate=0
 
-insert into Production.dbo.TransferToTruck(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,TruckNo,AddName,AddDate)
+insert into Production.dbo.TransferToTruck(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,TruckNo,AddName,AddDate,SCICtnNo)
 select distinct [TransferDate] = CONVERT(date, s.Time)
 ,MDvisionID = (select top 1 ID from Production.dbo.MDivision)
 ,[OrderID] = pd.OrderID
@@ -295,6 +297,7 @@ select distinct [TransferDate] = CONVERT(date, s.Time)
 ,[TruckNo] = s.TruckNo
 ,'SCIMIS'
 ,s.Time
+,pd.SCICtnNo
 from #tmpCompletePullout s
 inner join Production.dbo.PackingList_Detail pd on s.SCICtnNo=pd.SCICtnNo
 

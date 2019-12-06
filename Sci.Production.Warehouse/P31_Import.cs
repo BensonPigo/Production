@@ -60,9 +60,12 @@ select  po.SizeSpec
         , f.Description
 from PO_Supp_Detail po
 left join Fabric f on po.SCIRefno = f.SCIRefno
+LEFT JOIN Orders o ON o.ID=po.ID
 where   po.id = '{0}' 
         and po.seq1 = '{1}' 
-        and po.seq2='{2}'", sp, txtSeq.seq1, txtSeq.seq2);
+        and po.seq2='{2}'
+		AND o.Category<>'A'
+", sp, txtSeq.seq1, txtSeq.seq2);
 
                 DBProxy.Current.Select(null, strSQL, out dt);
                 if (dt != null && dt.Rows.Count > 0)
@@ -125,7 +128,8 @@ outer apply(
 ) as toSP
 Where a.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{txtSeq.seq1}' 
 and b.seq2='{txtSeq.seq2}' and Factory.MDivisionID = '{Sci.Env.User.Keyword}'
-and c.inqty-c.outqty + c.adjustqty > 0 ");
+and c.inqty-c.outqty + c.adjustqty > 0
+AND Orders.Category <> 'A' ");
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
@@ -134,6 +138,10 @@ and c.inqty-c.outqty + c.adjustqty > 0 ");
                     if (dtBorrow.Rows.Count == 0)
                     {
                         MyUtility.Msg.WarningBox("Data not found!!");
+                        this.txtToSP.Text = string.Empty;
+                        this.txtSeq.seq1 = string.Empty;
+                        this.txtSeq.seq2 = string.Empty;
+                        this.txtBorrowFromSP.Text = string.Empty;                        
                     }   
                     listControlBindingSource1.DataSource = dtBorrow;                 
                     grid_Filter();
@@ -338,18 +346,21 @@ and c.inqty-c.outqty + c.adjustqty > 0 ");
         {
             string filter = string.Empty;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            if (dt != null || dt.Rows.Count > 0)
+            if (dt != null)
             {
-                switch (this.chkNoLock.Checked)
+                if (dt.Rows.Count > 0)
                 {
-                    case true:
-                        filter = @"lock = 'False'";
-                        break;
-                    case false:
-                        filter = string.Empty;
-                        break;
+                    switch (this.chkNoLock.Checked)
+                    {
+                        case true:
+                            filter = @"lock = 'False'";
+                            break;
+                        case false:
+                            filter = string.Empty;
+                            break;
+                    }
+                    ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                 }
-            ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
             }        
         }
 

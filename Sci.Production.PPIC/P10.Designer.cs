@@ -198,7 +198,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(918, 487);
+            this.browse.Size = new System.Drawing.Size(1068, 487);
             // 
             // tabs
             // 
@@ -558,6 +558,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P10";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.ReceiveChkValue = "Confirmed";
             this.Text = "P10. Fabric Lacking & Replacement";
             this.UnApvChkValue = "Confirmed";

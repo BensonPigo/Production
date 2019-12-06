@@ -168,6 +168,7 @@ string.Empty,
 from Orders a 
 LEFT JOIN Brand Br ON a.BrandID = Br.ID 
 where poid = @poid
+and (SMnorderApv is not null or MnorderApv is not null)
 order by ID"
 , new List<SqlParameter> { new SqlParameter("poid", poid) }
 , out dt);
@@ -412,7 +413,9 @@ order by ID"
             string strSqlSelect = @"
 SELECT distinct OrderComboID from Orders
 outer apply (select 1 as cnt from Orders tmp where tmp.OrderComboID = Orders.ID) cnt
-WHERE Orders.POID = @POID";
+WHERE Orders.POID = @POID
+and (SMnorderApv is not null or MnorderApv is not null)
+";
 
             DualResult res = DBProxy.Current.Select(string.Empty, strSqlSelect, new List<SqlParameter> { new SqlParameter("@POID", poid) }, out dt);
 
@@ -482,6 +485,7 @@ OUTER APPLY(
      ,2,999) 
 ) b
 where POID = @poid 
+and (SMnorderApv is not null or MnorderApv is not null)
 and OrderComboID = (select top 1 OrderComboID from Orders where id = @ID) 
 group by POID,b.spno,br.Customize2";
             }
@@ -504,11 +508,12 @@ FROM Orders a WITH (NOLOCK)
 LEFT JOIN Brand Br ON a.BrandID = Br.ID
 OUTER APPLY(
     SELECT substring((SELECT '/'+REPLACE(ID,@poid,'') 
-    FROM Trade.dbo.Orders 
+    FROM Orders 
     WHERE POID = @poid
 	order by ID FOR XML PATH('')),2,999) as spno
 ) b
 where POID = @poid 
+and (SMnorderApv is not null or MnorderApv is not null)
 group by POID,b.spno,br.Customize2";
             }
 

@@ -88,7 +88,7 @@ left join #tMOSeqM tMM on tMM.OrderID = so.OrderID and tMM.Location = sl.Locatio
 --tMachineInfo(衣車信息表)
 select 
 [MachineCode] = m.ID,
-[TypeCode] = m.MachineGroupID,
+[TypeCode] = m.MasterGroupID,
 [TypeName] =mg.Description,
 [Model] = m.Model,
 [Brand] = m.MachineBrandID,
@@ -96,8 +96,8 @@ select
 [IsUsing] = iif(m.Junk = 0,1,0),
 [CardNo] = isnull(m.RFIDCardNo,0)
 into #tMachineInfo
-from Machine.dbo.Machine m with (nolock)
-inner join Machine.dbo.MachineGroup mg with (nolock) on m.MachineGroupID = mg.id and m.MasterGroupID = mg.MasterGroupID
+from SciMachine_Machine m with (nolock)
+inner join SciMachine_MachineGroup mg with (nolock) on m.MachineGroupID = mg.id and m.MasterGroupID = mg.MasterGroupID
 
 --tSeqBase(基本工序表)
 select 

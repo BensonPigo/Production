@@ -103,3 +103,7 @@ ImportSewingLineSchedule.Daily/ImportSewingLineSchedule.Daily/obj/
 MarkerFile.Hourly/bin/Debug
 MarkerFile.Hourly/bin/obj
 MarkerFile.Hourly/obj/
+.vs/Production.Daily/v16/Server/sqlite3/storage.ide-wal
+.vs/Production.Daily/v16/Server/sqlite3/storage.ide-shm
+.vs/Production.Daily/v16/Server/sqlite3/db.lock
+.vs/Production.Daily/v16/Server/sqlite3/storage.ide

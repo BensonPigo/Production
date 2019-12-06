@@ -211,7 +211,7 @@ inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk =
 inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-inner join [FinanceEN].dbo.AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
+inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
 where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
@@ -358,7 +358,7 @@ inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
-inner join [FinanceEN].dbo.AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
+inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
 where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
@@ -602,7 +602,7 @@ inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
-left join [FinanceEN].dbo.AccountNo a WITH (NOLOCK)  on a.ID = se.AccountID
+left join SciFMS_AccountNo a WITH (NOLOCK)  on a.ID = se.AccountID
 where s.Type = 'EXPORT'
 ");
                     if (!MyUtility.Check.Empty(this.date1))
@@ -677,7 +677,7 @@ inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join [FinanceEN].dbo.AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
+left join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
 where s.Type = 'EXPORT'
 ");
                     if (!MyUtility.Check.Empty(this.date1))
@@ -864,7 +864,7 @@ from ShippingAP s WITH (NOLOCK)
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
-left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+left join SciFMS_AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
@@ -983,7 +983,7 @@ where s.Type = 'EXPORT'");
                     foreach (DataRow dr in this.accnoData.Rows)
                     {
                         i++;
-                        string sql = string.Format("select concat(SUBSTRING(id,1,4),iif(len(id)>4,'-'+SUBSTRING(id,5,4),''),char(10)+char(13) ,Name) from [FinanceEN].dbo.AccountNo  WITH (NOLOCK)  where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"]));
+                        string sql = string.Format("select concat(SUBSTRING(id,1,4),iif(len(id)>4,'-'+SUBSTRING(id,5,4),''),char(10)+char(13) ,Name) from SciFMS_AccountNo  WITH (NOLOCK)  where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"]));
                         string accnoColName = MyUtility.GetValue.Lookup(sql);
                         accnoLnow = MyUtility.Convert.GetString(dr["Accno"]).Substring(0, 4);
                         string accnoLnow2 = MyUtility.Convert.GetString(dr["Accno"]).Length > 8 ? MyUtility.Convert.GetString(dr["Accno"]).Substring(4) : MyUtility.Convert.GetString(dr["Accno"]).Length > 4 ? "-" + MyUtility.Convert.GetString(dr["Accno"]).Substring(4) : string.Empty;

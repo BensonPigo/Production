@@ -117,7 +117,7 @@ from(
 		,Selected = 0
 		,lq.Ukey
 		,CanvassDate1=lq.AddDate
-		,AccountIDN=concat(AccountID,' ',(select Name from  FinanceEN.dbo.AccountNo with (nolock) where junk = 0 and id = AccountID))
+		,AccountIDN=concat(AccountID,' ',(select Name from  dbo.SciFMS_AccountNo with (nolock) where junk = 0 and id = AccountID))
 	from ShipExpense l
 	inner join ShipExpense_CanVass lq on l.ID = lq.ID
 	where 1=1 --lq.status <> 'Confirmed'

@@ -764,6 +764,7 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check requestid is Fabric.", "Data not found!!");
+                this.txtRequestNo.Text = string.Empty;
                 return;
             }
             else

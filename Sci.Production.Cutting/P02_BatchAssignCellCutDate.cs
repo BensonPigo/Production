@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using Sci.Production.Class;
 
 namespace Sci.Production.Cutting
 {
@@ -49,6 +50,8 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorTextColumnSettings col_Seq1 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_Seq2 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Shift = cellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
+
             #region Cell
             bool cellchk = true;
             Cell.EditingMouseDown += (s, e) =>
@@ -275,6 +278,7 @@ namespace Sci.Production.Cutting
              .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
              .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(3), settings: SpreadingNo, iseditingreadonly: false)
              .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2), settings: Cell, iseditingreadonly: false)
+             .Text("Shift", header: "Shift", width: Widths.AnsiChars(2), iseditingreadonly: false, settings: col_Shift)
              .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
              .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -294,6 +298,8 @@ namespace Sci.Production.Cutting
             this.gridBatchAssignCellEstCutDate.Columns["Cutcellid"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.ForeColor = Color.Red;
 
         }
 
@@ -468,6 +474,7 @@ Do you want to continue? ");
             string cdate = "";
             string Seq1 = txtSeq1.Text;
             string Seq2 = txtSeq2.Text;
+            string Shift = txtShift.Text;
             if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
             {
                 cdate = txtBatchUpdateEstCutDate.Text;
@@ -493,6 +500,8 @@ Do you want to continue? ");
                     detaildr[0]["estcutdate"] = dr["estcutdate"];
                     detaildr[0]["Seq1"] = dr["Seq1"];
                     detaildr[0]["Seq2"] = dr["Seq2"];
+                    detaildr[0]["shift"] = dr["shift"];
+
                 }
             }
             Close();
@@ -667,6 +676,33 @@ where   id = '{0}'
                 if (warningMsg.Count > 0)
                 {
                     MyUtility.Msg.WarningBox(warningMsg.Select(x => x).Distinct().ToList().JoinToString("\n"));
+                }
+            }
+        }
+
+        private void BtnBatchUpdateShift_Click(object sender, EventArgs e)
+        {
+            string strShift = "";
+            if (!MyUtility.Check.Empty(txtShift.Text))
+            {
+                strShift = txtShift.Text;
+            };
+            foreach (DataRow dr in curTb.Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+
+                if (dr["Sel"].ToString() == "True")
+                {
+                    if (strShift != "")
+                    {
+                        dr["Shift"] = strShift;
+                    }
+                    else
+                    {
+                        dr["Shift"] = DBNull.Value;
+                    }
+                    dr.EndEdit();
                 }
             }
         }

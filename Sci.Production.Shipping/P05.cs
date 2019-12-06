@@ -2010,7 +2010,7 @@ where o.ID in ({SP.Substring(0, SP.Length - 1)})
             sqlCmd = string.Format(
                         @"select 1
 from ShareExpense se WITH (NOLOCK) 
-LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);

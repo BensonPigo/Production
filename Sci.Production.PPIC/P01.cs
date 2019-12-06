@@ -330,7 +330,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnPFHistory.ForeColor = MyUtility.Check.Seek($@"select id from Order_PFHis with(nolock) where id = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
 
             #region 控制[m/notice sheet]按鈕是否變色
-            bool enableMNotice1 = MyUtility.Check.Seek(string.Format("select ID FROM Order_ColorCombo WITH (NOLOCK) where ID = (select OrderComboID FROM Orders where ID = '{1}')", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            bool enableMNotice1 = !MyUtility.Check.Empty(this.CurrentMaintain["MnorderApv"]);
             bool enableMNotice2 = !MyUtility.Check.Empty(this.CurrentMaintain["SMnorderApv"]);
             bool enableMNotice = enableMNotice1 || enableMNotice2;
             this.btnMNoticeSheet.ForeColor = enableMNotice ? Color.Blue : Color.Black;
@@ -1296,27 +1296,33 @@ where POID = @poid group by POID,b.spno";
         }
 
         // M/Notice Sheet
-     private void BtnMNoticeSheet_Click(object sender, EventArgs e)
-     {
-         if (this.CurrentMaintain["SMnorderApv"].ToString() == null || this.CurrentMaintain["SMnorderApv"].ToString() == string.Empty)
-         {
-             var dr = this.CurrentMaintain;
-            if (dr == null)
+        private void BtnMNoticeSheet_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SMnorderApv"]) && MyUtility.Check.Empty(this.CurrentMaintain["MnorderApv"]))
             {
+                MyUtility.Msg.WarningBox("M/Notice did not approve yet, you cannot print M/Notice.");
                 return;
             }
 
-            var frm = new Sci.Production.PPIC.P01_MNoticePrint(null, dr["ID"].ToString());
-             frm.ShowDialog(this);
-             this.RenewData();
-             return;
-         }
-         else
-         {
-             string poid = this.CurrentMaintain["POID"].ToString();
-             SMNoticePrg.PrintSMNotice(poid, SMNoticePrg.EnuPrintSMType.Order);
-         }
-     }
+            if (this.CurrentMaintain["SMnorderApv"].ToString() == null || this.CurrentMaintain["SMnorderApv"].ToString() == string.Empty)
+            {
+                var dr = this.CurrentMaintain;
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new Sci.Production.PPIC.P01_MNoticePrint(null, dr["ID"].ToString());
+                frm.ShowDialog(this);
+                this.RenewData();
+                return;
+            }
+            else
+            {
+                string poid = this.CurrentMaintain["POID"].ToString();
+                SMNoticePrg.PrintSMNotice(poid, SMNoticePrg.EnuPrintSMType.Order);
+            }
+        }
 
         /// <summary>
         /// MoveSubBlockIntoMainSheet

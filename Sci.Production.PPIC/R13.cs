@@ -41,6 +41,7 @@ namespace Sci.Production.PPIC
             this.sqlpar.Clear();
             string where1 = string.Empty;
             string where2 = string.Empty;
+            string whereBuyer = string.Empty;
             string sql_Exclude_holiday = string.Empty;
             #region 檢核必輸入條件 sql參數
             if (!this.dateRangeReadyDate.HasValue)
@@ -52,6 +53,13 @@ namespace Sci.Production.PPIC
             {
                 this.sqlpar.Add(new SqlParameter("@inputReadyDateFrom", this.dateRangeReadyDate.DateBox1.Value));
                 this.sqlpar.Add(new SqlParameter("@inputReadyDateTo", this.dateRangeReadyDate.DateBox2.Value));
+            }
+
+            if (this.dateRangeBuyerDelivery.HasValue)
+            {
+                //this.sqlpar.Add(new SqlParameter("@inputReadyDateFrom", this.dateRangeReadyDate.DateBox1.Value));
+                //this.sqlpar.Add(new SqlParameter("@inputReadyDateTo", this.dateRangeReadyDate.DateBox2.Value));
+                whereBuyer += $@" and O.BuyerDelivery between '{((DateTime)this.dateRangeBuyerDelivery.DateBox1.Value).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateRangeBuyerDelivery.DateBox2.Value).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtMdivision.Text))
@@ -138,6 +146,7 @@ SELECT [Factory] = Factory.ID,DATEADD(DAY,number,@ReadyDateFrom) [WorkDate],DATE
 into #WorkDate
 FROM master..spt_values s
 inner join Factory on 1 = 1 {where2}
+and IsProduceFty = 1
 WHERE s.type = 'P'
 AND DATEADD(DAY,number,@ReadyDateFrom) <= @ReadyDateTo
 
@@ -147,26 +156,74 @@ AND DATEADD(DAY,number,@ReadyDateFrom) <= @ReadyDateTo
 --抓出條件時間內對應的orders資料
 --依照指定的Ready Date+條件GAP天數去抓去Orders.SewOffLIne在那天生產結束的訂單，且Buyer Delivery date >= Ready Date的訂單，若該Ready Date星期日、特殊假日(Holiday)不需計算，星期日、特殊假日(Holiday)都要避開，例如Ready date是 7/28 GAP是1，但隔天是週日(7/29)，所以抓取orders.SewOffLIne時間點是7/30。
 --依照指定的Ready Date 找到相同的 Buyer Delivery date的訂單且 SewOffLIne > Buyer Delivery date的資料，若該Ready Date星期日、特殊假日(Holiday)不需計算。
+/*
+* 先用下線日SewingOfflineDate去撈取訂單資料, 再使用Order_QtyShip.BuyerDelivery 去串ReadyDate,如果有相同訂單則取最小值
+*/
+
+select o.* 
+,[WorkDate] = w.WorkDate
+,[WorkTime] = convert(datetime, w.WorkDate) + convert(datetime,@time)
+,[OriReadyDate] = w.ReadyDate
+,[ShipModeStatus] = Shipmode.ShipStatus
+into #tmpOrderOffLine
+from Orders o with (nolock)
+inner join #WorkDate w on w.Factory = o.FtyGroup 
+and w.WorkDate = o.SewOffLine
+outer apply(
+    select ShipStatus = 
+	stuff((
+	        select concat(',', format(os.BuyerDelivery,'yyyy/MM/dd') + ' - ' + convert(varchar(10), sum (os.Qty)))
+	        from order_QtyShip os with(nolock)
+	        where os.id = o.ID 
+            group by os.BuyerDelivery
+		    for xml path('')
+	),1,1,'')
+)Shipmode
+where 1=1
+{whereBuyer}
+
 select *
 into #orders_tmp
 from	
 (
-select o.* ,
-[WorkDate] = w.WorkDate,
-[WorkTime] = convert(datetime, w.WorkDate) + convert(datetime,@time),
-[OriReadyDate] = w.ReadyDate
-from Orders o with (nolock)
-inner join #WorkDate w on w.Factory = o.FtyGroup and w.WorkDate = o.SewOffLine and o.BuyerDelivery >= w.WorkDate
-union
-select o.* ,
-[WorkDate] = w.WorkDate,
-[WorkTime] = convert(datetime, w.WorkDate) + convert(datetime,@time),
-[OriReadyDate] = w.ReadyDate
-from Orders o with (nolock)
-inner join #WorkDate w on w.Factory = o.FtyGroup and w.WorkDate = o.BuyerDelivery 
-where o.SewOffLine > o.BuyerDelivery
+    select * 
+    from #tmpOrderOffLine
+
+    union
+
+    select o.*
+            , [WorkDate] = oq.WorkDate
+            , [WorkTime] = convert(datetime, oq.WorkDate) + convert(datetime,@time)
+            , [OriReadyDate] = oq.ReadyDate
+            , [ShipModeStatus] = Shipmode.ShipStatus
+    from (
+	    select oq.Id
+	            , [BuyerDelivery] = min(oq.BuyerDelivery)
+	            , w.ReadyDate
+                , w.WorkDate
+	    from Order_QtyShip oq with (nolock)
+	    inner join Orders o with (nolock) on o.ID = oq.Id
+	    inner join #WorkDate w on w.Factory = o.FtyGroup
+	                              and w.WorkDate = oq.BuyerDelivery
+	    where o.id not in (select id from #tmpOrderOffLine)
+              {whereBuyer}
+	    group by oq.Id, w.ReadyDate, w.WorkDate
+    ) oq
+    inner join orders o with (nolock) on oq.id=o.id
+	outer apply(
+        select ShipStatus = 
+			stuff((
+	            select concat(',', format(os.BuyerDelivery,'yyyy/MM/dd') + ' - ' + convert(varchar(10), sum (os.Qty)))
+	            from order_QtyShip os with(nolock)
+	            where os.id = o.ID 
+                group by os.BuyerDelivery
+		        for xml path('')
+	    ),1,1,'')
+	) Shipmode  
 ) as a 
-where Category = 'B' and Junk = 0 {where1}
+where Category = 'B' and Junk = 0 
+{where1}
+
 
 --抓取subprocess in
 select	[M] = o.MDivisionID,
@@ -266,7 +323,8 @@ select	o.MDivisionID,
 		[SubCon] = ls.abb,
 		[ReadyDate] = o.OriReadyDate,
 		[LoadingStatus] = iif(LoadingQty.value >= o.Qty,'Y',''),
-		[Ready] = case when subprocessqty.chksubprocesqty >= inoutcount.ct then 'Y' end
+		[Ready] = case when subprocessqty.chksubprocesqty >= inoutcount.ct then 'Y' end,
+		[ShipModeStatus]
 into #detailResult
 from #orders_tmp o 
 left join Country c with (Nolock) on c.id= o.Dest
@@ -331,50 +389,52 @@ select  FtyGroup,
 		[SubCon],
 		[ReadyDate],
 		[LoadingStatus],
-		[Ready]
+		[Ready],
+		[ShipModeStatus]
         from #detailResult
 
---sheet2 SUMMARY
-select MDivisionID, FtyGroup,[SpCnt] = count(*)
-from #detailResult
-group by MDivisionID, FtyGroup
 
---sheet3 RATING
---INHOUSE(RFID - SYSTEM BASED)
-select[ATcnt] = sum(iif([AT] is not null, 1, 0)),
-        [ATclose] = sum(iif([AT] >= Qty, 1, 0)),
-        [ATfail] = sum(iif([AT] < Qty and[AT] is not null, 1, 0)),
-		[BONDINGcnt] = sum(iif([BONDING] is not null,1,0 )),
-		[BONDINGclose] = sum(iif([BONDING] >= Qty,1,0 )),
-		[BONDINGfail] = sum(iif([BONDING] < Qty and [BONDING] is not null,1,0 )),
-		[HTcnt] = sum(iif([HT] is not null,1,0 )),
-		[HTclose] = sum(iif([HT] >= Qty,1,0 )),
-		[HTfail] = sum(iif([HT] < Qty and [HT] is not null,1,0 )),
-		[PAD-PRTcnt] = sum(iif([PAD-PRT] is not null,1,0 )),
-		[PAD-PRTclose] = sum(iif([PAD-PRT] >= Qty,1,0 )),
-		[PAD-PRTfail] = sum(iif([PAD-PRT] < Qty and [PAD-PRT] is not null,1,0 ))
-from #detailResult 
-
---SUBCON OUT(RFID -SYSTEM BASED)
+--sheet2 SUMMARY By Factory
 SELECT FtyGroup,
-       [PrintingCnt] = count(*),
-       [PrintingClose] = sum(iif([PRINTING] >= Qty, 1, 0)),
-       [Printingfail] = sum(iif([PRINTING] < Qty, 1, 0))
+       [ByFtyCnt] = count(*),
+       [ByFtyClose] = sum(iif([Ready] = 'Y', 1, 0)),
+       [ByFtyfail] = sum(iif([Ready] = 'Y', 0, 1))
 from #detailResult
-where[PRINTING] is not null 
 group by FtyGroup
+order by FtyGroup
 
-SELECT FtyGroup,
-	   [EMBROCnt] = count(*),
-	   [EMBROClose] = sum(iif([EMBRO] >= Qty,1,0 )),
-	   [EMBROfail] = sum(iif([EMBRO] < Qty ,1,0 ))
+--sheet3 Summary By Factory - SubProcess
+select t.Factory
+, t.SubProcessID
+, [BySubProcessCnt] = count(*)
+, [BySubProcessClose] = case when t.SubProcessID = 'Loading' then sum(IIF([LoadingStatus] = 'Y', 1, 0))
+	else sum(IIF(t.FinishedQtyBySet >= s.Qty ,1,0)) end
+, [BySubProcessfail] = case when t.SubProcessID = 'Loading' then sum(IIF([LoadingStatus] = 'Y', 0, 1))
+	else sum(IIF(t.FinishedQtyBySet < s.Qty ,1,0)) end
+from #tmpInOut t
+inner join #detailResult s on s.ID = t.SP
+and t.Factory = s.FtyGroup
+where t.SubProcessID in ('Emb','BO','PRT','AT','PAD-PRT','HT','Loading')
+group by t.Factory,t.SubProcessID
+order by t.Factory,t.SubProcessID
+
+-- Sheet 4 Summary By Printing Subcon  
+SELECT FtyGroup
+,SubCon
+       ,[PrintingCnt] = count(*)
+       ,[PrintingClose] = sum(iif([PRINTING] >= Qty, 1, 0))
+       ,[Printingfail] = sum(iif([PRINTING] < Qty, 1, 0))
 from #detailResult
-where[EMBRO] is not null 
-group by FtyGroup
+where [SubCon] is not null
+and [PRINTING] is not null 
+group by FtyGroup,SubCon
+order by FtyGroup,SubCon
+
 
 drop table #pOffline,#tmpP,#tmpc2,#tmpc3,#tmpc,#tmpc0
 drop table #tmpInOut,#tmpInOutFin,#WorkDate,#orders_tmp
-drop table #detailResult
+drop table #detailResult,#tmpOrderOffLine
+
 ";
             #endregion
             return base.ValidateInput();
@@ -393,9 +453,8 @@ drop table #detailResult
         {
             DataTable dtDetail = this.dts[0];
             DataTable dtSummary = this.dts[1];
-            DataTable dtRATING1 = this.dts[2];
-            DataTable dtRATING2 = this.dts[3];
-            DataTable dtRATING3 = this.dts[4];
+            DataTable dtBySubProcess = this.dts[2];
+            DataTable dtByPrinting = this.dts[3];
             if (dtDetail.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
@@ -409,83 +468,57 @@ drop table #detailResult
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R13.xltx", objApp);
             Excel.Worksheet worksheet;
 
+#if DEBUG
+            objApp.Visible = true;
+#endif
+
             // sheet1 data
             com.WriteTable(dtDetail, 2);
 
             #region sheet2 data
             worksheet = objApp.Sheets[2];
+            worksheet.Select();
 
-            var distinctM = dtSummary.AsEnumerable().GroupBy(s => new { M = s["MDivisionID"] })
-                .Select(s => new { s.Key.M, Total = s.Sum(i => (int)i["SpCnt"]) });
-
-            // 如果M超過1個先複製外框
-            if (distinctM.Count() > 1)
+            // 如果超過1個先複製外框
+            if (dtSummary.Rows.Count > 1)
             {
-                worksheet.get_Range("A3:B6").Copy();
-                for (int i = 1; i < distinctM.Count(); i++)
-                {
-                    Excel.Range to = worksheet.get_Range($"A{(3 + (i * 5)).ToString()}:B{(6 + (i * 5)).ToString()}");
-                    to.PasteSpecial(Excel.XlPasteType.xlPasteAll);
-                }
+                worksheet.get_Range("A3:E3").Copy();
+                Excel.Range to = worksheet.get_Range($"A3:E{(2 + dtSummary.Rows.Count).ToString()}");
+                to.PasteSpecial(Excel.XlPasteType.xlPasteAll);
             }
 
-            int startRow = 3;
-            foreach (var item in distinctM)
-            {
-                DataRow[] datalist = dtSummary.Select($"MDivisionID = '{item.M}'");
-
-                worksheet.Cells[1][startRow] = item.M;
-                worksheet.Cells[2][startRow + 3] = item.Total;
-                // 如果超過1筆插入多的row
-                for (int i = 0; i < datalist.Length; i++)
-                {
-                    worksheet.Cells[1][startRow + 2] = datalist[i]["FtyGroup"];
-                    worksheet.Cells[2][startRow + 2] = datalist[i]["SpCnt"];
-
-                    if (i < datalist.Length - 1)
-                    {
-                        worksheet.get_Range($"A{startRow + 3}:B{startRow + 3}").Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                        startRow++;
-                    }
-                }
-
-                startRow += 5;
-            }
+            com.WriteTable(dtSummary, 3);
 
             #endregion
 
             #region sheet3 data
             worksheet = objApp.Sheets[3];
+            worksheet.Select();
 
-            // INHOUSE (RFID -SYSTEM BASED)
-            worksheet.Cells[2][5] = dtRATING1.Rows[0]["ATcnt"];
-            worksheet.Cells[3][5] = dtRATING1.Rows[0]["ATclose"];
-            worksheet.Cells[4][5] = dtRATING1.Rows[0]["ATfail"];
-            worksheet.Cells[2][6] = dtRATING1.Rows[0]["BONDINGcnt"];
-            worksheet.Cells[3][6] = dtRATING1.Rows[0]["BONDINGclose"];
-            worksheet.Cells[4][6] = dtRATING1.Rows[0]["BONDINGfail"];
-            worksheet.Cells[2][7] = dtRATING1.Rows[0]["HTcnt"];
-            worksheet.Cells[3][7] = dtRATING1.Rows[0]["HTclose"];
-            worksheet.Cells[4][7] = dtRATING1.Rows[0]["HTfail"];
-            worksheet.Cells[2][8] = dtRATING1.Rows[0]["PAD-PRTcnt"];
-            worksheet.Cells[3][8] = dtRATING1.Rows[0]["PAD-PRTclose"];
-            worksheet.Cells[4][8] = dtRATING1.Rows[0]["PAD-PRTfail"];
-
-            // SUBCON OUT  (RFID -SYSTEM BASED)
-            int maxRow = dtRATING2.Rows.Count > dtRATING3.Rows.Count ? dtRATING2.Rows.Count : dtRATING3.Rows.Count;
-
-            // 插入多出來的row
-            if (maxRow > 1)
+            // 如果超過1個先複製外框
+            if (dtBySubProcess.Rows.Count > 1)
             {
-                for (int i = 1; i < maxRow; i++)
-                {
-                    worksheet.get_Range($"A{14 + i}:K{14 + i}").Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, worksheet.get_Range($"A{14 + i}:K{14 + i}").Copy(Type.Missing));
-                }
+                worksheet.get_Range("A3:F3").Copy();
+                Excel.Range to = worksheet.get_Range($"A3:F{(2 + dtBySubProcess.Rows.Count).ToString()}");
+                to.PasteSpecial(Excel.XlPasteType.xlPasteAll);
             }
 
-            com.ExcelApp.ActiveWorkbook.Sheets[3].Select(Type.Missing);
-            com.WriteTable(dtRATING2, 15);
-            com.WriteTable(dtRATING3, 15, 7);
+            com.WriteTable(dtBySubProcess, 3);
+            #endregion
+
+            #region Sheet4 data
+            worksheet = objApp.Sheets[4];
+            worksheet.Select();
+
+            // 如果超過1個先複製外框
+            if (dtByPrinting.Rows.Count > 1)
+            {
+                worksheet.get_Range("A3:F3").Copy();
+                Excel.Range to = worksheet.get_Range($"A3:F{(2 + dtByPrinting.Rows.Count).ToString()}");
+                to.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+            }
+
+            com.WriteTable(dtByPrinting, 3);
             #endregion
 
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);

@@ -32,6 +32,7 @@ namespace Sci.Production.Shipping
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("Qty", header: "Order Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -95,6 +96,7 @@ select
 	FinishedFOCStockinQty =isnull(oxx.FOCQty,0),
     [StockInDate] = convert(date, oxx.addDate),
 	CurrentFOCStock= dbo.GetFocStockByOrder(o.ID)
+    ,o.OrderTypeID
 from orders o with(nolock)
 outer apply(
 	select sum(TotalNotFocShipQty) as TotalNotFocShipQty , sum(TotalFocShipQty) as TotalFocShipQty 

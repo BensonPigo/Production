@@ -18,7 +18,7 @@ BEGIN
 			, cTo.Exact
     FROM dbo.Currency as cFrom WITH (NOLOCK)
     left join dbo.Currency as cTo WITH (NOLOCK) on cTo.ID = @toCurrency
-    left join FinanceEN.dbo.Rate as ex WITH (NOLOCK) on	ex.RateTypeID=@ExchangeTypeID 
+    left join dbo.SciFMS_Rate as ex WITH (NOLOCK) on	ex.RateTypeID=@ExchangeTypeID 
 													and ex.OriginalCurrency= cFrom.ID 
 													and ex.ExchangeCurrency= cTo.ID
 													and @Date between ex.BeginDate and ex.EndDate

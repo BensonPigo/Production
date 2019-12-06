@@ -94,8 +94,8 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
             string editDate = MyUtility.Check.Empty(this.CurrentMaintain["EditDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
 
             string tpeApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["TPEApvName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["TPEApvName"]}'");
-            string addBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["AddName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["AddName"]}'");
-            string editBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["EditName"]}' + '-' + Name + ' ' + '{tpeApvDate}' from TPEPass1 where ID = '{this.CurrentMaintain["EditName"]}'");
+            string addBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["AddName"]}' + '-' + Name + ' ' + '{addDate}' from TPEPass1 where ID = '{this.CurrentMaintain["AddName"]}'");
+            string editBy = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["EditName"]}' + '-' + Name + ' ' + '{editDate}' from TPEPass1 where ID = '{this.CurrentMaintain["EditName"]}'");
             string ftyApv = MyUtility.GetValue.Lookup($"select '{this.CurrentMaintain["FtyApvName"]}' + '-' + Name + ' ' + '{ftyApvDate}' from Pass1 where ID = '{this.CurrentMaintain["FtyApvName"]}'");
             if (MyUtility.Check.Empty(tpeApv))
             {
@@ -104,12 +104,12 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
 
             if (MyUtility.Check.Empty(addBy))
             {
-                tpeApv = $"{this.CurrentMaintain["AddName"]} {addDate}";
+                addBy = $"{this.CurrentMaintain["AddName"]} {addDate}";
             }
 
             if (MyUtility.Check.Empty(editBy))
             {
-                tpeApv = $"{this.CurrentMaintain["EditName"]} {editDate}";
+                editBy = $"{this.CurrentMaintain["EditName"]} {editDate}";
             }
 
             if (MyUtility.Check.Empty(ftyApv))
@@ -227,7 +227,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 {
                     return;
                 }
-                string sqlGetSupplier = GetSupplierSql(string.Empty);
+                string sqlGetSupplier = GetSupplierSql(string.Empty, true);
                 SelectItem selectItem = new SelectItem(sqlGetSupplier, string.Empty, string.Empty);
 
                 DialogResult dialogResult = selectItem.ShowDialog();
@@ -275,7 +275,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 {
                     return;
                 }
-                string sqlGetRefno = GetRefnoSql(string.Empty);
+                string sqlGetRefno = GetRefnoSql(string.Empty,true);
                 SelectItem selectItem = new SelectItem(sqlGetRefno, string.Empty, string.Empty);
 
                 DialogResult dialogResult = selectItem.ShowDialog();
@@ -369,49 +369,28 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
             }
         }
 
-        private string GetRefnoSql(string refno)
+        private string GetRefnoSql(string refno, bool IsRightClick = false)
         {
-            string whereRefno = MyUtility.Check.Empty(refno) ? string.Empty : $" and PSD.Refno = '{refno}'";
+            string whereRefno = IsRightClick ? string.Empty : $" AND p.Refno='{refno}' ";
             string sqlGetRefno = $@"
-SELECT DISTINCT PSD.Refno
-  FROM [PO_Supp_Detail] PSD
-  inner JOIN Fabric F ON F.SCIRefno = PSD.SCIRefno
-  inner JOIN PO_Supp PS ON PS.ID = PSD.ID AND PS.SEQ1= PSD.SEQ1
-  inner join(
-	select distinct o.POID,o.ID,oq.OrderIDFrom 
-	from Orders o
-	left join Order_Qty_Garment oq on oq.ID=o.POID and o.Category='G'
-	where o.ID='{this.CurrentDetailData["OrderID"]}'
-) o on isnull(o.OrderIDFrom,o.poid) = ps.ID
-outer apply(
-	select value = RTRIM(LTRIM(data)) from dbo.SplitString('{this.CurrentDetailData["MtlTypeID"].ToString()}',',')
-) MtlType
-  WHERE o.id = '{this.CurrentDetailData["OrderID"].ToString()}' AND 
-        F.MtlTypeID like MtlType.value AND 
-        PSD.FabricType = '{this.CurrentDetailData["FabricType"].ToString()}' AND 
-        PS.SuppID = '{this.CurrentDetailData["SuppID"].ToString()}' {whereRefno}
-ORDER BY PSD.Refno
+SELECT DISTINCT p.Refno
+FROM PO_Supp_Detail p
+LEFT JOIN Orders o ON o.POID=p.ID
+WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereRefno}
 
 ";
 
             return sqlGetRefno;
         }
 
-        private string GetSupplierSql(string suppID)
+        private string GetSupplierSql(string suppID,bool IsRightClick=false)
         {
-            string whereSuppID = MyUtility.Check.Empty(suppID) ? string.Empty : $" and ps.SuppID = '{suppID}'";
+            string whereSuppID = IsRightClick ? string.Empty : $"  AND p.SuppID='{suppID}' ";
             string sqlGetSupplier = $@"
-select distinct [Supplier] = ps.SuppID 
-from PO_Supp ps
-left join(
-	select distinct o.POID,o.ID,oq.OrderIDFrom 
-	from Orders o
-	left join Order_Qty_Garment oq on oq.ID=o.POID and o.Category='G'
-	where o.ID='{this.CurrentDetailData["OrderID"]}'
-) o on isnull(o.OrderIDFrom,o.poid) = ps.ID
-where o.id = '{this.CurrentDetailData["OrderID"]}' 
-{whereSuppID}
-order by ps.SuppID
+SELECT DISTINCT p.SuppID
+FROM PO_Supp p
+LEFT JOIN Orders o ON o.POID=p.ID
+WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereSuppID}
 ";
 
             return sqlGetSupplier;

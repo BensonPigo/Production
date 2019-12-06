@@ -2418,6 +2418,11 @@
     <Build Include="dbo\Tables\OrderChangeApplication_History.sql" />
     <Build Include="dbo\Tables\OrderChangeApplication_Detail.sql" />
     <Build Include="dbo\Tables\OrderChangeApplication.sql" />
+    <Build Include="dbo\Tables\ShareExpense_APP.sql" />
+    <Build Include="dbo\Views\View_ShowName_TPE.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

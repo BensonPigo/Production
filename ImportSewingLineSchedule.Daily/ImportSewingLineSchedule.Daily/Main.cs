@@ -166,7 +166,8 @@ INSERT INTO [dbo].[P_SewingLineSchedule]
            ,[CuttingOutput]
            ,[SewingOutput]
            ,[ScannedQty]
-           ,[ClogQty])
+           ,[ClogQty]
+           ,[BrandID])
 SELECT *  FROM OPENQUERY ([{item["name"]}],'SET FMTONLY OFF; exec production.dbo.GetSewingLineScheduleData ''{date}''')
 ";
                 }

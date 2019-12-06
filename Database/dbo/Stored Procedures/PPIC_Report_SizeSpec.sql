@@ -30,7 +30,7 @@ BEGIN
 					left join Production.dbo.Order_SizeCode os on a.Id = os.Id
 					left join Production.dbo.Order_SizeSpec b on a.Id = b.Id and a.SizeItem = b.SizeItem 
 						and b.SizeCode = os.SizeCode
-					left join Production.dbo.Order_SizeSpec_OrderCombo c on c.OrderComboID = '''+ @POID +''' 
+					left join Production.dbo.Order_SizeSpec_OrderCombo c on c.id = '''+ @POID +''' and c.OrderComboID = '''+ @id +''' 
 						and a.SizeItem = c.SizeItem and c.SizeCode = os.SizeCode
 				--and (b.SizeCode is not null or c.SizeCode is not null)
 				where a.Id = '''+ @POID +''' AND ('+ cast(@WithZ as varchar(1)) +' = ''1'' or A.SizeItem like ''S%'')

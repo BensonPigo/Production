@@ -1456,7 +1456,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 return;
             }
 
-            if (!this.CheckPullexists())
+            if (!this.CheckPullexists(false))
             {
                 return;
             }
@@ -1634,11 +1634,20 @@ When first applicant's team leader approval, anyone can not do any modification.
             }
         }
 
-        private bool CheckPullexists()
+        /// <summary>
+        /// 檢查 這張HC底下所有的PackingList/單筆PackingList  是否已經出貨
+        /// </summary>
+        /// <param name="isSingelCheck"> false=檢查這張HC底下所有的PackingList、true=檢查單筆PackingList </param>
+        /// <returns>是否存在</returns>
+        private bool CheckPullexists(bool isSingelCheck = true)
         {
-            string packingListID = this.CurrentDetailData["PackingListID"].ToString();
             #region 若該HC#下的Packing已經被拉到Pullout Report中且Pullout Status為confirm則不能刪除
-            string sqlchk = $@"
+            string sqlchk = string.Empty;
+
+            if (isSingelCheck)
+            {
+                string packingListID = this.CurrentDetailData["PackingListID"].ToString();
+                sqlchk = $@"
 SELECt [PackingListID]=p.ID 
 FROM PackingList p 
 INNER JOIN Pullout pu ON p.PulloutID=pu.ID 
@@ -1646,6 +1655,19 @@ WHERE p.ID='{packingListID}'
 AND Type In ('B','S','F') 
 AND pu.Status <> 'New'
 ";
+            }
+            else
+            {
+                sqlchk = $@"
+select distinct [PackingListID]= pl.ID
+from Pullout_Detail pd
+inner join PackingList pl on pl.id = pd.PackingListID
+inner join Pullout p on p.id = pd.id
+where p.status = 'confirmed'
+and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
+";
+            }
+
             DataTable pkdt;
             DualResult result = DBProxy.Current.Select(null, sqlchk, out pkdt);
             if (!result)
