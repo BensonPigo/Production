@@ -138,7 +138,7 @@
             this.masterpanel.Controls.Add(this.dateApproveDate);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 226);
+            this.masterpanel.Size = new System.Drawing.Size(1070, 226);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
@@ -190,7 +190,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 226);
-            this.detailpanel.Size = new System.Drawing.Size(892, 123);
+            this.detailpanel.Size = new System.Drawing.Size(1070, 230);
             // 
             // gridicon
             // 
@@ -205,7 +205,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 123);
+            this.detailgridcont.Size = new System.Drawing.Size(1070, 230);
             // 
             // detail2
             // 
@@ -219,8 +219,18 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1070, 494);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1070, 456);
+            // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 456);
+            this.detailbtm.Size = new System.Drawing.Size(1070, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -273,17 +283,21 @@
             // 
             this.labelSupplier.Location = new System.Drawing.Point(6, 40);
             this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelSupplier.Size = new System.Drawing.Size(97, 23);
             this.labelSupplier.TabIndex = 6;
             this.labelSupplier.Text = "Supplier";
+            this.labelSupplier.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelArtworkType
             // 
             this.labelArtworkType.Location = new System.Drawing.Point(6, 66);
             this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelArtworkType.Size = new System.Drawing.Size(96, 23);
             this.labelArtworkType.TabIndex = 7;
             this.labelArtworkType.Text = "ArtworkType";
+            this.labelArtworkType.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelInternalRemark
             // 

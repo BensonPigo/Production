@@ -37,6 +37,8 @@
             this.labelApproveDate = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
+            this.labelNoQuoteHint = new Sci.Win.UI.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.labelArtworkType = new Sci.Win.UI.Label();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
@@ -52,8 +54,6 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
-            this.labelNoQuoteHint = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreateFromSubProcessData)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -134,9 +134,11 @@
             // 
             this.labelSCIDelivery.Location = new System.Drawing.Point(381, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
             this.labelSCIDelivery.TabIndex = 7;
             this.labelSCIDelivery.Text = "SCI  Delivery";
+            this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtSPNoEnd
             // 
@@ -151,9 +153,11 @@
             // 
             this.labelApproveDate.Location = new System.Drawing.Point(9, 51);
             this.labelApproveDate.Name = "labelApproveDate";
+            this.labelApproveDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelApproveDate.Size = new System.Drawing.Size(95, 23);
             this.labelApproveDate.TabIndex = 5;
             this.labelApproveDate.Text = "Req. Apv Date";
+            this.labelApproveDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // panel1
             // 
@@ -186,6 +190,24 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
+            // labelNoQuoteHintColor
+            // 
+            this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
+            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(10, 81);
+            this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
+            this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
+            this.labelNoQuoteHintColor.TabIndex = 16;
+            // 
+            // labelNoQuoteHint
+            // 
+            this.labelNoQuoteHint.BackColor = System.Drawing.Color.Transparent;
+            this.labelNoQuoteHint.Location = new System.Drawing.Point(32, 80);
+            this.labelNoQuoteHint.Name = "labelNoQuoteHint";
+            this.labelNoQuoteHint.Size = new System.Drawing.Size(395, 23);
+            this.labelNoQuoteHint.TabIndex = 15;
+            this.labelNoQuoteHint.Text = "No quote record, please check with Planning Team";
+            this.labelNoQuoteHint.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // label8
             // 
             this.label8.AutoSize = true;
@@ -199,9 +221,11 @@
             // 
             this.labelArtworkType.Location = new System.Drawing.Point(381, 51);
             this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelArtworkType.Size = new System.Drawing.Size(95, 23);
             this.labelArtworkType.TabIndex = 12;
             this.labelArtworkType.Text = "Artwork Type";
+            this.labelArtworkType.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtartworktype_ftyArtworkType
             // 
@@ -241,9 +265,11 @@
             // 
             this.labelSPNo.Location = new System.Drawing.Point(9, 15);
             this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
             this.labelSPNo.TabIndex = 0;
             this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelDelivery
             // 
@@ -326,24 +352,6 @@
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
-            // 
-            // labelNoQuoteHintColor
-            // 
-            this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
-            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(10, 81);
-            this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
-            this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
-            this.labelNoQuoteHintColor.TabIndex = 16;
-            // 
-            // labelNoQuoteHint
-            // 
-            this.labelNoQuoteHint.BackColor = System.Drawing.Color.Transparent;
-            this.labelNoQuoteHint.Location = new System.Drawing.Point(32, 80);
-            this.labelNoQuoteHint.Name = "labelNoQuoteHint";
-            this.labelNoQuoteHint.Size = new System.Drawing.Size(395, 23);
-            this.labelNoQuoteHint.TabIndex = 15;
-            this.labelNoQuoteHint.Text = "No quote record, please check with Planning Team";
-            this.labelNoQuoteHint.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P01_BatchCreate
             // 

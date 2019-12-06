@@ -35,6 +35,7 @@
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
             this.labelNoQuoteHint = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -46,7 +47,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -104,9 +104,11 @@
             // 
             this.labelSPNo.Location = new System.Drawing.Point(23, 15);
             this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
             this.labelSPNo.TabIndex = 0;
             this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // groupBox2
             // 
@@ -120,6 +122,14 @@
             this.groupBox2.Size = new System.Drawing.Size(936, 53);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
+            // 
+            // labelNoQuoteHintColor
+            // 
+            this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
+            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(23, 19);
+            this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
+            this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
+            this.labelNoQuoteHintColor.TabIndex = 4;
             // 
             // labelNoQuoteHint
             // 
@@ -206,9 +216,11 @@
             // 
             this.labelSCIDelivery.Location = new System.Drawing.Point(417, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
             this.labelSCIDelivery.TabIndex = 7;
             this.labelSCIDelivery.Text = "SCI  Delivery";
+            this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtSPNoEnd
             // 
@@ -223,9 +235,11 @@
             // 
             this.labelApproveDate.Location = new System.Drawing.Point(23, 48);
             this.labelApproveDate.Name = "labelApproveDate";
+            this.labelApproveDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelApproveDate.Size = new System.Drawing.Size(95, 23);
             this.labelApproveDate.TabIndex = 5;
             this.labelApproveDate.Text = "Req. Apv Date";
+            this.labelApproveDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // panel1
             // 
@@ -260,14 +274,6 @@
             this.gridBatchImport.Size = new System.Drawing.Size(936, 390);
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
-            // 
-            // labelNoQuoteHintColor
-            // 
-            this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
-            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(23, 19);
-            this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
-            this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
-            this.labelNoQuoteHintColor.TabIndex = 4;
             // 
             // P01_Import
             // 
