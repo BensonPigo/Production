@@ -469,7 +469,11 @@ order by ASeq",
                 return;
             }
 
-            string updateCmd = string.Format("update OrderChangeApplication set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format(@"
+update OrderChangeApplication set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'
+INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
+VALUES('{1}','Confirmed','{0}',getdate())
+", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -493,7 +497,11 @@ order by ASeq",
                 return;
             }
 
-            string updateCmd = string.Format("update OrderChangeApplication set Status = 'Reject', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format(@"
+update OrderChangeApplication set Status = 'Reject', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'
+INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
+VALUES('{1}','Reject','{0}',getdate())
+", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -509,8 +517,8 @@ order by ASeq",
 
         private void BtnRefresh_Click(object sender, EventArgs e)
         {
-            this.OnDetailEntered();
             this.RenewData();
+            this.OnDetailEntered();
         }
 
         private void SendMail(string status)
@@ -530,7 +538,7 @@ order by ASeq",
 {status} SP#{this.CurrentMaintain["Orderid"]}-{factory} request change qty, please check, apply id# - {this.CurrentMaintain["ID"]}";
 
             var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, true, true);
-            //email.ShowDialog(this);
+            email.ShowDialog(this);
         }
     }
 }
