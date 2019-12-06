@@ -234,10 +234,6 @@ Te2.InvoiceNo)
 		values ( s.[ID],s.[Seq],s.[Type],s.[Container],s.[CartonQty],s.[WeightKg],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
 	;
 
-	DELETE pms
-	FROM Production.dbo.Export_Container pms
-	WHERE NOT EXISTS (SELECT 1 FROM Trade_To_Pms.dbo.Export_Container trade WHERE trade.ID=pms.ID AND trade.Container=pms.Container) 
-	;
 
 drop table #TExport;
 
