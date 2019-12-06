@@ -219,10 +219,8 @@ Te2.InvoiceNo)
 		on  t.ID = s.ID AND t.Container = s.Container
 	when matched then 
 		update set
-			t.ID				=  s.ID
-			, t.Seq				=  s.Seq
+			  t.Seq				=  s.Seq
 			, t.Type			=  s.Type
-			, t.Container		=  s.Container
 			, t.CartonQty		=  s.CartonQty
 			, t.WeightKg		=  s.WeightKg
 			, t.AddName			=  s.AddName
@@ -233,8 +231,17 @@ Te2.InvoiceNo)
 		insert (   [ID],  [Seq],  [Type],  [Container],  [CartonQty],  [WeightKg],  [AddName],  [AddDate],  [EditName],  [EditDate])
 		values ( s.[ID],s.[Seq],s.[Type],s.[Container],s.[CartonQty],s.[WeightKg],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
 	;
-
-
+	
+	DELETE pms
+	FROM Production.dbo.Export_Container pms
+	WHERE   EXISTS (
+				SELECT 1 FROM Trade_To_Pms.dbo.Export e WHERE e.ID=pms.ID
+			) -- 存在於Trade轉出的WK#
+			AND 
+			NOT EXISTS(
+				SELECT 1 FROM Trade_To_Pms.dbo.Export_Container ec WHERE ec.ID=pms.ID AND ec.Container=pms.Container	
+			)--不存在Trade轉出的Container
+	;
 drop table #TExport;
 
 END
