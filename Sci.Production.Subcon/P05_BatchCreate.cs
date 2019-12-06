@@ -58,7 +58,7 @@ namespace Sci.Production.Subcon
                 (Inline_b == null && Inline_e == null) &&
                 string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
             {
-                MyUtility.Msg.WarningBox("< SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< SCI Delivery > or < Sew. Inline > or < SP# > can't be empty!!");
                 txtSPNoStart.Focus();
                 return;
             }
@@ -468,12 +468,30 @@ and o.Junk=0
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 		" ;
   
-            if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and ot.ArtworkTypeID like '{0}%'", artworktype); }
-            if (!(string.IsNullOrWhiteSpace(Inline_b))) { SqlCmd += string.Format(" and ot.ArtworkInLine >= '{0}' ", Inline_b); }
-            if (!(string.IsNullOrWhiteSpace(Inline_e))) { SqlCmd += string.Format(" and ot.ArtworkOffLine <= '{0}' ", Inline_e); }
-            if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format("and  o.SciDelivery >= '{0}' ", sciDelivery_b); }
-            if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  o.SciDelivery <= '{0}' ", sciDelivery_e); }
-            if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+            if (!(string.IsNullOrWhiteSpace(artworktype)))
+            {
+                SqlCmd += string.Format(" and ot.ArtworkTypeID like '{0}%'", artworktype);
+            }
+            if (!(string.IsNullOrWhiteSpace(Inline_b)))
+            {
+                SqlCmd += string.Format(" and o.SewInLIne >= '{0}' ", Inline_b);
+            }
+            if (!(string.IsNullOrWhiteSpace(Inline_e)))
+            {
+                SqlCmd += string.Format(" and o.SewInLIne <= '{0}' ", Inline_e);
+            }
+            if (!(string.IsNullOrWhiteSpace(sciDelivery_b)))
+            {
+                SqlCmd += string.Format("and  o.SciDelivery >= '{0}' ", sciDelivery_b);
+            }
+            if (!(string.IsNullOrWhiteSpace(sciDelivery_e)))
+            {
+                SqlCmd += string.Format("and  o.SciDelivery <= '{0}' ", sciDelivery_e);
+            }
+            if (!(string.IsNullOrWhiteSpace(sp_b)))
+            {
+                SqlCmd += string.Format(" and o.ID between '{0}' and '{1}'", sp_b, sp_e);
+            }
             SqlCmd += @" 
 group by q.id,sao.LocalSuppID,ot.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
 ,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ReqQty.value,o.FtyGroup

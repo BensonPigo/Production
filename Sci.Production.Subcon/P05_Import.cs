@@ -147,11 +147,11 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             }
             if (!(dateInlineDate.Value1 == null))
             {
-                strSQLCmd += string.Format(" and ot.ArtworkInLine >= '{0}' ", Inline_b);
+                strSQLCmd += string.Format(" and o.SewInLIne >= '{0}' ", Inline_b);
             }
             if (!(dateInlineDate.Value2 == null))
             {
-                strSQLCmd += string.Format(" and ot.ArtworkOffLine <= '{0}' ", Inline_e);
+                strSQLCmd += string.Format(" and o.SewInLIne <= '{0}' ", Inline_e);
             }
             if (!(string.IsNullOrWhiteSpace(sp_b)))
             {

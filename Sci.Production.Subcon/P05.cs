@@ -157,9 +157,9 @@ ORDER BY ap.OrderID   ", masterID);
             #region Batch Import, Special record button
             btnBatchImport.Enabled = this.EditMode;
             #endregion
-            #region Batch create
-            btnBatchCreate.Enabled = !this.EditMode;
-            #endregion
+            //#region Batch create
+            //btnBatchCreate.Enabled = !this.EditMode;
+            //#endregion
 
             #region Irregular 判斷
             RefreshIrregularQtyReason();
@@ -169,15 +169,15 @@ ORDER BY ap.OrderID   ", masterID);
             string dateDeptApv = MyUtility.Check.Empty(MyUtility.Convert.GetDate(CurrentMaintain["DeptApvDate"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(CurrentMaintain["DeptApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
 
 
-            dispDeptApv.Text = CurrentMaintain["DeptApvName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", CurrentMaintain["DeptApvName"].ToString(), "Pass1", "ID") + dateDeptApv;
+            dispDeptApv.Text = CurrentMaintain["DeptApvName"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", CurrentMaintain["DeptApvName"].ToString(), "Pass1", "ID") + dateDeptApv;
 
             string dateMgApv = MyUtility.Check.Empty(MyUtility.Convert.GetDate(CurrentMaintain["MgApvDate"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(CurrentMaintain["MgApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
 
-            dispMgrApv.Text = CurrentMaintain["MgApvName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", CurrentMaintain["MgApvName"].ToString(), "Pass1", "ID") + dateMgApv;
+            dispMgrApv.Text = CurrentMaintain["MgApvName"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", CurrentMaintain["MgApvName"].ToString(), "Pass1", "ID") + dateMgApv;
 
             string dateClose = MyUtility.Check.Empty(MyUtility.Convert.GetDate(CurrentMaintain["CloseUnCloseDate"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(CurrentMaintain["CloseUnCloseDate"])).ToString("yyyy/MM/dd HH:mm:ss");
 
-            dispClosed.Text = CurrentMaintain["CloseUnCloseName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", CurrentMaintain["CloseUnCloseName"].ToString(), "Pass1", "ID") + dateClose;
+            dispClosed.Text = CurrentMaintain["CloseUnCloseName"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", CurrentMaintain["CloseUnCloseName"].ToString(), "Pass1", "ID") + dateClose;
             #endregion
         }
 

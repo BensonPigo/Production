@@ -32,7 +32,7 @@
             this.gridBatchCreateFromSubProcessData = new Sci.Win.UI.Grid();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.labelInlineDate = new Sci.Win.UI.Label();
+            this.labSewingInline = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
@@ -126,13 +126,13 @@
             this.dateSCIDelivery.Size = new System.Drawing.Size(243, 23);
             this.dateSCIDelivery.TabIndex = 2;
             // 
-            // labelInlineDate
+            // labSewingInline
             // 
-            this.labelInlineDate.Location = new System.Drawing.Point(9, 52);
-            this.labelInlineDate.Name = "labelInlineDate";
-            this.labelInlineDate.Size = new System.Drawing.Size(77, 23);
-            this.labelInlineDate.TabIndex = 8;
-            this.labelInlineDate.Text = "Inline Date";
+            this.labSewingInline.Location = new System.Drawing.Point(9, 52);
+            this.labSewingInline.Name = "labSewingInline";
+            this.labSewingInline.Size = new System.Drawing.Size(77, 23);
+            this.labSewingInline.TabIndex = 8;
+            this.labSewingInline.Text = "Sew. Inline";
             // 
             // labelSCIDelivery
             // 
@@ -167,7 +167,7 @@
             this.groupBox1.Controls.Add(this.txtartworktype_ftyArtworkType);
             this.groupBox1.Controls.Add(this.dateInlineDate);
             this.groupBox1.Controls.Add(this.dateSCIDelivery);
-            this.groupBox1.Controls.Add(this.labelInlineDate);
+            this.groupBox1.Controls.Add(this.labSewingInline);
             this.groupBox1.Controls.Add(this.labelSCIDelivery);
             this.groupBox1.Controls.Add(this.txtSPNoEnd);
             this.groupBox1.Controls.Add(this.btnFindNow);
@@ -328,7 +328,7 @@
         private Win.UI.Grid gridBatchCreateFromSubProcessData;
         private Win.UI.DateRange dateInlineDate;
         private Win.UI.DateRange dateSCIDelivery;
-        private Win.UI.Label labelInlineDate;
+        private Win.UI.Label labSewingInline;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.TextBox txtSPNoEnd;
         private Win.UI.Panel panel1;

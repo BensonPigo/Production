@@ -39,12 +39,12 @@
             this.label8 = new System.Windows.Forms.Label();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.labelInlineDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.labSewingInline = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -118,10 +118,10 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.labSewingInline);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.dateInlineDate);
             this.groupBox1.Controls.Add(this.dateSCIDelivery);
-            this.groupBox1.Controls.Add(this.labelInlineDate);
             this.groupBox1.Controls.Add(this.labelSCIDelivery);
             this.groupBox1.Controls.Add(this.txtSPNoEnd);
             this.groupBox1.Controls.Add(this.btnFindNow);
@@ -187,14 +187,6 @@
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateSCIDelivery.TabIndex = 2;
             // 
-            // labelInlineDate
-            // 
-            this.labelInlineDate.Location = new System.Drawing.Point(9, 51);
-            this.labelInlineDate.Name = "labelInlineDate";
-            this.labelInlineDate.Size = new System.Drawing.Size(95, 23);
-            this.labelInlineDate.TabIndex = 6;
-            this.labelInlineDate.Text = "Inline Date";
-            // 
             // labelSCIDelivery
             // 
             this.labelSCIDelivery.Location = new System.Drawing.Point(413, 15);
@@ -246,6 +238,14 @@
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
             // 
+            // labSewingInline
+            // 
+            this.labSewingInline.Location = new System.Drawing.Point(9, 51);
+            this.labSewingInline.Name = "labSewingInline";
+            this.labSewingInline.Size = new System.Drawing.Size(95, 23);
+            this.labSewingInline.TabIndex = 15;
+            this.labSewingInline.Text = "Sew. Inline";
+            // 
             // P05_Import
             // 
             this.ClientSize = new System.Drawing.Size(1002, 530);
@@ -280,9 +280,9 @@
         private Win.UI.Grid gridBatchImport;
         private Win.UI.DateRange dateInlineDate;
         private Win.UI.DateRange dateSCIDelivery;
-        private Win.UI.Label labelInlineDate;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
+        private Win.UI.Label labSewingInline;
     }
 }

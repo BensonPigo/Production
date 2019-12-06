@@ -320,6 +320,7 @@
             // btnBatchCreate
             // 
             this.btnBatchCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchCreate.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnBatchCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnBatchCreate.Location = new System.Drawing.Point(816, 12);
             this.btnBatchCreate.Name = "btnBatchCreate";
