@@ -28,10 +28,19 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_chk = new Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings();
+            col_chk.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                dr["selected"] = e.FormattedValue;
+                dr.EndEdit();
+                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected=1").Count();
+                this.numSelectedCTNQty.Value = sint;
+            };
 
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
             .Text("packinglistID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("CustCTN", header: "Cust CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -219,21 +228,22 @@ order by pld.ID,pld.CTNStartNo
                 }
 
                 // 去除重複
-                DataTable distl = readdt.AsEnumerable().Distinct().CopyToDataTable();
-                DataTable tmpdt = distl.Clone();
+                var distl = readdt.AsEnumerable().Select(s => new { PackingListID = MyUtility.Convert.GetString(s["PackingListID"]), CTNStartNo = MyUtility.Convert.GetString(s["CTNStartNo"]), custCtn = MyUtility.Convert.GetString(s["custCtn"]) }).Distinct().ToList();
+
+                DataTable tmpdt = readdt.Clone();
                 tmpdt.Columns.Remove("custCtn");
 
                 string sqlcmd = string.Empty;
-                foreach (DataRow item in distl.Rows)
+                foreach (var item in distl)
                 {
                     sqlcmd = $@"
 select PackingListID=pld.id,pld.CTNStartNo
 from PackingList_Detail pld  with(nolock)
-where pld.CustCTN = '{item["CustCTN"]}'
+where pld.CustCTN = '{item.custCtn}'
 union
 select PackingListID=pld.id,pld.CTNStartNo
 from PackingList_Detail pld  with(nolock)
-where pld.id = '{item["packinglistID"]}' and pld.CTNStartNo ='{item["CTNStartNo"]}'
+where pld.id = '{item.PackingListID}' and pld.CTNStartNo ='{item.CTNStartNo}'
 ";
                     DataTable packdt;
                     result = DBProxy.Current.Select(null, sqlcmd, out packdt);
@@ -249,15 +259,7 @@ where pld.id = '{item["packinglistID"]}' and pld.CTNStartNo ='{item["CTNStartNo"
                     {
                         DataRow dr = tmpdt.NewRow();
                         dr["PackingListID"] = string.Empty;
-                        if (MyUtility.Check.Empty(item["CTNStartNo"]))
-                        {
-                            dr["CTNStartNo"] = item["custCtn"];
-                        }
-                        else
-                        {
-                            dr["CTNStartNo"] = item["CTNStartNo"];
-                        }
-
+                        dr["CTNStartNo"] = item.custCtn;
                         tmpdt.Rows.Add(dr);
                     }
                     else
@@ -417,6 +419,18 @@ inner join PackingList_Detail pld on t.ukey = pld.ukey
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void Grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (this.listControlBindingSource1.DataSource == null || e.ColumnIndex != 0)
+            {
+                return;
+            }
+
+            this.grid1.ValidateControl();
+            int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected=1").Count();
+            this.numSelectedCTNQty.Value = sint;
         }
     }
 }
