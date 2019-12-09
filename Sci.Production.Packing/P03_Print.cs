@@ -251,11 +251,11 @@ namespace Sci.Production.Packing
             #region.
             string sqlcmd = $@"
 select * from(
-    select distinct pd.CTNStartno,o.Customize1,o.CustPOno,pd.Article,a.SizeCode,
+    select pd.CTNStartno,o.Customize1,o.CustPOno,pd.Article,a.SizeCode,
 		qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
 		CountryName,
-		GW=isnull(g.GW,0),
-		NW=isnull(n.NW,0)
+		GW=pd.GW,
+		NW=pd.NW
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
     outer apply (
@@ -273,14 +273,13 @@ select * from(
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
 	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,'')
     )b
-    outer apply (select GW=cast(GW as float) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo and CTNQty=1)g--混尺碼裝箱原本在代表的那一箱的 GW 就已經是加總後的結果
-    outer apply (select NW=cast(NW as float) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo and CTNQty=1)n--同上
-	outer apply	(
+    outer apply	(
 		SELECT [CountryName]=c.NameEN FROM Factory f
 		INNER JOIN Country c On f.CountryID=c.ID
 		WHERE f.ID='{ Sci.Env.User.Factory}'
 	)c
     where pd.id = '{this.masterData["ID"]}'
+		  and pd.CTNQty > 0
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 ";
