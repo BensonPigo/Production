@@ -56,7 +56,12 @@ namespace Sci.Production.Class
 
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(textValue, "LocalSupp", "ID"))
+                if (!MyUtility.Check.Seek($@"
+select DISTINCT l.ID
+from dbo.LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK) ON l.id=lb.id 
+WHERE lb.Status= 'Confirmed' AND  l.ID = '{textValue}'
+"))
                 {
                     this.textBox1.Text = "";
                     e.Cancel = true;

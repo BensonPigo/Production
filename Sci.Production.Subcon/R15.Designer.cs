@@ -38,7 +38,7 @@
             this.dateIssueDate = new Sci.Win.UI.DateRange();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.txtSPNO = new Sci.Win.UI.TextBox();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.txtstyle = new Sci.Production.Class.txtstyle();
             this.labelM = new Sci.Win.UI.Label();
@@ -293,7 +293,7 @@
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.TextBox txtSPNO;
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Class.txtstyle txtstyle;
         private Win.UI.Label labelM;
         private Class.txtMdivision txtMdivisionM;

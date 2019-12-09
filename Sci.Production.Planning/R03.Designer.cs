@@ -38,28 +38,27 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txttpeuser_caneditSMR = new Sci.Production.Class.txttpeuser_canedit();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(422, 12);
+            this.print.Location = new System.Drawing.Point(434, 12);
             this.print.TabIndex = 6;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(422, 48);
+            this.toexcel.Location = new System.Drawing.Point(434, 48);
             this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(422, 84);
+            this.close.Location = new System.Drawing.Point(434, 84);
             this.close.TabIndex = 8;
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(13, 12);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(83, 23);
@@ -68,7 +67,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 48);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(83, 23);
@@ -77,7 +75,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(13, 84);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(83, 23);
@@ -86,7 +83,6 @@
             // 
             // labelSMR
             // 
-            this.labelSMR.Lines = 0;
             this.labelSMR.Location = new System.Drawing.Point(13, 121);
             this.labelSMR.Name = "labelSMR";
             this.labelSMR.Size = new System.Drawing.Size(83, 23);
@@ -95,7 +91,6 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(13, 157);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(83, 23);
@@ -104,7 +99,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(13, 193);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(83, 23);
@@ -120,6 +114,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 0;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
             // 
             // txtbrand
             // 
@@ -153,6 +149,9 @@
             // 
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = true;
+            this.txtsubconSupplier.isMisc = false;
+            this.txtsubconSupplier.isShipping = false;
+            this.txtsubconSupplier.isSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(100, 157);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
@@ -161,6 +160,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(100, 193);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -185,7 +198,11 @@
             this.DefaultControl = "txtstyle";
             this.IsSupportToPrint = false;
             this.Name = "R03";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. Local Quotation List";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -218,7 +235,7 @@
         private Class.txtbrand txtbrand;
         private Class.txtseason txtseason;
         private Class.txttpeuser_canedit txttpeuser_caneditSMR;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DateRange dateSCIDelivery;
     }
 }

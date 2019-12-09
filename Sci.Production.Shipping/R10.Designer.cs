@@ -46,7 +46,7 @@
             this.txtcustcd = new Sci.Production.Class.txtcustcd();
             this.txtcountryDestination = new Sci.Production.Class.txtcountry();
             this.txtshipmode = new Sci.Production.Class.txtshipmode();
-            this.txtsubconForwarder = new Sci.Production.Class.txtsubcon();
+            this.txtsubconForwarder = new Sci.Production.Class.txtsubconNoConfirm();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
             this.radioDetailListBySPNoByFeeType = new Sci.Win.UI.RadioButton();
             this.radioDetailListbySPNo = new Sci.Win.UI.RadioButton();
@@ -424,7 +424,7 @@
         private Class.txtcustcd txtcustcd;
         private Class.txtcountry txtcountryDestination;
         private Class.txtshipmode txtshipmode;
-        private Class.txtsubcon txtsubconForwarder;
+        private Class.txtsubconNoConfirm txtsubconForwarder;
         private Win.UI.RadioPanel radioPanel2;
         private Win.UI.RadioButton radioDetailListBySPNoByFeeType;
         private Win.UI.RadioButton radioDetailListbySPNo;

@@ -42,7 +42,7 @@
             this.lbSCIDelivery = new Sci.Win.UI.Label();
             this.txtM = new Sci.Production.Class.txtMdivision();
             this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.SuspendLayout();
             // 
@@ -296,7 +296,7 @@
         private Win.UI.DateRange dateFarmOutDate;
         private Win.UI.TextBox txtMasterSPNo;
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Class.txtstyle txtstyle;
         private Class.txtMdivision txtM;
         private Win.UI.Label lbM;

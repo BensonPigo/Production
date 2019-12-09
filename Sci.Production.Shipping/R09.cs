@@ -475,19 +475,11 @@ select * from FtyExportData");
         {
             string selectCommand;
             selectCommand = @"
---select ID,Abb from LocalSupp WITH (NOLOCK) 
---union all
---select ID,AbbEN from Supp WITH (NOLOCK) 
---order by ID
-
-select DISTINCT l.ID, l.Abb
+select DISTINCT l.ID ,l.Abb
 from LocalSupp l WITH (NOLOCK) 
-left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' 
 union all
 select ID,AbbEN from Supp WITH (NOLOCK) 
-order by l.ID
-";
+order by ID";
 
             DataTable tbSelect;
             DBProxy.Current.Select(null, selectCommand, out tbSelect);
@@ -513,12 +505,8 @@ order by l.ID
                     DataRow inputData;
                     string sql = string.Format(
                         @"select * from (
---select ID,Abb from LocalSupp WITH (NOLOCK) 
-
-select DISTINCT l.ID, l.Abb
+select DISTINCT l.ID ,l.Abb
 from LocalSupp l WITH (NOLOCK) 
-left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' 
 union all
 select ID,AbbEN from Supp WITH (NOLOCK) ) a
 where a.ID = '{0}'", this.txtForwarder.Text);

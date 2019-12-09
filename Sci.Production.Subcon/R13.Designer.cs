@@ -36,7 +36,7 @@
             this.dateIssueDate = new Sci.Win.UI.DateRange();
             this.labelM = new Sci.Win.UI.Label();
             this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.dateApproveDate = new Sci.Win.UI.DateRange();
             this.labelApproveDate = new Sci.Win.UI.Label();
@@ -244,7 +244,7 @@
         private Win.UI.ComboBox comboFactory;
         private Win.UI.DateRange dateIssueDate;
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Class.txtMdivision txtMdivisionM;
         private Win.UI.Label labelM;
         private Win.UI.DateRange dateApproveDate;

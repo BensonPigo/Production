@@ -39,8 +39,8 @@
             this.txtCombineStyle = new Sci.Win.UI.TextBox();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtLocalSupp = new Sci.Production.Class.txtLocalSupp();
-            this.txtLocalTPESupp = new Sci.Production.Class.txtLocalTPESupp();
+            this.txtLocalSupp = new Sci.Production.Class.txtLocalSuppNoConfirm();
+            this.txtLocalTPESupp = new Sci.Production.Class.txtLocalTPESuppNoConfirm();
             this.txtFabRefno = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
@@ -239,8 +239,8 @@
         private Win.UI.TextBox txtCombineStyle;
         private Class.txtseason txtseason;
         private Class.txtbrand txtbrand;
-        private Class.txtLocalSupp txtLocalSupp;
-        private Class.txtLocalTPESupp txtLocalTPESupp;
+        private Class.txtLocalSuppNoConfirm txtLocalSupp;
+        private Class.txtLocalTPESuppNoConfirm txtLocalTPESupp;
         private Win.UI.TextBox txtFabRefno;
     }
 }
