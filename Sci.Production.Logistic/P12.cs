@@ -134,15 +134,17 @@ select
 	PulloutTransportNo='',
 	Remark='',
     pld.ukey
-from PackingList_Detail pld  with(nolock)
+from PackingList pl with (nolock)
+inner join PackingList_Detail pld  with(nolock) on pl.id = pld.id
 inner join orders o WITH (NOLOCK) on o.id	= pld.orderid
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-where pld.ReceiveDate is not null--（Clog 從工廠端接收到紙箱的日期）     
-and pld.TransferCFADate is null--（紙箱從 Clog 轉出至 CFA 的日期 - 在途）
-and pld.CFAReturnClogDate is null--（紙箱從 CFA 轉回 Clog 的日期 - 在途）
-and pld.DisposeFromClog = 0--（紙箱在 Clog 報廢）
-and pld.ClogPulloutDate is null--（紙箱從 Clog 出貨裝在卡車 / 貨櫃
-{where}
+where pl.MDivisionID = '{Sci.Env.User.Keyword}'  
+        and pld.ReceiveDate is not null--（Clog 從工廠端接收到紙箱的日期）   
+        and pld.TransferCFADate is null--（紙箱從 Clog 轉出至 CFA 的日期 - 在途）
+        and pld.CFAReturnClogDate is null--（紙箱從 CFA 轉回 Clog 的日期 - 在途）
+        and pld.DisposeFromClog = 0--（紙箱在 Clog 報廢）
+        and pld.ClogPulloutDate is null--（紙箱從 Clog 出貨裝在卡車 / 貨櫃
+        {where}
 order by pld.ID,pld.CTNStartNo
 ";
             DataTable dt;
@@ -230,72 +232,66 @@ order by pld.ID,pld.CTNStartNo
                 // 去除重複
                 var distl = readdt.AsEnumerable().Select(s => new { PackingListID = MyUtility.Convert.GetString(s["PackingListID"]), CTNStartNo = MyUtility.Convert.GetString(s["CTNStartNo"]), custCtn = MyUtility.Convert.GetString(s["custCtn"]) }).Distinct().ToList();
 
-                DataTable tmpdt = readdt.Clone();
-                tmpdt.Columns.Remove("custCtn");
+                string sqlcmd = $@"
+select distinct 
+        PackingListID = isnull (findInPL.PackingListID, '')
+        , CTNStartNo = case
+                            when findInPL.CTNStartNo is not null then findInPL.CTNStartNo 
+                            else t.custCtn
+                        end
+into #FindPL
+from #tmp t
+outer apply (
+    select PackingListID = pld.id
+            , pld.CTNStartNo
+    from PackingList_Detail pld  with(nolock)
+    where pld.CustCTN = t.custCtn
+    union
+    select PackingListID = pld.id
+            , pld.CTNStartNo
+    from PackingList_Detail pld  with(nolock)
+    where pld.id = t.packinglistID
+            and pld.CTNStartNo = t.cTNStartNo
+) findInPL
 
-                string sqlcmd = string.Empty;
-                foreach (var item in distl)
-                {
-                    sqlcmd = $@"
-select PackingListID=pld.id,pld.CTNStartNo
-from PackingList_Detail pld  with(nolock)
-where pld.CustCTN = '{item.custCtn}'
-union
-select PackingListID=pld.id,pld.CTNStartNo
-from PackingList_Detail pld  with(nolock)
-where pld.id = '{item.PackingListID}' and pld.CTNStartNo ='{item.CTNStartNo}'
-";
-                    DataTable packdt;
-                    result = DBProxy.Current.Select(null, sqlcmd, out packdt);
-                    if (!result)
-                    {
-                        this.ShowErr(result);
-                        return;
-                    }
-
-                    // 4.將步驟 1, 2 皆沒有找到資料的箱號
-                    // 新增資料列 Packing List ID 為空並且 CTN No 為找不到資料的箱號
-                    if (packdt.Rows.Count == 0)
-                    {
-                        DataRow dr = tmpdt.NewRow();
-                        dr["PackingListID"] = string.Empty;
-                        dr["CTNStartNo"] = item.custCtn;
-                        tmpdt.Rows.Add(dr);
-                    }
-                    else
-                    {
-                        foreach (DataRow ic in packdt.Rows)
-                        {
-                            DataRow dr = tmpdt.NewRow();
-                            dr["PackingListID"] = ic["PackingListID"];
-                            dr["CTNStartNo"] = ic["CTNStartNo"];
-                            tmpdt.Rows.Add(dr);
-                        }
-                    }
-                }
-
-                var tmpdt2 = tmpdt.AsEnumerable().Select(s => new { PackingListID = MyUtility.Convert.GetString(s["PackingListID"]), CTNStartNo = MyUtility.Convert.GetString(s["CTNStartNo"]) }).Distinct().ToList();
-
-                sqlcmd = $@"
 select t.*,
-	remark=case when a.v is null then'This carton isn''t in packing list.'
-				when b.v is not null then 'This carton not yet send to CLog.'
+	remark=case 
+                when InPackingList_DiffM.v is not null then 'The order''s M is not equal to login M.'
+				when NotInPackingList.v is null then'This carton isn''t in packing list.'
+				when NotInClog.v is not null then 'This carton not yet send to CLog.'
 				when e.DisposeFromClog = 1 then 'This carton had been dispose.'
 				when e.ClogPulloutDate is not null then 'This carton already completed Clog Pullout.'
                 else ''
 			end,
 	e.*
-from #tmp t
-outer apply(select top 1 v=1 from PackingList_Detail pld with(nolock) where t.packinglistID = pld.id and t.CTNStartNo=pld.CTNStartNo)a
+from #FindPL t
 outer apply(
-	select top 1 v='' from PackingList_Detail pld with(nolock) 
-	where t.packinglistID = pld.id and t.CTNStartNo=pld.CTNStartNo
-	and	(
-		pld.ReceiveDate is null--（Clog 從工廠端接收到紙箱的日期）                      
-		or pld.TransferCFADate is not null--（紙箱從 Clog 轉出至 CFA 的日期 - 在途）
-		or pld.CFAReturnClogDate is not null--（紙箱從 CFA 轉回 Clog 的日期 - 在途）
-	)
-)b
+    select top 1 v=1 
+    from PackingList pl with (nolock)
+    inner join PackingList_Detail pld  with(nolock) on pl.id = pld.id
+    where t.packinglistID = pld.id 
+          and t.CTNStartNo=pld.CTNStartNo
+          and pl.MDivisionID != '{Sci.Env.User.Keyword}'  
+) InPackingList_DiffM
+outer apply(
+    select top 1 v=1 
+    from PackingList pl with (nolock)
+    inner join PackingList_Detail pld  with(nolock) on pl.id = pld.id
+    where t.packinglistID = pld.id 
+          and t.CTNStartNo=pld.CTNStartNo
+          and pl.MDivisionID = '{Sci.Env.User.Keyword}'  
+) NotInPackingList
+outer apply(
+	select top 1 v='' 
+    from PackingList_Detail pld with(nolock) 
+	where t.packinglistID = pld.id 
+            and t.CTNStartNo=pld.CTNStartNo
+	        and	(
+		        pld.ReceiveDate is null--（Clog 從工廠端接收到紙箱的日期）                      
+		        or pld.TransferCFADate is not null--（紙箱從 Clog 轉出至 CFA 的日期 - 在途）
+		        or pld.CFAReturnClogDate is not null--（紙箱從 CFA 轉回 Clog 的日期 - 在途）
+	        )
+) NotInClog
 outer apply(
 	select
 		selected = cast(0 as bit),
@@ -306,25 +302,30 @@ outer apply(
 		PulloutTransportNo='',
         pld.ukey,
         pld.DisposeFromClog,
-        pld.ClogPulloutDate
-        
-	from PackingList_Detail pld  with(nolock)
+        pld.ClogPulloutDate        
+	from PackingList pl with (nolock)
+    inner join PackingList_Detail pld  with(nolock) on pl.id = pld.id
 	inner join orders o WITH (NOLOCK) on o.id	= pld.orderid
 	left join Country c WITH (NOLOCK) on o.Dest = c.ID
-	where t.packinglistID = pld.id and t.CTNStartNo=pld.CTNStartNo
-)e";
-                DataTable lastable;
-                result = MyUtility.Tool.ProcessWithObject(tmpdt2, string.Empty, sqlcmd, out lastable);
+	where t.packinglistID = pld.id 
+            and t.CTNStartNo=pld.CTNStartNo
+            and pl.MDivisionID = '{Sci.Env.User.Keyword}'  
+)e
+
+drop table #FindPL;
+";
+                DataTable packdt;
+                result = MyUtility.Tool.ProcessWithObject(distl, string.Empty, sqlcmd, out packdt);
                 if (!result)
                 {
                     this.ShowErr(result);
                     return;
                 }
 
-                this.listControlBindingSource1.DataSource = lastable;
+                this.listControlBindingSource1.DataSource = packdt;
 
                 this.numSelectedCTNQty.Value = 0;
-                this.numTTLQty.Value = lastable.Rows.Count;
+                this.numTTLQty.Value = packdt.Rows.Count;
             }
         }
 

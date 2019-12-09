@@ -104,12 +104,15 @@ select
 	pld.ClogPulloutDate,
 	pld.PulloutTransportNo,
 	dl.Name
-from PackingList_Detail pld  with(nolock)
+from PackingList pl with (nolock)
+inner join PackingList_Detail pld  with(nolock) on pl.id = pld.id
 inner join orders o WITH (NOLOCK) on o.id	= pld.orderid
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join DropDownList dl on dl.Type = 'Pms_PulloutTransport' and dl.ID = pld.PulloutTransport
 where 1=1
-{where}
+        and pl.MDivisionID = '{Sci.Env.User.Keyword}'  
+        and pld.ClogPulloutDate is not null
+        {where}
 order by pld.ID,pld.CTNStartNo
 ";
             DataTable dt;
