@@ -251,7 +251,11 @@ namespace Sci.Production.Packing
             #region.
             string sqlcmd = $@"
 select * from(
-    select distinct pd.CTNStartno,o.Customize1,o.CustPOno,pd.Article,a.SizeCode,qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',CountryName
+    select pd.CTNStartno,o.Customize1,o.CustPOno,pd.Article,a.SizeCode,
+		qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
+		CountryName,
+		GW=pd.GW,
+		NW=pd.NW
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
     outer apply (
@@ -269,12 +273,13 @@ select * from(
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
 	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,'')
     )b
-	outer apply	(
+    outer apply	(
 		SELECT [CountryName]=c.NameEN FROM Factory f
 		INNER JOIN Country c On f.CountryID=c.ID
 		WHERE f.ID='{ Sci.Env.User.Factory}'
 	)c
     where pd.id = '{this.masterData["ID"]}'
+		  and pd.CTNQty > 0
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 ";
@@ -326,14 +331,20 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
                     string qty = this.printData.Rows[i]["qty"].ToString();
                     string country = this.printData.Rows[i]["CountryName"].ToString();
+                    string gw = this.printData.Rows[i]["gw"].ToString();
+                    string nw = this.printData.Rows[i]["nw"].ToString();
+                    string cTNStartno = this.printData.Rows[i]["CTNStartno"].ToString();
                     #endregion
 
                     tables.Cell(1, 2).Range.Text = customize1;
+                    tables.Cell(1, 3).Range.Text = cTNStartno;
                     tables.Cell(2, 2).Range.Text = custPOno;
                     tables.Cell(3, 2).Range.Text = article;
                     tables.Cell(4, 2).Range.Text = sizeCode;
                     tables.Cell(5, 2).Range.Text = qty;
                     tables.Cell(6, 2).Range.Text = country;
+                    tables.Cell(7, 1).Range.Text = "GROSS WEIGHT:" + gw;
+                    tables.Cell(8, 1).Range.Text = "NET WEIGHT:" + nw;
                 }
                 #endregion
                 //關閉word保護模式
