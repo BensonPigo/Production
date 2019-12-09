@@ -89,6 +89,10 @@ namespace Sci.Production.PPIC
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved")
             {
