@@ -548,11 +548,11 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                     this.CurrentDetailData["seq"] = "";
                     this.CurrentDetailData["seq1"] = "";
                     this.CurrentDetailData["seq2"] = "";
-                    this.CurrentDetailData["roll"] = "";
-                    this.CurrentDetailData["dyelot"] = "";
+                    //this.CurrentDetailData["roll"] = "";
+                    //this.CurrentDetailData["dyelot"] = "";
                     this.CurrentDetailData["poid"] = "";
                     this.CurrentDetailData["DataFrom"] = "";
-                    this.CurrentDetailData["qty"] = 0;
+                    //this.CurrentDetailData["qty"] = 0;
                     return;
                 }
 
