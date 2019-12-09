@@ -42,22 +42,21 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(418, 12);
+            this.print.Location = new System.Drawing.Point(433, 12);
             this.print.TabIndex = 6;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(418, 48);
+            this.toexcel.Location = new System.Drawing.Point(433, 48);
             this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(418, 84);
+            this.close.Location = new System.Drawing.Point(433, 84);
             this.close.TabIndex = 8;
             // 
             // labelStyleNo
             // 
-            this.labelStyleNo.Lines = 0;
             this.labelStyleNo.Location = new System.Drawing.Point(13, 13);
             this.labelStyleNo.Name = "labelStyleNo";
             this.labelStyleNo.Size = new System.Drawing.Size(64, 23);
@@ -66,7 +65,6 @@
             // 
             // labelbrand
             // 
-            this.labelbrand.Lines = 0;
             this.labelbrand.Location = new System.Drawing.Point(13, 48);
             this.labelbrand.Name = "labelbrand";
             this.labelbrand.Size = new System.Drawing.Size(64, 23);
@@ -75,7 +73,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(13, 84);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(64, 23);
@@ -93,6 +90,8 @@
             this.txtstyleStart.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtstyleStart.Size = new System.Drawing.Size(130, 23);
             this.txtstyleStart.TabIndex = 1;
+            this.txtstyleStart.tarBrand = null;
+            this.txtstyleStart.tarSeason = null;
             // 
             // txtstyleEnd
             // 
@@ -105,6 +104,8 @@
             this.txtstyleEnd.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtstyleEnd.Size = new System.Drawing.Size(130, 23);
             this.txtstyleEnd.TabIndex = 2;
+            this.txtstyleEnd.tarBrand = null;
+            this.txtstyleEnd.tarSeason = null;
             // 
             // txtbrand
             // 
@@ -120,7 +121,6 @@
             // label4
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(214, 12);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(18, 23);
@@ -133,7 +133,6 @@
             // 
             // labelLocalMR
             // 
-            this.labelLocalMR.Lines = 0;
             this.labelLocalMR.Location = new System.Drawing.Point(13, 119);
             this.labelLocalMR.Name = "labelLocalMR";
             this.labelLocalMR.Size = new System.Drawing.Size(64, 23);
@@ -161,7 +160,7 @@
             // 
             // P04_Print
             // 
-            this.ClientSize = new System.Drawing.Size(510, 179);
+            this.ClientSize = new System.Drawing.Size(533, 179);
             this.Controls.Add(this.txtuserLocalMR);
             this.Controls.Add(this.txtseason);
             this.Controls.Add(this.labelLocalMR);
@@ -176,7 +175,11 @@
             this.DefaultControlForEdit = "txtstyleStart";
             this.IsSupportToPrint = false;
             this.Name = "P04_Print";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "Print";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
