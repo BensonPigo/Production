@@ -52,8 +52,15 @@
     [DisposeDate]         DATE            NULL,
     [APPBookingVW]        NUMERIC (20, 2) DEFAULT ((0)) NULL,
     [APPEstAmtVW]         NUMERIC (20, 2) DEFAULT ((0)) NULL,
+    [CFALocationID]       VARCHAR (10)    DEFAULT ('') NULL,
+    [EditCFALocationDate] DATETIME        NULL,
+    [EditCFALocationName] VARCHAR (10)    DEFAULT ('') NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
+
+
 
 
 
@@ -178,4 +185,32 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�n�D�
 GO
 CREATE NONCLUSTERED INDEX [IX_PackingList_Detail_OrgPK]
     ON [dbo].[PackingList_Detail]([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC);
+
+
+GO
+
+
+
+GO
+
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'更新CFALocation人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditCFALocationName';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'更新CFALocation時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditCFALocationDate';
+
+
+GO
+
+
+
+GO
+
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA儲位代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'CFALocationID';
 

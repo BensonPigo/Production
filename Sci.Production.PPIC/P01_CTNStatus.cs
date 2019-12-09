@@ -194,6 +194,9 @@ select [PackingListID] =  p.ID
 ,pd.ClogLocationId
 ,pd.EditLocationDate
 ,EditLocationName=pd.EditLocationName +'-'+(select name from pass1 where id=pd.EditLocationName)
+,pd.CFALocationID
+,pd.EditCFALocationDate
+,EditCFALocationName=concat(pd.EditCFALocationName,'-'+(select name from pass1 where id=pd.EditCFALocationName))
 ,pd.Remark
 ,pd.Seq
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
@@ -240,9 +243,12 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("ClogReceiveCFADate", header: "Clog Rec. CFA Date", width: Widths.AnsiChars(10))
                 .Date("CFAReturnFtyDate", header: "CFA Return Fty Date", width: Widths.AnsiChars(10))
                 .Date("PulloutDate", header: "Pull-out Date", width: Widths.AnsiChars(10))
-                .Text("ClogLocationId", header: "Location", width: Widths.AnsiChars(8))
-                .Text("EditLocationDate", header: "Edit Location Date", width: Widths.AnsiChars(10))
-                .Text("EditLocationName", header: "Edit Location By", width: Widths.AnsiChars(10))
+                .Text("ClogLocationId", header: "Clog Location", width: Widths.AnsiChars(8))
+                .Text("EditLocationDate", header: "Edit Clog Location Date", width: Widths.AnsiChars(10))
+                .Text("EditLocationName", header: "Edit Clog Location By", width: Widths.AnsiChars(10))
+                .Text("CFALocationID", header: "Clog Location", width: Widths.AnsiChars(8))
+                .Text("EditCFALocationDate", header: "Edit Clog Location Date", width: Widths.AnsiChars(10))
+                .Text("EditCFALocationName", header: "Edit Clog Location By", width: Widths.AnsiChars(10))
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(20));
         }
 

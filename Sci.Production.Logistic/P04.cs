@@ -117,7 +117,7 @@ namespace Sci.Production.Logistic
                 .Text("QtyPerCTN", header: "PC/Ctn", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10)).Get(out this.col_location)
-                .Text("Remark", header: "Reamrks", width: Widths.AnsiChars(10), settings: ts);
+                .Text("Remark", header: "Remarks", width: Widths.AnsiChars(10), settings: ts);
 
             int rowIndex = 0;
             int columIndex = 0;
@@ -602,6 +602,7 @@ from (
                                                            and PLD.OrderID = TtClog.OrderID
           where (PL.Type = 'B' or PL.Type = 'L')
                 and PLD.ReceiveDate is not null
+                and PLD.CFAReceiveDate is null
                 and PLD.CTNQty = 1
                 and orders.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
             #region 組條件
