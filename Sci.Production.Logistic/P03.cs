@@ -762,11 +762,12 @@ select @MDivisionID [MDivisionID]
     ,t.ScanName [ScanName]
     ,@Userid [AddName]
     ,GETDATE() [AddDate]
-    ,[LackingQty] = ( ScanQty - ISNULL( (
-                                        SELECT SUM(pd.ShipQty)
-                                        FROM PackingList_Detail pd
-                                        WHERE  pd.ID=t.PackingListID AND pd.CTNStartNo=t.CTNStartNo) 
-                                    ,0) 
+    ,[LackingQty] = ( ISNULL( (
+                                SELECT SUM(pd.ShipQty)
+                                FROM PackingList_Detail pd
+                                WHERE  pd.ID=t.PackingListID AND pd.CTNStartNo=t.CTNStartNo) 
+                            ,0) 
+                       - ScanQty
                     )
 from #tmp t ;
 

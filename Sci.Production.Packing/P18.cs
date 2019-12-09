@@ -386,9 +386,9 @@ INSERT INTO [dbo].[PackingScan_History]
            ,'{Sci.Env.User.UserID}'
            ,GETDATE()
            ,(
-                {oriScanQty}
-                - 
                 ISNULL(  (SELECT SUM(pd.ShipQty) FROM PackingList_Detail pd WHERE pd.ID='{tmp[0]["ID"]}' AND pd.CTNStartNo='{tmp[0]["CTNStartNo"]}') ,0)
+                - 
+                {oriScanQty}
             ) ----LackingQty計算規則詳見：ISP20191801
             )
 ";
