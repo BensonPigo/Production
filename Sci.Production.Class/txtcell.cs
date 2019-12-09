@@ -35,7 +35,7 @@ namespace Sci.Production.Class
             {
                 where = string.Format(" Where junk = 0 and mdivisionid = '{0}'", mdivision);
             }
-            sql = "select distinct id from CutCell WITH (NOLOCK) " + where;
+            sql = "select distinct id from Production.dbo.CutCell WITH (NOLOCK) " + where;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
@@ -50,9 +50,9 @@ namespace Sci.Production.Class
             {
                 string tmp = null;
                 if (!string.IsNullOrWhiteSpace(mdivision))
-                    tmp = MyUtility.GetValue.Lookup("id", mdivision + str, "Cutcell", "mdivisionid+id");
+                    tmp = MyUtility.GetValue.Lookup("id", mdivision + str, "Production.dbo.Cutcell", "mdivisionid+id");
                 else
-                    tmp = MyUtility.GetValue.Lookup("id", str, "Cutcell", "id");
+                    tmp = MyUtility.GetValue.Lookup("id", str, "Production.dbo.Cutcell", "id");
 
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
@@ -65,9 +65,9 @@ namespace Sci.Production.Class
                 {
                     string cJunk = null;
                     if (!string.IsNullOrWhiteSpace(mdivision))
-                        cJunk = MyUtility.GetValue.Lookup("Junk", mdivision + str, "CutCell", "mdivisionid+id");
+                        cJunk = MyUtility.GetValue.Lookup("Junk", mdivision + str, "Production.dbo.CutCell", "mdivisionid+id");
                     else
-                        cJunk = MyUtility.GetValue.Lookup("Junk", str, "CutCell", "id");
+                        cJunk = MyUtility.GetValue.Lookup("Junk", str, "Production.dbo.CutCell", "id");
 
                     if (cJunk == "True")
                     {
