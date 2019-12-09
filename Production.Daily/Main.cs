@@ -31,6 +31,7 @@ namespace Production.Daily
         string region = string.Empty;
         string tpeMisMail = string.Empty;
         bool isTestJobLog = false;
+        bool isSkipRarCheckDate = false;
 
         public Main()
         {
@@ -55,6 +56,15 @@ namespace Production.Daily
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            if (DBProxy.Current.DefaultModuleName == "PMS_Formal")
+            {
+                this.isSkipRarCheckDate = true;
+            }
+            else
+            {
+                this.isSkipRarCheckDate = false;
+            }
 
             OnRequery();
 
@@ -579,7 +589,7 @@ Region      Succeeded       Message
             bool fileExists = true; // 用來判斷檔案是否存在 importRegion.RarName
             if (isAuto)
             {
-                if (!transferPMS.CheckRar_CreateDate(importRegion, importRegion.RarName, false))
+                if (!transferPMS.CheckRar_CreateDate(importRegion, importRegion.RarName, isSkipRarCheckDate))
                 {
                     fileExists = false;
                     String subject = "PMS transfer data (New) ERROR";
