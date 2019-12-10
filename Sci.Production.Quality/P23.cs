@@ -64,7 +64,7 @@ namespace Sci.Production.Quality
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), null, null, null, null, Sci.Env.User.Keyword).Get(out this.col_location)
+                 .CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), M: Sci.Env.User.Keyword).Get(out this.col_location)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             #region CTNStartNo 有中文字的情況之下 按照我們希望的順序排

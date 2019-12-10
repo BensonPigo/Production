@@ -82,7 +82,7 @@ namespace Sci.Production.Quality
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("QtyPerCTN", header: "PC/Ctn", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("ShipQty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), null, null, null, null, Sci.Env.User.Keyword).Get(out this.col_location)
+            .CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), M: Sci.Env.User.Keyword).Get(out this.col_location)
             .Text("Remark", header: "Remarks", width: Widths.AnsiChars(10))
             ;
         }

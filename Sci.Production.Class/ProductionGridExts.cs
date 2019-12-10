@@ -63,7 +63,7 @@ namespace Sci
         }
 
         //CFALocation
-        public static IDataGridViewGenerator CellCFALocation(this IDataGridViewGenerator gen, string propertyname, string header, IWidth width = null, DataGridViewGeneratorTextColumnSettings settings = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null, string M = "")
+        public static IDataGridViewGenerator CellCFALocation(this IDataGridViewGenerator gen, string propertyname, string header, string M = "", IWidth width = null, DataGridViewGeneratorTextColumnSettings settings = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
         {
             if (settings == null) settings = new DataGridViewGeneratorTextColumnSettings();
             settings.CharacterCasing = CharacterCasing.Upper;
