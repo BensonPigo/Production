@@ -15,6 +15,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class P20 : Sci.Win.Tems.Input1
     {
         private string reasonTypeID;
@@ -23,6 +24,7 @@ namespace Sci.Production.PPIC
         private DataTable shipApplydata1;
         private DataTable shipApplydata2;
 
+        /// <inheritdoc/>
         public P20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -33,6 +35,7 @@ namespace Sci.Production.PPIC
             this.gridQtyBrkApplybyArticleSizeDetail.AutoGenerateColumns = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -86,9 +89,11 @@ namespace Sci.Production.PPIC
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.ClearAll();
             if (this.CurrentMaintain == null)
             {
                 return;
@@ -121,6 +126,8 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
             if (!result)
             {
                 this.ShowErr(result);
+                this.BtnConfirm.Enabled = false;
+                this.BtnReject.Enabled = false;
                 return;
             }
 
@@ -169,6 +176,8 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
             if (!MyUtility.Check.Seek($@"select * from Orders where ID = '{this.CurrentMaintain["Orderid"]}'", out currOrder))
             {
                 MyUtility.Msg.WarningBox("OrderID not found!");
+                this.BtnConfirm.Enabled = false;
+                this.BtnReject.Enabled = false;
                 return;
             }
 
@@ -473,11 +482,13 @@ order by ASeq",
                 return;
             }
 
-            string updateCmd = string.Format(@"
+            string updateCmd = string.Format(
+                @"
 update OrderChangeApplication set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Confirmed','{0}',getdate())
-", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+", Sci.Env.User.UserID,
+MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -501,11 +512,13 @@ VALUES('{1}','Confirmed','{0}',getdate())
                 return;
             }
 
-            string updateCmd = string.Format(@"
+            string updateCmd = string.Format(
+                @"
 update OrderChangeApplication set Status = 'Reject', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Reject','{0}',getdate())
-", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+", Sci.Env.User.UserID,
+MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -535,7 +548,7 @@ VALUES('{1}','Reject','{0}',getdate())
             emailList.Add(MyUtility.GetValue.Lookup(sqlcmd));
             var x = emailList.Where(w => !MyUtility.Check.Empty(w)).ToList();
             string toAddress = string.Join(";", x);
-            string ccAddress = "jeff.yeh@sportscity.com.tw";
+            string ccAddress = string.Empty;
             string factory = MyUtility.GetValue.Lookup($@"select factoryID from orders with(nolock) where id = '{this.CurrentMaintain["Orderid"]}'");
             string subject = $@"== this is my test mail (Testing) ==Order Qty Change SP#{this.CurrentMaintain["Orderid"]}-{factory}";
             string description = $@"== this is my test mail (Testing) ==
@@ -543,6 +556,54 @@ VALUES('{1}','Reject','{0}',getdate())
 
             var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, true, true);
             email.ShowDialog(this);
+        }
+
+        private void ClearAll()
+        {
+            this.ClearHeader();
+            this.ClearBody();
+        }
+
+        private void ClearHeader()
+        {
+            this.txtuserCFM.TextBox1.Text = string.Empty;
+            this.TxtCFMDate.Text = string.Empty;
+            this.txtuserReject.TextBox1.Text = string.Empty;
+            this.TxtRejectDate.Text = string.Empty;
+            this.txtuserSent.DisplayBox1.Text = string.Empty;
+            this.TxtSentDate.Text = string.Empty;
+            this.txtuserApprove.DisplayBox1.Text = string.Empty;
+            this.TxtAppDate.Text = string.Empty;
+            this.txtuserJunk.DisplayBox1.Text = string.Empty;
+            this.TxtJunkDate.Text = string.Empty;
+            this.txtuserClose.DisplayBox1.Text = string.Empty;
+            this.TxtCloseDate.Text = string.Empty;
+
+            // Order
+            this.dispStyle.Text = string.Empty;
+            this.dispSeason.Text = string.Empty;
+            this.cmbCategory.SelectedValue = string.Empty;
+            this.dispBrand.Text = string.Empty;
+            this.dispProgram.Text = string.Empty;
+            this.dispOrderType.Text = string.Empty;
+            this.dispProject.Text = string.Empty;
+            this.dateCFM.Text = string.Empty;
+            this.dateDelivery.Text = string.Empty;
+            this.dateSCIDelivery.Text = string.Empty;
+            this.dispDescription.Text = string.Empty;
+            this.numFOC.Text = string.Empty;
+            this.numOderQty.Text = string.Empty;
+            this.dispModel.Text = string.Empty;
+        }
+
+        private void ClearBody()
+        {
+            this.QtybrkOrderbs.DataSource = null;
+            this.QtybrkShipbs1.DataSource = null;
+            this.QtybrkShipbs2.DataSource = null;
+            this.QtybrkApplybs.DataSource = null;
+            this.QtybrkShipApplybs1.DataSource = null;
+            this.QtybrkShipApplybs2.DataSource = null;
         }
     }
 }
