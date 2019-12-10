@@ -393,13 +393,6 @@ namespace Sci.Production.Packing
         /// <returns>Image</returns>
         private Bitmap NewQRcode(string strBarcode)
         {
-            //DataMatrix datamatrix = new DataMatrix();
-            //datamatrix.Data = strBarcode;
-            //datamatrix.X = 20f;
-            //datamatrix.ImageFormat = ImageFormat.Bmp;
-            //datamatrix.drawBarcode("c#-barcode.Bmp");
-            //return datamatrix.drawBarcode();
-
             /*
   Level L (Low)      7%  of codewords can be restored. 
   Level M (Medium)   15% of codewords can be restored. 
@@ -409,14 +402,14 @@ namespace Sci.Production.Packing
             BarcodeWriter writer = new BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
-
                 Options = new QrCodeEncodingOptions
                 {
                     //Create Photo 
-                    Height = 50,
-                    Width = 50,
+                    Height = 41,
+                    Width = 41,
+                    Margin = 0,
                     CharacterSet = "UTF-8",
-                    Margin = 1,
+                    PureBarcode = true,
                     //錯誤修正容量
                     //L水平    7%的字碼可被修正
                     //M水平    15%的字碼可被修正
@@ -427,9 +420,9 @@ namespace Sci.Production.Packing
 
             };
 
-            Bitmap resizeQRcode = new Bitmap(writer.Write(strBarcode), new Size(37, 37));
+            //Bitmap resizeQRcode = new Bitmap(writer.Write(strBarcode), new Size(38, 38));
 
-            return resizeQRcode;
+            return writer.Write(strBarcode);
         }
     }
 }
