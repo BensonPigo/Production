@@ -53,8 +53,8 @@ namespace Sci.Production.Packing
             {
                 DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
                 DualResult result;
-                bool packingListError = false;
                 List<string> notMapping_FileName = new List<string>();
+                List<string> existsCustCTNList = new List<string>();
 
                 #region 檢查表格內的每一個檔案，裡面的每一張ZPL有沒有Mapping
                 foreach (DataRow dr in dt.Rows)
@@ -68,9 +68,17 @@ namespace Sci.Production.Packing
                     foreach (var ZPL in current.ZPL_Content)
                     {
                         // 檢查Usee是否有輸入不對的PackingList ID
-                        if (!this.checkPackingList_Exists(ZPL.CustPONo, ZPL.StyleID, packingListID, ZPL.Article, ZPL.CTNStartNo, ZPL.ShipQty, ZPL.SizeCode))
+                        if (this.checkPackingList_Count(ZPL.CustPONo, ZPL.StyleID, packingListID, ZPL.Article, ZPL.CTNStartNo, ZPL.ShipQty, ZPL.SizeCode) != current.ZPL_Content.Count)
                         {
                             isAnyNotMapping = true;
+                        }
+
+                        bool existsCustCTN = MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{ZPL.CustCTN}' ");
+
+                        if (existsCustCTN)
+                        {
+                            isAnyNotMapping = true;
+                            existsCustCTNList.Add(ZPL.CustCTN);
                         }
                     }
 
@@ -92,10 +100,18 @@ namespace Sci.Production.Packing
                         this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Fail";
                     }
 
-                    MyUtility.Msg.InfoBox("PackingList# does not Mapping.");
+                    string msg = "PackingList# does not Mapping.";
+
+                    if (existsCustCTNList.Count > 0)
+                    {
+                        msg += Environment.NewLine + "CustCTN existed : " + string.Join(" , ", existsCustCTNList);
+                    }
+
+                    MyUtility.Msg.InfoBox(msg);
                     this.canConvert = false;
                     return;
                 }
+
                 // 成功狀況
                 else
                 {
@@ -119,15 +135,15 @@ INTO #tmpOrders{i}
 FROM Orders 
 WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
 
-SELECT pd.*
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo
 INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' AND pd.CustCTN = ''
-	AND p.ID='{packingListID}'
+WHERE p.Type ='B'
     AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
-    AND CTNStartNo='{ZPL.CTNStartNo}' 
+    AND pd.CustCTN = ''
+	AND p.ID='{packingListID}'
     AND Article = '{ZPL.Article}'
     AND pd.ShipQty={ZPL.ShipQty}
     AND (
@@ -140,11 +156,52 @@ WHERE p.Type ='B' AND pd.CustCTN = ''
 	        OR 
 	        pd.SizeCode='{ZPL.SizeCode}'
         )
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
 
 UPDATE pd
 SET pd.CustCTN='{ZPL.CustCTN}'
 FROM PackingList_Detail pd
 INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' + ( SELECT IIF( s.IsSSCC=1,'_1','_2')
+										 FROM ShippingMarkPicture s
+										 INNER JOIN ShippingMarkPic c ON s.Seq=c.seq AND s.Side=c.Side
+										 INNER JOIN #tmp{i} t ON c.PackingListID=t.ID
+										 WHERE s.Seq=1)
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' + ( SELECT IIF( s.IsSSCC=1,'_1','_2')
+										 FROM ShippingMarkPicture s
+										 INNER JOIN ShippingMarkPic c ON s.Seq=c.seq AND s.Side=c.Side
+										 INNER JOIN #tmp{i} t ON c.PackingListID=t.ID
+										 WHERE s.Seq=2)
+ 			)
+
 
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
@@ -189,9 +246,10 @@ DROP TABLE #tmpOrders{i},#tmp{i}
         /// <summary>
         /// 檢查User輸入的PL#是否正確
         /// </summary>
-        private bool checkPackingList_Exists(string CustPONo, string StyleID, string PackingListID, string Article, string CTNStartNo, string ShipQty, string SizeCode)
+        private int checkPackingList_Count(string CustPONo, string StyleID, string PackingListID, string Article, string CTNStartNo, string ShipQty, string SizeCode)
         {
             string cmd = string.Empty;
+
             cmd = $@"
 
 
@@ -200,15 +258,14 @@ INTO #tmpOrders0
 FROM Orders 
 WHERE CustPONo='{CustPONo}' AND StyleID='{StyleID}'
 
-SELECT pd.*
-INTO #tmp0
+SELECT [Count]= COUNT(pd.Ukey)
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' AND pd.CustCTN = ''
-	AND p.ID='{PackingListID}'
+WHERE p.Type ='B' 
     AND pd.OrderID = (SELECT ID FROM #tmpOrders0)
-    AND CTNStartNo='{CTNStartNo}' 
+    AND pd.CustCTN = ''
+	AND p.ID='{PackingListID}'
     AND Article = '{Article}'
     AND pd.ShipQty={ShipQty}
     AND (
@@ -222,14 +279,11 @@ WHERE p.Type ='B' AND pd.CustCTN = ''
 	        pd.SizeCode='{SizeCode}'
         )
 		
-SELECT pd.*
-FROM PackingList_Detail pd
-INNER JOIN #tmp0 t ON t.Ukey=pd.Ukey
 
-DROP TABLE #tmpOrders0,#tmp0
+DROP TABLE #tmpOrders0
 ";
 
-            return MyUtility.Check.Seek(cmd);
+            return MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(cmd));
 
         }
     }

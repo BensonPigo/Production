@@ -539,11 +539,14 @@ WHERE p.MDivisionID = @MDivisionID
                     string fileName = item.Key;
                     List<ZPL> ZPLs = item.Value;
                     DataTable tmpDt;
+                    DataTable tmpDtB03;
 
                     foreach (var zpl in ZPLs)
                     {
 
                         // 確認一個ZPL檔，對應到幾個PackingList
+                        #region SQL檢查對應到幾個PackingList
+
                         string sqlCmd = $@"
 
 SELECT ID ,StyleID ,POID
@@ -552,16 +555,14 @@ FROM Orders
 WHERE CustPONo='{zpl.CustPONo}' AND StyleID='{zpl.StyleID}'
 
 
-
-SELECT [PackingListID] = pd.ID
+SELECT [PackingListID]=pd.ID ,[PackingList_Ukey]=pd.Ukey
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type ='B'
     AND pd.OrderID = (SELECT ID FROM #tmoOrders)
-    AND CTNStartNo='{zpl.CTNStartNo}' 
-    AND Article = '{zpl.Article}'
     AND pd.CustCTN='' 
+    AND Article = '{zpl.Article}'
     AND pd.ShipQty={zpl.ShipQty}
     AND (
 	        pd.SizeCode in
@@ -574,12 +575,72 @@ WHERE p.Type ='B'
 	        pd.SizeCode='{zpl.SizeCode}'
         )
 
+
 DROP TABLE #tmoOrders
+
 ";
+                        #endregion
 
                         DBProxy.Current.Select(null, sqlCmd, out tmpDt);
 
-                        if (tmpDt.Rows.Count > 1 || tmpDt.Rows.Count == 0)
+                        #region SQL 檢查ShippingMarkPicture
+                        sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{zpl.CustPONo}' AND StyleID='{zpl.StyleID}'
+
+SELECT DISTINCT o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND pd.CustCTN='' 
+    AND Article = '{zpl.Article}'
+    AND pd.ShipQty={zpl.ShipQty}
+    AND (
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{zpl.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{zpl.SizeCode}'
+        )
+
+
+
+SELECT IsSSCC
+FROM ShippingMarkPicture s
+INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+WHERE IsSSCC=0
+UNION 
+SELECT IsSSCC
+FROM ShippingMarkPicture s
+INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+WHERE IsSSCC=1
+
+DROP TABLE #tmoOrders,#tmp
+";
+                        #endregion
+
+                        DBProxy.Current.Select(null, sqlCmd, out tmpDtB03);
+
+                        // 對應到PackingList_Detail的箱數
+                        int packingListDetail_Count = tmpDt.Rows.Count;
+
+                        // CustCTN是否已經存在
+                        bool existsCustCTN = MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{zpl.CustCTN}' ");
+
+                        // ShippingMarkPicture是否有建立好 相同 BrandID CustCD CTNRefno Side 不同Seq IsSCC的兩筆資料
+                        bool packingB03DataError = tmpDtB03 == null ? true : (tmpDtB03.Rows.Count == 2 ? false : true);
+
+                        // ZPL數量 大小於 PackingList_Detail的箱數  或   對應到多個PackingListID  或  CustCTN已經存在PackingList_Detail   => Mapping不成功
+                        if (ZPLs.Count != packingListDetail_Count || tmpDt.AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count() > 1 || existsCustCTN || packingB03DataError)
                         {
                             if (!this.MappingModels.Where(o => o.FileName == fileName).Any())
                             {
@@ -595,9 +656,9 @@ DROP TABLE #tmoOrders
                         }
                         else
                         {
+                            // PackingList_Detail的箱數夠
                             if (!this.MappingModels.Where(o => o.FileName == fileName).Any())
                             {
-                                // 只有1個
                                 MappingModel model = new MappingModel()
                                 {
                                     FileName = fileName,
@@ -607,6 +668,7 @@ DROP TABLE #tmoOrders
                                 this.MappingModels.Add(model);
                             }
                         }
+
                     }
                 }
 
@@ -637,24 +699,26 @@ DROP TABLE #tmoOrders
 
                         string cmd = string.Empty;
                         int i = 0;
+
+                        // 相同PackingListID Article SizeCode ShipQty，照順序寫入CustCTN、P24表頭 + 表身
                         foreach (var ZPL in current.ZPL_Content)
                         {
                             cmd += $@"
-
+----1. 整理Mapping的資料
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders{i}
 FROM Orders 
 WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
 
-SELECT pd.*
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
 INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' AND pd.CustCTN = ''
+WHERE p.Type ='B' 
 	AND p.ID='{packingListID}'
+    AND pd.CustCTN='' 
     AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
-    AND CTNStartNo='{ZPL.CTNStartNo}' 
     AND Article = '{ZPL.Article}'
     AND pd.ShipQty={ZPL.ShipQty}
     AND (
@@ -667,11 +731,66 @@ WHERE p.Type ='B' AND pd.CustCTN = ''
 	        OR 
 	        pd.SizeCode='{ZPL.SizeCode}'
         )
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
 
+----2. 更新PackingList_Detail的CustCTN
 UPDATE pd
 SET pd.CustCTN='{ZPL.CustCTN}'
 FROM PackingList_Detail pd
 INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' + ( SELECT IIF( s.IsSSCC=1,'_1','_2')
+										 FROM ShippingMarkPicture s
+										 INNER JOIN ShippingMarkPic c ON s.Seq=c.seq AND s.Side=c.Side
+										 INNER JOIN #tmp{i} t ON c.PackingListID=t.ID
+										 WHERE s.Seq=1)
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' + ( SELECT IIF( s.IsSSCC=1,'_1','_2')
+										 FROM ShippingMarkPicture s
+										 INNER JOIN ShippingMarkPic c ON s.Seq=c.seq AND s.Side=c.Side
+										 INNER JOIN #tmp{i} t ON c.PackingListID=t.ID
+										 WHERE s.Seq=2)
+ 			)
 
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
@@ -795,6 +914,8 @@ DROP TABLE #tmpOrders{i},#tmp{i}
             public List<ZPL> ZPL_Content { get; set; }
 
             public string PackingListID { get; set; }
+
+            public string PackingList_Ukey { get; set; }
         }
 
         #endregion
