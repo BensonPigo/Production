@@ -854,6 +854,18 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 StringBuilder qAOutput = new StringBuilder();
                 int qAQty = 0;
 
+                foreach (DataRow dr in e.SubDetails.Rows)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        if (MyUtility.Convert.GetString(dr["SewingOutput_DetailUKey"]) == MyUtility.Convert.GetString(this.CurrentDetailData["UKey"]) && !MyUtility.Check.Empty(dr["QAQty"]))
+                        {
+                            qAOutput.Append(string.Format("{0}*{1},", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["QAQty"])));
+                            qAQty = qAQty + MyUtility.Convert.GetInt(dr["QAQty"]);
+                        }
+                    }
+                }
+
                 e.Detail["QAOutput"] = qAOutput.Length > 0 ? qAOutput.ToString() : string.Empty;
 
                 // 總計第三層 Qty 填入第二層 QAQty
