@@ -823,7 +823,9 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	drop table #tmpMachinePending_Detail
 
-	update dbo.Machine set Status = 'Pending',EstFinishRepairDate =null where ID in (select MachineID from @Tdebit where TPEReject = 0)  
+	update dbo.Machine set Status = 'Pending',EstFinishRepairDate =null 
+	where ID in (select MachineID from @Tdebit where TPEReject = 0)  
+	and status != 'Disposed'
 
 	update m set m.Status = 'Good'
 	from dbo.Machine m

@@ -55,11 +55,12 @@
     [CFALocationID]       VARCHAR (10)    DEFAULT ('') NULL,
     [EditCFALocationDate] DATETIME        NULL,
     [EditCFALocationName] VARCHAR (10)    DEFAULT ('') NULL,
+    [ClogPulloutName]     VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [ClogPulloutDate]     DATE            NULL,
+    [PulloutTransport]    VARCHAR (1)     DEFAULT ('') NOT NULL,
+    [PulloutTransportNo]  VARCHAR (10)    DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
-
-
-
 
 
 
@@ -189,13 +190,6 @@ CREATE NONCLUSTERED INDEX [IX_PackingList_Detail_OrgPK]
 
 GO
 
-
-
-GO
-
-
-
-GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'更新CFALocation人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditCFALocationName';
 
 
@@ -205,12 +199,20 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'更新CFALo
 
 GO
 
-
-
-GO
-
-
-
-GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA儲位代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'CFALocationID';
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'卡車/貨櫃代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'PulloutTransportNo';
 
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裝上卡車/貨櫃', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'PulloutTransport';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'紙箱從倉庫移出準備出貨(裝上卡車/貨櫃)的人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ClogPulloutName';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'紙箱從倉庫移出準備出貨(裝上卡車/貨櫃)的日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ClogPulloutDate';
+
+GO

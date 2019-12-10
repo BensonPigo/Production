@@ -149,6 +149,7 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             string isMorethenOrderQty = "0")
         {
             string sqlcmd = $@"
+-- Top
 -- 1.	尋找指定訂單 Fabric Combo + Fabric Panel Code
 -- 使用資料表 Bundle 去除重複即可得到每張訂單 Fabric Combo + Fabric Panel Code + Article + SizeCode
 select	distinct
@@ -163,7 +164,7 @@ into #AllOrders
 from Bundle_Detail bd
 inner join Bundle bun on bun.id = bd.id
 inner join Orders os  WITH (NOLOCK) on bun.Orderid = os.ID and bun.MDivisionID = os.MDivisionID
-inner join {tempTable} t on t.OrderID = bun.Orderid
+where exists (select 1 from {tempTable} t where t.OrderID = os.ID)
 
 select distinct bunD.ID
 		, bunD.BundleGroup
@@ -175,16 +176,19 @@ select distinct bunD.ID
 		, bun.Article
 		, bunD.Sizecode
 		, bunD.PatternDesc
+		, bunD.Qty
+		, bunD.IsPair
+		, bunD.Patterncode
 into #tmp_Bundle_QtyBySubprocess
 from Bundle bun
 INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
 inner join Bundle_Detail bunD on bunD.Id = bun.ID
-inner join #AllOrders x0 on bun.Orderid = x0.Orderid
+where exists (select 1 from  #AllOrders x0 where bun.Orderid = x0.Orderid
 		and bun.PatternPanel = x0.PatternPanel
 		and bun.FabricPanelCode = x0.FabricPanelCode
 		and bun.Article = x0.Article
 		and bunD.Sizecode = x0.Sizecode
-	    and bunD.PatternDesc = x0.PatternDesc
+	    and bunD.PatternDesc = x0.PatternDesc)
 ";
 
             foreach (string subprocessID in subprocessIDs)
@@ -202,6 +206,7 @@ inner join #AllOrders x0 on bun.Orderid = x0.Orderid
                 // --b.QtyBySubprocess
                 // --  部位有須要用 X 外加工計算
                 sqlcmd += $@"
+/*******************   {subprocessIDtmp} start  ********************/
 select distinct	st1.OrderID,
 		st1.POID,
 		st1.PatternPanel,
@@ -275,7 +280,6 @@ into #CutpartBySet{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st2
 group by st2.Orderid, st2.Article, st2.Sizecode
 
-
 select	st0.Orderid
 		, SubprocessId=sub.id
 		, sub.InOutRule
@@ -294,21 +298,14 @@ into #BundleInOutDetail{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
 inner join SubProcess sub on sub.ID = '{subprocessID}'
 left join Order_SizeCode os with (nolock) on os.ID = st0.POID and os.SizeCode = st0.SizeCode
-outer apply(
-	select bunD.BundleGroup, bunD.Qty, bunD.BundleNo,bunD.IsPair
-	from Bundle bun with (nolock) 
-	inner join Bundle_Detail bunD with (nolock)  on bunD.Id = bun.id 
-	where bun.Orderid = st0.Orderid and 
-							bun.PatternPanel = st0.PatternPanel and
-							bun.FabricPanelCode = st0.FabricPanelCode and
-							bun.Article = st0.Article  and
-							bunD.Patterncode = st0.Patterncode and
-							bunD.Sizecode = os.SizeCode
-)bund
+left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid 
+							and bunD.PatternPanel = st0.PatternPanel 
+							and	bunD.FabricPanelCode = st0.FabricPanelCode 
+							and	bunD.Article = st0.Article  
+							and	bunD.Patterncode = st0.Patterncode 
+							and	bunD.Sizecode = os.SizeCode 
 left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = sub.ID and isnull(bunIO.RFIDProcessLocationID,'') = ''
 where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
-
-
 
 select	Orderid
 		, SubprocessId
@@ -474,8 +471,6 @@ outer apply (
 ) IOQtyPerPcs
 where FinishedQty is not null
 
-
-
 drop table #QtyBySetPerCutpart{subprocessIDtmp}, #BundleInOutDetail{subprocessIDtmp}, #CutpartBySet{subprocessIDtmp}, #FinalQtyBySet{subprocessIDtmp}, #BundleInOutQty{subprocessIDtmp}
 ";
                 if (bySP)
@@ -490,11 +485,11 @@ from(
 ) minArticle
 group by OrderID
 ";
-                }
+                } 
+
+                sqlcmd += Environment.NewLine + $@"/*******************   {subprocessIDtmp} END  ********************/";
             }
-
-
-            sqlcmd += " drop table #AllOrders, #tmp_Bundle_QtyBySubprocess; ";
+            sqlcmd += Environment.NewLine + " drop table #AllOrders, #tmp_Bundle_QtyBySubprocess; " + Environment.NewLine;
             return sqlcmd;
         }
         #endregion
