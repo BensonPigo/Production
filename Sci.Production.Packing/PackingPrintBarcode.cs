@@ -11,6 +11,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ZXing;
+using ZXing.QrCode;
+using ZXing.QrCode.Internal;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace Sci.Production.Packing
@@ -247,6 +250,124 @@ namespace Sci.Production.Packing
         }
 
         /// <summary>
+        /// PrintQRcode
+        /// </summary>
+        /// <param name="packingID">packingID</param>
+        /// <param name="ctn1">ctn1</param>
+        /// <param name="ctn2">ctn2</param>
+        /// <param name="print_type">print_type</param>
+        /// <param name="country">country</param>
+        /// <returns>DualResult</returns>
+        public DualResult PrintQRcode(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
+        {
+            DataTable printData;
+            int pageItemCount = 11;
+            DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
+            if (!result)
+            {
+                return result;
+            }
+            else if (printData == null || printData.Rows.Count == 0)
+            {
+                return new DualResult(false, "Data not found.");
+            }
+
+            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
+            winword.Visible = false;
+            object printFile;
+            Microsoft.Office.Interop.Word._Document document;
+            Word.Table tables = null;
+
+            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_QRcode.dotx";
+            document = winword.Documents.Add(ref printFile);
+
+            try
+            {
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                #region 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                int page = (printData.Rows.Count / pageItemCount) + ((printData.Rows.Count % pageItemCount > 0) ? 1 : 0);
+                for (int i = 1; i < page; i++)
+                {
+                    winword.Selection.MoveDown();
+                    if (page > 1)
+                    {
+                        winword.Selection.InsertNewPage();
+                    }
+
+                    winword.Selection.Paste();
+                }
+                #endregion
+                #region 填入資料
+                for (int i = 0; i < page; i++)
+                {
+                    tables = table[i + 1];
+
+                    for (int p = i * pageItemCount; p < (i * pageItemCount) + pageItemCount; p++)
+                    {
+                        if (p >= printData.Rows.Count)
+                        {
+                            break;
+                        }
+
+                        #region 準備資料
+                        string barcode = printData.Rows[p]["SCICtnNo"].ToString();
+                        string packingNo = "PackingNo.: " + printData.Rows[p]["ID"];
+                        string spNo = "SP No.: " + printData.Rows[p]["OrderID"];
+                        string cartonNo = "Carton No.: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
+                        string poNo = "PO No.: " + printData.Rows[p]["PONo"];
+                        string sizeQty = "Size/Qty: " + printData.Rows[p]["SizeCode"] + "/" + printData.Rows[p]["ShipQty"];
+                        #endregion
+
+                        tables.Cell(((p % pageItemCount) * 6) + 1, 1).Range.Text = packingNo;
+                        tables.Cell(((p % pageItemCount) * 6) + 2, 1).Range.Text = spNo;
+                        tables.Cell(((p % pageItemCount) * 6) + 3, 1).Range.Text = cartonNo;
+                        tables.Cell(((p % pageItemCount) * 6) + 4, 1).Range.Text = poNo;
+                        tables.Cell(((p % pageItemCount) * 6) + 5, 1).Range.Text = sizeQty;
+
+                        Bitmap oriBitmap = this.NewQRcode(barcode);
+
+                        Clipboard.SetImage(oriBitmap);
+                        tables.Cell(((p % pageItemCount) * 6) + 3, 2).Range.Paste();
+                        Word.Shape qrCodeImg = tables.Cell(((p % pageItemCount) * 6) + 3, 2).Range.InlineShapes[1].ConvertToShape();
+                        qrCodeImg.WrapFormat.Type = Word.WdWrapType.wdWrapFront;
+                        qrCodeImg.RelativeHorizontalPosition = Word.WdRelativeHorizontalPosition.wdRelativeHorizontalPositionColumn;
+                    }
+                }
+                #endregion
+                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+
+                #region Save & Show Word
+                winword.Visible = true;
+                Marshal.ReleaseComObject(winword);
+                Marshal.ReleaseComObject(document);
+                Marshal.ReleaseComObject(table);
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                if (winword != null)
+                {
+                    winword.Quit();
+                }
+
+                return new DualResult(false, "Export word error.", ex);
+            }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+
+            return new DualResult(true);
+
+        }
+
+        /// <summary>
         /// 將 Barcode 轉換成圖片
         /// </summary>
         /// <param name="strBarcode">Barcode 內容</param>
@@ -263,6 +384,52 @@ namespace Sci.Production.Packing
             code.Resolution = 600;
             code.drawBarcode("c#-barcode.Bmp");
             return code.drawBarcode();
+        }
+
+        /// <summary>
+        /// 將 QR code 轉換成圖片
+        /// </summary>
+        /// <param name="strBarcode">Barcode 內容</param>
+        /// <returns>Image</returns>
+        private Bitmap NewQRcode(string strBarcode)
+        {
+            //DataMatrix datamatrix = new DataMatrix();
+            //datamatrix.Data = strBarcode;
+            //datamatrix.X = 20f;
+            //datamatrix.ImageFormat = ImageFormat.Bmp;
+            //datamatrix.drawBarcode("c#-barcode.Bmp");
+            //return datamatrix.drawBarcode();
+
+            /*
+  Level L (Low)      7%  of codewords can be restored. 
+  Level M (Medium)   15% of codewords can be restored. 
+  Level Q (Quartile) 25% of codewords can be restored. 
+  Level H (High)     30% of codewords can be restored. 
+*/
+            BarcodeWriter writer = new BarcodeWriter
+            {
+                Format = BarcodeFormat.QR_CODE,
+
+                Options = new QrCodeEncodingOptions
+                {
+                    //Create Photo 
+                    Height = 50,
+                    Width = 50,
+                    CharacterSet = "UTF-8",
+                    Margin = 1,
+                    //錯誤修正容量
+                    //L水平    7%的字碼可被修正
+                    //M水平    15%的字碼可被修正
+                    //Q水平    25%的字碼可被修正
+                    //H水平    30%的字碼可被修正
+                    ErrorCorrection = ErrorCorrectionLevel.H
+                }
+
+            };
+
+            Bitmap resizeQRcode = new Bitmap(writer.Write(strBarcode), new Size(37, 37));
+
+            return resizeQRcode;
         }
     }
 }
