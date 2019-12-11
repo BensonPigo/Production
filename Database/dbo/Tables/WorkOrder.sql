@@ -7,7 +7,7 @@
     [CutRef]              VARCHAR (6)    CONSTRAINT [DF_WorkOrder_CutRef] DEFAULT ('') NULL,
     [OrderID]             VARCHAR (13)   CONSTRAINT [DF_WorkOrder_OrderID] DEFAULT ('') NULL,
     [CutplanID]           VARCHAR (13)   CONSTRAINT [DF_WorkOrder_CutplanID] DEFAULT ('') NULL,
-    [Cutno]               NUMERIC (6)     NULL,
+    [Cutno]               NUMERIC (6)    NULL,
     [Layer]               NUMERIC (5)    CONSTRAINT [DF_WorkOrder_Layer] DEFAULT ((0)) NULL,
     [Colorid]             VARCHAR (6)    CONSTRAINT [DF_WorkOrder_Colorid] DEFAULT ('') NULL,
     [Markername]          VARCHAR (20)   CONSTRAINT [DF_WorkOrder_Markername] DEFAULT ('') NULL,
@@ -37,9 +37,12 @@
     [StraightLength]      VARCHAR (15)   NULL,
     [CurvedLength]        VARCHAR (15)   NULL,
     [SpreadingNoID]       VARCHAR (3)    NULL,
-    [Shift] VARCHAR NOT NULL DEFAULT (''), 
+    [Shift]               VARCHAR (1)    DEFAULT ('') NOT NULL,
+    [WKETA]               DATE           NULL,
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

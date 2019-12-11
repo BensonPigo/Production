@@ -39,6 +39,7 @@ namespace Sci.Production.Cutting
         Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
         Ict.Win.UI.DataGridViewTextBoxColumn col_cutno;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_layer;
+        Ict.Win.UI.DataGridViewDateBoxColumn col_wketa;        
         Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
         Ict.Win.UI.DataGridViewTextBoxColumn col_cutref;
         Ict.Win.UI.DataGridViewTextBoxColumn col_sizeRatio_size;
@@ -500,6 +501,22 @@ where WorkOrderUkey={0}", masterID);
                     }
                 }
             };
+            DataGridViewGeneratorDateColumnSettings WKETA = new DataGridViewGeneratorDateColumnSettings();
+            WKETA.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (e.Button == MouseButtons.Right)
+                {
+                    P02_WKETA item = new P02_WKETA(this.CurrentMaintain, dr);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.No) { dr["WKETA"] = DBNull.Value; }
+                    if (result == DialogResult.Yes) { dr["WKETA"] = itemx.WKETA; }
+                    dr.EndEdit();
+                }
+            };
+
+
             DataGridViewGeneratorNumericColumnSettings breakqty = new DataGridViewGeneratorNumericColumnSettings();
             breakqty.EditingMouseDoubleClick += (s, e) =>
             {
@@ -555,6 +572,7 @@ where WorkOrderUkey={0}", masterID);
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out col_seq1)
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2)).Get(out col_seq2)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("WKETA", header: "WK ETA", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WKETA).Get(out col_wketa)
                 .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), settings: EstCutDate).Get(out col_estcutdate)
                 .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(2)).Get(out col_SpreadingNoID)
@@ -919,6 +937,32 @@ where WorkOrderUkey={0}", masterID);
 
             };
             col_estcutdate.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            #endregion
+            #region col_wketa
+            col_wketa.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode)
+                { ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true; ((Ict.Win.UI.DateBox)e.Control).Enabled = true; }
+                else { ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true; ((Ict.Win.UI.DateBox)e.Control).Enabled = false; }
+
+            };
+            col_wketa.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);

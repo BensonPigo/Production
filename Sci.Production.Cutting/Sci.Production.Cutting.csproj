@@ -222,6 +222,12 @@
     <Compile Include="P02_OriginalData.Designer.cs">
       <DependentUpon>P02_OriginalData.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_WKETA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_WKETA.Designer.cs">
+      <DependentUpon>P02_WKETA.cs</DependentUpon>
+    </Compile>
     <Compile Include="P04.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -502,6 +508,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_OriginalData.resx">
       <DependentUpon>P02_OriginalData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_WKETA.resx">
+      <DependentUpon>P02_WKETA.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P04.resx">
       <DependentUpon>P04.cs</DependentUpon>
