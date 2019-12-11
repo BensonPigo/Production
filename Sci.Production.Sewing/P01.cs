@@ -3661,6 +3661,7 @@ left join orders o  with(nolock) on o.id = t.OrderId
                 ((DataTable)this.detailgridbs.DataSource).ImportRow(row);
             }
 
+            List<string> remarkList = new List<string>();
             foreach (DataRow item in this.DetailDatas)
             {
                 frommes = $@"
@@ -3722,6 +3723,7 @@ select a.ID,a.SewingOutput_DetailUkey,a.OrderId,a.ComboType,a.Article,a.SizeCode
        , a.OrderQty - a.AccumQty - Last.QAQty as BalQty
        , isnull(os.Seq,0) as Seq
        , OldDetailKey = ''
+       , DQSQAQty = a.QAQty
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID 
@@ -3745,6 +3747,20 @@ order by a.OrderId,os.Seq
                     return;
                 }
 
+                // 組remark
+                List<string> remarkList2 = new List<string>(); // 填入第2層用
+                foreach (DataRow dataRow in sewDt2.Rows)
+                {
+                    int dQSQAQty = (int)MyUtility.Convert.GetDecimal(dataRow["DQSQAQty"]);
+                    int qAQtyn = (int)MyUtility.Convert.GetDecimal(dataRow["QAQty"]);
+                    if (dQSQAQty > qAQtyn)
+                    {
+                        remarkList.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {dataRow["BalQty"]}");
+                        remarkList2.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {dataRow["BalQty"]}");
+                    }
+                }
+
+                sewDt2.Columns.Remove("DQSQAQty");
                 this.GetSubDetailDatas(item, out subDetailData);
                 foreach (DataRow ddr in sewDt2.Rows)
                 {
@@ -3777,7 +3793,6 @@ order by a.OrderId,os.Seq
                             qAOutput.Append(string.Format("{0}*{1},", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["QAQty"])));
                             qAQty = qAQty + MyUtility.Convert.GetInt(dr["QAQty"]);
                         }
-
                     }
                 }
 
@@ -3798,9 +3813,23 @@ order by a.OrderId,os.Seq
 
                 this.CalculateDefectQty(item);
 
+                string remark = string.Empty;
+                if (remarkList2.Count > 0)
+                {
+                    remark = string.Join("\r\n", remarkList2);
+                    item["remark"] = remark;
+                }
+
                 // 將第2層重新設定為新增狀態
                 item.AcceptChanges();
                 item.SetAdded();
+            }
+
+            string msg = string.Empty;
+            if (remarkList.Count > 0)
+            {
+                msg = string.Join("\r\n", remarkList);
+                MyUtility.Msg.WarningBox(msg);
             }
 
             // 總計第二層 Qty 填入第一層 QAQty
