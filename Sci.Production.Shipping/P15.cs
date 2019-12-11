@@ -49,8 +49,8 @@ select Blno
 						  and Type = 'WK_Payer')
 		, ETA_ETC = DATEDIFF(Day, closeDate, ETA)--, display_ETA_ETC
 		, ETA_ETD = DATEDIFF(Day, EtD, ETA)--, display_ETA_ETD
-		, Port_ETA = iif (isnull (PortArrival, '') = '', 0, DateDiff (Day, PortArrival, ETA))--, display_Port_ETA		
-		, Whse_ETA = iif (isnull (WhseArrival, '') = '', 0, DateDiff (Day, WhseArrival, ETA))--, display_Whse_ETA
+		, Port_ETA = iif (isnull (PortArrival, '') = '', 0, DateDiff (Day, ETA, PortArrival))--, display_Port_ETA		
+		, Whse_ETA = iif (isnull (WhseArrival, '') = '', 0, DateDiff (Day, ETA, WhseArrival))--, display_Whse_ETA
 		, FormStatus = (select name
 						from dbo.DropDownList
 						where id = FormStatus
@@ -102,9 +102,9 @@ where id = '{this.CurrentMaintain["ID"]}'
 
 select	TtlPackages = sum (TtlE.Packages)
 		, TtlWeightKg = sum (TtlE.WeightKg)
-		, Ttl20 = Concat ('20 x ', sum (Container.Count20))
-		, Ttl40 = Concat ('40 x ', sum (Container.Count40))
-		, TtlHQ = Concat ('HQ x ', sum (Container.CountHQ))
+		, Ttl20 = Concat ('20 x ', isnull (sum (Container.Count20), 0))
+		, Ttl40 = Concat ('40 x ', isnull (sum (Container.Count40), 0))
+		, TtlHQ = Concat ('HQ x ', isnull (sum (Container.CountHQ), 0))
 		, FOBCBM = sum(Isnull(getCBMFOB.Cbm,0))
 		, FORCBM = sum(Isnull(getCBMFOR.Cbm,0))
 		, FOR_CYCBM = sum(Isnull(getCBMFOR_CY.CbmFor, 0))
@@ -180,6 +180,7 @@ and Junk = 0
                 this.numForCBMCY.Value = MyUtility.Convert.GetDecimal(dtBl.Rows[0]["FOR_CYCBM"]);
             }
 
+            this.detailgrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -232,14 +233,11 @@ order by e.ID
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    if (e.RowIndex != -1)
+                    if (e.RowIndex != -1 && this.CurrentDetailData["ContainerNo"].Empty() == false)
                     {
-                        string exportID = this.CurrentMaintain["ID"].ToString();
-
-                        // 因為在Default Filter有篩過 MainExportID = ID，因此直接丟ID進去就好
+                        string exportID = this.CurrentDetailData["ID"].ToString();
                         P15_Containers form = new P15_Containers(exportID);
                         form.ShowDialog();
-
                     }
                 }
             };
@@ -248,13 +246,13 @@ order by e.ID
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("ID", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("FactoryID", header: "Factory", iseditingreadonly: true, width: Widths.AnsiChars(5))
-                .Text("CYCFS", header: "CYCFS", iseditingreadonly: true, width: Widths.AnsiChars(13))
+                .Text("CYCFS", header: "CYCFS", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("CountAll", header: "Ttl Qty", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(5))
-                .Numeric("Count20", header: "20", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(5))
-                .Numeric("Count40", header: "40", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(5))
-                .Numeric("CountHQ", header: "HQ", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(5))
-                .Text("ShipmentTerm", header: "Term", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                .Numeric("CBM", header: "CBM", iseditingreadonly: true, decimal_places: 3, width: Widths.AnsiChars(3))
+                .Numeric("Count20", header: "20", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(4))
+                .Numeric("Count40", header: "40", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(4))
+                .Numeric("CountHQ", header: "HQ", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(4))
+                .Text("ShipmentTerm", header: "Term", iseditingreadonly: true, width: Widths.AnsiChars(5))
+                .Numeric("CBM", header: "CBM", iseditingreadonly: true, decimal_places: 3, width: Widths.AnsiChars(4))
                 .Numeric("Packages", header: "Packages", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(4))
                 .Numeric("WeightKg", header: "Weight", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(5))
                 .CheckBox("NoImportCharges", header: "No Import Charge", iseditable: false, width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)

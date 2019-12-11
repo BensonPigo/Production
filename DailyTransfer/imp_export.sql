@@ -215,8 +215,14 @@ Te2.InvoiceNo)
 	RAISERROR('Import Export_Container - Starts',0,0)
 
 	Merge Production.dbo.Export_Container as t 
-	using Trade_To_Pms.dbo.Export_Container as s WITH (NOLOCK)
-		on  t.ID = s.ID AND t.Container = s.Container
+	using (
+		select *
+		from Trade_To_Pms.dbo.Export_Container ec WITH (NOLOCK)
+		where exists (
+					select 1
+					from Production.dbo.Export e
+					where e.id = ec.id)
+	) as s on t.ID = s.ID AND t.Container = s.Container
 	when matched then 
 		update set
 			  t.Seq				=  s.Seq
@@ -235,11 +241,16 @@ Te2.InvoiceNo)
 	DELETE pms
 	FROM Production.dbo.Export_Container pms
 	WHERE   EXISTS (
-				SELECT 1 FROM Trade_To_Pms.dbo.Export e WHERE e.ID=pms.ID
+				SELECT 1 
+				FROM Trade_To_Pms.dbo.Export e 
+				WHERE e.ID=pms.ID					  
+					  and FactoryID in (select id from @Sayfty)
 			) -- 存在於Trade轉出的WK#
-			AND 
-			NOT EXISTS(
-				SELECT 1 FROM Trade_To_Pms.dbo.Export_Container ec WHERE ec.ID=pms.ID AND ec.Container=pms.Container	
+			AND NOT EXISTS(
+				SELECT 1 
+				FROM Trade_To_Pms.dbo.Export_Container ec 
+				WHERE ec.ID=pms.ID 
+					  AND ec.Container=pms.Container	
 			)--不存在Trade轉出的Container
 	;
 drop table #TExport;

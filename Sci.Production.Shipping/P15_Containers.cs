@@ -9,12 +9,12 @@ namespace Sci.Production.Shipping
 {
     public partial class P15_Containers : Sci.Win.Tems.Base
     {
-        private string _mainExportId;
+        private string _ExportId;
 
-        public P15_Containers(string mainExportId)
+        public P15_Containers(string ExportId)
         {
             this.InitializeComponent();
-            this._mainExportId = mainExportId;
+            this._ExportId = ExportId;
         }
 
         protected override void OnFormLoaded()
@@ -33,7 +33,7 @@ select	e.ID
 		, ec.CartonQty
 from dbo.Export as e
 inner join dbo.Export_Container as ec on ec.ID = e.ID
-where e.MainExportId = '{this._mainExportId}'
+where e.ID = '{this._ExportId}'
 ORDER BY ec.Seq
 ";
             #endregion
@@ -48,13 +48,12 @@ ORDER BY ec.Seq
             this.listControlBindingSource1.DataSource = dt;
 
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("Type", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .Text("Type", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(5))
                 .Text("container", header: "Container", iseditingreadonly: true, width: Widths.AnsiChars(25))
                 .Numeric("WeightKg", header: "G.W.", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(10))
-                .Numeric("CartonQty", header: "Ttl Packages", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(10))
+                .Numeric("CartonQty", header: "Ttl Packages", iseditingreadonly: true, decimal_places: 0, width: Widths.AnsiChars(5))
                 ;
         }
-
 
         private void Button1_Click(object sender, EventArgs e)
         {
