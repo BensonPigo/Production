@@ -562,6 +562,8 @@ select * from FtyExportData ", e.FormattedValue.ToString());
             .Numeric("AmtFty", header: "Share Amt - Fty", decimal_places: 2)
             .Numeric("RatioOther", header: "Other Ratio", decimal_places: 2)
             .Numeric("AmtOther", header: "Share Amt - Other", decimal_places: 2)
+            .Numeric("APPExchageRate", header: "APP Exchage Rate", decimal_places: 6)
+            .Numeric("APPAmt", header: "APP Amt (USD)", decimal_places: 2)
             ;
             #endregion
             this.QueryData();
@@ -678,9 +680,12 @@ select
 	sa.RatioFty,
 	sa.AmtFty,
 	sa.RatioOther,
-	sa.AmtOther
+	sa.AmtOther,
+    sap.APPExchageRate,
+    APPAmt=iif(APPExchageRate=0,0, round((sa.AmtFty+sa.AmtOther)/sap.APPExchageRate,2))
 from ShareExpense_APP sa with(nolock)
 inner join AirPP with(nolock) on AirPP.id = sa.AirPPID
+inner  join ShippingAP sap on sap.ID = sa.ShippingAPID
 where sa.Junk = 0
 and sa.ShippingAPID = '{this.apData["ID"]}' 
 and sa.InvNo in ({invNos})
