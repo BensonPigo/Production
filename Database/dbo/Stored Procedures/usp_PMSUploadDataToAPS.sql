@@ -349,34 +349,38 @@ from
 group by [POCode],[Process],[Facility],[PDate],[Color],[XSize]
 '
 	END
+	EXEC(@Cmd)
+	EXEC(@Cmd2)
+	EXEC(@Cmd3)
+	EXEC(@Cmd4)
 
-	Begin Try
-		EXEC(@Cmd)		
-	End Try
-	Begin Catch
-		PRINT 'ERROR command1' 
-		rollback tran
-		EXECUTE [usp_GetErrorString];
-	End Catch
-	Begin Try
-		EXEC(@Cmd2)
-	End Try
-	Begin Catch
-		PRINT 'ERROR command2' 
-		EXECUTE [usp_GetErrorString];
-	End Catch
-	Begin Try
-		EXEC(@Cmd3)
-	End Try
-	Begin Catch
-		PRINT 'ERROR command3' 
-		EXECUTE [usp_GetErrorString];
-	End Catch
-	Begin Try
-		EXEC(@Cmd4)
-	End Try
-	Begin Catch
-		PRINT 'ERROR command4'
-		EXECUTE [usp_GetErrorString];
-	End Catch
+	--Begin Try
+	--	EXEC(@Cmd)		
+	--End Try
+	--Begin Catch
+	--	PRINT 'ERROR command1' 
+	--	rollback tran
+	--	EXECUTE [usp_GetErrorString];
+	--End Catch
+	--Begin Try
+	--	EXEC(@Cmd2)
+	--End Try
+	--Begin Catch
+	--	PRINT 'ERROR command2' 
+	--	EXECUTE [usp_GetErrorString];
+	--End Catch
+	--Begin Try
+	--	EXEC(@Cmd3)
+	--End Try
+	--Begin Catch
+	--	PRINT 'ERROR command3' 
+	--	EXECUTE [usp_GetErrorString];
+	--End Catch
+	--Begin Try
+	--	EXEC(@Cmd4)
+	--End Try
+	--Begin Catch
+	--	PRINT 'ERROR command4'
+	--	EXECUTE [usp_GetErrorString];
+	--End Catch
 END
