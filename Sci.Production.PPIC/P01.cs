@@ -808,7 +808,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                 }
                 else
                 {
-                    this.CurrentMaintain["FtyGroup"] = MyUtility.GetValue.Lookup("FTYGroup", this.txtmfactory.Text, "Orders", "ID");
+                    this.CurrentMaintain["FtyGroup"] = MyUtility.GetValue.Lookup("FTYGroup", this.txtmfactory.Text, "Factory", "ID");
                 }
             }
         }
