@@ -470,23 +470,14 @@ order by ID
             // 表頭Pay by Check打勾 = 表身Default全不勾
             // 表頭Pay by Check沒打勾 = 表身Default打勾不能超過一筆
 
-            // 表頭Pay by Check打勾時, 表身Default全不勾
-            //foreach (DataRow dr in dt.Rows)
-            //{
-            //    if (this.chkPaybyCheck.Checked)
-            //    {
-            //        dr["IsDefault"] = false;
-            //    }
-            //}
-            
-
             foreach (DataRow dr in dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted))
             {
                 if (dr["IsDefault"] == DBNull.Value)
                 {
                     dr["IsDefault"] = false;
                 }
-                // 打勾Default的那筆, 欄位除[Intermediary Bank][Intermediary Bank-SWIFT Code][Remark], 其他欄位必填
+
+                // 打勾Default的那筆, 欄位除["BranchCode"] ["BranchName"] [Intermediary Bank][Intermediary Bank-SWIFT Code][Remark], 其他欄位必填
                 if (Convert.ToBoolean(dr["IsDefault"]))
                 {
                     defaultCount += 1;
@@ -494,8 +485,6 @@ order by ID
                         MyUtility.Check.Empty(dr["AccountNo"]) ||
                         MyUtility.Check.Empty(dr["AccountName"]) ||
                         MyUtility.Check.Empty(dr["BankName"]) ||
-                        MyUtility.Check.Empty(dr["BranchCode"]) ||
-                        MyUtility.Check.Empty(dr["BranchName"]) ||
                         MyUtility.Check.Empty(dr["CountryID"]) ||
                         MyUtility.Check.Empty(dr["City"]) ||
                         MyUtility.Check.Empty(dr["SWIFTCode"])
@@ -546,7 +535,7 @@ order by ID
 
                 if (hasEmpty || allEmpty)
                 {
-                    MyUtility.Msg.InfoBox("If default is checked, column can not be empty except [Intermediary Bank] , [Intermediary Bank-SWIFT Code] and [Remark]." + Environment.NewLine + "If default is NOT checked, column can not be all empty."); 
+                    MyUtility.Msg.InfoBox("If default is checked, column can not be empty except [BranchCode] [BranchName] [Intermediary Bank] , [Intermediary Bank-SWIFT Code] and [Remark]." + Environment.NewLine + "If default is NOT checked, column can not be all empty."); 
                     return false;
                 }
             }
