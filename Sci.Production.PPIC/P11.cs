@@ -108,8 +108,21 @@ order by ld.Seq1,ld.Seq2", masterID);
             DataGridViewGeneratorNumericColumnSettings outqty = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings requestqty = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings issueqty = new DataGridViewGeneratorNumericColumnSettings();
-            Dictionary<string, string> processSource = new Dictionary<string, string>() { { "Automation", "Automation" }, { "Bonding", "Bonding" }, { "Cutting", "Cutting" }, { "Embroidery", "Embroidery" }, { "Heat transfer", "Heat transfer" }, { "Printing", "Printing" }, { "Sewing", "Sewing" }, { "Loading", "Loading" }, { "PPA", "PPA" } };
-            DataGridViewGeneratorComboBoxColumnSettings process = new DataGridViewGeneratorComboBoxColumnSettings() { DataSource = new BindingSource(processSource, null), ValueMember = "Value", DisplayMember = "Value" };
+            Dictionary<string, string> processSource = new Dictionary<string, string>() {
+                { "Automation", "Automation" },
+                { "Bonding", "Bonding" },
+                { "Cutting", "Cutting" },
+                { "Embroidery", "Embroidery" },
+                { "Heat transfer", "Heat transfer" },
+                { "Printing", "Printing" },
+                { "Sewing", "Sewing" },
+                { "Loading", "Loading" },
+                { "PPA", "PPA" },
+                { "FIFO", "FIFO" },
+                { "Pad print", "Pad print" },
+                { "PPIC", "PPIC" },
+                { "Thread", "Thread" }
+            }; DataGridViewGeneratorComboBoxColumnSettings process = new DataGridViewGeneratorComboBoxColumnSettings() { DataSource = new BindingSource(processSource, null), ValueMember = "Value", DisplayMember = "Value" };
 
             inqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             outqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
