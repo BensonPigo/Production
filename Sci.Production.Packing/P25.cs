@@ -633,6 +633,8 @@ DROP TABLE #tmoOrders,#tmp
                         // 對應到PackingList_Detail的箱數
                         int packingListDetail_Count = tmpDt.Rows.Count;
 
+                        int file_Count = ZPLs.Where(o => o.Article == zpl.Article && o.SizeCode == zpl.SizeCode && o.ShipQty == zpl.ShipQty).Count();
+
                         // CustCTN是否已經存在
                         bool existsCustCTN = MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{zpl.CustCTN}' ");
 
@@ -640,7 +642,7 @@ DROP TABLE #tmoOrders,#tmp
                         bool packingB03DataError = tmpDtB03 == null ? true : (tmpDtB03.Rows.Count == 2 ? false : true);
 
                         // ZPL數量 大小於 PackingList_Detail的箱數  或   對應到多個PackingListID  或  CustCTN已經存在PackingList_Detail   => Mapping不成功
-                        if (ZPLs.Count != packingListDetail_Count || tmpDt.AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count() > 1 || existsCustCTN || packingB03DataError)
+                        if (file_Count != packingListDetail_Count || tmpDt.AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count() > 1 || existsCustCTN || packingB03DataError)
                         {
                             if (!this.MappingModels.Where(o => o.FileName == fileName).Any())
                             {
@@ -765,7 +767,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 				FROM PackingList_Detail pd
 				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 			)
-           ,'{ZPL.CustCTN}' + ( SELECT IIF( s.IsSSCC=1,'_1','_2')
+           ,'{ZPL.CustCTN}' + ( SELECT DISTINCT IIF( s.IsSSCC=1,'_1','_2')
 										 FROM ShippingMarkPicture s
 										 INNER JOIN ShippingMarkPic c ON s.Seq=c.seq AND s.Side=c.Side
 										 INNER JOIN #tmp{i} t ON c.PackingListID=t.ID
@@ -785,7 +787,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 				FROM PackingList_Detail pd
 				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 			)
-           ,'{ZPL.CustCTN}' + ( SELECT IIF( s.IsSSCC=1,'_1','_2')
+           ,'{ZPL.CustCTN}' + ( SELECT DISTINCT IIF( s.IsSSCC=1,'_1','_2')
 										 FROM ShippingMarkPicture s
 										 INNER JOIN ShippingMarkPic c ON s.Seq=c.seq AND s.Side=c.Side
 										 INNER JOIN #tmp{i} t ON c.PackingListID=t.ID
