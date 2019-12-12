@@ -261,7 +261,7 @@ namespace Sci.Production.Packing
         public DualResult PrintQRcode(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
         {
             DataTable printData;
-            int pageItemCount = 11;
+            int pageItemCount = 13;
             DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
             if (!result)
             {
@@ -316,25 +316,22 @@ namespace Sci.Production.Packing
 
                         #region 準備資料
                         string barcode = printData.Rows[p]["SCICtnNo"].ToString();
-                        string packingNo = "PackingNo.: " + printData.Rows[p]["ID"];
-                        string spNo = "SP No.: " + printData.Rows[p]["OrderID"];
-                        string cartonNo = "Carton No.: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
-                        string poNo = "PO No.: " + printData.Rows[p]["PONo"];
-                        string sizeQty = "Size/Qty: " + printData.Rows[p]["SizeCode"] + "/" + printData.Rows[p]["ShipQty"];
+                        string packingNo = "P/L#: " + printData.Rows[p]["ID"];
+                        string spNo = "SP#: " + printData.Rows[p]["OrderID"];
+                        string cartonNo = "CTN: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
+                        string poNo = "PO#: " + printData.Rows[p]["PONo"];
+                        string sizeQty = "Size/Qty:" + printData.Rows[p]["SizeCode"] + "/" + printData.Rows[p]["ShipQty"];
                         #endregion
 
-                        tables.Cell(((p % pageItemCount) * 6) + 1, 1).Range.Text = packingNo;
-                        tables.Cell(((p % pageItemCount) * 6) + 2, 1).Range.Text = spNo;
-                        tables.Cell(((p % pageItemCount) * 6) + 3, 1).Range.Text = cartonNo;
-                        tables.Cell(((p % pageItemCount) * 6) + 4, 1).Range.Text = poNo;
-                        tables.Cell(((p % pageItemCount) * 6) + 5, 1).Range.Text = sizeQty;
+                        tables.Cell(((p % pageItemCount) * 3) + 1, 1).Range.Text = packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo;
+                        tables.Cell(((p % pageItemCount) * 3) + 2, 1).Range.Text = sizeQty + "  " + cartonNo;
 
                         Bitmap oriBitmap = this.NewQRcode(barcode);
 
                         Clipboard.SetImage(oriBitmap);
-                        tables.Cell(((p % pageItemCount) * 6) + 3, 2).Range.Paste();
-                        Word.Shape qrCodeImg = tables.Cell(((p % pageItemCount) * 6) + 3, 2).Range.InlineShapes[1].ConvertToShape();
-                        qrCodeImg.WrapFormat.Type = Word.WdWrapType.wdWrapFront;
+                        tables.Cell(((p % pageItemCount) * 3) + 1, 2).Range.Paste();
+                        Word.Shape qrCodeImg = tables.Cell(((p % pageItemCount) * 3) + 1, 2).Range.InlineShapes[1].ConvertToShape();
+                        qrCodeImg.WrapFormat.Type = Word.WdWrapType.wdWrapBehind;
                         qrCodeImg.RelativeHorizontalPosition = Word.WdRelativeHorizontalPosition.wdRelativeHorizontalPositionColumn;
                     }
                 }
@@ -405,8 +402,8 @@ namespace Sci.Production.Packing
                 Options = new QrCodeEncodingOptions
                 {
                     //Create Photo 
-                    Height = 41,
-                    Width = 41,
+                    Height = 43,
+                    Width = 43,
                     Margin = 0,
                     CharacterSet = "UTF-8",
                     PureBarcode = true,
@@ -415,12 +412,11 @@ namespace Sci.Production.Packing
                     //M水平    15%的字碼可被修正
                     //Q水平    25%的字碼可被修正
                     //H水平    30%的字碼可被修正
-                    ErrorCorrection = ErrorCorrectionLevel.H
+                    ErrorCorrection = ErrorCorrectionLevel.L
                 }
 
             };
 
-            //Bitmap resizeQRcode = new Bitmap(writer.Write(strBarcode), new Size(38, 38));
 
             return writer.Write(strBarcode);
         }
