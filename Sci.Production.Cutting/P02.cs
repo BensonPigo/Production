@@ -145,6 +145,21 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }
                 this.ReloadDatas();
             };
+
+            this.detailgrid.SelectionChanged += Detailgrid_SelectionChanged;
+        }
+
+        private void Detailgrid_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.detailgrid.GetSelectedRowIndex() <= 0)
+            {
+                this.btnAdditionalrevisedmarker.Enabled = false;
+            }
+            else
+            {
+                this.btnAdditionalrevisedmarker.Enabled = true;
+            }
+
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -398,7 +413,7 @@ drop table #tmp"
                 , masterID);
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out qtybreakTb);
             sizeGroup = qtybreakTb.DefaultView.ToTable(true, "sizecode");
-            artTb = qtybreakTb.DefaultView.ToTable(true, "article");
+            artTb = qtybreakTb.DefaultView.ToTable(true, new string[] { "article" ,"ID"});
             spTb = qtybreakTb.DefaultView.ToTable(true, "id");
 
             //// 若訂單數量超過裁切分配數量，則更新balance
@@ -583,13 +598,13 @@ where WorkOrderUkey={0}", masterID);
 
             Helper.Controls.Grid.Generator(this.gridDistributetoSPNo)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(15)).Get(out col_dist_sp)
-                .Text("article", header: "article", width: Widths.AnsiChars(8)).Get(out col_dist_article)
+                .Text("article", header: "Article", width: Widths.AnsiChars(8)).Get(out col_dist_article)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4)).Get(out col_dist_size)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6).Get(out col_dist_qty);
 
             Helper.Controls.Grid.Generator(this.gridQtyBreakdown)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
-                .Text("article", header: "article", width: Widths.AnsiChars(7))
+                .Text("article", header: "Article", width: Widths.AnsiChars(7))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(3))
                 .Numeric("Qty", header: "Order \nQty", width: Widths.AnsiChars(3), integer_places: 6)
                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(5), integer_places: 6, settings: breakqty);
@@ -1428,12 +1443,13 @@ where WorkOrderUkey={0}", masterID);
                         dr["SizeCode"] = "";
                         dr.EndEdit();
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox(string.Format("<SP#>:{0},<Article>:{1},<SizeCode>:{2}", dr["OrderID"], newvalue, dr["Article"]));
+                        MyUtility.Msg.WarningBox(string.Format("<SP#>:{0},<Article>:{1},<SizeCode>:{2} data not found", dr["OrderID"], dr["Article"], newvalue));
                         return;
                     }
                 }
                 dr["SizeCode"] = newvalue;
                 dr.EndEdit();
+
                 updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), dr["SizeCode"].ToString());
                 totalDisQty();
 
@@ -1448,7 +1464,7 @@ where WorkOrderUkey={0}", masterID);
                     DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
-                    sele = new SelectItem(artTb, "article", "15@300,300", dr["Article"].ToString(), false, ",");
+                    sele = new SelectItem(artTb, "article", "15@300,300", dr["Article"].ToString(), false, "," , gridFilter: $"ID = '{dr["OrderID"].ToString()}'");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -1574,55 +1590,24 @@ where WorkOrderUkey={0}", masterID);
                             now_distqty = now_distqty - Convert.ToInt32(dr2["Qty"]);
                         }
                     }
-
-                    if (now_distqty > 0)
+                    DataRow[] exdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' and OrderID ='EXCESS' ", workorderukey, newkey, dr["SizeCode"]));
+                    if (exdr.Length == 0 && now_distqty > 0)
                     {
-                        DataRow[] exdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' and OrderID ='EXCESS' ", workorderukey, newkey, dr["SizeCode"]));
-                        if (exdr.Length == 0)
-                        {
-                            DataRow ndr = distqtyTb.NewRow();
-                            ndr["WorkOrderUKey"] = workorderukey;
-                            ndr["NewKey"] = newkey;
-                            ndr["OrderID"] = "EXCESS";
-                            ndr["SizeCode"] = dr["SizeCode"];
-                            ndr["Qty"] = now_distqty;
-                            distqtyTb.Rows.Add(ndr);
-                        }
-                        else
-                        {
-                            exdr[0]["Qty"] = now_distqty;
-                        }
+                        DataRow ndr = distqtyTb.NewRow();
+                        ndr["WorkOrderUKey"] = workorderukey;
+                        ndr["NewKey"] = newkey;
+                        ndr["OrderID"] = "EXCESS";
+                        ndr["SizeCode"] = dr["SizeCode"];
+                        ndr["Qty"] = now_distqty;
+                        distqtyTb.Rows.Add(ndr);
                     }
-                    else
+                    else if(exdr.Length > 0)
                     {
-                        if (!this.EditMode) { return; }
-                        DataRow[] exdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' and OrderID ='EXCESS' ", workorderukey, newkey, dr["SizeCode"]));
-                        if (exdr.Length > 0)
-                            exdr[0].Delete();
+                        exdr[0]["Qty"] = now_distqty < 0 ? 0 : now_distqty;
                     }
+                    this.gridDistributetoSPNo.EndEdit();
                 }
             }
-        }
-
-        private DataTable GetPoSuppDetail(string sciRefno)
-        {
-            string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
-            DataTable dtPoSuppDetail;
-            DualResult result = DBProxy.Current.Select(null, $"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{poid}' and SCIRefno ='{sciRefno}' and Junk != 1 ", out dtPoSuppDetail);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return null;
-            }
-
-            if (dtPoSuppDetail.Rows.Count == 0)
-            {
-                MyUtility.Msg.WarningBox("No data found!");
-                return null;
-            }
-
-            return dtPoSuppDetail;
         }
 
         private void totalDisQty()
@@ -2061,6 +2046,7 @@ END";
             newRow["FactoryID"] = OldRow["FactoryID"];
             newRow["UKey"] = 0;
             newRow["SCIRefno"] = OldRow["SCIRefno"];
+            newRow["Refno"] = OldRow["Refno"];
             newRow["FabricCombo"] = OldRow["FabricCombo"];
             newRow["FabricPanelCode"] = OldRow["FabricPanelCode"];
             newRow["Cutno"] = DBNull.Value;
@@ -2430,9 +2416,7 @@ END";
             }
 
             DataRow[] distqtyTbrow = distqtyTb.AsEnumerable().Where(
-                                x => x.RowState != DataRowState.Deleted &&
-                                (MyUtility.Convert.GetInt(x["Qty"]) == 0 || MyUtility.Check.Empty(x["SizeCode"]) || MyUtility.Check.Empty(x["Article"])) &&
-                               MyUtility.Convert.GetString(x["OrderID"]).ToUpper() != "EXCESS").ToArray();
+                                x => this.DistributeToSPSaveBeforeCheck(x)).ToArray();
             for (int i = distqtyTbrow.Count() - 1 ; i >= 0 ; i--)
             {
                 distqtyTbrow[i].Delete();
@@ -2488,6 +2472,23 @@ END";
             CurrentMaintain["CutOffLine"] = ((DataTable)detailgridbs.DataSource).Compute("MAX(estcutdate)", null);
 
             return base.ClickSaveBefore();
+        }
+
+        private bool DistributeToSPSaveBeforeCheck(DataRow distDr)
+        { 
+            if(distDr.RowState != DataRowState.Deleted &&
+                                (MyUtility.Convert.GetInt(distDr["Qty"]) == 0 || MyUtility.Check.Empty(distDr["SizeCode"]) || MyUtility.Check.Empty(distDr["Article"])) &&
+                               MyUtility.Convert.GetString(distDr["OrderID"]).ToUpper() != "EXCESS")
+                {
+                return true;
+            }
+
+            if (distDr.RowState != DataRowState.Deleted && MyUtility.Convert.GetInt(distDr["Qty"]) == 0 && MyUtility.Convert.GetString(distDr["OrderID"]).ToUpper() == "EXCESS")
+            {
+                return true;
+            }
+
+            return false;
         }
 
         protected override DualResult ClickSave()
