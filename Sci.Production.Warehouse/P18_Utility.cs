@@ -143,8 +143,8 @@ where   InventoryPOID = '{0}'
             CurrentDetailData["seq2"] = seq2;
             if (CurrentDetailData["fabrictype"].ToString().ToUpper() != "F")
             {
-                CurrentDetailData["Roll"] = "";
-                CurrentDetailData["Dyelot"] = "";
+                //CurrentDetailData["Roll"] = "";
+                //CurrentDetailData["Dyelot"] = "";
             }
 
             return new DualResult(true);

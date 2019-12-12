@@ -463,8 +463,8 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                         CurrentDetailData["seq"] = "";
                         CurrentDetailData["seq1"] = "";
                         CurrentDetailData["seq2"] = "";
-                        CurrentDetailData["Roll"] = "";
-                        CurrentDetailData["Dyelot"] = "";
+                        //CurrentDetailData["Roll"] = "";
+                        //CurrentDetailData["Dyelot"] = "";
                         CurrentDetailData["stockunit"] = "";
                         CurrentDetailData["Description"] = "";
                         CurrentDetailData["fabrictype"] = "";
@@ -480,8 +480,8 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                             return;
                         }
 
-                        CurrentDetailData["Roll"] = "";
-                        CurrentDetailData["Dyelot"] = "";
+                        //CurrentDetailData["Roll"] = "";
+                        //CurrentDetailData["Dyelot"] = "";
                     }
                 }
             };
@@ -548,11 +548,11 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                     this.CurrentDetailData["seq"] = "";
                     this.CurrentDetailData["seq1"] = "";
                     this.CurrentDetailData["seq2"] = "";
-                    this.CurrentDetailData["roll"] = "";
-                    this.CurrentDetailData["dyelot"] = "";
+                    //this.CurrentDetailData["roll"] = "";
+                    //this.CurrentDetailData["dyelot"] = "";
                     this.CurrentDetailData["poid"] = "";
                     this.CurrentDetailData["DataFrom"] = "";
-                    this.CurrentDetailData["qty"] = 0;
+                    //this.CurrentDetailData["qty"] = 0;
                     return;
                 }
 
@@ -571,8 +571,8 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                     this.CurrentDetailData["seq"] = "";
                     this.CurrentDetailData["seq1"] = "";
                     this.CurrentDetailData["seq2"] = "";
-                    this.CurrentDetailData["roll"] = "";
-                    this.CurrentDetailData["dyelot"] = "";
+                    //this.CurrentDetailData["roll"] = "";
+                    //this.CurrentDetailData["dyelot"] = "";
                     this.CurrentDetailData["poid"] = e.FormattedValue;
                     this.CurrentDetailData["DataFrom"] = dataFrom;
                 }
