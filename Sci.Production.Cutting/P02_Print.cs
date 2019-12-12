@@ -210,19 +210,11 @@ select {byType},estCutDate{byType2} from #tmp2 group by {byType},estCutDate{byTy
                 worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
                 worksheet.Select();
                 worksheet.Name = Cutrefdr["Cutplanid"].ToString();
-                worksheet.Cells[3, 17] = Cutrefdr["Cutplanid"].ToString();
+                worksheet.Cells[3, 19] = Cutrefdr["Cutplanid"].ToString();
                 worksheet.Cells[9, 13] = ((DateTime)MyUtility.Convert.GetDate(Cutrefdr["Estcutdate"])).ToShortDateString();
                 nSheet++;
             }
-            nSheet = 1;
-            foreach (DataRow Cutrefdr in CutrefTb.Rows)
-            {
-                Clipboard.SetDataObject(NewQRcode(MyUtility.Convert.GetString(Cutrefdr["Cutplanid"])));
-                worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
-                Excel.Range rng = worksheet.get_Range("T2:U3");
-                worksheet.Paste(rng, false);
-                nSheet++;
-            }
+
             nSheet = 1;
             #endregion
             foreach (DataRow Cutrefdr in CutrefTb.Rows)
