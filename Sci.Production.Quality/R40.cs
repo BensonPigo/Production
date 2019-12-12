@@ -94,12 +94,13 @@ outer apply
 	group by a.StartDate
 ) Claimed
 outer apply (	
-	SELECT round(ISNULL(SUM(a.Qty),0)/6,2) AS Qty 
-	FROM ADIDASComplain_MonthlyQty a WITH (NOLOCK) 
-	WHERE 
-		a.YearMonth BETWEEN format(dateadd(month,-8,convert(date,concat(d.Y,d.m,'01'))),'yyyyMM') AND format(dateadd(month,-3,convert(date,concat(d.Y,d.m,'01'))),'yyyyMM')  
-		and a.BrandID = '{0}'	
-		 and FactoryID in (select id from dbo.SCIFty where CountryID = (select CountryID from Factory where id='{1}'))	
+	select round(ISNULL(SUM(o.Qty),0)/6,2) AS Qty 
+	from orders o
+	where cast(o.BuyerDelivery as date) BETWEEN dateadd(month,-8,convert(date,concat(d.Y,d.m,'01')))  AND dateadd(day,-1,dateadd(month,-2,convert(date,concat(d.Y,d.m,'01'))))
+	and o.BrandID = '{0}'
+	and o.FactoryID in (select id from dbo.SCIFty where CountryID = (select CountryID from Factory where id='{1}'))	
+	and o.Junk = 0
+	and o.Category in ('B','S')
 )sh 
 
 declare @dRanges table(starts int , ends int, name varchar(3))
@@ -272,13 +273,14 @@ outer apply
 	group by a.StartDate,B.FactoryID
 ) Claimed
 outer apply (	
-	SELECT round(ISNULL(SUM(a.Qty),0)/6,0) AS Qty 
-	FROM ADIDASComplain_MonthlyQty a WITH (NOLOCK) 
-	WHERE 
-		a.YearMonth BETWEEN format(dateadd(month,-8,convert(date,concat(d.Y,d.m,'01'))),'yyyyMM') AND format(dateadd(month,-3,convert(date,concat(d.Y,d.m,'01'))),'yyyyMM')  
-		and a.BrandID = 'ADIDAS'		
-		and FactoryID = d.ID
-	GROUP BY A.FactoryID
+	select round(ISNULL(SUM(o.Qty),0)/6,0) AS Qty 
+	from orders o
+	where cast(o.BuyerDelivery as date) BETWEEN dateadd(month,-8,convert(date,concat(d.Y,d.m,'01')))  AND dateadd(day,-1,dateadd(month,-2,convert(date,concat(d.Y,d.m,'01'))))
+	and o.BrandID = 'ADIDAS'	
+	and o.FactoryID = d.ID
+	and o.Junk = 0
+	and o.Category in ('B','S')
+	GROUP BY o.FactoryID
 )sh 
 
 select distinct FactoryID from #AllTemp
