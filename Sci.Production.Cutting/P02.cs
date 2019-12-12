@@ -598,13 +598,13 @@ where WorkOrderUkey={0}", masterID);
 
             Helper.Controls.Grid.Generator(this.gridDistributetoSPNo)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(15)).Get(out col_dist_sp)
-                .Text("article", header: "article", width: Widths.AnsiChars(8)).Get(out col_dist_article)
+                .Text("article", header: "Article", width: Widths.AnsiChars(8)).Get(out col_dist_article)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4)).Get(out col_dist_size)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6).Get(out col_dist_qty);
 
             Helper.Controls.Grid.Generator(this.gridQtyBreakdown)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
-                .Text("article", header: "article", width: Widths.AnsiChars(7))
+                .Text("article", header: "Article", width: Widths.AnsiChars(7))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(3))
                 .Numeric("Qty", header: "Order \nQty", width: Widths.AnsiChars(3), integer_places: 6)
                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(5), integer_places: 6, settings: breakqty);
