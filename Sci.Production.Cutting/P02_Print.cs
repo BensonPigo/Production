@@ -12,6 +12,9 @@ using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Linq;
+using ZXing;
+using ZXing.QrCode.Internal;
+using ZXing.QrCode;
 
 namespace Sci.Production.Cutting
 {
@@ -211,6 +214,7 @@ select {byType},estCutDate{byType2} from #tmp2 group by {byType},estCutDate{byTy
                 worksheet.Cells[9, 13] = ((DateTime)MyUtility.Convert.GetDate(Cutrefdr["Estcutdate"])).ToShortDateString();
                 nSheet++;
             }
+
             nSheet = 1;
             #endregion
             foreach (DataRow Cutrefdr in CutrefTb.Rows)
@@ -565,10 +569,20 @@ Cutplanid, str_PIVOT);
                 worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
                 worksheet.Select();
                 worksheet.Name = Cutrefdr["Cutref"].ToString();
-                worksheet.Cells[3, 19] = Cutrefdr["Cutref"].ToString();
+                worksheet.Cells[3, 18] = Cutrefdr["Cutref"].ToString();
                 worksheet.Cells[9, 13] = ((DateTime)MyUtility.Convert.GetDate(Cutrefdr["Estcutdate"])).ToShortDateString();
                 nSheet++;
             }
+            nSheet = 1;
+            foreach (DataRow Cutrefdr in CutrefTb.Rows)
+            {
+                Clipboard.SetDataObject(NewQRcode(MyUtility.Convert.GetString(Cutrefdr["Cutref"])));
+                worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
+                Excel.Range rng = worksheet.get_Range("T2:U3");
+                worksheet.Paste(rng, false);
+                nSheet++;
+            }
+
             nSheet = 1;
             foreach (DataRow Cutrefdr in CutrefTb.Rows)
             {
@@ -656,9 +670,6 @@ Cutplanid, str_PIVOT);
                     }                                      
                 }
                 #endregion
-
-
-
                 #region Markname
                 int nrow = 12;
 
@@ -700,7 +711,6 @@ Cutplanid, str_PIVOT);
 
                 }
                 #endregion
-
                 #region Distribute to SP#
                 if (WorkorderDisArry.Length > 0)
                 {
@@ -742,7 +752,6 @@ Cutplanid, str_PIVOT);
 
                 #endregion
 
-
                 string str_PIVOT = "";
                 nSizeColumn = 4;
                 string Pivot_cmd = "";
@@ -756,26 +765,10 @@ Cutplanid, str_PIVOT);
                 }
                 str_PIVOT = str_PIVOT.Substring(0, str_PIVOT.Length - 1);
 
-                //if (_worktype == 2)
-                //{
                     Pivot_cmd = string.Format(@"
 Select Cutno,Colorid,SizeCode,Cons,Layer,workorderukey,(Qty*Layer) as TotalQty from 
 #tmp
 Where Cutref = '{0}'", cutref);
-//                }
-//                else
-//                {                    
-//                    Pivot_cmd = string.Format(
-//@"Select * From
-//(
-//    Select Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
-//    #tmp
-//    Where Cutref = '{0}'
-//) as mTb
-//Pivot(Sum(TotalQty)
-//for SizeCode in ({1})) as pIvT 
-//order by Cutno,Colorid", cutref, str_PIVOT);
-//                }
 
                 if (CutQtyTb != null)
                 {
@@ -790,25 +783,6 @@ Where Cutref = '{0}'", cutref);
                 nrow = nrow + 2;
                 int copyrow = 0;
                 TotConsRowS = nrow; //第一個Cons
-                //foreach (DataRow cutqtydr in CutQtyTb.Rows)
-                //{
-                //    if (copyrow > 0)
-                //    {
-                //        Excel.Range r = worksheet.get_Range("A" + (nrow).ToString(), "A" + (nrow).ToString()).EntireRow;
-                //        r.Copy();
-                //        r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); //新增Row
-                //    }
-                //    worksheet.Cells[nrow, 1] = cutqtydr["Cutno"].ToString();
-                //    worksheet.Cells[nrow, 2] = cutqtydr["Colorid"].ToString();
-                //    worksheet.Cells[nrow, 3] = cutqtydr["Layer"].ToString();
-                //    worksheet.Cells[nrow, 20] = cutqtydr["Cons"].ToString();
-                //    for (int nSizeDetail = 0; nSizeDetail < SizeArry.Length; nSizeDetail++)
-                //    {
-                //        worksheet.Cells[nrow, nSizeDetail + 4] = cutqtydr[5].ToString(); //+4因為從第四個Column 開始 nSizeDetail +4 是因為Table 從第四個開始是Size
-                //    }
-                //    nrow++;
-                //    copyrow++;
-                //}
 
                 var distinct_CutQtyTb = from r1 in CutQtyTb.AsEnumerable()
                                         group r1 by new
@@ -860,7 +834,6 @@ Where Cutref = '{0}'", cutref);
                     copyrow++;
                 }
 
-
                 TotConsRowE = nrow - 1; //最後一個Cons
                 #region Total Cons
                 worksheet.Cells[nrow+1, 20] = string.Format("=SUM(T{0}:T{1})", TotConsRowS, TotConsRowE);
@@ -898,6 +871,40 @@ Where Cutref = '{0}'", cutref);
             strExcelName.OpenFile();
             #endregion 
             return true;
+        }
+
+        private Bitmap NewQRcode(string strBarcode)
+        {
+            /*
+  Level L (Low)      7%  of codewords can be restored. 
+  Level M (Medium)   15% of codewords can be restored. 
+  Level Q (Quartile) 25% of codewords can be restored. 
+  Level H (High)     30% of codewords can be restored. 
+*/
+            BarcodeWriter writer = new BarcodeWriter
+            {
+                Format = BarcodeFormat.QR_CODE,
+                Options = new QrCodeEncodingOptions
+                {
+                    //Create Photo 
+                    Height = 79,
+                    Width = 79,
+                    Margin = 0,
+                    CharacterSet = "UTF-8",
+                    PureBarcode = true,
+                    //錯誤修正容量
+                    //L水平    7%的字碼可被修正
+                    //M水平    15%的字碼可被修正
+                    //Q水平    25%的字碼可被修正
+                    //H水平    30%的字碼可被修正
+                    ErrorCorrection = ErrorCorrectionLevel.H
+                }
+
+            };
+
+            //Bitmap resizeQRcode = new Bitmap(writer.Write(strBarcode), new Size(38, 38));
+
+            return writer.Write(strBarcode);
         }
     }
 }
