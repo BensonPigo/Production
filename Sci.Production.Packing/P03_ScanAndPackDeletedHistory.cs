@@ -42,18 +42,12 @@ SELECT
 	,ph.CTNStartNo
 	,[OrderID]=ph.OrderID
 	,[ScanQty]= ph.ScanQty
-	,[LackingQty]= ISNULL(Lacking.Qty,0)
+	,[LackingQty]= ph.LackingQty
 	,[ScanName]= ph.ScanName+'-'+ (select Name from pass1 where id=ph.ScanName)
 	,[ScanDate]= ph.ScanEditDate
 	,[DeletedBy]=ph.AddName +'-'+ (select Name from pass1 where id=ph.AddName)
 	,[DeletedDate]=ph.AddDate
 FROM PackingScan_History ph
-OUTER APPLY(
-	select [Qty] = sum(QtyPerCTN) - sum(ScanQty) 
-	from PackingList_Detail pld 
-	where pld.ID=ph.PackingListID and pld.OrderID=ph.OrderID and pld.CTNStartNo=ph.CTNStartNo
-	and pld.Lacking=1
-)Lacking
 WHERE PackingListID='{this.PackingListID}'
 ";
 
