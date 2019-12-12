@@ -147,10 +147,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.QtybrkApplybs)).BeginInit();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1000, 600);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtuserApprove);
@@ -209,13 +205,10 @@
             this.detailcont.Controls.Add(this.LbSent);
             this.detailcont.Controls.Add(this.LbReason);
             this.detailcont.Controls.Add(this.LbID);
-            this.detailcont.Size = new System.Drawing.Size(1000, 562);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnRefresh);
-            this.detailbtm.Location = new System.Drawing.Point(0, 562);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -655,7 +648,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 208);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(997, 351);
+            this.tabControl.Size = new System.Drawing.Size(985, 129);
             this.tabControl.TabIndex = 837;
             // 
             // tabQtyOrder
@@ -664,7 +657,7 @@
             this.tabQtyOrder.Location = new System.Drawing.Point(4, 25);
             this.tabQtyOrder.Name = "tabQtyOrder";
             this.tabQtyOrder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyOrder.Size = new System.Drawing.Size(989, 322);
+            this.tabQtyOrder.Size = new System.Drawing.Size(977, 100);
             this.tabQtyOrder.TabIndex = 0;
             this.tabQtyOrder.Text = "Q\'ty B\'Down by Order";
             // 
@@ -674,7 +667,7 @@
             this.panelQtyOrder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelQtyOrder.Location = new System.Drawing.Point(3, 3);
             this.panelQtyOrder.Name = "panelQtyOrder";
-            this.panelQtyOrder.Size = new System.Drawing.Size(983, 316);
+            this.panelQtyOrder.Size = new System.Drawing.Size(971, 94);
             this.panelQtyOrder.TabIndex = 0;
             // 
             // GridQtyOrder
@@ -708,7 +701,7 @@
             this.GridQtyOrder.RowTemplate.Height = 24;
             this.GridQtyOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder.ShowCellToolTips = false;
-            this.GridQtyOrder.Size = new System.Drawing.Size(983, 316);
+            this.GridQtyOrder.Size = new System.Drawing.Size(971, 94);
             this.GridQtyOrder.TabIndex = 0;
             this.GridQtyOrder.TabStop = false;
             // 
@@ -1081,7 +1074,7 @@
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefresh.Location = new System.Drawing.Point(906, 4);
+            this.btnRefresh.Location = new System.Drawing.Point(803, 4);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(84, 28);
             this.btnRefresh.TabIndex = 835;
@@ -1138,7 +1131,7 @@
             this.IsSupportPrint = false;
             this.Name = "P20";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "P20";
+            this.Text = "P20. Order Qty change application";
             this.WorkAlias = "OrderChangeApplication";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
