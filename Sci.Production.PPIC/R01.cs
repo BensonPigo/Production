@@ -110,6 +110,14 @@ namespace Sci.Production.PPIC
                 MyUtility.Msg.WarningBox("Date can't be all empty!");
                 return false;
             }
+
+            if (this.chkGanttChart.Checked &&
+                (MyUtility.Check.Empty(SewingDate1) && MyUtility.Check.Empty(SewingDate2)))
+            {
+                MyUtility.Msg.WarningBox($@"Please input sewing date first if {"\""}Include Gantt chart{"\""} is checked");
+                return false;
+            }
+
             return base.ValidateInput();
         }
 
@@ -168,8 +176,9 @@ namespace Sci.Production.PPIC
                     return false;
                 }
 
+                #region Sheet 1
                 worksheet = objApp.Sheets[1];
-
+                worksheet.Activate();
                 worksheet.Columns[1].ColumnWidth = 8;
                 worksheet.Columns[2].ColumnWidth = 8;
                 worksheet.Columns[7].ColumnWidth = 8;
@@ -202,6 +211,257 @@ namespace Sci.Production.PPIC
                 worksheet.Columns[38].ColumnWidth = 8;
                 worksheet.Columns[39].ColumnWidth = 8;
                 worksheet.Columns[40].ColumnWidth = 8;
+                #endregion
+
+                #region Sheet 2
+                if (this.chkGanttChart.Checked)
+                {
+                    #region Query Gantt Chart
+                    string whereM = string.Empty;
+                    string whereF = string.Empty;
+                    string whereLine1 = string.Empty;
+                    string whereLine2 = string.Empty;
+                    string whereList = string.Empty;
+
+                    if (!MyUtility.Check.Empty(this.mDivision))
+                    {
+                        whereM = $"and s.MDivisionID = '{this.mDivision}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.factory))
+                    {
+                        whereF = $" AND (s.FactoryID = '{this.factory}' or '{this.factory}' ='')";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.line1))
+                    {
+                        whereLine1 = $" and s.SewingLineID >= '{this.line1}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.line2))
+                    {
+                        whereLine2 = $" and s.SewingLineID <= '{this.line2}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.buyerDelivery1))
+                    {
+                        whereList += $" and o.BuyerDelivery >= '{Convert.ToDateTime(this.buyerDelivery1).ToString("d")}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.buyerDelivery2))
+                    {
+                        whereList += $" and o.BuyerDelivery <= '{Convert.ToDateTime(this.buyerDelivery2).ToString("d")}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.sciDelivery1))
+                    {
+                        whereList += $" and o.SciDelivery >= '{Convert.ToDateTime(this.sciDelivery1).ToString("d")}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.sciDelivery2))
+                    {
+                        whereList += $" and o.SciDelivery <= '{Convert.ToDateTime(this.sciDelivery2).ToString("d")}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.brand))
+                    {
+                        whereList += $" and o.BrandID = '{this.brand}'";
+                    }
+
+                    string sqlcmd = $@"
+DECLARE @sewinginline DATETIME ='{Convert.ToDateTime(this.SewingDate1).ToString("d")}'
+DECLARE @sewingoffline DATETIME ='{Convert.ToDateTime(this.SewingDate2).ToString("d")}'
+DECLARE @LINE1 VARCHAR(10) = '{this.line1}'
+DECLARE @LINE2 VARCHAR(10) = '{this.line2}'
+--整個月 table
+;WITH cte AS (
+    SELECT [date] = @sewinginline
+    UNION ALL
+    SELECT [date] + 1 FROM cte WHERE ([date] < DATEADD(DAY,-1,@sewingoffline))
+)
+SELECT [date] = cast([date] as date) 
+into #daterange 
+FROM cte
+--WorkHour table
+select FactoryID,SewingLineID,Date,Hours,Holiday
+into #workhourtmp
+from WorkHour s
+where 1=1
+{whereF}
+and Date between @sewinginline and @sewingoffline
+{whereLine1}
+{whereLine2}
+--order by Date
+--準備一整個月workhour的資料判斷Holiday
+select distinct d.date,w.FactoryID,w.SewingLineID
+into #tmpd
+from #daterange d,#workhourtmp w
+--
+select distinct d.FactoryID,d.SewingLineID,d.date,Holiday = iif(w.Holiday is null or w.Holiday = 1 or w.Hours = 0,1,0)
+into #Holiday
+from #tmpd d
+left join #workhourtmp w on d.date = w.Date and d.FactoryID = w.FactoryID and d.SewingLineID = w.SewingLineID
+order by FactoryID,SewingLineID,date
+--先將符合條件的Sewing schedule撈出來
+select
+	 s.FactoryID
+	,s.SewingLineID
+	,o.StyleID
+	,Inline = cast(s.Inline as date)
+	,Offline = cast(s.Offline as date)
+	,OrderTypeID = isnull(o.OrderTypeID,'')
+	,o.SciDelivery
+	,o.BuyerDelivery
+	,Category = isnull(o.Category,'')
+	,o.CdCodeID
+into #Sewtmp
+from SewingSchedule s WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
+left join Style st WITH (NOLOCK) on st.Ukey = o.StyleUkey
+where (s.Inline between  @sewinginline and @sewingoffline 
+    or s.Offline between @sewinginline and @sewingoffline
+	or @sewinginline between s.Inline and s.Offline
+	or @sewingoffline between s.Inline and s.Offline
+)
+{whereM}
+{whereF}
+{whereLine1}
+{whereLine2}
+{whereList}
+
+select distinct
+	d.FactoryID
+	,d.SewingLineID
+	,d.date
+	,s.StyleID
+	,IsLastMonth = iif(s.SciDelivery < @sewinginline,1,0)--紫 優先度1
+	,IsNextMonth = iif(s.SciDelivery > DateAdd(DAY,-1,@sewingoffline),1,0)--綠 優先度2
+	,IsBulk = iif(s.Category = 'B',1,0)--藍 優先度3
+	,IsSMS = iif(s.OrderTypeID = 'SMS',1,0)--紅 優先度4
+	,s.BuyerDelivery
+	,s.CdCodeID
+into #Stmp
+from #Sewtmp s 
+left join #tmpd d on d.FactoryID = s.FactoryID and d.SewingLineID = s.SewingLineID and d.date between s.Inline and s.Offline
+--order by h.FactoryID,h.SewingLineID,h.date,s.StyleID
+select distinct FactoryID,SewingLineID,date,StyleID = a.s
+into #ConcatStyle
+from #Stmp s
+outer apply(
+	select s =(
+		select distinct concat(StyleID,'(',CdCodeID,')',';')
+		from #Stmp s2
+		where s2.FactoryID = s.FactoryID and s2.SewingLineID = s.SewingLineID and s2.date = s.date
+		for xml path('')
+	)
+)a
+--
+select h.FactoryID,h.SewingLineID,h.date,h.Holiday,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
+into #c
+from #Holiday h
+left join #Stmp s on s.FactoryID = h.FactoryID and s.SewingLineID = h.SewingLineID and s.date = h.date
+inner join(select distinct FactoryID,SewingLineID from #Stmp) x on x.FactoryID = h.FactoryID and x.SewingLineID = h.SewingLineID--排掉沒有在SewingSchedule內的資料by FactoryID,SewingLineID
+order by h.FactoryID,h.SewingLineID,h.date
+------------------------------------------------------------------------------------------------
+DECLARE cursor_sewingschedule CURSOR FOR
+select distinct c.FactoryID,c.SewingLineID,c.date
+	,StyleID = isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),'')
+	,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
+from #c c left join #ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
+order by c.FactoryID,c.SewingLineID,c.date
+
+--建立tmpe table存放最後要列印的資料
+DECLARE @tempPintData TABLE (
+   FactoryID VARCHAR(8),
+   SewingLineID VARCHAR(2),
+   StyleID VARCHAR(MAX),
+   InLine DATE,
+   OffLine DATE,
+   IsBulk BIT,
+   IsSMS BIT,
+   IsLastMonth BIT,
+   IsNextMonth BIT,
+   MinBuyerDelivery DATE
+)
+--
+DECLARE @factory VARCHAR(8),
+		@sewingline VARCHAR(2),
+		@StyleID VARCHAR(200),
+		@IsLastMonth int,
+		@IsNextMonth int,
+		@IsBulk int,
+		@IsSMS int,
+		@BuyerDelivery DATE,
+		@date DATE,
+		@beforefactory VARCHAR(8) = '',
+		@beforesewingline VARCHAR(2) = '',
+		@beforeStyleID VARCHAR(200) = '',
+		@beforeIsLastMonth int,
+		@beforeIsNextMonth int,
+		@beforeIsBulk int,
+		@beforeIsSMS int,
+		@beforeBuyerDelivery DATE,
+		@beforedate DATE
+
+OPEN cursor_sewingschedule
+FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	
+	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or @StyleID <> @beforeStyleID
+	Begin
+		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk ,IsSMS ,MinBuyerDelivery) 
+		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery);
+	END
+	ELSE
+	Begin
+		update @tempPintData set
+			 OffLine = @date
+			,IsLastMonth = iif(IsLastMonth = 1, IsLastMonth, @IsLastMonth)
+			,IsNextMonth = iif(IsNextMonth = 1, IsNextMonth, @IsNextMonth)
+			,IsBulk = iif(IsBulk = 1, IsBulk, @IsBulk)
+			,IsSMS = iif(IsSMS = 1, IsSMS, @IsSMS)
+			,MinBuyerDelivery = iif(MinBuyerDelivery < @BuyerDelivery,MinBuyerDelivery,@BuyerDelivery)
+		where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @beforedate
+	END
+	
+	set @beforefactory = @factory
+	set @beforesewingline = @sewingline
+	set @beforeStyleID = @StyleID
+	set @beforeIsLastMonth = @IsLastMonth
+	set @beforeIsNextMonth = @IsNextMonth
+	set @beforeIsBulk = @IsBulk
+	set @beforeIsSMS = @IsSMS
+	set @beforeBuyerDelivery = @BuyerDelivery
+	set @beforedate = @date
+	FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery
+END
+CLOSE cursor_sewingschedule
+DEALLOCATE cursor_sewingschedule
+
+select * from @tempPintData where StyleID<>''
+
+drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle
+";
+                    DataTable dtGantt;
+                    DualResult resultCmd = DBProxy.Current.Select(null, sqlcmd, out dtGantt);
+                    if (!resultCmd)
+                    {
+                        this.ShowErr(resultCmd);
+                        return resultCmd;
+                    }
+
+                    #endregion
+
+                    worksheet = objApp.Sheets[2];
+                    worksheet.Activate();
+
+                }
+
+                
+
+                #endregion
+
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
@@ -1572,10 +1832,12 @@ drop table	#APSListWorkDay,#APSList,#APSMain,#APSExtendWorkDateFin,#APSOrderQty,
             if (this.comboSummaryBy.SelectedIndex == 2)
             {
                 this.checkForPrintOut.Enabled = false;
+                this.chkGanttChart.Enabled = true;
             }
             else
             {
                 this.checkForPrintOut.Enabled = true;
+                this.chkGanttChart.Enabled = false;
             }
         }
     }

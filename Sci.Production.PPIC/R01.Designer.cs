@@ -47,21 +47,22 @@
             this.comboSummaryBy = new Sci.Win.UI.ComboBox();
             this.dateSewingDate = new Sci.Win.UI.DateRange();
             this.labSewingDate = new Sci.Win.UI.Label();
+            this.chkGanttChart = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(387, 28);
+            this.print.Location = new System.Drawing.Point(401, 28);
             this.print.TabIndex = 9;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(387, 64);
+            this.toexcel.Location = new System.Drawing.Point(401, 64);
             this.toexcel.TabIndex = 10;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(387, 100);
+            this.close.Location = new System.Drawing.Point(401, 100);
             this.close.TabIndex = 11;
             // 
             // txtVersion
@@ -292,9 +293,24 @@
             this.labSewingDate.TabIndex = 552;
             this.labSewingDate.Text = "Sewing Date";
             // 
+            // chkGanttChart
+            // 
+            this.chkGanttChart.AutoSize = true;
+            this.chkGanttChart.Checked = true;
+            this.chkGanttChart.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkGanttChart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkGanttChart.Location = new System.Drawing.Point(332, 264);
+            this.chkGanttChart.Name = "chkGanttChart";
+            this.chkGanttChart.ReadOnly = true;
+            this.chkGanttChart.Size = new System.Drawing.Size(149, 21);
+            this.chkGanttChart.TabIndex = 553;
+            this.chkGanttChart.Text = "Include Gantt Chart";
+            this.chkGanttChart.UseVisualStyleBackColor = true;
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(479, 339);
+            this.ClientSize = new System.Drawing.Size(493, 339);
+            this.Controls.Add(this.chkGanttChart);
             this.Controls.Add(this.dateSewingDate);
             this.Controls.Add(this.labSewingDate);
             this.Controls.Add(this.comboSummaryBy);
@@ -345,6 +361,7 @@
             this.Controls.SetChildIndex(this.comboSummaryBy, 0);
             this.Controls.SetChildIndex(this.labSewingDate, 0);
             this.Controls.SetChildIndex(this.dateSewingDate, 0);
+            this.Controls.SetChildIndex(this.chkGanttChart, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -371,5 +388,6 @@
         private Win.UI.ComboBox comboSummaryBy;
         private Win.UI.DateRange dateSewingDate;
         private Win.UI.Label labSewingDate;
+        private Win.UI.CheckBox chkGanttChart;
     }
 }
