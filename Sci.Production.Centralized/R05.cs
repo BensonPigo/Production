@@ -347,7 +347,7 @@ exec (@sql)
 
             i--;
             objSheets.get_Range((Excel.Range)objSheets.Cells[3, 4], (Excel.Range)objSheets.Cells[3, i]).Merge(false);
-            objSheets.get_Range((Excel.Range)objSheets.Cells[3, 4], (Excel.Range)objSheets.Cells[17, i]).Borders.Weight = 3; // 設定全框線
+            objSheets.get_Range((Excel.Range)objSheets.Cells[1, 3], (Excel.Range)objSheets.Cells[this.Summarydt.Rows.Count+4, i]).Borders.Weight = 3; // 設定全框線
 
             MyUtility.Excel.CopyToXls(this.dtAllData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[2], showExcel: false, DisplayAlerts_ForSaveFile: true);
             objSheets = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
