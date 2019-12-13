@@ -59,6 +59,12 @@
     <Compile Include="comboCentralizedFactory.Designer.cs">
       <DependentUpon>comboCentralizedFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="comboCentralizedZone.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="comboCentralizedZone.Designer.cs">
+      <DependentUpon>comboCentralizedZone.cs</DependentUpon>
+    </Compile>
     <Compile Include="comboCentralizedM.cs">
       <SubType>Component</SubType>
     </Compile>

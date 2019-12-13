@@ -1066,7 +1066,7 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
       ,a.Type	      =b.Type	
-
+      ,a.Zone	      =b.Zone	
 from Production.dbo.SCIFty as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 where b.IsSCI=1
 
@@ -1091,6 +1091,7 @@ INSERT INTO Production.dbo.SCIFty(
       ,EditName
       ,EditDate
 	  ,Type
+	  ,Zone
 )
 select 
        ID
@@ -1112,6 +1113,7 @@ select
       ,EditName
       ,EditDate
 	  ,Type
+	  ,Zone
 from Trade_To_Pms.dbo.Factory as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.SCIFty as a WITH (NOLOCK) where a.id = b.id)
 and b.IsSCI=1
