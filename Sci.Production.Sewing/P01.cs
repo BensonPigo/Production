@@ -3755,8 +3755,8 @@ order by a.OrderId,os.Seq
                     int qAQtyn = (int)MyUtility.Convert.GetDecimal(dataRow["QAQty"]);
                     if (dQSQAQty > qAQtyn)
                     {
-                        remarkList.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {dataRow["BalQty"]}");
-                        remarkList2.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {dataRow["BalQty"]}");
+                        remarkList.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {qAQtyn}");
+                        remarkList2.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {qAQtyn}");
                     }
                 }
 
@@ -3816,7 +3816,7 @@ order by a.OrderId,os.Seq
                 string remark = string.Empty;
                 if (remarkList2.Count > 0)
                 {
-                    remark = string.Join("\r\n", remarkList2);
+                    remark = string.Join("\r\n", remarkList2) + "\r\n" + "DQS Pass Q'ty is more than balance, please inform related team";
                     item["remark"] = remark;
                 }
 
@@ -3828,7 +3828,7 @@ order by a.OrderId,os.Seq
             string msg = string.Empty;
             if (remarkList.Count > 0)
             {
-                msg = string.Join("\r\n", remarkList);
+                msg = string.Join("\r\n", remarkList) + "\r\n" + "DQS Pass Q'ty is more than balance, please inform related team";
                 MyUtility.Msg.WarningBox(msg);
             }
 
