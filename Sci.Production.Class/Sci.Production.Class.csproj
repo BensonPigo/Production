@@ -150,6 +150,12 @@
     <Compile Include="txtCentralizedmulitFactory.Designer.cs">
       <DependentUpon>txtCentralizedmulitFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtCFALocation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCFALocation.Designer.cs">
+      <DependentUpon>txtCFALocation.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtClogReason.cs">
       <SubType>UserControl</SubType>
     </Compile>

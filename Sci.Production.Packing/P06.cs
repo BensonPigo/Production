@@ -326,8 +326,10 @@ order by os.Seq",
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true)
                 .Date("TransferDate", header: "Transfer CLOG", iseditingreadonly: true)
                 .Date("ReceiveDate", header: "CLOG CFM", iseditingreadonly: true)
-                .Text("ClogLocationId", header: "Location No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("ReturnDate", header: "Return Date", iseditingreadonly: true);
+                .Text("ClogLocationId", header: "Clog Location", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("ReturnDate", header: "Return Date", iseditingreadonly: true)
+                .Text("CFALocationID", header: "CFA Location No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                ;
 
             #region 欄位的Validating
             this.detailgrid.CellValidating += (s, e) =>

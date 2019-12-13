@@ -1,15 +1,18 @@
-﻿CREATE TABLE [dbo].[CFAReceive]
-(
-	[ID] BIGINT NOT NULL PRIMARY KEY IDENTITY, 
-    [ReceiveDate] DATE NULL, 
-    [MDivisionID] VARCHAR(8) NULL DEFAULT (''), 
-    [OrderID] VARCHAR(13) NULL DEFAULT (''), 
-    [PackingListID] VARCHAR(13) NULL DEFAULT (''), 
-    [CTNStartNo] VARCHAR(6) NULL DEFAULT (''), 
-    [AddName] VARCHAR(10) NULL DEFAULT (''), 
-    [AddDate] DATETIME NULL, 
-    [SCICtnNo] VARCHAR(15) CONSTRAINT [DF_CFAReceive_SCICtnNo] DEFAULT ('') NOT NULL
-)
+﻿CREATE TABLE [dbo].[CFAReceive] (
+    [ID]            BIGINT       IDENTITY (1, 1) NOT NULL,
+    [ReceiveDate]   DATE         NOT NULL,
+    [MDivisionID]   VARCHAR (8)  DEFAULT ('') NOT NULL,
+    [OrderID]       VARCHAR (13) DEFAULT ('') NOT NULL,
+    [PackingListID] VARCHAR (13) DEFAULT ('') NOT NULL,
+    [CTNStartNo]    VARCHAR (6)  DEFAULT ('') NOT NULL,
+    [AddName]       VARCHAR (10) DEFAULT ('') NOT NULL,
+    [AddDate]       DATETIME     NOT NULL,
+    [SCICtnNo]      VARCHAR (15) CONSTRAINT [DF_CFAReceive_SCICtnNo] DEFAULT ('') NOT NULL,
+    [CFALocationID] VARCHAR (10) DEFAULT ('') NULL,
+    PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+
 
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
@@ -30,14 +33,9 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'MDivisionID'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'訂單號碼',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'CFAReceive',
-    @level2type = N'COLUMN',
-    @level2name = N'OrderID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�q�渹�X', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'OrderID';
+
+
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'PackID',
@@ -48,38 +46,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'PackingListID'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'箱號',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'CFAReceive',
-    @level2type = N'COLUMN',
-    @level2name = N'CTNStartNo'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�c��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'CTNStartNo';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'新增人員',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'CFAReceive',
-    @level2type = N'COLUMN',
-    @level2name = N'AddName'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�s�W�H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'AddName';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'新增時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'CFAReceive',
-    @level2type = N'COLUMN',
-    @level2name = N'AddDate'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�s�W�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'AddDate';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'接收日期',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'CFAReceive',
-    @level2type = N'COLUMN',
-    @level2name = N'ReceiveDate'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'ReceiveDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA儲位代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'CFALocationID';
+
