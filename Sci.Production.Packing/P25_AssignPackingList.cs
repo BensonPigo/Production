@@ -175,11 +175,15 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 				FROM PackingList_Detail pd
 				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 			)
-           ,'{ZPL.CustCTN}' + ( SELECT IIF( s.IsSSCC=1,'_1','_2')
-										 FROM ShippingMarkPicture s
-										 INNER JOIN ShippingMarkPic c ON s.Seq=c.seq AND s.Side=c.Side
-										 INNER JOIN #tmp{i} t ON c.PackingListID=t.ID
-										 WHERE s.Seq=1)
+           ,'{ZPL.CustCTN}' +  ( 
+									SELECT IIF( s.IsSSCC=1,'_1','_2')
+									FROM ShippingMarkPicture s
+									INNER  JOIN (
+										SELECT t.BrandID,t.CustCDID,t.RefNo,c.Side,c.Seq
+										FROM #tmp{i} t 
+										INNER JOIN ShippingMarkPic c  ON c.PackingListID=t.ID  AND c.seq=1
+									)Q ON s.Seq=Q.Seq AND s.Side=Q.Side  AND s.CustCD=Q.CustCDID AND s.BrandID=Q.BrandID AND s.CTNRefno=Q.RefNo
+								)
  			)
 
 
@@ -195,11 +199,15 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 				FROM PackingList_Detail pd
 				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 			)
-           ,'{ZPL.CustCTN}' + ( SELECT IIF( s.IsSSCC=1,'_1','_2')
-										 FROM ShippingMarkPicture s
-										 INNER JOIN ShippingMarkPic c ON s.Seq=c.seq AND s.Side=c.Side
-										 INNER JOIN #tmp{i} t ON c.PackingListID=t.ID
-										 WHERE s.Seq=2)
+           ,'{ZPL.CustCTN}' +  ( 
+									SELECT IIF( s.IsSSCC=1,'_1','_2')
+									FROM ShippingMarkPicture s
+									INNER  JOIN (
+										SELECT t.BrandID,t.CustCDID,t.RefNo,c.Side,c.Seq
+										FROM #tmp{i} t 
+										INNER JOIN ShippingMarkPic c  ON c.PackingListID=t.ID  AND c.seq=2
+									)Q ON s.Seq=Q.Seq AND s.Side=Q.Side  AND s.CustCD=Q.CustCDID AND s.BrandID=Q.BrandID AND s.CTNRefno=Q.RefNo
+								)
  			)
 
 
