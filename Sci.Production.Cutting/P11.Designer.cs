@@ -87,6 +87,8 @@
             this.splitContainer6 = new System.Windows.Forms.SplitContainer();
             this.splitContainer7 = new System.Windows.Forms.SplitContainer();
             this.splitContainer8 = new System.Windows.Forms.SplitContainer();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
             this.radioGroup1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
@@ -137,7 +139,7 @@
             this.radioWithcuto.Location = new System.Drawing.Point(10, 2);
             this.radioWithcuto.Name = "radioWithcuto";
             this.radioWithcuto.Size = new System.Drawing.Size(74, 19);
-            this.radioWithcuto.TabIndex = 0;
+            this.radioWithcuto.TabIndex = 15;
             this.radioWithcuto.TabStop = true;
             this.radioWithcuto.Text = "with auto";
             this.radioWithcuto.UseVisualStyleBackColor = true;
@@ -161,7 +163,7 @@
             this.radiobegin1.Location = new System.Drawing.Point(10, 21);
             this.radiobegin1.Name = "radiobegin1";
             this.radiobegin1.Size = new System.Drawing.Size(91, 19);
-            this.radiobegin1.TabIndex = 1;
+            this.radiobegin1.TabIndex = 16;
             this.radiobegin1.Text = "begin with 1";
             this.radiobegin1.UseVisualStyleBackColor = true;
             // 
@@ -171,7 +173,7 @@
             this.btnClose.Location = new System.Drawing.Point(1086, 9);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 16;
+            this.btnClose.TabIndex = 18;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -182,7 +184,7 @@
             this.btnBatchCreate.Location = new System.Drawing.Point(980, 9);
             this.btnBatchCreate.Name = "btnBatchCreate";
             this.btnBatchCreate.Size = new System.Drawing.Size(100, 30);
-            this.btnBatchCreate.TabIndex = 15;
+            this.btnBatchCreate.TabIndex = 17;
             this.btnBatchCreate.Text = "Batch Create";
             this.btnBatchCreate.UseVisualStyleBackColor = true;
             this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
@@ -205,7 +207,7 @@
             this.btnCopy_to_same_Cutref.Location = new System.Drawing.Point(156, 9);
             this.btnCopy_to_same_Cutref.Name = "btnCopy_to_same_Cutref";
             this.btnCopy_to_same_Cutref.Size = new System.Drawing.Size(295, 30);
-            this.btnCopy_to_same_Cutref.TabIndex = 12;
+            this.btnCopy_to_same_Cutref.TabIndex = 13;
             this.btnCopy_to_same_Cutref.Text = "Copy Item/Cutpart/Artwork to same CutRef#";
             this.btnCopy_to_same_Cutref.UseVisualStyleBackColor = true;
             this.btnCopy_to_same_Cutref.Click += new System.EventHandler(this.btnCopy_to_same_Cutref_Click);
@@ -216,7 +218,7 @@
             this.btnCopy_to_other_Cutref.Location = new System.Drawing.Point(457, 9);
             this.btnCopy_to_other_Cutref.Name = "btnCopy_to_other_Cutref";
             this.btnCopy_to_other_Cutref.Size = new System.Drawing.Size(295, 30);
-            this.btnCopy_to_other_Cutref.TabIndex = 13;
+            this.btnCopy_to_other_Cutref.TabIndex = 14;
             this.btnCopy_to_other_Cutref.Text = "Copy Item/Cutpart/Artwork to other CutRef#";
             this.btnCopy_to_other_Cutref.UseVisualStyleBackColor = true;
             this.btnCopy_to_other_Cutref.Click += new System.EventHandler(this.btnCopy_to_other_Cutref_Click);
@@ -228,7 +230,7 @@
             this.btnColorComb.Location = new System.Drawing.Point(1064, 1);
             this.btnColorComb.Name = "btnColorComb";
             this.btnColorComb.Size = new System.Drawing.Size(97, 30);
-            this.btnColorComb.TabIndex = 8;
+            this.btnColorComb.TabIndex = 10;
             this.btnColorComb.Text = "Color Comb";
             this.btnColorComb.UseVisualStyleBackColor = true;
             this.btnColorComb.Click += new System.EventHandler(this.btnColorComb_Click);
@@ -252,7 +254,7 @@
             0,
             0});
             this.numTotalPart.Size = new System.Drawing.Size(37, 21);
-            this.numTotalPart.TabIndex = 6;
+            this.numTotalPart.TabIndex = 8;
             this.numTotalPart.Value = new decimal(new int[] {
             0,
             0,
@@ -274,7 +276,7 @@
             this.btnGarmentList.Location = new System.Drawing.Point(489, 1);
             this.btnGarmentList.Name = "btnGarmentList";
             this.btnGarmentList.Size = new System.Drawing.Size(97, 30);
-            this.btnGarmentList.TabIndex = 7;
+            this.btnGarmentList.TabIndex = 9;
             this.btnGarmentList.Text = "Garment List";
             this.btnGarmentList.UseVisualStyleBackColor = true;
             this.btnGarmentList.Click += new System.EventHandler(this.btnGarmentList_Click);
@@ -297,7 +299,7 @@
             this.btn_LefttoRight.Location = new System.Drawing.Point(3, 93);
             this.btn_LefttoRight.Name = "btn_LefttoRight";
             this.btn_LefttoRight.Size = new System.Drawing.Size(38, 30);
-            this.btn_LefttoRight.TabIndex = 9;
+            this.btn_LefttoRight.TabIndex = 11;
             this.btn_LefttoRight.Text = ">";
             this.btn_LefttoRight.UseVisualStyleBackColor = true;
             this.btn_LefttoRight.Click += new System.EventHandler(this.btn_LefttoRight_Click);
@@ -308,7 +310,7 @@
             this.btn_RighttoLeft.Location = new System.Drawing.Point(3, 162);
             this.btn_RighttoLeft.Name = "btn_RighttoLeft";
             this.btn_RighttoLeft.Size = new System.Drawing.Size(38, 30);
-            this.btn_RighttoLeft.TabIndex = 10;
+            this.btn_RighttoLeft.TabIndex = 12;
             this.btn_RighttoLeft.Text = "<";
             this.btn_RighttoLeft.UseVisualStyleBackColor = true;
             this.btn_RighttoLeft.Click += new System.EventHandler(this.btn_RighttoLeft_Click);
@@ -326,7 +328,7 @@
             0,
             0});
             this.numNoOfBundle.Size = new System.Drawing.Size(35, 21);
-            this.numNoOfBundle.TabIndex = 4;
+            this.numNoOfBundle.TabIndex = 7;
             this.numNoOfBundle.Value = new decimal(new int[] {
             0,
             0,
@@ -382,24 +384,24 @@
             this.dateEstCutDate.Location = new System.Drawing.Point(215, 6);
             this.dateEstCutDate.Name = "dateEstCutDate";
             this.dateEstCutDate.Size = new System.Drawing.Size(130, 21);
-            this.dateEstCutDate.TabIndex = 1;
+            this.dateEstCutDate.TabIndex = 2;
             // 
             // txtPOID
             // 
             this.txtPOID.BackColor = System.Drawing.Color.White;
             this.txtPOID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.txtPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPOID.Location = new System.Drawing.Point(511, 6);
+            this.txtPOID.Location = new System.Drawing.Point(215, 30);
             this.txtPOID.Name = "txtPOID";
             this.txtPOID.Size = new System.Drawing.Size(108, 21);
-            this.txtPOID.TabIndex = 2;
+            this.txtPOID.TabIndex = 3;
             // 
             // labelPOID
             // 
             this.labelPOID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelPOID.Location = new System.Drawing.Point(465, 5);
+            this.labelPOID.Location = new System.Drawing.Point(140, 29);
             this.labelPOID.Name = "labelPOID";
-            this.labelPOID.Size = new System.Drawing.Size(43, 23);
+            this.labelPOID.Size = new System.Drawing.Size(72, 23);
             this.labelPOID.TabIndex = 83;
             this.labelPOID.Text = "PO ID";
             // 
@@ -460,7 +462,7 @@
             this.gridCutpart.RowTemplate.Height = 24;
             this.gridCutpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCutpart.ShowCellToolTips = false;
-            this.gridCutpart.Size = new System.Drawing.Size(514, 283);
+            this.gridCutpart.Size = new System.Drawing.Size(514, 273);
             this.gridCutpart.TabIndex = 79;
             this.gridCutpart.TabStop = false;
             // 
@@ -514,7 +516,7 @@
             this.gridArticleSize.RowTemplate.Height = 24;
             this.gridArticleSize.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridArticleSize.ShowCellToolTips = false;
-            this.gridArticleSize.Size = new System.Drawing.Size(595, 220);
+            this.gridArticleSize.Size = new System.Drawing.Size(595, 211);
             this.gridArticleSize.TabIndex = 20;
             this.gridArticleSize.TabStop = false;
             this.gridArticleSize.SelectionChanged += new System.EventHandler(this.gridArticleSize_SelectionChanged);
@@ -548,7 +550,7 @@
             this.gridAllPart.RowTemplate.Height = 24;
             this.gridAllPart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAllPart.ShowCellToolTips = false;
-            this.gridAllPart.Size = new System.Drawing.Size(424, 283);
+            this.gridAllPart.Size = new System.Drawing.Size(424, 273);
             this.gridAllPart.TabIndex = 76;
             this.gridAllPart.TabStop = false;
             // 
@@ -602,7 +604,7 @@
             this.gridQty.RowTemplate.Height = 24;
             this.gridQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQty.ShowCellToolTips = false;
-            this.gridQty.Size = new System.Drawing.Size(172, 283);
+            this.gridQty.Size = new System.Drawing.Size(172, 273);
             this.gridQty.TabIndex = 77;
             this.gridQty.TabStop = false;
             // 
@@ -634,7 +636,7 @@
             this.gridCutRef.RowTemplate.Height = 24;
             this.gridCutRef.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCutRef.ShowCellToolTips = false;
-            this.gridCutRef.Size = new System.Drawing.Size(570, 220);
+            this.gridCutRef.Size = new System.Drawing.Size(570, 211);
             this.gridCutRef.TabIndex = 22;
             this.gridCutRef.TabStop = false;
             this.gridCutRef.SelectionChanged += new System.EventHandler(this.gridCutRef_SelectionChanged);
@@ -642,10 +644,10 @@
             // btnQuery
             // 
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnQuery.Location = new System.Drawing.Point(625, 1);
+            this.btnQuery.Location = new System.Drawing.Point(501, 6);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 3;
+            this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -670,17 +672,18 @@
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM.IsProduceFty = false;
             this.txtfactoryByM.IssupportJunk = false;
-            this.txtfactoryByM.Location = new System.Drawing.Point(396, 5);
+            this.txtfactoryByM.Location = new System.Drawing.Point(66, 29);
+            this.txtfactoryByM.MDivision = null;
             this.txtfactoryByM.Name = "txtfactoryByM";
-            this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
-            this.txtfactoryByM.TabIndex = 96;
+            this.txtfactoryByM.Size = new System.Drawing.Size(70, 23);
+            this.txtfactoryByM.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label1.Location = new System.Drawing.Point(348, 5);
+            this.label1.Location = new System.Drawing.Point(9, 29);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(45, 23);
+            this.label1.Size = new System.Drawing.Size(54, 23);
             this.label1.TabIndex = 97;
             this.label1.Text = "Factory";
             // 
@@ -697,7 +700,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.gridArticleSize);
-            this.splitContainer1.Size = new System.Drawing.Size(1169, 220);
+            this.splitContainer1.Size = new System.Drawing.Size(1169, 211);
             this.splitContainer1.SplitterDistance = 570;
             this.splitContainer1.TabIndex = 98;
             // 
@@ -714,7 +717,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(1169, 283);
+            this.splitContainer2.Size = new System.Drawing.Size(1169, 273);
             this.splitContainer2.SplitterDistance = 172;
             this.splitContainer2.TabIndex = 99;
             // 
@@ -731,7 +734,7 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer4);
-            this.splitContainer3.Size = new System.Drawing.Size(993, 283);
+            this.splitContainer3.Size = new System.Drawing.Size(993, 273);
             this.splitContainer3.SplitterDistance = 514;
             this.splitContainer3.TabIndex = 0;
             // 
@@ -749,7 +752,7 @@
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.gridAllPart);
-            this.splitContainer4.Size = new System.Drawing.Size(475, 283);
+            this.splitContainer4.Size = new System.Drawing.Size(475, 273);
             this.splitContainer4.SplitterDistance = 47;
             this.splitContainer4.TabIndex = 0;
             // 
@@ -762,6 +765,8 @@
             // 
             // splitContainer5.Panel1
             // 
+            this.splitContainer5.Panel1.Controls.Add(this.txtSpreadingNo1);
+            this.splitContainer5.Panel1.Controls.Add(this.label2);
             this.splitContainer5.Panel1.Controls.Add(this.chkAEQ);
             this.splitContainer5.Panel1.Controls.Add(this.labelBalance);
             this.splitContainer5.Panel1.Controls.Add(this.labelBalanceValue);
@@ -781,24 +786,25 @@
             // 
             this.splitContainer5.Panel2.Controls.Add(this.splitContainer6);
             this.splitContainer5.Size = new System.Drawing.Size(1169, 630);
-            this.splitContainer5.SplitterDistance = 30;
+            this.splitContainer5.SplitterDistance = 52;
             this.splitContainer5.TabIndex = 100;
             // 
             // chkAEQ
             // 
             this.chkAEQ.AutoSize = true;
             this.chkAEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAEQ.Location = new System.Drawing.Point(711, 6);
+            this.chkAEQ.Location = new System.Drawing.Point(348, 29);
             this.chkAEQ.Name = "chkAEQ";
             this.chkAEQ.Size = new System.Drawing.Size(147, 21);
-            this.chkAEQ.TabIndex = 99;
+            this.chkAEQ.TabIndex = 5;
             this.chkAEQ.Text = "Allocate excess qty";
             this.chkAEQ.UseVisualStyleBackColor = true;
             // 
             // labelBalance
             // 
+            this.labelBalance.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelBalance.BackColor = System.Drawing.Color.Transparent;
-            this.labelBalance.Location = new System.Drawing.Point(1037, 5);
+            this.labelBalance.Location = new System.Drawing.Point(1043, 27);
             this.labelBalance.Name = "labelBalance";
             this.labelBalance.Size = new System.Drawing.Size(54, 23);
             this.labelBalance.TabIndex = 98;
@@ -807,8 +813,9 @@
             // 
             // labelBalanceValue
             // 
+            this.labelBalanceValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelBalanceValue.BackColor = System.Drawing.Color.Transparent;
-            this.labelBalanceValue.Location = new System.Drawing.Point(1091, 5);
+            this.labelBalanceValue.Location = new System.Drawing.Point(1097, 27);
             this.labelBalanceValue.Name = "labelBalanceValue";
             this.labelBalanceValue.Size = new System.Drawing.Size(63, 23);
             this.labelBalanceValue.TabIndex = 98;
@@ -816,8 +823,9 @@
             // 
             // labelToalCutOutputValue
             // 
+            this.labelToalCutOutputValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelToalCutOutputValue.BackColor = System.Drawing.Color.Transparent;
-            this.labelToalCutOutputValue.Location = new System.Drawing.Point(969, 5);
+            this.labelToalCutOutputValue.Location = new System.Drawing.Point(975, 27);
             this.labelToalCutOutputValue.Name = "labelToalCutOutputValue";
             this.labelToalCutOutputValue.Size = new System.Drawing.Size(68, 23);
             this.labelToalCutOutputValue.TabIndex = 98;
@@ -825,8 +833,9 @@
             // 
             // labelTotalCutOutput
             // 
+            this.labelTotalCutOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTotalCutOutput.BackColor = System.Drawing.Color.Transparent;
-            this.labelTotalCutOutput.Location = new System.Drawing.Point(861, 5);
+            this.labelTotalCutOutput.Location = new System.Drawing.Point(867, 27);
             this.labelTotalCutOutput.Name = "labelTotalCutOutput";
             this.labelTotalCutOutput.Size = new System.Drawing.Size(108, 23);
             this.labelTotalCutOutput.TabIndex = 98;
@@ -847,8 +856,8 @@
             // splitContainer6.Panel2
             // 
             this.splitContainer6.Panel2.Controls.Add(this.splitContainer7);
-            this.splitContainer6.Size = new System.Drawing.Size(1169, 596);
-            this.splitContainer6.SplitterDistance = 220;
+            this.splitContainer6.Size = new System.Drawing.Size(1169, 574);
+            this.splitContainer6.SplitterDistance = 211;
             this.splitContainer6.TabIndex = 0;
             // 
             // splitContainer7
@@ -873,8 +882,8 @@
             // splitContainer7.Panel2
             // 
             this.splitContainer7.Panel2.Controls.Add(this.splitContainer8);
-            this.splitContainer7.Size = new System.Drawing.Size(1169, 372);
-            this.splitContainer7.SplitterDistance = 35;
+            this.splitContainer7.Size = new System.Drawing.Size(1169, 359);
+            this.splitContainer7.SplitterDistance = 33;
             this.splitContainer7.TabIndex = 0;
             // 
             // splitContainer8
@@ -898,9 +907,29 @@
             this.splitContainer8.Panel2.Controls.Add(this.btnClose);
             this.splitContainer8.Panel2.Controls.Add(this.label_TotalQty);
             this.splitContainer8.Panel2.Controls.Add(this.btnBatchCreate);
-            this.splitContainer8.Size = new System.Drawing.Size(1169, 333);
-            this.splitContainer8.SplitterDistance = 283;
+            this.splitContainer8.Size = new System.Drawing.Size(1169, 322);
+            this.splitContainer8.SplitterDistance = 273;
             this.splitContainer8.TabIndex = 0;
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label2.Location = new System.Drawing.Point(348, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(84, 23);
+            this.label2.TabIndex = 100;
+            this.label2.Text = "Spreading No";
+            // 
+            // txtSpreadingNo1
+            // 
+            this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo1.IncludeJunk = true;
+            this.txtSpreadingNo1.Location = new System.Drawing.Point(435, 5);
+            this.txtSpreadingNo1.MDivision = "";
+            this.txtSpreadingNo1.Name = "txtSpreadingNo1";
+            this.txtSpreadingNo1.Size = new System.Drawing.Size(60, 23);
+            this.txtSpreadingNo1.TabIndex = 4;
             // 
             // P11
             // 
@@ -1016,5 +1045,7 @@
         private Win.UI.Label labelBalanceValue;
         private Win.UI.Label labelToalCutOutputValue;
         private Win.UI.CheckBox chkAEQ;
+        private Class.txtSpreadingNo txtSpreadingNo1;
+        private Win.UI.Label label2;
     }
 }

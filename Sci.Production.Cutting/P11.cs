@@ -436,6 +436,8 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
            .Text("FabricPanelCode", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
            .Text("Item", header: "Item", width: Widths.AnsiChars(20), iseditingreadonly: false, settings: itemsetting).Get(out item)
+           .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(5), iseditingreadonly: true)
+
            ;
             gridCutRef.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridCutRef.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
@@ -527,6 +529,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             string cutdate = dateEstCutDate.Value == null ? "" : dateEstCutDate.Value.Value.ToShortDateString();
             string factory = txtfactoryByM.Text;
             string poid = txtPOID.Text;
+            string SpreadingNoID = txtSpreadingNo1.Text;
             #region Clear Table
             allpartTb.Clear();
             patternTb.Clear();
@@ -578,6 +581,7 @@ Select  distinct 0 as sel
                    where   Reason.Reasontypeid ='Style_Apparel_Type' 
                            and Style.ukey = ord.styleukey 
                            and Style.ApparelType = Reason.id ) 
+        , a.SpreadingNoID
         , a.Ukey
 from    workorder a WITH (NOLOCK) 
         ,orders ord WITH (NOLOCK) 
@@ -725,6 +729,14 @@ Where   a.ukey = b.workorderukey
                 distru_cmd_Excess += string.Format(" and ord.FtyGroup='{0}'", factory);
                 Excess_cmd = Excess_cmd + string.Format(" and  ord.FtyGroup='{0}'", factory);
                 SizeRatio.Append(string.Format(" and ord.FtyGroup='{0}'", factory));
+            }
+            if (!MyUtility.Check.Empty(SpreadingNoID))
+            {
+                query_cmd = query_cmd + string.Format(" and a.SpreadingNoID='{0}'", SpreadingNoID);
+                distru_cmd = distru_cmd + string.Format(" and a.SpreadingNoID='{0}'", SpreadingNoID);
+                distru_cmd_Excess += string.Format(" and a.SpreadingNoID='{0}'", SpreadingNoID);
+                Excess_cmd = Excess_cmd + string.Format(" and  a.SpreadingNoID='{0}'", SpreadingNoID);
+                SizeRatio.Append(string.Format(" and a.SpreadingNoID='{0}'", SpreadingNoID));
             }
             #endregion
 
