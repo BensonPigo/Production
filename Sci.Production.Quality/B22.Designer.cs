@@ -41,10 +41,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(792, 388);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.chkJunk);
@@ -52,12 +48,6 @@
             this.detailcont.Controls.Add(this.txtCode);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(792, 350);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(792, 38);
             // 
             // browse
             // 
@@ -125,7 +115,7 @@
             this.IsSupportPrint = false;
             this.Name = "B22";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B22";
+            this.Text = "B22. CFA Location Index";
             this.WorkAlias = "CFALocation";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
