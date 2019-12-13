@@ -107,6 +107,7 @@
             this.txtCFALocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCFALocation.IsSupportSytsemContextMenu = false;
             this.txtCFALocation.Location = new System.Drawing.Point(91, 74);
+            this.txtCFALocation.M = null;
             this.txtCFALocation.MDivisionObjectName = null;
             this.txtCFALocation.Name = "txtCFALocation";
             this.txtCFALocation.Size = new System.Drawing.Size(80, 23);
@@ -447,7 +448,7 @@
             this.Controls.Add(this.panel3);
             this.Name = "P27";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "QA P27. CFA Location Index";
+            this.Text = "QA P27. CFA Update Location";
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.panel4, 0);
             this.Controls.SetChildIndex(this.gridPackID, 0);
