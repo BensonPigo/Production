@@ -39,6 +39,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Windows.Forms;
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
@@ -419,6 +420,7 @@ WHERE p.MDivisionID = @MDivisionID
             foreach (string custCTNno in custCTN_List)
             {
                 string[] strArray; // 取得CustCTN過程中，暫存用
+                string[] strArray2; // 取得CustCTN過程中，暫存用
 
                 string content = dataList_String[custCTNno];
 
@@ -426,17 +428,21 @@ WHERE p.MDivisionID = @MDivisionID
                 strArray = content.Split(new string[] { "^FDPO#:^FS^FT225,850^A0B,40,50^FD", "^FS^FT280,950^A0B,40,50^FDSKU:^FS" }, StringSplitOptions.RemoveEmptyEntries);
                 string CustPONo = strArray[1];
 
-                strArray = content.Split(new string[] { "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD", "^FS^FT400,950^A0B,40,50^FDQTY:^FS^FT400,850^A0B,75,100^FD" }, StringSplitOptions.RemoveEmptyEntries);
-                string StyleID_Article_SizeCode = strArray[1];
+                strArray2 = content.Split(new string[] { "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD", "^FS^FT" }, StringSplitOptions.RemoveEmptyEntries);
+
+                // 使用規則運算是，從陣列中找出 OO-OO-OO 的文字，O代表任意字元
+                Regex r = new Regex(@"^\w{1,}\-\w{1,}\-\w{1,}$");
+
+                string StyleID_Article_SizeCode = strArray2.Where(o => r.IsMatch(o)).FirstOrDefault();
 
                 // Orders.StyleID
-                string StyleID = strArray[1].Split('-')[0];
+                string StyleID = StyleID_Article_SizeCode.Split('-')[0];
 
                 // Orders.Article
-                string Article = strArray[1].Split('-')[1];
+                string Article = StyleID_Article_SizeCode.Split('-')[1];
 
                 // Orders.SizeCode
-                string SizeCode = strArray[1].Split('-')[2];
+                string SizeCode = StyleID_Article_SizeCode.Split('-')[2];
 
                 // PackingList_Detail.ShipQty
                 strArray = content.Split(new string[] { "^FS^FT400,950^A0B,40,50^FDQTY:^FS^FT400,850^A0B,75,100^FD", "^FS^FO425,700^BY3^B3B,N,75,N,N^FD" }, StringSplitOptions.RemoveEmptyEntries);
