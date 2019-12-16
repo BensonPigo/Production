@@ -273,6 +273,16 @@ namespace Sci.Production.Subcon
                 //若沒有表頭(意即新增模式)，則不執行異動DB
                 if (MyUtility.Check.Empty(_masterData["ID"]))
                 {
+                    // 新增時需給AddDate,AddName
+                    foreach (DataRow dr in ModifyTable.Rows)
+                    {
+                        if (!MyUtility.Check.Empty(dr["SubconReasonID"]))
+                        {
+                            dr["Adddate"] = DateTime.Now;
+                            dr["AddName"] = Env.User.UserID;
+                        }
+                    }
+
                     P01.tmp_ModifyTable = ModifyTable;
                     P01.tmp_OriginDT_FromDB = OriginDT_FromDB;
                 }

@@ -48,7 +48,8 @@ namespace Sci.Production.Cutting
         DateTime? AddDate;
         string Cutno;
         string Comb;
-        
+        string SpreadingNoID;
+
         void GridSetup()
         {
             this.grid1.IsEditingReadOnly = false;
@@ -62,6 +63,7 @@ namespace Sci.Production.Cutting
                 .Text("SP", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("Group", header: "Group", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Line", header: "Line", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("Cell", header: "Cell", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("Style", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Item", header: "Item", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -77,12 +79,10 @@ namespace Sci.Production.Cutting
                 .Text("Parts", header: "Parts", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 0, integer_places: 10, width: Widths.AnsiChars(8), iseditingreadonly: true)
                 ;
-
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-
             if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty() 
                 && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty() 
                 && this.txtPOID.Text.Empty() 
@@ -124,7 +124,8 @@ namespace Sci.Production.Cutting
             AddDate = dateBundlecreatedDate.Value;
             Cutno = txtCutno.Text;
             Comb = txtComb.Text;
-            
+            SpreadingNoID = txtSpreadingNo1.Text;
+
             string sqlWhere = "";
             string sb = "";
             string declare = string.Empty;
@@ -195,6 +196,11 @@ namespace Sci.Production.Cutting
                 sqlWheres.Add(" b.PatternPanel  = @Comb ");
             }
 
+            if (!MyUtility.Check.Empty(SpreadingNoID))
+            {
+                sqlWheres.Add(" WorkOrder.SpreadingNoID=@SpreadingNoID");
+            }
+
             sqlWhere = string.Join(" and ", sqlWheres);
             if (!sqlWhere.Empty())
             {
@@ -226,6 +232,7 @@ declare @Cell varchar(3) = '{Cell}'
 declare @size varchar(8) = '{size}'
 declare @Addname varchar(10) = '{Addname}'
 declare @Cutno varchar(6) = '{Cutno}'
+declare @SpreadingNoID varchar(6) = '{SpreadingNoID}'
 declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
 declare @Comb varchar(2) = '{txtComb.Text}'
 {declare}
@@ -261,6 +268,7 @@ select
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
     , b.IsEXCESS
+    , WorkOrder.SpreadingNoID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -279,6 +287,7 @@ OUTER APPLY(
 	SELECT TOP 1 
 		MarkerNo  
         ,EstCutDate
+        ,SpreadingNoID
 	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
 )WorkOrder
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
@@ -316,6 +325,7 @@ select
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
     , b.IsEXCESS
+    , WorkOrder.SpreadingNoID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
@@ -340,6 +350,7 @@ OUTER APPLY(
 	SELECT TOP 1 
 		MarkerNo  
         ,EstCutDate
+        ,SpreadingNoID
 	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
 )WorkOrder
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
@@ -379,6 +390,7 @@ declare @Cell varchar(3) = '{Cell}'
 declare @size varchar(8) = '{size}'
 declare @Addname varchar(10) = '{Addname}'
 declare @Cutno varchar(6) = '{Cutno}'
+declare @SpreadingNoID varchar(6) = '{SpreadingNoID}'
 declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
 declare @Comb varchar(2) = '{txtComb.Text}'
 {declare}
@@ -414,6 +426,7 @@ select
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
     , b.IsEXCESS
+    , WorkOrder.SpreadingNoID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -432,6 +445,7 @@ OUTER APPLY(
 	SELECT TOP 1 
 		MarkerNo  
         ,EstCutDate
+        ,SpreadingNoID
 	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
 )WorkOrder
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
@@ -469,6 +483,7 @@ select
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
     , b.IsEXCESS
+    , WorkOrder.SpreadingNoID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
@@ -486,6 +501,7 @@ OUTER APPLY(
 	SELECT TOP 1 
 		MarkerNo  
         ,EstCutDate
+        ,SpreadingNoID
 	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
 )WorkOrder
 " + sqlWhere + @" 
@@ -753,7 +769,7 @@ where bd.BundleNo = '{0}'",
                 .CopyToDataTable();
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P12.xltx"); //預先開啟excel app                         
-            MyUtility.Excel.CopyToXls(selects, "", "Cutting_P12.xltx", 1, true,"Bundle,CutRef,POID,SP,Group,Line,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty", objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(selects, "", "Cutting_P12.xltx", 1, true, "Bundle,CutRef,POID,SP,Group,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty", objApp);      // 將datatable copy to excel
             return;
             #endregion
         }

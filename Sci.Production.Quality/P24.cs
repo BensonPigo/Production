@@ -518,7 +518,8 @@ INSERT INTO [dbo].[PackingScan_History]
            ,[ScanEditDate]
            ,[ScanName]
            ,[AddName]
-           ,[AddDate])
+           ,[AddDate]
+           ,[LackingQty])
      VALUES
            ('{Sci.Env.User.Keyword}'
            ,'{dr["ID"]}'
@@ -531,6 +532,14 @@ INSERT INTO [dbo].[PackingScan_History]
            ,'{dr["ScanName"]}'
            ,'{Sci.Env.User.UserID}'
            ,GETDATE()
+           , (  ISNULL( (
+                            SELECT SUM(pd.ShipQty)	
+                            FROM PackingList_Detail pd 
+                            WHERE  pd.ID='{dr["ID"]}' AND pd.CTNStartNo='{dr["CTNStartNo"]}'
+                        ) 
+                    ,0)
+                - {ScanQty}
+             )----LackingQty計算規則詳見：ISP20191801
             )");
                                 break;
                             default:

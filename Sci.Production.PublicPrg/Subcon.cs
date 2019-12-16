@@ -51,6 +51,23 @@ select 1 from ArtworkType with (nolock)
 
             return MyUtility.Check.Seek(sqlCheckIsArtworkorUseArtwork);
         }
+
+        public static DualResult UpdateArtworkReq_DetailArtworkPOID(string artworkPOID)
+        {
+            string sqlUpdateArtworkReq_Detail = $@"
+update ard  set ard.ArtworkPOID = '{artworkPOID}'
+    from ArtworkReq_Detail ard
+    where exists(select 1   from ArtworkPO_Detail apd
+                            where   apd.ID = '{artworkPOID}' and
+                                    apd.ArtworkReqID = ard.ID and 
+                                    apd.OrderID = ard.OrderID and
+                                    apd.ArtworkId = ard.ArtworkId and
+                                    apd.PatternCode = ard.PatternCode and
+                                    apd.PatternDesc = ard.PatternDesc )
+
+";
+            return DBProxy.Current.Execute(null, sqlUpdateArtworkReq_Detail);
+        }
     }
     
 }

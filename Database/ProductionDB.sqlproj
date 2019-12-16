@@ -2419,6 +2419,10 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Tables\CFALocation.sql" />
+    <Build Include="dbo\Tables\ArtworkReq.sql" />
+    <Build Include="dbo\Tables\ArtworkReq_Detail.sql" />
+    <Build Include="dbo\Tables\ArtworkReq_IrregularQty.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

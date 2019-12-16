@@ -150,6 +150,12 @@
     <Compile Include="txtCentralizedmulitFactory.Designer.cs">
       <DependentUpon>txtCentralizedmulitFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtCFALocation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCFALocation.Designer.cs">
+      <DependentUpon>txtCFALocation.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtClogReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -341,6 +347,12 @@
     </Compile>
     <Compile Include="txtsubcon.Designer.cs">
       <DependentUpon>txtsubcon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtSubconReason.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtSubconReason.designer.cs">
+      <DependentUpon>txtSubconReason.cs</DependentUpon>
     </Compile>
     <Compile Include="txtsubprocess.cs">
       <SubType>Component</SubType>
@@ -613,6 +625,9 @@
     <EmbeddedResource Include="txtsubcon.resx">
       <DependentUpon>txtsubcon.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtSubconReason.resx">
+      <DependentUpon>txtSubconReason.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtsubprocess.resx">
       <DependentUpon>txtsubprocess.cs</DependentUpon>

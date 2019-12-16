@@ -210,6 +210,49 @@ Te2.InvoiceNo)
 	when not matched by source and exists (select ID from @T where id = t.id)then
 	  		delete;
 
+
+-----------------------Export_Container-----------------------------
+	RAISERROR('Import Export_Container - Starts',0,0)
+
+	Merge Production.dbo.Export_Container as t 
+	using (
+		select *
+		from Trade_To_Pms.dbo.Export_Container ec WITH (NOLOCK)
+		where exists (
+					select 1
+					from Production.dbo.Export e
+					where e.id = ec.id)
+	) as s on t.ID = s.ID AND t.Container = s.Container
+	when matched then 
+		update set
+			  t.Seq				=  s.Seq
+			, t.Type			=  s.Type
+			, t.CartonQty		=  s.CartonQty
+			, t.WeightKg		=  s.WeightKg
+			, t.AddName			=  s.AddName
+			, t.AddDate			=  s.AddDate
+			, t.EditName		=  s.EditName
+			, t.EditDate		=  s.EditDate
+	when not matched by target then 
+		insert (   [ID],  [Seq],  [Type],  [Container],  [CartonQty],  [WeightKg],  [AddName],  [AddDate],  [EditName],  [EditDate])
+		values ( s.[ID],s.[Seq],s.[Type],s.[Container],s.[CartonQty],s.[WeightKg],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+	;
+	
+	DELETE pms
+	FROM Production.dbo.Export_Container pms
+	WHERE   EXISTS (
+				SELECT 1 
+				FROM Trade_To_Pms.dbo.Export e 
+				WHERE e.ID=pms.ID					  
+					  and FactoryID in (select id from @Sayfty)
+			) -- 存在於Trade轉出的WK#
+			AND NOT EXISTS(
+				SELECT 1 
+				FROM Trade_To_Pms.dbo.Export_Container ec 
+				WHERE ec.ID=pms.ID 
+					  AND ec.Container=pms.Container	
+			)--不存在Trade轉出的Container
+	;
 drop table #TExport;
 
 END
