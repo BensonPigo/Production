@@ -225,7 +225,6 @@
     </Compile>
     <Compile Include="P05_ReqQtyList.Designer.cs">
       <DependentUpon>P05_ReqQtyList.cs</DependentUpon>
->>>>>>> Mantis/ISP20191402
     </Compile>
     <Compile Include="P30_Qty.cs">
       <SubType>Form</SubType>
