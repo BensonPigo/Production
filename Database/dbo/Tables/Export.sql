@@ -66,6 +66,7 @@
     [PrepaidFtyImportFee] NUMERIC (10, 2) DEFAULT ((0)) NOT NULL,
     [MainExportID08] VARCHAR(13) NOT NULL DEFAULT (''), 
     [NonDeclare] BIT NOT NULL DEFAULT ((0)), 
+    [FormE] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
