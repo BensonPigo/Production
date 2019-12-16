@@ -3835,6 +3835,7 @@ outer apply(
            and ins.Location = t.ComboType
            and ins.OrderId = t.OrderId
 ) DefectData
+where DefectData.Qty > 0
 ";
 
             using (SqlConnection mesConn = new SqlConnection(Env.Cfg.GetConnection("ManufacturingExecution", DBProxy.Current.DefaultModuleName).ConnectionString))
