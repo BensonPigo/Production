@@ -35,8 +35,6 @@ namespace Sci.Production.Class
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            base.OnPopUp(e);
-
             string sqlWhere = "Where Junk = 0";
             string sqlCmd = string.Empty;
 
@@ -59,6 +57,7 @@ namespace Sci.Production.Class
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
             this.ValidateText();
+            base.OnPopUp(e);
         }
 
         protected override void OnValidating(CancelEventArgs e)
