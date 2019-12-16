@@ -27,6 +27,7 @@
     [LockDate] DATE NULL, 
     [CloseName] VARCHAR(10) NOT NULL DEFAULT (''), 
     [CloseDate] DATE NULL, 
+    [ArtworkReqID] VARCHAR(13) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_ArtworkPO] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
