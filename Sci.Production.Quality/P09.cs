@@ -121,6 +121,7 @@ namespace Sci.Production.Quality
             .CheckBox("selected", header: "", trueValue: 1, falseValue: 0, iseditable: true)
             .Text("ID", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("InvoiceNo", header: "Invoice#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Date("WhseArrival", header: "ATA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PoID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("seq", header: "Seq#", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -372,6 +373,7 @@ select distinct
 	ed.id,
     ed.InvoiceNo,
 	Export.ETA,
+    Export.WhseArrival,
 	ed.PoID,
 	seq=ed.seq1+'-'+ed.seq2,
 	ps.SuppID,
