@@ -506,6 +506,7 @@ USING(
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	,[PackingCTN] = pd.id + pd.CTNStartNo
+	,[IsMixPacking]= IIF( MixCount.Value > 1 , 1 ,0)
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
 	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
@@ -520,7 +521,12 @@ USING(
 		select * 
 		from  Production.dbo.LocalItem l
 		where l.RefNo=pd.RefNo
-	) LocalItem
+	) LocalItem	
+	OUTER APPLY(
+		SELECT [Value]= COUNT( p2.SizeCode )
+		FROm Production.dbo.PackingList_Detail p2
+		WHERE p2.ID = pd.ID  AND p2.OrderID=pd.OrderID AND p2.CTNStartNo= pd.CTNStartNo
+	)MixCount
 	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate
 	or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate)
 ) as S
@@ -543,18 +549,19 @@ UPDATE SET
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = s.SunriseUpdated,
 	t.GenSongUpdated = s.GenSongUpdated,
-	t.PackingCTN = s.PackingCTN
+	t.PackingCTN = s.PackingCTN,
+	t.IsMixPacking = s.IsMixPacking
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  ID, SCICtnNo
 , CustCTN
 ,  PulloutDate,  OrderID, OrderShipmodeSeq, Article, SizeCode
 		, ShipQty, Barcode, GW, CtnRefno, CtnLength, CtnWidth, CtnHeight, CtnUnit
-	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated,PackingCTN) 
+	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated,PackingCTN ,IsMixPacking) 
 VALUES(s.ID, s.SCICtnNo, 
 iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 , s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
 		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
-	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN)	;
+	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking)	;
 		
 		----寫入HTMLSetting和PicSetting
 		-- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
