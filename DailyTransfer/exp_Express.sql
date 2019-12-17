@@ -49,8 +49,7 @@ end;
 SELECT * 
 INTO Express
 FROM [Production].dbo.Express  
-WHERE upper(FreightBy) = '3RD'
-and (AddDate >=@DateStart  or EditDate >=@DateStart) ORDER BY Id
+WHERE (AddDate >=@DateStart  or EditDate >=@DateStart) ORDER BY Id
 
 SELECT B.* ,AirPPID=iif(isnull(b.PackingListID,'') = '',b.DutyNo , airpp.AirPPno)
 INTO Express_Detail
