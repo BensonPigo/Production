@@ -351,10 +351,15 @@ where o.Id = '{0}'",
             }
 
             string checkStatus = MyUtility.GetValue.Lookup(string.Format("select Status from AirPP where id = '{0}'", this.CurrentMaintain["ID"].ToString()));
-            if (checkStatus.ToUpper() == "APPROVED")
+
+            // 避免Form與DB的狀態不一樣，造成Approved之後還能存一堆東西進去
+            if (this.CurrentMaintain["Status"].ToString() == "New")
             {
-                MyUtility.Msg.WarningBox(string.Format("{0} already approved, cannot edit again.", this.CurrentMaintain["ID"].ToString()));
-                return false;
+                if (checkStatus.ToUpper() == "APPROVED")
+                {
+                    MyUtility.Msg.WarningBox(string.Format("{0} already approved, cannot edit again.", this.CurrentMaintain["ID"].ToString()));
+                    return false;
+                }
             }
 
             this.ChangeQuotationAVG();
