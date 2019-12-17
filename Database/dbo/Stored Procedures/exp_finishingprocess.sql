@@ -525,7 +525,7 @@ USING(
 	OUTER APPLY(
 		SELECT [Value]= COUNT( p2.SizeCode )
 		FROm Production.dbo.PackingList_Detail p2
-		WHERE p2.ID = pd.ID  AND p2.OrderID=pd.OrderID AND p2.CTNStartNo= pd.CTNStartNo
+		WHERE p2.ID = pd.ID  AND p2.OrderID=pd.OrderID AND p2.CTNStartNo= pd.CTNStartNo AND p2.OrderShipmodeSeq=pd.OrderShipmodeSeq
 	)MixCount
 	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate
 	or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate)

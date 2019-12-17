@@ -17,6 +17,14 @@ IF OBJECT_ID(N'dbo.AirPP') IS NOT NULL
 BEGIN
   DROP TABLE AirPP
 END
+
+IF OBJECT_ID(N'dbo.ShareExpense_APP') IS NOT NULL
+BEGIN
+  DROP TABLE ShareExpense_APP
+END
+
+
+-----------------------------------------------------AirPP-----------------------------------------------------
 SELECT [ID]
       ,[CDate]
       ,[OrderID]
@@ -98,13 +106,22 @@ CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE())
 AND Status IN ('New','Checked','Approved','Junked')
 ORDER BY Id 
 
-
 UPDATE Production.dbo.AirPP
 SET FtySendDate = GETDATE()
 WHERE 
 CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
  AND CONVERT(DATETIME, isnull(TPEEditDate,'')) <= CONVERT(DATETIME, isnull(EditDate,''))
 AND Status IN ('New','Checked','Approved','Junked') AND FtyMgrApvDate is not null AND FtySendDate is null
+
+---------------------------------------------------------------------------------------------------------------
+
+
+-----------------------------------------------------ShareExpense_APP------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------------------
+
+
 END
 
 
