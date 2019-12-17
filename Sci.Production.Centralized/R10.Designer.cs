@@ -50,12 +50,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(457, 73);
-            this.toexcel.TabIndex = 7;
+            this.toexcel.TabIndex = 6;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(457, 109);
-            this.close.TabIndex = 8;
+            this.close.TabIndex = 7;
             // 
             // label1
             // 
@@ -122,6 +122,7 @@
             "KP"});
             this.comboExchangeRate.Location = new System.Drawing.Point(150, 153);
             this.comboExchangeRate.Name = "comboExchangeRate";
+            this.comboExchangeRate.OldText = "";
             this.comboExchangeRate.Size = new System.Drawing.Size(121, 24);
             this.comboExchangeRate.TabIndex = 4;
             // 
@@ -143,7 +144,7 @@
             this.txtCentralizedFactory1.Location = new System.Drawing.Point(150, 84);
             this.txtCentralizedFactory1.Name = "txtCentralizedFactory1";
             this.txtCentralizedFactory1.Size = new System.Drawing.Size(108, 23);
-            this.txtCentralizedFactory1.TabIndex = 100;
+            this.txtCentralizedFactory1.TabIndex = 2;
             // 
             // txtcountry1
             // 
@@ -151,7 +152,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(150, 117);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 101;
+            this.txtcountry1.TabIndex = 3;
             this.txtcountry1.TextBox1Binding = "";
             // 
             // R10
@@ -169,7 +170,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "R10";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R10.Output Summary with FOB";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
