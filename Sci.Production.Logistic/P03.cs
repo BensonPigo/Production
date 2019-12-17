@@ -187,7 +187,6 @@ from (
     INNER JOIN  PackingList_Detail b WITH (NOLOCK)  ON a.Id = b.Id 
     INNEr JOIN  Orders c WITH (NOLOCK) ON b.OrderId = c.Id 
     INNER JOIN  Country d WITH (NOLOCK) ON  c.Dest = d.ID 
-    INNER JOIN  TransferToClog t WITH (NOLOCK) On a.id = t.PackingListID
 	OUTER APPLY (
 		SELECT [Value]=SUM(pd.ScanQty) 
 		FROM PackingList_Detail pd
