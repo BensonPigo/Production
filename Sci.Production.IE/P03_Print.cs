@@ -156,13 +156,27 @@ where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
             #region 第一頁
             sqlCmd = string.Format(
                 @"
-select a.GroupKey,a.OperationID,a.Annotation,a.GSD,MachineTypeID = iif(m.MachineGroupID = '','',a.MachineTypeID),a.Attachment,a.Template,a.ThreadColor
-,isnull(o.DescEN,'') as DescEN,rn = ROW_NUMBER() over(order by iif(IsPPa=1,1,0) ,a.No),a.Cycle,a.ActCycle,IsPPa,a.No
+select   a.GroupKey
+        ,a.OperationID
+        ,a.Annotation
+        ,a.GSD
+        ,a.MachineTypeID--MachineTypeID = iif(m.MachineGroupID = '','',a.MachineTypeID)
+        ,a.Attachment
+        ,a.Template
+        ,a.ThreadColor
+        ,isnull(o.DescEN,'') as DescEN
+        ,rn = ROW_NUMBER() over(order by iif(IsPPa=1,1,0) ,a.No)
+        ,a.Cycle
+        ,a.ActCycle
+        ,IsPPa
+        ,a.No
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
 where a.ID = {0}
-order by iif(IsPPa=1,1,0) ,a.No,iif(m.MachineGroupID = '','',a.MachineTypeID),a.Attachment,a.Template,a.ThreadColor", MyUtility.Convert.GetString(this.masterData["ID"]));
+order by iif(IsPPa=1,1,0) ,a.No
+,a.MachineTypeID--iif(m.MachineGroupID = '','',a.MachineTypeID)
+,a.Attachment,a.Template,a.ThreadColor", MyUtility.Convert.GetString(this.masterData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
             if (!result)
             {
@@ -173,7 +187,10 @@ order by iif(IsPPa=1,1,0) ,a.No,iif(m.MachineGroupID = '','',a.MachineTypeID),a.
             #region Machine Type IsPPa
             sqlCmd = string.Format(
                 @"
-select ld.OperationID,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),ld.Annotation,DescEN=isnull(o.DescEN,ld.Annotation)
+select   ld.OperationID
+        ,ld.MachineTypeID--MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID)
+        ,ld.Annotation
+        ,DescEN=isnull(o.DescEN,ld.Annotation)
 from LineMapping_Detail ld WITH (NOLOCK)
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
