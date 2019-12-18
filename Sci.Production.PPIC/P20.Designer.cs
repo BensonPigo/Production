@@ -58,10 +58,7 @@
             this.LbSent = new Sci.Win.UI.Label();
             this.LbReason = new Sci.Win.UI.Label();
             this.LbID = new Sci.Win.UI.Label();
-            this.txtuserCFM = new Sci.Production.Class.txtuser();
-            this.cmbCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.labelStatus = new System.Windows.Forms.Label();
-            this.txtuserReject = new Sci.Production.Class.txtuser();
             this.dispStyle = new Sci.Win.UI.DisplayBox();
             this.dispSeason = new Sci.Win.UI.DisplayBox();
             this.dispProject = new Sci.Win.UI.DisplayBox();
@@ -109,10 +106,13 @@
             this.CboReason = new Sci.Win.UI.ComboBox();
             this.QtybrkApplybs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnRefresh = new Sci.Win.UI.Button();
-            this.txtuserSent = new Sci.Production.Class.txttpeuser();
             this.txtuserApprove = new Sci.Production.Class.txttpeuser();
-            this.txtuserJunk = new Sci.Production.Class.txttpeuser();
             this.txtuserClose = new Sci.Production.Class.txttpeuser();
+            this.txtuserJunk = new Sci.Production.Class.txttpeuser();
+            this.txtuserSent = new Sci.Production.Class.txttpeuser();
+            this.txtuserReject = new Sci.Production.Class.txtuser();
+            this.cmbCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtuserCFM = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -147,6 +147,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.QtybrkApplybs)).BeginInit();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1000, 600);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtuserApprove);
@@ -178,10 +182,7 @@
             this.detailcont.Controls.Add(this.dispBrand);
             this.detailcont.Controls.Add(this.dispSeason);
             this.detailcont.Controls.Add(this.dispStyle);
-            this.detailcont.Controls.Add(this.txtuserReject);
             this.detailcont.Controls.Add(this.labelStatus);
-            this.detailcont.Controls.Add(this.cmbCategory);
-            this.detailcont.Controls.Add(this.txtuserCFM);
             this.detailcont.Controls.Add(this.LbJunk);
             this.detailcont.Controls.Add(this.LbClose);
             this.detailcont.Controls.Add(this.LbOrderQty);
@@ -205,10 +206,16 @@
             this.detailcont.Controls.Add(this.LbSent);
             this.detailcont.Controls.Add(this.LbReason);
             this.detailcont.Controls.Add(this.LbID);
+            this.detailcont.Controls.Add(this.txtuserReject);
+            this.detailcont.Controls.Add(this.cmbCategory);
+            this.detailcont.Controls.Add(this.txtuserCFM);
+            this.detailcont.Size = new System.Drawing.Size(1000, 562);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnRefresh);
+            this.detailbtm.Location = new System.Drawing.Point(0, 562);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -430,49 +437,16 @@
             this.LbID.TabIndex = 765;
             this.LbID.Text = "ID#";
             // 
-            // txtuserCFM
-            // 
-            this.txtuserCFM.DisplayBox1Binding = "";
-            this.txtuserCFM.Location = new System.Drawing.Point(68, 78);
-            this.txtuserCFM.Name = "txtuserCFM";
-            this.txtuserCFM.Size = new System.Drawing.Size(300, 23);
-            this.txtuserCFM.TabIndex = 791;
-            this.txtuserCFM.TextBox1Binding = "";
-            // 
-            // cmbCategory
-            // 
-            this.cmbCategory.BackColor = System.Drawing.Color.White;
-            this.cmbCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ReasonID", true));
-            this.cmbCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbCategory.FormattingEnabled = true;
-            this.cmbCategory.IsSupportUnselect = true;
-            this.cmbCategory.Location = new System.Drawing.Point(93, 178);
-            this.cmbCategory.Name = "cmbCategory";
-            this.cmbCategory.OldText = "";
-            this.cmbCategory.Size = new System.Drawing.Size(130, 24);
-            this.cmbCategory.TabIndex = 795;
-            this.cmbCategory.Type = "Category";
-            // 
             // labelStatus
             // 
-            this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelStatus.ForeColor = System.Drawing.Color.Red;
-            this.labelStatus.Location = new System.Drawing.Point(715, 3);
+            this.labelStatus.Location = new System.Drawing.Point(628, 3);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(179, 24);
+            this.labelStatus.Size = new System.Drawing.Size(268, 24);
             this.labelStatus.TabIndex = 802;
             this.labelStatus.Text = "Status";
             this.labelStatus.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // txtuserReject
-            // 
-            this.txtuserReject.DisplayBox1Binding = "";
-            this.txtuserReject.Location = new System.Drawing.Point(514, 32);
-            this.txtuserReject.Name = "txtuserReject";
-            this.txtuserReject.Size = new System.Drawing.Size(302, 23);
-            this.txtuserReject.TabIndex = 808;
-            this.txtuserReject.TextBox1Binding = "";
             // 
             // dispStyle
             // 
@@ -648,7 +622,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 208);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(985, 129);
+            this.tabControl.Size = new System.Drawing.Size(1088, 334);
             this.tabControl.TabIndex = 837;
             // 
             // tabQtyOrder
@@ -657,7 +631,7 @@
             this.tabQtyOrder.Location = new System.Drawing.Point(4, 25);
             this.tabQtyOrder.Name = "tabQtyOrder";
             this.tabQtyOrder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyOrder.Size = new System.Drawing.Size(977, 100);
+            this.tabQtyOrder.Size = new System.Drawing.Size(1080, 305);
             this.tabQtyOrder.TabIndex = 0;
             this.tabQtyOrder.Text = "Q\'ty B\'Down by Order";
             // 
@@ -667,7 +641,7 @@
             this.panelQtyOrder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelQtyOrder.Location = new System.Drawing.Point(3, 3);
             this.panelQtyOrder.Name = "panelQtyOrder";
-            this.panelQtyOrder.Size = new System.Drawing.Size(971, 94);
+            this.panelQtyOrder.Size = new System.Drawing.Size(1074, 299);
             this.panelQtyOrder.TabIndex = 0;
             // 
             // GridQtyOrder
@@ -701,7 +675,7 @@
             this.GridQtyOrder.RowTemplate.Height = 24;
             this.GridQtyOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder.ShowCellToolTips = false;
-            this.GridQtyOrder.Size = new System.Drawing.Size(971, 94);
+            this.GridQtyOrder.Size = new System.Drawing.Size(1074, 299);
             this.GridQtyOrder.TabIndex = 0;
             this.GridQtyOrder.TabStop = false;
             // 
@@ -711,7 +685,7 @@
             this.tabQtyShipMode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyShipMode.Name = "tabQtyShipMode";
             this.tabQtyShipMode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyShipMode.Size = new System.Drawing.Size(977, 100);
+            this.tabQtyShipMode.Size = new System.Drawing.Size(1080, 305);
             this.tabQtyShipMode.TabIndex = 1;
             this.tabQtyShipMode.Text = "Q\'ty B\'Down by Shipmode";
             // 
@@ -730,8 +704,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDownbyArticleSizeDetail);
-            this.splitContainer1.Size = new System.Drawing.Size(971, 94);
-            this.splitContainer1.SplitterDistance = 27;
+            this.splitContainer1.Size = new System.Drawing.Size(1074, 302);
+            this.splitContainer1.SplitterDistance = 86;
             this.splitContainer1.TabIndex = 0;
             // 
             // gridQtyBreakDownByShipmode
@@ -764,7 +738,7 @@
             this.gridQtyBreakDownByShipmode.RowTemplate.Height = 24;
             this.gridQtyBreakDownByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownByShipmode.ShowCellToolTips = false;
-            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(971, 27);
+            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(1074, 86);
             this.gridQtyBreakDownByShipmode.TabIndex = 1;
             this.gridQtyBreakDownByShipmode.TabStop = false;
             // 
@@ -821,7 +795,7 @@
             this.tabQtyApply.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApply.Name = "tabQtyApply";
             this.tabQtyApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApply.Size = new System.Drawing.Size(977, 100);
+            this.tabQtyApply.Size = new System.Drawing.Size(1080, 305);
             this.tabQtyApply.TabIndex = 3;
             this.tabQtyApply.Text = "Apply Q\'ty B\'Down by Order";
             // 
@@ -855,7 +829,7 @@
             this.GridQtyOrder_Apply.RowTemplate.Height = 24;
             this.GridQtyOrder_Apply.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder_Apply.ShowCellToolTips = false;
-            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(971, 94);
+            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(1074, 302);
             this.GridQtyOrder_Apply.TabIndex = 0;
             this.GridQtyOrder_Apply.TabStop = false;
             // 
@@ -865,7 +839,7 @@
             this.tabQtyApplyShipmode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApplyShipmode.Name = "tabQtyApplyShipmode";
             this.tabQtyApplyShipmode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(977, 100);
+            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(1080, 305);
             this.tabQtyApplyShipmode.TabIndex = 4;
             this.tabQtyApplyShipmode.Text = "Apply Q\'ty B\'Down by Shipmode";
             // 
@@ -884,8 +858,8 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.label2);
             this.splitContainer2.Panel2.Controls.Add(this.gridQtyBrkApplybyArticleSizeDetail);
-            this.splitContainer2.Size = new System.Drawing.Size(971, 94);
-            this.splitContainer2.SplitterDistance = 27;
+            this.splitContainer2.Size = new System.Drawing.Size(1074, 302);
+            this.splitContainer2.SplitterDistance = 86;
             this.splitContainer2.TabIndex = 1;
             // 
             // gridQtyBrkApplyByShipmode
@@ -918,7 +892,7 @@
             this.gridQtyBrkApplyByShipmode.RowTemplate.Height = 24;
             this.gridQtyBrkApplyByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBrkApplyByShipmode.ShowCellToolTips = false;
-            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(971, 27);
+            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(1074, 86);
             this.gridQtyBrkApplyByShipmode.TabIndex = 1;
             this.gridQtyBrkApplyByShipmode.TabStop = false;
             // 
@@ -1074,22 +1048,13 @@
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefresh.Location = new System.Drawing.Point(803, 4);
+            this.btnRefresh.Location = new System.Drawing.Point(906, 4);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(84, 28);
             this.btnRefresh.TabIndex = 835;
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
-            // 
-            // txtuserSent
-            // 
-            this.txtuserSent.DisplayBox1Binding = "";
-            this.txtuserSent.DisplayBox2Binding = "";
-            this.txtuserSent.Location = new System.Drawing.Point(68, 32);
-            this.txtuserSent.Name = "txtuserSent";
-            this.txtuserSent.Size = new System.Drawing.Size(300, 23);
-            this.txtuserSent.TabIndex = 847;
             // 
             // txtuserApprove
             // 
@@ -1100,15 +1065,6 @@
             this.txtuserApprove.Size = new System.Drawing.Size(300, 23);
             this.txtuserApprove.TabIndex = 847;
             // 
-            // txtuserJunk
-            // 
-            this.txtuserJunk.DisplayBox1Binding = "";
-            this.txtuserJunk.DisplayBox2Binding = "";
-            this.txtuserJunk.Location = new System.Drawing.Point(514, 55);
-            this.txtuserJunk.Name = "txtuserJunk";
-            this.txtuserJunk.Size = new System.Drawing.Size(302, 23);
-            this.txtuserJunk.TabIndex = 847;
-            // 
             // txtuserClose
             // 
             this.txtuserClose.DisplayBox1Binding = "";
@@ -1118,11 +1074,62 @@
             this.txtuserClose.Size = new System.Drawing.Size(302, 23);
             this.txtuserClose.TabIndex = 847;
             // 
+            // txtuserJunk
+            // 
+            this.txtuserJunk.DisplayBox1Binding = "";
+            this.txtuserJunk.DisplayBox2Binding = "";
+            this.txtuserJunk.Location = new System.Drawing.Point(514, 55);
+            this.txtuserJunk.Name = "txtuserJunk";
+            this.txtuserJunk.Size = new System.Drawing.Size(302, 23);
+            this.txtuserJunk.TabIndex = 847;
+            // 
+            // txtuserSent
+            // 
+            this.txtuserSent.DisplayBox1Binding = "";
+            this.txtuserSent.DisplayBox2Binding = "";
+            this.txtuserSent.Location = new System.Drawing.Point(68, 32);
+            this.txtuserSent.Name = "txtuserSent";
+            this.txtuserSent.Size = new System.Drawing.Size(300, 23);
+            this.txtuserSent.TabIndex = 847;
+            // 
+            // txtuserReject
+            // 
+            this.txtuserReject.DisplayBox1Binding = "";
+            this.txtuserReject.Location = new System.Drawing.Point(514, 32);
+            this.txtuserReject.Name = "txtuserReject";
+            this.txtuserReject.Size = new System.Drawing.Size(302, 23);
+            this.txtuserReject.TabIndex = 808;
+            this.txtuserReject.TextBox1Binding = "";
+            // 
+            // cmbCategory
+            // 
+            this.cmbCategory.BackColor = System.Drawing.Color.White;
+            this.cmbCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ReasonID", true));
+            this.cmbCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbCategory.FormattingEnabled = true;
+            this.cmbCategory.IsSupportUnselect = true;
+            this.cmbCategory.Location = new System.Drawing.Point(93, 178);
+            this.cmbCategory.Name = "cmbCategory";
+            this.cmbCategory.OldText = "";
+            this.cmbCategory.Size = new System.Drawing.Size(130, 24);
+            this.cmbCategory.TabIndex = 795;
+            this.cmbCategory.Type = "Category";
+            // 
+            // txtuserCFM
+            // 
+            this.txtuserCFM.DisplayBox1Binding = "";
+            this.txtuserCFM.Location = new System.Drawing.Point(68, 78);
+            this.txtuserCFM.Name = "txtuserCFM";
+            this.txtuserCFM.Size = new System.Drawing.Size(300, 23);
+            this.txtuserCFM.TabIndex = 791;
+            this.txtuserCFM.TextBox1Binding = "";
+            // 
             // P20
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 662);
+            this.ExpressQuery = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

@@ -40,6 +40,39 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
 
+            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,SMR Approved,1,Fty Confirmed,2,Fty Reject,3,MR Junked,4,All");
+
+            // 預設查詢為 Exclude Junk
+            this.queryfors.SelectedIndex = 0;
+            this.DefaultWhere = string.Empty;
+            this.ReloadDatas();
+            this.queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                string hasJunk = MyUtility.Check.Empty(this.queryfors.SelectedValue) ? string.Empty : this.queryfors.SelectedValue.ToString();
+                switch (hasJunk)
+                {
+                    case "0":
+                        this.DefaultWhere = "Status = 'Approved'";
+                        break;
+                    case "1":
+                        this.DefaultWhere = "Status = 'Confirmed'";
+                        break;
+                    case "2":
+                        this.DefaultWhere = "Status = 'Reject'";
+                        break;
+                    case "3":
+                        this.DefaultWhere = "Status = 'Junked'";
+                        break;
+                    case "4":
+                        this.DefaultWhere = string.Empty;
+                        break;
+                    default:
+                        this.DefaultWhere = string.Empty;
+                        break;
+                }
+                this.ReloadDatas();
+            };
+
             this.GridQtyOrder.IsEditingReadOnly = true;
             this.gridQtyBreakDownByShipmode.IsEditingReadOnly = true;
             this.gridQtyBreakDownbyArticleSizeDetail.IsEditingReadOnly = true;
@@ -108,6 +141,25 @@ namespace Sci.Production.PPIC
             {
                 this.BtnConfirm.Enabled = false;
                 this.BtnReject.Enabled = false;
+            }
+
+            switch (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]))
+            {
+                case "Approved":
+                    this.labelStatus.Text = "SMR Approved";
+                    break;
+                case "Confirmed":
+                    this.labelStatus.Text = "Fty Confirmed";
+                    break;
+                case "Reject":
+                    this.labelStatus.Text = "Fty Reject";
+                    break;
+                case "Junked":
+                    this.labelStatus.Text = "MR Junked";
+                    break;
+                default:
+                    this.labelStatus.Text = string.Empty;
+                    break;
             }
 
             #region 載入簽核流程資訊
@@ -550,7 +602,7 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             string toAddress = string.Join(";", x);
             string ccAddress = string.Empty;
             string factory = MyUtility.GetValue.Lookup($@"select factoryID from orders with(nolock) where id = '{this.CurrentMaintain["Orderid"]}'");
-            string subject = $@"== this is my test mail (Testing) ==Order Qty Change SP#{this.CurrentMaintain["Orderid"]}-{factory}";
+            string subject = $@"== this is my test mail (Testing) ==Order Qty Change SP# {this.CurrentMaintain["Orderid"]}-{factory}-{status}";
             string description = $@"== this is my test mail (Testing) ==
 {status} SP#{this.CurrentMaintain["Orderid"]}-{factory} request change qty, please check, apply id# - {this.CurrentMaintain["ID"]}";
 
