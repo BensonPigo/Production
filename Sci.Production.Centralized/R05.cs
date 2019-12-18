@@ -61,7 +61,7 @@ namespace Sci.Production.Centralized
 
             if (MyUtility.Check.Empty(this.Year) || MyUtility.Check.Empty(this.M))
             {
-                MyUtility.Msg.WarningBox("Please input <Inspection Date> and <M> first!");
+                MyUtility.Msg.WarningBox("Please input <Year> and <M> first!");
                 return false;
             }
 
@@ -109,7 +109,7 @@ namespace Sci.Production.Centralized
 
             if (!MyUtility.Check.Empty(this.Factory))
             {
-                where += $@" and o.FactoryID = '{this.Factory}'";
+                where += $@" and o.FtyGroup = '{this.Factory}'";
             }
 
             if (this.ExcludeSampleFactory)
@@ -140,8 +140,8 @@ select
 	o.Qty,
 	o.FOCQty,
 	TotalCPU=isnull(o.CPU,0) * isnull(o.Qty,0),
-	TotalSewingOutput=s.QAQty,
-	BalanceQty=o.Qty-s.QAQty,
+	TotalSewingOutput=isnull(s.QAQty,0),
+	BalanceQty=isnull(o.Qty,0)-isnull(s.QAQty,0),
 	BalanceCPU=(isnull(o.Qty,0)-isnull(s.QAQty,0))* isnull(o.CPU,0),
 	o.SewLine,
 	o.Dest,
@@ -154,7 +154,7 @@ select
 from Orders o with(nolock)
 left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
-outer apply(select QAQty= min(x.QAQty) from(select QAQty=sum(QAQty) from SewingOutput_Detail sod with(nolock) where sod.OrderId = o.ID group by sod.ComboType)x)s
+outer apply(select QAQty = dbo.getMinCompleteSewQty(o.ID,null,null) )s
 outer apply(
 	select OutputDate=max(so.OutputDate)
 	from SewingOutput_Detail sod with(nolock)

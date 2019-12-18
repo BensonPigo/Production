@@ -77,7 +77,7 @@ namespace Sci.Production.Class
                 using (con = new SqlConnection(conString))
                 {
                     con.Open();
-                    string sqlcmd = $@"select distinct zone from FACTORY sf where 1=1 and sf.junk=0 and sf.Zone <> '' Order by Zone";
+                    string sqlcmd = $@"select Zone=''  union all select distinct Zone from FACTORY sf where 1=1 and sf.junk=0 and sf.Zone <> '' Order by Zone";
                     result = DBProxy.Current.SelectByConn(con, sqlcmd, out Data);
                     if (!result)
                     {
