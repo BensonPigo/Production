@@ -477,7 +477,7 @@ order by ID
                     dr["IsDefault"] = false;
                 }
 
-                // 打勾Default的那筆, 欄位除["BranchCode"] ["BranchName"] [Intermediary Bank][Intermediary Bank-SWIFT Code][Remark], 其他欄位必填
+                // 打勾Default的那筆, 欄位除["BranchCode"] ["BranchName"] [Intermediary Bank][Intermediary Bank-SWIFT Code][Remark][SWIFTCode], 其他欄位必填
                 if (Convert.ToBoolean(dr["IsDefault"]))
                 {
                     defaultCount += 1;
@@ -486,8 +486,7 @@ order by ID
                         MyUtility.Check.Empty(dr["AccountName"]) ||
                         MyUtility.Check.Empty(dr["BankName"]) ||
                         MyUtility.Check.Empty(dr["CountryID"]) ||
-                        MyUtility.Check.Empty(dr["City"]) ||
-                        MyUtility.Check.Empty(dr["SWIFTCode"])
+                        MyUtility.Check.Empty(dr["City"])
                         )
                     {
                         hasEmpty = true;
