@@ -82,7 +82,6 @@
             this.label3 = new Sci.Win.UI.Label();
             this.RemarkToTaipei = new Sci.Win.UI.EditBox();
             this.chkImportChange = new Sci.Win.UI.CheckBox();
-            this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             this.chkReplacement = new Sci.Win.UI.CheckBox();
             this.chkDelay = new Sci.Win.UI.CheckBox();
             this.numTPEPaidUSD = new Sci.Win.UI.NumericBox();
@@ -94,6 +93,8 @@
             this.label6 = new Sci.Win.UI.Label();
             this.chkNonDeclare = new Sci.Win.UI.CheckBox();
             this.ChkDoortoDoorDelivery = new Sci.Win.UI.CheckBox();
+            this.labelFormE = new Sci.Win.UI.Label();
+            this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -110,6 +111,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labelFormE);
             this.masterpanel.Controls.Add(this.ChkDoortoDoorDelivery);
             this.masterpanel.Controls.Add(this.chkNonDeclare);
             this.masterpanel.Controls.Add(this.label6);
@@ -242,6 +244,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkNonDeclare, 0);
             this.masterpanel.Controls.SetChildIndex(this.ChkDoortoDoorDelivery, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFormE, 0);
             // 
             // detailpanel
             // 
@@ -886,16 +889,6 @@
             this.chkImportChange.Text = "No Import Charge";
             this.chkImportChange.UseVisualStyleBackColor = true;
             // 
-            // txttpeuserHandle
-            // 
-            this.txttpeuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "Handle", true));
-            this.txttpeuserHandle.DisplayBox1Binding = "";
-            this.txttpeuserHandle.DisplayBox2Binding = "";
-            this.txttpeuserHandle.Location = new System.Drawing.Point(693, 33);
-            this.txttpeuserHandle.Name = "txttpeuserHandle";
-            this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserHandle.TabIndex = 36;
-            // 
             // chkReplacement
             // 
             this.chkReplacement.AutoSize = true;
@@ -1025,6 +1018,30 @@
             this.ChkDoortoDoorDelivery.Text = "Door to Door Delivery";
             this.ChkDoortoDoorDelivery.UseVisualStyleBackColor = true;
             // 
+            // labelFormE
+            // 
+            this.labelFormE.BackColor = System.Drawing.Color.Transparent;
+            this.labelFormE.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
+            this.labelFormE.Location = new System.Drawing.Point(340, 6);
+            this.labelFormE.Name = "labelFormE";
+            this.labelFormE.Size = new System.Drawing.Size(85, 23);
+            this.labelFormE.TabIndex = 66;
+            this.labelFormE.Text = "Form E";
+            this.labelFormE.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.labelFormE.TextStyle.Color = System.Drawing.Color.Red;
+            this.labelFormE.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
+            this.labelFormE.TextStyle.GradientColor = System.Drawing.Color.Red;
+            // 
+            // txttpeuserHandle
+            // 
+            this.txttpeuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "Handle", true));
+            this.txttpeuserHandle.DisplayBox1Binding = "";
+            this.txttpeuserHandle.DisplayBox2Binding = "";
+            this.txttpeuserHandle.Location = new System.Drawing.Point(693, 33);
+            this.txttpeuserHandle.Name = "txttpeuserHandle";
+            this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserHandle.TabIndex = 36;
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(1008, 662);
@@ -1135,5 +1152,6 @@
         private Win.UI.DisplayBox displayCustomsDeclareNo;
         private Win.UI.CheckBox chkNonDeclare;
         private Win.UI.CheckBox ChkDoortoDoorDelivery;
+        private Win.UI.Label labelFormE;
     }
 }
