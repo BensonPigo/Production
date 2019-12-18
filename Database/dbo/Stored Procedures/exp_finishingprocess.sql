@@ -506,7 +506,7 @@ USING(
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	,[PackingCTN] = pd.id + pd.CTNStartNo
-	,[IsMixPacking]= IIF( COUNT(MixCount.ID) > 1 , 1 ,0)
+	,[IsMixPacking]= IIF( isnull(MixCount.val, 0) > 1 , 1 ,0)
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
 	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
@@ -523,17 +523,15 @@ USING(
 		where l.RefNo=pd.RefNo
 	) LocalItem	
 	OUTER APPLY(
-		SELECT DISTINCT p2.ID,p2.CTNStartNo ,p2.Article ,p2.SizeCode
-		FROm Production.dbo.PackingList_Detail p2
-		WHERE p2.ID = pd.ID  AND p2.CTNStartNo= pd.CTNStartNo 
+		select val = count(1)
+		from (
+			SELECT DISTINCT p2.Article ,p2.SizeCode
+			FROm Production.dbo.PackingList_Detail p2
+			WHERE p2.ID = pd.ID  AND p2.CTNStartNo= pd.CTNStartNo 
+		) CheckMix
 	)MixCount
 	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate
 	or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate)
-	GROUP BY pd.ID, pd.SCICtnNo, pd.CustCTN, p.PulloutDate, pd.OrderID, pd.OrderShipmodeSeq
-	,pd.Article, pd.SizeCode, pd.ShipQty, pd.Barcode, pd.GW, pd.RefNo
-	,LocalItem.CtnLength, LocalItem.CtnWidth, LocalItem.CtnHeight
-	,LocalItem.CtnUnit ,pd.CTNStartNo ,fpsPacking.ID
-
 ) as S
 on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode
 AND T.OrderID = S.OrderID AND T.OrderShipmodeSeq = S.OrderShipmodeSeq
