@@ -137,7 +137,7 @@ p.MDivisionID
 ,pd.CTNStartNo
 ,pd.ReceiveDate
 ,o.CustPONo
-,ClogLocationId=iif(pd.CFAReceiveDate is not null,format(pd.CFAReceiveDate,'yyyy/MM/dd'),pd.ClogLocationId)
+,ClogLocationId=iif(pd.CFAReceiveDate is not null,'CFA',pd.ClogLocationId)
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
 ,[TTLQty] = TTL.Qty
@@ -199,7 +199,7 @@ p.MDivisionID
 ,pd.CTNStartNo
 ,pd.ReceiveDate
 ,o.CustPONo
-,ClogLocationId=iif(pd.CFAReceiveDate is not null,format(pd.CFAReceiveDate,'yyyy/MM/dd'),pd.ClogLocationId)
+,ClogLocationId=iif(pd.CFAReceiveDate is not null,'CFA',pd.ClogLocationId)
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
 ,[TTLQty] = TTL.Qty
