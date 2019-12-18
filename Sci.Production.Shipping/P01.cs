@@ -179,8 +179,11 @@ where o.Id = '{0}'",
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("This record is < Approved >. Can't be modify!");
-                    return false;
+                    if (!MyUtility.Check.Empty(this.CurrentMaintain["APAmountEditDate"]))
+                    {
+                        MyUtility.Msg.WarningBox("This record is < Approved >. Can't be modify!");
+                        return false;
+                    }
                 }
             }
 
@@ -190,12 +193,58 @@ where o.Id = '{0}'",
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["APAmountEditDate"]) && this.CurrentMaintain["Status"].ToString() != "New")
+            {
+                this.SetReadonly();
+            }
+            else
+            {
+                this.ControlFactoryRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleFty"]));
+                this.ControlSubconRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleSubcon"]));
+                this.ControlSCIRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleSCI"]));
+                this.ControlSupplierRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleSupp"]));
+                this.ControlBuyerRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleBuyer"]));
+            }
+
             base.ClickEditAfter();
-            this.ControlFactoryRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleFty"]));
-            this.ControlSubconRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleSubcon"]));
-            this.ControlSCIRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleSCI"]));
-            this.ControlSupplierRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleSupp"]));
-            this.ControlBuyerRatio(!Convert.ToBoolean(this.CurrentMaintain["ResponsibleBuyer"]));
+        }
+
+        private void SetReadonly()
+        {
+            this.txtSpNo.ReadOnly = true;
+            this.numAirQty.ReadOnly = true;
+            this.numGrossWeight.ReadOnly = true;
+            this.txtSubconForwarder1.TextBox1.ReadOnly = true;
+            this.txtsubcon3.TextBox1.ReadOnly = true;
+            this.txtSRNo.ReadOnly = true;
+            this.numVWeight.ReadOnly = true;
+            this.txtResponsibilityJustifcation.ReadOnly = true;
+            this.txtSubconName.ReadOnly = true;
+            this.numForwarderNQuotation.ReadOnly = true;
+            this.numForwarder1Quotation.ReadOnly = true;
+            this.numForwarder2Quotation.ReadOnly = true;
+            this.numericBoxCW.ReadOnly = true;
+            this.numEstAmt.ReadOnly = true;
+            this.numActAmt.ReadOnly = true;
+            this.numExchangeRate.ReadOnly = true;
+            this.txtExplanation.ReadOnly = true;
+            this.checkFactory.ReadOnly = true;
+            this.checkSubcon.ReadOnly = true;
+            this.checkSCI.ReadOnly = true;
+            this.checkSupplier.ReadOnly = true;
+            this.checkBuyer.ReadOnly = true;
+            this.txtfactory.ReadOnly = true;
+            this.txtUserPPICmgr.TextBox1.ReadOnly = true;
+            this.txtUserFactorymgr.TextBox1.ReadOnly = true;
+            this.datePayDate.ReadOnly = true;
+
+            this.numSCIRatio.ReadOnly = true;
+            this.numSupplierRatio.ReadOnly = true;
+            this.numBuyerRatio.ReadOnly = true;
+            this.numFactoryRatio.ReadOnly = true;
+            this.numSubconRatio.ReadOnly = true;
+            this.txtBuyer.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -302,10 +351,15 @@ where o.Id = '{0}'",
             }
 
             string checkStatus = MyUtility.GetValue.Lookup(string.Format("select Status from AirPP where id = '{0}'", this.CurrentMaintain["ID"].ToString()));
-            if (checkStatus.ToUpper() == "APPROVED")
+
+            // 避免Form與DB的狀態不一樣，造成Approved之後還能存一堆東西進去
+            if (this.CurrentMaintain["Status"].ToString() == "New")
             {
-                MyUtility.Msg.WarningBox(string.Format("{0} already approved, cannot edit again.", this.CurrentMaintain["ID"].ToString()));
-                return false;
+                if (checkStatus.ToUpper() == "APPROVED")
+                {
+                    MyUtility.Msg.WarningBox(string.Format("{0} already approved, cannot edit again.", this.CurrentMaintain["ID"].ToString()));
+                    return false;
+                }
             }
 
             this.ChangeQuotationAVG();
