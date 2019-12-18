@@ -1021,10 +1021,10 @@
             // labelFormE
             // 
             this.labelFormE.BackColor = System.Drawing.Color.Transparent;
-            this.labelFormE.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.labelFormE.Location = new System.Drawing.Point(340, 14);
+            this.labelFormE.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
+            this.labelFormE.Location = new System.Drawing.Point(340, 6);
             this.labelFormE.Name = "labelFormE";
-            this.labelFormE.Size = new System.Drawing.Size(53, 15);
+            this.labelFormE.Size = new System.Drawing.Size(85, 23);
             this.labelFormE.TabIndex = 66;
             this.labelFormE.Text = "Form E";
             this.labelFormE.TextStyle.BorderColor = System.Drawing.Color.Red;
