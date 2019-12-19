@@ -3617,19 +3617,51 @@ group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Locatio
             }
 
             string sqlcmd = $@"
-select t.OrderId,t.Article,t.ComboType
-    ,Color=(select ColorID from View_OrderFAColor vof with(nolock) where vof.id=t.OrderId and vof.Article=t.Article)
-    ,TMS=ROUND(isnull(o.cpu,0) * isnull(o.CPUFactor,0) * 
-			isnull((select Rate = isnull([dbo].[GetOrderLocation_Rate](t.OrderId,sl.Location),[dbo].[GetStyleLocation_Rate](sl.StyleUkey,sl.Location))
-			from Style_Location sl WITH (NOLOCK) where sl.StyleUkey = o.StyleUkey and sl.Location = t.ComboType),0)
-			/100 * (select StdTMS from System WITH (NOLOCK)),0)
-    ,HourlyStandardOutput=(select top 1 ss.StandardOutput from SewingSchedule ss WITH (NOLOCK) where ss.OrderID = t.OrderID and ss.ComboType = t.ComboType and ss.SewingLineID = '{this.CurrentMaintain["SewingLineID"]}')
-    ,t.QAQty,t.DefectQty,t.InlineQty,t.ImportFromDQS,t.AutoCreate
-    ,ukey = 0
-    ,RFT = CONVERT(VARCHAR, convert(Decimal(5, 2), round((t.InlineQty - t.DefectQty) /  cast(t.InlineQty as decimal) * 100.0, 2))) + '%'
-    ,ID = '{this.CurrentMaintain["ID"]}'
+select t.OrderId
+,t.Article
+,t.ComboType
+,Color = (
+    select ColorID 
+    from View_OrderFAColor vof with(nolock) 
+    where vof.id=t.OrderId and vof.Article=t.Article
+)
+,TMS = iif(O_Location.Value = 0, S_Location.value,O_Location.value)
+,HourlyStandardOutput = 
+    (   select top 1 ss.StandardOutput 
+        from SewingSchedule ss WITH (NOLOCK) 
+        where ss.OrderID = t.OrderID 
+        and ss.ComboType = t.ComboType 
+        and ss.SewingLineID = '{this.CurrentMaintain["SewingLineID"]}')
+,t.QAQty,t.DefectQty,t.InlineQty,t.ImportFromDQS,t.AutoCreate
+,ukey = 0
+,RFT = CONVERT(VARCHAR, convert(Decimal(5, 2), round((t.InlineQty - t.DefectQty) /  cast(t.InlineQty as decimal) * 100.0, 2))) + '%'
+,ID = '{this.CurrentMaintain["ID"]}'
 from #tmp t
 left join orders o  with(nolock) on o.id = t.OrderId
+outer apply(
+    select value = ROUND(
+    isnull(o.cpu,0) * isnull(o.CPUFactor,0) * 
+	isnull(
+            (select Rate = [dbo].[GetStyleLocation_Rate](sl.StyleUkey,sl.Location)
+			from Style_Location sl WITH (NOLOCK) 
+            where sl.StyleUkey = o.StyleUkey 
+            and sl.Location = t.ComboType)
+            ,0)
+	    /100 * (select StdTMS from System WITH (NOLOCK))
+    ,0)
+)S_Location
+outer apply(
+    select value = ROUND(
+    isnull(o.cpu,0) * isnull(o.CPUFactor,0) * 
+	isnull(
+            (select Rate = [dbo].[GetOrderLocation_Rate](t.OrderId,ol.Location)
+			from Order_Location ol WITH (NOLOCK) 
+            where ol.OrderID = o.id 
+            and ol.Location = t.ComboType)
+            ,0)
+	    /100 * (select StdTMS from System WITH (NOLOCK))
+    ,0)
+)O_Location
 ";
             result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1);
             if (!result)
