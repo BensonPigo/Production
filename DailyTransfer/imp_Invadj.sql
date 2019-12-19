@@ -17,14 +17,7 @@ BEGIN
 --更新使用Merge寫法 ----------------InvAdjust
 Merge Production.dbo.InvAdjust as t
 using (
-	select b.*,p.OrderShipmodeSeq from Trade_To_Pms.dbo.InvAdjust b WITH (NOLOCK) 
-	inner join Production.dbo.Factory c WITH (NOLOCK) on b.FactoryID=c.ID
-	outer apply(
-		select OrderShipmodeSeq from Production.dbo.Pullout_Detail
-		where invno=b.GarmentInvoiceID
-		and orderid=b.orderid
-		and pulldate=b.pulldate
-	) as p	
+	select b.* from Trade_To_Pms.dbo.InvAdjust b WITH (NOLOCK)
 ) as s
 on t.id=s.id
 when not matched by target then 
