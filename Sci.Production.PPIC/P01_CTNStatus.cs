@@ -77,69 +77,112 @@ order by Seq", this.orderID);
             DataTable transferDetail, ctnLastStatus;
             #region 組撈Transaction Detail的Sql
             string sqlCmd = string.Format(
-                @"with Transferclog
-as(
-    select PackingListID = pd.ID
-			, pd.CTNStartNo
-            , Type = 'Fty Send to Clog'
-            , t.ID
-            , TypeDate = t.TransferDate
-            , Location = '' 
-            , UpdateDate = t.AddDate 
-            , Seq = isnull(pd.Seq,0) 
-            , pd.OrigID
-            , pd.OrigOrderID
-            , pd.OrigCTNStartNo
-    from TransferToClog t WITH (NOLOCK) 
-    inner join PackingList_Detail pd WITH (NOLOCK) on (
-    													pd.ID = t.PackingListID 
-														and pd.OrderID = t.OrderID 
-														and pd.CTNStartNo = t.CTNStartNo
-                                                       )
-                                                       or (
-    												 	pd.OrigID = t.PackingListID
-    												 	and pd.OrigOrderID = t.OrderID
-    												 	and pd.OrigCTNStartNo = t.CTNStartNo
-                                                       )
-    where pd.OrderID = '{0}' 
-          and pd.CTNQty > 0
-		  and t.PackingListID != ''
-          and t.OrderID != ''
-          and t.CTNStartNo != ''
-),
-CReceive
-as(
-    select PackingListID = pd.ID
-			, pd.CTNStartNo
-            , Type = 'Clog Receive from Fty' 
-            , c.ID
-            , TypeDate = c.ReceiveDate 
-            , Location = c.ClogLocationId 
-            , UpdateDate = c.AddDate 
-            , Seq = isnull(pd.Seq,0) 
-            , pd.OrigID
-            , pd.OrigOrderID
-            , pd.OrigCTNStartNo
-    from ClogReceive c WITH (NOLOCK) 
-    inner join PackingList_Detail pd WITH (NOLOCK) on (
-														pd.ID = c.PackingListID 
-														and pd.OrderID = c.OrderID 
-														and pd.CTNStartNo = c.CTNStartNo
-                                                      )
-                                                      or (
-    												 	pd.OrigID = c.PackingListID
-    												 	and pd.OrigOrderID = c.OrderID
-    												 	and pd.OrigCTNStartNo = c.CTNStartNo
-                                                      )
-    where pd.OrderId = '{0}' 
-          and pd.CTNQty > 0
-		  and c.PackingListID != ''
-          and c.OrderID != ''
-          and c.CTNStartNo != ''
-),
-CReturn 
-as (
-    select PackingListID = pd.ID
+                @"
+	select
+	ID,
+	CTNStartNo,
+	OrderID,
+	Seq,
+	OrigID,
+	OrigOrderID,
+	OrigCTNStartNo
+	into #PackingList_Detail
+	from PackingList_Detail 
+	where OrderID = '{0}' 
+          and CTNQty > 0
+
+	--Transferclog
+	select *
+	into #Transferclog
+	from(
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+		        , Type = 'Fty Send to Clog'
+		        , t.ID
+		        , TypeDate = t.TransferDate
+		        , Location = '' 
+		        , UpdateDate = t.AddDate 
+		        , Seq = isnull(pd.Seq,0) 
+		        , pd.OrigID
+		        , pd.OrigOrderID
+		        , pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join TransferToClog t  WITH (NOLOCK) on pd.ID = t.PackingListID 
+															and pd.OrderID = t.OrderID 
+															and pd.CTNStartNo = t.CTNStartNo
+		where t.PackingListID != ''
+		      and t.OrderID != ''
+		      and t.CTNStartNo != ''
+		union all
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+		        , Type = 'Fty Send to Clog'
+		        , t.ID
+		        , TypeDate = t.TransferDate
+		        , Location = '' 
+		        , UpdateDate = t.AddDate 
+		        , Seq = isnull(pd.Seq,0) 
+		        , pd.OrigID
+		        , pd.OrigOrderID
+		        , pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join TransferToClog t  WITH (NOLOCK) on pd.OrigID = t.PackingListID
+														 	and pd.OrigOrderID = t.OrderID
+														 	and pd.OrigCTNStartNo = t.CTNStartNo
+		where t.PackingListID != ''
+		      and t.OrderID != ''
+		      and t.CTNStartNo != '') t
+
+	
+		
+	--CReceive
+	select *
+	into #CReceive
+	from (
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+		        , Type = 'Clog Receive from Fty' 
+		        , c.ID
+		        , TypeDate = c.ReceiveDate 
+		        , Location = c.ClogLocationId 
+		        , UpdateDate = c.AddDate 
+		        , Seq = isnull(pd.Seq,0) 
+		        , pd.OrigID
+		        , pd.OrigOrderID
+		        , pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join ClogReceive c WITH (NOLOCK) on pd.ID = c.PackingListID 
+												  and pd.OrderID = c.OrderID 
+												  and pd.CTNStartNo = c.CTNStartNo
+		where c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+		union
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+		        , Type = 'Clog Receive from Fty' 
+		        , c.ID
+		        , TypeDate = c.ReceiveDate 
+		        , Location = c.ClogLocationId 
+		        , UpdateDate = c.AddDate 
+		        , Seq = isnull(pd.Seq,0) 
+		        , pd.OrigID
+		        , pd.OrigOrderID
+		        , pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join ClogReceive c WITH (NOLOCK) on pd.OrigID = c.PackingListID
+														 	and pd.OrigOrderID = c.OrderID
+														 	and pd.OrigCTNStartNo = c.CTNStartNo
+		where c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+	) t
+
+	--CReturn
+	select *
+	into #CReturn
+	from (
+	select PackingListID = pd.ID
 			, pd.CTNStartNo
             , Type = 'Clog Return to Fty' 
             , c.ID
@@ -150,118 +193,173 @@ as (
             , pd.OrigID
             , pd.OrigOrderID
             , pd.OrigCTNStartNo
-    from ClogReturn c WITH (NOLOCK) 
-    inner join PackingList_Detail pd WITH (NOLOCK) on (
-														pd.ID = c.PackingListID 
-														and pd.OrderID = c.OrderID 
-														and pd.CTNStartNo = c.CTNStartNo
-                                                       )
-                                                       or (
-    												 	pd.OrigID = c.PackingListID
-    												 	and pd.OrigOrderID = c.OrderID
-    												 	and pd.OrigCTNStartNo = c.CTNStartNo
-                                                       )
-    where pd.OrderId = '{0}' 
-          and pd.CTNQty > 0
-		  and c.PackingListID != ''
+    from #PackingList_Detail pd  
+    inner join ClogReturn c WITH (NOLOCK) on pd.ID = c.PackingListID 
+													  and pd.OrderID = c.OrderID 
+													  and pd.CTNStartNo = c.CTNStartNo
+                                                      
+	where c.PackingListID != ''
           and c.OrderID != ''
           and c.CTNStartNo != ''
-),
-TransferCFA
-as (
-    select PackingListID = pd.ID
+	union all
+	select PackingListID = pd.ID
 			, pd.CTNStartNo
-    		, Type = 'Clog Send to CFA' 
-    		, t.id
-    		, TypeDate = t.TransferDate 
-    		, Location = '' 
-    		, UpdateDate = t.AddDate  
-    		, Seq = isnull(pd.Seq,0) 
-    		, pd.OrigID
-    		, pd.OrigOrderID
-    		, pd.OrigCTNStartNo
-    from TransferToCFA t WITH (NOLOCK) 
-    inner join PackingList_Detail pd WITH (NOLOCK) on (
-    													pd.ID = t.PackingListID 
-														and pd.OrderID = t.OrderID 
-														and pd.CTNStartNo = t.CTNStartNo
-    												 )
-    												 or (
-    												 	pd.OrigID = t.PackingListID
+            , Type = 'Clog Return to Fty' 
+            , c.ID
+            , TypeDate = c.ReturnDate 
+            , Location = '' 
+            , UpdateDate = c.AddDate 
+            , Seq = isnull(pd.Seq,0) 
+            , pd.OrigID
+            , pd.OrigOrderID
+            , pd.OrigCTNStartNo
+    from #PackingList_Detail pd  
+    inner join ClogReturn c WITH (NOLOCK) on   pd.OrigID = c.PackingListID
+    												 	and pd.OrigOrderID = c.OrderID
+    												 	and pd.OrigCTNStartNo = c.CTNStartNo
+                                                      
+	where c.PackingListID != ''
+          and c.OrderID != ''
+          and c.CTNStartNo != ''
+	) t
+	
+
+	--TransferCFA
+	select *
+	into #TransferCFA
+	from (
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'Clog Send to CFA' 
+				, t.id
+				, TypeDate = t.TransferDate 
+				, Location = '' 
+				, UpdateDate = t.AddDate  
+				, Seq = isnull(pd.Seq,0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd
+		inner join TransferToCFA t WITH (NOLOCK) on pd.ID = t.PackingListID 
+													and pd.OrderID = t.OrderID 
+													and pd.CTNStartNo = t.CTNStartNo
+														 
+		where  t.PackingListID != ''
+		      and t.OrderID != ''
+		      and t.CTNStartNo != ''
+		union all
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'Clog Send to CFA' 
+				, t.id
+				, TypeDate = t.TransferDate 
+				, Location = '' 
+				, UpdateDate = t.AddDate  
+				, Seq = isnull(pd.Seq,0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd
+		inner join TransferToCFA t WITH (NOLOCK) on pd.OrigID = t.PackingListID
     												 	and pd.OrigOrderID = t.OrderID
     												 	and pd.OrigCTNStartNo = t.CTNStartNo
-    												 )
-    where pd.OrderID = '{0}' 
-    	  and pd.CTNQty > 0  
-		  and t.PackingListID != ''
-          and t.OrderID != ''
-          and t.CTNStartNo != ''
-)
-,
-ReceiveCFA
-as (
-	select PackingListID = pd.ID
-			, pd.CTNStartNo
-			, Type = 'CFA Receive from Clog' 
-			, c.id
-			, TypeDate = c.ReceiveDate 
-			, Location = '' 
-			, UpdateDate  = c.AddDate 
-			, Seq = isnull(pd.Seq, 0) 
-    		, pd.OrigID
-    		, pd.OrigOrderID
-    		, pd.OrigCTNStartNo
-	from CFAReceive c WITH (NOLOCK) 
-	inner join PackingList_Detail pd WITH (NOLOCK) on (
-														pd.ID = c.PackingListID 
-														and pd.OrderID = c.OrderID 
-														and pd.CTNStartNo = c.CTNStartNo
-													 )
-													 or (
-    												 	pd.OrigID = c.PackingListID
-    												 	and pd.OrigOrderID = c.OrderID
-    												 	and pd.OrigCTNStartNo = c.CTNStartNo
-													 )
-	where pd.OrderId = '{0}' 
-		  and pd.CTNQty > 0
-		  and c.PackingListID != ''
-          and c.OrderID != ''
-          and c.CTNStartNo != ''
-)
-,
-ReturnCFA
-as (
-	select PackingListID = pd.ID
-			, pd.CTNStartNo
-			, Type = 'CFA Return to ' + c.ReturnTo 
-			, c.id
-			, TypeDate = c.ReturnDate 
-			, Location = '' 
-			, UpdateDate  = c.AddDate 
-			, Seq = isnull(pd.Seq, 0) 
-    		, pd.OrigID
-    		, pd.OrigOrderID
-    		, pd.OrigCTNStartNo
-	from CFAReturn c WITH (NOLOCK) 
-	inner join PackingList_Detail pd WITH (NOLOCK) on (
-														pd.ID = c.PackingListID 
-													  	and pd.OrderID = c.OrderID 
-													  	and pd.CTNStartNo = c.CTNStartNo
-													 )
-													 or (
-    												 	pd.OrigID = c.PackingListID
-    												 	and pd.OrigOrderID = c.OrderID
-    												 	and pd.OrigCTNStartNo = c.CTNStartNo
-													 )
-	where pd.OrderId = '{0}' 
-		  and pd.CTNQty > 0 
-		  and c.PackingListID != ''
-          and c.OrderID != ''
-          and c.CTNStartNo != ''
-)
-,
-CReceiveCFA 
-as (
+														 
+		where  t.PackingListID != ''
+		      and t.OrderID != ''
+		      and t.CTNStartNo != ''
+	) t
+	
+	--ReceiveCFA
+	select *
+	into #ReceiveCFA
+	from (
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'CFA Receive from Clog' 
+				, c.id
+				, TypeDate = c.ReceiveDate 
+				, Location = '' 
+				, UpdateDate  = c.AddDate 
+				, Seq = isnull(pd.Seq, 0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join CFAReceive c WITH (NOLOCK) on pd.ID = c.PackingListID 
+												 and pd.OrderID = c.OrderID 
+												 and pd.CTNStartNo = c.CTNStartNo
+		where  c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+		union all
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'CFA Receive from Clog' 
+				, c.id
+				, TypeDate = c.ReceiveDate 
+				, Location = '' 
+				, UpdateDate  = c.AddDate 
+				, Seq = isnull(pd.Seq, 0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join CFAReceive c WITH (NOLOCK) on pd.OrigID = c.PackingListID
+												 and pd.OrigOrderID = c.OrderID
+												 and pd.OrigCTNStartNo = c.CTNStartNo
+		where  c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+	) t
+	
+	--ReturnCFA
+	select *
+	into #ReturnCFA
+	from (
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'CFA Return to ' + c.ReturnTo 
+				, c.id
+				, TypeDate = c.ReturnDate 
+				, Location = '' 
+				, UpdateDate  = c.AddDate 
+				, Seq = isnull(pd.Seq, 0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join CFAReturn c WITH (NOLOCK) on pd.ID = c.PackingListID 
+												and pd.OrderID = c.OrderID 
+												and pd.CTNStartNo = c.CTNStartNo
+		where c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+		union all
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'CFA Return to ' + c.ReturnTo 
+				, c.id
+				, TypeDate = c.ReturnDate 
+				, Location = '' 
+				, UpdateDate  = c.AddDate 
+				, Seq = isnull(pd.Seq, 0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join CFAReturn c WITH (NOLOCK) on pd.OrigID = c.PackingListID
+												and pd.OrigOrderID = c.OrderID
+												and pd.OrigCTNStartNo = c.CTNStartNo			
+		where c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+	) t
+	
+
+	--CReceiveCFA
+	select *
+	into #CReceiveCFA
+	from (
 	select PackingListID = pd.ID
 			, pd.CTNStartNo
 			, Type = 'Clog Receive from CFA'  
@@ -273,29 +371,17 @@ as (
     		, pd.OrigID
     		, pd.OrigOrderID
     		, pd.OrigCTNStartNo
-	from ClogReceiveCFA c WITH (NOLOCK) 
-	inner join PackingList_Detail pd WITH (NOLOCK) on (
-														pd.ID = c.PackingListID 
-														and pd.OrderID = c.OrderID 
-														and pd.CTNStartNo = c.CTNStartNo
-													 )
-													 or (
-    												 	pd.OrigID = c.PackingListID
-    												 	and pd.OrigOrderID = c.OrderID
-    												 	and pd.OrigCTNStartNo = c.CTNStartNo
-													 )
-	where pd.OrderId = '{0}' 
-		  and pd.CTNQty > 0  
-		  and c.PackingListID != ''
+	from #PackingList_Detail pd
+	inner join ClogReceiveCFA c WITH (NOLOCK) on pd.ID = c.PackingListID 
+												 and pd.OrderID = c.OrderID 
+												 and pd.CTNStartNo = c.CTNStartNo
+	where c.PackingListID != ''
           and c.OrderID != ''
           and c.CTNStartNo != ''
-)
-,
-DryRoomReceive 
-as (
+	union all
 	select PackingListID = pd.ID
 			, pd.CTNStartNo
-			, Type = 'Dry Room Receive from Fty' 
+			, Type = 'Clog Receive from CFA'  
 			, c.id
 			, TypeDate = c.ReceiveDate 
 			, Location = '' 
@@ -304,73 +390,129 @@ as (
     		, pd.OrigID
     		, pd.OrigOrderID
     		, pd.OrigCTNStartNo
-	from DryReceive c WITH (NOLOCK) 
-	inner join PackingList_Detail pd WITH (NOLOCK) on (
-														pd.ID = c.PackingListID 
-														and pd.OrderID = c.OrderID 
-														and pd.CTNStartNo = c.CTNStartNo
-													 )
-													 or (
-    												 	pd.OrigID = c.PackingListID
-    												 	and pd.OrigOrderID = c.OrderID
-    												 	and pd.OrigCTNStartNo = c.CTNStartNo
-													 )
-	where pd.OrderId = '{0}' 
-		  and pd.CTNQty > 0
-		  and c.PackingListID != ''
+	from #PackingList_Detail pd
+	inner join ClogReceiveCFA c WITH (NOLOCK) on pd.OrigID = c.PackingListID
+    										     and pd.OrigOrderID = c.OrderID
+    										     and pd.OrigCTNStartNo = c.CTNStartNo
+	where c.PackingListID != ''
           and c.OrderID != ''
           and c.CTNStartNo != ''
-)
-,
-DryRoomTransfer 
-as (
-	select PackingListID = pd.ID
-			, pd.CTNStartNo
-			, Type = 'Dry Room Transfer to '+ c.TransferTo
-			, c.ID
-			, TypeDate = c.TransferDate 
-			, Location = '' 
-			, UpdateDate = c.AddDate 
-			, Seq = isnull(pd.Seq, 0) 
-    		, pd.OrigID
-    		, pd.OrigOrderID
-    		, pd.OrigCTNStartNo
-	from DryTransfer c WITH (NOLOCK) 
-	inner join PackingList_Detail pd WITH (NOLOCK) on (
-														pd.ID = c.PackingListID 
-														and pd.OrderID = c.OrderID 
-														and pd.CTNStartNo = c.CTNStartNo
-													 )
-													 or (
-    												 	pd.OrigID = c.PackingListID
-    												 	and pd.OrigOrderID = c.OrderID
-    												 	and pd.OrigCTNStartNo = c.CTNStartNo
-													 )
-	where pd.OrderId = '{0}' 
-		  and pd.CTNQty > 0
-		  and c.PackingListID != ''
-          and c.OrderID != ''
-          and c.CTNStartNo != ''
-)
+	) t
+	
 
-select * from Transferclog
+	--DryRoomReceive
+	select * 
+	into #DryRoomReceive
+	from (
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'Dry Room Receive from Fty' 
+				, c.id
+				, TypeDate = c.ReceiveDate 
+				, Location = '' 
+				, UpdateDate = c.AddDate 
+				, Seq = isnull(pd.Seq, 0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join DryReceive c WITH (NOLOCK) on pd.ID = c.PackingListID 
+												 and pd.OrderID = c.OrderID 
+												 and pd.CTNStartNo = c.CTNStartNo
+														
+		where c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+		union all
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'Dry Room Receive from Fty' 
+				, c.id
+				, TypeDate = c.ReceiveDate 
+				, Location = '' 
+				, UpdateDate = c.AddDate 
+				, Seq = isnull(pd.Seq, 0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd 
+		inner join DryReceive c WITH (NOLOCK) on pd.OrigID = c.PackingListID
+														 	and pd.OrigOrderID = c.OrderID
+														 	and pd.OrigCTNStartNo = c.CTNStartNo
+														
+		where c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+	) t
+	
+
+	--DryRoomTransfer
+	select *
+	into #DryRoomTransfer
+	from (
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'Dry Room Transfer to '+ c.TransferTo
+				, c.ID
+				, TypeDate = c.TransferDate 
+				, Location = '' 
+				, UpdateDate = c.AddDate 
+				, Seq = isnull(pd.Seq, 0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd
+		inner join DryTransfer c WITH (NOLOCK) on pd.ID = c.PackingListID 
+												  and pd.OrderID = c.OrderID 
+												  and pd.CTNStartNo = c.CTNStartNo
+														
+		where c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+		union all
+		select PackingListID = pd.ID
+				, pd.CTNStartNo
+				, Type = 'Dry Room Transfer to '+ c.TransferTo
+				, c.ID
+				, TypeDate = c.TransferDate 
+				, Location = '' 
+				, UpdateDate = c.AddDate 
+				, Seq = isnull(pd.Seq, 0) 
+				, pd.OrigID
+				, pd.OrigOrderID
+				, pd.OrigCTNStartNo
+		from #PackingList_Detail pd
+		inner join DryTransfer c WITH (NOLOCK) on pd.OrigID = c.PackingListID
+														 	and pd.OrigOrderID = c.OrderID
+														 	and pd.OrigCTNStartNo = c.CTNStartNo
+														
+		where c.PackingListID != ''
+		      and c.OrderID != ''
+		      and c.CTNStartNo != ''
+	) t
+	
+
+select * from #Transferclog
 union all
-select * from CReceive
+select * from #CReceive
 union all
-select * from CReturn
+select * from #CReturn
 union all
-select * from TransferCFA
+select * from #TransferCFA
 union all
-select * from ReceiveCFA
+select * from #ReceiveCFA
 union all
-select * from ReturnCFA
+select * from #ReturnCFA
 union all
-select * from CReceiveCFA 
+select * from #CReceiveCFA 
 union all
-select * from DryRoomReceive 
+select * from #DryRoomReceive 
 union all
-select * from DryRoomTransfer 
-order by PackingListID,Seq,UpdateDate", this.orderID);
+select * from #DryRoomTransfer 
+order by PackingListID,Seq,UpdateDate
+
+drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#ReceiveCFA,#ReturnCFA,#CReceiveCFA ,#DryRoomReceive ,#DryRoomTransfer 
+", this.orderID);
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out transferDetail);
             if (!result)
