@@ -110,39 +110,43 @@ and Factory.IsProduceFty=1
             }
             #endregion
 
-            string sqlCmd = string.Format(
-                @"
-select *
-		, [NW] = ROUND( GW * ((ShipQty * 1.0) / (TtlShipQty *1.0)), 3, 1)  ----無條件捨去到小數點後第三位
-        , Description = [dbo].[getBOFMtlDesc](StyleUkey)
-from (
-    select 
+            string sqlCmd =
+                $@"
+ select 
         pd.ID
         , pd.OrderID
         , o.SeasonID
         , o.StyleID
         , Category = 'Bulk'
         , CTNNo = '' 
-        , GW = p.GW
-		, TtlShipQty = p.ShipQty
+		, [NW] = sum(pd.NWPerPcs * pd.ShipQty)
+		, NW_Ps = sum(pd.NWPerPcs)
         , Price = 0.0
-        , ShipQty = Sum (pd.ShipQty)
+        , ShipQty = sum(pd.ShipQty)
         , UnitID = o.StyleUnit
         , Receiver = '' 
         , LeaderID = o.SMR 
         , Leader = t.Name 
         , o.BrandID
-		, o.StyleUkey
-    from PackingList p WITH (NOLOCK) 
-	inner join PackingList_Detail pd WITH (NOLOCK) on p.id = pd.ID
+		, Description = [dbo].[getBOFMtlDesc](StyleUkey)
+    from PackingList_Detail pd WITH (NOLOCK) 	
     left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
     left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
     left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
-    where pd.ID = '{0}'
-          and Factory.IsProduceFty=1
-    group by pd.ID, pd.OrderID, o.SeasonID, o.StyleID, p.ShipQty, p.GW, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey
-) getBulkPL
-", this.txtBulkPL.Text);
+    where 1=1
+	and pd.ID='{this.txtBulkPL.Text}'
+    and Factory.IsProduceFty=1
+	and not exists(
+		select distinct p1.ID as PulloutID
+		from PackingList_Detail p2 WITH (NOLOCK) 
+		left join Orders o WITH (NOLOCK) on p2.OrderID = o.ID
+		left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
+		inner join Pullout_Detail p1 on p1.PackingListID = p2.ID
+		where p2.ID = pd.id
+		and Factory.IsProduceFty=1
+	)
+    group by pd.ID, pd.OrderID, o.SeasonID, o.StyleID, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey
+";
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
