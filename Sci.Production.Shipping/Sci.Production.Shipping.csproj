@@ -173,6 +173,12 @@
     <Compile Include="B49.Designer.cs">
       <DependentUpon>B49.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_ImportFromBulkPackingList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ImportFromBulkPackingList.designer.cs">
+      <DependentUpon>P02_ImportFromBulkPackingList.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_ImportFromSamplePackingList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -861,6 +867,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B49.resx">
       <DependentUpon>B49.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ImportFromBulkPackingList.resx">
+      <DependentUpon>P02_ImportFromBulkPackingList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ImportFromSamplePackingList.resx">
       <DependentUpon>P02_ImportFromSamplePackingList.cs</DependentUpon>
