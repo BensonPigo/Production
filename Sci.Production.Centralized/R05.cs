@@ -41,8 +41,8 @@ namespace Sci.Production.Centralized
         private bool Forecast;
         private bool FtyLocalOrder;
         private bool ExcludeSampleFactory;
-        private DataTable printData;
-        private DataTable dtAllData;
+        private DataTable[] printData;
+        private DataTable[] dtAllData;
         private DataTable Summarydt;
 
         /// <inheritdoc/>
@@ -148,19 +148,29 @@ select
 	o.OrderTypeID,
 	o.ProgramID,
 	o.CdCodeID,
-	CDCode.ProductionFamilyID,
-	ss.OutputDate,
-	OutputCPU=isnull(s.QAQty,0)*isnull(o.CPU,0)
+	CDCode.ProductionFamilyID
 from Orders o with(nolock)
 left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 outer apply(select QAQty = dbo.getMinCompleteSewQty(o.ID,null,null) )s
+where 1=1
+{where}
+";
+            string sqlCmd2 = $@"
+select
+	[Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
+	o.ID,
+	TotalCPU=isnull(o.CPU,0) * isnull(o.Qty,0),
+	s.OutputDate,
+	OutputCPU=isnull(s.QAQty,0)*isnull(o.CPU,0)
+from Orders o with(nolock)
+left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
+left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 outer apply(
-	select OutputDate=max(so.OutputDate)
-	from SewingOutput_Detail sod with(nolock)
-	inner join SewingOutput so with(nolock) on so.id = sod.id
-	where sod.OrderId = o.ID
-)ss
+	select OutputDate=format(x.OutputDate,'yyyyMM'),QAQty=sum(x.QAQty)
+	from dbo.[getMinCompleteSewQtyByDate] (o.id,null,null)x
+	group by format(x.OutputDate,'yyyyMM')
+)s
 where 1=1
 {where}
 ";
@@ -169,24 +179,31 @@ where 1=1
             string sqlOrder = sqlCmd + " And o.Junk = 0 and o.Qty > 0  And o.Category in ('B','S')  and (o.localorder = 0 or o.SubconInType=2)";
             string sqlForecast = sqlCmd + "And o.Qty > 0 AND o.IsForecast = 1 and (o.localorder = 0 or o.SubconInType=2)";
             string sqlFtyLocalOrder = sqlCmd + " AND o.LocalOrder = 1 ";
+            string sqlOrder2 = sqlCmd2 + " And o.Junk = 0 and o.Qty > 0  And o.Category in ('B','S')  and (o.localorder = 0 or o.SubconInType=2)";
+            string sqlForecast2 = sqlCmd2 + "And o.Qty > 0 AND o.IsForecast = 1 and (o.localorder = 0 or o.SubconInType=2)";
+            string sqlFtyLocalOrder2 = sqlCmd2 + " AND o.LocalOrder = 1 ";
             List<string> sqlCmdlist = new List<string>();
+            List<string> sqlCmdlist2 = new List<string>();
 
             if (this.Order)
             {
                 sqlCmdlist.Add(sqlOrder);
+                sqlCmdlist2.Add(sqlOrder2);
             }
 
             if (this.Forecast)
             {
                 sqlCmdlist.Add(sqlForecast);
+                sqlCmdlist2.Add(sqlForecast2);
             }
 
             if (this.FtyLocalOrder)
             {
                 sqlCmdlist.Add(sqlFtyLocalOrder);
+                sqlCmdlist2.Add(sqlFtyLocalOrder2);
             }
 
-            string sql = string.Join(" union all ", sqlCmdlist);
+            string sql = string.Join(" union all ", sqlCmdlist) + string.Join(" union all ", sqlCmdlist2);
 
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
@@ -220,7 +237,7 @@ where 1=1
                         return failResult;
                     }
 
-                    if (this.printData != null && this.printData.Rows.Count > 0)
+                    if (this.printData != null && this.printData[0].Rows.Count > 0)
                     {
                         if (this.dtAllData == null)
                         {
@@ -228,27 +245,33 @@ where 1=1
                         }
                         else
                         {
-                            this.dtAllData.Merge(this.printData);
+                            this.dtAllData[0].Merge(this.printData[0]);
+                            this.dtAllData[1].Merge(this.printData[1]);
                         }
                     }
                 }
             }
 
-            if (this.dtAllData == null || this.dtAllData.Rows.Count == 0)
+            if (this.dtAllData == null || this.dtAllData[0].Rows.Count == 0)
             {
                 return Result.F("Data not found!");
             }
 
             string sqlsum = $@"
+select Date,ID,TotalCPU,BalanceCPU=TotalCPU-sum(OutputCPU)
+into #tmp2_0
+from #tmp
+group by Date,ID,TotalCPU
+
 select Date,TotalCPU=sum(TotalCPU),BalanceCPU=sum(BalanceCPU)
 into #tmp2
-from #tmp
+from #tmp2_0
 group by Date
 
 declare @col nvarchar(max)=(select stuff((
 select concat(',[', OutputDate,']')
 from(
-	select distinct OutputDate= format(OutputDate,'yyyy/MM')
+	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
 )x
@@ -259,7 +282,7 @@ for xml path('')
 declare @col2 nvarchar(max)=(select stuff((
 select concat(',[',OutputDate,']=sum([', OutputDate,'])')
 from(
-	select distinct OutputDate= format(OutputDate,'yyyy/MM')
+	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
 )x
@@ -280,7 +303,7 @@ inner join
 		select
 		Date=SUBSTRING(t.Date,1,4)+''/''+SUBSTRING(t.Date,5,6),
 		OutputCPU,
-		OutputDate=format(OutputDate,''yyyy/MM'')
+		OutputDate
 		from #tmp t
 	)x
 	pivot(sum(OutputCPU) for OutputDate in('+@col+N'))xx
@@ -292,15 +315,16 @@ union all
 select ''Total'' ,null, sum(Balance),'+@col2+'  from #tmp3
 '
 exec (@sql)
+
+
+drop table #tmp,#tmp2,#tmp2_0
 ";
-            DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData, "Date,TotalCPU,BalanceCPU,OutputCPU,OutputDate", sqlsum, out this.Summarydt);
+            DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "Date,ID,TotalCPU,OutputCPU,OutputDate", sqlsum, out this.Summarydt);
             if (!dual)
             {
                 return dual;
             }
 
-            this.dtAllData.Columns.Remove("OutputDate");
-            this.dtAllData.Columns.Remove("OutputCPU");
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
             return Result.True;
         }
@@ -309,13 +333,13 @@ exec (@sql)
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            if (this.dtAllData == null || this.dtAllData.Rows.Count <= 0)
+            if (this.dtAllData == null || this.dtAllData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            this.SetCount(this.dtAllData.Rows.Count);
+            this.SetCount(this.dtAllData[0].Rows.Count);
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
@@ -349,8 +373,9 @@ exec (@sql)
             objSheets.get_Range((Excel.Range)objSheets.Cells[3, 4], (Excel.Range)objSheets.Cells[3, i]).Merge(false);
             objSheets.get_Range((Excel.Range)objSheets.Cells[3, 1], (Excel.Range)objSheets.Cells[this.Summarydt.Rows.Count+4, i]).Borders.Weight = 3; // 設定全框線
 
-            MyUtility.Excel.CopyToXls(this.dtAllData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[2], showExcel: false, DisplayAlerts_ForSaveFile: true);
+            MyUtility.Excel.CopyToXls(this.dtAllData[0], string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[2], showExcel: false, DisplayAlerts_ForSaveFile: true);
             objSheets = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
+            objSheets.Columns.AutoFit();
             objSheets.Columns[1].ColumnWidth = 10.38;
 
             objSheets = objApp.ActiveWorkbook.Worksheets[2]; // 取得工作表
