@@ -9,14 +9,13 @@ BEGIN
 
 	SELECT *
 	INTO #Trade_DQSReason
-	FROM SciTrade_To_Pms_DQSReason
+	FROM Trade_To_Pms.dbo.DQSReason
 	;
 
 	INSERT INTO ManufacturingExecution.dbo.DQSReason 
 			   ([Type]
 			   ,[ID]
 			   ,[Description]
-			   ,[LocalDescription]
 			   ,[Junk]
 			   ,[AddName]
 			   ,[AddDate]
@@ -45,5 +44,6 @@ BEGIN
 	FROM ManufacturingExecution.dbo.DQSReason t
 	INNER JOIN #Trade_DQSReason s ON t.ID=s.ID AND t.Type = s.Type
 
-
+	
+	DROP TABLE #Formula_Change_Table
 END
