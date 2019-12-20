@@ -24,12 +24,6 @@ namespace Sci.Production.Centralized
         }
 
         /// <inheritdoc/>
-        protected override void OnFormLoaded()
-        {
-            base.OnFormLoaded();
-        }
-
-        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
