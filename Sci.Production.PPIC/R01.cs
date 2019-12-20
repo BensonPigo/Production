@@ -582,7 +582,7 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle,
                     string sqlcmd2 = $@"
 select SewingLineID,SewingDay,SewingCPU
 ,[Total_StdOutput] = sum(StardardOutputPerDay)
-,[PPH] = sum(CPU) / (SewingCPU * sum(StardardOutputPerDay))
+,[PPH] = IIF(SewingCPU = 0 or sum(StardardOutputPerDay) = 0 , 0, sum(CPU) / (SewingCPU * sum(StardardOutputPerDay)))
 INTO #tmpFinal_step1
 from #tmp
 group by Style,SewingLineID,SewingDay,SewingCPU
@@ -649,8 +649,11 @@ drop table #tmpFinal_step1
                                 // 畫線
                                 worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 2)}{(rowcnt * 3) + 1}"].Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-                                // 設定格式
+                               // 設定格式
                                 worksheet.Range[$"A2:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 2)}{(rowcnt * 3) + 1}"].NumberFormatLocal = "@";
+                                worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 2)}{(rowcnt * 3) + 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                                worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 2)}{(rowcnt * 3) + 1}"].Font.Bold = true;
+                                worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 2)}{(rowcnt * 3) + 1}"].Font.Name = "Calibri";
 
                                 // 將Seet4 說明複製貼到最下方
                                 Excel.Range rangeCopyDescChgFty = objApp.Sheets[2].Range["C1:K9"];
@@ -827,21 +830,41 @@ drop table #tmpFinal_step1
                     }
 
                     #endregion
-
-                    #region Save & Show Excel
-
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
-                    Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
-                    workbook.SaveAs(strExcelName);
-                    workbook.Close();
-                    objApp.Quit();
-                    Marshal.ReleaseComObject(objApp);
-                    Marshal.ReleaseComObject(worksheet);
-                    Marshal.ReleaseComObject(workbook);
-
-                    strExcelName.OpenFile();
-                    #endregion
                 }
+
+                // 關閉Excel提示訊息
+                objApp.DisplayAlerts = false;
+
+                // 移除Seet2 和更動Sheet 排列順序
+                Excel._Workbook mWorkBook = objApp.Workbooks[1];
+
+                // 刪除sheet: [tmp]
+                mWorkBook.Sheets[2].Delete();
+
+                // 移動Sheet: Detail]
+                worksheet = mWorkBook.Sheets[2];
+                worksheet.Move(After: mWorkBook.Sheets[mWorkBook.Sheets.Count]);
+
+                // 移動Sheet: [Description]
+                worksheet = mWorkBook.Sheets[1];
+                worksheet.Move(After: mWorkBook.Sheets[mWorkBook.Sheets.Count]);
+
+                worksheet = objApp.Sheets[1];
+                worksheet.Select();
+
+                #region Save & Show Excel
+
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             else
             {
@@ -961,6 +984,7 @@ where id = '{0}'", Env.User.Factory), null);
             }
             return true;
         }
+
         private void ComboFactory_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.txtSewingLineStart.Text = string.Empty;
