@@ -50,6 +50,7 @@ Select  a.FtyGroup
         , md.inqty - md.outqty + md.adjustqty Balance
         , b.stockunit 
         , md.BLocation
+        , [LobQty] = isnull(md.LobQty,0)
 from orders a WITH (NOLOCK) 
      , po_supp_detail b WITH (NOLOCK) 
 left join fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
@@ -197,6 +198,7 @@ drop table #tmp
                  .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
                  .Text("BLocation", header: "Bulk Location", width: Widths.AnsiChars(10))
+                 .Text("LobQty", header: "Scarp Qty", width: Widths.AnsiChars(10))
                  ;
         }
 
