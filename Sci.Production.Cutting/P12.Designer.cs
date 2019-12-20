@@ -29,8 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
+            this.label2 = new Sci.Win.UI.Label();
             this.txtComb = new Sci.Win.UI.TextBox();
             this.lbComb = new Sci.Win.UI.Label();
             this.txtCutno = new Sci.Win.UI.TextBox();
@@ -73,8 +75,6 @@
             this.checkChangepagebyCut = new System.Windows.Forms.CheckBox();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -124,11 +124,30 @@
             this.panel1.Size = new System.Drawing.Size(1008, 131);
             this.panel1.TabIndex = 0;
             // 
+            // txtSpreadingNo1
+            // 
+            this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo1.IncludeJunk = true;
+            this.txtSpreadingNo1.Location = new System.Drawing.Point(717, 30);
+            this.txtSpreadingNo1.MDivision = "";
+            this.txtSpreadingNo1.Name = "txtSpreadingNo1";
+            this.txtSpreadingNo1.Size = new System.Drawing.Size(106, 23);
+            this.txtSpreadingNo1.TabIndex = 14;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(576, 30);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(138, 21);
+            this.label2.TabIndex = 107;
+            this.label2.Text = "Spreading No";
+            // 
             // txtComb
             // 
             this.txtComb.BackColor = System.Drawing.Color.White;
             this.txtComb.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtComb.Location = new System.Drawing.Point(710, 54);
+            this.txtComb.Location = new System.Drawing.Point(717, 54);
             this.txtComb.Name = "txtComb";
             this.txtComb.Size = new System.Drawing.Size(106, 23);
             this.txtComb.TabIndex = 15;
@@ -137,7 +156,7 @@
             // 
             this.lbComb.Location = new System.Drawing.Point(576, 55);
             this.lbComb.Name = "lbComb";
-            this.lbComb.Size = new System.Drawing.Size(131, 21);
+            this.lbComb.Size = new System.Drawing.Size(138, 21);
             this.lbComb.TabIndex = 105;
             this.lbComb.Text = "Comb";
             // 
@@ -145,14 +164,14 @@
             // 
             this.txtCutno.BackColor = System.Drawing.Color.White;
             this.txtCutno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutno.Location = new System.Drawing.Point(710, 79);
+            this.txtCutno.Location = new System.Drawing.Point(717, 79);
             this.txtCutno.Name = "txtCutno";
             this.txtCutno.Size = new System.Drawing.Size(106, 23);
             this.txtCutno.TabIndex = 16;
             // 
             // dateBundlecreatedDate
             // 
-            this.dateBundlecreatedDate.Location = new System.Drawing.Point(708, 4);
+            this.dateBundlecreatedDate.Location = new System.Drawing.Point(717, 4);
             this.dateBundlecreatedDate.Name = "dateBundlecreatedDate";
             this.dateBundlecreatedDate.Size = new System.Drawing.Size(130, 23);
             this.dateBundlecreatedDate.TabIndex = 13;
@@ -170,7 +189,7 @@
             // 
             this.lbCutno.Location = new System.Drawing.Point(576, 80);
             this.lbCutno.Name = "lbCutno";
-            this.lbCutno.Size = new System.Drawing.Size(131, 21);
+            this.lbCutno.Size = new System.Drawing.Size(138, 21);
             this.lbCutno.TabIndex = 102;
             this.lbCutno.Text = "Cut#";
             // 
@@ -178,9 +197,9 @@
             // 
             this.lbBundlecreatedDate.Location = new System.Drawing.Point(576, 5);
             this.lbBundlecreatedDate.Name = "lbBundlecreatedDate";
-            this.lbBundlecreatedDate.Size = new System.Drawing.Size(131, 21);
+            this.lbBundlecreatedDate.Size = new System.Drawing.Size(138, 21);
             this.lbBundlecreatedDate.TabIndex = 101;
-            this.lbBundlecreatedDate.Text = "Bundle created Date";
+            this.lbBundlecreatedDate.Text = "Bundle Created Date";
             // 
             // lbBundlecreator
             // 
@@ -188,7 +207,7 @@
             this.lbBundlecreator.Name = "lbBundlecreator";
             this.lbBundlecreator.Size = new System.Drawing.Size(99, 21);
             this.lbBundlecreator.TabIndex = 100;
-            this.lbBundlecreator.Text = "Bundle creator";
+            this.lbBundlecreator.Text = "Bundle Creator";
             // 
             // label1
             // 
@@ -507,14 +526,14 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -523,25 +542,6 @@
             this.grid1.Size = new System.Drawing.Size(1008, 379);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(576, 30);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(131, 21);
-            this.label2.TabIndex = 107;
-            this.label2.Text = "Spreading No";
-            // 
-            // txtSpreadingNo1
-            // 
-            this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
-            this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo1.IncludeJunk = true;
-            this.txtSpreadingNo1.Location = new System.Drawing.Point(710, 29);
-            this.txtSpreadingNo1.MDivision = "";
-            this.txtSpreadingNo1.Name = "txtSpreadingNo1";
-            this.txtSpreadingNo1.Size = new System.Drawing.Size(106, 23);
-            this.txtSpreadingNo1.TabIndex = 14;
             // 
             // P12
             // 
