@@ -37,10 +37,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.LbJunk = new Sci.Win.UI.Label();
             this.LbClose = new Sci.Win.UI.Label();
-            this.LbOrderQty = new Sci.Win.UI.Label();
-            this.LbFOCQty = new Sci.Win.UI.Label();
             this.LbProjectID = new Sci.Win.UI.Label();
-            this.LbModel = new Sci.Win.UI.Label();
             this.LbOrderTypeID = new Sci.Win.UI.Label();
             this.LbCategory = new Sci.Win.UI.Label();
             this.LbDescription = new Sci.Win.UI.Label();
@@ -65,16 +62,70 @@
             this.dispOrderType = new Sci.Win.UI.DisplayBox();
             this.dispProgram = new Sci.Win.UI.DisplayBox();
             this.dispBrand = new Sci.Win.UI.DisplayBox();
-            this.dispModel = new Sci.Win.UI.DisplayBox();
             this.dateCFM = new Sci.Win.UI.DateBox();
             this.dateDelivery = new Sci.Win.UI.DateBox();
             this.dateSCIDelivery = new Sci.Win.UI.DateBox();
             this.dispDescription = new Sci.Win.UI.DisplayBox();
-            this.numFOC = new Sci.Win.UI.NumericBox();
-            this.numOderQty = new Sci.Win.UI.NumericBox();
             this.BtnReject = new Sci.Win.UI.Button();
             this.BtnConfirm = new Sci.Win.UI.Button();
             this.tabControl = new Sci.Win.UI.TabControl();
+            this.tabResponsibility = new System.Windows.Forms.TabPage();
+            this.pickIdFactory = new Sci.Win.UI.DisplayBox();
+            this.txttpeuserPoHandle = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserPoSmr = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserMRHandle = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
+            this.label16 = new Sci.Win.UI.Label();
+            this.label15 = new Sci.Win.UI.Label();
+            this.label13 = new Sci.Win.UI.Label();
+            this.label12 = new Sci.Win.UI.Label();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.displaySCIICRInfo = new Sci.Win.UI.EditBox();
+            this.displayBuyerICRInfo = new Sci.Win.UI.DisplayBox();
+            this.label62 = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
+            this.numRatioBuyer = new Sci.Win.UI.NumericBox();
+            this.numRatioSupp = new Sci.Win.UI.NumericBox();
+            this.numRatioSCI = new Sci.Win.UI.NumericBox();
+            this.numRatioSubcon = new Sci.Win.UI.NumericBox();
+            this.numRatioFty = new Sci.Win.UI.NumericBox();
+            this.chkResponsibleBuyer = new Sci.Win.UI.CheckBox();
+            this.chkResponsibleSupp = new Sci.Win.UI.CheckBox();
+            this.chkResponsibleSCI = new Sci.Win.UI.CheckBox();
+            this.chkResponsibleSubcon = new Sci.Win.UI.CheckBox();
+            this.chkResponsibleFty = new Sci.Win.UI.CheckBox();
+            this.editBuyerRemark = new Sci.Win.UI.EditBox();
+            this.displayBuyerICRRemark = new Sci.Win.UI.DisplayBox();
+            this.displayBuyerDBCRemark = new Sci.Win.UI.DisplayBox();
+            this.displaySuppDBCRemark = new Sci.Win.UI.DisplayBox();
+            this.displaySCIICRRemark = new Sci.Win.UI.DisplayBox();
+            this.displaySubconDBCRemark = new Sci.Win.UI.DisplayBox();
+            this.txtBuyerICRNo = new Sci.Win.UI.TextBox();
+            this.txtBuyerDBCNo = new Sci.Win.UI.TextBox();
+            this.txtSuppDBCNo = new Sci.Win.UI.TextBox();
+            this.txtSCIICRNo = new Sci.Win.UI.TextBox();
+            this.txtSubConName = new Sci.Win.UI.TextBox();
+            this.txtSubconDBCNo = new Sci.Win.UI.TextBox();
+            this.label52 = new Sci.Win.UI.Label();
+            this.label51 = new Sci.Win.UI.Label();
+            this.label50 = new Sci.Win.UI.Label();
+            this.label49 = new Sci.Win.UI.Label();
+            this.label54 = new Sci.Win.UI.Label();
+            this.label48 = new Sci.Win.UI.Label();
+            this.label43 = new Sci.Win.UI.Label();
+            this.label44 = new Sci.Win.UI.Label();
+            this.label45 = new Sci.Win.UI.Label();
+            this.label46 = new Sci.Win.UI.Label();
+            this.label47 = new Sci.Win.UI.Label();
+            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.editBox2 = new Sci.Win.UI.EditBox();
+            this.editBox3 = new Sci.Win.UI.EditBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.label7 = new Sci.Win.UI.Label();
+            this.label8 = new Sci.Win.UI.Label();
+            this.CboReason = new Sci.Win.UI.ComboBox();
             this.tabQtyOrder = new System.Windows.Forms.TabPage();
             this.panelQtyOrder = new Sci.Win.UI.Panel();
             this.GridQtyOrder = new Sci.Win.UI.Grid();
@@ -103,7 +154,6 @@
             this.TxtRejectDate = new Sci.Win.UI.TextBox();
             this.TxtID = new Sci.Win.UI.TextBox();
             this.TxtSP = new Sci.Win.UI.TextBox();
-            this.CboReason = new Sci.Win.UI.ComboBox();
             this.QtybrkApplybs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnRefresh = new Sci.Win.UI.Button();
             this.txtuserApprove = new Sci.Production.Class.txttpeuser();
@@ -113,6 +163,21 @@
             this.txtuserReject = new Sci.Production.Class.txtuser();
             this.cmbCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.txtuserCFM = new Sci.Production.Class.txtuser();
+            this.DisSewingQty = new Sci.Win.UI.DisplayBox();
+            this.LbSewingQty = new Sci.Win.UI.Label();
+            this.DisTotalQty = new Sci.Win.UI.DisplayBox();
+            this.LbTotalQty = new Sci.Win.UI.Label();
+            this.displayCPU = new Sci.Win.UI.DisplayBox();
+            this.lbCPU = new Sci.Win.UI.Label();
+            this.LbActCutFstDate = new Sci.Win.UI.Label();
+            this.dateActCutFstDate = new Sci.Win.UI.DateBox();
+            this.ChkNeedToProduction = new Sci.Win.UI.CheckBox();
+            this.DisOrderNewQty = new Sci.Win.UI.DisplayBox();
+            this.label9 = new Sci.Win.UI.Label();
+            this.DisOrderQty = new Sci.Win.UI.DisplayBox();
+            this.LbOrderQty = new Sci.Win.UI.Label();
+            this.DisFOCQty = new Sci.Win.UI.DisplayBox();
+            this.LbFOCQty = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -120,6 +185,7 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabControl.SuspendLayout();
+            this.tabResponsibility.SuspendLayout();
             this.tabQtyOrder.SuspendLayout();
             this.panelQtyOrder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridQtyOrder)).BeginInit();
@@ -149,15 +215,29 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 600);
+            this.detail.Size = new System.Drawing.Size(1000, 650);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.DisOrderNewQty);
+            this.detailcont.Controls.Add(this.label9);
+            this.detailcont.Controls.Add(this.DisOrderQty);
+            this.detailcont.Controls.Add(this.LbOrderQty);
+            this.detailcont.Controls.Add(this.DisFOCQty);
+            this.detailcont.Controls.Add(this.LbFOCQty);
+            this.detailcont.Controls.Add(this.ChkNeedToProduction);
+            this.detailcont.Controls.Add(this.DisSewingQty);
+            this.detailcont.Controls.Add(this.LbSewingQty);
+            this.detailcont.Controls.Add(this.DisTotalQty);
+            this.detailcont.Controls.Add(this.LbTotalQty);
+            this.detailcont.Controls.Add(this.displayCPU);
+            this.detailcont.Controls.Add(this.lbCPU);
+            this.detailcont.Controls.Add(this.LbActCutFstDate);
+            this.detailcont.Controls.Add(this.dateActCutFstDate);
             this.detailcont.Controls.Add(this.txtuserApprove);
             this.detailcont.Controls.Add(this.txtuserClose);
             this.detailcont.Controls.Add(this.txtuserJunk);
             this.detailcont.Controls.Add(this.txtuserSent);
-            this.detailcont.Controls.Add(this.CboReason);
             this.detailcont.Controls.Add(this.TxtSP);
             this.detailcont.Controls.Add(this.TxtID);
             this.detailcont.Controls.Add(this.TxtJunkDate);
@@ -169,13 +249,10 @@
             this.detailcont.Controls.Add(this.tabControl);
             this.detailcont.Controls.Add(this.BtnReject);
             this.detailcont.Controls.Add(this.BtnConfirm);
-            this.detailcont.Controls.Add(this.numOderQty);
-            this.detailcont.Controls.Add(this.numFOC);
             this.detailcont.Controls.Add(this.dispDescription);
             this.detailcont.Controls.Add(this.dateSCIDelivery);
             this.detailcont.Controls.Add(this.dateDelivery);
             this.detailcont.Controls.Add(this.dateCFM);
-            this.detailcont.Controls.Add(this.dispModel);
             this.detailcont.Controls.Add(this.dispProject);
             this.detailcont.Controls.Add(this.dispOrderType);
             this.detailcont.Controls.Add(this.dispProgram);
@@ -185,10 +262,7 @@
             this.detailcont.Controls.Add(this.labelStatus);
             this.detailcont.Controls.Add(this.LbJunk);
             this.detailcont.Controls.Add(this.LbClose);
-            this.detailcont.Controls.Add(this.LbOrderQty);
-            this.detailcont.Controls.Add(this.LbFOCQty);
             this.detailcont.Controls.Add(this.LbProjectID);
-            this.detailcont.Controls.Add(this.LbModel);
             this.detailcont.Controls.Add(this.LbOrderTypeID);
             this.detailcont.Controls.Add(this.LbCategory);
             this.detailcont.Controls.Add(this.LbDescription);
@@ -204,17 +278,16 @@
             this.detailcont.Controls.Add(this.LbApp);
             this.detailcont.Controls.Add(this.LbCFM);
             this.detailcont.Controls.Add(this.LbSent);
-            this.detailcont.Controls.Add(this.LbReason);
             this.detailcont.Controls.Add(this.LbID);
             this.detailcont.Controls.Add(this.txtuserReject);
             this.detailcont.Controls.Add(this.cmbCategory);
             this.detailcont.Controls.Add(this.txtuserCFM);
-            this.detailcont.Size = new System.Drawing.Size(1000, 562);
+            this.detailcont.Size = new System.Drawing.Size(1000, 612);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnRefresh);
-            this.detailbtm.Location = new System.Drawing.Point(0, 562);
+            this.detailbtm.Location = new System.Drawing.Point(0, 612);
             this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
@@ -224,11 +297,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 600);
+            this.browse.Size = new System.Drawing.Size(1000, 650);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 629);
+            this.tabs.Size = new System.Drawing.Size(1008, 679);
             // 
             // LbJunk
             // 
@@ -248,24 +321,6 @@
             this.LbClose.TabIndex = 771;
             this.LbClose.Text = "Close";
             // 
-            // LbOrderQty
-            // 
-            this.LbOrderQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbOrderQty.Location = new System.Drawing.Point(686, 132);
-            this.LbOrderQty.Name = "LbOrderQty";
-            this.LbOrderQty.Size = new System.Drawing.Size(100, 19);
-            this.LbOrderQty.TabIndex = 786;
-            this.LbOrderQty.Text = "Order Q\'ty";
-            // 
-            // LbFOCQty
-            // 
-            this.LbFOCQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbFOCQty.Location = new System.Drawing.Point(686, 109);
-            this.LbFOCQty.Name = "LbFOCQty";
-            this.LbFOCQty.Size = new System.Drawing.Size(100, 19);
-            this.LbFOCQty.TabIndex = 785;
-            this.LbFOCQty.Text = "FOC Qty ";
-            // 
             // LbProjectID
             // 
             this.LbProjectID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -274,15 +329,6 @@
             this.LbProjectID.Size = new System.Drawing.Size(85, 19);
             this.LbProjectID.TabIndex = 784;
             this.LbProjectID.Text = "Project";
-            // 
-            // LbModel
-            // 
-            this.LbModel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbModel.Location = new System.Drawing.Point(686, 155);
-            this.LbModel.Name = "LbModel";
-            this.LbModel.Size = new System.Drawing.Size(100, 19);
-            this.LbModel.TabIndex = 783;
-            this.LbModel.Text = "Model";
             // 
             // LbOrderTypeID
             // 
@@ -422,7 +468,7 @@
             // LbReason
             // 
             this.LbReason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbReason.Location = new System.Drawing.Point(238, 5);
+            this.LbReason.Location = new System.Drawing.Point(9, 5);
             this.LbReason.Name = "LbReason";
             this.LbReason.Size = new System.Drawing.Size(104, 19);
             this.LbReason.TabIndex = 766;
@@ -502,15 +548,6 @@
             this.dispBrand.Size = new System.Drawing.Size(125, 23);
             this.dispBrand.TabIndex = 818;
             // 
-            // dispModel
-            // 
-            this.dispModel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispModel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispModel.Location = new System.Drawing.Point(789, 155);
-            this.dispModel.Name = "dispModel";
-            this.dispModel.Size = new System.Drawing.Size(126, 23);
-            this.dispModel.TabIndex = 824;
-            // 
             // dateCFM
             // 
             this.dateCFM.IsSupportEditMode = false;
@@ -547,48 +584,6 @@
             this.dispDescription.Size = new System.Drawing.Size(361, 23);
             this.dispDescription.TabIndex = 828;
             // 
-            // numFOC
-            // 
-            this.numFOC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numFOC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numFOC.IsSupportEditMode = false;
-            this.numFOC.Location = new System.Drawing.Point(789, 109);
-            this.numFOC.Name = "numFOC";
-            this.numFOC.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numFOC.ReadOnly = true;
-            this.numFOC.Size = new System.Drawing.Size(126, 23);
-            this.numFOC.TabIndex = 830;
-            this.numFOC.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numOderQty
-            // 
-            this.numOderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numOderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numOderQty.IsSupportEditMode = false;
-            this.numOderQty.Location = new System.Drawing.Point(789, 132);
-            this.numOderQty.Name = "numOderQty";
-            this.numOderQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numOderQty.ReadOnly = true;
-            this.numOderQty.Size = new System.Drawing.Size(126, 23);
-            this.numOderQty.TabIndex = 831;
-            this.numOderQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
             // BtnReject
             // 
             this.BtnReject.Location = new System.Drawing.Point(904, 68);
@@ -615,15 +610,792 @@
             this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Controls.Add(this.tabResponsibility);
             this.tabControl.Controls.Add(this.tabQtyOrder);
             this.tabControl.Controls.Add(this.tabQtyShipMode);
             this.tabControl.Controls.Add(this.tabQtyApply);
             this.tabControl.Controls.Add(this.tabQtyApplyShipmode);
-            this.tabControl.Location = new System.Drawing.Point(0, 208);
+            this.tabControl.Location = new System.Drawing.Point(0, 231);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1088, 334);
+            this.tabControl.Size = new System.Drawing.Size(997, 378);
             this.tabControl.TabIndex = 837;
+            // 
+            // tabResponsibility
+            // 
+            this.tabResponsibility.Controls.Add(this.pickIdFactory);
+            this.tabResponsibility.Controls.Add(this.txttpeuserPoHandle);
+            this.tabResponsibility.Controls.Add(this.txttpeuserPoSmr);
+            this.tabResponsibility.Controls.Add(this.txttpeuserMRHandle);
+            this.tabResponsibility.Controls.Add(this.txttpeuserSMR);
+            this.tabResponsibility.Controls.Add(this.label16);
+            this.tabResponsibility.Controls.Add(this.label15);
+            this.tabResponsibility.Controls.Add(this.label13);
+            this.tabResponsibility.Controls.Add(this.label12);
+            this.tabResponsibility.Controls.Add(this.textBox1);
+            this.tabResponsibility.Controls.Add(this.label3);
+            this.tabResponsibility.Controls.Add(this.displaySCIICRInfo);
+            this.tabResponsibility.Controls.Add(this.displayBuyerICRInfo);
+            this.tabResponsibility.Controls.Add(this.label62);
+            this.tabResponsibility.Controls.Add(this.label6);
+            this.tabResponsibility.Controls.Add(this.numRatioBuyer);
+            this.tabResponsibility.Controls.Add(this.numRatioSupp);
+            this.tabResponsibility.Controls.Add(this.numRatioSCI);
+            this.tabResponsibility.Controls.Add(this.numRatioSubcon);
+            this.tabResponsibility.Controls.Add(this.numRatioFty);
+            this.tabResponsibility.Controls.Add(this.chkResponsibleBuyer);
+            this.tabResponsibility.Controls.Add(this.chkResponsibleSupp);
+            this.tabResponsibility.Controls.Add(this.chkResponsibleSCI);
+            this.tabResponsibility.Controls.Add(this.chkResponsibleSubcon);
+            this.tabResponsibility.Controls.Add(this.chkResponsibleFty);
+            this.tabResponsibility.Controls.Add(this.editBuyerRemark);
+            this.tabResponsibility.Controls.Add(this.displayBuyerICRRemark);
+            this.tabResponsibility.Controls.Add(this.displayBuyerDBCRemark);
+            this.tabResponsibility.Controls.Add(this.displaySuppDBCRemark);
+            this.tabResponsibility.Controls.Add(this.displaySCIICRRemark);
+            this.tabResponsibility.Controls.Add(this.displaySubconDBCRemark);
+            this.tabResponsibility.Controls.Add(this.txtBuyerICRNo);
+            this.tabResponsibility.Controls.Add(this.txtBuyerDBCNo);
+            this.tabResponsibility.Controls.Add(this.txtSuppDBCNo);
+            this.tabResponsibility.Controls.Add(this.txtSCIICRNo);
+            this.tabResponsibility.Controls.Add(this.txtSubConName);
+            this.tabResponsibility.Controls.Add(this.txtSubconDBCNo);
+            this.tabResponsibility.Controls.Add(this.label52);
+            this.tabResponsibility.Controls.Add(this.label51);
+            this.tabResponsibility.Controls.Add(this.label50);
+            this.tabResponsibility.Controls.Add(this.label49);
+            this.tabResponsibility.Controls.Add(this.label54);
+            this.tabResponsibility.Controls.Add(this.label48);
+            this.tabResponsibility.Controls.Add(this.label43);
+            this.tabResponsibility.Controls.Add(this.label44);
+            this.tabResponsibility.Controls.Add(this.label45);
+            this.tabResponsibility.Controls.Add(this.label46);
+            this.tabResponsibility.Controls.Add(this.label47);
+            this.tabResponsibility.Controls.Add(this.editBox1);
+            this.tabResponsibility.Controls.Add(this.editBox2);
+            this.tabResponsibility.Controls.Add(this.editBox3);
+            this.tabResponsibility.Controls.Add(this.label4);
+            this.tabResponsibility.Controls.Add(this.label5);
+            this.tabResponsibility.Controls.Add(this.label7);
+            this.tabResponsibility.Controls.Add(this.label8);
+            this.tabResponsibility.Controls.Add(this.LbReason);
+            this.tabResponsibility.Controls.Add(this.CboReason);
+            this.tabResponsibility.Location = new System.Drawing.Point(4, 25);
+            this.tabResponsibility.Name = "tabResponsibility";
+            this.tabResponsibility.Size = new System.Drawing.Size(989, 349);
+            this.tabResponsibility.TabIndex = 5;
+            this.tabResponsibility.Text = "Responsibility";
+            // 
+            // pickIdFactory
+            // 
+            this.pickIdFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.pickIdFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponsibleFtyNo", true));
+            this.pickIdFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pickIdFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.pickIdFactory.Location = new System.Drawing.Point(210, 74);
+            this.pickIdFactory.Name = "pickIdFactory";
+            this.pickIdFactory.Size = new System.Drawing.Size(87, 21);
+            this.pickIdFactory.TabIndex = 974;
+            // 
+            // txttpeuserPoHandle
+            // 
+            this.txttpeuserPoHandle.DisplayBox1Binding = "";
+            this.txttpeuserPoHandle.DisplayBox2Binding = "";
+            this.txttpeuserPoHandle.Location = new System.Drawing.Point(470, 311);
+            this.txttpeuserPoHandle.Name = "txttpeuserPoHandle";
+            this.txttpeuserPoHandle.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuserPoHandle.TabIndex = 973;
+            // 
+            // txttpeuserPoSmr
+            // 
+            this.txttpeuserPoSmr.DisplayBox1Binding = "";
+            this.txttpeuserPoSmr.DisplayBox2Binding = "";
+            this.txttpeuserPoSmr.Location = new System.Drawing.Point(470, 289);
+            this.txttpeuserPoSmr.Name = "txttpeuserPoSmr";
+            this.txttpeuserPoSmr.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuserPoSmr.TabIndex = 972;
+            // 
+            // txttpeuserMRHandle
+            // 
+            this.txttpeuserMRHandle.DisplayBox1Binding = "";
+            this.txttpeuserMRHandle.DisplayBox2Binding = "";
+            this.txttpeuserMRHandle.Location = new System.Drawing.Point(88, 311);
+            this.txttpeuserMRHandle.Name = "txttpeuserMRHandle";
+            this.txttpeuserMRHandle.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuserMRHandle.TabIndex = 971;
+            // 
+            // txttpeuserSMR
+            // 
+            this.txttpeuserSMR.DisplayBox1Binding = "";
+            this.txttpeuserSMR.DisplayBox2Binding = "";
+            this.txttpeuserSMR.Location = new System.Drawing.Point(88, 289);
+            this.txttpeuserSMR.Name = "txttpeuserSMR";
+            this.txttpeuserSMR.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuserSMR.TabIndex = 970;
+            // 
+            // label16
+            // 
+            this.label16.Location = new System.Drawing.Point(392, 311);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(75, 21);
+            this.label16.TabIndex = 969;
+            this.label16.Text = "PO Handle";
+            // 
+            // label15
+            // 
+            this.label15.Location = new System.Drawing.Point(392, 289);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(75, 21);
+            this.label15.TabIndex = 968;
+            this.label15.Text = "PO SMR";
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(10, 311);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(75, 21);
+            this.label13.TabIndex = 967;
+            this.label13.Text = "MR Handle";
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(10, 289);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(75, 21);
+            this.label12.TabIndex = 966;
+            this.label12.Text = "SMR";
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BuyerICRNo", true));
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBox1.IsSupportEditMode = false;
+            this.textBox1.Location = new System.Drawing.Point(360, 75);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(120, 21);
+            this.textBox1.TabIndex = 964;
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(300, 74);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(55, 21);
+            this.label3.TabIndex = 965;
+            this.label3.Text = " ICR Info.";
+            // 
+            // displaySCIICRInfo
+            // 
+            this.displaySCIICRInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIICRInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIICRInfo.IsSupportEditMode = false;
+            this.displaySCIICRInfo.Location = new System.Drawing.Point(270, 149);
+            this.displaySCIICRInfo.Multiline = true;
+            this.displaySCIICRInfo.Name = "displaySCIICRInfo";
+            this.displaySCIICRInfo.ReadOnly = true;
+            this.displaySCIICRInfo.Size = new System.Drawing.Size(146, 21);
+            this.displaySCIICRInfo.TabIndex = 963;
+            // 
+            // displayBuyerICRInfo
+            // 
+            this.displayBuyerICRInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBuyerICRInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRInfo.Location = new System.Drawing.Point(270, 240);
+            this.displayBuyerICRInfo.Name = "displayBuyerICRInfo";
+            this.displayBuyerICRInfo.Size = new System.Drawing.Size(146, 21);
+            this.displayBuyerICRInfo.TabIndex = 962;
+            // 
+            // label62
+            // 
+            this.label62.BackColor = System.Drawing.SystemColors.Control;
+            this.label62.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label62.Location = new System.Drawing.Point(26, 173);
+            this.label62.Name = "label62";
+            this.label62.Size = new System.Drawing.Size(708, 15);
+            this.label62.TabIndex = 961;
+            this.label62.Text = "Marketing -include MR,Sample dep,PTN,IE,GM,IT,Finance,W/house.";
+            this.label62.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(215, 263);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(140, 21);
+            this.label6.TabIndex = 958;
+            this.label6.Text = " Buyer Remark";
+            // 
+            // numRatioBuyer
+            // 
+            this.numRatioBuyer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numRatioBuyer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RatioBuyer", true));
+            this.numRatioBuyer.DecimalPlaces = 2;
+            this.numRatioBuyer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numRatioBuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numRatioBuyer.IsSupportEditMode = false;
+            this.numRatioBuyer.Location = new System.Drawing.Point(158, 218);
+            this.numRatioBuyer.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numRatioBuyer.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioBuyer.Name = "numRatioBuyer";
+            this.numRatioBuyer.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioBuyer.ReadOnly = true;
+            this.numRatioBuyer.Size = new System.Drawing.Size(51, 21);
+            this.numRatioBuyer.TabIndex = 932;
+            this.numRatioBuyer.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numRatioSupp
+            // 
+            this.numRatioSupp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numRatioSupp.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RatioSupp", true));
+            this.numRatioSupp.DecimalPlaces = 2;
+            this.numRatioSupp.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numRatioSupp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numRatioSupp.IsSupportEditMode = false;
+            this.numRatioSupp.Location = new System.Drawing.Point(158, 192);
+            this.numRatioSupp.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numRatioSupp.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioSupp.Name = "numRatioSupp";
+            this.numRatioSupp.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioSupp.ReadOnly = true;
+            this.numRatioSupp.Size = new System.Drawing.Size(51, 21);
+            this.numRatioSupp.TabIndex = 929;
+            this.numRatioSupp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numRatioSCI
+            // 
+            this.numRatioSCI.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numRatioSCI.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RatioSCI", true));
+            this.numRatioSCI.DecimalPlaces = 2;
+            this.numRatioSCI.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numRatioSCI.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numRatioSCI.IsSupportEditMode = false;
+            this.numRatioSCI.Location = new System.Drawing.Point(158, 149);
+            this.numRatioSCI.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numRatioSCI.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioSCI.Name = "numRatioSCI";
+            this.numRatioSCI.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioSCI.ReadOnly = true;
+            this.numRatioSCI.Size = new System.Drawing.Size(51, 21);
+            this.numRatioSCI.TabIndex = 926;
+            this.numRatioSCI.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numRatioSubcon
+            // 
+            this.numRatioSubcon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numRatioSubcon.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RatioSubcon", true));
+            this.numRatioSubcon.DecimalPlaces = 2;
+            this.numRatioSubcon.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numRatioSubcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numRatioSubcon.IsSupportEditMode = false;
+            this.numRatioSubcon.Location = new System.Drawing.Point(158, 99);
+            this.numRatioSubcon.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numRatioSubcon.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioSubcon.Name = "numRatioSubcon";
+            this.numRatioSubcon.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioSubcon.ReadOnly = true;
+            this.numRatioSubcon.Size = new System.Drawing.Size(51, 21);
+            this.numRatioSubcon.TabIndex = 922;
+            this.numRatioSubcon.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numRatioFty
+            // 
+            this.numRatioFty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numRatioFty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RatioFty", true));
+            this.numRatioFty.DecimalPlaces = 2;
+            this.numRatioFty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numRatioFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numRatioFty.IsSupportEditMode = false;
+            this.numRatioFty.Location = new System.Drawing.Point(158, 74);
+            this.numRatioFty.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numRatioFty.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioFty.Name = "numRatioFty";
+            this.numRatioFty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRatioFty.ReadOnly = true;
+            this.numRatioFty.Size = new System.Drawing.Size(51, 21);
+            this.numRatioFty.TabIndex = 919;
+            this.numRatioFty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // chkResponsibleBuyer
+            // 
+            this.chkResponsibleBuyer.AutoSize = true;
+            this.chkResponsibleBuyer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponsibleBuyer", true));
+            this.chkResponsibleBuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkResponsibleBuyer.IsSupportEditMode = false;
+            this.chkResponsibleBuyer.Location = new System.Drawing.Point(9, 219);
+            this.chkResponsibleBuyer.Name = "chkResponsibleBuyer";
+            this.chkResponsibleBuyer.ReadOnly = true;
+            this.chkResponsibleBuyer.Size = new System.Drawing.Size(64, 21);
+            this.chkResponsibleBuyer.TabIndex = 931;
+            this.chkResponsibleBuyer.Text = "Buyer";
+            this.chkResponsibleBuyer.UseVisualStyleBackColor = true;
+            // 
+            // chkResponsibleSupp
+            // 
+            this.chkResponsibleSupp.AutoSize = true;
+            this.chkResponsibleSupp.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponsibleSupp", true));
+            this.chkResponsibleSupp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkResponsibleSupp.IsSupportEditMode = false;
+            this.chkResponsibleSupp.Location = new System.Drawing.Point(9, 190);
+            this.chkResponsibleSupp.Name = "chkResponsibleSupp";
+            this.chkResponsibleSupp.ReadOnly = true;
+            this.chkResponsibleSupp.Size = new System.Drawing.Size(79, 21);
+            this.chkResponsibleSupp.TabIndex = 928;
+            this.chkResponsibleSupp.Text = "Supplier";
+            this.chkResponsibleSupp.UseVisualStyleBackColor = true;
+            // 
+            // chkResponsibleSCI
+            // 
+            this.chkResponsibleSCI.AutoSize = true;
+            this.chkResponsibleSCI.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponsibleSCI", true));
+            this.chkResponsibleSCI.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkResponsibleSCI.IsSupportEditMode = false;
+            this.chkResponsibleSCI.Location = new System.Drawing.Point(9, 149);
+            this.chkResponsibleSCI.Name = "chkResponsibleSCI";
+            this.chkResponsibleSCI.ReadOnly = true;
+            this.chkResponsibleSCI.Size = new System.Drawing.Size(89, 21);
+            this.chkResponsibleSCI.TabIndex = 925;
+            this.chkResponsibleSCI.Text = "Marketing";
+            this.chkResponsibleSCI.UseVisualStyleBackColor = true;
+            // 
+            // chkResponsibleSubcon
+            // 
+            this.chkResponsibleSubcon.AutoSize = true;
+            this.chkResponsibleSubcon.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponsibleSubcon", true));
+            this.chkResponsibleSubcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkResponsibleSubcon.IsSupportEditMode = false;
+            this.chkResponsibleSubcon.Location = new System.Drawing.Point(10, 101);
+            this.chkResponsibleSubcon.Name = "chkResponsibleSubcon";
+            this.chkResponsibleSubcon.ReadOnly = true;
+            this.chkResponsibleSubcon.Size = new System.Drawing.Size(75, 21);
+            this.chkResponsibleSubcon.TabIndex = 921;
+            this.chkResponsibleSubcon.Text = "Subcon";
+            this.chkResponsibleSubcon.UseVisualStyleBackColor = true;
+            // 
+            // chkResponsibleFty
+            // 
+            this.chkResponsibleFty.AutoSize = true;
+            this.chkResponsibleFty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponsibleFty", true));
+            this.chkResponsibleFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkResponsibleFty.IsSupportEditMode = false;
+            this.chkResponsibleFty.Location = new System.Drawing.Point(10, 74);
+            this.chkResponsibleFty.Name = "chkResponsibleFty";
+            this.chkResponsibleFty.ReadOnly = true;
+            this.chkResponsibleFty.Size = new System.Drawing.Size(74, 21);
+            this.chkResponsibleFty.TabIndex = 918;
+            this.chkResponsibleFty.Text = "Factory";
+            this.chkResponsibleFty.UseVisualStyleBackColor = true;
+            // 
+            // editBuyerRemark
+            // 
+            this.editBuyerRemark.BackColor = System.Drawing.Color.White;
+            this.editBuyerRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BuyerRemark", true));
+            this.editBuyerRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.editBuyerRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBuyerRemark.Location = new System.Drawing.Point(360, 262);
+            this.editBuyerRemark.Multiline = true;
+            this.editBuyerRemark.Name = "editBuyerRemark";
+            this.editBuyerRemark.Size = new System.Drawing.Size(510, 22);
+            this.editBuyerRemark.TabIndex = 935;
+            // 
+            // displayBuyerICRRemark
+            // 
+            this.displayBuyerICRRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerICRRemark", true));
+            this.displayBuyerICRRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBuyerICRRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRRemark.Location = new System.Drawing.Point(540, 239);
+            this.displayBuyerICRRemark.Name = "displayBuyerICRRemark";
+            this.displayBuyerICRRemark.Size = new System.Drawing.Size(302, 21);
+            this.displayBuyerICRRemark.TabIndex = 957;
+            // 
+            // displayBuyerDBCRemark
+            // 
+            this.displayBuyerDBCRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyerDBCRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerDBCRemark", true));
+            this.displayBuyerDBCRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBuyerDBCRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyerDBCRemark.Location = new System.Drawing.Point(482, 217);
+            this.displayBuyerDBCRemark.Name = "displayBuyerDBCRemark";
+            this.displayBuyerDBCRemark.Size = new System.Drawing.Size(360, 21);
+            this.displayBuyerDBCRemark.TabIndex = 955;
+            // 
+            // displaySuppDBCRemark
+            // 
+            this.displaySuppDBCRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySuppDBCRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SuppDBCRemark", true));
+            this.displaySuppDBCRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySuppDBCRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySuppDBCRemark.Location = new System.Drawing.Point(482, 192);
+            this.displaySuppDBCRemark.Name = "displaySuppDBCRemark";
+            this.displaySuppDBCRemark.Size = new System.Drawing.Size(360, 21);
+            this.displaySuppDBCRemark.TabIndex = 953;
+            // 
+            // displaySCIICRRemark
+            // 
+            this.displaySCIICRRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIICRRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SCIICRRemark", true));
+            this.displaySCIICRRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySCIICRRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIICRRemark.Location = new System.Drawing.Point(540, 148);
+            this.displaySCIICRRemark.Name = "displaySCIICRRemark";
+            this.displaySCIICRRemark.Size = new System.Drawing.Size(302, 21);
+            this.displaySCIICRRemark.TabIndex = 952;
+            // 
+            // displaySubconDBCRemark
+            // 
+            this.displaySubconDBCRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySubconDBCRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SubconDBCRemark", true));
+            this.displaySubconDBCRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySubconDBCRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySubconDBCRemark.Location = new System.Drawing.Point(482, 99);
+            this.displaySubconDBCRemark.Name = "displaySubconDBCRemark";
+            this.displaySubconDBCRemark.Size = new System.Drawing.Size(360, 21);
+            this.displaySubconDBCRemark.TabIndex = 950;
+            // 
+            // txtBuyerICRNo
+            // 
+            this.txtBuyerICRNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtBuyerICRNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BuyerICRNo", true));
+            this.txtBuyerICRNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBuyerICRNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtBuyerICRNo.IsSupportEditMode = false;
+            this.txtBuyerICRNo.Location = new System.Drawing.Point(418, 239);
+            this.txtBuyerICRNo.Name = "txtBuyerICRNo";
+            this.txtBuyerICRNo.ReadOnly = true;
+            this.txtBuyerICRNo.Size = new System.Drawing.Size(120, 21);
+            this.txtBuyerICRNo.TabIndex = 934;
+            // 
+            // txtBuyerDBCNo
+            // 
+            this.txtBuyerDBCNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtBuyerDBCNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BuyerDBCNo", true));
+            this.txtBuyerDBCNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBuyerDBCNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtBuyerDBCNo.IsSupportEditMode = false;
+            this.txtBuyerDBCNo.Location = new System.Drawing.Point(360, 217);
+            this.txtBuyerDBCNo.Name = "txtBuyerDBCNo";
+            this.txtBuyerDBCNo.ReadOnly = true;
+            this.txtBuyerDBCNo.Size = new System.Drawing.Size(120, 21);
+            this.txtBuyerDBCNo.TabIndex = 933;
+            // 
+            // txtSuppDBCNo
+            // 
+            this.txtSuppDBCNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSuppDBCNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SuppDBCNo", true));
+            this.txtSuppDBCNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSuppDBCNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSuppDBCNo.IsSupportEditMode = false;
+            this.txtSuppDBCNo.Location = new System.Drawing.Point(360, 192);
+            this.txtSuppDBCNo.Name = "txtSuppDBCNo";
+            this.txtSuppDBCNo.ReadOnly = true;
+            this.txtSuppDBCNo.Size = new System.Drawing.Size(120, 21);
+            this.txtSuppDBCNo.TabIndex = 930;
+            // 
+            // txtSCIICRNo
+            // 
+            this.txtSCIICRNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSCIICRNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SCIICRNo", true));
+            this.txtSCIICRNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSCIICRNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSCIICRNo.IsSupportEditMode = false;
+            this.txtSCIICRNo.Location = new System.Drawing.Point(418, 148);
+            this.txtSCIICRNo.Name = "txtSCIICRNo";
+            this.txtSCIICRNo.ReadOnly = true;
+            this.txtSCIICRNo.Size = new System.Drawing.Size(120, 21);
+            this.txtSCIICRNo.TabIndex = 927;
+            // 
+            // txtSubConName
+            // 
+            this.txtSubConName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSubConName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubConName", true));
+            this.txtSubConName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSubConName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSubConName.IsSupportEditMode = false;
+            this.txtSubConName.Location = new System.Drawing.Point(360, 121);
+            this.txtSubConName.Name = "txtSubConName";
+            this.txtSubConName.ReadOnly = true;
+            this.txtSubConName.Size = new System.Drawing.Size(365, 21);
+            this.txtSubConName.TabIndex = 924;
+            // 
+            // txtSubconDBCNo
+            // 
+            this.txtSubconDBCNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSubconDBCNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubconDBCNo", true));
+            this.txtSubconDBCNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSubconDBCNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSubconDBCNo.IsSupportEditMode = false;
+            this.txtSubconDBCNo.Location = new System.Drawing.Point(360, 99);
+            this.txtSubconDBCNo.Name = "txtSubconDBCNo";
+            this.txtSubconDBCNo.ReadOnly = true;
+            this.txtSubconDBCNo.Size = new System.Drawing.Size(120, 21);
+            this.txtSubconDBCNo.TabIndex = 923;
+            // 
+            // label52
+            // 
+            this.label52.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label52.Location = new System.Drawing.Point(98, 217);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(56, 21);
+            this.label52.TabIndex = 949;
+            this.label52.Text = " Radio%";
+            // 
+            // label51
+            // 
+            this.label51.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label51.Location = new System.Drawing.Point(98, 192);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(56, 21);
+            this.label51.TabIndex = 948;
+            this.label51.Text = " Radio%";
+            // 
+            // label50
+            // 
+            this.label50.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label50.Location = new System.Drawing.Point(98, 148);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(56, 21);
+            this.label50.TabIndex = 947;
+            this.label50.Text = " Radio%";
+            // 
+            // label49
+            // 
+            this.label49.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label49.Location = new System.Drawing.Point(99, 99);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(56, 21);
+            this.label49.TabIndex = 946;
+            this.label49.Text = " Radio%";
+            // 
+            // label54
+            // 
+            this.label54.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label54.Location = new System.Drawing.Point(99, 75);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(56, 21);
+            this.label54.TabIndex = 945;
+            this.label54.Text = " Radio%";
+            // 
+            // label48
+            // 
+            this.label48.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label48.Location = new System.Drawing.Point(215, 240);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(55, 21);
+            this.label48.TabIndex = 944;
+            this.label48.Text = " ICR Info.";
+            // 
+            // label43
+            // 
+            this.label43.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label43.Location = new System.Drawing.Point(215, 217);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(140, 21);
+            this.label43.TabIndex = 943;
+            this.label43.Text = " Debit Memo(Customer)";
+            // 
+            // label44
+            // 
+            this.label44.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label44.Location = new System.Drawing.Point(216, 192);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(139, 21);
+            this.label44.TabIndex = 942;
+            this.label44.Text = " Debit Note(Supplier)";
+            // 
+            // label45
+            // 
+            this.label45.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label45.Location = new System.Drawing.Point(215, 149);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(55, 21);
+            this.label45.TabIndex = 941;
+            this.label45.Text = " ICR Info.";
+            // 
+            // label46
+            // 
+            this.label46.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label46.Location = new System.Drawing.Point(216, 121);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(139, 21);
+            this.label46.TabIndex = 940;
+            this.label46.Text = " Subcon Name";
+            // 
+            // label47
+            // 
+            this.label47.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label47.Location = new System.Drawing.Point(216, 99);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(139, 21);
+            this.label47.TabIndex = 920;
+            this.label47.Text = " Debit Memo(Factory)";
+            // 
+            // editBox1
+            // 
+            this.editBox1.BackColor = System.Drawing.Color.White;
+            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MRComment", true));
+            this.editBox1.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox1.Location = new System.Drawing.Point(685, 53);
+            this.editBox1.Multiline = true;
+            this.editBox1.Name = "editBox1";
+            this.editBox1.Size = new System.Drawing.Size(263, 23);
+            this.editBox1.TabIndex = 917;
+            // 
+            // editBox2
+            // 
+            this.editBox2.BackColor = System.Drawing.Color.White;
+            this.editBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editBox2.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox2.Location = new System.Drawing.Point(685, 29);
+            this.editBox2.Multiline = true;
+            this.editBox2.Name = "editBox2";
+            this.editBox2.Size = new System.Drawing.Size(263, 23);
+            this.editBox2.TabIndex = 916;
+            // 
+            // editBox3
+            // 
+            this.editBox3.BackColor = System.Drawing.Color.White;
+            this.editBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtyDesc", true));
+            this.editBox3.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.editBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox3.Location = new System.Drawing.Point(170, 31);
+            this.editBox3.Multiline = true;
+            this.editBox3.Name = "editBox3";
+            this.editBox3.Size = new System.Drawing.Size(369, 40);
+            this.editBox3.TabIndex = 915;
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label4.Location = new System.Drawing.Point(542, 54);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(140, 21);
+            this.label4.TabIndex = 939;
+            this.label4.Text = " MR\'s Comments";
+            // 
+            // label5
+            // 
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label5.Location = new System.Drawing.Point(542, 31);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(140, 21);
+            this.label5.TabIndex = 938;
+            this.label5.Text = " Task Team Comments";
+            // 
+            // label7
+            // 
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label7.Location = new System.Drawing.Point(82, 31);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(84, 21);
+            this.label7.TabIndex = 937;
+            this.label7.Text = "(For Factory)";
+            // 
+            // label8
+            // 
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label8.Location = new System.Drawing.Point(9, 31);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(84, 21);
+            this.label8.TabIndex = 936;
+            this.label8.Text = " Explanation";
+            // 
+            // CboReason
+            // 
+            this.CboReason.BackColor = System.Drawing.Color.White;
+            this.CboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.CboReason.FormattingEnabled = true;
+            this.CboReason.IsSupportUnselect = true;
+            this.CboReason.Location = new System.Drawing.Point(116, 3);
+            this.CboReason.Name = "CboReason";
+            this.CboReason.OldText = "";
+            this.CboReason.Size = new System.Drawing.Size(277, 24);
+            this.CboReason.TabIndex = 846;
             // 
             // tabQtyOrder
             // 
@@ -631,7 +1403,7 @@
             this.tabQtyOrder.Location = new System.Drawing.Point(4, 25);
             this.tabQtyOrder.Name = "tabQtyOrder";
             this.tabQtyOrder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyOrder.Size = new System.Drawing.Size(1080, 305);
+            this.tabQtyOrder.Size = new System.Drawing.Size(977, 77);
             this.tabQtyOrder.TabIndex = 0;
             this.tabQtyOrder.Text = "Q\'ty B\'Down by Order";
             // 
@@ -641,7 +1413,7 @@
             this.panelQtyOrder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelQtyOrder.Location = new System.Drawing.Point(3, 3);
             this.panelQtyOrder.Name = "panelQtyOrder";
-            this.panelQtyOrder.Size = new System.Drawing.Size(1074, 299);
+            this.panelQtyOrder.Size = new System.Drawing.Size(971, 71);
             this.panelQtyOrder.TabIndex = 0;
             // 
             // GridQtyOrder
@@ -675,7 +1447,7 @@
             this.GridQtyOrder.RowTemplate.Height = 24;
             this.GridQtyOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder.ShowCellToolTips = false;
-            this.GridQtyOrder.Size = new System.Drawing.Size(1074, 299);
+            this.GridQtyOrder.Size = new System.Drawing.Size(971, 71);
             this.GridQtyOrder.TabIndex = 0;
             this.GridQtyOrder.TabStop = false;
             // 
@@ -685,7 +1457,7 @@
             this.tabQtyShipMode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyShipMode.Name = "tabQtyShipMode";
             this.tabQtyShipMode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyShipMode.Size = new System.Drawing.Size(1080, 305);
+            this.tabQtyShipMode.Size = new System.Drawing.Size(977, 77);
             this.tabQtyShipMode.TabIndex = 1;
             this.tabQtyShipMode.Text = "Q\'ty B\'Down by Shipmode";
             // 
@@ -704,8 +1476,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDownbyArticleSizeDetail);
-            this.splitContainer1.Size = new System.Drawing.Size(1074, 302);
-            this.splitContainer1.SplitterDistance = 86;
+            this.splitContainer1.Size = new System.Drawing.Size(971, 71);
+            this.splitContainer1.SplitterDistance = 25;
             this.splitContainer1.TabIndex = 0;
             // 
             // gridQtyBreakDownByShipmode
@@ -738,7 +1510,7 @@
             this.gridQtyBreakDownByShipmode.RowTemplate.Height = 24;
             this.gridQtyBreakDownByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownByShipmode.ShowCellToolTips = false;
-            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(1074, 86);
+            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(971, 25);
             this.gridQtyBreakDownByShipmode.TabIndex = 1;
             this.gridQtyBreakDownByShipmode.TabStop = false;
             // 
@@ -762,6 +1534,9 @@
             this.gridQtyBreakDownbyArticleSizeDetail.AllowUserToDeleteRows = false;
             this.gridQtyBreakDownbyArticleSizeDetail.AllowUserToOrderColumns = false;
             this.gridQtyBreakDownbyArticleSizeDetail.AllowUserToResizeRows = false;
+            this.gridQtyBreakDownbyArticleSizeDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridQtyBreakDownbyArticleSizeDetail.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridQtyBreakDownbyArticleSizeDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridQtyBreakDownbyArticleSizeDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -785,7 +1560,7 @@
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.Height = 24;
             this.gridQtyBreakDownbyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownbyArticleSizeDetail.ShowCellToolTips = false;
-            this.gridQtyBreakDownbyArticleSizeDetail.Size = new System.Drawing.Size(983, 184);
+            this.gridQtyBreakDownbyArticleSizeDetail.Size = new System.Drawing.Size(971, 11);
             this.gridQtyBreakDownbyArticleSizeDetail.TabIndex = 1;
             this.gridQtyBreakDownbyArticleSizeDetail.TabStop = false;
             // 
@@ -795,7 +1570,7 @@
             this.tabQtyApply.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApply.Name = "tabQtyApply";
             this.tabQtyApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApply.Size = new System.Drawing.Size(1080, 305);
+            this.tabQtyApply.Size = new System.Drawing.Size(977, 77);
             this.tabQtyApply.TabIndex = 3;
             this.tabQtyApply.Text = "Apply Q\'ty B\'Down by Order";
             // 
@@ -829,7 +1604,7 @@
             this.GridQtyOrder_Apply.RowTemplate.Height = 24;
             this.GridQtyOrder_Apply.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder_Apply.ShowCellToolTips = false;
-            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(1074, 302);
+            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(971, 71);
             this.GridQtyOrder_Apply.TabIndex = 0;
             this.GridQtyOrder_Apply.TabStop = false;
             // 
@@ -839,7 +1614,7 @@
             this.tabQtyApplyShipmode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApplyShipmode.Name = "tabQtyApplyShipmode";
             this.tabQtyApplyShipmode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(1080, 305);
+            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(977, 77);
             this.tabQtyApplyShipmode.TabIndex = 4;
             this.tabQtyApplyShipmode.Text = "Apply Q\'ty B\'Down by Shipmode";
             // 
@@ -858,8 +1633,8 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.label2);
             this.splitContainer2.Panel2.Controls.Add(this.gridQtyBrkApplybyArticleSizeDetail);
-            this.splitContainer2.Size = new System.Drawing.Size(1074, 302);
-            this.splitContainer2.SplitterDistance = 86;
+            this.splitContainer2.Size = new System.Drawing.Size(971, 71);
+            this.splitContainer2.SplitterDistance = 25;
             this.splitContainer2.TabIndex = 1;
             // 
             // gridQtyBrkApplyByShipmode
@@ -892,7 +1667,7 @@
             this.gridQtyBrkApplyByShipmode.RowTemplate.Height = 24;
             this.gridQtyBrkApplyByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBrkApplyByShipmode.ShowCellToolTips = false;
-            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(1074, 86);
+            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(971, 25);
             this.gridQtyBrkApplyByShipmode.TabIndex = 1;
             this.gridQtyBrkApplyByShipmode.TabStop = false;
             // 
@@ -916,6 +1691,9 @@
             this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToDeleteRows = false;
             this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToOrderColumns = false;
             this.gridQtyBrkApplybyArticleSizeDetail.AllowUserToResizeRows = false;
+            this.gridQtyBrkApplybyArticleSizeDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridQtyBrkApplybyArticleSizeDetail.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridQtyBrkApplybyArticleSizeDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridQtyBrkApplybyArticleSizeDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -939,7 +1717,7 @@
             this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.Height = 24;
             this.gridQtyBrkApplybyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBrkApplybyArticleSizeDetail.ShowCellToolTips = false;
-            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(983, 184);
+            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(971, 11);
             this.gridQtyBrkApplybyArticleSizeDetail.TabIndex = 1;
             this.gridQtyBrkApplybyArticleSizeDetail.TabStop = false;
             // 
@@ -1033,18 +1811,6 @@
             this.TxtSP.Size = new System.Drawing.Size(130, 23);
             this.TxtSP.TabIndex = 845;
             // 
-            // CboReason
-            // 
-            this.CboReason.BackColor = System.Drawing.Color.White;
-            this.CboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.CboReason.FormattingEnabled = true;
-            this.CboReason.IsSupportUnselect = true;
-            this.CboReason.Location = new System.Drawing.Point(345, 3);
-            this.CboReason.Name = "CboReason";
-            this.CboReason.OldText = "";
-            this.CboReason.Size = new System.Drawing.Size(277, 24);
-            this.CboReason.TabIndex = 846;
-            // 
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1124,11 +1890,158 @@
             this.txtuserCFM.TabIndex = 791;
             this.txtuserCFM.TextBox1Binding = "";
             // 
+            // DisSewingQty
+            // 
+            this.DisSewingQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.DisSewingQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.DisSewingQty.Location = new System.Drawing.Point(629, 205);
+            this.DisSewingQty.Name = "DisSewingQty";
+            this.DisSewingQty.Size = new System.Drawing.Size(141, 23);
+            this.DisSewingQty.TabIndex = 854;
+            this.DisSewingQty.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // LbSewingQty
+            // 
+            this.LbSewingQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.LbSewingQty.Location = new System.Drawing.Point(551, 205);
+            this.LbSewingQty.Name = "LbSewingQty";
+            this.LbSewingQty.Size = new System.Drawing.Size(75, 19);
+            this.LbSewingQty.TabIndex = 855;
+            this.LbSewingQty.Text = "Sewing Q\'ty";
+            // 
+            // DisTotalQty
+            // 
+            this.DisTotalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.DisTotalQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OldQty", true));
+            this.DisTotalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.DisTotalQty.Location = new System.Drawing.Point(398, 205);
+            this.DisTotalQty.Name = "DisTotalQty";
+            this.DisTotalQty.Size = new System.Drawing.Size(141, 23);
+            this.DisTotalQty.TabIndex = 852;
+            this.DisTotalQty.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // LbTotalQty
+            // 
+            this.LbTotalQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.LbTotalQty.Location = new System.Drawing.Point(330, 205);
+            this.LbTotalQty.Name = "LbTotalQty";
+            this.LbTotalQty.Size = new System.Drawing.Size(65, 19);
+            this.LbTotalQty.TabIndex = 853;
+            this.LbTotalQty.Text = "Total Q\'ty";
+            // 
+            // displayCPU
+            // 
+            this.displayCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCPU.Location = new System.Drawing.Point(74, 205);
+            this.displayCPU.Name = "displayCPU";
+            this.displayCPU.Size = new System.Drawing.Size(68, 23);
+            this.displayCPU.TabIndex = 850;
+            this.displayCPU.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // lbCPU
+            // 
+            this.lbCPU.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lbCPU.Location = new System.Drawing.Point(5, 205);
+            this.lbCPU.Name = "lbCPU";
+            this.lbCPU.Size = new System.Drawing.Size(65, 19);
+            this.lbCPU.TabIndex = 851;
+            this.lbCPU.Text = "CPU";
+            // 
+            // LbActCutFstDate
+            // 
+            this.LbActCutFstDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.LbActCutFstDate.Location = new System.Drawing.Point(154, 205);
+            this.LbActCutFstDate.Name = "LbActCutFstDate";
+            this.LbActCutFstDate.Size = new System.Drawing.Size(86, 19);
+            this.LbActCutFstDate.TabIndex = 849;
+            this.LbActCutFstDate.Text = "1st Cut Date";
+            // 
+            // dateActCutFstDate
+            // 
+            this.dateActCutFstDate.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.dateActCutFstDate.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.dateActCutFstDate.IsSupportEditMode = false;
+            this.dateActCutFstDate.Location = new System.Drawing.Point(243, 205);
+            this.dateActCutFstDate.Name = "dateActCutFstDate";
+            this.dateActCutFstDate.ReadOnly = true;
+            this.dateActCutFstDate.Size = new System.Drawing.Size(75, 23);
+            this.dateActCutFstDate.TabIndex = 848;
+            // 
+            // ChkNeedToProduction
+            // 
+            this.ChkNeedToProduction.AutoSize = true;
+            this.ChkNeedToProduction.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedProduction", true));
+            this.ChkNeedToProduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ChkNeedToProduction.Location = new System.Drawing.Point(229, 4);
+            this.ChkNeedToProduction.Name = "ChkNeedToProduction";
+            this.ChkNeedToProduction.Size = new System.Drawing.Size(230, 21);
+            this.ChkNeedToProduction.TabIndex = 856;
+            this.ChkNeedToProduction.Text = "Still need to continue production";
+            this.ChkNeedToProduction.UseVisualStyleBackColor = true;
+            // 
+            // DisOrderNewQty
+            // 
+            this.DisOrderNewQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.DisOrderNewQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.DisOrderNewQty.Location = new System.Drawing.Point(755, 153);
+            this.DisOrderNewQty.Name = "DisOrderNewQty";
+            this.DisOrderNewQty.Size = new System.Drawing.Size(141, 23);
+            this.DisOrderNewQty.TabIndex = 861;
+            this.DisOrderNewQty.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label9
+            // 
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label9.Location = new System.Drawing.Point(687, 155);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(65, 19);
+            this.label9.TabIndex = 862;
+            this.label9.Text = "New Q\'ty";
+            // 
+            // DisOrderQty
+            // 
+            this.DisOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.DisOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.DisOrderQty.Location = new System.Drawing.Point(755, 130);
+            this.DisOrderQty.Name = "DisOrderQty";
+            this.DisOrderQty.Size = new System.Drawing.Size(141, 23);
+            this.DisOrderQty.TabIndex = 858;
+            this.DisOrderQty.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // LbOrderQty
+            // 
+            this.LbOrderQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.LbOrderQty.Location = new System.Drawing.Point(687, 132);
+            this.LbOrderQty.Name = "LbOrderQty";
+            this.LbOrderQty.Size = new System.Drawing.Size(65, 19);
+            this.LbOrderQty.TabIndex = 860;
+            this.LbOrderQty.Text = "Order Q\'ty";
+            // 
+            // DisFOCQty
+            // 
+            this.DisFOCQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.DisFOCQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.DisFOCQty.Location = new System.Drawing.Point(755, 107);
+            this.DisFOCQty.Name = "DisFOCQty";
+            this.DisFOCQty.Size = new System.Drawing.Size(141, 23);
+            this.DisFOCQty.TabIndex = 857;
+            this.DisFOCQty.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // LbFOCQty
+            // 
+            this.LbFOCQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.LbFOCQty.Location = new System.Drawing.Point(687, 109);
+            this.LbFOCQty.Name = "LbFOCQty";
+            this.LbFOCQty.Size = new System.Drawing.Size(65, 19);
+            this.LbFOCQty.TabIndex = 859;
+            this.LbFOCQty.Text = "FOC Qty ";
+            // 
             // P20
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 662);
+            this.ClientSize = new System.Drawing.Size(1008, 712);
             this.ExpressQuery = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
@@ -1149,6 +2062,8 @@
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
+            this.tabResponsibility.ResumeLayout(false);
+            this.tabResponsibility.PerformLayout();
             this.tabQtyOrder.ResumeLayout(false);
             this.panelQtyOrder.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GridQtyOrder)).EndInit();
@@ -1183,10 +2098,7 @@
 
         private Win.UI.Label LbJunk;
         private Win.UI.Label LbClose;
-        private Win.UI.Label LbOrderQty;
-        private Win.UI.Label LbFOCQty;
         private Win.UI.Label LbProjectID;
-        private Win.UI.Label LbModel;
         private Win.UI.Label LbOrderTypeID;
         private Win.UI.Label LbCategory;
         private Win.UI.Label LbDescription;
@@ -1214,13 +2126,10 @@
         private System.Windows.Forms.TabPage tabQtyApplyShipmode;
         private Win.UI.Button BtnReject;
         private Win.UI.Button BtnConfirm;
-        private Win.UI.NumericBox numOderQty;
-        private Win.UI.NumericBox numFOC;
         private Win.UI.DisplayBox dispDescription;
         private Win.UI.DateBox dateSCIDelivery;
         private Win.UI.DateBox dateDelivery;
         private Win.UI.DateBox dateCFM;
-        private Win.UI.DisplayBox dispModel;
         private Win.UI.DisplayBox dispProject;
         private Win.UI.DisplayBox dispOrderType;
         private Win.UI.DisplayBox dispProgram;
@@ -1259,5 +2168,76 @@
         private Class.txttpeuser txtuserClose;
         private Class.txttpeuser txtuserJunk;
         private Class.txttpeuser txtuserSent;
+        private System.Windows.Forms.TabPage tabResponsibility;
+        private Win.UI.DisplayBox DisSewingQty;
+        private Win.UI.Label LbSewingQty;
+        private Win.UI.DisplayBox DisTotalQty;
+        private Win.UI.Label LbTotalQty;
+        private Win.UI.DisplayBox displayCPU;
+        private Win.UI.Label lbCPU;
+        private Win.UI.Label LbActCutFstDate;
+        private Win.UI.DateBox dateActCutFstDate;
+        private Win.UI.TextBox textBox1;
+        private Win.UI.Label label3;
+        private Win.UI.EditBox displaySCIICRInfo;
+        private Win.UI.DisplayBox displayBuyerICRInfo;
+        private Win.UI.Label label62;
+        private Win.UI.Label label6;
+        private Win.UI.NumericBox numRatioBuyer;
+        private Win.UI.NumericBox numRatioSupp;
+        private Win.UI.NumericBox numRatioSCI;
+        private Win.UI.NumericBox numRatioSubcon;
+        private Win.UI.NumericBox numRatioFty;
+        private Win.UI.CheckBox chkResponsibleBuyer;
+        private Win.UI.CheckBox chkResponsibleSupp;
+        private Win.UI.CheckBox chkResponsibleSCI;
+        private Win.UI.CheckBox chkResponsibleSubcon;
+        private Win.UI.CheckBox chkResponsibleFty;
+        private Win.UI.EditBox editBuyerRemark;
+        private Win.UI.DisplayBox displayBuyerICRRemark;
+        private Win.UI.DisplayBox displayBuyerDBCRemark;
+        private Win.UI.DisplayBox displaySuppDBCRemark;
+        private Win.UI.DisplayBox displaySCIICRRemark;
+        private Win.UI.DisplayBox displaySubconDBCRemark;
+        private Win.UI.TextBox txtBuyerICRNo;
+        private Win.UI.TextBox txtBuyerDBCNo;
+        private Win.UI.TextBox txtSuppDBCNo;
+        private Win.UI.TextBox txtSCIICRNo;
+        private Win.UI.TextBox txtSubConName;
+        private Win.UI.TextBox txtSubconDBCNo;
+        private Win.UI.Label label52;
+        private Win.UI.Label label51;
+        private Win.UI.Label label50;
+        private Win.UI.Label label49;
+        private Win.UI.Label label54;
+        private Win.UI.Label label48;
+        private Win.UI.Label label43;
+        private Win.UI.Label label44;
+        private Win.UI.Label label45;
+        private Win.UI.Label label46;
+        private Win.UI.Label label47;
+        private Win.UI.EditBox editBox1;
+        private Win.UI.EditBox editBox2;
+        private Win.UI.EditBox editBox3;
+        private Win.UI.Label label4;
+        private Win.UI.Label label5;
+        private Win.UI.Label label7;
+        private Win.UI.Label label8;
+        private Win.UI.CheckBox ChkNeedToProduction;
+        private Win.UI.Label label16;
+        private Win.UI.Label label15;
+        private Win.UI.Label label13;
+        private Win.UI.Label label12;
+        private Class.txttpeuser txttpeuserPoHandle;
+        private Class.txttpeuser txttpeuserPoSmr;
+        private Class.txttpeuser txttpeuserMRHandle;
+        private Class.txttpeuser txttpeuserSMR;
+        private Win.UI.DisplayBox pickIdFactory;
+        private Win.UI.DisplayBox DisOrderNewQty;
+        private Win.UI.Label label9;
+        private Win.UI.DisplayBox DisOrderQty;
+        private Win.UI.Label LbOrderQty;
+        private Win.UI.DisplayBox DisFOCQty;
+        private Win.UI.Label LbFOCQty;
     }
 }

@@ -223,9 +223,58 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
             setTxtbox2("Closed", this.txtuserClose, this.TxtCloseDate);
             #endregion
 
+            #region 載入責任歸屬線上的資訊
+            // displaySCIICRInfo
+            if (!this.txtSCIICRNo.Text.Empty())
+            {
+                string sql = @"
+Select dep.Name 
+From ICR
+Outer apply (
+    Select Name 
+    From (
+        Select ID, rtrim(Name) as Name
+        From department
+        Union
+        SELECT 'SP-TSR' AS ID, 'Sample room(TW)-TSR' AS Name
+        Union
+        SELECT 'SP-PSR' AS ID, 'Sample room(PM4)-PSR' AS Name
+        Union
+        SELECT 'SP-VSR' AS ID, 'Sample room(VN)-VSR' AS Name
+        Union
+        SELECT 'SP-CSR' AS ID, 'Sample room(CN)-CSR' AS Name
+        Union
+        SELECT 'SP-PS2' AS ID, 'Sample room(PM3)-PS2' AS Name
+        Union
+        Select ID, rtrim(Name) as Name From DropDownList where Type = 'ProductionDep'
+    ) main
+    Where main.ID = ICR.department
+) dep
+Where ICR.ID = @ID
+";
+                this.displaySCIICRInfo.Text = MyUtility.GetValue.Lookup(sql);
+            }
+            else
+            {
+                this.displaySCIICRInfo.Clear();
+            }
+
+            // displayBuyerICRInfo
+            if (!this.txtBuyerICRNo.Text.Empty())
+            {
+                string searchSQL = string.Format("select department from icr where id = '{0}'", this.txtBuyerICRNo.Text);
+                this.displayBuyerICRInfo.Text = MyUtility.GetValue.Lookup(searchSQL);
+            }
+            else
+            {
+                this.displayBuyerICRInfo.Clear();
+            }
+            #endregion
+
             #region 載入Orders欄位
+            string orderid = this.CurrentDataRow["Orderid"].ToString();
             DataRow currOrder;
-            if (!MyUtility.Check.Seek($@"select * from Orders where ID = '{this.CurrentMaintain["Orderid"]}'", out currOrder))
+            if (!MyUtility.Check.Seek($@"select * from Orders where ID = '{orderid}'", out currOrder))
             {
                 MyUtility.Msg.WarningBox("OrderID not found!");
                 this.BtnConfirm.Enabled = false;
@@ -247,9 +296,16 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
             this.dateDelivery.Value = Convert.ToDateTime(row["BuyerDelivery"]);
             this.dateSCIDelivery.Value = Convert.ToDateTime(row["SCIDelivery"]);
             this.dispDescription.Text = row["Dest"].ToString();
-            this.numFOC.Text = row["FOCQty"].ToString();
-            this.numOderQty.Text = row["QTY"].ToString();
-            this.dispModel.Text = row["Model"].ToString();
+            this.DisFOCQty.Text = row["FOCQty"].ToString();
+            this.DisOrderQty.Text = row["QTY"].ToString();
+            this.displayCPU.Text = row["CPU"].ToString();
+            this.txttpeuserMRHandle.DisplayBox1.Text = row["MRHandle"].ToString();
+            this.txttpeuserSMR.DisplayBox1.Text = row["SMR"].ToString();
+
+            if (row["ActCutFstDate"] != DBNull.Value)
+            {
+                this.dateActCutFstDate.Value = Convert.ToDateTime(row["ActCutFstDate"].ToString());
+            }
 
             if (category == "S")
             {
@@ -259,7 +315,19 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
             {
                 this.reasonTypeID = "Order_BuyerDelivery";
             }
+
+            // 載入Sewing
+            string sSewoutPutQty = MyUtility.GetValue.Lookup($"select sum(SewoutPutQty) as SewoutPutQty from Order_Qty where id = '{orderid}'");
+            this.DisSewingQty.Text = sSewoutPutQty;
             #endregion
+
+            // 載入PO
+            DataRow currPO;
+            if (MyUtility.Check.Seek($"select * from PO where ID = '{orderid}'", out currPO))
+            {
+                this.txttpeuserPoHandle.DisplayBox1.Text = currPO["POHandle"].ToString();
+                this.txttpeuserPoSmr.DisplayBox1.Text = currPO["POSMR"].ToString();
+            }
 
             this.QtybrkOrderbs.DataSource = null;
             this.QtybrkShipbs1.DataSource = null;
@@ -602,7 +670,7 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             string toAddress = string.Join(";", x);
             string ccAddress = string.Empty;
             string factory = MyUtility.GetValue.Lookup($@"select factoryID from orders with(nolock) where id = '{this.CurrentMaintain["Orderid"]}'");
-            string subject = $@"== this is my test mail (Testing) ==Order Qty Change SP# {this.CurrentMaintain["Orderid"]}-{factory}-{status}";
+            string subject = $@"== this is my test mail (Testing) == {this.CurrentMaintain["ID"]} {this.CurrentMaintain["Orderid"]} {factory} {status}";
             string description = $@"== this is my test mail (Testing) ==
 {status} SP#{this.CurrentMaintain["Orderid"]}-{factory} request change qty, please check, apply id# - {this.CurrentMaintain["ID"]}";
 
@@ -643,9 +711,9 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             this.dateDelivery.Text = string.Empty;
             this.dateSCIDelivery.Text = string.Empty;
             this.dispDescription.Text = string.Empty;
-            this.numFOC.Text = string.Empty;
-            this.numOderQty.Text = string.Empty;
-            this.dispModel.Text = string.Empty;
+            this.DisFOCQty.Text = string.Empty;
+            this.DisOrderQty.Text = string.Empty;
+            this.DisOrderNewQty.Text = string.Empty;
         }
 
         private void ClearBody()
