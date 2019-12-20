@@ -46,7 +46,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'''')
-	,Remark=isnull(sd.Remark,'''')
+	,Remark= ''''
     ,o.SciDelivery
 	,sd.Ukey
 into #tmpSewingDetail

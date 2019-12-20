@@ -69,7 +69,7 @@ outer apply( select BrandID from Production.dbo.orders o1 where o.CustPONo = o1.
 outer apply( select top 1 BrandID from Production.dbo.Style where id = o.StyleID and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
 where 1=1 
 and s.Shift <>'O'
---排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
+--�ư�non sister�����o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))
 and (s.OutputDate between CAST(DATEADD(day,-60, @SewingoutputDate) AS date) and  CAST(@SewingoutputDate AS date) 
 	OR cast(s.EditDate as date) between CAST(DATEADD(day,-60, @SewingoutputDate) AS date) and  CAST(@SewingoutputDate AS date) )
