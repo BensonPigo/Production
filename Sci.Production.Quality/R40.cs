@@ -94,9 +94,9 @@ outer apply
 	group by a.StartDate
 ) Claimed
 outer apply (	
-	select round(ISNULL(SUM(o.Qty),0)/6,2) AS Qty 
+	select  Qty =SUM(o.Qty)
 	from orders o
-	where cast(o.BuyerDelivery as date) BETWEEN dateadd(month,-8,convert(date,concat(d.Y,d.m,'01')))  AND dateadd(day,-1,dateadd(month,-2,convert(date,concat(d.Y,d.m,'01'))))
+	where cast(o.BuyerDelivery as date) BETWEEN convert(date,concat(d.Y,d.m,'01'))  AND dateadd(day,-1,dateadd(month,1,convert(date,concat(d.Y,d.m,'01'))))
 	and o.BrandID = '{0}'
 	and o.FactoryID in (select id from dbo.SCIFty where CountryID = (select CountryID from Factory where id='{1}'))	
 	and o.Junk = 0
@@ -273,9 +273,9 @@ outer apply
 	group by a.StartDate,B.FactoryID
 ) Claimed
 outer apply (	
-	select round(ISNULL(SUM(o.Qty),0)/6,0) AS Qty 
+	select Qty =SUM(o.Qty)
 	from orders o
-	where cast(o.BuyerDelivery as date) BETWEEN dateadd(month,-8,convert(date,concat(d.Y,d.m,'01')))  AND dateadd(day,-1,dateadd(month,-2,convert(date,concat(d.Y,d.m,'01'))))
+	where cast(o.BuyerDelivery as date) BETWEEN convert(date,concat(d.Y,d.m,'01'))  AND dateadd(day,-1,dateadd(month,1,convert(date,concat(d.Y,d.m,'01'))))
 	and o.BrandID = 'ADIDAS'	
 	and o.FactoryID = d.ID
 	and o.Junk = 0
