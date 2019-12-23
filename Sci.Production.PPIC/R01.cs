@@ -747,7 +747,7 @@ drop table #tmpFinal_step1
                         Microsoft.Office.Interop.Excel.Range selrng = worksheet.get_Range(string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng), Type.Missing).EntireRow;
 
                         // 設置儲存格的背景色
-                        Microsoft.Office.Interop.Excel.Range rngColor = worksheet.Range[string.Format("{0}{1}:{0}{2}", PublicPrg.Prgs.GetExcelEnglishColumnName(startCol), MyUtility.Convert.GetString(intRowsStart), MyUtility.Convert.GetString(intRowsStart + 2))];
+                        Microsoft.Office.Interop.Excel.Range rngColor = worksheet.Range[$"{excelStartColEng}{MyUtility.Convert.GetString(intRowsStart)}:{excelEndColEng}{MyUtility.Convert.GetString(intRowsStart + 2)}"];
 
                         // 合併儲存格,文字置中 (僅限Style)
                         worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Merge(Type.Missing);
