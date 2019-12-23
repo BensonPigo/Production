@@ -21,6 +21,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
+            this.txtFactory.Text = Env.User.Factory;
         }
 
         protected override void OnFormLoaded()
@@ -42,6 +43,7 @@ namespace Sci.Production.Quality
     
     Declare @_i int = 0
     Declare @Startime datetime = @inputStartime
+    Declare @Factory varchar(8) = @inputFactory
     Declare @TimeRangeStart datetime
     Declare @TimeRangeEnd datetime
     Declare @DisplayTitle varchar(20)
@@ -60,7 +62,7 @@ namespace Sci.Production.Quality
     
     select @MaxWorkTime = max(WorkTime), @MinWorkTime = min(WorkTime)
     from [Dashboard].[dbo].[ReworkTotal] with (nolock)
-     where WorkDate = @Startime
+     where WorkDate = @Startime and FactoryID = @Factory
     
     if(@MaxWorkTime is null)
     begin
@@ -81,8 +83,8 @@ namespace Sci.Production.Quality
 	into #DefectOutput
 	from [Dashboard].[dbo].[ReworkTotal] rt with (nolock)
     inner join #TimeRange tr on rt.WorkTime >= tr.StartTime and rt.WorkTime < tr.EndTime
-	inner join GarmentDefectCode gdc on rt.FailCode = gdc.ID or rt.FailCode = gdc.ReworkTotalFailCode and gdc.Junk = 0
-	where rt.WorkDate = @Startime
+	inner join GarmentDefectCode gdc on (rt.FailCode = gdc.ID or rt.FailCode = gdc.ReworkTotalFailCode) and gdc.Junk = 0
+	where rt.WorkDate = @Startime and rt.FactoryID = @Factory
 	Group by rt.WorkDate, gdc.id,gdc.Description, tr.DisplayTitle, tr.ColSerNo
 	
 	Declare @DisplayTitleCol varchar(400)
@@ -118,7 +120,8 @@ namespace Sci.Production.Quality
             DataTable[] dtResults;
             DualResult result = DBProxy.Current.Select(null,
                 sqlQuery,
-                new List<SqlParameter>() { new SqlParameter("@inputStartime", this.dateBoxOutputDate.Value) },
+                new List<SqlParameter>() {  new SqlParameter("@inputStartime", this.dateBoxOutputDate.Value),
+                                            new SqlParameter("@inputFactory", this.txtFactory.Text)},
                 out dtResults);
 
             if(!result)
@@ -147,6 +150,12 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(this.dateBoxOutputDate.Value))
             {
                 MyUtility.Msg.WarningBox("<OutputDate> must be entered");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtFactory.Text))
+            {
+                MyUtility.Msg.WarningBox("<Factory> must be entered");
                 return;
             }
 
