@@ -81,7 +81,7 @@ namespace Sci.Production.Quality
 	into #DefectOutput
 	from [Dashboard].[dbo].[ReworkTotal] rt with (nolock)
     inner join #TimeRange tr on rt.WorkTime >= tr.StartTime and rt.WorkTime < tr.EndTime
-	inner join GarmentDefectCode gdc on rt.FailCode = gdc.ID
+	inner join GarmentDefectCode gdc on rt.FailCode = gdc.ID or rt.FailCode = gdc.ReworkTotalFailCode and gdc.Junk = 0
 	where rt.WorkDate = @Startime
 	Group by rt.WorkDate, gdc.id,gdc.Description, tr.DisplayTitle, tr.ColSerNo
 	

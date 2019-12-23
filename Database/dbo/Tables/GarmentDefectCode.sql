@@ -8,6 +8,7 @@
     [EditDate]            DATETIME       NULL,
     [Junk]                BIT            CONSTRAINT [df_Junk_Zero] DEFAULT ((0)) NOT NULL,
     [LocalDescription]    NVARCHAR (100) NOT NULL,
+    [ReworkTotalFailCode] NVARCHAR(3) NULL CONSTRAINT [DF_GarmentDefectCode_ReworkTotalFailCode] DEFAULT (''), 
     CONSTRAINT [PK_GarmentDefectCode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -47,3 +48,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentDefectCode', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Hanger System的FailCode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentDefectCode', @level2type = N'COLUMN', @level2name = N'ReworkTotalFailCode';
