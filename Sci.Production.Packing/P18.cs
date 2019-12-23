@@ -452,7 +452,6 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               ID = c.Field<string>("ID"),
                                                               CTNStartNo = c.Field<string>("CTNStartNo"),
                                                               CustPoNo = c.Field<string>("CustPoNo"),
-                                                              //Article = c.Field<string>("Article"),
                                                               BrandID = c.Field<string>("BrandID"),
                                                               StyleID = c.Field<string>("StyleID"),
                                                               Dest = c.Field<string>("Dest"),
@@ -464,7 +463,6 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               ID = g.Key.ID,
                                                               CTNStartNo = g.Key.CTNStartNo,
                                                               CustPoNo = g.Key.CustPoNo,
-                                                              //Article = g.Key.Article,
                                                               BrandId = g.Key.BrandID,
                                                               StyleId = g.Key.StyleID,
                                                               Dest = g.Key.Dest,
@@ -477,7 +475,7 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               TtlScanQty = g.Sum(st => st.Field<short>("ScanQty")),
                                                               TtlQtyPerCTN = g.Sum(st => st.Field<int>("QtyPerCTN")),
                                                               PKseq = g.Max(st => st.Field<string>("PKseq")),
-                                                              PassName = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("PassName").ToString()).Where(st => !string.IsNullOrEmpty(st)).ToArray()),
+                                                              PassName = g.Select(st => st.Field<string>("PassName")).FirstOrDefault(), // 一箱只會有一個掃描人員，因此抓第一筆就好
                                                               ActCTNWeight = g.Max(st => st.Field<decimal>("ActCTNWeight"))
                                                           }).OrderBy(s => s.ID).ThenBy(s => s.PKseq).ToList();
             string default_where = " 1 = 1 ";
@@ -720,8 +718,7 @@ set ScanQty = QtyPerCTN
 , Lacking = 0
 , ActCTNWeight = {this.numWeight.Value}
 where id = '{this.selecedPK.ID}' 
-and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
-and Article = '{this.selecedPK.Article}'";
+and CTNStartNo = '{this.selecedPK.CTNStartNo}' ";
                 sql_result = DBProxy.Current.Execute(null, upd_sql);
                 if (!sql_result)
                 {
@@ -822,7 +819,7 @@ and Article = '{this.selecedPK.Article}'";
             {
                 if (!MyUtility.Check.Empty(this.selecedPK.ID) && !MyUtility.Check.Empty(this.selecedPK.CTNStartNo) && !MyUtility.Check.Empty(this.selecedPK.Article))
                 {
-                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}'");
                     foreach (DataRow dr in dt_scanDetailrow)
                     {
                         dr["ActCTNWeight"] = this.numWeight.Text;
@@ -1115,15 +1112,12 @@ and Article = '{this.selecedPK.Article}'";
                     upd_sql += $@"
 update PackingList_Detail 
 set   
-ScanQty = {this.numBoxScanQty.Value} 
+ScanQty = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])} 
 , ScanEditDate = GETDATE()
 , ScanName = '{Env.User.UserID}'   
-, Lacking = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])}--1
+, Lacking = 1
 , BarCode = '{dr["Barcode"]}'
-where --id = '{this.selecedPK.ID}' 
---and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
---and Article = '{this.selecedPK.Article}'
-Ukey={dr["Ukey"]}
+where Ukey={dr["Ukey"]}
 ";
                 }
 
@@ -1157,7 +1151,6 @@ from PackingList_Detail pd
 left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
 where pd.id = '{this.selecedPK.ID}' 
 and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-and pd.Article = '{this.selecedPK.Article}'
 ";
 
             if (MyUtility.Check.Seek(sql, out drPassName))
@@ -1165,7 +1158,7 @@ and pd.Article = '{this.selecedPK.Article}'
                 passName = MyUtility.Convert.GetString(drPassName["PassName"]);
             }
 
-            DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+            DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}'");
             foreach (DataRow dr in dt_scanDetailrow)
             {
                 dr["PassName"] = passName;
