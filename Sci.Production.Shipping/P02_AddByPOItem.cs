@@ -345,11 +345,17 @@ and pld.OrderID = '{this.txtSPNo.Text}'
                     return false;
                 }
 
-                // ISP20191885 移除此限制
-                //if (!this.HcImportCheck(this.CurrentData["PackingListID"].ToString(), this.CurrentData["OrderID"].ToString(), packingListTyp))
-                //{
-                //    return false;
-                //}
+                if (MyUtility.Check.Seek($@"
+select 1 
+from packinglist 
+where ID = '{this.CurrentData["PackingListID"].ToString()}' 
+      and ExpressID<>'{this.CurrentData["ID"].ToString()}' 
+      AND ExpressID <> ''  
+      AND ExpressID IS NOT NULL"))
+                {
+                    MyUtility.Msg.WarningBox($"PackingList: {this.CurrentData["PackingListID"].ToString()} exists other HC");
+                    return false;
+                }
 
                 DataRow seq;
                 if (!MyUtility.Check.Seek(

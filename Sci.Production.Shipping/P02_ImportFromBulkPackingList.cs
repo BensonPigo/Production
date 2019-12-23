@@ -145,7 +145,7 @@ and Factory.IsProduceFty=1
 		where p2.ID = pd.id
 		and Factory.IsProduceFty=1
 	)
-    group by pd.ID, pd.OrderID, o.SeasonID, o.StyleID, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey
+    group by pd.ID, pd.OrderID, pd.CtnStartNo, o.SeasonID, o.StyleID, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey
 ";
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
@@ -186,14 +186,17 @@ and Factory.IsProduceFty=1
             cmds.Add(sp1);
 
             DataTable packListData;
-            string sqlCmd = "select ExpressID from PackingList WITH (NOLOCK) where ID = @id and Type = 'B'";
+            string sqlCmd = "select distinct ID, OrderID from PackingList_Detail WITH (NOLOCK) where ID = @id";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out packListData);
             if (result && packListData.Rows.Count > 0)
             {
-                if (!MyUtility.Check.Empty(packListData.Rows[0]["ExpressID"]))
+                // 檢查PL#,OrderID 是否可顯示於畫面上!
+                foreach (DataRow drchk in packListData.Rows)
                 {
-                    MyUtility.Msg.WarningBox("The Bulk PL# already be assign HC#, so can't assign again!!");
-                    return false;
+                    if (!this.HcImportCheck(drchk["ID"].ToString(), drchk["OrderID"].ToString()))
+                    {
+                        return false;
+                    }
                 }
             }
             else
@@ -356,14 +359,17 @@ values(
 
 ---- 1. 訂單 + PL 是否已經存在 HC表身
 SELECT [ExistsData]=1
-FROm  Express_Detail
-WHERE PackingListID='{packingListID}'
-      AND OrderID='{orderID}' 
+FROm  PackingList
+WHERE ID='{packingListID}'
+      and ExpressID = '{this.masterData["ID"].ToString()}'
 UNION 
 ---- 2. PL 是否有建立在其他 HC
 SELECT [ExistsData]=2
 FROm PackingList
-WHERE ID='{packingListID}' AND ExpressID<>'{this.masterData["ID"].ToString()}' AND ExpressID <> ''  AND ExpressID IS NOT NULL
+WHERE ID='{packingListID}' 
+      AND ExpressID<>'{this.masterData["ID"].ToString()}' 
+      AND ExpressID <> ''  
+      AND ExpressID IS NOT NULL
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)
