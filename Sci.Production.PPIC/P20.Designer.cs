@@ -70,6 +70,8 @@
             this.BtnConfirm = new Sci.Win.UI.Button();
             this.tabControl = new Sci.Win.UI.TabControl();
             this.tabResponsibility = new System.Windows.Forms.TabPage();
+            this.displayBuyerICRInfo = new Sci.Win.UI.DisplayBox();
+            this.displaySCIICRInfo = new Sci.Win.UI.DisplayBox();
             this.pickIdFactory = new Sci.Win.UI.DisplayBox();
             this.txttpeuserPoHandle = new Sci.Production.Class.txttpeuser();
             this.txttpeuserPoSmr = new Sci.Production.Class.txttpeuser();
@@ -81,8 +83,6 @@
             this.label12 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.displaySCIICRInfo = new Sci.Win.UI.EditBox();
-            this.displayBuyerICRInfo = new Sci.Win.UI.DisplayBox();
             this.label62 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.numRatioBuyer = new Sci.Win.UI.NumericBox();
@@ -178,6 +178,7 @@
             this.LbOrderQty = new Sci.Win.UI.Label();
             this.DisFOCQty = new Sci.Win.UI.DisplayBox();
             this.LbFOCQty = new Sci.Win.UI.Label();
+            this.btnProductionOutput = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -219,6 +220,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnProductionOutput);
             this.detailcont.Controls.Add(this.DisOrderNewQty);
             this.detailcont.Controls.Add(this.label9);
             this.detailcont.Controls.Add(this.DisOrderQty);
@@ -623,6 +625,8 @@
             // 
             // tabResponsibility
             // 
+            this.tabResponsibility.Controls.Add(this.displayBuyerICRInfo);
+            this.tabResponsibility.Controls.Add(this.displaySCIICRInfo);
             this.tabResponsibility.Controls.Add(this.pickIdFactory);
             this.tabResponsibility.Controls.Add(this.txttpeuserPoHandle);
             this.tabResponsibility.Controls.Add(this.txttpeuserPoSmr);
@@ -634,8 +638,6 @@
             this.tabResponsibility.Controls.Add(this.label12);
             this.tabResponsibility.Controls.Add(this.textBox1);
             this.tabResponsibility.Controls.Add(this.label3);
-            this.tabResponsibility.Controls.Add(this.displaySCIICRInfo);
-            this.tabResponsibility.Controls.Add(this.displayBuyerICRInfo);
             this.tabResponsibility.Controls.Add(this.label62);
             this.tabResponsibility.Controls.Add(this.label6);
             this.tabResponsibility.Controls.Add(this.numRatioBuyer);
@@ -685,6 +687,28 @@
             this.tabResponsibility.Size = new System.Drawing.Size(989, 349);
             this.tabResponsibility.TabIndex = 5;
             this.tabResponsibility.Text = "Responsibility";
+            // 
+            // displayBuyerICRInfo
+            // 
+            this.displayBuyerICRInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRInfo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerDBCDepartment", true));
+            this.displayBuyerICRInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBuyerICRInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRInfo.Location = new System.Drawing.Point(273, 240);
+            this.displayBuyerICRInfo.Name = "displayBuyerICRInfo";
+            this.displayBuyerICRInfo.Size = new System.Drawing.Size(146, 21);
+            this.displayBuyerICRInfo.TabIndex = 976;
+            // 
+            // displaySCIICRInfo
+            // 
+            this.displaySCIICRInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIICRInfo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SCIICRDepartment", true));
+            this.displaySCIICRInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySCIICRInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIICRInfo.Location = new System.Drawing.Point(273, 149);
+            this.displaySCIICRInfo.Name = "displaySCIICRInfo";
+            this.displaySCIICRInfo.Size = new System.Drawing.Size(146, 21);
+            this.displaySCIICRInfo.TabIndex = 975;
             // 
             // pickIdFactory
             // 
@@ -786,28 +810,6 @@
             this.label3.Size = new System.Drawing.Size(55, 21);
             this.label3.TabIndex = 965;
             this.label3.Text = " ICR Info.";
-            // 
-            // displaySCIICRInfo
-            // 
-            this.displaySCIICRInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySCIICRInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySCIICRInfo.IsSupportEditMode = false;
-            this.displaySCIICRInfo.Location = new System.Drawing.Point(270, 149);
-            this.displaySCIICRInfo.Multiline = true;
-            this.displaySCIICRInfo.Name = "displaySCIICRInfo";
-            this.displaySCIICRInfo.ReadOnly = true;
-            this.displaySCIICRInfo.Size = new System.Drawing.Size(146, 21);
-            this.displaySCIICRInfo.TabIndex = 963;
-            // 
-            // displayBuyerICRInfo
-            // 
-            this.displayBuyerICRInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBuyerICRInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displayBuyerICRInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBuyerICRInfo.Location = new System.Drawing.Point(270, 240);
-            this.displayBuyerICRInfo.Name = "displayBuyerICRInfo";
-            this.displayBuyerICRInfo.Size = new System.Drawing.Size(146, 21);
-            this.displayBuyerICRInfo.TabIndex = 962;
             // 
             // label62
             // 
@@ -1071,13 +1073,15 @@
             // 
             // editBuyerRemark
             // 
-            this.editBuyerRemark.BackColor = System.Drawing.Color.White;
+            this.editBuyerRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editBuyerRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BuyerRemark", true));
             this.editBuyerRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.editBuyerRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBuyerRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editBuyerRemark.IsSupportEditMode = false;
             this.editBuyerRemark.Location = new System.Drawing.Point(360, 262);
             this.editBuyerRemark.Multiline = true;
             this.editBuyerRemark.Name = "editBuyerRemark";
+            this.editBuyerRemark.ReadOnly = true;
             this.editBuyerRemark.Size = new System.Drawing.Size(510, 22);
             this.editBuyerRemark.TabIndex = 935;
             // 
@@ -1087,7 +1091,7 @@
             this.displayBuyerICRRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerICRRemark", true));
             this.displayBuyerICRRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayBuyerICRRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBuyerICRRemark.Location = new System.Drawing.Point(540, 239);
+            this.displayBuyerICRRemark.Location = new System.Drawing.Point(540, 240);
             this.displayBuyerICRRemark.Name = "displayBuyerICRRemark";
             this.displayBuyerICRRemark.Size = new System.Drawing.Size(302, 21);
             this.displayBuyerICRRemark.TabIndex = 957;
@@ -1120,7 +1124,7 @@
             this.displaySCIICRRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SCIICRRemark", true));
             this.displaySCIICRRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displaySCIICRRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySCIICRRemark.Location = new System.Drawing.Point(540, 148);
+            this.displaySCIICRRemark.Location = new System.Drawing.Point(540, 149);
             this.displaySCIICRRemark.Name = "displaySCIICRRemark";
             this.displaySCIICRRemark.Size = new System.Drawing.Size(302, 21);
             this.displaySCIICRRemark.TabIndex = 952;
@@ -1143,7 +1147,7 @@
             this.txtBuyerICRNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtBuyerICRNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtBuyerICRNo.IsSupportEditMode = false;
-            this.txtBuyerICRNo.Location = new System.Drawing.Point(418, 239);
+            this.txtBuyerICRNo.Location = new System.Drawing.Point(418, 240);
             this.txtBuyerICRNo.Name = "txtBuyerICRNo";
             this.txtBuyerICRNo.ReadOnly = true;
             this.txtBuyerICRNo.Size = new System.Drawing.Size(120, 21);
@@ -1182,7 +1186,7 @@
             this.txtSCIICRNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSCIICRNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSCIICRNo.IsSupportEditMode = false;
-            this.txtSCIICRNo.Location = new System.Drawing.Point(418, 148);
+            this.txtSCIICRNo.Location = new System.Drawing.Point(418, 149);
             this.txtSCIICRNo.Name = "txtSCIICRNo";
             this.txtSCIICRNo.ReadOnly = true;
             this.txtSCIICRNo.Size = new System.Drawing.Size(120, 21);
@@ -1315,37 +1319,43 @@
             // 
             // editBox1
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
+            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MRComment", true));
             this.editBox1.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editBox1.IsSupportEditMode = false;
             this.editBox1.Location = new System.Drawing.Point(685, 53);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
+            this.editBox1.ReadOnly = true;
             this.editBox1.Size = new System.Drawing.Size(263, 23);
             this.editBox1.TabIndex = 917;
             // 
             // editBox2
             // 
-            this.editBox2.BackColor = System.Drawing.Color.White;
+            this.editBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editBox2.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editBox2.IsSupportEditMode = false;
             this.editBox2.Location = new System.Drawing.Point(685, 29);
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
+            this.editBox2.ReadOnly = true;
             this.editBox2.Size = new System.Drawing.Size(263, 23);
             this.editBox2.TabIndex = 916;
             // 
             // editBox3
             // 
-            this.editBox3.BackColor = System.Drawing.Color.White;
+            this.editBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtyDesc", true));
             this.editBox3.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.editBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editBox3.IsSupportEditMode = false;
             this.editBox3.Location = new System.Drawing.Point(170, 31);
             this.editBox3.Multiline = true;
             this.editBox3.Name = "editBox3";
+            this.editBox3.ReadOnly = true;
             this.editBox3.Size = new System.Drawing.Size(369, 40);
             this.editBox3.TabIndex = 915;
             // 
@@ -1387,13 +1397,14 @@
             // 
             // CboReason
             // 
-            this.CboReason.BackColor = System.Drawing.Color.White;
-            this.CboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.CboReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.CboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.CboReason.FormattingEnabled = true;
             this.CboReason.IsSupportUnselect = true;
             this.CboReason.Location = new System.Drawing.Point(116, 3);
             this.CboReason.Name = "CboReason";
             this.CboReason.OldText = "";
+            this.CboReason.ReadOnly = true;
             this.CboReason.Size = new System.Drawing.Size(277, 24);
             this.CboReason.TabIndex = 846;
             // 
@@ -2037,6 +2048,18 @@
             this.LbFOCQty.TabIndex = 859;
             this.LbFOCQty.Text = "FOC Qty ";
             // 
+            // btnProductionOutput
+            // 
+            this.btnProductionOutput.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnProductionOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnProductionOutput.Location = new System.Drawing.Point(904, 103);
+            this.btnProductionOutput.Name = "btnProductionOutput";
+            this.btnProductionOutput.Size = new System.Drawing.Size(82, 48);
+            this.btnProductionOutput.TabIndex = 863;
+            this.btnProductionOutput.Text = "Production output";
+            this.btnProductionOutput.UseVisualStyleBackColor = true;
+            this.btnProductionOutput.Click += new System.EventHandler(this.BtnProductionOutput_Click);
+            // 
             // P20
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -2179,8 +2202,6 @@
         private Win.UI.DateBox dateActCutFstDate;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label3;
-        private Win.UI.EditBox displaySCIICRInfo;
-        private Win.UI.DisplayBox displayBuyerICRInfo;
         private Win.UI.Label label62;
         private Win.UI.Label label6;
         private Win.UI.NumericBox numRatioBuyer;
@@ -2239,5 +2260,8 @@
         private Win.UI.Label LbOrderQty;
         private Win.UI.DisplayBox DisFOCQty;
         private Win.UI.Label LbFOCQty;
+        private Win.UI.DisplayBox displayBuyerICRInfo;
+        private Win.UI.DisplayBox displaySCIICRInfo;
+        private Win.UI.Button btnProductionOutput;
     }
 }

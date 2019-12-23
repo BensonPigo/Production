@@ -223,54 +223,6 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
             setTxtbox2("Closed", this.txtuserClose, this.TxtCloseDate);
             #endregion
 
-            #region 載入責任歸屬線上的資訊
-            // displaySCIICRInfo
-            if (!this.txtSCIICRNo.Text.Empty())
-            {
-                string sql = @"
-Select dep.Name 
-From ICR
-Outer apply (
-    Select Name 
-    From (
-        Select ID, rtrim(Name) as Name
-        From department
-        Union
-        SELECT 'SP-TSR' AS ID, 'Sample room(TW)-TSR' AS Name
-        Union
-        SELECT 'SP-PSR' AS ID, 'Sample room(PM4)-PSR' AS Name
-        Union
-        SELECT 'SP-VSR' AS ID, 'Sample room(VN)-VSR' AS Name
-        Union
-        SELECT 'SP-CSR' AS ID, 'Sample room(CN)-CSR' AS Name
-        Union
-        SELECT 'SP-PS2' AS ID, 'Sample room(PM3)-PS2' AS Name
-        Union
-        Select ID, rtrim(Name) as Name From DropDownList where Type = 'ProductionDep'
-    ) main
-    Where main.ID = ICR.department
-) dep
-Where ICR.ID = @ID
-";
-                this.displaySCIICRInfo.Text = MyUtility.GetValue.Lookup(sql);
-            }
-            else
-            {
-                this.displaySCIICRInfo.Clear();
-            }
-
-            // displayBuyerICRInfo
-            if (!this.txtBuyerICRNo.Text.Empty())
-            {
-                string searchSQL = string.Format("select department from icr where id = '{0}'", this.txtBuyerICRNo.Text);
-                this.displayBuyerICRInfo.Text = MyUtility.GetValue.Lookup(searchSQL);
-            }
-            else
-            {
-                this.displayBuyerICRInfo.Clear();
-            }
-            #endregion
-
             #region 載入Orders欄位
             string orderid = this.CurrentDataRow["Orderid"].ToString();
             DataRow currOrder;
@@ -302,9 +254,11 @@ Where ICR.ID = @ID
             this.txttpeuserMRHandle.DisplayBox1.Text = row["MRHandle"].ToString();
             this.txttpeuserSMR.DisplayBox1.Text = row["SMR"].ToString();
 
-            if (row["ActCutFstDate"] != DBNull.Value)
+            string firstcutdate = $@"select FirstCutDate from [Production].dbo.Cutting where ID = '{row["CuttingSP"]}'";
+            DataRow cutrow;
+            if (MyUtility.Check.Seek(firstcutdate, out cutrow))
             {
-                this.dateActCutFstDate.Value = Convert.ToDateTime(row["ActCutFstDate"].ToString());
+                this.dateActCutFstDate.Value = MyUtility.Convert.GetDate(cutrow["FirstCutDate"]);
             }
 
             if (category == "S")
@@ -316,8 +270,58 @@ Where ICR.ID = @ID
                 this.reasonTypeID = "Order_BuyerDelivery";
             }
 
-            // 載入Sewing
-            string sSewoutPutQty = MyUtility.GetValue.Lookup($"select sum(SewoutPutQty) as SewoutPutQty from Order_Qty where id = '{orderid}'");
+            // 撈Sewing Data
+            string locationTable = string.Empty;
+            if (MyUtility.Check.Seek($"select 1 from Order_Location where OrderId = '{orderid}'"))
+            {
+                locationTable = "Order_Location  sl WITH (NOLOCK) on sl.OrderId = o.id";
+            }
+            else
+            {
+                locationTable = "Style_Location  sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey";
+            }
+
+            string sqlCmd = string.Format(
+                @"
+with SewQty as (
+	select	oq.Article
+			, oq.SizeCode
+			, oq.Qty
+			, ComboType = sl.Location
+			, QAQty = isnull(sum(sdd.QAQty),0)
+	from Orders o WITH (NOLOCK) 
+	inner join {2}
+	inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+	left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o.ID 
+															  and sdd.Article = oq.Article 
+															  and sdd.SizeCode = oq.SizeCode 
+															  and sdd.ComboType = sl.Location
+	where o.ID = '{0}'
+	group by oq.Article,oq.SizeCode,oq.Qty,sl.Location
+), 
+minSewQty as (
+	select	Article
+			, SizeCode
+			, QAQty = MIN(QAQty)
+	from SewQty
+	group by Article,SizeCode
+),
+PivotData as (
+	select *
+	from SewQty
+	PIVOT (SUM(QAQty)
+	FOR ComboType IN ([T],[B],[I],[O])) a
+)
+select SewQty = sum(m.QAQty )
+from PivotData p
+left join minSewQty m on m.Article = p.Article and m.SizeCode = p.SizeCode
+left join Order_Article oa WITH (NOLOCK) on oa.ID = '{1}' and oa.Article = p.Article
+left join Order_SizeCode os WITH (NOLOCK) on os.ID = '{1}' and os.SizeCode = p.SizeCode
+",
+                orderid,
+                poid,
+                locationTable);
+            string sSewoutPutQty = MyUtility.GetValue.Lookup(sqlCmd);
             this.DisSewingQty.Text = sSewoutPutQty;
             #endregion
 
@@ -335,7 +339,7 @@ Where ICR.ID = @ID
             this.QtybrkApplybs.DataSource = null;
 
             #region tab 1
-            string sqlCmd = $@"
+            sqlCmd = $@"
 select stuff((
 	select concat(',[',SizeCode,']')
 	from Order_SizeCode os with(nolock)
@@ -724,6 +728,24 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             this.QtybrkApplybs.DataSource = null;
             this.QtybrkShipApplybs1.DataSource = null;
             this.QtybrkShipApplybs2.DataSource = null;
+        }
+
+        private void BtnProductionOutput_Click(object sender, EventArgs e)
+        {
+            string orderid = this.CurrentDataRow["Orderid"].ToString();
+            DataRow currOrder;
+            if (!MyUtility.Check.Seek($@"select * from Orders where ID = '{orderid}'", out currOrder))
+            {
+                MyUtility.Msg.WarningBox("OrderID not found!");
+                return;
+            }
+            else
+            {
+                Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(currOrder);
+                callNextForm.tabControl1.TabPages.Remove(callNextForm.tabControl1.TabPages[2]);
+                callNextForm.tabControl1.TabPages.Remove(callNextForm.tabControl1.TabPages[1]);
+                callNextForm.ShowDialog(this);
+            }
         }
     }
 }
