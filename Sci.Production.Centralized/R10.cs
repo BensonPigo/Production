@@ -125,15 +125,27 @@ namespace Sci.Production.Centralized
             #region Detail SQL
             this.tsql_detail = string.Format(
 @"
-select so.FactoryID,so.OutputDate,f.CountryID,pod.BrandID,sodd.OrderId,GetCategory.Category,pod.CurrencyID,CValue.Article,CValue.Size,CValue.EType,CValue.OutputQty,
-       CPU = round(iif(CValue.EType is null,CValue.CPU,CValue.CPU*GetSuitRate.SuitRate),3),
-       GetCpuRate.CpuRate,GetSuitRate.SuitRate,GetCurrencyRate.CurrencyRate,
-	   TotalCpu = round(CValue.OutputQty*CValue.CPU*GetCpuRate.CpuRate*GetSuitRate.SuitRate,2),
-	   TotalFOB = round(GetTotalConfirmPrice.PoPrice*CValue.OutputQty*GetSuitRate.SuitRate,2)
+select   so.FactoryID
+	    ,so.OutputDate
+	    ,f.CountryID
+	    ,pod.BrandID
+	    ,sodd.OrderId
+	    ,GetCategory.Category
+	    ,pod.CurrencyID
+	    ,CValue.Article
+	    ,CValue.Size
+	    ,CValue.EType
+	    ,CValue.OutputQty
+	    ,CPU = round(iif(CValue.EType is null,CValue.CPU,CValue.CPU * GetSuitRate.SuitRate),3)
+	    ,GetCpuRate.CpuRate
+	    ,GetSuitRate.SuitRate
+	    ,GetCurrencyRate.CurrencyRate
+	    ,GetTotalConfirmPrice.PoPrice
+INTO #tmp
 from SewingOutput so
 inner join Factory f on f.ID = so.FactoryID
 inner join SewingOutput_Detail sod on sod.ID = so.ID
-inner join SewingOutput_Detail_Detail sodd on sodd.ID = so.ID  and sodd.OrderId = sod.OrderId and sod.OldDetailKey = sodd.OldDetailKey
+inner join SewingOutput_Detail_Detail sodd on sod.UKey = sodd.SewingOutput_DetailUKey
 inner join Orders pod on pod.ID = sodd.OrderId 
 inner join CDCode cd on cd.ID = pod.CDCodeID
 left join MockupOrder pmo on pmo.ID = sod.OrderId
@@ -145,12 +157,42 @@ outer apply(select Article = iif(so.ID = sodd.ID,sodd.Article,''),
 				   CPU = iif(so.ID = sodd.ID,pod.Cpu,pmo.Cpu)) as CValue
 outer apply(select iif(so.ID = sodd.ID,(select * from dbo.GetCPURate(pod.OrderTypeID,pod.ProgramID,pod.Category,pod.BrandID,'O'))
 									  ,(select * from dbo.GetCPURate('',pmo.ProgramID,'Mockup',pmo.BrandID,'M'))) as CpuRate) as GetCpuRate
-outer apply(select iif(so.ID = sodd.ID,(select dbo.GetSuitRate(cd.ComboPcs,sodd.ComboType) where cd.ID = pod.CDCodeID),1) as SuitRate) as GetSuitRate
+outer apply(
+	select [SuitRate]=iif(so.ID = sodd.ID
+						,(SELECT Rate*1.0 /100 FROM Order_Location where OrderID = sodd.OrderID and Location = sodd.ComboType)
+						,1) 
+) as GetSuitRate
+
 outer apply(select iif(so.ID = sodd.ID,iif(pod.CurrencyID <> 'USD',(select  dbo.GetFinanceRate('{0}',so.OutputDate,pod.CurrencyID,'USD')),1),0)as CurrencyRate) as GetCurrencyRate
 outer apply(select iif(so.ID = sodd.ID,(select dbo.GetPoPriceByArticleSize(sodd.Orderid,sodd.Article,sodd.SizeCode)),0) as PoPrice) as GetTotalConfirmPrice
 where  ", this.comboExchangeRate.Text) + sqlWhere +
 @"
 order by FactoryID,sodd.OrderId
+
+----Detail
+SELECT 
+         FactoryID
+        ,OutputDate 
+        ,CountryID
+        ,BrandID
+        ,OrderId
+        ,Category
+        ,CurrencyID
+        ,Article
+        ,Size
+        ,EType
+        ,[OutputQty]=SUM(OutputQty)
+        ,CPU
+        ,CpuRate
+        ,SuitRate
+        ,CurrencyRate
+        ,TotalCpu = round(SUM(OutputQty) * CPU * CpuRate * SuitRate ,2)
+        ,TotalFOB = round(PoPrice*SUM(OutputQty) * SuitRate ,2)
+FROM #tmp
+GROUP BY FactoryID, OutputDate ,CountryID,BrandID,OrderId,Category,CurrencyID,Article,Size,EType,CPU,CpuRate,SuitRate,CurrencyRate,PoPrice
+
+
+DROP TABLE #tmp
 ";
             #endregion
 

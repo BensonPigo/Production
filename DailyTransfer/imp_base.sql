@@ -879,8 +879,8 @@ UPDATE a
 SET  
       -- a.ID	    =b.ID	
       -- a.MDivisionID	      =b.MDivisionID	
-      -- Junk 重新更新日期暫定為 2019 / 10 / 25 a.Junk	      =b.Junk 
-      a.NameCH	      =b.NameCH	
+      a.Junk	      =b.Junk 
+      ,a.NameCH	      =b.NameCH	
       ,a.CountryID	      =b.CountryID		
       ,a.AddressCH	      =b.AddressCH	
       ,a.CurrencyID	      =b.CurrencyID	

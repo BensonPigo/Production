@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.label10 = new Sci.Win.UI.Label();
+            this.txtSPNo1 = new Sci.Win.UI.TextBox();
+            this.dateEstCutDate = new Sci.Win.UI.DateBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.txtCutRef = new Sci.Win.UI.TextBox();
             this.labAddDate = new Sci.Win.UI.Label();
             this.labSpNo = new Sci.Win.UI.Label();
@@ -42,10 +46,6 @@
             this.btnDelete = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridBatchDelete = new Sci.Win.UI.Grid();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateEstCutDate = new Sci.Win.UI.DateBox();
-            this.txtSPNo1 = new Sci.Win.UI.TextBox();
-            this.label10 = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -68,40 +68,72 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1239, 69);
+            this.groupBox1.Size = new System.Drawing.Size(893, 87);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(272, 22);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(18, 23);
+            this.label10.TabIndex = 116;
+            this.label10.Text = "～";
+            // 
+            // txtSPNo1
+            // 
+            this.txtSPNo1.BackColor = System.Drawing.Color.White;
+            this.txtSPNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo1.Location = new System.Drawing.Point(301, 22);
+            this.txtSPNo1.Name = "txtSPNo1";
+            this.txtSPNo1.Size = new System.Drawing.Size(107, 23);
+            this.txtSPNo1.TabIndex = 1;
+            // 
+            // dateEstCutDate
+            // 
+            this.dateEstCutDate.Location = new System.Drawing.Point(532, 22);
+            this.dateEstCutDate.Name = "dateEstCutDate";
+            this.dateEstCutDate.Size = new System.Drawing.Size(130, 23);
+            this.dateEstCutDate.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(438, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 23);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Est. Cut Date";
             // 
             // txtCutRef
             // 
             this.txtCutRef.BackColor = System.Drawing.Color.White;
             this.txtCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutRef.Location = new System.Drawing.Point(680, 22);
+            this.txtCutRef.Location = new System.Drawing.Point(532, 51);
             this.txtCutRef.Name = "txtCutRef";
-            this.txtCutRef.Size = new System.Drawing.Size(85, 23);
-            this.txtCutRef.TabIndex = 3;
+            this.txtCutRef.Size = new System.Drawing.Size(108, 23);
+            this.txtCutRef.TabIndex = 4;
             // 
             // labAddDate
             // 
-            this.labAddDate.Location = new System.Drawing.Point(768, 22);
+            this.labAddDate.Location = new System.Drawing.Point(9, 51);
             this.labAddDate.Name = "labAddDate";
-            this.labAddDate.Size = new System.Drawing.Size(72, 23);
+            this.labAddDate.Size = new System.Drawing.Size(137, 23);
             this.labAddDate.TabIndex = 6;
-            this.labAddDate.Text = "AddDate";
+            this.labAddDate.Text = "Bundle Created Date";
             // 
             // labSpNo
             // 
-            this.labSpNo.Location = new System.Drawing.Point(3, 22);
+            this.labSpNo.Location = new System.Drawing.Point(9, 22);
             this.labSpNo.Name = "labSpNo";
-            this.labSpNo.Size = new System.Drawing.Size(72, 23);
+            this.labSpNo.Size = new System.Drawing.Size(137, 23);
             this.labSpNo.TabIndex = 4;
             this.labSpNo.Text = "SP#";
             // 
             // labCutRef
             // 
-            this.labCutRef.Location = new System.Drawing.Point(605, 22);
+            this.labCutRef.Location = new System.Drawing.Point(438, 51);
             this.labCutRef.Name = "labCutRef";
-            this.labCutRef.Size = new System.Drawing.Size(72, 23);
+            this.labCutRef.Size = new System.Drawing.Size(91, 23);
             this.labCutRef.TabIndex = 5;
             this.labCutRef.Text = "CutRef";
             // 
@@ -121,16 +153,16 @@
             this.dateAddDate.DateBox2.Name = "";
             this.dateAddDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateAddDate.DateBox2.TabIndex = 1;
-            this.dateAddDate.Location = new System.Drawing.Point(843, 22);
+            this.dateAddDate.Location = new System.Drawing.Point(149, 51);
             this.dateAddDate.Name = "dateAddDate";
             this.dateAddDate.Size = new System.Drawing.Size(280, 23);
-            this.dateAddDate.TabIndex = 4;
+            this.dateAddDate.TabIndex = 3;
             // 
             // btnFindNow
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(1126, 22);
+            this.btnFindNow.Location = new System.Drawing.Point(780, 22);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
             this.btnFindNow.TabIndex = 5;
@@ -142,9 +174,9 @@
             // 
             this.txtSPNo.BackColor = System.Drawing.Color.White;
             this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNo.Location = new System.Drawing.Point(78, 22);
+            this.txtSPNo.Location = new System.Drawing.Point(149, 22);
             this.txtSPNo.Name = "txtSPNo";
-            this.txtSPNo.Size = new System.Drawing.Size(137, 23);
+            this.txtSPNo.Size = new System.Drawing.Size(107, 23);
             this.txtSPNo.TabIndex = 0;
             // 
             // groupBox2
@@ -152,9 +184,9 @@
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnDelete);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox2.Location = new System.Drawing.Point(0, 477);
+            this.groupBox2.Location = new System.Drawing.Point(0, 372);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1239, 53);
+            this.groupBox2.Size = new System.Drawing.Size(893, 53);
             this.groupBox2.TabIndex = 20;
             this.groupBox2.TabStop = false;
             // 
@@ -162,7 +194,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(1143, 17);
+            this.btnCancel.Location = new System.Drawing.Point(797, 17);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 7;
@@ -174,7 +206,7 @@
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDelete.Location = new System.Drawing.Point(1030, 17);
+            this.btnDelete.Location = new System.Drawing.Point(684, 17);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(107, 30);
             this.btnDelete.TabIndex = 6;
@@ -196,52 +228,20 @@
             this.gridBatchDelete.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridBatchDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridBatchDelete.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridBatchDelete.Location = new System.Drawing.Point(0, 69);
+            this.gridBatchDelete.Location = new System.Drawing.Point(0, 87);
             this.gridBatchDelete.Name = "gridBatchDelete";
             this.gridBatchDelete.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBatchDelete.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchDelete.RowTemplate.Height = 24;
             this.gridBatchDelete.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBatchDelete.ShowCellToolTips = false;
-            this.gridBatchDelete.Size = new System.Drawing.Size(1239, 408);
+            this.gridBatchDelete.Size = new System.Drawing.Size(893, 285);
             this.gridBatchDelete.TabIndex = 21;
             this.gridBatchDelete.TabStop = false;
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(381, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(88, 23);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Est. Cut Date";
-            // 
-            // dateEstCutDate
-            // 
-            this.dateEstCutDate.Location = new System.Drawing.Point(472, 22);
-            this.dateEstCutDate.Name = "dateEstCutDate";
-            this.dateEstCutDate.Size = new System.Drawing.Size(130, 23);
-            this.dateEstCutDate.TabIndex = 2;
-            // 
-            // txtSPNo1
-            // 
-            this.txtSPNo1.BackColor = System.Drawing.Color.White;
-            this.txtSPNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNo1.Location = new System.Drawing.Point(241, 22);
-            this.txtSPNo1.Name = "txtSPNo1";
-            this.txtSPNo1.Size = new System.Drawing.Size(137, 23);
-            this.txtSPNo1.TabIndex = 1;
-            // 
-            // label10
-            // 
-            this.label10.Location = new System.Drawing.Point(220, 22);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(18, 23);
-            this.label10.TabIndex = 116;
-            this.label10.Text = "～";
-            // 
             // P10_BatchDelete
             // 
-            this.ClientSize = new System.Drawing.Size(1239, 530);
+            this.ClientSize = new System.Drawing.Size(893, 425);
             this.Controls.Add(this.gridBatchDelete);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);

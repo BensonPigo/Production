@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +17,7 @@ namespace Sci.Production.Basic
     /// </summary>
     public partial class B04 : Sci.Win.Tems.Input1
     {
+        private bool Junk;
         /// <summary>
         /// B04
         /// </summary>
@@ -21,6 +26,9 @@ namespace Sci.Production.Basic
             : base(menuitem)
         {
             this.InitializeComponent();
+
+            this.label2.ForeColor = Color.Black;
+            //this.label2.BackColor = Color.White;
         }
 
         /// <summary>
@@ -49,6 +57,33 @@ namespace Sci.Production.Basic
             {
                 this.btnBankDetail.ForeColor = Color.Black;
             }
+
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, $@"
+SELECT * FROM LocalSupp_Bank_Detail WHERE Pkey=(
+SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND Status = 'Confirmed'ORDER BY ApproveDate DESC
+)", out dt);
+
+            this.chkPayByChk.Checked = MyUtility.GetValue.Lookup($"SELECT TOP 1 ByCheck FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND Status = 'Confirmed'ORDER BY ApproveDate DESC") == "True" ? true : false;
+
+            this.listControlBindingSource1.DataSource = dt;
+
+            this.gridBankDetail.Columns.Clear();
+            this.Helper.Controls.Grid.Generator(this.gridBankDetail)
+                .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
+                .Text("AccountNo", header: "Account No.", width: Widths.AnsiChars(13))
+                .Text("SWIFTCode", header: "Swift", width: Widths.AnsiChars(13))
+                .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(13))
+                .Text("BankName", header: "Bank Name", width: Widths.AnsiChars(13))
+                .Text("BranchCode", header: "Branch Code", width: Widths.AnsiChars(13))
+                .Text("BranchName", header: "Branch Name", width: Widths.AnsiChars(13))
+                .Text("CountryID", header: "Country", width: Widths.AnsiChars(13))
+                .Text("Alias", header: "Country Name", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("City", header: "City", width: Widths.AnsiChars(13))
+                .Text("MidSWIFTCode", header: "Intermediary Bank", width: Widths.AnsiChars(13))
+                .Text("MidBankName", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(13))
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(13))
+                ;
         }
 
         /// <summary>
@@ -131,7 +166,8 @@ namespace Sci.Production.Basic
         /// <param name="e">e</param>
         private void BtnBankDetail_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B04_BankData callNextForm = new Sci.Production.Basic.B04_BankData(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(Prgs.GetAuthority(Sci.Env.User.UserID, "B04. Supplier/Sub Con (Local)", "CanEdit"), this.CurrentMaintain["ID"].ToString(), null, null ,this.Perm.Confirm ,null);
+            //Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(new ToolStripMenuItem(), this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -174,6 +210,51 @@ namespace Sci.Production.Basic
                 }
                 this.ReloadDatas();
             };
+        }
+
+        /// /// <inheritdoc/>
+        protected override void ClickJunk()
+        {
+            base.ClickJunk();
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'Junked',Junk=1,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            MyUtility.Msg.InfoBox("Success!");
+            this.RenewData();
+        }
+
+        protected override void ClickUnJunk()
+        {
+            base.ClickUnJunk();
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'New' ,Junk=0,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            MyUtility.Msg.InfoBox("Success!");
+            this.RenewData();
+        }
+
+        Form batchapprove;
+
+        private void btnBatchApprove_Click(object sender, EventArgs e)
+        {
+
+            if (!this.Perm.Confirm)
+            {
+                MyUtility.Msg.WarningBox("You don't have permission to confirm.");
+                return;
+            }
+
+            if (this.batchapprove == null || this.batchapprove.IsDisposed)
+            {
+                this.batchapprove = new Sci.Production.Basic.B04_BatchApprove(reload);
+                this.batchapprove.Show();
+            }
+            else
+            {
+                this.batchapprove.Activate();
+            }
+        }
+
+        public void reload()
+        {
+            this.ReloadDatas();
+            this.RenewData();
         }
     }
 }

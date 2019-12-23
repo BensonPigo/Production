@@ -1108,7 +1108,7 @@ where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where
 	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_BOA_KeyWord as t
 	Using Trade_to_Pms.dbo.Style_BOA_KeyWord as s
-	on t.Style_BOAUkey=s.Style_BOAUkey 
+	on t.Style_BOAUkey=s.Style_BOAUkey and t.KeyWordID=s.KeyWordID 
 	when matched then
 		update set 
 		t.StyleUkey= s.StyleUkey,

@@ -187,7 +187,6 @@ from (
     INNER JOIN  PackingList_Detail b WITH (NOLOCK)  ON a.Id = b.Id 
     INNEr JOIN  Orders c WITH (NOLOCK) ON b.OrderId = c.Id 
     INNER JOIN  Country d WITH (NOLOCK) ON  c.Dest = d.ID 
-    INNER JOIN  TransferToClog t WITH (NOLOCK) On a.id = t.PackingListID
 	OUTER APPLY (
 		SELECT [Value]=SUM(pd.ScanQty) 
 		FROM PackingList_Detail pd
@@ -198,6 +197,7 @@ from (
 				AND SCICtnNo=b.SCICtnNo
 	)ScanQty
 	where   b.CTNStartNo != '' 
+	        and b.ClogPulloutDate is null            
 	        and b.ReceiveDate is not null
             and b.TransferCFADate is null
             and b.CFAReturnClogDate is null
@@ -388,6 +388,7 @@ OUTER APPLY (
 			AND ppd.SCICtnNo=pd.SCICtnNo
 )ScanQty
 where pd.ID = '{0}' 
+and pd.ClogPulloutDate is null
 and CTNStartNo = '{1}' 
 and pd.CTNQty > 0 
 and pd.DisposeFromClog= 0",
@@ -750,19 +751,28 @@ where pd.DisposeFromClog= 0 ;
 
 
 INSERT INTO [PackingScan_History]([MDivisionID],[PackingListID],[OrderID],[CTNStartNo],[SCICtnNo]
-	,[DeleteFrom],[ScanQty],[ScanEditDate],[ScanName],[AddName],[AddDate])
+	,[DeleteFrom],[ScanQty],[ScanEditDate],[ScanName],[AddName],[AddDate],[LackingQty])
 select @MDivisionID [MDivisionID]
-    ,PackingListID [PackingListID]
-    ,OrderID [OrderID]
-    ,CTNStartNo [CTNStartNo]
-    ,SCICtnNo [SCICtnNo]
+    ,t.PackingListID [PackingListID]
+    ,t.OrderID [OrderID]
+    ,t.CTNStartNo [CTNStartNo]
+    ,t.SCICtnNo [SCICtnNo]
     ,'Clog P03' [DeleteFrom]
-    ,ScanQty [ScanQty]
-    ,ScanEditDate [ScanEditDate]
-    ,ScanName [ScanName]
+    ,t.ScanQty [ScanQty]
+    ,t.ScanEditDate [ScanEditDate]
+    ,t.ScanName [ScanName]
     ,@Userid [AddName]
     ,GETDATE() [AddDate]
-from #tmp ;
+    ,[LackingQty] = ( ISNULL( (
+                                SELECT SUM(pd.ShipQty)
+                                FROM PackingList_Detail pd
+                                WHERE  pd.ID=t.PackingListID AND pd.CTNStartNo=t.CTNStartNo) 
+                            ,0) 
+                       - ScanQty
+                    )
+from #tmp t ;
+
+ ----LackingQty計算規則詳見：ISP20191801
 ";
 
             // Update Orders的資料

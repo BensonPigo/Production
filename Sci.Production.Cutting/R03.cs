@@ -85,6 +85,7 @@ select
 	[M] = wo.MDivisionID,
 	[Factory] = o.FtyGroup,
     [PPIC Close] = iif(c.Finished=1,'V',''),
+    wo.WKETA,
 	[Est.Cutting Date]= wo.EstCutDate,
 	[Act.Cutting Date] = MincDate.MincoDate,
 	[Earliest Sewing Inline] = c.SewInLine,
@@ -358,7 +359,7 @@ where 1=1
             #endregion
             sqlCmd.Append(@"
 select 
-[M],[Factory],[PPIC Close],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
+[M],[Factory],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
 ,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
@@ -477,14 +478,15 @@ drop table #tmp,#tmpL");
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(printData[0], "", "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
             // Perimeter(Decimal) AJ第35欄
-            objApp.Cells[3, 35] = "=IFERROR(LEFT(AH3,SEARCH(\"yd\",AH3,1)-1)+0+(IFERROR(RIGHT(LEFT(AH3,SEARCH(\"\"\"\",AH3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AH3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
+            objApp.Cells[3, 36] = "=IFERROR(LEFT(AI3,SEARCH(\"yd\",AI3,1)-1)+0+(IFERROR(RIGHT(LEFT(AI3,SEARCH(\"\"\"\",AI3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AI3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
             int rowct = printData[0].Rows.Count + 2;
-            objApp.Range[objApp.Cells[3, 35], objApp.Cells[3, 35]].Copy();
-            objApp.Range[objApp.Cells[4, 35], objApp.Cells[rowct, 35]].PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll, Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            objApp.Range[objApp.Cells[3, 36], objApp.Cells[3, 36]].Copy();
+            objApp.Range[objApp.Cells[4, 36], objApp.Cells[rowct, 36]].PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll, Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
             objApp.Range[objApp.Cells[2, 1], objApp.Cells[2, 1]].Select();
-            objSheets.get_Range("P2").ColumnWidth = 15.38;
-            objSheets.get_Range("T2").ColumnWidth = 15.38;
+            objSheets.get_Range("Q2").ColumnWidth = 15.38;
+            objSheets.get_Range("U2").ColumnWidth = 15.38;
 
             objSheets = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
             objSheets.Name = "summary";

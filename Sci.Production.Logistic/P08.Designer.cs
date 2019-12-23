@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chkUpdateOriLocation = new System.Windows.Forms.CheckBox();
             this.txtcloglocationLocationNo = new Sci.Production.Class.txtcloglocation();
             this.labelLocationNo = new Sci.Win.UI.Label();
             this.panel6 = new System.Windows.Forms.Panel();
@@ -51,7 +52,6 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.chkUpdateOriLocation = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -74,6 +74,18 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(839, 158);
             this.panel1.TabIndex = 54;
+            // 
+            // chkUpdateOriLocation
+            // 
+            this.chkUpdateOriLocation.AutoSize = true;
+            this.chkUpdateOriLocation.ForeColor = System.Drawing.Color.Red;
+            this.chkUpdateOriLocation.Location = new System.Drawing.Point(417, 122);
+            this.chkUpdateOriLocation.Name = "chkUpdateOriLocation";
+            this.chkUpdateOriLocation.Size = new System.Drawing.Size(205, 21);
+            this.chkUpdateOriLocation.TabIndex = 139;
+            this.chkUpdateOriLocation.Text = "Update to original locationID";
+            this.chkUpdateOriLocation.UseVisualStyleBackColor = true;
+            this.chkUpdateOriLocation.CheckedChanged += new System.EventHandler(this.chkUpdateOriLocation_CheckedChanged);
             // 
             // txtcloglocationLocationNo
             // 
@@ -299,18 +311,6 @@
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
-            // chkUpdateOriLocation
-            // 
-            this.chkUpdateOriLocation.AutoSize = true;
-            this.chkUpdateOriLocation.ForeColor = System.Drawing.Color.Red;
-            this.chkUpdateOriLocation.Location = new System.Drawing.Point(417, 122);
-            this.chkUpdateOriLocation.Name = "chkUpdateOriLocation";
-            this.chkUpdateOriLocation.Size = new System.Drawing.Size(205, 21);
-            this.chkUpdateOriLocation.TabIndex = 139;
-            this.chkUpdateOriLocation.Text = "Update to original locationID";
-            this.chkUpdateOriLocation.UseVisualStyleBackColor = true;
-            this.chkUpdateOriLocation.CheckedChanged += new System.EventHandler(this.chkUpdateOriLocation_CheckedChanged);
-            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(839, 550);
@@ -318,6 +318,7 @@
             this.Controls.Add(this.panel1);
             this.EditMode = true;
             this.Name = "P08";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P08.Clog Receive CFA Carton Input";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.grid, 0);

@@ -30,15 +30,16 @@
         {
             this.components = new System.ComponentModel.Container();
             this.gridBatchCreateFromSubProcessData = new Sci.Win.UI.Grid();
-            this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateApproveDate = new Sci.Win.UI.DateRange();
-            this.labelInlineDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.labelApproveDate = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
+            this.labelNoQuoteHint = new Sci.Win.UI.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.labelArtworkType = new Sci.Win.UI.Label();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.btnFindNow = new Sci.Win.UI.Button();
@@ -53,7 +54,6 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreateFromSubProcessData)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -81,66 +81,83 @@
             this.gridBatchCreateFromSubProcessData.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchCreateFromSubProcessData.RowTemplate.Height = 24;
             this.gridBatchCreateFromSubProcessData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBatchCreateFromSubProcessData.ShowCellToolTips = false;
             this.gridBatchCreateFromSubProcessData.Size = new System.Drawing.Size(1024, 379);
             this.gridBatchCreateFromSubProcessData.TabIndex = 0;
             this.gridBatchCreateFromSubProcessData.TabStop = false;
             // 
-            // dateInlineDate
-            // 
-            this.dateInlineDate.IsRequired = false;
-            this.dateInlineDate.Location = new System.Drawing.Point(433, 15);
-            this.dateInlineDate.Name = "dateInlineDate";
-            this.dateInlineDate.Size = new System.Drawing.Size(245, 23);
-            this.dateInlineDate.TabIndex = 3;
-            // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(110, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(132, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(110, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(107, 45);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(479, 15);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(243, 23);
-            this.dateSCIDelivery.TabIndex = 6;
+            this.dateSCIDelivery.TabIndex = 2;
             // 
             // dateApproveDate
             // 
+            // 
+            // 
+            // 
+            this.dateApproveDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateApproveDate.DateBox1.Name = "";
+            this.dateApproveDate.DateBox1.Size = new System.Drawing.Size(110, 23);
+            this.dateApproveDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateApproveDate.DateBox2.Location = new System.Drawing.Point(132, 0);
+            this.dateApproveDate.DateBox2.Name = "";
+            this.dateApproveDate.DateBox2.Size = new System.Drawing.Size(110, 23);
+            this.dateApproveDate.DateBox2.TabIndex = 1;
             this.dateApproveDate.IsRequired = false;
-            this.dateApproveDate.Location = new System.Drawing.Point(107, 15);
+            this.dateApproveDate.Location = new System.Drawing.Point(107, 51);
             this.dateApproveDate.Name = "dateApproveDate";
             this.dateApproveDate.Size = new System.Drawing.Size(243, 23);
-            this.dateApproveDate.TabIndex = 1;
-            // 
-            // labelInlineDate
-            // 
-            this.labelInlineDate.Location = new System.Drawing.Point(353, 15);
-            this.labelInlineDate.Name = "labelInlineDate";
-            this.labelInlineDate.Size = new System.Drawing.Size(77, 23);
-            this.labelInlineDate.TabIndex = 8;
-            this.labelInlineDate.Text = "Inline Date";
+            this.dateApproveDate.TabIndex = 3;
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Location = new System.Drawing.Point(9, 45);
+            this.labelSCIDelivery.Location = new System.Drawing.Point(381, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
             this.labelSCIDelivery.TabIndex = 7;
             this.labelSCIDelivery.Text = "SCI  Delivery";
+            this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtSPNoEnd
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(571, 44);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(241, 14);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(107, 23);
-            this.txtSPNoEnd.TabIndex = 8;
+            this.txtSPNoEnd.TabIndex = 1;
             // 
             // labelApproveDate
             // 
-            this.labelApproveDate.Location = new System.Drawing.Point(9, 15);
+            this.labelApproveDate.Location = new System.Drawing.Point(9, 51);
             this.labelApproveDate.Name = "labelApproveDate";
+            this.labelApproveDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelApproveDate.Size = new System.Drawing.Size(95, 23);
             this.labelApproveDate.TabIndex = 5;
-            this.labelApproveDate.Text = "Approve Date";
+            this.labelApproveDate.Text = "Req. Apv Date";
+            this.labelApproveDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // panel1
             // 
@@ -153,13 +170,13 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.labelNoQuoteHintColor);
+            this.groupBox1.Controls.Add(this.labelNoQuoteHint);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.labelArtworkType);
             this.groupBox1.Controls.Add(this.txtartworktype_ftyArtworkType);
-            this.groupBox1.Controls.Add(this.dateInlineDate);
             this.groupBox1.Controls.Add(this.dateSCIDelivery);
             this.groupBox1.Controls.Add(this.dateApproveDate);
-            this.groupBox1.Controls.Add(this.labelInlineDate);
             this.groupBox1.Controls.Add(this.labelSCIDelivery);
             this.groupBox1.Controls.Add(this.txtSPNoEnd);
             this.groupBox1.Controls.Add(this.labelApproveDate);
@@ -173,13 +190,42 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
+            // labelNoQuoteHintColor
+            // 
+            this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
+            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(10, 81);
+            this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
+            this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
+            this.labelNoQuoteHintColor.TabIndex = 16;
+            // 
+            // labelNoQuoteHint
+            // 
+            this.labelNoQuoteHint.BackColor = System.Drawing.Color.Transparent;
+            this.labelNoQuoteHint.Location = new System.Drawing.Point(32, 80);
+            this.labelNoQuoteHint.Name = "labelNoQuoteHint";
+            this.labelNoQuoteHint.Size = new System.Drawing.Size(395, 23);
+            this.labelNoQuoteHint.TabIndex = 15;
+            this.labelNoQuoteHint.Text = "No quote record, please check with Planning Team";
+            this.labelNoQuoteHint.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(216, 17);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 17);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "～";
+            // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Location = new System.Drawing.Point(682, 15);
+            this.labelArtworkType.Location = new System.Drawing.Point(381, 51);
             this.labelArtworkType.Name = "labelArtworkType";
-            this.labelArtworkType.Size = new System.Drawing.Size(88, 23);
+            this.labelArtworkType.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.labelArtworkType.Size = new System.Drawing.Size(95, 23);
             this.labelArtworkType.TabIndex = 12;
             this.labelArtworkType.Text = "Artwork Type";
+            this.labelArtworkType.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtartworktype_ftyArtworkType
             // 
@@ -187,7 +233,7 @@
             this.txtartworktype_ftyArtworkType.cClassify = "";
             this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(773, 15);
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(479, 51);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
@@ -201,6 +247,7 @@
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
             this.btnFindNow.TabIndex = 9;
+            this.btnFindNow.TabStop = false;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
             this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
@@ -209,18 +256,20 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(432, 44);
+            this.txtSPNoStart.Location = new System.Drawing.Point(107, 15);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(107, 23);
-            this.txtSPNoStart.TabIndex = 7;
+            this.txtSPNoStart.TabIndex = 0;
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(353, 45);
+            this.labelSPNo.Location = new System.Drawing.Point(9, 15);
             this.labelSPNo.Name = "labelSPNo";
-            this.labelSPNo.Size = new System.Drawing.Size(77, 23);
+            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelSPNo.Size = new System.Drawing.Size(95, 23);
             this.labelSPNo.TabIndex = 0;
             this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelDelivery
             // 
@@ -304,15 +353,6 @@
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(545, 47);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(22, 17);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "～";
-            // 
             // P01_BatchCreate
             // 
             this.ClientSize = new System.Drawing.Size(1024, 541);
@@ -321,6 +361,7 @@
             this.Controls.Add(this.groupBox2);
             this.DefaultControl = "dateApproveDate";
             this.Name = "P01_BatchCreate";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Batch Create From Sub Process Data";
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreateFromSubProcessData)).EndInit();
             this.panel1.ResumeLayout(false);
@@ -335,10 +376,8 @@
         #endregion
 
         private Win.UI.Grid gridBatchCreateFromSubProcessData;
-        private Win.UI.DateRange dateInlineDate;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.DateRange dateApproveDate;
-        private Win.UI.Label labelInlineDate;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.TextBox txtSPNoEnd;
         private Win.UI.Label labelApproveDate;
@@ -359,5 +398,7 @@
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
+        private Win.UI.Label labelNoQuoteHintColor;
+        private Win.UI.Label labelNoQuoteHint;
     }
 }

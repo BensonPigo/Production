@@ -35,12 +35,12 @@
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
+            this.labelNoQuoteHint = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateApproveDate = new Sci.Win.UI.DateRange();
-            this.labelInlineDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.labelApproveDate = new Sci.Win.UI.Label();
@@ -58,7 +58,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(888, 15);
+            this.btnCancel.Location = new System.Drawing.Point(840, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 1;
@@ -70,7 +70,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(792, 16);
+            this.btnImport.Location = new System.Drawing.Point(744, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 0;
@@ -82,10 +82,11 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(877, 15);
+            this.btnFindNow.Location = new System.Drawing.Point(829, 15);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
             this.btnFindNow.TabIndex = 6;
+            this.btnFindNow.TabStop = false;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
             this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
@@ -94,37 +95,57 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(517, 51);
+            this.txtSPNoStart.Location = new System.Drawing.Point(121, 15);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(122, 23);
-            this.txtSPNoStart.TabIndex = 4;
+            this.txtSPNoStart.TabIndex = 0;
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(419, 51);
+            this.labelSPNo.Location = new System.Drawing.Point(23, 15);
             this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
             this.labelSPNo.TabIndex = 0;
             this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelNoQuoteHintColor);
+            this.groupBox2.Controls.Add(this.labelNoQuoteHint);
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(984, 53);
+            this.groupBox2.Size = new System.Drawing.Size(936, 53);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
+            // 
+            // labelNoQuoteHintColor
+            // 
+            this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
+            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(23, 19);
+            this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
+            this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
+            this.labelNoQuoteHintColor.TabIndex = 4;
+            // 
+            // labelNoQuoteHint
+            // 
+            this.labelNoQuoteHint.BackColor = System.Drawing.Color.Transparent;
+            this.labelNoQuoteHint.Location = new System.Drawing.Point(45, 18);
+            this.labelNoQuoteHint.Name = "labelNoQuoteHint";
+            this.labelNoQuoteHint.Size = new System.Drawing.Size(395, 23);
+            this.labelNoQuoteHint.TabIndex = 3;
+            this.labelNoQuoteHint.Text = "No quote record, please check with Planning Team";
+            this.labelNoQuoteHint.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.dateInlineDate);
             this.groupBox1.Controls.Add(this.dateSCIDelivery);
             this.groupBox1.Controls.Add(this.dateApproveDate);
-            this.groupBox1.Controls.Add(this.labelInlineDate);
             this.groupBox1.Controls.Add(this.labelSCIDelivery);
             this.groupBox1.Controls.Add(this.txtSPNoEnd);
             this.groupBox1.Controls.Add(this.labelApproveDate);
@@ -134,83 +155,99 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(984, 93);
+            this.groupBox1.Size = new System.Drawing.Size(936, 87);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(647, 54);
+            this.label8.Location = new System.Drawing.Point(247, 18);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(22, 17);
             this.label8.TabIndex = 14;
             this.label8.Text = "～";
             // 
-            // dateInlineDate
-            // 
-            this.dateInlineDate.IsRequired = false;
-            this.dateInlineDate.Location = new System.Drawing.Point(517, 15);
-            this.dateInlineDate.Name = "dateInlineDate";
-            this.dateInlineDate.Size = new System.Drawing.Size(280, 23);
-            this.dateInlineDate.TabIndex = 2;
-            // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(107, 51);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(515, 15);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateSCIDelivery.TabIndex = 3;
+            this.dateSCIDelivery.TabIndex = 2;
             // 
             // dateApproveDate
             // 
+            // 
+            // 
+            // 
+            this.dateApproveDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateApproveDate.DateBox1.Name = "";
+            this.dateApproveDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateApproveDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateApproveDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateApproveDate.DateBox2.Name = "";
+            this.dateApproveDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateApproveDate.DateBox2.TabIndex = 1;
             this.dateApproveDate.IsRequired = false;
-            this.dateApproveDate.Location = new System.Drawing.Point(107, 15);
+            this.dateApproveDate.Location = new System.Drawing.Point(121, 48);
             this.dateApproveDate.Name = "dateApproveDate";
             this.dateApproveDate.Size = new System.Drawing.Size(280, 23);
-            this.dateApproveDate.TabIndex = 1;
-            // 
-            // labelInlineDate
-            // 
-            this.labelInlineDate.Location = new System.Drawing.Point(419, 15);
-            this.labelInlineDate.Name = "labelInlineDate";
-            this.labelInlineDate.Size = new System.Drawing.Size(95, 23);
-            this.labelInlineDate.TabIndex = 8;
-            this.labelInlineDate.Text = "Inline Date";
+            this.dateApproveDate.TabIndex = 3;
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Location = new System.Drawing.Point(9, 51);
+            this.labelSCIDelivery.Location = new System.Drawing.Point(417, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
             this.labelSCIDelivery.TabIndex = 7;
             this.labelSCIDelivery.Text = "SCI  Delivery";
+            this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtSPNoEnd
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(675, 51);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(274, 15);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(122, 23);
-            this.txtSPNoEnd.TabIndex = 5;
+            this.txtSPNoEnd.TabIndex = 1;
             // 
             // labelApproveDate
             // 
-            this.labelApproveDate.Location = new System.Drawing.Point(9, 15);
+            this.labelApproveDate.Location = new System.Drawing.Point(23, 48);
             this.labelApproveDate.Name = "labelApproveDate";
+            this.labelApproveDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelApproveDate.Size = new System.Drawing.Size(95, 23);
             this.labelApproveDate.TabIndex = 5;
-            this.labelApproveDate.Text = "Approve Date";
+            this.labelApproveDate.Text = "Req. Apv Date";
+            this.labelApproveDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.gridBatchImport);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 93);
+            this.panel1.Location = new System.Drawing.Point(0, 87);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(984, 384);
+            this.panel1.Size = new System.Drawing.Size(936, 390);
             this.panel1.TabIndex = 20;
             // 
             // gridBatchImport
@@ -233,18 +270,20 @@
             this.gridBatchImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchImport.RowTemplate.Height = 24;
             this.gridBatchImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridBatchImport.Size = new System.Drawing.Size(984, 384);
+            this.gridBatchImport.ShowCellToolTips = false;
+            this.gridBatchImport.Size = new System.Drawing.Size(936, 390);
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
             // 
             // P01_Import
             // 
-            this.ClientSize = new System.Drawing.Size(984, 530);
+            this.ClientSize = new System.Drawing.Size(936, 530);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.DefaultControl = "dateApproveDate";
             this.Name = "P01_Import";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Batch Import";
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
@@ -269,12 +308,12 @@
         private Win.UI.Label labelApproveDate;
         private Win.UI.Panel panel1;
         private Win.UI.Grid gridBatchImport;
-        private Win.UI.DateRange dateInlineDate;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.DateRange dateApproveDate;
-        private Win.UI.Label labelInlineDate;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
+        private Win.UI.Label labelNoQuoteHint;
+        private Win.UI.Label labelNoQuoteHintColor;
     }
 }

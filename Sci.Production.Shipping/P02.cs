@@ -20,8 +20,9 @@ namespace Sci.Production.Shipping
     public partial class P02 : Sci.Win.Tems.Input2
     {
         // 宣告Context Menu Item
-        private ToolStripMenuItem focpl;
+        private ToolStripMenuItem bulkpl;
         private ToolStripMenuItem samplepl;
+        private ToolStripMenuItem focpl;
         private ToolStripMenuItem purchase;
         private ToolStripMenuItem poitem;
         private ToolStripMenuItem newitem;
@@ -71,8 +72,9 @@ namespace Sci.Production.Shipping
                 };
 
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
-            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from FOC PL# (Garment FOC)", onclick: (s, e) => this.ImportFromFOCPL()).Get(out this.focpl);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import Bulk PL#", onclick: (s, e) => this.ImportBulkPL()).Get(out this.bulkpl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Sample PL#", onclick: (s, e) => this.ImportFromSamplePL()).Get(out this.samplepl);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from FOC PL# (Garment FOC)", onclick: (s, e) => this.ImportFromFOCPL()).Get(out this.focpl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Purchase (Material)", onclick: (s, e) => this.ImportFromPurchase()).Get(out this.purchase);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add by PO# item (Garment Chargeable)", onclick: (s, e) => this.AddByPOItem()).Get(out this.poitem);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
@@ -88,8 +90,9 @@ namespace Sci.Production.Shipping
         // 設定Context Menu的Enable/Disable
         private void SetContextMenuStatus(bool status)
         {
+            this.bulkpl.Enabled = status;
+            this.samplepl.Enabled = status;
             this.focpl.Enabled = status;
-            this.samplepl.Enabled = status; 
             this.purchase.Enabled = status;
             this.poitem.Enabled = status;
             this.newitem.Enabled = status;
@@ -132,6 +135,18 @@ namespace Sci.Production.Shipping
         private void ImportFromFOCPL()
         {
             Sci.Production.Shipping.P02_ImportFromFOCPackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromFOCPackingList(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
+            callFOCPLForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+        }
+
+        // Context Menu選擇Import Bulk PL#
+        private void ImportBulkPL()
+        {
+            Sci.Production.Shipping.P02_ImportFromBulkPackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromBulkPackingList(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
             this.RenewData();
@@ -678,8 +693,9 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 // Approve後就不可以再做任何動作(更改Context Menu Item的Enable/Disable)
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved")
                 {
-                    this.focpl.Enabled = false;
+                    this.bulkpl.Enabled = false;
                     this.samplepl.Enabled = false;
+                    this.focpl.Enabled = false;
                     this.purchase.Enabled = false;
                     this.poitem.Enabled = false;
                     this.newitem.Enabled = false;

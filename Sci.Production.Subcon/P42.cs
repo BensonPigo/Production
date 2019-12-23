@@ -772,6 +772,8 @@ select
 	,b.InOutRule 
 	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
 	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+	,bio.InComing
+	,bio.OutGoing
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -791,6 +793,8 @@ select
 				 when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				
 				 ELSE 'Not Valid'
 			 end
+	,[InComing] = FORMAT(t.InComing,'yyyy/MM/dd HH:mm:ss')
+	,[OutGoing] = FORMAT(t.OutGoing,'yyyy/MM/dd HH:mm:ss')
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
@@ -900,6 +904,8 @@ select
 	,b.InOutRule 
 	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
 	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+	,bio.InComing
+	,bio.OutGoing
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -919,6 +925,8 @@ select
 				 when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				
 				 ELSE 'Not Valid'
 			 end
+	,[InComing] = FORMAT(t.InComing,'yyyy/MM/dd HH:mm:ss')
+	,[OutGoing] = FORMAT(t.OutGoing,'yyyy/MM/dd HH:mm:ss')
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
@@ -954,6 +962,8 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("EXCESS", header: "EXCESS", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("OutGoing", header: "Farm Out", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("InComing", header: "Farm In", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);

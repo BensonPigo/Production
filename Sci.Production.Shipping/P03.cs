@@ -110,7 +110,9 @@ where ed.ID = '{0}'", masterID);
             this.txtLocateSP2.ReadOnly = false;
             this.chkReplacement.ReadOnly = true;
             this.chkDelay.ReadOnly = true;
-            this.label21.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false;
+            this.label21.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false; 
+            this.labelFormE.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["FormE"]) == "True" ? true : false;
+
             switch (MyUtility.Convert.GetString(this.CurrentMaintain["Payer"]))
             {
                 case "S":

@@ -854,6 +854,18 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 StringBuilder qAOutput = new StringBuilder();
                 int qAQty = 0;
 
+                foreach (DataRow dr in e.SubDetails.Rows)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        if (MyUtility.Convert.GetString(dr["SewingOutput_DetailUKey"]) == MyUtility.Convert.GetString(this.CurrentDetailData["UKey"]) && !MyUtility.Check.Empty(dr["QAQty"]))
+                        {
+                            qAOutput.Append(string.Format("{0}*{1},", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["QAQty"])));
+                            qAQty = qAQty + MyUtility.Convert.GetInt(dr["QAQty"]);
+                        }
+                    }
+                }
+
                 e.Detail["QAOutput"] = qAOutput.Length > 0 ? qAOutput.ToString() : string.Empty;
 
                 // 總計第三層 Qty 填入第二層 QAQty
@@ -910,7 +922,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
             cmds.Add(sp4);
             cmds.Add(sp5);
 
-            string sqlCmd = @"select iif(rft.InspectQty is null or rft.InspectQty = 0,'0', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%') as RFT
+            string sqlCmd = @"select iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%') as RFT
 from RFT WITH (NOLOCK) 
 where OrderID = @orderid
 and CDate = @cdate
@@ -3605,19 +3617,51 @@ group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Locatio
             }
 
             string sqlcmd = $@"
-select t.OrderId,t.Article,t.ComboType
-    ,Color=(select ColorID from View_OrderFAColor vof with(nolock) where vof.id=t.OrderId and vof.Article=t.Article)
-    ,TMS=ROUND(isnull(o.cpu,0) * isnull(o.CPUFactor,0) * 
-			isnull((select Rate = isnull([dbo].[GetOrderLocation_Rate](t.OrderId,sl.Location),[dbo].[GetStyleLocation_Rate](sl.StyleUkey,sl.Location))
-			from Style_Location sl WITH (NOLOCK) where sl.StyleUkey = o.StyleUkey and sl.Location = t.ComboType),0)
-			/100 * (select StdTMS from System WITH (NOLOCK)),0)
-    ,HourlyStandardOutput=(select top 1 ss.StandardOutput from SewingSchedule ss WITH (NOLOCK) where ss.OrderID = t.OrderID and ss.ComboType = t.ComboType and ss.SewingLineID = '{this.CurrentMaintain["SewingLineID"]}')
-    ,t.QAQty,t.DefectQty,t.InlineQty,t.ImportFromDQS,t.AutoCreate
-    ,ukey = 0
-    ,RFT = CONVERT(VARCHAR, convert(Decimal(5, 2), round((t.InlineQty - t.DefectQty) /  cast(t.InlineQty as decimal) * 100.0, 2))) + '%'
-    ,ID = '{this.CurrentMaintain["ID"]}'
+select t.OrderId
+,t.Article
+,t.ComboType
+,Color = (
+    select ColorID 
+    from View_OrderFAColor vof with(nolock) 
+    where vof.id=t.OrderId and vof.Article=t.Article
+)
+,TMS = iif(O_Location.Value = 0, S_Location.value,O_Location.value)
+,HourlyStandardOutput = 
+    (   select top 1 ss.StandardOutput 
+        from SewingSchedule ss WITH (NOLOCK) 
+        where ss.OrderID = t.OrderID 
+        and ss.ComboType = t.ComboType 
+        and ss.SewingLineID = '{this.CurrentMaintain["SewingLineID"]}')
+,t.QAQty,t.DefectQty,t.InlineQty,t.ImportFromDQS,t.AutoCreate
+,ukey = 0
+,RFT = CONVERT(VARCHAR, convert(Decimal(5, 2), round((t.InlineQty - t.DefectQty) /  cast(t.InlineQty as decimal) * 100.0, 2))) + '%'
+,ID = '{this.CurrentMaintain["ID"]}'
 from #tmp t
 left join orders o  with(nolock) on o.id = t.OrderId
+outer apply(
+    select value = ROUND(
+    isnull(o.cpu,0) * isnull(o.CPUFactor,0) * 
+	isnull(
+            (select Rate = [dbo].[GetStyleLocation_Rate](sl.StyleUkey,sl.Location)
+			from Style_Location sl WITH (NOLOCK) 
+            where sl.StyleUkey = o.StyleUkey 
+            and sl.Location = t.ComboType)
+            ,0)
+	    /100 * (select StdTMS from System WITH (NOLOCK))
+    ,0)
+)S_Location
+outer apply(
+    select value = ROUND(
+    isnull(o.cpu,0) * isnull(o.CPUFactor,0) * 
+	isnull(
+            (select Rate = [dbo].[GetOrderLocation_Rate](t.OrderId,ol.Location)
+			from Order_Location ol WITH (NOLOCK) 
+            where ol.OrderID = o.id 
+            and ol.Location = t.ComboType)
+            ,0)
+	    /100 * (select StdTMS from System WITH (NOLOCK))
+    ,0)
+)O_Location
 ";
             result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1);
             if (!result)
@@ -3649,6 +3693,7 @@ left join orders o  with(nolock) on o.id = t.OrderId
                 ((DataTable)this.detailgridbs.DataSource).ImportRow(row);
             }
 
+            List<string> remarkList = new List<string>();
             foreach (DataRow item in this.DetailDatas)
             {
                 frommes = $@"
@@ -3710,6 +3755,7 @@ select a.ID,a.SewingOutput_DetailUkey,a.OrderId,a.ComboType,a.Article,a.SizeCode
        , a.OrderQty - a.AccumQty - Last.QAQty as BalQty
        , isnull(os.Seq,0) as Seq
        , OldDetailKey = ''
+       , DQSQAQty = a.QAQty
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID 
@@ -3733,6 +3779,20 @@ order by a.OrderId,os.Seq
                     return;
                 }
 
+                // 組remark
+                List<string> remarkList2 = new List<string>(); // 填入第2層用
+                foreach (DataRow dataRow in sewDt2.Rows)
+                {
+                    int dQSQAQty = (int)MyUtility.Convert.GetDecimal(dataRow["DQSQAQty"]);
+                    int qAQtyn = (int)MyUtility.Convert.GetDecimal(dataRow["QAQty"]);
+                    if (dQSQAQty > qAQtyn)
+                    {
+                        remarkList.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {qAQtyn}");
+                        remarkList2.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {qAQtyn}");
+                    }
+                }
+
+                sewDt2.Columns.Remove("DQSQAQty");
                 this.GetSubDetailDatas(item, out subDetailData);
                 foreach (DataRow ddr in sewDt2.Rows)
                 {
@@ -3765,7 +3825,6 @@ order by a.OrderId,os.Seq
                             qAOutput.Append(string.Format("{0}*{1},", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["QAQty"])));
                             qAQty = qAQty + MyUtility.Convert.GetInt(dr["QAQty"]);
                         }
-
                     }
                 }
 
@@ -3786,9 +3845,23 @@ order by a.OrderId,os.Seq
 
                 this.CalculateDefectQty(item);
 
+                string remark = string.Empty;
+                if (remarkList2.Count > 0)
+                {
+                    remark = string.Join("\r\n", remarkList2) + "\r\n" + "DQS Pass Q'ty is more than balance, please inform related team";
+                    item["remark"] = remark;
+                }
+
                 // 將第2層重新設定為新增狀態
                 item.AcceptChanges();
                 item.SetAdded();
+            }
+
+            string msg = string.Empty;
+            if (remarkList.Count > 0)
+            {
+                msg = string.Join("\r\n", remarkList) + "\r\n" + "DQS Pass Q'ty is more than balance, please inform related team";
+                MyUtility.Msg.WarningBox(msg);
             }
 
             // 總計第二層 Qty 填入第一層 QAQty
@@ -3823,6 +3896,7 @@ outer apply(
            and ins.Location = t.ComboType
            and ins.OrderId = t.OrderId
 ) DefectData
+where DefectData.Qty > 0
 ";
 
             using (SqlConnection mesConn = new SqlConnection(Env.Cfg.GetConnection("ManufacturingExecution", DBProxy.Current.DefaultModuleName).ConnectionString))

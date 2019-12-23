@@ -18,8 +18,10 @@ namespace Sci.Production.Quality
 {
     public partial class P23 : Sci.Win.Tems.QueryForm
     {
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private string selectDataTable_DefaultView_Sort = string.Empty;
         private DataTable selectDataTable;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_location;
 
         public P23(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -30,11 +32,29 @@ namespace Sci.Production.Quality
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.EditMode = true;
             this.grid.IsEditingReadOnly = false;
             this.grid.DataSource = this.listControlBindingSource1;
 
+            this.grid.CellValueChanged += (s, e) =>
+            {
+                if (this.grid.Columns[e.ColumnIndex].DataPropertyName == this.col_location.DataPropertyName)
+                {
+                    DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
+                    dr["Selected"] = 1;
+                }
+            };
+
+            this.grid.CellValueChanged += (s, e) =>
+            {
+                if (this.grid.Columns[e.ColumnIndex].Name == this.col_chk.Name)
+                {
+                    this.calcCTNQty();
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.grid)
-                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                  .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -44,6 +64,7 @@ namespace Sci.Production.Quality
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), M: Sci.Env.User.Keyword).Get(out this.col_location)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             #region CTNStartNo 有中文字的情況之下 按照我們希望的順序排
@@ -136,6 +157,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.remark
 ,p2.SCICtnNo
+,p2.CFALocationID
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -178,6 +200,7 @@ order by p2.ID,p2.CTNStartNo";
             }
 
             this.HideWaitMessage();
+            this.calcCTNQty();
         }
        
         private void btnFind_Click(object sender, EventArgs e)
@@ -196,7 +219,8 @@ order by p2.ID,p2.CTNStartNo";
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
 Select distinct  0 as selected, b.ID , b.OrderID, 
-b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery, '' as Remark ,b.SCICtnNo
+b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery, '' as Remark ,b.SCICtnNo,
+b.CFALocationID
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -247,6 +271,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.remark
 ,p2.SCICtnNo
+,p2.CFALocationID
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -286,6 +311,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["BrandID"] = seekData["BrandID"];
                                     dr["Alias"] = seekData["Alias"];
                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    dr["CFALocationID"] = seekData["CFALocationID"];
                                     dr["remark"] = seekData["remark"];
                                     selectDataTable.Rows.Add(dr);
                                     insertCount++;
@@ -306,6 +332,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.remark
 ,p2.SCICtnNo
+,p2.CFALocationID
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -344,6 +371,7 @@ order by p2.ID,p2.CTNStartNo
                                         dr["BrandID"] = seekData["BrandID"];
                                         dr["Alias"] = seekData["Alias"];
                                         dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                        dr["CFALocationID"] = seekData["CFALocationID"];
                                         dr["remark"] = seekData["remark"];
                                         selectDataTable.Rows.Add(dr);
                                         insertCount++;
@@ -370,6 +398,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.remark
 ,p2.SCICtnNo
+,p2.CFALocationID
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -408,6 +437,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["BrandID"] = seekData["BrandID"];
                                     dr["Alias"] = seekData["Alias"];
                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    dr["CFALocationID"] = seekData["CFALocationID"];
                                     dr["remark"] = seekData["remark"];
                                     selectDataTable.Rows.Add(dr);
                                     insertCount++;
@@ -443,6 +473,7 @@ order by p2.ID,p2.CTNStartNo
                         MyUtility.Msg.WarningBox(warningmsg.ToString());
                     }
                 }
+                this.calcCTNQty();
             }
         }
 
@@ -501,13 +532,14 @@ and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog=
                     {
                         updateCmds.Add($@"
 update PackingList_Detail 
-set CFAReceiveDate  = CONVERT(varchar(100), GETDATE(), 111), CFAInspDate  = CONVERT(varchar(100), GETDATE(), 111)
+set CFAReceiveDate  = CONVERT(varchar(100), GETDATE(), 111), CFAInspDate  = CONVERT(varchar(100), GETDATE(), 111),
+    CFALocationID='{dr["CFALocationID"].ToString().Trim()}'
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");
                         insertCmds.Add($@"
-insert into CFAReceive(ReceiveDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,SCICtnNo)
-values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Sci.Env.User.UserID}',GETDATE(),'{dr["SCICtnNo"].ToString()}')
+insert into CFAReceive(ReceiveDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,SCICtnNo,CFALocationID)
+values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Sci.Env.User.UserID}',GETDATE(),'{dr["SCICtnNo"].ToString()}','{dr["CFALocationID"].ToString()}')
 ");
                     }
                 }
@@ -584,11 +616,49 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
                 this.listControlBindingSource1.DataSource = null;
             }
             this.HideWaitMessage();
+            this.calcCTNQty();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
+        {
+            string location = this.txtCFALocation.Text.Trim();
+            int pos = this.listControlBindingSource1.Position;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dt))
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            foreach (DataRow currentRecord in dt.Rows)
+            {
+                if (currentRecord["selected"].ToString() == "1")
+                {
+                    currentRecord["CFALocationID"] = location;
+                }
+            }
+
+            this.listControlBindingSource1.Position = pos;
+            this.grid.SuspendLayout();
+            this.grid.DataSource = null;
+            this.grid.DataSource = this.listControlBindingSource1;
+            this.listControlBindingSource1.Position = pos;
+            this.grid.ResumeLayout();
+        }
+
+        private void calcCTNQty()
+        {
+            if (this.listControlBindingSource1.DataSource != null)
+            {
+                this.grid.ValidateControl();
+                this.numTTLCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
+                this.numSelectQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
+            }
         }
     }
 }

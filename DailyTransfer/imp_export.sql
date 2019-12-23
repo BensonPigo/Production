@@ -97,20 +97,21 @@ BEGIN
 		, t.PrepaidFtyImportFee = s.PrepaidFtyImportFee
 		, t.NoImportCharges = iif(s.PrepaidFtyImportFee2 > 0, 1 ,0)
 		, t.MainExportID08 = s.MainExportID08
+		, t.FormE = s.FormE
 	  when not matched  by target then 
 		insert (ID ,ScheduleID ,ScheduleDate ,LoadDate ,CloseDate ,Etd ,Eta ,ExportCountry ,ImportCountry ,ExportPort ,ImportPort 
 		,CYCFS ,ShipModeID ,ShipmentTerm ,FactoryID ,ShipMark ,ShipMarkDesc ,Consignee ,Handle ,Posting ,Payer ,CompanyID 
 		,Confirm ,LastEdit ,Remark ,Ecfa ,FormStatus ,Carrier ,Forwarder ,Vessel ,ShipTo ,Sono ,Blno ,InvNo ,Exchange 
 		,Packages ,WeightKg ,NetKg ,Cbm ,CbmFor ,Takings ,TakingFee ,PortArrival ,DocArrival ,Broker 
 		,Insurer ,Trailer1 ,Trailer2 ,Freight ,Insurance ,Junk ,AddName ,AddDate ,EditName ,EditDate,MainExportID ,Replacement ,Delay ,PrepaidFtyImportFee,NoImportCharges
-		,MainExportID08)
+		,MainExportID08 ,FormE)
 	    values( 
 		s.ID ,s.ScheduleID ,s.ScheduleDate ,s.LoadDate ,s.CloseDate ,s.Etd ,s.Eta ,s.ExportCountry ,s.ImportCountry ,s.ExportPort ,s.ImportPort 
 		,s.CYCFS,s.ShipModeID ,s.ShipmentTerm ,s.FactoryID ,s.ShipMark ,s.ShipMarkDesc ,s.Consignee ,s.Handle ,s.Posting ,s.Payer ,s.CompanyID 
 		,s.Confirm ,s.LastEdit ,s.Remark ,s.Ecfa ,s.FormStatus,s.Carrier ,s.Forwarder ,s.Vessel ,s.ShipTo ,s.Sono ,s.Blno ,s.InvNo ,s.Exchange 
 		,s.Packages ,s.WeightKg ,s.NetKg ,s.Cbm ,s.CbmFor ,s.Takings ,s.TakingFee ,s.PortArrival ,s.DocArrival ,s.Broker 
 		,s.Insurer ,s.Trailer1 ,s.Trailer2 ,s.Freight ,s.Insurance ,s.Junk ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate,s.MainExportID ,s.Replacement ,s.Delay, s.PrepaidFtyImportFee, iif(s.PrepaidFtyImportFee2 > 0, 1 ,0)
-		,s.MainExportID08)
+		,s.MainExportID08 ,s.FormE)
 	  output inserted.id into @T; 
 
 -----------------------Export_detail-----------------------------
@@ -210,6 +211,49 @@ Te2.InvoiceNo)
 	when not matched by source and exists (select ID from @T where id = t.id)then
 	  		delete;
 
+
+-----------------------Export_Container-----------------------------
+	RAISERROR('Import Export_Container - Starts',0,0)
+
+	Merge Production.dbo.Export_Container as t 
+	using (
+		select *
+		from Trade_To_Pms.dbo.Export_Container ec WITH (NOLOCK)
+		where exists (
+					select 1
+					from Production.dbo.Export e
+					where e.id = ec.id)
+	) as s on t.ID = s.ID AND t.Container = s.Container
+	when matched then 
+		update set
+			  t.Seq				=  s.Seq
+			, t.Type			=  s.Type
+			, t.CartonQty		=  s.CartonQty
+			, t.WeightKg		=  s.WeightKg
+			, t.AddName			=  s.AddName
+			, t.AddDate			=  s.AddDate
+			, t.EditName		=  s.EditName
+			, t.EditDate		=  s.EditDate
+	when not matched by target then 
+		insert (   [ID],  [Seq],  [Type],  [Container],  [CartonQty],  [WeightKg],  [AddName],  [AddDate],  [EditName],  [EditDate])
+		values ( s.[ID],s.[Seq],s.[Type],s.[Container],s.[CartonQty],s.[WeightKg],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+	;
+	
+	DELETE pms
+	FROM Production.dbo.Export_Container pms
+	WHERE   EXISTS (
+				SELECT 1 
+				FROM Trade_To_Pms.dbo.Export e 
+				WHERE e.ID=pms.ID					  
+					  and FactoryID in (select id from @Sayfty)
+			) -- 存在於Trade轉出的WK#
+			AND NOT EXISTS(
+				SELECT 1 
+				FROM Trade_To_Pms.dbo.Export_Container ec 
+				WHERE ec.ID=pms.ID 
+					  AND ec.Container=pms.Container	
+			)--不存在Trade轉出的Container
+	;
 drop table #TExport;
 
 END

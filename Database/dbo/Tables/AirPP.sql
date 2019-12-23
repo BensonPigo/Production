@@ -72,6 +72,7 @@
     [ShipLeader]        VARCHAR (10)    NULL,
     [QuotationAVG]      NUMERIC (5, 2)  CONSTRAINT [DF_AirPP_QuotationAVG] DEFAULT ((0)) NOT NULL,
     [APReceiveDoxDate] DATE NULL, 
+    [APAmountEditDate] DATE NULL, 
     CONSTRAINT [PK_AirPP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -264,7 +265,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'DBC No by B
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'DBC by Buyer Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'BuyerDBCRemark';
+GO
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'付款金額確認日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'APAmountEditDate';
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ICR No by Buyer', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'BuyerICRNo';

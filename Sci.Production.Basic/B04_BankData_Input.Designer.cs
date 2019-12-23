@@ -77,7 +77,6 @@
             // 
             // labelAccountNo
             // 
-            this.labelAccountNo.Lines = 0;
             this.labelAccountNo.Location = new System.Drawing.Point(13, 13);
             this.labelAccountNo.Name = "labelAccountNo";
             this.labelAccountNo.Size = new System.Drawing.Size(120, 23);
@@ -86,7 +85,6 @@
             // 
             // labelSWIFTCode
             // 
-            this.labelSWIFTCode.Lines = 0;
             this.labelSWIFTCode.Location = new System.Drawing.Point(13, 40);
             this.labelSWIFTCode.Name = "labelSWIFTCode";
             this.labelSWIFTCode.Size = new System.Drawing.Size(120, 23);
@@ -95,7 +93,6 @@
             // 
             // labelAccountName
             // 
-            this.labelAccountName.Lines = 0;
             this.labelAccountName.Location = new System.Drawing.Point(13, 67);
             this.labelAccountName.Name = "labelAccountName";
             this.labelAccountName.Size = new System.Drawing.Size(120, 23);
@@ -104,7 +101,6 @@
             // 
             // labelBankName
             // 
-            this.labelBankName.Lines = 0;
             this.labelBankName.Location = new System.Drawing.Point(13, 94);
             this.labelBankName.Name = "labelBankName";
             this.labelBankName.Size = new System.Drawing.Size(120, 23);
@@ -113,7 +109,6 @@
             // 
             // labelCountry
             // 
-            this.labelCountry.Lines = 0;
             this.labelCountry.Location = new System.Drawing.Point(13, 121);
             this.labelCountry.Name = "labelCountry";
             this.labelCountry.Size = new System.Drawing.Size(120, 23);
@@ -122,7 +117,6 @@
             // 
             // labelCity
             // 
-            this.labelCity.Lines = 0;
             this.labelCity.Location = new System.Drawing.Point(13, 148);
             this.labelCity.Name = "labelCity";
             this.labelCity.Size = new System.Drawing.Size(120, 23);
@@ -131,7 +125,6 @@
             // 
             // labelIntermediaryBank
             // 
-            this.labelIntermediaryBank.Lines = 0;
             this.labelIntermediaryBank.Location = new System.Drawing.Point(13, 175);
             this.labelIntermediaryBank.Name = "labelIntermediaryBank";
             this.labelIntermediaryBank.Size = new System.Drawing.Size(120, 23);
@@ -140,7 +133,6 @@
             // 
             // labelIntermediaryBankSWIFTCode
             // 
-            this.labelIntermediaryBankSWIFTCode.Lines = 0;
             this.labelIntermediaryBankSWIFTCode.Location = new System.Drawing.Point(13, 202);
             this.labelIntermediaryBankSWIFTCode.Name = "labelIntermediaryBankSWIFTCode";
             this.labelIntermediaryBankSWIFTCode.Size = new System.Drawing.Size(200, 23);
@@ -149,7 +141,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(13, 229);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(120, 23);
@@ -158,7 +149,6 @@
             // 
             // labelCreateby
             // 
-            this.labelCreateby.Lines = 0;
             this.labelCreateby.Location = new System.Drawing.Point(13, 293);
             this.labelCreateby.Name = "labelCreateby";
             this.labelCreateby.Size = new System.Drawing.Size(120, 23);
@@ -167,7 +157,6 @@
             // 
             // labelEditby
             // 
-            this.labelEditby.Lines = 0;
             this.labelEditby.Location = new System.Drawing.Point(13, 320);
             this.labelEditby.Name = "labelEditby";
             this.labelEditby.Size = new System.Drawing.Size(120, 23);
@@ -326,9 +315,11 @@
             this.Controls.Add(this.labelAccountName);
             this.Controls.Add(this.labelSWIFTCode);
             this.Controls.Add(this.labelAccountNo);
+            this.EditMode = true;
             this.Name = "B04_BankData_Input";
+            this.OnLineHelpID = "Sci.Win.Subs.Input6A";
             this.Text = "Data maintain";
-            this.WorkAlias = "LocalSupp_Bank";
+            this.WorkAlias = "LocalSupp_Bank_Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.labelAccountNo, 0);
             this.Controls.SetChildIndex(this.labelSWIFTCode, 0);
