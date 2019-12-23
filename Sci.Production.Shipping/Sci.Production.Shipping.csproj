@@ -1152,11 +1152,11 @@
     <EmbeddedResource Include="R10.resx">
       <DependentUpon>R10.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="R11.resx">
-      <DependentUpon>R11.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="B41.resx">
       <DependentUpon>B41.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R11.resx">
+      <DependentUpon>R11.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R14.resx">
       <DependentUpon>R14.cs</DependentUpon>

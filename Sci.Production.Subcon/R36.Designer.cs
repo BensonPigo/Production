@@ -37,7 +37,7 @@
             this.comboStatus = new Sci.Win.UI.ComboBox();
             this.txtuserSMR = new Sci.Production.Class.txtuser();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
-            this.txtLocalSuppSupplier = new Sci.Production.Class.txtLocalSupp();
+            this.txtLocalSuppSupplier = new Sci.Production.Class.txtLocalSuppNoConfirm();
             this.txtSDNoEnd = new Sci.Win.UI.TextBox();
             this.label15 = new Sci.Win.UI.Label();
             this.txtSDNoStart = new Sci.Win.UI.TextBox();
@@ -531,7 +531,7 @@
         private Win.UI.TextBox txtSDNoEnd;
         private Win.UI.Label label15;
         private Win.UI.TextBox txtSDNoStart;
-        private Class.txtLocalSupp txtLocalSuppSupplier;
+        private Class.txtLocalSuppNoConfirm txtLocalSuppSupplier;
         private Class.txtuser txtuserSMR;
         private Class.txtuser txtuserHandle;
         private Win.UI.ComboBox comboOrderBy;

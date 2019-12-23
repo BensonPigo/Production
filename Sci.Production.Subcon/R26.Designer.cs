@@ -43,7 +43,7 @@
             this.label9 = new Sci.Win.UI.Label();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.comboReportType = new Sci.Win.UI.ComboBox();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
             this.dateIssueDate = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
@@ -439,7 +439,7 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Class.txtartworktype_fty txtartworktype_ftyCategory;
         private Win.UI.DateRange dateIssueDate;
         private Win.UI.DateRange dateSCIDelivery;

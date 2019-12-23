@@ -47,7 +47,7 @@
             this.labelCategory = new Sci.Win.UI.Label();
             this.checkIncludeFarmOutInDate = new Sci.Win.UI.CheckBox();
             this.labelSubcon = new Sci.Win.UI.Label();
-            this.txtMultiSubconSubcon = new Sci.Production.Class.txtMultiSubcon();
+            this.txtMultiSubconSubcon = new Sci.Production.Class.txtMultiSubconNoConfirm();
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtartworktype_ftySubProcess = new Sci.Production.Class.txtartworktype_fty();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
@@ -437,7 +437,7 @@
         private Class.txtfactory txtfactory;
         private Win.UI.Label labelCategory;
         private Win.UI.CheckBox checkIncludeFarmOutInDate;
-        private Class.txtMultiSubcon txtMultiSubconSubcon;
+        private Class.txtMultiSubconNoConfirm txtMultiSubconSubcon;
         private Win.UI.Label labelSubcon;
         private Class.comboDropDownList comboCategory;
     }

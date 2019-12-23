@@ -29,7 +29,12 @@ namespace Sci.Production.Class
             base.OnMouseDown(e);
             if (e.Button == MouseButtons.Right)
             {
-                string sqlcmd = string.Format(@"select id,abb from dbo.LocalSupp WITH (NOLOCK) ");
+                string sqlcmd = string.Format(@"
+select DISTINCT l.id , l.Abb 
+from dbo.LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+WHERE l.Junk=0 and lb.Status= 'Confirmed'
+");
 
                 Sci.Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(sqlcmd,
                                 "Supp ID,Supp Abb", "10,15", this.Text, null, null, null);

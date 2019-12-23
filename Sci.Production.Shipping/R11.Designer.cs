@@ -58,22 +58,27 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(453, 12);
+            this.print.TabIndex = 12;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(453, 48);
+            this.toexcel.TabIndex = 13;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(453, 84);
+            this.close.TabIndex = 14;
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Location = new System.Drawing.Point(407, 120);
+            this.buttonCustomized.TabIndex = 15;
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Location = new System.Drawing.Point(433, 156);
+            this.checkUseCustomized.TabIndex = 16;
             // 
             // txtVersion
             // 
@@ -190,7 +195,7 @@
             this.datePulloutDate.Location = new System.Drawing.Point(120, 120);
             this.datePulloutDate.Name = "datePulloutDate";
             this.datePulloutDate.Size = new System.Drawing.Size(280, 23);
-            this.datePulloutDate.TabIndex = 102;
+            this.datePulloutDate.TabIndex = 4;
             // 
             // txtbrand
             // 
@@ -199,7 +204,7 @@
             this.txtbrand.Location = new System.Drawing.Point(120, 184);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand.TabIndex = 103;
+            this.txtbrand.TabIndex = 6;
             // 
             // txtcustcd
             // 
@@ -209,7 +214,7 @@
             this.txtcustcd.Location = new System.Drawing.Point(120, 220);
             this.txtcustcd.Name = "txtcustcd";
             this.txtcustcd.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd.TabIndex = 104;
+            this.txtcustcd.TabIndex = 7;
             // 
             // txtcountryDestination
             // 
@@ -217,7 +222,7 @@
             this.txtcountryDestination.Location = new System.Drawing.Point(120, 257);
             this.txtcountryDestination.Name = "txtcountryDestination";
             this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
-            this.txtcountryDestination.TabIndex = 105;
+            this.txtcountryDestination.TabIndex = 8;
             this.txtcountryDestination.TextBox1Binding = "";
             // 
             // txtshipmode
@@ -230,7 +235,7 @@
             this.txtshipmode.Name = "txtshipmode";
             this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmode.TabIndex = 106;
+            this.txtshipmode.TabIndex = 9;
             this.txtshipmode.UseFunction = null;
             // 
             // displayForwarder
@@ -240,7 +245,7 @@
             this.displayForwarder.Location = new System.Drawing.Point(183, 331);
             this.displayForwarder.Name = "displayForwarder";
             this.displayForwarder.Size = new System.Drawing.Size(100, 23);
-            this.displayForwarder.TabIndex = 110;
+            this.displayForwarder.TabIndex = 11;
             // 
             // txtForwarder
             // 
@@ -249,7 +254,7 @@
             this.txtForwarder.Location = new System.Drawing.Point(120, 330);
             this.txtForwarder.Name = "txtForwarder";
             this.txtForwarder.Size = new System.Drawing.Size(61, 23);
-            this.txtForwarder.TabIndex = 109;
+            this.txtForwarder.TabIndex = 10;
             this.txtForwarder.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtForwarder_PopUp);
             this.txtForwarder.Validating += new System.ComponentModel.CancelEventHandler(this.TxtForwarder_Validating);
             // 
@@ -273,7 +278,7 @@
             this.dateOnBoardDate.Location = new System.Drawing.Point(118, 152);
             this.dateOnBoardDate.Name = "dateOnBoardDate";
             this.dateOnBoardDate.Size = new System.Drawing.Size(280, 23);
-            this.dateOnBoardDate.TabIndex = 115;
+            this.dateOnBoardDate.TabIndex = 5;
             // 
             // labelOnBoardDate
             // 
@@ -299,7 +304,7 @@
             this.rdbtnDetailList.Location = new System.Drawing.Point(3, 29);
             this.rdbtnDetailList.Name = "rdbtnDetailList";
             this.rdbtnDetailList.Size = new System.Drawing.Size(88, 21);
-            this.rdbtnDetailList.TabIndex = 1;
+            this.rdbtnDetailList.TabIndex = 3;
             this.rdbtnDetailList.TabStop = true;
             this.rdbtnDetailList.Text = "Detail List";
             this.rdbtnDetailList.UseVisualStyleBackColor = true;
@@ -311,7 +316,7 @@
             this.rdbtnMainList.Location = new System.Drawing.Point(3, 2);
             this.rdbtnMainList.Name = "rdbtnMainList";
             this.rdbtnMainList.Size = new System.Drawing.Size(82, 21);
-            this.rdbtnMainList.TabIndex = 0;
+            this.rdbtnMainList.TabIndex = 2;
             this.rdbtnMainList.TabStop = true;
             this.rdbtnMainList.Text = "Main List";
             this.rdbtnMainList.UseVisualStyleBackColor = true;

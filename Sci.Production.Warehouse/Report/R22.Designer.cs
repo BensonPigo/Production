@@ -43,7 +43,7 @@
             this.lbSupplier = new Sci.Win.UI.Label();
             this.lbFactory = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.label2 = new Sci.Win.UI.Label();
             this.chkQtyOver0 = new System.Windows.Forms.CheckBox();
             this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
@@ -323,7 +323,7 @@
         private Win.UI.Label lbSupplier;
         private Win.UI.Label lbFactory;
         private Class.txtfactory txtfactory;
-        private Class.txtsubcon txtSupplier;
+        private Class.txtsubconNoConfirm txtSupplier;
         private Win.UI.Label label2;
         private System.Windows.Forms.CheckBox chkQtyOver0;
         private Class.txtMdivision txtMdivision1;
