@@ -47,55 +47,9 @@ namespace Sci.Production.Win
             }
         }
 
-        void actF()
-        {
-            comboBox1.DataSource = null;
-            if (MyUtility.Check.Empty(this.act.Text.Trim()))
-            {
-                return;
-            }
-
-            DataTable dtPass1;
-            string SQLCmd = "SELECT ID, Factory,CodePage FROM Pass1 WHERE ID = @ID";
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@ID";
-            sp1.Value = this.act.Text;
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            cmds.Add(sp1);
-
-            if (!(result = DBProxy.Current.Select(null, SQLCmd, cmds, out dtPass1)))
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return;
-            }
-            if (dtPass1.Rows.Count == 0)
-            {
-                MyUtility.Msg.WarningBox("Account does not exist!");
-                return;
-            }
-
-            Dictionary<String, String> factoryOption = new Dictionary<String, String>();
-            string[] factories = dtPass1.Rows[0]["Factory"].ToString().Split(new char[] { ',' });
-            if (factories.Length > 0)
-            {
-                for (int i = 0; i < factories.Length; i++)
-                {
-                    factoryOption.Add(factories[i].Trim().ToUpper(), factories[i].Trim().ToUpper());
-                }
-                comboBox1.DataSource = new BindingSource(factoryOption, null);
-                comboBox1.ValueMember = "Key";
-                comboBox1.DisplayMember = "Value";
-            }
-        }
 
         void ok_Click(object sender, EventArgs e)
         {
-            this.checkBoxTestEnvironment.Checked = true;
-            this.act.Text = "SCIMIS";
-            actF();
-            this.comboBox1.SelectedIndex = 0;
-            this.pwd.Text = "SCIMIS888";
-
             string act = this.act.Text;
             string loginFactory = (string)this.comboBox1.SelectedValue;
             string pwd = this.pwd.Text;
