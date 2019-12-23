@@ -57,7 +57,10 @@ select Sel = 0
        , SPNo = isd.POID
 	   , Seq = Concat (isd.Seq1, '-', isd.Seq2)
 	   , Refno = isnull (psd.Refno, '')
-	   , Color = isnull (psd.ColorID, '')
+	   , Color = case when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is not null 
+				THEN Concat(iif(ISNULL(ThreadColor.SuppColor,'') = '', '', ThreadColor.SuppColor) 
+					, iif(ISNULL(psd.ColorID,'') = '', '', psd.ColorID + ' - ') + ISNULL(c.Name, ''))
+				else  isnull (psd.ColorID, '') end
 	   , Roll = isd.Roll
 	   , Dyelot = isd.Dyelot
 	   , Qty = isd.Qty
@@ -69,6 +72,14 @@ left join Orders o on o.ID=isd.POID
 left join Po_Supp_Detail psd on isd.POID = psd.ID
 								and isd.Seq1 = psd.SEQ1
 								and isd.Seq2 = psd.SEQ2
+left join Fabric f on psd.SCIRefno = f.SCIRefno
+left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and psd.ColorID = c.ID 
+outer apply(
+			SELECT DISTINCT pp.SuppColor
+			FROM po_supp_detail pp
+			WHERE pp.ID = psd.StockPOID AND pp.Seq1 = psd.StockSeq1 AND pp.Seq2 = psd.StockSeq2
+		)
+ThreadColor
 where isd.ID = @ID
 order by RowNo";
             DataTable dtResult;

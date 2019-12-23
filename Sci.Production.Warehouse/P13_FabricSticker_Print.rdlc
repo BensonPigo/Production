@@ -465,7 +465,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.70583cm</Height>
+              <Height>0.883cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -511,7 +511,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Color.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -939,7 +941,7 @@
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
         <Left>11.69021cm</Left>
-        <Height>6.80557cm</Height>
+        <Height>6.98274cm</Height>
         <Width>8.36995cm</Width>
         <Style>
           <Border>
@@ -1410,7 +1412,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.70583cm</Height>
+              <Height>0.883cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1456,7 +1458,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Color.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1884,7 +1888,7 @@
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
         <Left>0.76729cm</Left>
-        <Height>6.80557cm</Height>
+        <Height>6.98274cm</Height>
         <Width>8.36995cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
@@ -1894,7 +1898,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>6.80557cm</Height>
+    <Height>6.98274cm</Height>
     <Style />
   </Body>
   <Width>21cm</Width>
