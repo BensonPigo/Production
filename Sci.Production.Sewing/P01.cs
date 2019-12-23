@@ -3601,6 +3601,7 @@ and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
 and Shift = iif('{this.CurrentMaintain["Shift"]}'='D','Day',iif('{this.CurrentMaintain["Shift"]}'='N','Night',''))
+and (Status <> 'Fixed'  or (Status = 'Fixed' and cast(AddDate as date) = InspectionDate))
 group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location
 ";
             DataTable sewDt1;
