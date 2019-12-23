@@ -145,6 +145,7 @@ namespace Sci.Production.Packing
                                            isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
                                            isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
                                            ,p.Remark
+										   ,pd.Ukey
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -280,7 +281,7 @@ namespace Sci.Production.Packing
                 }
             }
 
-            DataRow[] dr_scanDetail = this.dt_scanDetail.Select($"ID = '{dr.ID}' and CTNStartNo = '{dr.CTNStartNo}' and Article = '{dr.Article}'");
+            DataRow[] dr_scanDetail = this.dt_scanDetail.Select($"ID = '{dr.ID}' and CTNStartNo = '{dr.CTNStartNo}' ");
             if (dr_scanDetail.Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count() == 0)
             {
                 if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -340,7 +341,13 @@ namespace Sci.Production.Packing
         {
             DualResult result1 = new DualResult(true);
             DualResult result2 = new DualResult(true);
-            short oriScanQty = (short)tmp[0]["ScanQty"];
+            int oriTtlScanQty = tmp.Sum(o => Convert.ToInt32(o["ScanQty"]));
+
+            string packingListID = tmp[0]["ID"].ToString();
+            string orderID = tmp[0]["OrderID"].ToString();
+            string cTNStartNo = tmp[0]["CTNStartNo"].ToString();
+            string scanName = tmp[0]["ScanName"].ToString();
+
             if (tmp.Length == 0)
             {
                 result1 = new DualResult(false, new BaseResult.MessageInfo("ClearScanQty Error"));
@@ -355,8 +362,10 @@ namespace Sci.Production.Packing
 
             if (clearType.Equals("ALL"))
             {
-                string upd_sql = $@"update PackingList_Detail set ScanQty = 0,ScanEditDate = NULL , ActCTNWeight = 0
-where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Article = '{tmp[0]["Article"]}'";
+                string upd_sql = $@"
+UPDATE PackingList_Detail 
+SET ScanQty = 0 ,ScanEditDate = NULL , ActCTNWeight = 0
+WHERE ID = '{packingListID}' AND CTNStartNo = '{cTNStartNo}' ";
 
                 string insertCmds = $@"
 
@@ -375,20 +384,20 @@ INSERT INTO [dbo].[PackingScan_History]
            ,[LackingQty])
      VALUES
            ('{Sci.Env.User.Keyword}'
-           ,'{tmp[0]["ID"]}'
-           ,'{tmp[0]["OrderID"]}'
-           ,'{tmp[0]["CTNStartNo"]}'
-           ,(SELECt TOP 1 SCICtnNo FROm PackingList_Detail WHERE ID = '{tmp[0]["ID"]}' AND CTNStartNo='{tmp[0]["CTNStartNo"]}')
+           ,'{packingListID}'
+           ,'{orderID}'
+           ,'{cTNStartNo}'
+           ,(SELECt TOP 1 SCICtnNo FROm PackingList_Detail WHERE ID = '{packingListID}' AND CTNStartNo='{cTNStartNo}')
            ,'Packing P18'
-           ,{oriScanQty}
+           ,{oriTtlScanQty}
            ,'{Convert.ToDateTime(tmp[0]["ScanEditDate"]).ToAppDateTimeFormatString()}'
-           ,'{tmp[0]["ScanName"]}'
+           ,'{scanName}'
            ,'{Sci.Env.User.UserID}'
            ,GETDATE()
            ,(
-                ISNULL(  (SELECT SUM(pd.ShipQty) FROM PackingList_Detail pd WHERE pd.ID='{tmp[0]["ID"]}' AND pd.CTNStartNo='{tmp[0]["CTNStartNo"]}') ,0)
+                ISNULL(  (SELECT SUM(pd.ShipQty) FROM PackingList_Detail pd WHERE pd.ID='{packingListID}' AND pd.CTNStartNo='{cTNStartNo}') ,0)
                 - 
-                {oriScanQty}
+                {oriTtlScanQty}
             ) ----LackingQty計算規則詳見：ISP20191801
             )
 ";
@@ -443,7 +452,7 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               ID = c.Field<string>("ID"),
                                                               CTNStartNo = c.Field<string>("CTNStartNo"),
                                                               CustPoNo = c.Field<string>("CustPoNo"),
-                                                              Article = c.Field<string>("Article"),
+                                                              //Article = c.Field<string>("Article"),
                                                               BrandID = c.Field<string>("BrandID"),
                                                               StyleID = c.Field<string>("StyleID"),
                                                               Dest = c.Field<string>("Dest"),
@@ -455,19 +464,20 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               ID = g.Key.ID,
                                                               CTNStartNo = g.Key.CTNStartNo,
                                                               CustPoNo = g.Key.CustPoNo,
-                                                              Article = g.Key.Article,
+                                                              //Article = g.Key.Article,
                                                               BrandId = g.Key.BrandID,
                                                               StyleId = g.Key.StyleID,
                                                               Dest = g.Key.Dest,
                                                               Remark = g.Key.Remark,
                                                               OrderID = string.Join("/", g.Select(st => st.Field<string>("OrderID")).Distinct().ToArray()),
-                                                              SizeCode = string.Join("/", g.Select(st => st.Field<string>("SizeCode")).ToArray()),
-                                                              QtyPerCTN = string.Join("/", g.Select(st => st.Field<int>("QtyPerCTN").ToString()).ToArray()),
-                                                              ScanQty = string.Join("/", g.Select(st => st.Field<short>("ScanQty").ToString()).ToArray()),
+                                                              Article = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("Article")).ToArray()),
+                                                              SizeCode = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("SizeCode")).ToArray()),
+                                                              QtyPerCTN = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<int>("QtyPerCTN").ToString()).ToArray()),
+                                                              ScanQty = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<short>("ScanQty").ToString()).ToArray()),
                                                               TtlScanQty = g.Sum(st => st.Field<short>("ScanQty")),
                                                               TtlQtyPerCTN = g.Sum(st => st.Field<int>("QtyPerCTN")),
                                                               PKseq = g.Max(st => st.Field<string>("PKseq")),
-                                                              PassName = string.Join("/", g.Select(st => st.Field<string>("PassName").ToString()).Where(st => !string.IsNullOrEmpty(st)).ToArray()),
+                                                              PassName = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("PassName").ToString()).Where(st => !string.IsNullOrEmpty(st)).ToArray()),
                                                               ActCTNWeight = g.Max(st => st.Field<decimal>("ActCTNWeight"))
                                                           }).OrderBy(s => s.ID).ThenBy(s => s.PKseq).ToList();
             string default_where = " 1 = 1 ";
@@ -1087,7 +1097,7 @@ and Article = '{this.selecedPK.Article}'";
             // 如果掃描數量> 0,則 update PackingList_Detail
             if (this.numBoxScanQty.Value > 0)
             {
-                string upd_sql = $@"
+                string upd_sql = string.Empty;/* $@"
 update PackingList_Detail 
 set   
 ScanQty = {this.numBoxScanQty.Value} 
@@ -1098,6 +1108,25 @@ ScanQty = {this.numBoxScanQty.Value}
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 and Article = '{this.selecedPK.Article}'";
+*/
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    upd_sql += $@"
+update PackingList_Detail 
+set   
+ScanQty = {this.numBoxScanQty.Value} 
+, ScanEditDate = GETDATE()
+, ScanName = '{Env.User.UserID}'   
+, Lacking = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])}--1
+, BarCode = '{dr["Barcode"]}'
+where --id = '{this.selecedPK.ID}' 
+--and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
+--and Article = '{this.selecedPK.Article}'
+Ukey={dr["Ukey"]}
+";
+                }
+
                 sql_result = DBProxy.Current.Execute(null, upd_sql);
                 if (!sql_result)
                 {
