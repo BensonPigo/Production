@@ -17,9 +17,12 @@
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_SCIFty_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
-    [Type] VARCHAR NOT NULL DEFAULT (''), 
+    [Type]         VARCHAR (1)    DEFAULT ('') NOT NULL,
+    [Zone]         VARCHAR (6)    DEFAULT ('') NULL,
     CONSTRAINT [PK_SCIFty] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -88,4 +91,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SCIFty', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠地區別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SCIFty', @level2type = N'COLUMN', @level2name = N'Zone';
 
