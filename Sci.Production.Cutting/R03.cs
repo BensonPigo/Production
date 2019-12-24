@@ -142,7 +142,9 @@ select
     wo.FabricPanelCode,
 	wo.MarkerNo,
 	wo.Markername,
-	wo.SCIRefno
+	wo.SCIRefno,
+	wo.Seq1,
+	wo.Seq2
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -362,7 +364,9 @@ select
 [M],[Factory],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
-,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
+,[Spreading Time (mins)],[Cutting Time (mins)]
+,w.Width
+,[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
 ,[To be combined]=cl.v
 from #tmp t
 --因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
@@ -397,6 +401,14 @@ outer apply(
 	inner join Fabric fb with(nolock) on fb.ConstructionID = con.id
 	where fb.SCIRefno = t.SCIRefno
 )cl
+outer apply(
+	SELECT top 1 OBE.Width
+	FROM Order_BOF OB 
+	INNER JOIN Order_BOF_Expend OBE ON OBE.Order_BOFUkey = OB.Ukey
+	INNER JOIN PO_Supp PS ON PS.ID = OB.Id AND PS.SuppID = OB.SuppID
+	INNER JOIN PO_Supp_Detail PSD ON PSD.ID= OB.Id AND PSD.RefNo = OB.Refno AND PSD.ColorID = OBE.ColorId and ps.SEQ1 = psd.SEQ1
+	WHERE PSD.ID =t.[Master SP#] AND PSD.SEQ1=t.Seq1 AND PSD.SEQ2=t.SEQ2
+)w
 
 order by [M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Cut#]
 -----------------------------------------------------------------------
@@ -479,11 +491,12 @@ drop table #tmp,#tmpL");
             MyUtility.Excel.CopyToXls(printData[0], "", "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
-            // Perimeter(Decimal) AJ第35欄
-            objApp.Cells[3, 36] = "=IFERROR(LEFT(AI3,SEARCH(\"yd\",AI3,1)-1)+0+(IFERROR(RIGHT(LEFT(AI3,SEARCH(\"\"\"\",AI3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AI3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
+            // Perimeter(Decimal)
+            int PerimeterCol = printData[0].Columns.Count - 3;
+            objApp.Cells[3, PerimeterCol] = $"=IFERROR(LEFT(AJ3,SEARCH(\"yd\",AJ3,1)-1)+0+(IFERROR(RIGHT(LEFT(AJ3,SEARCH(\"\"\"\",AJ3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AJ3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
             int rowct = printData[0].Rows.Count + 2;
-            objApp.Range[objApp.Cells[3, 36], objApp.Cells[3, 36]].Copy();
-            objApp.Range[objApp.Cells[4, 36], objApp.Cells[rowct, 36]].PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll, Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            objApp.Range[objApp.Cells[3, PerimeterCol], objApp.Cells[3, PerimeterCol]].Copy();
+            objApp.Range[objApp.Cells[4, PerimeterCol], objApp.Cells[rowct, PerimeterCol]].PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll, Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
             objApp.Range[objApp.Cells[2, 1], objApp.Cells[2, 1]].Select();
             objSheets.get_Range("Q2").ColumnWidth = 15.38;
             objSheets.get_Range("U2").ColumnWidth = 15.38;
