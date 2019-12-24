@@ -2,12 +2,16 @@
 =======
 ﻿using Ict;
 using Ict.Win;
+using org.apache.pdfbox.pdmodel;
+using org.apache.pdfbox.util;
+using PDFLibNet64;
 using Sci.Data;
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+<<<<<<< HEAD
 <<<<<<< HEAD
 using System.Drawing;
 <<<<<<< HEAD
@@ -34,6 +38,9 @@ using System.Net;
 =======
 =======
 >>>>>>> ISP20191302 - 調整P25功能
+=======
+using System.Drawing.Imaging;
+>>>>>>> ISP20191302 -
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -57,17 +64,19 @@ namespace Sci.Production.Packing
         private Dictionary<string, List<ZPL>> File_Name_ZPL = new Dictionary<string, List<ZPL>>();
         private List<string> wattingForConvert = new List<string>();
         private string[] wattingForConvert_contentsOfZPL;
+        private UploadType currentFileType;
 
         public bool canConvert = false;
 
         private List<MappingModel> MappingModels = new List<MappingModel>();
 >>>>>>> ISP20191302 - 調整P25功能
 
+        /// <inheritdoc/>
         public P25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.GridDt.Columns.Add(new DataColumn() { ColumnName = "ZPLFileName", DataType = typeof(string) });
+            this.GridDt.Columns.Add(new DataColumn() { ColumnName = "FileName", DataType = typeof(string) });
             this.GridDt.Columns.Add(new DataColumn() { ColumnName = "Result", DataType = typeof(string) });
         }
 
@@ -89,7 +98,7 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
             this.grid1.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.grid1)
-.Text("ZPLFileName", header: "ZPL File Name ", width: Widths.AnsiChars(35))
+.Text("FileName", header: "File Name ", width: Widths.AnsiChars(35))
 .Text("Result", header: "Result", width: Widths.AnsiChars(10))
 ;
         }
@@ -188,7 +197,7 @@ namespace Sci.Production.Packing
 >>>>>>> ISP20191302
 =======
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "ZPL files (*.zpl)|*.zpl";
+            openFileDialog1.Filter = "ZPL files (*.zpl)|*.zpl|(*.pdf)|*.pdf";
             openFileDialog1.Multiselect = true;
 >>>>>>> ISP20191302 - 調整P25功能
 
@@ -216,6 +225,17 @@ namespace Sci.Production.Packing
                 this.GridDt.Rows.Clear();
                 this.listControlBindingSource1.DataSource = null;
                 this.File_Name_ZPL.Clear();
+                // ZPL
+                if (openFileDialog1.SafeFileNames.Any(o => !o.EndsWith(".pdf") && o.EndsWith(".zpl")))
+                {
+                    this.currentFileType = UploadType.ZPL;
+                }
+
+                // PDF
+                if (openFileDialog1.SafeFileNames.Any(o => o.EndsWith(".pdf") && !o.EndsWith(".zpl")))
+                {
+                    this.currentFileType = UploadType.PDF;
+                }
 
                 string[] files = openFileDialog1.FileNames;
                 string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
@@ -247,38 +267,40 @@ namespace Sci.Production.Packing
 
                         // 用於顯示在表格的檔名
                         DataRow newDr = this.GridDt.NewRow();
-                        newDr["ZPLFileName"] = openFileDialog1.SafeFileNames[i];
+                        newDr["FileName"] = openFileDialog1.SafeFileNames[i];
                         newDr["Result"] = string.Empty;
                         this.GridDt.Rows.Add(newDr);
 
                         #region 1.若上傳的ZPL檔，包含多張ZPL，先拆成個別ZPL
 
-                        using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), System.Text.Encoding.UTF8))
+                        if (this.currentFileType == UploadType.ZPL)
                         {
+                            using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), System.Text.Encoding.UTF8))
+                            {
 
-                            // 1-1.讀取內容
-                            oriZplConten = reader.ReadToEnd();
+                                // 1-1.讀取內容
+                                oriZplConten = reader.ReadToEnd();
 
-                            // 1-2.去除換行符號
-                            tmpzplContent = oriZplConten.Replace("\r\n", string.Empty);
+                                // 1-2.去除換行符號
+                                tmpzplContent = oriZplConten.Replace("\r\n", string.Empty);
 
-                            // 1-3.先取得檔名，CustCTN被包在 ^FD>;>8 和 ^FS之間，取得CustCTN，作為檔名
-                            custCTNArray = tmpzplContent.Split(new string[] { "^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0^FO80,50^BY4^BCN,200,N,N,^FD>;>8", "^FS^FT115,280^A0N,34,47^FD" }, StringSplitOptions.RemoveEmptyEntries);
-                            custCTN_List = custCTNArray.Where(o => !o.Contains("^")).Distinct().ToList();
+                                // 1-3.先取得檔名，CustCTN被包在 ^FD>;>8 和 ^FS之間，取得CustCTN，作為檔名
+                                custCTNArray = tmpzplContent.Split(new string[] { "^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0^FO80,50^BY4^BCN,200,N,N,^FD>;>8", "^FS^FT115,280^A0N,34,47^FD" }, StringSplitOptions.RemoveEmptyEntries);
+                                custCTN_List = custCTNArray.Where(o => !o.Contains("^")).Distinct().ToList();
 
-                            // 1-4.拆出多個ZPL檔的內容，每一個ZPL都是以 ^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0 開頭
-                            tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0");
+                                // 1-4.拆出多個ZPL檔的內容，每一個ZPL都是以 ^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0 開頭
+                                tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0");
 
-                            string[] stringSeparators = new string[] { "\r\n" };
+                                string[] stringSeparators = new string[] { "\r\n" };
 
-                            // 1-5.最後拆出來的每一個ZPL，包含兩張圖片
-                            contentsOfZPL = tmpzplContent.Split(stringSeparators, StringSplitOptions.None);
-                        }
-                        #endregion
+                                // 1-5.最後拆出來的每一個ZPL，包含兩張圖片
+                                contentsOfZPL = tmpzplContent.Split(stringSeparators, StringSplitOptions.None);
+                            }
 
-                        // 2.根據ZPL檔名，取得對應的內容
-                        Dictionary<string, string> dataList = new Dictionary<string, string>();
+                            // 2.根據ZPL檔名，取得對應的內容
+                            Dictionary<string, string> dataList = new Dictionary<string, string>();
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
                     // 開始Mapping(沒有混碼的情況才執行這段)
@@ -337,21 +359,48 @@ WHERE p.MDivisionID = @MDivisionID
                             dataList.Add(singleFileName, contentString);
                         }
 >>>>>>> ISP20191302 - 調整P25功能
+=======
+                            foreach (string singleFileName in custCTN_List)
+                            {
+                                string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                                dataList.Add(singleFileName, contentString);
+                            }
 
-                        // 3.透過API將ZPL檔轉成PDF，並存到指定路徑
-                        this.wattingForConvert = custCTN_List;
-                        this.wattingForConvert_contentsOfZPL = contentsOfZPL;
-                        //foreach (string singleFileName in custCTN_List)
-                        //{
-                        //    string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
-                        //    this.CallAPI(singleFileName, contentString, shippingMarkPath);
-                        //}
+                            // 3.透過API將ZPL檔轉成PDF，並存到指定路徑
+                            this.wattingForConvert = custCTN_List;
+                            this.wattingForConvert_contentsOfZPL = contentsOfZPL;
 
-                        // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
-                        List<ZPL> zPL_Objects = this.Analysis_ZPL(dataList, custCTN_List);
+                            // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
+                            List<ZPL> zPL_Objects = this.Analysis_ZPL(dataList, custCTN_List);
 
-                        this.File_Name_ZPL.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
-                        i++;
+                            this.File_Name_ZPL.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
+                            i++;
+                        }
+                        #endregion
+>>>>>>> ISP20191302 -
+
+                        if (this.currentFileType == UploadType.PDF)
+                        {
+                            FileInfo fileInfo = new FileInfo(file);
+                            PDDocument doc = PDDocument.load(fileInfo.FullName);
+                            PDFTextStripper pdfStripper = new PDFTextStripper();
+                            oriZplConten = pdfStripper.getText(doc);
+                            string[] stringSeparators = new string[] { "\r\n" };
+                            string[] tmpArray = oriZplConten.Split(stringSeparators, StringSplitOptions.None);
+
+                            List<ZPL> zPL_Objects = new List<ZPL>() { new ZPL()
+                            {
+                                CustCTN = tmpArray[0].Split(' ')[1],
+                                CustPONo = tmpArray[21],
+                                StyleID = tmpArray[22],
+                                SizeCode = tmpArray[24],
+                                ShipQty = tmpArray[28]
+                            }};
+
+                            this.File_Name_ZPL.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
+                            i++;
+                        }
+
                     }
 
                     this.listControlBindingSource1.DataSource = this.GridDt;
@@ -828,7 +877,7 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                             transactionscope.Dispose();
 
                             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                            dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
+                            dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
                         }
                     }
                     MyUtility.Msg.InfoBox("Data Mapping successful!");
@@ -842,10 +891,17 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                     this.ShowWaitMessage("Convert to Image....");
                     string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
 
-                    foreach (string singleFileName in this.wattingForConvert)
+                    if (this.currentFileType == UploadType.ZPL)
                     {
-                        string contentString = this.wattingForConvert_contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
-                        this.CallAPI(singleFileName, contentString, shippingMarkPath);
+                        foreach (string singleFileName in this.wattingForConvert)
+                        {
+                            string contentString = this.wattingForConvert_contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                            this.CallAPI(singleFileName, contentString, shippingMarkPath);
+                        }
+                    }
+
+                    if (this.currentFileType == UploadType.PDF)
+                    {
                     }
 
                     this.HideWaitMessage();
@@ -935,6 +991,89 @@ DROP TABLE #tmpOrders{i},#tmp{i}
         }
 
         #endregion
+
+        public enum Definition
+        {
+            One = 1, Two = 2, Three = 3, Four = 4, Five = 5, Six = 6, Seven = 7, Eight = 8, Nine = 9, Ten = 10
+        }
+
+        /// <summary>
+        /// 將PDF文件轉換為圖片的方法
+        /// </summary>
+        /// <param name="pdfInputPath">PDF檔案路徑</param>
+        /// <param name="imageOutputPath">圖片輸出路徑</param>
+        /// <param name="imageName">生成圖片的名字</param>
+        /// <param name="startPageNum">從PDF文件的第幾頁開始轉換</param>
+        /// <param name="endPageNum">從PDF文件的第幾頁開始停止轉換</param>
+        /// <param name="imageFormat">設定所需圖片格式</param>
+        /// <param name="definition">設定圖片的清晰度，數字越大越清晰</param>
+        public static void ConvertPDF2Image(string pdfInputPath, string imageOutputPath,
+            string imageName, int startPageNum, int endPageNum, ImageFormat imageFormat, Definition definition)
+        {
+            PDFWrapper pdfWrapper = new PDFWrapper();
+
+            pdfWrapper.LoadPDF(pdfInputPath);
+            pdfWrapper.ZoomIN();
+            if (!System.IO.Directory.Exists(imageOutputPath))
+            {
+                Directory.CreateDirectory(imageOutputPath);
+            }
+
+            // validate pageNum
+            if (startPageNum <= 0)
+            {
+                startPageNum = 1;
+            }
+
+            if (endPageNum > pdfWrapper.PageCount)
+            {
+                endPageNum = pdfWrapper.PageCount;
+            }
+
+            if (startPageNum > endPageNum)
+            {
+                int tempPageNum = startPageNum;
+                startPageNum = endPageNum;
+                endPageNum = startPageNum;
+            }
+
+            // start to convert each page
+            for (int i = startPageNum; i <= endPageNum; i++)
+            {
+                pdfWrapper.ExportJpg(imageOutputPath + imageName + i.ToString() + ".jpg", i, i, 180, 80);//這裡可以設定輸出圖片的頁數、大小和圖片畫質
+                if (pdfWrapper.IsJpgBusy) { System.Threading.Thread.Sleep(100); }
+
+                Bitmap sourceImage = new Bitmap(imageOutputPath + imageName + i.ToString() + ".jpg");
+                int picWidth = 759;
+                int picHeight = 1207;
+
+                Bitmap pic = new Bitmap(picWidth, picHeight);
+                //建立圖片
+                Graphics graphic = Graphics.FromImage(pic);
+                //建立畫板
+
+                graphic.DrawImage(sourceImage,
+                         //將被切割的圖片畫在新圖片上面，第一個參數是被切割的原圖片
+                         new Rectangle(0, 0, picWidth, picHeight),
+                         //指定繪製影像的位置和大小，基本上是同pic大小
+                         new Rectangle(33, 110, picWidth, picHeight),
+                         //指定被切割的圖片要繪製的部分
+                         GraphicsUnit.Pixel);
+
+                pic.Save(imageOutputPath + imageName + i.ToString() + "2.jpg");
+                graphic.Dispose();
+                pic.Dispose();
+                sourceImage.Dispose();
+            }
+
+            pdfWrapper.Dispose();
+        }
+
+        private enum UploadType
+        {
+            ZPL,
+            PDF
+        }
 
         #region 作廢區
         /// <summary>
