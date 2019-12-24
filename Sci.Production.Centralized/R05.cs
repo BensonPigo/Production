@@ -212,8 +212,11 @@ where 1=1
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
             {
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                connectionString.Add(connections);
+                if (!MyUtility.Check.Empty(ss))
+                {
+                    var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                    connectionString.Add(connections);
+                }
             }
 
             if (connectionString == null || connectionString.Count == 0)

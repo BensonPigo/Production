@@ -18,6 +18,7 @@ using Sci;
 using System.Diagnostics;
 using System.Configuration;
 using PostJobLog;
+using System.Threading;
 
 namespace Production.Daily
 {
@@ -350,8 +351,22 @@ namespace Production.Daily
             }
             #endregion
 
-            result = transferPMS.Ftp_Ping(ftpIP, ftpID, ftpPwd);
-            if (!result) { return result; }
+            result = new DualResult(true);
+            for (int i = 0; i < 3; i++)
+            {
+                result = transferPMS.Ftp_Ping(ftpIP, ftpID, ftpPwd);
+                if (result)
+                {
+                    break;
+                }
+                Thread.Sleep(2500);
+            }
+
+            if (!result) 
+            {
+                this.CallJobLogApi("PMS transfer data (FTP) ERROR", result.GetException().ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
+                return result; 
+            }
 
             String exportRgCode = "";
             String importRgCode = "";

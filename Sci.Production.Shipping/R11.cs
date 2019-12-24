@@ -51,7 +51,9 @@ namespace Sci.Production.Shipping
         private void TxtForwarder_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand;
-            selectCommand = @"select ID,Abb from LocalSupp WITH (NOLOCK) 
+            selectCommand = @"
+select DISTINCT l.ID ,l.Abb
+from LocalSupp l WITH (NOLOCK) 
 union all
 select ID,AbbEN from Supp WITH (NOLOCK) 
 order by ID";
@@ -80,7 +82,8 @@ order by ID";
                     DataRow inputData;
                     string sql = string.Format(
                         @"select * from (
-select ID,Abb from LocalSupp WITH (NOLOCK) 
+select DISTINCT l.ID ,l.Abb
+from LocalSupp l WITH (NOLOCK) 
 union all
 select ID,AbbEN from Supp WITH (NOLOCK)) a
 where a.ID = '{0}'", this.txtForwarder.Text);

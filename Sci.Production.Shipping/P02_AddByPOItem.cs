@@ -225,12 +225,14 @@ GROUP BY pd.OrderID ,o.StyleUnit,pd.ShipQty ,TtlShipQty.Value ,p.GW
                             DataRow dr = dt.Rows[0];
 
                             this.CurrentData["PackingListID"] = this.txtPackingListID.Text;
-                            this.CurrentData["CTNNo"] = dr["CTNNo"].ToString();
-                            this.CurrentData["Qty"] = Convert.ToInt32(dr["TtlQty"]);
                             this.CurrentData["UnitID"] = dr["UnitID"].ToString();
                             this.CurrentData["Category"] = dr["Category"].ToString();
                             this.comboCategory.SelectedValue = Convert.ToInt32(dr["Category"]);
-                            this.CurrentData["NW"] = Convert.ToDecimal(dr["NW"]);
+                            // ISP20191885 移除自動計算後帶入
+                            //this.CurrentData["CTNNo"] = dr["CTNNo"].ToString();
+                            //this.CurrentData["Qty"] = Convert.ToInt32(dr["TtlQty"]);
+
+                            //this.CurrentData["NW"] = Convert.ToDecimal(dr["NW"]);
                         }
                     }
                 }
@@ -343,8 +345,15 @@ and pld.OrderID = '{this.txtSPNo.Text}'
                     return false;
                 }
 
-                if (!this.HcImportCheck(this.CurrentData["PackingListID"].ToString(), this.CurrentData["OrderID"].ToString(), packingListTyp))
+                if (MyUtility.Check.Seek($@"
+select 1 
+from packinglist 
+where ID = '{this.CurrentData["PackingListID"].ToString()}' 
+      and ExpressID<>'{this.CurrentData["ID"].ToString()}' 
+      AND ExpressID <> ''  
+      AND ExpressID IS NOT NULL"))
                 {
+                    MyUtility.Msg.WarningBox($"PackingList: {this.CurrentData["PackingListID"].ToString()} exists other HC");
                     return false;
                 }
 
@@ -463,76 +472,6 @@ WHERE ID='{this.CurrentData["PackingListID"]}' AND @count <= 1
             }
 
             return Result.True;
-        }
-
-        private bool HcImportCheck(string packingListID, string orderID, string packingListTyp = "")
-        {
-            DataTable dt;
-            string sqlCmd = string.Empty;
-
-            switch (packingListTyp)
-            {
-                case "B":
-                    sqlCmd = $@"
-
----- 訂單 + PL 是否已經存在 HC表身
-SELECT [ExistsData]=1
-FROm  Express_Detail
-WHERE PackingListID='{packingListID}'
-      AND OrderID='{orderID}' 
-";
-                    break;
-                case "S":
-                    sqlCmd = $@"
-----※ 只要以下條件任一個符合就不允許匯入 ※
-
----- 1. 訂單 + PL 是否已經存在 HC表身
-SELECT [ExistsData]=1
-FROm  Express_Detail
-WHERE PackingListID='{packingListID}'
-      AND OrderID='{orderID}' 
-UNION 
----- 2. 相同的 PL 是否有建立在其他的 HC
-SELECT [ExistsData]=2
-FROm PackingList
-WHERE ID='{packingListID}' AND ExpressID<>'{this.CurrentData["ID"].ToString()}' AND ExpressID <> ''  AND ExpressID IS NOT NULL
-";
-                    break;
-                default:
-                    break;
-            }
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
-            if (dt.Rows.Count > 0)
-            {
-                string msg = "Update failed, reason as below : " + Environment.NewLine;
-
-                if (dt.AsEnumerable().Any(row => row["ExistsData"].EqualString("1")) && packingListTyp == "B")
-                {
-                    msg += $"PackingList: {packingListID} has existed HC" + Environment.NewLine;
-                }
-
-                if (dt.AsEnumerable().Any(row => row["ExistsData"].EqualString("1")) && packingListTyp == "S")
-                {
-                    msg += $"PackingList: {packingListID}、SP#: {orderID} has existed HC" + Environment.NewLine;
-                }
-
-                if (dt.AsEnumerable().Any(row => row["ExistsData"].EqualString("2")))
-                {
-                    msg += $"PackingList: {packingListID} exists other HC" + Environment.NewLine;
-                }
-
-                MyUtility.Msg.WarningBox(msg);
-                return false;
-            }
-
-            return true;
         }
     }
 }

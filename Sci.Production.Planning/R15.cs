@@ -693,20 +693,20 @@ select t.MDivisionID
        , #cte2.cut_qty
        , [RFID Cut Qty] = #SORTING.OutQtyBySet
        , [RFID Loading Qty] = #loading.InQtyBySet
-       , [RFID Emb Farm In Qty] = #Emb.InQtyBySet
-       , [RFID Emb Farm Out Qty] = #Emb.OutQtyBySet
-       , [RFID Bond Farm In Qty] = #BO.InQtyBySet	
-       , [RFID Bond Farm Out Qty] = #BO.OutQtyBySet
-       , [RFID Print Farm In Qty] = #prt.InQtyBySet
-       , [RFID Print Farm Out Qty] = #prt.OutQtyBySet
-       , [RFID AT Farm In Qty] = #AT.InQtyBySet
-       , [RFID AT Farm Out Qty] = #AT.OutQtyBySet
-       , [RFID Pad Print Farm In Qty] = #PADPRT.InQtyBySet
-       , [RFID Pad Print Farm Out Qty] = #PADPRT.OutQtyBySet
-       , [RFID Emboss Farm In Qty] = #SUBCONEMB.InQtyBySet
-       , [RFID Emboss Farm Out Qty] =#SUBCONEMB.OutQtyBySet
-       , [RFID HT Farm In Qty] = #HT.InQtyBySet
-       , [RFID HT Farm Out Qty] = #HT.OutQtyBySet
+       , [RFID Emb Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( #Emb.InQtyBySet ,0) ,#Emb.InQtyBySet)
+       , [RFID Emb Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( #Emb.OutQtyBySet ,0) ,#Emb.OutQtyBySet)
+       , [RFID Bond Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('BO')),ISNULL( #BO.InQtyBySet ,0) ,#BO.InQtyBySet)	
+       , [RFID Bond Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('BO')),ISNULL( #BO.OutQtyBySet ,0) ,#BO.OutQtyBySet)
+       , [RFID Print Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PRINTING')),ISNULL( #prt.InQtyBySet,0) ,#prt.InQtyBySet)
+       , [RFID Print Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PRINTING')),ISNULL( #prt.OutQtyBySet,0) ,#prt.OutQtyBySet)
+       , [RFID AT Farm In Qty] =IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AT')),ISNULL(#AT.InQtyBySet,0) ,#AT.InQtyBySet)
+       , [RFID AT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AT')),ISNULL(#AT.OutQtyBySet,0) ,#AT.OutQtyBySet)
+       , [RFID Pad Print Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PAD PRINTING')),ISNULL(#PADPRT.InQtyBySet ,0) ,#PADPRT.InQtyBySet)
+       , [RFID Pad Print Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PAD PRINTING')),ISNULL( #PADPRT.OutQtyBySet,0) ,#PADPRT.OutQtyBySet)
+       , [RFID Emboss Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBOSS/DEBOSS')),ISNULL( #SUBCONEMB.InQtyBySet ,0) ,#SUBCONEMB.InQtyBySet)
+       , [RFID Emboss Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBOSS/DEBOSS')),ISNULL( #SUBCONEMB.OutQtyBySet ,0) ,#SUBCONEMB.OutQtyBySet)
+       , [RFID HT Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( #HT.InQtyBySet ,0) ,#HT.InQtyBySet)
+       , [RFID HT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( #HT.OutQtyBySet ,0) ,#HT.OutQtyBySet)
         , SubProcessStatus=
 			case when t.Junk = 1 then null 
                  when #SORTING.OutQtyBySet is null and #loading.InQtyBySet is null 
@@ -836,9 +836,12 @@ outer apply(
 	select Artwork =stuff((	
 		select concat('+',ArtworkTypeID)
 		from(
-			select distinct v.ArtworkTypeID
-			from dbo.View_Order_Artworks v  WITH (NOLOCK) 
-			where v.ID=t.OrderID
+			SELECT DISTINCT [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
+			FROM Bundle b1
+			INNER JOIN Bundle_Detail bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
+			INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
+			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID=bda1.SubprocessId
+			WHERE b1.Orderid=t.OrderID
 		)tmpartwork
 		for xml path('')
 	),1,1,'')
@@ -1270,20 +1273,21 @@ select t.MDivisionID
        , #cte2.cut_qty
        , [RFID Cut Qty] = SORTING.OutQtyBySet
        , [RFID Loading Qty] = loading.InQtyBySet
-       , [RFID Emb Farm In Qty] = Emb.InQtyBySet
-       , [RFID Emb Farm Out Qty] = Emb.OutQtyBySet
-       , [RFID Bond Farm In Qty] = BO.InQtyBySet	
-       , [RFID Bond Farm Out Qty] = BO.OutQtyBySet
-       , [RFID Print Farm In Qty] = prt.InQtyBySet
-       , [RFID Print Farm Out Qty] = prt.OutQtyBySet
-       , [RFID AT Farm In Qty] = AT.InQtyBySet
-       , [RFID AT Farm Out Qty] = AT.OutQtyBySet
-       , [RFID Pad Print Farm In Qty] = PADPRT.InQtyBySet
-       , [RFID Pad Print Farm Out Qty] = PADPRT.OutQtyBySet
-       , [RFID Emboss Farm In Qty] = SUBCONEMB.InQtyBySet
-       , [RFID Emboss Farm Out Qty] =SUBCONEMB.OutQtyBySet
-       , [RFID HT Farm In Qty] = HT.InQtyBySet
-       , [RFID HT Farm Out Qty] = HT.OutQtyBySet
+       , [RFID Emb Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( Emb.InQtyBySet ,0) ,Emb.InQtyBySet)
+       , [RFID Emb Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( Emb.OutQtyBySet ,0) ,Emb.OutQtyBySet)
+       , [RFID Bond Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('BO')),ISNULL( BO.InQtyBySet ,0) ,BO.InQtyBySet)	
+       , [RFID Bond Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('BO')),ISNULL( BO.OutQtyBySet ,0) ,BO.OutQtyBySet)
+       , [RFID Print Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PRINTING')),ISNULL( prt.InQtyBySet,0) ,prt.InQtyBySet)
+       , [RFID Print Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PRINTING')),ISNULL( prt.OutQtyBySet,0) ,prt.OutQtyBySet)
+       , [RFID AT Farm In Qty] =IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AT')),ISNULL(AT.InQtyBySet,0) ,AT.InQtyBySet)
+       , [RFID AT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AT')),ISNULL(AT.OutQtyBySet,0) ,AT.OutQtyBySet)
+       , [RFID Pad Print Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PAD PRINTING')),ISNULL(PADPRT.InQtyBySet ,0) ,PADPRT.InQtyBySet)
+       , [RFID Pad Print Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PAD PRINTING')),ISNULL( PADPRT.OutQtyBySet,0) ,PADPRT.OutQtyBySet)
+       , [RFID Emboss Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBOSS/DEBOSS')),ISNULL( SUBCONEMB.InQtyBySet ,0) ,SUBCONEMB.InQtyBySet)
+       , [RFID Emboss Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBOSS/DEBOSS')),ISNULL( SUBCONEMB.OutQtyBySet ,0) ,SUBCONEMB.OutQtyBySet)
+       , [RFID HT Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( HT.InQtyBySet ,0) ,HT.InQtyBySet)
+       , [RFID HT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( HT.OutQtyBySet ,0) ,HT.OutQtyBySet)
+
         , SubProcessStatus=
 			case when t.Junk = 1 then null
                  when SORTING.OutQtyBySet is null and loading.InQtyBySet is null 
@@ -1429,9 +1433,12 @@ outer apply(
 	select Artwork =stuff((	
 		select concat('+',ArtworkTypeID)
 		from(
-			select distinct v.ArtworkTypeID
-			from dbo.View_Order_Artworks v  WITH (NOLOCK) 
-			where v.ID=t.OrderID and v.Article = t.Article and v.SizeCode = t.SizeCode
+			SELECT DISTINCT [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
+			FROM Bundle b1
+			INNER JOIN Bundle_Detail bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
+			INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
+			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID=bda1.SubprocessId
+			WHERE b1.Orderid=t.OrderID AND b1.Article=t.Article AND bd1.SizeCode=t.SizeCode
 		)tmpartwork
 		for xml path('')
 	),1,1,'')

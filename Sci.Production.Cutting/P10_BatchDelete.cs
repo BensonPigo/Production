@@ -91,7 +91,6 @@ outer apply
 	and workorder.MDivisionID = b.MDivisionID
 ) as estdate
 where 1=1
-      and o.finished=0
       and o.mDivisionid='{Sci.Env.User.Keyword}'
       {sqlwhere}
 ";

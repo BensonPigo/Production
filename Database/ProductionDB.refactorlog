@@ -385,6 +385,7 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="UseRatioRule_Thick" />
   </Operation>
+<<<<<<< HEAD
   <Operation Name="Rename Refactor" Key="d5ee03ad-c7b9-4551-95b0-f56af67b1e9d" ChangeDateTime="08/21/2019 07:48:10">
     <Property Name="ElementName" Value="[dbo].[System].[ARKloginId]" />
     <Property Name="ElementType" Value="SqlSimpleColumn" />
@@ -411,5 +412,26 @@
     <Property Name="ParentElementName" Value="[dbo].[TransImport]" />
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ImportConnectionName" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ebc9c043-4a4a-4e83-b7e3-285358153c2e" ChangeDateTime="10/08/2019 05:45:07">
+    <Property Name="ElementName" Value="[dbo].[ArtworkReq].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ArtworkReq]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="20872abf-9cae-46a6-ba90-bb77bdc5e6cd" ChangeDateTime="10/08/2019 05:54:37">
+    <Property Name="ElementName" Value="[dbo].[ArtworkReq_Detail].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ArtworkReq_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="uKey" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="75a11186-f890-423b-b8eb-35ea758c5bbc" ChangeDateTime="10/08/2019 05:59:32">
+    <Property Name="ElementName" Value="[dbo].[ArtworkReq_IrregularQty].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ArtworkReq_IrregularQty]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="OrderID" />
   </Operation>
 </Operations>

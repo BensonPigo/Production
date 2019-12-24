@@ -280,7 +280,7 @@ namespace Sci.Production.Quality
             //this.grid.AutoResizeColumns();
 
             // 判斷Batch Encode是否可用
-            this.btnBatchEncode.Enabled = this.EditMode ? false : detailTb.AsEnumerable().Where(s => !s["Status"].Equals("Confirmed")).Any();
+            //this.btnBatchEncode.Enabled = this.EditMode ? false : detailTb.AsEnumerable().Where(s => !s["Status"].Equals("Confirmed")).Any();
 
             string strInspAutoLockAcc=MyUtility.GetValue.Lookup("SELECT InspAutoLockAcc FROM System");
             chkInspAutoLockAcc.Checked = MyUtility.Convert.GetBool(strInspAutoLockAcc);

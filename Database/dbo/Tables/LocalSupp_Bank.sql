@@ -1,83 +1,57 @@
-﻿CREATE TABLE [dbo].[LocalSupp_Bank] (
-    [ID]           VARCHAR (8)    CONSTRAINT [DF_LocalSupp_Bank_ID] DEFAULT ('') NOT NULL,
-    [AccountNo]    VARCHAR (30)   CONSTRAINT [DF_LocalSupp_Bank_AccountNo] DEFAULT ('') NOT NULL,
-    [AccountName]  NVARCHAR (60)  CONSTRAINT [DF_LocalSupp_Bank_AccountName] DEFAULT ('') NOT NULL,
-    [BankName]     NVARCHAR (70)  CONSTRAINT [DF_LocalSupp_Bank_BankName] DEFAULT ('') NOT NULL,
-    [CountryID]    VARCHAR (2)    CONSTRAINT [DF_LocalSupp_Bank_CountryID] DEFAULT ('') NOT NULL,
-    [City]         NVARCHAR (20)  CONSTRAINT [DF_LocalSupp_Bank_City] DEFAULT ('') NULL,
-    [SWIFTCode]    VARCHAR (11)   CONSTRAINT [DF_LocalSupp_Bank_SWIFTCode] DEFAULT ('') NULL,
-    [MidSWIFTCode] VARCHAR (11)   CONSTRAINT [DF_LocalSupp_Bank_MidSWIFTCode] DEFAULT ('') NULL,
-    [MidBankName]  NVARCHAR (70)  CONSTRAINT [DF_LocalSupp_Bank_MidBankName] DEFAULT ('') NULL,
-    [Remark]       NVARCHAR (MAX) CONSTRAINT [DF_LocalSupp_Bank_Remark] DEFAULT ('') NULL,
-    [IsDefault]    BIT            CONSTRAINT [DF_LocalSupp_Bank_IsDefault] DEFAULT ((0)) NULL,
-    [AddName]      VARCHAR (10)   CONSTRAINT [DF_LocalSupp_Bank_AddName] DEFAULT ('') NULL,
-    [AddDate]      DATETIME       NULL,
-    [EditName]     VARCHAR (10)   CONSTRAINT [DF_LocalSupp_Bank_EditName] DEFAULT ('') NULL,
-    [EditDate]     DATETIME       NULL,
-    CONSTRAINT [PK_LocalSupp_Bank] PRIMARY KEY CLUSTERED ([ID] ASC, [AccountNo] ASC)
-);
 
-
+CREATE TABLE [dbo].[LocalSupp_Bank](
+	[ID] [varchar](8) NOT NULL,
+	[AddName] [varchar](10) NULL,
+	[AddDate] [datetime] NULL,
+	[EditName] [varchar](10) NULL,
+	[EditDate] [datetime] NULL,
+	[PKey] [bigint] IDENTITY(1,1) NOT NULL,
+	[ByCheck] [bit] NOT NULL,
+	[Status] [varchar](15) NOT NULL,
+	[ApproveName] [varchar](15) NOT NULL,
+	[ApproveDate] [datetime] NULL,
+ CONSTRAINT [PK_LocalSupp_Bank] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC,
+	[PKey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Supplier_bank', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank';
 
-
+ALTER TABLE [dbo].[LocalSupp_Bank] ADD  CONSTRAINT [DF_LocalSupp_Bank_ID]  DEFAULT ('') FOR [ID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'供應商代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'ID';
 
-
+ALTER TABLE [dbo].[LocalSupp_Bank] ADD  CONSTRAINT [DF_LocalSupp_Bank_AddName]  DEFAULT ('') FOR [AddName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'匯款帳號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'AccountNo';
 
-
+ALTER TABLE [dbo].[LocalSupp_Bank] ADD  CONSTRAINT [DF_LocalSupp_Bank_EditName]  DEFAULT ('') FOR [EditName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'帳戶名稱', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'AccountName';
 
-
+ALTER TABLE [dbo].[LocalSupp_Bank] ADD  DEFAULT ((0)) FOR [ByCheck]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'銀行名稱', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'BankName';
 
-
+ALTER TABLE [dbo].[LocalSupp_Bank] ADD  DEFAULT ('') FOR [Status]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'國別代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'CountryID';
 
-
+ALTER TABLE [dbo].[LocalSupp_Bank] ADD  DEFAULT ('') FOR [ApproveName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'城市', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'City';
 
-
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'�����ӥN�X' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LocalSupp_Bank', @level2type=N'COLUMN',@level2name=N'ID'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'銀行SWIFT Code', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'SWIFTCode';
 
-
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'�s�W�H��' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LocalSupp_Bank', @level2type=N'COLUMN',@level2name=N'AddName'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'中間銀行SWCODE', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'MidSWIFTCode';
 
-
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'�s�W�ɶ�' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LocalSupp_Bank', @level2type=N'COLUMN',@level2name=N'AddDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'中間銀行名稱', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'MidBankName';
 
-
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'�̫�ק�H��' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LocalSupp_Bank', @level2type=N'COLUMN',@level2name=N'EditName'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'Remark';
 
-
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'�̫�ק�ɶ�' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LocalSupp_Bank', @level2type=N'COLUMN',@level2name=N'EditDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'IsDefault';
 
-
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Supplier_bank' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LocalSupp_Bank'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'AddName';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'AddDate';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'EditName';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_Bank', @level2type = N'COLUMN', @level2name = N'EditDate';
 

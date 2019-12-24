@@ -34,7 +34,7 @@
             this.txtShippingExpenseID_s = new Sci.Win.UI.TextBox();
             this.txtShippingExpenseID_e = new Sci.Win.UI.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtsubcon = new Sci.Production.Class.txtsubcon();
+            this.txtsubcon = new Sci.Production.Class.txtsubconNoConfirm();
             this.SuspendLayout();
             // 
             // print
@@ -181,6 +181,6 @@
         private Win.UI.TextBox txtShippingExpenseID_s;
         private Win.UI.TextBox txtShippingExpenseID_e;
         private System.Windows.Forms.Label label3;
-        private Class.txtsubcon txtsubcon;
+        private Class.txtsubconNoConfirm txtsubcon;
     }
 }

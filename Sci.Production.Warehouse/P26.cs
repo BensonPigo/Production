@@ -262,6 +262,7 @@ WHERE   StockType='{0}'
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: true)    //2
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)    //3
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)    //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)    //4
             .Text("colorid", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)    //5
             .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(5), iseditingreadonly: true)    //6
@@ -530,19 +531,33 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,(select p1.colorid from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as colorid
-,(select p1.sizespec from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as sizespec
-,a.Roll
-,a.Dyelot
-,a.Qty
-,a.stocktype
-,a.FromLocation
-,a.ToLocation
-,a.ftyinventoryukey
-,ukey
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
+            this.DetailSelectCommand = string.Format(@"
+select a.id
+	,a.PoId
+	,a.Seq1
+	,a.Seq2
+	,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+	, p1.colorid
+	, p1.sizespec
+	,a.Roll
+	,a.Dyelot
+	,a.Qty
+	,a.stocktype
+	,a.FromLocation
+	,a.ToLocation
+	,a.ftyinventoryukey
+	,ukey
+	,p1.Refno
+	,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 from dbo.LocationTrans_detail a WITH (NOLOCK) 
+outer apply
+(
+	select p1.colorid, p1.sizespec, p1.Refno
+	from PO_Supp_Detail p1 WITH (NOLOCK) 
+	where p1.ID = a.PoId 
+	and p1.seq1 = a.SEQ1 
+	and p1.SEQ2 = a.seq2
+)p1
 Where a.id = '{0}' ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
