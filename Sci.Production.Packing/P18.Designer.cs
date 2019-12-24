@@ -306,10 +306,10 @@
             this.tabPageScan.Controls.Add(this.labelQtyScan);
             this.tabPageScan.Controls.Add(this.labelTabScanTtlQty);
             this.tabPageScan.Controls.Add(this.labelTabScan);
-            this.tabPageScan.Location = new System.Drawing.Point(4, 22);
+            this.tabPageScan.Location = new System.Drawing.Point(4, 25);
             this.tabPageScan.Name = "tabPageScan";
             this.tabPageScan.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageScan.Size = new System.Drawing.Size(311, 170);
+            this.tabPageScan.Size = new System.Drawing.Size(311, 167);
             this.tabPageScan.TabIndex = 1;
             this.tabPageScan.Text = "Scan";
             // 
@@ -377,6 +377,7 @@
             this.txtScanEAN.Name = "txtScanEAN";
             this.txtScanEAN.Size = new System.Drawing.Size(184, 23);
             this.txtScanEAN.TabIndex = 1;
+            this.txtScanEAN.Leave += new System.EventHandler(this.txtScanEAN_Leave);
             this.txtScanEAN.Validating += new System.ComponentModel.CancelEventHandler(this.TxtScanEAN_Validating);
             // 
             // labelEAN

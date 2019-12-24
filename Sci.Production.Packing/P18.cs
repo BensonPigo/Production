@@ -1348,5 +1348,158 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             }
             #endregion
         }
+
+        private void txtScanEAN_Leave(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtScanEAN.Text))
+            {
+                return;
+            }
+
+            if (this.scanDetailBS.DataSource == null)
+            {
+                return;
+            }
+
+            DualResult sql_result;
+            int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
+
+            // 無Barcode
+            if (barcode_pos == -1)
+            {
+                int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
+                if (no_barcode_cnt == 0)
+                {
+                    P18_Message msg = new P18_Message();
+
+                    // 送回 沒有的barcode
+                    if (this.UseAutoScanPack) this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
+                    msg.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!");
+                    this.txtScanEAN.Text = string.Empty;
+                    return;
+                }
+                else
+                {
+                    DataTable no_barcode_dt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).CopyToDataTable();
+                    DataRow no_barcode_dr = no_barcode_dt.NewRow();
+                    if (no_barcode_dt.Rows.Count > 1)
+                    {
+                        // 有空的barcode就開窗
+                        SelectItem sele = new SelectItem(no_barcode_dt, "Article,Color,SizeCode", "8,6,8", string.Empty, headercaptions: "Colorway,Color,Size");
+                        DialogResult result = sele.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            this.txtScanEAN.Text = string.Empty;
+                            if (this.UseAutoScanPack) this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
+                            return;
+                        }
+
+                        no_barcode_dr = sele.GetSelecteds()[0];
+                    }
+                    else
+                    {
+                        no_barcode_dr = no_barcode_dt.Rows[0];
+                    }
+
+                    this.upd_sql_barcode += $@"
+update PackingList_Detail
+set BarCode = '{this.txtScanEAN.Text}'
+where PackingList_Detail.Article 
+=  '{no_barcode_dr["Article"]}'
+and PackingList_Detail.SizeCode
+=  '{no_barcode_dr["SizeCode"]}'
+and PackingList_Detail.ID = '{this.selecedPK.ID}'
+and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+";
+                    foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
+                    {
+                        if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
+                        {
+                            dr["Barcode"] = this.txtScanEAN.Text;
+                            dr["ScanQty"] = (short)dr["ScanQty"] + 1;
+                            this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
+                            break;
+                        }
+                    }
+
+                    if (this.UseAutoScanPack) this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim()).Length);
+                }
+            }
+            else
+            {
+                this.scanDetailBS.Position = barcode_pos;
+                DataRowView cur_dr = (DataRowView)this.scanDetailBS.Current;
+                int scanQty = (short)cur_dr["ScanQty"];
+                int qtyPerCTN = (int)cur_dr["QtyPerCTN"];
+                if (scanQty >= qtyPerCTN)
+                {
+                    // 此barcode已足夠,或超過 送回
+                    if (this.UseAutoScanPack)
+                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
+                    AutoClosingMessageBox.Show($"This Size scan is complete,can not scan again!!", "Warning", 3000);
+                    this.txtScanEAN.Text = string.Empty;
+                    return;
+                }
+                else
+                {
+                    cur_dr["ScanQty"] = (short)cur_dr["ScanQty"] + 1;
+                    this.UpdScanQty((long)cur_dr["Ukey"]);
+                }
+            }
+
+            // this.scanDetailBS.ResetCurrentItem();
+            this.scanDetailBS.ResetBindings(true);
+
+            // 計算scanQty
+            this.numBoxScanQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (short)s["ScanQty"]);
+
+            this.txtScanEAN.Text = string.Empty;
+
+            // 如果都掃完 update PackingList_Detail
+            if (this.numBoxScanQty.Value == this.numBoxScanTtlQty.Value)
+            {
+                if (!MyUtility.Check.Empty(this.upd_sql_barcode))
+                {
+                    if (!(sql_result = DBProxy.Current.Execute(null, this.upd_sql_barcode)))
+                    {
+                        this.ShowErr(sql_result);
+                        return;
+                    }
+                }
+
+                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
+
+                if (isNeedShowWeightInputWindow)
+                {
+                    P18_InputWeight p18_InputWeight = new P18_InputWeight();
+                    p18_InputWeight.ShowDialog();
+                    this.numWeight.Value = p18_InputWeight.ActWeight;
+                    this.numWeight.ValidateControl();
+                }
+
+                string upd_sql = $@"
+update PackingList_Detail 
+set ScanQty = QtyPerCTN 
+, ScanEditDate = GETDATE()
+, ScanName = '{Env.User.UserID}'   
+, Lacking = 0
+, ActCTNWeight = {this.numWeight.Value}
+where id = '{this.selecedPK.ID}' 
+and CTNStartNo = '{this.selecedPK.CTNStartNo}' ";
+                sql_result = DBProxy.Current.Execute(null, upd_sql);
+                if (!sql_result)
+                {
+                    this.ShowErr(sql_result);
+                    return;
+                }
+
+                this.AfterCompleteScanCarton();
+            }
+            else
+            {
+                // 讓遊標停留在原地
+                this.txtScanEAN.Focus();
+            }
+        }
     }
 }
