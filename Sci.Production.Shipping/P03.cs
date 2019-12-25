@@ -230,6 +230,27 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
         {
             DialogResult dResult;
 
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+
+            sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (gridData.Rows.Count > 0 && this.chkImportChange.Checked)
+            {
+                MyUtility.Msg.WarningBox("WK has been shared expense,  [No Import Charge] shouldn't tick, please double check.");
+            }
+
             // Arrive Port Date 不可晚於 Arrive W/H Date
             if (MyUtility.Convert.GetString(this.CurrentMaintain["ExportCountry"]).ToUpper() == MyUtility.Convert.GetString(this.CurrentMaintain["ImportCountry"]).ToUpper()
                 && MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]).ToUpper() == "TRUCK")

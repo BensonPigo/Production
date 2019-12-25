@@ -956,7 +956,17 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                         }
 
                         exportID = MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? MyUtility.Convert.GetString(dr["WKno"]) : MyUtility.Convert.GetString(dr["InvNo"]);
+                        string sqlPrepaidFtyImportFee = $@"select PrepaidFtyImportFee from Export where id = '{exportID}'";
+                        decimal prepaidFtyImportFee = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlPrepaidFtyImportFee));
                         bolNoImportCharges = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(string.Format("select NoImportCharges from Export where id = '{0}'", exportID)));
+                        if (bolNoImportCharges && prepaidFtyImportFee == 0)
+                        {
+                            MyUtility.Msg.WarningBox("P03. Import Schedule - [No Import Charge] has been checked, please reconfirm.");
+                        }
+                        else if (bolNoImportCharges && prepaidFtyImportFee != 0)
+                        {
+                            MyUtility.Msg.WarningBox("Shipping-TW already paid the import charge, please check with forwarder if they bill us repeatedly and inform Shipping-TW at the same time.");
+                        }
                         if (bolNoImportCharges)
                         {
                             MyUtility.Msg.WarningBox("No Import Charge");
