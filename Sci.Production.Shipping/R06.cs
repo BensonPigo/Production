@@ -179,16 +179,29 @@ select s.Type
         ,s.BLNo
         ,s.Remark
         ,s.InvNo
-        ,isnull((select CONCAT(InvNo,'/') 
+        ,ExportInv= iif( isnull(x1.InvNo,'') <>'' and isnull(x2.WKNo,'') <>'', x1.InvNo +'/'+x2.WKNo ,concat(x1.InvNo,x2.WKNo))
+from ShippingAP s WITH (NOLOCK) 
+left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
+outer apply(
+	select InvNo= stuff((select CONCAT('/',InvNo) 
                  from (
                         select distinct InvNo 
                         from ShareExpense WITH (NOLOCK) 
                         where ShippingAPID = s.ID
                               and junk != 1
                  ) a 
-                for xml path('')),'') as ExportInv
-from ShippingAP s WITH (NOLOCK) 
-left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
+                for xml path('')),1,1,'')
+)x1
+outer apply(
+	select WKNo= stuff((select CONCAT('/',WKNo) 
+                 from (
+                        select distinct WKNo 
+                        from ShareExpense WITH (NOLOCK) 
+                        where ShippingAPID = s.ID
+                              and junk != 1
+                 ) a 
+                for xml path('')),1,1,'')
+)x2
 where s.Status = 'Approved'");
             }
 
