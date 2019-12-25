@@ -755,11 +755,19 @@ where ShippingAPID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'
                 }
 
                 sqlCmd = string.Format(
-                    @"select ls.Name,ls.Address,ls.Tel,isnull(lsb.AccountNo,' ') as AccountNo, 
-isnull(lsb.AccountName,' ') as AccountName, isnull(lsb.BankName,' ') as BankName,
-isnull(lsb.CountryID,' ') as CountryID, isnull(lsb.City,' ') as City, isnull(lsb.SWIFTCode,' ') as SWIFTCode
+                    @"
+select ls.Name
+		, ls.Address
+		, ls.Tel
+		, isnull(lsbd.AccountNo,' ') as AccountNo
+		, isnull(lsbd.AccountName,' ') as AccountName
+		, isnull(lsbd.BankName,' ') as BankName
+		, isnull(lsbd.CountryID,' ') as CountryID
+		, isnull(lsbd.City,' ') as City
+		, isnull(lsbd.SWIFTCode,' ') as SWIFTCode
 from LocalSupp ls WITH (NOLOCK) 
-left join LocalSupp_Bank lsb WITH (NOLOCK) on ls.ID = lsb.ID and lsb.IsDefault = 1
+left join LocalSupp_Bank lsb WITH (NOLOCK) on ls.ID = lsb.ID 
+left join LocalSupp_Bank_Detail lsbd WITH (NOLOCK) on lsb.ID = lsbd.ID and lsbd.IsDefault = 1
 where ls.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out localSpuuData);
                 if (!result)
