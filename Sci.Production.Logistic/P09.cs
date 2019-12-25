@@ -41,7 +41,7 @@ namespace Sci.Production.Logistic
             this.gridTransferDate.IsEditingReadOnly = false;
             this.gridTransferDate.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridTransferDate)
-            .Date("TransferDate", header: "Receive Date", iseditable: false)
+            .Date("TransferDate", header: "Transfer Date", iseditable: false)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditable: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditable: false)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditable: false)
