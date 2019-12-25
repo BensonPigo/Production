@@ -45,5 +45,5 @@ BEGIN
 	INNER JOIN #Trade_DQSReason s ON t.ID=s.ID AND t.Type = s.Type
 
 	
-	DROP TABLE #Formula_Change_Table
+	DROP TABLE #Trade_DQSReason
 END
