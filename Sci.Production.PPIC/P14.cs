@@ -48,6 +48,33 @@ namespace Sci.Production.PPIC
             {
                 this.btnmail.Enabled = false;
             }
+
+            #region 依狀態調整Label 名稱
+            if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Reject", true) == 0)
+            {
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["ApproveName"]) && MyUtility.Check.Empty(this.CurrentMaintain["ConfirmName"]))
+                {
+                    this.labPurchaseApvName.Text = "Reject Name";
+                    this.labPurchaseApvDate.Text = "Reject Date";
+                    this.labPlanningConfName.Text = "Approve Name";
+                    this.labPlanningConfDate.Text = "Approve Date";
+                }
+                else if (!MyUtility.Check.Empty(this.CurrentMaintain["ApproveName"]) && !MyUtility.Check.Empty(this.CurrentMaintain["ConfirmName"]))
+                {
+                    this.labPurchaseApvName.Text = "Approve Name";
+                    this.labPurchaseApvDate.Text = "Approve Date";
+                    this.labPlanningConfName.Text = "Reject Name";
+                    this.labPlanningConfDate.Text = "Reject Date";
+                }
+            }
+            else
+            {
+                this.labPurchaseApvName.Text = "Approve Name";
+                this.labPurchaseApvDate.Text = "Approve Date";
+                this.labPlanningConfName.Text = "Approve Name";
+                this.labPlanningConfDate.Text = "Approve Date";
+            }
+            #endregion
         }
 
         /// <summary>
