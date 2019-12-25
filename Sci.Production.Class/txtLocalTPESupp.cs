@@ -102,7 +102,7 @@ select Junk from Supp WITH (NOLOCK) where ID = '{0}'
 select DISTINCT l.Abb
 from LocalSupp l WITH (NOLOCK) 
 left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' AND l.ID = '{this.textBox1.Text.ToString()}'   
+WHERE l.Junk=0 /*and lb.Status= 'Confirmed' */AND l.ID = '{this.textBox1.Text.ToString()}'   
 union all 
 select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.textBox1.Text.ToString()}' ";
                     this.displayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
@@ -116,8 +116,7 @@ select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.te
             string sql_cmd = $@"
 select DISTINCT l.Abb
 from LocalSupp l WITH (NOLOCK) 
-left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' AND l.ID = '{this.textBox1.Text.ToString()}'   
+WHERE l.ID = '{this.textBox1.Text.ToString()}'   
 union all 
 select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.textBox1.Text.ToString()}' 
 ";
