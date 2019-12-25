@@ -652,7 +652,7 @@ inner join #tmp b on a.ukey = b.ukey";
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select("",@"
+            DualResult result = DBProxy.Current.Select("", @"
 select b.nameEn 
 		,b.AddressEN
 		,b.Tel
@@ -663,12 +663,12 @@ select b.nameEn
 		,a.PaytermID+d.Name [Terms]
 		,a.InvNo [Invoice]
 		,a.Remark [Remark]
-		,e.AccountNo [AC_No]
-        ,e.AccountName [AC_Name]
-        ,e.BankName [Bank_Name]
-        ,e.CountryID [Country]
-        ,e.city [city] 
-        ,e.swiftcode [SwiftCode]
+		,LocalSuppBank.AccountNo [AC_No]
+        ,LocalSuppBank.AccountName [AC_Name]
+        ,LocalSuppBank.BankName [Bank_Name]
+        ,LocalSuppBank.CountryID [Country]
+        ,LocalSuppBank.city [city] 
+        ,LocalSuppBank.swiftcode [SwiftCode]
         ,a.Handle+f.Name [Prepared_by]
         ,a.CurrencyID[CurrencyID]
 		,a.VatRate[VatRate]
@@ -676,9 +676,21 @@ from dbo.LocalAP a WITH (NOLOCK)
 left join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid
 inner join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
 left join dbo.PayTerm d WITH (NOLOCK) on d.id=a.PaytermID
-left join dbo.LocalSupp_Bank e WITH (NOLOCK) on e.IsDefault=1 and e.id=a.LocalSuppID
 left join dbo.Pass1 f WITH (NOLOCK) on f.id=a.Handle
 left join dbo.Currency cr WITH (NOLOCK) on cr.ID = a.CurrencyID
+OUTER APPLY(
+	SELECT    [AccountNo]= IIF(lb.ByCheck=1,'',lbd.Accountno )
+		    , [AccountName]=IIF(lb.ByCheck=1,'',lbd.AccountName )
+		    , [BankName]=IIF(lb.ByCheck=1,'',lbd.BankName )
+		    , [CountryID]=IIF(lb.ByCheck=1,'',lbd.CountryID)
+		    , [City]=IIF(lb.ByCheck=1,'',lbd.City)
+		    , [SwiftCode]=IIF(lb.ByCheck=1,'',lbd.SwiftCode )
+	FROM LocalSupp_Bank lb
+	INNER JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND lb.PKey=lbd.Pkey
+	WHERE lb.ID=a.LocalSuppID  
+		AND lb.ApproveDate = (SElECT MAX(ApproveDate) FROM  LocalSupp_Bank WHERE Status='Confirmed' AND ID= a.LocalSuppID )
+		AND lbd.IsDefault=1
+)LocalSuppBank
 where a.id = @ID"
                 , pars, out dt);
             if (!result) { this.ShowErr(result); }
