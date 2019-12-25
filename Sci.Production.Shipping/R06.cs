@@ -341,7 +341,7 @@ where s.Status = 'Approved'");
                     objArray[0, 10] = dr["BLNo"];
                     objArray[0, 11] = dr["Remark"];
                     objArray[0, 12] = dr["InvNo"];
-                    objArray[0, 13] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : MyUtility.Convert.GetString(dr["ExportInv"]).Substring(0, MyUtility.Convert.GetString(dr["ExportInv"]).Length - 1);
+                    objArray[0, 13] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : dr["ExportInv"];
                     worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
