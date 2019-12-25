@@ -500,7 +500,6 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 		t.ShipQty=s.ShipQty,
 		t.ShipFoc=s.ShipFoc,
 		t.ShipETA=s.ShipETA,
-		t.Junk = s.Junk,
 		t.TPECurrencyID = a.CurrencyID,
 		t.TPEPrice = s.Price
 		from  dbo.MiscPO_Detail as  t
