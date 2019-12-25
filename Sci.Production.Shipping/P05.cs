@@ -647,18 +647,27 @@ where   pl.INVNo = '{0}'
                 return false;
             }
 
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
+            {
+                if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
+                {
+                    MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
+                    return false;
+                }
+            }
+
             string sqlCmd = string.Format(
-                @"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
+            @"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
 and fw.BrandID = '{0}'
 and fw.Forwarder = '{1}'
 and fw.ShipModeID = '{2}'
 and  fwd.WhseNo = '{3}'
 order by fwd.WhseNo",
-                MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
-                MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]),
-                MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]),
-                this.txtTerminalWhse.Text);
+            MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
+            MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]),
+            MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]),
+            this.txtTerminalWhse.Text);
 
             if (!MyUtility.Check.Empty(this.txtTerminalWhse.Text))
             {
@@ -1454,6 +1463,12 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
             if (Convert.ToDateTime(this.CurrentMaintain["InvDate"]) > Convert.ToDateTime(this.CurrentMaintain["FCRDate"]))
             {
                 MyUtility.Msg.WarningBox("< Inv. Date > can't exceed < FCR Date >!");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
+            {
+                MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
                 return;
             }
 
