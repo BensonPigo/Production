@@ -405,8 +405,8 @@ outer apply(
 	SELECT top 1 OBE.Width
 	FROM Order_BOF OB 
 	INNER JOIN Order_BOF_Expend OBE ON OBE.Order_BOFUkey = OB.Ukey
-	INNER JOIN PO_Supp PS ON PS.ID = OB.Id AND PS.SuppID = OB.SuppID
-	INNER JOIN PO_Supp_Detail PSD ON PSD.ID= OB.Id AND PSD.RefNo = OB.Refno AND PSD.ColorID = OBE.ColorId and ps.SEQ1 = psd.SEQ1
+	INNER JOIN PO_Supp PS ON PS.ID = OB.Id --AND PS.SuppID = OB.SuppID
+	INNER JOIN PO_Supp_Detail PSD ON PSD.ID= OB.Id AND PSD.RefNo = OB.Refno AND PSD.ColorID = OBE.ColorId --and ps.SEQ1 = psd.SEQ1
 	WHERE PSD.ID =t.[Master SP#] AND PSD.SEQ1=t.Seq1 AND PSD.SEQ2=t.SEQ2
 )w
 
