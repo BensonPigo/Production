@@ -16,13 +16,15 @@ namespace Sci.Production.Packing
         private DataTable _P25Dt;
         private DataTable GridDt = new DataTable();
         public bool canConvert = false;
+        private string _UploadType = string.Empty;
 
-        public P25_AssignPackingList(List<MappingModel> MappingModels, DataTable P25Dt)
+        public P25_AssignPackingList(List<MappingModel> MappingModels, DataTable P25Dt , string UploadType)
         {
             this.InitializeComponent();
             this._MappingModels = MappingModels;
             this._P25Dt = P25Dt;
-            this.GridDt.Columns.Add(new DataColumn() { ColumnName = "ZPLFileName", DataType = typeof(string) });
+            this._UploadType = UploadType;
+            this.GridDt.Columns.Add(new DataColumn() { ColumnName = "FileName", DataType = typeof(string) });
             this.GridDt.Columns.Add(new DataColumn() { ColumnName = "PackingListID", DataType = typeof(string) });
         }
 
@@ -33,7 +35,7 @@ namespace Sci.Production.Packing
             foreach (var mappingModel in this._MappingModels)
             {
                 DataRow dr = this.GridDt.NewRow();
-                dr["ZPLFileName"] = mappingModel.FileName;
+                dr["FileName"] = mappingModel.FileName;
                 dr["PackingListID"] = mappingModel.PackingListID;
                 this.GridDt.Rows.Add(dr);
             }
@@ -42,7 +44,7 @@ namespace Sci.Production.Packing
 
             this.grid2.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid2)
-.Text("ZPLFileName", header: "ZPL File Name ", width: Widths.AnsiChars(35))
+.Text("FileName", header: "File Name ", width: Widths.AnsiChars(35))
 .Text("PackingListID", header: "PackingList#", width: Widths.AnsiChars(15), iseditingreadonly: false)
 ;
         }
@@ -59,7 +61,7 @@ namespace Sci.Production.Packing
                 #region 檢查表格內的每一個檔案，裡面的每一張ZPL有沒有Mapping
                 foreach (DataRow dr in dt.Rows)
                 {
-                    string fileName = dr["ZPLFileName"].ToString();
+                    string fileName = dr["FileName"].ToString();
                     string packingListID = dr["PackingListID"].ToString();
                     bool isAnyNotMapping = false;
 
@@ -97,7 +99,7 @@ namespace Sci.Production.Packing
                     // 上一層表格填入結果
                     foreach (var fileName in notMapping_FileName.Distinct())
                     {
-                        this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Fail";
+                        this._P25Dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Fail";
                     }
 
                     string msg = "PackingList# does not Mapping.";
@@ -118,7 +120,7 @@ namespace Sci.Production.Packing
                     #region 把每一個檔案，的每一張ZPL都寫入PackingList_Detail
                     foreach (DataRow dr in dt.Rows)
                     {
-                        string fileName = dr["ZPLFileName"].ToString();
+                        string fileName = dr["FileName"].ToString();
                         string packingListID = dr["PackingListID"].ToString();
                         string cmd = string.Empty;
                         string updateCmd = string.Empty;
@@ -128,8 +130,11 @@ namespace Sci.Production.Packing
 
                         foreach (var ZPL in current.ZPL_Content)
                         {
-                            cmd += $@"
 
+                            if (this._UploadType == "ZPL")
+                            {
+                                cmd += $@"
+----1. 整理Mapping的資料
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders{i}
 FROM Orders 
@@ -158,11 +163,25 @@ WHERE p.Type ='B'
         )
 ORDER BY CONVERT ( int ,pd.CTNStartNo)
 
+----2. 更新PackingList_Detail的CustCTN
 UPDATE pd
 SET pd.CustCTN='{ZPL.CustCTN}'
 FROM PackingList_Detail pd
 INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
 
 INSERT INTO [dbo].[ShippingMarkPic_Detail]
            ([ShippingMarkPicUkey]
@@ -213,6 +232,95 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
+                            }
+
+                            if (this._UploadType == "PDF")
+                            {
+                                cmd += $@"
+----1. 整理Mapping的資料
+SELECT ID ,StyleID ,POID
+INTO #tmpOrders{i}
+FROM Orders 
+WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
+
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
+    AND pd.CustCTN = ''
+	AND p.ID='{packingListID}'
+    AND Article = '{ZPL.Article}'
+    AND pd.ShipQty={ZPL.ShipQty}
+    AND (
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{ZPL.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{ZPL.SizeCode}'
+        )
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
+
+----2. 更新PackingList_Detail的CustCTN
+UPDATE pd
+SET pd.CustCTN='{ZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}'
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}'
+ 			)
+
+
+DROP TABLE #tmpOrders{i},#tmp{i}
+";
+                            }
+
                             i++;
                         }
 
@@ -232,7 +340,7 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                                 transactionscope.Complete();
                                 transactionscope.Dispose();
 
-                                this._P25Dt.AsEnumerable().Where(o => o["ZPLFileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
+                                this._P25Dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
 
                                 this.canConvert = true;
                             }

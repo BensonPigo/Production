@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Data;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 using System.Drawing;
 <<<<<<< HEAD
 using System.Text;
@@ -39,6 +40,9 @@ using System.Net;
 =======
 >>>>>>> ISP20191302 - 調整P25功能
 =======
+=======
+using System.Drawing;
+>>>>>>> ISP20191897 - 加入PDF功能(混尺碼除外)
 using System.Drawing.Imaging;
 >>>>>>> ISP20191302 -
 using System.IO;
@@ -61,7 +65,8 @@ namespace Sci.Production.Packing
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 =======
         private DataTable GridDt = new DataTable();
-        private Dictionary<string, List<ZPL>> File_Name_ZPL = new Dictionary<string, List<ZPL>>();
+        private Dictionary<string, List<ZPL>> File_Name_Object = new Dictionary<string, List<ZPL>>();
+        private Dictionary<string, string> File_Name_PDF = new Dictionary<string, string>();
         private List<string> wattingForConvert = new List<string>();
         private string[] wattingForConvert_contentsOfZPL;
         private UploadType currentFileType;
@@ -104,6 +109,7 @@ namespace Sci.Production.Packing
         }
 >>>>>>> ISP20191302 - 調整P25功能
 
+<<<<<<< HEAD
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
         private void BtnSelecPath_Click(object sender, EventArgs e)
 >>>>>>> ISP20191302 - 暫時commit
@@ -128,6 +134,8 @@ namespace Sci.Production.Packing
         private void btnSelectFile_Click(object sender, EventArgs e)
 >>>>>>> ISP20191302
 =======
+=======
+>>>>>>> ISP20191897 - 加入PDF功能(混尺碼除外)
         private void BtnSelectFile_Click(object sender, EventArgs e)
 >>>>>>> ISP20191302 - 暫時commit
         {
@@ -224,15 +232,23 @@ namespace Sci.Production.Packing
 
                 this.GridDt.Rows.Clear();
                 this.listControlBindingSource1.DataSource = null;
-                this.File_Name_ZPL.Clear();
-                // ZPL
-                if (openFileDialog1.SafeFileNames.Any(o => !o.EndsWith(".pdf") && o.EndsWith(".zpl")))
+                this.File_Name_Object.Clear();
+                this.File_Name_PDF.Clear();
+                this.wattingForConvert.Clear();
+
+                if (this.wattingForConvert_contentsOfZPL != null)
+                {
+                    Array.Clear(this.wattingForConvert_contentsOfZPL, 0, this.wattingForConvert_contentsOfZPL.Length);
+                }
+
+                // ZPL格式
+                if (openFileDialog1.SafeFileNames.Any(o => !o.ToString().ToLower().EndsWith(".pdf") && o.ToString().ToLower().EndsWith(".zpl")))
                 {
                     this.currentFileType = UploadType.ZPL;
                 }
 
-                // PDF
-                if (openFileDialog1.SafeFileNames.Any(o => o.EndsWith(".pdf") && !o.EndsWith(".zpl")))
+                // PDF格式
+                if (openFileDialog1.SafeFileNames.Any(o => o.ToString().ToLower().EndsWith(".pdf") && !o.ToString().ToLower().EndsWith(".zpl")))
                 {
                     this.currentFileType = UploadType.PDF;
                 }
@@ -373,12 +389,13 @@ WHERE p.MDivisionID = @MDivisionID
                             // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
                             List<ZPL> zPL_Objects = this.Analysis_ZPL(dataList, custCTN_List);
 
-                            this.File_Name_ZPL.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
+                            this.File_Name_Object.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
                             i++;
                         }
                         #endregion
 >>>>>>> ISP20191302 -
 
+                        #region PDF一個檔案只有一張
                         if (this.currentFileType == UploadType.PDF)
                         {
                             FileInfo fileInfo = new FileInfo(file);
@@ -388,23 +405,28 @@ WHERE p.MDivisionID = @MDivisionID
                             string[] stringSeparators = new string[] { "\r\n" };
                             string[] tmpArray = oriZplConten.Split(stringSeparators, StringSplitOptions.None);
 
-                            List<ZPL> zPL_Objects = new List<ZPL>() { new ZPL()
+                            List<ZPL> zPL_Objects = new List<ZPL>()
                             {
-                                CustCTN = tmpArray[0].Split(' ')[1],
-                                CustPONo = tmpArray[21],
-                                StyleID = tmpArray[22],
-                                SizeCode = tmpArray[24],
-                                ShipQty = tmpArray[28]
-                            }};
+                                new ZPL()
+                                {
+                                    CustCTN = tmpArray[0].Split(' ')[1],
+                                    CustPONo = tmpArray[21],
+                                    StyleID = tmpArray[22].Split('-')[0],
+                                    Article=tmpArray[22].Split('-')[1],
+                                    SizeCode = tmpArray[24],
+                                    ShipQty = tmpArray[28]
+                                }
+                            };
 
-                            this.File_Name_ZPL.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
+                            this.File_Name_Object.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
+                            this.File_Name_PDF.Add(fileInfo.FullName, zPL_Objects.FirstOrDefault().CustCTN);
                             i++;
                         }
+                        #endregion
 
                     }
 
                     this.listControlBindingSource1.DataSource = this.GridDt;
-                    //MyUtility.Msg.InfoBox("ZPL convert to image Success!!");
                 }
                 catch (Exception ex)
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
@@ -415,6 +437,7 @@ WHERE p.MDivisionID = @MDivisionID
 
             this.listControlBindingSource.DataSource = this.gridData;
         }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 <<<<<<< HEAD
@@ -458,6 +481,9 @@ WHERE p.MDivisionID = @MDivisionID
 >>>>>>> ISP20191302 - 調整P25功能
 =======
 >>>>>>> ISP20191302 - try cath 加上
+=======
+
+>>>>>>> ISP20191897 - 加入PDF功能(混尺碼除外)
         /// <summary>
         /// 從單張ZPL內容中，拆解出需要的欄位資訊
         /// </summary>
@@ -588,7 +614,7 @@ WHERE p.MDivisionID = @MDivisionID
 
                 #region 開始Mapping
 
-                foreach (var item in this.File_Name_ZPL)
+                foreach (var item in this.File_Name_Object)
                 {
                     // 根據上傳的ZPL展開
                     string fileName = item.Key;
@@ -736,7 +762,7 @@ DROP TABLE #tmoOrders,#tmp
                 // 如果有Mapping失敗的，則到下一個視窗
                 if (notMapping)
                 {
-                    Sci.Production.Packing.P25_AssignPackingList form = new P25_AssignPackingList(this.MappingModels, (DataTable)this.listControlBindingSource1.DataSource);
+                    Sci.Production.Packing.P25_AssignPackingList form = new P25_AssignPackingList(this.MappingModels, (DataTable)this.listControlBindingSource1.DataSource ,this.currentFileType.ToString());
                     form.ShowDialog();
                     this.canConvert = form.canConvert;
                 }
@@ -760,7 +786,10 @@ DROP TABLE #tmoOrders,#tmp
                         // 相同PackingListID Article SizeCode ShipQty，照順序寫入CustCTN、P24表頭 + 表身
                         foreach (var ZPL in current.ZPL_Content)
                         {
-                            cmd += $@"
+                            if (this.currentFileType == UploadType.ZPL)
+                            {
+
+                                cmd += $@"
 ----1. 整理Mapping的資料
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders{i}
@@ -859,6 +888,95 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
+                            }
+
+                            if (this.currentFileType == UploadType.PDF)
+                            {
+                                cmd += $@"
+----1. 整理Mapping的資料
+SELECT ID ,StyleID ,POID
+INTO #tmpOrders{i}
+FROM Orders 
+WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
+
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' 
+	AND p.ID='{packingListID}'
+    AND pd.CustCTN='' 
+    AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
+    AND Article = '{ZPL.Article}'
+    AND pd.ShipQty={ZPL.ShipQty}
+    AND (
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{ZPL.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{ZPL.SizeCode}'
+        )
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
+
+----2. 更新PackingList_Detail的CustCTN
+UPDATE pd
+SET pd.CustCTN='{ZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+DROP TABLE #tmpOrders{i},#tmp{i}
+";
+                            }
+
                             i++;
                         }
 
@@ -885,11 +1003,12 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                     this.canConvert = true;
                 }
 
+                string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
+
                 if (this.canConvert)
                 {
                     // 然後開始轉圖片
                     this.ShowWaitMessage("Convert to Image....");
-                    string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
 
                     if (this.currentFileType == UploadType.ZPL)
                     {
@@ -902,6 +1021,16 @@ DROP TABLE #tmpOrders{i},#tmp{i}
 
                     if (this.currentFileType == UploadType.PDF)
                     {
+                        foreach (var item in this.File_Name_PDF)
+                        {
+
+                            string fileName = item.Key;
+                            string custCTN = item.Value;
+
+                            FileInfo file = new FileInfo(fileName);
+                            PDDocument doc = PDDocument.load(file.FullName);
+                            ConvertPDF2Image(fileName, shippingMarkPath, custCTN, 1, 5, ImageFormat.Jpeg, Definition.One);
+                        }
                     }
 
                     this.HideWaitMessage();
@@ -992,11 +1121,6 @@ DROP TABLE #tmpOrders{i},#tmp{i}
 
         #endregion
 
-        public enum Definition
-        {
-            One = 1, Two = 2, Three = 3, Four = 4, Five = 5, Six = 6, Seven = 7, Eight = 8, Nine = 9, Ten = 10
-        }
-
         /// <summary>
         /// 將PDF文件轉換為圖片的方法
         /// </summary>
@@ -1007,8 +1131,7 @@ DROP TABLE #tmpOrders{i},#tmp{i}
         /// <param name="endPageNum">從PDF文件的第幾頁開始停止轉換</param>
         /// <param name="imageFormat">設定所需圖片格式</param>
         /// <param name="definition">設定圖片的清晰度，數字越大越清晰</param>
-        public static void ConvertPDF2Image(string pdfInputPath, string imageOutputPath,
-            string imageName, int startPageNum, int endPageNum, ImageFormat imageFormat, Definition definition)
+        public static void ConvertPDF2Image(string pdfInputPath, string imageOutputPath, string imageName, int startPageNum, int endPageNum, ImageFormat imageFormat, Definition definition)
         {
             PDFWrapper pdfWrapper = new PDFWrapper();
 
@@ -1040,10 +1163,11 @@ DROP TABLE #tmpOrders{i},#tmp{i}
             // start to convert each page
             for (int i = startPageNum; i <= endPageNum; i++)
             {
-                pdfWrapper.ExportJpg(imageOutputPath + imageName + i.ToString() + ".jpg", i, i, 180, 80);//這裡可以設定輸出圖片的頁數、大小和圖片畫質
-                if (pdfWrapper.IsJpgBusy) { System.Threading.Thread.Sleep(100); }
-
-                Bitmap sourceImage = new Bitmap(imageOutputPath + imageName + i.ToString() + ".jpg");
+                string tmpIMG = imageOutputPath + imageName + "_tmp.bmp";
+                pdfWrapper.ExportJpg(tmpIMG, i, i, 180, 80);//這裡可以設定輸出圖片的頁數、大小和圖片畫質
+                //if (pdfWrapper.IsJpgBusy) { System.Threading.Thread.Sleep(500); }
+                System.Threading.Thread.Sleep(500);
+                Bitmap sourceImage = new Bitmap(tmpIMG);
                 int picWidth = 759;
                 int picHeight = 1207;
 
@@ -1059,11 +1183,11 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                          new Rectangle(33, 110, picWidth, picHeight),
                          //指定被切割的圖片要繪製的部分
                          GraphicsUnit.Pixel);
-
-                pic.Save(imageOutputPath + imageName + i.ToString() + "2.jpg");
+                pic.Save(imageOutputPath + imageName + ".bmp");
                 graphic.Dispose();
                 pic.Dispose();
                 sourceImage.Dispose();
+                File.Delete(tmpIMG);
             }
 
             pdfWrapper.Dispose();
@@ -1075,6 +1199,7 @@ DROP TABLE #tmpOrders{i},#tmp{i}
             PDF
         }
 
+<<<<<<< HEAD
         #region 作廢區
         /// <summary>
         /// 將上傳的ZPL檔，與PackingList_Detail對應，若有對上的則放上Grid
@@ -2107,5 +2232,11 @@ DROP TABLE #tmoOrders
 >>>>>>> ISP20191302 - try cath 加上
         #endregion
 >>>>>>> ISP20191302 - 調整P25功能
+=======
+        public enum Definition
+        {
+            One = 1, Two = 2, Three = 3, Four = 4, Five = 5, Six = 6, Seven = 7, Eight = 8, Nine = 9, Ten = 10
+        }
+>>>>>>> ISP20191897 - 加入PDF功能(混尺碼除外)
     }
 }
