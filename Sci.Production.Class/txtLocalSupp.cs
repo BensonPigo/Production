@@ -96,15 +96,7 @@ order by l.ID"
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            //this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID");
-            this.displayBox1.Text = MyUtility.GetValue.Lookup($@"
-
-select DISTINCT l.Abb
-from dbo.LocalSupp l WITH (NOLOCK) 
-left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  l.ID = '{this.textBox1.Text.ToString()}'
-");
-
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID");
         }
     }
 }
