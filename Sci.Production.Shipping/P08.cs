@@ -756,19 +756,30 @@ where ShippingAPID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'
 
                 sqlCmd = string.Format(
                     @"
-select ls.Name
+SELECT    ls.Name
 		, ls.Address
 		, ls.Tel
-		, isnull(lsbd.AccountNo,' ') as AccountNo
-		, isnull(lsbd.AccountName,' ') as AccountName
-		, isnull(lsbd.BankName,' ') as BankName
-		, isnull(lsbd.CountryID,' ') as CountryID
-		, isnull(lsbd.City,' ') as City
-		, isnull(lsbd.SWIFTCode,' ') as SWIFTCode
-from LocalSupp ls WITH (NOLOCK) 
-left join LocalSupp_Bank lsb WITH (NOLOCK) on ls.ID = lsb.ID 
-left join LocalSupp_Bank_Detail lsbd WITH (NOLOCK) on lsb.ID = lsbd.ID and lsbd.IsDefault = 1
-where ls.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]));
+		, [AccountNo]=LocalSupBank.AccountNo
+		, [AccountName]=LocalSupBank.AccountName
+		, [BankName]=LocalSupBank.BankName
+		, [CountryID]=LocalSupBank.CountryID
+		, [City]=LocalSupBank.City
+		, [SwiftCode]=LocalSupBank.SwiftCode
+FROM LocalSupp ls
+OUTER APPLY(
+	SELECT   [AccountNo]= IIF(lb.ByCheck=1,'',lbd.Accountno )
+			, [AccountName]=IIF(lb.ByCheck=1,'',lbd.AccountName )
+			, [BankName]=IIF(lb.ByCheck=1,'',lbd.BankName )
+			, [CountryID]=IIF(lb.ByCheck=1,'',lbd.CountryID)
+			, [City]=IIF(lb.ByCheck=1,'',lbd.City)
+			, [SwiftCode]=IIF(lb.ByCheck=1,'',lbd.SwiftCode )
+	FROM LocalSupp_Bank lb
+	LEFT JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND lb.PKey=lbd.Pkey
+	WHERE lb.ID=ls.ID
+		AND lb.ApproveDate = (SElECT MAX(ApproveDate) FROM  LocalSupp_Bank WHERE Status='Confirmed' AND ID=ls.ID)
+		AND lbd.IsDefault=1
+)LocalSupBank
+WHERE ls.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out localSpuuData);
                 if (!result)
                 {

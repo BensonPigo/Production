@@ -247,7 +247,7 @@ dr["localsuppid"]);
                             FROM Order_tmscost ot WITH (NOLOCK)
                             left join LocalSupp l WITH (NOLOCK) on l.ID=ot.LocalSuppID
                             left join LocalSupp_Bank lb WITH (NOLOCK) ON l.id=lb.id 
-                            where ot.LocalSuppID='{0}' and lb.Status= 'Confirmed' ", this.CurrentDetailData["localsuppid"]);
+                            where ot.LocalSuppID='{0}' ", this.CurrentDetailData["localsuppid"]);
                         DualResult result = DBProxy.Current.Select(null, subconName, out dt);
                         if (dt.Rows.Count == 0)
                         {
@@ -325,15 +325,7 @@ end;",
                     }
                     else
                     {
-                        sqlcmd = @"
---select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID
-
-select DISTINCT l.ID ,l.Abb ,l.Name
-from dbo.LocalSupp l WITH (NOLOCK) 
-left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed' and IsFactory = 1
-order by ID
-";
+                        sqlcmd = @"select DISTINCT l.ID ,l.Abb ,l.Name from dbo.LocalSupp l WITH (NOLOCK) left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id WHERE l.Junk=0 and lb.Status= 'Confirmed' and IsFactory = 1 order by ID";
                         item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
                         DialogResult result = item.ShowDialog();
                         if (result == DialogResult.Cancel)
