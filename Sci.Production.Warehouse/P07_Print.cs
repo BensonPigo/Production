@@ -109,6 +109,7 @@ select
 				,null,sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ))
 	,[SubVaniance]=R.ShipQty - R.ActualQty
 	,R.Remark		
+    ,ColorName=(select name from color where color.id = p.colorid and color.BrandId = p.BrandId )
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
 left join orders o WITH (NOLOCK) on o.ID = r.PoId
@@ -238,17 +239,18 @@ where R.id = @ID";
                     objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
                     objSheets.Cells[nRow, 5] = dr["Refno"].ToString();
                     objSheets.Cells[nRow, 6] = dr["ColorID"].ToString();
-                    objSheets.Cells[nRow, 7] = dr["WeaveTypeID"].ToString();
-                    objSheets.Cells[nRow, 8] = dr["BrandID"].ToString();
-                    objSheets.Cells[nRow, 9] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 10] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 11] = dr["ShipQty"].ToString()+" " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 12] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 13] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
-                    objSheets.Cells[nRow, 14] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
+                    objSheets.Cells[nRow, 7] = dr["ColorName"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["WeaveTypeID"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["BrandID"].ToString();
+                    objSheets.Cells[nRow, 10] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 11] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 12] = dr["ShipQty"].ToString()+" " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 13] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 14] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
+                    objSheets.Cells[nRow, 15] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
                         string.Empty : dr["TotalReceivingQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 15] = dr["QtyVaniance"].ToString();
-                    objSheets.Cells[nRow, 16] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 16] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 17] = dr["Remark"].ToString();
                     nRow++;
                 }
 
