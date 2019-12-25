@@ -7,9 +7,17 @@ CREATE PROCEDURE [dbo].[imp_MESbase]
 AS
 BEGIN
 
-	SELECT *
+	SELECT 
+	Type
+	,ID
+	,Description
+	,Junk
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
 	INTO #Trade_DQSReason
-	FROM Trade_To_Pms.dbo.DQSReason
+	FROM [Mainserver].Trade_To_Pms.dbo.DQSReason
 	;
 
 	INSERT INTO ManufacturingExecution.dbo.DQSReason 
