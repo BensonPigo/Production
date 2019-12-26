@@ -21,13 +21,11 @@ namespace Sci.Production.Cutting
 {
     public partial class P02_WKETA : Sci.Win.Tems.QueryForm
     {
-        DataRow Master;
         DataRow CurrentRow;
-        public P02_WKETA(DataRow master,DataRow currentRow)
+        public P02_WKETA(DataRow currentRow)
         {
             InitializeComponent();
             this.EditMode = true;
-            this.Master = master;
             this.CurrentRow = currentRow;
         }
 
