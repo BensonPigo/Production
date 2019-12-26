@@ -191,7 +191,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(133, 23);
             this.label1.TabIndex = 11;
-            this.label1.Text = "[Hanger-Reject Code";
+            this.label1.Text = "Hanger-Reject Code";
             // 
             // displayHangerFailCode
             // 
