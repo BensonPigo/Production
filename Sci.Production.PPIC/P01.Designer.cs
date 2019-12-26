@@ -3419,7 +3419,6 @@
             this.DefaultControlForEdit = "txtProgram";
             this.DefaultOrder = "ID";
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "P01";

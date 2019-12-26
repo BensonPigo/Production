@@ -136,6 +136,41 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
+        protected override bool ClickCopyBefore()
+        {
+            if (!MyUtility.Convert.GetBool(this.CurrentMaintain["LocalOrder"]))
+            {
+                MyUtility.Msg.WarningBox("Only Local Order can copy !!", "Error");
+            }
+
+            return MyUtility.Convert.GetBool(this.CurrentMaintain["LocalOrder"]);
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickCopyAfter()
+        {
+            DataRow dataRow = this.CurrentMaintain;
+            base.ClickNew();
+            this.CurrentMaintain["LocalOrder"] = dataRow["LocalOrder"];
+            this.CurrentMaintain["BrandID"] = dataRow["BrandID"];
+            this.CurrentMaintain["ProgramID"] = dataRow["ProgramID"];
+            this.CurrentMaintain["CustPONo"] = dataRow["CustPONo"];
+            this.CurrentMaintain["StyleID"] = dataRow["StyleID"];
+            this.CurrentMaintain["SeasonID"] = dataRow["SeasonID"];
+            this.CurrentMaintain["BuyerDelivery"] = dataRow["BuyerDelivery"];
+            this.CurrentMaintain["OrigBuyerDelivery"] = dataRow["OrigBuyerDelivery"];
+            this.CurrentMaintain["SciDelivery"] = dataRow["SciDelivery"];
+            this.CurrentMaintain["SDPDate"] = dataRow["SDPDate"];
+            this.CurrentMaintain["CurrencyID"] = dataRow["CurrencyID"];
+            this.CurrentMaintain["PoPrice"] = dataRow["PoPrice"];
+            this.CurrentMaintain["FactoryID"] = dataRow["FactoryID"];
+            this.CurrentMaintain["Dest"] = dataRow["Dest"];
+            this.CurrentMaintain["ShipModeList"] = dataRow["ShipModeList"];
+            this.CurrentMaintain["MCHandle"] = dataRow["MCHandle"];
+            this.CurrentMaintain["LocalMR"] = dataRow["LocalMR"];
+        }
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
