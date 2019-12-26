@@ -867,14 +867,6 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             }
             else
             {
-                if (this.listControlBindingSource1.DataSource != null && ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count > 0)
-                {
-                    if (((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Any(a => MyUtility.Convert.GetBool(a["NoExportCharges"])))
-                    {
-                        MyUtility.Msg.WarningBox("No Export Charge was ticked, please double check.");
-                    }
-                }
-
                 this.gridBLNo.ValidateControl();
                 bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(this.apData["ID"])));
                 bool haveSea = false, noExistNotSea = true;
@@ -956,10 +948,17 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                         }
 
                         exportID = MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? MyUtility.Convert.GetString(dr["WKno"]) : MyUtility.Convert.GetString(dr["InvNo"]);
+                        string sqlPrepaidFtyImportFee = $@"select PrepaidFtyImportFee from Export where id = '{exportID}'";
+                        decimal prepaidFtyImportFee = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlPrepaidFtyImportFee));
                         bolNoImportCharges = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(string.Format("select NoImportCharges from Export where id = '{0}'", exportID)));
-                        if (bolNoImportCharges)
+                        if (bolNoImportCharges && prepaidFtyImportFee == 0)
                         {
-                            MyUtility.Msg.WarningBox("No Import Charge");
+                            MyUtility.Msg.WarningBox("P03. Import Schedule - [No Import Charge] has been checked, please reconfirm.");
+                            return;
+                        }
+                        else if (bolNoImportCharges && prepaidFtyImportFee != 0)
+                        {
+                            MyUtility.Msg.WarningBox("Shipping-TW already paid the import charge, please check with forwarder if they bill us repeatedly and inform Shipping-TW at the same time.");
                             return;
                         }
 

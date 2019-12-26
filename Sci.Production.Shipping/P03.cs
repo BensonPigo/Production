@@ -230,6 +230,27 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
         {
             DialogResult dResult;
 
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+
+            sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (gridData.Rows.Count > 0 && this.chkImportChange.Checked)
+            {
+                MyUtility.Msg.WarningBox("WK has been shared expense,  [No Import Charge] shouldn't tick, please double check.");
+            }
+
             // Arrive Port Date 不可晚於 Arrive W/H Date
             if (MyUtility.Convert.GetString(this.CurrentMaintain["ExportCountry"]).ToUpper() == MyUtility.Convert.GetString(this.CurrentMaintain["ImportCountry"]).ToUpper()
                 && MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]).ToUpper() == "TRUCK")
@@ -286,19 +307,6 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
                 }
             }
 
-            if (this.ChkHaveAP())
-            {
-                return false;
-            }
-
-            // 已經有做出口費用分攤，不能勾選[No Import Charge]
-            if (MyUtility.Check.Seek(string.Format(@"select WKNO from ShareExpense WITH (NOLOCK) where WKNO = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
-                && this.chkImportChange.Checked)
-            {
-                MyUtility.Msg.WarningBox("This WK# has share expense, please unselect [No Import Charge].");
-                return false;
-            }
-
             return base.ClickSaveBefore();
         }
 
@@ -343,33 +351,6 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);
-        }
-
-        /// <summary>
-        /// 檢查[Expense Data]有[A/P No]存在、Export.PrepaidFtyImportFee>0
-        /// </summary>
-        /// <returns>Boolean</returns>
-        private bool ChkHaveAP()
-        {
-            bool rtnBol = false;
-            string sqlCmd = string.Empty;
-            bool bolShippingAPID = false;
-            if (this.chkImportChange.Checked)
-            {
-                sqlCmd = string.Format(
-                    @"select se.ShippingAPID
-                      from ShareExpense se WITH (NOLOCK)  
-                      where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-                bolShippingAPID = MyUtility.Check.Seek(sqlCmd);
-                if (bolShippingAPID)
-                {
-                    MyUtility.Msg.ErrorBox("Have A/P# already");
-                    this.chkImportChange.Checked = false;
-                    rtnBol = true;
-                }
-            }
-
-            return rtnBol;
         }
 
         private void btnBatchUpload_Click(object sender, EventArgs e)
