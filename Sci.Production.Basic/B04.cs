@@ -202,8 +202,6 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
                         this.DefaultWhere = "JUNK = 0";
                         break;
                     case "1":
-                        this.DefaultWhere = "JUNK = 1";
-                        break;
                     default:
                         this.DefaultWhere = string.Empty;
                         break;
