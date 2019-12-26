@@ -271,6 +271,8 @@ with tmpOrders as (
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','')
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
+            , o.BuyBack
+            , o.BuyBackOrderID
 "
             + seperCmd +
     @" from Orders o WITH (NOLOCK) 
@@ -721,8 +723,10 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.DryCTN
             , t.PackErrorCtn
             , t.CFACTN
-			,t.isForecast
+			, t.isForecast
 			, t.AirFreightByBrand
+			, t.BuyBack
+			, t.BuyBackOrderID
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -886,6 +890,8 @@ select  t.*
         , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
         , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
         , CDCode.ProductionFamilyID
+        , t.BuyBack
+		, t.BuyBackOrderID
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1484,7 +1490,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
             return Result.True;
         }
 
-        private int lastColA = 129; // 最後一欄 , 有新增欄位要改這
+        private int lastColA = 131; // 最後一欄 , 有新增欄位要改這
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -1710,6 +1716,8 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 126] = dr["CuttingSP"];
                 objArray[intRowsStart, 127] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 128] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 129] = dr["BuyBack"];
+                objArray[intRowsStart, 130] = dr["BuyBackOrderID"];
                 #endregion
 
                 if (this.artwork || this.pap)
