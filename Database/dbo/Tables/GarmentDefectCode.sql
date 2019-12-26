@@ -8,7 +8,7 @@
     [EditDate]            DATETIME       NULL,
     [Junk]                BIT            CONSTRAINT [df_Junk_Zero] DEFAULT ((0)) NOT NULL,
     [LocalDescription]    NVARCHAR (100) NOT NULL,
-    [ReworkTotalFailCode] NVARCHAR(3) NULL CONSTRAINT [DF_GarmentDefectCode_ReworkTotalFailCode] DEFAULT (''), 
+    [ReworkTotalFailCode] NVARCHAR(10) NULL CONSTRAINT [DF_GarmentDefectCode_ReworkTotalFailCode] DEFAULT (''), 
     CONSTRAINT [PK_GarmentDefectCode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
