@@ -37,6 +37,8 @@
             this.editLocalDesc = new Sci.Win.UI.EditBox();
             this.labLocalDesc = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayHangerFailCode = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -45,8 +47,14 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(831, 441);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayHangerFailCode);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.editLocalDesc);
             this.detailcont.Controls.Add(this.labLocalDesc);
@@ -56,7 +64,13 @@
             this.detailcont.Controls.Add(this.labelDefectcode);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelDefectType);
+            this.detailcont.Size = new System.Drawing.Size(831, 403);
             this.detailcont.MouseDown += new System.Windows.Forms.MouseEventHandler(this.detailcont_MouseDown);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 403);
+            this.detailbtm.Size = new System.Drawing.Size(831, 38);
             // 
             // browse
             // 
@@ -64,7 +78,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(839, 424);
+            this.tabs.Size = new System.Drawing.Size(839, 470);
             // 
             // createby
             // 
@@ -83,7 +97,7 @@
             // 
             this.labelDefectcode.Location = new System.Drawing.Point(58, 66);
             this.labelDefectcode.Name = "labelDefectcode";
-            this.labelDefectcode.Size = new System.Drawing.Size(89, 23);
+            this.labelDefectcode.Size = new System.Drawing.Size(133, 23);
             this.labelDefectcode.TabIndex = 2;
             this.labelDefectcode.Text = "Defect code";
             // 
@@ -91,7 +105,7 @@
             // 
             this.labelDescription.Location = new System.Drawing.Point(58, 132);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(89, 23);
+            this.labelDescription.Size = new System.Drawing.Size(133, 23);
             this.labelDescription.TabIndex = 3;
             this.labelDescription.Text = "Description";
             // 
@@ -99,7 +113,7 @@
             // 
             this.labelDefectType.Location = new System.Drawing.Point(58, 99);
             this.labelDefectType.Name = "labelDefectType";
-            this.labelDefectType.Size = new System.Drawing.Size(89, 23);
+            this.labelDefectType.Size = new System.Drawing.Size(133, 23);
             this.labelDefectType.TabIndex = 4;
             this.labelDefectType.Text = "Defect Type";
             // 
@@ -108,7 +122,7 @@
             this.txtDefectcode.BackColor = System.Drawing.Color.White;
             this.txtDefectcode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
             this.txtDefectcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDefectcode.Location = new System.Drawing.Point(150, 66);
+            this.txtDefectcode.Location = new System.Drawing.Point(194, 66);
             this.txtDefectcode.Name = "txtDefectcode";
             this.txtDefectcode.Size = new System.Drawing.Size(135, 23);
             this.txtDefectcode.TabIndex = 0;
@@ -121,7 +135,7 @@
             this.txtDefectType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GarmentDefectTypeID", true));
             this.txtDefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtDefectType.IsSupportEditMode = false;
-            this.txtDefectType.Location = new System.Drawing.Point(150, 99);
+            this.txtDefectType.Location = new System.Drawing.Point(194, 99);
             this.txtDefectType.Name = "txtDefectType";
             this.txtDefectType.ReadOnly = true;
             this.txtDefectType.Size = new System.Drawing.Size(135, 23);
@@ -133,7 +147,7 @@
             this.editDescription.CausesValidation = false;
             this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editDescription.Location = new System.Drawing.Point(150, 132);
+            this.editDescription.Location = new System.Drawing.Point(194, 132);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.Size = new System.Drawing.Size(460, 94);
@@ -145,7 +159,7 @@
             this.editLocalDesc.BackColor = System.Drawing.Color.White;
             this.editLocalDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDescription", true));
             this.editLocalDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editLocalDesc.Location = new System.Drawing.Point(150, 239);
+            this.editLocalDesc.Location = new System.Drawing.Point(194, 239);
             this.editLocalDesc.Multiline = true;
             this.editLocalDesc.Name = "editLocalDesc";
             this.editLocalDesc.Size = new System.Drawing.Size(460, 86);
@@ -155,7 +169,7 @@
             // 
             this.labLocalDesc.Location = new System.Drawing.Point(58, 239);
             this.labLocalDesc.Name = "labLocalDesc";
-            this.labLocalDesc.Size = new System.Drawing.Size(89, 23);
+            this.labLocalDesc.Size = new System.Drawing.Size(133, 23);
             this.labLocalDesc.TabIndex = 9;
             this.labLocalDesc.Text = "Local Desc.";
             // 
@@ -164,16 +178,34 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(300, 68);
+            this.checkJunk.Location = new System.Drawing.Point(344, 68);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 10;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(58, 335);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(133, 23);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Hanger-Reject Code";
+            // 
+            // displayHangerFailCode
+            // 
+            this.displayHangerFailCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayHangerFailCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReworkTotalFailCode", true));
+            this.displayHangerFailCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayHangerFailCode.Location = new System.Drawing.Point(194, 335);
+            this.displayHangerFailCode.Name = "displayHangerFailCode";
+            this.displayHangerFailCode.Size = new System.Drawing.Size(135, 23);
+            this.displayHangerFailCode.TabIndex = 12;
+            // 
             // B21
             // 
-            this.ClientSize = new System.Drawing.Size(839, 457);
+            this.ClientSize = new System.Drawing.Size(839, 503);
             this.DefaultControl = "txtDefectcode";
             this.DefaultControlForEdit = "editDescription";
             this.DefaultOrder = "GarmentDefectTypeID,Seq";
@@ -212,5 +244,7 @@
         private Win.UI.EditBox editLocalDesc;
         private Win.UI.Label labLocalDesc;
         private Win.UI.CheckBox checkJunk;
+        private Win.UI.DisplayBox displayHangerFailCode;
+        private Win.UI.Label label1;
     }
 }
