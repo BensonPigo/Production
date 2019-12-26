@@ -58,8 +58,11 @@ select Sel = 0
 	   , Seq = Concat (isd.Seq1, '-', isd.Seq2)
 	   , Refno = isnull (psd.Refno, '')
 	   , Color = case when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is not null 
-				THEN iif(ISNULL(ThreadColor.SuppColor,'') = '', '', ThreadColor.SuppColor) 
-				else  isnull (psd.ColorID, '') end
+							THEN iif(ISNULL(ThreadColor.SuppColor,'') = '', '', ThreadColor.SuppColor) 
+					  when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is null 
+							THEN psd.SuppColor
+				 else  isnull (psd.ColorID, '') end
+	   , Roll = isd.Roll
 	   , Roll = isd.Roll
 	   , Dyelot = isd.Dyelot
 	   , Qty = isd.Qty
