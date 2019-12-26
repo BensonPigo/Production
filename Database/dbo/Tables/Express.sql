@@ -36,6 +36,7 @@ CREATE TABLE [dbo].[Express] (
     [ByCustomerCarrier]   VARCHAR (15)   CONSTRAINT [DF_Express_ByCustomerCarrier] DEFAULT ('') NULL,
     [ByCustomerAccountID] VARCHAR (15)   CONSTRAINT [DF_Express_ByCustomerAccountID] DEFAULT ('') NULL,
     [ByFtyCarrier]        VARCHAR (8)    CONSTRAINT [DF_Express_ByFtyCarrier] DEFAULT ('') NULL,
+    [SpecialSending] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Express] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -201,3 +202,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'快遞付�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'快遞付款會計科目(Payer為客人)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'ByCustomerAccountID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'特殊寄件(在非常規的工作日寄出)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Express',
+    @level2type = N'COLUMN',
+    @level2name = N'SpecialSending'

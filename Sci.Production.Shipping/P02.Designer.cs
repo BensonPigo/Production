@@ -103,6 +103,7 @@
             this.txtCarrierbyFty = new Sci.Win.UI.TextBox();
             this.dispCarrierbyCustomer = new Sci.Win.UI.DisplayBox();
             this.disSuppabb = new Sci.Win.UI.DisplayBox();
+            this.chkSpecialSending = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -119,6 +120,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkSpecialSending);
             this.masterpanel.Controls.Add(this.disSuppabb);
             this.masterpanel.Controls.Add(this.dispCarrierbyCustomer);
             this.masterpanel.Controls.Add(this.txtCarrierbyFty);
@@ -247,6 +249,7 @@
             this.masterpanel.Controls.SetChildIndex(this.dispCarrierbyCustomer, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.disSuppabb, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkSpecialSending, 0);
             // 
             // detailpanel
             // 
@@ -260,7 +263,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(6792, 8);
+            this.refresh.Location = new System.Drawing.Point(7110, 8);
             // 
             // detailgridcont
             // 
@@ -731,14 +734,14 @@
             this.labelttlGW.TabIndex = 37;
             this.labelttlGW.Text = "ttl G.W.";
             // 
-            // numericBox4
+            // numericBoxttlGW
             // 
             this.numericBoxttlGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBoxttlGW.DecimalPlaces = 3;
             this.numericBoxttlGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBoxttlGW.IsSupportEditMode = false;
             this.numericBoxttlGW.Location = new System.Drawing.Point(500, 148);
-            this.numericBoxttlGW.Name = "numericBox4";
+            this.numericBoxttlGW.Name = "numericBoxttlGW";
             this.numericBoxttlGW.NullValue = new decimal(new int[] {
             0,
             0,
@@ -1136,6 +1139,20 @@
             this.disSuppabb.Size = new System.Drawing.Size(194, 23);
             this.disSuppabb.TabIndex = 63;
             // 
+            // chkSpecialSending
+            // 
+            this.chkSpecialSending.AutoSize = true;
+            this.chkSpecialSending.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SpecialSending", true));
+            this.chkSpecialSending.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkSpecialSending.IsSupportEditMode = false;
+            this.chkSpecialSending.Location = new System.Drawing.Point(8, 85);
+            this.chkSpecialSending.Name = "chkSpecialSending";
+            this.chkSpecialSending.ReadOnly = true;
+            this.chkSpecialSending.Size = new System.Drawing.Size(129, 21);
+            this.chkSpecialSending.TabIndex = 64;
+            this.chkSpecialSending.Text = "Special Sending";
+            this.chkSpecialSending.UseVisualStyleBackColor = true;
+            // 
             // P02
             // 
             this.ApvChkValue = "Sent";
@@ -1260,5 +1277,6 @@
         private Win.UI.Label label2;
         private Win.UI.DisplayBox dispCarrierbyCustomer;
         private Win.UI.DisplayBox disSuppabb;
+        private Win.UI.CheckBox chkSpecialSending;
     }
 }

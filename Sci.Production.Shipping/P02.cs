@@ -11,6 +11,7 @@ using Sci.Win.Tools;
 using Sci.Win;
 using System.Reflection;
 using System.Linq;
+using System.Drawing;
 
 namespace Sci.Production.Shipping
 {
@@ -60,6 +61,20 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboFrom, 2, 1, "1,Factory,2,Brand");
             MyUtility.Tool.SetupCombox(this.comboTO, 2, 1, "1,SCI,2,Factory,3,Supplier,4,Brand");
             MyUtility.Tool.SetupCombox(this.cmbPayer, 2, 1, "3RD,Freight Collect by 3rd Party,CUST,Freight Collect by Customer,FTY,Freight Pre-Paid by Fty,HAND,Hand Carry");
+
+            Sci.Win.UI.Button btnSendingSchedule = new Win.UI.Button();
+            Point btnSendingScheduleloc = new Point(720, this.lbl_queryfor.Location.Y);
+            btnSendingSchedule.Text = "FTY Regular Sending Schedule";
+            btnSendingSchedule.Location = btnSendingScheduleloc;
+            btnSendingSchedule.Size = new Size(250, 30);
+            btnSendingSchedule.Click += (s, e) =>
+            {
+                using (var sendingSchedule = new P02_FTYRegularSendingSchedule())
+                {
+                    sendingSchedule.ShowDialog();
+                }
+            };
+            this.browsetop.Controls.Add(btnSendingSchedule);
         }
 
         /// <inheritdoc/>
@@ -861,6 +876,88 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 this.txtUserManager.TextBox1.Focus();
                 MyUtility.Msg.WarningBox("Manager can't empty");
                 return false;
+            }
+            #endregion
+
+            #region set Special Sending Value
+            if ((this.CurrentMaintain["FromTag"].ToString() == "1") &&
+                    (this.CurrentMaintain["ToTag"].ToString() == "1" || 
+                     this.CurrentMaintain["ToTag"].ToString() == "2"))
+            {
+                string fromRegion = MyUtility.GetValue.Lookup($@"select NegoRegion from Factory where id='{this.CurrentMaintain["FromSite"]}'");
+                string countryCode = string.Empty;
+                string dateShipDate = ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("yyyy/MM/dd");
+
+                switch (this.CurrentMaintain["ToTag"])
+                {
+                    case "1":
+                        countryCode = MyUtility.GetValue.Lookup($@"select CountryID from Supp where AbbEN='sci'");
+                        break;
+                    case "2":
+                        countryCode = MyUtility.GetValue.Lookup($@"select CountryID from SCIFty where id='{this.CurrentMaintain["ToSite"]}'");
+                        break;
+                    default:
+                        break;
+                }
+
+                string sqlcmd = string.Empty;
+                DataRow dr;
+
+                // 存在FactoryExpress_SendingSchedule
+                sqlcmd = $@"
+select 
+[SpecialSend] = 
+case when Date.value = '1' and s.MON=1 then 0 
+	 when Date.value = '2' and s.TUE=1 then 0 
+     when Date.value = '3' and s.WED=1 then 0 
+     when Date.value = '4' and s.THU=1 then 0 
+     when Date.value = '5' and s.FRI=1 then 0 
+     when Date.value = '6' and s.SAT=1 then 0 
+     when Date.value = '7' and s.SUN=1 then 0 
+else 1 end
+,S.* 
+from FactoryExpress_SendingSchedule S
+outer apply(SELECT value = CONVERT(CHAR(1),DATEPART(WEEKDAY, CONVERT(datetime,'{dateShipDate}') +6))) Date
+where RegionCode = '{fromRegion}' 
+and ToID='{countryCode}' 
+and s.BeginDate <= CONVERT(datetime,'{dateShipDate}')
+and s.junk = 0
+";
+                if (MyUtility.Check.Seek(sqlcmd,out dr))
+                {
+                    this.CurrentMaintain["SpecialSending"] = dr["SpecialSend"];
+                }
+
+                // FactoryExpress_SendingScheduleHistory
+                else
+                {
+                    sqlcmd = $@"
+select 
+[SpecialSend] = 
+case when Date.value = '1' and s.MON=1 then 0 
+	 when Date.value = '2' and s.TUE=1 then 0 
+     when Date.value = '3' and s.WED=1 then 0 
+     when Date.value = '4' and s.THU=1 then 0 
+     when Date.value = '5' and s.FRI=1 then 0 
+     when Date.value = '6' and s.SAT=1 then 0 
+     when Date.value = '7' and s.SUN=1 then 0 
+else 1 end
+,S.* 
+from FactoryExpress_SendingScheduleHistory S
+outer apply(SELECT value = CONVERT(CHAR(1),DATEPART(WEEKDAY, CONVERT(datetime,'{dateShipDate}') +6))) Date
+where RegionCode = '{fromRegion}' 
+and ToID='{countryCode}' 
+and '{dateShipDate}' between s.BeginDate and isnull(s.EndDate,CONVERT(datetime,'2200/12/31'))
+";
+                    if (MyUtility.Check.Seek(sqlcmd, out dr))
+                    {
+                        this.CurrentMaintain["SpecialSending"] = dr["SpecialSend"];
+                    }
+                    else
+                    {
+                        this.CurrentMaintain["SpecialSending"] = false;
+                    }
+                }
             }
             #endregion
 

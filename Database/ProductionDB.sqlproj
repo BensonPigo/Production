@@ -2425,6 +2425,8 @@
     <Build Include="dbo\Tables\ArtworkReq_Detail.sql" />
     <Build Include="dbo\Tables\ArtworkReq_IrregularQty.sql" />
     <Build Include="dbo\Tables\LocalSupp_Bank_Detail.sql" />
+    <Build Include="dbo\Tables\FactoryExpress_SendingScheduleHistory.sql" />
+    <Build Include="dbo\Tables\FactoryExpress_SendingSchedule.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

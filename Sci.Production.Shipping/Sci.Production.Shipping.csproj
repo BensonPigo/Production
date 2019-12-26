@@ -104,6 +104,9 @@
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
+    <Reference Include="Sci.Andy">
+      <HintPath>..\_Dll\Sci.Andy.dll</HintPath>
+    </Reference>
     <Reference Include="Sci.Proj, Version=1.0.1505.1800, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
@@ -172,6 +175,18 @@
     </Compile>
     <Compile Include="B49.Designer.cs">
       <DependentUpon>B49.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_FTYRegularSendingSchedule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_FTYRegularSendingSchedule.designer.cs">
+      <DependentUpon>P02_FTYRegularSendingSchedule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_FTYRegularSendingScheduleHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_FTYRegularSendingScheduleHistory.designer.cs">
+      <DependentUpon>P02_FTYRegularSendingScheduleHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="P02_ImportFromBulkPackingList.cs">
       <SubType>Form</SubType>
@@ -867,6 +882,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B49.resx">
       <DependentUpon>B49.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_FTYRegularSendingSchedule.resx">
+      <DependentUpon>P02_FTYRegularSendingSchedule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_FTYRegularSendingScheduleHistory.resx">
+      <DependentUpon>P02_FTYRegularSendingScheduleHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ImportFromBulkPackingList.resx">
       <DependentUpon>P02_ImportFromBulkPackingList.cs</DependentUpon>
