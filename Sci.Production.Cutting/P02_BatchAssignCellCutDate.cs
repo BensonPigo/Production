@@ -319,7 +319,7 @@ namespace Sci.Production.Cutting
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.ForeColor = Color.Red;
-            col_wketa.Width = 77;
+            //col_wketa.Width = 97;
 
             col_wketa.EditingControlShowing += (s, e) =>
             {
@@ -748,6 +748,39 @@ where   id = '{0}'
                         dr["Shift"] = DBNull.Value;
                     }
                     dr.EndEdit();
+                }
+            }
+        }
+
+        private void BtnBatchWKETA_Click(object sender, EventArgs e)
+        {
+            this.gridBatchAssignCellEstCutDate.ValidateControl();
+            string cdate = "";
+            if (!MyUtility.Check.Empty(dateBoxWKETA.Value))
+            {
+                cdate = dateBoxWKETA.Text;
+            };
+
+            DataRow[] drSelect = curTb.Select("Sel = 1");
+            foreach (DataRow dr in drSelect)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+                string sqlcmdChk = $@"
+select 1
+From Export_Detail ED 
+INNER JOIN Export E ON E.ID = ED.ID
+where ED.poid='{dr["id"]}' 
+and ED.seq1 ='{dr["Seq1"]}' and ED.seq2='{dr["seq2"]}'
+and e.ETA = '{cdate}'
+";
+                if (MyUtility.Check.Seek(sqlcmdChk))
+                {
+                    dr["WKETA"] = cdate;
+                }
+                else
+                {
+                    dr["WKETA"] = DBNull.Value;
                 }
             }
         }
