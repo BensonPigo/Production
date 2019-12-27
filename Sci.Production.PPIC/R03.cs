@@ -173,6 +173,8 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 
             seperCmdkpi = this.seperate ? "oq.FtyKPI" : "o.FtyKPI";
             seperCmdkpi2 = this.seperate ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.id=oq.Id" : string.Empty;
+
+            // 注意!! 新增欄位也要一併新增在poCombo (搜尋KeyWork: union)
             sqlCmd.Append(@"
 with tmpOrders as (
     select DISTINCT o.ID
@@ -483,6 +485,7 @@ tmpFilterZone as (
     where st.ArtworkTypeID = '{0}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) ", this.subProcess));
             }
 
+            // 注意! 新增欄位也要一併新增在這!!
             if (this.poCombo)
             {
                 if (this.seperate && p_type.Equals("ALL"))
@@ -592,6 +595,8 @@ tmpFilterZone as (
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','') 
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
+            , o.BuyBack
+            , o.BuyBackOrderID
 "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
@@ -890,8 +895,6 @@ select  t.*
         , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
         , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
         , CDCode.ProductionFamilyID
-        , t.BuyBack
-		, t.BuyBackOrderID
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1490,7 +1493,10 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
             return Result.True;
         }
 
-        private int lastColA = 131; // 最後一欄 , 有新增欄位要改這
+        // 最後一欄 , 有新增欄位要改這
+        // 注意!新增欄位也要新增到StandardReport_Detail。
+        private int lastColA = 131;
+
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
