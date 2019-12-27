@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -66,6 +67,19 @@ namespace Sci.Production.Shipping
                     this.btnAddNewNLCode.Enabled = false;
                     this.lab_status.Text = "New";
                 }
+            }
+
+            string sqlcmd = $@"select FactoryID from VNContract_Factory With(nolock) where VNContractID = '{this.CurrentMaintain["ID"]}'";
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+            else
+            {
+                var list = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["FactoryID"])).ToList();
+                this.txtmultifactory1.Text = string.Join(",", list);
             }
         }
 
@@ -182,6 +196,46 @@ namespace Sci.Production.Shipping
             #endregion
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            var ftylist = this.txtmultifactory1.Text.Split(',').ToList();
+            DataTable dt = new DataTable();
+            dt.Columns.Add("VNContractID");
+            dt.Columns.Add("FactoryID");
+            foreach (string fty in ftylist)
+            {
+                if (!MyUtility.Check.Empty(fty))
+                {
+                    DataRow row = dt.NewRow();
+                    row["VNContractID"] = this.CurrentMaintain["ID"];
+                    row["FactoryID"] = fty;
+                    dt.Rows.Add(row);
+                }
+            }
+
+            string sqlcmd = $@"
+insert into VNContract_Factory
+select t.VNContractID,t.FactoryID
+from #tmp t
+left join VNContract_Factory vf on vf.VNContractID = t.VNContractID and vf.FactoryID = t.FactoryID
+where vf.VNContractID is null
+
+delete vf
+from VNContract_Factory vf
+left join #tmp t on vf.VNContractID = t.VNContractID and vf.FactoryID = t.FactoryID
+where t.VNContractID is null
+AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out dt);
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
