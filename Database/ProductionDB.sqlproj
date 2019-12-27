@@ -2425,6 +2425,7 @@
     <Build Include="dbo\Tables\ArtworkReq_Detail.sql" />
     <Build Include="dbo\Tables\ArtworkReq_IrregularQty.sql" />
     <Build Include="dbo\Tables\LocalSupp_Bank_Detail.sql" />
+    <Build Include="dbo\Tables\VNContract_Factory.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

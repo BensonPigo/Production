@@ -43,6 +43,8 @@
             this.btnImportData = new Sci.Win.UI.Button();
             this.btnAddNewNLCode = new Sci.Win.UI.Button();
             this.lab_status = new System.Windows.Forms.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtmultifactory1 = new Sci.Production.Class.txtmultifactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,6 +61,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtmultifactory1);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.lab_status);
             this.masterpanel.Controls.Add(this.btnAddNewNLCode);
             this.masterpanel.Controls.Add(this.btnImportData);
@@ -74,7 +78,7 @@
             this.masterpanel.Controls.Add(this.labelStartDate);
             this.masterpanel.Controls.Add(this.dateEndDate);
             this.masterpanel.Controls.Add(this.dateStartDate);
-            this.masterpanel.Size = new System.Drawing.Size(912, 131);
+            this.masterpanel.Size = new System.Drawing.Size(912, 160);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateStartDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEndDate, 0);
@@ -91,15 +95,17 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImportData, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAddNewNLCode, 0);
             this.masterpanel.Controls.SetChildIndex(this.lab_status, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtmultifactory1, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 131);
-            this.detailpanel.Size = new System.Drawing.Size(912, 248);
+            this.detailpanel.Location = new System.Drawing.Point(0, 160);
+            this.detailpanel.Size = new System.Drawing.Size(912, 219);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(649, 96);
+            this.gridicon.Location = new System.Drawing.Point(649, 125);
             // 
             // refresh
             // 
@@ -107,7 +113,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(912, 248);
+            this.detailgridcont.Size = new System.Drawing.Size(912, 219);
             // 
             // detail2
             // 
@@ -162,7 +168,6 @@
             // 
             // labelStartDate
             // 
-            this.labelStartDate.Lines = 0;
             this.labelStartDate.Location = new System.Drawing.Point(9, 9);
             this.labelStartDate.Name = "labelStartDate";
             this.labelStartDate.Size = new System.Drawing.Size(105, 23);
@@ -171,7 +176,6 @@
             // 
             // labelContractNo
             // 
-            this.labelContractNo.Lines = 0;
             this.labelContractNo.Location = new System.Drawing.Point(9, 39);
             this.labelContractNo.Name = "labelContractNo";
             this.labelContractNo.Size = new System.Drawing.Size(105, 23);
@@ -180,7 +184,6 @@
             // 
             // labelGrandTotalQty
             // 
-            this.labelGrandTotalQty.Lines = 0;
             this.labelGrandTotalQty.Location = new System.Drawing.Point(9, 69);
             this.labelGrandTotalQty.Name = "labelGrandTotalQty";
             this.labelGrandTotalQty.Size = new System.Drawing.Size(105, 23);
@@ -189,7 +192,6 @@
             // 
             // labelSubconName
             // 
-            this.labelSubconName.Lines = 0;
             this.labelSubconName.Location = new System.Drawing.Point(9, 99);
             this.labelSubconName.Name = "labelSubconName";
             this.labelSubconName.Size = new System.Drawing.Size(105, 23);
@@ -246,7 +248,6 @@
             // 
             // labelEndDate
             // 
-            this.labelEndDate.Lines = 0;
             this.labelEndDate.Location = new System.Drawing.Point(322, 9);
             this.labelEndDate.Name = "labelEndDate";
             this.labelEndDate.Size = new System.Drawing.Size(64, 23);
@@ -255,7 +256,6 @@
             // 
             // labelSubcon
             // 
-            this.labelSubcon.Lines = 0;
             this.labelSubcon.Location = new System.Drawing.Point(322, 39);
             this.labelSubcon.Name = "labelSubcon";
             this.labelSubcon.Size = new System.Drawing.Size(64, 23);
@@ -313,6 +313,26 @@
             this.lab_status.Size = new System.Drawing.Size(0, 25);
             this.lab_status.TabIndex = 15;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 131);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(105, 23);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "Factory";
+            // 
+            // txtmultifactory1
+            // 
+            this.txtmultifactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtmultifactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtmultifactory1.IsSupportEditMode = false;
+            this.txtmultifactory1.Location = new System.Drawing.Point(118, 131);
+            this.txtmultifactory1.Name = "txtmultifactory1";
+            this.txtmultifactory1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditMode;
+            this.txtmultifactory1.ReadOnly = true;
+            this.txtmultifactory1.Size = new System.Drawing.Size(450, 23);
+            this.txtmultifactory1.TabIndex = 17;
+            // 
             // B43
             // 
             this.ApvChkValue = "New";
@@ -331,6 +351,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "B43";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "B43. Customs Contract";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
@@ -372,5 +393,7 @@
         private Win.UI.Label labelContractNo;
         private Win.UI.Label labelStartDate;
         private System.Windows.Forms.Label lab_status;
+        private Win.UI.Label label1;
+        private Class.txtmultifactory txtmultifactory1;
     }
 }
