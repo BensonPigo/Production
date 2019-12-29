@@ -14,6 +14,7 @@
     [SeamLength]    NUMERIC (12, 2) NULL,
     [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
     [MtlFactorID] VARCHAR(3) NULL, 
+    [MasterPlusGroup] VARCHAR(4) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

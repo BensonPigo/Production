@@ -35,6 +35,7 @@
     [EditDate]                DATETIME       NULL,
     [Ukey]                    BIGINT          NOT NULL IDENTITY,
     [Annotation] NVARCHAR(200) NULL, 
+    [MasterPlusGroup] VARCHAR(4) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Operation] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
