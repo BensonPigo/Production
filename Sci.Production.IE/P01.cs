@@ -11,6 +11,7 @@ using Sci.Win.Tools;
 using Sci.Production.PublicForm;
 using System.Data.SqlClient;
 using System.Linq;
+using Sci.Production.Class;
 
 namespace Sci.Production.IE
 {
@@ -127,6 +128,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.MtlFactorID
       ,td.Template
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
+	  ,o.MasterPlusGroup
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
@@ -155,7 +157,6 @@ order by td.Seq", masterID);
             this.comboStyle.DisplayMember = "Location";
             this.comboStyle.ValueMember = "Location";
             #endregion
-
         }
 
         /// <summary>
@@ -222,7 +223,10 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             base.OnDetailGridSetup();
             Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
-            #region Seq & Operation Code & Frequency & SMV & M/C & Attachment按右鍵與Validating
+
+            celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell();
+
+            #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
             #region Seq的Valid
             seq.CellValidating += (s, e) =>
             {
@@ -430,7 +434,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                 }
             };
             #endregion
-            #region M/C
+            #region ST/MC Type
             this.machine.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode)
@@ -465,7 +469,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                         {
                             dr["MachineTypeID"] = string.Empty;
                             e.Cancel = true;
-                            MyUtility.Msg.WarningBox(string.Format("< M/C: {0} > not found!!!", e.FormattedValue.ToString()));
+                            MyUtility.Msg.WarningBox(string.Format("< ST/MC Type: {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                         else
@@ -616,7 +620,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                 .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
-                .Text("MachineTypeID", header: "M/C", width: Widths.AnsiChars(8), settings: this.machine)
+                .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
+                .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8),settings: txtSubReason)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
@@ -921,6 +926,29 @@ group by id.Location,M.ArtworkTypeID";
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+
+            if (this.detailgridbs.DataSource != null)
+            {
+                DataTable detail = (DataTable)this.detailgridbs.DataSource;
+
+                string updCmd = string.Empty;
+                foreach (DataRow item in detail.Rows)
+                {
+                    updCmd += $@"
+UPDATE TimeStudy_Detail
+SET MasterPlusGroup = '{item["MasterPlusGroup"]}'
+WHERE Ukey={item["Ukey"]}
+
+";
+                }
+
+                DualResult reusult = DBProxy.Current.Execute(null, updCmd);
+                if (!reusult)
+                {
+                    this.ShowErr(reusult);
+                }
+
+            }
 
             // 若ThreadColorComb已有資料要自動發信通知Style.ThreadEditname(去串pass1.EMail若為空或null則不需要發信)，通知使用者資料有變更。
             string sqlcmd = $@"
@@ -1239,7 +1267,7 @@ where ID = {0}",
                             id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
                             id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,id.MtlFactorID,
                             round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as SMV, o.SeamLength,s.IETMSID,s.IETMSVersion,
-                            (isnull(o.SeamLength,0) * isnull(id.Frequency,0))  as ttlSeamLength
+                            (isnull(o.SeamLength,0) * isnull(id.Frequency,0))  as ttlSeamLength ,o.MasterPlusGroup
                             from Style s WITH (NOLOCK) 
                             inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
                             inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey

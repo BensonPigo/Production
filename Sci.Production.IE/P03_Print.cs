@@ -165,6 +165,7 @@ select   a.GroupKey
         ,a.Annotation
         ,a.GSD
         ,a.MachineTypeID--MachineTypeID = iif(m.MachineGroupID = '','',a.MachineTypeID)
+		,a.MasterPlusGroup
         ,a.Attachment
         ,a.Template
         ,a.ThreadColor
@@ -410,35 +411,38 @@ order by no
             worksheet.Cells[2, 2] = style + " " + season + " " + brand + " " + combotype;
 
             // excel 範圍別名宣告 公式使用
-            excel.ActiveWorkbook.Names.Add("Operation", worksheet.Range["A6", "J" + this.operationCode.Rows.Count + 5]);
+            excel.ActiveWorkbook.Names.Add("Operation", worksheet.Range["A6", "K" + this.operationCode.Rows.Count + 5]);
 
             // 填Operation
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 10];
+            object[,] objArray = new object[1, 11];
             foreach (DataRow dr in this.operationCode.Rows)
             {
                 objArray[0, 0] = dr["rn"];
                 objArray[0, 1] = this.contentType == "A" ? MyUtility.Convert.GetString(dr["Annotation"]).Trim() : MyUtility.Convert.GetString(dr["DescEN"]).Trim();
                 objArray[0, 2] = dr["MachineTypeID"];
-                objArray[0, 3] = dr["Attachment"];
-                objArray[0, 4] = dr["Template"];
-                objArray[0, 5] = dr["GSD"];
-                objArray[0, 6] = dr["Cycle"];
-                objArray[0, 7] = dr["ThreadColor"];
-                objArray[0, 8] = dr["OperationID"];
-                objArray[0, 9] = $"=CONCATENATE(C{intRowsStart},\" \",D{intRowsStart},\" \",E{intRowsStart},\" \",H{intRowsStart})";
-                worksheet.Range[string.Format("A{0}:J{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 3] = dr["MasterPlusGroup"];
+                objArray[0, 4] = dr["Attachment"];
+                objArray[0, 5] = dr["Template"];
+                objArray[0, 6] = dr["GSD"];
+                objArray[0, 7] = dr["Cycle"];
+                objArray[0, 8] = dr["ThreadColor"];
+                objArray[0, 9] = dr["OperationID"];
+                objArray[0, 10] = $"=CONCATENATE(C{intRowsStart},\" \",E{intRowsStart},\" \",F{intRowsStart},\" \",I{intRowsStart})";
+                worksheet.Range[string.Format("A{0}:K{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
             worksheet.Cells[intRowsStart, 1] = string.Format("=MAX($A$2:A{0})+1", intRowsStart - 1);
-            worksheet.Cells[intRowsStart, 6] = string.Format("=SUM(F6:F{0})", intRowsStart - 1);
-            worksheet.Range[string.Format("A5:I{0}", intRowsStart)].Borders.Weight = 1; // 1: 虛線, 2:實線, 3:粗體線
-            worksheet.Range[string.Format("A5:I{0}", intRowsStart)].Borders.LineStyle = 1;
+
+            // time
+            worksheet.Cells[intRowsStart, 7] = string.Format("=SUM(G6:G{0})", intRowsStart - 1);
+            worksheet.Range[string.Format("A5:J{0}", intRowsStart)].Borders.Weight = 1; // 1: 虛線, 2:實線, 3:粗體線
+            worksheet.Range[string.Format("A5:J{0}", intRowsStart)].Borders.LineStyle = 1;
 
             intRowsStart++;
-            worksheet.Cells[intRowsStart, 6] = string.Format("=E{0}/{1}", intRowsStart - 1, MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]));
-            worksheet.get_Range("E" + intRowsStart, "E" + intRowsStart).Font.Bold = true;
+            worksheet.Cells[intRowsStart, 7] = string.Format("=F{0}/{1}", intRowsStart - 1, MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]));
+            worksheet.get_Range("F" + intRowsStart, "F" + intRowsStart).Font.Bold = true;
 
             intRowsStart++;
             worksheet.Cells[intRowsStart, 2] = "Picture";
@@ -517,31 +521,35 @@ order by no
         {
             // Operation
             worksheet.Cells[rownum, 5] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,2,0)),\"\",VLOOKUP(D{rownum},Operation,2,0))";
-            worksheet.Cells[rownum, 16] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,2,0)),\"\",VLOOKUP(O{rownum},Operation,2,0))";
+            worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,2,0)),\"\",VLOOKUP(S{rownum},Operation,2,0))";
 
             // GSD
-            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,6,0)),\"\",VLOOKUP(D{rownum},Operation,6,0))";
-            worksheet.Cells[rownum, 19] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,6,0)),\"\",VLOOKUP(O{rownum},Operation,6,0))";
+            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,7,0)),\"\",VLOOKUP(D{rownum},Operation,7,0))";
+            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,7,0)),\"\",VLOOKUP(S{rownum},Operation,7,0))";
 
             // TMS
             worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,7,0)),\"\",VLOOKUP(D{rownum},Operation,7,0))";
-            worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,7,0)),\"\",VLOOKUP(O{rownum},Operation,7,0))";
+            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,8,0)),\"\",VLOOKUP(S{rownum},Operation,8,0))";
 
-            // Machine Type
-            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,10,0)),\"\",IF(VLOOKUP(D{rownum},Operation,10,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,10,0)),\"\",VLOOKUP(D{rownum - 1},Operation,10,0)),\"\",VLOOKUP(D{rownum},Operation,10,0)))";
-            worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,10,0)),\"\",IF(VLOOKUP(O{rownum},Operation,10,0)=IF(ISNA(VLOOKUP(O{rownum - 1},Operation,10,0)),\"\",VLOOKUP(O{rownum - 1},Operation,10,0)),\"\",VLOOKUP(O{rownum},Operation,10,0)))";
+            // ST/MC type
+            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,11,0)),\"\",IF(VLOOKUP(D{rownum},Operation,11,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,11,0)),\"\",VLOOKUP(D{rownum - 1},Operation,11,0)),\"\",VLOOKUP(D{rownum},Operation,11,0)))";
+            worksheet.Cells[rownum, 17] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,11,0)),\"\",IF(VLOOKUP(S{rownum},Operation,11,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,11,0)),\"\",VLOOKUP(S{rownum - 1},Operation,11,0)),\"\",VLOOKUP(S{rownum},Operation,11,0)))";
+
+            // Machine Group
+            worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,4,0)),\"\",IF(VLOOKUP(D{rownum},Operation,4,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,4,0)),\"\",VLOOKUP(D{rownum - 1},Operation,4,0)),\"\",VLOOKUP(D{rownum},Operation,4,0)))";
+            worksheet.Cells[rownum, 16] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,4,0)),\"\",IF(VLOOKUP(S{rownum},Operation,4,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,4,0)),\"\",VLOOKUP(S{rownum - 1},Operation,4,0)),\"\",VLOOKUP(S{rownum},Operation,4,0)))";
 
             // Attachment
-            worksheet.Cells[rownum, 26] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,4,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,4,0)=\"\",\"\",\"Attachment\"))";
-            worksheet.Cells[rownum, 17] = $"=IF(OR(ISNA(VLOOKUP(O{rownum},Operation,4,0)),M{rownum}=\"\"),\"\",IF(VLOOKUP(O{rownum},Operation,4,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 30] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,5,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,5,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 21] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,5,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,5,0)=\"\",\"\",\"Attachment\"))";
 
             // Template
-            worksheet.Cells[rownum, 27] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,5,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
-            worksheet.Cells[rownum, 18] = $"=IF(OR(ISNA(VLOOKUP(O{rownum},Operation,5,0)),M{rownum}=\"\"),\"\",IF(VLOOKUP(O{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,6,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,6,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,6,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,6,0)=\"\",\"\",\"Template\"))";
 
             // only Machine Type
-            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,3,0)),\"\",IF(VLOOKUP(D{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum},Operation,3,0)))";
-            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,3,0)),\"\",IF(VLOOKUP(O{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum},Operation,3,0)))";
+            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,3,0)),\"\",IF(VLOOKUP(D{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum},Operation,3,0)))";
+            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,3,0)),\"\",IF(VLOOKUP(S{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,3,0)),\"\",VLOOKUP(S{rownum - 1},Operation,3,0)),\"\",VLOOKUP(S{rownum},Operation,3,0)))";
 
         }
 
@@ -558,8 +566,8 @@ order by no
             worksheet.Cells[9, 6] = this.styleCPU;
 
             // 右下簽名位置
-            worksheet.Cells[29, 16] = DateTime.Now.ToString("d");
-            worksheet.Cells[32, 16] = Sci.Env.User.UserName;
+            worksheet.Cells[29, 20] = DateTime.Now.ToString("d");
+            worksheet.Cells[32, 20] = Sci.Env.User.UserName;
 
             // 左下表頭資料
             worksheet.Cells[56, 4] = this.masterData["Version"];
@@ -702,7 +710,7 @@ order by no
             int idxppa = 0;
             foreach (string item in noPPA)
             {
-                worksheet.Cells[25 + idxppa, 1] = $"=IF(ISNA(VLOOKUP(D{25 + idxppa},Operation,9,0)),\"\",VLOOKUP(D{25 + idxppa},Operation,9,0))";
+                worksheet.Cells[25 + idxppa, 1] = $"=IF(ISNA(VLOOKUP(D{25 + idxppa},Operation,10,0)),\"\",VLOOKUP(D{25 + idxppa},Operation,10,0))";
                 worksheet.Cells[25 + idxppa, 5] = $"=IF(ISNA(VLOOKUP(D{25 + idxppa},Operation,2,0)),\"\",VLOOKUP(D{25 + idxppa},Operation,2,0))";
                 worksheet.Cells[25 + idxppa, 10] = $"=IF(ISNA(VLOOKUP(D{25 + idxppa},Operation,3,0)),\"\",VLOOKUP(D{25 + idxppa},Operation,3,0))";
                 worksheet.Cells[25 + idxppa, 4] = item;
@@ -767,7 +775,7 @@ order by no
                     {
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
-                        worksheet.get_Range(string.Format("P{0}:R{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
 
                         if (i > 0)
                         {
@@ -790,13 +798,13 @@ order by no
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
                 string endRow = (norow + 5).ToString();
-                worksheet.Names.Add("MachineINV1", worksheet.Range["W17", "W" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineINV2", worksheet.Range["X17", "X" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["Z19", "AA" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["Q17", "R" + endRow], Type.Missing);
-                worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$T$17:$T${endRow}))/2,0)", Type.Missing);
-                worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$S$17:$S${endRow}))/2,0)", Type.Missing);
-                worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$T$17:$T${endRow})", Type.Missing);
+                worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AD" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U17", "V" + endRow], Type.Missing);
+                worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$W$17:$W${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
                 int m = 0;
 
                 foreach (DataRow nodr in nodist.Rows)
@@ -804,14 +812,14 @@ order by no
                     list_GCTimeChartData.Add(new GCTimeChartData()
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
-                        TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "S")}{norow}",
-                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "T")}{norow}"
+                        TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "W")}{norow}",
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}"
                     });
 
                     list_CycleTimeChart.Add(new CycleTimeChart()
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
-                        ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "N")}{norow}",
+                        ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "R")}{norow}",
                         ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
                         TaktFormula = $"=E1"
                     });
@@ -845,7 +853,7 @@ order by no
                     }
                     else
                     {
-                        nocolumn = 13;
+                        nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
@@ -888,7 +896,7 @@ order by no
                         {
                             rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                             worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
-                            worksheet.get_Range(string.Format("P{0}:R{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
 
                             if (indx > 2)
                             {
@@ -916,14 +924,14 @@ order by no
                 norow = 17 + ((j - 2) * 5) + addct;
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
-                int endRow = norow + 5;
-                worksheet.Names.Add("MachineINV1", worksheet.Range["W17", "W" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineINV2", worksheet.Range["X17", "X" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["Z19", "AA" + endRow]);
-                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["Q17", "R" + endRow]);
-                worksheet.Names.Add("TtlTMS", $"=(SUM('Line Mapping'!$B$17:$B${endRow})+SUM('Line Mapping'!$T$17:$T${endRow}))/2");
-                worksheet.Names.Add("TtlGSD", $"=(SUM('Line Mapping'!$C$17:$C${endRow})+SUM('Line Mapping'!$S$17:$S${endRow}))/2");
-                worksheet.Names.Add("MaxTMS", $"=Max('Line Mapping'!$B$17:$B${endRow},'Line Mapping'!$T$17:$T${endRow})");
+                string endRow = (norow + 5).ToString();
+                worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AD" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U17", "V" + endRow], Type.Missing);
+                worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$W$17:$W${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
 
                 int leftright_count = 2;
                 bool leftDirection = true;
@@ -934,13 +942,13 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "S")}{norow}",
-                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "T")}{norow}"
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}"
                     });
 
                     list_CycleTimeChart.Add(new CycleTimeChart()
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
-                        ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "N")}{norow}",
+                        ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "R")}{norow}",
                         ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
                         TaktFormula = $"=E1"
                     });
@@ -971,7 +979,7 @@ order by no
                     }
                     else
                     {
-                        nocolumn = 13;
+                        nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
