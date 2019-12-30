@@ -234,16 +234,21 @@ from(
 )x
 group by OrderID
 
-SELECT [CTNLastReceiveDate]= format(Max(rcv.minreceivedate),'yyyy/MM/dd') , rcv.orderid,rcv.ordershipmodeseq 
+SELECT  
+	[orderid]= t.OrderID
+	,[ordershipmodeseq]= pd.ordershipmodeseq
+	,[CTNLastReceiveDate]= format(pd.ReceiveDate ,'yyyy/MM/dd')
 into #tmp_ClogReceive
-FROM (
-	SELECT [MinReceiveDate]=Min(CR.receivedate), cr.orderid, PD.ordershipmodeseq 
-	FROM Production.dbo.ClogReceive cr 
-	inner join #tmp_main t2 on t2.OrderID = cr.orderid and t2.localorder = 0 
-	INNER JOIN Production.dbo.PackingList_Detail PD ON PD.id = CR.PackingListID AND PD.ctnstartno = CR.ctnstartno  and t2.Seq=PD.ordershipmodeseq
-	GROUP BY cr.PackingListID, cr.ctnstartno, cr.orderid, PD.ordershipmodeseq
-) rcv 
-GROUP BY rcv.orderid,rcv.ordershipmodeseq 
+from #tmp_main t
+outer apply(
+	select pd.OrderID, pd.ordershipmodeseq, max(pd.ReceiveDate) ReceiveDate
+	from PackingList_Detail pd
+	where pd.OrderID = t.OrderID
+	and not exists (select 1 from PackingList_Detail p where pd.OrderID = p.OrderID and p.ReceiveDate is null)
+	group by pd.OrderID, pd.ordershipmodeseq 
+)pd 
+WHERE t.localorder = 0  
+GROUP BY t.OrderID, pd.ordershipmodeseq, format(pd.ReceiveDate ,'yyyy/MM/dd')
 
 Select  oqsD.ID,oqsD.Seq
         ,sum (case when dbo.GetPoPriceByArticleSize(oqsd.id,oqsD.Article,oqsD.SizeCode) > 0 then oqsD.Qty else 0 end) as FOB
