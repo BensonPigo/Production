@@ -525,7 +525,9 @@ BEGIN
 				t.EstPODD       = s.EstPODD,
 				t.AirFreightByBrand    = s.AirFreightByBrand,
 				t.AllowanceComboID = s.AllowanceComboID,
-				t.ChangeMemoDate       = s.ChangeMemoDate
+				t.ChangeMemoDate       = s.ChangeMemoDate,
+				t.BuyBack              = s.BuyBack,
+				t.BuyBackOrderID       = s.BuyBackOrderID
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -555,6 +557,7 @@ BEGIN
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
 			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
 			, LastProductionDate	, EstPODD				, AirFreightByBrand		, AllowanceComboID      , ChangeMemoDate
+			, BuyBack				, BuyBackOrderID
 
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
@@ -583,7 +586,8 @@ BEGIN
 			, s.SizeUnit			, s.CuttingSP			, s.IsMixMarker			, s.EachConsSource		, s.KPIEachConsApprove	
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
 			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
-			, s.LastProductionDate	, EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
+			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
+			, s.BuyBack				, s.BuyBackOrderID
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
