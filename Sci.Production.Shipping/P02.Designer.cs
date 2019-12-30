@@ -1142,7 +1142,7 @@
             // chkSpecialSending
             // 
             this.chkSpecialSending.AutoSize = true;
-            this.chkSpecialSending.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SpecialSending", true));
+            this.chkSpecialSending.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSpecialSending", true));
             this.chkSpecialSending.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkSpecialSending.IsSupportEditMode = false;
             this.chkSpecialSending.Location = new System.Drawing.Point(8, 85);

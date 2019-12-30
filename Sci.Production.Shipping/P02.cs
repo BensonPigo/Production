@@ -906,7 +906,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 // 存在FactoryExpress_SendingSchedule
                 sqlcmd = $@"
 select 
-[SpecialSend] = 
+[IsSpecialSending] = 
 case when Date.value = '1' and s.MON=1 then 0 
 	 when Date.value = '2' and s.TUE=1 then 0 
      when Date.value = '3' and s.WED=1 then 0 
@@ -925,14 +925,14 @@ and s.junk = 0
 ";
                 if (MyUtility.Check.Seek(sqlcmd, out dr))
                 {
-                    this.CurrentMaintain["SpecialSending"] = dr["SpecialSend"];
+                    this.CurrentMaintain["IsSpecialSending"] = dr["IsSpecialSending"];
                 }
                 else
                 {
                     // FactoryExpress_SendingScheduleHistory
                     sqlcmd = $@"
 select 
-[SpecialSend] = 
+[IsSpecialSending] = 
 case when Date.value = '1' and regular.MON >= 1 then 0 
 	 when Date.value = '2' and regular.TUE >= 1 then 0 
      when Date.value = '3' and regular.WED >= 1 then 0 
@@ -967,11 +967,11 @@ outer apply (
 ";
                     if (MyUtility.Check.Seek(sqlcmd, out dr))
                     {
-                        this.CurrentMaintain["SpecialSending"] = dr["SpecialSend"];
+                        this.CurrentMaintain["IsSpecialSending"] = dr["IsSpecialSending"];
                     }
                     else
                     {
-                        this.CurrentMaintain["SpecialSending"] = false;
+                        this.CurrentMaintain["IsSpecialSending"] = false;
                     }
                 }
             }
