@@ -14,7 +14,7 @@ CREATE TABLE [dbo].[Express] (
     [CTNQty]              SMALLINT       CONSTRAINT [DF_Express_CTNQty] DEFAULT ((0)) NULL,
     [Handle]              VARCHAR (10)   CONSTRAINT [DF_Express_Handle] DEFAULT ('') NULL,
     [Manager]             VARCHAR (10)   CONSTRAINT [DF_Express_Manager] DEFAULT ('') NULL,
-    [NW]                  NUMERIC (8, 2) CONSTRAINT [DF_Express_NW] DEFAULT ((0)) NULL,
+    [NW]                  NUMERIC (9, 3) CONSTRAINT [DF_Express_NW] DEFAULT ((0)) NULL,
     [CTNNW]               NUMERIC (8, 2) CONSTRAINT [DF_Express_CTNNW] DEFAULT ((0)) NULL,
     [VW]                  NUMERIC (8, 2) CONSTRAINT [DF_Express_VW] DEFAULT ((0)) NULL,
     [CarrierID]           VARCHAR (4)    CONSTRAINT [DF_Express_CarrierID] DEFAULT ('') NULL,
@@ -33,11 +33,15 @@ CREATE TABLE [dbo].[Express] (
     [AddDate]             DATETIME       NULL,
     [EditName]            VARCHAR (10)   CONSTRAINT [DF_Express_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME       NULL,
+    [FreightBy]           VARCHAR (4)    NULL,
     [ByCustomerCarrier]   VARCHAR (15)   CONSTRAINT [DF_Express_ByCustomerCarrier] DEFAULT ('') NULL,
     [ByCustomerAccountID] VARCHAR (15)   CONSTRAINT [DF_Express_ByCustomerAccountID] DEFAULT ('') NULL,
     [ByFtyCarrier]        VARCHAR (8)    CONSTRAINT [DF_Express_ByFtyCarrier] DEFAULT ('') NULL,
+    [IsSpecialSending]    BIT            DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Express] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -194,10 +198,24 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'供應商代碼(Payer為工廠)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'ByFtyCarrier';
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'快遞付款(Payer為客人)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'ByCustomerCarrier';
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'快遞付款會計科目(Payer為客人)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'ByCustomerAccountID';
+
+
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'特殊寄件(在非常規的工作日寄出)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'IsSpecialSending';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'HC�k��(3RD,FTY,CUST,HAND)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'FreightBy';
 

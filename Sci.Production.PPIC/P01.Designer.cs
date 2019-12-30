@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.dateBoxChangeMemo = new Sci.Win.UI.DateBox();
+            this.labChangeMemoDate = new Sci.Win.UI.Label();
             this.dateLastProductionDate = new Sci.Win.UI.DateBox();
             this.labLastProductionDate = new Sci.Win.UI.Label();
             this.btnPFHistory = new Sci.Win.UI.Button();
@@ -302,8 +304,10 @@
             this.shapeContainer6 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.comboSubconInType = new Ict.Win.UI.ComboBox();
             this.chkAFbyAdidas = new Sci.Win.UI.CheckBox();
-            this.dateBoxChangeMemo = new Sci.Win.UI.DateBox();
-            this.labChangeMemoDate = new Sci.Win.UI.Label();
+            this.labBuyBack = new Sci.Win.UI.Label();
+            this.dispBuyBack = new Sci.Win.UI.DisplayBox();
+            this.dispBuyBackOrderID = new Sci.Win.UI.DisplayBox();
+            this.labBBSP = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -320,6 +324,10 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.dispBuyBackOrderID);
+            this.detailcont.Controls.Add(this.labBBSP);
+            this.detailcont.Controls.Add(this.dispBuyBack);
+            this.detailcont.Controls.Add(this.labBuyBack);
             this.detailcont.Controls.Add(this.chkAFbyAdidas);
             this.detailcont.Controls.Add(this.comboSubconInType);
             this.detailcont.Controls.Add(this.txtdropdownlistCategory);
@@ -454,10 +462,10 @@
             this.detailcont.Controls.Add(this.txtpaytermar1);
             this.detailcont.Controls.Add(this.txtcurrency1);
             this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txtuser2);
-            this.detailcont.Controls.Add(this.txttpeuser1);
+            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
+            this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
@@ -623,12 +631,30 @@
             this.tabPage1.Controls.Add(this.txttpeuser3);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser5);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // dateBoxChangeMemo
+            // 
+            this.dateBoxChangeMemo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ChangeMemoDate", true));
+            this.dateBoxChangeMemo.IsSupportEditMode = false;
+            this.dateBoxChangeMemo.Location = new System.Drawing.Point(671, 170);
+            this.dateBoxChangeMemo.Name = "dateBoxChangeMemo";
+            this.dateBoxChangeMemo.ReadOnly = true;
+            this.dateBoxChangeMemo.Size = new System.Drawing.Size(98, 21);
+            this.dateBoxChangeMemo.TabIndex = 197;
+            // 
+            // labChangeMemoDate
+            // 
+            this.labChangeMemoDate.Location = new System.Drawing.Point(527, 170);
+            this.labChangeMemoDate.Name = "labChangeMemoDate";
+            this.labChangeMemoDate.Size = new System.Drawing.Size(142, 21);
+            this.labChangeMemoDate.TabIndex = 196;
+            this.labChangeMemoDate.Text = "Last Change Memo Date";
             // 
             // dateLastProductionDate
             // 
@@ -1767,7 +1793,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer2.Size = new System.Drawing.Size(990, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -2082,7 +2108,7 @@
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayDescription.Location = new System.Drawing.Point(346, 166);
             this.displayDescription.Name = "displayDescription";
-            this.displayDescription.Size = new System.Drawing.Size(313, 21);
+            this.displayDescription.Size = new System.Drawing.Size(294, 21);
             this.displayDescription.TabIndex = 24;
             // 
             // labelSMR
@@ -2135,7 +2161,7 @@
             // 
             // labelOrderQty
             // 
-            this.labelOrderQty.Location = new System.Drawing.Point(815, 112);
+            this.labelOrderQty.Location = new System.Drawing.Point(825, 112);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(61, 21);
             this.labelOrderQty.TabIndex = 39;
@@ -2143,7 +2169,7 @@
             // 
             // labelFOCQty
             // 
-            this.labelFOCQty.Location = new System.Drawing.Point(815, 139);
+            this.labelFOCQty.Location = new System.Drawing.Point(825, 139);
             this.labelFOCQty.Name = "labelFOCQty";
             this.labelFOCQty.Size = new System.Drawing.Size(61, 21);
             this.labelFOCQty.TabIndex = 40;
@@ -2155,7 +2181,7 @@
             this.numOrderQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
             this.numOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numOrderQty.IsSupportEditMode = false;
-            this.numOrderQty.Location = new System.Drawing.Point(880, 112);
+            this.numOrderQty.Location = new System.Drawing.Point(890, 112);
             this.numOrderQty.Name = "numOrderQty";
             this.numOrderQty.NullValue = new decimal(new int[] {
             0,
@@ -2178,7 +2204,7 @@
             this.numFOCQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FOCQty", true));
             this.numFOCQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numFOCQty.IsSupportEditMode = false;
-            this.numFOCQty.Location = new System.Drawing.Point(880, 139);
+            this.numFOCQty.Location = new System.Drawing.Point(890, 139);
             this.numFOCQty.Name = "numFOCQty";
             this.numFOCQty.NullValue = new decimal(new int[] {
             0,
@@ -3394,23 +3420,41 @@
             this.chkAFbyAdidas.Text = "AF by adidas";
             this.chkAFbyAdidas.UseVisualStyleBackColor = true;
             // 
-            // dateBoxChangeMemo
+            // labBuyBack
             // 
-            this.dateBoxChangeMemo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ChangeMemoDate", true));
-            this.dateBoxChangeMemo.IsSupportEditMode = false;
-            this.dateBoxChangeMemo.Location = new System.Drawing.Point(671, 170);
-            this.dateBoxChangeMemo.Name = "dateBoxChangeMemo";
-            this.dateBoxChangeMemo.ReadOnly = true;
-            this.dateBoxChangeMemo.Size = new System.Drawing.Size(98, 21);
-            this.dateBoxChangeMemo.TabIndex = 197;
+            this.labBuyBack.Location = new System.Drawing.Point(644, 166);
+            this.labBuyBack.Name = "labBuyBack";
+            this.labBuyBack.Size = new System.Drawing.Size(65, 21);
+            this.labBuyBack.TabIndex = 227;
+            this.labBuyBack.Text = "Buy Back";
             // 
-            // labChangeMemoDate
+            // dispBuyBack
             // 
-            this.labChangeMemoDate.Location = new System.Drawing.Point(527, 170);
-            this.labChangeMemoDate.Name = "labChangeMemoDate";
-            this.labChangeMemoDate.Size = new System.Drawing.Size(142, 21);
-            this.labChangeMemoDate.TabIndex = 196;
-            this.labChangeMemoDate.Text = "Last Change Memo Date";
+            this.dispBuyBack.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispBuyBack.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyBack", true));
+            this.dispBuyBack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispBuyBack.Location = new System.Drawing.Point(712, 166);
+            this.dispBuyBack.Name = "dispBuyBack";
+            this.dispBuyBack.Size = new System.Drawing.Size(110, 21);
+            this.dispBuyBack.TabIndex = 228;
+            // 
+            // dispBuyBackOrderID
+            // 
+            this.dispBuyBackOrderID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispBuyBackOrderID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyBackOrderID", true));
+            this.dispBuyBackOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispBuyBackOrderID.Location = new System.Drawing.Point(890, 166);
+            this.dispBuyBackOrderID.Name = "dispBuyBackOrderID";
+            this.dispBuyBackOrderID.Size = new System.Drawing.Size(102, 21);
+            this.dispBuyBackOrderID.TabIndex = 230;
+            // 
+            // labBBSP
+            // 
+            this.labBBSP.Location = new System.Drawing.Point(825, 166);
+            this.labBBSP.Name = "labBBSP";
+            this.labBBSP.Size = new System.Drawing.Size(61, 21);
+            this.labBBSP.TabIndex = 229;
+            this.labBBSP.Text = "BB SP";
             // 
             // P01
             // 
@@ -3419,7 +3463,6 @@
             this.DefaultControlForEdit = "txtProgram";
             this.DefaultOrder = "ID";
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "P01";
@@ -3720,5 +3763,9 @@
         private Win.UI.CheckBox chkAFbyAdidas;
         private Win.UI.DateBox dateBoxChangeMemo;
         private Win.UI.Label labChangeMemoDate;
+        private Win.UI.DisplayBox dispBuyBackOrderID;
+        private Win.UI.Label labBBSP;
+        private Win.UI.DisplayBox dispBuyBack;
+        private Win.UI.Label labBuyBack;
     }
 }

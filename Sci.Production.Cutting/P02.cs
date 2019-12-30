@@ -524,7 +524,7 @@ where WorkOrderUkey={0}", masterID);
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
-                    P02_WKETA item = new P02_WKETA(this.CurrentMaintain, dr);
+                    P02_WKETA item = new P02_WKETA(dr);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     if (result == DialogResult.No) { dr["WKETA"] = DBNull.Value; }

@@ -179,16 +179,29 @@ select s.Type
         ,s.BLNo
         ,s.Remark
         ,s.InvNo
-        ,isnull((select CONCAT(InvNo,'/') 
+        ,ExportInv= iif( isnull(x1.InvNo,'') <>'' and isnull(x2.WKNo,'') <>'', x1.InvNo +'/'+x2.WKNo ,concat(x1.InvNo,x2.WKNo))
+from ShippingAP s WITH (NOLOCK) 
+left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
+outer apply(
+	select InvNo= stuff((select CONCAT('/',InvNo) 
                  from (
                         select distinct InvNo 
                         from ShareExpense WITH (NOLOCK) 
                         where ShippingAPID = s.ID
                               and junk != 1
                  ) a 
-                for xml path('')),'') as ExportInv
-from ShippingAP s WITH (NOLOCK) 
-left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
+                for xml path('')),1,1,'')
+)x1
+outer apply(
+	select WKNo= stuff((select CONCAT('/',WKNo) 
+                 from (
+                        select distinct WKNo 
+                        from ShareExpense WITH (NOLOCK) 
+                        where ShippingAPID = s.ID
+                              and junk != 1
+                 ) a 
+                for xml path('')),1,1,'')
+)x2
 where s.Status = 'Approved'");
             }
 
@@ -328,7 +341,7 @@ where s.Status = 'Approved'");
                     objArray[0, 10] = dr["BLNo"];
                     objArray[0, 11] = dr["Remark"];
                     objArray[0, 12] = dr["InvNo"];
-                    objArray[0, 13] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : MyUtility.Convert.GetString(dr["ExportInv"]).Substring(0, MyUtility.Convert.GetString(dr["ExportInv"]).Length - 1);
+                    objArray[0, 13] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : dr["ExportInv"];
                     worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }

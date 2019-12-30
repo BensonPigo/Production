@@ -1066,7 +1066,7 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
       ,a.Type	      =b.Type	
-
+      ,a.Zone	      =b.Zone	
 from Production.dbo.SCIFty as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 where b.IsSCI=1
 
@@ -1091,6 +1091,7 @@ INSERT INTO Production.dbo.SCIFty(
       ,EditName
       ,EditDate
 	  ,Type
+	  ,Zone
 )
 select 
        ID
@@ -1112,6 +1113,7 @@ select
       ,EditName
       ,EditDate
 	  ,Type
+	  ,Zone
 from Trade_To_Pms.dbo.Factory as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.SCIFty as a WITH (NOLOCK) where a.id = b.id)
 and b.IsSCI=1
@@ -3293,6 +3295,164 @@ when not matched by target then
 	values (s.[ID],s.[Payer],s.[FromTag],s.[FromInclude],s.[FromExclude],s.[ToTag],s.[ToInclude],s.[ToExclude],s.[ToFty],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
 when not matched by source then 
 	delete;	
+
+
+-------FactoryExpress_SendingSchedule
+UPDATE a
+SET 
+a.[Seq]			=b.[Seq],
+a.[Country]		=b.[Country],
+a.[RegionCode]	=b.[RegionCode],
+a.[ToID]		=b.[ToID],
+a.[ToAlias]		=b.[ToAlias],
+a.[BeginDate]	=b.[BeginDate],
+a.[SUN]			=b.[SUN],
+a.[MON]			=b.[MON],
+a.[TUE]			=b.[TUE],
+a.[WED]			=b.[WED],
+a.[THU]			=b.[THU],
+a.[FRI]			=b.[FRI],
+a.[SAT]			=b.[SAT],
+a.[Junk]		=b.[Junk],
+a.[AddName]		=b.[AddName],
+a.[AddDate]		=b.[AddDate],
+a.[EditName]	=b.[EditName],
+a.[EditDate]	=b.[EditDate]
+from Production.dbo.FactoryExpress_SendingSchedule as a 
+inner join Trade_To_Pms.dbo.FactoryExpress_SendingSchedule as b 
+	ON a.RegionCode=b.RegionCode and a.ToID = b.ToID
+-------------------------- INSERT INTO 抓
+INSERT INTO Production.dbo.FactoryExpress_SendingSchedule
+ (
+	   [Seq]
+      ,[Country]
+      ,[RegionCode]
+      ,[ToID]
+      ,[ToAlias]
+      ,[BeginDate]
+      ,[SUN]
+      ,[MON]
+      ,[TUE]
+      ,[WED]
+      ,[THU]
+      ,[FRI]
+      ,[SAT]
+      ,[Junk]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+)
+SELECT [Seq]
+      ,[Country]
+      ,[RegionCode]
+      ,[ToID]
+      ,[ToAlias]
+      ,[BeginDate]
+      ,[SUN]
+      ,[MON]
+      ,[TUE]
+      ,[WED]
+      ,[THU]
+      ,[FRI]
+      ,[SAT]
+      ,[Junk]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+from Trade_To_Pms.dbo.FactoryExpress_SendingSchedule as b WITH (NOLOCK)
+where not exists(
+	select 1 
+	from Production.dbo.FactoryExpress_SendingSchedule as a WITH (NOLOCK) 
+	where a.RegionCode=b.RegionCode 
+	and a.ToID = b.ToID 
+)
+
+----------------------刪除主TABLE多的資料
+Delete Production.dbo.FactoryExpress_SendingSchedule
+from Production.dbo.FactoryExpress_SendingSchedule as a 
+left join Trade_To_Pms.dbo.FactoryExpress_SendingSchedule as b
+on a.RegionCode=b.RegionCode and a.ToID = b.ToID
+where b.ToID is null
+
+
+-------FactoryExpress_SendingScheduleHistory
+UPDATE a
+SET 
+a.[Ukey]		=b.[Ukey],
+a.[Country]		=b.[Country],
+a.[RegionCode]	=b.[RegionCode],
+a.[ToID]		=b.[ToID],
+a.[ToAlias]		=b.[ToAlias],
+a.[BeginDate]	=b.[BeginDate],
+a.[EndDate]	=b.[EndDate],
+a.[SUN]			=b.[SUN],
+a.[MON]			=b.[MON],
+a.[TUE]			=b.[TUE],
+a.[WED]			=b.[WED],
+a.[THU]			=b.[THU],
+a.[FRI]			=b.[FRI],
+a.[SAT]			=b.[SAT],
+a.[AddName]		=b.[AddName],
+a.[AddDate]		=b.[AddDate],
+a.[EditName]	=b.[EditName],
+a.[EditDate]	=b.[EditDate]
+from Production.dbo.FactoryExpress_SendingScheduleHistory as a 
+inner join Trade_To_Pms.dbo.FactoryExpress_SendingScheduleHistory as b 
+	ON a.Ukey=b.Ukey
+-------------------------- INSERT INTO 抓
+INSERT INTO Production.dbo.FactoryExpress_SendingScheduleHistory
+ (
+	   [Ukey]
+      ,[Country]
+      ,[RegionCode]
+      ,[ToID]
+      ,[ToAlias]
+      ,[BeginDate]
+      ,[SUN]
+      ,[MON]
+      ,[TUE]
+      ,[WED]
+      ,[THU]
+      ,[FRI]
+      ,[SAT]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+)
+SELECT [Ukey]
+      ,[Country]
+      ,[RegionCode]
+      ,[ToID]
+      ,[ToAlias]
+      ,[BeginDate]
+      ,[SUN]
+      ,[MON]
+      ,[TUE]
+      ,[WED]
+      ,[THU]
+      ,[FRI]
+      ,[SAT]      
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+from Trade_To_Pms.dbo.FactoryExpress_SendingScheduleHistory as b WITH (NOLOCK)
+where not exists(
+	select 1 
+	from Production.dbo.FactoryExpress_SendingScheduleHistory as a WITH (NOLOCK) 
+	where a.Ukey=b.Ukey 
+)
+
+
+----------------------刪除主TABLE多的資料
+Delete Production.dbo.FactoryExpress_SendingScheduleHistory
+from Production.dbo.FactoryExpress_SendingScheduleHistory as a 
+left join Trade_To_Pms.dbo.FactoryExpress_SendingScheduleHistory as b
+on a.Ukey=b.Ukey 
+where b.ToID is null
 
 END
 

@@ -153,6 +153,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IE_B13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B13.Designer.cs">
+      <DependentUpon>IE_B13.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -224,6 +230,12 @@
     </Compile>
     <Compile Include="R04.Designer.cs">
       <DependentUpon>R04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R05.Designer.cs">
+      <DependentUpon>R05.cs</DependentUpon>
     </Compile>
     <Compile Include="R10.cs">
       <SubType>Form</SubType>
@@ -322,6 +334,9 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="IE_B13.resx">
+      <DependentUpon>IE_B13.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -357,6 +372,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R04.resx">
       <DependentUpon>R04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R05.resx">
+      <DependentUpon>R05.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R10.resx">
       <DependentUpon>R10.cs</DependentUpon>
