@@ -128,6 +128,7 @@ ap.OrderID
 from dbo.ArtworkReq_Detail ap
 left join dbo.Orders o on ap.OrderID = o.id
 left join dbo.ArtworkPO_Detail apo on apo.ID = ap.ArtworkPOID
+and apo.OrderID = ap.OrderID AND AP.ArtworkID = APO.ArtworkId AND AP.PatternCode = APO.PatternCode
 where ap.id = '{0}'  
 ORDER BY ap.OrderID   ", masterID);
 
@@ -233,17 +234,39 @@ ORDER BY ap.OrderID   ", masterID);
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     string sqlcmd = $@"
-select  OrderQty = sum(q.qty)  
+select  OrderQty = sum(oa.qty)  
 , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) + {e.FormattedValue}
 from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
-inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
-    and oa.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}' 
-left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
-	and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID 
-	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
-	and vsa.PatternCode = oa.PatternCode and vsa.PatternDesc = oa.PatternDesc 
+cross apply(
+	select * 
+	from (		
+		select a.id,a.ArtworkTypeID,q.Article,q.Qty,q.SizeCode,a.PatternCode,a.PatternDesc,a.ArtworkID,a.ArtworkName
+		,rowNo = ROW_NUMBER() over (
+			partition by a.id,a.ArtworkTypeID,q.Article,a.PatternCode,a.PatternDesc
+				,a.ArtworkID,q.sizecode order by a.AddDate desc)
+		from Order_Artwork a WITH (NOLOCK)
+		inner join order_qty q WITH (NOLOCK) on q.id = a.ID and a.Article = q.Article
+		where a.id = o.id
+		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}'
+		) s
+	where rowNo = 1 
+)oa
+outer apply(
+	select * 
+	from (		
+		select *
+		,rowNo = ROW_NUMBER() over (
+			partition by a.StyleUkey,a.ArtworkTypeID,a.Article,a.PatternCode,a.PatternDesc
+				,a.ArtworkID,a.ArtworkName order by a.StyleArtworkUkey desc)
+		from View_Style_Artwork a WITH (NOLOCK)
+		where a.StyleUkey = o.StyleUkey
+		and a.Article = oa.Article and a.ArtworkID = oa.ArtworkID 
+		and a.ArtworkName = oa.ArtworkName and a.ArtworkTypeID = oa.ArtworkTypeID 
+		and a.PatternCode = oa.PatternCode and a.PatternDesc = oa.PatternDesc 
+		) s
+	where rowNo = 1 
+)vsa
 left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
 and sao.LocalSuppId = '{CurrentMaintain["localsuppid"]}' 
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
