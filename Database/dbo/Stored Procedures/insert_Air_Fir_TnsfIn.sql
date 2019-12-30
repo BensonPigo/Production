@@ -1,6 +1,4 @@
 ﻿
-
-
 CREATE PROCEDURE [dbo].[insert_Air_Fir_TnsfIn]
 (
 	@ID varchar(13),
@@ -22,8 +20,8 @@ select
 [SuppID]=C.SuppID,
 [SCIRefno]=b.SCIRefno,
 [Refno]=b.Refno,
-[ReceivingID]=a.Id,
-[ArriveQty]= a.Qty,
+[TransferInID]=a.Id,
+[TransferInQty]= a.Qty,
 [AddName]=@LoginID,
 [AddDate]= CONVERT(date,getdate()),
 [MinSciDelivery] = (select MinSciDelivery from GetSCI(a.PoId,d.Category)) ,
@@ -92,8 +90,8 @@ using (
 			a.SuppID,
 			a.SCIRefno,
 			a.Refno,
-			a.ReceivingID,
-			SUM(a.ArriveQty) ArriveQty,
+			a.TransferInID,
+			SUM(a.TransferInQty) TransferInQty,
 			a.AddName,
 			a.AddDate,
 			a.MinSciDelivery  ,
@@ -113,7 +111,7 @@ using (
 			a.SuppID,
 			a.SCIRefno,
 			a.Refno,
-			a.ReceivingID,
+			a.TransferInID,
 			a.AddName,
 			a.AddDate,
 			a.MinSciDelivery  ,
@@ -123,19 +121,19 @@ using (
 			a.fabricType,
 			b.InspDeadLine
  ) as s
-on t.poid=s.poid and t.seq1=s.seq1 and t.seq2=s.seq2 and t.receivingid=s.id 
+on t.poid=s.poid and t.seq1=s.seq1 and t.seq2=s.seq2 and t.receivingid=s.TransferInID 
 when matched then
  update set
  t.suppid=s.suppid,
  t.scirefno=s.scirefno,
  t.refno=s.refno,
- t.ArriveQty = s.ArriveQty,
+ t.ArriveQty = s.TransferInQty,
  t.InspDeadLine = s.InspDeadLine,
  t.AddName=s.AddName,
  t.AddDate=s.AddDate
  when not matched by target then
  insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
- values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,s.InspDeadLine,s.AddName,AddDate)
+ values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.TransferInID,s.TransferInQty,s.InspDeadLine,s.AddName,AddDate)
 when not matched by source and t.ReceivingID=@ID then
  delete
  output inserted.id as Id ,DELETED.id as deID
@@ -188,13 +186,13 @@ when matched then
  t.suppid=s.suppid,
  t.scirefno=s.scirefno,
  t.refno=s.refno,
- t.ArriveQty = s.ArriveQty,
+ t.ArriveQty = s.TransferInQty,
  t.InspDeadLine = s.InspDeadLine,
  t.AddName=s.AddName,
  t.AddDate=s.AddDate
  when not matched by target then
  insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
- values(s.PoId,iif(len(s.Seq1)<=2,s.Seq1+' ',s.Seq1),s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,s.InspDeadLine,s.AddName,AddDate)
+ values(s.PoId,iif(len(s.Seq1)<=2,s.Seq1+' ',s.Seq1),s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.TransferInQty,s.InspDeadLine,s.AddName,AddDate)
 when not matched by source and t.ReceivingID=@ID then
  delete
  output inserted.id as Id ,DELETED.id as deID
@@ -219,7 +217,7 @@ RAISERROR('insert_Air_Fir_TnsfIn - Starts',0,0)
 --FabricType = F�~����H�U�q��
 IF EXISTS(
 SELECT 1 
-FROM Receiving_Detail r
+FROM TransferIn_Detail r
 INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
 WHERE r.ID=@ID AND p.FabricType='F' 
 )
@@ -228,27 +226,27 @@ BEGIN
 SELECT   [FirID]=f.ID
 		,[Roll]=r.Roll
 		,[Dyelot]=r.Dyelot
-		,[StockQty]=r.StockQty
-INTO #tmp_Receiving
-FROM Receiving_Detail r
+		,[TransferInQty]=r.Qty
+INTO #tmp_TransferIn
+FROM TransferIn_Detail r
 INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
 INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
 WHERE r.ID=@ID AND p.FabricType='F'
 
 Merge dbo.FIR_Shadebone  as t
 using( 
-	 SELECT * FROM #tmp_Receiving
+	 SELECT * FROM #tmp_TransferIn
 ) as s
 on t.ID=s.FirID AND t.Roll=s.Roll AND t.Dyelot=s.Dyelot 
 
 WHEN MATCHED THEN
-	 UPDATE SET t.TicketYds=s.StockQty ,t.EditName=@LoginID, t.EditDate=GETDATE()
+	 UPDATE SET t.TicketYds=s.TransferInQty ,t.EditName=@LoginID, t.EditDate=GETDATE()
 
 WHEN NOT MATCHED by TARGET THEN 
 	insert  ([ID]           ,[Roll]           ,[Dyelot]           ,[Scale]           ,[Inspdate]           ,[Inspector]           ,[Result]
             ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds])
 	values(  s.FirID   ,s.Roll      ,s.Dyelot      ,''                ,NULL                 ,''                    ,''
-	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.StockQty )
+	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.TransferInQty )
 ;
 
 END
@@ -260,7 +258,7 @@ END TRY
 
 --drop table #InspDeadLine
 --drop table #tempTableAll
---drop table #tmp_Receiving
+--drop table ##tmp_TransferIn
 
 BEGIN CATCH
 	ROLLBACK TRANSACTION;
