@@ -405,18 +405,86 @@ WHERE p.MDivisionID = @MDivisionID
                             string[] stringSeparators = new string[] { "\r\n" };
                             string[] tmpArray = oriZplConten.Split(stringSeparators, StringSplitOptions.None);
 
-                            List<ZPL> zPL_Objects = new List<ZPL>()
+                            List<ZPL> zPL_Objects = new List<ZPL>();
+
+                            // 若是混尺碼則分開處理
+                            if (tmpArray[24] == "MIXED")
                             {
-                                new ZPL()
+                                string[] Sizes = tmpArray[Array.IndexOf(tmpArray, tmpArray.Where(o => o == "Size/Qty").FirstOrDefault()) + 1].Split(' ');
+                                string[] qtyOfSizes = tmpArray[Array.IndexOf(tmpArray, tmpArray.Where(o => o == "Size/Qty").FirstOrDefault()) + 2].Split(' ');
+
+                                List<SizeObject> size_qty = new List<SizeObject>();
+                                List<MixedCompare> MixedCompares = new List<MixedCompare>();
+
+                                string tmpStr = string.Empty;
+                                for (int ix = 0; ix <= tmpArray[33].Length - 1; ix++)
                                 {
-                                    CustCTN = tmpArray[0].Split(' ')[1],
-                                    CustPONo = tmpArray[21],
-                                    StyleID = tmpArray[22].Split('-')[0],
-                                    Article=tmpArray[22].Split('-')[1],
-                                    SizeCode = tmpArray[24],
-                                    ShipQty = tmpArray[28]
+                                    MixedCompares.Add(new MixedCompare() {
+                                        Text = tmpArray[33][ix].ToString(),
+                                        IsInt = int.TryParse(tmpArray[33][ix].ToString(), out int q)
+                                    });
                                 }
-                            };
+
+                                foreach (var item in MixedCompares)
+                                {
+
+                                    if (tmpStr != string.Empty && !item.IsInt)
+                                    {
+                                        break;
+                                    }
+
+                                    if (item.IsInt)
+                                    {
+                                        tmpStr += item.Text;
+                                    }
+                                }
+
+                                int QtyPerSmallPack = Convert.ToInt32(tmpStr);
+
+                                // 每個尺寸的數量
+                                for (int ix = 0; ix <= Sizes.Length - 1; ix++)
+                                {
+                                    size_qty.Add(new SizeObject() {
+                                        Size = Sizes[ix],
+                                        Qty = Convert.ToInt32(qtyOfSizes[ix]) * QtyPerSmallPack
+                                    });
+                                }
+
+                                // 每個小包的總和，跟Qty的數字沒對上直接return
+                                if (size_qty.Sum(o => o.Qty) != Convert.ToInt32(tmpArray[28]))
+                                {
+                                    MyUtility.Msg.InfoBox($"CustCTN: {tmpArray[0].Split(' ')[1]}, Total of <Size/Qty> is not equal <Qty> !!");
+                                    this.HideWaitMessage();
+                                    return;
+                                }
+
+                                zPL_Objects.Add(
+                                     new ZPL()
+                                     {
+                                         CustCTN = tmpArray[0].Split(' ')[1],
+                                         CustPONo = tmpArray[21],
+                                         StyleID = tmpArray[22].Split('-')[0],
+                                         Article = tmpArray[22].Split('-')[1],
+                                         SizeCode = tmpArray[24], //MIXED
+                                         ShipQty = tmpArray[28],
+                                         Size_Qty_List = size_qty
+                                     }
+                                 );
+                            }
+                            else
+                            {
+                                zPL_Objects.Add(
+                                     new ZPL()
+                                     {
+                                         CustCTN = tmpArray[0].Split(' ')[1],
+                                         CustPONo = tmpArray[21],
+                                         StyleID = tmpArray[22].Split('-')[0],
+                                         Article = tmpArray[22].Split('-')[1],
+                                         SizeCode = tmpArray[24],
+                                         ShipQty = tmpArray[28]
+                                     }
+                                 );
+                            }
 
                             this.File_Name_Object.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
                             this.File_Name_PDF.Add(fileInfo.FullName, zPL_Objects.FirstOrDefault().CustCTN);
@@ -1074,6 +1142,22 @@ DROP TABLE #tmpOrders{i},#tmp{i}
 
         }
 
+        public class MixedCompare
+        {
+            public string Text { get; set; }
+
+            public bool IsInt { get; set; }
+
+        }
+
+        public class SizeObject
+        {
+            public string Size { get; set; }
+
+            public int Qty{ get; set; }
+
+        }
+
         public class P25_Object
         {
             public string PackingList_Detail_CustCTN { get; set; }
@@ -1106,6 +1190,8 @@ DROP TABLE #tmpOrders{i},#tmp{i}
             public string CustCTN { get; set; }
 
             public string CTNStartNo { get; set; }
+
+            public List<SizeObject> Size_Qty_List { get; set; }  //混尺碼用
         }
 
         public class MappingModel
