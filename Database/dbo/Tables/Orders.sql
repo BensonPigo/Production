@@ -156,6 +156,8 @@
     [EstPODD] DATE NULL, 
     [AllowanceComboID] VARCHAR(13) NULL, 
     [ChangeMemoDate] DATE NULL, 
+    [BuyBack] VARCHAR(20) NULL, 
+    [BuyBackOrderID] VARCHAR(13) NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

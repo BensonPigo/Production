@@ -173,6 +173,8 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 
             seperCmdkpi = this.seperate ? "oq.FtyKPI" : "o.FtyKPI";
             seperCmdkpi2 = this.seperate ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.id=oq.Id" : string.Empty;
+
+            // 注意!! 新增欄位也要一併新增在poCombo (搜尋KeyWork: union)
             sqlCmd.Append(@"
 with tmpOrders as (
     select DISTINCT o.ID
@@ -271,6 +273,8 @@ with tmpOrders as (
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','')
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
+            , o.BuyBack
+            , o.BuyBackOrderID
 "
             + seperCmd +
     @" from Orders o WITH (NOLOCK) 
@@ -481,6 +485,7 @@ tmpFilterZone as (
     where st.ArtworkTypeID = '{0}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) ", this.subProcess));
             }
 
+            // 注意! 新增欄位也要一併新增在這!!
             if (this.poCombo)
             {
                 if (this.seperate && p_type.Equals("ALL"))
@@ -590,6 +595,8 @@ tmpFilterZone as (
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','') 
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
+            , o.BuyBack
+            , o.BuyBackOrderID
 "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
@@ -721,8 +728,10 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.DryCTN
             , t.PackErrorCtn
             , t.CFACTN
-			,t.isForecast
+			, t.isForecast
 			, t.AirFreightByBrand
+			, t.BuyBack
+			, t.BuyBackOrderID
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -1484,7 +1493,10 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
             return Result.True;
         }
 
-        private int lastColA = 129; // 最後一欄 , 有新增欄位要改這
+        // 最後一欄 , 有新增欄位要改這
+        // 注意!新增欄位也要新增到StandardReport_Detail。
+        private int lastColA = 131;
+
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -1710,6 +1722,8 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 126] = dr["CuttingSP"];
                 objArray[intRowsStart, 127] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 128] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 129] = dr["BuyBack"];
+                objArray[intRowsStart, 130] = dr["BuyBackOrderID"];
                 #endregion
 
                 if (this.artwork || this.pap)
