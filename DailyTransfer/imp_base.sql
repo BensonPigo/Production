@@ -3374,7 +3374,7 @@ Delete Production.dbo.FactoryExpress_SendingSchedule
 from Production.dbo.FactoryExpress_SendingSchedule as a 
 left join Trade_To_Pms.dbo.FactoryExpress_SendingSchedule as b
 on a.RegionCode=b.RegionCode and a.ToID = b.ToID
-where b.id is null
+where b.ToID is null
 
 
 -------FactoryExpress_SendingScheduleHistory
@@ -3452,7 +3452,7 @@ Delete Production.dbo.FactoryExpress_SendingScheduleHistory
 from Production.dbo.FactoryExpress_SendingScheduleHistory as a 
 left join Trade_To_Pms.dbo.FactoryExpress_SendingScheduleHistory as b
 on a.Ukey=b.Ukey 
-where b.id is null
+where b.ToID is null
 
 END
 

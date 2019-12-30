@@ -923,14 +923,13 @@ and ToID='{countryCode}'
 and s.BeginDate <= CONVERT(datetime,'{dateShipDate}')
 and s.junk = 0
 ";
-                if (MyUtility.Check.Seek(sqlcmd,out dr))
+                if (MyUtility.Check.Seek(sqlcmd, out dr))
                 {
                     this.CurrentMaintain["SpecialSending"] = dr["SpecialSend"];
                 }
-
-                // FactoryExpress_SendingScheduleHistory
                 else
                 {
+                    // FactoryExpress_SendingScheduleHistory
                     sqlcmd = $@"
 select 
 [SpecialSend] = 
