@@ -696,7 +696,67 @@ WHERE p.MDivisionID = @MDivisionID
                         // 確認一個ZPL檔，對應到幾個PackingList
                         #region SQL檢查對應到幾個PackingList
 
-                        string sqlCmd = $@"
+                        string sqlCmd = string.Empty;
+                        List<string> sqlMixed = new List<string>();
+                        bool IsMixed = zpl.SizeCode.ToUpper().Contains("MIX");
+
+                        if (IsMixed)
+                        {
+                            foreach (var data in zpl.Size_Qty_List)
+                            {
+                                sqlMixed.Add( $@"
+
+		( SizeCode='{data.Size}' OR SizeCode in(
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{data.Size}')
+	        )  
+			AND pd.ShipQty={data.Qty})
+");
+                            }
+
+                            sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{zpl.CustPONo}' AND StyleID='{zpl.StyleID}'
+
+SELECT CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
+INTO #tmpMappingCartonNo
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND pd.CustCTN='' 
+    AND Article = '{zpl.Article}'
+	AND (
+";
+                            sqlCmd += string.Join("		OR" + Environment.NewLine, sqlMixed);
+                            sqlCmd += $@"
+		)
+GROUP BY CTNStartNo
+HAVING COUNT(pd.Ukey)={zpl.Size_Qty_List.Count}
+
+SELECT [PackingListID]=pd.ID ,[PackingList_Ukey]=pd.Ukey
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND pd.CustCTN='' 
+    AND Article = '{zpl.Article}'
+    AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo) 
+
+
+DROP TABLE #tmoOrders,#tmpMappingCartonNo
+
+";
+                        }
+                        else
+                        {
+                            sqlCmd = $@"
 
 SELECT ID ,StyleID ,POID
 INTO #tmoOrders
@@ -728,12 +788,69 @@ WHERE p.Type ='B'
 DROP TABLE #tmoOrders
 
 ";
+
+                        }
                         #endregion
 
                         DBProxy.Current.Select(null, sqlCmd, out tmpDt);
 
                         #region SQL 檢查ShippingMarkPicture
-                        sqlCmd = $@"
+
+                        if (IsMixed)
+                        {
+
+                            sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{zpl.CustPONo}' AND StyleID='{zpl.StyleID}'
+
+SELECT CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
+INTO #tmpMappingCartonNo
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND pd.CustCTN='' 
+    AND Article = '{zpl.Article}'
+	AND (
+";
+                            sqlCmd += string.Join("		OR" + Environment.NewLine, sqlMixed);
+                            sqlCmd += $@"
+		)
+GROUP BY CTNStartNo
+HAVING COUNT(pd.Ukey)={zpl.Size_Qty_List.Count}
+
+SELECT DISTINCT o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND pd.CustCTN='' 
+    AND Article = '{zpl.Article}'
+    AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo) 
+
+SELECT IsSSCC
+FROM ShippingMarkPicture s
+INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+WHERE IsSSCC=0
+UNION 
+SELECT IsSSCC
+FROM ShippingMarkPicture s
+INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+WHERE IsSSCC=1
+
+DROP TABLE #tmoOrders,#tmpMappingCartonNo,#tmp 
+
+";
+                        }
+                        else
+                        {
+                            sqlCmd = $@"
 
 SELECT ID ,StyleID ,POID
 INTO #tmoOrders
@@ -775,6 +892,8 @@ WHERE IsSSCC=1
 
 DROP TABLE #tmoOrders,#tmp
 ";
+
+                        }
                         #endregion
 
                         DBProxy.Current.Select(null, sqlCmd, out tmpDtB03);
@@ -790,8 +909,11 @@ DROP TABLE #tmoOrders,#tmp
                         // ShippingMarkPicture是否有建立好 相同 BrandID CustCD CTNRefno Side 不同Seq IsSCC的兩筆資料
                         bool packingB03DataError = tmpDtB03 == null ? true : (tmpDtB03.Rows.Count == 2 ? false : true);
 
-                        // ZPL數量 大小於 PackingList_Detail的箱數  或   對應到多個PackingListID  或  CustCTN已經存在PackingList_Detail   => Mapping不成功
-                        if (file_Count != packingListDetail_Count || tmpDt.AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count() > 1 || existsCustCTN || packingB03DataError)
+                        // 檔案數量 大小於 PackingList_Detail的箱數  或   對應到多個PackingListID  或  CustCTN已經存在PackingList_Detail   => Mapping不成功
+                        if ( (!IsMixed && file_Count != packingListDetail_Count) ||
+                            tmpDt.AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count() > 1 ||
+                            existsCustCTN ||
+                            packingB03DataError)
                         {
                             if (!this.MappingModels.Where(o => o.FileName == fileName).Any())
                             {
@@ -800,7 +922,8 @@ DROP TABLE #tmoOrders,#tmp
                                 {
                                     FileName = fileName,
                                     ZPL_Content = ZPLs,
-                                    PackingListID = string.Empty
+                                    PackingListID = string.Empty,
+                                    IsMixed = IsMixed
                                 };
                                 this.MappingModels.Add(model);
                             }
@@ -814,7 +937,8 @@ DROP TABLE #tmoOrders,#tmp
                                 {
                                     FileName = fileName,
                                     ZPL_Content = ZPLs,
-                                    PackingListID = tmpDt.Rows[0]["PackingListID"].ToString()
+                                    PackingListID = tmpDt.Rows[0]["PackingListID"].ToString(),
+                                    IsMixed = IsMixed
                                 };
                                 this.MappingModels.Add(model);
                             }
@@ -845,10 +969,12 @@ DROP TABLE #tmoOrders,#tmp
                         string updateCmd = string.Empty;
                         string fileName = item.FileName;
                         string packingListID = item.PackingListID;
+                        bool IsMixed = item.IsMixed;
 
                         MappingModel current = this.MappingModels.Where(o => o.FileName == fileName).FirstOrDefault();
 
                         string cmd = string.Empty;
+                        List<string> sqlMixed = new List<string>();
                         int i = 0;
 
                         // 相同PackingListID Article SizeCode ShipQty，照順序寫入CustCTN、P24表頭 + 表身
@@ -960,7 +1086,119 @@ DROP TABLE #tmpOrders{i},#tmp{i}
 
                             if (this.currentFileType == UploadType.PDF)
                             {
-                                cmd += $@"
+                                if (IsMixed)
+                                {
+
+                                    foreach (var data in ZPL.Size_Qty_List)
+                                    {
+                                        sqlMixed.Add($@"
+		( SizeCode='{data.Size}' OR SizeCode in(
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders{i}) AND SizeSpec IN ('{data.Size}')
+	        )  
+			AND pd.ShipQty={data.Qty})
+");
+                                    }
+
+                                    cmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders{i}
+FROM Orders 
+WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
+
+----1. 整理Mapping的資料
+SELECT CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
+INTO #tmpMappingCartonNo{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
+    AND pd.CustCTN='' 
+    AND Article = '{ZPL.Article}'
+	AND (
+";
+                                    cmd += string.Join("		OR" + Environment.NewLine, sqlMixed);
+                                    cmd += $@"
+		)
+GROUP BY CTNStartNo
+HAVING COUNT(pd.Ukey)={ZPL.Size_Qty_List.Count}
+
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+	AND p.ID='{packingListID}'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
+    AND pd.CustCTN='' 
+    AND Article = '{ZPL.Article}'
+    AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo{i}) 
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
+
+----2. 更新PackingList_Detail的CustCTN
+UPDATE pd
+SET pd.CustCTN='{ZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN #tmp{i} t ON t.CTNStartNo=pd.CTNStartNo AND pd.ID=t.ID
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+DROP TABLE #tmoOrders{i},#tmpMappingCartonNo{i},#tmp{i}
+
+";
+                                }
+                                else
+                                {
+
+                                    cmd += $@"
 ----1. 整理Mapping的資料
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders{i}
@@ -1043,6 +1281,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
+                                }
                             }
 
                             i++;
@@ -1139,7 +1378,6 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                 }
             }
 
-
         }
 
         public class MixedCompare
@@ -1203,6 +1441,8 @@ DROP TABLE #tmpOrders{i},#tmp{i}
             public string PackingListID { get; set; }
 
             public string PackingList_Ukey { get; set; }
+
+            public bool IsMixed { get; set; }
         }
 
         #endregion
@@ -1273,7 +1513,7 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                 graphic.Dispose();
                 pic.Dispose();
                 sourceImage.Dispose();
-                File.Delete(tmpIMG);
+                //File.Delete(tmpIMG);
             }
 
             pdfWrapper.Dispose();

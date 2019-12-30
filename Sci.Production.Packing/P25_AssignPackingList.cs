@@ -70,11 +70,21 @@ namespace Sci.Production.Packing
                     foreach (var ZPL in current.ZPL_Content)
                     {
                         // 檢查Usee是否有輸入不對的PackingList ID
-                        if (this.checkPackingList_Count(ZPL.CustPONo, ZPL.StyleID, packingListID, ZPL.Article, ZPL.CTNStartNo, ZPL.ShipQty, ZPL.SizeCode) != current.ZPL_Content.Count)
+                        if (current.IsMixed)
                         {
-                            isAnyNotMapping = true;
+                            if (this.checkPackingList_Count(current.IsMixed, ZPL.CustPONo, ZPL.StyleID, packingListID, ZPL.Article, ZPL.CTNStartNo, ZPL.ShipQty, ZPL.SizeCode, ZPL.Size_Qty_List)==0)
+                            {
+                                isAnyNotMapping = true;
+                            }
                         }
-
+                        else
+                        {
+                            if (this.checkPackingList_Count(current.IsMixed, ZPL.CustPONo, ZPL.StyleID, packingListID, ZPL.Article, ZPL.CTNStartNo, ZPL.ShipQty, ZPL.SizeCode, ZPL.Size_Qty_List)
+                                != current.ZPL_Content.Count)
+                            {
+                                isAnyNotMapping = true;
+                            }
+                        }
                         bool existsCustCTN = MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{ZPL.CustCTN}' ");
 
                         if (existsCustCTN)
@@ -123,6 +133,7 @@ namespace Sci.Production.Packing
                         string fileName = dr["FileName"].ToString();
                         string packingListID = dr["PackingListID"].ToString();
                         string cmd = string.Empty;
+                        List<string> sqlMixed = new List<string>();
                         string updateCmd = string.Empty;
                         int i = 0;
 
@@ -236,7 +247,119 @@ DROP TABLE #tmpOrders{i},#tmp{i}
 
                             if (this._UploadType == "PDF")
                             {
-                                cmd += $@"
+                                if (current.IsMixed)
+                                {
+
+                                    foreach (var data in ZPL.Size_Qty_List)
+                                    {
+                                        sqlMixed.Add($@"
+		( SizeCode='{data.Size}' OR SizeCode in(
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders{i}) AND SizeSpec IN ('{data.Size}')
+	        )  
+			AND pd.ShipQty={data.Qty})
+");
+                                    }
+
+                                    cmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders{i}
+FROM Orders 
+WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
+
+----1. 整理Mapping的資料
+SELECT CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
+INTO #tmpMappingCartonNo{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
+    AND pd.CustCTN='' 
+    AND Article = '{ZPL.Article}'
+	AND (
+";
+                                    cmd += string.Join("		OR" + Environment.NewLine, sqlMixed);
+                                    cmd += $@"
+		)
+GROUP BY CTNStartNo
+HAVING COUNT(pd.Ukey)={ZPL.Size_Qty_List.Count}
+
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+	AND p.ID='{packingListID}'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
+    AND pd.CustCTN='' 
+    AND Article = '{ZPL.Article}'
+    AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo{i}) 
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
+
+----2. 更新PackingList_Detail的CustCTN
+UPDATE pd
+SET pd.CustCTN='{ZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN #tmp{i} t ON t.CTNStartNo=pd.CTNStartNo AND pd.ID=t.ID
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+DROP TABLE #tmoOrders{i},#tmpMappingCartonNo{i},#tmp{i}
+
+";
+                                }
+                                else
+                                {
+
+                                    cmd += $@"
 ----1. 整理Mapping的資料
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders{i}
@@ -319,6 +442,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
+                                }
                             }
 
                             i++;
@@ -362,11 +486,69 @@ DROP TABLE #tmpOrders{i},#tmp{i}
         /// <summary>
         /// 檢查User輸入的PL#是否正確
         /// </summary>
-        private int checkPackingList_Count(string CustPONo, string StyleID, string PackingListID, string Article, string CTNStartNo, string ShipQty, string SizeCode)
+        private int checkPackingList_Count(bool IsMixed,string CustPONo, string StyleID, string PackingListID, string Article, string CTNStartNo, string ShipQty, string SizeCode , List<SizeObject> Size_Qty_List)
         {
             string cmd = string.Empty;
+            List<string> sqlMixed = new List<string>();
 
-            cmd = $@"
+            if (IsMixed)
+            {
+                foreach (var data in Size_Qty_List)
+                {
+                    sqlMixed.Add($@"
+
+		( SizeCode='{data.Size}' OR SizeCode in(
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{data.Size}')
+	        )  
+			AND pd.ShipQty={data.Qty})
+");
+                }
+
+                cmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{CustPONo}' AND StyleID='{StyleID}'
+
+SELECT CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
+INTO #tmpMappingCartonNo
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND pd.CustCTN='' 
+    AND Article = '{Article}'
+	AND (
+";
+                cmd += string.Join("		OR" + Environment.NewLine, sqlMixed);
+                cmd += $@"
+		)
+GROUP BY CTNStartNo
+HAVING COUNT(pd.Ukey)={Size_Qty_List.Count}
+
+SELECT [Count]= COUNT(pd.Ukey)
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND pd.CustCTN='' 
+	AND p.ID='{PackingListID}'
+    AND Article = '{Article}'
+    AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo) 
+
+
+DROP TABLE #tmoOrders,#tmpMappingCartonNo
+
+";
+            }
+            else
+            {
+                cmd = $@"
 
 
 SELECT ID ,StyleID ,POID
@@ -398,6 +580,7 @@ WHERE p.Type ='B'
 
 DROP TABLE #tmpOrders0
 ";
+            }
 
             return MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(cmd));
 
