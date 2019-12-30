@@ -149,12 +149,7 @@ using Trade_to_Pms.dbo.OperationDesc as s
 	update set 
 	t.DescKH= s.DescKH,
 	t.DescVi=s.DescVi,
-	t.DescCHS=s.DescCHS
-when not matched by target then
-	insert(ID,DescKH,DescVi,DescCHS)
-	values(s.ID,s.DescKH,s.DescVi,s.DescCHS)
-when not matched by source then
-	delete ;
+	t.DescCHS=s.DescCHS;
 
 --ATTACH
 --MOLD
