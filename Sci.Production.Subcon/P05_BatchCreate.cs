@@ -412,10 +412,10 @@ namespace Sci.Production.Subcon
 select distinct Selected = 0
         , LocalSuppID = isnull(rtrim(sao.LocalSuppId),'')
         , o.FTYGroup
-		, [orderID] = q.ID
-        , OrderQty = sum(q.qty)  
+		, [orderID] = oa.ID
+        , OrderQty = sum(oa.qty)  
         , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) 
-        , ReqQty = iif(sum(q.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(q.qty)- (ReqQty.value + PoQty.value))
+        , ReqQty = iif(sum(oa.qty)-(ReqQty.value + PoQty.value) < 0, 0, sum(oa.qty)- (ReqQty.value + PoQty.value))
 		, o.SewInLIne
 		, o.SciDelivery
 		, [ArtworkID] = case when oa.ArtworkID is null then '{artworktype}' else oa.ArtworkID end 
@@ -429,12 +429,36 @@ select distinct Selected = 0
         , [ArtworkTypeID] = '{artworktype}'
 from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
-inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-left join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode and oa.ArtworkTypeID = '{artworktype}'
-left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey 
-	and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID 
-	and vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID 
-	and vsa.PatternCode = oa.PatternCode and vsa.PatternDesc = oa.PatternDesc 
+cross apply(
+	select * 
+	from (		
+		select a.id,a.ArtworkTypeID,q.Article,q.Qty,q.SizeCode,a.PatternCode,a.PatternDesc,a.ArtworkID,a.ArtworkName
+		,rowNo = ROW_NUMBER() over (
+			partition by a.id,a.ArtworkTypeID,q.Article,a.PatternCode,a.PatternDesc
+				,a.ArtworkID,q.sizecode order by a.AddDate desc)
+		from Order_Artwork a WITH (NOLOCK)
+		inner join order_qty q WITH (NOLOCK) on q.id = a.ID and a.Article = q.Article
+		where a.id = o.id
+		and a.ArtworkTypeID = '{artworktype}'
+		) s
+	where rowNo = 1 
+)oa
+outer apply(
+	select * 
+	from (		
+		select *
+		,rowNo = ROW_NUMBER() over (
+			partition by a.StyleUkey,a.ArtworkTypeID,a.Article,a.PatternCode,a.PatternDesc
+				,a.ArtworkID,a.ArtworkName order by a.StyleArtworkUkey desc)
+		from View_Style_Artwork a WITH (NOLOCK)
+		where a.StyleUkey = o.StyleUkey
+		and a.Article = oa.Article and a.ArtworkID = oa.ArtworkID 
+		and a.ArtworkName = oa.ArtworkName and a.ArtworkTypeID = oa.ArtworkTypeID 
+		and a.PatternCode = oa.PatternCode and a.PatternDesc = oa.PatternDesc 
+		) s
+	where rowNo = 1 
+)vsa
+
 left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
 left join ArtworkType at WITH (NOLOCK) on at.id = ot.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
@@ -490,11 +514,16 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             }
             if (!(string.IsNullOrWhiteSpace(sp_b)))
             {
-                SqlCmd += string.Format(" and o.ID between '{0}' and '{1}'", sp_b, sp_e);
+                SqlCmd += string.Format(" and o.ID >= '{0}'", sp_b);
             }
+            if (!(string.IsNullOrWhiteSpace(sp_e)))
+            {
+                SqlCmd += string.Format(" and o.ID <= '{0}'", sp_e);
+            }
+
             SqlCmd += @" 
-group by q.id,sao.LocalSuppID,ot.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-,oa.qty,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ReqQty.value,o.FtyGroup
+group by oa.id,sao.LocalSuppID,ot.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
+,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ReqQty.value,o.FtyGroup
 order by orderID,ArtworkID,PatternCode,PatternDesc			
 			";
             #endregion
