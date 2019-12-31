@@ -241,14 +241,21 @@ SELECT
 into #tmp_ClogReceive
 from #tmp_main t
 outer apply(
-	select pd.OrderID, pd.ordershipmodeseq, max(pd.ReceiveDate) ReceiveDate
+	select  pd.OrderID
+            , pd.ordershipmodeseq
+            , ReceiveDate = max(pd.ReceiveDate) 
 	from PackingList_Detail pd
 	where pd.OrderID = t.OrderID
-	and not exists (select 1 from PackingList_Detail p where pd.OrderID = p.OrderID and p.ReceiveDate is null)
+          and pd.ordershipmodeseq = t.Seq
+	      and not exists (
+                select 1 
+                from PackingList_Detail pdCheck
+                where pd.OrderID = pdCheck.OrderID 
+					  and pd.OrderShipmodeSeq = pdCheck.OrderShipmodeSeq
+                      and pdCheck.ReceiveDate is null
+          )
 	group by pd.OrderID, pd.ordershipmodeseq 
 )pd 
-WHERE t.localorder = 0  
-GROUP BY t.OrderID, pd.ordershipmodeseq, format(pd.ReceiveDate ,'yyyy/MM/dd')
 
 Select  oqsD.ID,oqsD.Seq
         ,sum (case when dbo.GetPoPriceByArticleSize(oqsd.id,oqsD.Article,oqsD.SizeCode) > 0 then oqsD.Qty else 0 end) as FOB
