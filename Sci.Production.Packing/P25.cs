@@ -4,7 +4,7 @@
 using Ict.Win;
 using org.apache.pdfbox.pdmodel;
 using org.apache.pdfbox.util;
-using PDFLibNet64;
+using PDFLibNet32;
 using Sci.Data;
 >>>>>>> ISP20191302 - 調整畫面，部分操作流程
 using System;
