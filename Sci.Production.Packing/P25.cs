@@ -417,11 +417,12 @@ WHERE p.MDivisionID = @MDivisionID
                                 List<MixedCompare> MixedCompares = new List<MixedCompare>();
 
                                 string tmpStr = string.Empty;
+                                int q = 0;
                                 for (int ix = 0; ix <= tmpArray[33].Length - 1; ix++)
                                 {
                                     MixedCompares.Add(new MixedCompare() {
                                         Text = tmpArray[33][ix].ToString(),
-                                        IsInt = int.TryParse(tmpArray[33][ix].ToString(), out int q)
+                                        IsInt = int.TryParse(tmpArray[33][ix].ToString(), out q)
                                     });
                                 }
 
