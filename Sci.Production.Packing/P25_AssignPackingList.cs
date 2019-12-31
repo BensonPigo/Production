@@ -144,6 +144,204 @@ namespace Sci.Production.Packing
 
                             if (this._UploadType == "ZPL")
                             {
+                                if (current.IsMixed)
+                                {
+
+                                    foreach (var data in ZPL.Size_Qty_List)
+                                    {
+                                        sqlMixed.Clear();
+                                        sqlMixed.Add($@"
+		( SizeCode='{data.Size}' OR SizeCode in(
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders{i}) AND SizeSpec IN ('{data.Size}')
+	        )  
+			AND pd.ShipQty={data.Qty})
+");
+                                    }
+
+                                    cmd += $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders{i}
+FROM Orders 
+WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
+
+----1. 整理Mapping的資料
+SELECT CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
+INTO #tmpMappingCartonNo{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
+    AND pd.CustCTN='' 
+    AND Article = '{ZPL.Article}'
+	AND (
+";
+                                    cmd += string.Join("		OR" + Environment.NewLine, sqlMixed);
+                                    cmd += $@"
+		)
+GROUP BY CTNStartNo
+HAVING COUNT(pd.Ukey)={ZPL.Size_Qty_List.Count}
+
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+	AND p.ID='{packingListID}'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
+    AND pd.CustCTN='' 
+    AND Article = '{ZPL.Article}'
+    AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo{i}) 
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
+
+----2. 更新PackingList_Detail的CustCTN
+UPDATE pd
+SET pd.CustCTN='{ZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN #tmp{i} t ON t.CTNStartNo=pd.CTNStartNo AND pd.ID=t.ID
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+DROP TABLE #tmoOrders{i},#tmpMappingCartonNo{i},#tmp{i}
+
+";
+                                }
+                                else
+                                {
+
+                                    cmd += $@"
+----1. 整理Mapping的資料
+SELECT ID ,StyleID ,POID
+INTO #tmpOrders{i}
+FROM Orders 
+WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
+
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
+    AND pd.CustCTN = ''
+	AND p.ID='{packingListID}'
+    AND Article = '{ZPL.Article}'
+    AND pd.ShipQty={ZPL.ShipQty}
+    AND (
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{ZPL.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{ZPL.SizeCode}'
+        )
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
+
+----2. 更新PackingList_Detail的CustCTN
+UPDATE pd
+SET pd.CustCTN='{ZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}'
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}'
+ 			)
+
+
+DROP TABLE #tmpOrders{i},#tmp{i}
+";
+                                }
+                                /*
                                 cmd += $@"
 ----1. 整理Mapping的資料
 SELECT ID ,StyleID ,POID
@@ -242,7 +440,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 
 
 DROP TABLE #tmpOrders{i},#tmp{i}
-";
+";*/
                             }
 
                             if (this._UploadType == "PDF")

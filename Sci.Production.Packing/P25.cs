@@ -309,7 +309,7 @@ namespace Sci.Production.Packing
 
                                 string[] stringSeparators = new string[] { "\r\n" };
 
-                                // 1-5.最後拆出來的每一個ZPL，包含兩張圖片
+                                // 1-5.最後拆出來的每一個ZPL，包含三張圖片
                                 contentsOfZPL = tmpzplContent.Split(stringSeparators, StringSplitOptions.None);
                             }
 
@@ -565,49 +565,87 @@ WHERE p.MDivisionID = @MDivisionID
             {
                 string[] strArray; // 取得CustCTN過程中，暫存用
                 string[] strArray2; // 取得CustCTN過程中，暫存用
-
+                bool IsMiexed = false;
                 string content = dataList_String[custCTNno];
+                IsMiexed = content.ToUpper().Contains("MIXED");
 
                 // Orders.CustPONo
                 strArray = content.Split(new string[] { "^FDPO#:^FS^FT225,850^A0B,40,50^FD", "^FS^FT280,950^A0B,40,50^FDSKU:^FS" }, StringSplitOptions.RemoveEmptyEntries);
                 string CustPONo = strArray[1];
 
-                strArray2 = content.Split(new string[] { "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD", "^FS^FT" }, StringSplitOptions.RemoveEmptyEntries);
+                if (IsMiexed)
+                {
+                    strArray2 = content.Split(new string[] { "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD", "^FS^FT" }, StringSplitOptions.RemoveEmptyEntries);
+                }
+                else
+                {
+                    strArray2 = content.Split(new string[] { "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD", "^FS^FT" }, StringSplitOptions.RemoveEmptyEntries);
+                }
 
                 // 使用規則運算是，從陣列中找出 OO-OO-OO 的文字，O代表任意字元
                 Regex r = new Regex(@"^\w{1,}\-\w{1,}\-\w{1,}$");
 
-                string StyleID_Article_SizeCode = strArray2.Where(o => r.IsMatch(o)).FirstOrDefault();
+                string StyleID_Article_SizeCode = string.Empty ;
+                string StyleID = string.Empty;
+                string Article = string.Empty;
+                string SizeCode = string.Empty;
+                string ShipQty = string.Empty;
+                string CTNStartNo = string.Empty;
+                List <SizeObject> SizeObjects = new List<SizeObject>();
 
-                // Orders.StyleID
-                string StyleID = StyleID_Article_SizeCode.Split('-')[0];
+                if (IsMiexed)
+                {
+                    int startIndex = Array.IndexOf(strArray2, strArray2.Where(o => o.ToString().Contains("Style-Color-Size")).FirstOrDefault());
+                    int endIndex = Array.IndexOf(strArray2, strArray2.Where(o => o.ToString().Contains("Total Qty")).FirstOrDefault());
+                    int sizeCount = (endIndex - startIndex - 1) / 4;
+                    List<string> tmpSizes = new List<string>();
+                    int ii = 0;
+                    for (int i = startIndex+1; i <= endIndex; i++)
+                    {
+                        string tmpSize = string.Empty;
+                        if (i % 4 == 2 )
+                        {
+                            string[] stringSeparators = new string[] { "^FD" };
+                            string sku = strArray2[i].Split(stringSeparators, StringSplitOptions.None)[1];
+                            StyleID = sku.Split('-')[0];
+                            Article = sku.Split('-')[1];
+                            tmpSize = sku.Split('-')[2];
+                            tmpSizes.Add(tmpSize);
+                        }
+                        if (i % 4 == 0)
+                        {
+                            string[] stringSeparators = new string[] { "^FD" };
+                            string qty = strArray2[i].Split(stringSeparators, StringSplitOptions.None)[1];
+                            SizeObjects.Add(new SizeObject()
+                            {
+                                Size= tmpSizes[ii],
+                                Qty=Convert.ToInt32(qty.TrimStart().TrimEnd())
+                            });
+                            ii++;
+                        }
+                    }
 
-                // Orders.Article
-                string Article = StyleID_Article_SizeCode.Split('-')[1];
+                }
+                else
+                {
+                    StyleID_Article_SizeCode = strArray2.Where(o => r.IsMatch(o)).FirstOrDefault();
+                    // Orders.StyleID
+                    StyleID = StyleID_Article_SizeCode.Split('-')[0];
+                    // Orders.Article
+                    Article = StyleID_Article_SizeCode.Split('-')[1];
+                    // Orders.SizeCode
+                    SizeCode = StyleID_Article_SizeCode.Split('-')[2];
+                    // PackingList_Detail.ShipQty
+                    strArray = content.Split(new string[] { "^FS^FT400,950^A0B,40,50^FDQTY:^FS^FT400,850^A0B,75,100^FD", "^FS^FO425,700^BY3^B3B,N,75,N,N^FD" }, StringSplitOptions.RemoveEmptyEntries);
+                    ShipQty = strArray[1];
 
-                // Orders.SizeCode
-                string SizeCode = StyleID_Article_SizeCode.Split('-')[2];
-
-                // PackingList_Detail.ShipQty
-                strArray = content.Split(new string[] { "^FS^FT400,950^A0B,40,50^FDQTY:^FS^FT400,850^A0B,75,100^FD", "^FS^FO425,700^BY3^B3B,N,75,N,N^FD" }, StringSplitOptions.RemoveEmptyEntries);
-                string ShipQty = strArray[1];
+                    // PackingList_Detail.CTNStartNo
+                    strArray = content.Split(new string[] { "^FDBOX:^FS^FT700,590^A0B,48,65^FD", "^FS^FO0,960^GB775,0,4^FS^FT115,995^A0N,34,47,^FD" }, StringSplitOptions.RemoveEmptyEntries);
+                    CTNStartNo = strArray[1];
+                }
 
                 // PackingList_Detail.CustCTN
                 string CustCTN = custCTNno;
-
-                // PackingList_Detail.CTNStartNo
-                strArray = content.Split(new string[] { "^FDBOX:^FS^FT700,590^A0B,48,65^FD", "^FS^FO0,960^GB775,0,4^FS^FT115,995^A0N,34,47,^FD" }, StringSplitOptions.RemoveEmptyEntries);
-                string CTNStartNo = strArray[1];
-
-                //ZPL aData = new ZPL()
-                //{
-                //    CustCTN = CustCTN,
-                //    StyleID = StyleID,
-                //    Article = Article,
-                //    SizeCode = SizeCode,
-                //    ShipQty = ShipQty,
-                //    CTNStartNo = CTNStartNo
-                //};
 
                 list.Add(new ZPL()
                 {
@@ -617,7 +655,8 @@ WHERE p.MDivisionID = @MDivisionID
                     Article = Article,
                     SizeCode = SizeCode,
                     ShipQty = ShipQty,
-                    CTNStartNo = CTNStartNo
+                    CTNStartNo = CTNStartNo,
+                    Size_Qty_List = SizeObjects
                 });
             }
 
@@ -630,15 +669,22 @@ WHERE p.MDivisionID = @MDivisionID
         /// <param name="zplFileName">CustCTN</param>
         /// <param name="zplContentString">ZPL文字內容</param>
         /// <param name="shippingMarkPath">指定下載到哪裡</param>
-        private void CallAPI(string zplFileName, string zplContentString, string shippingMarkPath)
+        private void CallAPI(string zplFileName, string zplContentString, string shippingMarkPath , bool IsMixed)
         {
-            // 一份ZPL有兩張圖片，因此再拆一次
+            // 一份ZPL有3張圖片，因此再拆一次
             string[] stringSeparators = new string[] { "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH0,0^LRN" };
-            string[] content = zplContentString.Split(stringSeparators, StringSplitOptions.None);
+            List<string>content = zplContentString.Split(stringSeparators, StringSplitOptions.None).ToList();
 
-            for (int i = 0; i < content.Length; i++)
+            for (int i = 0; i < content.Count; i++)
             {
-                if (i == 1)
+                if (i == 1 && IsMixed)
+                {
+                    stringSeparators = new string[] { "^XA^MMT^XZ^XA^PRE^FS^FT0314,0058^A0N,0036,0036^FR^FDCarton Contents^FS" };
+                    string[] aa = content[i].Split(stringSeparators, StringSplitOptions.None);
+                    content[i] = aa[0];
+                    content.Add("^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH0,0^LRN" + aa[1]);
+                }
+                else
                 {
                     content[i] = "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH0,0^LRN" + content[i];
                 }
@@ -699,7 +745,7 @@ WHERE p.MDivisionID = @MDivisionID
 
                         string sqlCmd = string.Empty;
                         List<string> sqlMixed = new List<string>();
-                        bool IsMixed = zpl.SizeCode.ToUpper().Contains("MIX");
+                        bool IsMixed = zpl.SizeCode.ToUpper().Contains("MIX") || (MyUtility.Check.Empty(zpl.SizeCode) && zpl.Size_Qty_List != null);
 
                         if (IsMixed)
                         {
@@ -984,6 +1030,203 @@ DROP TABLE #tmoOrders,#tmp
                             if (this.currentFileType == UploadType.ZPL)
                             {
 
+                                if (IsMixed)
+                                {
+                                    sqlMixed.Clear();
+                                    foreach (var data in ZPL.Size_Qty_List)
+                                    {
+                                        sqlMixed.Add($@"
+		( SizeCode='{data.Size}' OR SizeCode in(
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders{i}) AND SizeSpec IN ('{data.Size}')
+	        )  
+			AND pd.ShipQty={data.Qty})
+");
+                                    }
+
+                                    cmd += $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders{i}
+FROM Orders 
+WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
+
+----1. 整理Mapping的資料
+SELECT CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
+INTO #tmpMappingCartonNo{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
+    AND pd.CustCTN='' 
+    AND Article = '{ZPL.Article}'
+	AND (
+";
+                                    cmd += string.Join("		OR" + Environment.NewLine, sqlMixed);
+                                    cmd += $@"
+		)
+GROUP BY CTNStartNo
+HAVING COUNT(pd.Ukey)={ZPL.Size_Qty_List.Count}
+
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+	AND p.ID='{packingListID}'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
+    AND pd.CustCTN='' 
+    AND Article = '{ZPL.Article}'
+    AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo{i}) 
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
+
+----2. 更新PackingList_Detail的CustCTN
+UPDATE pd
+SET pd.CustCTN='{ZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN #tmp{i} t ON t.CTNStartNo=pd.CTNStartNo AND pd.ID=t.ID
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+DROP TABLE #tmoOrders{i},#tmpMappingCartonNo{i},#tmp{i}
+----------------------------------------------------------------------------------------------------
+";
+                                }
+                                else
+                                {
+
+                                    cmd += $@"
+----1. 整理Mapping的資料
+SELECT ID ,StyleID ,POID
+INTO #tmpOrders{i}
+FROM Orders 
+WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
+
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+INTO #tmp{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' 
+	AND p.ID='{packingListID}'
+    AND pd.CustCTN='' 
+    AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
+    AND Article = '{ZPL.Article}'
+    AND pd.ShipQty={ZPL.ShipQty}
+    AND (
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{ZPL.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{ZPL.SizeCode}'
+        )
+ORDER BY CONVERT ( int ,pd.CTNStartNo)
+
+----2. 更新PackingList_Detail的CustCTN
+UPDATE pd
+SET pd.CustCTN='{ZPL.CustCTN}'
+FROM PackingList_Detail pd
+INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+
+
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+END
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{ZPL.CustCTN}' 
+ 			)
+
+DROP TABLE #tmpOrders{i},#tmp{i}
+";
+                                }
+                                /*
                                 cmd += $@"
 ----1. 整理Mapping的資料
 SELECT ID ,StyleID ,POID
@@ -1082,7 +1325,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
  			)
 
 DROP TABLE #tmpOrders{i},#tmp{i}
-";
+";*/
                             }
 
                             if (this.currentFileType == UploadType.PDF)
@@ -1323,7 +1566,7 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                         foreach (string singleFileName in this.wattingForConvert)
                         {
                             string contentString = this.wattingForConvert_contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
-                            this.CallAPI(singleFileName, contentString, shippingMarkPath);
+                            this.CallAPI(singleFileName, contentString, shippingMarkPath, contentString.ToUpper().Contains("MIXED"));
                         }
                     }
 
@@ -1394,7 +1637,6 @@ DROP TABLE #tmpOrders{i},#tmp{i}
             public string Size { get; set; }
 
             public int Qty{ get; set; }
-
         }
 
         public class P25_Object
