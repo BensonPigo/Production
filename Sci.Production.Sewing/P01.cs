@@ -1687,6 +1687,7 @@ from #tmp t
 inner join inspection i with(nolock) on t.Cdate = i.InspectionDate and t.FactoryID = i.FactoryID 
 	and t.SewinglineID = i.Line and t.Team = i.Team and t.Shift = iif(i.Shift='Day','D','N')and t.OrderId = i.OrderId
 inner join Inspection_Detail id with(nolock) on i.id= id.id
+where (i.Status <> 'Fixed'  or (i.Status = 'Fixed' and cast(i.AddDate as date) = i.InspectionDate))
 group by t.id,GarmentDefectTypeID, GarmentDefectCodeID
 ";
                 DataTable rftDT_Detail;
@@ -3895,7 +3896,8 @@ outer apply(
            and ins.Shift = '{shift}' 
            and ins.Article = t.Article
            and ins.Location = t.ComboType
-           and ins.OrderId = t.OrderId 
+           and ins.OrderId = t.OrderId            
+           and (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
 ) DefectData
 outer apply(
     -- 最後計算RFT 排除Fixed，但若同一天被Reject又被修好這時候也要抓進來並算reject。
@@ -3911,7 +3913,6 @@ outer apply(
            and ins.OrderId = t.OrderId
            and not (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
 ) DiffInspectQty
-where DefectData.Qty > 0
 ";
 
             using (SqlConnection mesConn = new SqlConnection(Env.Cfg.GetConnection("ManufacturingExecution", DBProxy.Current.DefaultModuleName).ConnectionString))
