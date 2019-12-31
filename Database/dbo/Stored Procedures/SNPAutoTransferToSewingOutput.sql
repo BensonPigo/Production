@@ -150,7 +150,7 @@ BEGIN
 					,Article
 					,SizeCode
 					,[QAQty]=CASE   WHEN (ByLine.SumQty + AlreadyInPMS.Qty) >= Order_Qty.Qty AND LineCount.Val=1 THEN Order_Qty.Qty
-									WHEN (ByLine.SumQty + AlreadyInPMS.Qty) >= Order_Qty.Qty AND LineCount.Val>1 AND WorkLine=MaxLine.Val THEN (Order_Qty.Qty - AlreadyInPMS.Qty - ByLine.SumQty + ISNULL(t.QAQty,0) )
+									WHEN (ByLine.SumQty + AlreadyInPMS.Qty) >= Order_Qty.Qty AND LineCount.Val>1 AND t.QAQty=MaxQty.Val THEN (Order_Qty.Qty - AlreadyInPMS.Qty - ByLine.SumQty + ISNULL(t.QAQty,0) )
 									ELSE ISNULL(t.QAQty,0)
 									END
 					,[InlineQty]
@@ -189,10 +189,10 @@ BEGIN
 			)ByLine
 
 			OUTER APPLY(
-				SELECT [Val]=MAX(t2.WorkLine)
+				SELECT [Val]=MAX(t2.QAQty)
 				FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t2
 				WHERE t.dDate=t2.dDate AND t.OrderId=t2.OrderId AND t.ComboType=t2.ComboType AND t.Article=t2.Article AND t.SizeCode=t2.SizeCode AND t.InlineQty=t2.InlineQty
-			)MaxLine
+			)MaxQty
 			OUTER APPLY(
 				SELECT [Val]=COUNT(t2.WorkLine)
 				FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t2
