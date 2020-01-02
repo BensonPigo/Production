@@ -1198,6 +1198,7 @@ select ID = null
        , ld.isppa
        , ld.Threadcolor
        , ld.ActCycle
+       , ld.MasterPlusGroup
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID

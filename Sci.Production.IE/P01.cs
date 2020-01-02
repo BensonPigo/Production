@@ -271,6 +271,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                     dr["Frequency"] = 1;
                                     dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                     dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                    dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
                                     dr.EndEdit();
                                 }
                             }
@@ -289,6 +290,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                 dr["Frequency"] = 1;
                                 dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                 dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
                                 dr.EndEdit();
                             }
                             else
