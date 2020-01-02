@@ -1426,6 +1426,13 @@ where (OrderID <> '' or OrderID is not null)
                     MyUtility.Msg.WarningBox("QA Output shouled be the same as before.");
                     return false;
                 }
+
+                int delDetailDatasCount = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(x => x.RowState == DataRowState.Deleted).ToList().Count();
+                if (delDetailDatasCount > 0)
+                {
+                    MyUtility.Msg.WarningBox("Cannot remove SP after unconfirm. Please update QA Qty to zero manually.");
+                    return false;
+                }
             }
             #endregion
 
