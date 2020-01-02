@@ -406,7 +406,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	UPDATE a
 	SET Junk = b.Cancel
 	FROM dbo.MiscPO_Detail a
-	INNER JOIN dbo.SciTrade_To_Pms_MmsReq_Detail b ON a.ID = b.ID
+	INNER JOIN dbo.SciTrade_To_Pms_MmsReq_Detail b ON a.ID = b.ID and a.Seq2 = b.Seq2
 
 	-- ------------MachinePO--------------------
 	declare @T table (id varchar(13))
