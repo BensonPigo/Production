@@ -1687,6 +1687,7 @@ from #tmp t
 inner join inspection i with(nolock) on t.Cdate = i.InspectionDate and t.FactoryID = i.FactoryID 
 	and t.SewinglineID = i.Line and t.Team = i.Team and t.Shift = iif(i.Shift='Day','D','N')and t.OrderId = i.OrderId
 inner join Inspection_Detail id with(nolock) on i.id= id.id
+where (i.Status <> 'Fixed'  or (i.Status = 'Fixed' and cast(i.AddDate as date) = i.InspectionDate))
 group by t.id,GarmentDefectTypeID, GarmentDefectCodeID
 ";
                 DataTable rftDT_Detail;
@@ -3582,6 +3583,7 @@ Hi all,
                 return;
             }
 
+            string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
             string frommes = $@"
 select
 	OrderId
@@ -3600,7 +3602,7 @@ where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString(
 and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
-and Shift = iif('{this.CurrentMaintain["Shift"]}'='D','Day',iif('{this.CurrentMaintain["Shift"]}'='N','Night',''))
+and Shift = '{shift}'
 group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location
 ";
             DataTable sewDt1;
@@ -3710,7 +3712,7 @@ where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString(
 and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
-and Shift = iif('{this.CurrentMaintain["Shift"]}'='D','Day',iif('{this.CurrentMaintain["Shift"]}'='N','Night',''))
+and Shift = '{shift}'
 and Article = '{item["Article"]}'
 and Location = '{item["ComboType"]}'
 and OrderId = '{item["OrderId"]}'
@@ -3874,7 +3876,7 @@ select t.OrderId
 	, CDate='{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
 	, SewinglineID='{this.CurrentMaintain["SewingLineID"]}'
 	, FactoryID = '{this.CurrentMaintain["FactoryID"]}'
-	, InspectQty= t.InlineQty
+	, InspectQty= t.InlineQty - DiffInspectQty.Qty
 	, RejectQty= t.DefectQty
 	, [DefectQty] = DefectData.Qty
 	, Shift='{this.CurrentMaintain["Shift"]}'
@@ -3891,18 +3893,33 @@ outer apply(
            and ins.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
            and ins.Line = '{this.CurrentMaintain["SewingLineID"]}'
            and ins.Team = '{this.CurrentMaintain["Team"]}'
-           and ins.Shift = iif('{this.CurrentMaintain["Shift"]}'='D','Day',iif('{this.CurrentMaintain["Shift"]}'='N','Night',''))
+           and ins.Shift = '{shift}' 
+           and ins.Article = t.Article
+           and ins.Location = t.ComboType
+           and ins.OrderId = t.OrderId            
+           and (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
+) DefectData
+outer apply(
+    -- 最後計算RFT 排除Fixed，但若同一天被Reject又被修好這時候也要抓進來並算reject。
+    select Qty=count(*)
+	from Inspection ins with (nolock)
+	where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+           and ins.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+           and ins.Line = '{this.CurrentMaintain["SewingLineID"]}'
+           and ins.Team = '{this.CurrentMaintain["Team"]}'
+           and ins.Shift = '{shift}' 
            and ins.Article = t.Article
            and ins.Location = t.ComboType
            and ins.OrderId = t.OrderId
-) DefectData
-where DefectData.Qty > 0
+           and not (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
+) DiffInspectQty
 ";
 
             using (SqlConnection mesConn = new SqlConnection(Env.Cfg.GetConnection("ManufacturingExecution", DBProxy.Current.DefaultModuleName).ConnectionString))
             {
                 mesConn.Open();
-                result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource,
+                result = MyUtility.Tool.ProcessWithDatatable(
+                    (DataTable)this.detailgridbs.DataSource,
                     string.Empty,
                     rftfrommes,
                     out this.rftDT,
