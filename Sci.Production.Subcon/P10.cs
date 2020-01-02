@@ -707,11 +707,11 @@ select F.nameEn
 ,A.ApQty
 ,format(A.Amount,'#,###,###,##0.00')Amount
 ,ap.PayTermID+'-'+P.name as Terms
-,LOB.AccountNo
-,LOB.AccountName
-,LOB.BankName
-,LOB.CountryID+'/'+LOB.City as Country
-,LOB.SWIFTCode
+,LocalSuppBank.AccountNo
+,LocalSuppBank.AccountName
+,LocalSuppBank.BankName
+,LocalSuppBank.CountryID+'/'+LocalSuppBank.City as Country
+,LocalSuppBank.SWIFTCode
 ,ap.Handle+CHAR(13)+CHAR(10)+pas.name as PreparedBy
 ,format(ap.Amount,'#,###,###,##0.00') as Total
 ,format(ap.Vat,'#,###,###,##0.00') as Vat
@@ -724,12 +724,23 @@ LEFT JOIN dbo.LocalSupp L WITH (NOLOCK)
     ON  L.ID = ap.LocalSuppID
 LEFT JOIN dbo.Artworkap_Detail A WITH (NOLOCK) 
     ON  A.ID = ap.ID
-LEFT JOIN dbo.LocalSupp_Bank LOB WITH (NOLOCK) 
-    ON  IsDefault = 1 and LOB.ID = ap.LocalSuppID
 LEFT JOIN DBO.PayTerm P WITH (NOLOCK) 
     ON P.ID = ap.PayTermID
 LEFT JOIN DBO.Pass1 pas WITH (NOLOCK) 
     ON pas.ID = ap.Handle 
+OUTER APPLY(
+	SELECT   [AccountNo]= IIF(lb.ByCheck=1,'',lbd.Accountno )
+	, [AccountName]=IIF(lb.ByCheck=1,'',lbd.AccountName )
+	, [BankName]=IIF(lb.ByCheck=1,'',lbd.BankName )
+	, [CountryID]=IIF(lb.ByCheck=1,'',lbd.CountryID)
+	, [City]=IIF(lb.ByCheck=1,'',lbd.City)
+	, [SwiftCode]=IIF(lb.ByCheck=1,'',lbd.SwiftCode )
+	FROM LocalSupp_Bank lb
+	LEFT JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND lb.PKey=lbd.Pkey
+	WHERE lb.ID=ap.LocalSuppID
+	AND lb.ApproveDate = (SElECT MAX(ApproveDate) FROM LocalSupp_Bank WHERE Status='Confirmed' AND ID=ap.LocalSuppID)
+	AND lbd.IsDefault=1
+)LocalSuppBank 
 where ap.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
