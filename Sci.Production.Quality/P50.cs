@@ -60,9 +60,15 @@ namespace Sci.Production.Quality
     declare @MaxWorkTime datetime
     declare @MinWorkTime datetime
     
+    select  WorkTime,
+            FailCode,
+            qty
+    into    #tmpReworkTotal
+    from [ExtendServer].[Dashboard].[dbo].[ReworkTotal] with (nolock)
+    where WorkDate = @Startime and FactoryID = @Factory
+
     select @MaxWorkTime = max(WorkTime), @MinWorkTime = min(WorkTime)
-    from [Dashboard].[dbo].[ReworkTotal] with (nolock)
-     where WorkDate = @Startime and FactoryID = @Factory
+    from #tmpReworkTotal
     
     if(@MaxWorkTime is null)
     begin
@@ -81,11 +87,10 @@ namespace Sci.Production.Quality
             , tr.ColSerNo
 	        , [DefectQty] = sum(rt.qty)
 	into #DefectOutput
-	from [Dashboard].[dbo].[ReworkTotal] rt with (nolock)
+	from #tmpReworkTotal rt
     inner join #TimeRange tr on rt.WorkTime >= tr.StartTime and rt.WorkTime < tr.EndTime
 	inner join GarmentDefectCode gdc on (rt.FailCode = gdc.ID or rt.FailCode = gdc.ReworkTotalFailCode) and gdc.Junk = 0
-	where rt.WorkDate = @Startime and rt.FactoryID = @Factory
-	Group by rt.WorkDate, gdc.id,gdc.Description, tr.DisplayTitle, tr.ColSerNo
+	Group by gdc.id,gdc.Description, tr.DisplayTitle, tr.ColSerNo
 	
 	Declare @DisplayTitleCol varchar(400)
 	SELECT @DisplayTitleCol =  Stuff((select concat( ',','['+DisplayTitle+']')   from #TimeRange order by StartTime FOR XML PATH('')),1,1,'') 
