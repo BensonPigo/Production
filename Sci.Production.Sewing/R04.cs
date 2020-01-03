@@ -85,7 +85,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubConOutContractNumber
     ,o.SubconInType
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'')
-	,Remark=isnull(sd.Remark,'')
+	,Remark= ssd.SewingOutputRemark
     ,o.SciDelivery
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
@@ -111,6 +111,15 @@ outer apply
 		for xml path('')
 	),1,1,'')
 )sr
+outer apply
+(
+	select [SewingOutputRemark]=stuff((
+		select concat(',',ssd.Remark)
+		from SewingOutput_Detail ssd WITH (NOLOCK) 
+		where ssd.ID = sd.ID
+		for xml path('')
+	),1,1,'')
+)ssd
 outer apply( select BrandID from orders o1 WITH (NOLOCK) where o.CustPONo=o1.id )Order2
 outer apply( select top 1 BrandID from Style WITH (NOLOCK) where id=o.StyleID and SeasonID=o.SeasonID and BrandID!='SUBCON-I' )StyleBrand
 where 1=1 "));
