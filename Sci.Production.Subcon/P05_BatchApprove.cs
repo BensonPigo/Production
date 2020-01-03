@@ -11,21 +11,31 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using Sci.Production.PublicPrg;
+
 namespace Sci.Production.Subcon
 {
     public partial class P05_BatchApprove : Sci.Win.Subs.Base
     {
         Action delegateAct;
+        private bool boolDeptApv;
+        private bool canConfrim;
+        private bool canCheck;
         public P05_BatchApprove(Action reload)
         {
             InitializeComponent();
             this.EditMode = true;
             this.delegateAct = reload;
+            // 檢查是否擁有Confirm or Check權限
+            canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
+            canCheck = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
+
+            boolDeptApv = true;
+            Authority();
         }
 
         protected override void OnFormLoaded()
         {
-
             base.OnFormLoaded();
             Query();
 
@@ -76,9 +86,18 @@ namespace Sci.Production.Subcon
             listControlBindingSource2.DataSource = null;
             DataSet ds = null;
             DataRelation relation;
-            string sqlCmd = string.Empty; 
+            string sqlCmd = string.Empty;
+            string filter = string.Empty;
+            if (boolDeptApv)
+            {
+                filter = @" and Status = 'New'";               
+            }
+            else
+            {
+                filter = @" and Status = 'Locked'";
+            }
 
-            sqlCmd = string.Format(@"
+            sqlCmd = $@"
 select 0 Selected
     ,ID
 	,FactoryId
@@ -88,13 +107,10 @@ select 0 Selected
 	,[DeptApvName] = (select name from Pass1 where id = DeptApvName)
 	,[MgApvName] = (select name from pass1 where id = MgApvName)
 	,Remark
+    ,[Status],Exceed
 from ArtworkReq
-where (
-    ([Status] = 'Locked' and Exceed = 1) 
-or 
-    ([Status] = 'New' and Exceed = 0)
-)
-
+where 1=1
+{filter}
 
 select a.ID
 	,ad.OrderID  
@@ -103,17 +119,15 @@ select a.ID
 	,ad.ArtworkId
 	,ad.Stitch
 	,ad.PatternCode
+    ,ad.PatternDesc
 	,ad.QtyGarment
+    ,[Status],Exceed
 from ArtworkReq a
 inner join ArtworkReq_Detail ad on a.ID = ad.ID 
 left join Orders o on ad.OrderID = o.ID
-where (
-([Status] = 'Locked' and Exceed = 1) 
-or 
-([Status] = 'New' and Exceed = 0)
-)
-
-                      ");
+where 1=1
+{filter}
+                      ";
 
             if (!SQL.Selects("", sqlCmd, out ds)){
                 MyUtility.Msg.WarningBox(sqlCmd, "DB error!!");
@@ -135,6 +149,7 @@ or
             listControlBindingSource2.DataMember = "rel1";
             this.gridArtworkReq.AutoResizeColumns();
             this.gridArtworkReqDetail.AutoResizeColumns();
+            Authority();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -144,10 +159,13 @@ or
 
         private void btnApprove_Click(object sender, EventArgs e)
         {
+            this.gridArtworkReq.ValidateControl();
             DataSet ds = (DataSet)listControlBindingSource1.DataSource;
             DataTable dt = ds.Tables["Master"];
+            DataTable dt2 = ds.Tables["Detail"];
             DualResult result;
             string sqlcmd = string.Empty;
+            string strStatus;
 
             if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return; 
 
@@ -157,9 +175,60 @@ or
                 return;
             }
 
-            sqlcmd = string.Format(@"update ArtworkReq 
-                    set [Status]='Approved', MgApvName='{0}', MgApvDate=GETDATE(), editname='{0}', editdate=GETDATE()  
-                    where ID in ('{1}') ", Env.User.UserID, string.Join("','", query.ToList()));
+            DataRow[] drSelect = dt.Select(" Selected = 1");
+            foreach (DataRow dr in drSelect)
+            {
+                // Status = New
+                if (boolDeptApv)
+                {
+                    // 判斷irregular Reason沒寫不能存檔
+                    DataTable dtDetail = dt2.AsEnumerable().Where(x => x["ID"].EqualString(dr["id"].ToString())).CopyToDataTable();
+                    var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtDetail);
+
+                    DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
+                    if (dtIrregular != null)
+                    {
+                        bool isReasonEmpty = dtIrregular.AsEnumerable().Any(s => MyUtility.Check.Empty(s["SubconReasonID"]));
+                        if (isReasonEmpty)
+                        {
+                            MyUtility.Msg.WarningBox($@"<Req#: {dr["ID"]}> Irregular Qty Reason cannot be empty!");
+                            return;
+                        }
+                    }
+
+                    if (MyUtility.Check.Empty(dr["Exceed"]))
+                    {
+                        strStatus = "Approved";
+                    }
+                    else
+                    {
+                        strStatus = "Locked";
+                    }
+
+                    sqlcmd += $@"
+update ArtworkReq 
+set [Status] = '{strStatus}'
+, DeptApvName = '{Env.User.UserID}'
+, DeptApvDate = GETDATE()
+, editname = '{Env.User.UserID}'
+, editdate=GETDATE()  
+where ID = '{dr["ID"]}' ";
+                }
+                // Status = Checked
+                else
+                {
+                    sqlcmd += $@"
+update ArtworkReq 
+set [Status] = 'Approved'
+, MgApvName = '{Env.User.UserID}'
+, MgApvDate = GETDATE()
+, editname = '{Env.User.UserID}'
+, editdate=GETDATE()  
+where ID = '{dr["ID"]}' ";
+                }
+
+            }
+           
 
             if (!(result = DBProxy.Current.Execute(null, sqlcmd))) {
                 ShowErr(sqlcmd, result);
@@ -167,7 +236,7 @@ or
             }
 
             Query();
-            MyUtility.Msg.InfoBox("Sucessful");
+            MyUtility.Msg.InfoBox("Successful.");
             this.delegateAct();
         }
 
@@ -208,6 +277,40 @@ order by aq.ID, aqd.OrderID
             }
 
             MyUtility.Excel.CopyToXls(printData, "", "Subcon_P05_BatchApprove.xltx");
+        }
+
+        private void Authority()
+        {
+            if ((canConfrim & canCheck) || Env.User.IsAdmin)
+            {
+                if (boolDeptApv)
+                {
+                    this.linkLabelDept.Enabled = false;
+                    this.linkLabelMg.Enabled = true;
+                }
+                else
+                {
+                    this.linkLabelDept.Enabled = true;
+                    this.linkLabelMg.Enabled = false;
+                }
+                
+            }
+            else
+            {
+                boolDeptApv = canCheck ? true : false;
+            }
+        }
+
+        private void LinkLabelDept_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            boolDeptApv = true;
+            Query();
+        }
+
+        private void LinkLabelMg_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            boolDeptApv = false;
+            Query();
         }
     }
 }

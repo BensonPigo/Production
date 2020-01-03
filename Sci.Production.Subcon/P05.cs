@@ -100,6 +100,23 @@ namespace Sci.Production.Subcon
             {
                 ChangeBrowseColor();
             };
+
+            #region 權限控管
+            // 檢查是否擁有Confirm or Check權限
+            bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
+            bool canCheck = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
+            
+
+
+            if (canConfrim || canCheck || Env.User.IsAdmin)
+            {
+                this.btnBatchApprove.Enabled = true;
+            }
+            else
+            {
+                this.btnBatchApprove.Enabled = false;
+            }
+            #endregion
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -755,7 +772,7 @@ where id = '{CurrentMaintain["id"]}'";
 
         private void btnBatchApprove_Click(object sender, EventArgs e)
         {
-            if (this.Perm.Confirm)
+            if (this.Perm.Confirm || this.Perm.Check)
             {
                 if (batchapprove == null || batchapprove.IsDisposed)
                 {
