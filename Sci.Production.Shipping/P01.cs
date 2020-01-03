@@ -42,6 +42,26 @@ namespace Sci.Production.Shipping
             this.txtuserShipLeader.TextBox1.IsSupportEditMode = false;
             this.txtCountryDestination.TextBox1.ReadOnly = true;
             this.txtCountryDestination.TextBox1.IsSupportEditMode = false;
+
+            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "All,All,New,New,Checked,PPIC Checked,Approved,FTY Approved,Comfirmed,SMR Comfirmed,Locked,GM Team Locked");
+
+            this.queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (this.queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = string.Empty;
+                        break;
+                    default:
+                        this.DefaultWhere = $" Status = '{this.queryfors.SelectedValue}'"; 
+                        break;
+                }
+
+                this.ReloadDatas();
+            };
+
+            // 預設為PPIC Checked
+            this.queryfors.SelectedIndex = 2;
         }
 
         /// <inheritdoc/>
