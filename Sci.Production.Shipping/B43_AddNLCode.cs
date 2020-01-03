@@ -56,7 +56,7 @@ namespace Sci.Production.Shipping
             this.gridAddNewNLCode.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridAddNewNLCode)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10))
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7))
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(12))
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15))
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), settings: this.unit)
                 .Numeric("WasteLower", header: "Waste Lower", decimal_places: 3)

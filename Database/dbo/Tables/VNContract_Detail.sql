@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[VNContract_Detail] (
     [ID]            VARCHAR (15)    CONSTRAINT [DF_VNContract_Detail_ID] DEFAULT ('') NOT NULL,
     [HSCode]        VARCHAR (11)    CONSTRAINT [DF_VNContract_Detail_HSCode] DEFAULT ('') NOT NULL,
-    [NLCode]        VARCHAR (5)     CONSTRAINT [DF_VNContract_Detail_NLCode] DEFAULT ('') NOT NULL,
+    [NLCode]        VARCHAR (9)     CONSTRAINT [DF_VNContract_Detail_NLCode] DEFAULT ('') NOT NULL,
     [Qty]           NUMERIC (14, 3) CONSTRAINT [DF_VNContract_Detail_Qty] DEFAULT ((0)) NULL,
     [UnitID]        VARCHAR (8)     CONSTRAINT [DF_VNContract_Detail_UnitID] DEFAULT ('') NOT NULL,
     [WasteLower]    NUMERIC (5, 3)  CONSTRAINT [DF_VNContract_Detail_WasteLower] DEFAULT ((0)) NOT NULL,

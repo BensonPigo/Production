@@ -237,7 +237,7 @@ where 1 = 1");
                 }
 
                 sqlCmd.Append(@"                                                                                                       
-order by CONVERT(int,SUBSTRING(a.NLCode,3,3))
+order by TRY_CONVERT(int, SUBSTRING(a.NLCode, 3, LEN(a.NLCode))), a.NLCode
 
 drop table #tmpContract;
 drop table #tmpDeclare;");
@@ -1115,7 +1115,7 @@ where 1 = 1 ");
 
                 sqlCmd.Append(string.Format(
                     @"                                                                                                       
-order by CONVERT(int,SUBSTRING(a.NLCode,3,3))
+order by TRY_CONVERT(int, SUBSTRING(a.NLCode, 3, LEN(a.NLCode))), a.NLCode
 
 --1)在途物料
 select * from #tmpOnRoadMaterial where Qty != 0  {0} {1} order by POID,Seq

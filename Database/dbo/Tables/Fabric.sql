@@ -27,7 +27,7 @@
     [AddDate]          DATETIME        NULL,
     [EditName]         VARCHAR (10)    CONSTRAINT [DF_Fabric_EditName] DEFAULT ('') NULL,
     [EditDate]         DATETIME        NULL,
-    [NLCode]           VARCHAR (5)     CONSTRAINT [DF_Fabric_NLCode] DEFAULT ('') NULL,
+    [NLCode]           VARCHAR (9)     CONSTRAINT [DF_Fabric_NLCode] DEFAULT ('') NULL,
     [HSCode]           VARCHAR (11)    CONSTRAINT [DF_Fabric_HSCode] DEFAULT ('') NULL,
     [CustomsUnit]      VARCHAR (8)     CONSTRAINT [DF_Fabric_CustomsUnit] DEFAULT ('') NULL,
     [PcsWidth]         NUMERIC (7, 4)  CONSTRAINT [DF_Fabric_PcsWidth] DEFAULT ((0)) NULL,

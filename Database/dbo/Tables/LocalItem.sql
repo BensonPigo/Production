@@ -24,7 +24,7 @@
     [AddDate]        DATETIME        NULL,
     [EditName]       VARCHAR (10)    CONSTRAINT [DF_LocalItem_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME        NULL,
-    [NLCode]         VARCHAR (5)     CONSTRAINT [DF_LocalItem_NLCode] DEFAULT ('') NULL,
+    [NLCode]         VARCHAR (9)     CONSTRAINT [DF_LocalItem_NLCode] DEFAULT ('') NULL,
     [HSCode]         VARCHAR (11)    CONSTRAINT [DF_LocalItem_HSCode] DEFAULT ('') NULL,
     [CustomsUnit]    VARCHAR (8)     CONSTRAINT [DF_LocalItem_CustomsUnit] DEFAULT ('') NULL,
     [PcsWidth]       NUMERIC (7, 4)  CONSTRAINT [DF_LocalItem_PcsWidth] DEFAULT ((0)) NULL,

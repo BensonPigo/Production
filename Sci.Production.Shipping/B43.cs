@@ -31,7 +31,7 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
+            this.DetailSelectCommand = string.Format(@"select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where ID = '{0}' order by TRY_CONVERT(int, SUBSTRING(NLCode, 3, LEN(NLCode))), NLCode", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -41,7 +41,7 @@ namespace Sci.Production.Shipping
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("WasteLower", header: "Waste Lower", decimal_places: 3)

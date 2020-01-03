@@ -99,7 +99,7 @@ where 1=1 and vc.Status = 'Confirmed'"));
                     sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", this.customSP1, this.customSP2));
                 }
 
-                sqlCmd.Append(" order by CustomSP,CONVERT(int,SUBSTRING(vcd.NLCode,3,3))");
+                sqlCmd.Append(" order by CustomSP, TRY_CONVERT(int, SUBSTRING(vcd.NLCode, 3, LEN(vcd.NLCode))), vcd.NLCode");
 
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
