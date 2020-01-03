@@ -263,7 +263,7 @@ cross apply(
 			partition by a.id,a.ArtworkTypeID,q.Article,a.PatternCode,a.PatternDesc
 				,a.ArtworkID,q.sizecode order by a.AddDate desc)
 		from Order_Artwork a WITH (NOLOCK)
-		inner join order_qty q WITH (NOLOCK) on q.id = a.ID and a.Article = q.Article
+		inner join order_qty q WITH (NOLOCK) on q.id = a.ID and  (a.Article = q.Article or a.Article = '----')
 		where a.id = o.id
 		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}'
 		) s
