@@ -121,6 +121,12 @@ namespace Sci.Production.Subcon
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, SqlCmd, out dtArtwork))
             {
+                DualResult resultGetSpecialRecordData = GetSpecialRecordData();
+                if (!resultGetSpecialRecordData)
+                {
+                    this.ShowErr(resultGetSpecialRecordData);
+                }
+
                 if (dtArtwork.Rows.Count == 0 && showNoDataMsg)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtArtwork;
@@ -560,7 +566,7 @@ SELECT distinct	Selected = 0
 into    #quoteDetail
 FROM Orders WITH (NOLOCK) 
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
-inner join ArtworkType awt WITH (NOLOCK) on awt.ID like '{1}%'
+inner join ArtworkType awt WITH (NOLOCK) on awt.ID = '{1}'
 inner join view_order_artworks v on v.id = Orders.id 
 									and v.artworktypeid = awt.ID
 inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = Orders.ID and 
@@ -673,7 +679,7 @@ SELECT 	Selected = 0
         , Orders.Category
 FROM ArtworkReq_Detail ard WITH (NOLOCK) 
 inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = '{2}'  and ar.Status = 'Approved'
-inner join Order_TmsCost WITH (NOLOCK) on ard.OrderID = Order_TmsCost.ID and Order_TmsCost.ArtworkTypeID like ar.ArtworkTypeID + '%'
+inner join Order_TmsCost WITH (NOLOCK) on ard.OrderID = Order_TmsCost.ID and Order_TmsCost.ArtworkTypeID = ar.ArtworkTypeID
 inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 WHERE 	ard.ArtworkPOID = '' and
@@ -709,6 +715,78 @@ WHERE 	ard.ArtworkPOID = '' and
             #endregion
 
             return SqlCmd;
+        }
+
+        private DualResult GetSpecialRecordData()
+        {
+            string sqlWhere = string.Empty;
+            if (!(dateSCIDelivery.Value1 == null)) { sqlWhere += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
+            if (!(dateSCIDelivery.Value2 == null)) { sqlWhere += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
+            if (!(dateApproveDate.Value1 == null)) { sqlWhere += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
+            if (!(dateApproveDate.Value2 == null)) { sqlWhere += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
+            if (!(string.IsNullOrWhiteSpace(sp_b))) { sqlWhere += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+
+
+            string sqlGetSpecialRecordData = $@"
+select	Selected = 0 
+		, o.FTYGroup
+		, orderid = o.ID 
+		, Styleid = rtrim(o.Styleid) 
+		, SeasonID = rtrim(o.SeasonID) 
+        , [Article] = (SELECT Stuff((select concat( ',',Article)   from Order_Article with (nolock) where ID = o.ID FOR XML PATH('')),1,1,'') )
+		, o.ordertypeid
+		, o.SciDelivery
+		, ar.ArtworkTypeID
+		, ArtworkID = ard.ArtworkID 
+		, PatternCode = ard.PatternCode 
+		, PatternDesc = ard.PatternDesc 
+		, LocalSuppID = rtrim(ar.LocalSuppID) 
+		, Cost = 0.0
+		, costStitch = 1 
+		, stitch = ard.stitch
+		, unitprice = 0.0
+		, qtygarment = ard.QtyGarment
+		, poqty = ard.ReqQty
+		, o.SewInLine
+		, [PriceApv] = 'Y'
+		, message = '' 
+        , IsArtwork = 0
+		, [ArtworkReq_DetailUkey] = ard.Ukey
+		, [ArtworkReqID] = ar.ID
+        , o.Category
+from ArtworkReq ar  with (nolock)
+inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID 
+inner join orders o WITH (NOLOCK) on ard.OrderId = o.ID  
+inner join ArtworkType at with (nolock) on ar.ArtworkTypeID = at.ID
+outer apply (
+        select IssueQty = ISNULL(sum(PoQty),0)
+        from ArtworkPO_Detail AD, ArtworkPO A
+        where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= ard.PatternCode
+) IssueQty
+where  ar.ArtworkTypeID = '{artworktype}' and ar.Status = 'Approved' and  ard.ArtworkPOID = '' and
+    (
+	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O') 
+	or 
+	(o.category = 'S')
+	) and
+    not exists( select 1 from #tmpArtwork t where t.OrderID = ard.orderid)
+    {sqlWhere}
+";
+            DataTable dtResult = new DataTable();
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtArtwork, "OrderID", sqlGetSpecialRecordData, out dtResult, temptablename: "#tmpArtwork");
+
+            if (!result)
+            {
+                return result;
+            }
+
+            // 若有special資料舊merge回主table中
+            if (dtResult.Rows.Count > 0)
+            {
+                this.dtArtwork.Merge(dtResult);
+            }
+
+            return new DualResult(true);
         }
 
         private void DetalGridCellEditChange(int index)

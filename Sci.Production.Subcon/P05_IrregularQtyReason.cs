@@ -251,46 +251,39 @@ o.FactoryID
 ,[CreateDate] = null
 ,[EditBy] = ''
 ,[EditDate] = null
-,voa.ArtworkID,voa.PatternCode,voa.PatternDesc
+,s.ArtworkID,s.PatternCode,s.PatternDesc
 into #tmpCurrent
-from  Order_TmsCost ot
-inner join orders o WITH (NOLOCK) on ot.ID = o.ID
+from  orders o WITH (NOLOCK) 
 inner join order_qty oq WITH (NOLOCK) on oq.id = o.ID
-left join View_Order_Artworks voa on oq.Article = voa.Article
-    and voa.id=o.ID and voa.SizeCode = oq.SizeCode and voa.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 inner join #tmp s  on s.OrderID = o.ID 
-	and isnull(voa.ArtworkID,'{_masterData["ArtworkTypeID"]}') = s.ArtworkID
-	and isnull(voa.PatternCode,'') = isnull(s.PatternCode,'')
-	and isnull(voa.PatternDesc,'') = isnull(s.PatternDesc,'')
 outer apply(
 	select value = ISNULL(sum(PoQty),0)
     from ArtworkPO_Detail ad, ArtworkPO a
 	where ad.ID = a.ID
     and OrderID = o.ID 
-    and ad.PatternCode = isnull(voa.PatternCode,'')
-	and ad.PatternDesc = isnull(voa.PatternDesc,'') 
-    and ad.ArtworkID = iif(voa.ArtworkID is null,'{_masterData["ArtworkTypeID"]}',voa.ArtworkID)
-	and ad.ArtworkReqID=''
+    and ad.PatternCode = isnull(s.PatternCode,'')
+	and ad.PatternDesc = isnull(s.PatternDesc,'') 
+    and ad.ArtworkID = iif(s.ArtworkID is null,'{_masterData["ArtworkTypeID"]}',s.ArtworkID)
+	and ad.ArtworkReqID =''
 	and a.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
 ) PoQty
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
 	from ArtworkReq_Detail ad , ArtworkReq a
 	where ad.ID = a.ID
-	and OrderID = o.ID and ad.PatternCode= isnull(voa.PatternCode,'')
-	and ad.PatternDesc = isnull(voa.PatternDesc,'') 
-    and ad.ArtworkID = iif(voa.ArtworkID is null,'{_masterData["ArtworkTypeID"]}',voa.ArtworkID)
+	and OrderID = o.ID and ad.PatternCode= isnull(s.PatternCode,'')
+	and ad.PatternDesc = isnull(s.PatternDesc,'') 
+    and ad.ArtworkID = iif(s.ArtworkID is null,'{_masterData["ArtworkTypeID"]}',s.ArtworkID)
 	and ad.id !=  '{_ArtWorkReq_ID}'
 	and a.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
-    and a.status != 'Closed' and ad.ArtworkPOID =''
+    and a.status != 'Closed'
 )ReqQty
 where not exists(
 	select 1 from #tmpDB
 	where orderID = o.ID and ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
 )
-and ot.ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
-group by o.FactoryID,ot.ArtworkTypeID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
-,voa.ArtworkID,voa.PatternCode,voa.PatternDesc
+group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
+,s.ArtworkID,s.PatternCode,s.PatternDesc
 having ReqQty.value + PoQty.value + s.ReqQty > sum(oq.Qty) 
 
 select * 
