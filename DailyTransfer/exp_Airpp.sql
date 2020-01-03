@@ -92,10 +92,8 @@ SELECT [ID]
 ,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2),12) ) AS ForWard2N
 INTO AirPP
 FROM Production.dbo.AirPP AS A
-WHERE 
-CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
- AND CONVERT(DATETIME, isnull(TPEEditDate,'')) <= CONVERT(DATETIME, isnull(EditDate,''))
-AND Status IN ('New','Checked','Approved','Junked')
+WHERE	-- 30 天內新增異動的資料
+		CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE())
 ORDER BY Id 
 
 
