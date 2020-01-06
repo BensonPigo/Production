@@ -73,7 +73,7 @@ from VNConsumption where 1=0";
                 .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("UsageUnit", header: "Usage Unit", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(9), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(100), iseditingreadonly: true);
             this.listControlBindingSource1.DataSource = this.dtBatchImport;

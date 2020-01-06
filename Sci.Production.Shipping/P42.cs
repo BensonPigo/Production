@@ -65,7 +65,7 @@ inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID = vd.ID
 left join VNContractQtyAdjust_Detail_Detail vdd WITH (NOLOCK) on v.ID = vdd.ID and vd.NLCode = vdd.NLCode
 left join VNContract_Detail c WITH (NOLOCK) on c.ID = v.VNContractID and c.NLCode = vd.NLCode
 where {0}
-order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
+order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -221,7 +221,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), settings: this.fabricType)
                 .Text("UsageUnit", header: "UsageUnit", width: Widths.AnsiChars(8), settings: this.usageUnit)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(12), settings: this.nlcode)
                 .Numeric("Qty", header: "Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: stockQtySetting)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true);
         }
