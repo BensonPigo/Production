@@ -742,7 +742,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 result = DBProxy.Current.Execute(null, updateCmd);
                 if (!result)
                 {
-                    DualResult failResult = new DualResult(false, "Save Order_QtyShip fail!!\r\n" + result.ToString());
+                    DualResult failResult = new DualResult(false, "Save Orders fail!!\r\n" + result.ToString());
                     return failResult;
                 }
                 #endregion
