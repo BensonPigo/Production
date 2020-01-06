@@ -1609,6 +1609,20 @@ BEGIN
 	when not matched by source and t.id in (select id from #TOrder)then
 			delete;
 			
+----------------OrderChangeApplication-----------------
+update t set	
+	[Status]  =s.[Status]
+	,[EditName]=s.[EditName]
+	,[EditDate]=s.[EditDate]
+from Production.dbo.OrderChangeApplication t
+inner join Trade_To_Pms.dbo.OrderChangeApplication s on s.ID = t.ID
+where s.Status = 'Closed'
+
+INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
+select s.ID,s.Status,s.[StatusUser],s.[StatusDate]
+from Trade_To_Pms.dbo.[OrderChangeApplication_History] s
+left join Production.dbo.[OrderChangeApplication_History] t on s.ID = t.ID and s.Status = t.Status
+where s.Status = 'Closed' and t.id is null
 
 ----------------ppaschedule-----------------
 
