@@ -749,19 +749,72 @@ WHERE p.MDivisionID = @MDivisionID
 
                         if (IsMixed)
                         {
+                            int i = 0;
+                            sqlCmd = $@"
+
+SELECT ID ,StyleID ,POID
+INTO #tmoOrders
+FROM Orders 
+WHERE CustPONo='{zpl.CustPONo}' AND StyleID='{zpl.StyleID}'
+";
+
                             foreach (var data in zpl.Size_Qty_List)
                             {
-                                sqlMixed.Add( $@"
+                                sqlCmd += $@"
 
-		( SizeCode='{data.Size}' OR SizeCode in(
+SELECT  CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
+INTO #tmpCount{i}
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND pd.CustCTN='' 
+    AND Article = '{zpl.Article}'
+	AND ( SizeCode='{data.Size}' OR SizeCode in(
 		        SELECT SizeCode 
 		        FROM Order_SizeSpec 
 		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{data.Size}')
-	        )  
-			AND pd.ShipQty={data.Qty})
-");
+	        ))  
+	AND pd.ShipQty={data.Qty}
+GROUP BY CTNStartNo
+
+";
+                                i++;
                             }
 
+                            sqlCmd += $@"
+SELECT a.CTNStartNo,[CartonCount]=SUM(CartonCount) 
+INTO #tmpMappingCartonNo
+FROM (
+";
+                            i = 0;
+                            foreach (var data in zpl.Size_Qty_List)
+                            {
+                                sqlMixed.Add($@"
+	SELECT  *
+	FROM #tmpCount{i}
+");
+                                i++;
+                            }
+
+                            sqlCmd += string.Join(" UNION ALL" + Environment.NewLine, sqlMixed);
+                            sqlCmd += $@"
+
+)a
+GROUP BY CTNStartNo
+
+SELECT [PackingListID]=pd.ID ,[PackingList_Ukey]=pd.Ukey
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B'
+    AND pd.OrderID = (SELECT ID FROM #tmoOrders)
+    AND pd.CustCTN='' 
+    AND Article = '{zpl.Article}'
+    AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo) 
+
+";
+                            /*
                             sqlCmd = $@"
 
 SELECT ID ,StyleID ,POID
@@ -835,40 +888,69 @@ WHERE p.Type ='B'
 DROP TABLE #tmoOrders
 
 ";
-
+*/
                         }
                         #endregion
 
                         DBProxy.Current.Select(null, sqlCmd, out tmpDt);
-
+                        sqlMixed.Clear();
                         #region SQL 檢查ShippingMarkPicture
 
                         if (IsMixed)
                         {
-
+                            int i = 0;
                             sqlCmd = $@"
 
 SELECT ID ,StyleID ,POID
 INTO #tmoOrders
 FROM Orders 
 WHERE CustPONo='{zpl.CustPONo}' AND StyleID='{zpl.StyleID}'
+";
 
-SELECT CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
-INTO #tmpMappingCartonNo
+                            foreach (var data in zpl.Size_Qty_List)
+                            {
+                                sqlCmd += $@"
+
+SELECT  CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
+INTO #tmpCount{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type ='B'
     AND pd.OrderID = (SELECT ID FROM #tmoOrders)
     AND pd.CustCTN='' 
     AND Article = '{zpl.Article}'
-	AND (
-";
-                            sqlCmd += string.Join("		OR" + Environment.NewLine, sqlMixed);
-                            sqlCmd += $@"
-		)
+	AND ( SizeCode='{data.Size}' OR SizeCode in(
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders) AND SizeSpec IN ('{data.Size}')
+	        ))  
+	AND pd.ShipQty={data.Qty}
 GROUP BY CTNStartNo
-HAVING COUNT(pd.Ukey)={zpl.Size_Qty_List.Count}
+
+";
+                                i++;
+                            }
+
+                            sqlCmd += $@"
+SELECT a.CTNStartNo,[CartonCount]=SUM(CartonCount) 
+INTO #tmpMappingCartonNo
+FROM (
+";
+                            i = 0;
+                            foreach (var data in zpl.Size_Qty_List)
+                            {
+                                sqlMixed.Add($@"
+	SELECT  *
+	FROM #tmpCount{i}
+");
+                                i++;
+                            }
+
+                            sqlCmd += string.Join(" UNION ALL" + Environment.NewLine, sqlMixed);
+                            sqlCmd += $@"
+
+)a
+GROUP BY CTNStartNo
 
 SELECT DISTINCT o.BrandID ,o.CustCDID ,pd.RefNo
 INTO #tmp
@@ -881,6 +963,7 @@ WHERE p.Type ='B'
     AND Article = '{zpl.Article}'
     AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo) 
 
+
 SELECT IsSSCC
 FROM ShippingMarkPicture s
 INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
@@ -890,10 +973,9 @@ SELECT IsSSCC
 FROM ShippingMarkPicture s
 INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
 WHERE IsSSCC=1
-
-DROP TABLE #tmoOrders,#tmpMappingCartonNo,#tmp 
-
 ";
+
+                            
                         }
                         else
                         {
