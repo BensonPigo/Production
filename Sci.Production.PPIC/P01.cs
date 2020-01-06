@@ -677,6 +677,7 @@ where oq.Id = '{1}'", Convert.ToDateTime(this.CurrentMaintain["BuyerDelivery"]).
             if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE")
             {
                 string insertCmd;
+                string updateCmd;
                 DualResult result;
                 if (!MyUtility.Check.Seek(string.Format("select ID from Order_Artwork WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
                 {
@@ -721,7 +722,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
 
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE" && MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
                 {
-                    string updateCmd = string.Format("update Order_QtyShip set ShipModeID = '{0}' where ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeList"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                    updateCmd = string.Format("update Order_QtyShip set ShipModeID = '{0}' where ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeList"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     result = DBProxy.Current.Execute(null, updateCmd);
                     if (!result)
                     {
@@ -729,6 +730,22 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                         return failResult;
                     }
                 }
+
+                #region 當地訂單的Orders.SizeUnit欄位不會寫入，因此要回頭去Style.SizeUnit欄位找，然後寫入
+                updateCmd = $@"
+UPDATE o
+SET o.SizeUnit = s.SizeUnit
+FROM Orders o
+INNER JOIN Style s ON o.StyleID=s.ID AND o.BrandID=s.BrandID AND o.SeasonID=s.SeasonID
+WHERE o.ID='{this.CurrentMaintain["ID"]}'
+";
+                result = DBProxy.Current.Execute(null, updateCmd);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Save Orders fail!!\r\n" + result.ToString());
+                    return failResult;
+                }
+                #endregion
             }
 
             return Result.True;
