@@ -68,22 +68,24 @@
             this.chkWhseClose = new Sci.Win.UI.CheckBox();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
+            this.chkIncludeJunk = new Sci.Win.UI.CheckBox();
+            this.chkExcludeMaterial = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(436, 12);
-            this.print.TabIndex = 21;
+            this.print.TabIndex = 23;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(436, 48);
-            this.toexcel.TabIndex = 22;
+            this.toexcel.TabIndex = 24;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(436, 84);
-            this.close.TabIndex = 23;
+            this.close.TabIndex = 25;
             // 
             // labelSCIDelivery
             // 
@@ -532,9 +534,33 @@
             this.labelBrand.TabIndex = 147;
             this.labelBrand.Text = "Brand";
             // 
+            // chkIncludeJunk
+            // 
+            this.chkIncludeJunk.AutoSize = true;
+            this.chkIncludeJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeJunk.Location = new System.Drawing.Point(13, 556);
+            this.chkIncludeJunk.Name = "chkIncludeJunk";
+            this.chkIncludeJunk.Size = new System.Drawing.Size(160, 21);
+            this.chkIncludeJunk.TabIndex = 21;
+            this.chkIncludeJunk.Text = "Include Junk Material";
+            this.chkIncludeJunk.UseVisualStyleBackColor = true;
+            // 
+            // chkExcludeMaterial
+            // 
+            this.chkExcludeMaterial.AutoSize = true;
+            this.chkExcludeMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludeMaterial.Location = new System.Drawing.Point(13, 583);
+            this.chkExcludeMaterial.Name = "chkExcludeMaterial";
+            this.chkExcludeMaterial.Size = new System.Drawing.Size(130, 21);
+            this.chkExcludeMaterial.TabIndex = 22;
+            this.chkExcludeMaterial.Text = "Exclude Material";
+            this.chkExcludeMaterial.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(528, 582);
+            this.ClientSize = new System.Drawing.Size(528, 633);
+            this.Controls.Add(this.chkExcludeMaterial);
+            this.Controls.Add(this.chkIncludeJunk);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.chkWhseClose);
@@ -625,6 +651,8 @@
             this.Controls.SetChildIndex(this.chkWhseClose, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.chkIncludeJunk, 0);
+            this.Controls.SetChildIndex(this.chkExcludeMaterial, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -672,5 +700,7 @@
         private Win.UI.CheckBox chkWhseClose;
         private Class.txtbrand txtbrand;
         private Win.UI.Label labelBrand;
+        private Win.UI.CheckBox chkIncludeJunk;
+        private Win.UI.CheckBox chkExcludeMaterial;
     }
 }
