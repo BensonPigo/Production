@@ -169,9 +169,9 @@ namespace Sci.Production.PPIC
             if (this.type == "StylePerEachSewingDate")
             {
                 objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_Style_PerEachSewingDate.xltx"); // 預先開啟excel app
-#if DEBUG
-                objApp.Visible = true;
-#endif
+//#if DEBUG
+//                objApp.Visible = true;
+//#endif
                 worksheet = objApp.Sheets[3];
                 worksheet.Select();
                 result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R01_Style_PerEachSewingDate.xltx", 1, false, string.Empty, objApp, false, worksheet, false);
@@ -314,6 +314,8 @@ select
 	,o.StyleID
 	,Inline = cast(s.Inline as date)
 	,Offline = cast(s.Offline as date)
+	,[InlineHour] = DATEDIFF(ss,Cast(s.Inline as date),s.Inline) / 3600.0
+    ,[OfflineHour] = DATEDIFF(ss,Cast(s.Offline as date),s.Offline) / 3600.0
 	,OrderTypeID = isnull(o.OrderTypeID,'')
 	,o.SciDelivery
 	,o.BuyerDelivery
@@ -366,6 +368,10 @@ select distinct
 	,d.SewingLineID
 	,d.date
 	,s.StyleID
+	,s.Inline
+	,s.Offline
+	,s.InlineHour
+	,s.OfflineHour
 	,IsLastMonth = iif(s.SciDelivery < @sewinginline,1,0)--紫 優先度1
 	,IsNextMonth = iif(s.SciDelivery > DateAdd(DAY,-1,@sewingoffline),1,0)--綠 優先度2
 	,IsBulk = iif(s.Category = 'B',1,0)--藍 優先度3
@@ -388,10 +394,13 @@ left join #tmpd d on d.FactoryID = s.FactoryID and d.SewingLineID = s.SewingLine
 left join Workhour_Detail wkd with(nolock) on wkd.FactoryID = s.FactoryID
 										and wkd.SewingLineID = s.SewingLineID and wkd.Date = d.date
 
+
 select FactoryID
 , SewingLineID
 ,date
 ,StyleID
+,Inline,Offline
+,InlineHour,OfflineHour
 ,IsLastMonth
 ,IsNextMonth
 ,IsBulk
@@ -413,7 +422,12 @@ into #tmpStmp_step1
 from #Stmp
 group by FactoryID, SewingLineID,date,StyleID,IsLastMonth,IsNextMonth,IsBulk
 ,IsSMS,BuyerDelivery,CdCodeID,APSNo,StartHour,EndHour,CPU,OriWorkHour,HourOutput,TotalSewingTime
-,LearnCurveID,LNCSERIALNumber,OrderID,ComboType
+,LearnCurveID,LNCSERIALNumber,OrderID,ComboType,Inline,Offline,InlineHour,OfflineHour
+
+
+--刪除每個計畫inline,offline當天超過時間的班表                                                
+delete #tmpStmp_step1 where [date] = Inline and EndHour <= InlineHour
+delete #tmpStmp_step1 where [date] = Offline and StartHour >= OfflineHour
 
 
 select FactoryID
@@ -445,15 +459,16 @@ from #tmpStmp_step1
 
 select distinct FactoryID,SewingLineID,date,StyleID = a.s
 into #ConcatStyle
-from #Stmp s
+from #tmpStmp_step2 s
 outer apply(
 	select s =(
 		select distinct concat(StyleID,'(',CdCodeID,')',';')
-		from #Stmp s2
+		from #tmpStmp_step2 s2
 		where s2.FactoryID = s.FactoryID and s2.SewingLineID = s.SewingLineID and s2.date = s.date
 		for xml path('')
 	)
 )a
+
 --
 select h.FactoryID,h.SewingLineID,h.date,h.Holiday,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
 ,s.APSNo
@@ -580,16 +595,18 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle,
 
                     // from Detail甘特圖資料
                     string sqlcmd2 = $@"
-select SewingLineID,SewingDay,SewingCPU
+select SewingLineID,SewingDay,SewingCPU,Sewer
 ,[Total_StdOutput] = sum(StardardOutputPerDay)
-,[PPH] = IIF(SewingCPU = 0 or sum(StardardOutputPerDay) = 0 , 0, sum(CPU) / (SewingCPU * sum(StardardOutputPerDay)))
+,[s] = SewingCPU * sum(StardardOutputPerDay)
+,[m] = sum(New_WorkHourPerDay) * Sewer
 INTO #tmpFinal_step1
 from #tmp
-group by Style,SewingLineID,SewingDay,SewingCPU
+group by Style,SewingLineID,SewingDay,SewingCPU,Sewer
 
-select SewingLineID,SewingDay
+select 
+SewingLineID,SewingDay
 ,[Total_StdOutput] = sum(Total_StdOutput)
-,[PPH] = round(sum(pph),2)
+,[PPH] = round(sum(s)/sum(m),2)
 from #tmpFinal_step1
 where SewingDay between '{Convert.ToDateTime(this.SewingDate1).ToString("d")}' and '{Convert.ToDateTime(this.SewingDate2).ToString("d")}'
 group by SewingLineID,SewingDay
@@ -722,6 +739,8 @@ drop table #tmpFinal_step1
 
                             line = MyUtility.Convert.GetString(dr["SewingLineID"]);
                             worksheet.Cells[intRowsStart, 1] = line;
+                            worksheet.Cells[intRowsStart + 1, 1] = "Std Q";
+                            worksheet.Cells[intRowsStart+2, 1] = "PPH";
                             rowcnt++;
                         }
 
