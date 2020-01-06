@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[VNConsumption_Detail] (
     [ID]         VARCHAR (13)    NOT NULL,
-    [NLCode]     VARCHAR (5)     CONSTRAINT [DF_VNConsumption_Detail_NLCode] DEFAULT ('') NOT NULL,
+    [NLCode]     VARCHAR (9)     CONSTRAINT [DF_VNConsumption_Detail_NLCode] DEFAULT ('') NOT NULL,
     [HSCode]     VARCHAR (11)    CONSTRAINT [DF_VNConsumption_Detail_HSCode] DEFAULT ('') NULL,
     [UnitID]     VARCHAR (8)     CONSTRAINT [DF_VNConsumption_Detail_UnitID] DEFAULT ('') NULL,
     [Qty]        NUMERIC (17, 6) CONSTRAINT [DF_VNConsumption_Detail_Qty] DEFAULT ((0)) NULL,

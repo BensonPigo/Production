@@ -2428,6 +2428,7 @@
     <Build Include="dbo\Tables\VNContract_Factory.sql" />
     <Build Include="dbo\Tables\FactoryExpress_SendingScheduleHistory.sql" />
     <Build Include="dbo\Tables\FactoryExpress_SendingSchedule.sql" />
+    <Build Include="dbo\Views\View_VNNLCodeWaste.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -133,7 +133,7 @@
             this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtNLCode.Location = new System.Drawing.Point(120, 14);
             this.txtNLCode.Name = "txtNLCode";
-            this.txtNLCode.Size = new System.Drawing.Size(68, 23);
+            this.txtNLCode.Size = new System.Drawing.Size(100, 23);
             this.txtNLCode.TabIndex = 0;
             this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode_PopUp);
             this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode_Validating);
