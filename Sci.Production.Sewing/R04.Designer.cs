@@ -43,21 +43,23 @@
             this.chk_Accumulate_output = new Sci.Win.UI.CheckBox();
             this.chk_Include_Artwork = new Sci.Win.UI.CheckBox();
             this.chkExcludeSampleFty = new Sci.Win.UI.CheckBox();
+            this.lbShift = new Sci.Win.UI.Label();
+            this.comboShift = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(433, 12);
+            this.print.Location = new System.Drawing.Point(434, 12);
             this.print.TabIndex = 6;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(433, 48);
+            this.toexcel.Location = new System.Drawing.Point(434, 48);
             this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(433, 84);
+            this.close.Location = new System.Drawing.Point(434, 84);
             this.close.TabIndex = 8;
             // 
             // labelOoutputDate
@@ -219,9 +221,31 @@
             this.chkExcludeSampleFty.Text = "Exclude Sample Factory";
             this.chkExcludeSampleFty.UseVisualStyleBackColor = true;
             // 
+            // lbShift
+            // 
+            this.lbShift.Location = new System.Drawing.Point(23, 230);
+            this.lbShift.Name = "lbShift";
+            this.lbShift.Size = new System.Drawing.Size(88, 23);
+            this.lbShift.TabIndex = 103;
+            this.lbShift.Text = "Shift";
+            // 
+            // comboShift
+            // 
+            this.comboShift.BackColor = System.Drawing.Color.White;
+            this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboShift.FormattingEnabled = true;
+            this.comboShift.IsSupportUnselect = true;
+            this.comboShift.Location = new System.Drawing.Point(115, 229);
+            this.comboShift.Name = "comboShift";
+            this.comboShift.OldText = "";
+            this.comboShift.Size = new System.Drawing.Size(170, 24);
+            this.comboShift.TabIndex = 104;
+            // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(525, 255);
+            this.ClientSize = new System.Drawing.Size(525, 298);
+            this.Controls.Add(this.comboShift);
+            this.Controls.Add(this.lbShift);
             this.Controls.Add(this.chkExcludeSampleFty);
             this.Controls.Add(this.chk_Include_Artwork);
             this.Controls.Add(this.chk_Accumulate_output);
@@ -241,7 +265,11 @@
             this.DefaultControlForEdit = "dateOoutputDate";
             this.IsSupportToPrint = false;
             this.Name = "R04";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R04. Sewing daily output list";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -260,6 +288,8 @@
             this.Controls.SetChildIndex(this.chk_Accumulate_output, 0);
             this.Controls.SetChildIndex(this.chk_Include_Artwork, 0);
             this.Controls.SetChildIndex(this.chkExcludeSampleFty, 0);
+            this.Controls.SetChildIndex(this.lbShift, 0);
+            this.Controls.SetChildIndex(this.comboShift, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -282,5 +312,7 @@
         private Win.UI.CheckBox chk_Accumulate_output;
         private Win.UI.CheckBox chk_Include_Artwork;
         private Win.UI.CheckBox chkExcludeSampleFty;
+        private Win.UI.Label lbShift;
+        private Win.UI.ComboBox comboShift;
     }
 }

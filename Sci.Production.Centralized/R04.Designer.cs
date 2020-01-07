@@ -40,12 +40,13 @@
             this.chk_Include_Artwork = new Sci.Win.UI.CheckBox();
             this.chkSewingReasonID = new Sci.Win.UI.CheckBox();
             this.chkType = new Sci.Win.UI.CheckBox();
-            this.label11 = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Production.Class.comboCentralizedFactory(this.components);
             this.comboM = new Sci.Production.Class.comboCentralizedM(this.components);
             this.txtCDCode = new Sci.Production.Class.txtcdcode();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboShift = new Sci.Win.UI.ComboBox();
+            this.lbShift = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -179,17 +180,6 @@
             this.chkType.Text = "Exclude sample factory";
             this.chkType.UseVisualStyleBackColor = true;
             // 
-            // label11
-            // 
-            this.label11.BackColor = System.Drawing.SystemColors.Control;
-            this.label11.Location = new System.Drawing.Point(23, 200);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(301, 23);
-            this.label11.TabIndex = 225;
-            this.label11.Text = "All subcon-out、non sister subcon-in excluded.";
-            this.label11.TextStyle.BorderColor = System.Drawing.Color.Transparent;
-            this.label11.TextStyle.Color = System.Drawing.Color.Red;
-            // 
             // comboFactory
             // 
             this.comboFactory.BackColor = System.Drawing.Color.White;
@@ -245,12 +235,33 @@
             this.comboCategory.TabIndex = 228;
             this.comboCategory.Type = "Pms_GMT_Simple";
             // 
+            // comboShift
+            // 
+            this.comboShift.BackColor = System.Drawing.Color.White;
+            this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboShift.FormattingEnabled = true;
+            this.comboShift.IsSupportUnselect = true;
+            this.comboShift.Location = new System.Drawing.Point(115, 198);
+            this.comboShift.Name = "comboShift";
+            this.comboShift.OldText = "";
+            this.comboShift.Size = new System.Drawing.Size(170, 24);
+            this.comboShift.TabIndex = 230;
+            // 
+            // lbShift
+            // 
+            this.lbShift.Location = new System.Drawing.Point(23, 199);
+            this.lbShift.Name = "lbShift";
+            this.lbShift.Size = new System.Drawing.Size(88, 23);
+            this.lbShift.TabIndex = 229;
+            this.lbShift.Text = "Shift";
+            // 
             // R04
             // 
             this.ClientSize = new System.Drawing.Size(559, 256);
+            this.Controls.Add(this.comboShift);
+            this.Controls.Add(this.lbShift);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.chkType);
-            this.Controls.Add(this.label11);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.chkSewingReasonID);
@@ -271,6 +282,9 @@
             this.Name = "R04";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R04. Centralized daily output list";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelOoutputDate, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
@@ -285,12 +299,13 @@
             this.Controls.SetChildIndex(this.chkSewingReasonID, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
-            this.Controls.SetChildIndex(this.label11, 0);
             this.Controls.SetChildIndex(this.chkType, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
+            this.Controls.SetChildIndex(this.lbShift, 0);
+            this.Controls.SetChildIndex(this.comboShift, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -313,7 +328,8 @@
         private Class.comboCentralizedM comboM;
         private Class.comboCentralizedFactory comboFactory;
         private Win.UI.CheckBox chkType;
-        private Win.UI.Label label11;
         private Class.comboDropDownList comboCategory;
+        private Win.UI.ComboBox comboShift;
+        private Win.UI.Label lbShift;
     }
 }
