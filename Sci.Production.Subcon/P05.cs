@@ -102,6 +102,13 @@ namespace Sci.Production.Subcon
             };
         }
 
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.txtsubconSupplier.TextBox1.ReadOnly = true;
+            this.txtartworktype_ftyArtworkType.ReadOnly = true;
+        }
+
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
@@ -845,6 +852,11 @@ where id = '{CurrentMaintain["id"]}'";
 
         private void txtsubconSupplier_Validating(object sender, CancelEventArgs e)
         {
+            if (this.CurrentMaintain["LocalSuppID"].ToString() != this.txtsubconSupplier.TextBox1.Text)
+            {
+                ((DataTable)detailgridbs.DataSource).Rows.Clear();
+            }
+
             if (MyUtility.Check.Empty(this.txtsubconSupplier.TextBox1.Text))
             {
                 this.CurrentMaintain["LocalSuppID"] = DBNull.Value;
@@ -853,6 +865,7 @@ where id = '{CurrentMaintain["id"]}'";
             {
                 this.CurrentMaintain["LocalSuppID"] = this.txtsubconSupplier.TextBox1.Text;
             }
+
         }
 
         /// <summary>

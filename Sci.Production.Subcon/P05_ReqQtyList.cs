@@ -36,10 +36,8 @@ where AD.ID = A.ID
 and ad.OrderID ='{dr["orderID"]}'
 and ad.PatternCode = '{dr["PatternCode"]}'
 and a.ID != '{dr["id"]}'
-and a.status != 'Closed' and ad.ArtworkPOID =''
-
+and a.status != 'Closed'
 union 
-
 select a.Status
 ,a.ID
 ,ad.PoQty

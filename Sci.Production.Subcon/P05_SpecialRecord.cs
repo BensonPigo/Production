@@ -42,8 +42,9 @@ namespace Sci.Production.Subcon
             Helper.Controls.Grid.Generator(this.gridSpecialRecord)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
+                .Numeric("OrderQty", header: "Qrder Qty", iseditingreadonly: true)
+                .Numeric("AccReqQty", header: "Accu. Req QTY", iseditingreadonly: true)
                 .Numeric("ReqQty", header: "Req QTY")
-                .Numeric("AccReqQty", header: "Accu. Req QTY")
                 .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true);
 
             this.gridSpecialRecord.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;
@@ -70,7 +71,7 @@ namespace Sci.Production.Subcon
                 }
                 if (!MyUtility.Check.Empty(poid))
                 {
-                    sqlwhere += string.Format(" and o.poid >= '{0}' ", poid);
+                    sqlwhere += string.Format(" and o.poid = '{0}' ", poid);
                 }
 
 
