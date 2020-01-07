@@ -172,10 +172,13 @@ WHERE p.MDivisionID = @MDivisionID
                 return;
             }
 
+            this.btnToExcel.Enabled = false;
             foreach (DataRow item in selectedDatas)
             {
                 this.Print(item);
             }
+
+            this.btnToExcel.Enabled = true;
         }
 
         private void Print(DataRow item)
