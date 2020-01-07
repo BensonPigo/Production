@@ -1598,7 +1598,8 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
 
             IList<string> updateCmds = new List<string>();
             updateCmds.Add(string.Format("update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            updateCmds.Add(string.Format("update PackingList set ExpressID = '',pulloutdate=null where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update PackingList set ExpressID = '' where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -1672,7 +1673,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
             string updateCmd = string.Format("update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
-            updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}'";
+            updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}' and type = 'F'";
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
