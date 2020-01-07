@@ -110,5 +110,10 @@ namespace Sci.Production.Warehouse
             }
             return check;
         }
+
+        private void btnBatchCreate_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
