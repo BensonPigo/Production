@@ -233,7 +233,45 @@ ORDER BY ap.OrderID   ", masterID);
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    string sqlcmd = $@"
+                    string sqlcmd = string.Empty;
+                    if (MyUtility.Check.Empty(dr["PatternCode"]))
+                    {
+                        #region Special Record
+                        sqlcmd = $@"
+select  [OrderQty] = o.Qty,
+        [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) + {e.FormattedValue}
+from orders o with (nolock)
+outer apply (
+        select value = ISNULL(sum(ReqQty),0)
+        from ArtworkReq_Detail AD, ArtworkReq a
+        where ad.ID=a.ID
+		and a.ArtworkTypeID = '{this.CurrentMaintain["artworktypeid"]}'
+		and OrderID = o.ID 
+        and ad.PatternCode= ''
+        and ad.PatternDesc = ''
+        and ad.ArtworkID = '{this.CurrentMaintain["artworktypeid"]}'
+        and a.id != '{this.CurrentMaintain["id"]}'
+        and a.status != 'Closed'
+) ReqQty
+outer apply (
+        select value = ISNULL(sum(PoQty),0)
+        from ArtworkPO_Detail AD,ArtworkPO A
+        where a.ID=ad.ID
+		and a.ArtworkTypeID = '{this.CurrentMaintain["artworktypeid"]}'
+		and OrderID = o.ID 
+        and ad.PatternCode= ''
+        and ad.PatternDesc = ''
+        and ad.ArtworkID = '{this.CurrentMaintain["artworktypeid"]}'
+		and ad.ArtworkReqID=''
+) PoQty
+where o.ID = '{dr["OrderID"]}'
+";
+                        #endregion
+                    }
+                    else
+                    {
+                        #region 一般資料
+                        sqlcmd = $@"
 select  OrderQty = sum(oa.qty)  
 , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) + {e.FormattedValue}
 from  Order_TmsCost ot
@@ -304,6 +342,11 @@ and isnull(oa.PatternDesc,'') = '{dr["PatternDesc"]}'
 and isnull(oa.ArtworkID,ot.ArtworkTypeID) like '{dr["ArtworkId"]}%'
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 group by ReqQty.value,PoQty.value";
+                        #endregion
+                    }
+
+
+                   
                     DataRow drQty;                    
                     if (MyUtility.Check.Seek(sqlcmd , out drQty))
                     {
@@ -854,6 +897,24 @@ where id = '{CurrentMaintain["id"]}'";
         {
             MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, ",,1,Irregular Qty");
             this.queryfors.SelectedIndex = 0;
+        }
+
+        private void btnSpecialRecord_Click(object sender, EventArgs e)
+        {
+            var dr = CurrentMaintain; if (null == dr) return;
+            if (dr["artworktypeid"] == DBNull.Value)
+            {
+                MyUtility.Msg.WarningBox("Please fill Artworktype first!");
+                txtartworktype_ftyArtworkType.Focus();
+                return;
+            }
+
+            var frm = new Sci.Production.Subcon.P05_SpecialRecord(dr, (DataTable)detailgridbs.DataSource);
+            frm.ShowDialog(this);
+            this.RenewData();
+            detailgridbs.EndEdit();
+
+            this.RefreshIrregularQtyReason();
         }
     }
 

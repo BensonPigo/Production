@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
@@ -27,6 +28,7 @@ namespace Sci.Production.Subcon
             dr_artworkReq = master;
             dt_artworkReqDetail = detail;
             this.Text += string.Format(" : {0}", dr_artworkReq["artworktypeid"].ToString());
+            this.labelNoSuppHint.Text = $"No assign supplier({dr_artworkReq["LocalSuppID"]}). Please check with planning team";
         }
 
         //Find Now Button
@@ -138,7 +140,7 @@ outer apply(
 
             strSQLCmd = $@"
 select  Selected = 0
-        , ot.LocalSuppId
+        , [LocalSuppId] = isnull(ot.LocalSuppId,'')
 		, [orderID] = oa.ID
         , OrderQty = sum(oa.qty)  
         , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) {tmpcurrentReq}
@@ -155,7 +157,6 @@ select  Selected = 0
 		, o.POID
         , id = ''
         , ExceedQty = 0
-into #tmpArtReqFromOrder_TmsCost
 from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 {sqlIsArtwork}
@@ -171,7 +172,7 @@ outer apply (
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{dr_artworkReq["artworktypeid"]}' ,oa.ArtworkID)
         and a.id != '{dr_artworkReq["id"]}'
-        and a.status != 'Closed' and ad.ArtworkPOID =''
+        and a.status != 'Closed'
 ) ReqQty
 outer apply (
         select value = ISNULL(sum(PoQty),0)
@@ -185,7 +186,6 @@ outer apply (
 ) PoQty
 {tmpTable}
 where f.IsProduceFty=1
---and ot.LocalSuppID = '{dr_artworkReq["localsuppid"]}'
 and ot.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
@@ -195,76 +195,6 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 group by oa.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
             ,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,ot.qty,PoQty.value,ot.ArtworkTypeID,ReqQty.value  {tmpGroupby}
 
---get special record
-select
-Selected = 0
-, [LocalSuppId] = '{dr_artworkReq["localsuppid"]}'
-, [orderID] = o.ID
-, OrderQty = o.Qty
-, [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) 
-, ReqQty = iif(o.Qty-(ReqQty.value + PoQty.value ) < 0, 0, o.Qty - (ReqQty.value + PoQty.value ))
-, o.SewInLIne
-, o.SciDelivery
-, [ArtworkID] = '{dr_artworkReq["artworktypeid"]}' 
-, stitch = 1
-, PatternCode = ''
-, PatternDesc = ''
-, [qtygarment] = 1
-, o.StyleID
-, o.POID
-, id = ''
-, ExceedQty = 0
-from orders o with (nolock)
-cross join ArtworkType at with (nolock)
-outer apply (
-        select value = ISNULL(sum(ReqQty),0)
-        from ArtworkReq_Detail AD, ArtworkReq a
-        where ad.ID=a.ID
-		and a.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
-		and OrderID = o.ID 
-        and ad.PatternCode= ''
-        and ad.PatternDesc = ''
-        and ad.ArtworkID = '{dr_artworkReq["artworktypeid"]}'
-        and a.id != ''
-        and a.status != 'Closed' and ad.ArtworkPOID =''
-) ReqQty
-outer apply (
-        select value = ISNULL(sum(PoQty),0)
-        from ArtworkPO_Detail AD,ArtworkPO A
-        where a.ID=ad.ID
-		and a.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
-		and OrderID = o.ID and ad.PatternCode= ''
-        and ad.PatternDesc = ''
-        and ad.ArtworkID = '{dr_artworkReq["artworktypeid"]}'
-		and ad.ArtworkReqID=''
-) PoQty
-where   o.Junk = 0 and o.Qty > 0 and
-	(
-	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O' and at.ID = '{dr_artworkReq["artworktypeid"]}') 
-	or 
-	(o.category = 'S' and at.ID = '{dr_artworkReq["artworktypeid"]}')
-	)
-    {sqlwhere} and
-    not exists (select 1 from #tmpArtReqFromOrder_TmsCost otc where otc.OrderID = o.ID)
-union all
-select  Selected = 0
-        , LocalSuppId
-        , orderID
-        , OrderQty
-        , AccReqQty
-        , ReqQty
-        , SewInLIne
-        , SciDelivery
-        , ArtworkID
-        , stitch
-        , PatternCode
-        , PatternDesc
-        , qtygarment
-        , StyleID
-        , POID
-        , id
-        , ExceedQty
-from #tmpArtReqFromOrder_TmsCost where LocalSuppId = '{dr_artworkReq["localsuppid"]}'
         
 ";
 
@@ -275,9 +205,49 @@ from #tmpArtReqFromOrder_TmsCost where LocalSuppId = '{dr_artworkReq["localsuppi
             {
                 if (dtArtwork.Rows.Count == 0)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
-                listControlBindingSource1.DataSource = dtArtwork;
+                listControlBindingSource1.DataSource = this.FilterResult();
+
+                foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
+                {
+                    this.DetalGridCellEditChange(dr.Index);
+                }
             }
             else { ShowErr(strSQLCmd, result); }
+        }
+
+        private void checkBoxReqQtyHasValue_CheckedChanged(object sender, EventArgs e)
+        {
+            listControlBindingSource1.DataSource = this.FilterResult();
+            foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
+            {
+                this.DetalGridCellEditChange(dr.Index);
+            }
+        }
+
+        private void gridBatchImport_Sorted(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
+            {
+                this.DetalGridCellEditChange(dr.Index);
+            }
+        }
+
+        private DataTable FilterResult()
+        {
+            if (this.dtArtwork == null)
+            {
+                return null;
+            }
+
+            if (this.checkBoxReqQtyHasValue.Checked)
+            {
+                var filterResult = this.dtArtwork.AsEnumerable().Where(s => (decimal)s["ReqQty"] > 0);
+                return filterResult.Any() ? filterResult.CopyToDataTable() : null;
+            }
+            else
+            {
+                return this.dtArtwork;
+            }
         }
 
         protected override void OnFormLoaded()
@@ -370,6 +340,17 @@ where id ='{dr_artworkReq["artworktypeid"]}'
             }
             
             this.Close();
-        }        
+        }
+
+        private void DetalGridCellEditChange(int index)
+        {
+            string localSuppId = (string)this.gridBatchImport.GetDataRow(index)["LocalSuppId"];
+            if (MyUtility.Check.Empty(localSuppId))
+            {
+                this.gridBatchImport.Rows[index].Cells["Selected"].ReadOnly = true;
+                this.gridBatchImport.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(229, 108, 126);
+            }
+        }
+
     }
 }

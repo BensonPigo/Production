@@ -50,6 +50,7 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.checkBoxReqQtyHasValue = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreateFromSubProcessData)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -166,6 +167,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxReqQtyHasValue);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.labelArtworkType);
             this.groupBox1.Controls.Add(this.txtartworktype_ftyArtworkType);
@@ -311,6 +313,20 @@
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
+            // checkBoxReqQtyHasValue
+            // 
+            this.checkBoxReqQtyHasValue.AutoSize = true;
+            this.checkBoxReqQtyHasValue.Checked = true;
+            this.checkBoxReqQtyHasValue.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxReqQtyHasValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxReqQtyHasValue.Location = new System.Drawing.Point(579, 52);
+            this.checkBoxReqQtyHasValue.Name = "checkBoxReqQtyHasValue";
+            this.checkBoxReqQtyHasValue.Size = new System.Drawing.Size(99, 21);
+            this.checkBoxReqQtyHasValue.TabIndex = 17;
+            this.checkBoxReqQtyHasValue.Text = "Req. Qty>0";
+            this.checkBoxReqQtyHasValue.UseVisualStyleBackColor = true;
+            this.checkBoxReqQtyHasValue.CheckedChanged += new System.EventHandler(this.checkBoxReqQtyHasValue_CheckedChanged);
+            // 
             // P05_BatchCreate
             // 
             this.ClientSize = new System.Drawing.Size(1024, 541);
@@ -354,5 +370,6 @@
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
+        private Win.UI.CheckBox checkBoxReqQtyHasValue;
     }
 }

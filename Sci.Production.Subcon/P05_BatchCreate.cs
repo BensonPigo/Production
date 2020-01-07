@@ -80,7 +80,7 @@ namespace Sci.Production.Subcon
             {
                 if (dtArtwork.Rows.Count == 0 && showNoDataMsg)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
-                listControlBindingSource1.DataSource = dtArtwork;
+                listControlBindingSource1.DataSource = this.FilterResult();
             }
             else
             {
@@ -115,6 +115,11 @@ namespace Sci.Production.Subcon
             {
                 this.gridBatchCreateFromSubProcessData.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
+        }
+
+        private void checkBoxReqQtyHasValue_CheckedChanged(object sender, EventArgs e)
+        {
+            this.FilterResult();
         }
 
         // Cancel
@@ -402,6 +407,23 @@ namespace Sci.Production.Subcon
                 , ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
         }
 
+        private DataTable FilterResult()
+        {
+            if (this.dtArtwork == null)
+            {
+                return null;
+            }
+
+            if (this.checkBoxReqQtyHasValue.Checked)
+            {
+                var filterResult = this.dtArtwork.AsEnumerable().Where(s => (decimal)s["ReqQty"] > 0);
+                return filterResult.Any() ? filterResult.CopyToDataTable() : null;
+            }
+            else
+            {
+                return this.dtArtwork;
+            }
+        }
         private string QuoteFromTmsCost()
         {
             string SqlCmd;
@@ -498,7 +520,7 @@ outer apply (
         and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,ot.ArtworkTypeID,oa.ArtworkID)
-        and a.status != 'Closed' and ad.ArtworkPOID =''
+        and a.status != 'Closed'
 ) ReqQty
 outer apply (
         select value = ISNULL(sum(PoQty),0)
