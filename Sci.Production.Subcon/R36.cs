@@ -181,25 +181,25 @@ namespace Sci.Production.Subcon
 
             if (!this.dateSettledDate.Value1.Empty())
             {
-                sqlWheres.Add("cur_schedule.VoucherDate >= @SettledDate1");
+                sqlWheres.Add("MaxVoucherDate.VoucherDate >= @SettledDate1");
                 ParameterList.Add(new SqlParameter("@SettledDate1", SettledDate1));
                 needSettleData = 1;
             }
             if (!this.dateSettledDate.Value2.Empty())
             {
-                sqlWheres.Add("cur_schedule.VoucherDate <= @SettledDate2");
+                sqlWheres.Add("MaxVoucherDate.VoucherDate <= @SettledDate2");
                 ParameterList.Add(new SqlParameter("@SettledDate2", SettledDate2.Value.AddDays(1).AddSeconds(-1)));
                 needSettleData = 1;
             } 
             if (this.comboPaymentSettled.Text == "Settled")
             {
-                sqlWheres.Add("( (a.Amount+a.Tax) = ISNULL(Settled.Amount,0) AND ISNULL(cur_schedule.VoucherID,'') <> '' ) ");
+                sqlWheres.Add(" (a.Amount+a.Tax) = Settled.Amount ");
                 ParameterList.Add(new SqlParameter("@payment", payment));
                 needSettleData = 1;
             }
             if (this.comboPaymentSettled.Text == "Not Settled")
             {
-                sqlWheres.Add(" ( (a.Amount+a.Tax) <> ISNULL(Settled.Amount,0) OR ISNULL(cur_schedule.VoucherID,'') = '' )");
+                sqlWheres.Add(" (a.Amount+a.Tax) <> Settled.Amount");
                 ParameterList.Add(new SqlParameter("@payment", payment));
                 needSettleData = 0;
             }
@@ -256,8 +256,19 @@ select
 	,a.receivename
 	,a.cfmdate
 	,a.cfmname
-	,cur_schedule.VoucherID
-    ,cur_schedule.VoucherDate[Settled Date]
+	,[VoucherNo]=(	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10)+ ds.VoucherID 
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v.VoucherDate IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				)
+    ,[Settled Date]= IIF((a.Amount+a.Tax) = Settled.Amount ,MaxVoucherDate.VoucherDate ,NULL)
 	,a.printdate
 	,a.status
 	,a.statuseditdate
@@ -274,17 +285,18 @@ outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
 outer apply (select * from dbo.View_ShowName vs where vs.id = a.addname ) vs3
 outer apply (select * from dbo.View_ShowName vs where vs.id = a.editname ) vs4 
 OUTER APPLY( 
-	SELECT TOP 1  --多筆的話只帶第一筆
-		ds.VoucherID
-		,v.VoucherDate
+	SELECT [VoucherDate]=MAX(v.VoucherDate)
 	FROM debit_schedule ds WITH (NOLOCK) 
 	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
-	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID
-)AS cur_schedule
+	WHERE  ISNULL(ds.VoucherID,'')<>''
+			AND v.VoucherDate IS NOT NULL
+			AND ds.ID=a.ID
+)AS MaxVoucherDate
 OUTER APPLY(
 	SELECT [Amount]=Sum(ds.Amount) 
 	FROM Debit_Schedule ds
-	WHERE ds.ID=a.ID and ds.VoucherID <> ''
+	LEFT JOIN FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+	WHERE ds.ID=a.ID and ds.VoucherID <> '' AND v.VoucherDate IS NOT NULL
 )Settled
 
 " + Environment.NewLine 
@@ -320,9 +332,31 @@ select a.ID
 ,a.ReceiveDate
 ,vs5.Name_Extno as AccAH
 ,a.cfmdate
-,cur_schedule.VoucherID[VoucherNo]
-,cur_schedule.VoucherDate
-,cur_schedule.VoucherDate[Settled Date]
+,[VoucherNo]=(	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10)+  ds.VoucherID 
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v2.VoucherDate  IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v2.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				)
+,[VoucherDate] = (	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10)+ Cast(v2.VoucherDate as varchar)
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v2.VoucherDate  IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v2.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				)
+,[Settled Date]= IIF((a.Amount+a.Tax) = Settled.Amount ,MaxVoucherDate.VoucherDate ,NULL)
 ,b1.ttlCA
 ,b1.ttlAddition
 ,ttl.ttlSA
@@ -342,13 +376,13 @@ outer apply (
 	from localdebit_detail b WITH (NOLOCK) where b.ID = a.id  
 ) b1
 OUTER APPLY( 
-	SELECT TOP 1
-		ds.VoucherID
-		,v.VoucherDate
+	SELECT [VoucherDate]=MAX(v2.VoucherDate)
 	FROM debit_schedule ds WITH (NOLOCK) 
-	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
-	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID
-)AS cur_schedule
+	left join FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+	WHERE  ISNULL(ds.VoucherID,'')<>''
+			AND v2.VoucherDate IS NOT NULL
+			AND ds.ID=a.ID
+)AS MaxVoucherDate
 outer apply (
     Select [ttlRA] = Sum(iif(isnull(dsch.VoucherID,'')!='',dsch.amount,0)) ,[ttlSA] = sum(dsch.amount)
     from debit_schedule dsch WITH (NOLOCK) where dsch.ID = a.id  
@@ -356,7 +390,8 @@ outer apply (
 OUTER APPLY(
 	SELECT [Amount]=Sum(ds.Amount) 
 	FROM Debit_Schedule ds
-	WHERE ds.ID=a.ID and ds.VoucherID <> ''
+	LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+	WHERE ds.ID=a.ID and ds.VoucherID <> '' AND v2.VoucherDate IS NOT NULL
 )Settled
 "
 + Environment.NewLine 
@@ -395,9 +430,31 @@ select a.ID
 ,a.ReceiveDate
 ,vs5.Name_Extno as AccAH
 ,a.cfmdate
-,cur_schedule.VoucherID[VoucherNo]
-,cur_schedule.VoucherDate
-,cur_schedule.VoucherDate[Settled Date]
+,[VoucherNo]=(	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10)+  ds.VoucherID 
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v2.VoucherDate  IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v2.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				)
+,[VoucherDate]= (	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10)+ Cast(v2.VoucherDate as varchar)
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v2.VoucherDate  IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v2.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				)
+,[Settled Date]= IIF((a.Amount+a.Tax) = Settled.Amount ,MaxVoucherDate.VoucherDate ,NULL)
 ,b.Orderid
 ,b.qty
 ,b.UnitID
@@ -418,17 +475,18 @@ outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) 
 outer apply (select * from dbo.View_ShowName vs where vs.id = a.ReceiveName ) vs4
 outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfmName ) vs5
 OUTER APPLY( 
-	SELECT TOP 1
-		ds.VoucherID
-		,v.VoucherDate
+	SELECT [VoucherDate]=MAX(v2.VoucherDate)
 	FROM debit_schedule ds WITH (NOLOCK) 
-	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
-	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID
-)AS cur_schedule
+	left join FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+	WHERE  ISNULL(ds.VoucherID,'')<>''
+			AND v2.VoucherDate IS NOT NULL
+			AND ds.ID=a.ID
+)AS MaxVoucherDate
 OUTER APPLY(
 	SELECT [Amount]=Sum(ds.Amount) 
 	FROM Debit_Schedule ds
-	WHERE ds.ID=a.ID and ds.VoucherID <> ''
+	LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+	WHERE ds.ID=a.ID and ds.VoucherID <> '' AND v2.VoucherDate IS NOT NULL
 )Settled
 " + Environment.NewLine
 + sqlWhere
@@ -465,9 +523,31 @@ select a.ID
 ,a.ReceiveDate
 ,vs5.Name_Extno as AccAH
 ,a.cfmdate
-,cur_schedule.VoucherID [VoucherNo]
-,cur_schedule.VoucherDate
-,cur_schedule.VoucherDate[Settled Date]
+,[VoucherNo]=(	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10)+  ds.VoucherID 
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v2.VoucherDate  IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v2.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				)
+,[VoucherDate]= (	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10)+ Cast(v2.VoucherDate as varchar)
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v2.VoucherDate  IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v2.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				)
+,[Settled Date]= IIF((a.Amount+a.Tax) = Settled.Amount ,MaxVoucherDate.VoucherDate ,NULL)
 ,c.issuedate
 ,c.amount
 ,c.VoucherId
@@ -489,17 +569,18 @@ outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfmName ) vs5
 outer apply (select * from dbo.View_ShowName vs where vs.id = c.addName ) vs6
 outer apply (select * from dbo.View_ShowName vs where vs.id = c.editname ) vs7
 OUTER APPLY( 
-	SELECT TOP 1
-		ds.VoucherID
-		,v.VoucherDate
+	SELECT [VoucherDate]=MAX(v2.VoucherDate)
 	FROM debit_schedule ds WITH (NOLOCK) 
-	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
-	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID
-)AS cur_schedule
+	left join FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+	WHERE  ISNULL(ds.VoucherID,'')<>''
+			AND v2.VoucherDate IS NOT NULL
+			AND ds.ID=a.ID
+)AS MaxVoucherDate
 OUTER APPLY(
 	SELECT [Amount]=Sum(ds.Amount) 
 	FROM Debit_Schedule ds
-	WHERE ds.ID=a.ID and ds.VoucherID <> ''
+	LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+	WHERE ds.ID=a.ID and ds.VoucherID <> '' AND v2.VoucherDate IS NOT NULL
 )Settled
 "
 + Environment.NewLine

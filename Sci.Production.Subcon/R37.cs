@@ -108,20 +108,26 @@ namespace Sci.Production.Subcon
             }
             if (this.comboPaymentSettled.Text == "Settled")
             {
-                sqlWheres.Add("a.Amount = ISNULL(Debit_Schedule_Amount.Amount ,0)");
+                sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 1");
             }
             if (this.comboPaymentSettled.Text == "Not Settled")
             {
-                sqlWheres.Add("a.Amount <> ISNULL(Debit_Schedule_Amount.Amount ,0)");
+                sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 0");
             }
             if (!this.dateSettledDate.Value1.Empty())
             {
-                sqlHaving += " and finalVoucher.[Settled Date] >= @SettledDate1";
+                sqlHaving += $@" AND IIF(a.IsSubcon=1,
+					IIF(ISNULL(IsSettled.Val , 0) = 1,MaxVoucherDate.VoucherDate,NULL), 
+					a.SettleDate
+				) >= @SettledDate1 ";
                 list.Add(new SqlParameter("@SettledDate1", SettDate1));
             }
             if (!this.dateSettledDate.Value2.Empty())
             {
-                sqlHaving += " and finalVoucher.[Settled Date] <= @SettledDate2";
+                sqlHaving += $@" AND IIF(a.IsSubcon=1,
+					IIF(ISNULL(IsSettled.Val , 0) = 1,MaxVoucherDate.VoucherDate,NULL), 
+					a.SettleDate
+				) <= @SettledDate2";
                 list.Add(new SqlParameter("@SettledDate2", SettDate2.Value.AddDays(1).AddSeconds(-1)));
             }
             #endregion
@@ -146,36 +152,69 @@ SELECT distinct a.ID
 ,a.Received
 ,a.Cfm+ '-' + ISNULL(vs3.Name_Extno,'') [cfm]
 ,a.CfmDate
-,finalVoucher.[Voucher No.]
-,finalVoucher.[Voucher Date]
-,finalVoucher.[Settled Date]
+,[Voucher No.]=IIF(a.IsSubcon=1,
+				(	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10)+ ds.VoucherID 
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v.VoucherDate IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				), 
+				a.VoucherFactory)
+,[Voucher Date]= IIF(a.IsSubcon=1,
+					(	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10) + CONVERT(varchar, v.VoucherDate, 111)
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v.VoucherDate  IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				),
+					Cast((SELECT VoucherDate FROM SciFMS_Voucher WHERE ID=(SELECT VoucherFactory FROM Debit WHERE ID=a.ID)) as varchar)
+				)
+,[Settled Date]=IIF(a.IsSubcon=1,
+					IIF(ISNULL(IsSettled.Val , 0) = 1,MaxVoucherDate.VoucherDate,NULL), 
+					a.SettleDate
+				)
 FROM  Debit a WITH (NOLOCK) 
 outer apply (select * from dbo.View_ShowName_TPE vs where vs.id = a.Handle ) vs1
 outer apply (select * from dbo.View_ShowName_TPE vs where vs.id = a.SMR ) vs2
 outer apply (select * from dbo.View_ShowName_TPE vs where vs.id = a.cfm ) vs3  
 outer apply ( 
-	SELECT TOP 1
-		ds.VoucherID
-		,v.VoucherDate
-	FROM debit_schedule ds WITH (NOLOCK) 
+	SELECT [VoucherDate]=MAX(v.VoucherDate)
+	FROM Debit_Schedule ds WITH (NOLOCK) 
 	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
-	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID 
-) Cur_Debit5
-outer apply(
-	select deb.VoucherFactory,VoucherDate,SettleDate 
-	from dbo.Debit deb WITH (NOLOCK) 
-	where deb.VoucherFactory = VoucherID 
-) n
-outer apply(
-	select   [Voucher No.] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherID, n.VoucherFactory)
-			,[Voucher Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.VoucherDate)
-			,[Settled Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.SettleDate) 
-)finalVoucher
+	WHERE  ISNULL(ds.VoucherID,'')!=''
+			AND v.VoucherDate IS NOT NULL
+			AND ds.ID=a.ID 
+) MaxVoucherDate
 OUTER APPLY(
 	SELECT [Amount]=Sum(Amount)
 	FROM Debit_Schedule
 	WHERE ID=a.ID AND VoucherID <> ''
 )Debit_Schedule_Amount
+OUTER APPLY(
+	SELECT [Val]=IIF(a.IsSubcon=1,
+	(
+		SELECT IIF(Sum(ds.Amount) = (ld.Amount+ld.Tax) ,1 ,0 )
+		FROM LocalDebit ld
+		LEFT JOIN Debit_Schedule ds ON ds.ID=ld.ID 
+		LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+		WHERE ld.ID = a.ID AND ISNULL(ds.VoucherID,'') <> '' AND v2.VoucherDate IS NOT NULL
+		GROUP BY ld.Amount ,ld.Tax
+	),
+	(SELECT IIF(a.VoucherFactory != '' ,1 ,0)
+	))
+)IsSettled
 where a.type='F' and 
 " + sqlWhere + ' ' + sqlHaving);
             #endregion
@@ -198,9 +237,39 @@ SELECT distinct a.ID
 ,a.Received
 ,a.Cfm+ '-' + ISNULL(vs3.Name_Extno,'') [cfm]
 ,a.CfmDate
-,finalVoucher.[Voucher No.]
-,finalVoucher.[Voucher Date]
-,finalVoucher.[Settled Date]
+,[Voucher No.]=IIF(a.IsSubcon=1,
+				(	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10)+ ds.VoucherID 
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v.VoucherDate IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				), 
+				a.VoucherFactory)
+,[Voucher Date]= IIF(a.IsSubcon=1,
+					(	SELECT (
+						STUFF(
+						(
+							SELECT CHAR(10) + CONVERT(varchar, v.VoucherDate, 111)
+							FROM debit_schedule ds WITH (NOLOCK) 
+							LEFT JOIN FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
+							WHERE  ISNULL(ds.VoucherID,'')<>'' AND v.VoucherDate IS NOT NULL AND ds.ID=a.ID
+							ORDER BY v.VoucherDate
+							FOR XML PATH('')
+						), 1, 1, '') 
+					)
+				),
+					Cast((SELECT VoucherDate FROM SciFMS_Voucher WHERE ID=(SELECT VoucherFactory FROM Debit WHERE ID=a.ID)) as varchar)
+				)
+,[Settled Date]=IIF(a.IsSubcon=1,
+					IIF(ISNULL(IsSettled.Val , 0) = 1,MaxVoucherDate.VoucherDate,NULL), 
+					a.SettleDate
+				)
 ,dd.OrderID
 ,dd.Qty
 ,dd.Amount
@@ -211,28 +280,31 @@ outer apply (select * from dbo.View_ShowName_TPE vs where vs.id = a.Handle ) vs1
 outer apply (select * from dbo.View_ShowName_TPE vs where vs.id = a.SMR ) vs2  
 outer apply (select * from dbo.View_ShowName_TPE vs where vs.id = a.cfm ) vs3 
 outer apply ( 
-	SELECT TOP 1
-		ds.VoucherID
-		,v.VoucherDate
-	FROM debit_schedule ds WITH (NOLOCK) 
+	SELECT [VoucherDate]=MAX(v.VoucherDate)
+	FROM Debit_Schedule ds WITH (NOLOCK) 
 	left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
-	WHERE  isnull(ds.VoucherID,'')!=''	AND ds.ID=a.ID 
-) Cur_Debit5
-outer apply(
-	select deb.VoucherFactory,VoucherDate,SettleDate 
-	from dbo.Debit deb WITH (NOLOCK) 
-	where deb.VoucherFactory = VoucherID 
-) n
-outer apply(
-	select   [Voucher No.] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherID, n.VoucherFactory)
-			,[Voucher Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.VoucherDate)
-			,[Settled Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.SettleDate) 
-)finalVoucher
+	WHERE  ISNULL(ds.VoucherID,'')!=''
+			AND v.VoucherDate IS NOT NULL
+			AND ds.ID=a.ID 
+) MaxVoucherDate
 OUTER APPLY(
 	SELECT [Amount]=Sum(Amount)
 	FROM Debit_Schedule
 	WHERE ID=a.ID AND VoucherID <> ''
 )Debit_Schedule_Amount
+OUTER APPLY(
+	SELECT [Val]=IIF(a.IsSubcon=1,
+	(
+		SELECT IIF(Sum(ds.Amount) = (ld.Amount+ld.Tax) ,1 ,0 )
+		FROM LocalDebit ld
+		LEFT JOIN Debit_Schedule ds ON ds.ID = ld.ID 
+		LEFT JOIN FinanceEn.dbo.Voucher as v2 on v2.id = ds.VoucherID
+		WHERE ld.ID = a.ID AND ISNULL(ds.VoucherID,'') <> '' AND v2.VoucherDate IS NOT NULL
+		GROUP BY ld.Amount ,ld.Tax
+	),
+	(SELECT IIF(a.VoucherFactory != '' ,1 ,0)
+	))
+)IsSettled
 
 where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
             #endregion
