@@ -890,6 +890,41 @@ DROP TABLE #tmoOrders
 ";
 */
                         }
+                        else
+                        {
+                            sqlCmd = $@"
+
+
+SELECT ID ,StyleID ,POID
+INTO #tmpOrders0
+FROM Orders 
+WHERE CustPONo='{zpl.CustPONo}' AND StyleID='{zpl.StyleID}'
+
+SELECT [PackingListID]=pd.ID ,[PackingList_Ukey]=pd.Ukey
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' 
+    AND pd.OrderID = (SELECT ID FROM #tmpOrders0)
+    AND pd.CustCTN = ''
+    AND Article = '{zpl.Article}'
+    AND pd.ShipQty={zpl.ShipQty}
+    AND (
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders0) AND SizeSpec IN ('{zpl.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{zpl.SizeCode}'
+        )
+		
+
+DROP TABLE #tmpOrders0
+";
+                        }
+
                         #endregion
 
                         DBProxy.Current.Select(null, sqlCmd, out tmpDt);
@@ -1092,19 +1127,23 @@ DROP TABLE #tmoOrders,#tmp
                     // 如果全部Mapping成功，直接修改
                     DualResult result;
 
+                    string updateCmd = string.Empty;
+                    int i = 0;
+                    List<string> fileNamess = new List<string>();
+
                     foreach (var item in this.MappingModels)
                     {
 
-                        string updateCmd = string.Empty;
                         string fileName = item.FileName;
                         string packingListID = item.PackingListID;
                         bool IsMixed = item.IsMixed;
+
+                        fileNamess.Add(fileName);
 
                         MappingModel current = this.MappingModels.Where(o => o.FileName == fileName).FirstOrDefault();
 
                         string cmd = string.Empty;
                         List<string> sqlMixed = new List<string>();
-                        int i = 0;
 
                         // 相同PackingListID Article SizeCode ShipQty，照順序寫入CustCTN、P24表頭 + 表身
                         foreach (var ZPL in current.ZPL_Content)
@@ -1615,20 +1654,25 @@ DROP TABLE #tmpOrders{i},#tmp{i}
 
                         updateCmd += cmd + Environment.NewLine + "---------";
 
-                        using (TransactionScope transactionscope = new TransactionScope())
+                    }
+
+                    using (TransactionScope transactionscope = new TransactionScope())
+                    {
+                        if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
                         {
-                            if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
-                            {
-                                transactionscope.Dispose();
-                                this.ShowErr(result);
-                                return;
-                            }
-
-                            transactionscope.Complete();
                             transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
 
-                            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                            dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).FirstOrDefault()["Result"] = "Pass";
+                        transactionscope.Complete();
+                        transactionscope.Dispose();
+
+                        DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                        List<DataRow> dl = dt.AsEnumerable().Where(o => fileNamess.Contains(o["FileName"].ToString())).ToList();//.FirstOrDefault()["Result"] = "Pass";
+                        foreach (DataRow dr in dl)
+                        {
+                            dr["Result"] = "Pass";
                         }
                     }
                     MyUtility.Msg.InfoBox("Data Mapping successful!");
