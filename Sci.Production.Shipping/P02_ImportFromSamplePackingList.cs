@@ -140,6 +140,7 @@ from (
     left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
     where pd.ID = '{0}'
           and Factory.IsProduceFty=1
+          and p.Type = 'S'
     group by pd.ID, pd.OrderID, o.SeasonID, o.StyleID, p.ShipQty, p.GW, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey
 ) getSamplePL
 ", this.txtSamplePL.Text);
