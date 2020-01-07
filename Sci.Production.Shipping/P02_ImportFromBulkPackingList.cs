@@ -130,12 +130,14 @@ and Factory.IsProduceFty=1
         , o.BrandID
 		, Description = [dbo].[getBOFMtlDesc](StyleUkey)
     from PackingList_Detail pd WITH (NOLOCK) 	
+    inner join PackingList p with (nolock) on pd.id = p.id
     left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
     left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
     left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
     where 1=1
 	and pd.ID='{this.txtBulkPL.Text}'
     and Factory.IsProduceFty=1
+    and p.Type = 'B'
 	and not exists(
 		select distinct p1.ID as PulloutID
 		from PackingList_Detail p2 WITH (NOLOCK) 
@@ -301,7 +303,7 @@ values(
 '{0}','{1}'
 ,(select ISNULL(RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3),'001')from Express_Detail where ID = '{0}' and Seq2 = '') ----Seq1
 ,'{2}','{3}','{4}',{5},{6},'{7}'
-,'2'  ----Category
+,'3'  ----Category
 ,'{8}',{9},'{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
                                             MyUtility.Convert.GetString(this.masterData["ID"]),
                                             MyUtility.Convert.GetString(dr["OrderID"]),

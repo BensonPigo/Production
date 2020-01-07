@@ -122,6 +122,7 @@ and Factory.IsProduceFty=1
     , o.BrandID
     , [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
 from PackingList_Detail pd WITH (NOLOCK) 
+inner join PackingList p with (Nolock) on pd.id = p.id
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
 left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
@@ -132,7 +133,8 @@ OUTER APPLY(
 	SELECT GW FROM PackingList WHERE ID = pd.ID 
 )TtlGW
 where pd.ID = '{0}'
-and Factory.IsProduceFty=1", this.txtFOCPL.Text);
+        and p.Type = 'F'
+        and Factory.IsProduceFty=1", this.txtFOCPL.Text);
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
