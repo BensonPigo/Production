@@ -19,6 +19,7 @@ namespace Sci.Production.IE
     {
         private DataRow masterData;
         private string artworktype;
+        private string strLanguage;
         private string custcdID;
         private string machineID;
         private decimal efficiency;
@@ -32,6 +33,7 @@ namespace Sci.Production.IE
         public P01_Print(DataRow masterData)
         {
             this.InitializeComponent();
+            this.EditMode = true;
             this.masterData = masterData;
             DataTable artworkType;
             string sqlCmd = string.Format(
@@ -45,6 +47,9 @@ and TimeStudy_Detail.ID = {0}",
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
             MyUtility.Tool.SetupCombox(this.comboArtworkType, 1, artworkType);
             this.comboArtworkType.SelectedIndex = -1;
+
+            MyUtility.Tool.SetupCombox(this.comboLanguage, 2, 1, "en,English,cn,Chinese,vn,Vietnam,kh,Cambodia");
+            this.comboLanguage.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -61,6 +66,7 @@ and TimeStudy_Detail.ID = {0}",
 
             this.efficiency = MyUtility.Convert.GetInt(this.numEfficiencySetting.Value);
             this.artworktype = this.comboArtworkType.Text;
+            this.strLanguage = this.comboLanguage.SelectedValue.ToString();
 
             return base.ValidateInput();
         }
@@ -118,15 +124,24 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
 union all
 ";
             sqlCmd += string.Format(
-                @"select td.Seq,td.OperationID,td.MachineTypeID,td.Mold,td.Frequency,td.SMV,td.PcsPerHour,td.Sewer,
-td.Annotation,o.DescEN
+                @"
+select td.Seq,td.OperationID,td.MachineTypeID,td.Mold,td.Frequency,td.SMV,td.PcsPerHour,td.Sewer,
+td.Annotation
+,DescEN = case when '{3}' = 'cn' then isnull(od.DescCHS,o.DescEN)
+               when '{3}' = 'vn' then isnull(od.DescVI,o.DescEN)
+               when '{3}' = 'kh' then isnull(od.DescKH,o.DescEN)
+else o.DescEN end
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+left join OperationDesc od on o.ID = od.ID
 {0}
 where td.ID = {1}{2}
-", MyUtility.Check.Empty(this.artworktype) ? string.Empty : @"left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID LEFT JOIN Artworktype_Detail ATD WITH(NOLOCK) ON m.ID = ATD.MachineTypeID",
+", MyUtility.Check.Empty(this.artworktype) ? string.Empty : @"
+LEFT JOIN MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID 
+LEFT JOIN Artworktype_Detail ATD WITH(NOLOCK) ON m.ID = ATD.MachineTypeID",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
-                MyUtility.Check.Empty(this.artworktype) ? string.Empty : string.Format(" and ATD.ArtworkTypeID = '{0}'", this.artworktype));
+                MyUtility.Check.Empty(this.artworktype) ? string.Empty : string.Format(" and ATD.ArtworkTypeID = '{0}'", this.artworktype)
+                , this.strLanguage);
             sqlCmd += $@"
 union all
 select 

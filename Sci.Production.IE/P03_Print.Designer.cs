@@ -38,30 +38,32 @@
             this.radioDescription = new Sci.Win.UI.RadioButton();
             this.chkpage = new System.Windows.Forms.CheckBox();
             this.numpage = new Sci.Win.UI.NumericBox();
+            this.comboLanguage = new Sci.Win.UI.ComboBox();
+            this.labLanguage = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(286, 12);
-            this.print.TabIndex = 1;
+            this.print.Location = new System.Drawing.Point(435, 12);
+            this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(286, 48);
-            this.toexcel.TabIndex = 2;
+            this.toexcel.Location = new System.Drawing.Point(435, 48);
+            this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(286, 84);
-            this.close.TabIndex = 3;
+            this.close.Location = new System.Drawing.Point(435, 84);
+            this.close.TabIndex = 6;
             // 
             // labelLineMappingDisplay
             // 
             this.labelLineMappingDisplay.Location = new System.Drawing.Point(13, 12);
             this.labelLineMappingDisplay.Name = "labelLineMappingDisplay";
-            this.labelLineMappingDisplay.Size = new System.Drawing.Size(137, 23);
+            this.labelLineMappingDisplay.Size = new System.Drawing.Size(162, 23);
             this.labelLineMappingDisplay.TabIndex = 94;
             this.labelLineMappingDisplay.Text = "Line mapping display:";
             // 
@@ -69,10 +71,10 @@
             // 
             this.radioPanel1.Controls.Add(this.radioZ);
             this.radioPanel1.Controls.Add(this.radioU);
-            this.radioPanel1.Location = new System.Drawing.Point(154, 8);
+            this.radioPanel1.Location = new System.Drawing.Point(181, 12);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(50, 54);
-            this.radioPanel1.TabIndex = 95;
+            this.radioPanel1.TabIndex = 0;
             // 
             // radioZ
             // 
@@ -102,7 +104,7 @@
             // 
             this.labelOperationContentType.Location = new System.Drawing.Point(13, 75);
             this.labelOperationContentType.Name = "labelOperationContentType";
-            this.labelOperationContentType.Size = new System.Drawing.Size(147, 23);
+            this.labelOperationContentType.Size = new System.Drawing.Size(162, 23);
             this.labelOperationContentType.TabIndex = 96;
             this.labelOperationContentType.Text = "Operation content type:";
             // 
@@ -110,10 +112,10 @@
             // 
             this.radioPanel2.Controls.Add(this.radioAnnotation);
             this.radioPanel2.Controls.Add(this.radioDescription);
-            this.radioPanel2.Location = new System.Drawing.Point(164, 73);
+            this.radioPanel2.Location = new System.Drawing.Point(181, 75);
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(111, 58);
-            this.radioPanel2.TabIndex = 97;
+            this.radioPanel2.TabIndex = 1;
             // 
             // radioAnnotation
             // 
@@ -142,7 +144,7 @@
             // chkpage
             // 
             this.chkpage.AutoSize = true;
-            this.chkpage.Location = new System.Drawing.Point(13, 146);
+            this.chkpage.Location = new System.Drawing.Point(16, 146);
             this.chkpage.Name = "chkpage";
             this.chkpage.Size = new System.Drawing.Size(162, 21);
             this.chkpage.TabIndex = 98;
@@ -166,16 +168,38 @@
             0,
             0});
             this.numpage.Size = new System.Drawing.Size(53, 23);
-            this.numpage.TabIndex = 99;
+            this.numpage.TabIndex = 2;
             this.numpage.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
+            // comboLanguage
+            // 
+            this.comboLanguage.BackColor = System.Drawing.Color.White;
+            this.comboLanguage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLanguage.FormattingEnabled = true;
+            this.comboLanguage.IsSupportUnselect = true;
+            this.comboLanguage.Location = new System.Drawing.Point(181, 182);
+            this.comboLanguage.Name = "comboLanguage";
+            this.comboLanguage.OldText = "";
+            this.comboLanguage.Size = new System.Drawing.Size(121, 24);
+            this.comboLanguage.TabIndex = 3;
+            // 
+            // labLanguage
+            // 
+            this.labLanguage.Location = new System.Drawing.Point(13, 183);
+            this.labLanguage.Name = "labLanguage";
+            this.labLanguage.Size = new System.Drawing.Size(162, 23);
+            this.labLanguage.TabIndex = 102;
+            this.labLanguage.Text = "Language:";
+            // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(378, 206);
+            this.ClientSize = new System.Drawing.Size(527, 247);
+            this.Controls.Add(this.labLanguage);
+            this.Controls.Add(this.comboLanguage);
             this.Controls.Add(this.numpage);
             this.Controls.Add(this.chkpage);
             this.Controls.Add(this.radioPanel2);
@@ -184,7 +208,11 @@
             this.Controls.Add(this.labelLineMappingDisplay);
             this.IsSupportToPrint = false;
             this.Name = "P03_Print";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "Print";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelLineMappingDisplay, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.labelOperationContentType, 0);
@@ -194,6 +222,8 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.chkpage, 0);
             this.Controls.SetChildIndex(this.numpage, 0);
+            this.Controls.SetChildIndex(this.comboLanguage, 0);
+            this.Controls.SetChildIndex(this.labLanguage, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -215,5 +245,7 @@
         private Win.UI.RadioButton radioDescription;
         private System.Windows.Forms.CheckBox chkpage;
         private Win.UI.NumericBox numpage;
+        private Win.UI.ComboBox comboLanguage;
+        private Win.UI.Label labLanguage;
     }
 }

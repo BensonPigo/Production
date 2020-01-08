@@ -38,22 +38,24 @@
             this.chkPressing = new System.Windows.Forms.CheckBox();
             this.chkPacking = new System.Windows.Forms.CheckBox();
             this.chkInspection = new System.Windows.Forms.CheckBox();
+            this.comboLanguage = new Sci.Win.UI.ComboBox();
+            this.labLanguage = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(355, 12);
-            this.print.TabIndex = 3;
+            this.print.Location = new System.Drawing.Point(434, 12);
+            this.print.TabIndex = 7;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(355, 48);
-            this.toexcel.TabIndex = 4;
+            this.toexcel.Location = new System.Drawing.Point(434, 48);
+            this.toexcel.TabIndex = 8;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(355, 84);
-            this.close.TabIndex = 5;
+            this.close.Location = new System.Drawing.Point(434, 84);
+            this.close.TabIndex = 9;
             // 
             // labelEfficiencySetting
             // 
@@ -138,7 +140,7 @@
             this.chkCutting.Location = new System.Drawing.Point(138, 85);
             this.chkCutting.Name = "chkCutting";
             this.chkCutting.Size = new System.Drawing.Size(71, 21);
-            this.chkCutting.TabIndex = 3;
+            this.chkCutting.TabIndex = 2;
             this.chkCutting.Text = "Cutting";
             this.chkCutting.UseVisualStyleBackColor = true;
             // 
@@ -148,7 +150,7 @@
             this.chkPressing.Location = new System.Drawing.Point(138, 112);
             this.chkPressing.Name = "chkPressing";
             this.chkPressing.Size = new System.Drawing.Size(82, 21);
-            this.chkPressing.TabIndex = 5;
+            this.chkPressing.TabIndex = 4;
             this.chkPressing.Text = "Pressing";
             this.chkPressing.UseVisualStyleBackColor = true;
             // 
@@ -158,7 +160,7 @@
             this.chkPacking.Location = new System.Drawing.Point(226, 112);
             this.chkPacking.Name = "chkPacking";
             this.chkPacking.Size = new System.Drawing.Size(77, 21);
-            this.chkPacking.TabIndex = 6;
+            this.chkPacking.TabIndex = 5;
             this.chkPacking.Text = "Packing";
             this.chkPacking.UseVisualStyleBackColor = true;
             // 
@@ -168,13 +170,35 @@
             this.chkInspection.Location = new System.Drawing.Point(226, 85);
             this.chkInspection.Name = "chkInspection";
             this.chkInspection.Size = new System.Drawing.Size(91, 21);
-            this.chkInspection.TabIndex = 4;
+            this.chkInspection.TabIndex = 3;
             this.chkInspection.Text = "Inspection";
             this.chkInspection.UseVisualStyleBackColor = true;
             // 
+            // comboLanguage
+            // 
+            this.comboLanguage.BackColor = System.Drawing.Color.White;
+            this.comboLanguage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLanguage.FormattingEnabled = true;
+            this.comboLanguage.IsSupportUnselect = true;
+            this.comboLanguage.Location = new System.Drawing.Point(138, 144);
+            this.comboLanguage.Name = "comboLanguage";
+            this.comboLanguage.OldText = "";
+            this.comboLanguage.Size = new System.Drawing.Size(121, 24);
+            this.comboLanguage.TabIndex = 6;
+            // 
+            // labLanguage
+            // 
+            this.labLanguage.Location = new System.Drawing.Point(13, 145);
+            this.labLanguage.Name = "labLanguage";
+            this.labLanguage.Size = new System.Drawing.Size(118, 23);
+            this.labLanguage.TabIndex = 100;
+            this.labLanguage.Text = "Language";
+            // 
             // P01_Print
             // 
-            this.ClientSize = new System.Drawing.Size(447, 165);
+            this.ClientSize = new System.Drawing.Size(526, 202);
+            this.Controls.Add(this.labLanguage);
+            this.Controls.Add(this.comboLanguage);
             this.Controls.Add(this.chkInspection);
             this.Controls.Add(this.chkPacking);
             this.Controls.Add(this.chkPressing);
@@ -189,7 +213,11 @@
             this.DefaultControlForEdit = "numEfficiencySetting";
             this.IsSupportToPrint = false;
             this.Name = "P01_Print";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "Print";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -203,6 +231,8 @@
             this.Controls.SetChildIndex(this.chkPressing, 0);
             this.Controls.SetChildIndex(this.chkPacking, 0);
             this.Controls.SetChildIndex(this.chkInspection, 0);
+            this.Controls.SetChildIndex(this.comboLanguage, 0);
+            this.Controls.SetChildIndex(this.labLanguage, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -220,5 +250,7 @@
         private System.Windows.Forms.CheckBox chkPressing;
         private System.Windows.Forms.CheckBox chkPacking;
         private System.Windows.Forms.CheckBox chkInspection;
+        private Win.UI.ComboBox comboLanguage;
+        private Win.UI.Label labLanguage;
     }
 }
