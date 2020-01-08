@@ -241,6 +241,7 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
             this.dispSeason.Text = row["SeasonID"].ToString();
             this.cmbCategory.SelectedValue = row["Category"].ToString();
             this.dispBrand.Text = row["BrandID"].ToString();
+            this.dispFactory.Text = row["FactoryID"].ToString();
             this.dispProgram.Text = row["ProgramID"].ToString();
             this.dispOrderType.Text = row["OrderTypeID"].ToString();
             this.dispProject.Text = row["ProjectID"].ToString();
@@ -332,6 +333,14 @@ left join Order_SizeCode os WITH (NOLOCK) on os.ID = '{1}' and os.SizeCode = p.S
                 this.txttpeuserPoHandle.DisplayBox1.Text = currPO["POHandle"].ToString();
                 this.txttpeuserPoSmr.DisplayBox1.Text = currPO["POSMR"].ToString();
             }
+
+            if (MyUtility.Check.Seek($"select [OrderNewQty] =cast(sum(iif(oc.ReasonID IN ('OCR05', 'OCR06'), 0, Qty)) as int) from OrderChangeApplication_Detail ocd inner join OrderChangeApplication oc on oc.id = ocd.id where ocd.id = '{ this.CurrentDataRow["ID"].ToString()}'", out currPO))
+            {
+                this.DisOrderNewQty.Text = currPO["OrderNewQty"].ToString ();
+            }
+
+            // 設定為黃底
+            this.DisOrderNewQty.BackColor = Color.FromArgb(254, 254, 120);
 
             this.QtybrkOrderbs.DataSource = null;
             this.QtybrkShipbs1.DataSource = null;
@@ -678,7 +687,7 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             string description = $@"== this is my test mail (Testing) ==
 {status} SP#{this.CurrentMaintain["Orderid"]}-{factory} request change qty, please check, apply id# - {this.CurrentMaintain["ID"]}";
 
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, true, true);
+            var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
             email.ShowDialog(this);
         }
 

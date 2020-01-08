@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.LbJunk = new Sci.Win.UI.Label();
             this.LbClose = new Sci.Win.UI.Label();
             this.LbProjectID = new Sci.Win.UI.Label();
@@ -51,7 +51,6 @@
             this.LbBrandID = new Sci.Win.UI.Label();
             this.LbReject = new Sci.Win.UI.Label();
             this.LbApp = new Sci.Win.UI.Label();
-            this.LbCFM = new Sci.Win.UI.Label();
             this.LbSent = new Sci.Win.UI.Label();
             this.LbReason = new Sci.Win.UI.Label();
             this.LbID = new Sci.Win.UI.Label();
@@ -72,7 +71,6 @@
             this.tabResponsibility = new System.Windows.Forms.TabPage();
             this.displayBuyerICRInfo = new Sci.Win.UI.DisplayBox();
             this.displaySCIICRInfo = new Sci.Win.UI.DisplayBox();
-            this.pickIdFactory = new Sci.Win.UI.DisplayBox();
             this.txttpeuserPoHandle = new Sci.Production.Class.txttpeuser();
             this.txttpeuserPoSmr = new Sci.Production.Class.txttpeuser();
             this.txttpeuserMRHandle = new Sci.Production.Class.txttpeuser();
@@ -120,11 +118,8 @@
             this.label47 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.editBox2 = new Sci.Win.UI.EditBox();
-            this.editBox3 = new Sci.Win.UI.EditBox();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
             this.CboReason = new Sci.Win.UI.ComboBox();
             this.tabQtyOrder = new System.Windows.Forms.TabPage();
             this.panelQtyOrder = new Sci.Win.UI.Panel();
@@ -179,6 +174,18 @@
             this.DisFOCQty = new Sci.Win.UI.DisplayBox();
             this.LbFOCQty = new Sci.Win.UI.Label();
             this.btnProductionOutput = new Sci.Win.UI.Button();
+            this.LbCFM = new Sci.Win.UI.Label();
+            this.lbFacotry = new Sci.Win.UI.Label();
+            this.dispFactory = new Sci.Win.UI.DisplayBox();
+            this.label10 = new Sci.Win.UI.Label();
+            this.dispFactoryICRDepartment = new Sci.Win.UI.DisplayBox();
+            this.displayFactoryICRRemark = new Sci.Win.UI.DisplayBox();
+            this.displayFactoryICRAmount = new Sci.Win.UI.DisplayBox();
+            this.displaySubconDBCAmount = new Sci.Win.UI.DisplayBox();
+            this.displaySCIICRAmount = new Sci.Win.UI.DisplayBox();
+            this.displaySuppDBCAmount = new Sci.Win.UI.DisplayBox();
+            this.displayBuyerDBCAmount = new Sci.Win.UI.DisplayBox();
+            this.displayBuyerICRAmount = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -216,10 +223,13 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 650);
+            this.detail.Size = new System.Drawing.Size(1057, 654);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label10);
+            this.detailcont.Controls.Add(this.dispFactory);
+            this.detailcont.Controls.Add(this.lbFacotry);
             this.detailcont.Controls.Add(this.btnProductionOutput);
             this.detailcont.Controls.Add(this.DisOrderNewQty);
             this.detailcont.Controls.Add(this.label9);
@@ -284,13 +294,13 @@
             this.detailcont.Controls.Add(this.txtuserReject);
             this.detailcont.Controls.Add(this.cmbCategory);
             this.detailcont.Controls.Add(this.txtuserCFM);
-            this.detailcont.Size = new System.Drawing.Size(1000, 612);
+            this.detailcont.Size = new System.Drawing.Size(1057, 616);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnRefresh);
-            this.detailbtm.Location = new System.Drawing.Point(0, 612);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 616);
+            this.detailbtm.Size = new System.Drawing.Size(1057, 38);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -299,27 +309,27 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 650);
+            this.browse.Size = new System.Drawing.Size(1143, 650);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 679);
+            this.tabs.Size = new System.Drawing.Size(1065, 683);
             // 
             // LbJunk
             // 
             this.LbJunk.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbJunk.Location = new System.Drawing.Point(451, 55);
+            this.LbJunk.Location = new System.Drawing.Point(491, 55);
             this.LbJunk.Name = "LbJunk";
-            this.LbJunk.Size = new System.Drawing.Size(60, 19);
+            this.LbJunk.Size = new System.Drawing.Size(66, 19);
             this.LbJunk.TabIndex = 787;
-            this.LbJunk.Text = "Junk";
+            this.LbJunk.Text = "MR Junk";
             // 
             // LbClose
             // 
             this.LbClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbClose.Location = new System.Drawing.Point(451, 78);
+            this.LbClose.Location = new System.Drawing.Point(491, 78);
             this.LbClose.Name = "LbClose";
-            this.LbClose.Size = new System.Drawing.Size(60, 19);
+            this.LbClose.Size = new System.Drawing.Size(66, 19);
             this.LbClose.TabIndex = 771;
             this.LbClose.Text = "Close";
             // 
@@ -344,7 +354,7 @@
             // LbCategory
             // 
             this.LbCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbCategory.Location = new System.Drawing.Point(5, 178);
+            this.LbCategory.Location = new System.Drawing.Point(5, 201);
             this.LbCategory.Name = "LbCategory";
             this.LbCategory.Size = new System.Drawing.Size(85, 19);
             this.LbCategory.TabIndex = 781;
@@ -353,16 +363,16 @@
             // LbDescription
             // 
             this.LbDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbDescription.Location = new System.Drawing.Point(451, 178);
+            this.LbDescription.Location = new System.Drawing.Point(235, 201);
             this.LbDescription.Name = "LbDescription";
-            this.LbDescription.Size = new System.Drawing.Size(100, 19);
+            this.LbDescription.Size = new System.Drawing.Size(85, 22);
             this.LbDescription.TabIndex = 780;
             this.LbDescription.Text = "Description";
             // 
             // LbSCIDelivery
             // 
             this.LbSCIDelivery.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbSCIDelivery.Location = new System.Drawing.Point(451, 155);
+            this.LbSCIDelivery.Location = new System.Drawing.Point(491, 155);
             this.LbSCIDelivery.Name = "LbSCIDelivery";
             this.LbSCIDelivery.Size = new System.Drawing.Size(100, 19);
             this.LbSCIDelivery.TabIndex = 779;
@@ -371,7 +381,7 @@
             // LbOrderDelivery
             // 
             this.LbOrderDelivery.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbOrderDelivery.Location = new System.Drawing.Point(451, 132);
+            this.LbOrderDelivery.Location = new System.Drawing.Point(491, 132);
             this.LbOrderDelivery.Name = "LbOrderDelivery";
             this.LbOrderDelivery.Size = new System.Drawing.Size(100, 19);
             this.LbOrderDelivery.TabIndex = 778;
@@ -380,7 +390,7 @@
             // LbOrderCFMDate
             // 
             this.LbOrderCFMDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbOrderCFMDate.Location = new System.Drawing.Point(451, 109);
+            this.LbOrderCFMDate.Location = new System.Drawing.Point(491, 109);
             this.LbOrderCFMDate.Name = "LbOrderCFMDate";
             this.LbOrderCFMDate.Size = new System.Drawing.Size(100, 19);
             this.LbOrderCFMDate.TabIndex = 777;
@@ -398,7 +408,7 @@
             // LbStyleID
             // 
             this.LbStyleID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbStyleID.Location = new System.Drawing.Point(5, 132);
+            this.LbStyleID.Location = new System.Drawing.Point(5, 155);
             this.LbStyleID.Name = "LbStyleID";
             this.LbStyleID.Size = new System.Drawing.Size(85, 19);
             this.LbStyleID.TabIndex = 773;
@@ -416,7 +426,7 @@
             // LbSeasonID
             // 
             this.LbSeasonID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbSeasonID.Location = new System.Drawing.Point(5, 155);
+            this.LbSeasonID.Location = new System.Drawing.Point(5, 178);
             this.LbSeasonID.Name = "LbSeasonID";
             this.LbSeasonID.Size = new System.Drawing.Size(85, 19);
             this.LbSeasonID.TabIndex = 774;
@@ -425,7 +435,7 @@
             // LbBrandID
             // 
             this.LbBrandID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbBrandID.Location = new System.Drawing.Point(235, 109);
+            this.LbBrandID.Location = new System.Drawing.Point(5, 132);
             this.LbBrandID.Name = "LbBrandID";
             this.LbBrandID.Size = new System.Drawing.Size(85, 19);
             this.LbBrandID.TabIndex = 775;
@@ -434,36 +444,27 @@
             // LbReject
             // 
             this.LbReject.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbReject.Location = new System.Drawing.Point(451, 32);
+            this.LbReject.Location = new System.Drawing.Point(491, 32);
             this.LbReject.Name = "LbReject";
-            this.LbReject.Size = new System.Drawing.Size(60, 19);
+            this.LbReject.Size = new System.Drawing.Size(66, 19);
             this.LbReject.TabIndex = 770;
-            this.LbReject.Text = "Reject";
+            this.LbReject.Text = "Fty Reject";
             // 
             // LbApp
             // 
             this.LbApp.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.LbApp.Location = new System.Drawing.Point(5, 55);
             this.LbApp.Name = "LbApp";
-            this.LbApp.Size = new System.Drawing.Size(60, 19);
+            this.LbApp.Size = new System.Drawing.Size(83, 19);
             this.LbApp.TabIndex = 768;
-            this.LbApp.Text = "Approve";
-            // 
-            // LbCFM
-            // 
-            this.LbCFM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbCFM.Location = new System.Drawing.Point(5, 78);
-            this.LbCFM.Name = "LbCFM";
-            this.LbCFM.Size = new System.Drawing.Size(60, 19);
-            this.LbCFM.TabIndex = 769;
-            this.LbCFM.Text = "CFM";
+            this.LbApp.Text = "SMR Approve";
             // 
             // LbSent
             // 
             this.LbSent.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.LbSent.Location = new System.Drawing.Point(5, 32);
             this.LbSent.Name = "LbSent";
-            this.LbSent.Size = new System.Drawing.Size(60, 19);
+            this.LbSent.Size = new System.Drawing.Size(85, 19);
             this.LbSent.TabIndex = 767;
             this.LbSent.Text = "Sent";
             // 
@@ -500,18 +501,18 @@
             // 
             this.dispStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispStyle.Location = new System.Drawing.Point(93, 132);
+            this.dispStyle.Location = new System.Drawing.Point(93, 155);
             this.dispStyle.Name = "dispStyle";
-            this.dispStyle.Size = new System.Drawing.Size(130, 23);
+            this.dispStyle.Size = new System.Drawing.Size(139, 23);
             this.dispStyle.TabIndex = 815;
             // 
             // dispSeason
             // 
             this.dispSeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispSeason.Location = new System.Drawing.Point(93, 155);
+            this.dispSeason.Location = new System.Drawing.Point(93, 178);
             this.dispSeason.Name = "dispSeason";
-            this.dispSeason.Size = new System.Drawing.Size(130, 23);
+            this.dispSeason.Size = new System.Drawing.Size(139, 23);
             this.dispSeason.TabIndex = 816;
             // 
             // dispProject
@@ -520,7 +521,7 @@
             this.dispProject.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispProject.Location = new System.Drawing.Point(323, 178);
             this.dispProject.Name = "dispProject";
-            this.dispProject.Size = new System.Drawing.Size(125, 23);
+            this.dispProject.Size = new System.Drawing.Size(153, 23);
             this.dispProject.TabIndex = 821;
             // 
             // dispOrderType
@@ -529,7 +530,7 @@
             this.dispOrderType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispOrderType.Location = new System.Drawing.Point(323, 155);
             this.dispOrderType.Name = "dispOrderType";
-            this.dispOrderType.Size = new System.Drawing.Size(125, 23);
+            this.dispOrderType.Size = new System.Drawing.Size(153, 23);
             this.dispOrderType.TabIndex = 820;
             // 
             // dispProgram
@@ -538,22 +539,22 @@
             this.dispProgram.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispProgram.Location = new System.Drawing.Point(323, 132);
             this.dispProgram.Name = "dispProgram";
-            this.dispProgram.Size = new System.Drawing.Size(125, 23);
+            this.dispProgram.Size = new System.Drawing.Size(153, 23);
             this.dispProgram.TabIndex = 819;
             // 
             // dispBrand
             // 
             this.dispBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispBrand.Location = new System.Drawing.Point(323, 109);
+            this.dispBrand.Location = new System.Drawing.Point(94, 132);
             this.dispBrand.Name = "dispBrand";
-            this.dispBrand.Size = new System.Drawing.Size(125, 23);
+            this.dispBrand.Size = new System.Drawing.Size(138, 23);
             this.dispBrand.TabIndex = 818;
             // 
             // dateCFM
             // 
             this.dateCFM.IsSupportEditMode = false;
-            this.dateCFM.Location = new System.Drawing.Point(554, 109);
+            this.dateCFM.Location = new System.Drawing.Point(594, 109);
             this.dateCFM.Name = "dateCFM";
             this.dateCFM.ReadOnly = true;
             this.dateCFM.Size = new System.Drawing.Size(130, 23);
@@ -562,7 +563,7 @@
             // dateDelivery
             // 
             this.dateDelivery.IsSupportEditMode = false;
-            this.dateDelivery.Location = new System.Drawing.Point(554, 132);
+            this.dateDelivery.Location = new System.Drawing.Point(594, 132);
             this.dateDelivery.Name = "dateDelivery";
             this.dateDelivery.ReadOnly = true;
             this.dateDelivery.Size = new System.Drawing.Size(130, 23);
@@ -571,7 +572,7 @@
             // dateSCIDelivery
             // 
             this.dateSCIDelivery.IsSupportEditMode = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(554, 155);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(594, 155);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.ReadOnly = true;
             this.dateSCIDelivery.Size = new System.Drawing.Size(130, 23);
@@ -581,14 +582,14 @@
             // 
             this.dispDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispDescription.Location = new System.Drawing.Point(554, 178);
+            this.dispDescription.Location = new System.Drawing.Point(323, 200);
             this.dispDescription.Name = "dispDescription";
-            this.dispDescription.Size = new System.Drawing.Size(361, 23);
+            this.dispDescription.Size = new System.Drawing.Size(153, 23);
             this.dispDescription.TabIndex = 828;
             // 
             // BtnReject
             // 
-            this.BtnReject.Location = new System.Drawing.Point(904, 68);
+            this.BtnReject.Location = new System.Drawing.Point(959, 59);
             this.BtnReject.Name = "BtnReject";
             this.BtnReject.Size = new System.Drawing.Size(84, 28);
             this.BtnReject.TabIndex = 834;
@@ -599,7 +600,7 @@
             // BtnConfirm
             // 
             this.BtnConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.BtnConfirm.Location = new System.Drawing.Point(904, 34);
+            this.BtnConfirm.Location = new System.Drawing.Point(959, 25);
             this.BtnConfirm.Name = "BtnConfirm";
             this.BtnConfirm.Size = new System.Drawing.Size(84, 28);
             this.BtnConfirm.TabIndex = 833;
@@ -617,17 +618,24 @@
             this.tabControl.Controls.Add(this.tabQtyShipMode);
             this.tabControl.Controls.Add(this.tabQtyApply);
             this.tabControl.Controls.Add(this.tabQtyApplyShipmode);
-            this.tabControl.Location = new System.Drawing.Point(0, 231);
+            this.tabControl.Location = new System.Drawing.Point(3, 251);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(997, 378);
+            this.tabControl.Size = new System.Drawing.Size(1054, 366);
             this.tabControl.TabIndex = 837;
             // 
             // tabResponsibility
             // 
+            this.tabResponsibility.Controls.Add(this.displayBuyerICRAmount);
+            this.tabResponsibility.Controls.Add(this.displayBuyerDBCAmount);
+            this.tabResponsibility.Controls.Add(this.displaySuppDBCAmount);
+            this.tabResponsibility.Controls.Add(this.displaySCIICRAmount);
+            this.tabResponsibility.Controls.Add(this.displaySubconDBCAmount);
+            this.tabResponsibility.Controls.Add(this.displayFactoryICRAmount);
+            this.tabResponsibility.Controls.Add(this.displayFactoryICRRemark);
+            this.tabResponsibility.Controls.Add(this.dispFactoryICRDepartment);
             this.tabResponsibility.Controls.Add(this.displayBuyerICRInfo);
             this.tabResponsibility.Controls.Add(this.displaySCIICRInfo);
-            this.tabResponsibility.Controls.Add(this.pickIdFactory);
             this.tabResponsibility.Controls.Add(this.txttpeuserPoHandle);
             this.tabResponsibility.Controls.Add(this.txttpeuserPoSmr);
             this.tabResponsibility.Controls.Add(this.txttpeuserMRHandle);
@@ -675,16 +683,13 @@
             this.tabResponsibility.Controls.Add(this.label47);
             this.tabResponsibility.Controls.Add(this.editBox1);
             this.tabResponsibility.Controls.Add(this.editBox2);
-            this.tabResponsibility.Controls.Add(this.editBox3);
             this.tabResponsibility.Controls.Add(this.label4);
             this.tabResponsibility.Controls.Add(this.label5);
-            this.tabResponsibility.Controls.Add(this.label7);
-            this.tabResponsibility.Controls.Add(this.label8);
             this.tabResponsibility.Controls.Add(this.LbReason);
             this.tabResponsibility.Controls.Add(this.CboReason);
             this.tabResponsibility.Location = new System.Drawing.Point(4, 25);
             this.tabResponsibility.Name = "tabResponsibility";
-            this.tabResponsibility.Size = new System.Drawing.Size(989, 349);
+            this.tabResponsibility.Size = new System.Drawing.Size(1046, 337);
             this.tabResponsibility.TabIndex = 5;
             this.tabResponsibility.Text = "Responsibility";
             // 
@@ -710,22 +715,11 @@
             this.displaySCIICRInfo.Size = new System.Drawing.Size(146, 21);
             this.displaySCIICRInfo.TabIndex = 975;
             // 
-            // pickIdFactory
-            // 
-            this.pickIdFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.pickIdFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponsibleFtyNo", true));
-            this.pickIdFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pickIdFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.pickIdFactory.Location = new System.Drawing.Point(210, 74);
-            this.pickIdFactory.Name = "pickIdFactory";
-            this.pickIdFactory.Size = new System.Drawing.Size(87, 21);
-            this.pickIdFactory.TabIndex = 974;
-            // 
             // txttpeuserPoHandle
             // 
             this.txttpeuserPoHandle.DisplayBox1Binding = "";
             this.txttpeuserPoHandle.DisplayBox2Binding = "";
-            this.txttpeuserPoHandle.Location = new System.Drawing.Point(470, 311);
+            this.txttpeuserPoHandle.Location = new System.Drawing.Point(592, 311);
             this.txttpeuserPoHandle.Name = "txttpeuserPoHandle";
             this.txttpeuserPoHandle.Size = new System.Drawing.Size(300, 23);
             this.txttpeuserPoHandle.TabIndex = 973;
@@ -734,7 +728,7 @@
             // 
             this.txttpeuserPoSmr.DisplayBox1Binding = "";
             this.txttpeuserPoSmr.DisplayBox2Binding = "";
-            this.txttpeuserPoSmr.Location = new System.Drawing.Point(470, 289);
+            this.txttpeuserPoSmr.Location = new System.Drawing.Point(592, 287);
             this.txttpeuserPoSmr.Name = "txttpeuserPoSmr";
             this.txttpeuserPoSmr.Size = new System.Drawing.Size(300, 23);
             this.txttpeuserPoSmr.TabIndex = 972;
@@ -743,33 +737,33 @@
             // 
             this.txttpeuserMRHandle.DisplayBox1Binding = "";
             this.txttpeuserMRHandle.DisplayBox2Binding = "";
-            this.txttpeuserMRHandle.Location = new System.Drawing.Point(88, 311);
+            this.txttpeuserMRHandle.Location = new System.Drawing.Point(141, 311);
             this.txttpeuserMRHandle.Name = "txttpeuserMRHandle";
-            this.txttpeuserMRHandle.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuserMRHandle.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserMRHandle.TabIndex = 971;
             // 
             // txttpeuserSMR
             // 
             this.txttpeuserSMR.DisplayBox1Binding = "";
             this.txttpeuserSMR.DisplayBox2Binding = "";
-            this.txttpeuserSMR.Location = new System.Drawing.Point(88, 289);
+            this.txttpeuserSMR.Location = new System.Drawing.Point(141, 287);
             this.txttpeuserSMR.Name = "txttpeuserSMR";
-            this.txttpeuserSMR.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuserSMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserSMR.TabIndex = 970;
             // 
             // label16
             // 
-            this.label16.Location = new System.Drawing.Point(392, 311);
+            this.label16.Location = new System.Drawing.Point(446, 313);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(75, 21);
+            this.label16.Size = new System.Drawing.Size(138, 21);
             this.label16.TabIndex = 969;
             this.label16.Text = "PO Handle";
             // 
             // label15
             // 
-            this.label15.Location = new System.Drawing.Point(392, 289);
+            this.label15.Location = new System.Drawing.Point(446, 289);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(75, 21);
+            this.label15.Size = new System.Drawing.Size(138, 21);
             this.label15.TabIndex = 968;
             this.label15.Text = "PO SMR";
             // 
@@ -777,7 +771,7 @@
             // 
             this.label13.Location = new System.Drawing.Point(10, 311);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(75, 21);
+            this.label13.Size = new System.Drawing.Size(128, 21);
             this.label13.TabIndex = 967;
             this.label13.Text = "MR Handle";
             // 
@@ -785,7 +779,7 @@
             // 
             this.label12.Location = new System.Drawing.Point(10, 289);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(75, 21);
+            this.label12.Size = new System.Drawing.Size(128, 21);
             this.label12.TabIndex = 966;
             this.label12.Text = "SMR";
             // 
@@ -796,7 +790,7 @@
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(360, 75);
+            this.textBox1.Location = new System.Drawing.Point(426, 75);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(120, 21);
@@ -805,7 +799,7 @@
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(300, 74);
+            this.label3.Location = new System.Drawing.Point(216, 75);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(55, 21);
             this.label3.TabIndex = 965;
@@ -829,7 +823,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(140, 21);
             this.label6.TabIndex = 958;
-            this.label6.Text = " Buyer Remark";
+            this.label6.Text = " Buyer Remark by MR\'s";
             // 
             // numRatioBuyer
             // 
@@ -1082,7 +1076,7 @@
             this.editBuyerRemark.Multiline = true;
             this.editBuyerRemark.Name = "editBuyerRemark";
             this.editBuyerRemark.ReadOnly = true;
-            this.editBuyerRemark.Size = new System.Drawing.Size(510, 22);
+            this.editBuyerRemark.Size = new System.Drawing.Size(670, 22);
             this.editBuyerRemark.TabIndex = 935;
             // 
             // displayBuyerICRRemark
@@ -1093,7 +1087,7 @@
             this.displayBuyerICRRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBuyerICRRemark.Location = new System.Drawing.Point(540, 240);
             this.displayBuyerICRRemark.Name = "displayBuyerICRRemark";
-            this.displayBuyerICRRemark.Size = new System.Drawing.Size(302, 21);
+            this.displayBuyerICRRemark.Size = new System.Drawing.Size(342, 21);
             this.displayBuyerICRRemark.TabIndex = 957;
             // 
             // displayBuyerDBCRemark
@@ -1104,7 +1098,7 @@
             this.displayBuyerDBCRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBuyerDBCRemark.Location = new System.Drawing.Point(482, 217);
             this.displayBuyerDBCRemark.Name = "displayBuyerDBCRemark";
-            this.displayBuyerDBCRemark.Size = new System.Drawing.Size(360, 21);
+            this.displayBuyerDBCRemark.Size = new System.Drawing.Size(400, 21);
             this.displayBuyerDBCRemark.TabIndex = 955;
             // 
             // displaySuppDBCRemark
@@ -1115,7 +1109,7 @@
             this.displaySuppDBCRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displaySuppDBCRemark.Location = new System.Drawing.Point(482, 192);
             this.displaySuppDBCRemark.Name = "displaySuppDBCRemark";
-            this.displaySuppDBCRemark.Size = new System.Drawing.Size(360, 21);
+            this.displaySuppDBCRemark.Size = new System.Drawing.Size(400, 21);
             this.displaySuppDBCRemark.TabIndex = 953;
             // 
             // displaySCIICRRemark
@@ -1126,7 +1120,7 @@
             this.displaySCIICRRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displaySCIICRRemark.Location = new System.Drawing.Point(540, 149);
             this.displaySCIICRRemark.Name = "displaySCIICRRemark";
-            this.displaySCIICRRemark.Size = new System.Drawing.Size(302, 21);
+            this.displaySCIICRRemark.Size = new System.Drawing.Size(342, 21);
             this.displaySCIICRRemark.TabIndex = 952;
             // 
             // displaySubconDBCRemark
@@ -1137,7 +1131,7 @@
             this.displaySubconDBCRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displaySubconDBCRemark.Location = new System.Drawing.Point(482, 99);
             this.displaySubconDBCRemark.Name = "displaySubconDBCRemark";
-            this.displaySubconDBCRemark.Size = new System.Drawing.Size(360, 21);
+            this.displaySubconDBCRemark.Size = new System.Drawing.Size(400, 21);
             this.displaySubconDBCRemark.TabIndex = 950;
             // 
             // txtBuyerICRNo
@@ -1199,7 +1193,7 @@
             this.txtSubConName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSubConName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSubConName.IsSupportEditMode = false;
-            this.txtSubConName.Location = new System.Drawing.Point(360, 121);
+            this.txtSubConName.Location = new System.Drawing.Point(360, 122);
             this.txtSubConName.Name = "txtSubConName";
             this.txtSubConName.ReadOnly = true;
             this.txtSubConName.Size = new System.Drawing.Size(365, 21);
@@ -1324,11 +1318,11 @@
             this.editBox1.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(685, 53);
+            this.editBox1.Location = new System.Drawing.Point(152, 29);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(263, 23);
+            this.editBox1.Size = new System.Drawing.Size(291, 23);
             this.editBox1.TabIndex = 917;
             // 
             // editBox2
@@ -1338,31 +1332,17 @@
             this.editBox2.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editBox2.IsSupportEditMode = false;
-            this.editBox2.Location = new System.Drawing.Point(685, 29);
+            this.editBox2.Location = new System.Drawing.Point(592, 29);
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
             this.editBox2.ReadOnly = true;
             this.editBox2.Size = new System.Drawing.Size(263, 23);
             this.editBox2.TabIndex = 916;
             // 
-            // editBox3
-            // 
-            this.editBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtyDesc", true));
-            this.editBox3.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.editBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox3.IsSupportEditMode = false;
-            this.editBox3.Location = new System.Drawing.Point(170, 31);
-            this.editBox3.Multiline = true;
-            this.editBox3.Name = "editBox3";
-            this.editBox3.ReadOnly = true;
-            this.editBox3.Size = new System.Drawing.Size(369, 40);
-            this.editBox3.TabIndex = 915;
-            // 
             // label4
             // 
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label4.Location = new System.Drawing.Point(542, 54);
+            this.label4.Location = new System.Drawing.Point(9, 31);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(140, 21);
             this.label4.TabIndex = 939;
@@ -1371,29 +1351,11 @@
             // label5
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label5.Location = new System.Drawing.Point(542, 31);
+            this.label5.Location = new System.Drawing.Point(446, 31);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(140, 21);
             this.label5.TabIndex = 938;
-            this.label5.Text = " Task Team Comments";
-            // 
-            // label7
-            // 
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label7.Location = new System.Drawing.Point(82, 31);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(84, 21);
-            this.label7.TabIndex = 937;
-            this.label7.Text = "(For Factory)";
-            // 
-            // label8
-            // 
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label8.Location = new System.Drawing.Point(9, 31);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(84, 21);
-            this.label8.TabIndex = 936;
-            this.label8.Text = " Explanation";
+            this.label5.Text = " GM Team Comment";
             // 
             // CboReason
             // 
@@ -1405,7 +1367,7 @@
             this.CboReason.Name = "CboReason";
             this.CboReason.OldText = "";
             this.CboReason.ReadOnly = true;
-            this.CboReason.Size = new System.Drawing.Size(277, 24);
+            this.CboReason.Size = new System.Drawing.Size(327, 24);
             this.CboReason.TabIndex = 846;
             // 
             // tabQtyOrder
@@ -1414,7 +1376,7 @@
             this.tabQtyOrder.Location = new System.Drawing.Point(4, 25);
             this.tabQtyOrder.Name = "tabQtyOrder";
             this.tabQtyOrder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyOrder.Size = new System.Drawing.Size(977, 77);
+            this.tabQtyOrder.Size = new System.Drawing.Size(1122, 77);
             this.tabQtyOrder.TabIndex = 0;
             this.tabQtyOrder.Text = "Q\'ty B\'Down by Order";
             // 
@@ -1424,7 +1386,7 @@
             this.panelQtyOrder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelQtyOrder.Location = new System.Drawing.Point(3, 3);
             this.panelQtyOrder.Name = "panelQtyOrder";
-            this.panelQtyOrder.Size = new System.Drawing.Size(971, 71);
+            this.panelQtyOrder.Size = new System.Drawing.Size(1116, 71);
             this.panelQtyOrder.TabIndex = 0;
             // 
             // GridQtyOrder
@@ -1444,21 +1406,21 @@
             this.GridQtyOrder.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.GridQtyOrder.Location = new System.Drawing.Point(0, 0);
             this.GridQtyOrder.Name = "GridQtyOrder";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GridQtyOrder.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GridQtyOrder.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.GridQtyOrder.RowHeadersVisible = false;
             this.GridQtyOrder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.GridQtyOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.GridQtyOrder.RowTemplate.Height = 24;
             this.GridQtyOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder.ShowCellToolTips = false;
-            this.GridQtyOrder.Size = new System.Drawing.Size(971, 71);
+            this.GridQtyOrder.Size = new System.Drawing.Size(1116, 71);
             this.GridQtyOrder.TabIndex = 0;
             this.GridQtyOrder.TabStop = false;
             // 
@@ -1468,7 +1430,7 @@
             this.tabQtyShipMode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyShipMode.Name = "tabQtyShipMode";
             this.tabQtyShipMode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyShipMode.Size = new System.Drawing.Size(977, 77);
+            this.tabQtyShipMode.Size = new System.Drawing.Size(1122, 77);
             this.tabQtyShipMode.TabIndex = 1;
             this.tabQtyShipMode.Text = "Q\'ty B\'Down by Shipmode";
             // 
@@ -1487,7 +1449,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDownbyArticleSizeDetail);
-            this.splitContainer1.Size = new System.Drawing.Size(971, 71);
+            this.splitContainer1.Size = new System.Drawing.Size(1116, 71);
             this.splitContainer1.SplitterDistance = 25;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -1508,20 +1470,20 @@
             this.gridQtyBreakDownByShipmode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakDownByShipmode.Location = new System.Drawing.Point(0, 0);
             this.gridQtyBreakDownByShipmode.Name = "gridQtyBreakDownByShipmode";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakDownByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakDownByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakDownByShipmode.RowTemplate.Height = 24;
             this.gridQtyBreakDownByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownByShipmode.ShowCellToolTips = false;
-            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(971, 25);
+            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(1116, 25);
             this.gridQtyBreakDownByShipmode.TabIndex = 1;
             this.gridQtyBreakDownByShipmode.TabStop = false;
             // 
@@ -1558,20 +1520,20 @@
             this.gridQtyBreakDownbyArticleSizeDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakDownbyArticleSizeDetail.Location = new System.Drawing.Point(0, 28);
             this.gridQtyBreakDownbyArticleSizeDetail.Name = "gridQtyBreakDownbyArticleSizeDetail";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakDownbyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakDownbyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.Height = 24;
             this.gridQtyBreakDownbyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownbyArticleSizeDetail.ShowCellToolTips = false;
-            this.gridQtyBreakDownbyArticleSizeDetail.Size = new System.Drawing.Size(971, 11);
+            this.gridQtyBreakDownbyArticleSizeDetail.Size = new System.Drawing.Size(1116, 11);
             this.gridQtyBreakDownbyArticleSizeDetail.TabIndex = 1;
             this.gridQtyBreakDownbyArticleSizeDetail.TabStop = false;
             // 
@@ -1581,7 +1543,7 @@
             this.tabQtyApply.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApply.Name = "tabQtyApply";
             this.tabQtyApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApply.Size = new System.Drawing.Size(977, 77);
+            this.tabQtyApply.Size = new System.Drawing.Size(1122, 77);
             this.tabQtyApply.TabIndex = 3;
             this.tabQtyApply.Text = "Apply Q\'ty B\'Down by Order";
             // 
@@ -1601,21 +1563,21 @@
             this.GridQtyOrder_Apply.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.GridQtyOrder_Apply.Location = new System.Drawing.Point(3, 3);
             this.GridQtyOrder_Apply.Name = "GridQtyOrder_Apply";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GridQtyOrder_Apply.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GridQtyOrder_Apply.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.GridQtyOrder_Apply.RowHeadersVisible = false;
             this.GridQtyOrder_Apply.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.GridQtyOrder_Apply.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.GridQtyOrder_Apply.RowTemplate.Height = 24;
             this.GridQtyOrder_Apply.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder_Apply.ShowCellToolTips = false;
-            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(971, 71);
+            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(1116, 71);
             this.GridQtyOrder_Apply.TabIndex = 0;
             this.GridQtyOrder_Apply.TabStop = false;
             // 
@@ -1625,7 +1587,7 @@
             this.tabQtyApplyShipmode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApplyShipmode.Name = "tabQtyApplyShipmode";
             this.tabQtyApplyShipmode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(977, 77);
+            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(1122, 77);
             this.tabQtyApplyShipmode.TabIndex = 4;
             this.tabQtyApplyShipmode.Text = "Apply Q\'ty B\'Down by Shipmode";
             // 
@@ -1644,7 +1606,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.label2);
             this.splitContainer2.Panel2.Controls.Add(this.gridQtyBrkApplybyArticleSizeDetail);
-            this.splitContainer2.Size = new System.Drawing.Size(971, 71);
+            this.splitContainer2.Size = new System.Drawing.Size(1116, 71);
             this.splitContainer2.SplitterDistance = 25;
             this.splitContainer2.TabIndex = 1;
             // 
@@ -1665,20 +1627,20 @@
             this.gridQtyBrkApplyByShipmode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBrkApplyByShipmode.Location = new System.Drawing.Point(0, 0);
             this.gridQtyBrkApplyByShipmode.Name = "gridQtyBrkApplyByShipmode";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBrkApplyByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBrkApplyByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle11;
             this.gridQtyBrkApplyByShipmode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBrkApplyByShipmode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBrkApplyByShipmode.RowTemplate.Height = 24;
             this.gridQtyBrkApplyByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBrkApplyByShipmode.ShowCellToolTips = false;
-            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(971, 25);
+            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(1116, 25);
             this.gridQtyBrkApplyByShipmode.TabIndex = 1;
             this.gridQtyBrkApplyByShipmode.TabStop = false;
             // 
@@ -1715,20 +1677,20 @@
             this.gridQtyBrkApplybyArticleSizeDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBrkApplybyArticleSizeDetail.Location = new System.Drawing.Point(0, 28);
             this.gridQtyBrkApplybyArticleSizeDetail.Name = "gridQtyBrkApplybyArticleSizeDetail";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBrkApplybyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBrkApplybyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
             this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.Height = 24;
             this.gridQtyBrkApplybyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBrkApplybyArticleSizeDetail.ShowCellToolTips = false;
-            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(971, 11);
+            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(1116, 11);
             this.gridQtyBrkApplybyArticleSizeDetail.TabIndex = 1;
             this.gridQtyBrkApplybyArticleSizeDetail.TabStop = false;
             // 
@@ -1737,7 +1699,7 @@
             this.TxtAppDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtAppDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtAppDate.IsSupportEditMode = false;
-            this.TxtAppDate.Location = new System.Drawing.Point(370, 55);
+            this.TxtAppDate.Location = new System.Drawing.Point(395, 55);
             this.TxtAppDate.Name = "TxtAppDate";
             this.TxtAppDate.ReadOnly = true;
             this.TxtAppDate.Size = new System.Drawing.Size(80, 23);
@@ -1748,7 +1710,7 @@
             this.TxtSentDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtSentDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtSentDate.IsSupportEditMode = false;
-            this.TxtSentDate.Location = new System.Drawing.Point(370, 32);
+            this.TxtSentDate.Location = new System.Drawing.Point(396, 32);
             this.TxtSentDate.Name = "TxtSentDate";
             this.TxtSentDate.ReadOnly = true;
             this.TxtSentDate.Size = new System.Drawing.Size(80, 23);
@@ -1759,7 +1721,7 @@
             this.TxtCFMDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtCFMDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtCFMDate.IsSupportEditMode = false;
-            this.TxtCFMDate.Location = new System.Drawing.Point(370, 78);
+            this.TxtCFMDate.Location = new System.Drawing.Point(396, 78);
             this.TxtCFMDate.Name = "TxtCFMDate";
             this.TxtCFMDate.ReadOnly = true;
             this.TxtCFMDate.Size = new System.Drawing.Size(80, 23);
@@ -1770,7 +1732,7 @@
             this.TxtJunkDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtJunkDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtJunkDate.IsSupportEditMode = false;
-            this.TxtJunkDate.Location = new System.Drawing.Point(816, 55);
+            this.TxtJunkDate.Location = new System.Drawing.Point(862, 55);
             this.TxtJunkDate.Name = "TxtJunkDate";
             this.TxtJunkDate.ReadOnly = true;
             this.TxtJunkDate.Size = new System.Drawing.Size(80, 23);
@@ -1781,7 +1743,7 @@
             this.TxtCloseDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtCloseDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtCloseDate.IsSupportEditMode = false;
-            this.TxtCloseDate.Location = new System.Drawing.Point(816, 78);
+            this.TxtCloseDate.Location = new System.Drawing.Point(862, 78);
             this.TxtCloseDate.Name = "TxtCloseDate";
             this.TxtCloseDate.ReadOnly = true;
             this.TxtCloseDate.Size = new System.Drawing.Size(80, 23);
@@ -1792,7 +1754,7 @@
             this.TxtRejectDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.TxtRejectDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtRejectDate.IsSupportEditMode = false;
-            this.TxtRejectDate.Location = new System.Drawing.Point(816, 32);
+            this.TxtRejectDate.Location = new System.Drawing.Point(862, 30);
             this.TxtRejectDate.Name = "TxtRejectDate";
             this.TxtRejectDate.ReadOnly = true;
             this.TxtRejectDate.Size = new System.Drawing.Size(80, 23);
@@ -1819,13 +1781,13 @@
             this.TxtSP.Location = new System.Drawing.Point(93, 109);
             this.TxtSP.Name = "TxtSP";
             this.TxtSP.ReadOnly = true;
-            this.TxtSP.Size = new System.Drawing.Size(130, 23);
+            this.TxtSP.Size = new System.Drawing.Size(139, 23);
             this.TxtSP.TabIndex = 845;
             // 
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefresh.Location = new System.Drawing.Point(906, 4);
+            this.btnRefresh.Location = new System.Drawing.Point(963, 4);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(84, 28);
             this.btnRefresh.TabIndex = 835;
@@ -1837,7 +1799,7 @@
             // 
             this.txtuserApprove.DisplayBox1Binding = "";
             this.txtuserApprove.DisplayBox2Binding = "";
-            this.txtuserApprove.Location = new System.Drawing.Point(68, 55);
+            this.txtuserApprove.Location = new System.Drawing.Point(93, 55);
             this.txtuserApprove.Name = "txtuserApprove";
             this.txtuserApprove.Size = new System.Drawing.Size(300, 23);
             this.txtuserApprove.TabIndex = 847;
@@ -1846,7 +1808,7 @@
             // 
             this.txtuserClose.DisplayBox1Binding = "";
             this.txtuserClose.DisplayBox2Binding = "";
-            this.txtuserClose.Location = new System.Drawing.Point(514, 78);
+            this.txtuserClose.Location = new System.Drawing.Point(560, 78);
             this.txtuserClose.Name = "txtuserClose";
             this.txtuserClose.Size = new System.Drawing.Size(302, 23);
             this.txtuserClose.TabIndex = 847;
@@ -1855,7 +1817,7 @@
             // 
             this.txtuserJunk.DisplayBox1Binding = "";
             this.txtuserJunk.DisplayBox2Binding = "";
-            this.txtuserJunk.Location = new System.Drawing.Point(514, 55);
+            this.txtuserJunk.Location = new System.Drawing.Point(560, 55);
             this.txtuserJunk.Name = "txtuserJunk";
             this.txtuserJunk.Size = new System.Drawing.Size(302, 23);
             this.txtuserJunk.TabIndex = 847;
@@ -1864,7 +1826,7 @@
             // 
             this.txtuserSent.DisplayBox1Binding = "";
             this.txtuserSent.DisplayBox2Binding = "";
-            this.txtuserSent.Location = new System.Drawing.Point(68, 32);
+            this.txtuserSent.Location = new System.Drawing.Point(94, 32);
             this.txtuserSent.Name = "txtuserSent";
             this.txtuserSent.Size = new System.Drawing.Size(300, 23);
             this.txtuserSent.TabIndex = 847;
@@ -1872,7 +1834,7 @@
             // txtuserReject
             // 
             this.txtuserReject.DisplayBox1Binding = "";
-            this.txtuserReject.Location = new System.Drawing.Point(514, 32);
+            this.txtuserReject.Location = new System.Drawing.Point(560, 30);
             this.txtuserReject.Name = "txtuserReject";
             this.txtuserReject.Size = new System.Drawing.Size(302, 23);
             this.txtuserReject.TabIndex = 808;
@@ -1885,17 +1847,17 @@
             this.cmbCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbCategory.FormattingEnabled = true;
             this.cmbCategory.IsSupportUnselect = true;
-            this.cmbCategory.Location = new System.Drawing.Point(93, 178);
+            this.cmbCategory.Location = new System.Drawing.Point(94, 201);
             this.cmbCategory.Name = "cmbCategory";
             this.cmbCategory.OldText = "";
-            this.cmbCategory.Size = new System.Drawing.Size(130, 24);
+            this.cmbCategory.Size = new System.Drawing.Size(138, 24);
             this.cmbCategory.TabIndex = 795;
             this.cmbCategory.Type = "Category";
             // 
             // txtuserCFM
             // 
             this.txtuserCFM.DisplayBox1Binding = "";
-            this.txtuserCFM.Location = new System.Drawing.Point(68, 78);
+            this.txtuserCFM.Location = new System.Drawing.Point(94, 78);
             this.txtuserCFM.Name = "txtuserCFM";
             this.txtuserCFM.Size = new System.Drawing.Size(300, 23);
             this.txtuserCFM.TabIndex = 791;
@@ -1905,7 +1867,7 @@
             // 
             this.DisSewingQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.DisSewingQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisSewingQty.Location = new System.Drawing.Point(629, 205);
+            this.DisSewingQty.Location = new System.Drawing.Point(805, 197);
             this.DisSewingQty.Name = "DisSewingQty";
             this.DisSewingQty.Size = new System.Drawing.Size(141, 23);
             this.DisSewingQty.TabIndex = 854;
@@ -1914,7 +1876,7 @@
             // LbSewingQty
             // 
             this.LbSewingQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbSewingQty.Location = new System.Drawing.Point(551, 205);
+            this.LbSewingQty.Location = new System.Drawing.Point(727, 201);
             this.LbSewingQty.Name = "LbSewingQty";
             this.LbSewingQty.Size = new System.Drawing.Size(75, 19);
             this.LbSewingQty.TabIndex = 855;
@@ -1925,7 +1887,7 @@
             this.DisTotalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.DisTotalQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OldQty", true));
             this.DisTotalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisTotalQty.Location = new System.Drawing.Point(398, 205);
+            this.DisTotalQty.Location = new System.Drawing.Point(805, 174);
             this.DisTotalQty.Name = "DisTotalQty";
             this.DisTotalQty.Size = new System.Drawing.Size(141, 23);
             this.DisTotalQty.TabIndex = 852;
@@ -1934,9 +1896,9 @@
             // LbTotalQty
             // 
             this.LbTotalQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbTotalQty.Location = new System.Drawing.Point(330, 205);
+            this.LbTotalQty.Location = new System.Drawing.Point(727, 179);
             this.LbTotalQty.Name = "LbTotalQty";
-            this.LbTotalQty.Size = new System.Drawing.Size(65, 19);
+            this.LbTotalQty.Size = new System.Drawing.Size(75, 19);
             this.LbTotalQty.TabIndex = 853;
             this.LbTotalQty.Text = "Total Q\'ty";
             // 
@@ -1944,27 +1906,27 @@
             // 
             this.displayCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCPU.Location = new System.Drawing.Point(74, 205);
+            this.displayCPU.Location = new System.Drawing.Point(594, 178);
             this.displayCPU.Name = "displayCPU";
-            this.displayCPU.Size = new System.Drawing.Size(68, 23);
+            this.displayCPU.Size = new System.Drawing.Size(127, 23);
             this.displayCPU.TabIndex = 850;
             this.displayCPU.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lbCPU
             // 
             this.lbCPU.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.lbCPU.Location = new System.Drawing.Point(5, 205);
+            this.lbCPU.Location = new System.Drawing.Point(491, 178);
             this.lbCPU.Name = "lbCPU";
-            this.lbCPU.Size = new System.Drawing.Size(65, 19);
+            this.lbCPU.Size = new System.Drawing.Size(100, 19);
             this.lbCPU.TabIndex = 851;
             this.lbCPU.Text = "CPU";
             // 
             // LbActCutFstDate
             // 
             this.LbActCutFstDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbActCutFstDate.Location = new System.Drawing.Point(154, 205);
+            this.LbActCutFstDate.Location = new System.Drawing.Point(491, 201);
             this.LbActCutFstDate.Name = "LbActCutFstDate";
-            this.LbActCutFstDate.Size = new System.Drawing.Size(86, 19);
+            this.LbActCutFstDate.Size = new System.Drawing.Size(100, 19);
             this.LbActCutFstDate.TabIndex = 849;
             this.LbActCutFstDate.Text = "1st Cut Date";
             // 
@@ -1973,10 +1935,10 @@
             this.dateActCutFstDate.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
             this.dateActCutFstDate.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
             this.dateActCutFstDate.IsSupportEditMode = false;
-            this.dateActCutFstDate.Location = new System.Drawing.Point(243, 205);
+            this.dateActCutFstDate.Location = new System.Drawing.Point(594, 200);
             this.dateActCutFstDate.Name = "dateActCutFstDate";
             this.dateActCutFstDate.ReadOnly = true;
-            this.dateActCutFstDate.Size = new System.Drawing.Size(75, 23);
+            this.dateActCutFstDate.Size = new System.Drawing.Size(127, 23);
             this.dateActCutFstDate.TabIndex = 848;
             // 
             // ChkNeedToProduction
@@ -1995,7 +1957,7 @@
             // 
             this.DisOrderNewQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.DisOrderNewQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisOrderNewQty.Location = new System.Drawing.Point(755, 153);
+            this.DisOrderNewQty.Location = new System.Drawing.Point(805, 151);
             this.DisOrderNewQty.Name = "DisOrderNewQty";
             this.DisOrderNewQty.Size = new System.Drawing.Size(141, 23);
             this.DisOrderNewQty.TabIndex = 861;
@@ -2004,9 +1966,9 @@
             // label9
             // 
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label9.Location = new System.Drawing.Point(687, 155);
+            this.label9.Location = new System.Drawing.Point(727, 155);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(65, 19);
+            this.label9.Size = new System.Drawing.Size(75, 19);
             this.label9.TabIndex = 862;
             this.label9.Text = "New Q\'ty";
             // 
@@ -2014,7 +1976,7 @@
             // 
             this.DisOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.DisOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisOrderQty.Location = new System.Drawing.Point(755, 130);
+            this.DisOrderQty.Location = new System.Drawing.Point(805, 128);
             this.DisOrderQty.Name = "DisOrderQty";
             this.DisOrderQty.Size = new System.Drawing.Size(141, 23);
             this.DisOrderQty.TabIndex = 858;
@@ -2023,9 +1985,9 @@
             // LbOrderQty
             // 
             this.LbOrderQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbOrderQty.Location = new System.Drawing.Point(687, 132);
+            this.LbOrderQty.Location = new System.Drawing.Point(727, 132);
             this.LbOrderQty.Name = "LbOrderQty";
-            this.LbOrderQty.Size = new System.Drawing.Size(65, 19);
+            this.LbOrderQty.Size = new System.Drawing.Size(75, 19);
             this.LbOrderQty.TabIndex = 860;
             this.LbOrderQty.Text = "Order Q\'ty";
             // 
@@ -2033,7 +1995,7 @@
             // 
             this.DisFOCQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.DisFOCQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisFOCQty.Location = new System.Drawing.Point(755, 107);
+            this.DisFOCQty.Location = new System.Drawing.Point(805, 105);
             this.DisFOCQty.Name = "DisFOCQty";
             this.DisFOCQty.Size = new System.Drawing.Size(141, 23);
             this.DisFOCQty.TabIndex = 857;
@@ -2042,9 +2004,9 @@
             // LbFOCQty
             // 
             this.LbFOCQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.LbFOCQty.Location = new System.Drawing.Point(687, 109);
+            this.LbFOCQty.Location = new System.Drawing.Point(727, 109);
             this.LbFOCQty.Name = "LbFOCQty";
-            this.LbFOCQty.Size = new System.Drawing.Size(65, 19);
+            this.LbFOCQty.Size = new System.Drawing.Size(75, 19);
             this.LbFOCQty.TabIndex = 859;
             this.LbFOCQty.Text = "FOC Qty ";
             // 
@@ -2052,7 +2014,7 @@
             // 
             this.btnProductionOutput.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnProductionOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnProductionOutput.Location = new System.Drawing.Point(904, 103);
+            this.btnProductionOutput.Location = new System.Drawing.Point(961, 94);
             this.btnProductionOutput.Name = "btnProductionOutput";
             this.btnProductionOutput.Size = new System.Drawing.Size(82, 48);
             this.btnProductionOutput.TabIndex = 863;
@@ -2060,11 +2022,132 @@
             this.btnProductionOutput.UseVisualStyleBackColor = true;
             this.btnProductionOutput.Click += new System.EventHandler(this.BtnProductionOutput_Click);
             // 
+            // LbCFM
+            // 
+            this.LbCFM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.LbCFM.Location = new System.Drawing.Point(5, 78);
+            this.LbCFM.Name = "LbCFM";
+            this.LbCFM.Size = new System.Drawing.Size(84, 19);
+            this.LbCFM.TabIndex = 769;
+            this.LbCFM.Text = "Fty Confirmed";
+            // 
+            // lbFacotry
+            // 
+            this.lbFacotry.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lbFacotry.Location = new System.Drawing.Point(235, 109);
+            this.lbFacotry.Name = "lbFacotry";
+            this.lbFacotry.Size = new System.Drawing.Size(85, 19);
+            this.lbFacotry.TabIndex = 864;
+            this.lbFacotry.Text = "Factory";
+            // 
+            // dispFactory
+            // 
+            this.dispFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispFactory.Location = new System.Drawing.Point(323, 107);
+            this.dispFactory.Name = "dispFactory";
+            this.dispFactory.Size = new System.Drawing.Size(153, 23);
+            this.dispFactory.TabIndex = 865;
+            // 
+            // label10
+            // 
+            this.label10.BackColor = System.Drawing.SystemColors.Control;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(7, 228);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(513, 15);
+            this.label10.TabIndex = 912;
+            this.label10.Text = "*If with cutting output charge FOB Amt ,without cutting output charge material co" +
+    "st.";
+            this.label10.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // dispFactoryICRDepartment
+            // 
+            this.dispFactoryICRDepartment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispFactoryICRDepartment.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryICRDepartment", true));
+            this.dispFactoryICRDepartment.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dispFactoryICRDepartment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispFactoryICRDepartment.Location = new System.Drawing.Point(274, 75);
+            this.dispFactoryICRDepartment.Name = "dispFactoryICRDepartment";
+            this.dispFactoryICRDepartment.Size = new System.Drawing.Size(146, 21);
+            this.dispFactoryICRDepartment.TabIndex = 977;
+            // 
+            // displayFactoryICRRemark
+            // 
+            this.displayFactoryICRRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactoryICRRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryICRRemark", true));
+            this.displayFactoryICRRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayFactoryICRRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactoryICRRemark.Location = new System.Drawing.Point(552, 74);
+            this.displayFactoryICRRemark.Name = "displayFactoryICRRemark";
+            this.displayFactoryICRRemark.Size = new System.Drawing.Size(330, 21);
+            this.displayFactoryICRRemark.TabIndex = 978;
+            // 
+            // displayFactoryICRAmount
+            // 
+            this.displayFactoryICRAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactoryICRAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayFactoryICRAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactoryICRAmount.Location = new System.Drawing.Point(888, 74);
+            this.displayFactoryICRAmount.Name = "displayFactoryICRAmount";
+            this.displayFactoryICRAmount.Size = new System.Drawing.Size(142, 21);
+            this.displayFactoryICRAmount.TabIndex = 979;
+            // 
+            // displaySubconDBCAmount
+            // 
+            this.displaySubconDBCAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySubconDBCAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySubconDBCAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySubconDBCAmount.Location = new System.Drawing.Point(888, 99);
+            this.displaySubconDBCAmount.Name = "displaySubconDBCAmount";
+            this.displaySubconDBCAmount.Size = new System.Drawing.Size(142, 21);
+            this.displaySubconDBCAmount.TabIndex = 980;
+            // 
+            // displaySCIICRAmount
+            // 
+            this.displaySCIICRAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIICRAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySCIICRAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIICRAmount.Location = new System.Drawing.Point(888, 147);
+            this.displaySCIICRAmount.Name = "displaySCIICRAmount";
+            this.displaySCIICRAmount.Size = new System.Drawing.Size(142, 21);
+            this.displaySCIICRAmount.TabIndex = 981;
+            // 
+            // displaySuppDBCAmount
+            // 
+            this.displaySuppDBCAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySuppDBCAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySuppDBCAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySuppDBCAmount.Location = new System.Drawing.Point(888, 192);
+            this.displaySuppDBCAmount.Name = "displaySuppDBCAmount";
+            this.displaySuppDBCAmount.Size = new System.Drawing.Size(142, 21);
+            this.displaySuppDBCAmount.TabIndex = 982;
+            // 
+            // displayBuyerDBCAmount
+            // 
+            this.displayBuyerDBCAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyerDBCAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBuyerDBCAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyerDBCAmount.Location = new System.Drawing.Point(888, 217);
+            this.displayBuyerDBCAmount.Name = "displayBuyerDBCAmount";
+            this.displayBuyerDBCAmount.Size = new System.Drawing.Size(142, 21);
+            this.displayBuyerDBCAmount.TabIndex = 983;
+            // 
+            // displayBuyerICRAmount
+            // 
+            this.displayBuyerICRAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBuyerICRAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRAmount.Location = new System.Drawing.Point(888, 240);
+            this.displayBuyerICRAmount.Name = "displayBuyerICRAmount";
+            this.displayBuyerICRAmount.Size = new System.Drawing.Size(142, 21);
+            this.displayBuyerICRAmount.TabIndex = 984;
+            // 
             // P20
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 712);
+            this.ClientSize = new System.Drawing.Size(1065, 716);
             this.ExpressQuery = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
@@ -2135,7 +2218,6 @@
         private Win.UI.Label LbBrandID;
         private Win.UI.Label LbReject;
         private Win.UI.Label LbApp;
-        private Win.UI.Label LbCFM;
         private Win.UI.Label LbSent;
         private Win.UI.Label LbReason;
         private Win.UI.Label LbID;
@@ -2239,11 +2321,8 @@
         private Win.UI.Label label47;
         private Win.UI.EditBox editBox1;
         private Win.UI.EditBox editBox2;
-        private Win.UI.EditBox editBox3;
         private Win.UI.Label label4;
         private Win.UI.Label label5;
-        private Win.UI.Label label7;
-        private Win.UI.Label label8;
         private Win.UI.CheckBox ChkNeedToProduction;
         private Win.UI.Label label16;
         private Win.UI.Label label15;
@@ -2253,7 +2332,6 @@
         private Class.txttpeuser txttpeuserPoSmr;
         private Class.txttpeuser txttpeuserMRHandle;
         private Class.txttpeuser txttpeuserSMR;
-        private Win.UI.DisplayBox pickIdFactory;
         private Win.UI.DisplayBox DisOrderNewQty;
         private Win.UI.Label label9;
         private Win.UI.DisplayBox DisOrderQty;
@@ -2263,5 +2341,17 @@
         private Win.UI.DisplayBox displayBuyerICRInfo;
         private Win.UI.DisplayBox displaySCIICRInfo;
         private Win.UI.Button btnProductionOutput;
+        private Win.UI.Label label10;
+        private Win.UI.DisplayBox dispFactory;
+        private Win.UI.Label lbFacotry;
+        private Win.UI.DisplayBox displayBuyerICRAmount;
+        private Win.UI.DisplayBox displayBuyerDBCAmount;
+        private Win.UI.DisplayBox displaySuppDBCAmount;
+        private Win.UI.DisplayBox displaySCIICRAmount;
+        private Win.UI.DisplayBox displaySubconDBCAmount;
+        private Win.UI.DisplayBox displayFactoryICRAmount;
+        private Win.UI.DisplayBox displayFactoryICRRemark;
+        private Win.UI.DisplayBox dispFactoryICRDepartment;
+        private Win.UI.Label LbCFM;
     }
 }
