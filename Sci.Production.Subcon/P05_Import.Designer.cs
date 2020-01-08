@@ -35,7 +35,10 @@
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
+            this.labelNoSuppHint = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.checkBoxReqQtyHasValue = new Sci.Win.UI.CheckBox();
             this.labSewingInline = new Sci.Win.UI.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
@@ -45,6 +48,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.checkBoxAssignedSupp = new Sci.Win.UI.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -109,6 +113,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelNoQuoteHintColor);
+            this.groupBox2.Controls.Add(this.labelNoSuppHint);
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -118,8 +124,28 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
+            // labelNoQuoteHintColor
+            // 
+            this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
+            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(9, 19);
+            this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
+            this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
+            this.labelNoQuoteHintColor.TabIndex = 6;
+            // 
+            // labelNoSuppHint
+            // 
+            this.labelNoSuppHint.BackColor = System.Drawing.Color.Transparent;
+            this.labelNoSuppHint.Location = new System.Drawing.Point(31, 18);
+            this.labelNoSuppHint.Name = "labelNoSuppHint";
+            this.labelNoSuppHint.Size = new System.Drawing.Size(395, 23);
+            this.labelNoSuppHint.TabIndex = 5;
+            this.labelNoSuppHint.Text = "No assign supplier({#Supplier}). Please check with planning team";
+            this.labelNoSuppHint.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxAssignedSupp);
+            this.groupBox1.Controls.Add(this.checkBoxReqQtyHasValue);
             this.groupBox1.Controls.Add(this.labSewingInline);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.dateInlineDate);
@@ -135,6 +161,20 @@
             this.groupBox1.Size = new System.Drawing.Size(1002, 93);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // checkBoxReqQtyHasValue
+            // 
+            this.checkBoxReqQtyHasValue.AutoSize = true;
+            this.checkBoxReqQtyHasValue.Checked = true;
+            this.checkBoxReqQtyHasValue.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxReqQtyHasValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxReqQtyHasValue.Location = new System.Drawing.Point(413, 51);
+            this.checkBoxReqQtyHasValue.Name = "checkBoxReqQtyHasValue";
+            this.checkBoxReqQtyHasValue.Size = new System.Drawing.Size(99, 21);
+            this.checkBoxReqQtyHasValue.TabIndex = 16;
+            this.checkBoxReqQtyHasValue.Text = "Req. Qty>0";
+            this.checkBoxReqQtyHasValue.UseVisualStyleBackColor = true;
+            this.checkBoxReqQtyHasValue.CheckedChanged += new System.EventHandler(this.checkBoxReqQtyHasValue_CheckedChanged);
             // 
             // labSewingInline
             // 
@@ -251,6 +291,21 @@
             this.gridBatchImport.Size = new System.Drawing.Size(1002, 384);
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
+            this.gridBatchImport.Sorted += new System.EventHandler(this.gridBatchImport_Sorted);
+            // 
+            // checkBoxAssignedSupp
+            // 
+            this.checkBoxAssignedSupp.AutoSize = true;
+            this.checkBoxAssignedSupp.Checked = true;
+            this.checkBoxAssignedSupp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxAssignedSupp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxAssignedSupp.Location = new System.Drawing.Point(518, 51);
+            this.checkBoxAssignedSupp.Name = "checkBoxAssignedSupp";
+            this.checkBoxAssignedSupp.Size = new System.Drawing.Size(380, 21);
+            this.checkBoxAssignedSupp.TabIndex = 17;
+            this.checkBoxAssignedSupp.Text = "Already assigned supplier({#supplier}) by planning team";
+            this.checkBoxAssignedSupp.UseVisualStyleBackColor = true;
+            this.checkBoxAssignedSupp.CheckedChanged += new System.EventHandler(this.checkBoxReqQtyHasValue_CheckedChanged);
             // 
             // P05_Import
             // 
@@ -290,5 +345,9 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
         private Win.UI.Label labSewingInline;
+        private Win.UI.Label labelNoQuoteHintColor;
+        private Win.UI.Label labelNoSuppHint;
+        private Win.UI.CheckBox checkBoxReqQtyHasValue;
+        private Win.UI.CheckBox checkBoxAssignedSupp;
     }
 }
