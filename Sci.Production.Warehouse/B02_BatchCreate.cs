@@ -29,10 +29,19 @@ namespace Sci.Production.Warehouse
         {
             List<MtlLocation> MtlLocations = new List<MtlLocation>();
             DualResult result;
-            if (MyUtility.Check.Empty(this.txtID.Text) ||
-                !(this.chkBulk.Checked || this.chkInventory.Checked || this.chkScrap.Checked))
+            if(MyUtility.Check.Empty(this.txtID.Text) && !(this.chkBulk.Checked || this.chkInventory.Checked || this.chkScrap.Checked))
             {
                 MyUtility.Msg.InfoBox("<Code> can not be empty and at least one <Stock Type> is checked.");
+                return;
+            }
+            else if(MyUtility.Check.Empty(this.txtID.Text))
+            {
+                MyUtility.Msg.InfoBox("<Code> can not be empty.");
+                return;
+            }
+            else if (!(this.chkBulk.Checked || this.chkInventory.Checked || this.chkScrap.Checked))
+            {
+                MyUtility.Msg.InfoBox("At least one <Stock Type> is checked.");
                 return;
             }
             else
