@@ -35,6 +35,7 @@
             this.comboStockType = new Sci.Win.UI.ComboBox();
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.btnBatchCreate = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -42,10 +43,6 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(833, 395);
             // 
             // detailcont
             // 
@@ -56,19 +53,14 @@
             this.detailcont.Controls.Add(this.labelStockType);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Size = new System.Drawing.Size(833, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(833, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(833, 395);
+            this.browse.Size = new System.Drawing.Size(976, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(841, 424);
+            this.tabs.Size = new System.Drawing.Size(984, 424);
             // 
             // createby
             // 
@@ -85,7 +77,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(20, 14);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(75, 23);
@@ -94,7 +85,6 @@
             // 
             // labelStockType
             // 
-            this.labelStockType.Lines = 0;
             this.labelStockType.Location = new System.Drawing.Point(20, 49);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(75, 23);
@@ -103,7 +93,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(20, 84);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
@@ -129,6 +118,7 @@
             this.comboStockType.IsSupportUnselect = true;
             this.comboStockType.Location = new System.Drawing.Point(98, 49);
             this.comboStockType.Name = "comboStockType";
+            this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
             this.comboStockType.TabIndex = 8;
             // 
@@ -154,14 +144,28 @@
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
+            // btnBatchCreate
+            // 
+            this.btnBatchCreate.Location = new System.Drawing.Point(831, 12);
+            this.btnBatchCreate.Name = "btnBatchCreate";
+            this.btnBatchCreate.Size = new System.Drawing.Size(112, 30);
+            this.btnBatchCreate.TabIndex = 2;
+            this.btnBatchCreate.Text = "Batch Create";
+            this.btnBatchCreate.UseVisualStyleBackColor = true;
+            this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
+            // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(841, 457);
+            this.ClientSize = new System.Drawing.Size(984, 457);
+            this.Controls.Add(this.btnBatchCreate);
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B02.Material Location Index";
             this.WorkAlias = "mtlLocation";
+            this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchCreate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -184,5 +188,6 @@
         private Win.UI.Label labelStockType;
         private Win.UI.Label labelDescription;
         private Win.UI.CheckBox checkJunk;
+        private Win.UI.Button btnBatchCreate;
     }
 }

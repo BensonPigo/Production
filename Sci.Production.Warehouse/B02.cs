@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci;
 using Sci.Data;
 using System.Data.SqlClient;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -32,7 +33,10 @@ namespace Sci.Production.Warehouse
             comboStockType.ValueMember = "Key";
             comboStockType.DisplayMember = "Value";
 
-            
+
+            // 有新增權限的人才可以按這顆按鈕
+            bool canNew = Prgs.GetAuthority(Sci.Env.User.UserID, "B02. Material Location Index", "CanNew");
+            this.btnBatchCreate.Enabled = canNew;
         }
 
         //編輯狀態限制
@@ -41,6 +45,13 @@ namespace Sci.Production.Warehouse
             base.ClickEditAfter();
             this.txtCode.ReadOnly = true;
             this.comboStockType.ReadOnly = true;
+        }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            this.btnBatchCreate.Enabled = !this.EditMode;
         }
 
         //存檔前檢查
@@ -109,6 +120,13 @@ namespace Sci.Production.Warehouse
                 check = false;
             }
             return check;
+        }
+
+        private void btnBatchCreate_Click(object sender, EventArgs e)
+        {
+            B02_BatchCreate form = new B02_BatchCreate();
+            form.ShowDialog();
+            ReloadDatas();
         }
     }
 }
