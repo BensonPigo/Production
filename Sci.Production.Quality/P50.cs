@@ -148,6 +148,7 @@ namespace Sci.Production.Quality
             if (dtResults.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
+                this.gridDefectOutput.Columns.Clear();
                 return;
             }
 
