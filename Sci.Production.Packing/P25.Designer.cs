@@ -495,8 +495,12 @@
             this.IsToolbarVisible = false;
             this.Name = "P25";
             this.OnLineHelpID = "Sci.Win.Tems.Base";
+<<<<<<< HEAD
             this.Text = "P25. Upload ZPL (for GenSong)";
 >>>>>>> ISP20191302
+=======
+            this.Text = "P25. Upload Sticker File";
+>>>>>>> ISP20191302 - 修改P25 P24圖片儲存方式
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.panel3, 0);

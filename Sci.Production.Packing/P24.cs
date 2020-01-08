@@ -15,6 +15,7 @@ using System.IO;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Packing
 {
@@ -49,7 +50,8 @@ select distinct
     FileSourcePath='',
     FileAction='',
     sd.ShippingMarkPicUkey,
-    pd.RefNo
+    pd.RefNo,
+    [ShippingMark]=IIF(sd.Image IS NOT NULL ,1 ,0 )
 from ShippingMarkPic_Detail sd with(nolock)
 inner join ShippingMarkPic s with(nolock) on sd.ShippingMarkPicUkey = s.Ukey
 inner join PackingList_Detail pd with(nolock) on pd.ID = s.PackingListID and pd.SCICtnNo = sd.SCICtnNo
@@ -76,7 +78,8 @@ order by pd.SCICtnNo
             .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("FileName", header: "Shipping Mark File Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            //.Text("FileName", header: "Shipping Mark File Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .CheckBox("ShippingMark", header: "Shipping Mark", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .Button("Upload", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnUpload)
             .Button("Delete", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnDelete)
             ;
@@ -205,7 +208,7 @@ order by pd.SCICtnNo
             // 呼叫File 選擇視窗
             OpenFileDialog file = new OpenFileDialog();
             file.InitialDirectory = "c:\\"; // 預設路徑
-            file.Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*"; // 使用檔名
+            file.Filter = "Image Files(*.BMP;)|*.BMP"; // 使用檔名
             file.FilterIndex = 1;
             file.RestoreDirectory = true;
             if (file.ShowDialog() == DialogResult.OK)
@@ -277,6 +280,7 @@ order by pd.SCICtnNo
             {
                 DataTable dtHasFileNameDetail = checkHasFileNameData.CopyToDataTable();
                 DataTable dtCheckResult;
+<<<<<<< HEAD
                 string sqlCheckDetail = $@"
 select distinct o.BrandID,o.CustCDID,t.Refno
 from #tmp t
@@ -290,24 +294,59 @@ where not exists (select 1 from ShippingMarkPicture smp with (nolock)
 ";
 
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(dtHasFileNameDetail, string.Empty, sqlCheckDetail, out dtCheckResult);
+=======
+                //foreach (DataRow drr in dtHasFileNameDetail.Rows)
+                //{
+
+                    string sqlCheckDetail = $@"
+   /* select distinct o.BrandID,o.CustCDID,t.Refno
+    from #tmp t
+    left join orders o with (nolock) on t.OrderID = o.ID
+    where not exists (select 1 from ShippingMarkPicture smp with (nolock) 
+                                where   smp.BrandID = o.BrandID and
+                                        smp.CustCD = o.CustCDID and
+                                        smp.CTNRefno = t.Refno and
+                                        smp.Side = '{this.CurrentMaintain["Side"]}' and
+                                        smp.Seq = '{this.CurrentMaintain["Seq"]}')
+*/
+ SELECT DISTINCT o.BrandID, o.CustCDID ,pd.Refno
+ FROM ShippingMarkPic s
+ INNER JOIN PackingList_Detail pd ON pd.ID = s.PackingListID
+ INNER JOIN Orders o ON o.ID = pd.OrderID
+ WHERE s.Ukey=42
+ AND NOT EXISTS(
+	 SELECT *
+	 FROM ShippingMarkPicture  smp
+	 WHERE   smp.BrandID = o.BrandID 
+	 AND smp.CustCD = o.CustCDID 
+	 AND smp.CTNRefno = pd.Refno 
+     AND smp.Side = '{this.CurrentMaintain["Side"]}' 
+     AND smp.Seq = '{this.CurrentMaintain["Seq"]}'
+ )
+    ";
+
+                //DualResult result = MyUtility.Tool.ProcessWithDatatable(dtHasFileNameDetail, string.Empty, sqlCheckDetail, out dtCheckResult);
+                DualResult result = DBProxy.Current.Select(null, sqlCheckDetail, out dtCheckResult);
+>>>>>>> ISP20191302 - 修改P25 P24圖片儲存方式
                 if (!result)
-                {
-                    this.ShowErr(result);
-                    return false;
-                }
+                    {
+                        this.ShowErr(result);
+                        return false;
+                    }
 
-                string errMsg = string.Empty;
-                foreach (DataRow dr in dtCheckResult.Rows)
-                {
-                    errMsg += $"<Brand>:{dr["BrandID"]}  <CustCD>:{dr["CustCDID"]}  <CTNRefno>:{dr["Refno"]} {Environment.NewLine}";
-                }
+                    string errMsg = string.Empty;
+                    foreach (DataRow dr in dtCheckResult.Rows)
+                    {
+                        errMsg += $"<Brand>:{dr["BrandID"]}  <CustCD>:{dr["CustCDID"]}  <CTNRefno>:{dr["Refno"]} {Environment.NewLine}";
+                    }
 
-                if (errMsg.Length > 0)
-                {
-                    errMsg = "Please go to [Packing B03] to complete setting!" + Environment.NewLine + errMsg;
-                    MyUtility.Msg.WarningBox(errMsg);
-                    return false;
-                }
+                    if (errMsg.Length > 0)
+                    {
+                        errMsg = "Please go to [Packing B03] to complete setting!" + Environment.NewLine + errMsg;
+                        MyUtility.Msg.WarningBox(errMsg);
+                        return false;
+                    }
+                //}
             }
             #endregion
 
@@ -364,30 +403,68 @@ where not exists (select 1 from ShippingMarkPicture smp with (nolock)
                     string destination_fileName = MyUtility.Convert.GetString(dr["FileName"]);
                     try
                     {
+                        //轉換成Byte存, 不用再存圖片到server上
                         string destination = Path.Combine(this.destination_path, destination_fileName);
 
-                        if (System.IO.File.Exists(local_path_file))
-                        {
-                            if (System.IO.File.Exists(destination))
-                            {
-                                System.IO.File.Delete(destination);
-                            }
 
-                            System.IO.File.Copy(local_path_file, destination, true);
-                        }
-                        else
-                        {
-                            if (MyUtility.Check.Empty(dr["FileNameOri"]))
-                            {
-                                dr["FileName"] = string.Empty;
-                            }
-                            else
-                            {
-                                dr["FileName"] = dr["FileNameOri"];
-                            }
 
-                            //MyUtility.Msg.WarningBox($"File: {local_path_file} not exists!");
+                        byte[] data = null;
+
+                        FileInfo fInfo = new FileInfo(local_path_file);
+
+                        long length = fInfo.Length;
+
+                        FileStream fStream = new FileStream(local_path_file, FileMode.Open, FileAccess.Read);
+
+                        BinaryReader br = new BinaryReader(fStream);
+
+                        data = br.ReadBytes((int)length);
+
+                        string cmd = $@"----ShippingMarkPic_Detail存入圖片
+UPDATE sd
+SET sd.Image=@Image
+FROM ShippingMarkPic s
+INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
+WHERE s.Ukey ={this.CurrentMaintain["Ukey"]}
+AND s.Side=@Side
+AND s.Seq=@Seq
+AND sd.SCICtnNo=@SCICtnNo
+                    ";
+                        List<SqlParameter> para = new List<SqlParameter>();
+                        para.Add(new SqlParameter("@Side", this.CurrentMaintain["Side"].ToString()));
+                        para.Add(new SqlParameter("@Seq", this.CurrentMaintain["Seq"].ToString()));
+                        para.Add(new SqlParameter("@SCICtnNo", dr["SCICtnNo"].ToString()));
+                        para.Add(new SqlParameter("@Image", (object)data));
+
+                        DualResult result = DBProxy.Current.Execute(null, cmd, para);
+
+                        if (!result)
+                        {
+                            this.ShowErr(result);
                         }
+
+                        //if (System.IO.File.Exists(local_path_file))
+                        //{
+                        //    if (System.IO.File.Exists(destination))
+                        //    {
+                        //        System.IO.File.Delete(destination);
+                        //    }
+
+                        //    System.IO.File.Copy(local_path_file, destination, true);
+                        //}
+                        //else
+                        //{
+                        //    if (MyUtility.Check.Empty(dr["FileNameOri"]))
+                        //    {
+                        //        dr["FileName"] = string.Empty;
+                        //    }
+                        //    else
+                        //    {
+                        //        dr["FileName"] = dr["FileNameOri"];
+                        //    }
+
+                        //    //MyUtility.Msg.WarningBox($"File: {local_path_file} not exists!");
+                        //}
                     }
                     catch (System.IO.IOException exception)
                     {
