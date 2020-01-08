@@ -681,6 +681,14 @@ order by fwd.WhseNo",
 
             #endregion
 
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["Forwarder"].ToString(), Prgs.CallFormAction.Save);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return false;
+            }
+            #endregion
+
             // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
             if (!this.CheckShipMode())
             {
@@ -1445,6 +1453,14 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["Forwarder"].ToString(), Prgs.CallFormAction.Confirm);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return;
+            }
+            #endregion
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["CYCFS"]))
             {

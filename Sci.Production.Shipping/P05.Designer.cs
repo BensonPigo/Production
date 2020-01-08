@@ -96,7 +96,7 @@
             this.dateForward = new Sci.Win.UI.DateBox();
             this.labActFCRDate = new Sci.Win.UI.Label();
             this.dateActFCRDate = new Sci.Win.UI.DateBox();
-            this.txtSubconForwarder = new Sci.Production.Class.txtsubcon();
+            this.txtSubconForwarder = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtUserHandle = new Sci.Production.Class.txtuser();
             this.txtShiptermShipmentTerm = new Sci.Production.Class.txtshipterm();
             this.txtShipmodeShippingMode = new Sci.Production.Class.txtshipmode();
@@ -349,7 +349,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1077, 602);
+            this.browse.Size = new System.Drawing.Size(1077, 622);
             // 
             // tabs
             // 
@@ -1396,7 +1396,7 @@
         private Win.UI.Label labelInvDate;
         private Win.UI.Label labelInvSerial;
         private Win.UI.Label labelInvoiceNo;
-        private Class.txtsubcon txtSubconForwarder;
+        private Class.txtsubconNoConfirm txtSubconForwarder;
         private Class.txtuser txtUserHandle;
         private Win.UI.Label labelETDETA;
         private Win.UI.Label labelShipPlanNo;

@@ -75,7 +75,7 @@
             this.txtuserLock = new Sci.Production.Class.txtuser();
             this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtuserApprove = new Sci.Production.Class.txtuser();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -849,7 +849,7 @@
         private Win.UI.DisplayBox displayApvDate;
         private Win.UI.DisplayBox displayCurrency;
         private Win.UI.DateBox dateIssueDate;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Button btnImportThread;
         private Win.UI.Label label25;

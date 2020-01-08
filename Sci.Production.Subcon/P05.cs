@@ -474,7 +474,15 @@ group by ReqQty.value,PoQty.value";
                 txtmfactory.Focus();
                 return false;
             }
-           
+
+            #endregion
+
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Save);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return false;
+            }
             #endregion
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("ReqQty = 0"))
@@ -526,6 +534,14 @@ group by ReqQty.value,PoQty.value";
             DualResult result;
             string sqlcmd;
             string strStatus;
+
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return;
+            }
+            #endregion
 
             if (MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
             {
@@ -594,6 +610,14 @@ where id = '{CurrentMaintain["id"]}'";
 
         protected override void ClickConfirm()
         {
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return;
+            }
+            #endregion
+
             DualResult result;
 
             string sqlcmd;
