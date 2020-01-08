@@ -248,7 +248,7 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
 
             if (gridData.Rows.Count > 0 && this.chkImportChange.Checked)
             {
-                if (MyUtility.Convert.GetInt(this.CurrentMaintain["TPEPaidUSD"]) > 0)
+                if (MyUtility.Convert.GetDecimal(this.CurrentMaintain["TPEPaidUSD"]) > 0)
                 {
                     MyUtility.Msg.WarningBox("WK has been shared expense,  [No Import Charge] shouldn't tick, please double check.");
                 }
