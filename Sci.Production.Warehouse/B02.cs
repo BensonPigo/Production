@@ -47,6 +47,13 @@ namespace Sci.Production.Warehouse
             this.comboStockType.ReadOnly = true;
         }
 
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            this.btnBatchCreate.Enabled = !this.EditMode;
+        }
+
         //存檔前檢查
         protected override bool ClickSaveBefore()
         {
