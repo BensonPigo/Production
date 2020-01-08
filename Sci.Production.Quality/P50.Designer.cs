@@ -142,6 +142,7 @@
             // 
             this.txtLine.BackColor = System.Drawing.Color.White;
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLine.IsSupportEditMode = false;
             this.txtLine.Location = new System.Drawing.Point(458, 9);
             this.txtLine.Name = "txtLine";
             this.txtLine.Size = new System.Drawing.Size(100, 23);
