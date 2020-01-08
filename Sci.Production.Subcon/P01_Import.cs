@@ -457,9 +457,7 @@ left join dbo.Order_Artwork oa on oa.ID = o.ID and
 							oa.ArtworkID = ard.ArtworkID and 
                             oa.PatternCode = ard.PatternCode and 
                             oa.PatternDesc = ard.PatternDesc
-left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
-left join LocalSupp ls with (nolock) on ls.id = ot.LocalSuppID
 outer apply (
         select IssueQty = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD, ArtworkPO A
