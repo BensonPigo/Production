@@ -54,6 +54,7 @@
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.btnSpecialRecord = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -70,6 +71,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnSpecialRecord);
             this.masterpanel.Controls.Add(this.btnIrrQtyReason);
             this.masterpanel.Controls.Add(this.txtmfactory);
             this.masterpanel.Controls.Add(this.txtuserHandle);
@@ -88,7 +90,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.dateReqDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 149);
+            this.masterpanel.Size = new System.Drawing.Size(1061, 149);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateReqDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
@@ -108,11 +110,12 @@
             this.masterpanel.Controls.SetChildIndex(this.txtuserHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnIrrQtyReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSpecialRecord, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 149);
-            this.detailpanel.Size = new System.Drawing.Size(892, 136);
+            this.detailpanel.Size = new System.Drawing.Size(1061, 305);
             // 
             // gridicon
             // 
@@ -126,7 +129,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 136);
+            this.detailgridcont.Size = new System.Drawing.Size(1061, 305);
             // 
             // detail2
             // 
@@ -140,9 +143,13 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1061, 556);
+            // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 285);
+            this.detailcont.Size = new System.Drawing.Size(1061, 454);
             // 
             // detailbtm
             // 
@@ -152,8 +159,8 @@
             this.detailbtm.Controls.Add(this.labMGMgrApv);
             this.detailbtm.Controls.Add(this.dispDeptApv);
             this.detailbtm.Controls.Add(this.labDeptMgrApv);
-            this.detailbtm.Location = new System.Drawing.Point(0, 285);
-            this.detailbtm.Size = new System.Drawing.Size(892, 102);
+            this.detailbtm.Location = new System.Drawing.Point(0, 454);
+            this.detailbtm.Size = new System.Drawing.Size(1061, 102);
             this.detailbtm.TabIndex = 1;
             this.detailbtm.Controls.SetChildIndex(this.labDeptMgrApv, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -332,7 +339,7 @@
             // 
             // btnIrrQtyReason
             // 
-            this.btnIrrQtyReason.Location = new System.Drawing.Point(858, 45);
+            this.btnIrrQtyReason.Location = new System.Drawing.Point(858, 76);
             this.btnIrrQtyReason.Name = "btnIrrQtyReason";
             this.btnIrrQtyReason.Size = new System.Drawing.Size(188, 30);
             this.btnIrrQtyReason.TabIndex = 9;
@@ -461,6 +468,16 @@
             this.txtsubconSupplier.TextBox1Binding = "";
             this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtsubconSupplier_Validating);
             // 
+            // btnSpecialRecord
+            // 
+            this.btnSpecialRecord.Location = new System.Drawing.Point(858, 42);
+            this.btnSpecialRecord.Name = "btnSpecialRecord";
+            this.btnSpecialRecord.Size = new System.Drawing.Size(188, 30);
+            this.btnSpecialRecord.TabIndex = 20;
+            this.btnSpecialRecord.Text = "Special Record";
+            this.btnSpecialRecord.UseVisualStyleBackColor = true;
+            this.btnSpecialRecord.Click += new System.EventHandler(this.btnSpecialRecord_Click);
+            // 
             // P05
             // 
             this.ApvChkValue = "Locked";
@@ -541,5 +558,6 @@
         private Win.UI.Label labMGMgrApv;
         private Win.UI.DisplayBox dispDeptApv;
         private Win.UI.Label labDeptMgrApv;
+        private Win.UI.Button btnSpecialRecord;
     }
 }
