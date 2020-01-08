@@ -955,7 +955,7 @@
             this.btnBatchUpload.TabIndex = 36;
             this.btnBatchUpload.Text = "Batch Upload-Shipping";
             this.btnBatchUpload.UseVisualStyleBackColor = true;
-            this.btnBatchUpload.Click += new System.EventHandler(this.btnBatchUpload_Click);
+            this.btnBatchUpload.Click += new System.EventHandler(this.BtnBatchUpload_Click);
             // 
             // displayDeclarationID
             // 
