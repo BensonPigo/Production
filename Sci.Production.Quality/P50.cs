@@ -32,6 +32,15 @@ namespace Sci.Production.Quality
 
         private void Query()
         {
+            string sqlwhere = string.Empty;
+            List<SqlParameter> sqlpara = new List<SqlParameter>(); 
+            sqlpara.Add(new SqlParameter("@inputStartime", this.dateBoxOutputDate.Value));
+            sqlpara.Add(new SqlParameter("@inputFactory", this.txtFactory.Text));
+            if (!string.IsNullOrEmpty(this.txtLine.Text)) {
+                sqlpara.Add(new SqlParameter("@line", this.txtLine.Text));
+                sqlwhere = "and WorkLine = @line";
+            }
+
             string sqlQuery = $@"
     Create table #TimeRange
 (
@@ -65,7 +74,9 @@ namespace Sci.Production.Quality
             qty
     into    #tmpReworkTotal
     from [ExtendServer].[Dashboard].[dbo].[ReworkTotal] with (nolock)
-    where WorkDate = @Startime and FactoryID = @Factory
+    where WorkDate = @Startime 
+    and FactoryID = @Factory
+    {sqlwhere}
 
     select @MaxWorkTime = max(WorkTime), @MinWorkTime = min(WorkTime)
     from #tmpReworkTotal
@@ -125,8 +136,7 @@ namespace Sci.Production.Quality
             DataTable[] dtResults;
             DualResult result = DBProxy.Current.Select(null,
                 sqlQuery,
-                new List<SqlParameter>() {  new SqlParameter("@inputStartime", this.dateBoxOutputDate.Value),
-                                            new SqlParameter("@inputFactory", this.txtFactory.Text)},
+                sqlpara,
                 out dtResults);
 
             if(!result)
