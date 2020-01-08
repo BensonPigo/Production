@@ -10,16 +10,17 @@ namespace Sci.Production.PPIC
         public P19(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
+            this.dateInputDate.Text = DateTime.Now.ToShortDateString();
         }
 
-        private void btnPMS_Click(object sender, EventArgs e)
+        private void BtnPMS_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Loading....");
             string sqlCmd = "SELECT 1 FROM sysdatabases WHERE name='FPS'";
 
-           bool isFpsEXISTS = MyUtility.Check.Seek(sqlCmd);
-
+            bool isFpsEXISTS = MyUtility.Check.Seek(sqlCmd);
+            DateTime inputDate;
             if (!isFpsEXISTS)
             {
                 MyUtility.Msg.InfoBox("Cannot find database [FPS], please connect to IT admin.");
@@ -27,7 +28,12 @@ namespace Sci.Production.PPIC
                 return;
             }
 
-            sqlCmd = "exec [FPS].dbo.exp_finishingprocess ;";
+            if (!DateTime.TryParse(this.dateInputDate.Text, out inputDate))
+            {
+                inputDate = DateTime.Now;
+            }
+
+            sqlCmd = $"exec [FPS].dbo.exp_finishingprocess '{inputDate.ToString("yyyy/MM/dd")}';";
             DBProxy.Current.DefaultTimeout = 1200;
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
@@ -42,7 +48,7 @@ namespace Sci.Production.PPIC
             MyUtility.Msg.InfoBox("Complete.");
         }
 
-        private void btnMWS_Click(object sender, EventArgs e)
+        private void BtnMWS_Click(object sender, EventArgs e)
         {
 
             this.ShowWaitMessage("Loading....");
