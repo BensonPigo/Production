@@ -2,9 +2,10 @@
 -- Description:	轉出FPS資料
 -- =============================================
 CREATE PROCEDURE [dbo].[exp_finishingprocess]
-
-	
+	@inputDate date = null
 AS
+Begin try
+
 IF OBJECT_ID(N'Orders') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[Orders](
@@ -288,10 +289,15 @@ CREATE TABLE [dbo].[StyleFPSetting] (
 END
 
 
-declare @cDate date = CONVERT(date,GETDATE());
+declare @cDate date = @inputDate;
 declare @yestarDay date =CONVERT(Date, dateAdd(day,-1,GetDate()));
 --declare @cDate date = CONVERT(date, DATEADD(DAY,-10, GETDATE()));-- for test
 --declare @yestarDay date =CONVERT(Date, dateAdd(day,-11,GetDate()));-- for test
+
+if(@inputDate is null)
+begin
+	set @cDate = CONVERT(date,GETDATE());
+end
 
 --01. 轉出區間 [Production].[dbo].[Orders].AddDate or EditDate= 今天
 MERGE Orders AS T
@@ -809,3 +815,19 @@ UPDATE SET
 WHEN NOT MATCHED BY TARGET THEN
 INSERT([StyleID], [SeasonID], [BrandID], [Pressing1], [Pressing2], [Folding1], [Folding2], [CmdTime], [SunriseUpdated])
 VALUES(s.[StyleID] ,s.[SeasonID], s.[BrandID], s.[Pressing1], s.[Pressing2], s.[Folding1], s.[Folding2], GetDate(), 0);
+
+END try
+Begin Catch
+	DECLARE  @ErrorMessage  NVARCHAR(4000),  
+			 @ErrorSeverity INT,    
+			 @ErrorState    INT;
+	SELECT     
+		@ErrorMessage  = ERROR_MESSAGE(),    
+		@ErrorSeverity = ERROR_SEVERITY(),   
+		@ErrorState    = ERROR_STATE();
+
+	RAISERROR (@ErrorMessage, -- Message text.    
+				 @ErrorSeverity, -- Severity.    
+				 @ErrorState -- State.    
+			   ); 
+End Catch
