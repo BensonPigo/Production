@@ -124,6 +124,7 @@ namespace Sci.Production.Subcon
         private void checkBoxReqQtyHasValue_CheckedChanged(object sender, EventArgs e)
         {
             listControlBindingSource1.DataSource = this.FilterResult();
+            this.gridBatchImport.ClearSelection();
             foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
             {
                 this.DetalGridCellEditChange(dr.Index);
@@ -311,7 +312,7 @@ select  Selected = 0
         , id = ''
         , ExceedQty = 0
 from  orders o WITH (NOLOCK)
-left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
+left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.LocalSuppId = '{dr_artworkReq["LocalSuppId"]}'
 outer apply( select top 1 ArtworkTypeID,PatternCode,PatternDesc,ArtworkID 
                 from dbo.Order_Artwork  WITH (NOLOCK) where ID = o.ID and 
                                                             ArtworkTypeID = ot.ArtworkTypeID ) oa
@@ -458,7 +459,7 @@ outer apply(
 
             strSQLCmd = $@"
 select  Selected = 0
-        , [LocalSuppId] = isnull(ot.LocalSuppId,'')
+        , [LocalSuppId] = '{dr_artworkReq["LocalSuppId"]}'
 		, [orderID] = o.ID
         , OrderQty = o.Qty
         , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) {tmpcurrentReq}
