@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Transactions;
-using static Sci.Production.Packing.P25;
+using static Sci.Production.Packing.P26;
 
 namespace Sci.Production.Packing
 {
-    public partial class P25_AssignPackingList : Sci.Win.Tems.Base
+    public partial class P26_AssignPackingList : Sci.Win.Tems.Base
     {
         private List<MappingModel> _MappingModels;
         private DataTable _P25Dt;
@@ -18,7 +18,7 @@ namespace Sci.Production.Packing
         public bool canConvert = false;
         private string _UploadType = string.Empty;
 
-        public P25_AssignPackingList(List<MappingModel> MappingModels, DataTable P25Dt , string UploadType)
+        public P26_AssignPackingList(List<MappingModel> MappingModels, DataTable P25Dt , string UploadType)
         {
             this.InitializeComponent();
             this._MappingModels = MappingModels;
