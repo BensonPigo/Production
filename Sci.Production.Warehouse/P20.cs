@@ -134,31 +134,38 @@ namespace Sci.Production.Warehouse
             #region -- SQL Command --
             StringBuilder sqlcmd = new StringBuilder();
             sqlcmd.Append(@"
-select  i.poid
-        , i.seq1
-        , i.seq2
-        , i.BrandID
-        , i.InputQty
-        , i.OutputQty
-        , i.Qty
-        , case b.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' else 'Other' end as fabrictype
-        , i.FactoryID
-        , i.ETA
-        , i.MtlTypeID
-        , i.ProjectID
-        , i.Deadline
-        , i.Refno
-        , b.ColorID
-        , i.Ukey
-        , I.SCIRefno
-        , I.UnitID POUNIT
-        , DBO.getStockUnit(b.SCIRefno,s.suppid) AS STOCKUNIT
-        , dbo.GetUnitRate(I.UnitID, DBO.getStockUnit(I.SCIRefno,I.suppid)) RATE
-from inventory i WITH (NOLOCK) 
-inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
-left join dbo.PO_Supp as s WITH (NOLOCK) on s.ID = b.ID and s.Seq1 = b.SEQ1
-where f.Junk = 0 ");
+select i.*
+	,[InputQty_unit] = cast(InputQty * rate as decimal(18,2))
+	,[OutputQty_unit] = cast(OutputQty * rate as decimal(18,2))
+	,[Qty_unit] = cast(Qty * rate as decimal(18,2))
+into #tmp_TpeIventory
+from 
+(
+	select  i.poid
+			, i.seq1
+			, i.seq2
+			, i.BrandID
+			, i.InputQty
+			, i.OutputQty
+			, i.Qty
+			, case b.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' else 'Other' end as fabrictype
+			, i.FactoryID
+			, i.ETA
+			, i.MtlTypeID
+			, i.ProjectID
+			, i.Deadline
+			, i.Refno
+			, b.ColorID
+			, i.Ukey
+			, I.SCIRefno
+			, I.UnitID POUNIT
+			, DBO.getStockUnit(b.SCIRefno,s.suppid) AS STOCKUNIT
+			, dbo.GetUnitRate(I.UnitID, DBO.getStockUnit(I.SCIRefno,I.suppid)) RATE	
+	from inventory i WITH (NOLOCK) 
+	inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
+	left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
+	left join dbo.PO_Supp as s WITH (NOLOCK) on s.ID = b.ID and s.Seq1 = b.SEQ1
+	where f.Junk = 0 ");
 
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(" and i.poid = @spno");
@@ -172,9 +179,10 @@ where f.Junk = 0 ");
                 sqlcmd.Append(" and b.ColorID = @ColorID");
             if (!MyUtility.Check.Empty(factory))
                 sqlcmd.Append(" and i.FactoryID = @factory");
-
-            sqlcmd.Append(Environment.NewLine);
-            sqlcmd.Append(@";
+            sqlcmd.Append(@"
+)i; 
+select * from #tmp_TpeIventory; ");
+            sqlcmd.Append(@"
 select  poid
         , seq1
         , seq2
@@ -193,6 +201,10 @@ select  poid
         , Reason
         , InventoryUkey
         , ProjectID
+		, [qty_unit] = cast(qty * RATE as decimal(18,2))
+		, [running_total_unit] = cast(sum(tmp.qty) over (partition by InventoryUkey 
+											order by InventoryUkey,ConfirmDate,ID
+											rows between unbounded preceding and current row)  * RATE as decimal(18,2))
 from (
     select  i.poid
             , i.seq1
@@ -224,9 +236,11 @@ from (
             , T.InventoryUkey
             , t.TransferUkey
             , i.ProjectID
+            , tp.RATE
     from inventory i WITH (NOLOCK) 
     inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
     inner join invtrans t WITH (NOLOCK) on t.InventoryUkey = i.Ukey
+    inner join #tmp_TpeIventory tp on T.InventoryUkey = tp.Ukey
     left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
     where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
@@ -265,9 +279,11 @@ from (
             , t.TransferUkey
             , T.InventoryUkey
             , i.ProjectID
+            , tp.RATE
     from inventory i WITH (NOLOCK) 
     inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
     inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type='3'
+    inner join #tmp_TpeIventory tp on T.InventoryUkey = tp.Ukey
     left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
     where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
@@ -313,7 +329,7 @@ where   stocktype='I'");
             if (!txtSeq.checkSeq2Empty())
                 sqlcmd.Append(@" 
         and f.seq2 = @seq2");
-
+            sqlcmd.Append(Environment.NewLine + "drop table #tmp_TpeIventory;");
 
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@spno";
@@ -380,12 +396,8 @@ where   stocktype='I'");
             if (dtTpeIventory.Select("qty > 0", "").Count() == 0 && checkQty.Checked)
             {
                 MyUtility.Msg.WarningBox("qty > 0 Data not found!!");
-            }
+            } 
 
-            dtTpeIventory.Columns.Add("InputQty_unit", typeof(decimal), "Convert(InputQty * rate * 100, 'System.Int64') / 100.0 + iif(Convert(InputQty * rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
-            dtTpeIventory.Columns.Add("OutputQty_unit", typeof(decimal), "Convert(OutputQty * rate * 100, 'System.Int64') / 100.0 + iif(Convert(OutputQty * rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
-            dtTpeIventory.Columns.Add("Qty_unit", typeof(decimal), "Convert(Qty * rate * 100, 'System.Int64') / 100.0 + iif(Convert(Qty * rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
-            //dtTpeIventory.Columns.Add("Balance", typeof(decimal), "InputQty - OutputQty");
             dtTpeIventory.DefaultView.Sort="POID,SEQ1,SEQ2";
             dtTpeIventory.TableName = "dtTpeIventory";
 
@@ -396,10 +408,7 @@ where   stocktype='I'");
                 , new DataColumn[] { dtTpeIventory.Columns["Ukey"] }
                 , new DataColumn[] { dtInvtrans.Columns["InventoryUkey"] }
                 );
-            data.Relations.Add(relation);
-            
-            dtInvtrans.Columns.Add("qty_unit", typeof(decimal), "Convert(Qty * parent.rate * 100, 'System.Int64') / 100.0 + iif(Convert(Qty * parent.rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
-            dtInvtrans.Columns.Add("running_total_unit", typeof(decimal), "Convert(running_total * parent.rate * 100, 'System.Int64') / 100.0 + iif(Convert(running_total * parent.rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
+            data.Relations.Add(relation);                      
 
             bindingSource1.DataSource = data;
             bindingSource1.DataMember = "dtTpeIventory";
