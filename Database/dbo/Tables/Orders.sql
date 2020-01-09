@@ -158,6 +158,7 @@
     [ChangeMemoDate] DATE NULL, 
     [BuyBack] VARCHAR(20) NULL, 
     [BuyBackOrderID] VARCHAR(13) NULL, 
+    [ForecastCategory] VARCHAR NULL DEFAULT (''), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -795,9 +796,12 @@ CREATE NONCLUSTERED INDEX [IX_SciDelivery]
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA�c��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CfaCTN';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CfaCTN';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ëǽc��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'DRYCTN';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'除溼室箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'DRYCTN';
 
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預估單分類', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ForecastCategory';

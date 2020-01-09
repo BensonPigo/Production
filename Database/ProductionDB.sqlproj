@@ -2429,7 +2429,8 @@
     <Build Include="dbo\Tables\FactoryExpress_SendingScheduleHistory.sql" />
     <Build Include="dbo\Tables\FactoryExpress_SendingSchedule.sql" />
     <Build Include="dbo\Views\View_VNNLCodeWaste.sql" />
-    <Build Include="dbo\Stored Procedures\insert_Air_Fir_TnsfIn.sql" />
+    <Build Include="dbo\Stored Procedures\insert_Air_Fir_TnsfIn.sql" /> 
+    <Build Include="dbo\Functions\GetOrderAmount.sql" />  
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
