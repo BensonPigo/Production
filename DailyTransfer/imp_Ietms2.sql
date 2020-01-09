@@ -58,6 +58,7 @@ a.FromGSD	= b.FromGSD
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
+,a.MasterPlusGroup	= b.MasterPlusGroup
 
 from Production.dbo.Operation as a inner join Trade_To_Pms.dbo.Operation as b ON a.id=b.id
 -------------------------- INSERT INTO ��
@@ -96,7 +97,7 @@ ID
 ,AddDate
 ,EditName
 ,EditDate
-
+,MasterPlusGroup
 )
 select 
 ID
@@ -133,7 +134,7 @@ ID
 ,AddDate
 ,EditName
 ,EditDate
-
+,MasterPlusGroup
 from Trade_To_Pms.dbo.Operation as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Operation as a WITH (NOLOCK) where a.id = b.id)
 
@@ -144,17 +145,17 @@ where not exists(select id from Production.dbo.Operation as a WITH (NOLOCK) wher
 
 merge Production.dbo.OperationDesc as t
 using Trade_to_Pms.dbo.OperationDesc as s 
-    on t.id=s.id
-    when matched then 
-    update set 
-    t.DescKH= s.DescKH,
-    t.DescVi=s.DescVi,
-    t.DescCHS=s.DescCHS
+	on t.id=s.id
+	when matched then 
+	update set 
+	t.DescKH= s.DescKH,
+	t.DescVi=s.DescVi,
+	t.DescCHS=s.DescCHS
 when not matched by target then
-    insert(ID,DescKH,DescVi,DescCHS)
-    values(s.ID,s.DescKH,s.DescVi,s.DescCHS)
+	insert(ID,DescKH,DescVi,DescCHS)
+	values(s.ID,s.DescKH,s.DescVi,s.DescCHS)
 when not matched by source then
-    delete ;
+	delete ;
 
 --ATTACH
 --MOLD
