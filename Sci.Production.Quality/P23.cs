@@ -38,15 +38,6 @@ namespace Sci.Production.Quality
 
             this.grid.CellValueChanged += (s, e) =>
             {
-                if (this.grid.Columns[e.ColumnIndex].DataPropertyName == this.col_location.DataPropertyName)
-                {
-                    DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                    dr["Selected"] = 1;
-                }
-            };
-
-            this.grid.CellValueChanged += (s, e) =>
-            {
                 if (this.grid.Columns[e.ColumnIndex].Name == this.col_chk.Name)
                 {
                     this.calcCTNQty();
@@ -64,7 +55,8 @@ namespace Sci.Production.Quality
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), M: Sci.Env.User.Keyword).Get(out this.col_location)
+                 //.CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), M: Sci.Env.User.Keyword).Get(out this.col_location)
+                 .Text("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             #region CTNStartNo 有中文字的情況之下 按照我們希望的順序排
@@ -157,7 +149,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.remark
 ,p2.SCICtnNo
-,p2.CFALocationID
+,[CFALocationID] = 'CFA'
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -271,7 +263,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.remark
 ,p2.SCICtnNo
-,p2.CFALocationID
+,[CFALocationID] = 'CFA'
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -332,7 +324,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.remark
 ,p2.SCICtnNo
-,p2.CFALocationID
+,[CFALocationID] = 'CFA'
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -398,7 +390,7 @@ select distinct
 ,o.BuyerDelivery
 ,p2.remark
 ,p2.SCICtnNo
-,p2.CFALocationID
+,[CFALocationID] = 'CFA'
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -622,33 +614,6 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
-        {
-            string location = this.txtCFALocation.Text.Trim();
-            int pos = this.listControlBindingSource1.Position;
-            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dt))
-            {
-                MyUtility.Msg.WarningBox("Please select data first!");
-                return;
-            }
-
-            foreach (DataRow currentRecord in dt.Rows)
-            {
-                if (currentRecord["selected"].ToString() == "1")
-                {
-                    currentRecord["CFALocationID"] = location;
-                }
-            }
-
-            this.listControlBindingSource1.Position = pos;
-            this.grid.SuspendLayout();
-            this.grid.DataSource = null;
-            this.grid.DataSource = this.listControlBindingSource1;
-            this.listControlBindingSource1.Position = pos;
-            this.grid.ResumeLayout();
         }
 
         private void calcCTNQty()
