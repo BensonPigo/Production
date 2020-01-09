@@ -113,8 +113,8 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 	
 	--LocalDebit UPDATE
 	Merge Production.dbo.LocalDebit as t
-	using (Select * from Trade_To_Pms.dbo.debit WITH (NOLOCK) where IsSubcon = 1 AND Status='New') as s
-	on t.id = s.id
+	using (Select * from Trade_To_Pms.dbo.debit WITH (NOLOCK) where IsSubcon = 1) as s
+	on t.id = s.id AND t.Status='New'
 	when matched then
 		update set 
 			t.FactoryID = s.BrandID,
