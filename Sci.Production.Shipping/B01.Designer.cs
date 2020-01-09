@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtubconForwarder = new Sci.Production.Class.txtsubcon();
+            this.txtubconForwarder = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtShipMode = new Sci.Production.Class.txtshipmode();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelForwarder = new Sci.Win.UI.Label();
@@ -341,7 +341,7 @@
 
         #endregion
 
-        private Class.txtsubcon txtubconForwarder;
+        private Class.txtsubconNoConfirm txtubconForwarder;
         private Class.txtshipmode txtShipMode;
         private Class.txtbrand txtbrand;
         private Win.UI.Label labelForwarder;

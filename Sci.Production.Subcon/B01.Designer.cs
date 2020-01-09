@@ -78,7 +78,7 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.btnQuotationRecord = new Sci.Win.UI.Button();
             this.btnPaymentHistory = new Sci.Win.UI.Button();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.dateQuotDate = new Sci.Win.UI.DateBox();
             this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_local();
             this.label2 = new Sci.Win.UI.Label();
@@ -1015,7 +1015,7 @@
         private Win.UI.ComboBox comboCartonDimension;
         private Win.UI.DisplayBox displayPrice;
         private Class.txtcurrency txtcurrencyPrice;
-        private Class.txtsubcon txtSubconSupplier;
+        private Class.txtsubconNoConfirm txtSubconSupplier;
         private Win.UI.DateBox dateQuotDate;
         private Win.UI.NumericBox numL;
         private Win.UI.NumericBox numWeightofAxle;

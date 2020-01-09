@@ -46,7 +46,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtT1 = new Sci.Production.Class.txtsubcon();
+            this.txtT1 = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtT2 = new Sci.Production.Class.txtLocalTPESupp();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -397,7 +397,7 @@
         private Class.txtseason txtseason;
         private Class.txtstyle txtstyle;
         private Win.UI.Label label10;
-        private Class.txtsubcon txtT1;
+        private Class.txtsubconNoConfirm txtT1;
         private Class.txtLocalTPESupp txtT2;
     }
 }
