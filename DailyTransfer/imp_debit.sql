@@ -99,24 +99,67 @@ insert @Sayfty select id from Production.dbo.Factory
 
 declare @tLocalDebit table (id varchar(13),isinsert bit)
 
+	--LocalDebit INSERT
 	Merge Production.dbo.LocalDebit as t
 	using (Select * from Trade_To_Pms.dbo.debit WITH (NOLOCK) where IsSubcon = 1 ) as s
 	on t.id = s.id
 	when not matched by target then
-		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID,Currencyid, AddDate, AddName,[status],MDivisionID,issuedate)
-		values( '1', Id, BrandID, Amount, CurrencyID,CurrencyID, AddDate,'SCIMIS','New',
-		isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.BRANDID),''),s.adddate )
-		output inserted.id,iif(deleted.id='',1,0) into @tLocalDebit;
+		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID ,CurrencyID, AddDate, AddName,[status],MDivisionID,issuedate)
+		values( '1'    , Id, BrandID  , Amount   , CurrencyID		,CurrencyID, AddDate,'SCIMIS','New',
+			isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.BRANDID),'')
+			,s.adddate )
+	output inserted.id,iif(deleted.id='',1,0) into @tLocalDebit;
 
+	
+	--LocalDebit UPDATE
+	Merge Production.dbo.LocalDebit as t
+	using (Select * from Trade_To_Pms.dbo.debit WITH (NOLOCK) where IsSubcon = 1) as s
+	on t.id = s.id AND t.Status='New'
+	when matched then
+		update set 
+			t.FactoryID = s.BrandID,
+			t.TaipeiAMT = s.Amount,
+			t.TaipeiCurrencyID = s.CurrencyID,
+			t.Currencyid = s.CurrencyID,
+			t.EditName = s.EditName,
+			t.EditDate = s.EditDate,
+			t.MDivisionID = isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.BRANDID),''),
+			t.issuedate = s.adddate
+	;
+	
+	--LocalDebit_Detail INSERT
 	Merge Production.dbo.LocalDebit_Detail as t
-	using( select a.*,b.adddate as add1 from Trade_To_Pms.dbo.debit_detail a WITH (NOLOCK)
-	inner join Trade_To_Pms.dbo.debit b WITH (NOLOCK) on a.id=b.id
-	 where a.id in (select id from  Production.dbo.LocalDebit WITH (NOLOCK) where TaipeiDBC=1)) as s
+	using( 
+			select a.*,b.adddate as add1 
+			from Trade_To_Pms.dbo.debit_detail a WITH (NOLOCK)
+			inner join Trade_To_Pms.dbo.debit b WITH (NOLOCK) on a.id=b.id
+			where a.id in (select id from  Production.dbo.LocalDebit WITH (NOLOCK) where TaipeiDBC=1)
+	 ) as s
 	on t.TaipeiUkey=s.ukey
 	when not matched by target then
 		insert(	 id,   Orderid,   UnitID,   qty,   amount,  AddDate, AddName,taipeireason,description,TaipeiUkey)
-		values(s.Id, s.orderid, s.UnitID, s.qty, s.Amount,s.add1, 'SCIMIS',s.reason,s.description,ukey);
-
+		values(s.Id, s.orderid, s.UnitID, s.qty, s.Amount,s.add1, 'SCIMIS',s.reason,s.description,ukey)
+	;
+		
+	--LocalDebit_Detail UPDATE
+	Merge Production.dbo.LocalDebit_Detail as t
+	using( 
+			select a.*,b.adddate as add1 
+			from Trade_To_Pms.dbo.debit_detail a WITH (NOLOCK)
+			inner join Trade_To_Pms.dbo.debit b WITH (NOLOCK) on a.id=b.id
+			where a.id in (select id from  Production.dbo.LocalDebit WITH (NOLOCK) where TaipeiDBC=1)
+	 ) as s
+	on t.TaipeiUkey=s.ukey AND t.ID IN (SELECT ID FROM Production.dbo.LocalDebit WHERE Status='New')
+	when matched then
+		update set 
+			t.id = s.id,
+			t.Orderid = s.Orderid,
+			t.UnitID = s.UnitID,
+			t.qty = s.qty,
+			t.amount = s.amount,
+			t.taipeireason = s.reason,
+			t.description = s.description
+	;
 END
 
 
