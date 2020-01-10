@@ -266,7 +266,7 @@ into  #tmp_localap
 from(
 	select 
 			apd.Qty ap_qty
-			,apd.Qty*apd.Price*dbo.getRate('FX',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt 
+			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt 
 			,ap.Category
 			,ap.FactoryId
 			,o.POID as OrderId 

@@ -53,21 +53,25 @@
             this.radioExportFeeReport = new Sci.Win.UI.RadioButton();
             this.dateOnBoardDate = new Sci.Win.UI.DateRange();
             this.labelOnBoardDate = new Sci.Win.UI.Label();
+            this.lbVoucherDate = new Sci.Win.UI.Label();
+            this.dateVoucherDate = new Sci.Win.UI.DateRange();
+            this.lbRateType = new Sci.Win.UI.Label();
+            this.comboRateType = new Sci.Win.UI.ComboBox();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(433, 12);
+            this.print.Location = new System.Drawing.Point(434, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(433, 48);
+            this.toexcel.Location = new System.Drawing.Point(434, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(433, 84);
+            this.close.Location = new System.Drawing.Point(434, 84);
             // 
             // labelReportContent
             // 
@@ -79,7 +83,7 @@
             // 
             // labelPulloutDate
             // 
-            this.labelPulloutDate.Location = new System.Drawing.Point(13, 80);
+            this.labelPulloutDate.Location = new System.Drawing.Point(13, 68);
             this.labelPulloutDate.Name = "labelPulloutDate";
             this.labelPulloutDate.Size = new System.Drawing.Size(101, 23);
             this.labelPulloutDate.TabIndex = 95;
@@ -87,7 +91,7 @@
             // 
             // labelAPApvDate
             // 
-            this.labelAPApvDate.Location = new System.Drawing.Point(13, 112);
+            this.labelAPApvDate.Location = new System.Drawing.Point(13, 96);
             this.labelAPApvDate.Name = "labelAPApvDate";
             this.labelAPApvDate.Size = new System.Drawing.Size(101, 23);
             this.labelAPApvDate.TabIndex = 96;
@@ -95,7 +99,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(13, 181);
+            this.labelBrand.Location = new System.Drawing.Point(13, 180);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(101, 23);
             this.labelBrand.TabIndex = 97;
@@ -103,7 +107,7 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Location = new System.Drawing.Point(13, 218);
+            this.labelCustCD.Location = new System.Drawing.Point(13, 208);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(101, 23);
             this.labelCustCD.TabIndex = 98;
@@ -111,7 +115,7 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Location = new System.Drawing.Point(13, 254);
+            this.labelDestination.Location = new System.Drawing.Point(13, 236);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(101, 23);
             this.labelDestination.TabIndex = 99;
@@ -119,7 +123,7 @@
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Location = new System.Drawing.Point(13, 290);
+            this.labelShipMode.Location = new System.Drawing.Point(13, 264);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(101, 23);
             this.labelShipMode.TabIndex = 100;
@@ -127,7 +131,7 @@
             // 
             // labelForwarder
             // 
-            this.labelForwarder.Location = new System.Drawing.Point(13, 326);
+            this.labelForwarder.Location = new System.Drawing.Point(13, 292);
             this.labelForwarder.Name = "labelForwarder";
             this.labelForwarder.Size = new System.Drawing.Size(101, 23);
             this.labelForwarder.TabIndex = 101;
@@ -135,7 +139,7 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Location = new System.Drawing.Point(13, 363);
+            this.labelReportType.Location = new System.Drawing.Point(13, 348);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(101, 23);
             this.labelReportType.TabIndex = 102;
@@ -193,7 +197,7 @@
             this.datePulloutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.datePulloutDate.DateBox2.TabIndex = 1;
             this.datePulloutDate.IsRequired = false;
-            this.datePulloutDate.Location = new System.Drawing.Point(118, 80);
+            this.datePulloutDate.Location = new System.Drawing.Point(119, 68);
             this.datePulloutDate.Name = "datePulloutDate";
             this.datePulloutDate.Size = new System.Drawing.Size(280, 23);
             this.datePulloutDate.TabIndex = 104;
@@ -215,7 +219,7 @@
             this.dateAPApvDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateAPApvDate.DateBox2.TabIndex = 1;
             this.dateAPApvDate.IsRequired = false;
-            this.dateAPApvDate.Location = new System.Drawing.Point(118, 112);
+            this.dateAPApvDate.Location = new System.Drawing.Point(119, 96);
             this.dateAPApvDate.Name = "dateAPApvDate";
             this.dateAPApvDate.Size = new System.Drawing.Size(280, 23);
             this.dateAPApvDate.TabIndex = 105;
@@ -224,7 +228,7 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(119, 181);
+            this.txtbrand.Location = new System.Drawing.Point(119, 180);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(81, 23);
             this.txtbrand.TabIndex = 106;
@@ -234,7 +238,7 @@
             this.txtcustcd.BackColor = System.Drawing.Color.White;
             this.txtcustcd.BrandObjectName = null;
             this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd.Location = new System.Drawing.Point(119, 218);
+            this.txtcustcd.Location = new System.Drawing.Point(119, 208);
             this.txtcustcd.Name = "txtcustcd";
             this.txtcustcd.Size = new System.Drawing.Size(125, 23);
             this.txtcustcd.TabIndex = 107;
@@ -242,7 +246,7 @@
             // txtcountryDestination
             // 
             this.txtcountryDestination.DisplayBox1Binding = "";
-            this.txtcountryDestination.Location = new System.Drawing.Point(118, 254);
+            this.txtcountryDestination.Location = new System.Drawing.Point(119, 236);
             this.txtcountryDestination.Name = "txtcountryDestination";
             this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
             this.txtcountryDestination.TabIndex = 108;
@@ -254,8 +258,9 @@
             this.txtshipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtshipmode.FormattingEnabled = true;
             this.txtshipmode.IsSupportUnselect = true;
-            this.txtshipmode.Location = new System.Drawing.Point(118, 290);
+            this.txtshipmode.Location = new System.Drawing.Point(119, 264);
             this.txtshipmode.Name = "txtshipmode";
+            this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(80, 24);
             this.txtshipmode.TabIndex = 109;
             this.txtshipmode.UseFunction = null;
@@ -264,7 +269,10 @@
             // 
             this.txtsubconForwarder.DisplayBox1Binding = "";
             this.txtsubconForwarder.IsIncludeJunk = true;
-            this.txtsubconForwarder.Location = new System.Drawing.Point(119, 326);
+            this.txtsubconForwarder.isMisc = false;
+            this.txtsubconForwarder.isShipping = false;
+            this.txtsubconForwarder.isSubcon = false;
+            this.txtsubconForwarder.Location = new System.Drawing.Point(119, 292);
             this.txtsubconForwarder.Name = "txtsubconForwarder";
             this.txtsubconForwarder.Size = new System.Drawing.Size(170, 23);
             this.txtsubconForwarder.TabIndex = 110;
@@ -275,7 +283,7 @@
             this.radioPanel2.Controls.Add(this.radioDetailListBySPNoByFeeType);
             this.radioPanel2.Controls.Add(this.radioDetailListbySPNo);
             this.radioPanel2.Controls.Add(this.radioExportFeeReport);
-            this.radioPanel2.Location = new System.Drawing.Point(118, 361);
+            this.radioPanel2.Location = new System.Drawing.Point(118, 348);
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(232, 84);
             this.radioPanel2.TabIndex = 111;
@@ -333,22 +341,76 @@
             this.dateOnBoardDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateOnBoardDate.DateBox2.TabIndex = 1;
             this.dateOnBoardDate.IsRequired = false;
-            this.dateOnBoardDate.Location = new System.Drawing.Point(118, 144);
+            this.dateOnBoardDate.Location = new System.Drawing.Point(119, 124);
             this.dateOnBoardDate.Name = "dateOnBoardDate";
             this.dateOnBoardDate.Size = new System.Drawing.Size(280, 23);
             this.dateOnBoardDate.TabIndex = 113;
             // 
             // labelOnBoardDate
             // 
-            this.labelOnBoardDate.Location = new System.Drawing.Point(13, 144);
+            this.labelOnBoardDate.Location = new System.Drawing.Point(13, 124);
             this.labelOnBoardDate.Name = "labelOnBoardDate";
             this.labelOnBoardDate.Size = new System.Drawing.Size(101, 23);
             this.labelOnBoardDate.TabIndex = 112;
             this.labelOnBoardDate.Text = "On Board Date";
             // 
+            // lbVoucherDate
+            // 
+            this.lbVoucherDate.Location = new System.Drawing.Point(13, 152);
+            this.lbVoucherDate.Name = "lbVoucherDate";
+            this.lbVoucherDate.Size = new System.Drawing.Size(101, 23);
+            this.lbVoucherDate.TabIndex = 114;
+            this.lbVoucherDate.Text = "Voucher Date";
+            // 
+            // dateVoucherDate
+            // 
+            // 
+            // 
+            // 
+            this.dateVoucherDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateVoucherDate.DateBox1.Name = "";
+            this.dateVoucherDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateVoucherDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateVoucherDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateVoucherDate.DateBox2.Name = "";
+            this.dateVoucherDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateVoucherDate.DateBox2.TabIndex = 1;
+            this.dateVoucherDate.IsRequired = false;
+            this.dateVoucherDate.Location = new System.Drawing.Point(119, 152);
+            this.dateVoucherDate.Name = "dateVoucherDate";
+            this.dateVoucherDate.Size = new System.Drawing.Size(280, 23);
+            this.dateVoucherDate.TabIndex = 115;
+            // 
+            // lbRateType
+            // 
+            this.lbRateType.Location = new System.Drawing.Point(13, 320);
+            this.lbRateType.Name = "lbRateType";
+            this.lbRateType.Size = new System.Drawing.Size(101, 23);
+            this.lbRateType.TabIndex = 116;
+            this.lbRateType.Text = "Rate Type";
+            // 
+            // comboRateType
+            // 
+            this.comboRateType.BackColor = System.Drawing.Color.White;
+            this.comboRateType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboRateType.FormattingEnabled = true;
+            this.comboRateType.IsSupportUnselect = true;
+            this.comboRateType.Location = new System.Drawing.Point(118, 320);
+            this.comboRateType.Name = "comboRateType";
+            this.comboRateType.OldText = "";
+            this.comboRateType.Size = new System.Drawing.Size(121, 24);
+            this.comboRateType.TabIndex = 117;
+            // 
             // R10
             // 
-            this.ClientSize = new System.Drawing.Size(525, 482);
+            this.ClientSize = new System.Drawing.Size(525, 477);
+            this.Controls.Add(this.comboRateType);
+            this.Controls.Add(this.lbRateType);
+            this.Controls.Add(this.dateVoucherDate);
+            this.Controls.Add(this.lbVoucherDate);
             this.Controls.Add(this.dateOnBoardDate);
             this.Controls.Add(this.labelOnBoardDate);
             this.Controls.Add(this.radioPanel2);
@@ -371,7 +433,11 @@
             this.Controls.Add(this.labelReportContent);
             this.IsSupportToPrint = false;
             this.Name = "R10";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R10. Share Expense Report - Export";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -395,6 +461,10 @@
             this.Controls.SetChildIndex(this.radioPanel2, 0);
             this.Controls.SetChildIndex(this.labelOnBoardDate, 0);
             this.Controls.SetChildIndex(this.dateOnBoardDate, 0);
+            this.Controls.SetChildIndex(this.lbVoucherDate, 0);
+            this.Controls.SetChildIndex(this.dateVoucherDate, 0);
+            this.Controls.SetChildIndex(this.lbRateType, 0);
+            this.Controls.SetChildIndex(this.comboRateType, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -431,5 +501,9 @@
         private Win.UI.RadioButton radioExportFeeReport;
         private Win.UI.DateRange dateOnBoardDate;
         private Win.UI.Label labelOnBoardDate;
+        private Win.UI.Label lbVoucherDate;
+        private Win.UI.DateRange dateVoucherDate;
+        private Win.UI.Label lbRateType;
+        private Win.UI.ComboBox comboRateType;
     }
 }

@@ -23,8 +23,11 @@ namespace Sci.Production.Shipping
         private DateTime? doxRcvdDate2;
         private DateTime? apApvDate1;
         private DateTime? apApvDate2;
+        private DateTime? voucherDate1;
+        private DateTime? voucherDate2;
         private string shipMode;
         private string forwarder;
+        private string rateType;
         private int reportType;
         private DataTable printData;
         private DataTable accnoData;
@@ -45,6 +48,7 @@ namespace Sci.Production.Shipping
         {
             base.OnFormLoaded();
             this.txtshipmode.SelectedIndex = -1;
+            MyUtility.Tool.SetupCombox(this.comboRateType, 2, 1, ",Original currency,FX,Fixed exchange rate,KP,KPI exchange rate");
         }
 
         /// <inheritdoc/>
@@ -56,8 +60,11 @@ namespace Sci.Production.Shipping
             this.doxRcvdDate2 = this.dateDoxRcvdDate.Value2;
             this.apApvDate1 = this.dateAPApvDate.Value1;
             this.apApvDate2 = this.dateAPApvDate.Value2;
+            this.voucherDate1 = this.dateVoucherDate.Value1;
+            this.voucherDate2 = this.dateVoucherDate.Value2;
             this.shipMode = this.txtshipmode.Text;
             this.forwarder = this.txtForwarder.Text;
+            this.rateType = this.comboRateType.SelectedValue.ToString();
             this.reportType = this.radioListbyWKNo.Checked ? 1 : 2;
             return base.ValidateInput();
         }
@@ -69,19 +76,33 @@ namespace Sci.Production.Shipping
             if (this.reportType == 1)
             {
                 #region 組SQL Command
-                sqlCmd.Append(@"with ExportData
+                sqlCmd.Append($@"
+with ExportData
 as (
-select e.InvNo,'Material' as Type,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
-CYCFS = CYCFS.value,
-e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
-e.PortArrival,e.DocArrival,se.CurrencyID,se.Amount,se.AccountID
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
-inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
-left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
-outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
-where s.Type = 'IMPORT'
-      AND se.Junk <> 1
+	select e.InvNo
+		,[Type] = 'Material'
+		,[WKNo] = e.ID 
+		,[FtyWKNo] = ''
+		,e.ShipModeID
+		,[CYCFS] = CYCFS.value
+		,e.Packages
+		,e.Blno
+		,e.WeightKg
+		,e.Cbm
+		,[Forwarder] = e.Forwarder+'-'+isnull(supp.AbbEN,'')
+		,e.PortArrival
+		,e.DocArrival
+		,se.CurrencyID
+		,se.Amount
+		,se.AccountID
+		,[Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
+    left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
+    outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
+    where s.Type = 'IMPORT'
+    AND se.Junk <> 1
 ");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {
@@ -113,6 +134,16 @@ where s.Type = 'IMPORT'
                     sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
                 }
 
+                if (!MyUtility.Check.Empty(this.voucherDate1))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate2))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                }
+
                 if (!MyUtility.Check.Empty(this.shipMode))
                 {
                     sqlCmd.Append(string.Format(" and e.ShipModeID = '{0}'", this.shipMode));
@@ -123,18 +154,31 @@ where s.Type = 'IMPORT'
                     sqlCmd.Append(string.Format(" and e.Forwarder = '{0}'", this.forwarder));
                 }
 
-                sqlCmd.Append(@"),
-FtyExportData
-as (
-select fe.InvNo,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) as Type,'' as WKNo,fe.ID as FtyWKNo,fe.ShipModeID,
-fe.CYCFS,fe.Packages,fe.Blno,fe.WeightKg,fe.Cbm,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
-fe.PortArrival,fe.DocArrival,se.CurrencyID,se.Amount,se.AccountID
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
-left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
-left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
-where fe.Type <> 3
-      AND se.Junk <> 1
+                sqlCmd.Append($@"),
+FtyExportData as (
+	select fe.InvNo
+		,[Type] = IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) 
+		,[WKNo] = ''
+		,[FtyWKNo] = fe.ID
+		,fe.ShipModeID
+		,fe.CYCFS
+		,fe.Packages
+		,fe.Blno
+		,fe.WeightKg
+		,fe.Cbm
+		,[Forwarder] = fe.Forwarder+'-'+isnull(ls.Abb,'')
+		,fe.PortArrival
+		,fe.DocArrival
+		,se.CurrencyID
+		,se.Amount
+		,se.AccountID
+		,[Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
+    left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
+    where fe.Type <> 3
+    AND se.Junk <> 1
 ");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {
@@ -164,6 +208,16 @@ where fe.Type <> 3
                 if (!MyUtility.Check.Empty(this.apApvDate2))
                 {
                     sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate1))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate2))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
                 }
 
                 if (!MyUtility.Check.Empty(this.shipMode))
@@ -202,11 +256,16 @@ select AccountID from FtyExportData where AccountID not in ('61012001','61012002
                     @"),
 tmpAllData
 as (
-select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-PortArrival,DocArrival,CurrencyID,AccountID,Amount from ExportData
-union all
-select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-PortArrival,DocArrival,CurrencyID,AccountID,Amount from FtyExportData)
+    select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
+        PortArrival,DocArrival,CurrencyID,AccountID
+        ,[Amount] = Amount * Rate 
+    from ExportData
+    union all
+    select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
+        PortArrival,DocArrival,CurrencyID,AccountID
+        ,[Amount] = Amount * Rate 
+    from FtyExportData
+)
 
 select * from tmpAllData
 PIVOT (SUM(Amount)
@@ -221,21 +280,41 @@ FOR AccountID IN ({0})) a", allAccno.ToString()));
             else
             {
                 #region 組SQL Command
-                sqlCmd.Append(@"with ExportData
-as (
-select e.InvNo,'Material' as Type,s.MDivisionID,e.Consignee,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
-CYCFS = CYCFS.value,
-e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
-e.PortArrival,e.DocArrival,se.AccountID+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
-s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
-inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
-left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
-left join SciFMS_AccountNo a on a.ID = se.AccountID
-outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
-where s.Type = 'IMPORT'
-      AND se.Junk <> 1
+                sqlCmd.Append($@"
+with ExportData as 
+(
+	select e.InvNo
+		,[Type] = 'Material'
+		,s.MDivisionID
+		,e.Consignee
+		,[WKNo] = e.ID
+		,[FtyWKNo] = ''
+		,e.ShipModeID
+		,[CYCFS] = CYCFS.value
+		,e.Packages
+		,e.Blno
+		,e.WeightKg
+		,e.Cbm
+		,[Forwarder] = e.Forwarder+'-'+isnull(supp.AbbEN,'')
+		,e.PortArrival
+		,e.DocArrival
+		,[AccountNo] = se.AccountID+'-'+isnull(a.Name,'')
+		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,se.CurrencyID
+		,se.ShippingAPID
+		,s.CDate
+		,[ApvDate] = CONVERT(DATE,s.ApvDate)
+		,s.VoucherID
+		,s.VoucherDate
+		,s.SubType 
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
+    left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
+    left join SciFMS_AccountNo a on a.ID = se.AccountID
+    outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
+    where s.Type = 'IMPORT'
+    AND se.Junk <> 1
 ");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {
@@ -267,6 +346,16 @@ where s.Type = 'IMPORT'
                     sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
                 }
 
+                if (!MyUtility.Check.Empty(this.voucherDate1))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate2))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                }
+
                 if (!MyUtility.Check.Empty(this.shipMode))
                 {
                     sqlCmd.Append(string.Format(" and e.ShipModeID = '{0}'", this.shipMode));
@@ -277,20 +366,41 @@ where s.Type = 'IMPORT'
                     sqlCmd.Append(string.Format(" and e.Forwarder = '{0}'", this.forwarder));
                 }
 
-                sqlCmd.Append(@"),
-FtyExportData
-as (
-select fe.InvNo,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) as Type,s.MDivisionID,fe.Consignee,'' as WKNo,fe.ID as FtyWKNo,fe.ShipModeID,
-fe.CYCFS,fe.Packages,fe.Blno,fe.WeightKg,fe.Cbm,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
-fe.PortArrival,fe.DocArrival,se.AccountID+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
-s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
-left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
-left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
-left join SciFMS_AccountNo a on a.ID = se.AccountID
-where fe.Type <> 3
-      AND se.Junk <> 1
+                sqlCmd.Append($@"
+),
+FtyExportData as 
+(
+	select fe.InvNo
+		,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) as Type
+		,s.MDivisionID
+		,fe.Consignee
+		,'' as WKNo
+		,fe.ID as FtyWKNo
+		,fe.ShipModeID
+		,fe.CYCFS
+		,fe.Packages
+		,fe.Blno
+		,fe.WeightKg
+		,fe.Cbm
+		,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder
+		,fe.PortArrival
+		,fe.DocArrival
+		,se.AccountID+'-'+isnull(a.Name,'') as AccountNo
+		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,se.CurrencyID
+		,se.ShippingAPID
+		,s.CDate
+		,CONVERT(DATE,s.ApvDate) as ApvDate
+		,s.VoucherID
+		,s.VoucherDate
+		,s.SubType 
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
+    left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
+    left join SciFMS_AccountNo a on a.ID = se.AccountID
+    where fe.Type <> 3
+    AND se.Junk <> 1
 ");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {
@@ -320,6 +430,16 @@ where fe.Type <> 3
                 if (!MyUtility.Check.Empty(this.apApvDate2))
                 {
                     sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate1))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate2))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
                 }
 
                 if (!MyUtility.Check.Empty(this.shipMode))
@@ -379,6 +499,16 @@ select * from FtyExportData");
                 }
 
                 worksheet.Cells[1, 19 + i + 1] = "Total Import Fee";
+
+                // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
+                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
+                {
+                    for (int k = 15; k <= 19 + i + 1;  k++)
+                    {
+                        worksheet.Cells[1, k] = worksheet.Cells[1, k].Value + "\r\n(USD)";
+                    }
+                }
+
                 string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(19 + i);
                 string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(19 + i + 1);
 
@@ -420,9 +550,15 @@ select * from FtyExportData");
             }
             else
             {
+                // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
+                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
+                {
+                    worksheet.Cells[1, 17] = worksheet.Cells[1, 17].Value + "\r\n(USD)";
+                }
+
                 // 填內容值
                 int intRowsStart = 2;
-                object[,] objArray = new object[1, 23];
+                object[,] objArray = new object[1, 24];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["InvNo"];
@@ -447,7 +583,8 @@ select * from FtyExportData");
                     objArray[0, 19] = dr["CDate"];
                     objArray[0, 20] = dr["ApvDate"];
                     objArray[0, 21] = dr["VoucherID"];
-                    objArray[0, 22] = dr["SubType"];
+                    objArray[0, 22] = dr["VoucherDate"];
+                    objArray[0, 23] = dr["SubType"];
 
                     worksheet.Range[string.Format("A{0}:W{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
