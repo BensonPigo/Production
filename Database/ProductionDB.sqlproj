@@ -2430,6 +2430,8 @@
     <Build Include="dbo\Tables\FactoryExpress_SendingSchedule.sql" />
     <Build Include="dbo\Views\View_VNNLCodeWaste.sql" />
     <Build Include="dbo\Stored Procedures\insert_Air_Fir_TnsfIn.sql" />
+    <Build Include="dbo\Functions\GetSewingLineScheduleDataBase.sql" />
+    <Build Include="dbo\Functions\GetSewingLineScheduleData_Efficiency.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
