@@ -108,21 +108,20 @@ order by ld.Seq1,ld.Seq2", masterID);
             DataGridViewGeneratorNumericColumnSettings outqty = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings requestqty = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings issueqty = new DataGridViewGeneratorNumericColumnSettings();
-            Dictionary<string, string> processSource = new Dictionary<string, string>() {
-                { "Automation", "Automation" },
-                { "Bonding", "Bonding" },
-                { "Cutting", "Cutting" },
-                { "Embroidery", "Embroidery" },
-                { "Heat transfer", "Heat transfer" },
-                { "Printing", "Printing" },
-                { "Sewing", "Sewing" },
-                { "Loading", "Loading" },
-                { "PPA", "PPA" },
-                { "FIFO", "FIFO" },
-                { "Pad print", "Pad print" },
-                { "PPIC", "PPIC" },
-                { "Thread", "Thread" }
-            }; DataGridViewGeneratorComboBoxColumnSettings process = new DataGridViewGeneratorComboBoxColumnSettings() { DataSource = new BindingSource(processSource, null), ValueMember = "Value", DisplayMember = "Value" };
+            DataGridViewGeneratorComboBoxColumnSettings process = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataTable processSourceDt = new DataTable();
+            Dictionary<string, string> processSourcedata = new Dictionary<string, string>();
+            string sqlprocess = $@"Select FullName from Production.dbo.subprocess where IsLackingAndReplacement=1";
+            DualResult dualResult = DBProxy.Current.Select(null, sqlprocess, out processSourceDt);
+            foreach (DataRow item in processSourceDt.Rows)
+            {
+                string fullname = MyUtility.Convert.GetString(item["FullName"]);
+                processSourcedata.Add(fullname, fullname);
+            }
+
+            process.DataSource = new BindingSource(processSourcedata, null);
+            process.ValueMember = "Key";
+            process.DisplayMember = "Value";
 
             inqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             outqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
