@@ -197,7 +197,6 @@ from (
 				AND SCICtnNo=b.SCICtnNo
 	)ScanQty
 	where   b.CTNStartNo != '' 
-	        and b.ClogPulloutDate is null            
 	        and b.ReceiveDate is not null
             and b.TransferCFADate is null
             and b.CFAReturnClogDate is null
@@ -388,7 +387,6 @@ OUTER APPLY (
 			AND ppd.SCICtnNo=pd.SCICtnNo
 )ScanQty
 where pd.ID = '{0}' 
-and pd.ClogPulloutDate is null
 and CTNStartNo = '{1}' 
 and pd.CTNQty > 0 
 and pd.DisposeFromClog= 0",
