@@ -2583,6 +2583,47 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 return dt;
             }
         }
+
+        public static DualResult ReTransferMtlToScrapByPO(string poID, List<DataRow> listMtlItem)
+        {
+            string sqlRetransferToScrap = $@"
+        -- 新增 報廢單主檔 & 明細檔
+		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = '{poID}' AND S.Status='Confirmed')
+			update [dbo].[SubTransfer] set [EditName]= '{Env.User.UserID}' , [EditDate] = GETDATE() WHERE ID = '{poID}' 
+		ELSE 
+		BEGIN
+			INSERT INTO [dbo].[SubTransfer]
+				   ([Id]				   ,[MDivisionID]				   ,[FactoryID]
+				   ,[Type]
+				   ,[IssueDate]				   ,[Status]				   ,[Remark]
+				   ,[AddName]				   ,[AddDate]				   ,[EditName]
+				   ,[EditDate])
+			VALUES
+					('{poID}' 
+					,'{Env.User.Keyword}' 
+					,'{Env.User.Factory}'
+					,'D' -- A2C
+					,GETDATE()
+					,'Confirmed'
+					,'Add by Warehouse Close'
+					,'{Env.User.UserID}' 
+					,GETDATE()
+					,'{Env.User.UserID}' 
+					,GETDATE()
+					);
+		END
+";
+            foreach (var retransferToScrapItem in listMtlItem)
+            {
+                string mDivisionPoDetailUkey = MyUtility.Check.Empty(retransferToScrapItem["MDivisionPoDetailUkey"]) ? "NULL" : retransferToScrapItem["MDivisionPoDetailUkey"].ToString();
+                sqlRetransferToScrap += $@" 
+    exec dbo.usp_ReTransferMtlToScrap {retransferToScrapItem["Ukey"]}
+    exec dbo.usp_SingleItemRecaculate {mDivisionPoDetailUkey}, '{poID}', '{retransferToScrapItem["Seq1"]}', '{retransferToScrapItem["Seq2"]}'
+    ";
+            }
+
+            return DBProxy.Current.Execute(null, sqlRetransferToScrap);
+        }
     }
     public class Prgs_POSuppDetailData
     {
