@@ -136,23 +136,55 @@ BEGIN
 				, SizeName as SizeCode
 				,[QAQty]=sum(OutputQty) 
 				,[InlineQty]=sum(InputQty) --4/13 InputQty�g�J��Sewing P01���e����prod qty��
+				,[RowKey]=row_number()OVER (ORDER BY dDate ,WorkLine ,MONo ,ColorName ,SizeName)
 			into #tmp_Into_SewingOutput_Detail_Detail_with0
 			from #tOutputTotal
 			where dDate = @DateStart
 			group by dDate,WorkLine,MONo,ColorName,SizeName
 
 			
+			/*
+			QAQty判斷說明：
+			由於Hanger轉進的資料，會有「產出數量 > 訂單數量」的問題，因此寫入DB時要扣掉，以符合訂單數量。
+			ComboType + OrderId + Article + SizeCode可能不只一個產線有生產，因此會有以下狀況
+			
+			[A]  Hanger的產出數量 >= 訂單數量 && 有生產該款式的產線 = 1 
 
-			SELECt  dDate
-					,WorkLine
-					,OrderId
-					,ComboType
-					,Article
-					,SizeCode
-					,[QAQty]=CASE  WHEN (Order_Qty.Qty - AlreadyInPMS.Qty) >= ISNULL(t.QAQty,0) THEN ISNULL(t.QAQty,0)
-								   ELSE (Order_Qty.Qty - AlreadyInPMS.Qty) 
-								   END
-					,[InlineQty]
+				寫入PMS的產出數量 = 訂單數量 - 已經存在Production DB的數量
+
+
+			[B]  Hanger的產出數量 >= 訂單數量 && 有生產該款式的產線 > 1 
+			
+				則產量最高的產線，寫入PMS的產出數量 = 訂單數量 - 已經存在Production DB的數量 - 所有產線的產出總和 + 自己這條產線的產出
+				產量最高的產線不變
+
+				舉例：若A款式
+				1.訂單數量 = 100
+				2.已經存在Production DB的數量 = 90
+				3.產線01產出 = 7，產線02產出 = 5，總和產出12
+
+				[B-1] 能寫入PMS的只有10，多餘的2要從產量最多的產線(01)去扣
+					  =>產線01寫入： 100 - 90 - 12 + 7 =5
+					  =>產線01寫入： 5
+
+				另一種情況是 ：
+				[B-2] 產線01 = 6，產線02 = 6，總和產出12
+				  	  則只抓一筆來扣掉
+					  =>產線01寫入： 100 - 90 - 12 + 6 = 4
+					  =>產線01寫入： 6
+
+			*/
+			SELECt   t.dDate
+					,t.WorkLine
+					,t.OrderId
+					,t.ComboType
+					,t.Article
+					,t.SizeCode
+					,[QAQty]=CASE   WHEN (LineTotal.SumQty + AlreadyInPMS.Qty) >= Order_Qty.Qty AND LineCount.Val=1 THEN Order_Qty.Qty - AlreadyInPMS.Qty    ----狀況[A]
+									WHEN (LineTotal.SumQty + AlreadyInPMS.Qty) >= Order_Qty.Qty AND LineCount.Val>1 AND t.RowKey=MaxQty.RowKey THEN (Order_Qty.Qty - AlreadyInPMS.Qty - LineTotal.SumQty + ISNULL(t.QAQty,0) )  ----狀況[B-1]
+									ELSE ISNULL(t.QAQty,0)  ----狀況[B-2]
+									END
+					,t.[InlineQty]
 			INTO #tmp_Into_SewingOutput_Detail_Detail_1
 			FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t
 			outer apply(
@@ -168,7 +200,7 @@ BEGIN
                 SELECT [Qty]=iif(b.value is not null,round(cast(ISNULL([Qty],0) as decimal) * (1+ isnull(b.DyeingLoss,0)/100),0),Order_Qty.Qty)
 				FROM Order_Qty 
 				WHERE ID=t.OrderId AND Article=t.Article AND SizeCode=t.SizeCode
-			)Order_Qty
+			)Order_Qty  ----這個OrderId + Article + SizeCode的訂單數量
 			OUTER APPLY(
 				SELECT [Qty]=ISNULL(SUM(QAQty),0)
 				FROM SewingOutput_Detail_Detail
@@ -180,7 +212,28 @@ BEGIN
 				)
 				AND Article=t.Article
 				AND SizeCode=t.SizeCode
-			)AlreadyInPMS
+			)AlreadyInPMS  ----這個ComboType + OrderId + Article + SizeCode，已經存在DB的產出數量
+			OUTER APPLY(
+				SELECT [SumQty]=SUM(ISNULL(t2.QAQty,0))
+				FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t2
+				WHERE t.dDate=t2.dDate AND t.OrderId=t2.OrderId AND t.ComboType=t2.ComboType AND t.Article=t2.Article AND t.SizeCode=t2.SizeCode
+			)LineTotal  ----加總所有產線的產出數量
+			OUTER APPLY(
+				SELECT TOP 1 [Val]=MAX(t2.QAQty) ,t2.dDate  ,t2.OrderId  ,t2.ComboType  ,t2.Article  ,t2.SizeCode , t2.InlineQty ,t2.RowKey
+				FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t2
+				WHERE t.dDate=t2.dDate 
+						AND t.OrderId=t2.OrderId 
+						AND t.ComboType=t2.ComboType 
+						AND t.Article=t2.Article 
+						AND t.SizeCode=t2.SizeCode
+				GROUP BY t2.dDate  ,t2.OrderId  ,t2.ComboType  ,t2.Article  ,t2.SizeCode , t2.InlineQty , t2.RowKey
+				ORDER BY [Val] DESC
+			)MaxQty  ----有生產 這個ComboType + OrderId + Article + SizeCode的產線當中，產出最高的那一條 (可能會有兩筆一模一樣的產出的，因此要抓TOP 1 的那一筆來扣)
+			OUTER APPLY(
+				SELECT [Val]=COUNT(t2.WorkLine)
+				FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t2
+				WHERE t.dDate=t2.dDate AND t.OrderId=t2.OrderId AND t.ComboType=t2.ComboType AND t.Article=t2.Article AND t.SizeCode=t2.SizeCode
+			)LineCount ----找出有幾條產線，是有生產 這個ComboType + OrderId + Article + SizeCode的
 			
 			
 			SELECt  *
