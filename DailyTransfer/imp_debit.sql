@@ -148,9 +148,8 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 			from Trade_To_Pms.dbo.debit_detail a WITH (NOLOCK)
 			inner join Trade_To_Pms.dbo.debit b WITH (NOLOCK) on a.id=b.id
 			where a.id in (select id from  Production.dbo.LocalDebit WITH (NOLOCK) where TaipeiDBC=1)
-			AND b.Status='New'
 	 ) as s
-	on t.TaipeiUkey=s.ukey
+	on t.TaipeiUkey=s.ukey AND t.ID IN (SELECT ID FROM Production.dbo.LocalDebit WHERE Status='New')
 	when matched then
 		update set 
 			t.id = s.id,
