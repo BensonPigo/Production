@@ -59,6 +59,12 @@
     <Compile Include="comboCentralizedFactory.Designer.cs">
       <DependentUpon>comboCentralizedFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="comboCentralizedZone.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="comboCentralizedZone.Designer.cs">
+      <DependentUpon>comboCentralizedZone.cs</DependentUpon>
+    </Compile>
     <Compile Include="comboCentralizedM.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -138,11 +144,47 @@
     <Compile Include="txtcdcode.Designer.cs">
       <DependentUpon>txtcdcode.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtCentralizedmulitM.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCentralizedmulitM.Designer.cs">
+      <DependentUpon>txtCentralizedmulitM.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtCentralizedmulitFactory.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCentralizedmulitFactory.Designer.cs">
+      <DependentUpon>txtCentralizedmulitFactory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtCFALocation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCFALocation.Designer.cs">
+      <DependentUpon>txtCFALocation.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtClogReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="txtClogReason.designer.cs">
       <DependentUpon>txtClogReason.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtLocalSuppNoConfirm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtLocalSuppNoConfirm.Designer.cs">
+      <DependentUpon>txtLocalSuppNoConfirm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtLocalTPESuppNoConfirm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtLocalTPESuppNoConfirm.Designer.cs">
+      <DependentUpon>txtLocalTPESuppNoConfirm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtMultiSubconNoConfirm.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtMultiSubconNoConfirm.Designer.cs">
+      <DependentUpon>txtMultiSubconNoConfirm.cs</DependentUpon>
     </Compile>
     <Compile Include="txtShippingReason.cs">
       <SubType>UserControl</SubType>
@@ -329,6 +371,18 @@
     </Compile>
     <Compile Include="txtsubcon.Designer.cs">
       <DependentUpon>txtsubcon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtsubconNoConfirm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtsubconNoConfirm.Designer.cs">
+      <DependentUpon>txtsubconNoConfirm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtSubconReason.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtSubconReason.designer.cs">
+      <DependentUpon>txtSubconReason.cs</DependentUpon>
     </Compile>
     <Compile Include="txtsubprocess.cs">
       <SubType>Component</SubType>
@@ -566,6 +620,15 @@
       <DependentUpon>txtcountry.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="txtLocalSuppNoConfirm.resx">
+      <DependentUpon>txtLocalSuppNoConfirm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtLocalTPESuppNoConfirm.resx">
+      <DependentUpon>txtLocalTPESuppNoConfirm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtMultiSubconNoConfirm.resx">
+      <DependentUpon>txtMultiSubconNoConfirm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="txtShippingReason.resx">
       <DependentUpon>txtShippingReason.cs</DependentUpon>
     </EmbeddedResource>
@@ -601,6 +664,12 @@
     <EmbeddedResource Include="txtsubcon.resx">
       <DependentUpon>txtsubcon.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtsubconNoConfirm.resx">
+      <DependentUpon>txtsubconNoConfirm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtSubconReason.resx">
+      <DependentUpon>txtSubconReason.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtsubprocess.resx">
       <DependentUpon>txtsubprocess.cs</DependentUpon>

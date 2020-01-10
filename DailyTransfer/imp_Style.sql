@@ -45,13 +45,13 @@ StyleUkey
       ,EditDate
 )
 select 
-StyleUkey
-      ,Location
-      ,Rate
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
+	   b.StyleUkey
+      ,b.Location
+      ,b.Rate
+      ,b.AddName
+      ,b.AddDate
+      ,b.EditName
+      ,b.EditDate
 from Trade_To_Pms.dbo.Style_Location as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Location as a WITH (NOLOCK) where a.StyleUkey=b.StyleUkey AND a.Location	= b.Location)
 
@@ -196,63 +196,63 @@ ID
 ,Picture2
 )
 select 
-ID
-,Ukey
-,BrandID
-,ProgramID
-,SeasonID
-,IsNull(Model,'')
-,Description
-,StyleName
-,CdCodeID
-,ApparelType
-,FabricType
-,Contents
-,GMTLT
-,CPU
-,Factories
-,FTYRemark
-,Phase
-,SampleSMR
-,SampleMRHandle
-,BulkSMR
-,BulkMRHandle
-,Junk
-,RainwearTestPassed
-,SizePage
-,SizeRange
-,Gender
-,CTNQty
-,StdCost
-,Processes
-,ArtworkCost
-,Label
-,Packing
-,IETMSID
-,IETMSVersion
-,IEImportName
-,IEImportDate
-,ApvDate
-,ApvName
-,CareCode
-,SpecialMark
-,Lining
-,StyleUnit
-,ExpectionForm
-,ExpectionFormRemark
-,ComboType
-,AddName
-,AddDate
-,EditName
-,EditDate
-,SizeUnit
-,ModularParent
-,CPUAdjusted
+ b.ID
+,b.Ukey
+,b.BrandID
+,b.ProgramID
+,b.SeasonID
+,IsNull(b.Model,'')
+,b.Description
+,b.StyleName
+,b.CdCodeID
+,b.ApparelType
+,b.FabricType
+,b.Contents
+,b.GMTLT
+,b.CPU
+,b.Factories
+,b.FTYRemark
+,b.Phase
+,b.SampleSMR
+,b.SampleMRHandle
+,b.BulkSMR
+,b.BulkMRHandle
+,b.Junk
+,b.RainwearTestPassed
+,b.SizePage
+,b.SizeRange
+,b.Gender
+,b.CTNQty
+,b.StdCost
+,b.Processes
+,b.ArtworkCost
+,b.Label
+,b.Packing
+,b.IETMSID
+,b.IETMSVersion
+,b.IEImportName
+,b.IEImportDate
+,b.ApvDate
+,b.ApvName
+,b.CareCode
+,b.SpecialMark
+,b.Lining
+,b.StyleUnit
+,b.ExpectionForm
+,b.ExpectionFormRemark
+,b.ComboType
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
+,b.SizeUnit
+,b.ModularParent
+,b.CPUAdjusted
 ,0
-,ThickFabric
-,DyeingID
-,Picture1
-,Picture2
+,b.ThickFabric
+,b.DyeingID
+,b.Picture1
+,b.Picture2
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
@@ -302,7 +302,7 @@ StyleUkey
 
 )
 select 
-b.StyleUkey
+ b.StyleUkey
 ,b.ArtworkTypeID
 ,b.Seq
 ,b.Qty
@@ -356,7 +356,7 @@ inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
 -------------------------- INSERT INTO 抓
 RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_Artwork(
-StyleUkey
+ StyleUkey
 ,ArtworkTypeID
 ,Article
 ,PatternCode
@@ -377,24 +377,24 @@ StyleUkey
 
 )
 select 
-StyleUkey
-,ArtworkTypeID
-,Article
-,PatternCode
-,PatternDesc
-,ArtworkID
-,ArtworkName
-,Qty
-,Price
-,Cost
-,Remark
+ b.StyleUkey
+,b.ArtworkTypeID
+,b.Article
+,b.PatternCode
+,b.PatternDesc
+,b.ArtworkID
+,b.ArtworkName
+,b.Qty
+,b.Price
+,b.Cost
+,b.Remark
 --,Ukey
-,AddName
-,AddDate
-,EditName
-,EditDate
-,TMS
-,Ukey
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
+,b.TMS
+,b.Ukey
 
 from Trade_To_Pms.dbo.Style_Artwork as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Artwork as a WITH (NOLOCK) where a.TradeUkey = b.Ukey)
@@ -435,16 +435,16 @@ StyleUkey
 
 )
 select 
-StyleUkey
-,CustCDID
-,Qty
-,CountryID
-,Continent
-,AddName
-,AddDate
-,EditName
-,EditDate
-,UKey
+ b.StyleUkey
+,b.CustCDID
+,b.Qty
+,b.CountryID
+,b.Continent
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
+,b.UKey
 
 from Trade_To_Pms.dbo.Style_QtyCTN as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_QtyCTN as a WITH (NOLOCK) where a.UKey = b.UKey)
@@ -481,11 +481,11 @@ StyleUkey
 
 )
 select 
-StyleUkey
-,Seq
-,SizeGroup
-,SizeCode
-,UKey
+ b.StyleUkey
+,b.Seq
+,b.SizeGroup
+,b.SizeCode
+,b.UKey
 
 from Trade_To_Pms.dbo.Style_SizeCode as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SizeCode as a WITH (NOLOCK) where a.Ukey = b.Ukey)
@@ -519,11 +519,11 @@ StyleUkey
 ,Upper
 )
 select 
-StyleUkey
-,SizeGroup
-,SizeItem
-,Lower
-,Upper
+ b.StyleUkey
+,b.SizeGroup
+,b.SizeItem
+,b.Lower
+,b.Upper
 from Trade_To_Pms.dbo.Style_SizeTol as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SizeTol as a WITH (NOLOCK) where a.StyleUkey = b.StyleUkey and a.SizeGroup = b.SizeGroup and a.SizeItem = b.SizeItem)
 
@@ -559,11 +559,11 @@ StyleUkey
 
 )
 select 
-StyleUkey
-,SizeItem
-,SizeCode
-,SizeSpec
-,UKey
+ b.StyleUkey
+,b.SizeItem
+,b.SizeCode
+,b.SizeSpec
+,b.UKey
 
 from Trade_To_Pms.dbo.Style_SizeSpec as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SizeSpec as a WITH (NOLOCK) where a.Ukey = b.Ukey)
@@ -600,12 +600,12 @@ StyleUkey
 ,Contents
 )
 select 
-StyleUkey
-,Seq
-,Article
-,TissuePaper
-,ArticleName
-,Contents
+ b.StyleUkey
+,b.Seq
+,b.Article
+,b.TissuePaper
+,b.ArticleName
+,b.Contents
 from Trade_To_Pms.dbo.Style_Article as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Article as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
 
@@ -622,7 +622,7 @@ when not matched by target then
 	) values (
 		s.Styleukey , s.Article , s.colorid, s.qty
 	)
-when not matched by source AND T.Styleukey IN (SELECT Styleukey FROM Trade_To_Pms.dbo.Style) then  
+when not matched by source AND T.Styleukey IN (SELECT ukey FROM Trade_To_Pms.dbo.Style) then  
 	delete;
 --STYLEA
 --Style_MarkerList
@@ -709,37 +709,37 @@ INSERT INTO Production.dbo.Style_MarkerList(
 
 )
 select 
- StyleUkey
-,Ukey
-,Seq
-,MarkerName
-,FabricCode
-,FabricCombo
-,FabricPanelCode
-,MarkerLength
-,ConsPC
-,CuttingPiece
-,ActCuttingPerimeter
-,StraightLength
-,CurvedLength
-,Efficiency
-,Remark
-,MixedSizeMarker
-,MarkerNo
-,MarkerUpdate
-,MarkerUpdateName
-,AllSize
-,PhaseID
-,SMNoticeID
-,MarkerVersion
-,Direction
-,CuttingWidth
-,Width
-,Type
-,AddName
-,AddDate
-,EditName
-,EditDate
+ b.StyleUkey
+,b.Ukey
+,b.Seq
+,b.MarkerName
+,b.FabricCode
+,b.FabricCombo
+,b.FabricPanelCode
+,b.MarkerLength
+,b.ConsPC
+,b.CuttingPiece
+,b.ActCuttingPerimeter
+,b.StraightLength
+,b.CurvedLength
+,b.Efficiency
+,b.Remark
+,b.MixedSizeMarker
+,b.MarkerNo
+,b.MarkerUpdate
+,b.MarkerUpdateName
+,b.AllSize
+,b.PhaseID
+,b.SMNoticeID
+,b.MarkerVersion
+,b.Direction
+,b.CuttingWidth
+,b.Width
+,b.Type
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
 
 from Trade_To_Pms.dbo.Style_MarkerList as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_MarkerList as a WITH (NOLOCK) where a.Ukey = b.Ukey)
@@ -885,16 +885,16 @@ StyleUkey
 ,QTWidth
 )
 select 
-StyleUkey
-,FabricPanelCode
-,FabricCode
-,PatternPanel
-,AddName
-,AddDate
-,EditName
-,EditDate
-,Style_BOFUkey
-,QTWidth
+ b.StyleUkey
+,b.FabricPanelCode
+,b.FabricCode
+,b.PatternPanel
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
+,b.Style_BOFUkey
+,b.QTWidth
 from Trade_To_Pms.dbo.Style_FabricCode as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_FabricCode as a WITH (NOLOCK) where a.StyleUkey = b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode)
 --STYLE8
@@ -947,20 +947,20 @@ StyleUkey
 ,HorizontalCutting
 )
 select 
-StyleUkey
-,FabricCode
-,Refno
-,SCIRefno
-,Kind
-,Ukey
-,SuppIDBulk
-,SuppIDSample
-,consPc
-,MatchFabric
-,HRepeat
-,VRepeat
-,OneTwoWay 
-,HorizontalCutting
+ b.StyleUkey
+,b.FabricCode
+,b.Refno
+,b.SCIRefno
+,b.Kind
+,b.Ukey
+,b.SuppIDBulk
+,b.SuppIDSample
+,b.consPc
+,b.MatchFabric
+,b.HRepeat
+,b.VRepeat
+,b.OneTwoWay 
+,b.HorizontalCutting
 from Trade_To_Pms.dbo.Style_BOF as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOF as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 --STYLE9
@@ -1006,6 +1006,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
+,a.FabricPanelCode = b.FabricPanelCode
 
 from Production.dbo.Style_BOA as a 
 inner join Trade_To_Pms.dbo.Style_BOA as b ON a.Ukey=b.Ukey
@@ -1034,36 +1035,37 @@ StyleUkey
 ,AddDate
 ,EditName
 ,EditDate
-
+,FabricPanelCode
 )
 select 
-StyleUkey
-,Ukey
-,Refno
-,SCIRefno
-,SEQ1
-,ConsPC
-,PatternPanel
-,SizeItem
-,ProvidedPatternRoom
-,Remark
-,ColorDetail
-,IsCustCD
-,BomTypeZipper
-,BomTypeSize
-,BomTypeColor
-,BomTypePo
-,SuppIDBulk
-,SuppIDSample
-,AddName
-,AddDate
-,EditName
-,EditDate
-
+ b.StyleUkey
+,b.Ukey
+,b.Refno
+,b.SCIRefno
+,b.SEQ1
+,b.ConsPC
+,b.PatternPanel
+,b.SizeItem
+,b.ProvidedPatternRoom
+,b.Remark
+,b.ColorDetail
+,b.IsCustCD
+,b.BomTypeZipper
+,b.BomTypeSize
+,b.BomTypeColor
+,b.BomTypePo
+,b.SuppIDBulk
+,b.SuppIDSample
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
+,b.FabricPanelCode
 from Trade_To_Pms.dbo.Style_BOA as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
 -----------------------[Style_BOA_CustCD]-----------------------
+/*
 	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_BOA_CustCD as t
 	Using Trade_To_Pms.dbo.Style_BOA_CustCD as s
@@ -1101,12 +1103,12 @@ where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where
 	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
 		delete; 
 
-
+*/
 ------------------Style_BOA_KeyWord-------------------
 	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_BOA_KeyWord as t
 	Using Trade_to_Pms.dbo.Style_BOA_KeyWord as s
-	on t.Style_BOAUkey=s.Style_BOAUkey 
+	on t.Style_BOAUkey=s.Style_BOAUkey and t.KeyWordID=s.KeyWordID 
 	when matched then
 		update set 
 		t.StyleUkey= s.StyleUkey,
@@ -1170,16 +1172,16 @@ INSERT INTO Production.dbo.Style_ColorCombo(
 ,EditDate
 )
 select 
- StyleUkey
-,Article
-,ColorID
-,FabricCode
-,FabricPanelCode
-,PatternPanel
-,AddName
-,AddDate
-,EditName
-,EditDate
+ b.StyleUkey
+,b.Article
+,b.ColorID
+,b.FabricCode
+,b.FabricPanelCode
+,b.PatternPanel
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
 from Trade_To_Pms.dbo.Style_ColorCombo as b
 where not exists(select 1 from Production.dbo.Style_ColorCombo as a WITH (NOLOCK) where a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.FabricPanelCode	= b.FabricPanelCode)
 --STYLEJ
@@ -1231,19 +1233,19 @@ StyleUkey
 
 )
 select 
-StyleUkey
-,UKEY
-,Article
-,CountryID
-,Continent
-,HSCode1
-,HSCode2
-,CATNo1
-,CATNo2
-,AddName
-,AddDate
-,EditName
-,EditDate
+ b.StyleUkey
+,b.UKEY
+,b.Article
+,b.CountryID
+,b.Continent
+,b.HSCode1
+,b.HSCode2
+,b.CATNo1
+,b.CATNo2
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
 
 from Trade_To_Pms.dbo.Style_HSCode as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_HSCode as a WITH (NOLOCK) where a.UKEY = b.UKEY)
@@ -1285,14 +1287,14 @@ StyleUkey
 ,Ukey_old
 )
 select 
-StyleUkey
-,FabricPanelCode
-,SetupID
-,AddName
-,AddDate
-,EditName
-,EditDate
-,Ukey_old
+ b.StyleUkey
+,b.FabricPanelCode
+,b.SetupID
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
+,b.Ukey_old
 
 from Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode AND a.Ukey_old	= b.Ukey_old)
@@ -1331,13 +1333,13 @@ StyleUkey
 ,EditDate
 )
 select 
-StyleUkey
-,FactoryID
-,GMTLT
-,AddName
-,AddDate
-,EditName
-,EditDate
+ b.StyleUkey
+,b.FactoryID
+,b.GMTLT
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
 from Trade_To_Pms.dbo.Style_GMTLTFty as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_GMTLTFty as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.FactoryID	= b.FactoryID)
 --STYLEK
@@ -1387,18 +1389,18 @@ MasterBrandID
 
 )
 select 
-MasterBrandID
-,MasterStyleID
-,MasterSeasonID
-,MasterStyleUkey
-,ChildrenBrandID
-,ChildrenStyleID
-,ChildrenSeasonID
-,ChildrenStyleUkey
-,AddName
-,AddDate
-,EditName
-,EditDate
+ b.MasterBrandID
+,b.MasterStyleID
+,b.MasterSeasonID
+,b.MasterStyleUkey
+,b.ChildrenBrandID
+,b.ChildrenStyleID
+,b.ChildrenSeasonID
+,b.ChildrenStyleUkey
+,b.AddName
+,b.AddDate
+,b.EditName
+,b.EditDate
 
 from Trade_To_Pms.dbo.Style_SimilarStyle as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SimilarStyle as a WITH (NOLOCK) where a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey)

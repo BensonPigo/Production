@@ -293,6 +293,8 @@ BEGIN
 						, N_Style			= IIF(isnull(a.StyleID, '') != isnull(b.StyleID, '') , b.StyleID, '')
 						, O_CustPONo		= IIF(isnull(a.CustPONo, '') != isnull(b.CustPONo, '') , a.CustPONo, '')
 						, N_CustPONo		= IIF(isnull(a.CustPONo, '') != isnull(b.CustPONo, '') , b.CustPONo, '')
+						, O_ShipModeList	= IIF(isnull(a.ShipModeList, '') != isnull(b.ShipModeList, '') , a.ShipModeList, '')
+						, N_ShipModeList	= IIF(isnull(a.ShipModeList, '') != isnull(b.ShipModeList, '') , b.ShipModeList, '')
 				from Production.dbo.Orders a WITH (NOLOCK)
 				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
 				where	(isnull(A.QTY, 0) != isnull(B.QTY, 0) 
@@ -308,6 +310,7 @@ BEGIN
 						OR isnull(A.KPILETA, '') != isnull(B.KPILETA, '')
 						OR isnull(A.LETA, '') != isnull(B.LETA, '')	
 						OR isnull(A.CustPONo, '') != isnull(B.CustPONo, '')	
+						OR isnull(A.ShipModeList, '') != isnull(B.ShipModeList, '')	
 						)
 						and b.FactoryID in (select ID from Factory)) s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToday
@@ -327,6 +330,7 @@ BEGIN
 				, t.OriginalSMnorderApv		= s.O_SmnorderApv
 				, t.OriginalLETA			= s.O_LETA
 				, t.OriginalCustPONo		= s.O_CustPONo
+				, t.OriginalShipModeList	= s.O_ShipModeList
 				, t.NewQty					= s.N_Qty
 				, t.NewBuyerDelivery		= s.N_BuyerDelivery
 				, t.NewSciDelivery			= s.N_SciDelivery
@@ -337,6 +341,7 @@ BEGIN
 				, t.NewSMnorderApv			= s.N_SMnorderApv
 				, t.NewLETA					= s.N_LETA
 				, t.NewCustPONo      		= s.N_CustPONo
+				, t.NewShipModeList			= s.N_ShipModeList
 				, t.KPILETA					= s.N_KPILETA
 				, t.MnorderApv2				= s.N_MnorderApv2
 				, t.JunkOrder				= s.N_Junk
@@ -351,7 +356,8 @@ BEGIN
 				, NewStyleID			, NewCMPQDate		, NewEachConsApv	, NewMnorderApv			, NewSMnorderApv
 				, NewLETA				, NewCustPONo		 
 				, KPILETA			    , MnorderApv2		, JunkOrder			, UpdateDate
-				, TransferDate			, BrandID
+				, TransferDate			, BrandID			
+				, OriginalShipModeList	, NewShipModeList
 			) values (
 				s.ID					, s.FactoryID		, s.MDivisionID		, s.O_Qty				, s.O_BuyerDelivery
 				, s.O_SciDelivery		, s.O_Style			, s.O_CMPQDate		, s.O_EachConsApv		, s.O_MnorderApv
@@ -361,6 +367,7 @@ BEGIN
 				, s.N_LETA				, s.N_CustPONo
 				, s.N_KPILETA		    , s.N_MnorderApv2	, s.N_Junk			, @dToday
 				, @OldDate				, s.BrandID
+				, s.O_ShipModeList		, s.N_ShipModeList
 			);
 
         ----5.No Change!
@@ -516,7 +523,12 @@ BEGIN
 				t.SubconInType = '0',
 				t.LastProductionDate       = s.LastProductionDate,				
 				t.EstPODD       = s.EstPODD,
-				t.AirFreightByBrand    = s.AirFreightByBrand
+				t.AirFreightByBrand    = s.AirFreightByBrand,
+				t.AllowanceComboID = s.AllowanceComboID,
+				t.ChangeMemoDate       = s.ChangeMemoDate,
+				t.BuyBack              = s.BuyBack,
+				t.BuyBackOrderID       = s.BuyBackOrderID,
+				t.ForecastCategory     = s.ForecastCategory
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -545,7 +557,9 @@ BEGIN
 			, SizeUnit				, CuttingSP				, IsMixMarker			, EachConsSource		, KPIEachConsApprove	
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
 			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
-			, LastProductionDate	, EstPODD				, AirFreightByBrand
+			, LastProductionDate	, EstPODD				, AirFreightByBrand		, AllowanceComboID      , ChangeMemoDate
+			, BuyBack				, BuyBackOrderID		, ForecastCategory
+
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
 			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
@@ -573,7 +587,8 @@ BEGIN
 			, s.SizeUnit			, s.CuttingSP			, s.IsMixMarker			, s.EachConsSource		, s.KPIEachConsApprove	
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
 			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
-			, s.LastProductionDate	, EstPODD				, s.AirFreightByBrand
+			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
+			, s.BuyBack				, s.BuyBackOrderID		, s.ForecastCategory
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
@@ -1489,24 +1504,25 @@ BEGIN
 		------------Order_BOA_CustCD----------Bill of Other - 用量展開
 		Merge Production.dbo.Order_BOA_CustCD as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_CustCD a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.Order_BOAUkey=s.Order_BOAUkey and t.custcdid=s.custcdid and t.refno=s.refno
+		on t.Order_BOAUkey=s.Order_BOAUkey and t.ColumnValue=s.ColumnValue
 		when matched then 
 			update set 
-				t.id		= s.id,
-				t.CustCDID	= s.CustCDID,
-				t.Refno		= s.Refno,
-				t.SCIRefno	= s.SCIRefno,
-				t.AddName	= s.AddName,
-				t.AddDate	= s.AddDate,
-				t.EditName	= s.EditName,
-				t.EditDate	= s.EditDate
+				t.id			= s.id,
+				t.CustCDID		= s.CustCDID,
+				t.Refno			= s.Refno,
+				t.SCIRefno		= s.SCIRefno,
+				t.AddName		= s.AddName,
+				t.AddDate		= s.AddDate,
+				t.EditName		= s.EditName,
+				t.EditDate		= s.EditDate,
+				t.ColumnValue	= s.ColumnValue
 		when not matched by target then
 			insert (
 				Id			, Order_BOAUkey		, CustCDID		, Refno		, SCIRefno
-				, AddName	, AddDate			, EditName		, EditDate
+				, AddName	, AddDate			, EditName		, EditDate	, ColumnValue
 			) values (
 				s.Id		, s.Order_BOAUkey	, s.CustCDID	, s.Refno	, s.SCIRefno
-				, s.AddName	, s.AddDate			, s.EditName	, s.EditDate
+				, s.AddName	, s.AddDate			, s.EditName	, s.EditDate, s.ColumnValue
 			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
@@ -1577,297 +1593,6 @@ BEGIN
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete
 		;
-
-		--------------------MNOder-------------------------M/NOtice
-		Merge Production.dbo.MNOrder as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id
-		when matched then 
-			update set 
-				t.BrandID		= s.BrandID,
-				t.ProgramID		= s.ProgramID,
-				t.StyleID		= s.StyleID,
-				t.SeasonID		= s.SeasonID,
-				t.Qty			= s.Qty,
-				t.OrderUnit		= s.OrderUnit,
-				t.FactoryID		= s.FactoryID,
-				t.CTNQty		= s.CTNQty,
-				t.CustCDID		= s.CustCDID,
-				t.CustPONO		= s.CustPONO,
-				t.Customize1	= s.Customize1,
-				t.BuyerDelivery	= s.BuyerDelivery,
-				t.MRHandle		= s.MRHandle,
-				t.SMR			= s.SMR,
-				t.PACKING		= s.PACKING,
-				t.Packing2		= s.Packing2,
-				t.MarkBack		= s.MarkBack,
-				t.MarkFront		= s.MarkFront,
-				t.MarkLeft		= s.MarkLeft,
-				t.MarkRight		= s.MarkRight,
-				t.Label			= s.Label,
-				t.SizeRange		= s.SizeRange,
-				t.AddName		= s.AddName,
-				t.AddDate		= s.AddDate,
-				t.POID			= s.POID,
-				t.OrderComboID	= s.OrderComboID	
-		when not matched by target then
-			insert (
-				ID				, BrandID		, ProgramID			, StyleID		, SeasonID
-				, Qty			, OrderUnit		, FactoryID			, CTNQty		, CustCDID
-				, CustPONO		, Customize1	, BuyerDelivery		, MRHandle		, SMR
-				, PACKING		, Packing2		, MarkBack			, MarkFront		, MarkLeft
-				, MarkRight		, Label			, SizeRange			, AddName		, AddDate
-				, POID			, OrderComboID
-			) values (
-				s.ID			, s.BrandID		, s.ProgramID		, s.StyleID		, s.SeasonID
-				, s.Qty			, s.OrderUnit	, s.FactoryID		, s.CTNQty		, s.CustCDID
-				, s.CustPONO	, s.Customize1	, s.BuyerDelivery	, s.MRHandle	, s.SMR
-				, s.PACKING		, s.Packing2	, s.MarkBack		, s.MarkFront	, s.MarkLeft
-				, s.MarkRight	, s.Label		, s.SizeRange		, s.AddName		, s.AddDate
-				, s.POID		, s.OrderComboID
-			);
-		 
-		----------------MNOrder_Qty---------------------------M/NOtice Qty breakdown
-		Merge Production.dbo.MNOrder_Qty as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_Qty a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.article=s.article and t.sizecode=s.sizecode
-		when matched then 
-			update set 
-				t.Article	= s.Article,
-				t.SizeCode	= s.SizeCode,
-				t.Qty		= s.Qty,
-				t.AddName	= s.AddName,
-				t.AddDate	= s.AddDate,
-				t.EditName	= s.EditName,
-				t.EditDate	= s.EditDate
-		when not matched by target then
-			insert (
-				ID			, Article		, SizeCode		, Qty		, AddName
-				, AddDate	, EditName		, EditDate
-			) values (
-				s.ID		, s.Article		, s.SizeCode	, s.Qty		, s.AddName
-				, s.AddDate	, s.EditName	, s.EditDate
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-		--------------MNOrder_Color---------------------M/NOtice 單-Color Description
-		Merge Production.dbo.MNOrder_Color as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_Color a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.colorid=s.colorid and t.seqno=s.seqno
-		when matched then 
-			update set 
-				t.ColorName			= s.ColorName,
-				t.Seqno				= s.Seqno,
-				t.ColorMultiple		= s.ColorMultiple,
-				t.ColorMultipleName	= s.ColorMultipleName
-		when not matched by target then
-			insert (
-				ID						, ColorID		, ColorName		, Seqno		, ColorMultiple
-				, ColorMultipleName
-			) values (
-				s.ID					, s.ColorID		, s.ColorName	, s.Seqno	, s.ColorMultiple
-				, s.ColorMultipleName
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-		--------------MNOrder_SizeCode-----------------M/NOtice-尺寸表 Size Spec(存尺寸碼)
-		Merge Production.dbo.MNOrder_SizeCode as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.SizeCode=s.SizeCode 
-		when matched then 
-			update set 
-				t.Seq		= s.Seq,
-				t.SizeGroup	= s.SizeGroup
-		when not matched by target then
-			insert (
-				Id		, Seq		, SizeGroup		, SizeCode
-			) values (
-				s.Id	, s.Seq		, s.SizeGroup	, s.SizeCode
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-		--------------MNOrder_SizeItem-----------------M/NOtice-尺寸表 Size Spec(存量法資料)
-		Merge Production.dbo.MNOrder_SizeItem as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeItem a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.SizeItem=s.SizeItem 
-		when matched then 
-			update set 
-				t.SizeDesc	= s.SizeDesc,
-				t.SizeUnit	= s.SizeUnit
-		when not matched by target then
-			insert (
-				ID		, SizeItem		, SizeDesc		, SizeUnit
-			) values (
-				s.ID	, s.SizeItem	, s.SizeDesc	, s.SizeUnit
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-
-		--------------MNOrder_SizeSpec-----------------M/NOtice-尺寸表 Size Spec(存尺寸碼)
-		Merge Production.dbo.MNOrder_SizeSpec as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeSpec a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.SizeItem=s.SizeItem and t.SizeCode=s.SizeCode and t.ukey=s.ukey
-		when matched then 
-			update set 
-				t.SizeSpec	= s.SizeSpec
-		when not matched by target then
-			insert (
-				ID		, SizeItem		, SizeCode		, SizeSpec		, ukey
-			) values (
-				s.ID	, s.SizeItem	, s.SizeCode	, s.SizeSpec	, s.ukey
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-
-		-------------MNOrder_SizeSpec_OrderCombo--------MNOrder_SizeSpec_OrderCombo
-		Merge Production.dbo.MNOrder_SizeSpec_OrderCombo as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeSpec_OrderCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.ukey=s.ukey
-		when matched then 
-			update set 
-				 t.id			= s.id
-				,t.OrderComboID = s.OrderComboID
-				,t.SizeItem		= s.SizeItem
-				,t.SizeCode		= s.SizeCode
-				,t.SizeSpec		= s.SizeSpec
-		when not matched by target then
-			insert (
-				ID		, OrderComboID		, SizeItem		, SizeCode		, SizeSpec
-				, ukey
-			) values (
-				s.ID	, s.OrderComboID	, s.SizeItem	, s.SizeCode	, s.SizeSpec
-				, s.ukey
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-
-		--------------MNOrder_ColorCombo-----------------M/NOtice-Color Comb. (主料-配色表)
-
-		Merge Production.dbo.MNOrder_ColorCombo as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_ColorCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.Article=s.Article and t.FabricPanelCode=s.FabricPanelCode
-		when matched then 
-			update set 
-				t.ColorID		= s.ColorID,
-				t.FabricCode	= s.FabricCode,
-				t.PatternPanel	= s.PatternPanel,
-				t.FabricType	= s.FabricType
-		when not matched by target then
-			insert (
-				ID					, Article		, ColorID		, FabricCode	, PatternPanel
-				, FabricPanelCode   , FabricType
-			) values (
-				s.ID				, s.Article		, s.ColorID		, s.FabricCode	, s.PatternPanel
-				, s.FabricPanelCode , s.FabricType
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-		--------------MNOrder_FabricCode-----------------M/NOtice-配色表 Color Comb. (主料-部位vs布別vsQT)
-		Merge Production.dbo.MNOrder_FabricCode as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_FabricCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode
-		when matched then 
-			update set 
-				t.PatternPanel	= s.PatternPanel,
-				t.FabricCode	= s.FabricCode
-		when not matched by target then
-			insert (
-				ID		, PatternPanel		, FabricCode	, FabricPanelCode
-			) values (
-				s.ID	, s.PatternPanel	, s.FabricCode	, s.FabricPanelCode
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-		--------------MNOrder_BOF-----------------M/NOtice-Fabric
-		Merge Production.dbo.MNOrder_BOF as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_BOF a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.FabricCode=s.FabricCode
-		when matched then 
-			update set 
-				t.Refno				= s.Refno,
-				t.SCIRefno			= s.SCIRefno,
-				t.SuppID			= s.SuppID,
-				t.Description		= s.Description,
-				t.FabricUkey_Old	= s.FabricUkey_Old,
-				t.[FabricVer_OLd ]		= s.FabricVer_OLd 
-		when not matched by target then
-			insert (  
-				ID				, FabricCode		, Refno				, SCIRefno		, SuppID
-				, Description	, FabricUkey_Old	, [FabricVer_OLd ]
-			) values (
-				s.ID			, s.FabricCode		, s.Refno			, s.SCIRefno	, s.SuppID
-				, s.Description	, s.FabricUkey_Old	, s.FabricVer_OLd 
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-			--------------MNOrder_BOA-----------------M/NOtice-Fabric
-		Merge Production.dbo.MNOrder_BOA as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_BOA a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.ukey=s.ukey
-		when matched then 
-			update set 
-				t.id				= s.id,
-				t.Refno				= s.Refno,
-				t.SCIRefno			= s.SCIRefno,
-				t.SuppID			= s.SuppID,
-				t.Seq				= s.Seq,
-				t.UsedQty			= s.UsedQty,
-				t.BomTypeSize		= s.BomTypeSize,
-				t.BomTypeColor		= s.BomTypeColor,
-				t.BomTypePono		= s.BomTypePono,
-				t.PatternPanel		= s.PatternPanel,
-				t.SizeItem			= s.SizeItem,
-				t.BomTypeZipper		= s.BomTypeZipper,
-				t.Remark			= s.Remark,
-				t.Description		= s.Description,
-				t.FabricVer_Old		= s.FabricVer_Old,
-				t.FabricUkey_Old	= s.FabricUkey_Old
-		when not matched by target then
-			insert (  
-				Id					, UKey				, Refno				, SCIRefno			, SuppID
-				, Seq				, UsedQty			, BomTypeSize		, BomTypeColor		, BomTypePono
-				, PatternPanel		, SizeItem			, BomTypeZipper		, Remark			, Description
-				, FabricVer_Old		, FabricUkey_Old 
-			) values (
-				s.Id				, s.UKey			, s.Refno			, s.SCIRefno		, s.SuppID
-				, s.Seq				, s.UsedQty			, s.BomTypeSize		, s.BomTypeColor	, s.BomTypePono
-				, s.PatternPanel	, s.SizeItem		, s.BomTypeZipper	, s.Remark			, s.Description
-				, s.FabricVer_Old	, s.FabricUkey_Old
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
-
-
-----------------MNOrder_SizeSpec_OrderCombo-----------------M/NOtice-尺寸表 Size Spec(存尺寸碼)
-	Merge Production.dbo.MNOrder_SizeSpec_OrderCombo as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeSpec_OrderCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.ukey=s.ukey
-		when matched then 
-			update set 
-				t.[Id]				= s.id
-				, t.[OrderComboID]	= s.[OrderComboID]
-				, t.[SizeItem]		= s.[SizeItem]
-				, t.[SizeCode]		= s.[SizeCode]
-				, t.[SizeSpec]		= s.[SizeSpec]		  
-		when not matched by target then
-			insert (  
-				Id		, [OrderComboID]	, [SizeItem]	, [SizeCode]	, [SizeSpec]
-				, ukey 
-			) values (
-				s.Id	, s.[OrderComboID]	, s.[SizeItem]	, s.[SizeCode]	, s.[SizeSpec]
-				, s.ukey
-			)
-		when not matched by source and t.id in (select id from #TOrder) then
-			delete;
 
 ----------------order_markerlist_Article-----------------
 	Merge Production.dbo.order_markerlist_Article as t
@@ -2102,56 +1827,6 @@ where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_UnitPrice
 Delete b
 from Production.dbo.Order_UnitPrice b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder
-Delete b
-from Production.dbo.MNOrder b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder_BOA
-Delete b
-from Production.dbo.MNOrder_BOA b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder_BOF
-Delete b
-from Production.dbo.MNOrder_BOF b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder_Color
-Delete b
-from Production.dbo.MNOrder_Color b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder_ColorCombo
-Delete b
-from Production.dbo.MNOrder_ColorCombo b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder_FabricCode
-Delete b
-from Production.dbo.MNOrder_FabricCode b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder_Qty
-Delete b
-from Production.dbo.MNOrder_Qty b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder_SizeCode
-Delete b
-from Production.dbo.MNOrder_SizeCode b
-where id in (select id from #tmpOrders as t
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder_SizeItem
-Delete b
-from Production.dbo.MNOrder_SizeItem b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------MNOrder_SizeSpec
-Delete b
-from Production.dbo.MNOrder_SizeSpec b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------[dbo].[PO]

@@ -4,7 +4,8 @@
     [SubName] NVARCHAR (250) CONSTRAINT [DF_ADIDASComplainDefect_Detail_SubName] DEFAULT ('') NOT NULL,
     [MtlTypeID] VARCHAR(20) CONSTRAINT [DF_ADIDASComplainDefect_Detail_MtlTypeID] DEFAULT ('') NOT NULL, 
     [FabricType] VARCHAR(1) CONSTRAINT [DF_ADIDASComplainDefect_Detail_FabricType] DEFAULT ('') NOT NULL, 
-    CONSTRAINT [PK_ADIDASComplainDefect_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SubID] ASC)
+    [Responsibility] VARCHAR(2) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_ADIDASComplainDefect_Detail] PRIMARY KEY ([ID], [SubID], [FabricType]) 
 );
 
 
@@ -23,3 +24,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sub ID', @l
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Name', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ADIDASComplainDefect_Detail', @level2type = N'COLUMN', @level2name = N'SubName';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'責任歸屬',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ADIDASComplainDefect_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Responsibility'

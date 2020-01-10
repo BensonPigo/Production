@@ -71,10 +71,12 @@
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(600, 5);
+            this.undo.TabIndex = 18;
             // 
             // save
             // 
             this.save.Location = new System.Drawing.Point(520, 5);
+            this.save.TabIndex = 17;
             // 
             // labelSPNo
             // 
@@ -94,7 +96,7 @@
             // 
             // labelPrice
             // 
-            this.labelPrice.Location = new System.Drawing.Point(13, 126);
+            this.labelPrice.Location = new System.Drawing.Point(417, 180);
             this.labelPrice.Name = "labelPrice";
             this.labelPrice.Size = new System.Drawing.Size(87, 23);
             this.labelPrice.TabIndex = 98;
@@ -148,7 +150,7 @@
             this.txtSPNo.Location = new System.Drawing.Point(104, 13);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(120, 23);
-            this.txtSPNo.TabIndex = 0;
+            this.txtSPNo.TabIndex = 1;
             this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
             this.txtSPNo.Validated += new System.EventHandler(this.TxtSPNo_Validated);
             // 
@@ -160,7 +162,7 @@
             this.displaySPNo.Location = new System.Drawing.Point(229, 13);
             this.displaySPNo.Name = "displaySPNo";
             this.displaySPNo.Size = new System.Drawing.Size(30, 23);
-            this.displaySPNo.TabIndex = 105;
+            this.displaySPNo.TabIndex = 2;
             // 
             // editDescription
             // 
@@ -171,7 +173,7 @@
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.Size = new System.Drawing.Size(572, 82);
-            this.editDescription.TabIndex = 1;
+            this.editDescription.TabIndex = 5;
             // 
             // numPrice
             // 
@@ -179,7 +181,7 @@
             this.numPrice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Price", true));
             this.numPrice.DecimalPlaces = 4;
             this.numPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPrice.Location = new System.Drawing.Point(104, 126);
+            this.numPrice.Location = new System.Drawing.Point(508, 180);
             this.numPrice.Maximum = new decimal(new int[] {
             1410065407,
             2,
@@ -197,7 +199,7 @@
             0,
             0});
             this.numPrice.Size = new System.Drawing.Size(90, 23);
-            this.numPrice.TabIndex = 2;
+            this.numPrice.TabIndex = 13;
             this.numPrice.Value = new decimal(new int[] {
             0,
             0,
@@ -220,7 +222,7 @@
             this.txtCTNNo.Location = new System.Drawing.Point(491, 126);
             this.txtCTNNo.Name = "txtCTNNo";
             this.txtCTNNo.Size = new System.Drawing.Size(90, 23);
-            this.txtCTNNo.TabIndex = 3;
+            this.txtCTNNo.TabIndex = 11;
             this.txtCTNNo.Validated += new System.EventHandler(this.TxtCTNNo_Validated);
             // 
             // numQty
@@ -242,7 +244,7 @@
             0,
             0});
             this.numQty.Size = new System.Drawing.Size(74, 23);
-            this.numQty.TabIndex = 4;
+            this.numQty.TabIndex = 7;
             this.numQty.Value = new decimal(new int[] {
             0,
             0,
@@ -265,13 +267,13 @@
             this.txtunit_ftyUnit.Location = new System.Drawing.Point(491, 153);
             this.txtunit_ftyUnit.Name = "txtunit_ftyUnit";
             this.txtunit_ftyUnit.Size = new System.Drawing.Size(66, 23);
-            this.txtunit_ftyUnit.TabIndex = 5;
+            this.txtunit_ftyUnit.TabIndex = 12;
             // 
             // numNW
             // 
             this.numNW.BackColor = System.Drawing.Color.White;
             this.numNW.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NW", true));
-            this.numNW.DecimalPlaces = 2;
+            this.numNW.DecimalPlaces = 3;
             this.numNW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numNW.Location = new System.Drawing.Point(104, 180);
             this.numNW.Maximum = new decimal(new int[] {
@@ -286,7 +288,7 @@
             0,
             0});
             this.numNW.Size = new System.Drawing.Size(65, 23);
-            this.numNW.TabIndex = 6;
+            this.numNW.TabIndex = 8;
             this.numNW.Value = new decimal(new int[] {
             0,
             0,
@@ -295,7 +297,7 @@
             // 
             // labelReceiver
             // 
-            this.labelReceiver.Location = new System.Drawing.Point(417, 180);
+            this.labelReceiver.Location = new System.Drawing.Point(417, 206);
             this.labelReceiver.Name = "labelReceiver";
             this.labelReceiver.Size = new System.Drawing.Size(70, 23);
             this.labelReceiver.TabIndex = 114;
@@ -307,10 +309,10 @@
             this.txtReceiver.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtReceiver.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Receiver", true));
             this.txtReceiver.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReceiver.Location = new System.Drawing.Point(491, 180);
+            this.txtReceiver.Location = new System.Drawing.Point(491, 206);
             this.txtReceiver.Name = "txtReceiver";
             this.txtReceiver.Size = new System.Drawing.Size(185, 23);
-            this.txtReceiver.TabIndex = 7;
+            this.txtReceiver.TabIndex = 14;
             // 
             // comboCategory
             // 
@@ -323,25 +325,25 @@
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(91, 24);
-            this.comboCategory.TabIndex = 8;
+            this.comboCategory.TabIndex = 9;
             // 
             // labelAirPPNo
             // 
-            this.labelAirPPNo.Location = new System.Drawing.Point(417, 206);
+            this.labelAirPPNo.Location = new System.Drawing.Point(13, 126);
             this.labelAirPPNo.Name = "labelAirPPNo";
-            this.labelAirPPNo.Size = new System.Drawing.Size(70, 23);
+            this.labelAirPPNo.Size = new System.Drawing.Size(87, 23);
             this.labelAirPPNo.TabIndex = 117;
             this.labelAirPPNo.Text = "PL#";
             // 
-            // txtAirPPNo
+            // txtPackingListID
             // 
             this.txtPackingListID.BackColor = System.Drawing.Color.White;
             this.txtPackingListID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PackingListID", true));
             this.txtPackingListID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPackingListID.Location = new System.Drawing.Point(491, 206);
-            this.txtPackingListID.Name = "txtAirPPNo";
+            this.txtPackingListID.Location = new System.Drawing.Point(104, 126);
+            this.txtPackingListID.Name = "txtPackingListID";
             this.txtPackingListID.Size = new System.Drawing.Size(120, 23);
-            this.txtPackingListID.TabIndex = 9;
+            this.txtPackingListID.TabIndex = 6;
             this.txtPackingListID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPackingListID_Validating);
             // 
             // txttpeuserTeamLeader
@@ -352,7 +354,7 @@
             this.txttpeuserTeamLeader.Location = new System.Drawing.Point(104, 234);
             this.txttpeuserTeamLeader.Name = "txttpeuserTeamLeader";
             this.txttpeuserTeamLeader.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserTeamLeader.TabIndex = 119;
+            this.txttpeuserTeamLeader.TabIndex = 10;
             // 
             // labelBrand
             // 
@@ -370,7 +372,7 @@
             this.displayBrand.Location = new System.Drawing.Point(491, 233);
             this.displayBrand.Name = "displayBrand";
             this.displayBrand.Size = new System.Drawing.Size(100, 23);
-            this.displayBrand.TabIndex = 121;
+            this.displayBrand.TabIndex = 15;
             // 
             // editRemark
             // 
@@ -381,7 +383,7 @@
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(572, 56);
-            this.editRemark.TabIndex = 10;
+            this.editRemark.TabIndex = 16;
             // 
             // labelSeason
             // 
@@ -399,7 +401,7 @@
             this.displaySeason.Location = new System.Drawing.Point(359, 13);
             this.displaySeason.Name = "displaySeason";
             this.displaySeason.Size = new System.Drawing.Size(92, 23);
-            this.displaySeason.TabIndex = 124;
+            this.displaySeason.TabIndex = 3;
             // 
             // labelStyle
             // 
@@ -417,7 +419,7 @@
             this.displayStyle.Location = new System.Drawing.Point(534, 13);
             this.displayStyle.Name = "displayStyle";
             this.displayStyle.Size = new System.Drawing.Size(140, 23);
-            this.displayStyle.TabIndex = 126;
+            this.displayStyle.TabIndex = 4;
             // 
             // P02_AddByPOItem
             // 

@@ -70,7 +70,7 @@ where Junk != 1", out dtFactory);
 
             if (this.dateFarmOutDate.HasValue)
             {
-                FirstWhere.Add($@"  and b.Id LIKE 'TB%'");
+                FirstWhere.Add($@"  and left(b.ID,2) ='TB'");
                 if (this.dateFarmOutDate.Value1.Empty() == false)
                 {
                     FirstWhere.Add(" and b.IssueDate >= @dateFarmOutDateFrom ");
@@ -114,14 +114,14 @@ where Junk != 1", out dtFactory);
             {
                 if (dateBundleScan.Value1.Empty() == false)
                 {
-                    FirstWhere.Add(" and (b.Id LIKE 'TB%' and b.IssueDate >= @dateBundleScanFrom or b.Id LIKE 'TC%' and bd.ReceiveDate >= @dateBundleScanFrom)");
+                    FirstWhere.Add(" and (left(b.ID,2) = 'TB' and b.IssueDate >= @dateBundleScanFrom or left(b.ID,2) = 'TC' and bd.ReceiveDate >= @dateBundleScanFrom)");
                     finalWhere.Add(" and (FarmOut.IssueDate >= @dateBundleScanFrom or FarmIn.ReceiveDate >= @dateBundleScanFrom)");
                     listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", (this.dateBundleScan.DateBox1.Value)));
                 }
             
                 if (dateBundleScan.Value2.Empty() == false)
                 {
-                    FirstWhere.Add(" and (b.Id LIKE 'TB%' and b.IssueDate <= @dateBundleScanTo or b.Id LIKE 'TC%' and bd.ReceiveDate <= @dateBundleScanTo)");
+                    FirstWhere.Add(" and (left(b.ID,2) = 'TB' and b.IssueDate <= @dateBundleScanTo or left(b.ID,2) = 'TC' and bd.ReceiveDate <= @dateBundleScanTo)");
                     finalWhere.Add(" and (FarmOut.IssueDate <= @dateBundleScanTo or FarmIn.ReceiveDate <= @dateBundleScanTo)");
                     listSqlPar.Add(new SqlParameter("@dateBundleScanTo", (this.dateBundleScan.DateBox2.Value.Value.AddDays(1).AddSeconds(-1))));
                 }
@@ -139,7 +139,7 @@ where Junk != 1", out dtFactory);
 
             if (!MyUtility.Check.Empty(this.subProcess))
             {
-                finalWhere.Add($@" and (s.id in ('{subProcess.Replace(",", "','")}') or '{subProcess}'='')");
+                finalWhere.Add($@" and s.id in ('{subProcess.Replace(",", "','")}')");
             }
 
             if (!MyUtility.Check.Empty(this.spNo))
@@ -155,32 +155,53 @@ set arithabort on
 
 --筆記：Farm Out=BundleTrack.AddDate   、   Farm In = BundleTrack_Detail.ReceiveDate
 
+ CREATE TABLE #Base (
+    BundleNo varchar(10), 
+    StartProcess varchar(10)
+    index [IX_#Base] nonclustered (BundleNo,StartProcess)
+)
+
+ CREATE TABLE #FarmOutList (
+    BundleNo varchar(10), 
+    StartProcess varchar(10), 
+    IssueDate date, 
+	AddDate datetime, 
+	EndSite varchar(10),  
+    index [IX_#FarmOutList] nonclustered (BundleNo,StartProcess)
+)
+
+ CREATE TABLE #FarmInList (
+    BundleNo varchar(10), 
+    StartProcess varchar(10),
+	ReceiveDate datetime, 
+    index [IX_#FarmInList] nonclustered (BundleNo,StartProcess)
+)
+
 --先找出該時間區段內所有的Farm Out，BundleNo、StartProcess
+insert into #Base
 SELECT DISTINCT bd.BundleNo ,b.StartProcess 
-INTO #Base
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
 WHERE   1 = 1 {FirstWhere.JoinToString("\r\n")}  
 
 --再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，lastEditDate 用於排序
 
+insert into #FarmOutList
 SELECT distinct bd.BundleNo ,b.StartProcess ,
 		[IssueDate] = FIRST_VALUE(b.IssueDate) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc),
 		[AddDate] = FIRST_VALUE(b.AddDate) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc),
 		[EndSite] = FIRST_VALUE(b.EndSite) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc)
-INTO #FarmOutList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
-WHERE   b.Id LIKE 'TB%' 
+WHERE   left(b.ID,2) = 'TB' 
 		AND exists (select 1 from #Base where BundleNo = bd.BundleNo and StartProcess=b.StartProcess)
 
-
+insert into #FarmInList
 SELECT distinct bd.BundleNo ,b.StartProcess  ,
 		[ReceiveDate] = FIRST_VALUE(bd.ReceiveDate) over (partition by bd.BundleNo ,b.StartProcess ORDER BY bd.ReceiveDate desc)
-INTO #FarmInList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
-WHERE   b.Id LIKE 'TC%' 
+WHERE   left(b.ID,2) = 'TC' 
 		AND exists (SELECT 1 FROM #Base where BundleNo = bd.BundleNo and StartProcess=b.StartProcess)
 		
 

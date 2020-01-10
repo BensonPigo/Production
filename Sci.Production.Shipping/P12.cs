@@ -36,6 +36,7 @@ namespace Sci.Production.Shipping
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("Qty", header: "Order Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -43,6 +44,7 @@ namespace Sci.Production.Shipping
                 .Numeric("FOCQty", header: "FOC Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("ChargeablePulloutQty", header: "Chargeable Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FOCPulloutQty", header: "FOC Pullout Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("SewingOutputQty", header: "Sewing Output Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("FinishedFOCStockinQty", header: "Finished FOC Stock-in Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 ;
         }
@@ -100,7 +102,9 @@ select
 	o.FOCQty,
 	ChargeablePulloutQty = isnull(ShipQty_ByType.TotalNotFocShipQty,0),
 	FOCPulloutQty = isnull(ShipQty_ByType.TotalFocShipQty,0),
+    SewingOutputQty = SewingOutPut.Qty ,
 	FinishedFOCStockinQty = ISNULL(FocStockQty.Value ,0)    -- Function 取得 FOC 庫存
+	,o.OrderTypeID
 from orders o with(nolock)
 inner join Factory f with(nolock) on f.id = o.FactoryID and f.IsProduceFty = 1
 outer apply(
@@ -116,7 +120,11 @@ outer apply(
 		group by pl.Type
 	) a
 )ShipQty_ByType
-
+outer apply(
+	select Qty = isnull(sum([dbo].getMinCompleteSewQty(oq.ID,oq.Article,oq.SizeCode)),0)
+	from Order_Qty oq 
+	where oq.ID=o.ID
+)SewingOutPut
 OUTER APPLY(
 	--判斷FOC 是否建立 PackingList
 	SELECT [Result]=IIF(COUNT(p.ID) > 0 ,'true' , 'false') 
@@ -202,6 +210,26 @@ order by o.ID
             DataTable dt2 = dt.Copy();
             DataTable odt;
             DualResult result;
+
+            #region SewingOutput總產出不可少於訂單總數量
+            string msgError = string.Empty;
+            DataRow[] drlist = dt2.Select("SewingOutputQty < Qty");
+            if (drlist.Length > 0)
+            {
+                msgError = "Sewing output q'ty less than order q'ty, those SP# cannot do FOC stock-in. ";
+            }
+
+            foreach (DataRow dr in drlist)
+            {
+                msgError += Environment.NewLine + dr["OrderID"];
+            }
+
+            if (!MyUtility.Check.Empty(msgError))
+            {
+                MyUtility.Msg.WarningBox(msgError);
+                return;
+            }
+            #endregion
 
             string sqlchk = $@"
 select t.OrderID

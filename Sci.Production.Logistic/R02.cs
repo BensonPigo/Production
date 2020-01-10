@@ -125,18 +125,19 @@ namespace Sci.Production.Logistic
             }
 
             sqlcmd.Append(@"
-select a.MDivisionID,a.FactoryID,a.OrderID,a.PackingID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled
+select a.MDivisionID,a.FactoryID,a.OrderID,a.StyleID,a.PackingID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled
 ,TTLQty,[QtyPerSize],a.PulloutComplete,ActPulloutDate,reason
 from(
 select 
 p.MDivisionID
 ,o.FactoryID
 ,pd.OrderID
+,o.StyleID
 ,[PackingID] = p.id
 ,pd.CTNStartNo
 ,pd.ReceiveDate
 ,o.CustPONo
-,pd.ClogLocationId
+,ClogLocationId=iif(pd.CFAReceiveDate is not null,'CFA',pd.ClogLocationId)
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
 ,[TTLQty] = TTL.Qty
@@ -193,11 +194,12 @@ select
 p.MDivisionID
 ,o.FactoryID
 ,pd.OrderID
+,o.StyleID
 ,[PackingID] = p.id
 ,pd.CTNStartNo
 ,pd.ReceiveDate
 ,o.CustPONo
-,pd.ClogLocationId
+,ClogLocationId=iif(pd.CFAReceiveDate is not null,'CFA',pd.ClogLocationId)
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
 ,[TTLQty] = TTL.Qty
@@ -283,43 +285,44 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
             worksheet.Cells[2, 2] = this.po1 + " ~ " + this.po2;
             worksheet.Cells[3, 2] = this.sp1 + " ~ " + this.sp2;
             worksheet.Cells[4, 2] = this.location1 + " ~ " + this.location2;
-            worksheet.Cells[2, 9] = this.brand;
-            worksheet.Cells[3, 9] = this.mDivision;
+            worksheet.Cells[2, 10] = this.brand;
+            worksheet.Cells[3, 10] = this.mDivision;
 
             // 填內容值
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 15];
+            object[,] objArray = new object[1, 16];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
                 objArray[0, 1] = dr["FactoryID"];
                 objArray[0, 2] = dr["OrderID"];
-                objArray[0, 3] = dr["PackingID"];
-                objArray[0, 4] = dr["CTNStartNo"];
-                objArray[0, 5] = dr["ReceiveDate"];
-                objArray[0, 6] = dr["CustPONo"];
-                objArray[0, 7] = dr["ClogLocationId"];
-                objArray[0, 8] = dr["BrandID"];
-                objArray[0, 9] = dr["Cancelled"];
+                objArray[0, 3] = dr["StyleID"];
+                objArray[0, 4] = dr["PackingID"];
+                objArray[0, 5] = dr["CTNStartNo"];
+                objArray[0, 6] = dr["ReceiveDate"];
+                objArray[0, 7] = dr["CustPONo"];
+                objArray[0, 8] = dr["ClogLocationId"];
+                objArray[0, 9] = dr["BrandID"];
+                objArray[0, 10] = dr["Cancelled"];
                 if (this.Perm.Confirm)
                 {
-                    objArray[0, 10] = dr["TTLQty"];
-                    objArray[0, 11] = dr["QtyPerSize"];
-                    objArray[0, 12] = dr["PulloutComplete"];
-                    objArray[0, 13] = dr["ActPulloutDate"];
-                    objArray[0, 14] = dr["reason"];
+                    objArray[0, 11] = dr["TTLQty"];
+                    objArray[0, 12] = dr["QtyPerSize"];
+                    objArray[0, 13] = dr["PulloutComplete"];
+                    objArray[0, 14] = dr["ActPulloutDate"];
+                    objArray[0, 15] = dr["reason"];
                 }
 
-                worksheet.Range[string.Format("A{0}:O{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:P{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
             if (!this.Perm.Confirm)
             {
-                worksheet.Cells[5, 11] = string.Empty;
                 worksheet.Cells[5, 12] = string.Empty;
                 worksheet.Cells[5, 13] = string.Empty;
                 worksheet.Cells[5, 14] = string.Empty;
+                worksheet.Cells[5, 15] = string.Empty;
             }
 
             #region Save & Show Excel

@@ -61,40 +61,85 @@ order by oa.Seq,os.Seq", this.orderID);
 
             sqlCmd = string.Format(
                 @"
-with tmpPackingList
-as (
-select *,
-(select isnull(sum(iq.DiffQty),0) 
-from Pullout_Detail pd WITH (NOLOCK) , InvAdjust i WITH (NOLOCK) , InvAdjust_Qty iq WITH (NOLOCK) 
-where pd.ID = a.PulloutID and pd.OrderID = '{0}' and pd.UKey = i.Ukey_Pullout and i.ID = iq.ID) as adjQty
-from (select pl.ShipModeID,pl.FactoryID,pl.ID,pl.INVNo,pl.PulloutID,p.PulloutDate,pl.CTNQty,sum(pd.ShipQty) as ShipQty
-from PackingList pl WITH (NOLOCK) 
-inner join PackingList_Detail pd WITH (NOLOCK) on pl.ID = pd.ID
-left join Pullout p WITH (NOLOCK) on pl.PulloutID = p.ID
-where pd.OrderID = '{0}' 
-group by pl.ShipModeID,pl.FactoryID,pl.ID,pl.INVNo,pl.PulloutID,p.PulloutDate,pl.CTNQty) a
+with tmpPackingList as (
+    select *
+           , adjQty = (select isnull(sum(iq.DiffQty),0) 
+                       from Pullout_Detail pd WITH (NOLOCK) 
+                            , InvAdjust i WITH (NOLOCK) 
+                            , InvAdjust_Qty iq WITH (NOLOCK) 
+                       where pd.ID = a.PulloutID 
+                             and pd.OrderID = '{0}' 
+                             and pd.UKey = i.Ukey_Pullout 
+                             and i.ID = iq.ID) 
+    from (
+        select pl.ShipModeID
+               , pl.FactoryID
+               , pl.ID
+               , pl.INVNo
+               , pl.PulloutID
+               , pl.PulloutDate
+               , pl.CTNQty
+               , ShipQty = sum(pd.ShipQty)
+        from PackingList pl WITH (NOLOCK) 
+        inner join PackingList_Detail pd WITH (NOLOCK) on pl.ID = pd.ID
+        left join Pullout p WITH (NOLOCK) on pl.PulloutID = p.ID
+        where pd.OrderID = '{0}' 
+        group by pl.ShipModeID,pl.FactoryID,pl.ID,pl.INVNo,pl.PulloutID,pl.PulloutDate,pl.CTNQty
+    ) a
 ),
-tmpPullout
-as(
-select *,
-(select isnull(sum(iq.DiffQty),0) from Pullout_Detail pd WITH (NOLOCK) , InvAdjust i WITH (NOLOCK) , InvAdjust_Qty iq WITH (NOLOCK) where pd.ID = a.PulloutID and pd.OrderID = '{0}' and pd.UKey = i.Ukey_Pullout and i.ID = iq.ID) as adjQty
-from (select '' as ShipModeID,p.FactoryID,'' as ID,'' as INVNo,p.ID as PulloutID, p.PulloutDate,0 as CTNQty, sum(pd.ShipQty) as ShipQty
-from Pullout_Detail pd WITH (NOLOCK) , Pullout p WITH (NOLOCK) 
-where pd.OrderID = '{0}'
-and pd.ShipQty > 0
-and p.ID = pd.ID
-and not exists (select 1 from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) where pl.ID = pld.ID and pd.OrderID = pld.OrderID and pl.PulloutID = p.ID)
-group by p.FactoryID,p.ID,p.PulloutDate) a
+tmpPullout as(
+    select *
+           , adjQty = (select isnull(sum(iq.DiffQty),0) 
+                       from Pullout_Detail pd WITH (NOLOCK) 
+                            , InvAdjust i WITH (NOLOCK) 
+                            , InvAdjust_Qty iq WITH (NOLOCK) 
+                       where pd.ID = a.PulloutID 
+                             and pd.OrderID = '{0}' 
+                             and pd.UKey = i.Ukey_Pullout 
+                             and i.ID = iq.ID)
+    from (
+        select ShipModeID = ''
+               , p.FactoryID
+               , ID = ''
+               , INVNo = '' 
+               , PulloutID = p.ID
+               , p.PulloutDate
+               , CTNQty = 0
+               , ShipQty = sum(pd.ShipQty)
+        from Pullout_Detail pd WITH (NOLOCK) 
+             , Pullout p WITH (NOLOCK) 
+        where pd.OrderID = '{0}'
+              and pd.ShipQty > 0
+              and p.ID = pd.ID
+              and not exists (
+                    select 1 
+                    from PackingList pl WITH (NOLOCK) 
+                         , PackingList_Detail pld WITH (NOLOCK) 
+                    where pl.ID = pld.ID 
+                          and pd.OrderID = pld.OrderID 
+                          and pl.PulloutID = p.ID)
+        group by p.FactoryID, p.ID, p.PulloutDate
+    ) a
 ),
-tmpInvAdj
-as
-(
-select '' as ShipModeID,''  as FactoryID,'' as ID,i.GarmentInvoiceID as INVNo,'' as PulloutID, null as PulloutDate,0 as CTNQty, 0 as ShipQty,sum(iq.DiffQty) as adjQty
-from InvAdjust i WITH (NOLOCK) , InvAdjust_Qty iq WITH (NOLOCK) 
-where i.ID = iq.ID
-and i.OrderID = '{0}'
-and not exists (select 1 from tmpPackingList where INVNo = i.GarmentInvoiceID)
-group by i.GarmentInvoiceID
+tmpInvAdj as (
+    select ShipModeID = ''
+           , FactoryID = ''
+           , ID = ''
+           , INVNo = i.GarmentInvoiceID
+           , PulloutID = ''
+           , PulloutDate = null
+           , CTNQty = 0
+           , ShipQty = 0
+           , adjQty = sum(iq.DiffQty)
+    from InvAdjust i WITH (NOLOCK) 
+         , InvAdjust_Qty iq WITH (NOLOCK) 
+    where i.ID = iq.ID
+          and i.OrderID = '{0}'
+          and not exists (
+                select 1 
+                from tmpPackingList 
+                where INVNo = i.GarmentInvoiceID)
+    group by i.GarmentInvoiceID
 )
 select * from tmpPackingList
 union all

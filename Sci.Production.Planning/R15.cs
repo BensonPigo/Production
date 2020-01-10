@@ -23,6 +23,7 @@ namespace Sci.Production.Planning
         private string spno2;
         private string custcd;
         private string brandid;
+        private string styleId;
         private DateTime? sciDelivery1;
         private DateTime? sciDelivery2;
         private DateTime? CustRqsDate1;
@@ -58,7 +59,7 @@ namespace Sci.Production.Planning
             DataTable dt;
             DBProxy.Current.Select(null, "select sby = 'SP#' union all select sby = 'Acticle / Size'", out dt);
             MyUtility.Tool.SetupCombox(this.comboBox1, 1, dt);
-            this.comboBox1.SelectedIndex = 0;
+            this.comboBox1.SelectedIndex = 0; this.ReportType = "SP#";
         }
 
         /// <summary>
@@ -96,6 +97,7 @@ namespace Sci.Production.Planning
             this.spno2 = this.txtSPNoEnd.Text;
             #endregion
             this.brandid = this.txtbrand.Text;
+            this.styleId = this.txtStyle.Text;
             this.custcd = this.txtCustCD.Text;
             this.mdivision = this.txtMdivision.Text;
             this.factory = this.txtfactory.Text;
@@ -203,7 +205,11 @@ namespace Sci.Production.Planning
                     // 首列資料篩選
                     Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
+
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
+
+                    // 客製化欄位，記得設定this.IsSupportCopy = true
+                    this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP");
@@ -224,11 +230,14 @@ namespace Sci.Production.Planning
                     Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-
                     // 首列資料篩選
                     Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
+
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
+
+                    // 客製化欄位，記得設定this.IsSupportCopy = true
+                    this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP");
@@ -264,6 +273,10 @@ namespace Sci.Production.Planning
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
 
+
+                    // 客製化欄位，記得設定this.IsSupportCopy = true
+                    this.CreateCustomizedExcel(ref objSheets);
+
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
                     Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
@@ -288,6 +301,9 @@ namespace Sci.Production.Planning
                     Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
+
+                    // 客製化欄位，記得設定this.IsSupportCopy = true
+                    this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
@@ -336,6 +352,11 @@ namespace Sci.Production.Planning
             #endregion
 
             #region --- 條件組合  ---
+            if (!MyUtility.Check.Empty(this.styleId))
+            {
+                sqlCmd.Append($@" and o.StyleID = '{this.styleId}' ");
+            }
+
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
                 sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
@@ -348,12 +369,14 @@ namespace Sci.Production.Planning
 
             if (!MyUtility.Check.Empty(this.sewingInline1))
             {
-                sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+                // sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+                sqlCmd.Append($@"and ( o.SewInLine >= '{this.sewingInline1.Value.ToString("d")}' OR '{this.sewingInline1.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.sewingInline2))
             {
-                sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
+                // sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
+                sqlCmd.Append($@"and ( o.SewInLine <= '{this.sewingInline2.Value.ToString("d")}' OR '{this.sewingInline2.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1) && !MyUtility.Check.Empty(this.BuyerDelivery2))
@@ -493,9 +516,10 @@ where IsTMS =1 or IsPrice = 1
             }
             #endregion
 
-            #region SummaryBy SP#
             string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT" };
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+
+            #region SummaryBy SP#
             sqlCmd.Append($@"
 
 -- 依撈出來的order資料(cte)去找各製程的WIP
@@ -522,6 +546,11 @@ inner join dbo.CuttingOutput_Detail b WITH (NOLOCK) on b.id = a.id
 inner join dbo.WorkOrder_Distribute c WITH (NOLOCK) on c.WorkOrderUkey = b.WorkOrderUkey
 inner join (select distinct OrderID from #cte) t on c.OrderID = t.OrderID
 group by c.OrderID
+
+select pd.OrderId, pd.ScanQty
+into #tmp_PackingList_Detail
+from PackingList_Detail pd
+inner join #cte t on pd.OrderID = t.OrderID
 
 select t.OrderID
        , cut_qty = (SELECT SUM(CWIP.Qty) 
@@ -625,6 +654,7 @@ select t.MDivisionID
        , t.FactoryID
        , t.SewLine
        , t.OrdersBuyerDelivery
+       , t.SciDelivery
        , t.SewInLine
        , t.SewOffLine
        , t.BrandID
@@ -644,6 +674,9 @@ select t.MDivisionID
        , t.SewETA
        , t.PackETA
        , t.CPU
+	   , [TTL CPU] = t.CPU * t.Qty
+	   , [CPU Closed]= t.CPU * #cte2.sewing_output
+	   , [CPU bal]= t.CPU * (t.qty + t.FOCQty - #cte2.sewing_output )
        , article_list = (select article + ',' 
                          from (
                               select distinct q.Article  
@@ -660,20 +693,20 @@ select t.MDivisionID
        , #cte2.cut_qty
        , [RFID Cut Qty] = #SORTING.OutQtyBySet
        , [RFID Loading Qty] = #loading.InQtyBySet
-       , [RFID Emb Farm In Qty] = #Emb.InQtyBySet
-       , [RFID Emb Farm Out Qty] = #Emb.OutQtyBySet
-       , [RFID Bond Farm In Qty] = #BO.InQtyBySet	
-       , [RFID Bond Farm Out Qty] = #BO.OutQtyBySet
-       , [RFID Print Farm In Qty] = #prt.InQtyBySet
-       , [RFID Print Farm Out Qty] = #prt.OutQtyBySet
-       , [RFID AT Farm In Qty] = #AT.InQtyBySet
-       , [RFID AT Farm Out Qty] = #AT.OutQtyBySet
-       , [RFID Pad Print Farm In Qty] = #PADPRT.InQtyBySet
-       , [RFID Pad Print Farm Out Qty] = #PADPRT.OutQtyBySet
-       , [RFID Emboss Farm In Qty] = #SUBCONEMB.InQtyBySet
-       , [RFID Emboss Farm Out Qty] =#SUBCONEMB.OutQtyBySet
-       , [RFID HT Farm In Qty] = #HT.InQtyBySet
-       , [RFID HT Farm Out Qty] = #HT.OutQtyBySet
+       , [RFID Emb Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( #Emb.InQtyBySet ,0) ,#Emb.InQtyBySet)
+       , [RFID Emb Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( #Emb.OutQtyBySet ,0) ,#Emb.OutQtyBySet)
+       , [RFID Bond Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('BO')),ISNULL( #BO.InQtyBySet ,0) ,#BO.InQtyBySet)	
+       , [RFID Bond Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('BO')),ISNULL( #BO.OutQtyBySet ,0) ,#BO.OutQtyBySet)
+       , [RFID Print Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PRINTING')),ISNULL( #prt.InQtyBySet,0) ,#prt.InQtyBySet)
+       , [RFID Print Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PRINTING')),ISNULL( #prt.OutQtyBySet,0) ,#prt.OutQtyBySet)
+       , [RFID AT Farm In Qty] =IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AT')),ISNULL(#AT.InQtyBySet,0) ,#AT.InQtyBySet)
+       , [RFID AT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AT')),ISNULL(#AT.OutQtyBySet,0) ,#AT.OutQtyBySet)
+       , [RFID Pad Print Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PAD PRINTING')),ISNULL(#PADPRT.InQtyBySet ,0) ,#PADPRT.InQtyBySet)
+       , [RFID Pad Print Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PAD PRINTING')),ISNULL( #PADPRT.OutQtyBySet,0) ,#PADPRT.OutQtyBySet)
+       , [RFID Emboss Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBOSS/DEBOSS')),ISNULL( #SUBCONEMB.InQtyBySet ,0) ,#SUBCONEMB.InQtyBySet)
+       , [RFID Emboss Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBOSS/DEBOSS')),ISNULL( #SUBCONEMB.OutQtyBySet ,0) ,#SUBCONEMB.OutQtyBySet)
+       , [RFID HT Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( #HT.InQtyBySet ,0) ,#HT.InQtyBySet)
+       , [RFID HT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( #HT.OutQtyBySet ,0) ,#HT.OutQtyBySet)
         , SubProcessStatus=
 			case when t.Junk = 1 then null 
                  when #SORTING.OutQtyBySet is null and #loading.InQtyBySet is null 
@@ -803,9 +836,12 @@ outer apply(
 	select Artwork =stuff((	
 		select concat('+',ArtworkTypeID)
 		from(
-			select distinct v.ArtworkTypeID
-			from dbo.View_Order_Artworks v  WITH (NOLOCK) 
-			where v.ID=t.OrderID
+			SELECT DISTINCT [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
+			FROM Bundle b1
+			INNER JOIN Bundle_Detail bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
+			INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
+			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID=bda1.SubprocessId
+			WHERE b1.Orderid=t.OrderID
 		)tmpartwork
 		for xml path('')
 	),1,1,'')
@@ -848,19 +884,24 @@ outer apply(
 outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
 outer apply(
     select ScanQty = sum(pd.ScanQty)
-    from PackingList_Detail pd
+    from #tmp_PackingList_Detail pd
     where pd.OrderId = t.OrderID
 )PackDetail
 ");
 
-            sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
-            sqlCmd.Append(@"
-declare @sql nvarchar(max)
-select @sql = isnull(@sql+';', '') + 'drop table ' + quotename(name)
-from tempdb..sysobjects
-where name like '#%'
-exec (@sql)
-");
+            sqlCmd.Append(string.Format(@" order by {0}" + Environment.NewLine, this.orderby));
+            sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine);
+            foreach (string subprocess in subprocessIDs)
+            {
+                string whereSubprocess = subprocess;
+                if (subprocess.Equals("PAD-PRT"))
+                {
+                    whereSubprocess = "PADPRT";
+                }
+
+                sqlCmd.Append(string.Format(@" drop table #QtyBySetPerSubprocess{0}, #{0};" + Environment.NewLine, whereSubprocess));
+            }
+
             #endregion
 
             return sqlCmd;
@@ -909,12 +950,14 @@ WHERE 1=1 "));
 
             if (!MyUtility.Check.Empty(this.sewingInline1))
             {
-                sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+                // sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+                sqlCmd.Append($@"and ( o.SewInLine >= '{this.sewingInline1.Value.ToString("d")}' OR '{this.sewingInline1.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.sewingInline2))
             {
-                sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
+                // sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
+                sqlCmd.Append($@"and ( o.SewInLine <= '{this.sewingInline2.Value.ToString("d")}' OR '{this.sewingInline2.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1) && !MyUtility.Check.Empty(this.BuyerDelivery2))
@@ -1086,6 +1129,11 @@ inner join dbo.WorkOrder_Distribute c WITH (NOLOCK) on c.WorkOrderUkey = b.WorkO
 inner join (select distinct OrderID,Article,SizeCode from #cte) t on c.OrderID = t.OrderID and c.Article = t.Article and c.SizeCode = t.SizeCode
 group by c.OrderID,c.Article,c.SizeCode  
 
+select pd.OrderId,  pd.Article, pd.SizeCode, pd.ScanQty
+into #tmp_PackingList_Detail
+from PackingList_Detail pd
+inner join #cte t on pd.OrderId = t.OrderID and pd.Article = t.Article and pd.SizeCode = t.SizeCode
+
 select t.OrderID,t.Article,t.SizeCode
        , cut_qty = (SELECT SUM(CWIP.Qty) 
                     FROM DBO.CuttingOutput_WIP CWIP WITH (NOLOCK) 
@@ -1190,6 +1238,7 @@ select t.MDivisionID
        , t.FactoryID
        , SewingSchedule.SewingLineID
        , t.OrdersBuyerDelivery
+       , t.SciDelivery
        , SewingSchedule2.Inline
        , SewingSchedule2.Offline
        , t.BrandID
@@ -1209,6 +1258,9 @@ select t.MDivisionID
        , t.SewETA
        , t.PackETA
        , t.CPU
+	   , [TTL CPU] = t.CPU * t.Qty
+	   , [CPU Closed]= t.CPU * #cte2.sewing_output
+	   , [CPU bal]= t.CPU * (t.qty + t.FOCQty - #cte2.sewing_output)
        , t.Article
 	   , t.SizeCode
 -----------------------------------------------------------------------------------------------------------------------------------------
@@ -1221,20 +1273,21 @@ select t.MDivisionID
        , #cte2.cut_qty
        , [RFID Cut Qty] = SORTING.OutQtyBySet
        , [RFID Loading Qty] = loading.InQtyBySet
-       , [RFID Emb Farm In Qty] = Emb.InQtyBySet
-       , [RFID Emb Farm Out Qty] = Emb.OutQtyBySet
-       , [RFID Bond Farm In Qty] = BO.InQtyBySet	
-       , [RFID Bond Farm Out Qty] = BO.OutQtyBySet
-       , [RFID Print Farm In Qty] = prt.InQtyBySet
-       , [RFID Print Farm Out Qty] = prt.OutQtyBySet
-       , [RFID AT Farm In Qty] = AT.InQtyBySet
-       , [RFID AT Farm Out Qty] = AT.OutQtyBySet
-       , [RFID Pad Print Farm In Qty] = PADPRT.InQtyBySet
-       , [RFID Pad Print Farm Out Qty] = PADPRT.OutQtyBySet
-       , [RFID Emboss Farm In Qty] = SUBCONEMB.InQtyBySet
-       , [RFID Emboss Farm Out Qty] =SUBCONEMB.OutQtyBySet
-       , [RFID HT Farm In Qty] = HT.InQtyBySet
-       , [RFID HT Farm Out Qty] = HT.OutQtyBySet
+       , [RFID Emb Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( Emb.InQtyBySet ,0) ,Emb.InQtyBySet)
+       , [RFID Emb Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( Emb.OutQtyBySet ,0) ,Emb.OutQtyBySet)
+       , [RFID Bond Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('BO')),ISNULL( BO.InQtyBySet ,0) ,BO.InQtyBySet)	
+       , [RFID Bond Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('BO')),ISNULL( BO.OutQtyBySet ,0) ,BO.OutQtyBySet)
+       , [RFID Print Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PRINTING')),ISNULL( prt.InQtyBySet,0) ,prt.InQtyBySet)
+       , [RFID Print Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PRINTING')),ISNULL( prt.OutQtyBySet,0) ,prt.OutQtyBySet)
+       , [RFID AT Farm In Qty] =IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AT')),ISNULL(AT.InQtyBySet,0) ,AT.InQtyBySet)
+       , [RFID AT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AT')),ISNULL(AT.OutQtyBySet,0) ,AT.OutQtyBySet)
+       , [RFID Pad Print Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PAD PRINTING')),ISNULL(PADPRT.InQtyBySet ,0) ,PADPRT.InQtyBySet)
+       , [RFID Pad Print Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('PAD PRINTING')),ISNULL( PADPRT.OutQtyBySet,0) ,PADPRT.OutQtyBySet)
+       , [RFID Emboss Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBOSS/DEBOSS')),ISNULL( SUBCONEMB.InQtyBySet ,0) ,SUBCONEMB.InQtyBySet)
+       , [RFID Emboss Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBOSS/DEBOSS')),ISNULL( SUBCONEMB.OutQtyBySet ,0) ,SUBCONEMB.OutQtyBySet)
+       , [RFID HT Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( HT.InQtyBySet ,0) ,HT.InQtyBySet)
+       , [RFID HT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( HT.OutQtyBySet ,0) ,HT.OutQtyBySet)
+
         , SubProcessStatus=
 			case when t.Junk = 1 then null
                  when SORTING.OutQtyBySet is null and loading.InQtyBySet is null 
@@ -1380,9 +1433,12 @@ outer apply(
 	select Artwork =stuff((	
 		select concat('+',ArtworkTypeID)
 		from(
-			select distinct v.ArtworkTypeID
-			from dbo.View_Order_Artworks v  WITH (NOLOCK) 
-			where v.ID=t.OrderID and v.Article = t.Article and v.SizeCode = t.SizeCode
+			SELECT DISTINCT [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
+			FROM Bundle b1
+			INNER JOIN Bundle_Detail bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
+			INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
+			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID=bda1.SubprocessId
+			WHERE b1.Orderid=t.OrderID AND b1.Article=t.Article AND bd1.SizeCode=t.SizeCode
 		)tmpartwork
 		for xml path('')
 	),1,1,'')
@@ -1425,30 +1481,57 @@ outer apply(
 outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
 outer apply(
     select ScanQty = sum(pd.ScanQty)
-    from PackingList_Detail pd
+    from #tmp_PackingList_Detail pd
     where pd.OrderId = t.OrderID
     and pd.Article = t.Article
 	and pd.SizeCode = t.SizeCode
 )PackDetail
 ");
 
-            sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode", this.orderby));
+            sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode" + Environment.NewLine, this.orderby)); 
+            sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine);
+            foreach (string subprocess in subprocessIDs)
+            {
+                string whereSubprocess = subprocess;
+                if (subprocess.Equals("PAD-PRT"))
+                {
+                    whereSubprocess = "PADPRT";
+                }
 
-            sqlCmd.Append(@"
-declare @sql nvarchar(max)
-select @sql = isnull(@sql+';', '') + 'drop table ' + quotename(name)
-from tempdb..sysobjects
-where name like '#%'
-exec (@sql)
-");
-            //if (this.isArtwork)
-            //{
-            //    sqlCmd.Append(@";drop table #rawdata_tmscost,#tmscost_pvt");
-            //}
-
+                sqlCmd.Append(string.Format(@" drop table #QtyBySetPerSubprocess{0};" + Environment.NewLine, whereSubprocess));
+            }
             #endregion
 
             return sqlCmd;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            switch (this.comboBox1.SelectedIndex)
+            {
+                case 0:
+                         this.ReportType = "SP#";
+                    break;
+                case 1:
+                    this.ReportType = "Acticle / Size";
+                    break;
+                default:
+                    break;
+            }
+
+            //if (this.comboBox1.selec)
+            //{
+            //    this.ReportType = "MainList";
+            //    this.dateDelivery.ReadOnly = true;
+            //    this.dateDelivery.Value1 = null;
+            //    this.dateDelivery.Value2 = null;
+            //}
+            //if (this.radioDetailList.Checked)
+            //{
+            //    this.ReportType = "DetailList";
+            //    this.dateDelivery.ReadOnly = false;
+            //}
         }
     }
 }

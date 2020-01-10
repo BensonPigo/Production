@@ -160,6 +160,7 @@ Where   1=1
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
             #region -- Transfer Qty Valid --
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
@@ -168,6 +169,7 @@ Where   1=1
                     {
                         gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                         gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
+                        this.sum_checkedqty();
                     }
                 };
             #endregion
@@ -208,6 +210,7 @@ WHERE   StockType='{dr["toStocktype"]}'
                         dr["qty"] = 0;
                     }
                     dr.EndEdit();
+                    this.sum_checkedqty();
                 }
             };
             #region -- Location 右鍵開窗 --
@@ -357,6 +360,14 @@ WHERE   StockType='{0}'
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             txtLocation.Text = item.GetSelectedString();
+        }
+
+        private void sum_checkedqty()
+        {
+            listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
+            this.displayTotal.Value = localPrice.ToString();
         }
     }
 }

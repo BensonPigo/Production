@@ -136,6 +136,41 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
+        protected override bool ClickCopyBefore()
+        {
+            if (!MyUtility.Convert.GetBool(this.CurrentMaintain["LocalOrder"]))
+            {
+                MyUtility.Msg.WarningBox("Only Local Order can copy !!", "Error");
+            }
+
+            return MyUtility.Convert.GetBool(this.CurrentMaintain["LocalOrder"]);
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickCopyAfter()
+        {
+            DataRow dataRow = this.CurrentMaintain;
+            base.ClickNew();
+            this.CurrentMaintain["LocalOrder"] = dataRow["LocalOrder"];
+            this.CurrentMaintain["BrandID"] = dataRow["BrandID"];
+            this.CurrentMaintain["ProgramID"] = dataRow["ProgramID"];
+            this.CurrentMaintain["CustPONo"] = dataRow["CustPONo"];
+            this.CurrentMaintain["StyleID"] = dataRow["StyleID"];
+            this.CurrentMaintain["SeasonID"] = dataRow["SeasonID"];
+            this.CurrentMaintain["BuyerDelivery"] = dataRow["BuyerDelivery"];
+            this.CurrentMaintain["OrigBuyerDelivery"] = dataRow["OrigBuyerDelivery"];
+            this.CurrentMaintain["SciDelivery"] = dataRow["SciDelivery"];
+            this.CurrentMaintain["SDPDate"] = dataRow["SDPDate"];
+            this.CurrentMaintain["CurrencyID"] = dataRow["CurrencyID"];
+            this.CurrentMaintain["PoPrice"] = dataRow["PoPrice"];
+            this.CurrentMaintain["FactoryID"] = dataRow["FactoryID"];
+            this.CurrentMaintain["Dest"] = dataRow["Dest"];
+            this.CurrentMaintain["ShipModeList"] = dataRow["ShipModeList"];
+            this.CurrentMaintain["MCHandle"] = dataRow["MCHandle"];
+            this.CurrentMaintain["LocalMR"] = dataRow["LocalMR"];
+        }
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -330,7 +365,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnPFHistory.ForeColor = MyUtility.Check.Seek($@"select id from Order_PFHis with(nolock) where id = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
 
             #region 控制[m/notice sheet]按鈕是否變色
-            bool enableMNotice1 = MyUtility.Check.Seek(string.Format("select ID FROM MnOrder_ColorCombo WITH (NOLOCK) where ID = (select OrderComboID FROM MNOrder where ID = '{1}')", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            bool enableMNotice1 = !MyUtility.Check.Empty(this.CurrentMaintain["MnorderApv"]);
             bool enableMNotice2 = !MyUtility.Check.Empty(this.CurrentMaintain["SMnorderApv"]);
             bool enableMNotice = enableMNotice1 || enableMNotice2;
             this.btnMNoticeSheet.ForeColor = enableMNotice ? Color.Blue : Color.Black;
@@ -642,6 +677,7 @@ where oq.Id = '{1}'", Convert.ToDateTime(this.CurrentMaintain["BuyerDelivery"]).
             if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE")
             {
                 string insertCmd;
+                string updateCmd;
                 DualResult result;
                 if (!MyUtility.Check.Seek(string.Format("select ID from Order_Artwork WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
                 {
@@ -686,7 +722,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
 
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE" && MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
                 {
-                    string updateCmd = string.Format("update Order_QtyShip set ShipModeID = '{0}' where ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeList"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                    updateCmd = string.Format("update Order_QtyShip set ShipModeID = '{0}' where ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeList"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     result = DBProxy.Current.Execute(null, updateCmd);
                     if (!result)
                     {
@@ -694,6 +730,22 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                         return failResult;
                     }
                 }
+
+                #region 當地訂單的Orders.SizeUnit欄位不會寫入，因此要回頭去Style.SizeUnit欄位找，然後寫入
+                updateCmd = $@"
+UPDATE o
+SET o.SizeUnit = s.SizeUnit
+FROM Orders o
+INNER JOIN Style s ON o.StyleID=s.ID AND o.BrandID=s.BrandID AND o.SeasonID=s.SeasonID
+WHERE o.ID='{this.CurrentMaintain["ID"]}'
+";
+                result = DBProxy.Current.Execute(null, updateCmd);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Save Orders fail!!\r\n" + result.ToString());
+                    return failResult;
+                }
+                #endregion
             }
 
             return Result.True;
@@ -808,7 +860,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                 }
                 else
                 {
-                    this.CurrentMaintain["FtyGroup"] = MyUtility.GetValue.Lookup("FTYGroup", this.txtmfactory.Text, "Orders", "ID");
+                    this.CurrentMaintain["FtyGroup"] = MyUtility.GetValue.Lookup("FTYGroup", this.txtmfactory.Text, "Factory", "ID");
                 }
             }
         }
@@ -1296,27 +1348,33 @@ where POID = @poid group by POID,b.spno";
         }
 
         // M/Notice Sheet
-     private void BtnMNoticeSheet_Click(object sender, EventArgs e)
-     {
-         if (this.CurrentMaintain["SMnorderApv"].ToString() == null || this.CurrentMaintain["SMnorderApv"].ToString() == string.Empty)
-         {
-             var dr = this.CurrentMaintain;
-            if (dr == null)
+        private void BtnMNoticeSheet_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SMnorderApv"]) && MyUtility.Check.Empty(this.CurrentMaintain["MnorderApv"]))
             {
+                MyUtility.Msg.WarningBox("M/Notice did not approve yet, you cannot print M/Notice.");
                 return;
             }
 
-            var frm = new Sci.Production.PPIC.P01_MNoticePrint(null, dr["ID"].ToString());
-             frm.ShowDialog(this);
-             this.RenewData();
-             return;
-         }
-         else
-         {
-             string poid = this.CurrentMaintain["POID"].ToString();
-             SMNoticePrg.PrintSMNotice(poid, SMNoticePrg.EnuPrintSMType.Order);
-         }
-     }
+            if (this.CurrentMaintain["SMnorderApv"].ToString() == null || this.CurrentMaintain["SMnorderApv"].ToString() == string.Empty)
+            {
+                var dr = this.CurrentMaintain;
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new Sci.Production.PPIC.P01_MNoticePrint(null, dr["ID"].ToString());
+                frm.ShowDialog(this);
+                this.RenewData();
+                return;
+            }
+            else
+            {
+                string poid = this.CurrentMaintain["POID"].ToString();
+                SMNoticePrg.PrintSMNotice(poid, SMNoticePrg.EnuPrintSMType.Order);
+            }
+        }
 
         /// <summary>
         /// MoveSubBlockIntoMainSheet
@@ -1425,6 +1483,16 @@ where POID = @poid group by POID,b.spno";
                 if (!MyUtility.Check.Empty(spList))
                 {
                     MyUtility.Msg.WarningBox("Below combined SP# not yet ship!!\r\n" + spList.Substring(0, spList.Length - 1));
+                    return;
+                }
+            }
+
+            if (this.CurrentMaintain["Category"].EqualString("A"))
+            {
+                DualResult resultCheckOrderCategoryTypeA = P01_Utility.CheckOrderCategoryTypeA(this.CurrentMaintain["ID"].ToString());
+                if (!resultCheckOrderCategoryTypeA)
+                {
+                    MyUtility.Msg.WarningBox(resultCheckOrderCategoryTypeA.Description);
                     return;
                 }
             }

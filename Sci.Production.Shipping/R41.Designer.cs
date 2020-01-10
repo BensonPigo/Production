@@ -113,7 +113,7 @@
             this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtNLCode.Location = new System.Drawing.Point(123, 48);
             this.txtNLCode.Name = "txtNLCode";
-            this.txtNLCode.Size = new System.Drawing.Size(70, 23);
+            this.txtNLCode.Size = new System.Drawing.Size(100, 23);
             this.txtNLCode.TabIndex = 99;
             // 
             // txtContractNo

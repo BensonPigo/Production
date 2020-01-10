@@ -80,7 +80,7 @@ namespace Sci.Production.Shipping
             }
             else
             {
-                this.Status_Where = "AND s.Status <> 'Junked'";
+                this.Status_Where = "AND s.junk = 0";
             }
 
             return base.ValidateInput();
@@ -102,7 +102,7 @@ SELECT
         ,s.Price
         ,s.CanvassDate
         ,s.AccountID
-        ,[Account Name]=(select Name from FinanceEN.dbo.AccountNo where id = s.AccountID)
+        ,[Account Name]=(select Name from dbo.SciFMS_AccountNo where id = s.AccountID)
         ,s.Status
         ,[LastPaymentDate]=LastPaymentDate.Date
 FROM ShipExpense s

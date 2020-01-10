@@ -12,6 +12,7 @@
     [StockType]         CHAR (1)        CONSTRAINT [DF_Issue_Detail_StockType] DEFAULT ('') NULL,
     [ukey]              BIGINT          IDENTITY (1, 1) NOT NULL,
     [BarcodeNo]         VARCHAR (13)    NOT NULL,
+    [CompleteTime] DATETIME NULL,
     CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC),
     CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey]),
     CONSTRAINT [UK_Issue_Detail_BarcodeNo] UNIQUE NONCLUSTERED ([BarcodeNo] ASC)

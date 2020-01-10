@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -123,7 +124,7 @@ select vdd.ID,vdd.Refno,vdd.FabricType,vdd.NLCode,Qty = Round(vdd.Qty,2),vdd.Rem
 from VNImportDeclaration_Detail_Detail vdd with(nolock)
 inner join VNImportDeclaration_Detail vd with(nolock) on vd.id = vdd.ID and vd.NLCode = vdd.NLCode
 where vdd.id = '{masterID}'
-order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
+order by TRY_CONVERT(int, SUBSTRING(vdd.NLCode, 3, LEN(vdd.NLCode))), vdd.NLCode
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -272,7 +273,7 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                 .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), settings: this.fabricType)
                 .Text("UsageUnit", header: "UsageUnit", width: Widths.AnsiChars(8), settings: this.usageUnit)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(12), settings: this.nlcode).Get(out this.col_nlcode)
                 .Numeric("Qty", header: "Customs Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
                 .Text("UnitID", header: "Customs Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
@@ -378,6 +379,38 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                         MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
                         return false;
                     }
+                }
+            }
+            #endregion
+
+            #region
+            var detailList = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted);
+            if (detailList.Count() > 0)
+            {
+                var duplicateList = detailList
+                    .GroupBy(g => new { ID = g["ID"].ToString(), NLCode = g["NLCode"].ToString(), HSCode = g["HSCode"].ToString() })
+                    .GroupBy(g => new { g.Key.ID, g.Key.NLCode })
+                    .Select(g => new { g.Key.ID, g.Key.NLCode, ct = g.Count() })
+                    .Where(w => w.ct > 1);
+                if (duplicateList.Count() > 0)
+                {
+                    string msg = @"
+There have different HS Code in the same customs code.
+Please check below material some HS Code need to update.
+Brand, RefNo, HSCode, Customs Code
+";
+                    var dl = detailList.
+                        Where(w => duplicateList.Select(s => s.NLCode).Contains(MyUtility.Convert.GetString(w["NLCode"]))).
+                        OrderBy(o => MyUtility.Convert.GetString(o["NLCode"])).
+                        Select(s => new
+                        {
+                            list = MyUtility.Convert.GetString(s["BrandID"]) + "," +
+                                MyUtility.Convert.GetString(s["RefNo"]) + "," +
+                                MyUtility.Convert.GetString(s["HSCode"]) + "," +
+                                MyUtility.Convert.GetString(s["NLCode"])
+                        }).Select(s => s.list.ToString()).ToList();
+                    MyUtility.Msg.WarningBox(msg + string.Join("\r\n", dl));
+                    return false;
                 }
             }
             #endregion
@@ -1462,7 +1495,7 @@ select NLCode
        , UsageUnit
 	   , Price = iif(NewQty=0,0,Price / NewQty)
 from #tmp
-order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
+order by TRY_CONVERT(int, SUBSTRING(NLCode, 3, LEN(NLCode))), NLCode"),
                     out groupNoInPOData);
             if (!result)
             {

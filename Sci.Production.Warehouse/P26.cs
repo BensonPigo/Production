@@ -20,6 +20,14 @@ namespace Sci.Production.Warehouse
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
 
+        private class NowDetail
+        {
+            public string POID { get; set; }
+            public string Seq1 { get; set; }
+            public string Seq2 { get; set; }
+            public List<string> DB_CLocations { get; set; }
+        }
+
         public P26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -254,6 +262,7 @@ WHERE   StockType='{0}'
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: true)    //2
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)    //3
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)    //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)    //4
             .Text("colorid", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)    //5
             .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(5), iseditingreadonly: true)    //6
@@ -284,10 +293,42 @@ WHERE   StockType='{0}'
             if (null == dr) return;
 
             StringBuilder sqlupd2 = new StringBuilder();
+            List<NowDetail> NowDetails = new List<NowDetail>();
             string sqlupd3 = "";
             DualResult result;//, result2;
             string upd_MD_2T = "";
             string upd_Fty_26F = "";
+
+
+            //先把表身POID Seq1 2原本的MDivisionPoDetail CLocation記下來  ISP20191578
+            foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != "").ToList())
+            {
+                string POID = item["POID"].ToString();
+                string Seq1 = item["Seq"].ToString().Split(' ')[0];
+                string Seq2 = item["Seq"].ToString().Split(' ')[1];
+
+                DataTable DT_MDivisionPoDetail;
+                //從MDivisionPoDetail出現有的Location
+                DBProxy.Current.Select(null, $@"
+SELECt CLocation
+FROM MDivisionPoDetail
+WHERE POID='{POID}'
+AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+", out DT_MDivisionPoDetail);
+
+                List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
+
+                NowDetail nData = new NowDetail()
+                {
+                    POID= POID,
+                    Seq1=Seq1,
+                    Seq2=Seq2,
+                    DB_CLocations= DB_CLocations
+                };
+                NowDetails.Add(nData);
+
+            }
+
 
             #region 更新表頭狀態資料
 
@@ -358,7 +399,61 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                            qty = 0,
                            stocktype = m.First().Field<string>("stocktype")
                        }).ToList();
-            #endregion            
+            #endregion
+
+            #region ISP20191578 ToLocation的資料一併更新回MDivisionPODetail.CLocation欄位
+            string updateMDivisionPODetailCLocation = string.Empty;
+            try
+            {
+                foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != "").ToList())
+                {
+                    string POID = item["POID"].ToString();
+                    string Seq1 = item["Seq"].ToString().Split(' ')[0];
+                    string Seq2 = item["Seq"].ToString().Split(' ')[1];
+
+                    List<string> New_CLocationList = this.DetailDatas.AsEnumerable().Where(o => o["POID"].ToString() == POID && o["Seq"].ToString() == (Seq1 + " " + Seq2) && o["ToLocation"].ToString() != "")
+                        .Select(o => o["ToLocation"].ToString())
+                        .Distinct().ToList();
+
+                    //List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
+                    List<string> DB_CLocations = NowDetails.Where(o => o.POID == POID && o.Seq1 == Seq1 && o.Seq2 == Seq2).FirstOrDefault().DB_CLocations;
+
+                    List<string> Fincal = new List<string>();
+
+                    foreach (var New_CLocation in New_CLocationList)
+                    {
+                        if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
+                        {
+                            DB_CLocations.Add(New_CLocation);
+                        }
+                    }
+
+                    foreach (var CLocation in DB_CLocations.Distinct().ToList())
+                    {
+                        foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
+                        {
+                            if (!Fincal.Contains(a))
+                            {
+                                Fincal.Add(a);
+                            }
+                        }
+                    }
+
+                    string cmd = $@"
+UPDATE MDivisionPoDetail
+SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
+WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+
+";
+                    updateMDivisionPODetailCLocation += cmd;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr("Update MDivisionPoDetail error.", ex);
+                return;
+            }
+            #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
@@ -384,6 +479,8 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                     #endregion
 
                     #region MDivisionPoDetail
+
+
                     upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, "", upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
@@ -401,9 +498,21 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                         return;
                     }
 
+                    if (!MyUtility.Check.Empty(updateMDivisionPODetailCLocation))
+                    {
+                        result = DBProxy.Current.Execute(null, updateMDivisionPODetailCLocation);
+
+                        if (!result)
+                        {
+                            _transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Confirmed successful");
+
                 }
                 catch (Exception ex)
                 {
@@ -413,7 +522,8 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                 }
 
             }
-           
+
+            MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
         //寫明細撈出的sql command
@@ -421,19 +531,33 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,(select p1.colorid from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as colorid
-,(select p1.sizespec from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as sizespec
-,a.Roll
-,a.Dyelot
-,a.Qty
-,a.stocktype
-,a.FromLocation
-,a.ToLocation
-,a.ftyinventoryukey
-,ukey
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
+            this.DetailSelectCommand = string.Format(@"
+select a.id
+	,a.PoId
+	,a.Seq1
+	,a.Seq2
+	,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+	, p1.colorid
+	, p1.sizespec
+	,a.Roll
+	,a.Dyelot
+	,a.Qty
+	,a.stocktype
+	,a.FromLocation
+	,a.ToLocation
+	,a.ftyinventoryukey
+	,ukey
+	,p1.Refno
+	,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 from dbo.LocationTrans_detail a WITH (NOLOCK) 
+outer apply
+(
+	select p1.colorid, p1.sizespec, p1.Refno
+	from PO_Supp_Detail p1 WITH (NOLOCK) 
+	where p1.ID = a.PoId 
+	and p1.seq1 = a.SEQ1 
+	and p1.SEQ2 = a.seq2
+)p1
 Where a.id = '{0}' ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);

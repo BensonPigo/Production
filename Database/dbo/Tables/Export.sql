@@ -64,6 +64,9 @@
     [Replacement]         BIT             DEFAULT ((0)) NOT NULL,
     [Delay]               BIT             DEFAULT ((0)) NOT NULL,
     [PrepaidFtyImportFee] NUMERIC (10, 2) DEFAULT ((0)) NOT NULL,
+    [MainExportID08] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [NonDeclare] BIT NOT NULL DEFAULT ((0)), 
+    [FormE] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -321,3 +324,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Export',
     @level2type = N'COLUMN',
     @level2name = N'PrepaidFtyImportFee'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'代墊工廠進口費母單',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export',
+    @level2type = N'COLUMN',
+    @level2name = N'MainExportID08'

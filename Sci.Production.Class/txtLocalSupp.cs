@@ -56,7 +56,12 @@ namespace Sci.Production.Class
 
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(textValue, "LocalSupp", "ID"))
+                if (!MyUtility.Check.Seek($@"
+select DISTINCT l.ID
+from dbo.LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK) ON l.id=lb.id 
+WHERE lb.Status= 'Confirmed' AND  l.ID = '{textValue}'
+"))
                 {
                     this.textBox1.Text = "";
                     e.Cancel = true;
@@ -73,7 +78,13 @@ namespace Sci.Production.Class
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,Abb from LocalSupp WITH (NOLOCK) order by ID", "8,30,20", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem($@"
+select DISTINCT l.ID,l.Name,l.Abb 
+from LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+WHERE l.Junk=0 and lb.Status= 'Confirmed'  
+order by l.ID"
+, "8,30,20", this.textBox1.Text);
             item.Width = 650;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }

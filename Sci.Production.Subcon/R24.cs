@@ -142,6 +142,7 @@ namespace Sci.Production.Subcon
             sqlCmd.Append(@"
 select distinct o.poid 
         , a.FactoryID
+		, a.MDivisionID
 		, artworktypeid = a.Category
 into #tmp
 from dbo.localap a WITH (NOLOCK) 
@@ -294,9 +295,9 @@ group by  bb.ArtworkTypeID,t.poid
 
 -- #tmp_final 
 select distinct t.FactoryID
-	,aa.MDivisionID
+	,t.MDivisionID
     ,t.artworktypeid
-    ,aa.POID
+    ,t.POID
     ,aa.StyleID
     ,cc.BuyerID
     ,aa.BrandID 
@@ -309,7 +310,9 @@ select distinct t.FactoryID
     ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  ,NULL											 ,round(y.order_amt/y.order_qty,3) )    
     ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL	 ,round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty),2)  )
 
-    ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,''))into #tmp_final
+    ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,''))
+
+into #tmp_final
 from #tmp t
 left join orders aa WITH (NOLOCK) on t.poid =aa.poid  
 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid

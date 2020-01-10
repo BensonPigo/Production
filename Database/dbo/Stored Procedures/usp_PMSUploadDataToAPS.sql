@@ -143,21 +143,25 @@ outer apply(
 	)
 )REMK
 outer apply(
-	select PRGM = (
-		Select IIF(d.Qty = '''',d.TMS, d.Qty + IIF(d.TMS = '''', '''', '',''+d.TMS)) 
-		from (
-			Select 
-				IIF(ot.Qty <> 0,a.Abbreviation+'':''+CONVERT(varchar,ot.Qty),'''') as Qty, 
-				IIF(ot.TMS <> 0 and a.Classify = ''O'' ,a.Abbreviation+'':''+CONVERT(varchar,ot.TMS),'''') as TMS 
-			from Order_TmsCost ot, ArtworkType a 
-			where ot.ID  = o.ID 
-			and a.ID = ot.ArtworkTypeID 
-			and (a.Classify = ''S'' or a.IsSubprocess = 1) 
-			and not (ot.Price = 0 and a.Classify <> ''O'')		
-		) d
-		Where d.Qty <> '''' and d.TMS <> ''''
-		for xml path('''')
-	)
+	--select PRGM = (
+	--	Select IIF(d.Qty = '''',d.TMS, d.Qty + IIF(d.TMS = '''', '''', '',''+d.TMS)) 
+	--	from (
+	--		Select 
+	--			IIF(ot.Qty <> 0,a.Abbreviation+'':''+CONVERT(varchar,ot.Qty),'''') as Qty, 
+	--			IIF(ot.TMS <> 0 and a.Classify = ''O'' ,a.Abbreviation+'':''+CONVERT(varchar,ot.TMS),'''') as TMS 
+	--		from Order_TmsCost ot, ArtworkType a 
+	--		where ot.ID  = o.ID 
+	--		and a.ID = ot.ArtworkTypeID 
+	--		and (a.Classify = ''S'' or a.IsSubprocess = 1) 
+	--		and not (ot.Price = 0 and a.Classify <> ''O'')		
+	--	) d
+	--	Where d.Qty <> '''' and d.TMS <> ''''
+	--	for xml path('''')
+	--)
+
+	SELECT [PRGM]=FabricType
+	FROM Style s
+	WHERE s.Ukey = o.StyleUkey 
 ) PRGM
 outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where MasterStyleUkey = o.StyleUkey)MasterStyleID1
 outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where ChildrenStyleUkey = o.StyleUkey)MasterStyleID2
@@ -345,34 +349,38 @@ from
 group by [POCode],[Process],[Facility],[PDate],[Color],[XSize]
 '
 	END
+	EXEC(@Cmd)
+	EXEC(@Cmd2)
+	EXEC(@Cmd3)
+	EXEC(@Cmd4)
 
-	Begin Try
-		EXEC(@Cmd)		
-	End Try
-	Begin Catch
-		PRINT 'ERROR command1' 
-		rollback tran
-		EXECUTE [usp_GetErrorString];
-	End Catch
-	Begin Try
-		EXEC(@Cmd2)
-	End Try
-	Begin Catch
-		PRINT 'ERROR command2' 
-		EXECUTE [usp_GetErrorString];
-	End Catch
-	Begin Try
-		EXEC(@Cmd3)
-	End Try
-	Begin Catch
-		PRINT 'ERROR command3' 
-		EXECUTE [usp_GetErrorString];
-	End Catch
-	Begin Try
-		EXEC(@Cmd4)
-	End Try
-	Begin Catch
-		PRINT 'ERROR command4'
-		EXECUTE [usp_GetErrorString];
-	End Catch
+	--Begin Try
+	--	EXEC(@Cmd)		
+	--End Try
+	--Begin Catch
+	--	PRINT 'ERROR command1' 
+	--	rollback tran
+	--	EXECUTE [usp_GetErrorString];
+	--End Catch
+	--Begin Try
+	--	EXEC(@Cmd2)
+	--End Try
+	--Begin Catch
+	--	PRINT 'ERROR command2' 
+	--	EXECUTE [usp_GetErrorString];
+	--End Catch
+	--Begin Try
+	--	EXEC(@Cmd3)
+	--End Try
+	--Begin Catch
+	--	PRINT 'ERROR command3' 
+	--	EXECUTE [usp_GetErrorString];
+	--End Catch
+	--Begin Try
+	--	EXEC(@Cmd4)
+	--End Try
+	--Begin Catch
+	--	PRINT 'ERROR command4'
+	--	EXECUTE [usp_GetErrorString];
+	--End Catch
 END

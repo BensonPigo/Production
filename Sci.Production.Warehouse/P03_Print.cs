@@ -79,16 +79,18 @@ namespace Sci.Production.Warehouse
                 //xlt = @"Warehouse_P03_Print-1.xltx";
                 //PO_Supp_tmp為了Chinese Abb Fabric_Supp 的suppID如果找不到，請找 PO_Supp_Detail.SCIRefno seq1最小的且suppID在 Fabric_Supp是有資料的那筆
                 result= DBProxy.Current.Select("", @"with PO_Supp_tmp as (
-                                                 select aa.*,bb.AbbCH from 
-                                                 (select a.ID,a.SCIRefno,FIRST_VALUE(b.SuppID) OVER (partition by a.SCIRefno ORDER BY b.SEQ1 ) SuppID ,a.SEQ1 ,a.SEQ2
-                                                 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-                                                 left join dbo.PO_Supp b WITH (NOLOCK) on b.id=a.id and b.SEQ1=a.SEQ1
-                                                 where a.id=@ID ) aa
-                                                 left join dbo.Fabric_Supp bb on bb.SCIRefno = aa.SCIRefno and bb.SuppID = aa.SuppID 
+                                                     select aa.*,bb.AbbCH from 
+                                                     (select a.ID,a.SCIRefno,FIRST_VALUE(b.SuppID) OVER (partition by a.SCIRefno ORDER BY b.SEQ1 ) SuppID ,a.SEQ1 ,a.SEQ2
+                                                     from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+                                                     left join dbo.PO_Supp b WITH (NOLOCK) on b.id=a.id and b.SEQ1=a.SEQ1
+                                                     where a.id=@ID ) aa
+                                                     left join dbo.Fabric_Supp bb on bb.SCIRefno = aa.SCIRefno and bb.SuppID = aa.SuppID 
                                                 )
-                                                select * from (
+                                                select * 
+                                                INTO #tmp
+                                                from (
                                                 select a.id [sp]
-			                                       ,b.StyleID [style#]
+			                                       ,b.StyleID
 			                                       ,a.SEQ1+a.SEQ2 [SEQ]
 			                                       ,c.SuppID [Supp]
 			                                       ,d.NameEN [Supp Name]
@@ -196,7 +198,7 @@ namespace Sci.Production.Warehouse
                                              , [WK#] = '-'
                                              , [Order List] =  l.OrderID
                                              , [Arrived Qty] = isnull(l.InQty,0)
-                                             , [StockUnitUnit]  = l.UnitID
+                                             , [StockUnit]  = l.UnitID
                                              , [Released Qty] = isnull(l.OutQty,0)
                                              , [Adjust Qty] =isnull( l.AdjustQty,0)
                                              , [Balance]  = isnull(InQty - OutQty + AdjustQty,0)
@@ -211,7 +213,65 @@ namespace Sci.Production.Warehouse
                                                 left join orders o on o.id = l.orderid
                                                 left join LocalItem b on l.Refno=b.RefNo
                                                 left join LocalSupp c on b.LocalSuppid=c.ID
-                                                 where l.OrderID = @ID     ) as a " + junk_where + order_by, pars, out dt);			       
+                                                 where l.OrderID = @ID     ) as a " + junk_where + order_by +
+                                                @"
+                                                select 
+	                                                [sp] 
+	                                                , [StyleID] 
+	                                                , [SEQ] 
+	                                                , [Supp] 
+	                                                , [Supp Name] 
+	                                                , [Sup. 1st Cfm ETA]
+	                                                , [RevisedETD] 
+	                                                , [Ref#]	
+	                                                , [description]  
+	                                                , [Chinese Abb] 
+	                                                , [HS Code] 
+	                                                , [Material_Type] 
+	                                                , [Color] 
+	                                                , [Size] 
+	                                                , [Currency] 
+	                                                , [Qty] 
+	                                                , [Order Qty] 
+	                                                , [Net Qty] 
+	                                                , [Use Qty] 
+	                                                , [Ship Qty] 
+	                                                , [F.O.C]
+	                                                , [AP Qty]
+	                                                , [FormA]
+	                                                , [Taipei Stock Qty]
+	                                                , [POUnit]
+	                                                , [Cmplt]
+	                                                , [Act. Eta]
+	                                                , [WK#]
+	                                                , [Order List]
+	                                                , [Arrived Qty]
+	                                                , [Received Rate(%)]=IIF( CanINT.val IS NOT NULL AND CanINT2.val IS NOT NULL
+													                        , CAST(ROUND( ([Arrived Qty] / REPLACE([Ship Qty],',','') * 100),2) AS varchar) 
+													                        , '-')
+	                                                , [StockUnit] 
+	                                                , [Released Qty]
+	                                                , [Adjust Qty]
+	                                                , [Balance]
+	                                                , [Stock Qty]
+	                                                , [Scrap Qty]
+	                                                , [Bulk Location]
+	                                                , [Stock Location]
+	                                                , [FIR]
+	                                                , [Remark]
+	                                                , [junk] 
+                                                from #tmp
+                                                OUTER APPLY(
+	                                                SELECT val= (TRY_CONVERT(decimal, REPLACE([Ship Qty],',','')))
+                                                )CanINT
+                                                OUTER APPLY(
+	                                                SELECT val= (TRY_CONVERT(decimal, [Arrived Qty]))
+                                                )CanINT2
+
+
+                                                DROP TABLE #tmp"
+
+                                                 , pars, out dt);			       
           }
           else  
           {
@@ -324,10 +384,10 @@ namespace Sci.Production.Warehouse
               
                 for (int i = 0; i < dt.Rows.Count; i++) {
                     if (dt.Rows[i]["junk"].ToString().Equals("True")) {
-                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[40][i + 2]].Interior.ColorIndex = 15;
+                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[41][i + 2]].Interior.ColorIndex = 15;
                     }
                 }
-                worksheet.Columns[41].Delete();
+                worksheet.Columns[42].Delete();
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
                 
                 objApp.ActiveWorkbook.SaveAs(strExcelName);

@@ -1081,6 +1081,7 @@ Where a.id = '{0}'", masterID);
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check borrow id is existed.", "Data not found!!");
+                this.txtBorrowID.Text = string.Empty;
                 return;
             }
             else

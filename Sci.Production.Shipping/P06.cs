@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -406,6 +407,33 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
         protected override DualResult ClickSavePost()
         {
             DualResult result;
+
+            #region 存檔前檢查是否有重複的表身資料
+            string cmd = $@"
+--ClickSavePost尚未Commit，因此使用 WITH(NOLOCK) 檢視Commit後的Pullout_Detail會不會有重複的資料
+SELECT [ID]
+      ,[OrderID]
+      ,[OrderShipmodeSeq]
+      ,[PackingListID]
+      ,[Count]=COUNT([UKey])
+FROM Pullout_Detail WITH(NOLOCK)
+WHERE ID ='{this.CurrentMaintain["ID"]}' 
+      and [PackingListID] != ''
+GROUP BY [ID]
+      ,[OrderID]
+      ,[OrderShipmodeSeq]
+      ,[PackingListID]
+HAVING COUNT([UKey]) > 1
+
+";
+
+            bool hasDuplicate = MyUtility.Check.Seek(cmd);
+            if (hasDuplicate)
+            {
+                return new DualResult(false, "Detail data is not lastest, please click <Undo> and <Refresh> data.");
+            }
+            #endregion
+
             if (this.updatePackinglist.Trim() != string.Empty)
             {
                 result = DBProxy.Current.Execute(null, this.updatePackinglist);
@@ -541,7 +569,11 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             {
                 return;
             }
-
+            
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(PulloutID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
+            }
             // 模擬按Edit行為
             this.toolbar.cmdEdit.PerformClick();
 
@@ -624,51 +656,52 @@ and c.ClogReceiveCFADate is null
                         Sci.Env.User.UserID));
             }
 
-            string sqlCmd = string.Format("select distinct OrderID from Pullout_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DataTable pullOrder;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out pullOrder);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
-                return;
-            }
+            updateCmds.Add(
+                    $@"
+update o
+set ActPulloutDate = ActPulloutDate.value
+	, PulloutComplete = PulloutComplete.value
+from Orders o
+outer apply (
+	SELECT value =  Max(p.pulloutdate)
+	FROM pullout_detail pd inner join pullout p on pd.id = p.id 
+	WHERE  pd.orderid = o.id 
+			AND (pd.status = 'C' or pd.ShipQty > 0)
+			AND p.status != 'New'
+) ActPulloutDate
+outer apply (
+	select value = CASE
+						WHEN (
+			                SELECT SUM(ShipQty)
+			                FROM
+			                (
+                                ---- 自己這張以外的已出貨數 加總
+				                SELECT [ShipQty]=ISNULL( SUM(pd.ShipQty),0)
+				                FROM Pullout p
+				                INNER JOIN Pullout_Detail pd ON pd.ID=p.ID
+				                WHERE OrderID = o.ID
+				                        AND p.Status <> 'New'
+				                        AND p.ID != '{this.CurrentMaintain["ID"]}'
+				                UNION ALL
+                                ---- 當下這筆，因為還沒confirm，在上面 <> 'New'的條件下找不到，要額外列進來計算
+				                SELECT [ShipQty]=ISNULL( SUM(pd.ShipQty),0)
+				                FROM Pullout p
+				                INNER JOIN Pullout_Detail pd ON pd.ID=p.ID
+				                WHERE OrderID = o.ID
+				                        AND p.ID='{this.CurrentMaintain["ID"]}'
+			                ) t
+			                ) >= o.Qty THEN 1
+		                ELSE 0 
+		                END
+) PulloutComplete
+where	exists (
+			select 1
+			from Pullout_Detail pd
+			where pd.ID = '{this.CurrentMaintain["ID"]}'
+				  and pd.OrderID = o.ID 
+		)");
 
-            foreach (DataRow dr in pullOrder.Rows)
-            {
-                updateCmds.Add(string.Format(
-                    @"
-UPDATE orders SET
-	actpulloutdate = (
-		SELECT Max(p.pulloutdate)
-		FROM pullout_detail pd inner join pullout p on pd.id = p.id 
-		WHERE  pd.orderid = orders.id 
-		AND (pd.status = 'C' or pd.ShipQty > 0)
-		AND p.status = 'Confirmed'
-	)
-	,pulloutcomplete = 
-		case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) then pulloutcomplete
-			when(
-				SELECT Count(p.id)
-				FROM pullout_detail pd inner join pullout p on pd.id = p.id
-				WHERE pd.orderid = orders.id 
-				AND p.status = 'Confirmed' 
-				AND pd.status = 'C'
-				) > 0
-			then 1
-			when(
-				SELECT Count(p.id)
-				FROM pullout_detail pd inner join pullout p on pd.id = p.id 
-				WHERE  pd.orderid = orders.id 
-				AND p.status = 'Confirmed' 
-				AND pd.status = 'S'
-				)>0
-			then 1
-			else 0
-			end
-WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
-            }
-
-            result = DBProxy.Current.Executes(null, updateCmds);
+            DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());

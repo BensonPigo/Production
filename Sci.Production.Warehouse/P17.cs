@@ -875,6 +875,7 @@ Where a.id = '{0}'", masterID);
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Transfer# is not found!!");
+                    this.txtTransfer.Text = string.Empty;
                     return;
                 }
                 else
@@ -886,8 +887,12 @@ Where a.id = '{0}'", masterID);
 , a.Dyelot as dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 ,a.ftyinventoryukey
-from dbo.Issue_Detail a WITH (NOLOCK) inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
-where a.id='{0}'", txtTransfer.Text), out dt);
+from dbo.Issue_Detail a WITH (NOLOCK) 
+inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
+LEFT JOIN Orders o ON o.ID = a.POID
+where a.id='{0}'
+AND o.Category <> 'A'
+", txtTransfer.Text), out dt);
                     foreach (var item in dt.ToList())
                     {
                         //DetailDatas.(item);

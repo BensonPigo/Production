@@ -15,8 +15,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
-        string season, mdivision, orderby, spno1, spno2, fabrictype, refno1, refno2, style, country, supp, factory, wkNo1, wkNo2;
-        //string season, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp, factory;
+        string season, mdivision, orderby, spno1, spno2, fabrictype, refno1, refno2, style, country, supp, factory, wkNo1, wkNo2 ,brand;
+        string IncludeJunk, ExcludeMaterial;
         DateTime? sciDelivery1, sciDelivery2, suppDelivery1, suppDelivery2, eta1, eta2, ata1, ata2;
         DataTable printData;
 
@@ -70,6 +70,25 @@ namespace Sci.Production.Warehouse
             factory = txtfactory.Text;
             fabrictype = comboFabricType.SelectedValue.ToString();
             orderby = comboOrderBy.Text;
+            brand = txtbrand.Text;
+
+            if (this.chkIncludeJunk.Checked)
+            {
+                IncludeJunk = Environment.NewLine;
+            }
+            else
+            {
+                IncludeJunk = " AND PSD.Junk=0 ";
+            }
+
+            if (this.chkExcludeMaterial.Checked)
+            {
+                ExcludeMaterial = " AND o.Category <> 'M' ";
+            }
+            else
+            {
+                ExcludeMaterial = Environment.NewLine;
+            }
 
             return base.ValidateInput();
         }
@@ -95,6 +114,9 @@ namespace Sci.Production.Warehouse
 
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
             sp_factory.ParameterName = "@FactoryID";
+            
+            System.Data.SqlClient.SqlParameter sp_brand = new System.Data.SqlClient.SqlParameter();
+            sp_brand.ParameterName = "@BrandID";
 
             System.Data.SqlClient.SqlParameter sp_refno1 = new System.Data.SqlClient.SqlParameter();
             sp_refno1.ParameterName = "@refno1";
@@ -121,6 +143,9 @@ select  F.MDivisionID
         ,style = si.StyleID
 		,o.BrandID
         ,PSD.FinalETD
+		,[ActETA]=PSD.FinalETA
+		,[Sup Delivery Rvsd ETA]=PSD.RevisedETA
+		,[Category]=o.Category
         ,supp = concat(PS.suppid,'-',S.NameEN )
         ,S.CountryID
         ,PSD.Refno
@@ -352,6 +377,14 @@ where 1=1
                 cmds.Add(sp_factory);
             }
 
+
+            if (!MyUtility.Check.Empty(brand))
+            {
+                sqlCmd.Append(" and O.BrandID = @BrandID");
+                sp_brand.Value = brand;
+                cmds.Add(sp_brand);
+            }
+
             if (!MyUtility.Check.Empty(fabrictype))
             {
                 sqlCmd.Append(string.Format(@" and PSD.FabricType = '{0}'", fabrictype));
@@ -413,6 +446,10 @@ where 1=1
             {
                 sqlCmd.Append(" and o.WhseClose is null");
             }
+
+
+            sqlCmd.Append(IncludeJunk + Environment.NewLine);
+            sqlCmd.Append(ExcludeMaterial + Environment.NewLine);
 
             if (orderby.ToUpper().TrimEnd() == "SUPPLIER")
             {

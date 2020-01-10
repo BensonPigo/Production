@@ -159,12 +159,13 @@ namespace Sci.Production.Shipping
             if (allID.Length > 0)
             {
                 sqlCmd.Append(string.Format(
-                    @"select distinct pd.ID, pd.OrderID,oq.BuyerDelivery,p.INVNo
-from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) ,Order_QtyShip oq WITH (NOLOCK) 
+                    @"
+select distinct pd.ID, pd.OrderID,oq.BuyerDelivery,p.INVNo
+from PackingList p WITH (NOLOCK) 
+INNER JOIN PackingList_Detail pd WITH (NOLOCK) ON p.id = pd.ID
+INNER JOIN Order_QtyShip oq WITH (NOLOCK) ON  pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
 where p.INVNo in ({0})
-and p.id = pd.ID
-and pd.OrderID = oq.Id
-and pd.OrderShipmodeSeq = oq.Seq", allID.ToString().Substring(0, allID.Length - 1)));
+", allID.ToString().Substring(0, allID.Length - 1)));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.plData);
                 if (!result)
                 {
@@ -227,12 +228,22 @@ and pd.OrderShipmodeSeq = oq.Seq", allID.ToString().Substring(0, allID.Length - 
             if (allID.Length > 0)
             {
                 string sqlCmd = string.Format(
-                    @"select p.ID,
-iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
-iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip WITH (NOLOCK) where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
-p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,
-p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo, p.MDivisionID, p.ShipQty
+                    @"
+select    p.ID
+		, [OrderID]=iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) 
+		, [BuyerDelivery]=iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip WITH (NOLOCK) where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) 
+		, p.Status
+		, p.CTNQty
+		, p.CBM
+		, [ClogCTNQty]=(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) 
+		, p.InspDate
+		, p.InspStatus
+		, [PulloutDate]=IIF(e.ShipDate IS NOT NULL,e.ShipDate, p.PulloutDate)
+		, p.InvNo
+		, p.MDivisionID
+		, p.ShipQty
 from PackingList p WITH (NOLOCK) 
+LEFT JOIN Express e WITH (NOLOCK) ON e.ID=p.ExpressID
 where p.InvNo in ({0})", allID.ToString().Substring(0, allID.Length - 1));
                 DataTable packData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out packData);

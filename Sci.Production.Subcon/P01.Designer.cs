@@ -46,7 +46,6 @@
             this.label25 = new Sci.Win.UI.Label();
             this.label17 = new Sci.Win.UI.Label();
             this.btnBatchImport = new Sci.Win.UI.Button();
-            this.btnSpecialRecord = new Sci.Win.UI.Button();
             this.displayPONo = new Sci.Win.UI.DisplayBox();
             this.dateIssueDate = new Sci.Win.UI.DateBox();
             this.displayCurrency = new Sci.Win.UI.DisplayBox();
@@ -116,7 +115,6 @@
             this.masterpanel.Controls.Add(this.displayCurrency);
             this.masterpanel.Controls.Add(this.txtsubconSupplier);
             this.masterpanel.Controls.Add(this.displayPONo);
-            this.masterpanel.Controls.Add(this.btnSpecialRecord);
             this.masterpanel.Controls.Add(this.btnBatchImport);
             this.masterpanel.Controls.Add(this.label17);
             this.masterpanel.Controls.Add(this.label25);
@@ -165,7 +163,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.label17, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchImport, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnSpecialRecord, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPONo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsubconSupplier, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCurrency, 0);
@@ -200,6 +197,7 @@
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(953, 182);
             this.gridicon.TabIndex = 11;
+            this.gridicon.TabStop = false;
             // 
             // refresh
             // 
@@ -285,17 +283,21 @@
             // 
             this.labelSupplier.Location = new System.Drawing.Point(6, 40);
             this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelSupplier.Size = new System.Drawing.Size(97, 23);
             this.labelSupplier.TabIndex = 6;
             this.labelSupplier.Text = "Supplier";
+            this.labelSupplier.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelArtworkType
             // 
             this.labelArtworkType.Location = new System.Drawing.Point(6, 66);
             this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelArtworkType.Size = new System.Drawing.Size(96, 23);
             this.labelArtworkType.TabIndex = 7;
             this.labelArtworkType.Text = "ArtworkType";
+            this.labelArtworkType.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelInternalRemark
             // 
@@ -406,20 +408,10 @@
             this.btnBatchImport.Name = "btnBatchImport";
             this.btnBatchImport.Size = new System.Drawing.Size(188, 30);
             this.btnBatchImport.TabIndex = 9;
+            this.btnBatchImport.TabStop = false;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
             this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
-            // 
-            // btnSpecialRecord
-            // 
-            this.btnSpecialRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSpecialRecord.Location = new System.Drawing.Point(870, 79);
-            this.btnSpecialRecord.Name = "btnSpecialRecord";
-            this.btnSpecialRecord.Size = new System.Drawing.Size(188, 30);
-            this.btnSpecialRecord.TabIndex = 10;
-            this.btnSpecialRecord.Text = "Special Record";
-            this.btnSpecialRecord.UseVisualStyleBackColor = true;
-            this.btnSpecialRecord.Click += new System.EventHandler(this.btnSpecialRecord_Click);
             // 
             // displayPONo
             // 
@@ -437,7 +429,7 @@
             this.dateIssueDate.Location = new System.Drawing.Point(373, 40);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.Size = new System.Drawing.Size(100, 23);
-            this.dateIssueDate.TabIndex = 1;
+            this.dateIssueDate.TabIndex = 2;
             // 
             // displayCurrency
             // 
@@ -585,7 +577,7 @@
             this.dateDeliveryDate.Location = new System.Drawing.Point(373, 66);
             this.dateDeliveryDate.Name = "dateDeliveryDate";
             this.dateDeliveryDate.Size = new System.Drawing.Size(100, 23);
-            this.dateDeliveryDate.TabIndex = 2;
+            this.dateDeliveryDate.TabIndex = 5;
             // 
             // btnBatchCreate
             // 
@@ -606,7 +598,7 @@
             this.dateApproveDate.Location = new System.Drawing.Point(588, 170);
             this.dateApproveDate.Name = "dateApproveDate";
             this.dateApproveDate.Size = new System.Drawing.Size(130, 23);
-            this.dateApproveDate.TabIndex = 26;
+            this.dateApproveDate.TabIndex = 12;
             this.dateApproveDate.TabStop = false;
             // 
             // txtmfactory
@@ -622,7 +614,7 @@
             this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(100, 23);
-            this.txtmfactory.TabIndex = 4;
+            this.txtmfactory.TabIndex = 0;
             // 
             // txtuserApproveName
             // 
@@ -631,8 +623,7 @@
             this.txtuserApproveName.Location = new System.Drawing.Point(107, 170);
             this.txtuserApproveName.Name = "txtuserApproveName";
             this.txtuserApproveName.Size = new System.Drawing.Size(300, 23);
-            this.txtuserApproveName.TabIndex = 24;
-            this.txtuserApproveName.TabStop = false;
+            this.txtuserApproveName.TabIndex = 10;
             this.txtuserApproveName.TextBox1Binding = "";
             // 
             // txtuserHandle
@@ -655,7 +646,8 @@
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(107, 66);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(165, 23);
-            this.txtartworktype_ftyArtworkType.TabIndex = 5;
+            this.txtartworktype_ftyArtworkType.TabIndex = 4;
+            this.txtartworktype_ftyArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtartworktype_ftyArtworkType_PopUp);
             this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
             // 
             // txtsubconSupplier
@@ -669,7 +661,7 @@
             this.txtsubconSupplier.Location = new System.Drawing.Point(107, 40);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
-            this.txtsubconSupplier.TabIndex = 0;
+            this.txtsubconSupplier.TabIndex = 1;
             this.txtsubconSupplier.TextBox1Binding = "";
             this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtsubconSupplier_Validating);
             // 
@@ -705,10 +697,11 @@
             // 
             // btnIrrPriceReason
             // 
-            this.btnIrrPriceReason.Location = new System.Drawing.Point(870, 114);
+            this.btnIrrPriceReason.Location = new System.Drawing.Point(870, 85);
             this.btnIrrPriceReason.Name = "btnIrrPriceReason";
             this.btnIrrPriceReason.Size = new System.Drawing.Size(188, 30);
             this.btnIrrPriceReason.TabIndex = 72;
+            this.btnIrrPriceReason.TabStop = false;
             this.btnIrrPriceReason.Text = "Irregular Price Reason";
             this.btnIrrPriceReason.UseVisualStyleBackColor = true;
             this.btnIrrPriceReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click);
@@ -763,8 +756,7 @@
             this.txtuserLockName.Location = new System.Drawing.Point(107, 144);
             this.txtuserLockName.Name = "txtuserLockName";
             this.txtuserLockName.Size = new System.Drawing.Size(300, 23);
-            this.txtuserLockName.TabIndex = 77;
-            this.txtuserLockName.TabStop = false;
+            this.txtuserLockName.TabIndex = 9;
             this.txtuserLockName.TextBox1Binding = "";
             // 
             // txtuserCloseName
@@ -774,8 +766,7 @@
             this.txtuserCloseName.Location = new System.Drawing.Point(107, 196);
             this.txtuserCloseName.Name = "txtuserCloseName";
             this.txtuserCloseName.Size = new System.Drawing.Size(300, 23);
-            this.txtuserCloseName.TabIndex = 78;
-            this.txtuserCloseName.TabStop = false;
+            this.txtuserCloseName.TabIndex = 11;
             this.txtuserCloseName.TextBox1Binding = "";
             // 
             // dateLockDate
@@ -785,7 +776,7 @@
             this.dateLockDate.Location = new System.Drawing.Point(588, 144);
             this.dateLockDate.Name = "dateLockDate";
             this.dateLockDate.Size = new System.Drawing.Size(130, 23);
-            this.dateLockDate.TabIndex = 79;
+            this.dateLockDate.TabIndex = 10;
             this.dateLockDate.TabStop = false;
             // 
             // dateCloseDate
@@ -795,7 +786,7 @@
             this.dateCloseDate.Location = new System.Drawing.Point(588, 196);
             this.dateCloseDate.Name = "dateCloseDate";
             this.dateCloseDate.Size = new System.Drawing.Size(130, 23);
-            this.dateCloseDate.TabIndex = 80;
+            this.dateCloseDate.TabIndex = 14;
             this.dateCloseDate.TabStop = false;
             // 
             // P01
@@ -811,7 +802,7 @@
             this.DefaultFilter = "potype=\'O\'";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
-            this.GridUniqueKey = "id,artworkid,patterncode,OrderId";
+            this.GridUniqueKey = "id,artworkid,patterncode,OrderId,ArtworkReqID";
             this.IsSupportCheck = true;
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;
@@ -876,7 +867,6 @@
         private Win.UI.DateBox dateIssueDate;
         private Class.txtsubcon txtsubconSupplier;
         private Win.UI.DisplayBox displayPONo;
-        private Win.UI.Button btnSpecialRecord;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label label17;
         private Win.UI.Label label25;

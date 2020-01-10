@@ -39,32 +39,34 @@
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.txtSPNO = new Sci.Win.UI.TextBox();
             this.checkOutstanding = new Sci.Win.UI.CheckBox();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.txtstyle = new Sci.Production.Class.txtstyle();
             this.labelM = new Sci.Win.UI.Label();
             this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
             this.label9 = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(430, 12);
-            this.print.TabIndex = 9;
+            this.print.Location = new System.Drawing.Point(441, 12);
+            this.print.TabIndex = 10;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 10;
+            this.toexcel.Location = new System.Drawing.Point(441, 48);
+            this.toexcel.TabIndex = 11;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 11;
+            this.close.Location = new System.Drawing.Point(441, 84);
+            this.close.TabIndex = 12;
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 120);
+            this.labelFactory.Location = new System.Drawing.Point(13, 117);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
             this.labelFactory.TabIndex = 94;
@@ -72,7 +74,7 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Location = new System.Drawing.Point(13, 48);
+            this.labelArtworkType.Location = new System.Drawing.Point(13, 47);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(98, 23);
             this.labelArtworkType.TabIndex = 95;
@@ -80,7 +82,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(13, 157);
+            this.label5.Location = new System.Drawing.Point(13, 152);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(98, 23);
             this.label5.TabIndex = 98;
@@ -88,7 +90,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(13, 193);
+            this.labelSPNo.Location = new System.Drawing.Point(13, 187);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(98, 23);
             this.labelSPNo.TabIndex = 99;
@@ -96,7 +98,7 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Location = new System.Drawing.Point(13, 229);
+            this.labelStyle.Location = new System.Drawing.Point(13, 257);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(98, 23);
             this.labelStyle.TabIndex = 100;
@@ -104,7 +106,7 @@
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Location = new System.Drawing.Point(13, 265);
+            this.labelOrderBy.Location = new System.Drawing.Point(13, 292);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(98, 23);
             this.labelOrderBy.TabIndex = 101;
@@ -116,7 +118,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(114, 119);
+            this.comboFactory.Location = new System.Drawing.Point(114, 116);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
@@ -153,17 +155,17 @@
             this.comboOrderBy.Items.AddRange(new object[] {
             "Issue Date",
             "Supplier"});
-            this.comboOrderBy.Location = new System.Drawing.Point(114, 264);
+            this.comboOrderBy.Location = new System.Drawing.Point(114, 291);
             this.comboOrderBy.Name = "comboOrderBy";
             this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
-            this.comboOrderBy.TabIndex = 7;
+            this.comboOrderBy.TabIndex = 8;
             // 
             // txtSPNO
             // 
             this.txtSPNO.BackColor = System.Drawing.Color.White;
             this.txtSPNO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNO.Location = new System.Drawing.Point(115, 193);
+            this.txtSPNO.Location = new System.Drawing.Point(115, 187);
             this.txtSPNO.MaxLength = 13;
             this.txtSPNO.Name = "txtSPNO";
             this.txtSPNO.Size = new System.Drawing.Size(146, 23);
@@ -173,10 +175,10 @@
             // 
             this.checkOutstanding.AutoSize = true;
             this.checkOutstanding.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkOutstanding.Location = new System.Drawing.Point(13, 302);
+            this.checkOutstanding.Location = new System.Drawing.Point(13, 329);
             this.checkOutstanding.Name = "checkOutstanding";
             this.checkOutstanding.Size = new System.Drawing.Size(407, 21);
-            this.checkOutstanding.TabIndex = 8;
+            this.checkOutstanding.TabIndex = 9;
             this.checkOutstanding.Text = "Outstanding (Without payment only && Exclude status closed)";
             this.checkOutstanding.UseVisualStyleBackColor = true;
             // 
@@ -184,7 +186,10 @@
             // 
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = true;
-            this.txtsubconSupplier.Location = new System.Drawing.Point(115, 157);
+            this.txtsubconSupplier.isMisc = false;
+            this.txtsubconSupplier.isShipping = false;
+            this.txtsubconSupplier.isSubcon = false;
+            this.txtsubconSupplier.Location = new System.Drawing.Point(115, 152);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtsubconSupplier.TabIndex = 4;
@@ -196,7 +201,7 @@
             this.txtartworktype_ftyArtworkType.cClassify = "";
             this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(114, 48);
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(114, 47);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 1;
@@ -206,16 +211,16 @@
             this.txtstyle.BackColor = System.Drawing.Color.White;
             this.txtstyle.BrandObjectName = null;
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(115, 229);
+            this.txtstyle.Location = new System.Drawing.Point(115, 257);
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle.TabIndex = 6;
+            this.txtstyle.TabIndex = 7;
             this.txtstyle.tarBrand = null;
             this.txtstyle.tarSeason = null;
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 84);
+            this.labelM.Location = new System.Drawing.Point(13, 82);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
             this.labelM.TabIndex = 105;
@@ -225,7 +230,7 @@
             // 
             this.txtMdivisionM.BackColor = System.Drawing.Color.White;
             this.txtMdivisionM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivisionM.Location = new System.Drawing.Point(114, 84);
+            this.txtMdivisionM.Location = new System.Drawing.Point(114, 82);
             this.txtMdivisionM.Name = "txtMdivisionM";
             this.txtMdivisionM.Size = new System.Drawing.Size(66, 23);
             this.txtMdivisionM.TabIndex = 2;
@@ -244,9 +249,28 @@
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // labelBrand
+            // 
+            this.labelBrand.Location = new System.Drawing.Point(13, 222);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(98, 23);
+            this.labelBrand.TabIndex = 107;
+            this.labelBrand.Text = "Brand";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(115, 222);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(83, 23);
+            this.txtbrand.TabIndex = 6;
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(522, 360);
+            this.ClientSize = new System.Drawing.Size(533, 381);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.txtMdivisionM);
@@ -268,7 +292,11 @@
             this.DefaultControlForEdit = "dateIssueDate";
             this.IsSupportToPrint = false;
             this.Name = "R01";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R01. Subcon PO List";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -289,6 +317,8 @@
             this.Controls.SetChildIndex(this.txtMdivisionM, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.label9, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -307,11 +337,13 @@
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.TextBox txtSPNO;
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.CheckBox checkOutstanding;
         private Class.txtstyle txtstyle;
         private Win.UI.Label labelM;
         private Class.txtMdivision txtMdivisionM;
         private Win.UI.Label label9;
+        private Win.UI.Label labelBrand;
+        private Class.txtbrand txtbrand;
     }
 }

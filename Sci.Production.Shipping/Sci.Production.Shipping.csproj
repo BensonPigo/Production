@@ -104,6 +104,9 @@
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
+    <Reference Include="Sci.Andy">
+      <HintPath>..\_Dll\Sci.Andy.dll</HintPath>
+    </Reference>
     <Reference Include="Sci.Proj, Version=1.0.1505.1800, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
@@ -161,11 +164,35 @@
     <Compile Include="B05.Designer.cs">
       <DependentUpon>B05.cs</DependentUpon>
     </Compile>
+    <Compile Include="B06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B06.Designer.cs">
+      <DependentUpon>B06.cs</DependentUpon>
+    </Compile>
     <Compile Include="B49.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="B49.Designer.cs">
       <DependentUpon>B49.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_FTYRegularSendingSchedule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_FTYRegularSendingSchedule.designer.cs">
+      <DependentUpon>P02_FTYRegularSendingSchedule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_ImportFromBulkPackingList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ImportFromBulkPackingList.designer.cs">
+      <DependentUpon>P02_ImportFromBulkPackingList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_ImportFromSamplePackingList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ImportFromSamplePackingList.Designer.cs">
+      <DependentUpon>P02_ImportFromSamplePackingList.cs</DependentUpon>
     </Compile>
     <Compile Include="P03_BatchUpload.cs">
       <SubType>Form</SubType>
@@ -577,6 +604,18 @@
     <Compile Include="P14.Designer.cs">
       <DependentUpon>P14.cs</DependentUpon>
     </Compile>
+    <Compile Include="P15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15.Designer.cs">
+      <DependentUpon>P15.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P15_Containers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15_Containers.Designer.cs">
+      <DependentUpon>P15_Containers.cs</DependentUpon>
+    </Compile>
     <Compile Include="P40.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -780,6 +819,18 @@
     <Compile Include="R42.Designer.cs">
       <DependentUpon>R42.cs</DependentUpon>
     </Compile>
+    <Compile Include="R44.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R44.Designer.cs">
+      <DependentUpon>R44.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R43.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R43.Designer.cs">
+      <DependentUpon>R43.cs</DependentUpon>
+    </Compile>
     <Compile Include="Shipping.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -820,8 +871,20 @@
     <EmbeddedResource Include="B05.resx">
       <DependentUpon>B05.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B06.resx">
+      <DependentUpon>B06.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B49.resx">
       <DependentUpon>B49.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_FTYRegularSendingSchedule.resx">
+      <DependentUpon>P02_FTYRegularSendingSchedule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ImportFromBulkPackingList.resx">
+      <DependentUpon>P02_ImportFromBulkPackingList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ImportFromSamplePackingList.resx">
+      <DependentUpon>P02_ImportFromSamplePackingList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_BatchUpload.resx">
       <DependentUpon>P03_BatchUpload.cs</DependentUpon>
@@ -1046,6 +1109,12 @@
     <EmbeddedResource Include="P14.resx">
       <DependentUpon>P14.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P15.resx">
+      <DependentUpon>P15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P15_Containers.resx">
+      <DependentUpon>P15_Containers.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P40.resx">
       <DependentUpon>P40.cs</DependentUpon>
     </EmbeddedResource>
@@ -1104,11 +1173,11 @@
     <EmbeddedResource Include="R10.resx">
       <DependentUpon>R10.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="R11.resx">
-      <DependentUpon>R11.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="B41.resx">
       <DependentUpon>B41.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R11.resx">
+      <DependentUpon>R11.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R14.resx">
       <DependentUpon>R14.cs</DependentUpon>
@@ -1142,6 +1211,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R12.resx">
       <DependentUpon>R12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R44.resx">
+      <DependentUpon>R44.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R43.resx">
+      <DependentUpon>R43.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

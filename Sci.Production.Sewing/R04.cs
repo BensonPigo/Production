@@ -85,7 +85,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubConOutContractNumber
     ,o.SubconInType
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'')
-	,Remark=isnull(sd.Remark,'')
+	,Remark= ssd.SewingOutputRemark
     ,o.SciDelivery
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
@@ -105,14 +105,23 @@ outer apply
 (
 	select [SewingReasonDesc]=stuff((
 		select concat(',',sr.ID+'-'+sr.Description)
-		from SewingReason sr
+		from SewingReason sr WITH (NOLOCK)
 		inner join SewingOutput_Detail sd2 WITH (NOLOCK) on sd2.SewingReasonID=sr.ID
 		where sr.Type='SO' and sd2.id = s.id
 		for xml path('')
 	),1,1,'')
 )sr
-outer apply( select BrandID from orders o1 where o.CustPONo=o1.id )Order2
-outer apply( select top 1 BrandID from Style where id=o.StyleID and SeasonID=o.SeasonID and BrandID!='SUBCON-I' )StyleBrand
+outer apply
+(
+	select [SewingOutputRemark]=stuff((
+		select concat(',',ssd.Remark)
+		from SewingOutput_Detail ssd WITH (NOLOCK) 
+		where ssd.ID = sd.ID
+		for xml path('')
+	),1,1,'')
+)ssd
+outer apply( select BrandID from orders o1 WITH (NOLOCK) where o.CustPONo=o1.id )Order2
+outer apply( select top 1 BrandID from Style WITH (NOLOCK) where id=o.StyleID and SeasonID=o.SeasonID and BrandID!='SUBCON-I' )StyleBrand
 where 1=1 "));
 
             if (!MyUtility.Check.Empty(this.date1))
@@ -243,10 +252,10 @@ from(
 --準備台北資料(須排除這些)
 select ps.ID
 into #TPEtmp
-from PO_Supp ps
-inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
-inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
-inner join MtlType ml on ml.id = fb.MtlTypeID
+from PO_Supp ps WITH (NOLOCK)
+inner join PO_Supp_Detail psd WITH (NOLOCK) on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+inner join Fabric fb WITH (NOLOCK) on psd.SCIRefno = fb.SCIRefno 
+inner join MtlType ml WITH (NOLOCK) on ml.id = fb.MtlTypeID
 where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
 and ml.isThread=1 
 and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
@@ -346,8 +355,8 @@ select * from(
             {
                 sqlCmd.Append(@"
                                     outer  apply(select value = Sum(SD.QAQty)
-                                             from SewingOutput_Detail SD
-                                             inner join SewingOutput S on SD.ID=S.ID
+                                             from SewingOutput_Detail SD WITH (NOLOCK)
+                                             inner join SewingOutput S WITH (NOLOCK) on SD.ID=S.ID
                                              where SD.ComboType=t.ComboType
                                                and SD.orderid=t.OrderId
                                                and S.OutputDate <= t.OutputDate) acc_output");

@@ -145,10 +145,13 @@ and FKMenu= (select PKey from MenuDetail where FormName='Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account,se.UnitID,a.IsAPP 
+                @"
+select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account,se.UnitID
+    ,a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
 from ShippingAP_Detail sd WITH (NOLOCK) 
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
+left join SciFMS_AccountNO a on a.ID = se.AccountID
+left join SciFMS_AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -486,39 +489,11 @@ where sd.ID = '{0}'", masterID);
                 return false;
             }
             #endregion
-            DataTable tmpdt;
-            string sqlchkforisapp = $@"
-select a.isapp 
-from #tmp sd
-left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-left join [FinanceEN].dbo.AccountNO a on a.ID = substring(se.AccountID,1,4)
-";
-            DataTable dDt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlchkforisapp, out tmpdt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
 
-            var hasisapp = tmpdt.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["IsAPP"]));
-            if (hasisapp.Count() > 0)
-            {
-                var notapp = tmpdt.AsEnumerable().Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]));
-                if (notapp.Count() > 0)
-                {
-                    MyUtility.Msg.WarningBox(@"Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.
-
-If the application is for Air - Prepaid Invoice, please ensure that all item codes are linked to the correct Account Name -
-6105 - Air prepaid apparel - FTY and / or 5912 - Disburz for SCI Adm Expz, Thank You.");
-                    return false;
-                }
-            }
-
-            // Supplier與B/L No 如果重複才需要填寫原因, Reason 不可為空
+            // Supplier與B/L No 如果重複才需要填寫原因, Reason 不可為空，須排除自己這張AP
             if (!MyUtility.Check.Empty(this.txtBLNo.Text))
             {
-                string strSQLcmd = $@"select 1 from ShippingAP where BLNo='{this.txtBLNo.Text}' AND LocalSuppID='{this.CurrentMaintain["LocalSuppID"].ToString()}' ";
+                string strSQLcmd = $@"select 1 from ShippingAP where ID <> '{this.CurrentMaintain["ID"]}' AND BLNo='{this.txtBLNo.Text}' AND LocalSuppID='{this.CurrentMaintain["LocalSuppID"].ToString()}' ";
                 if (MyUtility.Check.Seek(strSQLcmd) && MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
                 {
                     MyUtility.Msg.WarningBox(@"<Reason> cannot be empty becusae this <B/L No.> is already exists in other same supplier AP.");
@@ -526,7 +501,7 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                     return false;
                 }
             }
-             
+
             // InvNo + B/L No不可以重複建立
             if (!MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
             {
@@ -632,6 +607,46 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                 this.CurrentMaintain["ID"] = newID;
             }
 
+            DataTable tmpdt;
+            string sqlchkforisapp = $@"
+select a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
+from #tmp sd
+left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
+left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
+";
+            var dtldt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted);
+            if (dtldt.Count() > 0)
+            {
+                DataTable dDt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlchkforisapp, out tmpdt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                // 有標記IsAPP就是APP
+                var hasisapp = tmpdt.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["IsAPP"]));
+                if (hasisapp.Count() > 0)
+                {
+                    // 沒標記IsAPP,不是IsShippingVAT(稅),不是AdvancePaymentTPE(代墊台北), 則不是IsAPP
+                    var notapp = tmpdt.AsEnumerable().
+                        Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]) &&
+                                    !MyUtility.Convert.GetBool(w["IsShippingVAT"]) &&
+                                    !MyUtility.Convert.GetBool(w["AdvancePaymentTPE"]));
+
+                    if (notapp.Count() > 0)
+                    {
+                        MyUtility.Msg.WarningBox(@"Air-Prepaid Account Payment cannot inculde non Air-Prepaid Item Code.
+
+If the application is for Air - Prepaid Invoice, please ensure that all item codes are linked to the correct Account Name -
+6105 - Air prepaid apparel - FTY and / or 5912 - Disburz for SCI Adm Expz, Thank You.");
+                        return false;
+                    }
+                }
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -687,6 +702,20 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                 return failResult;
             }
 
+            sqlCmd = $@"
+update ShareExpense_APP
+set Junk = 1
+    , EditDate = getdate()
+    , EditName = '{Env.User.UserID}'
+where ShippingAPID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'";
+
+            result = DBProxy.Current.Execute(null, sqlCmd);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Delete ShareExpense_APP false.\r\n" + result.ToString());
+                return failResult;
+            }
+
             return Result.True;
         }
 
@@ -726,12 +755,31 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                 }
 
                 sqlCmd = string.Format(
-                    @"select ls.Name,ls.Address,ls.Tel,isnull(lsb.AccountNo,' ') as AccountNo, 
-isnull(lsb.AccountName,' ') as AccountName, isnull(lsb.BankName,' ') as BankName,
-isnull(lsb.CountryID,' ') as CountryID, isnull(lsb.City,' ') as City, isnull(lsb.SWIFTCode,' ') as SWIFTCode
-from LocalSupp ls WITH (NOLOCK) 
-left join LocalSupp_Bank lsb WITH (NOLOCK) on ls.ID = lsb.ID and lsb.IsDefault = 1
-where ls.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]));
+                    @"
+SELECT    ls.Name
+		, ls.Address
+		, ls.Tel
+		, [AccountNo]=LocalSupBank.AccountNo
+		, [AccountName]=LocalSupBank.AccountName
+		, [BankName]=LocalSupBank.BankName
+		, [CountryID]=LocalSupBank.CountryID
+		, [City]=LocalSupBank.City
+		, [SwiftCode]=LocalSupBank.SwiftCode
+FROM LocalSupp ls
+OUTER APPLY(
+	SELECT   [AccountNo]= IIF(lb.ByCheck=1,'',lbd.Accountno )
+			, [AccountName]=IIF(lb.ByCheck=1,'',lbd.AccountName )
+			, [BankName]=IIF(lb.ByCheck=1,'',lbd.BankName )
+			, [CountryID]=IIF(lb.ByCheck=1,'',lbd.CountryID)
+			, [City]=IIF(lb.ByCheck=1,'',lbd.City)
+			, [SwiftCode]=IIF(lb.ByCheck=1,'',lbd.SwiftCode )
+	FROM LocalSupp_Bank lb
+	LEFT JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND lb.PKey=lbd.Pkey
+	WHERE lb.ID=ls.ID
+		AND lb.ApproveDate = (SElECT MAX(ApproveDate) FROM  LocalSupp_Bank WHERE Status='Confirmed' AND ID=ls.ID)
+		AND lbd.IsDefault=1
+)LocalSupBank
+WHERE ls.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out localSpuuData);
                 if (!result)
                 {

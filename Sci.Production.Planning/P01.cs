@@ -246,7 +246,8 @@ dr["localsuppid"]);
                             SELECT top 1 l.Abb
                             FROM Order_tmscost ot WITH (NOLOCK)
                             left join LocalSupp l WITH (NOLOCK) on l.ID=ot.LocalSuppID
-                            where ot.LocalSuppID='{0}'", this.CurrentDetailData["localsuppid"]);
+                            left join LocalSupp_Bank lb WITH (NOLOCK) ON l.id=lb.id 
+                            where ot.LocalSuppID='{0}' ", this.CurrentDetailData["localsuppid"]);
                         DualResult result = DBProxy.Current.Select(null, subconName, out dt);
                         if (dt.Rows.Count == 0)
                         {
@@ -278,24 +279,26 @@ dr["localsuppid"]);
 
 if (exists (select 1 from ArtworkType where ID = '{1}' and IsArtwork = 1))
 begin
-	SELECT	QU.LocalSuppId
-			, LOCALSUPP.Abb
+	SELECT DISTINCT	QU.LocalSuppId
+			, l.Abb
 			, QU.Mockup
 	FROM Order_TmsCost OT WITH (NOLOCK)
 	INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
 	INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
 	LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
-	INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
-	WHERE OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
-	GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
+	INNER JOIN LocalSupp l WITH (NOLOCK) ON l.ID = QU.LocalSuppId
+    LEFT JOIN LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+	WHERE OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}' AND lb.Status= 'Confirmed'
+	GROUP BY QU.LocalSuppId,l.Abb,QU.Mockup
 end
 else
 begin
-	select	LocalSuppID = ID
-			, Abb = Abb
+	select DISTINCT	LocalSuppID = l.ID
+			, Abb = l.Abb
 			, Mockup = NULL
-	from LocalSupp
-	where junk = 0
+	from LocalSupp l
+    left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+	where l.junk = 0 and lb.Status= 'Confirmed'
 end;",
                             this.CurrentDetailData["ID"],
                             this.CurrentDetailData["Artworktypeid"]);
@@ -322,7 +325,7 @@ end;",
                     }
                     else
                     {
-                        sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID";
+                        sqlcmd = @"select DISTINCT l.ID ,l.Abb ,l.Name from dbo.LocalSupp l WITH (NOLOCK) left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id WHERE l.Junk=0 and lb.Status= 'Confirmed' and IsFactory = 1 order by ID";
                         item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
                         DialogResult result = item.ShowDialog();
                         if (result == DialogResult.Cancel)
@@ -357,27 +360,29 @@ end;",
                             @"
 if (exists (select 1 from ArtworkType where ID = '{1}' and IsArtwork = 1))
 begin
-	SELECT QU.LocalSuppId
-			, LOCALSUPP.Abb
+	SELECT DISTINCT QU.LocalSuppId
+			, l.Abb
 			, QU.Mockup
 	FROM Order_TmsCost OT WITH (NOLOCK)
 	INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
 	INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
 	LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
-	INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
+	INNER JOIN LocalSupp l WITH (NOLOCK) ON l.ID = QU.LocalSuppId
+	LEFT JOIN LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 	WHERE OT.ID = '{0}' 
 			AND OT.ARTWORKTYPEID = '{1}' 
 			AND qu.Localsuppid = '{2}'
-	GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
+            AND lb.Status= 'Confirmed'
+	GROUP BY QU.LocalSuppId,l.Abb,QU.Mockup
 end
 else
 begin
-	select	LocalSuppID = ID
-			, Abb = Abb
+	select DISTINCT	LocalSuppID = l.ID
+			, Abb = l.Abb
 			, Mockup = ''
-	from LocalSupp
-	where junk = 0
-			and ID = '{2}'
+	from LocalSupp l
+    left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+	where l.junk = 0 and l.ID = '{2}' and lb.Status= 'Confirmed'
 end;",
 this.CurrentDetailData["ID"],
 this.CurrentDetailData["Artworktypeid"],

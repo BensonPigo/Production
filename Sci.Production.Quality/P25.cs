@@ -49,6 +49,7 @@ namespace Sci.Production.Quality
             .Text("Dest", header: "Destination", width: Widths.Auto(), iseditable: false)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditable: false)
+            .Text("CFALocationID", header: "Location No.", width: Widths.Auto(), iseditable: false)
             .Text("AddName", header: "Received By", width: Widths.Auto(), iseditable: false)
             .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
             .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
@@ -111,6 +112,7 @@ select  1 as selected
         , RepackPackID
         , RepackOrderID
         , RepackCtnStartNo
+        , CFALocationID
 from (
     select  cr.ReceiveDate
             , [PackingListID] = iif(pd.OrigID = '',pd.ID, pd.OrigID)
@@ -126,6 +128,7 @@ from (
             , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
             , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
             , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+            , cr.CFALocationID
     from CFAReceive cr WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID

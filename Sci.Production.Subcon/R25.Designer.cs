@@ -34,7 +34,7 @@
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.dateReceiveDate = new Sci.Win.UI.DateRange();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
@@ -213,7 +213,7 @@
 
         private Win.UI.Panel panel1;
         private Win.UI.Label labelReceiveDate;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelSupplier;
         private Win.UI.Label labelCategory;

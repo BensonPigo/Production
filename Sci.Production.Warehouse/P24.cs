@@ -255,14 +255,19 @@ WHERE   StockType='{0}'
                 return;
             }
 
-            DualResult result = Prgs.P24confirm(this.CurrentMaintain["ID"].ToString());
-            if (!result)
+            try
             {
-                this.ShowErr(result);
-            }
-            else
-            {
+                DualResult result = Prgs.P24confirm(this.CurrentMaintain["ID"].ToString());
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
                 MyUtility.Msg.InfoBox("Confirmed successful");
+            }
+            catch (Exception ex)
+            {
+                ShowErr(ex);
             }
         }
 

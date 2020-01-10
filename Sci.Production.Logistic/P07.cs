@@ -146,6 +146,7 @@ and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
 and p2.CFAReturnClogDate is null
+and p2.ClogPulloutDate is null
 and p2.DisposeFromClog= 0
 and (po.Status = 'New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
@@ -264,6 +265,7 @@ and p2.ReceiveDate is not null
 and p2.DisposeFromClog= 0
 and p2.TransferCFADate is null
 and p2.CFAReturnClogDate is null
+and p2.ClogPulloutDate is null
 and (po.Status = 'New' or po.Status is null)
 and p2.id='{sl[1].Substring(0, 13)}'
 and p2.CTNStartNo='{sl[1].Substring(13)}'
@@ -328,6 +330,7 @@ and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
 and p2.DisposeFromClog= 0
 and p2.CFAReturnClogDate is null
+and p2.ClogPulloutDate is null
 and (po.Status = 'New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
 order by p2.ID,p2.CTNStartNo
@@ -397,6 +400,7 @@ and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
 and p2.DisposeFromClog= 0
 and p2.CFAReturnClogDate is null
+and p2.ClogPulloutDate is null
 and (po.Status = 'New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
 order by p2.ID,p2.CTNStartNo

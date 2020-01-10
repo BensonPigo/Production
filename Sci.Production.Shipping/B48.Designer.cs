@@ -33,6 +33,7 @@
             this.dispID = new Sci.Win.UI.DisplayBox();
             this.dispDesc = new Sci.Win.UI.DisplayBox();
             this.chkJunk = new Sci.Win.UI.CheckBox();
+            this.chkIsFtyWK = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,6 +48,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsFtyWK);
             this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.dispDesc);
             this.detailcont.Controls.Add(this.dispID);
@@ -58,6 +60,10 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 315);
             this.detailbtm.Size = new System.Drawing.Size(713, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(713, 353);
             // 
             // tabs
             // 
@@ -111,6 +117,20 @@
             this.chkJunk.Text = "Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
+            // chkIsFtyWK
+            // 
+            this.chkIsFtyWK.AutoSize = true;
+            this.chkIsFtyWK.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsFtyWK", true));
+            this.chkIsFtyWK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsFtyWK.IsSupportEditMode = false;
+            this.chkIsFtyWK.Location = new System.Drawing.Point(70, 166);
+            this.chkIsFtyWK.Name = "chkIsFtyWK";
+            this.chkIsFtyWK.ReadOnly = true;
+            this.chkIsFtyWK.Size = new System.Drawing.Size(292, 21);
+            this.chkIsFtyWK.TabIndex = 5;
+            this.chkIsFtyWK.Text = "Need input Fty WK# on adjustment memo.";
+            this.chkIsFtyWK.UseVisualStyleBackColor = true;
+            // 
             // B48
             // 
             this.ClientSize = new System.Drawing.Size(721, 415);
@@ -121,6 +141,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B48";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B48. Adjust Customs Contract Qty Reason";
             this.WorkAlias = "ShippingReason";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -143,5 +164,6 @@
         private Win.UI.DisplayBox dispDesc;
         private Win.UI.DisplayBox dispID;
         private Win.UI.CheckBox chkJunk;
+        private Win.UI.CheckBox chkIsFtyWK;
     }
 }

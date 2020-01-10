@@ -39,7 +39,7 @@
             this.txtBLNoStart = new Sci.Win.UI.TextBox();
             this.txtBLNoEnd = new Sci.Win.UI.TextBox();
             this.comboM = new Sci.Win.UI.ComboBox();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.comboOrderby = new Sci.Win.UI.ComboBox();
             this.label7 = new Sci.Win.UI.Label();
             this.labelReportType = new Sci.Win.UI.Label();
@@ -390,7 +390,7 @@
         private Win.UI.TextBox txtBLNoStart;
         private Win.UI.TextBox txtBLNoEnd;
         private Win.UI.ComboBox comboM;
-        private Class.txtsubcon txtSubconSupplier;
+        private Class.txtsubconNoConfirm txtSubconSupplier;
         private Win.UI.ComboBox comboOrderby;
         private Win.UI.Label label7;
         private Win.UI.Label labelReportType;

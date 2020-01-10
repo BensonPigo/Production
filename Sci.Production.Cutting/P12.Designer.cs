@@ -31,6 +31,8 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
+            this.label2 = new Sci.Win.UI.Label();
             this.txtComb = new Sci.Win.UI.TextBox();
             this.lbComb = new Sci.Win.UI.Label();
             this.txtCutno = new Sci.Win.UI.TextBox();
@@ -82,6 +84,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtSpreadingNo1);
+            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txtComb);
             this.panel1.Controls.Add(this.lbComb);
             this.panel1.Controls.Add(this.txtCutno);
@@ -117,23 +121,42 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 108);
+            this.panel1.Size = new System.Drawing.Size(1008, 131);
             this.panel1.TabIndex = 0;
+            // 
+            // txtSpreadingNo1
+            // 
+            this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo1.IncludeJunk = true;
+            this.txtSpreadingNo1.Location = new System.Drawing.Point(717, 30);
+            this.txtSpreadingNo1.MDivision = "";
+            this.txtSpreadingNo1.Name = "txtSpreadingNo1";
+            this.txtSpreadingNo1.Size = new System.Drawing.Size(106, 23);
+            this.txtSpreadingNo1.TabIndex = 14;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(576, 30);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(138, 21);
+            this.label2.TabIndex = 107;
+            this.label2.Text = "Spreading No";
             // 
             // txtComb
             // 
             this.txtComb.BackColor = System.Drawing.Color.White;
             this.txtComb.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtComb.Location = new System.Drawing.Point(869, 79);
+            this.txtComb.Location = new System.Drawing.Point(717, 54);
             this.txtComb.Name = "txtComb";
-            this.txtComb.Size = new System.Drawing.Size(100, 23);
-            this.txtComb.TabIndex = 106;
+            this.txtComb.Size = new System.Drawing.Size(106, 23);
+            this.txtComb.TabIndex = 15;
             // 
             // lbComb
             // 
-            this.lbComb.Location = new System.Drawing.Point(819, 79);
+            this.lbComb.Location = new System.Drawing.Point(576, 55);
             this.lbComb.Name = "lbComb";
-            this.lbComb.Size = new System.Drawing.Size(47, 21);
+            this.lbComb.Size = new System.Drawing.Size(138, 21);
             this.lbComb.TabIndex = 105;
             this.lbComb.Text = "Comb";
             // 
@@ -141,57 +164,57 @@
             // 
             this.txtCutno.BackColor = System.Drawing.Color.White;
             this.txtCutno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutno.Location = new System.Drawing.Point(716, 79);
+            this.txtCutno.Location = new System.Drawing.Point(717, 79);
             this.txtCutno.Name = "txtCutno";
-            this.txtCutno.Size = new System.Drawing.Size(100, 23);
-            this.txtCutno.TabIndex = 104;
+            this.txtCutno.Size = new System.Drawing.Size(106, 23);
+            this.txtCutno.TabIndex = 16;
             // 
             // dateBundlecreatedDate
             // 
-            this.dateBundlecreatedDate.Location = new System.Drawing.Point(542, 79);
+            this.dateBundlecreatedDate.Location = new System.Drawing.Point(717, 4);
             this.dateBundlecreatedDate.Name = "dateBundlecreatedDate";
             this.dateBundlecreatedDate.Size = new System.Drawing.Size(130, 23);
-            this.dateBundlecreatedDate.TabIndex = 4;
+            this.dateBundlecreatedDate.TabIndex = 13;
             // 
             // txtuser1
             // 
             this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(107, 79);
+            this.txtuser1.Location = new System.Drawing.Point(108, 104);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 103;
+            this.txtuser1.TabIndex = 7;
             this.txtuser1.TextBox1Binding = "";
             // 
             // lbCutno
             // 
-            this.lbCutno.Location = new System.Drawing.Point(675, 79);
+            this.lbCutno.Location = new System.Drawing.Point(576, 80);
             this.lbCutno.Name = "lbCutno";
-            this.lbCutno.Size = new System.Drawing.Size(38, 21);
+            this.lbCutno.Size = new System.Drawing.Size(138, 21);
             this.lbCutno.TabIndex = 102;
             this.lbCutno.Text = "Cut#";
             // 
             // lbBundlecreatedDate
             // 
-            this.lbBundlecreatedDate.Location = new System.Drawing.Point(410, 79);
+            this.lbBundlecreatedDate.Location = new System.Drawing.Point(576, 5);
             this.lbBundlecreatedDate.Name = "lbBundlecreatedDate";
-            this.lbBundlecreatedDate.Size = new System.Drawing.Size(129, 21);
+            this.lbBundlecreatedDate.Size = new System.Drawing.Size(138, 21);
             this.lbBundlecreatedDate.TabIndex = 101;
-            this.lbBundlecreatedDate.Text = "Bundle created Date";
+            this.lbBundlecreatedDate.Text = "Bundle Created Date";
             // 
             // lbBundlecreator
             // 
-            this.lbBundlecreator.Location = new System.Drawing.Point(5, 79);
+            this.lbBundlecreator.Location = new System.Drawing.Point(6, 105);
             this.lbBundlecreator.Name = "lbBundlecreator";
             this.lbBundlecreator.Size = new System.Drawing.Size(99, 21);
             this.lbBundlecreator.TabIndex = 100;
-            this.lbBundlecreator.Text = "Bundle creator";
+            this.lbBundlecreator.Text = "Bundle Creator";
             // 
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label1.Location = new System.Drawing.Point(594, 49);
+            this.label1.Location = new System.Drawing.Point(338, 29);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(45, 23);
+            this.label1.Size = new System.Drawing.Size(93, 23);
             this.label1.TabIndex = 99;
             this.label1.Text = "Factory";
             // 
@@ -203,51 +226,51 @@
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM.IsProduceFty = false;
             this.txtfactoryByM.IssupportJunk = false;
-            this.txtfactoryByM.Location = new System.Drawing.Point(642, 49);
+            this.txtfactoryByM.Location = new System.Drawing.Point(434, 29);
             this.txtfactoryByM.MDivision = null;
             this.txtfactoryByM.Name = "txtfactoryByM";
-            this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
-            this.txtfactoryByM.TabIndex = 98;
+            this.txtfactoryByM.Size = new System.Drawing.Size(107, 23);
+            this.txtfactoryByM.TabIndex = 9;
             // 
             // dateBox1
             // 
-            this.dateBox1.Location = new System.Drawing.Point(575, 16);
+            this.dateBox1.Location = new System.Drawing.Point(434, 54);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 3;
+            this.dateBox1.TabIndex = 10;
             // 
             // txtCell
             // 
             this.txtCell.BackColor = System.Drawing.Color.White;
             this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell.Location = new System.Drawing.Point(750, 48);
+            this.txtCell.Location = new System.Drawing.Point(434, 79);
             this.txtCell.Name = "txtCell";
-            this.txtCell.Size = new System.Drawing.Size(100, 23);
-            this.txtCell.TabIndex = 8;
+            this.txtCell.Size = new System.Drawing.Size(107, 23);
+            this.txtCell.TabIndex = 11;
             // 
             // txtSize
             // 
             this.txtSize.BackColor = System.Drawing.Color.White;
             this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSize.Location = new System.Drawing.Point(751, 16);
+            this.txtSize.Location = new System.Drawing.Point(108, 79);
             this.txtSize.Name = "txtSize";
-            this.txtSize.Size = new System.Drawing.Size(100, 23);
-            this.txtSize.TabIndex = 9;
+            this.txtSize.Size = new System.Drawing.Size(101, 23);
+            this.txtSize.TabIndex = 6;
             // 
             // txtPOID
             // 
             this.txtPOID.BackColor = System.Drawing.Color.White;
             this.txtPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPOID.Location = new System.Drawing.Point(363, 15);
+            this.txtPOID.Location = new System.Drawing.Point(434, 4);
             this.txtPOID.Name = "txtPOID";
-            this.txtPOID.Size = new System.Drawing.Size(100, 23);
-            this.txtPOID.TabIndex = 2;
+            this.txtPOID.Size = new System.Drawing.Size(107, 23);
+            this.txtPOID.TabIndex = 8;
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(474, 50);
+            this.label10.Location = new System.Drawing.Point(212, 54);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(15, 22);
+            this.label10.Size = new System.Drawing.Size(21, 22);
             this.label10.TabIndex = 18;
             this.label10.Text = "~";
             // 
@@ -255,23 +278,23 @@
             // 
             this.txtBundleEnd.BackColor = System.Drawing.Color.White;
             this.txtBundleEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBundleEnd.Location = new System.Drawing.Point(492, 49);
+            this.txtBundleEnd.Location = new System.Drawing.Point(236, 54);
             this.txtBundleEnd.Name = "txtBundleEnd";
             this.txtBundleEnd.Size = new System.Drawing.Size(99, 23);
-            this.txtBundleEnd.TabIndex = 7;
+            this.txtBundleEnd.TabIndex = 5;
             // 
             // txtBundleStart
             // 
             this.txtBundleStart.BackColor = System.Drawing.Color.White;
             this.txtBundleStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBundleStart.Location = new System.Drawing.Point(372, 49);
+            this.txtBundleStart.Location = new System.Drawing.Point(108, 54);
             this.txtBundleStart.Name = "txtBundleStart";
-            this.txtBundleStart.Size = new System.Drawing.Size(99, 23);
-            this.txtBundleStart.TabIndex = 6;
+            this.txtBundleStart.Size = new System.Drawing.Size(100, 23);
+            this.txtBundleStart.TabIndex = 4;
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(184, 50);
+            this.label8.Location = new System.Drawing.Point(212, 29);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(22, 22);
             this.label8.TabIndex = 15;
@@ -281,23 +304,23 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(209, 49);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(236, 29);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(99, 23);
-            this.txtSPNoEnd.TabIndex = 5;
+            this.txtSPNoEnd.TabIndex = 3;
             // 
             // txtSPNoStart
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(83, 50);
+            this.txtSPNoStart.Location = new System.Drawing.Point(108, 29);
             this.txtSPNoStart.Name = "txtSPNoStart";
-            this.txtSPNoStart.Size = new System.Drawing.Size(99, 23);
-            this.txtSPNoStart.TabIndex = 4;
+            this.txtSPNoStart.Size = new System.Drawing.Size(100, 23);
+            this.txtSPNoStart.TabIndex = 2;
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(184, 16);
+            this.label9.Location = new System.Drawing.Point(212, 4);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(22, 22);
             this.label9.TabIndex = 12;
@@ -305,10 +328,10 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(889, 10);
+            this.btnQuery.Location = new System.Drawing.Point(902, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(94, 35);
-            this.btnQuery.TabIndex = 11;
+            this.btnQuery.TabIndex = 17;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -317,10 +340,10 @@
             // 
             this.checkExtendAllParts.AutoSize = true;
             this.checkExtendAllParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkExtendAllParts.Location = new System.Drawing.Point(859, 49);
+            this.checkExtendAllParts.Location = new System.Drawing.Point(434, 105);
             this.checkExtendAllParts.Name = "checkExtendAllParts";
             this.checkExtendAllParts.Size = new System.Drawing.Size(126, 21);
-            this.checkExtendAllParts.TabIndex = 10;
+            this.checkExtendAllParts.TabIndex = 12;
             this.checkExtendAllParts.Text = "Extend All Parts";
             this.checkExtendAllParts.UseVisualStyleBackColor = true;
             // 
@@ -328,7 +351,7 @@
             // 
             this.txtCutRefEnd.BackColor = System.Drawing.Color.White;
             this.txtCutRefEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutRefEnd.Location = new System.Drawing.Point(209, 15);
+            this.txtCutRefEnd.Location = new System.Drawing.Point(236, 4);
             this.txtCutRefEnd.Name = "txtCutRefEnd";
             this.txtCutRefEnd.Size = new System.Drawing.Size(99, 23);
             this.txtCutRefEnd.TabIndex = 1;
@@ -337,64 +360,64 @@
             // 
             this.txtCutRefStart.BackColor = System.Drawing.Color.White;
             this.txtCutRefStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutRefStart.Location = new System.Drawing.Point(83, 16);
+            this.txtCutRefStart.Location = new System.Drawing.Point(108, 4);
             this.txtCutRefStart.Name = "txtCutRefStart";
-            this.txtCutRefStart.Size = new System.Drawing.Size(99, 23);
+            this.txtCutRefStart.Size = new System.Drawing.Size(100, 23);
             this.txtCutRefStart.TabIndex = 0;
             // 
             // labelSize
             // 
-            this.labelSize.Location = new System.Drawing.Point(712, 16);
+            this.labelSize.Location = new System.Drawing.Point(6, 80);
             this.labelSize.Name = "labelSize";
-            this.labelSize.Size = new System.Drawing.Size(36, 23);
+            this.labelSize.Size = new System.Drawing.Size(99, 21);
             this.labelSize.TabIndex = 6;
             this.labelSize.Text = "Size";
             // 
             // labelCell
             // 
-            this.labelCell.Location = new System.Drawing.Point(716, 47);
+            this.labelCell.Location = new System.Drawing.Point(338, 79);
             this.labelCell.Name = "labelCell";
-            this.labelCell.Size = new System.Drawing.Size(32, 23);
+            this.labelCell.Size = new System.Drawing.Size(93, 23);
             this.labelCell.TabIndex = 5;
             this.labelCell.Text = "Cell";
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(480, 15);
+            this.label5.Location = new System.Drawing.Point(338, 54);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(91, 23);
+            this.label5.Size = new System.Drawing.Size(93, 23);
             this.label5.TabIndex = 4;
             this.label5.Text = "Est. Cut Date";
             // 
             // labelBundleNo
             // 
-            this.labelBundleNo.Location = new System.Drawing.Point(313, 49);
+            this.labelBundleNo.Location = new System.Drawing.Point(6, 55);
             this.labelBundleNo.Name = "labelBundleNo";
-            this.labelBundleNo.Size = new System.Drawing.Size(56, 23);
+            this.labelBundleNo.Size = new System.Drawing.Size(99, 21);
             this.labelBundleNo.TabIndex = 3;
             this.labelBundleNo.Text = "Bundle#";
             // 
             // labelPOID
             // 
-            this.labelPOID.Location = new System.Drawing.Point(313, 15);
+            this.labelPOID.Location = new System.Drawing.Point(338, 4);
             this.labelPOID.Name = "labelPOID";
-            this.labelPOID.Size = new System.Drawing.Size(47, 23);
+            this.labelPOID.Size = new System.Drawing.Size(93, 23);
             this.labelPOID.TabIndex = 2;
             this.labelPOID.Text = "POID";
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(5, 51);
+            this.labelSPNo.Location = new System.Drawing.Point(6, 30);
             this.labelSPNo.Name = "labelSPNo";
-            this.labelSPNo.Size = new System.Drawing.Size(75, 21);
+            this.labelSPNo.Size = new System.Drawing.Size(99, 21);
             this.labelSPNo.TabIndex = 1;
             this.labelSPNo.Text = "SP#";
             // 
             // labelCutRef
             // 
-            this.labelCutRef.Location = new System.Drawing.Point(5, 16);
+            this.labelCutRef.Location = new System.Drawing.Point(6, 5);
             this.labelCutRef.Name = "labelCutRef";
-            this.labelCutRef.Size = new System.Drawing.Size(75, 22);
+            this.labelCutRef.Size = new System.Drawing.Size(99, 21);
             this.labelCutRef.TabIndex = 0;
             this.labelCutRef.Text = "Cut Ref";
             // 
@@ -482,9 +505,9 @@
             // 
             this.panel5.Controls.Add(this.grid1);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(0, 108);
+            this.panel5.Location = new System.Drawing.Point(0, 131);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1008, 402);
+            this.panel5.Size = new System.Drawing.Size(1008, 379);
             this.panel5.TabIndex = 10;
             // 
             // grid1
@@ -516,7 +539,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(1008, 402);
+            this.grid1.Size = new System.Drawing.Size(1008, 379);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
@@ -589,5 +612,7 @@
         private Win.UI.TextBox txtComb;
         private Win.UI.Label lbComb;
         private System.Windows.Forms.CheckBox checkChangepagebyCut;
+        private Win.UI.Label label2;
+        private Class.txtSpreadingNo txtSpreadingNo1;
     }
 }

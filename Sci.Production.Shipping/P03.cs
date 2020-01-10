@@ -39,19 +39,19 @@ select
 	case when ed.PoType = 'M' and ed.FabricType = 'M' 
 		then (
 			select TOP 1 mpo.FactoryID 
-			from [Machine].dbo.MachinePO mpo, [Machine].dbo.MachinePO_Detail mpod 
+			from SciMachine_MachinePO mpo, SciMachine_MachinePO_Detail mpod 
 			where mpo.ID = mpod.ID and mpod.ID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2
 		)
         when ed.PoType = 'M' and ed.FabricType = 'P' 
 		 then (
 			select TOP 1 ppo.FactoryID 
-			from [Machine].dbo.PartPO ppo, [Machine].dbo.PartPO_Detail ppod 
+			from SciMachine_PartPO ppo, SciMachine_PartPO_Detail ppod 
 			where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2
 		) 
 		when ed.PoType = 'M' and ed.FabricType = 'O' 
 		then (
 			select TOP 1 mpo.Factoryid 
-			from [Machine].dbo.MiscPO mpo, [Machine].dbo.MiscPO_Detail mpod 
+			from SciMachine_MiscPO mpo, SciMachine_MiscPO_Detail mpod 
 			where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2
 		) 
 	else o.FactoryID end)
@@ -110,7 +110,9 @@ where ed.ID = '{0}'", masterID);
             this.txtLocateSP2.ReadOnly = false;
             this.chkReplacement.ReadOnly = true;
             this.chkDelay.ReadOnly = true;
-            this.label21.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false;
+            this.label21.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false; 
+            this.labelFormE.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["FormE"]) == "True" ? true : false;
+
             switch (MyUtility.Convert.GetString(this.CurrentMaintain["Payer"]))
             {
                 case "S":
@@ -127,8 +129,70 @@ where ed.ID = '{0}'", masterID);
                     break;
             }
 
-            decimal intPrepaidFtyImportFee = MyUtility.Convert.GetDecimal(this.CurrentMaintain["PrepaidFtyImportFee"]);
+            string sqlmainPrepaidFtyImportFee = $@"
+select PrepaidFtyImportFee
+from Export
+where ID = '{this.CurrentMaintain["MainExportID08"]}'
+";
+
+            decimal intPrepaidFtyImportFee = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlmainPrepaidFtyImportFee));
             this.chkImportChange.Enabled = !(intPrepaidFtyImportFee > 0);
+            #region Declaration ID
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["Blno"]))
+            {
+                string sqlcmd = $@"select ID from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 0";
+                this.displayDeclarationID.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            else
+            {
+                this.displayDeclarationID.Text = string.Empty;
+            }
+
+            if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
+            {
+                string sqlcmd = $@"select ID from VNImportDeclaration where WKNo='{this.CurrentMaintain["ID"]}' and IsFtyExport = 0";
+                this.displayDeclarationID.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            #endregion
+            #region CustomsDeclareNo
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["Blno"]))
+            {
+                string sqlcmd = $@"select DeclareNo from VNImportDeclaration where BLNo='{this.CurrentMaintain["Blno"]}' and IsFtyExport = 0";
+                this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            else
+            {
+                this.displayCustomsDeclareNo.Text = string.Empty;
+            }
+
+            if (MyUtility.Check.Empty(this.displayDeclarationID.Text))
+            {
+                string sqlcmd = $@"select DeclareNo from VNImportDeclaration where WKNo='{this.CurrentMaintain["ID"]}' and IsFtyExport = 0";
+                this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+            #endregion
+            #region Door to Door
+            string chkdtd = $@"
+select 1
+from Door2DoorDelivery 
+where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
+      and ExportCountry ='{this.CurrentMaintain["ExportCountry"]}'
+      and ImportCountry = '{this.CurrentMaintain["ImportCountry"]}'
+      and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
+      and Vessel ='{this.CurrentMaintain["Vessel"]}'
+union 
+select 1
+from Door2DoorDelivery
+where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
+      and ExportCountry ='{this.CurrentMaintain["ExportCountry"]}'
+      and ImportCountry = '{this.CurrentMaintain["ImportCountry"]}'
+      and ShipModeID = '{this.CurrentMaintain["ShipModeID"]}'
+      and Vessel  =''
+";
+            this.ChkDoortoDoorDelivery.Checked = MyUtility.Check.Seek(chkdtd);
+            #endregion
+
+            this.ControlColor();
         }
 
         /// <inheritdoc/>
@@ -165,6 +229,27 @@ where ed.ID = '{0}'", masterID);
         protected override bool ClickSaveBefore()
         {
             DialogResult dResult;
+
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+
+            sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (gridData.Rows.Count > 0 && this.chkImportChange.Checked)
+            {
+                MyUtility.Msg.WarningBox("WK has been shared expense,  [No Import Charge] shouldn't tick, please double check.");
+            }
 
             // Arrive Port Date 不可晚於 Arrive W/H Date
             if (MyUtility.Convert.GetString(this.CurrentMaintain["ExportCountry"]).ToUpper() == MyUtility.Convert.GetString(this.CurrentMaintain["ImportCountry"]).ToUpper()
@@ -222,19 +307,6 @@ where ed.ID = '{0}'", masterID);
                 }
             }
 
-            if (this.ChkHaveAP())
-            {
-                return false;
-            }
-
-            // 已經有做出口費用分攤，不能勾選[No Import Charge]
-            if (MyUtility.Check.Seek(string.Format(@"select WKNO from ShareExpense WITH (NOLOCK) where WKNO = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
-                && this.chkImportChange.Checked)
-            {
-                MyUtility.Msg.WarningBox("This WK# has share expense, please unselect [No Import Charge].");
-                return false;
-            }
-
             return base.ClickSaveBefore();
         }
 
@@ -281,33 +353,6 @@ where ed.ID = '{0}'", masterID);
             callNextForm.ShowDialog(this);
         }
 
-        /// <summary>
-        /// 檢查[Expense Data]有[A/P No]存在、Export.PrepaidFtyImportFee>0
-        /// </summary>
-        /// <returns>Boolean</returns>
-        private bool ChkHaveAP()
-        {
-            bool rtnBol = false;
-            string sqlCmd = string.Empty;
-            bool bolShippingAPID = false;
-            if (this.chkImportChange.Checked)
-            {
-                sqlCmd = string.Format(
-                    @"select se.ShippingAPID
-                      from ShareExpense se WITH (NOLOCK)  
-                      where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-                bolShippingAPID = MyUtility.Check.Seek(sqlCmd);
-                if (bolShippingAPID)
-                {
-                    MyUtility.Msg.ErrorBox("Have A/P# already");
-                    this.chkImportChange.Checked = false;
-                    rtnBol = true;
-                }
-            }
-
-            return rtnBol;
-        }
-
         private void btnBatchUpload_Click(object sender, EventArgs e)
         {
             if (!this.Perm.Edit)
@@ -319,6 +364,34 @@ where ed.ID = '{0}'", masterID);
             P03_BatchUpload callNextForm = new P03_BatchUpload();
             callNextForm.ShowDialog(this);
             this.ReloadDatas();
+        }
+
+        private void ControlColor()
+        {
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+
+            sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (gridData.Rows.Count > 0)
+            {
+                this.btnExpenseData.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnExpenseData.ForeColor = Color.Black;
+            }
         }
     }
 }

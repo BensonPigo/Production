@@ -17,6 +17,8 @@ namespace Sci.Production.Logistic
     /// </summary>
     public partial class P02 : Sci.Win.Tems.QueryForm
     {
+        private DataTable selectDataTable = new DataTable();
+
         /// <summary>
         /// P02
         /// </summary>
@@ -104,8 +106,6 @@ namespace Sci.Production.Logistic
             };
         }
 
-        private DataTable selectDataTable;
-
         // Find
         private void Find()
         {
@@ -124,16 +124,24 @@ namespace Sci.Production.Logistic
 
             Dictionary<string, string> dicSqlFilte = new Dictionary<string, string>();
             dicSqlFilte.Add("PackingList ID", !MyUtility.Check.Empty(this.txtPackID.Text) ? string.Format("and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()) : string.Empty);
-            dicSqlFilte.Add("PackingList_Detail OrderID", !MyUtility.Check.Empty(this.txtSPNo.Text) ? string.Format("and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()) : string.Empty);
+            dicSqlFilte.Add("Order ID", !MyUtility.Check.Empty(this.txtSPNo.Text) ? string.Format("and c.ID = '{0}'", this.txtSPNo.Text.ToString().Trim()) : string.Empty);
             dicSqlFilte.Add("Orders CustPONo", !MyUtility.Check.Empty(this.txtPONo.Text) ? string.Format("and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()) : string.Empty);
             dicSqlFilte.Add("Orders FtyGroup", !MyUtility.Check.Empty(this.txtfactory.Text) ? string.Format(@"and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()) : string.Empty);
-            dicSqlFilte.Add("TransferToClog AddDate Start", !MyUtility.Check.Empty(this.dateTimePicker1.Text) ? string.Format("and t.AddDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()) : string.Empty);
-            dicSqlFilte.Add("TransferToClog AddDate End", !MyUtility.Check.Empty(this.dateTimePicker2.Text) ? string.Format("and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()) : string.Empty);
+            dicSqlFilte.Add("TransferToClog AddDate Start", !MyUtility.Check.Empty(this.dateTimePicker1.Text) ? string.Format("where t.AddDate >= cast('{0}' as datetime)", this.dateTimePicker1.Text.ToString().Trim()) : string.Empty);
+            dicSqlFilte.Add("TransferToClog AddDate End", !MyUtility.Check.Empty(this.dateTimePicker2.Text) ? string.Format("and t.AddDate <= cast('{0}' as datetime)", this.dateTimePicker2.Text.ToString().Trim()) : string.Empty);
             dicSqlFilte.Add("TransferToClog TransferSlipNo", !MyUtility.Check.Empty(this.txtTransferSlipNo.Text) ? strTransferSlipNoFilte : string.Empty);
             #endregion
 
             string sqlCmd = string.Format(
                 @"
+SELECT *
+into #tmp_TransferToClog
+FROM TransferToClog t WITH (NOLOCK)
+-- TransferToClog AddDate Start --
+{5}
+-- TransferToClog AddDate End --
+{6}
+
 select *
        , rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
        , rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
@@ -155,41 +163,35 @@ from (
              ,c.FtyGroup
              ,'' as Remark
              , b.SCICtnNo
-      from PackingList a WITH (NOLOCK) 
-           , PackingList_Detail b WITH (NOLOCK) 
-           , Orders c WITH (NOLOCK) 
-           , Country d WITH (NOLOCK)
-           , TransferToClog t WITH (NOLOCK)
-      where b.OrderId = c.Id 
-            and a.Id = b.Id 
-            and b.CTNStartNo != '' 
-            and b.CTNQty = 1
-            and b.TransferDate is not null
-            and b.ReceiveDate is null
-            and c.Dest = d.ID 
-            and b.DisposeFromClog= 0
-            and a.MDivisionID = '{0}' 
-            and (a.Type = 'B' or a.Type = 'L') 
-            and c.MDivisionID = '{0}'
-            and a.id = t.PackingListID            
+	  from PackingList a WITH (NOLOCK) 
+	  inner join #tmp_TransferToClog t WITH (NOLOCK) on a.id = t.PackingListID
+	  inner join PackingList_Detail b WITH (NOLOCK) on a.Id = b.Id
+	  inner join Orders c WITH (NOLOCK) on b.OrderId = c.Id 
+  	  inner join Country d WITH (NOLOCK) on c.Dest = d.ID 
+      where a.MDivisionID = '{0}'
             -- PackingList ID --
             {1}
-            -- PackingList_Detail OrderID --
+            -- Order ID --
             {2}
             -- Orders CustPONo --
             {3}
             -- Orders FtyGroup --
-            {4}
-            -- TransferToClog AddDate Start --
-            {5}
-            -- TransferToClog AddDate End --
-            {6}
+            {4} 
             -- TransferToClog TransferSlipNo --
             {7}
+            and b.CTNStartNo != '' 
+            and b.CTNQty = 1
+            and b.TransferDate is not null
+            and b.ReceiveDate is null 
+            and b.DisposeFromClog= 0 
+            and (a.Type = 'B' or a.Type = 'L')
 )X 
-order by rn", Sci.Env.User.Keyword,
+order by rn
+
+drop table #tmp_TransferToClog
+", Sci.Env.User.Keyword,
             dicSqlFilte["PackingList ID"],
-            dicSqlFilte["PackingList_Detail OrderID"],
+            dicSqlFilte["Order ID"],
             dicSqlFilte["Orders CustPONo"],
             dicSqlFilte["Orders FtyGroup"],
             dicSqlFilte["TransferToClog AddDate Start"],
@@ -208,10 +210,14 @@ order by rn", Sci.Env.User.Keyword,
                 {
                     this.ControlButton4Text("Cancel");
                 }
-            }
 
-            this.listControlBindingSource1.DataSource = this.selectDataTable;
-            this.numTotalCTNQty.Value = this.selectDataTable.Rows.Count;
+                this.listControlBindingSource1.DataSource = this.selectDataTable;
+                this.numTotalCTNQty.Value = this.selectDataTable.Rows.Count;
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(selectResult.Messages.ToString());
+            }
         }
 
         private void ButtonFind_Click(object sender, EventArgs e)

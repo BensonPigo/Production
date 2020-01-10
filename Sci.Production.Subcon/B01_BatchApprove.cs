@@ -116,7 +116,7 @@ from
 					   when ChooseSupp = 4 then price4 end
 		,Selected = 0
 		,lq.Ukey
-		,AccountIDN=concat(AccountID,' ',(select Name from  FinanceEN.dbo.AccountNo with (nolock) where junk = 0 and id = AccountID))
+		,AccountIDN=concat(AccountID,' ',(select Name from  dbo.SciFMS_AccountNo with (nolock) where junk = 0 and id = AccountID))
 	
 	from LocalItem l
 	inner join LocalItem_Quot lq on l.RefNo = lq.RefNo

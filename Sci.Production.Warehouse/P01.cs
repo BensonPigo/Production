@@ -190,14 +190,12 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 if (OrdersData.Rows.Count > 0)
                 {
                     editPOCombo.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["PoList"]);
-                    editCuttingCombo.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["CuttingList"]);
                     displayRMTLETAMasterSP.Value = MyUtility.Convert.GetString(OrdersData.Rows[0]["MTLExport"]);
                     displayActPullout.Value = MyUtility.Convert.GetString(OrdersData.Rows[0]["PulloutComplete"]);
                 }
                 else
                 {
                     editPOCombo.Text = "";
-                    editCuttingCombo.Text = "";
                     displayRMTLETAMasterSP.Value = "";
                     displayActPullout.Value = "";
                 }
@@ -206,7 +204,6 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             {
                 MyUtility.Msg.ErrorBox("Query OrdersData fail!!" + result.ToString());
                 editPOCombo.Text = "";
-                editCuttingCombo.Text = "";
                 displayRMTLETAMasterSP.Value = "";
                 displayActPullout.Value = "";
             }

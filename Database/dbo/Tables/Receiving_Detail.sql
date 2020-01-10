@@ -18,6 +18,7 @@
     [StockQty]     NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_StockQty] DEFAULT ((0)) NULL,
     [StockType]    VARCHAR (1)     CONSTRAINT [DF_Receiving_Detail_StockType] DEFAULT ('') NULL,
     [Ukey]         BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CompleteTime] DATETIME NULL, 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

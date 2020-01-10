@@ -177,6 +177,8 @@
             this.labCW = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.dateAPAmountEditDate = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -185,12 +187,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(996, 693);
-            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.dateAPAmountEditDate);
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.dateBox1);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.numericBoxCW);
@@ -283,19 +283,19 @@
             this.detailcont.Controls.Add(this.numExchangeRate);
             this.detailcont.Controls.Add(this.numVWeight);
             this.detailcont.Controls.Add(this.numGrossWeight);
-            this.detailcont.Controls.Add(this.txttpeuserSMR);
-            this.detailcont.Controls.Add(this.txttpeuserMR);
-            this.detailcont.Controls.Add(this.txttpeuserTask);
             this.detailcont.Controls.Add(this.txttpeuserPOHandle);
             this.detailcont.Controls.Add(this.txttpeuserPOSMR);
-            this.detailcont.Controls.Add(this.txtsubcon3);
+            this.detailcont.Controls.Add(this.txttpeuserMR);
+            this.detailcont.Controls.Add(this.txttpeuserTask);
+            this.detailcont.Controls.Add(this.txttpeuserSMR);
             this.detailcont.Controls.Add(this.labelExchangeRate);
+            this.detailcont.Controls.Add(this.txtsubcon3);
             this.detailcont.Controls.Add(this.txtSubconForwarderN);
             this.detailcont.Controls.Add(this.txtSubconForwarder1);
-            this.detailcont.Controls.Add(this.txtuserShipLeader);
-            this.detailcont.Controls.Add(this.txtUserFactorymgr);
-            this.detailcont.Controls.Add(this.txtUserPreparedBy);
             this.detailcont.Controls.Add(this.txtUserPPICmgr);
+            this.detailcont.Controls.Add(this.txtUserFactorymgr);
+            this.detailcont.Controls.Add(this.txtuserShipLeader);
+            this.detailcont.Controls.Add(this.txtUserPreparedBy);
             this.detailcont.Controls.Add(this.labelVWeight);
             this.detailcont.Controls.Add(this.labelGrossWeight);
             this.detailcont.Controls.Add(this.dateRcvDoxDate);
@@ -330,7 +330,7 @@
             this.detailcont.Controls.Add(this.labelAirNo);
             this.detailcont.Controls.Add(this.shapeContainer1);
             this.detailcont.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.detailcont.Size = new System.Drawing.Size(996, 645);
+            this.detailcont.Size = new System.Drawing.Size(897, 347);
             // 
             // detailbtm
             // 
@@ -339,8 +339,8 @@
             this.detailbtm.Controls.Add(this.labelUpdTPEDate);
             this.detailbtm.Controls.Add(this.labelTPEEditDate);
             this.detailbtm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.detailbtm.Location = new System.Drawing.Point(0, 645);
-            this.detailbtm.Size = new System.Drawing.Size(996, 48);
+            this.detailbtm.Location = new System.Drawing.Point(0, 347);
+            this.detailbtm.Size = new System.Drawing.Size(897, 48);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -1184,7 +1184,7 @@
             // 
             // labelComments
             // 
-            this.labelComments.Location = new System.Drawing.Point(512, 278);
+            this.labelComments.Location = new System.Drawing.Point(512, 302);
             this.labelComments.Name = "labelComments";
             this.labelComments.Size = new System.Drawing.Size(69, 37);
             this.labelComments.TabIndex = 71;
@@ -1196,7 +1196,7 @@
             this.editComments.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MRComment", true));
             this.editComments.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editComments.IsSupportEditMode = false;
-            this.editComments.Location = new System.Drawing.Point(584, 276);
+            this.editComments.Location = new System.Drawing.Point(584, 300);
             this.editComments.Multiline = true;
             this.editComments.Name = "editComments";
             this.editComments.ReadOnly = true;
@@ -1471,7 +1471,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(996, 645);
+            this.shapeContainer1.Size = new System.Drawing.Size(994, 641);
             this.shapeContainer1.TabIndex = 93;
             this.shapeContainer1.TabStop = false;
             // 
@@ -2150,6 +2150,24 @@
             this.label1.TabIndex = 161;
             this.label1.Text = "Fty Sent Dox Date";
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(625, 276);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(109, 18);
+            this.label2.TabIndex = 170;
+            this.label2.Text = "Act. Amt Cfm Date";
+            // 
+            // dateAPAmountEditDate
+            // 
+            this.dateAPAmountEditDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "APAmountEditDate", true));
+            this.dateAPAmountEditDate.IsSupportEditMode = false;
+            this.dateAPAmountEditDate.Location = new System.Drawing.Point(737, 275);
+            this.dateAPAmountEditDate.Name = "dateAPAmountEditDate";
+            this.dateAPAmountEditDate.ReadOnly = true;
+            this.dateAPAmountEditDate.Size = new System.Drawing.Size(109, 21);
+            this.dateAPAmountEditDate.TabIndex = 16;
+            // 
             // P01
             // 
             this.ApvChkValue = "Checked";
@@ -2158,6 +2176,7 @@
             this.DefaultControl = "txtSpNo";
             this.DefaultControlForEdit = "txtSpNo";
             this.DefaultOrder = "CDate";
+            this.ExpressQuery = true;
             this.IsSupportCheck = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
@@ -2337,5 +2356,7 @@
         private Win.UI.Label labCW;
         private Win.UI.DateBox dateBox1;
         private Win.UI.Label label1;
+        private Win.UI.DateBox dateAPAmountEditDate;
+        private Win.UI.Label label2;
     }
 }

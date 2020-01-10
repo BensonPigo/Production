@@ -618,6 +618,21 @@ order by os.Seq", dr["OrderID"].ToString(),
                 return false;
             }
 
+            // 檢查 表頭的 ShipMode 是否屬於必須建立 APP（請至資料表 : ShipMode 確認是否需要建立 APP : NeedCreateAPP）
+            // 若確認必須要建立 APP 則判斷表身的 N.W. / pcs 是否都有輸入
+            bool isNeedCreateAPP = MyUtility.Check.Seek($"select 1 from ShipMode with (nolock) where ID = '{this.CurrentMaintain["ShipModeID"]}' and NeedCreateAPP = 1");
+
+            if (isNeedCreateAPP)
+            {
+                bool isNWPcsEmpty = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["NWPerPcs"])).Any();
+                if (isNWPcsEmpty)
+                {
+                    string shipModeAirPP = Prgs.GetNeedCreateAppShipMode();
+                    MyUtility.Msg.WarningBox($"Shipping mode is {shipModeAirPP} row data need input N.W./Pcs");
+                    return false;
+                }
+            }
+
             // 刪除表身SP No.或Qty為空白的資料，檢查表身的Color Way與Size不可以為空值，順便填入Seq欄位值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, needPackQty = 0, ttlShipQty = 0, count = 0, drCtnQty = 0;
             double nw = 0.0, gw = 0.0, nnw = 0.0, cbm = 0.0;
@@ -673,9 +688,9 @@ order by os.Seq", dr["OrderID"].ToString(),
                 drCtnQty = MyUtility.Check.Empty(dr["CTNQty"]) ? 0 : MyUtility.Convert.GetInt(dr["CTNQty"]);
                 ctnQty = ctnQty + drCtnQty;
                 shipQty = shipQty + MyUtility.Convert.GetInt(dr["ShipQty"]);
-                nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
-                gw = MyUtility.Math.Round(gw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
-                nnw = MyUtility.Math.Round(nnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
+                nw = MyUtility.Math.Round(nw + (MyUtility.Convert.GetDouble(dr["NW"]) * MyUtility.Convert.GetDouble(dr["CTNQty"])), 3);
+                gw = MyUtility.Math.Round(gw + (MyUtility.Convert.GetDouble(dr["GW"]) * MyUtility.Convert.GetDouble(dr["CTNQty"])), 3);
+                nnw = MyUtility.Math.Round(nnw + (MyUtility.Convert.GetDouble(dr["NNW"]) * MyUtility.Convert.GetDouble(dr["CTNQty"])), 3);
                 if (drCtnQty > 0)
                 {
                     ctnCBM = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
@@ -1089,6 +1104,42 @@ where InvA.OrderID = '{0}'
 
             // 檢查Sewing Output Qty是否有超過Packing Qty
             if (!Prgs.CheckPackingQtyWithSewingOutput(this.CurrentMaintain["ID"].ToString()))
+            {
+                return;
+            }
+
+            string sqlchk = $@"
+SELECT  msg=concat(pd.OrderID,'(',pd.OrderShipmodeSeq,')')
+FROm PackingList p
+INNER JOIN PackingList_Detail pd On p.ID=pd.ID
+INNER JOIN  Order_QtyShip oq ON pd.OrderID=oq.Id
+LEFt JOIN ShipMode s ON oq.ShipModeID=s.ID
+WHERE p.ID='{this.CurrentMaintain["ID"]}'
+AND s.ShipGroup <> (
+	SELECT TOP 1 sm.ShipGroup
+	FROm PackingList p
+	LEFt JOIN ShipMode sm ON p.ShipModeID=sm.ID
+	WHERE p.ID='{this.CurrentMaintain["ID"]}'
+)";
+
+            DataTable dtchk;
+            DualResult dualResult = DBProxy.Current.Select(null, sqlchk, out dtchk);
+            if (!dualResult)
+            {
+                this.ShowErr(dualResult);
+                return;
+            }
+
+            if (dtchk.Rows.Count > 0)
+            {
+                var os = dtchk.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).Distinct().ToList();
+                string msg = @"Ship Mode are different, please check!
+" + string.Join(",", os);
+                MyUtility.Msg.WarningBox(msg);
+                return;
+            }
+
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
                 return;
             }

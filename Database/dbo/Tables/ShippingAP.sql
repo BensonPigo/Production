@@ -1,33 +1,38 @@
 ﻿CREATE TABLE [dbo].[ShippingAP] (
-    [ID]          VARCHAR (13)    CONSTRAINT [DF_ShippingAP_ID] DEFAULT ('') NOT NULL,
-    [CDate]       DATE            NOT NULL,
-    [MDivisionID] VARCHAR (8)     CONSTRAINT [DF_ShippingAP_FactoryID] DEFAULT ('') NOT NULL,
-    [Type]        VARCHAR (6)     CONSTRAINT [DF_ShippingAP_Type] DEFAULT ('') NULL,
-    [SubType]     VARCHAR (25)    CONSTRAINT [DF_ShippingAP_SubType] DEFAULT ('') NULL,
-    [LocalSuppID] VARCHAR (8)     CONSTRAINT [DF_ShippingAP_LocalSuppID] DEFAULT ('') NOT NULL,
-    [PayTermID]   VARCHAR (6)     CONSTRAINT [DF_ShippingAP_PayTermID] DEFAULT ('') NULL,
-    [Remark]      NVARCHAR (60)   CONSTRAINT [DF_ShippingAP_Remark] DEFAULT ('') NULL,
-    [InvNo]       VARCHAR (20)    CONSTRAINT [DF_ShippingAP_InvNo] DEFAULT ('') NULL,
-    [CurrencyID]  VARCHAR (3)     CONSTRAINT [DF_ShippingAP_CurrencyID] DEFAULT ('') NULL,
-    [Amount]      NUMERIC (12, 2) CONSTRAINT [DF_ShippingAP_Amount] DEFAULT ((0)) NULL,
-    [VATRate]     NUMERIC (3, 1)  CONSTRAINT [DF_ShippingAP_VATRate] DEFAULT ((0)) NULL,
-    [VAT]         NUMERIC (11, 2) CONSTRAINT [DF_ShippingAP_VAT] DEFAULT ((0)) NULL,
-    [BLNo]        VARCHAR (20)    CONSTRAINT [DF_ShippingAP_BLNo] DEFAULT ('') NULL,
-    [Handle]      VARCHAR (10)    CONSTRAINT [DF_ShippingAP_Handle] DEFAULT ('') NULL,
-    [Accountant]  VARCHAR (10)    CONSTRAINT [DF_ShippingAP_Accountant] DEFAULT ('') NULL,
-    [Status]      VARCHAR (15)    CONSTRAINT [DF_ShippingAP_Status] DEFAULT ('') NULL,
-    [ApvDate]     DATETIME        NULL,
-    [VoucherID]   VARCHAR (16)    CONSTRAINT [DF_ShippingAP_VoucherNo] DEFAULT ('') NULL,
-    [AddName]     VARCHAR (10)    CONSTRAINT [DF_ShippingAP_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME        NULL,
-    [EditName]    VARCHAR (10)    CONSTRAINT [DF_ShippingAP_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME        NULL,
-    [FactoryID]   VARCHAR (8)     DEFAULT ('') NOT NULL,
-    [ExVoucherID] VARCHAR (16)    DEFAULT ('') NULL,
-    [Reason]      VARCHAR (5)     DEFAULT ('') NULL,
-    [VoucherDate] DATE NULL, 
+    [ID]               VARCHAR (13)    CONSTRAINT [DF_ShippingAP_ID] DEFAULT ('') NOT NULL,
+    [CDate]            DATE            NOT NULL,
+    [MDivisionID]      VARCHAR (8)     CONSTRAINT [DF_ShippingAP_FactoryID] DEFAULT ('') NOT NULL,
+    [Type]             VARCHAR (6)     CONSTRAINT [DF_ShippingAP_Type] DEFAULT ('') NULL,
+    [SubType]          VARCHAR (25)    CONSTRAINT [DF_ShippingAP_SubType] DEFAULT ('') NULL,
+    [LocalSuppID]      VARCHAR (8)     CONSTRAINT [DF_ShippingAP_LocalSuppID] DEFAULT ('') NOT NULL,
+    [PayTermID]        VARCHAR (6)     CONSTRAINT [DF_ShippingAP_PayTermID] DEFAULT ('') NULL,
+    [Remark]           NVARCHAR (60)   CONSTRAINT [DF_ShippingAP_Remark] DEFAULT ('') NULL,
+    [InvNo]            VARCHAR (20)    CONSTRAINT [DF_ShippingAP_InvNo] DEFAULT ('') NULL,
+    [CurrencyID]       VARCHAR (3)     CONSTRAINT [DF_ShippingAP_CurrencyID] DEFAULT ('') NULL,
+    [Amount]           NUMERIC (12, 2) CONSTRAINT [DF_ShippingAP_Amount] DEFAULT ((0)) NULL,
+    [VATRate]          NUMERIC (3, 1)  CONSTRAINT [DF_ShippingAP_VATRate] DEFAULT ((0)) NULL,
+    [VAT]              NUMERIC (11, 2) CONSTRAINT [DF_ShippingAP_VAT] DEFAULT ((0)) NULL,
+    [BLNo]             VARCHAR (20)    CONSTRAINT [DF_ShippingAP_BLNo] DEFAULT ('') NULL,
+    [Handle]           VARCHAR (10)    CONSTRAINT [DF_ShippingAP_Handle] DEFAULT ('') NULL,
+    [Accountant]       VARCHAR (10)    CONSTRAINT [DF_ShippingAP_Accountant] DEFAULT ('') NULL,
+    [Status]           VARCHAR (15)    CONSTRAINT [DF_ShippingAP_Status] DEFAULT ('') NULL,
+    [ApvDate]          DATETIME        NULL,
+    [VoucherID]        VARCHAR (16)    CONSTRAINT [DF_ShippingAP_VoucherNo] DEFAULT ('') NULL,
+    [AddName]          VARCHAR (10)    CONSTRAINT [DF_ShippingAP_AddName] DEFAULT ('') NULL,
+    [AddDate]          DATETIME        NULL,
+    [EditName]         VARCHAR (10)    CONSTRAINT [DF_ShippingAP_EditName] DEFAULT ('') NULL,
+    [EditDate]         DATETIME        NULL,
+    [FactoryID]        VARCHAR (8)     DEFAULT ('') NOT NULL,
+    [ExVoucherID]      VARCHAR (16)    DEFAULT ('') NULL,
+    [Reason]           VARCHAR (5)     DEFAULT ('') NULL,
+    [VoucherDate]      DATE            NULL,
+    [SharedAmtFactory] NUMERIC (12, 2) CONSTRAINT [DF_ShippingAP_SharedAmtFactory] DEFAULT ((0)) NOT NULL,
+    [SharedAmtOther]   NUMERIC (12, 2) CONSTRAINT [DF_ShippingAP_SharedAmtOther] DEFAULT ((0)) NOT NULL,
+    [APPExchageRate]   NUMERIC (11, 6) DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -143,7 +148,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'Reason';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��]', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'Reason';
+
+
 
 
 GO

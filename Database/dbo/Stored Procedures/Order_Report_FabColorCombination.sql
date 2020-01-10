@@ -5,27 +5,30 @@ CREATE PROCEDURE [dbo].[Order_Report_FabColorCombination]
 AS
 BEGIN
 
-declare @OrderComboID varchar(13) = (select OrderComboID from MNOrder where ID = @OrderID)
-declare @tbl table (id varchar(13), Article varchar(8))
+declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @tbl table  (seq bigint, id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
 else if(@ByType = 1)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID AND OrderComboID = @OrderID)
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where POID = @POID AND OrderComboID = @OrderID)
 else if(@ByType = 2)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID )
-	
---FABRIC 主料，有FabricCode
-SELECT Article,c.BrandID,d.ColorID,a.FabricPanelCode,QTFabricPanelCode=isnull(b.QTFabricPanelCode,''),FabricCode 
-into #tmp FROM dbo.MNOrder_ColorCombo a
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where POID = @POID )
+
+
+SELECT tbl.seq,cc.Article,c.BrandID,d.ColorID,a.FabricPanelCode,QTFabricPanelCode=isnull(b.QTFabricPanelCode,''),a.FabricCode 
+into #tmp FROM dbo.Order_FabricCode a
+left join dbo.Order_ColorCombo cc
+	on a.FabricPanelCode = cc.FabricPanelCode and a.Id = cc.Id
 left join (
-	SELECT Id,FabricPanelCode,QTFabricPanelCode FROM DBO.MNOrder_FabricCode_QT where FabricPanelCode <> QTFabricPanelCode
+	SELECT Id,FabricPanelCode,QTFabricPanelCode FROM DBO.Order_FabricCode_QT where FabricPanelCode <> QTFabricPanelCode
 ) b on a.Id = b.Id and a.FabricPanelCode = b.FabricPanelCode
-left join dbo.MNOrder c on a.Id = c.ID
+left join dbo.Orders c on a.Id = c.ID
 outer apply (	
-	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = c.BrandID and d.ID = a.ColorID FOR XML PATH('')),1,1,'')
+	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = c.BrandID and d.ID = cc.ColorID FOR XML PATH('')),1,1,'')
 ) d
-WHERE a.ID = @OrderComboID and a.Article in (select Article from @tbl) AND FabricType = 'F'
+outer apply(select min(seq) seq,Article from @tbl tbl where tbl.Article = cc.Article group by Article ) tbl
+WHERE a.ID = @poid And cc.Article in (select article from @tbl) AND FabricType = 'F'
 
 if exists(select 1 from #tmp)
 	begin
@@ -37,12 +40,14 @@ if exists(select 1 from #tmp)
 			where Data between @minCode	and @maxCode FOR XML PATH('')
 		),1,1,'')			
 		declare @sql nvarchar(max) = 'SELECT CODE=Article,'+@rptcol+' FROM(
-			select 0 as idx,Article,ColorID,FabricPanelCode from #tmp
-			union select 998 as idx,''MAT.'',FabricCode,FabricPanelCode from #tmp
-			union select 999 as idx,''QT With'',QTFabricPanelCode,FabricPanelCode from #tmp
+			select seq,Article,ColorID,FabricPanelCode from #tmp
+			union 
+			select seq=998,''MAT.'',FabricCode,FabricPanelCode from #tmp
+			union 
+			select seq=999,''QT With'',QTFabricPanelCode,FabricPanelCode from #tmp
 		) a pivot (
 			max(ColorID) FOR FabricPanelCode in ('+@rptcol+')
-		) b order by idx'
+		) b order by seq,Article'
 
 		exec (@sql)
 	end

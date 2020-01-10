@@ -267,6 +267,7 @@
             this.comboTeam.OldText = "";
             this.comboTeam.Size = new System.Drawing.Size(57, 24);
             this.comboTeam.TabIndex = 3;
+            this.comboTeam.SelectedIndexChanged += new System.EventHandler(this.ComboTeam_SelectedIndexChanged);
             // 
             // labelManpower
             // 
@@ -580,6 +581,7 @@
             this.txtsewinglineLine.Name = "txtsewinglineLine";
             this.txtsewinglineLine.Size = new System.Drawing.Size(60, 23);
             this.txtsewinglineLine.TabIndex = 1;
+            this.txtsewinglineLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtsewinglineLine_Validating);
             // 
             // labelSubconOutFty
             // 
@@ -670,7 +672,8 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P01";
-            this.RecallChkValue = "Send";
+            this.OnLineHelpID = "Sci.Win.Tems.Input8";
+            this.RecallChkValue = "Sent";
             this.SubDetailKeyField1 = "id,ukey";
             this.SubDetailKeyField2 = "id,SewingOutput_DetailUKey";
             this.SubGridAlias = "SewingOutput_Detail_Detail";

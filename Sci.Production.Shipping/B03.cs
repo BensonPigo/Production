@@ -16,6 +16,8 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class B03 : Sci.Win.Tems.Input1
     {
+        private bool Junk;
+
         /// <summary>
         /// B03
         /// </summary>
@@ -249,6 +251,23 @@ namespace Sci.Production.Shipping
 
                 this.ReloadDatas();
             };
+        }
+
+        /// /// <inheritdoc/>
+        protected override void ClickJunk()
+        {
+            base.ClickJunk();
+            DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=1,Status='Junked',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            MyUtility.Msg.InfoBox("Success!");
+            this.RenewData();
+        }
+
+        protected override void ClickUnJunk()
+        {
+            base.ClickUnJunk();
+            DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=0,Status='New',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            MyUtility.Msg.InfoBox("Success!");
+            this.RenewData();
         }
     }
 }

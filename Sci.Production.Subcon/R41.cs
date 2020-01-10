@@ -92,7 +92,7 @@ namespace Sci.Production.Subcon
             StringBuilder sqlWhereWorkOrder = new StringBuilder();
             if (!MyUtility.Check.Empty(SubProcess))
             {
-                sqlWhere.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
+                sqlWhere.Append($@" and s.id in ('{SubProcess.Replace(",", "','")}') ");
             }
             if (!MyUtility.Check.Empty(CutRef1))
             {
@@ -140,7 +140,7 @@ namespace Sci.Production.Subcon
 
             if (this.processLocation != "ALL")
             {
-                sqlWhere.Append(string.Format(@" and bio.RFIDProcessLocationID = '{0}'", this.processLocation));
+                sqlWhere.Append(string.Format(@" and isnull(bio.RFIDProcessLocationID,'') = '{0}'", this.processLocation));
             }
 
             if (!MyUtility.Check.Empty(dateBDelivery1))
@@ -205,6 +205,7 @@ Select
     [Article] = b.Article,
     [Color] = b.ColorId,
     [Line] = b.SewinglineId,
+    bio.SewingLineID,
     [Cell] = b.SewingCell,
     [Pattern] = bd.PatternCode,
     [PtnDesc] = bd.PatternDesc,
@@ -220,6 +221,13 @@ Select
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
     [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
+    [AllocatedSubcon]=Stuff((					
+					select concat(',',ls.abb)
+					from order_tmscost ot
+					inner join LocalSupp ls on ls.id = ot.LocalSuppID
+					 where ot.id = o.id and ot.ArtworkTypeID=s.ArtworkTypeId 
+					for xml path('')
+					),1,1,''),
 	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,''))/24.0,2))
 					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,''))/24.0,2))
 					when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then null
@@ -336,6 +344,7 @@ select
     r.[Article],
     r.[Color],
     r.[Line],
+    r.SewingLineID,
     r.[Cell],
     r.[Pattern],
     r.[PtnDesc],
@@ -351,6 +360,7 @@ select
     r.[InComing],
     r.[Out (Time)],
     r.[POSupplier],
+    r.[AllocatedSubcon],
 	r.AvgTime,
     [TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
                         when AvgTime < 0 then 'Not Valid'
@@ -381,23 +391,15 @@ drop table #result
 
             #endregion
 
-            string cmdct = $@"
-{sqlCmd}
-
-select ct = count(1)
-from #result
-
-drop table #result
-";
             DataTable groupByDt;
-            DualResult result = DBProxy.Current.Select(null, cmdct, out groupByDt);
+            DualResult result = DBProxy.Current.Select(null, sqlResult, out groupByDt);
             if (!result)
             {
                 this.ShowErr(result);
                 return false;
-            }
-            var groupByLinq = groupByDt.AsEnumerable();
-            int ct = groupByLinq.Sum(s => (int)s["ct"]);
+            }            
+
+            int ct = groupByDt.Rows.Count;
             SetCount(ct);
             if (ct <= 0)
             {
@@ -413,42 +415,24 @@ drop table #result
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx");
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
-            int num = 200000;
-            
-            using (var cn = new SqlConnection(Env.Cfg.GetConnection("", DBProxy.Current.DefaultModuleName).ConnectionString))
-            using (var cm = cn.CreateCommand())
+            int num = 100000; 
+            int start = 0; 
+            DataTable dt = groupByDt.AsEnumerable().Skip(start).Take(num).CopyToDataTable(); 
+            while (dt.Rows.Count > 0)
             {
-                cm.CommandText = sqlResult;
-                cm.CommandTimeout = 1200;
-                var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
-                adp.SelectCommand.CommandTimeout = 1200; // 設定TSQL select record TimeOut
-                var cnt = 0;
-                var start = 0;
-                using (var ds = new DataSet())
+                System.Diagnostics.Debug.WriteLine("load {0} records", dt.Rows.Count);
+
+                //do some jobs        
+                MyUtility.Excel.CopyToXls(dt, string.Empty, "Subcon_R41_Bundle tracking list (RFID).xltx", 1 + start, false, null, objApp, wSheet: objSheets);
+                start += num;
+                if (start > ct)
                 {
-                    while ((cnt = adp.Fill(ds, start, num, "Bundle_Detail")) > 0)
-                    {
-                        System.Diagnostics.Debug.WriteLine("load {0} records", cnt);
-
-                        //do some jobs        
-                        if (MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1 + start, false, null, objApp, wSheet: objSheets) == false)
-                        {
-                            break;
-                        }  
-                                                
-                        start += num;
-
-                        //if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                        ds.Tables[0].Dispose();
-                        ds.Tables.Clear();
-                    }
+                    break;
                 }
+                dt = groupByDt.AsEnumerable().Skip(start).Take(num).CopyToDataTable();
             }
-            //if (Cpage > 0)
-            //{
-            //    objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit();//這頁需要重新調整欄寬                
-            //}
-                        
+
+
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
             objApp.ActiveWorkbook.SaveAs(strExcelName);

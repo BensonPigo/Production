@@ -114,10 +114,7 @@ select  operation = case a.type
         ,cuttingInline = (select min(cutting.CutInLine) 
                           from Cutting WITH (NOLOCK) 
                           where id = a.InventoryPOID) 
-        ,bulkFactory = (select FactoryID 
-                        from dbo.orders WITH (NOLOCK) 
-                        where id = iif((a.type='2' or a.type='6') , a.seq70poid    
-                                                                  , a.InventoryPOID)) 
+        ,bulkFactory = iif((a.type='2' or a.type='6') and BulkFty1.FactoryID is null, a.TransferFactory, BulkFty1.FactoryID)
         ,Factory_ArrivedQty = iif((a.type='1' or a.type='4') ,e.InQty, 0.00) 
         ,productionQty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, (isnull(d.NETQty,0.000) + isnull(d.LossQty,0.000))), 2)
         ,bulkBalance = case a.type
@@ -144,6 +141,7 @@ select  operation = case a.type
         ,b.ColorID
         ,b.SizeSpec
         ,Qty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, a.Qty), 2)
+		,[InventoryQty]=IIF((a.type='2' or a.type='6'), ISNULL( Inventory70.LInvQty ,0)  ,ISNULL( InventoryInv.LInvQty ,0) )
         ,a.UnitID
         ,e.BLocation
         ,reason = a.ReasonID +'-'+(select ReasonEN from InvtransReason WITH (NOLOCK) where id = a.ReasonID) 
@@ -168,6 +166,22 @@ OUTER APPLY(
 								 where id = iif((a.type='2' or a.type='6') , a.seq70poid     
 																		   , a.InventoryPOID)) 
 )Category
+Outer Apply(
+	select FactoryID 
+	from dbo.orders WITH (NOLOCK) 
+	where id = iif((a.type='2' or a.type='6') , a.seq70poid    
+												, a.InventoryPOID)
+)BulkFty1
+OUTER APPLY(
+	SELECT LInvQty
+	FROM MDivisionPoDetail
+	WHERE POID=a.seq70poid  AND SEQ1=a.seq70seq1 AND SEQ2=a.seq70seq2
+)Inventory70
+OUTER APPLY(
+	SELECT LInvQty
+	FROM MDivisionPoDetail
+	WHERE POID=a.InventoryPOID  AND SEQ1=a.InventorySeq1 AND SEQ2=a.InventorySeq2
+)InventoryInv
 
 where 1=1 "
  ));

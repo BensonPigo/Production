@@ -149,6 +149,7 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             string isMorethenOrderQty = "0")
         {
             string sqlcmd = $@"
+-- Top
 -- 1.	尋找指定訂單 Fabric Combo + Fabric Panel Code
 -- 使用資料表 Bundle 去除重複即可得到每張訂單 Fabric Combo + Fabric Panel Code + Article + SizeCode
 select	distinct
@@ -158,11 +159,36 @@ select	distinct
 		, bun.FabricPanelCode
 		, bun.Article
 		, bd.Sizecode
+		, bd.PatternDesc
 into #AllOrders
 from Bundle_Detail bd
 inner join Bundle bun on bun.id = bd.id
 inner join Orders os  WITH (NOLOCK) on bun.Orderid = os.ID and bun.MDivisionID = os.MDivisionID
-inner join {tempTable} t on t.OrderID = bun.Orderid
+where exists (select 1 from {tempTable} t where t.OrderID = os.ID)
+
+select distinct bunD.ID
+		, bunD.BundleGroup
+		, bunD.BundleNo
+		, bun.AddDate
+		, bun.Orderid
+		, bun.PatternPanel
+		, bun.FabricPanelCode
+		, bun.Article
+		, bunD.Sizecode
+		, bunD.PatternDesc
+		, bunD.Qty
+		, bunD.IsPair
+		, bunD.Patterncode
+into #tmp_Bundle_QtyBySubprocess
+from Bundle bun
+INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
+inner join Bundle_Detail bunD on bunD.Id = bun.ID
+where exists (select 1 from  #AllOrders x0 where bun.Orderid = x0.Orderid
+		and bun.PatternPanel = x0.PatternPanel
+		and bun.FabricPanelCode = x0.FabricPanelCode
+		and bun.Article = x0.Article
+		and bunD.Sizecode = x0.Sizecode
+	    and bunD.PatternDesc = x0.PatternDesc)
 ";
 
             foreach (string subprocessID in subprocessIDs)
@@ -180,7 +206,8 @@ inner join {tempTable} t on t.OrderID = bun.Orderid
                 // --b.QtyBySubprocess
                 // --  部位有須要用 X 外加工計算
                 sqlcmd += $@"
-select	st1.OrderID,
+/*******************   {subprocessIDtmp} start  ********************/
+select distinct	st1.OrderID,
 		st1.POID,
 		st1.PatternPanel,
 		st1.FabricPanelCode,
@@ -196,17 +223,41 @@ outer apply (
 			, QtyBySet = count (1)
 			, QtyBySubprocess = sum (isnull (QtyBySubprocess.v, 0))
 	from (
-		select	top 1
-				bunD.ID
-				, bunD.BundleGroup
-		from Bundle_Detail bunD WITH (NOLOCK) 
-		inner join Bundle bun  WITH (NOLOCK) on bunD.Id = bun.ID
-		INNER JOIn Orders o ON bun.Orderid = o.ID AND bun.MDivisionid = o.MDivisionID 
-		where bun.Orderid = st1.Orderid
-				and bun.PatternPanel = st1.PatternPanel
-				and bun.FabricPanelCode = st1.FabricPanelCode
-				and bun.Article = st1.Article
-				and bunD.Sizecode = st1.Sizecode
+ 		select top 1 ID = isnull(x1.ID ,x2.ID)
+			,BundleGroup = isnull(x1.BundleGroup ,x2.BundleGroup)
+		from (select st1.Orderid,st1.PatternPanel,st1.FabricPanelCode,st1.Article,st1.Sizecode,st1.PatternDesc)x0 
+		outer apply (
+			select top 1
+					bunD.ID
+					, bunD.BundleGroup
+					, bunD.BundleNo
+			from #tmp_Bundle_QtyBySubprocess bunD
+			where bunD.Orderid = x0.Orderid
+					and bunD.PatternPanel = x0.PatternPanel
+					and bunD.FabricPanelCode = x0.FabricPanelCode
+					and bunD.Article = x0.Article
+					and bunD.Sizecode = x0.Sizecode
+				    and bunD.PatternDesc = x0.PatternDesc
+					and exists (select 1
+									from Bundle_Detail_Art BunDArt
+									where BunDArt.Bundleno = bunD.BundleNo
+										and BunDArt.SubprocessId = '{subprocessID}')
+			order by bunD.AddDate desc
+		)x1
+		outer apply(
+			select top 1
+					bunD.ID
+					, bunD.BundleGroup
+					, bunD.BundleNo
+			from #tmp_Bundle_QtyBySubprocess bunD 
+			where bunD.Orderid = x0.Orderid
+					and bunD.PatternPanel = x0.PatternPanel
+					and bunD.FabricPanelCode = x0.FabricPanelCode
+					and bunD.Article = x0.Article
+					and bunD.Sizecode = x0.Sizecode
+				    and bunD.PatternDesc = x0.PatternDesc
+			order by bunD.AddDate desc
+		)x2
 	) getGroupInfo
 	inner join Bundle_Detail bunD on getGroupInfo.Id = bunD.Id and getGroupInfo.BundleGroup = bunD.BundleGroup
 	outer apply (
@@ -229,7 +280,6 @@ into #CutpartBySet{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st2
 group by st2.Orderid, st2.Article, st2.Sizecode
 
-
 select	st0.Orderid
 		, SubprocessId=sub.id
 		, sub.InOutRule
@@ -248,20 +298,14 @@ into #BundleInOutDetail{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
 inner join SubProcess sub on sub.ID = '{subprocessID}'
 left join Order_SizeCode os with (nolock) on os.ID = st0.POID and os.SizeCode = st0.SizeCode
-outer apply(
-	select bunD.BundleGroup, bunD.Qty, bunD.BundleNo,bunD.IsPair
-	from Bundle bun with (nolock) 
-	inner join Bundle_Detail bunD with (nolock)  on bunD.Id = bun.id 
-	where bun.Orderid = st0.Orderid and 
-							bun.PatternPanel = st0.PatternPanel and
-							bun.FabricPanelCode = st0.FabricPanelCode and
-							bun.Article = st0.Article  and
-							bunD.Patterncode = st0.Patterncode and
-							bunD.Sizecode = os.SizeCode
-)bund
+left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid 
+							and bunD.PatternPanel = st0.PatternPanel 
+							and	bunD.FabricPanelCode = st0.FabricPanelCode 
+							and	bunD.Article = st0.Article  
+							and	bunD.Patterncode = st0.Patterncode 
+							and	bunD.Sizecode = os.SizeCode 
 left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = sub.ID and isnull(bunIO.RFIDProcessLocationID,'') = ''
 where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
-
 
 select	Orderid
 		, SubprocessId
@@ -271,13 +315,13 @@ select	Orderid
 		, PatternPanel
 		, FabricPanelCode
 		, PatternCode
-		, InQty = sum(iif(InComing is not null ,Qty,0)) / iif(IsPair=1,m,1)
-		, OutQty = sum(iif(OutGoing is not null ,Qty,0)) / iif(IsPair=1,m,1)
-		, OriInQty = sum(iif(InComing is not null ,Qty,0)) 
-		, OriOutQty = sum(iif(OutGoing is not null ,Qty,0)) 
-		, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null ,Qty,0))
-								when InOutRule = 2 then sum(iif(OutGoing is not null ,Qty,0))
-								else sum(iif(OutGoing is not null and InComing is not null ,Qty,0)) end) / iif(IsPair=1,m,1)
+		, InQty = sum(iif(InComing is not null ,cast(Qty as int),0)) / iif(IsPair=1,m,1)
+		, OutQty = sum(iif(OutGoing is not null ,cast(Qty as int),0)) / iif(IsPair=1,m,1)
+		, OriInQty = sum(iif(InComing is not null ,cast(Qty as int),0)) 
+		, OriOutQty = sum(iif(OutGoing is not null ,cast(Qty as int),0)) 
+		, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null ,cast(Qty as int),0))
+								when InOutRule = 2 then sum(iif(OutGoing is not null ,cast(Qty as int),0))
+								else sum(iif(OutGoing is not null and InComing is not null ,cast(Qty as int),0)) end) / iif(IsPair=1,m,1)
 		, num = count(1)
 		, num_In = sum(iif(InComing is not null ,1,0)) 
 		, num_Out= sum(iif(OutGoing is not null ,1,0))
@@ -290,7 +334,6 @@ select	Orderid
 into #BundleInOutQty{subprocessIDtmp}
 from #BundleInOutDetail{subprocessIDtmp}
 group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair,m
-
 ";
 
                 if (isNeedCombinBundleGroup)
@@ -418,7 +461,7 @@ select	OrderID = cbs.OrderID
 						end
 into #QtyBySetPerSubprocess{subprocessIDtmp}
 from #CutpartBySet{subprocessIDtmp} cbs
-left join Order_Qty oq  WITH (NOLOCK) on oq.id = cbs.OrderID and oq.SizeCode = cbs.SizeCode and oq.Article = cbs.Article
+inner join Order_Qty oq  WITH (NOLOCK) on oq.id = cbs.OrderID and oq.SizeCode = cbs.SizeCode and oq.Article = cbs.Article   --ISP20191573 SizeCode和Article 的資料都必須從Trade來，不是Bundle有的全部都用
 left join #FinalQtyBySet{subprocessIDtmp} sub on cbs.Orderid = sub.Orderid and cbs.Sizecode = sub.size and cbs.Article = sub.Article
 outer apply (
 	select	InQtyByPcs = sum (isnull (bunIO.OriInQty, 0))
@@ -427,6 +470,8 @@ outer apply (
 	where cbs.OrderID = bunIO.OrderID and cbs.Sizecode = bunIO.Size and cbs.Article = bunIO.Article
 ) IOQtyPerPcs
 where FinishedQty is not null
+
+drop table #QtyBySetPerCutpart{subprocessIDtmp}, #BundleInOutDetail{subprocessIDtmp}, #CutpartBySet{subprocessIDtmp}, #FinalQtyBySet{subprocessIDtmp}, #BundleInOutQty{subprocessIDtmp}
 ";
                 if (bySP)
                 {
@@ -440,9 +485,11 @@ from(
 ) minArticle
 group by OrderID
 ";
-                }
-            }
+                } 
 
+                sqlcmd += Environment.NewLine + $@"/*******************   {subprocessIDtmp} END  ********************/";
+            }
+            sqlcmd += Environment.NewLine + " drop table #AllOrders, #tmp_Bundle_QtyBySubprocess; " + Environment.NewLine;
             return sqlcmd;
         }
         #endregion

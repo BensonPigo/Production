@@ -64,7 +64,7 @@ namespace Sci.Production.Subcon
             // 剛好settle的 voucher# & Date 顯示
             DataRow dr;
             MyUtility.Check.Seek(string.Format(@";WITH cte as 
-(select t.VoucherID,(select a.voucherdate from FinanceEN.dbo.voucher a where a.id = t.VoucherID) voucherdate , sum(amount ) 
+(select t.VoucherID,(select a.voucherdate from dbo.SciFMS_voucher a where a.id = t.VoucherID) voucherdate , sum(amount ) 
 over (order by issuedate
       rows between unbounded preceding and current row) as running_total 
 												 from dbo.Debit_Schedule T WITH (NOLOCK) where id='{0}' and voucherid !='' and voucherid is not null 
@@ -95,7 +95,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 if (MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]))
                 {
                     this.numExchange.ReadOnly = true;
-                    this.numAmount.ReadOnly = false;
+                    //this.numAmount.ReadOnly = false;
                 }
                 else
                 {
@@ -136,12 +136,15 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     if (strExact == null || string.IsNullOrWhiteSpace(strExact))
                     {
                         MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , summary amout failed!", CurrentMaintain["currencyID"]), "Warning");
-                        return;
+                        //return;
                     }
-                    int exact = int.Parse(strExact);
+                    int exact = int.Parse(MyUtility.Check.Empty(strExact) ? "0" : strExact);
+                    decimal exchange = Convert.ToDecimal(CurrentMaintain["exchange"]);
                     object detail_Amount = ((DataTable)detailgridbs.DataSource).Compute("sum(AMOUNT)", "");
                     object detail_Addition = ((DataTable)detailgridbs.DataSource).Compute("sum(ADDITION)", "");
-                    CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_Amount + (decimal)detail_Addition, exact);
+
+                    CurrentMaintain["amount"] = MyUtility.Math.Round(((decimal)detail_Amount + (decimal)detail_Addition) * exchange, exact);
+                    
                     ReCalculateTax();
                     #endregion
                 }
@@ -211,7 +214,13 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 txtuserSMR.TextBox1.Focus();
                 return false;
             }
-            
+
+            if (MyUtility.Check.Empty(CurrentMaintain["LocalSuppID"]))
+            {
+                MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!", "Warning");
+                return false;
+            }
+
             if (MyUtility.Check.Empty(CurrentMaintain["CURRENCYID"]))
             {
                 MyUtility.Msg.WarningBox("< Currency >  can't be empty!", "Warning");
@@ -520,7 +529,7 @@ where id = '{4}'"
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
             //var frm = new Sci.Production.Subcon.P37_DebitSchedule(Production.PublicPrg.Prgs.GetAuthority(dr["cfmname"].ToString()), dr["ID"].ToString(), null, null);
-            var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null,this.CurrentMaintain,"P36");  //調成跟舊系統一樣，不管誰都可以編輯
+            var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null,this.CurrentMaintain,"P36",(bool)this.CurrentMaintain["TaipeiDBC"]);  //調成跟舊系統一樣，不管誰都可以編輯
             frm.ShowDialog(this);
             this.RenewData();
             this.Refresh();

@@ -41,6 +41,9 @@ namespace Sci.Production.Cutting
             this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             DataGridViewGeneratorTextColumnSettings col_cutreason = cellcutreason.GetGridCell("RC");
             DataGridViewGeneratorCheckBoxColumnSettings col_check = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Shift = cellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
+
+
             #region set grid
             Helper.Controls.Grid.Generator(this.gridDetail)
             .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_check)
@@ -56,6 +59,8 @@ namespace Sci.Production.Cutting
             .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("SpreadingNoID", header: "Org.\nSpreading No", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("NewSpreadingNoID", header: "New\nSpreading No", width: Widths.AnsiChars(2)).Get(out col_SpreadingNo)
+            .Text("Shift", header: "Org.\nShift", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("NewShift", header: "New\nShift", width: Widths.AnsiChars(5), settings: col_Shift)
             .Text("Cutcellid", header: "Org.\nCut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("NewCutcellid", header: "New\nCut Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
             .Text("CutReasonid", header: "Reason", width: Widths.AnsiChars(6), settings: col_cutreason)
@@ -69,6 +74,7 @@ namespace Sci.Production.Cutting
             this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["CutReasonid"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["NewSpreadingNoID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDetail.Columns["NewShift"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["NewCutcellid"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
@@ -249,6 +255,7 @@ From
         NewestcutDate = cast(null as date) , '' as cutreasonid ,0 as sel
         ,NewCutcellid=''
         ,NewSpreadingNoID=''
+        ,[NewShift]=''
     from Workorder a";
             string where = string.Format(" Where cutplanid!='' and MDivisionId = '{0}'", keyWord);
             if (!MyUtility.Check.Empty(cutsp)) where = where + string.Format(" and id='{0}'", cutsp);
@@ -289,6 +296,7 @@ From
             string reason = txtcutReason.TextBox1.Text;
             string SpreadingNo = txtSpreadingNo1.Text;
             string cell = txtCell1.Text;
+            string shift = txtShift.Text;
             foreach (DataRow dr in detailTb.Rows)
             {
                 if(dr["Sel"].ToString()=="1")
@@ -304,6 +312,7 @@ From
                     dr["cutreasonid"] = reason;
                     dr["NewSpreadingNoID"] = SpreadingNo;
                     dr["NewCutcellid"] = cell;
+                    dr["NewShift"]= shift;
                 }
             }
         }
@@ -329,7 +338,8 @@ From
             {
                 if ((dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", "")))) || 
                     (dr["Cutcellid"] != dr["NewCutcellid"] && !MyUtility.Check.Empty(dr["NewCutcellid"])) ||
-                    (dr["SpreadingNoID"] != dr["NewSpreadingNoID"] && !MyUtility.Check.Empty(dr["NewSpreadingNoID"]))
+                    (dr["SpreadingNoID"] != dr["NewSpreadingNoID"] && !MyUtility.Check.Empty(dr["NewSpreadingNoID"])) ||
+                    (dr["Shift"] != dr["NewShift"] && !MyUtility.Check.Empty(dr["NewShift"]))
                     )
                 {
                     if (MyUtility.Check.Empty(dr["CutReasonid"]))
@@ -341,6 +351,7 @@ From
                     string newestcutdate = MyUtility.Check.Empty(dr["newestcutdate"]) ? "Null" : $"'{((DateTime)dr["newestcutdate"]).ToShortDateString()}'";
                     string NewCutcellid = MyUtility.Check.Empty(dr["NewCutcellid"]) ? "Null" : $"'{dr["NewCutcellid"]}'";
                     string NewSpreadingNoID = MyUtility.Check.Empty(dr["NewSpreadingNoID"]) ? "Null" : $"'{dr["NewSpreadingNoID"]}'";
+                    string NewShift = MyUtility.Check.Empty(dr["NewShift"]) ? "Null" : $"'{dr["NewShift"]}'";
                     string orgEstCutDate =((DateTime)dr["EstCutDate"]).ToShortDateString();
                     if (!MyUtility.Check.Empty(dr["newestcutdate"]))
                     {
@@ -354,10 +365,14 @@ From
                     {
                         update = update + $"Update Workorder Set SpreadingNoID='{dr["NewSpreadingNoID"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
+                    if (!MyUtility.Check.Empty(dr["NewShift"]))
+                    {
+                        update = update + $"Update Workorder Set Shift='{dr["NewShift"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
+                    }
 
                     update = update + $@"
-Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate      ,NewEstCutDate  ,CutReasonid              ,ID             ,OrgCutCellid       ,NewCutCellid   ,OrgSpreadingNoID         ,NewSpreadingNoID, AddDate, AddName) 
-Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID},getdate(),'{Sci.Env.User.UserID}');";
+Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate      ,NewEstCutDate  ,CutReasonid              ,ID             ,OrgCutCellid       ,NewCutCellid   ,OrgSpreadingNoID         ,NewSpreadingNoID       , OrgShift         ,NewShift   , AddDate, AddName) 
+Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID} ,'{dr["Shift"]}'  ,{NewShift}    ,getdate(),'{Sci.Env.User.UserID}');";
                 }
             }
 
@@ -400,6 +415,7 @@ where cutting.ID = '{0}';", tmp_id);
                     var chksame = chkdrs.Select(m => new
                     {
                         NewSpreadingNoID = m.Field<string>("NewSpreadingNoID"),
+                        NewShift = m.Field<string>("NewShift"),
                         NewCutcellid = m.Field<string>("NewCutcellid"),
                         NewEstcutdate = m.Field<DateTime?>("NewEstcutdate"),
                         CutReasonid = m.Field<string>("CutReasonid")
@@ -407,13 +423,13 @@ where cutting.ID = '{0}';", tmp_id);
                     // 更新的欄位不能合併表示不一樣
                     if (chksame.Count> 1)
                     {
-                        MyUtility.Msg.WarningBox("You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [reason] in same M and CutRef#");
+                        MyUtility.Msg.WarningBox("You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [reason] or [Shift] in same M and CutRef#");
                         return;
                     }
                 }
 
                 // 檢查DB(不包含撈出資料)有沒有同裁次, 若有則要檢查此次更新的欄位是否與DB內相同
-                string csqlhk = $@"select MDivisionId,CutRef,SpreadingNoID,Cutcellid,estcutdate
+                string csqlhk = $@"select MDivisionId,CutRef,SpreadingNoID,Cutcellid,estcutdate,Shift
 from workOrder w with(nolock) 
 where ukey not in ({inUkey})
 and MDivisionId = '{item.MDivisionId}'
@@ -446,9 +462,14 @@ and CutRef = '{item.CutRef}'
                     {
                         isNotsame = true;
                     }
+                    if (!MyUtility.Check.Empty(chkdrs[0]["NewShift"]) &&
+                        !MyUtility.Convert.GetString(dr["Shift"]).EqualString(MyUtility.Convert.GetString(chkdrs[0]["NewShift"])))
+                    {
+                        isNotsame = true;
+                    }
                     if (isNotsame)
                     {
-                        MyUtility.Msg.WarningBox("You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [reason] in same M and CutRef#");
+                        MyUtility.Msg.WarningBox("You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [reason] or [Shift] in same M and CutRef#");
                         return;
                     }
                 }

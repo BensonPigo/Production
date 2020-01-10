@@ -11,6 +11,7 @@ using Sci.Win.Tools;
 using Sci.Win;
 using System.Reflection;
 using System.Linq;
+using System.Drawing;
 
 namespace Sci.Production.Shipping
 {
@@ -20,6 +21,8 @@ namespace Sci.Production.Shipping
     public partial class P02 : Sci.Win.Tems.Input2
     {
         // 宣告Context Menu Item
+        private ToolStripMenuItem bulkpl;
+        private ToolStripMenuItem samplepl;
         private ToolStripMenuItem focpl;
         private ToolStripMenuItem purchase;
         private ToolStripMenuItem poitem;
@@ -58,6 +61,20 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboFrom, 2, 1, "1,Factory,2,Brand");
             MyUtility.Tool.SetupCombox(this.comboTO, 2, 1, "1,SCI,2,Factory,3,Supplier,4,Brand");
             MyUtility.Tool.SetupCombox(this.cmbPayer, 2, 1, "3RD,Freight Collect by 3rd Party,CUST,Freight Collect by Customer,FTY,Freight Pre-Paid by Fty,HAND,Hand Carry");
+
+            Sci.Win.UI.Button btnSendingSchedule = new Win.UI.Button();
+            Point btnSendingScheduleloc = new Point(720, this.lbl_queryfor.Location.Y);
+            btnSendingSchedule.Text = "FTY Regular Sending Schedule";
+            btnSendingSchedule.Location = btnSendingScheduleloc;
+            btnSendingSchedule.Size = new Size(250, 30);
+            btnSendingSchedule.Click += (s, e) =>
+            {
+                using (var sendingSchedule = new P02_FTYRegularSendingSchedule())
+                {
+                    sendingSchedule.ShowDialog();
+                }
+            };
+            this.browsetop.Controls.Add(btnSendingSchedule);
         }
 
         /// <inheritdoc/>
@@ -70,6 +87,8 @@ namespace Sci.Production.Shipping
                 };
 
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import Bulk PL#", onclick: (s, e) => this.ImportBulkPL()).Get(out this.bulkpl);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Sample PL#", onclick: (s, e) => this.ImportFromSamplePL()).Get(out this.samplepl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from FOC PL# (Garment FOC)", onclick: (s, e) => this.ImportFromFOCPL()).Get(out this.focpl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Purchase (Material)", onclick: (s, e) => this.ImportFromPurchase()).Get(out this.purchase);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add by PO# item (Garment Chargeable)", onclick: (s, e) => this.AddByPOItem()).Get(out this.poitem);
@@ -86,6 +105,8 @@ namespace Sci.Production.Shipping
         // 設定Context Menu的Enable/Disable
         private void SetContextMenuStatus(bool status)
         {
+            this.bulkpl.Enabled = status;
+            this.samplepl.Enabled = status;
             this.focpl.Enabled = status;
             this.purchase.Enabled = status;
             this.poitem.Enabled = status;
@@ -132,7 +153,31 @@ namespace Sci.Production.Shipping
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+        }
+
+        // Context Menu選擇Import Bulk PL#
+        private void ImportBulkPL()
+        {
+            Sci.Production.Shipping.P02_ImportFromBulkPackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromBulkPackingList(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
+            callFOCPLForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+        }
+
+        // Context Menu選擇Import from FOC PL# (Garment FOC)
+        private void ImportFromSamplePL()
+        {
+            Sci.Production.Shipping.P02_ImportFromSamplePackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromSamplePackingList(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
+            callFOCPLForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
@@ -144,7 +189,7 @@ namespace Sci.Production.Shipping
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callPurchaseForm.ShowDialog(this);
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
@@ -159,7 +204,7 @@ namespace Sci.Production.Shipping
             callPOItemForm.ShowDialog(this);
 
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
@@ -173,7 +218,7 @@ namespace Sci.Production.Shipping
             callNewItemForm.SetInsert(dr);
             callNewItemForm.ShowDialog(this);
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
@@ -279,7 +324,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
             DBProxy.Current.Execute(null, sqlcmd);
             #endregion
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             DataRow[] after_row = ((DataTable)this.detailgridbs.DataSource).Select(string.Format(" OrderId = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Category = '{3}' ", before_orderid, before_seq1, before_seq2, before_category));
             if (after_row.Length == 0)
@@ -392,7 +437,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             #endregion
 
             this.RenewData();
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
         }
 
         // Context Menu選擇Print
@@ -470,7 +515,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                 }
             }
 
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.displayCarrier.Value = MyUtility.GetValue.Lookup(string.Format("select c.SuppID + '-' + s.AbbEN from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["CarrierID"])));
             if (MyUtility.Check.Empty(this.CurrentMaintain["StatusUpdateDate"]))
             {
@@ -523,43 +568,53 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
-select ed.*
-	,case when ed.Category in ('4','9') then ed.MtlDesc else ed.Description end nDescription
-	,AirPPno=iif(isnull(ed.PackingListID,'') = '',ed.DutyNo , airpp.AirPPno)
-from
-(
-	select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
-		dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
-		isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
-		isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
-		isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
-		isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Leader)),ed.Leader) as LeaderName,
-		CASE ed.Category
-			WHEN '1' THEN N'Sample'
-			WHEN '2' THEN N'SMS'
-			WHEN '3' THEN N'Bulk'
-			WHEN '4' THEN N'Material'
-			WHEN '5' THEN N'Dox'
-			WHEN '6' THEN N'Machine/Parts'
-			WHEN '7' THEN N'Mock Up'
-			WHEN '8' THEN N'Other Sample'
-			WHEN '9' THEN N'Other Material'
-			ELSE N''
-		END as CategoryName
-	from Express_Detail ed WITH (NOLOCK) 
-	left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
-	left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
-	left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
-	where ed.ID = '{0}'
-)ed
-outer apply(
-	select top 1 AirPPno = AirPP.ID
-	from PackingList_Detail pld with(nolock)
-	inner join AirPP with(nolock) on AirPP.OrderID = pld.OrderID and AirPP.OrderShipmodeSeq = pld.OrderShipmodeSeq
-	where pld.id = ed.PackingListID and pld.OrderID = ed.OrderID
-	order by AirPP.AddDate desc
-)airpp
-Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
+SELECT OrderNumber = ROW_NUMBER() over (order by   TRY_CONVERT (int, CTNNo )
+										    , (RIGHT (REPLICATE ('0', 10) + rtrim (ltrim (CTNNo)), 10))
+										    , DropDownListSeq
+							    )        
+      ,allData.* 
+FROM(
+    select ed.*
+	    ,case when ed.Category in ('4','9') then ed.MtlDesc else ed.Description end nDescription
+	    ,AirPPno=iif(isnull(ed.PackingListID,'') = '',ed.DutyNo , airpp.AirPPno)
+    from
+    (
+	    select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
+		    dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
+		    isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
+		    isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
+		    isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
+		    isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Leader)),ed.Leader) as LeaderName,
+		    CASE ed.Category
+			    WHEN '1' THEN N'Sample'
+			    WHEN '2' THEN N'SMS'
+			    WHEN '3' THEN N'Bulk'
+			    WHEN '4' THEN N'Material'
+			    WHEN '5' THEN N'Dox'
+			    WHEN '6' THEN N'Machine/Parts'
+			    WHEN '7' THEN N'Mock Up'
+			    WHEN '8' THEN N'Other Sample'
+			    WHEN '9' THEN N'Other Material'
+			    ELSE N''
+		    END as CategoryName
+		    ,[DropDownListSeq]=dp.Seq
+			,[CategoryNameFromDD]=dp.Description
+	    from Express_Detail ed WITH (NOLOCK) 
+	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
+	    left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
+	    left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
+        LEFT JOIN DropDownList dp ON dp.Type='Pms_Sort_HC_DHL_Cate' AND ed.Category = dp.ID
+	    where ed.ID = '{0}'
+    )ed
+    outer apply(
+	    select top 1 AirPPno = AirPP.ID
+	    from PackingList_Detail pld with(nolock)
+	    inner join AirPP with(nolock) on AirPP.OrderID = pld.OrderID and AirPP.OrderShipmodeSeq = pld.OrderShipmodeSeq
+	    where pld.id = ed.PackingListID and pld.OrderID = ed.OrderID
+	    order by AirPP.AddDate desc
+    )airpp
+) allData
+Order by CTNNo,Seq1,Seq2", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -609,7 +664,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(15))
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15))
                 .Text("CTNNo", header: "C/No.", width: Widths.AnsiChars(5))
-                .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 2)
+                .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 3)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(10), decimal_places: 4)
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(7), decimal_places: 2)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(5))
@@ -653,6 +708,8 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                 // Approve後就不可以再做任何動作(更改Context Menu Item的Enable/Disable)
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved")
                 {
+                    this.bulkpl.Enabled = false;
+                    this.samplepl.Enabled = false;
                     this.focpl.Enabled = false;
                     this.purchase.Enabled = false;
                     this.poitem.Enabled = false;
@@ -822,6 +879,104 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             }
             #endregion
 
+            #region set Special Sending Value
+            if ((this.CurrentMaintain["FromTag"].ToString() == "1") &&
+                    (this.CurrentMaintain["ToTag"].ToString() == "1" || 
+                     this.CurrentMaintain["ToTag"].ToString() == "2"))
+            {
+                string fromRegion = MyUtility.GetValue.Lookup($@"select NegoRegion from Factory where id='{this.CurrentMaintain["FromSite"]}'");
+                string countryCode = string.Empty;
+                string dateShipDate = ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("yyyy/MM/dd");
+
+                switch (this.CurrentMaintain["ToTag"].ToString())
+                {
+                    case "1":
+                        countryCode = MyUtility.GetValue.Lookup($@"select CountryID from Supp where AbbEN='sci'");
+                        break;
+                    case "2":
+                        countryCode = MyUtility.GetValue.Lookup($@"select CountryID from SCIFty where id='{this.CurrentMaintain["ToSite"]}'");
+                        break;
+                    default:
+                        break;
+                }
+
+                string sqlcmd = string.Empty;
+                DataRow dr;
+
+                // 存在FactoryExpress_SendingSchedule
+                sqlcmd = $@"
+select 
+[IsSpecialSending] = 
+case when Date.value = '1' and s.MON=1 then 0 
+	 when Date.value = '2' and s.TUE=1 then 0 
+     when Date.value = '3' and s.WED=1 then 0 
+     when Date.value = '4' and s.THU=1 then 0 
+     when Date.value = '5' and s.FRI=1 then 0 
+     when Date.value = '6' and s.SAT=1 then 0 
+     when Date.value = '7' and s.SUN=1 then 0 
+else 1 end
+,S.* 
+from FactoryExpress_SendingSchedule S
+outer apply(SELECT value = CONVERT(CHAR(1),DATEPART(WEEKDAY, CONVERT(datetime,'{dateShipDate}') +6))) Date
+where RegionCode = '{fromRegion}' 
+and ToID='{countryCode}' 
+and s.BeginDate <= CONVERT(datetime,'{dateShipDate}')
+and s.junk = 0
+";
+                if (MyUtility.Check.Seek(sqlcmd, out dr))
+                {
+                    this.CurrentMaintain["IsSpecialSending"] = dr["IsSpecialSending"];
+                }
+                else
+                {
+                    // FactoryExpress_SendingScheduleHistory
+                    sqlcmd = $@"
+select 
+[IsSpecialSending] = 
+case when Date.value = '1' and regular.MON >= 1 then 0 
+	 when Date.value = '2' and regular.TUE >= 1 then 0 
+     when Date.value = '3' and regular.WED >= 1 then 0 
+     when Date.value = '4' and regular.THU >= 1 then 0 
+     when Date.value = '5' and regular.FRI >= 1 then 0 
+     when Date.value = '6' and regular.SAT >= 1 then 0 
+     when Date.value = '7' and regular.SUN >= 1 then 0
+     when FoundHis = 0 then 0 
+     else 1 
+end	
+from (
+	select MON = count (case when s.MON = 1 then 1 end)
+			, TUE = count (case when s.TUE = 1 then 1 end)
+			, WED = count (case when s.WED = 1 then 1 end)
+			, THU = count (case when s.THU = 1 then 1 end)
+			, FRI = count (case when s.FRI = 1 then 1 end)
+			, SAT = count (case when s.SAT = 1 then 1 end)
+			, SUN = count (case when s.SUN = 1 then 1 end)
+            , FoundHis = count(1)
+	from FactoryExpress_SendingScheduleHistory s
+    where RegionCode = '{fromRegion}' 
+          and ToID='{countryCode}' 
+          and ('{dateShipDate}' between s.BeginDate and s.EndDate
+               or (s.EndDate is null
+                   and s.BeginDate <= '{dateShipDate}'
+                  )
+              )
+) regular
+outer apply (
+    SELECT value = CONVERT(CHAR(1),DATEPART(WEEKDAY, CONVERT(datetime,'{dateShipDate}') +6))
+) Date
+";
+                    if (MyUtility.Check.Seek(sqlcmd, out dr))
+                    {
+                        this.CurrentMaintain["IsSpecialSending"] = dr["IsSpecialSending"];
+                    }
+                    else
+                    {
+                        this.CurrentMaintain["IsSpecialSending"] = false;
+                    }
+                }
+            }
+            #endregion
+
             // GetID
             if (this.IsDetailInserting)
             {
@@ -847,7 +1002,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
-            this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             base.ClickSaveAfter();
         }
 
@@ -1372,7 +1527,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
 (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Manager"]))), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
                 callNextForm.ShowDialog(this);
                 this.RenewData();
-                this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+                this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
         }
 
         /// <inheritdoc/>
@@ -1430,7 +1585,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 return;
             }
 
-            if (!this.CheckPullexists())
+            if (!this.CheckPullexists(false))
             {
                 return;
             }
@@ -1443,7 +1598,8 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
 
             IList<string> updateCmds = new List<string>();
             updateCmds.Add(string.Format("update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            updateCmds.Add(string.Format("update PackingList set ExpressID = '',pulloutdate=null where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update PackingList set ExpressID = '' where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -1517,7 +1673,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
             string updateCmd = string.Format("update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
-            updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}'";
+            updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}' and type = 'F'";
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -1608,17 +1764,40 @@ When first applicant's team leader approval, anyone can not do any modification.
             }
         }
 
-        private bool CheckPullexists()
+        /// <summary>
+        /// 檢查 這張HC底下所有的PackingList/單筆PackingList  是否已經出貨
+        /// </summary>
+        /// <param name="isSingelCheck"> false=檢查這張HC底下所有的PackingList、true=檢查單筆PackingList </param>
+        /// <returns>是否存在</returns>
+        private bool CheckPullexists(bool isSingelCheck = true)
         {
             #region 若該HC#下的Packing已經被拉到Pullout Report中且Pullout Status為confirm則不能刪除
-            string sqlchk = $@"
-select distinct p.ID
+            string sqlchk = string.Empty;
+
+            if (isSingelCheck)
+            {
+                string packingListID = this.CurrentDetailData["PackingListID"].ToString();
+                sqlchk = $@"
+SELECt [PackingListID]=p.ID 
+FROM PackingList p 
+INNER JOIN Pullout pu ON p.PulloutID=pu.ID 
+WHERE p.ID='{packingListID}' 
+AND Type In ('B','S','F') 
+AND pu.Status <> 'New'
+";
+            }
+            else
+            {
+                sqlchk = $@"
+select distinct [PackingListID]= pl.ID
 from Pullout_Detail pd
 inner join PackingList pl on pl.id = pd.PackingListID
 inner join Pullout p on p.id = pd.id
 where p.status = 'confirmed'
 and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
 ";
+            }
+
             DataTable pkdt;
             DualResult result = DBProxy.Current.Select(null, sqlchk, out pkdt);
             if (!result)
@@ -1629,7 +1808,7 @@ and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
 
             if (pkdt.Rows.Count > 0)
             {
-                string msg = "These PackingList# are existed in Pullout Report so it can't be delete!\r\nPackingList#: " + string.Join(Environment.NewLine + "PackingList#: ", pkdt.AsEnumerable().Select(row => row["ID"]).ToList());
+                string msg = "These PackingList# are existed in Pullout Report so it can't be delete!\r\nPackingList#: " + string.Join(Environment.NewLine + "PackingList#: ", pkdt.AsEnumerable().Select(row => row["PackingListID"]).ToList());
                 MyUtility.Msg.WarningBox(msg);
                 return false;
             }

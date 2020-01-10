@@ -23,8 +23,8 @@ BEGIN
 	
 	set @isRoll = isnull((
 			select fr.IsRoll
-			from ManufacturingExecution.dbo.RefnoRelaxtime rr 
-			inner join ManufacturingExecution.dbo.FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
+			from SciMES_RefnoRelaxtime rr 
+			inner join SciMES_FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
 			where rr.Refno = @Refno
 		),0)
 

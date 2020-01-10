@@ -13,6 +13,7 @@ using Ict.Win;
 using System.Linq.Dynamic;
 using Sci.Win.Tools;
 using System.Transactions;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Packing
 {
@@ -131,7 +132,7 @@ namespace Sci.Production.Packing
                                            pd.Color,
                                            pd.SizeCode  ,
                                            pd.QtyPerCTN,
-                                           ScanQty = Cast(isnull(ScanQty.Value,0) as smallint),
+                                           ScanQty = pd.ScanQty,
                                            pd.ScanEditDate,
                                            pd.ScanName,
                                            pd.barcode,
@@ -143,20 +144,13 @@ namespace Sci.Production.Packing
                                            o.Dest,
                                            isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
                                            isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+                                           ,p.Remark
+										   ,pd.Ukey
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
                                 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
                                 left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
-								OUTER APPLY (
-									SELECT [Value]=SUM(ScanQty) 
-									FROM PackingList_Detail 
-									WHERE ID= p.Id 
-											AND OrderID=pd.OrderID 
-											AND CTNStartNo=pd.CTNStartNo  
-											AND CTNStartNo=pd.CTNStartNo 
-											AND SCICtnNo=pd.SCICtnNo
-								)ScanQty
                                 where p.Type in ('B','L') ";
 
             foreach (string where in aLLwhere)
@@ -268,9 +262,17 @@ namespace Sci.Production.Packing
 
             if (this.selecedPK != null && this.numBoxScanQty.Value > 0)
             {
-                if (dr.ID == this.selecedPK.ID && dr.CTNStartNo == this.selecedPK.CTNStartNo && dr.Article == this.selecedPK.Article)
+                // 這邊加try catch 是為了ISP20191449 補充說明的bug 2 當user殺生問題可以keep當時情況
+                try
                 {
-                    return result;
+                    if (dr.ID == this.selecedPK.ID && dr.CTNStartNo == this.selecedPK.CTNStartNo && dr.Article == this.selecedPK.Article)
+                    {
+                        return result;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new DualResult(false, ex);
                 }
 
                 if (!this.LackingClose())
@@ -279,7 +281,7 @@ namespace Sci.Production.Packing
                 }
             }
 
-            DataRow[] dr_scanDetail = this.dt_scanDetail.Select($"ID = '{dr.ID}' and CTNStartNo = '{dr.CTNStartNo}' and Article = '{dr.Article}'");
+            DataRow[] dr_scanDetail = this.dt_scanDetail.Select($"ID = '{dr.ID}' and CTNStartNo = '{dr.CTNStartNo}' ");
             if (dr_scanDetail.Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count() == 0)
             {
                 if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -288,6 +290,9 @@ namespace Sci.Production.Packing
                     {
                         return result;
                     }
+
+                    // 由於Form上面的DataTable已經更新，因此要重新抓取
+                    dr = (SelectCartonDetail)this.gridSelectCartonDetail.GetData(rowidx);
                 }
                 else
                 {
@@ -339,7 +344,13 @@ namespace Sci.Production.Packing
         {
             DualResult result1 = new DualResult(true);
             DualResult result2 = new DualResult(true);
-            short oriScanQty = (short)tmp[0]["ScanQty"];
+            int oriTtlScanQty = tmp.Sum(o => Convert.ToInt32(o["ScanQty"]));
+
+            string packingListID = tmp[0]["ID"].ToString();
+            string orderID = tmp[0]["OrderID"].ToString();
+            string cTNStartNo = tmp[0]["CTNStartNo"].ToString();
+            string scanName = tmp[0]["ScanName"].ToString();
+
             if (tmp.Length == 0)
             {
                 result1 = new DualResult(false, new BaseResult.MessageInfo("ClearScanQty Error"));
@@ -354,8 +365,10 @@ namespace Sci.Production.Packing
 
             if (clearType.Equals("ALL"))
             {
-                string upd_sql = $@"update PackingList_Detail set ScanQty = 0,ScanEditDate = NULL , ActCTNWeight = 0
-where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Article = '{tmp[0]["Article"]}'";
+                string upd_sql = $@"
+UPDATE PackingList_Detail 
+SET ScanQty = 0 ,ScanEditDate = NULL , ActCTNWeight = 0
+WHERE ID = '{packingListID}' AND CTNStartNo = '{cTNStartNo}' ";
 
                 string insertCmds = $@"
 
@@ -370,19 +383,25 @@ INSERT INTO [dbo].[PackingScan_History]
            ,[ScanEditDate]
            ,[ScanName]
            ,[AddName]
-           ,[AddDate])
+           ,[AddDate]
+           ,[LackingQty])
      VALUES
            ('{Sci.Env.User.Keyword}'
-           ,'{tmp[0]["ID"]}'
-           ,'{tmp[0]["OrderID"]}'
-           ,'{tmp[0]["CTNStartNo"]}'
-           ,(SELECt TOP 1 SCICtnNo FROm PackingList_Detail WHERE ID = '{tmp[0]["ID"]}' AND CTNStartNo='{tmp[0]["CTNStartNo"]}')
+           ,'{packingListID}'
+           ,'{orderID}'
+           ,'{cTNStartNo}'
+           ,(SELECt TOP 1 SCICtnNo FROm PackingList_Detail WHERE ID = '{packingListID}' AND CTNStartNo='{cTNStartNo}')
            ,'Packing P18'
-           ,{oriScanQty}
+           ,{oriTtlScanQty}
            ,'{Convert.ToDateTime(tmp[0]["ScanEditDate"]).ToAppDateTimeFormatString()}'
-           ,'{tmp[0]["ScanName"]}'
+           ,'{scanName}'
            ,'{Sci.Env.User.UserID}'
            ,GETDATE()
+           ,(
+                ISNULL(  (SELECT SUM(pd.ShipQty) FROM PackingList_Detail pd WHERE pd.ID='{packingListID}' AND pd.CTNStartNo='{cTNStartNo}') ,0)
+                - 
+                {oriTtlScanQty}
+            ) ----LackingQty計算規則詳見：ISP20191801
             )
 ";
 
@@ -412,6 +431,8 @@ INSERT INTO [dbo].[PackingScan_History]
                     }
                 }
 
+                // 重新從DB撈取下方Grid資料
+                this.Reset();
                 this.LoadSelectCarton();
             }
 
@@ -436,10 +457,10 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               ID = c.Field<string>("ID"),
                                                               CTNStartNo = c.Field<string>("CTNStartNo"),
                                                               CustPoNo = c.Field<string>("CustPoNo"),
-                                                              Article = c.Field<string>("Article"),
                                                               BrandID = c.Field<string>("BrandID"),
                                                               StyleID = c.Field<string>("StyleID"),
-                                                              Dest = c.Field<string>("Dest")
+                                                              Dest = c.Field<string>("Dest"),
+                                                              Remark = c.Field<string>("Remark")
                                                           }
                                                           into g
                                                           select new SelectCartonDetail
@@ -447,18 +468,19 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               ID = g.Key.ID,
                                                               CTNStartNo = g.Key.CTNStartNo,
                                                               CustPoNo = g.Key.CustPoNo,
-                                                              Article = g.Key.Article,
                                                               BrandId = g.Key.BrandID,
                                                               StyleId = g.Key.StyleID,
                                                               Dest = g.Key.Dest,
+                                                              Remark = g.Key.Remark,
                                                               OrderID = string.Join("/", g.Select(st => st.Field<string>("OrderID")).Distinct().ToArray()),
-                                                              SizeCode = string.Join("/", g.Select(st => st.Field<string>("SizeCode")).ToArray()),
-                                                              QtyPerCTN = string.Join("/", g.Select(st => st.Field<int>("QtyPerCTN").ToString()).ToArray()),
-                                                              ScanQty = string.Join("/", g.Select(st => st.Field<short>("ScanQty").ToString()).ToArray()),
+                                                              Article = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("Article")).ToArray()),
+                                                              SizeCode = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("SizeCode")).ToArray()),
+                                                              QtyPerCTN = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<int>("QtyPerCTN").ToString()).ToArray()),
+                                                              ScanQty = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<short>("ScanQty").ToString()).ToArray()),
                                                               TtlScanQty = g.Sum(st => st.Field<short>("ScanQty")),
                                                               TtlQtyPerCTN = g.Sum(st => st.Field<int>("QtyPerCTN")),
                                                               PKseq = g.Max(st => st.Field<string>("PKseq")),
-                                                              PassName = string.Join("/", g.Select(st => st.Field<string>("PassName").ToString()).Where(st => !string.IsNullOrEmpty(st)).ToArray()),
+                                                              PassName = g.Select(st => st.Field<string>("PassName")).FirstOrDefault(), // 一箱只會有一個掃描人員，因此抓第一筆就好
                                                               ActCTNWeight = g.Max(st => st.Field<decimal>("ActCTNWeight"))
                                                           }).OrderBy(s => s.ID).ThenBy(s => s.PKseq).ToList();
             string default_where = " 1 = 1 ";
@@ -475,7 +497,16 @@ INSERT INTO [dbo].[PackingScan_History]
                 default_where += $" and ID = \"{this.comboPKFilter.SelectedValue}\"";
             }
 
-            this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
+            var selectCartonFilterResult = list_selectCarton.Where(default_where);
+
+            if (selectCartonFilterResult.Any())
+            {
+                this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
+            }
+            else
+            {
+                this.selcartonBS.DataSource = null;
+            }
 
             var queryTotal = from c in list_selectCarton
                              group c by c.ID into g
@@ -523,6 +554,12 @@ INSERT INTO [dbo].[PackingScan_History]
             this.displayCustomize1.Text = MyUtility.GetValue.Lookup($"select Customize1 from orders with(nolock) where id = '{dr.OrderID}'");
             this.displayCustomize2.Text = MyUtility.GetValue.Lookup($"select Customize2 from orders with(nolock) where id = '{dr.OrderID}'");
             this.displayCustomize3.Text = MyUtility.GetValue.Lookup($"select Customize3 from orders with(nolock) where id = '{dr.OrderID}'");
+            this.displayKIT.Text = MyUtility.GetValue.Lookup($@"
+SELECT TOP 1 cc.Kit
+FROM Orders o 
+LEFT JOIN CustCD cc ON o.BrandID=cc.BrandID AND o.CustCDID=cc.ID
+WHERE o.ID='{dr.OrderID}'");
+            this.boxPackingRemark.Text = dr.Remark;
         }
 
         private void ChkBoxNotScan_CheckedChanged(object sender, EventArgs e)
@@ -668,6 +705,16 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     }
                 }
 
+                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
+
+                if (isNeedShowWeightInputWindow)
+                {
+                    P18_InputWeight p18_InputWeight = new P18_InputWeight();
+                    p18_InputWeight.ShowDialog();
+                    this.numWeight.Value = p18_InputWeight.ActWeight;
+                    this.numWeight.ValidateControl();
+                }
+
                 string upd_sql = $@"
 update PackingList_Detail 
 set ScanQty = QtyPerCTN 
@@ -676,50 +723,15 @@ set ScanQty = QtyPerCTN
 , Lacking = 0
 , ActCTNWeight = {this.numWeight.Value}
 where id = '{this.selecedPK.ID}' 
-and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
-and Article = '{this.selecedPK.Article}'";
-                if (sql_result = DBProxy.Current.Execute(null, upd_sql))
-                {
-                    // 回壓DataTable
-                    DataRow drPassName;
-                    string passName = string.Empty;
-                    string sql = $@"
-select isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
-from PackingList_Detail pd
-left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
-where pd.id = '{this.selecedPK.ID}' 
-and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-and pd.Article = '{this.selecedPK.Article}'
-";
-
-                    if (MyUtility.Check.Seek(sql, out drPassName))
-                    {
-                        passName = MyUtility.Convert.GetString(drPassName["PassName"]);
-                    }
-
-                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
-                    foreach (DataRow dr in dt_scanDetailrow)
-                    {
-                        dr["PassName"] = passName;
-                    }
-
-                    // 檢查下方carton列表是否都掃完
-                    int carton_complete = this.dt_scanDetail.AsEnumerable().Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count();
-                    if (carton_complete == 0)
-                    {
-                        this.ClearAll("ALL");
-                    }
-                    else
-                    {
-                        this.ClearAll("SCAN");
-                        this.LoadSelectCarton();
-                    }
-                }
-                else
+and CTNStartNo = '{this.selecedPK.CTNStartNo}' ";
+                sql_result = DBProxy.Current.Execute(null, upd_sql);
+                if (!sql_result)
                 {
                     this.ShowErr(sql_result);
                     return;
                 }
+
+                this.AfterCompleteScanCarton();
             }
             else
             {
@@ -812,7 +824,7 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 if (!MyUtility.Check.Empty(this.selecedPK.ID) && !MyUtility.Check.Empty(this.selecedPK.CTNStartNo) && !MyUtility.Check.Empty(this.selecedPK.Article))
                 {
-                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}'");
                     foreach (DataRow dr in dt_scanDetailrow)
                     {
                         dr["ActCTNWeight"] = this.numWeight.Text;
@@ -841,6 +853,8 @@ and pd.Article = '{this.selecedPK.Article}'
             private string dest;
             private string passName;
             private decimal actCTNWeight;
+
+            private string _remark;
 
             public string ID
             {
@@ -1049,14 +1063,28 @@ and pd.Article = '{this.selecedPK.Article}'
                     this.actCTNWeight = value;
                 }
             }
+
+
+            public string Remark
+            {
+                get
+                {
+                    return this._remark;
+                }
+
+                set
+                {
+                    this._remark = value;
+                }
+            }
         }
 
         private void btnLacking_Click(object sender, EventArgs e)
         {
-            this.updateLackingStatus();
+            this.UpdateLackingStatus();
         }
 
-        private void updateLackingStatus()
+        private void UpdateLackingStatus()
         {
             DualResult sql_result;
             DataTable dt = (DataTable)this.scanDetailBS.DataSource;
@@ -1071,58 +1099,30 @@ and pd.Article = '{this.selecedPK.Article}'
             // 如果掃描數量> 0,則 update PackingList_Detail
             if (this.numBoxScanQty.Value > 0)
             {
-                string upd_sql = $@"
+                string upd_sql = string.Empty;
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    upd_sql += $@"
 update PackingList_Detail 
 set   
-ScanQty = {this.numBoxScanQty.Value} 
+ScanQty = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])} 
 , ScanEditDate = GETDATE()
 , ScanName = '{Env.User.UserID}'   
 , Lacking = 1
-, BarCode = '{dt.Rows[0]["Barcode"]}'
-where id = '{this.selecedPK.ID}' 
-and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
-and Article = '{this.selecedPK.Article}'";
-                if (sql_result = DBProxy.Current.Execute(null, upd_sql))
-                {
-                    // 回壓DataTable
-                    DataRow drPassName;
-                    string passName = string.Empty;
-                    string sql = $@"
-select isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
-from PackingList_Detail pd
-left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
-where pd.id = '{this.selecedPK.ID}' 
-and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-and pd.Article = '{this.selecedPK.Article}'
+, BarCode = '{dr["Barcode"]}'
+where Ukey={dr["Ukey"]}
 ";
-                    if (MyUtility.Check.Seek(sql, out drPassName))
-                    {
-                        passName = MyUtility.Convert.GetString(drPassName["PassName"]);
-                    }
-
-                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
-                    foreach (DataRow dr in dt_scanDetailrow)
-                    {
-                        dr["PassName"] = passName;
-                    }
-
-                    // 檢查下方carton列表是否都掃完
-                    int carton_complete = this.dt_scanDetail.AsEnumerable().Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count();
-                    if (carton_complete == 0)
-                    {
-                        this.ClearAll("ALL");
-                    }
-                    else
-                    {
-                        this.ClearAll("SCAN");
-                        this.LoadSelectCarton();
-                    }
                 }
-                else
+
+                sql_result = DBProxy.Current.Execute(null, upd_sql);
+                if (!sql_result)
                 {
                     this.ShowErr(sql_result);
                     return;
                 }
+
+                this.AfterCompleteScanCarton();
 
                 MyUtility.Msg.InfoBox("Lacking successfully!!");
             }
@@ -1130,6 +1130,51 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 // 讓遊標停留在原地
                 this.txtScanEAN.Select();
+            }
+        }
+
+        private void AfterCompleteScanCarton()
+        {
+            // 回壓DataTable
+            DataRow drPassName;
+            string passName = string.Empty;
+
+            // 掃描完成後要重新撈一次ScanName，存到Form的DataTable
+            string scanName = string.Empty;
+
+            string sql = $@"
+select  ScanName, isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName,
+        pd.ScanEditDate
+from PackingList_Detail pd
+left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+where pd.id = '{this.selecedPK.ID}' 
+and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+";
+
+            if (MyUtility.Check.Seek(sql, out drPassName))
+            {
+                passName = MyUtility.Convert.GetString(drPassName["PassName"]);
+                scanName = MyUtility.Convert.GetString(drPassName["ScanName"]);
+            }
+
+            DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}'");
+            foreach (DataRow dr in dt_scanDetailrow)
+            {
+                dr["ScanName"] = scanName;
+                dr["PassName"] = passName;
+                dr["ScanEditDate"] = drPassName["ScanEditDate"];
+            }
+
+            // 檢查下方carton列表是否都掃完
+            int carton_complete = this.dt_scanDetail.AsEnumerable().Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count();
+            if (carton_complete == 0)
+            {
+                this.ClearAll("ALL");
+            }
+            else
+            {
+                this.ClearAll("SCAN");
+                this.LoadSelectCarton();
             }
         }
 
@@ -1152,7 +1197,7 @@ and pd.Article = '{this.selecedPK.Article}'
                 DialogResult resultLacking = questionBox.ShowDialog();
                 if (resultLacking == DialogResult.Yes)
                 {
-                    this.updateLackingStatus();
+                    this.UpdateLackingStatus();
                     return true;
                 }
                 else
@@ -1162,6 +1207,299 @@ and pd.Article = '{this.selecedPK.Article}'
             }
 
             return true;
+        }
+
+        private void Reset()
+        {
+
+            DualResult result;
+            this.PackingListID = string.Empty;
+            this.CTNStarNo = string.Empty;
+
+            if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
+            {
+                return;
+            }
+
+            if (this.txtScanCartonSP.Text.Length > 13)
+            {
+                this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+            }
+
+            this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
+            this.ClearAll("SCAN");
+
+            if (this.txtScanCartonSP.Text.Length > 13)
+            {
+                this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+            }
+
+            this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
+            this.ClearAll("SCAN");
+
+            #region 檢查是否有資料，三個角度
+
+            // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
+            // 2.=Orders.ID
+            // 3.=Orders.CustPoNo
+            string[] aLLwhere = new string[]
+            {
+                this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
+                $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
+                $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
+                $@" and pd.CustCTN = '{this.txtScanCartonSP.Text}'"
+            };
+
+            string scanDetail_sql = $@"select distinct
+                                           pd.ID,
+                                           pd.CTNStartNo  ,
+                                           pd.OrderID,
+                                           o.CustPoNo ,
+                                           pd.Article    ,
+                                           pd.Color,
+                                           pd.SizeCode  ,
+                                           pd.QtyPerCTN,
+                                           ScanQty = pd.ScanQty,
+                                           pd.ScanEditDate,
+                                           pd.ScanName,
+                                           pd.barcode,
+                                           p.BrandID,
+                                           o.StyleID,
+                                           os.Seq,
+                                           pd.Ukey,
+                                           [PKseq] = pd.Seq,
+                                           o.Dest,
+                                           isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
+                                           isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+                                           ,p.Remark
+										   ,pd.Ukey
+                                from PackingList_Detail pd WITH (NOLOCK)
+                                inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
+                                inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+                                left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
+                                left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+                                where p.Type in ('B','L') ";
+
+            foreach (string where in aLLwhere)
+            {
+                result = DBProxy.Current.Select(null, scanDetail_sql + where, out this.dt_scanDetail);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (this.dt_scanDetail.Rows.Count > 0)
+                {
+                    break;
+                }
+            }
+
+            if (this.dt_scanDetail.Rows.Count == 0)
+            {
+                AutoClosingMessageBox.Show($"<{this.txtScanCartonSP.Text}> Invalid CTN#!!", "Warning", 3000);
+                return;
+            }
+
+            // 產生comboPKFilter資料
+            List<string> srcPKFilter = new List<string>() { string.Empty };
+            srcPKFilter.AddRange(this.dt_scanDetail.AsEnumerable().Select(s => s["ID"].ToString()).Distinct().ToList());
+            this.comboPKFilter.DataSource = srcPKFilter;
+
+            // 產生select Carton資料
+            int cnt_selectCarton = this.LoadSelectCarton();
+
+            if (cnt_selectCarton == 1)
+            {
+                // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
+                if (Convert.ToInt16(this.dt_scanDetail.Compute("Sum(ScanQty)", null)) > 0)
+                {
+                    if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        if (!(result = this.ClearScanQty(this.dt_scanDetail.Select(), "ALL")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        this.ClearAll("ALL");
+                        return;
+                    }
+                }
+
+                if (this.UseAutoScanPack)
+                {
+                    foreach (DataRow dr in this.dt_scanDetail.Rows)
+                    {
+                        dr["barcode"] = DBNull.Value;
+                    }
+                    DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'  ");
+                }
+
+                DualResult result_load = this.LoadScanDetail(0);
+                if (!result_load)
+                {
+                    this.ShowErr(result_load);
+                }
+            }
+            #endregion
+        }
+
+        private void txtScanEAN_Leave(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtScanEAN.Text))
+            {
+                return;
+            }
+
+            if (this.scanDetailBS.DataSource == null)
+            {
+                return;
+            }
+
+            DualResult sql_result;
+            int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
+
+            // 無Barcode
+            if (barcode_pos == -1)
+            {
+                int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
+                if (no_barcode_cnt == 0)
+                {
+                    P18_Message msg = new P18_Message();
+
+                    // 送回 沒有的barcode
+                    if (this.UseAutoScanPack) this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
+                    msg.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!");
+                    this.txtScanEAN.Text = string.Empty;
+                    return;
+                }
+                else
+                {
+                    DataTable no_barcode_dt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).CopyToDataTable();
+                    DataRow no_barcode_dr = no_barcode_dt.NewRow();
+                    if (no_barcode_dt.Rows.Count > 1)
+                    {
+                        // 有空的barcode就開窗
+                        SelectItem sele = new SelectItem(no_barcode_dt, "Article,Color,SizeCode", "8,6,8", string.Empty, headercaptions: "Colorway,Color,Size");
+                        DialogResult result = sele.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            this.txtScanEAN.Text = string.Empty;
+                            if (this.UseAutoScanPack) this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
+                            return;
+                        }
+
+                        no_barcode_dr = sele.GetSelecteds()[0];
+                    }
+                    else
+                    {
+                        no_barcode_dr = no_barcode_dt.Rows[0];
+                    }
+
+                    this.upd_sql_barcode += $@"
+update PackingList_Detail
+set BarCode = '{this.txtScanEAN.Text}'
+where PackingList_Detail.Article 
+=  '{no_barcode_dr["Article"]}'
+and PackingList_Detail.SizeCode
+=  '{no_barcode_dr["SizeCode"]}'
+and PackingList_Detail.ID = '{this.selecedPK.ID}'
+and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+";
+                    foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
+                    {
+                        if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
+                        {
+                            dr["Barcode"] = this.txtScanEAN.Text;
+                            dr["ScanQty"] = (short)dr["ScanQty"] + 1;
+                            this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
+                            break;
+                        }
+                    }
+
+                    if (this.UseAutoScanPack) this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim()).Length);
+                }
+            }
+            else
+            {
+                this.scanDetailBS.Position = barcode_pos;
+                DataRowView cur_dr = (DataRowView)this.scanDetailBS.Current;
+                int scanQty = (short)cur_dr["ScanQty"];
+                int qtyPerCTN = (int)cur_dr["QtyPerCTN"];
+                if (scanQty >= qtyPerCTN)
+                {
+                    // 此barcode已足夠,或超過 送回
+                    if (this.UseAutoScanPack)
+                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
+                    AutoClosingMessageBox.Show($"This Size scan is complete,can not scan again!!", "Warning", 3000);
+                    this.txtScanEAN.Text = string.Empty;
+                    return;
+                }
+                else
+                {
+                    cur_dr["ScanQty"] = (short)cur_dr["ScanQty"] + 1;
+                    this.UpdScanQty((long)cur_dr["Ukey"]);
+                }
+            }
+
+            // this.scanDetailBS.ResetCurrentItem();
+            this.scanDetailBS.ResetBindings(true);
+
+            // 計算scanQty
+            this.numBoxScanQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (short)s["ScanQty"]);
+
+            this.txtScanEAN.Text = string.Empty;
+
+            // 如果都掃完 update PackingList_Detail
+            if (this.numBoxScanQty.Value == this.numBoxScanTtlQty.Value)
+            {
+                if (!MyUtility.Check.Empty(this.upd_sql_barcode))
+                {
+                    if (!(sql_result = DBProxy.Current.Execute(null, this.upd_sql_barcode)))
+                    {
+                        this.ShowErr(sql_result);
+                        return;
+                    }
+                }
+
+                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
+
+                if (isNeedShowWeightInputWindow)
+                {
+                    P18_InputWeight p18_InputWeight = new P18_InputWeight();
+                    p18_InputWeight.ShowDialog();
+                    this.numWeight.Value = p18_InputWeight.ActWeight;
+                    this.numWeight.ValidateControl();
+                }
+
+                string upd_sql = $@"
+update PackingList_Detail 
+set ScanQty = QtyPerCTN 
+, ScanEditDate = GETDATE()
+, ScanName = '{Env.User.UserID}'   
+, Lacking = 0
+, ActCTNWeight = {this.numWeight.Value}
+where id = '{this.selecedPK.ID}' 
+and CTNStartNo = '{this.selecedPK.CTNStartNo}' ";
+                sql_result = DBProxy.Current.Execute(null, upd_sql);
+                if (!sql_result)
+                {
+                    this.ShowErr(sql_result);
+                    return;
+                }
+
+                this.AfterCompleteScanCarton();
+            }
+            else
+            {
+                // 讓遊標停留在原地
+                this.txtScanEAN.Focus();
+            }
         }
     }
 }

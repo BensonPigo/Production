@@ -230,6 +230,16 @@ isnull((select SUM(c.Qty)
                   .Numeric("AccuInCome", header: "Loading Output", width: Widths.AnsiChars(6), settings: this.loadoutput);
 
             // 撈Sewing Data
+            string locationTable = string.Empty;
+            if (MyUtility.Check.Seek($"select 1 from Order_Location where OrderId = '{this.masterData["ID"]}'"))
+            {
+                locationTable = "Order_Location  sl WITH (NOLOCK) on sl.OrderId = o.id";
+            }
+            else
+            {
+                locationTable = "Style_Location  sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey";
+            }
+
             sqlCmd = string.Format(
                 @"
 with SewQty as (
@@ -239,7 +249,7 @@ with SewQty as (
 			, ComboType = sl.Location
 			, QAQty = isnull(sum(sdd.QAQty),0)
 	from Orders o WITH (NOLOCK) 
-	inner join Style_Location sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey
+	inner join {2}
 	inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
 	left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o.ID 
 															  and sdd.Article = oq.Article 
@@ -270,11 +280,16 @@ left join Order_Article oa WITH (NOLOCK) on oa.ID = '{1}' and oa.Article = p.Art
 left join Order_SizeCode os WITH (NOLOCK) on os.ID = '{1}' and os.SizeCode = p.SizeCode
 order by oa.Seq,os.Seq;",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
-                MyUtility.Convert.GetString(this.masterData["POID"]));
+                MyUtility.Convert.GetString(this.masterData["POID"]),
+                locationTable);
 
             DataTable sewingData;
             result = DBProxy.Current.Select(null, sqlCmd, out sewingData);
-
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
             sqlCmd = string.Format(
                 @"select oq.Article,oq.SizeCode,oq.Qty,sum(c.Qty) as CutQty
 from Orders o WITH (NOLOCK) 

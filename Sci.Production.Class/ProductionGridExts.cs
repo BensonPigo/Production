@@ -62,6 +62,71 @@ namespace Sci
             return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
         }
 
+        //CFALocation
+        public static IDataGridViewGenerator CellCFALocation(this IDataGridViewGenerator gen, string propertyname, string header, string M = "", IWidth width = null, DataGridViewGeneratorTextColumnSettings settings = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
+        {
+            if (settings == null) settings = new DataGridViewGeneratorTextColumnSettings();
+            settings.CharacterCasing = CharacterCasing.Upper;
+            settings.EditingMouseDown += (s, e) =>
+            {
+                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                if (frm.EditMode)
+                {
+                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
+                            string sqlcmd = string.Empty;
+                            if (MyUtility.Check.Empty(M))
+                            {
+                                sqlcmd = "select ID,Description from CFALocation group by ID,Description order by ID";
+                            }
+                            else
+                            {
+                                sqlcmd = $"select ID,Description from CFALocation where MDivisionID='{M}'  group by ID,Description order by ID";
+                            }
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,40", dr["CFALocationId"].ToString().Trim());
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel) { return; }
+                            e.EditingControl.Text = item.GetSelectedString();
+                        }
+                    }
+                }
+            };
+            settings.CellValidating += (s, e) =>
+            {
+                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                if (frm.EditMode)
+                {
+                    DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
+                    {
+                        string sqlcmd = string.Empty;
+                        if (MyUtility.Check.Empty(M))
+                        {
+                            sqlcmd = "select ID,Description from CFALocation where id = '{e.FormattedValue}' group by ID,Description order by ID";
+                        }
+                        else
+                        {
+                            sqlcmd = $"select ID,Description from CFALocation where MDivisionID='{M}'and id = '{e.FormattedValue}'  group by ID,Description order by ID";
+                        }
+
+                        if (!MyUtility.Check.Seek(sqlcmd))
+                        {
+                            dr["CFALocationId"] = "";
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< CFALocation : {0} > not found!!!", e.FormattedValue.ToString()));
+                            return;
+                        }
+                    }
+                }
+            };
+            return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+
         // order id
         public static IDataGridViewGenerator CellOrderId(this IDataGridViewGenerator gen, string propertyname
                                                                 , string header, IWidth width = null
@@ -116,7 +181,7 @@ namespace Sci
                     {
                         if (CheckMDivisionID)
                         {
-                            if (!MyUtility.Check.Seek(string.Format("select * from dbo.orders inner join dbo.factory on orders.FtyGroup=factory.id where orders.ID='{0}' and factory.MDivisionID='{1}'", e.FormattedValue.ToString(),Sci.Env.User.Keyword), null))
+                            if (!MyUtility.Check.Seek(string.Format("select * from dbo.orders inner join dbo.factory on orders.FtyGroup=factory.id where orders.ID='{0}' and factory.MDivisionID='{1}' AND orders.Category!='A'", e.FormattedValue.ToString(),Sci.Env.User.Keyword), null))
                             {
                                 dr["poid"] = "";
                                 e.Cancel = true;

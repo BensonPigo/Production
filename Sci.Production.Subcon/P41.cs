@@ -68,8 +68,8 @@ select
 	[Defect Qty (pcs)]=bi.DefectQty,
 	[Replacement Qty (pcs)]=bi.ReplacementQty,
 	Status=iif(bi.DefectQty=bi.ReplacementQty,'Complete','')
-from ManufacturingExecution.dbo.BundleInspection bi with(nolock)
-left join ManufacturingExecution.dbo.BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID and bdr.SubProcessID = bi.SubProcessID
+from dbo.SciMES_BundleInspection bi with(nolock)
+left join dbo.SciMES_BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID and bdr.SubProcessID = bi.SubProcessID
 where bi.BundleNo='{drSelected["BundleNo"]}'
 ";
                 DataTable dt;
@@ -224,7 +224,7 @@ bd.BundleNo
 ,[ReceiveQtyLoading]= IIF(ReceiveQtyLoading.InComing != '' OR ReceiveQtyLoading.InComing IS NOT NULL , 'Complete' ,'Not Complete')
 ,[XXXRFIDIn]=bio.InComing
 ,[XXXRFIDOut]=bio.OutGoing
-,BundleReplacement=BR.RQ
+into #tmpMain
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
 {(this.chkExtendAllParts.Checked ? "LEFT JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID AND bd.Patterncode ='ALLPARTS'" : "")}
@@ -278,23 +278,60 @@ OUTER APPLY(
 		)
 	)M
 )DefaultSubProcess
+WHERE o.MDivisionID='{Sci.Env.User.Keyword}' {sqlWhere}
 
+select
+bi.BundleNo,
+bi.ReasonID,
+bi.DefectQty,
+bi.ReplacementQty
+into #tmpBundleInspection
+from dbo.SciMES_BundleInspection bi  with(nolock)
+where exists(select 1 from #tmpMain where BundleNo = bi.BundleNo) and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
+
+
+select 
+t.BundleNo
+,t.Orderid
+,t.POID
+,t.FactoryID
+,t.Category
+,t.ProgramID
+,t.StyleID
+,t.SeasonID
+,t.Colorid
+,t.Article
+,t.SizeCode
+,t.CutCellID
+,t.Sewinglineid
+,t.PatternPanel
+,t.Cutpart
+,t.CutpartName
+,t.SubProcessID
+,t.DefaultSubProcess
+,t.BundleGroup
+,t.Qty
+,t.ReceiveQtySorting
+,t.ReceiveQtyLoading
+,t.XXXRFIDIn
+,t.XXXRFIDOut
+,BundleReplacement = BR.RQ
+from #tmpMain t
 outer apply(
     select RQ=stuff((
 	    select concat(',',ReasonID,'(',sum(isnull(bi.DefectQty,0)-isnull(bi.ReplacementQty,0)),')')
-	    from ManufacturingExecution.dbo.BundleInspection bi  with(nolock)
-	    where isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
-	    and bi.BundleNo = bd.BundleNo
+	    from #tmpBundleInspection bi  with(nolock)
+	    where bi.BundleNo = t.BundleNo
 	    group by ReasonID
 	    for xml path('')
     ),1,1,'')
 )BR
 
-WHERE o.MDivisionID='{Sci.Env.User.Keyword}' 
+drop table #tmpMain,#tmpBundleInspection
 
 ");
 
-            result=DBProxy.Current.Select(null, sqlCmd.Append(sqlWhere).ToString(), out dt);
+            result=DBProxy.Current.Select(null, sqlCmd.ToString(), out dt);
 
             if (!result)
             {

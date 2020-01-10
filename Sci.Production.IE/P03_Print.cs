@@ -22,6 +22,7 @@ namespace Sci.Production.IE
         private DataRow masterData;
         private string display;
         private string contentType;
+        private string strLanguage;
         private DataTable operationCode;
         private DataTable nodist;
         private DataTable noppa;
@@ -54,6 +55,8 @@ namespace Sci.Production.IE
             this.styleCPU = styleCPU;
             this.radioU.Checked = true;
             this.radioDescription.Checked = true;
+            MyUtility.Tool.SetupCombox(this.comboLanguage, 2, 1, "en,English,cn,Chinese,vn,Vietnam,kh,Cambodia");
+            this.comboLanguage.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -65,6 +68,7 @@ namespace Sci.Production.IE
             this.display = this.radioU.Checked ? "U" : "Z";
             this.contentType = this.radioDescription.Checked ? "D" : "A";
             this.changp = MyUtility.Convert.GetDecimal(this.numpage.Value);
+            this.strLanguage = this.comboLanguage.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
@@ -156,13 +160,31 @@ where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
             #region 第一頁
             sqlCmd = string.Format(
                 @"
-select a.GroupKey,a.OperationID,a.Annotation,a.GSD,MachineTypeID = iif(m.MachineGroupID = '','',a.MachineTypeID),a.Attachment,a.Template,a.ThreadColor
-,isnull(o.DescEN,'') as DescEN,rn = ROW_NUMBER() over(order by iif(IsPPa=1,1,0) ,a.No),a.Cycle,a.ActCycle,IsPPa,a.No
+select   a.GroupKey
+        ,a.OperationID
+        ,a.Annotation
+        ,a.GSD
+        ,a.MachineTypeID--MachineTypeID = iif(m.MachineGroupID = '','',a.MachineTypeID)
+        ,a.Attachment
+        ,a.Template
+        ,a.ThreadColor
+        ,DescEN = case when '{1}' = 'cn' then isnull(od.DescCHS,o.DescEN)
+                       when '{1}' = 'vn' then isnull(od.DescVI,o.DescEN)
+                       when '{1}' = 'kh' then isnull(od.DescKH,o.DescEN)
+            else o.DescEN end
+        ,rn = ROW_NUMBER() over(order by iif(IsPPa=1,1,0) ,a.No)
+        ,a.Cycle
+        ,a.ActCycle
+        ,IsPPa
+        ,a.No
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
+left join OperationDesc od on o.ID = od.ID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
 where a.ID = {0}
-order by iif(IsPPa=1,1,0) ,a.No,iif(m.MachineGroupID = '','',a.MachineTypeID),a.Attachment,a.Template,a.ThreadColor", MyUtility.Convert.GetString(this.masterData["ID"]));
+order by iif(IsPPa=1,1,0) ,a.No
+,a.MachineTypeID--iif(m.MachineGroupID = '','',a.MachineTypeID)
+,a.Attachment,a.Template,a.ThreadColor", MyUtility.Convert.GetString(this.masterData["ID"]), this.strLanguage);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
             if (!result)
             {
@@ -173,12 +195,19 @@ order by iif(IsPPa=1,1,0) ,a.No,iif(m.MachineGroupID = '','',a.MachineTypeID),a.
             #region Machine Type IsPPa
             sqlCmd = string.Format(
                 @"
-select ld.OperationID,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),ld.Annotation,DescEN=isnull(o.DescEN,ld.Annotation)
+select   ld.OperationID
+        ,ld.MachineTypeID--MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID)
+        ,ld.Annotation
+        ,DescEN = case when '{1}' = 'cn' then isnull(od.DescCHS,o.DescEN)
+                       when '{1}' = 'vn' then isnull(od.DescVI,o.DescEN)
+                       when '{1}' = 'kh' then isnull(od.DescKH,o.DescEN)
+            else o.DescEN end
 from LineMapping_Detail ld WITH (NOLOCK)
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
+left join OperationDesc od on o.ID = od.ID
 where ld.ID = {0} and IsPPa = 1 
-order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
+order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]), this.strLanguage);
             result = DBProxy.Current.Select(null, sqlCmd, out this.noppa);
             if (!result)
             {
@@ -203,20 +232,24 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, o.DescEN as Description
+					, Description = case when '{1}' = 'cn' then isnull(od.DescCHS,o.DescEN)
+                                         when '{1}' = 'vn' then isnull(od.DescVI,o.DescEN)
+                                         when '{1}' = 'kh' then isnull(od.DescKH,o.DescEN)
+                                         else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
 					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+            left join OperationDesc od on o.ID = od.ID
 			where ld.ID = {0} AND No <> ''
 		)a
 	)b
 )ActCycle
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 GROUP BY NO ,ActCycle.Value
-order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
+order by no", MyUtility.Convert.GetString(this.masterData["ID"]), this.strLanguage);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -254,13 +287,17 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, o.DescEN as Description
+					, Description = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
+                                         when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
+                                         when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
+                                         else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
 					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+            left join OperationDesc od on o.ID = od.ID
 			where ld.ID = {0} AND No <> ''
 		)a
 	)b
@@ -271,7 +308,8 @@ order by no
 
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
+                    this.changp
+                    , strLanguage);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -303,13 +341,17 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, o.DescEN as Description
+					, Description = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
+                                         when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
+                                         when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
+                                         else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
 					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+            left join OperationDesc od on o.ID = od.ID
 			where ld.ID = {0} AND No <> ''
 		)a
 	)b
@@ -320,7 +362,8 @@ order by no
 
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
+                    this.changp,
+                    this.strLanguage);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2);
                 if (!result)
                 {

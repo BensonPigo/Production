@@ -32,6 +32,8 @@
     [BrandID]               VARCHAR (8)  DEFAULT ('') NOT NULL,
     [OriginalCustPONo]      VARCHAR (30) NULL,
     [NewCustPONo]           VARCHAR (30) NULL,
+    [OriginalShipModeList] VARCHAR(30) NULL, 
+    [NewShipModeList ] VARCHAR(30) NULL, 
     CONSTRAINT [PK_OrderComparisonList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

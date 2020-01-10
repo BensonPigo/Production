@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using Sci.Production.Class;
 
 namespace Sci.Production.Cutting
 {
@@ -49,6 +50,10 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorTextColumnSettings col_Seq1 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_Seq2 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Shift = cellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
+            DataGridViewGeneratorDateColumnSettings WKETA = new DataGridViewGeneratorDateColumnSettings();
+            Ict.Win.UI.DataGridViewDateBoxColumn col_wketa = new Ict.Win.UI.DataGridViewDateBoxColumn();
+
             #region Cell
             bool cellchk = true;
             Cell.EditingMouseDown += (s, e) =>
@@ -264,6 +269,22 @@ namespace Sci.Production.Cutting
             };
             #endregion
 
+            #region WKETA
+            WKETA.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                if (e.Button == MouseButtons.Right)
+                {
+                    P02_WKETA item = new P02_WKETA(dr);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.No) { dr["WKETA"] = DBNull.Value; }
+                    if (result == DialogResult.Yes) { dr["WKETA"] = itemx.WKETA; }
+                    dr.EndEdit();
+                }
+            };
+            
+            #endregion
 
             this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
@@ -275,6 +296,7 @@ namespace Sci.Production.Cutting
              .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
              .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(3), settings: SpreadingNo, iseditingreadonly: false)
              .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2), settings: Cell, iseditingreadonly: false)
+             .Text("Shift", header: "Shift", width: Widths.AnsiChars(2), iseditingreadonly: false, settings: col_Shift)
              .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
              .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -284,6 +306,7 @@ namespace Sci.Production.Cutting
              .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), settings: col_Seq1)
              .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), settings: col_Seq2)
              .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+             .Date("WKETA", header: "WK ETA", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WKETA).Get(out col_wketa)
              .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: EstCutDate)
              .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
@@ -294,7 +317,34 @@ namespace Sci.Production.Cutting
             this.gridBatchAssignCellEstCutDate.Columns["Cutcellid"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.ForeColor = Color.Red;
+            //col_wketa.Width = 97;
 
+            col_wketa.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode)
+                { ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true; ((Ict.Win.UI.DateBox)e.Control).Enabled = true; }
+                else { ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true; ((Ict.Win.UI.DateBox)e.Control).Enabled = false; }
+
+            };
+            col_wketa.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
         }
 
         private void btnFilter_Click(object sender, EventArgs e)
@@ -468,6 +518,7 @@ Do you want to continue? ");
             string cdate = "";
             string Seq1 = txtSeq1.Text;
             string Seq2 = txtSeq2.Text;
+            string Shift = txtShift.Text;
             if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
             {
                 cdate = txtBatchUpdateEstCutDate.Text;
@@ -491,8 +542,11 @@ Do you want to continue? ");
                     detaildr[0]["SpreadingNoID"] = dr["SpreadingNoID"];
                     detaildr[0]["Cutcellid"] = dr["Cutcellid"];
                     detaildr[0]["estcutdate"] = dr["estcutdate"];
+                    detaildr[0]["WKETA"] = dr["WKETA"];
                     detaildr[0]["Seq1"] = dr["Seq1"];
                     detaildr[0]["Seq2"] = dr["Seq2"];
+                    detaildr[0]["shift"] = dr["shift"];
+
                 }
             }
             Close();
@@ -667,6 +721,66 @@ where   id = '{0}'
                 if (warningMsg.Count > 0)
                 {
                     MyUtility.Msg.WarningBox(warningMsg.Select(x => x).Distinct().ToList().JoinToString("\n"));
+                }
+            }
+        }
+
+        private void BtnBatchUpdateShift_Click(object sender, EventArgs e)
+        {
+            string strShift = "";
+            if (!MyUtility.Check.Empty(txtShift.Text))
+            {
+                strShift = txtShift.Text;
+            };
+            foreach (DataRow dr in curTb.Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+
+                if (dr["Sel"].ToString() == "True")
+                {
+                    if (strShift != "")
+                    {
+                        dr["Shift"] = strShift;
+                    }
+                    else
+                    {
+                        dr["Shift"] = DBNull.Value;
+                    }
+                    dr.EndEdit();
+                }
+            }
+        }
+
+        private void BtnBatchWKETA_Click(object sender, EventArgs e)
+        {
+            this.gridBatchAssignCellEstCutDate.ValidateControl();
+            string cdate = "";
+            if (!MyUtility.Check.Empty(dateBoxWKETA.Value))
+            {
+                cdate = dateBoxWKETA.Text;
+            };
+
+            DataRow[] drSelect = curTb.Select("Sel = 1");
+            foreach (DataRow dr in drSelect)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+                string sqlcmdChk = $@"
+select 1
+From Export_Detail ED 
+INNER JOIN Export E ON E.ID = ED.ID
+where ED.poid='{dr["id"]}' 
+and ED.seq1 ='{dr["Seq1"]}' and ED.seq2='{dr["seq2"]}'
+and e.ETA = '{cdate}'
+";
+                if (MyUtility.Check.Seek(sqlcmdChk))
+                {
+                    dr["WKETA"] = cdate;
+                }
+                else
+                {
+                    dr["WKETA"] = DBNull.Value;
                 }
             }
         }

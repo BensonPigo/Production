@@ -90,7 +90,7 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1
 inner join dbo.Orders on c.poid = orders.id
 inner join dbo.Factory on orders.FactoryID = factory.ID
 INNER JOIN Fabric f on a.SCIRefNo=f.SCIRefNo
-Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
+Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Orders.category!='A'
     and factory.MDivisionID = '{1}'
 ", sp, Sci.Env.User.Keyword)); // 
                 if (!txtSeq1.checkSeq1Empty() && txtSeq1.checkSeq2Empty())

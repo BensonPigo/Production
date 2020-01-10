@@ -18,6 +18,7 @@ using Sci;
 using System.Diagnostics;
 using System.Configuration;
 using PostJobLog;
+using System.Threading;
 
 namespace Production.Daily
 {
@@ -31,6 +32,7 @@ namespace Production.Daily
         string region = string.Empty;
         string tpeMisMail = string.Empty;
         bool isTestJobLog = false;
+        bool isSkipRarCheckDate = false;
 
         public Main()
         {
@@ -56,6 +58,15 @@ namespace Production.Daily
         {
             base.OnFormLoaded();
 
+            if (DBProxy.Current.DefaultModuleName == "PMS_Formal")
+            {
+                this.isSkipRarCheckDate = true;
+            }
+            else
+            {
+                this.isSkipRarCheckDate = false;
+            }
+
             OnRequery();
 
             transferPMS.fromSystem = "Production";
@@ -70,8 +81,8 @@ namespace Production.Daily
         private void OnRequery()
         {
             DataTable _mailTo;
-            String sqlCmd;             
-                       
+            String sqlCmd;
+
             sqlCmd = "Select * From dbo.MailTo Where ID = '001'";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out _mailTo);
@@ -93,10 +104,10 @@ namespace Production.Daily
         {
             DualResult result;
             String sqlCmd;
-            List<SqlParameter> paras = new List<SqlParameter>();            
-                sqlCmd = "Update dbo.MailTo Set ToAddress = @ToAddress, CcAddress = @CcAddress, Content = @Content Where ID = '001'";
- 
-                        
+            List<SqlParameter> paras = new List<SqlParameter>();
+            sqlCmd = "Update dbo.MailTo Set ToAddress = @ToAddress, CcAddress = @CcAddress, Content = @Content Where ID = '001'";
+
+
             paras.Add(new SqlParameter("@ToAddress", editToAddress.Text));
             paras.Add(new SqlParameter("@CcAddress", editCcAddress.Text));
             paras.Add(new SqlParameter("@Content", editContent.Text));
@@ -147,8 +158,8 @@ namespace Production.Daily
             DualResult result;
             result = transferPMS.Ftp_Ping(this.CurrentData["FtpIP"].ToString(), this.CurrentData["FtpID"].ToString(), this.CurrentData["FtpPwd"].ToString());
 
-            string rarFile =ConfigurationSettings.AppSettings["rarexefile"].ToString();
-           
+            string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
+
             if (!result)
             {
                 ShowErr(result);
@@ -224,7 +235,7 @@ namespace Production.Daily
         #endregion
 
         #region Call JobLog web api回傳執行結果
-        private void CallJobLogApi(string subject, string desc,string startDate, string endDate,bool isTest, bool succeeded)
+        private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
         {
             JobLog jobLog = new JobLog()
             {
@@ -349,9 +360,23 @@ namespace Production.Daily
                 return new DualResult(false, "You can't setup the path using by \\ (UNC),pls mapping for a disk then can do it");
             }
             #endregion
-            
-            result = transferPMS.Ftp_Ping(ftpIP, ftpID, ftpPwd);
-            if (!result) { return result; }
+
+            result = new DualResult(true);
+            for (int i = 0; i < 3; i++)
+            {
+                result = transferPMS.Ftp_Ping(ftpIP, ftpID, ftpPwd);
+                if (result)
+                {
+                    break;
+                }
+                Thread.Sleep(2500);
+            }
+
+            if (!result) 
+            {
+                this.CallJobLogApi("PMS transfer data (FTP) ERROR", result.GetException().ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
+                return result; 
+            }
 
             String exportRgCode = "";
             String importRgCode = "";
@@ -376,7 +401,7 @@ namespace Production.Daily
             #region 先把Trade_To_Pms的DB drop掉
             transferPMS.DeleteDatabase(importRegion);
             #endregion
-                     
+
             string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
             if (!File.Exists(rarFile))
             {
@@ -386,7 +411,7 @@ namespace Production.Daily
                 this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                 return new DualResult(false, "Win_RAR File does not exist !");
             }
-           
+
             startDate = DateTime.Now;
 
             #region 開始執行轉出
@@ -399,22 +424,23 @@ namespace Production.Daily
             }
             #endregion
             #region check Export File
-            if (!File.Exists(exportRegion.DirName + exportRegion.RarName)){
+            if (!File.Exists(exportRegion.DirName + exportRegion.RarName))
+            {
                 subject = "PMS transfer data (New) ERROR";
                 desc = "Not found the ZIP(rar) file,pls advice Taipei's Programer";
                 SendMail(subject, desc);
                 this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
             }
-            #endregion 
-            
+            #endregion
+
             #region 開始執行轉入
             result = DailyImport(importRegion);
 
-            endDate = DateTime.Now;            
-            if (!result) 
+            endDate = DateTime.Now;
+            if (!result)
             {
                 ErrMail("Import", transferPMS.Regions_All); //importRegion);
-                return result;             
+                return result;
             }
             #endregion
             #region check lock date
@@ -449,7 +475,7 @@ namespace Production.Daily
                 else
                 {
                     transferDate = ((DateTime)orderComparisonList.Rows[0]["TransferDate"]).ToShortDateString();
-                }               
+                }
                 updateDate = ((DateTime)orderComparisonList.Rows[0]["UpdateDate"]).ToShortDateString();
             }
             #endregion
@@ -485,7 +511,7 @@ namespace Production.Daily
             desc += Environment.NewLine + "================================" +
                     Environment.NewLine + mailTo["Content"].ToString();
             #endregion
-            subject = mailTo["Subject"].ToString().TrimEnd() +" "+ this.CurrentData["RgCode"].ToString();
+            subject = mailTo["Subject"].ToString().TrimEnd() + " " + this.CurrentData["RgCode"].ToString();
 
             // 改call system job log api 將資料回傳至台北紀錄
             SendMail(subject, desc, false);
@@ -509,10 +535,10 @@ Region      Succeeded       Message
 ***--------------------------------------------------------***
 ";
             string totalMsg = "";
-          
-                TransRegion Region = Regions_All[0];   
-            
-            string RegionStr = Region.Region;            
+
+            TransRegion Region = Regions_All[0];
+
+            string RegionStr = Region.Region;
             string Msg = "";//tfTrade.Regions_All[i].Message;
             bool success = Region.Succeeded;
             for (int k = 0; k < Region.Logs.Count; k++)
@@ -545,7 +571,7 @@ Region      Succeeded       Message
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
 
-            if (this.chk_export.Checked==false)
+            if (this.chk_export.Checked == false)
             {
                 return Ict.Result.True;
             }
@@ -578,7 +604,7 @@ Region      Succeeded       Message
             bool fileExists = true; // 用來判斷檔案是否存在 importRegion.RarName
             if (isAuto)
             {
-                if (!transferPMS.CheckRar_CreateDate(importRegion, importRegion.RarName, false))
+                if (!transferPMS.CheckRar_CreateDate(importRegion, importRegion.RarName, isSkipRarCheckDate))
                 {
                     fileExists = false;
                     String subject = "PMS transfer data (New) ERROR";
@@ -591,7 +617,7 @@ Region      Succeeded       Message
             else
             {
                 //手動rar檔路徑改為system.importdatapath
-                string sourceFile = importRegion.DirName.ToString()+importRegion.RarName;                
+                string sourceFile = importRegion.DirName.ToString() + importRegion.RarName;
                 string RaRLastEditDate = File.GetLastWriteTime(sourceFile).ToString("yyyyMMdd");
                 string Today = DateTime.Now.ToString("yyyyMMdd");
                 if (!File.Exists(sourceFile))
@@ -650,7 +676,7 @@ Region      Succeeded       Message
                     }
                 }
             }
-           
+
             #endregion
 
             #region 刪除原先的壓縮檔
@@ -659,7 +685,7 @@ Region      Succeeded       Message
                 File.Delete(exportRegion.DirName + exportRegion.RarName);
             }
             #endregion
-            
+
             #region 判斷若DB不存在，就掛載
             DataTable isDbExist;
             sqlCmd = "Select Name From master.dbo.sysdatabases Where ('[' + name + ']' = @DbName OR name = @DbName)";
@@ -695,8 +721,8 @@ Region      Succeeded       Message
                      "Exec sys.sp_cdc_disable_db;";
             #endregion
 
-           
-           
+
+
             if (!transferPMS.Export_Pms_To_Trade(ftpIP, ftpID, ftpPwd, _fromPath, exportRegion.DBName))
             {
                 return new DualResult(false, "Export failed!");
@@ -713,14 +739,27 @@ Region      Succeeded       Message
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
 
-            if (this.chk_import.Checked==false)
+            if (this.chk_import.Checked == false)
             {
                 return Ict.Result.True;
             }
             #region Setup Data
             DataTable transImport;
-            String sqlCmd = "Use [Production];" +
-                            "Select * From dbo.TransRegion Left Join dbo.TransImport On 1 = 1 Where TransRegion.Is_Export = 0";
+            String sqlCmd = $@"Use [Production];
+Select	TransRegion.Region
+		,TransRegion.DirName
+		,TransRegion.RarName
+		,TransRegion.Is_Export
+		,TransRegion.ConnectionName
+		,TransRegion.DBName
+		,TransRegion.DBFileName
+		,TransImport.GroupID
+		,TransImport.Seq
+		,TransImport.Name
+		,TransImport.TSQL
+From dbo.TransRegion 
+Left Join dbo.TransImport On TransRegion.ConnectionName = TransImport.ImportConnectionName
+Where TransRegion.Is_Export = 0";
 
             result = DBProxy.Current.Select(null, sqlCmd, out transImport);
             if (!result) { return result; }
@@ -736,10 +775,12 @@ Region      Succeeded       Message
                 */
                 transferPMS.SetupData(transImport);
             }
+
             #endregion
+            
             //手動執行,才去判斷執行
             if (!isAuto)
-            {                
+            {
                 string path = region.DirName;
                 string sourceFile = path + region.RarName;
                 string RaRLastEditDate = File.GetLastWriteTime(sourceFile).ToString("yyyyMMdd");
@@ -755,14 +796,14 @@ Region      Succeeded       Message
                     SendMail(subject, desc);
                     this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                     return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File(" + region.RarName + ") is New");
-                }             
-            }                      
-            
+                }
+            }
+
             #region 刪除DataBase
             result = transferPMS.DeleteDatabase(region);
             if (!result) { return result; }
-            #endregion            
-          
+            #endregion
+
             #region 將資料Copy To DB資料夾以掛載
             String fromPath = this.CurrentData["ImportDataPath"].ToString();
             String toPath = transImport.Rows[0]["DirName"].ToString();
@@ -777,8 +818,8 @@ Region      Succeeded       Message
                 {
                     return new DualResult(false, "rar file Download failed!");
                 };
-            }         
-           
+            }
+
 
             #endregion
             #region 掛載資料庫
@@ -791,15 +832,21 @@ Region      Succeeded       Message
             {
                 region.Logs.Add(item.Value);
             }
-            
+
             #endregion
 
-            #region Deploy procedure 到Production
-            Dictionary<string, KeyValuePair<DateTime?, DualResult>> resDic = transferPMS.Deploy_Procedure(region.DirName, prefix: "imp_", connectionName: transferPMS.fromSystem);
-            foreach (var item in resDic)
+            #region Deploy procedure
+            Dictionary<string, KeyValuePair<DateTime?, DualResult>> resDic;
+            var deployImportProcedure = transImport.AsEnumerable().Where(s => s["Name"].ToString().StartsWith("imp_"));
+            foreach (DataRow installItem in deployImportProcedure)
             {
-                region.Logs.Add(item.Value);
+                resDic = transferPMS.Deploy_Procedure(region.DirName, prefix: installItem["Name"].ToString(), connectionName: installItem["ConnectionName"].ToString());
+                foreach (var item in resDic)
+                {
+                    region.Logs.Add(item.Value);
+                }
             }
+
             #endregion
 
             if (!transferPMS.Import_Trade_To_Pms(ftpIP, ftpID, ftpPwd))
@@ -946,7 +993,7 @@ Region      Succeeded       Message
                 result = Deploy_LockDate(sqlFile, conn);
                 if (!result)
                 {
-                    errors.Add(spname,new KeyValuePair<DateTime?, DualResult>(DateTime.Now, result)); 
+                    errors.Add(spname, new KeyValuePair<DateTime?, DualResult>(DateTime.Now, result));
                 }
             }
             return errors;
@@ -964,14 +1011,14 @@ Region      Succeeded       Message
             return result;
         }
         public bool UnRaR(TransRegion region)
-        {     
+        {
 
-            string destFile = region.DirName + region.RarName;            
+            string destFile = region.DirName + region.RarName;
             string destPath = region.DirName.ToString().Substring(0, region.DirName.Length - 1);
 
             string UnRARpath = region.DirName.ToString().Substring(0, region.DirName.Length - 1);
-            string targetRar = Path.Combine(UnRARpath, region.RarName);          
-                     
+            string targetRar = Path.Combine(UnRARpath, region.RarName);
+
             if (File.Exists(destFile))
             {
 
@@ -999,14 +1046,14 @@ Region      Succeeded       Message
                     string.Format(@"x {0} {1}", targetRar, UnRARpath);
                 startInfo.Arguments = argu;
                 System.Diagnostics.Process process = System.Diagnostics.Process.Start(startInfo);
-               
+
                 // 強制等待process 解壓縮完畢
-                    process.WaitForExit();
-                
+                process.WaitForExit();
+
             }
             return true;
         }
-        
+
         //刪除目錄下所有檔案
         private static void DeleteDirectory(string fileName)
         {
@@ -1019,7 +1066,7 @@ Region      Succeeded       Message
                         FileInfo fi = new FileInfo(document);
                         fi.Attributes = FileAttributes.Normal;
                         File.Delete(document);
-                        
+
                     }
                 }
             }
@@ -1069,7 +1116,7 @@ where p.PulloutDate <= @PullOutLock
                 string path = Sci.Env.Cfg.ReportTempDir;
                 string fileName = "Pullout Report is pending Lock - " + this.CurrentData["RgCode"].ToString().Trim() + " - " + DateTime.Now.ToString("yyyyMMdd");
                 int lastIndex = 1;
-                
+
                 //判斷 流水號 = ReCode + " Pullout Report " + Date + 流水號 ( 4 碼 )
                 while (System.IO.File.Exists(path + fileName + lastIndex.ToString().PadLeft(4, '0') + ".xlsx"))
                 {

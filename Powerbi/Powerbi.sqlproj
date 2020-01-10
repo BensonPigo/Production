@@ -86,13 +86,15 @@
     <Build Include="dbo\Functions\P_GetOrderLocation_Rate.sql" />
     <Build Include="dbo\Stored Procedures\PowerBI_OrderComparison.sql" />
     <Build Include="dbo\Stored Procedures\PowerBI_InventoryAnalysis.sql" />
-    <Build Include="dbo\Stored Procedures\P_ImportSewingDailyOutput.sql" />
+    <Build Include="dbo\Stored Procedures\P_ImportEfficiencyBI.sql" />
     <Build Include="dbo\Stored Procedures\F_F003_InsertData.sql" />
     <Build Include="dbo\Stored Procedures\F_F002_InsertData.sql" />
     <Build Include="dbo\Stored Procedures\F_F001_COPBasic.sql" />
-    <Build Include="dbo\Stored Procedures\P_DeleteSewingOutPut.sql" />
+    <Build Include="dbo\Stored Procedures\P_DeleteEfficiencyBI.sql" />
     <Build Include="dbo\Tables\EfficiencyBI.sql" />
     <Build Include="dbo\Stored Procedures\ImportEfficiencyBI.sql" />
     <Build Include="dbo\Tables\P_SewingLineSchedule.sql" />
+    <Build Include="dbo\Stored Procedures\ImportSewingLineScheduleBIData.sql" />
+    <Build Include="dbo\Tables\SewingLineScheduleBI.sql" />
   </ItemGroup>
 </Project>

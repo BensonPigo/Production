@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -20,6 +22,7 @@ namespace Sci.Production.Shipping
         private string hscode;
         private string nlcode;
         private string sp;
+        private List<string> FactoryList;
         private bool liguidationonly;
         private DataTable Summary;
         private DataTable OnRoadMaterial;
@@ -128,6 +131,23 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            #region 先取得合約(VNContract)的所有工廠Factory
+            // FactoryList
+            string sqlcmdF = $@"select FactoryID from VNContract_Factory With(nolock) where VNContractID = '{this.contract}'";
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmdF, out dt);
+            string whereftys = string.Empty;
+            if (!result)
+            {
+                return result;
+            }
+            else
+            {
+                this.FactoryList = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["FactoryID"])).ToList();
+                whereftys = "and o.FactoryID in ('" + string.Join("','", this.FactoryList) + "')";
+            }
+            #endregion
+
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
             /*
@@ -217,7 +237,7 @@ where 1 = 1");
                 }
 
                 sqlCmd.Append(@"                                                                                                       
-order by CONVERT(int,SUBSTRING(a.NLCode,3,3))
+order by TRY_CONVERT(int, SUBSTRING(a.NLCode, 3, LEN(a.NLCode))), a.NLCode
 
 drop table #tmpContract;
 drop table #tmpDeclare;");
@@ -227,7 +247,7 @@ drop table #tmpDeclare;");
             {
                 #region liguidationonly = false
                 sqlCmd.Append(
-                    @"
+                    $@"
 -- 1)在途物料(已報關但還在途)(On Road Material Qty新增報表)
 Declare @EtaRange date = GETDATE() - 31
 select * 
@@ -238,6 +258,7 @@ from
 	 [HSCode] = f.HSCode
 	,[NLCode] = f.NLCode
 	,[PoID] = ed.PoID
+    ,o.FactoryID
 	,[Seq] = ed.Seq1+'-'+ed.Seq2
 	,[Refno] = ed.refno
     ,[MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
@@ -266,19 +287,22 @@ from
 	inner join Export_Detail ed WITH (NOLOCK) on e.id=ed.id
 	inner join VNImportDeclaration vd WITH (NOLOCK) on vd.BLNo=e.BLNo 
 	inner join po_supp_detail psd WITH (NOLOCK) on psd.ID=ed.poid and psd.seq1=ed.seq1 and psd.seq2=ed.seq2
-	inner join Fabric f WITH (NOLOCK) on f.SciRefno=psd.SciRefno										
+	inner join Fabric f WITH (NOLOCK) on f.SciRefno=psd.SciRefno		
+    inner join Orders o WITH (NOLOCK) on o.id= ed.poid
 	where vd.VNContractID = @contract
 	and vd.Status='Confirmed'
 	and not exists (select 1 from Receiving WITH (NOLOCK)
 		where exportID = e.id and status='Confirmed')
 	and vd.blno<>''
     and e.Eta > @EtaRange
+    {whereftys}
 union all
 	
 	select distinct
 	 [HSCode] = isnull(isnull(f.HSCode,li.HSCode),'')
 	,[NLCode] = isnull(isnull(f.NLCode,li.NLCode),'')
 	,[POID] = fed.PoID
+    ,o.FactoryID
 	,[Seq] = fed.Seq1+'-'+fed.Seq2
 	,[RefNo] = fed.refno
     ,[MaterialType] = iif(f.Type is null,li.Category,dbo.GetMaterialTypeDesc(f.Type))
@@ -304,6 +328,7 @@ union all
 	,[StockUnit] = isnull(StockUnit.unit,'')
 	from FtyExport fe WITH (NOLOCK)
 	inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id	
+    inner join Orders o WITH (NOLOCK) on o.id= fed.PoID
 	left join Fabric f WITH (NOLOCK) on f.SciRefno=fed.SciRefno			
 	left join LocalItem li WITH (NOLOCK) on li.Refno = fed.RefNo
 	outer apply(
@@ -324,25 +349,21 @@ union all
 	and not exists (select 1 from LocalReceiving WITH (NOLOCK)
 		where InvNo = fe.InvNo and status='Confirmed')
     and fe.PortArrival > @EtaRange
+    {whereftys}
 ) a
 -- end --
 				
 
 --撈W/House資料
-select 	distinct o.POID
-		, o.MDivisionID 
-into #tmpPOID
-from Orders o WITH (NOLOCK) 
-where o.WhseClose is null
-
 -- 2) 料倉(AB)( W/House Qty Detail)
 select * 
 into #tmpWHQty
 from (
-		select 
+	select 
 	 [HSCode] = isnull(f.HSCode,'')
 	,[NLCode] = isnull(f.NLCode,'')
 	,[POID] = fi.POID
+    ,o.FactoryID
 	,[Seq] = (fi.Seq1+'-'+fi.Seq2)
 	,[Refno] = psd.Refno
     ,[MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
@@ -377,47 +398,61 @@ from (
 	,[W/House Qty(Stock Unit)] = fi.InQty-fi.OutQty+fi.AdjustQty
 	,[Stock Unit] = psd.StockUnit
 	from FtyInventory fi WITH (NOLOCK)  --EDIT
+    inner join Orders o WITH (NOLOCK) on o.id= fi.POID
 	left join PO_Supp_Detail psd WITH (NOLOCK) on fi.POID = psd.ID and psd.SEQ1 = fi.Seq1 and psd.SEQ2 = fi.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 	where (fi.StockType = 'B' or fi.StockType = 'I')
-	and fi.InQty-fi.OutQty+fi.AdjustQty>0 
-
+	and fi.InQty-fi.OutQty+fi.AdjustQty != 0 
+    {whereftys}
 union all
 
-select distinct
-	 [HSCode] = isnull(li.HSCode,'') 
-	,[NLCode] = isnull(li.NLCode,'') 
-	,[POID] = l.OrderID
-	,[Seq] = ''
-	,[RefNo] = l.Refno
-    ,[MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
-	,[Description] = li.Description
-	,[Roll] = '' 
-	,[Dyelot] = '' 
-	,[StockType] = 'B'
-	,[Location] = '' 
-	,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
-		,l.UnitId
-		,li.CustomsUnit
-		,(l.InQty-l.OutQty+l.AdjustQty)
-		,0
-		,li.PcsWidth
-		,li.PcsLength
-		,li.PcsKg
-		,isnull(IIF(li.CustomsUnit = 'M2',
-			(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
-		,isnull(IIF(li.CustomsUnit = 'M2',
-			(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
-            ,li.Refno)
-		,0)
-	,[W/House Unit] = li.CustomsUnit
-	,[W/House Qty(Usage Unit)] =l.InQty-l.OutQty+l.AdjustQty
-	,[Customs Unit] = l.UnitId
-	from LocalInventory l WITH (NOLOCK) 	
-	inner join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-	where l.InQty-l.OutQty+l.AdjustQty > 0	
+    select HSCode,NLCode,POID
+        ,FactoryID
+        ,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location
+        ,Qty=sum(Qty)
+        ,[W/House Unit]
+        ,[W/House Qty(Usage Unit)]=sum([W/House Qty(Usage Unit)])
+        ,[Customs Unit]
+    from(
+        select
+	         [HSCode] = isnull(li.HSCode,'') 
+	        ,[NLCode] = isnull(li.NLCode,'') 
+	        ,[POID] = l.OrderID
+            ,o.FactoryID
+	        ,[Seq] = ''
+	        ,[RefNo] = l.Refno
+            ,[MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
+	        ,[Description] = li.Description
+	        ,[Roll] = '' 
+	        ,[Dyelot] = '' 
+	        ,[StockType] = 'B'
+	        ,[Location] = '' 
+	        ,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+		        ,l.UnitId
+		        ,li.CustomsUnit
+		        ,(l.InQty-l.OutQty+l.AdjustQty)
+		        ,0
+		        ,li.PcsWidth
+		        ,li.PcsLength
+		        ,li.PcsKg
+		        ,isnull(IIF(li.CustomsUnit = 'M2',
+			        (select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			        ,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
+		        ,isnull(IIF(li.CustomsUnit = 'M2',
+			        (select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			        ,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
+                    ,li.Refno)
+		        ,0)
+	        ,[W/House Unit] = li.CustomsUnit
+	        ,[W/House Qty(Usage Unit)] =l.InQty-l.OutQty+l.AdjustQty
+	        ,[Customs Unit] = l.UnitId
+        from LocalInventory l WITH (NOLOCK) 	
+        inner join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
+        inner join Orders o WITH (NOLOCK) on o.id= l.OrderID
+        where l.InQty-l.OutQty+l.AdjustQty != 0	
+        {whereftys}
+    )x
+	group by HSCode,NLCode,POID,FactoryID,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location,[W/House Unit],[Customs Unit]
 ) a
 
 
@@ -430,6 +465,7 @@ select distinct	o.ID
 		,o.Category
 		,o.SeasonID
 		,o.POID 
+        ,o.FactoryID
 into #tmpWHNotClose 
 from Orders o  WITH (NOLOCK) 
 inner join VNConsumption vn WITH (NOLOCK) on vn.Styleid=o.Styleid 
@@ -440,6 +476,7 @@ and o.WhseClose is null
 and o.Qty<>0
 and o.LocalOrder = 0 
 and vn.VNContractID=@contract
+{whereftys}
 
 
  -- 3) WIP在製品(WIP Qty Detail) 
@@ -451,6 +488,7 @@ from
 	select 		 
 	 [HSCode] = isnull(f.HSCode,'')
 	,[NLCode] = isnull(f.NLCode,'')
+    ,t.FactoryID
 	,[ID] = t.ID
 	,[Qty] = IIF((mdp.OutQty-mdp.LObQty) > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 		,psd.StockUnit
@@ -481,12 +519,12 @@ from
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on mdp.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
     left join Color c WITH (NOLOCK) on psd.BrandID = c.BrandID and psd.ColorID = c.ID
-
 union all
 
 	select 
 	 [HSCode] = isnull(li.HSCode,'')
 	,[NLCode] = isnull(li.NLCode,'')
+    ,t.FactoryID
 	,[ID] = t.ID
 	,[Qty] = IIF(l.OutQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 		,l.UnitId
@@ -540,28 +578,29 @@ inner join (
 where v.VNContractID = @contract
 
 --撈已Sewing數量
-select 	t.ID
-		,sdd.ComboType
-		,sdd.Article
-		,sdd.SizeCode
-		,sum(sdd.QAQty) as QAQty
-		,isnull(a.HSCode,'') as HSCode
-		,isnull(a.NLCode,'') as NLCode
-		,isnull(a.UnitID,'') as UnitID
-		,sum(isnull(a.Qty ,0)) as Qty
-		,isnull(a.CustomSP,'') as CustomSP
-		,t.POID
-        ,isnull(a.Refno,'') as Refno
-        ,isnull(a.MaterialType,'') as MaterialType
-        ,isnull(a.Description,'') as Description
-        ,isnull(a.CustomsUnit,'') as CustomsUnit
-        ,[StockQty] = sum(isnull(a.StockQty ,0))
-        ,isnull(a.StockUnit,'') as StockUnit
+select 	ID = bas.OrderId
+		,bas.ComboType
+		,bas.Article
+		,bas.SizeCode
+		,sum(bas.QAQty) as QAQty
+		,isnull(bas.HSCode,'') as HSCode
+		,isnull(bas.NLCode,'') as NLCode
+		,isnull(bas.UnitID,'') as UnitID
+		,sum(isnull(bas.Qty ,0)) as Qty
+		,isnull(bas.CustomSP,'') as CustomSP
+		,bas.POID
+        ,bas.FactoryID
+        ,isnull(bas.Refno,'') as Refno
+        ,isnull(bas.MaterialType,'') as MaterialType
+        ,isnull(bas.Description,'') as Description
+        ,isnull(bas.CustomsUnit,'') as CustomsUnit
+        ,[StockQty] = sum(isnull(bas.StockQty ,0))
+        ,isnull(bas.StockUnit,'') as StockUnit
 into #tmpWHNotCloseSewingOutput
-from #tmpWHNotClose t 
-inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.ID
-left join (
-	select distinct	sdd.OrderId
+from (
+	select sdd.OrderId
+			, t.POID
+			, t.FactoryID
 			,sdd.ComboType
 			,sdd.Article
 			,sdd.SizeCode
@@ -580,25 +619,37 @@ left join (
             ,[StockQty] = (ol_rate.value/100*sdd.QAQty)* (vdd.StockQty * (1+vd.Waste))
             ,[StockUnit] = vdd.StockUnit
 	from #tmpWHNotClose t
-	inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.ID	    
+	outer apply (
+		select sdd.OrderID
+				, sdd.ComboType
+				, sdd.Article
+				, sdd.SizeCode
+				, QAQty = Sum(sdd.QAQty)
+		from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
+		where sdd.OrderId = t.ID	    
+		group by sdd.OrderID, sdd.ComboType, sdd.Article, sdd.SizeCode
+	) sdd	
+	outer apply(
+		select value = dbo.GetOrderLocation_Rate(t.id, sdd.ComboType)
+	) ol_rate	
 	inner join #tmpCustomSP v on v.StyleID = t.StyleID and v.BrandID = t.BrandID and v.Category = t.Category and v.seasonid=t.seasonid
 	inner join VNConsumption_Article va WITH (NOLOCK) on va.ID = v.ID and va.Article = sdd.Article
 	inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = v.ID and vs.SizeCode = sdd.SizeCode
     inner join VNConsumption_Detail vd WITH (NOLOCK) on vd.ID = v.ID
 	inner join VNConsumption_Detail_Detail vdd WITH (NOLOCK) on vdd.ID = vd.ID and vdd.NLCode = vd.NLCode
     left join LocalItem li with (nolock) on li.RefNo = vdd.RefNo
-	outer apply(select value = dbo.GetOrderLocation_Rate(t.id,sdd.ComboType)) ol_rate		
-) a on t.ID = a.OrderId and sdd.ComboType = a.ComboType and sdd.Article = a.Article and sdd.SizeCode = a.SizeCode
-group by t.ID, sdd.ComboType,sdd.Article,sdd.SizeCode,isnull(a.HSCode,''),
-         isnull(a.NLCode,''),isnull(a.MaterialType,''),isnull(a.Description,''),isnull(a.CustomsUnit,'')
-	,isnull(a.UnitID,''),isnull(a.CustomSP,''),t.POID,isnull(a.Refno,''),isnull(a.StockUnit,'')
-order by t.ID, sdd.ComboType,sdd.Article,sdd.SizeCode
+) bas
+group by bas.OrderId, bas.ComboType, bas.Article, bas.SizeCode, isnull(bas.HSCode,'')
+			, isnull(bas.NLCode,''), isnull(bas.MaterialType,''), isnull(bas.Description,'')
+			, isnull(bas.CustomsUnit,''), isnull(bas.UnitID,''), isnull(bas.CustomSP,'')
+			, bas.POID, isnull(bas.Refno,''), isnull(bas.StockUnit,''), bas.FactoryID
 
 --組WIP明細
 select 	
 [HSCode] = IIF(ti.HSCode is null,tw.HSCode,ti.HSCode)
 ,[NLCode] = IIF(ti.NLCode is null,tw.NLCode,ti.NLCode)
 ,[ID] = IIF(ti.ID is null,tw.POID,ti.ID)
+,FactoryID=IIF(ti.FactoryID is null,tw.FactoryID,ti.FactoryID)
 ,[Refno] = IIF(ti.Refno is null,tw.Refno,ti.Refno)   
 ,[MaterialType] = IIF(ti.MaterialType is null,tw.MaterialType,ti.MaterialType)   
 ,[Description] = IIF(ti.Description is null,tw.Description,ti.Description)   
@@ -618,8 +669,9 @@ from (
             ,CustomsUnit
             ,SUM(StockQty) as StockQty
             ,StockUnit
+            ,FactoryID
 	from #tmpIssueQty 
-	group by ID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit
+	group by ID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit,FactoryID
 ) ti
 full outer 
 join (
@@ -633,10 +685,20 @@ join (
             ,CustomsUnit
             ,SUM(StockQty) as StockQty
             ,StockUnit
+            ,FactoryID
 	from #tmpWHNotCloseSewingOutput 
     where CustomSP <>''
-	group by POID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit
-) tw on tw.POID = ti.ID and tw.NLCode = ti.NLCode and tw.Refno = ti.Refno and ti.HSCode = tw.HSCode and tw.MaterialType = ti.MaterialType and ti.CustomsUnit = tw.CustomsUnit and ti.StockUnit = tw.StockUnit
+	group by POID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit,FactoryID
+) tw on tw.POID = ti.ID 
+     and ti.HSCode = tw.HSCode 
+     and tw.NLCode = ti.NLCode 
+     and tw.Refno = ti.Refno 
+     and tw.MaterialType = ti.MaterialType 
+     and ti.Description = tw.Description
+     and ti.CustomsUnit = tw.CustomsUnit 
+     and ti.StockUnit = tw.StockUnit
+     and ti.FactoryID = tw.FactoryID
+
 order by IIF(ti.ID is null,tw.POID,ti.ID)
 
 --4) Production成品倉(Prod. Qty Detail)
@@ -647,6 +709,7 @@ select distinct	o.ID
 		,o.BrandID		
 		,o.Category
 		,o.SeasonID
+        ,o.FactoryID
 into #tmpNoPullOutComp
 from Orders o WITH (NOLOCK)
 inner join VNConsumption vn WITH (NOLOCK) on vn.Styleid=o.Styleid 
@@ -657,6 +720,7 @@ and o.Finished=0
 and o.Qty<>0
 and o.LocalOrder = 0
 and vn.VNContractID=@contract
+{whereftys}
 
 ;with tmpPreProdQty as(
 	select distinct
@@ -667,6 +731,7 @@ and vn.VNContractID=@contract
 	 - isnull(dbo.getMinCompleteGMTQty(tp.ID,sdd.Article,sdd.SizeCode),0) 
 	,[PullQty] = isnull(PulloutDD.ShipQty + InvAdjustQ.DiffQty,0)
 	,[GMTAdjustQty] = isnull(AdjustGMT.gmtQty,0)
+    ,tp.FactoryID
 	from #tmpNoPullOutComp tp
 	inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on tp.id=sdd.orderid	
 	left join SewingOutput_Detail_Detail_Garment sddg WITH (NOLOCK) on sdd.id=sddg.OrderIDfrom
@@ -693,6 +758,7 @@ select
 [HSCode] = vd.HSCode
 ,[NLCode] = vd.NLCode
 ,[SP#] = tpq.ID
+,tpq.FactoryID
 ,[Refno] = vdd.Refno
 ,[MaterialType] = iif(vdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vdd.FabricType))
 ,[Description] = case   when vdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vdd.Refno)
@@ -746,6 +812,7 @@ group by vd.id,vc.sizecode
 
 select 
  [SP#] = vdd.OrderId
+,o.FactoryID
 ,[Refno] = vcdd.Refno
 ,[MaterialType] = iif(vcdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vcdd.FabricType))
 ,[Description] =    case when vcdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vcdd.Refno)
@@ -768,6 +835,7 @@ inner join VNConsumption vc on vc.StyleID = vdd.StyleID and vc.BrandID=vdd.Brand
 							and vc.sizecode=vdd.sizecode and vc.customsp=vdd.customsp
 inner join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID=vc.ID
 inner join VNConsumption_Detail_Detail vcdd WITH (NOLOCK) on vcd.ID= vcdd.ID and vcd.NLCode = vcdd.NLCode
+inner join orders o WITH (NOLOCK) on o.id=vdd.OrderId
 left join LocalItem li with (nolock) on li.RefNo = vcdd.RefNo
 outer apply (
 	select sum(ExportQty) as ExportQty 
@@ -779,7 +847,7 @@ where vd.status='Confirmed'
 and vd.VNContractID=@contract
 and exists(
 	select 1 from #tmpPull where ID=vd.id)
-
+{whereftys}
 
 -- 6) 料倉(C) (Scrap Qty Detail
 --撈Scrap資料
@@ -790,6 +858,7 @@ from (
 	 [HSCode] = isnull(f.HSCode,'')
 	,[NLCode] = isnull(f.NLCode,'')
 	,[POID] = ft.POID
+    ,o.FactoryID
 	,[Seq] = (ft.Seq1+'-'+ft.Seq2)
 	,[Refno] = psd.Refno	
     ,[MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
@@ -820,13 +889,16 @@ from (
 	left join FtyInventory_detail ftd WITH (NOLOCK) on ft.ukey=ftd.ukey	
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on ft.POID = psd.ID and psd.SEQ1 = ft.Seq1 and psd.SEQ2 = ft.Seq2
 	inner join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
+    inner join orders o WITH (NOLOCK) on o.id=ft.POID
 	where 1=1 and ft.StockType='O'
-	and ft.InQty-ft.OutQty+ft.AdjustQty>0
+	and ft.InQty-ft.OutQty+ft.AdjustQty != 0
+    {whereftys}
 union all
 	select 	
 	 [HSCode] = isnull(li.HSCode,'')
 	,[NLCode] = isnull(li.NLCode,'')
 	,[POID] = l.OrderID
+    ,o.FactoryID
 	,[Seq] = ''
 	,[Refno] = l.Refno	
     ,[MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
@@ -856,55 +928,63 @@ union all
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
 	where 1=1
-	and l.LobQty >0
+	and l.LobQty != 0
+    {whereftys}
 ) a
 
 -- 7) Outstanding List 
 -- 撈出 報表3)WIP 計算SewingoutPut 對應不到VNConsumption的資料
 ;with sp
  as (
-	select distinct id,article,sizecode,qaqty
+	select distinct 
+			id
+			, article
+			, sizecode
+			, qaqty
 	from #tmpWHNotCloseSewingOutput
 	where CustomSP =''
 )
 select o.ID
-,o.Styleid
-,o.Brandid
-,o.Seasonid
-,sp.Article 
-,sp.Sizecode
-,sp.QaQty
+		, o.FactoryID
+		, o.Styleid
+		, o.Brandid
+		, o.Seasonid
+		, sp.Article 
+		, sp.Sizecode
+		, sp.QaQty
 into #tmpOutstanding 
 from sp
 inner join orders o WITH (NOLOCK) on sp.id=o.id
+where 1=1
+{whereftys}
 
 -- 8) 未WH關單
-select 
-StyleID,
-ID,
-Refno,
-Color,
-Description,
-NLCode,
-Qty,
-CustomsUnit,
-StockQty,
-StockUnit
+select StyleID
+        , ID
+        , FactoryID
+        , Refno
+        , Color
+        , Description
+        , NLCode
+        , Qty
+        , CustomsUnit
+        , StockQty
+        , StockUnit
 into #tmpWHNotCloseFinal
 from #tmpIssueQty
 
 -- 9) 已SewingOutput數量
-select
-HSCode,
-NLCode,
-ID,
-Refno,
-MaterialType,
-Description,
-Qty,
-CustomsUnit,
-StockQty,
-StockUnit
+select	HSCode
+		, NLCode
+		, ID
+		, FactoryID
+		, Refno
+		, MaterialType
+		, Description
+		, Qty
+		, CustomsUnit
+		, StockQty
+		, StockUnit
 into  #tmpSewingOutputFinal
 from #tmpWHNotCloseSewingOutput
 
@@ -994,7 +1074,7 @@ left join (
 	select 	NLCode
 			,SUM(Qty) as Qty 
 	from #tmpWIPDetail 
-    where Qty > 0
+    where Qty != 0
 	group by NLCode
 ) ti on a.NLCode = ti.NLCode
 left join (
@@ -1035,40 +1115,40 @@ where 1 = 1 ");
 
                 sqlCmd.Append(string.Format(
                     @"                                                                                                       
-order by CONVERT(int,SUBSTRING(a.NLCode,3,3))
+order by TRY_CONVERT(int, SUBSTRING(a.NLCode, 3, LEN(a.NLCode))), a.NLCode
 
 --1)在途物料
-select * from #tmpOnRoadMaterial where Qty > 0  {0} {1} order by POID,Seq
+select * from #tmpOnRoadMaterial where Qty != 0  {0} {1} order by POID,Seq
 
 --2)W/H明細
-select * from #tmpWHQty where Qty > 0 {0} {1} 
+select * from #tmpWHQty where Qty != 0 {0} {1} 
 order by POID,Seq
 
 --3)WIP明細
-select * from #tmpWIPDetail where Qty > 0 {0} {1} 
+select * from #tmpWIPDetail where Qty != 0 {0} {1} 
 order by ID
 
 --4)Prod明細
-select * from #tmpProdQty where Qty > 0 {0} {1} 
+select * from #tmpProdQty where Qty != 0 {0} {1} 
 order by SP#,Article,SizeCode
 
 --5)在途成品
-select * from #OnRoadProductQty where Qty > 0 {0} {1} 
+select * from #OnRoadProductQty where Qty != 0 {0} {1} 
 order by SP#,Article,SizeCode
 
 --6)Scrap明細
-select * from #tmpScrapQty where Qty > 0 {0} {1} 
+select * from #tmpScrapQty where Qty != 0 {0} {1} 
 order by POID,Seq
 
 --7)Outstanding List 
-select * from #tmpOutstanding where QaQty > 0
+select * from #tmpOutstanding where QaQty != 0
 order by ID 
 
 -- 8) 未WH關單
-select * from #tmpWHNotCloseFinal where Qty > 0  {0} {1} order by ID
+select * from #tmpWHNotCloseFinal where Qty != 0  {0} {1} order by ID
 
 -- 9) 已SewingOutput數量
-select * from #tmpSewingOutputFinal where Qty > 0  {0} {1} order by ID
+select * from #tmpSewingOutputFinal where Qty != 0  {0} {1} order by ID
 
 ", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format("and HSCode = '{0}'", this.hscode),
                                                                        MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode)));
@@ -1118,116 +1198,171 @@ select * from #tmpSewingOutputFinal where Qty > 0  {0} {1} order by ID
             this.ShowWaitMessage("Starting EXCEL...");
             bool result;
             this.ShowWaitMessage("Starting EXCEL...Summary");
-
+            string filename = string.Empty;
+            string ftys = string.Join(",", this.FactoryList);
             if (!this.liguidationonly)
             {
-                result = MyUtility.Excel.CopyToXls(this.Summary, string.Empty, xltfile: "Shipping_R40_Summary.xltx", headerRow: 1);
-                if (!result)
-                {
-                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                }
+                filename = "Shipping_R40_Summary.xltx";
+                Excel.Application excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                com.ColumnsAutoFit = true;
+                com.WriteTable(this.Summary, 3);
+
+                Excel.Worksheet worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                worksheet.Cells[1, 1] = "Summary-" + this.contract + "(" + ftys + ")";
+                this.SaveExcelwithName(excelapp, "Summary");
 
                 if (this.OnRoadMaterial.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...OnRoadMaterial List");
-                    result = MyUtility.Excel.CopyToXls(this.OnRoadMaterial, string.Empty, xltfile: "Shipping_R40_OnRoadMaterial.xltx", headerRow: 1);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    }
+                    filename = "Shipping_R40_OnRoadMaterial.xltx";
+                    excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                    com.ColumnsAutoFit = true;
+                    com.WriteTable(this.OnRoadMaterial, 3);
+
+                    worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    worksheet.Cells[1, 1] = "On Road Material-" + this.contract + "(" + ftys + ")";
+                    this.SaveExcelwithName(excelapp, "On Road Material");
                 }
 
                 if (this.WHDetail.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...WHouse Qty Detail");
-                    result = MyUtility.Excel.CopyToXls(this.WHDetail, string.Empty, xltfile: "Shipping_R40_WHQtyDetail.xltx", headerRow: 1);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    }
+                    filename = "Shipping_R40_WHQtyDetail.xltx";
+                    excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                    com.ColumnsAutoFit = true;
+                    com.WriteTable(this.WHDetail, 3);
+
+                    worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    worksheet.Cells[1, 1] = "WHouse Qty Detail-" + this.contract + "(" + ftys + ")";
+                    this.SaveExcelwithName(excelapp, "WHouse Qty Detail");
                 }
 
                 if (this.WIPDetail.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...WIP Qty Detail");
-                    result = MyUtility.Excel.CopyToXls(this.WIPDetail, string.Empty, xltfile: "Shipping_R40_WIPQtyDetail.xltx", headerRow: 1);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    }
+                    filename = "Shipping_R40_WIPQtyDetail.xltx";
+                    excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                    com.ColumnsAutoFit = true;
+                    com.WriteTable(this.WIPDetail, 3);
+
+                    worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    worksheet.Cells[1, 1] = "WIP Qty Detail-" + this.contract + "(" + ftys + ")";
+                    this.SaveExcelwithName(excelapp, "WIP Qty Detail");
                 }
 
                 if (this.ProdDetail.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...Prod. Qty Detail");
-                    result = MyUtility.Excel.CopyToXls(this.ProdDetail, string.Empty, xltfile: "Shipping_R40_ProdQtyDetail.xltx", headerRow: 1);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    }
+                    filename = "Shipping_R40_ProdQtyDetail.xltx";
+                    excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                    com.ColumnsAutoFit = true;
+                    com.WriteTable(this.ProdDetail, 3);
+
+                    worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    worksheet.Cells[1, 1] = "Prod. Qty Detail-" + this.contract + "(" + ftys + ")";
+                    this.SaveExcelwithName(excelapp, "Prod. Qty Detail");
                 }
 
                 if (this.ScrapDetail.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...Scrap Qty Detail");
-                    result = MyUtility.Excel.CopyToXls(this.ScrapDetail, string.Empty, xltfile: "Shipping_R40_ScrapQtyDetail.xltx", headerRow: 1);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    }
+                    filename = "Shipping_R40_ScrapQtyDetail.xltx";
+                    excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                    com.ColumnsAutoFit = true;
+                    com.WriteTable(this.ScrapDetail, 3);
+
+                    worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    worksheet.Cells[1, 1] = "Scrap Qty Detail-" + this.contract + "(" + ftys + ")";
+                    this.SaveExcelwithName(excelapp, "Scrap Qty Detail");
                 }
 
                 if (this.OnRoadProduction.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...OnRoadProduction List");
-                    result = MyUtility.Excel.CopyToXls(this.OnRoadProduction, string.Empty, xltfile: "Shipping_R40_OnRoadProduction.xltx", headerRow: 1);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    }
+                    filename = "Shipping_R40_OnRoadProduction.xltx";
+                    excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                    com.ColumnsAutoFit = true;
+                    com.WriteTable(this.OnRoadProduction, 3);
+
+                    worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    worksheet.Cells[1, 1] = "On Road Production-" + this.contract + "(" + ftys + ")";
+                    this.SaveExcelwithName(excelapp, "On Road Production");
                 }
 
                 if (this.Outstanding.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...Outstanding");
-                    result = MyUtility.Excel.CopyToXls(this.Outstanding, string.Empty, xltfile: "Shipping_R40_OutStanding.xltx", headerRow: 1);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    }
+                    filename = "Shipping_R40_OutStanding.xltx";
+                    excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                    com.ColumnsAutoFit = true;
+                    com.WriteTable(this.Outstanding, 3);
+
+                    worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    worksheet.Cells[1, 1] = "OutStanding-" + this.contract + "(" + ftys + ")";
+                    this.SaveExcelwithName(excelapp, "OutStanding");
                 }
 
                 if (this.WarehouseNotClose.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...Warehouse Not Close List");
-                    result = MyUtility.Excel.CopyToXls(this.WarehouseNotClose, string.Empty, xltfile: "Shipping_R40_WHNotClose.xltx", headerRow: 1);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    }
+                    filename = "Shipping_R40_WHNotClose.xltx";
+                    excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                    com.ColumnsAutoFit = true;
+                    com.WriteTable(this.WarehouseNotClose, 3);
+
+                    worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    worksheet.Cells[1, 1] = "Warehouse Not Close-" + this.contract + "(" + ftys + ")";
+                    this.SaveExcelwithName(excelapp, "Warehouse Not Close");
                 }
 
                 if (this.AlreadySewingOutput.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...Already SewingOutput List");
-                    result = MyUtility.Excel.CopyToXls(this.AlreadySewingOutput, string.Empty, xltfile: "Shipping_R40_AlreadySewingOutput.xltx", headerRow: 1);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    }
+                    filename = "Shipping_R40_AlreadySewingOutput.xltx";
+                    excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                    com.ColumnsAutoFit = true;
+                    com.WriteTable(this.AlreadySewingOutput, 3);
+
+                    worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    worksheet.Cells[1, 1] = "Already SewingOutput-" + this.contract + "(" + ftys + ")";
+                    this.SaveExcelwithName(excelapp, "Already SewingOutput");
                 }
             }
             else
             {
-                result = MyUtility.Excel.CopyToXls(this.Summary, string.Empty, xltfile: "Shipping_R40_Summary(Only Liquidation).xltx", headerRow: 1);
-                if (!result)
-                {
-                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                }
+                filename = "Shipping_R40_Summary(Only Liquidation).xltx";
+                Excel.Application excelapp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelapp);
+                com.ColumnsAutoFit = true;
+                com.WriteTable(this.Summary, 3);
+
+                Excel.Worksheet worksheet = excelapp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                worksheet.Cells[1, 1] = "Summary-" + this.contract + "(" + ftys + ")";
+                this.SaveExcelwithName(excelapp, "Summary");
             }
 
             this.HideWaitMessage();
             return true;
+        }
+
+        private void SaveExcelwithName(Excel.Application excelapp, string filename)
+        {
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(filename);
+            Microsoft.Office.Interop.Excel.Workbook workbook = excelapp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excelapp.Quit();
+            strExcelName.OpenFile();
         }
 
         private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)

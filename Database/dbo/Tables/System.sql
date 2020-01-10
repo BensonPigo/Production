@@ -12,7 +12,7 @@
     [SewLock]                    DATE           NULL,
     [SampleRate]                 TINYINT        CONSTRAINT [DF_System_SPLRate] DEFAULT ((0)) NULL,
     [PullLock]                   DATE           NULL,
-    [RgCode]                     VARCHAR (3)    CONSTRAINT [DF_System_RgCode] DEFAULT ('') NULL,
+    [RgCode]                     VARCHAR (3)    CONSTRAINT [DF_System_RgCode] DEFAULT ('') NOT NULL,
     [ImportDataPath]             VARCHAR (60)   CONSTRAINT [DF_System_UdsPath] DEFAULT ('') NULL,
     [ImportDataFileName]         VARCHAR (60)   CONSTRAINT [DF_System_UdFileName] DEFAULT ('') NULL,
     [ExportDataPath]             VARCHAR (60)   CONSTRAINT [DF_System_DnsPath] DEFAULT ('') NULL,
@@ -47,8 +47,14 @@
 	[ARKServerName] VARCHAR(20) NULL, 
     [ARKDatabaseName] VARCHAR(20) NULL, 
     [ARKLoginId] VARCHAR(20) NULL, 
-    [ARKLoginPwd] VARCHAR(20) NULL
+    [ARKLoginPwd] VARCHAR(20) NULL,
+    [MarkerInputPath]            NVARCHAR (80)  NULL,
+    [MarkerOutputPath]           NVARCHAR (80)  NULL, 
+    [ReplacementReport ] VARCHAR(80) NULL
+	CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
+
+
 
 
 

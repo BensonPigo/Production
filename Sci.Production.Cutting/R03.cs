@@ -16,7 +16,7 @@ namespace Sci.Production.Cutting
     {
         DataTable[] printData;
         string WorkOrder, factory, CuttingSP1, CuttingSP2,Style;
-        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2, EarliestBuyerDelivery1, EarliestBuyerDelivery2;
+        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2, EarliestBuyerDelivery1, EarliestBuyerDelivery2, ActCuttingDate1, ActCuttingDate2;
         DateTime? BuyerDelivery1, BuyerDelivery2, SCIDelivery1, SCIDelivery2, SewingInline1, SewingInline2;
         StringBuilder condition = new StringBuilder();
 
@@ -42,6 +42,8 @@ namespace Sci.Production.Cutting
             
             Est_CutDate1 = dateEstCutDate.Value1;
             Est_CutDate2 = dateEstCutDate.Value2;
+            ActCuttingDate1 = dateActCuttingDate.Value1;
+            ActCuttingDate2 = dateActCuttingDate.Value2;
             CuttingSP1 = txtCuttingSPStart.Text;
             CuttingSP2 = txtCuttingSPEnd.Text;
             BuyerDelivery1 = dateBuyerDelivery.Value1;
@@ -64,6 +66,7 @@ namespace Sci.Production.Cutting
                 && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) 
                 && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2)
                 && MyUtility.Check.Empty(EarliestBuyerDelivery1) && MyUtility.Check.Empty(EarliestBuyerDelivery2)
+                && MyUtility.Check.Empty(ActCuttingDate1) && MyUtility.Check.Empty(ActCuttingDate2)
                 )
             {
                 MyUtility.Msg.WarningBox("Can't all empty!!");
@@ -82,6 +85,7 @@ select
 	[M] = wo.MDivisionID,
 	[Factory] = o.FtyGroup,
     [PPIC Close] = iif(c.Finished=1,'V',''),
+    wo.WKETA,
 	[Est.Cutting Date]= wo.EstCutDate,
 	[Act.Cutting Date] = MincDate.MincoDate,
 	[Earliest Sewing Inline] = c.SewInLine,
@@ -132,9 +136,15 @@ select
 	,--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
 	[Marker Length] = wo.MarkerLength,
 	wo.ActCuttingPerimeter,
+    o.SCIDelivery,
     o.BuyerDelivery,
 	patternUKey=p.PatternUkey,
-    wo.FabricPanelCode
+    wo.FabricPanelCode,
+	wo.MarkerNo,
+	wo.Markername,
+	wo.SCIRefno,
+	wo.Seq1,
+	wo.Seq2
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -264,6 +274,16 @@ where 1=1
                 sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
             }
 
+            if (!MyUtility.Check.Empty(ActCuttingDate1))
+            {
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate >= cast('{0}' as date) ", Convert.ToDateTime(ActCuttingDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(ActCuttingDate2))
+            {
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate <= cast('{0}' as date) ", Convert.ToDateTime(ActCuttingDate2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(BuyerDelivery1))
             {
                 sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
@@ -341,10 +361,13 @@ where 1=1
             #endregion
             sqlCmd.Append(@"
 select 
-[M],[Factory],[PPIC Close],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
+[M],[Factory],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
-,[Spreading Time (mins)],[Cutting Time (mins)],[Marker Length],ActCuttingPerimeter,BuyerDelivery
+,[Spreading Time (mins)],[Cutting Time (mins)]
+,w.Width
+,[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
+,[To be combined]=cl.v
 from #tmp t
 --因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
 outer apply(
@@ -364,6 +387,28 @@ outer apply(
 	for xml path(''))
 	,1,1,'')
 )Artwork
+outer apply(
+	select Layer=SUM(wo2.Layer)
+	from WorkOrder wo2 with(nolock)
+	where wo2.id = t.[Master SP#] and wo2.EstCutDate  = t.[Est.Cutting Date] and wo2.MarkerNo = t.MarkerNo and wo2.Markername = t.Markername
+	group by wo2.id,wo2.EstCutDate,wo2.MarkerNo,wo2.Markername
+    having count(1) > 1
+	--WorkOrder.ID+EstCutDate+MarkerNo+Markername皆相同, 但CutRef不同(必須2筆以上) 的 Layer加起來
+)cly
+outer apply(
+	select v=iif( cly.Layer is not null and cly.Layer <= con.CuttingLayer,'Y','')
+	from Construction con with(nolock)
+	inner join Fabric fb with(nolock) on fb.ConstructionID = con.id
+	where fb.SCIRefno = t.SCIRefno
+)cl
+outer apply(
+	SELECT top 1 OBE.Width
+	FROM Order_BOF OB 
+	INNER JOIN Order_BOF_Expend OBE ON OBE.Order_BOFUkey = OB.Ukey
+	INNER JOIN PO_Supp PS ON PS.ID = OB.Id --AND PS.SuppID = OB.SuppID
+	INNER JOIN PO_Supp_Detail PSD ON PSD.ID= OB.Id AND PSD.RefNo = OB.Refno AND PSD.ColorID = OBE.ColorId --and ps.SEQ1 = psd.SEQ1
+	WHERE PSD.ID =t.[Master SP#] AND PSD.SEQ1=t.Seq1 AND PSD.SEQ2=t.SEQ2
+)w
 
 order by [M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Cut#]
 -----------------------------------------------------------------------
@@ -445,8 +490,16 @@ drop table #tmp,#tmpL");
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(printData[0], "", "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.get_Range("P2").ColumnWidth = 15.38;
-            objSheets.get_Range("T2").ColumnWidth = 15.38;
+
+            // Perimeter(Decimal)
+            int PerimeterCol = printData[0].Columns.Count - 3;
+            objApp.Cells[3, PerimeterCol] = $"=IFERROR(LEFT(AJ3,SEARCH(\"yd\",AJ3,1)-1)+0+(IFERROR(RIGHT(LEFT(AJ3,SEARCH(\"\"\"\",AJ3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AJ3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
+            int rowct = printData[0].Rows.Count + 2;
+            objApp.Range[objApp.Cells[3, PerimeterCol], objApp.Cells[3, PerimeterCol]].Copy();
+            objApp.Range[objApp.Cells[4, PerimeterCol], objApp.Cells[rowct, PerimeterCol]].PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll, Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            objApp.Range[objApp.Cells[2, 1], objApp.Cells[2, 1]].Select();
+            objSheets.get_Range("Q2").ColumnWidth = 15.38;
+            objSheets.get_Range("U2").ColumnWidth = 15.38;
 
             objSheets = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
             objSheets.Name = "summary";

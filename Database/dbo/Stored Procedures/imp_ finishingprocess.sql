@@ -149,13 +149,14 @@ from Production.dbo.PackingList_Detail t
 inner join #tmpTransferLocation s on t.SCICtnNo=s.SCICtnNo
 
 --02. TransferToClog
-insert into Production.dbo.TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo,AddDate,OldID,TransferSlipNo,AddName)
+insert into Production.dbo.TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo,AddDate,OldID,TransferSlipNo,AddName,SCICtnNo)
 select [TransferDate] = CONVERT(date, t.Time)
 ,MDvisionID = (select top 1 ID from Production.dbo.MDivision)
 ,[PackingListID] = pd.ID
 ,[OrderID] = pd.OrderID
 ,[CtnStartNo] = pd.CTNStartNo
 ,t.Time,null,null,'SCIMIS'
+,pd.SCICtnNo
 from #tmpTransferLocation t
 inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 
@@ -166,13 +167,14 @@ from #tmpTransferLocation t
 inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 
 --03. ClogReceive
-insert into Production.dbo.ClogReceive(ReceiveDate,MDivisionID,PackingListID,OrderID,CTNStartNo,AddDate,OldID,AddName)
+insert into Production.dbo.ClogReceive(ReceiveDate,MDivisionID,PackingListID,OrderID,CTNStartNo,AddDate,OldID,AddName,SCICtnNo)
 select [ReceiveDate] = CONVERT(date, t.Time)
 ,[MDvisionID] = (select top 1 ID from Production.dbo.MDivision)
 ,[PackingListID] = pd.ID
 ,[OrderID] = pd.OrderID
 ,[CtnStartNo] = pd.CTNStartNo
 ,t.Time,null,'SCIMIS'
+,pd.SCICtnNo
 from #tmpTransferLocation t
 inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 
@@ -211,13 +213,25 @@ where row=1
 update t
 set t.SCIUpdate=1
 from TransferLocation t
-where exists(select * from #tmp_LastLocation where SCICtnNo= t.SCICtnNo and row=1)
+where exists(
+	select * 
+	from #tmp_LastLocation tmp
+	inner join Production.dbo.PackingList_Detail pd 
+		on tmp.SCICtnNo = pd.SCICtnNo
+	where tmp.SCICtnNo= t.SCICtnNo and row=1
+)
 
 -- MiniToPallet
 update t
 set t.SCIUpdate=1
 from MiniToPallet t
-where exists(select * from #tmp_LastLocation where SCICtnNo= t.SCICtnNo and row=1)
+where exists(
+	select * 
+	from #tmp_LastLocation tmp
+	inner join Production.dbo.PackingList_Detail pd 
+		on tmp.SCICtnNo = pd.SCICtnNo
+	where tmp.SCICtnNo= t.SCICtnNo and row=1
+)
 
 --05 ClogReturn/CompleteClogReturn
 select * 
@@ -240,7 +254,13 @@ inner join #tmpCompleteClogReturn s on t.ID=s.ID
 update t
 set t.SCIUpdate=1
 from CompleteClogReturn t
-where exists(select * from #tmpCompleteClogReturn where t.ID=id)
+where exists(
+	select * 
+	from #tmpCompleteClogReturn tmp
+	inner join Production.dbo.ClogReturn cr 
+		on tmp.ID = cr.ID
+	where t.ID= tmp.ID
+)
 
 --06 TransferToCFA/CompleteTransferToCFA
 select * 
@@ -256,15 +276,20 @@ inner join #tmpCompleteTransferToCFA s on t.ID=s.ID
 update t
 set t.SCIUpdate=1
 from CompleteTransferToCFA t
-where exists(select * from #tmpCompleteTransferToCFA where t.ID=id)
+where exists(
+	select * 
+	from #tmpCompleteTransferToCFA tmp
+	inner join Production.dbo.TransferToCFA cfa on tmp.ID = cfa.ID
+	where t.ID=tmp.id
+)
 
 -- 07 TransferToTruck/CompletePullout
 select * 
 into #tmpCompletePullout
 from CompletePullout where SCIUpdate=0
 
-insert into Production.dbo.TransferToTruck(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,TruckNo,AddName,AddDate)
-select [TransferDate] = CONVERT(date, s.Time)
+insert into Production.dbo.TransferToTruck(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,TruckNo,AddName,AddDate,SCICtnNo)
+select distinct [TransferDate] = CONVERT(date, s.Time)
 ,MDvisionID = (select top 1 ID from Production.dbo.MDivision)
 ,[OrderID] = pd.OrderID
 ,[PackingListID] = pd.ID
@@ -272,13 +297,17 @@ select [TransferDate] = CONVERT(date, s.Time)
 ,[TruckNo] = s.TruckNo
 ,'SCIMIS'
 ,s.Time
+,pd.SCICtnNo
 from #tmpCompletePullout s
 inner join Production.dbo.PackingList_Detail pd on s.SCICtnNo=pd.SCICtnNo
 
 update t
 set t.SCIUpdate=1
 from CompletePullout t
-where exists(select * from #tmpCompletePullout where id = t.id)
+inner join #tmpCompletePullout s on t.ID=s.ID
+inner join Production.dbo.PackingList_Detail pd on s.SCICtnNo=pd.SCICtnNo
+inner join Production.dbo.TransferToTruck tt on tt.OrderID = pd.OrderID 
+and tt.PackingListID = pd.ID and tt.CTNStartNo = pd.CTNStartNo
 
 -- 08 PackingList_Detail/CompleteSacnPack
 select * 
@@ -302,7 +331,12 @@ inner join #tmpCompleteSacnPack s on t.SCICtnNo=s.SCICtnNo
 update t
 set t.SCIUpdate=1
 from CompleteSacnPack t
-where exists(select * from #tmpCompleteSacnPack where t.ID = id)
+where exists(
+	select * 
+	from #tmpCompleteSacnPack tmp
+	inner join Production.dbo.PackingList_Detail pd 
+		on tmp.SCICtnNo = pd.SCICtnNo
+	where t.ID = tmp.id)
 
 drop table #tmp_LastLocation,#tmpCompleteClogReturn,#tmpCompletePullout,#tmpCompleteSacnPack,#tmpCompleteTransferToCFA,#tmpTransferLocation
 

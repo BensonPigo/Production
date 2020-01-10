@@ -95,7 +95,8 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.ex
 				) AS Inspector2,Inspector,Result
 	                From AIR a WITH (NOLOCK) 
                     Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
-                Where a.poid='{this.masterID}' and a.Status <> 'Confirmed' order by seq1,seq2
+                Where a.poid='{this.masterID}' --and a.Status <> 'Confirmed' 
+                order by seq1,seq2
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out encodeData);

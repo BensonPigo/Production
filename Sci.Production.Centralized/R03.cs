@@ -184,7 +184,7 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 ,OutputDate,Shift, Team
 ,SCategory = so.Category, CPUFactor, o.MDivisionID,orderid
 ,Rate = isnull([dbo].[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1) 
-,ActManPower= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
+,ActManPower= so.Manpower
 ,c.ProductionFamilyID
 into #stmp
 from Orders o WITH (NOLOCK) 
@@ -291,12 +291,12 @@ select OutputDate
 , MDivisionID
 , ProductionFamilyID
 , QAQty = sum(QAQty)
-, ActManPower= Sum(Round(ActManPower,2))
+, ActManPower= ActManPower
 , WorkHour = sum(Round(WorkHour,3))
 into #stmp2		
 from #stmp
 group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID
-, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID, ProductionFamilyID
+, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID, ProductionFamilyID, ActManPower
 
 select 
 a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.MDivisionID,a.FactoryID, a.POID , a.Category, a.CdCodeID 
@@ -308,7 +308,7 @@ a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.MDivisionID,a.FactoryID,
 , QARate = convert(numeric(12,2)
 , sum(a.QARate))
 , TotalManHour =
-	(select sum(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2))
+    (select sum(ROUND( ActManPower * WorkHour, 2)) 
 	from #stmp2 f 
 	where f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
 	and f.orderid = a.orderid

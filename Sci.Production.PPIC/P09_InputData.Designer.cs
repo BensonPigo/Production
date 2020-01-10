@@ -36,7 +36,6 @@
             this.label1stEstimateQty = new Sci.Win.UI.Label();
             this.labelDamageSampleSentDate = new Sci.Win.UI.Label();
             this.labelReplacementETA = new Sci.Win.UI.Label();
-            this.labelDefectResponsibility = new Sci.Win.UI.Label();
             this.labelFactorySuggested = new Sci.Win.UI.Label();
             this.txtSEQ = new Sci.Win.UI.TextBox();
             this.editDescription = new Sci.Win.UI.EditBox();
@@ -46,7 +45,6 @@
             this.num1stEstimateQty = new Sci.Win.UI.NumericBox();
             this.dateDamageSampleSentDate = new Sci.Win.UI.DateBox();
             this.dateReplacementETA = new Sci.Win.UI.DateBox();
-            this.comboDefectResponsibility = new Sci.Win.UI.ComboBox();
             this.labelRefNo = new Sci.Win.UI.Label();
             this.displayRefNo = new Sci.Win.UI.DisplayBox();
             this.labelInvoice = new Sci.Win.UI.Label();
@@ -161,14 +159,6 @@
             this.labelReplacementETA.Size = new System.Drawing.Size(171, 23);
             this.labelReplacementETA.TabIndex = 102;
             this.labelReplacementETA.Text = "Replacement ETA";
-            // 
-            // labelDefectResponsibility
-            // 
-            this.labelDefectResponsibility.Location = new System.Drawing.Point(13, 303);
-            this.labelDefectResponsibility.Name = "labelDefectResponsibility";
-            this.labelDefectResponsibility.Size = new System.Drawing.Size(221, 23);
-            this.labelDefectResponsibility.TabIndex = 103;
-            this.labelDefectResponsibility.Text = "Defect Responsibility & Explanation";
             // 
             // labelFactorySuggested
             // 
@@ -310,19 +300,6 @@
             this.dateReplacementETA.Name = "dateReplacementETA";
             this.dateReplacementETA.Size = new System.Drawing.Size(110, 23);
             this.dateReplacementETA.TabIndex = 14;
-            // 
-            // comboDefectResponsibility
-            // 
-            this.comboDefectResponsibility.BackColor = System.Drawing.Color.White;
-            this.comboDefectResponsibility.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Responsibility", true));
-            this.comboDefectResponsibility.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDefectResponsibility.FormattingEnabled = true;
-            this.comboDefectResponsibility.IsSupportUnselect = true;
-            this.comboDefectResponsibility.Location = new System.Drawing.Point(238, 303);
-            this.comboDefectResponsibility.Name = "comboDefectResponsibility";
-            this.comboDefectResponsibility.OldText = "";
-            this.comboDefectResponsibility.Size = new System.Drawing.Size(198, 24);
-            this.comboDefectResponsibility.TabIndex = 16;
             // 
             // labelRefNo
             // 
@@ -591,7 +568,6 @@
             this.Controls.Add(this.labelInvoice);
             this.Controls.Add(this.displayRefNo);
             this.Controls.Add(this.labelRefNo);
-            this.Controls.Add(this.comboDefectResponsibility);
             this.Controls.Add(this.dateReplacementETA);
             this.Controls.Add(this.dateDamageSampleSentDate);
             this.Controls.Add(this.num1stEstimateQty);
@@ -601,7 +577,6 @@
             this.Controls.Add(this.editDescription);
             this.Controls.Add(this.txtSEQ);
             this.Controls.Add(this.labelFactorySuggested);
-            this.Controls.Add(this.labelDefectResponsibility);
             this.Controls.Add(this.labelReplacementETA);
             this.Controls.Add(this.labelDamageSampleSentDate);
             this.Controls.Add(this.label1stEstimateQty);
@@ -612,6 +587,7 @@
             this.Controls.Add(this.labelSEQ);
             this.DefaultControl = "txtSEQ";
             this.Name = "P09_InputData";
+            this.OnLineHelpID = "Sci.Win.Subs.Input6A";
             this.Text = "Replacement Report - Accessory";
             this.Controls.SetChildIndex(this.labelSEQ, 0);
             this.Controls.SetChildIndex(this.labelDescription, 0);
@@ -621,7 +597,6 @@
             this.Controls.SetChildIndex(this.label1stEstimateQty, 0);
             this.Controls.SetChildIndex(this.labelDamageSampleSentDate, 0);
             this.Controls.SetChildIndex(this.labelReplacementETA, 0);
-            this.Controls.SetChildIndex(this.labelDefectResponsibility, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.labelFactorySuggested, 0);
             this.Controls.SetChildIndex(this.txtSEQ, 0);
@@ -632,7 +607,6 @@
             this.Controls.SetChildIndex(this.num1stEstimateQty, 0);
             this.Controls.SetChildIndex(this.dateDamageSampleSentDate, 0);
             this.Controls.SetChildIndex(this.dateReplacementETA, 0);
-            this.Controls.SetChildIndex(this.comboDefectResponsibility, 0);
             this.Controls.SetChildIndex(this.labelRefNo, 0);
             this.Controls.SetChildIndex(this.displayRefNo, 0);
             this.Controls.SetChildIndex(this.labelInvoice, 0);
@@ -669,7 +643,6 @@
         private Win.UI.Label label1stEstimateQty;
         private Win.UI.Label labelDamageSampleSentDate;
         private Win.UI.Label labelReplacementETA;
-        private Win.UI.Label labelDefectResponsibility;
         private Win.UI.Label labelFactorySuggested;
         private Win.UI.TextBox txtSEQ;
         private Win.UI.EditBox editDescription;
@@ -679,7 +652,6 @@
         private Win.UI.NumericBox num1stEstimateQty;
         private Win.UI.DateBox dateDamageSampleSentDate;
         private Win.UI.DateBox dateReplacementETA;
-        private Win.UI.ComboBox comboDefectResponsibility;
         private Win.UI.Label labelRefNo;
         private Win.UI.DisplayBox displayRefNo;
         private Win.UI.Label labelInvoice;

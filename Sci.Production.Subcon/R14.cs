@@ -13,9 +13,9 @@ namespace Sci.Production.Subcon
 {
     public partial class R14 : Sci.Win.Tems.PrintForm
     {
-        string artworktype, factory, style, mdivision, spno1, spno2, ordertype,ratetype;
-        int ordertypeindex,statusindex;
-        DateTime? Issuedate1, Issuedate2, GLdate1,GLdate2;
+        string artworktype, factory, style, mdivision, spno1, spno2, ordertype, ratetype;
+        int ordertypeindex, statusindex;
+        DateTime? Issuedate1, Issuedate2, GLdate1, GLdate2;
         DataTable printData;
 
         public R14(ToolStripMenuItem menuitem)
@@ -79,9 +79,9 @@ namespace Sci.Production.Subcon
                     ordertype = "('B','S','M')";
                     break;
             }
-            
+
             style = txtstyle.Text;
-            
+
             return base.ValidateInput();
         }
 
@@ -119,14 +119,14 @@ namespace Sci.Production.Subcon
             System.Data.SqlClient.SqlParameter sp_style = new System.Data.SqlClient.SqlParameter();
             sp_style.ParameterName = "@style";
             #endregion
-            
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();      
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(
                 @"
-                    select distinct c.POID, a.IssueDate ,a.ArtworkTypeID
+                    select distinct c.POID, a.IssueDate ,a.ArtworkTypeID ,a.FactoryID,a.MDivisionID
                     into #tmp1
                     from ArtworkAP a WITH (NOLOCK) 
                     inner join ArtworkAP_Detail b WITH (NOLOCK) on b.id = a.id  
@@ -179,7 +179,7 @@ namespace Sci.Production.Subcon
                     break;
             }
 
-            
+
             if (!MyUtility.Check.Empty(spno1))
             {
                 sqlCmd.Append(" and b.orderid >= @spno1");
@@ -233,7 +233,7 @@ namespace Sci.Production.Subcon
 
             sqlCmd.Append(@"
 
-                    select POID,ArtworkTypeID
+                    select  DISTINCT  POID ,ArtworkTypeID ,FactoryID ,MDivisionID
                     into #tmp
                     from #tmp1                                        
                 ");
@@ -245,11 +245,11 @@ namespace Sci.Production.Subcon
 
             // 指定繡花條件時，有多撈取繡花線的成本
             if (artworktype.ToLower().TrimEnd() == "embroidery")
-            {                
+            {
 
                 sqlCmd.Append(string.Format(@"
 
-                select aa.FactoryID
+                select t.FactoryID
                 ,t.artworktypeid
                 ,aa.POID
                 ,aa.StyleID
@@ -356,13 +356,13 @@ namespace Sci.Production.Subcon
 					WHERE al.POId = aa.POID AND al.ArtworkTypeId=t.ArtworkTypeId
 				)IrregularPrice 
                 where ap_qty > 0
-                ", ratetype,ordertype));
+                ", ratetype, ordertype));
 
             }
             else
             {
                 sqlCmd.Append(string.Format(@"
-                select aa.FactoryID
+                select t.FactoryID
                 ,t.artworktypeid
                 ,aa.POID
                 ,aa.StyleID
@@ -433,7 +433,7 @@ namespace Sci.Production.Subcon
 					WHERE al.POId = aa.POID AND al.ArtworkTypeId=t.ArtworkTypeId
 				)IrregularPrice 
                 where ap_qty > 0
-                ", ratetype,ordertype));
+                ", ratetype, ordertype));
             }
             #endregion
 
@@ -478,7 +478,7 @@ namespace Sci.Production.Subcon
                     sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
                 }
             }
-            
+
             if (!MyUtility.Check.Empty(style))
             {
                 sqlCmd.Append(" and styleid = @style");
@@ -487,9 +487,9 @@ namespace Sci.Production.Subcon
             }
 
             //ORDER BY
-            sqlCmd.Append(" ORDER BY aa.FactoryID, t.artworktypeid, aa.POID ");
+            sqlCmd.Append(" ORDER BY t.FactoryID, t.artworktypeid, aa.POID ");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());

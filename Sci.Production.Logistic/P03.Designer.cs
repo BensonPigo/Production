@@ -479,7 +479,7 @@
             // 
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer1.Name = "shapeContainer2";
+            this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Size = new System.Drawing.Size(877, 152);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;

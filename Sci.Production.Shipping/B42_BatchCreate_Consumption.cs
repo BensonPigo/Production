@@ -230,7 +230,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"]));
 
             this.gridConsumption.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridConsumption)
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(8), settings: this.nlcode)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(12), settings: this.nlcode)
                 .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 3, width: Widths.AnsiChars(7), settings: this.qty)
                 .Numeric("Waste", header: "Waste", decimal_places: 3, width: Widths.AnsiChars(5), iseditingreadonly: true);

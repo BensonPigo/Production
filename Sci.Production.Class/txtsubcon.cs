@@ -114,7 +114,14 @@ namespace Sci.Production.Class
             }
             if (!string.IsNullOrWhiteSpace(textValue))
             {
-                string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
+                string Sql = string.Format(@"
+--select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'
+
+select DISTINCT l.Junk
+from dbo.LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+WHERE l.Junk=0 and lb.Status= 'Confirmed' AND  l.ID = '{0}'
+", textValue);
 
                 if (IsSubcon)
                 {
@@ -150,7 +157,13 @@ namespace Sci.Production.Class
                             return;
                         }
                     }
-                    this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
+                    //this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
+                    this.displayBox1.Text = MyUtility.GetValue.Lookup($@"
+select DISTINCT l.Abb
+from dbo.LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+WHERE l.Junk=0 /*and lb.Status= 'Confirmed'*/ AND  l.ID = '{this.textBox1.Text.ToString()}'
+");
                 }
             }
             this.ValidateControl();
@@ -166,7 +179,14 @@ namespace Sci.Production.Class
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base) this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly==true) return;
             string selectCommand;
-            selectCommand = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) where 1=1 ";
+            selectCommand = @"
+--select ID,Abb,Name from LocalSupp WITH (NOLOCK) where 1=1 
+
+select DISTINCT l.ID ,l.Abb ,l.Name
+from dbo.LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+WHERE l.Junk=0 and lb.Status= 'Confirmed'
+";
             if (!IsIncludeJunk)
             {
                 selectCommand += " and Junk =  0 ";
@@ -196,8 +216,14 @@ namespace Sci.Production.Class
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.textBox1.ValidateControl();
-            this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
-           
+            //this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
+            this.displayBox1.Text = MyUtility.GetValue.Lookup($@"
+
+select DISTINCT l.Abb
+from dbo.LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+WHERE l.Junk=0 /*and lb.Status= 'Confirmed'*/ AND  l.ID = '{this.textBox1.Text.ToString()}'
+");
 
         }
     }
@@ -219,7 +245,15 @@ namespace Sci.Production.Class
                     DataRow row1 = grid.GetDataRow(e.RowIndex);
 
                     DataTable subTb;
-                    string sql = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 order by ID";
+                    string sql = @"
+--select ID,Abb,Name from LocalSupp WITH (NOLOCK) where 1=1 
+
+select DISTINCT l.ID ,l.Abb ,l.Name
+from dbo.LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+WHERE l.Junk=0 and lb.Status= 'Confirmed'
+order by ID
+";
                     DualResult duR =  DBProxy.Current.Select("Production", sql, out subTb);
                     if (duR)
                     {
@@ -244,7 +278,16 @@ namespace Sci.Production.Class
                 DataRow row = grid.GetDataRow<DataRow>(e.RowIndex), sqlRow;
                 String oldValue = row[suppid].ToString();
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
-                string sql = string.Format("select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 and ID = '{0}'", newValue);
+                string sql = string.Format(@"
+--select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 and ID = '{0}'
+
+
+select DISTINCT l.ID ,l.Abb ,l.Name
+from dbo.LocalSupp l WITH (NOLOCK) 
+left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
+WHERE l.Junk=0 and lb.Status= 'Confirmed' and l.ID = '{0}'
+order by ID
+", newValue);
                 if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                 {
                     if (!MyUtility.Check.Seek(sql, out sqlRow,"Production"))

@@ -12,6 +12,7 @@ using System.Transactions;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -189,7 +190,7 @@ select  p.GMTBookingLock
 							order by sod.OrderId
                             for xml path('')
                           ), 1, 1, '')         , Pullout.sendtotpe
-,pl2.APPBookingVW,pl2.APPEstAmtVW
+    ,pl2.APPBookingVW,pl2.APPEstAmtVW
 from PackingList p WITH (NOLOCK) 
 left join Pullout WITH (NOLOCK) on Pullout.id=p.Pulloutid
 outer apply(
@@ -215,7 +216,8 @@ where {0}", this.masterID);
             base.OnDetailEntered();
 
             this.txtTerminalWhse.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(this.CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
-
+            this.displayBoxDeclarationID.Text = MyUtility.GetValue.Lookup("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
+            this.displayBoxCustomsNo.Text = MyUtility.GetValue.Lookup("DeclareNo", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
             #region AirPP List按鈕變色
             if (!this.EditMode)
             {
@@ -272,6 +274,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             {
                 this.FBDate_Ori = null;
             }
+
+            this.ControlColor();
         }
 
         /// <inheritdoc/>
@@ -643,18 +647,27 @@ where   pl.INVNo = '{0}'
                 return false;
             }
 
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
+            {
+                if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
+                {
+                    MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
+                    return false;
+                }
+            }
+
             string sqlCmd = string.Format(
-                @"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
+            @"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
 and fw.BrandID = '{0}'
 and fw.Forwarder = '{1}'
 and fw.ShipModeID = '{2}'
 and  fwd.WhseNo = '{3}'
 order by fwd.WhseNo",
-                MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
-                MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]),
-                MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]),
-                this.txtTerminalWhse.Text);
+            MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
+            MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]),
+            MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]),
+            this.txtTerminalWhse.Text);
 
             if (!MyUtility.Check.Empty(this.txtTerminalWhse.Text))
             {
@@ -704,8 +717,14 @@ order by fwd.WhseNo",
                 return false;
             }
             #endregion
+            #region 若 No Export Charge 有勾選，同時 Expense Data 也有資料，
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["NoExportCharges"]) && this.ControlColor())
+            {
+                MyUtility.Msg.WarningBox("This record have expense data, please double check.");
+            }
+            #endregion
 
-            #region 新增單狀態下，取ID且檢查此ID是否存在 
+            #region 新增單狀態下，取ID且檢查此ID是否存在
             if (this.IsDetailInserting)
             {
                 string fac = MyUtility.GetValue.Lookup($@"
@@ -1447,6 +1466,12 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
                 return;
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
+            {
+                MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
+                return;
+            }
+
             // 檢查表身的ShipMode與表頭的ShipMode如果不同 & ShipModeID 不存在Order_QtyShip
             // 就不可以Confirm
             if (!this.CheckShipMode())
@@ -1498,6 +1523,12 @@ Packing List : {pid}";
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return;
             }
+
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(INVNo: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
+            }
+
             DualResult result;
             // 當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
@@ -1920,7 +1951,7 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and o.SeasonID = f.SeasonID 
           and  f.BrandID = '{this.txtbrand.Text}' 
-          and GETDATE() between f.BeginDate and f.EndDate
+          and cast(GETDATE()as date) between f.BeginDate and f.EndDate
 )f1
 outer apply(
     select ShipperID 
@@ -1928,7 +1959,7 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and f.SeasonID = '' 
           and f.BrandID = '{this.txtbrand.Text}' 
-          and GETDATE() between f.BeginDate and f.EndDate
+          and cast(GETDATE()as date) between f.BeginDate and f.EndDate
 )f2
 where o.ID in ({SP.Substring(0, SP.Length - 1)})
 ";
@@ -1956,6 +1987,35 @@ where o.ID in ({SP.Substring(0, SP.Length - 1)})
             }
 
             return true;
+        }
+
+        private bool ControlColor()
+        {
+            DataTable gridData;
+            string sqlCmd = string.Empty;
+            sqlCmd = string.Format(
+                        @"select 1
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
+where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (gridData.Rows.Count > 0)
+            {
+                this.btnExpenseData.ForeColor = Color.Blue;
+                return true;
+            }
+            else
+            {
+                this.btnExpenseData.ForeColor = Color.Black;
+                return false;
+            }
         }
     }
 }

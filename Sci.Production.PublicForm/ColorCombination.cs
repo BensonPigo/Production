@@ -37,7 +37,14 @@ namespace Sci.Production.PublicForm
 
         private void requery()
         {
+
             Helper.Controls.Grid.Generator(this.gridFabric)
+            .Text("FabricCode", header: "Fabric#", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Description", header: "Description", width: Widths.AnsiChars(55), iseditingreadonly: true);
+
+
+            Helper.Controls.Grid.Generator(this.gridColCombin)
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             Helper.Controls.Grid.Generator(this.gridColorDesc)
@@ -62,7 +69,7 @@ namespace Sci.Production.PublicForm
                 headername = dr["FabricPanelCode"].ToString().Trim();
                 createheader = createheader + string.Format(",case when a.FabricPanelCode='{0}' then Colorid end '{0}' ", dr["FabricPanelCode"].ToString().Trim());
 
-                Helper.Controls.Grid.Generator(this.gridFabric)
+                Helper.Controls.Grid.Generator(this.gridColCombin)
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
             //BOA
@@ -78,14 +85,23 @@ namespace Sci.Production.PublicForm
             {
                 headername = dr["PatternPanel"].ToString().Trim();
                 createheader = createheader + string.Format(",case when a.PatternPanel='{0}' then Colorid end '{0}' ", headername);
-                Helper.Controls.Grid.Generator(this.gridFabric)
+                Helper.Controls.Grid.Generator(this.gridColCombin)
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
 
             string createtable = createheader + string.Format(" From Order_ColorCombo a WITH (NOLOCK) where id ='{0}' ", cutid); //create data
             createheader = createheader + " From Order_ColorCombo a WITH (NOLOCK) where 1=0"; //empty table
 
-            DataTable gridtb, datatb;
+            //BOF
+            string cmd = $@"
+SELECT o.FabricCode,f.Refno,f.Description
+FROM Order_BOF o with(nolock) 
+LEFT JOIN Fabric f with(nolock) ON o.SCIRefno=f.SCIRefno
+where o.id = '{cutid}'
+ORDER BY o.FabricCode
+";
+
+            DataTable gridtb, datatb ,gridFabric;
             sqlresult = DBProxy.Current.Select(null, createheader, out gridtb);
             if (!sqlresult)
             {
@@ -93,6 +109,12 @@ namespace Sci.Production.PublicForm
                 return;
             }
 
+            sqlresult = DBProxy.Current.Select(null, cmd, out gridFabric);
+            if (!sqlresult)
+            {
+                ShowErr(createheader, sqlresult);
+                return;
+            }
             #endregion
 
             #region QT 塞資料
@@ -171,6 +193,7 @@ namespace Sci.Production.PublicForm
             #endregion
 
             this.listControlBindingSource1.DataSource = gridtb;
+            this.listControlBindingSource3.DataSource = gridFabric;
         }
 
         private void btnClose_Click(object sender, EventArgs e)

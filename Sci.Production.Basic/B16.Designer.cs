@@ -34,6 +34,8 @@
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.chkIncludeSeaShipping = new Sci.Win.UI.CheckBox();
+            this.checkBoxNeedCreateAPP = new Sci.Win.UI.CheckBox();
+            this.chkNeedCreateIntExpress = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,6 +50,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkNeedCreateIntExpress);
+            this.detailcont.Controls.Add(this.checkBoxNeedCreateAPP);
             this.detailcont.Controls.Add(this.chkIncludeSeaShipping);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayDescription);
@@ -144,6 +148,32 @@
             this.chkIncludeSeaShipping.Text = "Include Sea Shipping";
             this.chkIncludeSeaShipping.UseVisualStyleBackColor = true;
             // 
+            // checkBoxNeedCreateAPP
+            // 
+            this.checkBoxNeedCreateAPP.AutoSize = true;
+            this.checkBoxNeedCreateAPP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedCreateAPP", true));
+            this.checkBoxNeedCreateAPP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBoxNeedCreateAPP.Location = new System.Drawing.Point(584, 94);
+            this.checkBoxNeedCreateAPP.Name = "checkBoxNeedCreateAPP";
+            this.checkBoxNeedCreateAPP.ReadOnly = true;
+            this.checkBoxNeedCreateAPP.Size = new System.Drawing.Size(185, 21);
+            this.checkBoxNeedCreateAPP.TabIndex = 6;
+            this.checkBoxNeedCreateAPP.Text = "Need create Air Pre-Paid";
+            this.checkBoxNeedCreateAPP.UseVisualStyleBackColor = true;
+            // 
+            // chkNeedCreateIntExpress
+            // 
+            this.chkNeedCreateIntExpress.AutoSize = true;
+            this.chkNeedCreateIntExpress.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedCreateIntExpress", true));
+            this.chkNeedCreateIntExpress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkNeedCreateIntExpress.Location = new System.Drawing.Point(584, 121);
+            this.chkNeedCreateIntExpress.Name = "chkNeedCreateIntExpress";
+            this.chkNeedCreateIntExpress.ReadOnly = true;
+            this.chkNeedCreateIntExpress.Size = new System.Drawing.Size(241, 21);
+            this.chkNeedCreateIntExpress.TabIndex = 7;
+            this.chkNeedCreateIntExpress.Text = "Need create International Express";
+            this.chkNeedCreateIntExpress.UseVisualStyleBackColor = true;
+            // 
             // B16
             // 
             this.ClientSize = new System.Drawing.Size(834, 402);
@@ -180,5 +210,7 @@
         private Win.UI.DisplayBox displayCode;
         private Win.UI.Label labelDescription;
         private Win.UI.CheckBox chkIncludeSeaShipping;
+        private Win.UI.CheckBox checkBoxNeedCreateAPP;
+        private Win.UI.CheckBox chkNeedCreateIntExpress;
     }
 }

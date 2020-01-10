@@ -32,6 +32,7 @@ namespace Sci.Production.PPIC
             this.InitializeComponent();
             this.DefaultFilter = string.Format("Type = 'A' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
             this.InsertDetailGridOnDoubleClick = false;
+            MyUtility.Tool.SetupCombox(this.comboDefectResponsibilityExplanation, 2, 1, "F,Factory,M,Mill,S,Subcon in Local,T,SCI dep. (purchase/s. mrs/sample room)");
         }
 
         /// <inheritdoc/>
@@ -60,14 +61,7 @@ namespace Sci.Production.PPIC
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"select rd.*,(rd.Seq1 + ' ' +rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as DescriptionDetail,
-isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
-CASE rd.Responsibility
-WHEN 'M' THEN N'Mill'
-WHEN 'S' THEN N'Subcon in Local'
-WHEN 'F' THEN N'Factory'
-WHEN 'T' THEN N'SCI dep. (purchase / s. mrs / sample room)'
-ELSE N''
-END as CategoryName
+isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
@@ -116,6 +110,27 @@ order by rd.Seq1,rd.Seq2", masterID);
                 this.txttpeuserPCSMR.DisplayBox1Binding = string.Empty;
                 this.txttpeuserPCHandle.DisplayBox1Binding = string.Empty;
             }
+
+            string sqlcmd = $@"select 1
+from Clip where TableName = 'ReplacementReport' AND UniqueKey = '{this.CurrentMaintain["ID"]}'";
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                this.btnDownload.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnDownload.ForeColor = Color.Black;
+            }
+
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
@@ -141,6 +156,7 @@ order by rd.Seq1,rd.Seq2", masterID);
 
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .CheckBox("Junk", header: "Junk", iseditable: false)
             .Text("Seq", header: "SEQ#", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("RefNo", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .EditText("DescriptionDetail", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: desc)
@@ -157,19 +173,34 @@ order by rd.Seq1,rd.Seq2", masterID);
             .Text("AWBNo", header: "AWB# Of\r\nDamage\r\nSample", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ReplacementETA", header: "Replacement\r\nETA", iseditingreadonly: true)
             .Numeric("OccurCost", header: "Cost Occurred", decimal_places: 3, width: Widths.AnsiChars(7), settings: occurcost, iseditingreadonly: true)
-            .Text("CategoryName", header: "Defect\r\nResponsibility", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .EditText("ResponsibilityReason", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .EditText("Suggested", header: "Factory Suggested Solution", width: Widths.AnsiChars(30), iseditingreadonly: true);
 
             this.detailgrid.CellDoubleClick += (s, e) =>
             {
-                if (e.ColumnIndex == 0)
+                if (e.ColumnIndex == 1 && !MyUtility.Convert.GetBool(this.CurrentMaintain["SendToTrade"]))
                 {
                     Sci.Production.PPIC.P09_InputData callInputDataForm = new Sci.Production.PPIC.P09_InputData(this.CurrentMaintain);
                     callInputDataForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
                     callInputDataForm.ShowDialog(this);
                 }
             };
+
+            this.detailgrid.Sorted += (s, e) =>
+            {
+                this.ChangeRowColor();
+            };
+        }
+
+        private void ChangeRowColor()
+        {
+            foreach (DataGridViewRow gridRow in this.detailgrid.Rows)
+            {
+                if (MyUtility.Convert.GetBool(gridRow.Cells["Junk"].Value))
+                {
+                    gridRow.DefaultCellStyle.BackColor = Color.LightGray;
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -180,6 +211,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             this.CurrentMaintain["CDate"] = DateTime.Today;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "A";
+            this.CurrentMaintain["SendToTrade"] = 0;
         }
 
         /// <inheritdoc/>
@@ -264,6 +296,12 @@ order by rd.Seq1,rd.Seq2", masterID);
                 this.CurrentMaintain["ID"] = id;
             }
 
+            // 將表頭的Responsibility存至detail
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr["Responsibility"] = this.CurrentMaintain["Responsibility"];
+            }
+
             return true;
         }
 
@@ -335,6 +373,8 @@ order by rd.Seq1,rd.Seq2", masterID);
             string confirm = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["TPECFMName"])));
             int j = 0;
             int n = 0;
+
+            string responsibility = MyUtility.Convert.GetString(this.CurrentMaintain["Responsibility"]);
             foreach (DataRow dr in gridData.Rows)
             {
                 j++;
@@ -376,14 +416,14 @@ order by rd.Seq1,rd.Seq2", masterID);
                 worksheet.Cells[row + 15, column] = MyUtility.Check.Empty(dr["DamageSendDate"]) ? string.Empty : Convert.ToDateTime(dr["DamageSendDate"]).ToString("d");
                 worksheet.Cells[row + 16, column] = MyUtility.Convert.GetString(dr["AWBNo"]);
                 worksheet.Cells[row + 17, column] = MyUtility.Check.Empty(dr["ReplacementETA"]) ? string.Empty : Convert.ToDateTime(dr["ReplacementETA"]).ToString("d");
-                worksheet.Cells[row + 18, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "M" ? "V" : string.Empty;
-                worksheet.Cells[row + 18, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "M" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
-                worksheet.Cells[row + 19, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "T" ? "V" : string.Empty;
-                worksheet.Cells[row + 19, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "T" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
-                worksheet.Cells[row + 20, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "F" ? "V" : string.Empty;
-                worksheet.Cells[row + 20, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "F" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
-                worksheet.Cells[row + 21, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "S" ? "V" : string.Empty;
-                worksheet.Cells[row + 21, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "S" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
+                worksheet.Cells[row + 18, 3] = responsibility == "M" ? "V" : string.Empty;
+                worksheet.Cells[row + 18, column] = responsibility == "M" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
+                worksheet.Cells[row + 19, 3] = responsibility == "T" ? "V" : string.Empty;
+                worksheet.Cells[row + 19, column] = responsibility == "T" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
+                worksheet.Cells[row + 20, 3] = responsibility == "F" ? "V" : string.Empty;
+                worksheet.Cells[row + 20, column] = responsibility == "F" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
+                worksheet.Cells[row + 21, 3] = responsibility == "S" ? "V" : string.Empty;
+                worksheet.Cells[row + 21, column] = responsibility == "S" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
                 worksheet.Cells[row + 22, column] = MyUtility.Convert.GetString(dr["Suggested"]);
                 worksheet.Cells[row + 23, column] = apply;
                 worksheet.Cells[row + 24, column] = approve;
@@ -438,7 +478,7 @@ order by rd.Seq1,rd.Seq2", masterID);
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
-                    string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid";
+                    string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid  AND Category !='A'";
                     DataTable ordersData;
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ordersData);
 
@@ -631,8 +671,18 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMain
                 return;
             }
 
+            this.SendMail();
+
             DualResult result;
-            string updateCmd = string.Format("update ReplacementReport set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            result = Prgs.PostReplacementReportToTrade(this.CurrentMaintain["ID"].ToString());
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            string updateCmd = string.Format("update ReplacementReport set SendToTrade = 1,Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -641,7 +691,6 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMain
             }
 
             this.RenewData();
-            this.SendMail();
         }
 
         /// <inheritdoc/>
@@ -797,6 +846,12 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
 
             return true;
+        }
+
+        private void BtnDownload_Click(object sender, EventArgs e)
+        {
+            P08_Download callInputDataForm = new P08_Download(this.CurrentMaintain);
+            callInputDataForm.ShowDialog(this);
         }
     }
 }

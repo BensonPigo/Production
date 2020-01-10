@@ -605,6 +605,97 @@ order by a.Seq ASC,a.CTNQty DESC", packingListID);
         }
         #endregion
 
+        public static DualResult CheckExistsOrder_QtyShip_Detail(string packingListID = "", string INVNo = "", string ShipPlanID = "", string PulloutID = "", bool showmsg = true)
+        {
+            string where = string.Empty;
+            if (!MyUtility.Check.Empty(packingListID))
+                where = $@"and p.id ='{packingListID}'";
+            else if (!MyUtility.Check.Empty(INVNo))
+                where = $@"and p.INVNo ='{INVNo}'";
+            else if (!MyUtility.Check.Empty(ShipPlanID))
+                where = $@"and p.ShipPlanID ='{ShipPlanID}'";
+            else if (!MyUtility.Check.Empty(PulloutID))
+                where = $@"and p.PulloutID ='{PulloutID}'";
+
+            string sqlCmd = $@"
+select pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,ShipQty=sum(pd.ShipQty)
+into #tmpPacking
+from(
+	select distinct pd.OrderID,pd.OrderShipmodeSeq
+	from PackingList p with(nolock)
+	inner join PackingList_detail pd with(nolock) on p.id = pd.id
+	where 1=1 {where}
+)x
+inner  join PackingList_detail pd with(nolock) on pd.OrderID = x.OrderID and pd.OrderShipmodeSeq =x.OrderShipmodeSeq
+group by pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode
+
+select oqd.ID,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty
+into #tmpOrderShip
+from(
+	select distinct pd.OrderID,pd.OrderShipmodeSeq
+	from PackingList p with(nolock)
+	inner join PackingList_detail pd with(nolock) on p.id = pd.id
+	where 1=1 {where}
+)x
+inner join Order_QtyShip_Detail oqd with(nolock) on oqd.ID = x.OrderID and oqd.Seq =x.OrderShipmodeSeq
+";
+            string sqlA = sqlCmd + $@"
+select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
+from #tmpPacking p
+left join #tmpOrderShip oqd with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
+where isnull(p.ShipQty,0) > isnull(oqd.Qty,0)
+";
+            string sqlB = sqlCmd + $@"
+select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
+from #tmpOrderShip oqd
+left join #tmpPacking p with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
+where isnull(p.ShipQty,0) < isnull(oqd.Qty,0)
+";
+
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlA, out dt);
+            if (!result)
+            {
+                if (showmsg)
+                    MyUtility.Msg.WarningBox(result.ToString());
+                return result;
+            }
+
+            // 不允許 Confirm
+            if (dt.Rows.Count > 0)
+            {
+                var os = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).ToList();
+                string msg = @"Ship Qty>Order Qty, please check Q'ty Breakdown by Shipmode (Seq).
+" + string.Join("\t", os);
+
+                if (showmsg)
+                    MyUtility.Msg.WarningBox(msg);
+
+                return Result.F(msg);
+            }
+
+            result = DBProxy.Current.Select(null, sqlB, out dt);
+            if (!result)
+            {
+                if (showmsg)
+                    MyUtility.Msg.WarningBox(result.ToString());
+                return result;
+            }
+
+            // 僅提示允許繼續 Confirm
+            if (dt.Rows.Count > 0)
+            {
+                var os = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).ToList();
+                string msg = @"Ship Qty<Order Qty, please be sure this is Short Shipment before Save/Confirm the Packing List.
+" + string.Join("\t", os);
+                
+                MyUtility.Msg.WarningBox(msg);
+                return Result.True;
+            }
+
+            return Result.True;
+        }
+
         #region Query Packing List Print out Pacging List Report Data
         /// <summary>
         /// QueryPackingListReportData(string,DataTable,DataTable,DataTable,DataTable,DataTable,DataTable,string)
@@ -1867,6 +1958,7 @@ select  pd.ID
 					 end
 		, checkMixSize.value
         , o.BuyerDelivery
+        , pd.SCICtnNo
 from PackingList_Detail pd WITH (NOLOCK) 
 left join orders o with(nolock) on o.id = pd.OrderID
 outer apply (
@@ -2418,6 +2510,19 @@ and pd2.[SizeCode]			=pd.[SizeCode]
         public static bool P03SaveCheck(DataRow currentMaintain, DataTable detailDatas, Grid detailGrid = null)
         {
             DualResult result;
+            #region 刪除表身SP No.或Qty為空白的資料
+            for (int j = detailDatas.Rows.Count - 1; j >= 0; j--)
+            {
+                if (detailDatas.Rows[j].RowState != DataRowState.Deleted)
+                {
+                    if (MyUtility.Check.Empty(detailDatas.Rows[j]["OrderID"]) || MyUtility.Check.Empty(detailDatas.Rows[j]["ShipQty"]))
+                    {
+                        detailDatas.Rows[j].Delete();
+                    }
+                }
+            }
+            #endregion
+
             var checkDetailListNoDeleted = detailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]);
 
             #region 檢查表頭的CustCD與表身所有SP的 Orders.custcdid是否相同
@@ -2476,14 +2581,6 @@ where CustCD.value != @CustCD
                 if (isAlreadyCreated)
                 {
                     return false;
-                }
-                #endregion
-
-                #region 刪除表身SP No.或Qty為空白的資料
-                if (MyUtility.Check.Empty(dr["OrderID"]) || MyUtility.Check.Empty(dr["ShipQty"]))
-                {
-                    dr.Delete();
-                    continue;
                 }
                 #endregion
 
@@ -2658,7 +2755,6 @@ where oqd.Id = '{1}'
             }
 
             #region ship mode 有變更時 check Order_QtyShip
-
             StringBuilder chk_ship_err = new StringBuilder();
             StringBuilder chk_seq_null = new StringBuilder();
             var check_chip_list = from r1 in checkDetailListNoDeleted
@@ -2667,8 +2763,7 @@ where oqd.Id = '{1}'
                                       SP = r1.Field<string>("OrderID"),
                                       Seq = r1.Field<string>("OrderShipmodeSeq")
                                   }
-
-into g
+                                  into g
                                   select new
                                   {
                                       SP = g.Key.SP,
@@ -2689,7 +2784,6 @@ into g
                 MyUtility.Msg.WarningBox(chk_seq_null.ToString());
                 return false;
             }
-
             #endregion
 
             if (detailDatas.Rows.Count == 0)

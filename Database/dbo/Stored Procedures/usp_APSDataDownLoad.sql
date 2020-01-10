@@ -853,7 +853,7 @@ BEGIN
 	BEGIN
 	--撈APS的Sewing Schedule Detail
 	CREATE TABLE #tmpAPSSchedule 
-	(ID int,POID int,SALESORDERNO varchar(20),REFNO varchar(100),NAME varchar(50),STARTTIME datetime,ENDTIME datetime,UPDATEDATE datetime,POCOLOR char(60),POSIZE varchar(30),PLANAMOUNT numeric(24,10),DURATION numeric(24,10),CAPACITY numeric(24,10),EFFICIENCY numeric(24,10), Sewer int ,LNCSERIALNumber  int);
+	(ID int,POID int,SALESORDERNO varchar(20),REFNO varchar(100),NAME varchar(50),STARTTIME datetime,ENDTIME datetime,UPDATEDATE datetime,POCOLOR char(60),POSIZE varchar(30),PLANAMOUNT numeric(24,10),DURATION numeric(24,10),CAPACITY numeric(24,10),EFFICIENCY numeric(24,10), Sewer int ,LNCSERIALNumber  int, SwitchTime int);
 	
 	SET @cmd = '
 	insert into #tmpAPSSchedule
@@ -873,6 +873,10 @@ BEGIN
 		   , pd.EFFICIENCY
 		   , sewer = p.WorkerNumber 
 		   , p.LNCSERIALNumber 
+		   , SwitchTime = case 
+							  when p.SwitchType is null or p.SwitchType < 0 then 0
+							  else isnull(p.SwitchTime,0)
+						  end
 	from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT p
 		,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f
 		,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa
@@ -971,8 +975,9 @@ BEGIN
 		   , OriEFF = Max(EFFICIENCY)
 		   , sewer 
 		   , LNCSERIALNumber
+		   , SwitchTime=isnull(SwitchTime,0)
 	from #tmpAPSSchedule
-	group by SALESORDERNO,REFNO,NAME,ID,STARTTIME,ENDTIME,ROUND(CAPACITY*60,0),DURATION,UPDATEDATE,POID,Sewer,LNCSERIALNumber
+	group by SALESORDERNO,REFNO,NAME,ID,STARTTIME,ENDTIME,ROUND(CAPACITY*60,0),DURATION,UPDATEDATE,POID,Sewer,LNCSERIALNumber, SwitchTime
 	order by SALESORDERNO
 	/*
 		APS的生產計劃資料結構（ProductionEvent、ProductionEventDetail）
@@ -1009,7 +1014,9 @@ BEGIN
 			@sizecode varchar(8),
 			@detailalloqty int,
 			@LNCSERIALNumber int,       -- 定義為該計畫生產的最後一天對應的是學習曲線的第幾天
-			@LnCurveTemplateID int;
+			@LnCurveTemplateID int,
+			@SwitchTime int -- 換款時間
+			;
 
 
 	CREATE TABLE #ProdEff (Efficiency numeric(24,10))
@@ -1019,7 +1026,7 @@ BEGIN
 
 	OPEN cursor_sewingschedule
 	FETCH NEXT FROM cursor_sewingschedule 
-	INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff, @sewer ,@LNCSERIALNumber
+	INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff, @sewer ,@LNCSERIALNumber,@SwitchTime
 	
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -1163,6 +1170,7 @@ BEGIN
 						,OriEff
 						,SewLineEff
 						,LNCSERIALNumber
+						,SwitchTime
 						)
 						values (
 						@orderid
@@ -1187,6 +1195,7 @@ BEGIN
 						,CONVERT(numeric(5,2),isnull(@OriEff*100,100))
 						,CONVERT(numeric(5,2),isnull(@SewLineEff*100,100))
 						,@LNCSERIALNumber
+						,isnull(@SwitchTime,0)
 						);
 
 						--取最新的ID
@@ -1354,6 +1363,7 @@ BEGIN
 									, OriEff = CONVERT(numeric(5,2),isnull( @OriEff*100,100))
 									, SewLineEff = CONVERT(numeric(5,2),isnull( @SewLineEff*100,100))
 									, LNCSERIALNumber = @LNCSERIALNumber
+									, SwitchTime = isnull(@SwitchTime,0)
 								where ID = @sewingscheduleid;
 
 								--更新SewingSchedule_Detail
@@ -1438,7 +1448,7 @@ BEGIN
 			END
 
 		FETCH NEXT FROM cursor_sewingschedule 
-		INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff, @Sewer ,@LNCSERIALNumber
+		INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid ,@OriEff, @Sewer ,@LNCSERIALNumber,@SwitchTime
 
 	END
 	CLOSE cursor_sewingschedule

@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[VNFixedDeclareItem] (
-    [NLCode]      VARCHAR (5)     CONSTRAINT [DF_FixedDeclareItem_NLCode] DEFAULT ('') NOT NULL,
+    [NLCode]      VARCHAR (9)     CONSTRAINT [DF_FixedDeclareItem_NLCode] DEFAULT ('') NOT NULL,
     [HSCode]      VARCHAR (11)    CONSTRAINT [DF_FixedDeclareItem_HSCode] DEFAULT ('') NOT NULL,
     [UnitID]      VARCHAR (8)     CONSTRAINT [DF_FixedDeclareItem_UnitID] DEFAULT ('') NULL,
     [Qty]         NUMERIC (14, 3) CONSTRAINT [DF_FixedDeclareItem_Qty] DEFAULT ((0)) NULL,

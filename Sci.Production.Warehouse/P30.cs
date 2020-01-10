@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
 using Sci.Production.PublicForm;
 using Sci.Production.PublicPrg;
 using System;
@@ -163,6 +164,17 @@ WHERE   StockType='{dr["tostocktype"]}'
         currentrow.EndEdit();
     }
 };
+
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr = gridRel.GetDataRow(e.RowIndex);
+                    dr["tolocation"] = e.FormattedValue;
+                    dr.EndEdit();
+                }
+            };
+
             #region -- Grid2 設定 --
             this.gridRel.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridRel.DataSource = listControlBindingSource2;
@@ -588,7 +600,10 @@ insert into subtransfer_detail
  , ToPOID  , ToSeq1              , ToSeq2       , ToRoll    , ToStockType
  , ToDyelot, Qty                 , ToLocation)
 select *
-from #tmp";
+from #tmp
+;
+
+";
 
             DataTable dtMaster = new DataTable();
             dtMaster.Columns.Add("Poid");

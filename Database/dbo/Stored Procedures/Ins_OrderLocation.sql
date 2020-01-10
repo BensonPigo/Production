@@ -8,34 +8,26 @@ CREATE PROCEDURE [dbo].[Ins_OrderLocation]
 AS
 BEGIN
 	
-	MERGE Order_Location AS t
-	USING (
+	/*MERGE Order_Location AS tar
+	USING (SELECT o.id,sl.Location,sl.Rate,sl.AddName,sl.AddDate,sl.EditName,sl.EditDate
+		FROM orders o
+		inner join Style_Location sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey
+		where o.id = @OrderId)  AS s
+	ON tar.OrderID = s.id and tar.Location = s.Location
+	WHEN NOT MATCHED BY TARGET 
+	    THEN INSERT(OrderId,Location,Rate,AddName,AddDate,EditName,EditDate) VALUES(s.Id,s.Location,s.Rate,s.AddName,s.AddDate,s.EditName,s.EditDate);*/
+
+	declare @cnt int
+	select @cnt = count(*) from Order_Location where OrderId = @OrderId
+	if (@cnt > 0)
+	begin
+		RETURN
+	end
+
+	INSERT into  Order_Location(OrderId,Location,Rate,AddName,AddDate,EditName,EditDate)
 		SELECT o.id,sl.Location,sl.Rate,sl.AddName,sl.AddDate,sl.EditName,sl.EditDate
 		FROM orders o
 		inner join Style_Location sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey
 		where o.id = @OrderId
-	)  AS s
-	ON t.OrderID = s.id and t.Location = s.Location
-	WHEN MATCHED THEN
-	UPDATE SET
-		t.Rate = s.Rate,
-		t.EditName = s.EditName,
-		t.EditDate = s.EditDate
-	WHEN NOT MATCHED BY TARGET THEN
-	    INSERT(OrderId,  Location,  Rate,  AddName,  AddDate,  EditName,  EditDate) 
-		VALUES(   s.Id,s.Location,s.Rate,s.AddName,s.AddDate,s.EditName,s.EditDate);
-
-	--declare @cnt int
-	--select @cnt = count(*) from Order_Location where OrderId = @OrderId
-	--if (@cnt > 0)
-	--begin
-	--	RETURN
-	--end
-
-	--INSERT into  Order_Location(OrderId,Location,Rate,AddName,AddDate,EditName,EditDate)
-	--	SELECT o.id,sl.Location,sl.Rate,sl.AddName,sl.AddDate,sl.EditName,sl.EditDate
-	--	FROM orders o
-	--	inner join Style_Location sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey
-	--	where o.id = @OrderId
 
 END

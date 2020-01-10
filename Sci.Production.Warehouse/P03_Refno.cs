@@ -36,6 +36,9 @@ namespace Sci.Production.Warehouse
                 = string.Format(@"
 Select  a.FtyGroup
         ,b.id
+        ,a.StyleID
+        ,a.SeasonID
+        ,a.BrandID
         , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq --left(b.seq1+' ',3)+b.Seq2 as seq
         --, colorid = isnull(dbo.GetColorMultipleID(a.BrandID,b.colorid),'')
 		, [ColorID]= IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' ,b.SuppColor,dbo.GetColorMultipleID(a.BrandID,b.ColorID)) 
@@ -47,6 +50,7 @@ Select  a.FtyGroup
         , md.inqty - md.outqty + md.adjustqty Balance
         , b.stockunit 
         , md.BLocation
+        , [LobQty] = isnull(md.LobQty,0)
 from orders a WITH (NOLOCK) 
      , po_supp_detail b WITH (NOLOCK) 
 left join fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
@@ -181,6 +185,9 @@ drop table #tmp
             Helper.Controls.Grid.Generator(this.gridRefNo)
                  .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(13))
                  .Text("id", header: "SP#", width: Widths.AnsiChars(13))
+                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(13))
+                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(13))
+                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(13))
                  .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
                  .Text("colorid", header: "Color", width: Widths.AnsiChars(6))
                  .Text("sizespec", header: "Size", width: Widths.AnsiChars(15))
@@ -191,6 +198,7 @@ drop table #tmp
                  .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
                  .Text("BLocation", header: "Bulk Location", width: Widths.AnsiChars(10))
+                 .Text("LobQty", header: "Scarp Qty", width: Widths.AnsiChars(10))
                  ;
         }
 
