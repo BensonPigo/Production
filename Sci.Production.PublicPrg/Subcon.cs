@@ -83,10 +83,6 @@ update ard  set ard.ArtworkPOID = '{artworkPOID}'
             {
                 case "Confirmed":
                     return new DualResult(true);
-                case "":
-                    hintMsg = $"LocalSupp Bank<{suppID}> Data not found";
-                    MyUtility.Msg.WarningBox(hintMsg);
-                    return new DualResult(false, hintMsg);
                 default:
                     if (callFormAction == CallFormAction.Save)
                     {
