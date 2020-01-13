@@ -44,7 +44,7 @@ namespace Sci.Production.PPIC
 
             // 預設查詢為 Exclude Junk
             this.queryfors.SelectedIndex = 0;
-            this.DefaultWhere = string.Empty;
+            this.DefaultWhere = $"(select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
             this.ReloadDatas();
             this.queryfors.SelectedIndexChanged += (s, e) =>
             {
@@ -52,22 +52,20 @@ namespace Sci.Production.PPIC
                 switch (hasJunk)
                 {
                     case "0":
-                        this.DefaultWhere = "Status = 'Approved'";
+                        this.DefaultWhere = $"Status = 'Approved' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
                         break;
                     case "1":
-                        this.DefaultWhere = "Status = 'Confirmed'";
+                        this.DefaultWhere = $"Status = 'Confirmed' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
                         break;
                     case "2":
-                        this.DefaultWhere = "Status = 'Reject'";
+                        this.DefaultWhere = $"Status = 'Reject' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
                         break;
                     case "3":
-                        this.DefaultWhere = "Status = 'Junked'";
+                        this.DefaultWhere = $"Status = 'Junked' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
                         break;
                     case "4":
-                        this.DefaultWhere = string.Empty;
-                        break;
                     default:
-                        this.DefaultWhere = string.Empty;
+                        this.DefaultWhere = $"(select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
                         break;
                 }
                 this.ReloadDatas();
