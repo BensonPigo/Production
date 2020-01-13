@@ -30,13 +30,11 @@
         {
             this.labelCode = new Sci.Win.UI.Label();
             this.labelDescription = new Sci.Win.UI.Label();
-            this.labelGroupID = new Sci.Win.UI.Label();
             this.labelArtworkType = new Sci.Win.UI.Label();
             this.labelMachineAllowance = new Sci.Win.UI.Label();
             this.labelManualAllowance = new Sci.Win.UI.Label();
             this.displayCode = new Sci.Win.UI.DisplayBox();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
-            this.displayGroupID = new Sci.Win.UI.DisplayBox();
             this.displayArtworkType = new Sci.Win.UI.DisplayBox();
             this.numMachineAllowance = new Sci.Win.UI.NumericBox();
             this.numManualAllowance = new Sci.Win.UI.NumericBox();
@@ -67,13 +65,11 @@
             this.detailcont.Controls.Add(this.numManualAllowance);
             this.detailcont.Controls.Add(this.numMachineAllowance);
             this.detailcont.Controls.Add(this.displayArtworkType);
-            this.detailcont.Controls.Add(this.displayGroupID);
             this.detailcont.Controls.Add(this.displayDescription);
             this.detailcont.Controls.Add(this.displayCode);
             this.detailcont.Controls.Add(this.labelManualAllowance);
             this.detailcont.Controls.Add(this.labelMachineAllowance);
             this.detailcont.Controls.Add(this.labelArtworkType);
-            this.detailcont.Controls.Add(this.labelGroupID);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Size = new System.Drawing.Size(829, 357);
@@ -110,7 +106,7 @@
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(125, 23);
             this.labelCode.TabIndex = 0;
-            this.labelCode.Text = "Code";
+            this.labelCode.Text = "ST/MC type";
             // 
             // labelDescription
             // 
@@ -120,17 +116,9 @@
             this.labelDescription.TabIndex = 1;
             this.labelDescription.Text = "Description";
             // 
-            // labelGroupID
-            // 
-            this.labelGroupID.Location = new System.Drawing.Point(30, 99);
-            this.labelGroupID.Name = "labelGroupID";
-            this.labelGroupID.Size = new System.Drawing.Size(125, 23);
-            this.labelGroupID.TabIndex = 2;
-            this.labelGroupID.Text = "Machine Group";
-            // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Location = new System.Drawing.Point(30, 134);
+            this.labelArtworkType.Location = new System.Drawing.Point(30, 103);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(125, 23);
             this.labelArtworkType.TabIndex = 3;
@@ -138,7 +126,7 @@
             // 
             // labelMachineAllowance
             // 
-            this.labelMachineAllowance.Location = new System.Drawing.Point(30, 169);
+            this.labelMachineAllowance.Location = new System.Drawing.Point(30, 138);
             this.labelMachineAllowance.Name = "labelMachineAllowance";
             this.labelMachineAllowance.Size = new System.Drawing.Size(125, 23);
             this.labelMachineAllowance.TabIndex = 4;
@@ -146,7 +134,7 @@
             // 
             // labelManualAllowance
             // 
-            this.labelManualAllowance.Location = new System.Drawing.Point(30, 204);
+            this.labelManualAllowance.Location = new System.Drawing.Point(30, 173);
             this.labelManualAllowance.Name = "labelManualAllowance";
             this.labelManualAllowance.Size = new System.Drawing.Size(125, 23);
             this.labelManualAllowance.TabIndex = 5;
@@ -172,22 +160,12 @@
             this.displayDescription.Size = new System.Drawing.Size(380, 23);
             this.displayDescription.TabIndex = 1;
             // 
-            // displayGroupID
-            // 
-            this.displayGroupID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayGroupID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineGroupID", true));
-            this.displayGroupID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayGroupID.Location = new System.Drawing.Point(159, 99);
-            this.displayGroupID.Name = "displayGroupID";
-            this.displayGroupID.Size = new System.Drawing.Size(50, 23);
-            this.displayGroupID.TabIndex = 2;
-            // 
             // displayArtworkType
             // 
             this.displayArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ArtworkTypeID", true));
             this.displayArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayArtworkType.Location = new System.Drawing.Point(159, 134);
+            this.displayArtworkType.Location = new System.Drawing.Point(159, 103);
             this.displayArtworkType.Name = "displayArtworkType";
             this.displayArtworkType.Size = new System.Drawing.Size(140, 23);
             this.displayArtworkType.TabIndex = 3;
@@ -198,7 +176,7 @@
             this.numMachineAllowance.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineAllow", true));
             this.numMachineAllowance.DecimalPlaces = 2;
             this.numMachineAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numMachineAllowance.Location = new System.Drawing.Point(159, 169);
+            this.numMachineAllowance.Location = new System.Drawing.Point(159, 138);
             this.numMachineAllowance.Name = "numMachineAllowance";
             this.numMachineAllowance.NullValue = new decimal(new int[] {
             0,
@@ -219,7 +197,7 @@
             this.numManualAllowance.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ManAllow", true));
             this.numManualAllowance.DecimalPlaces = 2;
             this.numManualAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numManualAllowance.Location = new System.Drawing.Point(159, 204);
+            this.numManualAllowance.Location = new System.Drawing.Point(159, 173);
             this.numManualAllowance.Name = "numManualAllowance";
             this.numManualAllowance.NullValue = new decimal(new int[] {
             0,
@@ -236,7 +214,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(212, 169);
+            this.label9.Location = new System.Drawing.Point(212, 138);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(18, 23);
             this.label9.TabIndex = 12;
@@ -244,7 +222,7 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(212, 204);
+            this.label10.Location = new System.Drawing.Point(212, 173);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
             this.label10.TabIndex = 13;
@@ -297,7 +275,8 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B05";
-            this.Text = "B05. Machine Type";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
+            this.Text = "B05. ST/MC type";
             this.UniqueExpress = "ID";
             this.WorkAlias = "MachineType";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -321,13 +300,11 @@
         private Win.UI.NumericBox numManualAllowance;
         private Win.UI.NumericBox numMachineAllowance;
         private Win.UI.DisplayBox displayArtworkType;
-        private Win.UI.DisplayBox displayGroupID;
         private Win.UI.DisplayBox displayDescription;
         private Win.UI.DisplayBox displayCode;
         private Win.UI.Label labelManualAllowance;
         private Win.UI.Label labelMachineAllowance;
         private Win.UI.Label labelArtworkType;
-        private Win.UI.Label labelGroupID;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
         private Win.UI.Button btnThreadRatio;

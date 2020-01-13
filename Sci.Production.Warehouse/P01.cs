@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
             : this(menuitem)
         {
             this.Text = history != "Y" ? this.Text : this.Text + " (History)";
-            btnCloseMTL.Text = history != "Y" ? btnCloseMTL.Text : "Transfer Bulk to Scrap";
+            btnCloseMTL.Text = history != "Y" ? btnCloseMTL.Text : "Re-Transfer Mtl. to Scrap";
             this.DefaultFilter = history != "Y" ? string.Format("IsForecast = 0 and Whseclose is null")
                 : string.Format("IsForecast = 0 and Whseclose is not null");
             dataType = history;
@@ -87,24 +87,42 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             #region 新增Batch Shipment Finished按鈕
             Sci.Win.UI.Button btnBatchClose = new Sci.Win.UI.Button();
-            btnBatchClose.Text = "Batch close R/MTL";
+            if (this.dataType == "Y")
+            {
+                btnBatchClose.Text = "Batch Re-Transfer Mtl. to Scrap";
+                btnBatchClose.Size = new Size(260, 30);//預設是(80,30)
+            }
+            else
+            {
+                btnBatchClose.Text = "Batch close R/MTL";
+                btnBatchClose.Size = new Size(180, 30);//預設是(80,30)
+            }
             btnBatchClose.Click += new EventHandler(btnBatchClose_Click);
             browsetop.Controls.Add(btnBatchClose);
-            btnBatchClose.Size = new Size(180, 30);//預設是(80,30)
-            btnBatchClose.Visible = dataType != "Y";
+           
             #endregion
 
         }
 
         private void btnBatchClose_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P01_BatchCloseRowMaterial();
-            this.ShowWaitMessage("Data Loading....");
-            frm.QueryData(true);
-            this.HideWaitMessage();
-            frm.ShowDialog(this);
-            ReloadDatas();
-            this.RenewData();
+            if (this.dataType == "Y")
+            {
+                var frm = new Sci.Production.Warehouse.P01_BatchReTransferMtlToScrap();
+                frm.ShowDialog(this);
+                ReloadDatas();
+                this.RenewData();
+            }
+            else
+            {
+                var frm = new Sci.Production.Warehouse.P01_BatchCloseRowMaterial();
+                this.ShowWaitMessage("Data Loading....");
+                frm.QueryData(true);
+                this.HideWaitMessage();
+                frm.ShowDialog(this);
+                ReloadDatas();
+                this.RenewData();
+            }
         }
 
         protected override void OnDetailEntered()
@@ -495,6 +513,15 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
 
             if (dataType != "Y")
             {
+                #region 檢查B倉是否還有資料Lock
+                bool existsFtyInventoryLock = MyUtility.Check.Seek($"select 1 from FtyInventory with (nolock) where POID = '{dr["poid"].ToString()}' and StockType='B' and Lock = 1");
+                if (existsFtyInventoryLock)
+                {
+                    MyUtility.Msg.WarningBox("Still lock material. can not do close.");
+                    return;
+                }
+                #endregion
+
                 DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to close this R/Mtl?");
                 if (dResult.ToString().ToUpper() == "NO") return;
 
@@ -531,8 +558,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             }
             else
             {
-                var frm = new Sci.Win.Tems.Input6(null);
-                frm = new Sci.Production.Warehouse.P25(null, CurrentMaintain["poid"].ToString());
+                var frm = new P01_ReTransferMtlToScrap(CurrentMaintain["poid"].ToString());
                 frm.ShowDialog(this);
             }
         }

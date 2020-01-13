@@ -40,6 +40,10 @@
             this.txtPONo = new Sci.Win.UI.TextBox();
             this.labTransDate = new Sci.Win.UI.Label();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.numTTLCTNQty = new Sci.Win.UI.NumericBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numSelectQty = new Sci.Win.UI.NumericBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.btnImportFromBarcode = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -47,13 +51,6 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.txtCFALocation = new Sci.Production.Class.txtCFALocation();
-            this.btnUpdateAllLocation = new Sci.Win.UI.Button();
-            this.labelLocationNo = new Sci.Win.UI.Label();
-            this.numTTLCTNQty = new Sci.Win.UI.NumericBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.numSelectQty = new Sci.Win.UI.NumericBox();
-            this.label1 = new Sci.Win.UI.Label();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
@@ -179,19 +176,74 @@
             this.panel7.Controls.Add(this.label2);
             this.panel7.Controls.Add(this.numSelectQty);
             this.panel7.Controls.Add(this.label1);
-            this.panel7.Controls.Add(this.txtCFALocation);
-            this.panel7.Controls.Add(this.btnUpdateAllLocation);
-            this.panel7.Controls.Add(this.labelLocationNo);
             this.panel7.Controls.Add(this.btnImportFromBarcode);
             this.panel7.Location = new System.Drawing.Point(0, 64);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(864, 42);
             this.panel7.TabIndex = 41;
             // 
+            // numTTLCTNQty
+            // 
+            this.numTTLCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTTLCTNQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTTLCTNQty.IsSupportEditMode = false;
+            this.numTTLCTNQty.Location = new System.Drawing.Point(272, 10);
+            this.numTTLCTNQty.Name = "numTTLCTNQty";
+            this.numTTLCTNQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTTLCTNQty.ReadOnly = true;
+            this.numTTLCTNQty.Size = new System.Drawing.Size(40, 23);
+            this.numTTLCTNQty.TabIndex = 34;
+            this.numTTLCTNQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(169, 10);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(100, 23);
+            this.label2.TabIndex = 33;
+            this.label2.Text = "Total CTN Qty:";
+            // 
+            // numSelectQty
+            // 
+            this.numSelectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numSelectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numSelectQty.IsSupportEditMode = false;
+            this.numSelectQty.Location = new System.Drawing.Point(126, 10);
+            this.numSelectQty.Name = "numSelectQty";
+            this.numSelectQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numSelectQty.ReadOnly = true;
+            this.numSelectQty.Size = new System.Drawing.Size(40, 23);
+            this.numSelectQty.TabIndex = 32;
+            this.numSelectQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(7, 10);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(116, 23);
+            this.label1.TabIndex = 31;
+            this.label1.Text = "Selected CTN Qty";
+            // 
             // btnImportFromBarcode
             // 
             this.btnImportFromBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromBarcode.Location = new System.Drawing.Point(677, 3);
+            this.btnImportFromBarcode.Location = new System.Drawing.Point(331, 3);
             this.btnImportFromBarcode.Name = "btnImportFromBarcode";
             this.btnImportFromBarcode.Size = new System.Drawing.Size(176, 30);
             this.btnImportFromBarcode.TabIndex = 7;
@@ -263,95 +315,6 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // txtCFALocation
-            // 
-            this.txtCFALocation.BackColor = System.Drawing.Color.White;
-            this.txtCFALocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCFALocation.IsSupportEditMode = false;
-            this.txtCFALocation.IsSupportSytsemContextMenu = false;
-            this.txtCFALocation.Location = new System.Drawing.Point(103, 10);
-            this.txtCFALocation.M = null;
-            this.txtCFALocation.MDivisionObjectName = null;
-            this.txtCFALocation.Name = "txtCFALocation";
-            this.txtCFALocation.Size = new System.Drawing.Size(80, 23);
-            this.txtCFALocation.TabIndex = 30;
-            // 
-            // btnUpdateAllLocation
-            // 
-            this.btnUpdateAllLocation.Location = new System.Drawing.Point(191, 6);
-            this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
-            this.btnUpdateAllLocation.Size = new System.Drawing.Size(159, 30);
-            this.btnUpdateAllLocation.TabIndex = 28;
-            this.btnUpdateAllLocation.Text = "Update All Location";
-            this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.BtnUpdateAllLocation_Click);
-            // 
-            // labelLocationNo
-            // 
-            this.labelLocationNo.Location = new System.Drawing.Point(8, 10);
-            this.labelLocationNo.Name = "labelLocationNo";
-            this.labelLocationNo.Size = new System.Drawing.Size(92, 23);
-            this.labelLocationNo.TabIndex = 29;
-            this.labelLocationNo.Text = "Location No.";
-            // 
-            // numTTLCTNQty
-            // 
-            this.numTTLCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTTLCTNQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTTLCTNQty.IsSupportEditMode = false;
-            this.numTTLCTNQty.Location = new System.Drawing.Point(618, 10);
-            this.numTTLCTNQty.Name = "numTTLCTNQty";
-            this.numTTLCTNQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTTLCTNQty.ReadOnly = true;
-            this.numTTLCTNQty.Size = new System.Drawing.Size(40, 23);
-            this.numTTLCTNQty.TabIndex = 34;
-            this.numTTLCTNQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(515, 10);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 23);
-            this.label2.TabIndex = 33;
-            this.label2.Text = "Total CTN Qty:";
-            // 
-            // numSelectQty
-            // 
-            this.numSelectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numSelectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numSelectQty.IsSupportEditMode = false;
-            this.numSelectQty.Location = new System.Drawing.Point(472, 10);
-            this.numSelectQty.Name = "numSelectQty";
-            this.numSelectQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numSelectQty.ReadOnly = true;
-            this.numSelectQty.Size = new System.Drawing.Size(40, 23);
-            this.numSelectQty.TabIndex = 32;
-            this.numSelectQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(353, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(116, 23);
-            this.label1.TabIndex = 31;
-            this.label1.Text = "Selected CTN Qty";
-            // 
             // P23
             // 
             this.ClientSize = new System.Drawing.Size(867, 550);
@@ -398,9 +361,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.DateRange dateTransferDate;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private Class.txtCFALocation txtCFALocation;
-        private Win.UI.Button btnUpdateAllLocation;
-        private Win.UI.Label labelLocationNo;
         private Win.UI.NumericBox numTTLCTNQty;
         private Win.UI.Label label2;
         private Win.UI.NumericBox numSelectQty;

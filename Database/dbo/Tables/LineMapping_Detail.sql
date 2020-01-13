@@ -18,7 +18,8 @@
     [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
     [ThreadColor]   NVARCHAR    NULL,
     [IsPPA ] BIT NULL, 
-    [ActCycle] NUMERIC(7, 2) NULL, 
+    [ActCycle] NUMERIC(7, 2) NULL,  
+    [MasterPlusGroup] VARCHAR(4) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

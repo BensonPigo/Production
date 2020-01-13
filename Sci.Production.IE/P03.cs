@@ -8,6 +8,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Linq;
+using Sci.Production.Class;
 
 namespace Sci.Production.IE
 {
@@ -59,6 +60,7 @@ select  ld.*
         , e.Name as EmployeeName
         , e.Skill as EmployeeSkill
         , iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+        ,o.MasterPlusGroup
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -110,6 +112,8 @@ order by ld.No, ld.GroupKey", masterID);
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Notice = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
+
+            celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell();
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
@@ -202,7 +206,7 @@ order by ld.No, ld.GroupKey", masterID);
                 }
             };
             #endregion
-            #region Machine Type的按右鍵與Validating
+            #region ST/MC type的按右鍵與Validating
             machine.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode)
@@ -257,7 +261,7 @@ order by ld.No, ld.GroupKey", masterID);
                             {
                                 dr["MachineTypeID"] = string.Empty;
                                 e.Cancel = true;
-                                MyUtility.Msg.WarningBox(string.Format("< Machine Type: {0} > not found!!!", e.FormattedValue.ToString()));
+                                MyUtility.Msg.WarningBox(string.Format("< ST/MC type: {0} > not found!!!", e.FormattedValue.ToString()));
                                 return;
                             }
                         }
@@ -473,7 +477,8 @@ order by ld.No, ld.GroupKey", masterID);
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
             .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: ppa)
-            .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
+            .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), settings: machine)
+            .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(10), settings: txtSubReason)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
@@ -762,6 +767,35 @@ order by ld.No, ld.GroupKey", masterID);
             this.txtStyleComboType.BackColor = this.txtStyleID.BackColor;
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            if (this.detailgridbs.DataSource != null)
+            {
+                DataTable detail = (DataTable)this.detailgridbs.DataSource;
+
+                string updCmd = string.Empty;
+                foreach (DataRow item in detail.Rows)
+                {
+                    updCmd += $@"
+UPDATE LineMapping_Detail
+SET MasterPlusGroup = '{item["MasterPlusGroup"]}'
+WHERE Ukey={item["Ukey"]}
+
+";
+                }
+
+                DualResult reusult = DBProxy.Current.Execute(null, updCmd);
+                if (!reusult)
+                {
+                    this.ShowErr(reusult);
+                }
+
+            }
         }
 
         /// <summary>
@@ -1164,6 +1198,7 @@ select ID = null
        , ld.isppa
        , ld.Threadcolor
        , ld.ActCycle
+       , ld.MasterPlusGroup
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -1280,6 +1315,7 @@ select
 	,EmployeeSkill = ''
 	,Efficiency = 100
 	,IsPPA = 0
+    ,[MasterPlusGroup]=''
 from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
 union all
 ";
@@ -1307,6 +1343,7 @@ select ID = null
 	   , EmployeeSkill = ''
 	   , Efficiency = 100
        , IsPPA  = iif(td.SMV > 0,0,1)
+       ,o.MasterPlusGroup
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where td.ID = {timeStudy["ID"]} ";
@@ -1337,6 +1374,7 @@ select
 	,EmployeeSkill = ''
 	,Efficiency = 100
 	,IsPPA = 0
+    ,[MasterPlusGroup]=''
 from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Inspection'
 ";
             }
@@ -1367,6 +1405,7 @@ select
 	,EmployeeSkill = ''
 	,Efficiency = 100
 	,IsPPA = 0
+    ,[MasterPlusGroup]=''
 from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Pressing'
 ";
             }
@@ -1397,6 +1436,7 @@ select
 	,EmployeeSkill = ''
 	,Efficiency = 100
 	,IsPPA = 0
+    ,[MasterPlusGroup]=''
 from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
 ";
             }

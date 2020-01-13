@@ -248,7 +248,15 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
 
             if (gridData.Rows.Count > 0 && this.chkImportChange.Checked)
             {
-                MyUtility.Msg.WarningBox("WK has been shared expense,  [No Import Charge] shouldn't tick, please double check.");
+                if (MyUtility.Convert.GetDecimal(this.CurrentMaintain["TPEPaidUSD"]) > 0)
+                {
+                    MyUtility.Msg.WarningBox("WK has been shared expense,  [No Import Charge] shouldn't tick, please double check.");
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("[Expense Data] already have data, please reconfirm.");
+                    return false;
+                }
             }
 
             // Arrive Port Date 不可晚於 Arrive W/H Date
@@ -353,7 +361,7 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             callNextForm.ShowDialog(this);
         }
 
-        private void btnBatchUpload_Click(object sender, EventArgs e)
+        private void BtnBatchUpload_Click(object sender, EventArgs e)
         {
             if (!this.Perm.Edit)
             {
