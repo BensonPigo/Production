@@ -2,9 +2,9 @@
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @Date_S DATE = '2019-01-08' --DATEADD(m, DATEDIFF(m,0,GETDATE()),7); --當月8號
+	DECLARE @Date_S DATE = DATEADD(m, DATEDIFF(m,0,GETDATE()),7); --當月8號
 	DECLARE @Date_E DATE = DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6);--隔年7號
-	DECLARE @YearMonth_S date = '2019-01-01' --getdate();--當月
+	DECLARE @YearMonth_S date = getdate();--當月
 	DECLARE @YearMonth_E date = dateadd(m, 11, getdate())--往後推算12個月
 	--重新建立Power BI的Report Table
 	DECLARE @TableNameA VARCHAR(20);
