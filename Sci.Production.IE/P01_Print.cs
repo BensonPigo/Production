@@ -104,6 +104,7 @@ select
 	Sewer=0,
 	Annotation = null,	
 	DescEN = null
+	,[MasterPlusGroup]=''
 from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
 union all
 select 
@@ -120,6 +121,7 @@ select
 	Sewer=0,
 	Annotation = 	null,
 	DescEN = '**Cutting'
+	,[MasterPlusGroup]=''
 from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
 union all
 ";
@@ -130,7 +132,8 @@ td.Annotation
 ,DescEN = case when '{3}' = 'cn' then isnull(od.DescCHS,o.DescEN)
                when '{3}' = 'vn' then isnull(od.DescVI,o.DescEN)
                when '{3}' = 'kh' then isnull(od.DescKH,o.DescEN)
-else o.DescEN end
+ else o.DescEN end
+,o.MasterPlusGroup
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join OperationDesc od on o.ID = od.ID
@@ -159,6 +162,7 @@ select
 	Sewer=0,
 	Annotation = null,	
 	DescEN = null
+	,[MasterPlusGroup]=''
 from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID <> 'Cutting'
 union all
 select
@@ -175,6 +179,7 @@ select
 	Sewer=0,
 	Annotation = null,
 	DescEN = '**Inspection'
+	,[MasterPlusGroup]=''
 from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Inspection'
 union all
 select 
@@ -191,6 +196,7 @@ select
 	Sewer=0,
 	Annotation = null,
 	DescEN = '**Pressing'
+	,[MasterPlusGroup]=''
 from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Pressing'
 union all
 select 	
@@ -207,6 +213,7 @@ select
 	Sewer=0,
 	Annotation = null,
 	DescEN =  '**Packing'
+	,[MasterPlusGroup]=''
 from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
 order by seq
 ";
@@ -306,27 +313,28 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[3, 5] = MyUtility.Convert.GetString(this.masterData["SeasonID"]);
             worksheet.Cells[3, 7] = this.custcdID;
             worksheet.Cells[3, 11] = Convert.ToDateTime(DateTime.Today).ToString("d");
-            worksheet.Cells[4, 12] = MyUtility.Convert.GetString(this.efficiency) + "%";
+            worksheet.Cells[4, 13] = MyUtility.Convert.GetString(this.efficiency) + "%";
             worksheet.Columns[3].ColumnWidth = 18.4;
             // 填內容值
             int intRowsStart = 5;
-            object[,] objArray = new object[1, 12];
+            object[,] objArray = new object[1, 13];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = intRowsStart - 4;
                 objArray[0, 1] = dr["Seq"];
                 objArray[0, 2] = dr["OperationID"];
                 objArray[0, 3] = dr["MachineTypeID"];
-                objArray[0, 4] = dr["Mold"];
-                objArray[0, 5] = dr["DescEN"];
-                objArray[0, 6] = dr["Annotation"];
-                objArray[0, 7] = dr["Frequency"];
-                objArray[0, 8] = dr["SMV"];
-                objArray[0, 9] = dr["PcsPerHour"];
-                objArray[0, 10] = dr["Sewer"];
-                objArray[0, 11] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * (this.efficiency / 100), 1);
+                objArray[0, 4] = dr["MasterPlusGroup"];
+                objArray[0, 5] = dr["Mold"];
+                objArray[0, 6] = dr["DescEN"];
+                objArray[0, 7] = dr["Annotation"];
+                objArray[0, 8] = dr["Frequency"];
+                objArray[0, 9] = dr["SMV"];
+                objArray[0, 10] = dr["PcsPerHour"];
+                objArray[0, 11] = dr["Sewer"];
+                objArray[0, 12] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * (this.efficiency / 100), 1);
 
-                worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -334,8 +342,8 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Range[string.Format("A{0}:B{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[string.Format("A{0}:B{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             worksheet.Cells[intRowsStart, 1] = "Machine:";
-            worksheet.Range[string.Format("C{0}:L{0}", intRowsStart)].Merge(Type.Missing);
-            worksheet.Range[string.Format("C{0}:L{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+            worksheet.Range[string.Format("C{0}:M{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("C{0}:M{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
 
             // 避免machineID為空所產生的錯誤
             if (this.machineID.Length > 2)
@@ -343,8 +351,8 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 worksheet.Cells[intRowsStart, 3] = this.machineID.Substring(0, this.machineID.Length - 2);
             }
 
-            worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 3; // 1: 虛線, 2:實線, 3:粗體線
-            worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
+            worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 3; // 1: 虛線, 2:實線, 3:粗體線
+            worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
 
             intRowsStart++;
             worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
@@ -353,7 +361,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[intRowsStart, 4] = MyUtility.Convert.GetString(this.masterData["TotalSewingTime"]);
             worksheet.Cells[intRowsStart, 5] = "Sec.";
             worksheet.Cells[intRowsStart, 7] = "Prepared by:";
-            worksheet.Range[string.Format("H{0}:L{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("H{0}:M{0}", intRowsStart)].Merge(Type.Missing);
             string cipfrow = string.Empty;
             if (this.chkCutting.Checked || this.chkInspection.Checked || this.chkPacking.Checked || this.chkPressing.Checked)
             {
@@ -401,13 +409,13 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 worksheet.Cells[intRowsStart, 1] = $"Total Time/Pc(Include {chk}):";
                 worksheet.Cells[intRowsStart, 4] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(this.masterData["TotalSewingTime"]) + ttl);
                 worksheet.Cells[intRowsStart, 5] = "Sec.";
-                worksheet.Range[string.Format("H{0}:L{0}", intRowsStart)].Merge(Type.Missing);
+                worksheet.Range[string.Format("H{0}:M{0}", intRowsStart)].Merge(Type.Missing);
                 cipfrow = $"A{intRowsStart}";
             }
 
             intRowsStart++;
-            worksheet.Range[string.Format("A{0}:F{0}", intRowsStart)].Merge(Type.Missing);
-            worksheet.Range[string.Format("A{0}:F{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+            worksheet.Range[string.Format("A{0}:G{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("A{0}:G{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             StringBuilder artwork = new StringBuilder();
             foreach (DataRow dr in this.artworkType.Rows)
             {
@@ -423,7 +431,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[intRowsStart, 4] = MyUtility.Convert.GetString(this.masterData["NumberSewer"]);
             worksheet.Cells[intRowsStart, 5] = "Sewer";
             worksheet.Cells[intRowsStart, 7] = "Approved by:";
-            worksheet.Range[string.Format("H{0}:L{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("H{0}:M{0}", intRowsStart)].Merge(Type.Missing);
 
             intRowsStart++;
             worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
@@ -464,7 +472,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
 
             worksheet.Cells[intRowsStart, 5] = "Pcs";
             worksheet.Cells[intRowsStart, 7] = "Noted by:";
-            worksheet.Range[string.Format("H{0}:L{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("H{0}:M{0}", intRowsStart)].Merge(Type.Missing);
 
             excel.Cells.EntireRow.AutoFit();
             if (!MyUtility.Check.Empty(cipfrow))

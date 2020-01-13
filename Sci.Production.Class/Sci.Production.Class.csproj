@@ -180,6 +180,12 @@
     <Compile Include="txtLocalTPESuppNoConfirm.Designer.cs">
       <DependentUpon>txtLocalTPESuppNoConfirm.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtMachineGroup.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtMachineGroup.designer.cs">
+      <DependentUpon>txtMachineGroup.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtMultiSubconNoConfirm.cs">
       <SubType>Component</SubType>
     </Compile>
