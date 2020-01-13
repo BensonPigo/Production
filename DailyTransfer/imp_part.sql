@@ -803,13 +803,17 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	select	md.id
 			,md.seq
 			,md.TPEApvDate
+			,md.TPEApvName
 			,md.TPEReject
 			,m.status
 	into #tmpMachinePending_Detail
 	from dbo.SciTrade_To_Pms_MachinePending_Detail md
 	inner join dbo.MachinePending m on m.id = md.id
 
-	update t set t.TPEReject = s.TPEReject
+	update t 
+	set t.TPEReject = s.TPEReject
+	,t.TPEApvName = s.TPEApvName 
+	,t.TPEApvDate = s.TPEApvDate 
 	from dbo.MachinePending_Detail t
 	inner join #tmpMachinePending_Detail s on t.id=s.id and t.seq = s.seq
 	where s.status = 'Confirmed' and s.TPEApvDate is not null
