@@ -46,7 +46,7 @@
             this.dateArtworkInLine = new Sci.Win.UI.DateBox();
             this.btnCheckData = new Sci.Win.UI.Button();
             this.comboInHouseOSP = new Sci.Win.UI.ComboBox();
-            this.txtsubconLocalSuppid = new Sci.Production.Class.txtsubcon();
+            this.txtsubconLocalSuppid = new Sci.Production.Class.txtsubconNoConfirm();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.pictureBox2 = new Sci.Win.UI.PictureBox();
@@ -70,7 +70,7 @@
             this.labelOSPInHouse = new Sci.Win.UI.Label();
             this.comboOSPInHouse = new Sci.Win.UI.ComboBox();
             this.labelSupplier = new Sci.Win.UI.Label();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.labelSeason = new Sci.Win.UI.Label();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -840,7 +840,7 @@
         private Win.UI.CheckBox checkInLine;
         private Win.UI.ComboBox comboOSPInHouse;
         private Win.UI.Label labelSupplier;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.Label labelSeason;
         private Class.txtseason txtseason;
         private Class.txtstyle txtstyle;
@@ -852,7 +852,7 @@
         private Win.UI.Label labelFilterEmpty;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.ComboBox comboInHouseOSP;
-        private Class.txtsubcon txtsubconLocalSuppid;
+        private Class.txtsubconNoConfirm txtsubconLocalSuppid;
         private Win.UI.Button btnCheckData;
         private Win.UI.NumericBox numWorkHours;
         private Win.UI.NumericBox numEfficiency;

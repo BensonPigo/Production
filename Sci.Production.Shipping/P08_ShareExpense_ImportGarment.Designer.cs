@@ -45,7 +45,7 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.txtTruck = new Sci.Win.UI.TextBox();
             this.labelTruckNo = new Sci.Win.UI.Label();
-            this.txtSubconForwarder = new Sci.Production.Class.txtsubcon();
+            this.txtSubconForwarder = new Sci.Production.Class.txtsubconNoConfirm();
             this.labelForwarder = new Sci.Win.UI.Label();
             this.dateFCRDate = new Sci.Win.UI.DateRange();
             this.labelFCRDate = new Sci.Win.UI.Label();
@@ -367,7 +367,7 @@
         private Win.UI.Label labelBrand;
         private Win.UI.TextBox txtTruck;
         private Win.UI.Label labelTruckNo;
-        private Class.txtsubcon txtSubconForwarder;
+        private Class.txtsubconNoConfirm txtSubconForwarder;
         private Win.UI.Label labelForwarder;
         private Win.UI.DateRange dateFCRDate;
         private Win.UI.Label labelFCRDate;

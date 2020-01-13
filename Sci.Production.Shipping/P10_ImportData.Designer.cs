@@ -36,7 +36,7 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
-            this.txtSubconForwarder = new Sci.Production.Class.txtsubcon();
+            this.txtSubconForwarder = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.txtshipmode = new Sci.Production.Class.txtshipmode();
@@ -485,7 +485,7 @@
         private Win.UI.Button btnQuery;
         private Win.UI.TextBox txtSPNo;
         private Win.UI.Label labelSPNo;
-        private Class.txtsubcon txtSubconForwarder;
+        private Class.txtsubconNoConfirm txtSubconForwarder;
         private Class.txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.Grid grid2;

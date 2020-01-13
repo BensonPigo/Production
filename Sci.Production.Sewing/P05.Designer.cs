@@ -45,7 +45,7 @@
             this.dateBoxApvDate = new Sci.Win.UI.DateBox();
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtSubConOutFty = new Sci.Production.Class.txtLocalSupp();
+            this.txtSubConOutFty = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -139,7 +139,6 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
@@ -333,6 +332,10 @@
             // 
             this.txtSubConOutFty.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubConOutFty", true));
             this.txtSubConOutFty.DisplayBox1Binding = "";
+            this.txtSubConOutFty.IsIncludeJunk = false;
+            this.txtSubConOutFty.isMisc = false;
+            this.txtSubConOutFty.isShipping = false;
+            this.txtSubConOutFty.isSubcon = false;
             this.txtSubConOutFty.Location = new System.Drawing.Point(128, 10);
             this.txtSubConOutFty.Name = "txtSubConOutFty";
             this.txtSubConOutFty.Size = new System.Drawing.Size(252, 23);
@@ -358,10 +361,11 @@
             this.GridAlias = "SubconOutContract_detail";
             this.GridUniqueKey = "OrderID,ComboType,Article";
             this.IsSupportConfirm = true;
-            this.IsSupportUnconfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "SubConOutFty,ContractNumber";
             this.Name = "P05";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P05.SubconOutContract";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "SubConOutFty,ContractNumber";
@@ -399,7 +403,7 @@
         private Win.UI.Label label1;
         private Win.UI.Label label10;
         private Win.UI.TextBox txtContractnumber;
-        private Class.txtLocalSupp txtSubConOutFty;
+        private Class.txtsubconNoConfirm txtSubConOutFty;
         private Win.UI.TextBox txtRemark;
         private Win.UI.DateBox dateBoxApvDate;
         private Class.txtuser txtuser1;

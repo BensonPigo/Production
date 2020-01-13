@@ -205,7 +205,7 @@ namespace Sci.Production.Class
     {
         public static DataGridViewGeneratorTextColumnSettings GetGridCell(string suppid)
         {
-            cellsbucon ts = new cellsbucon();
+            cellsbuconNoConfirm ts = new cellsbuconNoConfirm();
             // 右鍵彈出功能
 
             ts.EditingMouseDown += (s, e) =>

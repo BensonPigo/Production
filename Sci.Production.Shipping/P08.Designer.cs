@@ -69,7 +69,7 @@
             this.txtSserAccountant = new Sci.Production.Class.txtuser();
             this.txtUserHandle = new Sci.Production.Class.txtuser();
             this.txtpayterm_ftyTerms = new Sci.Production.Class.txtpayterm_fty();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.lbExVoucherID = new Sci.Win.UI.Label();
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             this.labReason = new Sci.Win.UI.Label();
@@ -975,7 +975,7 @@
         private Win.UI.TextBox txtInvoice;
         private Win.UI.TextBox txtRemark;
         private Class.txtpayterm_fty txtpayterm_ftyTerms;
-        private Class.txtsubcon txtSubconSupplier;
+        private Class.txtsubconNoConfirm txtSubconSupplier;
         private Win.UI.ComboBox comboType2;
         private Win.UI.ComboBox comboType;
         private Win.UI.DateBox dateDate;

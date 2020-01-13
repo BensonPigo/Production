@@ -63,7 +63,7 @@
             this.txtuserAccountant = new Sci.Production.Class.txtuser();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.labelTotalQty = new Sci.Win.UI.Label();
             this.numTotalqty = new Sci.Win.UI.NumericBox();
             this.lbExVoucherID = new Sci.Win.UI.Label();
@@ -739,7 +739,7 @@
         private Class.txtartworktype_fty txtartworktype_ftyCategory;
         private Win.UI.DisplayBox displayCurrency;
         private Win.UI.DateBox dateIssueDate;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label label25;

@@ -54,7 +54,7 @@
             this.txtuserApproveName = new Sci.Production.Class.txtuser();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -513,7 +513,7 @@
         private Win.UI.TextBox txtRemark;
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.DateBox dateIssueDate;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DisplayBox displayPONo;
         private Win.UI.Button btnSpecialRecord;
         private Win.UI.Button btnBatchImport;

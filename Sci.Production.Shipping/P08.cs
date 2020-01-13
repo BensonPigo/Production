@@ -490,6 +490,14 @@ where sd.ID = '{0}'", masterID);
             }
             #endregion
 
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["LocalSuppID"].ToString(), Prgs.CallFormAction.Save);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return false;
+            }
+            #endregion
+
             // Supplier與B/L No 如果重複才需要填寫原因, Reason 不可為空，須排除自己這張AP
             if (!MyUtility.Check.Empty(this.txtBLNo.Text))
             {
@@ -915,6 +923,14 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             if (MyUtility.Check.Empty(this.CurrentMaintain["CurrencyID"]) || currencyEmpty)
             {
                 MyUtility.Msg.WarningBox("Currency cannot be empty!!");
+                return;
+            }
+            #endregion
+
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
                 return;
             }
             #endregion

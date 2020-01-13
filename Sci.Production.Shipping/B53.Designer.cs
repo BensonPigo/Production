@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.displayUnit = new Sci.Win.UI.DisplayBox();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.numWeight = new Sci.Win.UI.NumericBox();
             this.labelWeight = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
@@ -297,7 +297,7 @@
         #endregion
 
         private Win.UI.DisplayBox displayUnit;
-        private Class.txtsubcon txtSubconSupplier;
+        private Class.txtsubconNoConfirm txtSubconSupplier;
         private Win.UI.NumericBox numWeight;
         private Win.UI.Label labelWeight;
         private Win.UI.CheckBox checkJunk;

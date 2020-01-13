@@ -47,7 +47,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.btnBatchApprove = new Sci.Win.UI.Button();
             this.txtUnit = new Sci.Production.Class.txtunit_local();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -382,7 +382,7 @@
         private Win.UI.DateBox dateCanvassDate;
         private Win.UI.NumericBox numPrice;
         private Win.UI.DisplayBox displayPrice;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Class.txtbrand txtbrand;
         private Win.UI.EditBox editDescription;
         private Win.UI.TextBox txtCode;
