@@ -59,7 +59,7 @@ From(
 select ID, Qty, BrandID, StyleID, SeasonID, OrderTypeID, ProgramID, Category, CPU
 	, BuyerDelivery, StyleUkey, FactoryID, MDivisionID
 	, [CheckStyle] = case when ForecastSampleGroup in ('D','S') then 0 else 1 end
-	, [SampleGroup] = ForecastSampleGroup, CdCodeID, CurrencyID, AddDate
+	, [SampleGroup] = ForecastSampleGroup, CdCodeID, CurrencyID, AddDate, ForecastCategory
 into #tmp_Forecast
 from Production.dbo.Orders
 where Category = ''
@@ -114,7 +114,7 @@ From(
 		Left join Production.dbo.Order_TmsCost tmsCost on tmsCost.Id = orders.ID
 		Left join #UseArtworkType at on at.id = tmsCost.ArtworkTypeID
 		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate
-		WHERE orders.Category IN ('B', 'S') and Orders.SciDelivery between @Date_S and @Date_E
+		WHERE Orders.Category IN ('B', 'S') and Orders.SciDelivery between @Date_S and @Date_E and Orders.LocalOrder <> '1'
 	) as a
 	PIVOT
 	(
@@ -138,7 +138,7 @@ From(
 		Left join Production.dbo.Style	on Forecast.BrandID=Style.BrandID and Forecast.StyleID =Style.ID and  Forecast.SeasonID = Style.SeasonID
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
 		Left join #UseArtworkType at on at.id = tmsCost.ArtworkTypeID
-		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Forecast.OrderTypeID, Forecast.ProgramID, Forecast.Category, Forecast.BrandID, 'S')) getCPURate
+		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Forecast.OrderTypeID, Forecast.ProgramID, Forecast.ForecastCategory, Forecast.BrandID, 'S')) getCPURate
 		WHERE Forecast.ForecastCategory IN ('B', 'S') and Forecast.BuyerDelivery between @Date_S and @Date_E
 	) as a
 	PIVOT
@@ -289,6 +289,7 @@ outer apply (select * from Production.dbo.GetOrderAmount(orders.ID)) goa
 inner JOIN #atSource atSource on atSource.ID = Orders.ID
 WHERE orders.Category IN ('B', 'S')
 and Orders.SciDelivery between @Date_S and @Date_E
+and Orders.LocalOrder <> '1'
 
 UNION ALL
 
@@ -307,7 +308,7 @@ Select
 	when day(Forecast.BuyerDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, Forecast.BuyerDelivery, 112),6) + '01'
 	when day(Forecast.BuyerDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, Forecast.BuyerDelivery, 112),6) + '02'
 	else ''	end,
-	[Category]          = IIF(Forecast.Category = 'S', ddlSampleGroup.Name, 'Bulk fc'),
+	[Category]          = IIF(Forecast.ForecastCategory = 'S', ddlSampleGroup.Name, 'Bulk fc'),
 	[Dev. Sample]		= IIF(OrderType.isDevSample = 1, 'Y', ''), 
 	[PONO]              = '',
 	[POID]              = '',
@@ -492,7 +493,9 @@ From #tmpOrderList
 		Left join Production.dbo.ArtworkType at on at.id = tmsCost.ArtworkTypeID
 		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate
 
-		WHERE orders.Category IN ('B', 'FC', 'S') and Orders.SciDelivery between @Date_S and @Date_E
+		WHERE Orders.Category IN ('B', 'FC', 'S') and Orders.SciDelivery between @Date_S and @Date_E
+		and Orders.LocalOrder <> '1'
+
 	UNION
         --Forecast
 		Select Forecast.ID
@@ -509,7 +512,7 @@ From #tmpOrderList
 		Left join Production.dbo.Style	on Forecast.BrandID=Style.BrandID and Forecast.StyleID =Style.ID and  Forecast.SeasonID = Style.SeasonID
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
 		Left join Production.dbo.ArtworkType at on at.id = tmsCost.ArtworkTypeID
-		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Forecast.OrderTypeID, Forecast.ProgramID, Forecast.Category, Forecast.BrandID, 'S')) getCPURate
+		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Forecast.OrderTypeID, Forecast.ProgramID, Forecast.ForecastCategory, Forecast.BrandID, 'S')) getCPURate
 		WHERE Forecast.ForecastCategory IN ('B', 'S') and Forecast.BuyerDelivery between @Date_S and @Date_E
 	UNION
 		--FactoryOrder
