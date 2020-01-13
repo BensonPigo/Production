@@ -687,7 +687,7 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             string description = $@"== this is my test mail (Testing) ==
 {status} SP#{this.CurrentMaintain["Orderid"]}-{factory} request change qty, please check, apply id# - {this.CurrentMaintain["ID"]}";
 
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
+            var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, true, true);
             email.ShowDialog(this);
         }
 
