@@ -39,26 +39,27 @@
             this.radioANNEX = new Sci.Win.UI.RadioButton();
             this.radioEachConsumption = new Sci.Win.UI.RadioButton();
             this.radioFormForCustomSystem = new Sci.Win.UI.RadioButton();
+            this.lbContractNo = new Sci.Win.UI.Label();
+            this.txtCustomsContract1 = new Sci.Production.Class.txtCustomsContract();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(392, 12);
+            this.print.Location = new System.Drawing.Point(379, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(392, 48);
+            this.toexcel.Location = new System.Drawing.Point(379, 48);
             this.toexcel.TabIndex = 4;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(392, 84);
+            this.close.Location = new System.Drawing.Point(379, 84);
             this.close.TabIndex = 5;
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(20, 12);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(83, 23);
@@ -67,8 +68,7 @@
             // 
             // labelCustomSPNo
             // 
-            this.labelCustomSPNo.Lines = 0;
-            this.labelCustomSPNo.Location = new System.Drawing.Point(20, 48);
+            this.labelCustomSPNo.Location = new System.Drawing.Point(20, 37);
             this.labelCustomSPNo.Name = "labelCustomSPNo";
             this.labelCustomSPNo.Size = new System.Drawing.Size(83, 23);
             this.labelCustomSPNo.TabIndex = 95;
@@ -76,6 +76,20 @@
             // 
             // dateDate
             // 
+            // 
+            // 
+            // 
+            this.dateDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateDate.DateBox1.Name = "";
+            this.dateDate.DateBox1.Size = new System.Drawing.Size(114, 23);
+            this.dateDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateDate.DateBox2.Location = new System.Drawing.Point(136, 0);
+            this.dateDate.DateBox2.Name = "";
+            this.dateDate.DateBox2.Size = new System.Drawing.Size(114, 23);
+            this.dateDate.DateBox2.TabIndex = 1;
             this.dateDate.IsRequired = false;
             this.dateDate.Location = new System.Drawing.Point(107, 12);
             this.dateDate.Name = "dateDate";
@@ -86,7 +100,7 @@
             // 
             this.txtCustomSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtCustomSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCustomSPNoStart.Location = new System.Drawing.Point(107, 48);
+            this.txtCustomSPNoStart.Location = new System.Drawing.Point(107, 37);
             this.txtCustomSPNoStart.Name = "txtCustomSPNoStart";
             this.txtCustomSPNoStart.Size = new System.Drawing.Size(80, 23);
             this.txtCustomSPNoStart.TabIndex = 1;
@@ -95,7 +109,7 @@
             // 
             this.txtCustomSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtCustomSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCustomSPNoEnd.Location = new System.Drawing.Point(210, 48);
+            this.txtCustomSPNoEnd.Location = new System.Drawing.Point(213, 37);
             this.txtCustomSPNoEnd.Name = "txtCustomSPNoEnd";
             this.txtCustomSPNoEnd.Size = new System.Drawing.Size(80, 23);
             this.txtCustomSPNoEnd.TabIndex = 2;
@@ -103,8 +117,7 @@
             // label3
             // 
             this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(189, 48);
+            this.label3.Location = new System.Drawing.Point(190, 38);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(20, 23);
             this.label3.TabIndex = 99;
@@ -116,8 +129,7 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Lines = 0;
-            this.labelReportType.Location = new System.Drawing.Point(20, 84);
+            this.labelReportType.Location = new System.Drawing.Point(20, 87);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(83, 23);
             this.labelReportType.TabIndex = 100;
@@ -128,7 +140,7 @@
             this.radioPanel1.Controls.Add(this.radioANNEX);
             this.radioPanel1.Controls.Add(this.radioEachConsumption);
             this.radioPanel1.Controls.Add(this.radioFormForCustomSystem);
-            this.radioPanel1.Location = new System.Drawing.Point(107, 80);
+            this.radioPanel1.Location = new System.Drawing.Point(107, 87);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(193, 89);
             this.radioPanel1.TabIndex = 3;
@@ -149,7 +161,7 @@
             // 
             this.radioEachConsumption.AutoSize = true;
             this.radioEachConsumption.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioEachConsumption.Location = new System.Drawing.Point(4, 32);
+            this.radioEachConsumption.Location = new System.Drawing.Point(4, 33);
             this.radioEachConsumption.Name = "radioEachConsumption";
             this.radioEachConsumption.Size = new System.Drawing.Size(142, 21);
             this.radioEachConsumption.TabIndex = 1;
@@ -169,9 +181,28 @@
             this.radioFormForCustomSystem.Text = "Form for custom system";
             this.radioFormForCustomSystem.UseVisualStyleBackColor = true;
             // 
+            // lbContractNo
+            // 
+            this.lbContractNo.Location = new System.Drawing.Point(20, 62);
+            this.lbContractNo.Name = "lbContractNo";
+            this.lbContractNo.Size = new System.Drawing.Size(83, 23);
+            this.lbContractNo.TabIndex = 101;
+            this.lbContractNo.Text = "Contract no.";
+            // 
+            // txtCustomsContract1
+            // 
+            this.txtCustomsContract1.BackColor = System.Drawing.Color.White;
+            this.txtCustomsContract1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustomsContract1.Location = new System.Drawing.Point(107, 62);
+            this.txtCustomsContract1.Name = "txtCustomsContract1";
+            this.txtCustomsContract1.Size = new System.Drawing.Size(186, 23);
+            this.txtCustomsContract1.TabIndex = 102;
+            // 
             // B42_Print
             // 
-            this.ClientSize = new System.Drawing.Size(484, 205);
+            this.ClientSize = new System.Drawing.Size(474, 221);
+            this.Controls.Add(this.txtCustomsContract1);
+            this.Controls.Add(this.lbContractNo);
             this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.labelReportType);
             this.Controls.Add(this.label3);
@@ -182,7 +213,11 @@
             this.Controls.Add(this.labelDate);
             this.IsSupportToPrint = false;
             this.Name = "B42_Print";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "Print";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -194,6 +229,8 @@
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.labelReportType, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
+            this.Controls.SetChildIndex(this.lbContractNo, 0);
+            this.Controls.SetChildIndex(this.txtCustomsContract1, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -214,5 +251,7 @@
         private Win.UI.RadioButton radioANNEX;
         private Win.UI.RadioButton radioEachConsumption;
         private Win.UI.RadioButton radioFormForCustomSystem;
+        private Win.UI.Label lbContractNo;
+        private Class.txtCustomsContract txtCustomsContract1;
     }
 }
