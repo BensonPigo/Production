@@ -71,7 +71,7 @@
             this.btnImportData = new Sci.Win.UI.Button();
             this.txtUserHandle = new Sci.Production.Class.txtuser();
             this.txtdropdownlistContainerType = new Sci.Production.Class.txtdropdownlist();
-            this.txtSubconForwarder = new Sci.Production.Class.txtsubcon();
+            this.txtSubconForwarder = new Sci.Production.Class.txtsubconNoConfirm();
             this.labSisFtyWk = new Sci.Win.UI.Label();
             this.txtSisFtyWK = new Sci.Win.UI.TextBox();
             this.labShipper = new Sci.Win.UI.Label();
@@ -973,7 +973,7 @@
         private Win.UI.TextBox txtPortofLoading;
         private Win.UI.TextBox txtConsignee;
         private Win.UI.TextBox txtInvoiceNo;
-        private Class.txtsubcon txtSubconForwarder;
+        private Class.txtsubconNoConfirm txtSubconForwarder;
         private Win.UI.DisplayBox displayFtyWKNo;
         private Win.UI.Label labelPortofDischarge;
         private Win.UI.Label labelPortofLoading;

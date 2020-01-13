@@ -57,10 +57,9 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
                 if (!MyUtility.Check.Seek($@"
-select DISTINCT l.ID
+select l.ID
 from dbo.LocalSupp l WITH (NOLOCK) 
-left join LocalSupp_Bank lb WITH (NOLOCK) ON l.id=lb.id 
-WHERE lb.Status= 'Confirmed' AND  l.ID = '{textValue}'
+WHERE  l.ID = '{textValue}'
 "))
                 {
                     this.textBox1.Text = "";
@@ -79,10 +78,9 @@ WHERE lb.Status= 'Confirmed' AND  l.ID = '{textValue}'
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem($@"
-select DISTINCT l.ID,l.Name,l.Abb 
+select l.ID,l.Name,l.Abb 
 from LocalSupp l WITH (NOLOCK) 
-left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-WHERE l.Junk=0 and lb.Status= 'Confirmed'  
+WHERE l.Junk=0 
 order by l.ID"
 , "8,30,20", this.textBox1.Text);
             item.Width = 650;

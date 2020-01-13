@@ -45,7 +45,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtT1 = new Sci.Production.Class.txtsubcon();
+            this.txtT1 = new Sci.Production.Class.txtsubconNoConfirm();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -366,6 +366,6 @@
         private Class.txtbrand txtbrand;
         private Class.txtseason txtseason;
         private Class.txtstyle txtstyle;
-        private Class.txtsubcon txtT1;
+        private Class.txtsubconNoConfirm txtT1;
     }
 }

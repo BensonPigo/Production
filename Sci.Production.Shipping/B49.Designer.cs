@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.label17 = new Sci.Win.UI.Label();
             this.label16 = new Sci.Win.UI.Label();
             this.numKGPcs = new Sci.Win.UI.NumericBox();
@@ -468,7 +468,7 @@
         }
 
         #endregion
-        private Class.txtsubcon txtSubconSupplier;
+        private Class.txtsubconNoConfirm txtSubconSupplier;
         private Win.UI.Label label17;
         private Win.UI.Label label16;
         private Win.UI.NumericBox numKGPcs;

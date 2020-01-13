@@ -207,6 +207,14 @@ namespace Sci.Production.Subcon
 
             #endregion
 
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Save);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return false;
+            }
+            #endregion
+
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty =0 or refno =' '"))
             {
                 row.Delete();
@@ -1349,7 +1357,13 @@ where refno = '{0}'
         protected override void ClickCheck()
         {
             base.ClickCheck();
-
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return;
+            }
+            #endregion
 
             string sql = string.Format("UPDATE Localpo SET Status='Locked',LockName='{0}', LockDate = GETDATE() , EditName = '{0}' , EditDate = GETDATE() WHERE ID = '{1}'"
                         , Env.User.UserID, CurrentMaintain["ID"]);
@@ -1435,6 +1449,13 @@ where refno = '{0}'
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return;
+            }
+            #endregion
 
             string sqlupd3 = string.Format("update Localpo set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                                "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);

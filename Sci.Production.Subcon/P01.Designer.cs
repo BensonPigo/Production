@@ -63,7 +63,7 @@
             this.txtuserApproveName = new Sci.Production.Class.txtuser();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.labelTotalPoQty = new Sci.Win.UI.Label();
             this.numTotalPOQty = new Sci.Win.UI.NumericBox();
             this.btnIrrPriceReason = new Sci.Win.UI.Button();
@@ -865,7 +865,7 @@
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.DisplayBox displayCurrency;
         private Win.UI.DateBox dateIssueDate;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DisplayBox displayPONo;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label label17;

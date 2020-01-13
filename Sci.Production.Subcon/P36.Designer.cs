@@ -69,7 +69,7 @@
             this.displaySettleDate = new Sci.Win.UI.DisplayBox();
             this.dateReceiveDate = new Sci.Win.UI.DateBox();
             this.txtuserAmtReceived = new Sci.Production.Class.txtuser();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtuserSMR = new Sci.Production.Class.txtuser();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
@@ -892,7 +892,7 @@
         private Win.UI.NumericBox numAmount;
         private Win.UI.Label labelAmount;
         private Win.UI.Label labelSupplier;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.Button btnDebitSchedule;
         private Win.UI.DisplayBox displayFactory;
         private Win.UI.Label labelFactory;

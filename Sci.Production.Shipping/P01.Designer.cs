@@ -156,9 +156,9 @@
             this.displayTPEEditDate = new Sci.Win.UI.DisplayBox();
             this.displayUpdTPEDate = new Sci.Win.UI.DisplayBox();
             this.txtResponsibilityJustifcation = new Sci.Win.UI.TextBox();
-            this.txtsubcon3 = new Sci.Production.Class.txtsubcon();
-            this.txtSubconForwarder1 = new Sci.Production.Class.txtsubcon();
-            this.txtSubconForwarderN = new Sci.Production.Class.txtsubcon();
+            this.txtsubcon3 = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtSubconForwarder1 = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtSubconForwarderN = new Sci.Production.Class.txtsubconNoConfirm();
             this.txttpeuserPOSMR = new Sci.Production.Class.txttpeuser();
             this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
             this.txttpeuserPOHandle = new Sci.Production.Class.txttpeuser();
@@ -2345,9 +2345,9 @@
         private Win.UI.Label labelUpdTPEDate;
         private Win.UI.Label labelTPEEditDate;
         private Win.UI.TextBox txtResponsibilityJustifcation;
-        private Class.txtsubcon txtsubcon3;
-        private Class.txtsubcon txtSubconForwarder1;
-        private Class.txtsubcon txtSubconForwarderN;
+        private Class.txtsubconNoConfirm txtsubcon3;
+        private Class.txtsubconNoConfirm txtSubconForwarder1;
+        private Class.txtsubconNoConfirm txtSubconForwarderN;
         private Win.UI.Label labelShipLeader;
         private Class.txtuser txtuserShipLeader;
         private Win.UI.Label labQuotationAVG;

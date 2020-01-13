@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtsubconSupplier1 = new Sci.Production.Class.txtsubcon();
-            this.txtsubconSupplier2 = new Sci.Production.Class.txtsubcon();
-            this.txtsubconSupplier3 = new Sci.Production.Class.txtsubcon();
-            this.txtsubconSupplier4 = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier1 = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconSupplier2 = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconSupplier3 = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconSupplier4 = new Sci.Production.Class.txtsubconNoConfirm();
             this.txtcurrencySupplier1Price = new Sci.Production.Class.txtcurrency();
             this.txtcurrencySupplier2Price = new Sci.Production.Class.txtcurrency();
             this.txtcurrencySupplier3Price = new Sci.Production.Class.txtcurrency();
@@ -613,10 +613,10 @@
         private Class.txtcurrency txtcurrencySupplier3Price;
         private Class.txtcurrency txtcurrencySupplier2Price;
         private Class.txtcurrency txtcurrencySupplier1Price;
-        private Class.txtsubcon txtsubconSupplier4;
-        private Class.txtsubcon txtsubconSupplier3;
-        private Class.txtsubcon txtsubconSupplier2;
-        private Class.txtsubcon txtsubconSupplier1;
+        private Class.txtsubconNoConfirm txtsubconSupplier4;
+        private Class.txtsubconNoConfirm txtsubconSupplier3;
+        private Class.txtsubconNoConfirm txtsubconSupplier2;
+        private Class.txtsubconNoConfirm txtsubconSupplier1;
         private Win.UI.Label label2;
         private Win.UI.DateBox dateQuotation4;
         private Win.UI.DateBox dateQuotation3;

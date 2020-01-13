@@ -10,6 +10,7 @@ using Sci.Win.Tems;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Sewing
 {
@@ -121,6 +122,12 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
                 MyUtility.Msg.WarningBox("Detail data SP#、ComboType、Article、Output Qty、Price(Unit) can't empty or 0!!");
                 return false;
             }
+
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["SubConOutFty"].ToString(), Prgs.CallFormAction.Save);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return false;
+            }
             #endregion
             return base.ClickSaveBefore();
         }
@@ -152,6 +159,12 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             if (MyUtility.Check.Empty(this.CurrentMaintain["Issuedate"]))
             {
                 MyUtility.Msg.WarningBox("Issue Date cannot be empty!");
+                return;
+            }
+
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["SubConOutFty"].ToString(), Prgs.CallFormAction.Confirm);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
                 return;
             }
 

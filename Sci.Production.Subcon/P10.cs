@@ -179,6 +179,14 @@ namespace Sci.Production.Subcon
             }
             #endregion
 
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Save);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return false;
+            }
+            #endregion
+
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("apqty = 0"))
             {
                 row.Delete();
@@ -371,6 +379,14 @@ where a.id='{0}'
         //Approve
         protected override void ClickConfirm()
         {
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return;
+            }
+            #endregion
+
             var dr = this.CurrentMaintain; if (null == dr) return;
             string sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
             string sqlupfromAP = string.Empty;

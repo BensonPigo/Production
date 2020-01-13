@@ -243,10 +243,9 @@ dr["localsuppid"]);
                         this.CurrentDetailData["localsuppid"] = Env.User.Factory;
                         string subconName = string.Format(
                             @"
-                            SELECT top 1 l.Abb
+                            SELECT l.Abb
                             FROM Order_tmscost ot WITH (NOLOCK)
                             left join LocalSupp l WITH (NOLOCK) on l.ID=ot.LocalSuppID
-                            left join LocalSupp_Bank lb WITH (NOLOCK) ON l.id=lb.id 
                             where ot.LocalSuppID='{0}' ", this.CurrentDetailData["localsuppid"]);
                         DualResult result = DBProxy.Current.Select(null, subconName, out dt);
                         if (dt.Rows.Count == 0)
@@ -287,18 +286,16 @@ begin
 	INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
 	LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
 	INNER JOIN LocalSupp l WITH (NOLOCK) ON l.ID = QU.LocalSuppId
-    LEFT JOIN LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-	WHERE OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}' AND lb.Status= 'Confirmed'
+	WHERE OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
 	GROUP BY QU.LocalSuppId,l.Abb,QU.Mockup
 end
 else
 begin
-	select DISTINCT	LocalSuppID = l.ID
+	select LocalSuppID = l.ID
 			, Abb = l.Abb
 			, Mockup = NULL
 	from LocalSupp l
-    left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-	where l.junk = 0 and lb.Status= 'Confirmed'
+	where l.junk = 0
 end;",
                             this.CurrentDetailData["ID"],
                             this.CurrentDetailData["Artworktypeid"]);
@@ -325,7 +322,7 @@ end;",
                     }
                     else
                     {
-                        sqlcmd = @"select DISTINCT l.ID ,l.Abb ,l.Name from dbo.LocalSupp l WITH (NOLOCK) left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id WHERE l.Junk=0 and lb.Status= 'Confirmed' and IsFactory = 1 order by ID";
+                        sqlcmd = @"select DISTINCT l.ID ,l.Abb ,l.Name from dbo.LocalSupp l WITH (NOLOCK)  WHERE l.Junk=0 and IsFactory = 1 order by ID";
                         item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
                         DialogResult result = item.ShowDialog();
                         if (result == DialogResult.Cancel)
@@ -368,21 +365,18 @@ begin
 	INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
 	LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
 	INNER JOIN LocalSupp l WITH (NOLOCK) ON l.ID = QU.LocalSuppId
-	LEFT JOIN LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
 	WHERE OT.ID = '{0}' 
 			AND OT.ARTWORKTYPEID = '{1}' 
 			AND qu.Localsuppid = '{2}'
-            AND lb.Status= 'Confirmed'
 	GROUP BY QU.LocalSuppId,l.Abb,QU.Mockup
 end
 else
 begin
-	select DISTINCT	LocalSuppID = l.ID
+	select LocalSuppID = l.ID
 			, Abb = l.Abb
 			, Mockup = ''
 	from LocalSupp l
-    left join LocalSupp_Bank lb WITH (NOLOCK)  ON l.id=lb.id 
-	where l.junk = 0 and l.ID = '{2}' and lb.Status= 'Confirmed'
+	where l.junk = 0 and l.ID = '{2}'
 end;",
 this.CurrentDetailData["ID"],
 this.CurrentDetailData["Artworktypeid"],

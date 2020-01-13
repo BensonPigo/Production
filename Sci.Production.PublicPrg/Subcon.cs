@@ -11,7 +11,7 @@ using Ict.Win;
 
 namespace Sci.Production.PublicPrg
 {
-    
+
     public static partial class Prgs
     {
         #region GetItemDesc
@@ -68,6 +68,38 @@ update ard  set ard.ArtworkPOID = '{artworkPOID}'
 ";
             return DBProxy.Current.Execute(null, sqlUpdateArtworkReq_Detail);
         }
+
+        public enum CallFormAction
+        {
+            Save = 1,
+            Confirm = 2
+        }
+        public static DualResult CheckLocalSupp_BankStatus(string suppID, CallFormAction callFormAction )
+        {
+            string sqlCheck = $@"select top 1 Status from dbo.LocalSupp_Bank where ID = '{suppID}' order by Adddate desc";
+            string localSupp_BankStatus = MyUtility.GetValue.Lookup(sqlCheck);
+            string hintMsg = string.Empty;
+            switch (localSupp_BankStatus)
+            {
+                case "Confirmed":
+                    return new DualResult(true);
+                default:
+                    if (callFormAction == CallFormAction.Save)
+                    {
+                        hintMsg = "The bank account did not be approved yet, please ask FIN team check the data or it cannot go to next step.";
+                        MyUtility.Msg.InfoBox(hintMsg);
+                        return new DualResult(true, hintMsg);
+                    }
+                    else
+                    {
+                        hintMsg = "The bank account did not be approved yet, please ask FIN team check the data in [Basic B04] first!";
+                        MyUtility.Msg.WarningBox(hintMsg);
+                        return new DualResult(false, hintMsg);
+                    }
+                    
+            }
+
+        }
     }
-    
+
 }

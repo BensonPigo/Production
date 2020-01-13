@@ -53,7 +53,7 @@
             this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.btnSpecialRecord = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -542,7 +542,7 @@
         private Win.UI.TextBox txtRemark;
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.DateBox dateReqDate;
-        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DisplayBox displayReqID;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label labExceed;

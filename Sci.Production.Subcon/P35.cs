@@ -183,6 +183,14 @@ where lapd.id = '{0}'"
             }
             #endregion
 
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Save);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return false;
+            }
+            #endregion
+
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0"))
             {
                 row.Delete();
@@ -385,6 +393,15 @@ where lapd.id = '{0}'"
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+
+            #region 檢查LocalSupp_Bank
+            DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
+            if (!resultCheckLocalSupp_BankStatus)
+            {
+                return;
+            }
+            #endregion
+
             //mantis 9749 confirm前先檢查此單狀態為NEW才可以confirm
             bool chk_status = MyUtility.Check.Seek(string.Format("select status from dbo.Localap  where id = '{0}' and status = 'New' ", CurrentMaintain["id"]));
             if (chk_status == false)

@@ -34,7 +34,7 @@
             this.labelCode = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtCurrency1 = new Sci.Production.Class.txtcurrency();
-            this.txtsubconSupplier1 = new Sci.Production.Class.txtsubcon();
+            this.txtsubconSupplier1 = new Sci.Production.Class.txtsubconNoConfirm();
             this.label2 = new Sci.Win.UI.Label();
             this.dateQuotation1 = new Sci.Win.UI.DateBox();
             this.label6 = new Sci.Win.UI.Label();
@@ -238,7 +238,7 @@
         private Win.UI.DisplayBox displayCode;
         private Win.UI.Label labelCode;
         private Class.txtcurrency txtCurrency1;
-        private Class.txtsubcon txtsubconSupplier1;
+        private Class.txtsubconNoConfirm txtsubconSupplier1;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.DateBox dateQuotation1;
