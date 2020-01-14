@@ -134,7 +134,7 @@ and 1=1"));
 
                 if (!MyUtility.Check.Empty(this.contractNo))
                 {
-                    sqlCmd.Append(string.Format(" and vc.VNContractID = '{0}' ", this.contractNo));
+                    sqlCmd.Append(string.Format(" and VNContractID = '{0}' ", this.contractNo));
                 }
 
                 if (!MyUtility.Check.Empty(this.date1))

@@ -46,17 +46,18 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(379, 12);
+            this.print.Location = new System.Drawing.Point(387, 12);
+            this.print.TabIndex = 7;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(379, 48);
-            this.toexcel.TabIndex = 4;
+            this.toexcel.Location = new System.Drawing.Point(387, 48);
+            this.toexcel.TabIndex = 8;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(379, 84);
-            this.close.TabIndex = 5;
+            this.close.Location = new System.Drawing.Point(387, 84);
+            this.close.TabIndex = 9;
             // 
             // labelDate
             // 
@@ -143,7 +144,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(107, 87);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(193, 89);
-            this.radioPanel1.TabIndex = 3;
+            this.radioPanel1.TabIndex = 4;
             // 
             // radioANNEX
             // 
@@ -152,7 +153,7 @@
             this.radioANNEX.Location = new System.Drawing.Point(4, 60);
             this.radioANNEX.Name = "radioANNEX";
             this.radioANNEX.Size = new System.Drawing.Size(73, 21);
-            this.radioANNEX.TabIndex = 2;
+            this.radioANNEX.TabIndex = 6;
             this.radioANNEX.TabStop = true;
             this.radioANNEX.Text = "ANNEX";
             this.radioANNEX.UseVisualStyleBackColor = true;
@@ -164,7 +165,7 @@
             this.radioEachConsumption.Location = new System.Drawing.Point(4, 33);
             this.radioEachConsumption.Name = "radioEachConsumption";
             this.radioEachConsumption.Size = new System.Drawing.Size(142, 21);
-            this.radioEachConsumption.TabIndex = 1;
+            this.radioEachConsumption.TabIndex = 5;
             this.radioEachConsumption.TabStop = true;
             this.radioEachConsumption.Text = "Each consumption";
             this.radioEachConsumption.UseVisualStyleBackColor = true;
@@ -176,7 +177,7 @@
             this.radioFormForCustomSystem.Location = new System.Drawing.Point(4, 4);
             this.radioFormForCustomSystem.Name = "radioFormForCustomSystem";
             this.radioFormForCustomSystem.Size = new System.Drawing.Size(176, 21);
-            this.radioFormForCustomSystem.TabIndex = 0;
+            this.radioFormForCustomSystem.TabIndex = 4;
             this.radioFormForCustomSystem.TabStop = true;
             this.radioFormForCustomSystem.Text = "Form for custom system";
             this.radioFormForCustomSystem.UseVisualStyleBackColor = true;
@@ -192,11 +193,13 @@
             // txtCustomsContract1
             // 
             this.txtCustomsContract1.BackColor = System.Drawing.Color.White;
+            this.txtCustomsContract1.CheckDate = false;
+            this.txtCustomsContract1.CheckStatus = true;
             this.txtCustomsContract1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCustomsContract1.Location = new System.Drawing.Point(107, 62);
             this.txtCustomsContract1.Name = "txtCustomsContract1";
             this.txtCustomsContract1.Size = new System.Drawing.Size(186, 23);
-            this.txtCustomsContract1.TabIndex = 102;
+            this.txtCustomsContract1.TabIndex = 3;
             // 
             // B42_Print
             // 
