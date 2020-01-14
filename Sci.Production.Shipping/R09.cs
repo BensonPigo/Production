@@ -93,9 +93,8 @@ as (
 		,e.PortArrival
 		,e.DocArrival
 		,se.CurrencyID
-		,se.Amount
-		,se.AccountID
-		,[Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,se.AccountID		
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
@@ -170,9 +169,8 @@ FtyExportData as (
 		,fe.PortArrival
 		,fe.DocArrival
 		,se.CurrencyID
-		,se.Amount
-		,se.AccountID
-		,[Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,se.AccountID 
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
@@ -257,13 +255,11 @@ select AccountID from FtyExportData where AccountID not in ('61012001','61012002
 tmpAllData
 as (
     select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-        PortArrival,DocArrival,CurrencyID,AccountID
-        ,[Amount] = Amount * Rate 
+        PortArrival,DocArrival,CurrencyID,AccountID,Amount
     from ExportData
     union all
     select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-        PortArrival,DocArrival,CurrencyID,AccountID
-        ,[Amount] = Amount * Rate 
+        PortArrival,DocArrival,CurrencyID,AccountID,Amount
     from FtyExportData
 )
 

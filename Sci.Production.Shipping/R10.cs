@@ -144,7 +144,8 @@ as (
 		, se.CurrencyID
 		, p.OrderID
 		, [packingID] = p.ID
-		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+        , se.AccountID
+        , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
@@ -240,8 +241,9 @@ tmpPL as
 		, s.BLNo
 		, se.CurrencyID
 		, p.OrderID
-		, [packingID] = p.ID 
-		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		, [packingID] = p.ID
+        , se.AccountID
+        , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
@@ -331,6 +333,8 @@ as (
 		, s.BLNo
 		, se.CurrencyID
 		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		, se.AccountID
+		, se.Amount
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
@@ -431,6 +435,8 @@ tmpPL as
 		, s.BLNo
 		, se.CurrencyID
 		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		, se.AccountID
+		, se.Amount
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
@@ -526,7 +532,8 @@ select distinct [type]
 	, currencyid
 	, orderid
 	, packingid
-	, Rate
+	, AccountID
+	, Amount
 into #temp2
 from #temp1 as a
 outer apply (
@@ -553,7 +560,6 @@ select [type]
 	, Dest
 	, ShipModeID
 	, PulloutDate
-	, Rate
 	, [ShipQty]=sum(pt.ShipQty)
 	, [ctnqty]=sum(pt.ctnqty)
 	, [gw]=sum(pt.gw)
@@ -561,6 +567,8 @@ select [type]
 	, Forwarder
 	, BLNo
 	, CurrencyID
+	, AccountID
+	, Amount
 into #temp3
 from #temp2 a
 outer apply(select sum(qty) as OQty from Order_QtyShip  WITH (NOLOCK) where id=a.OrderID) as oqs
@@ -577,7 +585,8 @@ outer apply(
 	) , 1, 1, '')
 ) Category
 group by type,id,OnBoardDate,Shipper,BrandID,Category.value,CustCDID,
-Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,Rate
+Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID
+,AccountID,Amount
 
 select 
 	a.[type]
@@ -598,11 +607,11 @@ select
 	, a.Forwarder
 	, a.BLNo
 	, a.CurrencyID 
-	, b.AccountID
-	, [Amount] = b.Amount * a.Rate
+	, a.AccountID
+	, a.Amount
 into #temp4
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID and b.Junk = 0");
+");
                     }
                     else
                     {
@@ -626,6 +635,8 @@ select distinct [type]
 	,s.BLNo
 	,currencyid
 	,Rate
+	,AccountID
+	,Amount
 into #temp2
 from #temp1 as a
 outer apply (
@@ -664,12 +675,14 @@ select [type]
 	,Forwarder
 	,BLNo
 	,CurrencyID 
+	,AccountID
+	,Amount
 into #temp3
 from #temp2 a
 outer apply(select sum(qty) as OQty from Order_QtyShip WITH (NOLOCK)  where id=a.OrderID) as oqs
 outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList WITH (NOLOCK)  where id=a.packingID) as pt
 group by type,id,OnBoardDate,Shipper,BrandID,Category,CustCDID,
-Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID,Rate
+Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID,Rate,AccountID,Amount
 
 -- 取得TOTAL CBM, 用來計算比例
 select a.id	,sum(a.CBM) TotalCBM
@@ -711,12 +724,11 @@ from (
 		,a.Forwarder
 		,a.BLNo
 		,a.CurrencyID 
-		,b.AccountID
-		,[Amount] = iif(c.TotalCBM is null or c.TotalCBM=0 or a.Rate=0,0, convert(float, round(b.Amount * a.CBM * a.Rate / C.TotalCBM, 2) ))
-	from #temp3 a
-	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID and b.Junk = 0
+		,a.AccountID
+		,[Amount] = iif(c.TotalCBM is null or c.TotalCBM=0 or a.Rate=0,0, convert(float, round(a.Amount * a.CBM * a.Rate / C.TotalCBM, 2) ))
+	from #temp3 a 
 	LEFT JOIN #tmpTotoalCBM C ON A.ID=C.ID
-	union all
+union all
 	select a.[type]
 		,a.id
 		,a.OnBoardDate
@@ -739,12 +751,14 @@ from (
 		,a.Forwarder
 		,a.BLNo
 		,a.CurrencyID
-		,b.AccountID
-		,[Amount] = iif(c.TotalGW is null or c.TotalGW=0 or a.Rate=0,0, convert(float, round(b.Amount * a.gw * a.Rate / C.TotalGW, 2) ))
+		,a.AccountID
+		,[Amount] = iif(c.TotalGW is null or c.TotalGW=0 or a.Rate=0,0, convert(float, round(a.Amount * a.gw * a.Rate / C.TotalGW, 2) ))
 	from #temp3 a
-	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID and b.Junk = 0
 	LEFT JOIN #tmpTotoalGW C ON A.ID=C.ID
-) a");
+) a
+
+drop table #tmpTotoalCBM,#tmpTotoalGW
+");
                     }
 
                      queryAccount = string.Format(
@@ -799,7 +813,7 @@ from #temp4
 PIVOT (SUM(Amount)
 FOR AccountID IN ({0})) a
 order by id
-drop table #temp1,#temp2,#temp3,#temp4,#tmpTotoalCBM,#tmpTotoalGW
+drop table #temp1,#temp2,#temp3,#temp4
 ", allAccno.ToString().Substring(0, 1) == "," ? allAccno.ToString().Substring(1, allAccno.Length - 1) : allAccno.ToString()));
                 }
                 else
