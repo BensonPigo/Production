@@ -640,10 +640,8 @@
             // datePLRcvDate
             // 
             this.datePLRcvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackingArrival", true));
-            this.datePLRcvDate.IsSupportEditMode = false;
             this.datePLRcvDate.Location = new System.Drawing.Point(673, 61);
             this.datePLRcvDate.Name = "datePLRcvDate";
-            this.datePLRcvDate.ReadOnly = true;
             this.datePLRcvDate.Size = new System.Drawing.Size(130, 23);
             this.datePLRcvDate.TabIndex = 37;
             // 
