@@ -2,7 +2,7 @@
     [UKEY]         BIGINT         NOT NULL,
     [TableName]    VARCHAR (60)   NULL,
     [HisType]      NVARCHAR (60)  NULL,
-    [SourceID]     VARCHAR (13)   NULL,
+    [SourceID]     VARCHAR (16)   NULL,
     [ReasonTypeID] VARCHAR (50)   NULL,
     [ReasonID]     VARCHAR (5)    NULL,
     [OldValue]     NVARCHAR (50)  NULL,
