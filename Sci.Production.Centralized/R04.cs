@@ -215,7 +215,7 @@ where 1=1
                         sqlCmd.Append(" and s.Shift <> 'O' and o.LocalOrder <> 1 and o.SubconInType not in (1, 2)" + Environment.NewLine);
                         break;
                     case "Subcon-In":
-                        sqlCmd.Append(" and s.Shift <> 'O' and s.Category <> 'M' and o.LocalOrder = 1 and SubconInType in (1, 2)" + Environment.NewLine);
+                        sqlCmd.Append(" and s.Shift <> 'O' and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and o.SubconInType in ('0','3')))" + Environment.NewLine);
                         break;
                     case "Subcon-Out":
                         sqlCmd.Append(" and s.Shift = 'O'" + Environment.NewLine);
