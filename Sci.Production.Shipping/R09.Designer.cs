@@ -53,17 +53,14 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(452, 12);
-            this.print.TabIndex = 8;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(452, 48);
-            this.toexcel.TabIndex = 6;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(452, 84);
-            this.close.TabIndex = 7;
             // 
             // labelArrivePortDate
             // 
@@ -186,7 +183,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(129, 188);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(200, 59);
-            this.radioPanel1.TabIndex = 5;
+            this.radioPanel1.TabIndex = 7;
             // 
             // radioListByWKNoByFeeType
             // 
@@ -222,7 +219,7 @@
             this.txtshipmode.Name = "txtshipmode";
             this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmode.TabIndex = 3;
+            this.txtshipmode.TabIndex = 4;
             this.txtshipmode.UseFunction = null;
             // 
             // txtForwarder
@@ -232,7 +229,7 @@
             this.txtForwarder.Location = new System.Drawing.Point(129, 138);
             this.txtForwarder.Name = "txtForwarder";
             this.txtForwarder.Size = new System.Drawing.Size(61, 23);
-            this.txtForwarder.TabIndex = 4;
+            this.txtForwarder.TabIndex = 5;
             this.txtForwarder.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtForwarder_PopUp);
             this.txtForwarder.Validating += new System.ComponentModel.CancelEventHandler(this.TxtForwarder_Validating);
             // 
@@ -273,7 +270,7 @@
             this.dateVoucherDate.Location = new System.Drawing.Point(129, 88);
             this.dateVoucherDate.Name = "dateVoucherDate";
             this.dateVoucherDate.Size = new System.Drawing.Size(280, 23);
-            this.dateVoucherDate.TabIndex = 110;
+            this.dateVoucherDate.TabIndex = 3;
             // 
             // lbRateType
             // 
@@ -292,8 +289,8 @@
             this.comboRateType.Location = new System.Drawing.Point(129, 162);
             this.comboRateType.Name = "comboRateType";
             this.comboRateType.OldText = "";
-            this.comboRateType.Size = new System.Drawing.Size(121, 24);
-            this.comboRateType.TabIndex = 112;
+            this.comboRateType.Size = new System.Drawing.Size(159, 24);
+            this.comboRateType.TabIndex = 6;
             // 
             // R09
             // 
