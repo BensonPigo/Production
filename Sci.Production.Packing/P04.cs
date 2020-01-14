@@ -1299,7 +1299,13 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
                 return;
             }
 
-            Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString());
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ShipModeID"]))
+            {
+                MyUtility.Msg.WarningBox("Ship Mode can't empty.");
+                return;
+            }
+
+            Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
