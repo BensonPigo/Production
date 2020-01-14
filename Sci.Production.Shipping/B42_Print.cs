@@ -21,6 +21,7 @@ namespace Sci.Production.Shipping
         private string reportType;
         private string customSP1;
         private string customSP2;
+        private string contractNo;
         private DateTime? date1;
         private DateTime? date2;
         private DataTable printData;
@@ -59,10 +60,17 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.txtCustomsContract1.Text))
+            {
+                MyUtility.Msg.WarningBox("Contract no can't be empty!!");
+                return false;
+            }
+
             this.date1 = this.dateDate.Value1;
             this.date2 = this.dateDate.Value2;
             this.customSP1 = this.txtCustomSPNoStart.Text;
             this.customSP2 = this.txtCustomSPNoEnd.Text;
+            this.contractNo = this.txtCustomsContract1.Text;
             this.reportType = this.radioFormForCustomSystem.Checked ? "1" : this.radioEachConsumption.Checked ? "2" : "3";
 
             return base.ValidateInput();
@@ -77,12 +85,18 @@ namespace Sci.Production.Shipping
             // Form for custom system
             if (this.reportType == "1")
             {
-                sqlCmd.Append(string.Format(@"select vc.CustomSP,vcd.NLCode,vcd.Qty,isnull(vcd.Waste,0)*100 as Waste,Round(vcd.Qty * (isnull(vcd.Waste,0)+1),4) as CCOA,vncd.DescVI as Remark
+                sqlCmd.Append(string.Format(@"
+select vc.CustomSP,vcd.NLCode,vcd.Qty,isnull(vcd.Waste,0)*100 as Waste,Round(vcd.Qty * (isnull(vcd.Waste,0)+1),4) as CCOA,vncd.DescVI as Remark
 from VNConsumption vc WITH (NOLOCK) 
 inner join VNConsumption_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
 left join VNContract_Detail vd WITH (NOLOCK) on vc.VNContractID = vd.ID and vcd.NLCode = vd.NLCode
 left join (select iif(NLCode = 'VNBUY' ,1,0) as LocalPurchase,DescVI from VNNLCodeDesc  WITH (NOLOCK)  where NLCode in ('VNBUY','NOVNBUY')) vncd on vd.LocalPurchase = vncd.LocalPurchase
 where 1=1 and vc.Status = 'Confirmed'"));
+
+                if (!MyUtility.Check.Empty(this.contractNo))
+                {
+                    sqlCmd.Append(string.Format(" and vc.VNContractID = '{0}' ", this.contractNo));
+                }
 
                 if (!MyUtility.Check.Empty(this.date1))
                 {
@@ -112,10 +126,16 @@ where 1=1 and vc.Status = 'Confirmed'"));
             // Each consumption
             else if (this.reportType == "2")
             {
-                sqlCmd.Append(string.Format(@"select count(CustomSP) as RecCount
+                sqlCmd.Append(string.Format(@"
+select count(CustomSP) as RecCount
 from VNConsumption WITH (NOLOCK) 
 where Status = 'Confirmed'
 and 1=1"));
+
+                if (!MyUtility.Check.Empty(this.contractNo))
+                {
+                    sqlCmd.Append(string.Format(" and VNContractID = '{0}' ", this.contractNo));
+                }
 
                 if (!MyUtility.Check.Empty(this.date1))
                 {
@@ -134,7 +154,8 @@ and 1=1"));
 
                 this.recCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd.ToString()));
                 sqlCmd.Clear();
-                sqlCmd.Append(string.Format(@"select vc.VNContractID,v.StartDate,v.EndDate,isnull(v.SubConName,'') as SubConName,
+                sqlCmd.Append(string.Format(@"
+select vc.VNContractID,v.StartDate,v.EndDate,isnull(v.SubConName,'') as SubConName,
 isnull(v.SubConAddress,'') as SubConAddress,isnull(v.TotalQty,0) as TotalQty,
 vc.CustomSP,vc.Qty as GMTQty,isnull(vn.DescVI,'') as DescVI,isnull(vcd.NLCode,'') as NLCode,
 isnull(vn.UnitVI,'') as UnitVI,isnull(vcd.Qty,0) as Qty,isnull(vcd.Waste,0)*100 as Waste,
@@ -148,6 +169,11 @@ left join VNNLCodeDesc vn WITH (NOLOCK) on vn.NLCode = vcd.NLCode
 left join Style s WITH (NOLOCK) on s.Ukey = vc.StyleUKey
 where vc.Status = 'Confirmed'
 and 1=1 "));
+                if (!MyUtility.Check.Empty(this.contractNo))
+                {
+                    sqlCmd.Append(string.Format(" and vc.VNContractID = '{0}' ", this.contractNo));
+                }
+
                 if (!MyUtility.Check.Empty(this.date1))
                 {
                     sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
@@ -174,7 +200,8 @@ and 1=1 "));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"Select ROW_NUMBER() OVER (ORDER BY v.CustomSP) as STT,v.StyleID, v.SeasonID, v.Version, 
+                sqlCmd.Append(string.Format(@"
+Select ROW_NUMBER() OVER (ORDER BY v.CustomSP) as STT,v.StyleID, v.SeasonID, v.Version, 
 v.BrandID, v.Category,isnull(s.Gender,'') as StyleType, isnull(r1.Name,'') as FabricType,
 isnull(r2.Name,'') as ApparelType, isnull(s.Lining,'') as Lining,v.SizeCode, v.CustomSP,
 v.Qty,isnull(s.StyleUnit,'') as StyleUnit, (v.CPU*v.VNMultiple) as CMP,(v.CPU*v.VNMultiple*v.Qty) as TtlCMP,
@@ -186,6 +213,11 @@ left join Reason r1 WITH (NOLOCK) on r1.ReasonTypeID = 'Fabric_Kind' and r1.ID =
 left join Reason r2 WITH (NOLOCK) on r2.ReasonTypeID = 'Style_Apparel_Type' and r2.ID = s.ApparelType
 where v.Status = 'Confirmed' 
 and 1=1"));
+
+                if (!MyUtility.Check.Empty(this.contractNo))
+                {
+                    sqlCmd.Append(string.Format(" and v.VNContractID = '{0}' ", this.contractNo));
+                }
 
                 if (!MyUtility.Check.Empty(this.date1))
                 {
