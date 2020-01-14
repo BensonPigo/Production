@@ -186,6 +186,12 @@
     <Compile Include="txtMachineGroup.designer.cs">
       <DependentUpon>txtMachineGroup.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtCustomsContract.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCustomsContract.Designer.cs">
+      <DependentUpon>txtCustomsContract.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtMultiSubconNoConfirm.cs">
       <SubType>Component</SubType>
     </Compile>
