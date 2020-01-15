@@ -685,17 +685,25 @@ group by type,id,OnBoardDate,Shipper,BrandID,Category,CustCDID,
 Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID,Rate,AccountID,Amount
 
 -- 取得TOTAL CBM, 用來計算比例
-select a.id	,sum(a.CBM) TotalCBM
+select a.id, sum(a.CBM) TotalCBM
 into #tmpTotoalCBM
-from #temp3 a
-where a.shipmodeID in ('SEA','S-A/P','S-A/C')
+from 
+(
+	select distinct a.id, a.packingid, a.CBM
+	from #temp3 a
+	where a.shipmodeID in ('SEA','S-A/P','S-A/C')
+)a 
 group by a.id
 
 -- 取得TOTAL GW, 用來計算比例
 select a.id	,sum(a.gw) TotalGW
 into #tmpTotoalGW
-from #temp3 a
-where a.shipmodeID in ('A/C', 'A/P', 'A/P-C', 'E/C', 'E/P', 'E/P-C')
+from
+(
+	select distinct a.id, a.packingid, a.gw
+	from #temp3 a
+	where a.shipmodeID in ('A/C', 'A/P', 'A/P-C', 'E/C', 'E/P', 'E/P-C')
+)a
 group by a.id
 
 -- group by GB#+SP# 依TotalCBM, Total GW比例來取得對應的Amount值
