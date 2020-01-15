@@ -470,6 +470,7 @@
             // 
             // btnSpecialRecord
             // 
+            this.btnSpecialRecord.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnSpecialRecord.Location = new System.Drawing.Point(858, 42);
             this.btnSpecialRecord.Name = "btnSpecialRecord";
             this.btnSpecialRecord.Size = new System.Drawing.Size(188, 30);
