@@ -208,7 +208,7 @@ FROM (
 GROUP BY CTNStartNo";
                                     cmd += $@"
 
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
 INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
@@ -236,7 +236,7 @@ BEGIN
 
 	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
 	FROM ShippingMarkPicture s
-	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
 END
 
@@ -307,7 +307,7 @@ INTO #tmpOrders{i}
 FROM Orders 
 WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
 
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
 INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
@@ -345,7 +345,7 @@ BEGIN
 
 	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
 	FROM ShippingMarkPicture s
-	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
 END
 
@@ -451,7 +451,7 @@ WHERE p.Type ='B'
 GROUP BY CTNStartNo
 HAVING COUNT(pd.Ukey)={ZPL.Size_Qty_List.Count}
 
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
 INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
@@ -479,7 +479,7 @@ BEGIN
 
 	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
 	FROM ShippingMarkPicture s
-	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
 END
 
@@ -530,7 +530,7 @@ INTO #tmpOrders{i}
 FROM Orders 
 WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
 
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,o.CustCDID ,pd.RefNo
+SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
 INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
@@ -568,7 +568,7 @@ BEGIN
 
 	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
 	FROM ShippingMarkPicture s
-	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
 END
 
@@ -736,7 +736,7 @@ WHERE p.Type ='B'
 	AND pd.SCICtnNo <> ''
 
 ----ShippingMarkPicture
-SELECT DISTINCT o.BrandID ,o.CustCDID ,pd.RefNo
+SELECT DISTINCT o.BrandID ,pd.RefNo
 INTO #tmp
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
@@ -753,12 +753,12 @@ WHERE p.Type ='B'
 
 SELECT IsSSCC
 FROM ShippingMarkPicture s
-INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 WHERE IsSSCC=0
 UNION 
 SELECT IsSSCC
 FROM ShippingMarkPicture s
-INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 WHERE IsSSCC=1
 
 ";
@@ -795,7 +795,7 @@ WHERE p.Type ='B'
         )
 
 
-SELECT DISTINCT o.BrandID ,o.CustCDID ,pd.RefNo
+SELECT DISTINCT o.BrandID ,pd.RefNo
 INTO #tmp
 FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
@@ -825,12 +825,12 @@ AND(
 
 SELECT IsSSCC
 FROM ShippingMarkPicture s
-INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 WHERE IsSSCC = 0
 UNION
 SELECT IsSSCC
 FROM ShippingMarkPicture s
-INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CustCD=t.CustCDID AND s.CTNRefno=t.RefNo AND s.Side='D'
+INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 WHERE IsSSCC = 1
 
 DROP TABLE #tmpOrders ,#tmp
