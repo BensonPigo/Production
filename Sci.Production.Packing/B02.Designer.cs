@@ -93,7 +93,6 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Size = new System.Drawing.Size(787, 337);
             this.detailcont.TabStop = true;
-            this.detailcont.Title = "2";
             // 
             // detailbtm
             // 
@@ -319,7 +318,7 @@
             this.btnUpload.Location = new System.Drawing.Point(593, 272);
             this.btnUpload.Name = "btnUpload";
             this.btnUpload.Size = new System.Drawing.Size(80, 30);
-            this.btnUpload.TabIndex = 10;
+            this.btnUpload.TabIndex = 11;
             this.btnUpload.Text = "Upload";
             this.btnUpload.UseVisualStyleBackColor = true;
             this.btnUpload.Click += new System.EventHandler(this.BtnUpload_Click);
@@ -330,7 +329,7 @@
             this.btnDownload.Location = new System.Drawing.Point(695, 272);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(80, 30);
-            this.btnDownload.TabIndex = 11;
+            this.btnDownload.TabIndex = 12;
             this.btnDownload.Text = "Download";
             this.btnDownload.UseVisualStyleBackColor = true;
             this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
@@ -361,7 +360,7 @@
             this.displayFileName.Location = new System.Drawing.Point(470, 243);
             this.displayFileName.Name = "displayFileName";
             this.displayFileName.Size = new System.Drawing.Size(305, 23);
-            this.displayFileName.TabIndex = 9;
+            this.displayFileName.TabIndex = 10;
             // 
             // label10
             // 
@@ -384,7 +383,6 @@
             // comboStickerSize
             // 
             this.comboStickerSize.BackColor = System.Drawing.Color.White;
-            this.comboStickerSize.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Side", true));
             this.comboStickerSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStickerSize.FormattingEnabled = true;
             this.comboStickerSize.IsSupportUnselect = true;
@@ -396,9 +394,9 @@
             this.comboStickerSize.Location = new System.Drawing.Point(499, 197);
             this.comboStickerSize.Name = "comboStickerSize";
             this.comboStickerSize.OldText = "";
-            this.comboStickerSize.Size = new System.Drawing.Size(121, 24);
-            this.comboStickerSize.TabIndex = 23;
-            this.comboStickerSize.SelectedIndexChanged += new System.EventHandler(this.comboStickerSize_SelectedIndexChanged);
+            this.comboStickerSize.Size = new System.Drawing.Size(192, 24);
+            this.comboStickerSize.TabIndex = 9;
+            this.comboStickerSize.SelectedIndexChanged += new System.EventHandler(this.ComboStickerSize_SelectedIndexChanged);
             // 
             // label11
             // 

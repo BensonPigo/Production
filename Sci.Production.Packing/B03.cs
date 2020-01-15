@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -36,6 +37,26 @@ namespace Sci.Production.Packing
                 this.ht.Add("Picture1", path + "CTN.jpg");
                 this.pictureBox1.ImageLocation = this.ht["Picture1"].ToString();
             }
+
+            #region ComboBox
+            DualResult result;
+            DataTable sizes;
+            string cmd = $@"
+SELECT [ID]='' ,[SIze]='' 
+UNION
+SELECT ID, SIze 
+FROM StickerSize WITH (NOLOCK) ";
+
+            if (result = DBProxy.Current.Select(null, cmd, out sizes))
+            {
+                MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, sizes);
+                this.comboStickerSize.DisplayMember = "Size";
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
+            #endregion
         }
 
         private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -105,6 +126,45 @@ namespace Sci.Production.Packing
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            this.comboStickerSize.SelectedValue = this.CurrentMaintain["StickerSizeID"];
+        }
+
+        private void ComboStickerSize_SelectedValueChanged(object sender, EventArgs e)
+        {
+
+            if (this.comboStickerSize.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            DataTable dt;
+            DualResult result;
+            Int64 id = Convert.ToInt64(this.comboStickerSize.SelectedValue);
+            string cmd = "SELECT  Size ,Width,Length FROM StickerSize WITH(NOLOCK) WHERE ID=@ID";
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            paras.Add(new SqlParameter("@ID", id));
+
+            result = DBProxy.Current.Select(null, cmd, paras, out dt);
+            if (result)
+            {
+                if (dt.Rows != null && dt.Rows.Count > 0)
+                {
+                    this.CurrentMaintain["PicLength"] = Convert.ToInt32(dt.Rows[0]["Length"]);
+                    this.CurrentMaintain["PicWidth"] = Convert.ToInt32(dt.Rows[0]["Width"]);
+                    this.CurrentMaintain["StickerSizeID"] = id;
+                }
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
         }
     }
 }

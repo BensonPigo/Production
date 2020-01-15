@@ -51,6 +51,8 @@
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.label10 = new Sci.Win.UI.Label();
             this.checkIsSSCC = new Sci.Win.UI.CheckBox();
+            this.label11 = new Sci.Win.UI.Label();
+            this.comboStickerSize = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -62,10 +64,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(716, 374);
+            this.detail.Size = new System.Drawing.Size(770, 374);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label11);
+            this.detailcont.Controls.Add(this.comboStickerSize);
             this.detailcont.Controls.Add(this.checkIsSSCC);
             this.detailcont.Controls.Add(this.pictureBox1);
             this.detailcont.Controls.Add(this.label10);
@@ -89,20 +93,20 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(716, 336);
+            this.detailcont.Size = new System.Drawing.Size(770, 336);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 336);
-            this.detailbtm.Size = new System.Drawing.Size(716, 38);
+            this.detailbtm.Size = new System.Drawing.Size(770, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(716, 374);
+            this.browse.Size = new System.Drawing.Size(770, 374);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(724, 403);
+            this.tabs.Size = new System.Drawing.Size(778, 403);
             // 
             // label1
             // 
@@ -138,7 +142,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(381, 74);
+            this.label6.Location = new System.Drawing.Point(381, 63);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(123, 23);
             this.label6.TabIndex = 15;
@@ -146,7 +150,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(381, 115);
+            this.label7.Location = new System.Drawing.Point(381, 95);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(123, 23);
             this.label7.TabIndex = 16;
@@ -154,7 +158,7 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(381, 194);
+            this.label8.Location = new System.Drawing.Point(381, 156);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(123, 23);
             this.label8.TabIndex = 17;
@@ -162,7 +166,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(381, 155);
+            this.label9.Location = new System.Drawing.Point(381, 126);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(123, 23);
             this.label9.TabIndex = 18;
@@ -206,7 +210,7 @@
             this.numFromRight.BackColor = System.Drawing.Color.White;
             this.numFromRight.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromRight", true));
             this.numFromRight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromRight.Location = new System.Drawing.Point(507, 74);
+            this.numFromRight.Location = new System.Drawing.Point(507, 63);
             this.numFromRight.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -231,7 +235,7 @@
             this.numFromBottom.BackColor = System.Drawing.Color.White;
             this.numFromBottom.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromBottom", true));
             this.numFromBottom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromBottom.Location = new System.Drawing.Point(507, 115);
+            this.numFromBottom.Location = new System.Drawing.Point(507, 95);
             this.numFromBottom.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -256,7 +260,7 @@
             this.numPicLength.BackColor = System.Drawing.Color.White;
             this.numPicLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PicLength", true));
             this.numPicLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPicLength.Location = new System.Drawing.Point(507, 194);
+            this.numPicLength.Location = new System.Drawing.Point(507, 156);
             this.numPicLength.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -281,7 +285,7 @@
             this.numPicWidth.BackColor = System.Drawing.Color.White;
             this.numPicWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PicWidth", true));
             this.numPicWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPicWidth.Location = new System.Drawing.Point(507, 155);
+            this.numPicWidth.Location = new System.Drawing.Point(507, 126);
             this.numPicWidth.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -361,7 +365,7 @@
             this.chkIs2Side.Location = new System.Drawing.Point(381, 223);
             this.chkIs2Side.Name = "chkIs2Side";
             this.chkIs2Side.Size = new System.Drawing.Size(90, 24);
-            this.chkIs2Side.TabIndex = 10;
+            this.chkIs2Side.TabIndex = 11;
             this.chkIs2Side.Text = "Is 2 Side";
             this.chkIs2Side.UseVisualStyleBackColor = true;
             // 
@@ -374,7 +378,7 @@
             this.chkIsHorizontal.Location = new System.Drawing.Point(381, 253);
             this.chkIsHorizontal.Name = "chkIsHorizontal";
             this.chkIsHorizontal.Size = new System.Drawing.Size(117, 24);
-            this.chkIsHorizontal.TabIndex = 11;
+            this.chkIsHorizontal.TabIndex = 12;
             this.chkIsHorizontal.Text = "Is Horizontal";
             this.chkIsHorizontal.UseVisualStyleBackColor = true;
             // 
@@ -405,15 +409,41 @@
             this.checkIsSSCC.Location = new System.Drawing.Point(381, 283);
             this.checkIsSSCC.Name = "checkIsSSCC";
             this.checkIsSSCC.Size = new System.Drawing.Size(89, 24);
-            this.checkIsSSCC.TabIndex = 12;
+            this.checkIsSSCC.TabIndex = 13;
             this.checkIsSSCC.Text = "Is SSCC";
             this.checkIsSSCC.UseVisualStyleBackColor = true;
+            // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(381, 187);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(121, 23);
+            this.label11.TabIndex = 26;
+            this.label11.Text = "Sticker Size";
+            // 
+            // comboStickerSize
+            // 
+            this.comboStickerSize.BackColor = System.Drawing.Color.White;
+            this.comboStickerSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStickerSize.FormattingEnabled = true;
+            this.comboStickerSize.IsSupportUnselect = true;
+            this.comboStickerSize.Items.AddRange(new object[] {
+            "A",
+            "B",
+            "C",
+            "D"});
+            this.comboStickerSize.Location = new System.Drawing.Point(507, 187);
+            this.comboStickerSize.Name = "comboStickerSize";
+            this.comboStickerSize.OldText = "";
+            this.comboStickerSize.Size = new System.Drawing.Size(192, 24);
+            this.comboStickerSize.TabIndex = 10;
+            this.comboStickerSize.SelectedValueChanged += new System.EventHandler(this.ComboStickerSize_SelectedValueChanged);
             // 
             // B03
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(724, 436);
+            this.ClientSize = new System.Drawing.Size(778, 436);
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
@@ -460,5 +490,7 @@
         private Win.UI.PictureBox pictureBox1;
         private Win.UI.Label label10;
         private Win.UI.CheckBox checkIsSSCC;
+        private Win.UI.Label label11;
+        private Win.UI.ComboBox comboStickerSize;
     }
 }

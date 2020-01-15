@@ -153,17 +153,15 @@ IF OBJECT_ID(N'ShippingMark') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[ShippingMark](
 	[ID]			 [bigint] IDENTITY(1,1) NOT NULL,
-	[BrandID]		 [varchar](8) NOT NULL,
-	[CustCD]		 [varchar](16) NOT NULL,
-	[CTNRefno]		 [varchar](21) NOT NULL,
-	[Side]			 [varchar](5) NOT NULL,
-	[Seq]			 [int] NOT NULL,
-	[Category]		 [varchar](4) NOT NULL,
-	[FromLeft]		 [int] NOT NULL,
-	[FromTop]		 [int] NOT NULL,
-	[Length]		 [int] NOT NULL,
-	[Width]			 [int] NOT NULL,
-	[Is2Side]		 [bit] NOT NULL,
+	[BrandID]		 [varchar](8) NOT NULL DEFAULT(('')),
+	[CTNRefno]		 [varchar](21) NOT NULL DEFAULT(('')),
+	[Side]			 [varchar](5) NOT NULL DEFAULT(('')),
+	[Seq]			 [int] NOT NULL DEFAULT ((0)),
+	[Category]		 [varchar](4) NOT NULL DEFAULT(('')),
+	[FromRight]		 [int] NOT NULL DEFAULT ((0)),
+	[FromBottom]	 [int] NOT NULL DEFAULT ((0)),
+	[StickerSizeID]	 [bigint] NOT NULL DEFAULT ((0)),
+	[Is2Side]		 [bit] NOT NULL  DEFAULT (0),
 	[FileName]		 [varchar](25) NOT NULL DEFAULT (('')),
 	[CmdTime]		 [dateTime] NOT NULL,
 	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
@@ -174,8 +172,7 @@ BEGIN
  CONSTRAINT [PK_ShippingMark] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC,	
-	[BrandID] ASC,	
-	[CustCD] ASC,	
+	[BrandID] ASC,
 	[CTNRefno] ASC,	
 	[Side] ASC,
 	[Seq] ASC,
@@ -185,15 +182,13 @@ BEGIN
 
 	EXECUTE sp_addextendedproperty N'MS_Description', N'ID', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'ID'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'客戶名稱', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'BrandID'
-	EXECUTE sp_addextendedproperty N'MS_Description', N'出貨地點', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'CustCD'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'紙箱料號', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'CTNRefno'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'貼碼面, 上下左右前後', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Side'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'序號', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Seq'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'類別, 噴碼/貼碼(HTML/PIC)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Category'
-	EXECUTE sp_addextendedproperty N'MS_Description', N'離左邊的位置(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FromLeft'
-	EXECUTE sp_addextendedproperty N'MS_Description', N'離上面的位置(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FromTop'
-	EXECUTE sp_addextendedproperty N'MS_Description', N'噴碼/貼碼長(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Length'
-	EXECUTE sp_addextendedproperty N'MS_Description', N'噴碼/貼碼寬(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Width'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'離右邊的位置(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FromRight'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'離下面的位置(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FromBottom'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'尺寸貼紙ID', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'StickerSizeID'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'是否轉角貼, (0,1)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Is2Side'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'HTML檔名', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FileName'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'CmdTime'
@@ -227,6 +222,24 @@ BEGIN
 	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'CmdTime'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'Sunrise是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'SunriseUpdated'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'GenSongUpdated'
+END
+
+IF OBJECT_ID(N'StickerSize') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[StickerSize](
+		[ID] [bigint] NOT NULL DEFAULT(0),
+		[Size] [varchar](20) NOT NULL DEFAULT(''),
+		[Width] [int] NOT NULL DEFAULT(0),
+		[Length] [int] NOT NULL DEFAULT(0),
+		[AddName] [varchar](10) NOT NULL DEFAULT(''),
+		[AddDate] [datetime] NULL,
+		[EditName] [varchar](10) NOT NULL DEFAULT(''),
+		[EditDate] [datetime] NULL,
+	 CONSTRAINT [PK_StickerSize] PRIMARY KEY CLUSTERED 
+	(
+		[ID] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
 END
 
 IF OBJECT_ID(N'ClogReturn') IS NULL
@@ -378,9 +391,14 @@ VALUES(s.id, s.Seq, s.ShipmodeID, s.BuyerDelivery, s.Qty, s.EstPulloutDate, s.Re
 MERGE ShippingMark AS T
 USING(
 	SELECT 
-	BrandID,CustCD,CTNRefno,Side
-	,[Seq]=1,[Category] = 'HTML'
-	,FromLeft,FromTop,[Length] = StampLength,[Width] = StampWidth
+	BrandID
+	,CTNRefno
+	,Side
+	,FromRight
+	,FromBottom
+	,StickerSizeID
+	,[Seq]=1
+	,[Category] = 'HTML'
 	,[Is2Side] = 0 ,FileName
 	,[CmdTime] = GetDate()
 	,[FilePath] = (select TOP 1 ShippingMarkPath from Production.dbo.System)
@@ -388,13 +406,12 @@ USING(
 	FROM Production.dbo.ShippingMarkStamp 
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
-on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq and t.Category=s.Category
+on t.BrandID = s.BrandID and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq and t.Category=s.Category
 WHEN MATCHED THEN
 UPDATE SET
-	t.FromLeft = s.FromLeft,
-	t.FromTop = s.FromTop,
-	t.Length = s.Length,
-	t.Width = s.Width,
+	t.FromRight = s.FromRight,
+	t.FromBottom = s.FromBottom,
+	t.StickerSizeID = s.StickerSizeID,
 	t.Is2Side = s.Is2Side,
 	t.FileName = s.FileName,
 	t.CmdTime = s.CmdTime,
@@ -402,18 +419,22 @@ UPDATE SET
 	t.GenSongUpdated = 0,
 	t.[FilePath] = s.[FilePath]
 WHEN NOT MATCHED BY TARGET THEN
-INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
-		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[FilePath])
-Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
-		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[FilePath]);
+INSERT([BrandID] ,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromRight] ,[FromBottom] ,[StickerSizeID]
+		,[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[FilePath])
+Values(s.[BrandID] ,s.[CTNRefno],s.[Side],s.[Seq],s.[Category] ,s.[FromRight] ,s.[FromBottom] ,s.[StickerSizeID]
+		,s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[FilePath]);
 
 --04. 轉出區間 當AddDate or EditDate =今天、Category = 'PIC'
 MERGE ShippingMark AS T
 USING(
 	SELECT 
-	BrandID,CustCD,CTNRefno,Side
+	BrandID
+	,CTNRefno
+	,Side
+	,FromRight
+	,FromBottom
+	,StickerSizeID
 	,Seq,[Category] = 'PIC'
-	,FromLeft,FromTop,[Length] = PicLength,[Width] = PicWidth
 	,[Is2Side] = Is2Side ,[FileName]=''
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
@@ -423,13 +444,12 @@ USING(
 	FROM Production.dbo.ShippingMarkpicture 
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
 ) as S
-on t.BrandID = s.BrandID and t.CustCD=s.CustCD and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq and t.Category=s.Category
+on t.BrandID = s.BrandID and t.CTNRefno=s.CTNRefno and t.Side=s.Side and t.Seq=s.Seq and t.Category=s.Category
 WHEN MATCHED THEN
 UPDATE SET
-	t.FromLeft = s.FromLeft,
-	t.FromTop = s.FromTop,
-	t.Length = s.Length,
-	t.Width = s.Width,
+	t.FromRight = s.FromRight,
+	t.FromBottom = s.FromBottom,
+	t.StickerSizeID = s.StickerSizeID,
 	t.Is2Side = s.Is2Side,
 	t.FileName = s.FileName,
 	t.CmdTime = s.CmdTime,
@@ -439,11 +459,11 @@ UPDATE SET
 	t.FilePath = s.FilePath,
 	t.IsSSCC = s.IsSSCC
 WHEN NOT MATCHED BY TARGET THEN
-INSERT([BrandID],[CustCD]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] ,[FromLeft],		
-		[FromTop],[Length],[Width],[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[IsHorizontal] ,[FilePath],[IsSSCC])
+INSERT([BrandID]	,[CTNRefno]	,[Side]	,[Seq] ,[Category] 	,[FromRight] ,[FromBottom] ,[StickerSizeID]
+		,[Is2Side],[FileName],[CmdTime],[SunriseUpdated],	[GenSongUpdated] ,[IsHorizontal] ,[FilePath],[IsSSCC])
 
-Values(s.[BrandID],s.[CustCD],s.[CTNRefno],s.[Side],s.[Seq],s.[Category],s.[FromLeft],		
-		s.[FromTop],s.[Length],s.[Width],s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[IsHorizontal] ,s.[FilePath],s.[IsSSCC]);
+Values(s.[BrandID],s.[CTNRefno],s.[Side],s.[Seq],s.[Category] ,s.[FromRight] ,s.[FromBottom] ,s.[StickerSizeID]
+		,s.[Is2Side],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated] ,s.[IsHorizontal] ,s.[FilePath],s.[IsSSCC]);
 
 --05. 轉出區間 當AddDate or EditDate =今天
 MERGE ShippingMarkPic_Detail AS T
@@ -594,7 +614,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 		INTO #HasSetting_HTMLSetting
 		FROM [Production].[dbo].PackingList p 
 		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
-		LEFT  JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+		LEFT  JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND pd.CtnRefno=s.CTNRefno
 		WHERE s.Category='HTML'
 
 		----有設定的：FileName有值=1，空白=0
@@ -637,7 +657,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 		INTO #tmp_HasSetting_File
 		FROM [Production].[dbo].PackingList p 
 		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
-		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND pd.CtnRefno=s.CTNRefno
 		WHERE s.Category='PIC' 
 		AND NOT EXISTS( -- P24 沒有圖片FileName為空的
 			SELECT 1
@@ -658,7 +678,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 		INTO #tmp_NoSetting
 		FROM [Production].[dbo].PackingList p 
 		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
-		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND pd.CtnRefno=s.CTNRefno
 		WHERE s.Category='PIC'
 
 		----PicSetting = 0 表示需貼標 但沒有上傳圖片至Packing P24
@@ -671,7 +691,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 		INTO #tmp_HasSetting_NoFile
 		FROM [Production].[dbo].PackingList p 
 		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
-		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND p.CustCDID=s.CustCD AND pd.CtnRefno=s.CTNRefno
+		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND pd.CtnRefno=s.CTNRefno
 		WHERE s.Category='PIC' 
 		AND EXISTS( -- P24 有圖片FileName為空的
 			SELECT 1
@@ -816,6 +836,29 @@ WHEN NOT MATCHED BY TARGET THEN
 INSERT([StyleID], [SeasonID], [BrandID], [Pressing1], [Pressing2], [Folding1], [Folding2], [CmdTime], [SunriseUpdated])
 VALUES(s.[StyleID] ,s.[SeasonID], s.[BrandID], s.[Pressing1], s.[Pressing2], s.[Folding1], s.[Folding2], GetDate(), 0);
 
+
+--12. 轉出區間 當AddDate or EditDate =今天
+MERGE StickerSize AS T
+USING(
+	SELECT *
+	FROM Production.dbo.StickerSize
+	where (convert(date,AddDate) = @cDate OR convert(date,EditDate) = @cDate)
+) as s
+on t.ID = s.ID
+WHEN MATCHED THEN
+UPDATE SET
+    t.ID		=s.ID,			
+	t.Size		=s.Size,			
+	t.Width		=s.Width,			
+	t.Length	=s.Length,			
+	t.AddName	=s.AddName,			
+	t.AddDate	=s.AddDate,			
+	t.EditName	=s.EditName,			
+	t.EditDate	=s.EditDate		
+WHEN NOT MATCHED BY TARGET THEN
+INSERT( [ID], [Size] ,[Width] ,[Length] ,[AddName] ,[AddDate] ,[EditName] ,[EditDate] )
+VALUES( s.[ID], s.[Size] ,s.[Width] ,s.[Length] ,s.[AddName] ,s.[AddDate] ,s.[EditName] ,s.[EditDate] )
+;
 END try
 Begin Catch
 	DECLARE  @ErrorMessage  NVARCHAR(4000),  

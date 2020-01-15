@@ -69,6 +69,7 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(800, 417);
+            this.tabs.TabStop = false;
             // 
             // label1
             // 

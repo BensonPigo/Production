@@ -283,7 +283,6 @@ from #tmp t
 left join orders o with (nolock) on t.OrderID = o.ID
 where not exists (select 1 from ShippingMarkPicture smp with (nolock) 
                             where   smp.BrandID = o.BrandID and
-                                    smp.CustCD = o.CustCDID and
                                     smp.CTNRefno = t.Refno and
                                     smp.Side = '{this.CurrentMaintain["Side"]}' and
                                     smp.Seq = '{this.CurrentMaintain["Seq"]}')
@@ -792,7 +791,7 @@ order by SCICtnNo
             if (this.detailgrid.Rows.Count > 0)
             {
                 firstDetailSP = this.detailgrid.Rows[0].Cells["OrderID"].Value.ToString();
-                MyUtility.Check.Seek($"select BrandID,CustCDID from orders with (nolock) where ID = '{firstDetailSP}'", out drOrder);
+                MyUtility.Check.Seek($"select BrandID from orders with (nolock) where ID = '{firstDetailSP}'", out drOrder);
             }
 
             if (drOrder == null)
@@ -800,7 +799,7 @@ order by SCICtnNo
                 return;
             }
 
-            string sqlGetShippingMarkPicture = $@"select distinct Side,Seq from ShippingMarkPicture where BrandID = '{drOrder["BrandID"]}' and CustCD = '{drOrder["CustCDID"]}' order by Seq";
+            string sqlGetShippingMarkPicture = $@"select distinct Side,Seq from ShippingMarkPicture where BrandID = '{drOrder["BrandID"]}' order by Seq";
             DataTable dtSeqSideSource;
             result = DBProxy.Current.Select(null, sqlGetShippingMarkPicture, out dtSeqSideSource);
 
