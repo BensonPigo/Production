@@ -25,11 +25,14 @@ namespace Sci.Production.Shipping
         private DateTime? apApvDate2;
         private DateTime? onBoardDate1;
         private DateTime? onBoardDate2;
+        private DateTime? voucherDate1;
+        private DateTime? voucherDate2;
         private string brand;
         private string custcd;
         private string dest;
         private string shipmode;
         private string forwarder;
+        private string rateType;
         private int reportContent;
         private int reportType;
         private DataTable printData;
@@ -51,6 +54,7 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            MyUtility.Tool.SetupCombox(this.comboRateType, 2, 1, ",Original currency,FX,Fixed exchange rate,KP,KPI exchange rate");
             this.txtshipmode.SelectedIndex = -1;
         }
 
@@ -89,11 +93,14 @@ namespace Sci.Production.Shipping
             this.apApvDate2 = this.dateAPApvDate.Value2;
             this.onBoardDate1 = this.dateOnBoardDate.Value1;
             this.onBoardDate2 = this.dateOnBoardDate.Value2;
+            this.voucherDate1 = this.dateVoucherDate.Value1;
+            this.voucherDate2 = this.dateVoucherDate.Value2;
             this.brand = this.txtbrand.Text;
             this.custcd = this.txtcustcd.Text;
             this.dest = this.txtcountryDestination.TextBox1.Text;
             this.shipmode = this.txtshipmode.Text;
             this.forwarder = this.txtsubconForwarder.TextBox1.Text;
+            this.rateType = this.comboRateType.SelectedValue.ToString();
             this.reportContent = this.radioGarment.Checked ? 1 : 2;
             this.reportType = this.radioExportFeeReport.Checked ? 1 : this.radioDetailListbySPNo.Checked ? 2 : 3;
             return base.ValidateInput();
@@ -116,27 +123,37 @@ namespace Sci.Production.Shipping
                     if (this.reportType == 1)
                     {
                         #region 組SQL
-                        sqlCmd.Append(@"
+                        sqlCmd.Append($@"
 with tmpGB 
 as (
-select distinct 'GARMENT' as Type,
-g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,
-[Category] = case when o.Category = 'B' then 'Bulk'
-					  when o.Category = 'S' then 'Sample'
-					  when o.Category = 'G' then 'Garment'
-					  else '' end,
-g.CustCDID,g.Dest,g.ShipModeID,p.PulloutDate,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
-s.BLNo,
-se.CurrencyID,
-p.OrderID,p.ID as packingID
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
-inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
-inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
-inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
-inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder 
-where s.Type = 'EXPORT'
+	select distinct [Type] = 'GARMENT'
+		, g.ID
+		, [OnBoardDate] = g.ETD 
+		, g.Shipper
+		, g.BrandID
+		, [Category] = case when o.Category = 'B' then 'Bulk'
+							  when o.Category = 'S' then 'Sample'
+							  when o.Category = 'G' then 'Garment'
+							  else '' end
+		, g.CustCDID
+		, g.Dest
+		, g.ShipModeID
+		, p.PulloutDate
+		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
+		, s.BLNo
+		, se.CurrencyID
+		, p.OrderID
+		, [packingID] = p.ID
+        , se.AccountID
+        , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+    inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
+    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder 
+    where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
@@ -168,6 +185,16 @@ where s.Type = 'EXPORT'
                             sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
                         }
 
+                        if (!MyUtility.Check.Empty(this.voucherDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        }
+
                         if (!MyUtility.Check.Empty(this.brand))
                         {
                             sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
@@ -193,26 +220,37 @@ where s.Type = 'EXPORT'
                             sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
                         }
 
-                        sqlCmd.Append(@"),tmpPL
-as (
-select distinct 'GARMENT' as Type,
-p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,
-[Category] = case when o.Category = 'B' then 'Bulk'
-					  when o.Category = 'S' then 'Sample'
-					  when o.Category = 'G' then 'Garment'
-					  else '' end,
-o.CustCDID,o.Dest,p.ShipModeID,p.PulloutDate,
-'' as Forwarder,
-s.BLNo,
-se.CurrencyID,
-p.OrderID,p.ID as packingID
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
-inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
-inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
-inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
-where s.Type = 'EXPORT'
+                        sqlCmd.Append($@"
+),
+tmpPL as 
+(
+	select distinct [Type] = 'GARMENT'
+		, p.ID
+		, [OnBoardDate] = null
+		, [Shipper] = ''  
+		, o.BrandID
+		, [Category] = case when o.Category = 'B' then 'Bulk'
+							  when o.Category = 'S' then 'Sample'
+							  when o.Category = 'G' then 'Garment'
+							  else '' end
+		, o.CustCDID
+		, o.Dest
+		, p.ShipModeID
+		, p.PulloutDate
+		, [Forwarder] = ''
+		, s.BLNo
+		, se.CurrencyID
+		, p.OrderID
+		, [packingID] = p.ID
+        , se.AccountID
+        , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
+    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
+    where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
@@ -232,6 +270,16 @@ where s.Type = 'EXPORT'
                         if (!MyUtility.Check.Empty(this.apApvDate2))
                         {
                             sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
                         }
 
                         if (!MyUtility.Check.Empty(this.brand))
@@ -261,28 +309,41 @@ where s.Type = 'EXPORT'
                     else
                     {
                         #region 組SQL
-                        sqlCmd.Append(@"
+                        sqlCmd.Append($@"
 with tmpGB 
 as (
-select distinct 'GARMENT' as Type,
-g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,
-[Category] = case when o.Category = 'B' then 'Bulk'
-					  when o.Category = 'S' then 'Sample'
-					  when o.Category = 'G' then 'Garment'
-					  else '' end,
-pd.OrderID,oq.BuyerDelivery,
-g.CustCDID,g.Dest,g.ShipModeID,p.ID as packingid, p.PulloutID,p.PulloutDate,
-g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
-s.BLNo,se.CurrencyID
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
-inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
-inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
-inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
-inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-inner join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID=oq.Id and oq.Seq = pd.OrderShipmodeSeq
-inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
-where s.Type = 'EXPORT'
+	select distinct [Type] = 'GARMENT'
+		, g.ID
+		, [OnBoardDate] = g.ETD 
+		, g.Shipper
+		, g.BrandID
+		, [Category] = case when o.Category = 'B' then 'Bulk'
+							  when o.Category = 'S' then 'Sample'
+							  when o.Category = 'G' then 'Garment'
+							  else '' end
+		, pd.OrderID
+		, oq.BuyerDelivery
+		, g.CustCDID
+		, g.Dest
+		, g.ShipModeID
+		, [packingid] = p.ID
+		, p.PulloutID
+		, p.PulloutDate
+		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'')
+		, s.BLNo
+		, se.CurrencyID
+		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		, se.AccountID
+		, se.Amount
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+    inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
+    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    inner join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID=oq.Id and oq.Seq = pd.OrderShipmodeSeq
+    inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
+    where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
@@ -314,6 +375,16 @@ where s.Type = 'EXPORT'
                             sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
                         }
 
+                        if (!MyUtility.Check.Empty(this.voucherDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        }
+
                         if (!MyUtility.Check.Empty(this.brand))
                         {
                             sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
@@ -339,27 +410,41 @@ where s.Type = 'EXPORT'
                             sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
                         }
 
-                        sqlCmd.Append(@"),
-tmpPL
-as (
-select distinct 'GARMENT' as Type,
-p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,
-[Category] = case when o.Category = 'B' then 'Bulk'
-					  when o.Category = 'S' then 'Sample'
-					  when o.Category = 'G' then 'Garment'
-					  else '' end,
-pd.OrderID,oq.BuyerDelivery,
-o.CustCDID,o.Dest,p.ShipModeID,p.ID as packingid, p.PulloutID,p.PulloutDate,
-'' as Forwarder,
-s.BLNo,se.CurrencyID
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
-inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
-inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
-inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
-inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
-where s.Type = 'EXPORT'
+                        sqlCmd.Append($@"
+),
+tmpPL as 
+(
+	select distinct [Type] = 'GARMENT'
+		, p.ID
+		, [OnBoardDate] = null
+		, [Shipper] = ''
+		, o.BrandID
+		, [Category] = case when o.Category = 'B' then 'Bulk'
+						  when o.Category = 'S' then 'Sample'
+						  when o.Category = 'G' then 'Garment'
+						  else '' end
+		, pd.OrderID
+		, oq.BuyerDelivery
+		, o.CustCDID
+		, o.Dest
+		, p.ShipModeID
+		, [packingid] = p.ID
+		, p.PulloutID
+		, p.PulloutDate
+		, [Forwarder] = ''
+		, s.BLNo
+		, se.CurrencyID
+		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		, se.AccountID
+		, se.Amount
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
+    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
+    inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
+    where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
@@ -379,6 +464,16 @@ where s.Type = 'EXPORT'
                         if (!MyUtility.Check.Empty(this.apApvDate2))
                         {
                             sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
                         }
 
                         if (!MyUtility.Check.Empty(this.brand))
@@ -404,13 +499,15 @@ where s.Type = 'EXPORT'
 
                     }
 
-                    sqlCmd.Append(@"),
+                    sqlCmd.Append(@"
+),
 tmpAllData
 as (
 select * from tmpGB
 union all
 select * from tmpPL
 )
+
 select * 
 into #temp1
 from tmpAllData");
@@ -420,8 +517,23 @@ from tmpAllData");
                     {
                         sqlCmd.Append(@"
 -----temp2
-select distinct type,id,OnBoardDate,shipper,Brandid,category,custcdid,dest,shipmodeid,pulloutdate,
-forwarder,s.BLNo,currencyid,orderid,packingid
+select distinct [type]
+	, id
+	, OnBoardDate
+	, shipper
+	, Brandid
+	, category
+	, custcdid
+	, dest
+	, shipmodeid
+	, pulloutdate
+	, forwarder
+	, s.BLNo
+	, currencyid
+	, orderid
+	, packingid
+	, AccountID
+	, Amount
 into #temp2
 from #temp1 as a
 outer apply (
@@ -437,9 +549,26 @@ outer apply (
 	)s
 
 
-select type,id,OnBoardDate,Shipper,BrandID,Category = Category.value,[OQty]=sum(oqs.OQty),CustCDID,
-Dest,ShipModeID,PulloutDate,
-[ShipQty]=sum(pt.ShipQty),[ctnqty]=sum(pt.ctnqty),[gw]=sum(pt.gw),[CBM]=sum(pt.CBM),Forwarder,BLNo,CurrencyID 
+select [type]
+	, id
+	, OnBoardDate
+	, Shipper
+	, BrandID
+	, [Category] = Category.value
+	, [OQty]=sum(oqs.OQty)
+	, CustCDID
+	, Dest
+	, ShipModeID
+	, PulloutDate
+	, [ShipQty]=sum(pt.ShipQty)
+	, [ctnqty]=sum(pt.ctnqty)
+	, [gw]=sum(pt.gw)
+	, [CBM]=sum(pt.CBM)
+	, Forwarder
+	, BLNo
+	, CurrencyID
+	, AccountID
+	, Amount
 into #temp3
 from #temp2 a
 outer apply(select sum(qty) as OQty from Order_QtyShip  WITH (NOLOCK) where id=a.OrderID) as oqs
@@ -456,19 +585,58 @@ outer apply(
 	) , 1, 1, '')
 ) Category
 group by type,id,OnBoardDate,Shipper,BrandID,Category.value,CustCDID,
-Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID 
+Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID
+,AccountID,Amount
 
-select a.*,b.AccountID,b.Amount 
+select 
+	a.[type]
+	, a.id
+	, a.OnBoardDate
+	, a.Shipper
+	, a.BrandID
+	, a.[Category]
+	, a.[OQty]
+	, a.CustCDID
+	, a.Dest
+	, a.ShipModeID
+	, a.PulloutDate
+	, a.[ShipQty]
+	, a.[ctnqty]
+	, a.[gw]
+	, a.[CBM]
+	, a.Forwarder
+	, a.BLNo
+	, a.CurrencyID 
+	, a.AccountID
+	, a.Amount
 into #temp4
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID and b.Junk = 0");
+");
                     }
                     else
                     {
                         sqlCmd.Append(@"
 -----temp2 detail List by SP#
-select distinct type,id,OnBoardDate,shipper,Brandid,category,OrderID,BuyerDelivery,custcdid,dest,shipmodeid,packingid,PulloutID,PulloutDate,
-forwarder,s.BLNo,currencyid
+select distinct [type]
+	,id
+	,OnBoardDate
+	,shipper
+	,Brandid
+	,category
+	,OrderID
+	,BuyerDelivery
+	,custcdid
+	,dest
+	,shipmodeid
+	,packingid
+	,PulloutID
+	,PulloutDate
+	,forwarder
+	,s.BLNo
+	,currencyid
+	,Rate
+	,AccountID
+	,Amount
 into #temp2
 from #temp1 as a
 outer apply (
@@ -482,47 +650,123 @@ outer apply (
 			for xml path('')
 		),1,1,'')
 	)s
+
 --temp3 detail List by SP#
-select type,id,OnBoardDate,Shipper,BrandID,Category,orderID,BuyerDelivery,[OQty]=sum(oqs.OQty),CustCDID,
-Dest,ShipModeID,packingid,PulloutID,PulloutDate,
-[ShipQty]=sum(pt.ShipQty),[ctnqty]=sum(pt.ctnqty),[gw]=sum(pt.gw),[CBM]=sum(pt.CBM),Forwarder,BLNo,CurrencyID 
+select [type]
+	,id
+	,OnBoardDate
+	,Shipper
+	,BrandID
+	,Category
+	,orderID
+	,BuyerDelivery
+	,[OQty]=sum(oqs.OQty)
+	,CustCDID
+	,Dest
+	,ShipModeID
+	,packingid
+	,PulloutID
+	,PulloutDate
+	,Rate
+	,[ShipQty]=sum(pt.ShipQty)
+	,[ctnqty]=sum(pt.ctnqty)
+	,[gw]=sum(pt.gw)
+	,[CBM]=sum(pt.CBM)
+	,Forwarder
+	,BLNo
+	,CurrencyID 
+	,AccountID
+	,Amount
 into #temp3
 from #temp2 a
 outer apply(select sum(qty) as OQty from Order_QtyShip WITH (NOLOCK)  where id=a.OrderID) as oqs
 outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList WITH (NOLOCK)  where id=a.packingID) as pt
 group by type,id,OnBoardDate,Shipper,BrandID,Category,CustCDID,
-Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID
+Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID,Rate,AccountID,Amount
 
 -- 取得TOTAL CBM, 用來計算比例
-select a.id	,sum(a.CBM) TotalCBM
+select a.id, sum(a.CBM) TotalCBM
 into #tmpTotoalCBM
-from #temp3 a
-where a.shipmodeID in ('SEA','S-A/P','S-A/C')
+from 
+(
+	select distinct a.id, a.packingid, a.CBM
+	from #temp3 a
+	where a.shipmodeID in ('SEA','S-A/P','S-A/C')
+)a 
 group by a.id
 
 -- 取得TOTAL GW, 用來計算比例
 select a.id	,sum(a.gw) TotalGW
 into #tmpTotoalGW
-from #temp3 a
-where a.shipmodeID in ('A/C', 'A/P', 'A/P-C', 'E/C', 'E/P', 'E/P-C')
+from
+(
+	select distinct a.id, a.packingid, a.gw
+	from #temp3 a
+	where a.shipmodeID in ('A/C', 'A/P', 'A/P-C', 'E/C', 'E/P', 'E/P-C')
+)a
 group by a.id
 
 -- group by GB#+SP# 依TotalCBM, Total GW比例來取得對應的Amount值
 select * 
 into #temp4
 from (
-	select a.*,b.AccountID
-	,[Amount] = iif(c.TotalCBM is null or c.TotalCBM=0,0, convert(float, round(b.Amount * A.CBM/C.TotalCBM,2) ))
-	from #temp3 a
-	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID and b.Junk = 0
+	select a.[type]
+		,a.id
+		,a.OnBoardDate
+		,a.Shipper
+		,a.BrandID
+		,a.Category
+		,a.OrderID
+		,a.BuyerDelivery
+		,a.[OQty]
+		,a.CustCDID
+		,a.Dest
+		,a.ShipModeID
+		,a.packingid
+		,a.PulloutID
+		,a.PulloutDate	
+		,a.[ShipQty]
+		,a.[ctnqty]
+		,a.[gw]
+		,a.[CBM]
+		,a.Forwarder
+		,a.BLNo
+		,a.CurrencyID 
+		,a.AccountID
+		,[Amount] = iif(c.TotalCBM is null or c.TotalCBM=0 or a.Rate=0,0, convert(float, round(a.Amount * a.CBM * a.Rate / C.TotalCBM, 2) ))
+	from #temp3 a 
 	LEFT JOIN #tmpTotoalCBM C ON A.ID=C.ID
-	union all
-	select a.*,b.AccountID
-	,[Amount] = iif(c.TotalGW is null or c.TotalGW=0,0, convert(float, round(b.Amount * A.gw/C.TotalGW,2) ))
+union all
+	select a.[type]
+		,a.id
+		,a.OnBoardDate
+		,a.Shipper
+		,a.BrandID
+		,a.Category
+		,a.OrderID
+		,a.BuyerDelivery
+		,a.[OQty]
+		,a.CustCDID
+		,a.Dest
+		,a.ShipModeID
+		,a.packingid
+		,a.PulloutID
+		,a.PulloutDate	
+		,a.[ShipQty]
+		,a.[ctnqty]
+		,a.[gw]
+		,a.[CBM]
+		,a.Forwarder
+		,a.BLNo
+		,a.CurrencyID
+		,a.AccountID
+		,[Amount] = iif(c.TotalGW is null or c.TotalGW=0 or a.Rate=0,0, convert(float, round(a.Amount * a.gw * a.Rate / C.TotalGW, 2) ))
 	from #temp3 a
-	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID and b.Junk = 0
 	LEFT JOIN #tmpTotoalGW C ON A.ID=C.ID
-) a");
+) a
+
+drop table #tmpTotoalCBM,#tmpTotoalGW
+");
                     }
 
                      queryAccount = string.Format(
@@ -577,33 +821,59 @@ from #temp4
 PIVOT (SUM(Amount)
 FOR AccountID IN ({0})) a
 order by id
-drop table #temp1,#temp2,#temp3,#temp4,#tmpTotoalCBM,#tmpTotoalGW
+drop table #temp1,#temp2,#temp3,#temp4
 ", allAccno.ToString().Substring(0, 1) == "," ? allAccno.ToString().Substring(1, allAccno.Length - 1) : allAccno.ToString()));
                 }
                 else
                 {
                     // Detail List by SP# by Fee Type
                     #region 組SQL
-                    sqlCmd.Append(@"with tmpGB 
+                    sqlCmd.Append($@"
+with tmpGB 
 as (
-select distinct 'GARMENT' as Type,g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,
-[Category] = case when o.Category = 'B' then 'Bulk'
-					  when o.Category = 'S' then 'Sample'
-					  when o.Category = 'G' then 'Garment'
-					  else '' end,
-pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
-s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
-inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
-inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
-inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
-left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
-left join SciFMS_AccountNo a WITH (NOLOCK)  on a.ID = se.AccountID
-where s.Type = 'EXPORT'
+	select distinct [Type] = 'GARMENT'
+		, g.ID
+		, [OnBoardDate] = g.ETD
+		, g.Shipper
+		, g.BrandID
+		, [Category] = case when o.Category = 'B' then 'Bulk'
+						  when o.Category = 'S' then 'Sample'
+						  when o.Category = 'G' then 'Garment'
+						  else '' end
+		, pd.OrderID
+		, oq.BuyerDelivery
+		, [OQty] = isnull(oq.Qty,0)
+		, g.CustCDID
+		, g.Dest
+		, g.ShipModeID
+		, [PackID] = p.ID
+		, p.PulloutID
+		, p.PulloutDate
+		, p.ShipQty
+		, p.CTNQty
+		, p.GW
+		, p.CBM
+		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'')
+		, s.BLNo
+		, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
+		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		, se.CurrencyID
+		, [APID] = s.ID 
+		, s.CDate
+		, [ApvDate] = CONVERT(DATE,s.ApvDate) 
+		, s.VoucherID
+		, s.VoucherDate
+		, s.SubType
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+    inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
+    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+    left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
+    left join SciFMS_AccountNo a WITH (NOLOCK)  on a.ID = se.AccountID
+    where s.Type = 'EXPORT'
 ");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
@@ -635,6 +905,16 @@ where s.Type = 'EXPORT'
                         sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
                     }
 
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                    }
+
                     if (!MyUtility.Check.Empty(this.brand))
                     {
                         sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
@@ -660,25 +940,51 @@ where s.Type = 'EXPORT'
                         sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
                     }
 
-                    sqlCmd.Append(@"),
-tmpPL
-as (
-select distinct 'GARMENT' as Type,p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,
-[Category] = case when o.Category = 'B' then 'Bulk'
-					  when o.Category = 'S' then 'Sample'
-					  when o.Category = 'G' then 'Garment'
-					  else '' end,
-pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,'' as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
-s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
-inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
-inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
-left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
-where s.Type = 'EXPORT'
+                    sqlCmd.Append($@"
+),
+tmpPL as 
+(
+	select distinct [Type] = 'GARMENT'
+		, p.ID
+		, [OnBoardDate] = null
+		, [Shipper] = ''
+		, o.BrandID
+		, [Category] = case when o.Category = 'B' then 'Bulk'
+							  when o.Category = 'S' then 'Sample'
+							  when o.Category = 'G' then 'Garment'
+							  else '' end
+		, pd.OrderID
+		, oq.BuyerDelivery
+		, [OQty] = isnull(oq.Qty,0)
+		, o.CustCDID
+		, o.Dest
+		, p.ShipModeID
+		, [PackID] = p.ID
+		, p.PulloutID
+		, p.PulloutDate
+		, p.ShipQty
+		, p.CTNQty
+		, p.GW
+		, p.CBM
+		, [Forwarder] = ''
+		, s.BLNo
+		, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
+		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		, se.CurrencyID
+		, [APID] = s.ID
+		, s.CDate
+		, [ApvDate] = CONVERT(DATE,s.ApvDate) 
+		, s.VoucherID
+		, s.VoucherDate
+		, s.SubType
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
+    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+    left join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
+    where s.Type = 'EXPORT'
 ");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
@@ -698,6 +1004,16 @@ where s.Type = 'EXPORT'
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
                         sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -738,34 +1054,71 @@ order by ID,OrderID,PackID");
                     if (this.reportType == 1)
                     {
                         #region 組SQL
-                        sqlCmd.Append(@"with tmpMaterialData
+                        sqlCmd.Append($@"
+with tmpMaterialData
 as (
-select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Category,
-0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,f.PortArrival as PulloutDate,0 as ShipQty,
-0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),
-se.Amount
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
-inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
-left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
-where s.Type = 'EXPORT'
+	select [Type] = 'MATERIAL'
+		, f.ID
+		, [Shipper] = s.MDivisionID
+		, [BrandID] = '' 
+		, [Category] = '' 
+		, [OQty] = 0
+		, [CustCDID] = ''
+		, [Dest] = f.ImportCountry
+		, f.ShipModeID
+		, [PulloutDate] = f.PortArrival
+		, [ShipQty] = 0
+		, [CTNQty] = 0 
+		, [GW] = f.WeightKg 
+		, [CBM] = f.Cbm
+		, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'') 
+		, [BLNo] = f.Blno
+		, se.CurrencyID
+		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
+		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
+    left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+    where s.Type = 'EXPORT'
 ");
                         #endregion
                     }
                     else
                     { // Detail List by SP#
                         #region 組SQL
-                        sqlCmd.Append(@"with tmpMaterialData
+                        sqlCmd.Append($@"
+with tmpMaterialData
 as (
-select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Category,'' as OrderID, null as BuyerDelivery,
-0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,'' as PackID,'' as PulloutID,f.PortArrival as PulloutDate,
-0 as ShipQty,0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,
-se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),se.Amount
-from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
-inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
-left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
-where s.Type = 'EXPORT'");
+	select [Type] = 'MATERIAL'
+		, f.ID
+		, [Shipper] = s.MDivisionID
+		, [BrandID] = ''
+		, [Category] = ''
+		, [OrderID] = ''
+		, [BuyerDelivery] = null
+		, [OQty] = 0
+		, [CustCDID] = ''
+		, [Dest] = f.ImportCountry
+		, f.ShipModeID
+		, [PackID] = ''
+		, [PulloutID] = ''
+		, [PulloutDate] = f.PortArrival
+		, [ShipQty] = 0
+		, [CTNQty] = 0
+		, [GW] = f.WeightKg
+		, [CBM] = f.Cbm
+		, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'')
+		, [BLNo] = f.Blno
+		, se.CurrencyID
+		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
+		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+	from ShippingAP s WITH (NOLOCK) 
+	inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+	inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
+	left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+	where s.Type = 'EXPORT'
+");
                         #endregion
                     }
                     #region 組條件
@@ -789,6 +1142,16 @@ where s.Type = 'EXPORT'");
                         sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
                     }
 
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                    }
+
                     if (!MyUtility.Check.Empty(this.dest))
                     {
                         sqlCmd.Append(string.Format(" and f.ImportCountry = '{0}'", this.dest));
@@ -807,7 +1170,8 @@ where s.Type = 'EXPORT'");
                     queryAccount = string.Format(
                         "{0}{1}",
                         sqlCmd.ToString(),
-                        string.Format(@") 
+                        string.Format(@"
+) 
 select distinct a.* 
 into #Accno 
 from (
@@ -856,10 +1220,36 @@ FOR AccountID IN ({0})) a", allAccno.ToString()));
                 else
                 { // Detail List by SP# by Fee Type
                     #region 組SQL
-                    sqlCmd.Append(@"select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Category,'' as OrderID, null as BuyerDelivery,
-0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,'' as PackID,'' as PulloutID,f.PortArrival as PulloutDate,
-0 as ShipQty,0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,
-se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
+                    sqlCmd.Append($@"
+select [Type] = 'MATERIAL'
+	, f.ID
+	, [Shipper] = s.MDivisionID
+	, [BrandID] = ''
+	, [Category] = ''
+	, [OrderID] = ''
+	, [BuyerDelivery] = null 
+	, [OQty] = 0
+	, [CustCDID] = ''
+	, [Dest] = f.ImportCountry 
+	, f.ShipModeID
+	, [PackID] = ''
+	, [PulloutID] = ''
+	, [PulloutDate] = f.PortArrival 
+	, [ShipQty] = 0 
+	, [CTNQty] = 0
+	, [GW] = f.WeightKg
+	, [CBM] = f.Cbm
+	, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'') 
+	, [BLNo] = f.Blno 
+	, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
+	, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+	, se.CurrencyID
+	, [APID] = s.ID
+	, s.CDate
+	, [ApvDate] = CONVERT(DATE,s.ApvDate)
+	, s.VoucherID
+	, s.VoucherDate
+	, s.SubType
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
@@ -884,6 +1274,16 @@ where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
                         sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dest))
@@ -993,6 +1393,15 @@ where s.Type = 'EXPORT'");
                     }
 
                     worksheet.Cells[1, allColumn + i + 1] = "Total Export Fee";
+                }
+
+                // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
+                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
+                {
+                    for (int k = allColumn - 5; k <= allColumn + i + 1; k++)
+                    {
+                        worksheet.Cells[1, k] = worksheet.Cells[1, k].Value + "\r\n(USD)";
+                    }
                 }
 
                 string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + i);
@@ -1166,9 +1575,16 @@ where s.Type = 'EXPORT'");
             }
             else
             {
+                // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
+                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
+                {
+                    worksheet.Cells[1, 22] = worksheet.Cells[1, 22].Value + "\r\n(USD)";
+                }
+
+
                 // 填內容值
                 int intRowsStart = 2;
-                object[,] objArray = new object[1, 28];
+                object[,] objArray = new object[1, 29];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["Type"];
@@ -1198,7 +1614,8 @@ where s.Type = 'EXPORT'");
                     objArray[0, 24] = dr["CDate"];
                     objArray[0, 25] = dr["ApvDate"];
                     objArray[0, 26] = dr["VoucherID"];
-                    objArray[0, 27] = dr["SubType"];
+                    objArray[0, 27] = dr["VoucherDate"];
+                    objArray[0, 28] = dr["SubType"];
 
                     worksheet.Range[string.Format("A{0}:AB{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
