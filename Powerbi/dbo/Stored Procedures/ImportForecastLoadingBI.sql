@@ -104,8 +104,8 @@ From(
 	From (
 		Select tmsCost.ID
 		, ArtworkTypeName = at.name
-		, Value = case unit When 'TMS' Then orders.Qty * tms / 1400 * getCPURate.CpuRate
-				  When 'STITCH' Then orders.Qty * tmsCost.Qty / 1000 * getCPURate.CpuRate
+		, Value = case unit When 'TMS' Then orders.Qty * tms * 1.0 / 1400 * getCPURate.CpuRate
+				  When 'STITCH' Then orders.Qty * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate
 				  When 'PCS' Then orders.Qty * tmsCost.Qty * getCPURate.CpuRate
 				  Else orders.Qty * getCPURate.CpuRate
 				  End
@@ -128,8 +128,8 @@ From(
 	From (
 		Select Forecast.ID
 		, ArtworkTypeName = at.name
-		, Value = case unit When 'TMS' Then Forecast.Qty * tms / 1400 * getCPURate.CpuRate
-			When 'STITCH' Then  Forecast.Qty * tmsCost.Qty / 1000 * getCPURate.CpuRate
+		, Value = case unit When 'TMS' Then Forecast.Qty * tms * 1.0 / 1400 * getCPURate.CpuRate
+			When 'STITCH' Then  Forecast.Qty * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate
 			When 'PCS' Then Forecast.Qty * tmsCost.Qty * getCPURate.CpuRate
 			Else Forecast.Qty * getCPURate.CpuRate
 			End
@@ -153,8 +153,8 @@ From(
 	From (
 		Select FactoryOrder.ID
 		, ArtworkTypeName = at.name
-		, Value = case unit When 'TMS' Then FactoryOrder.Qty * tms / 1400 * getCPURate.CpuRate
-			When 'STITCH' Then  FactoryOrder.Qty * tmsCost.Qty / 1000 * getCPURate.CpuRate
+		, Value = case unit When 'TMS' Then FactoryOrder.Qty * tms * 1.0 / 1400 * getCPURate.CpuRate
+			When 'STITCH' Then  FactoryOrder.Qty * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate
 			When 'PCS' Then FactoryOrder.Qty * tmsCost.Qty * getCPURate.CpuRate
 			Else FactoryOrder.Qty * getCPURate.CpuRate
 			End
@@ -178,8 +178,8 @@ From(
 	From (
 		Select FactoryOrder.ID
 		, ArtworkTypeName = at.name
-		, Value = case unit When 'TMS' Then FactoryOrder.Qty * tms / 1400 * getCPURate.CpuRate
-			When 'STITCH' Then  FactoryOrder.Qty * tmsCost.Qty / 1000 * getCPURate.CpuRate
+		, Value = case unit When 'TMS' Then FactoryOrder.Qty * tms  * 1.0 / 1400 * getCPURate.CpuRate
+			When 'STITCH' Then  FactoryOrder.Qty * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate
 			When 'PCS' Then FactoryOrder.Qty * tmsCost.Qty * getCPURate.CpuRate
 			Else FactoryOrder.Qty * getCPURate.CpuRate
 			End * -1
@@ -502,8 +502,8 @@ From #tmpOrderList
 		, Forecast.FactoryID
 		, Forecast.MDivisionID
 		, ArtworkTypeID = at.ID
-		, Value = case When at.ProductionUnit = 'TMS' Then Forecast.Qty * tms / 1400 * getCPURate.CpuRate
-			When at.ArtworkUnit = 'STITCH' Then  Forecast.Qty * tmsCost.Qty / 1000 * getCPURate.CpuRate
+		, Value = case When at.ProductionUnit = 'TMS' Then Forecast.Qty * tms * 1.0/ 1400 * getCPURate.CpuRate
+			When at.ArtworkUnit = 'STITCH' Then  Forecast.Qty * tmsCost.Qty * 1.0/ 1000 * getCPURate.CpuRate
 			When at.ProductionUnit = 'Qty' Then Forecast.Qty * tmsCost.Qty * getCPURate.CpuRate
 			Else Forecast.Qty * getCPURate.CpuRate
 			End
@@ -520,8 +520,8 @@ From #tmpOrderList
 		, FactoryOrder.FactoryID
 		, Factory.MDivisionID
 		, ArtworkTypeID = at.ID
-		, Value = case When at.ProductionUnit = 'TMS' Then FactoryOrder.Qty * tms / 1400 * getCPURate.CpuRate
-			When at.ArtworkUnit = 'STITCH' Then  FactoryOrder.Qty * tmsCost.Qty / 1000 * getCPURate.CpuRate
+		, Value = case When at.ProductionUnit = 'TMS' Then FactoryOrder.Qty * tms * 1.0 / 1400 * getCPURate.CpuRate
+			When at.ArtworkUnit = 'STITCH' Then  FactoryOrder.Qty * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate
 			When at.ProductionUnit = 'Qty' Then FactoryOrder.Qty * tmsCost.Qty * getCPURate.CpuRate
 			Else FactoryOrder.Qty * getCPURate.CpuRate
 			End
@@ -539,8 +539,8 @@ From #tmpOrderList
 		, FactoryID = FactoryOrder.ProgramID
 		, Factory.MDivisionID
 		, ArtworkTypeID = at.ID
-		, Value = case When at.ProductionUnit = 'TMS' Then FactoryOrder.Qty * tms / 1400 * getCPURate.CpuRate
-			When at.ArtworkUnit = 'STITCH' Then  FactoryOrder.Qty * tmsCost.Qty / 1000 * getCPURate.CpuRate
+		, Value = case When at.ProductionUnit = 'TMS' Then FactoryOrder.Qty * tms * 1.0 / 1400 * getCPURate.CpuRate
+			When at.ArtworkUnit = 'STITCH' Then  FactoryOrder.Qty * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate
 			When at.ProductionUnit = 'Qty' Then FactoryOrder.Qty * tmsCost.Qty * getCPURate.CpuRate
 			Else FactoryOrder.Qty * getCPURate.CpuRate
 			End * -1
@@ -554,15 +554,15 @@ From #tmpOrderList
 		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType in ('2') and FactoryOrder.SCIDelivery between @Date_S and @Date_E
 	) source
 
-	select 
+select 
 	 a.FactoryID
 	, a.MDivisionID
 	, a.ArtworkTypeID
 	, a.[Key]
 	, sumValue = sum(Value)
-	into #SourceB
-	From #SourceA a
-	Group by a.FactoryID, a.MDivisionID, a.ArtworkTypeID, a.[Key]
+into #SourceB
+From #SourceA a
+Group by a.FactoryID, a.MDivisionID, a.ArtworkTypeID, a.[Key]
 
 -- 建立所有的Key
 Declare @KeyTable Table ([key] varchar(6) not null primary key)
