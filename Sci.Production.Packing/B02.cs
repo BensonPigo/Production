@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -33,6 +34,25 @@ namespace Sci.Production.Packing
                 this.ht.Add("Picture1", path + "CTN.jpg");
                 this.pictureBox1.ImageLocation = this.ht["Picture1"].ToString();
             }
+            #region ComboBox
+            DualResult result;
+            DataTable sizes;
+            string cmd = $@"
+SELECT [SIze]='' 
+UNION
+SELECT  SIze 
+FROM StickerSize WITH (NOLOCK) ";
+
+            if (result = DBProxy.Current.Select(null, cmd, out sizes))
+            {
+                MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, sizes);
+                this.comboStickerSize.SelectedIndex = 0;
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
+            #endregion 
         }
 
         protected override void OnDetailEntered()
@@ -212,6 +232,17 @@ namespace Sci.Production.Packing
             }
 
             this.CurrentMaintain["FileName"] = this.Destination_fileName;
+        }
+
+        private void comboStickerSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            string slectedSize = this.comboStickerSize.SelectedValue.ToString();
+            string cmd = "SELE";
+            List<SqlParameter> paras = new List<SqlParameter>();
+            paras.Add(new SqlParameter("@Size", slectedSize));
+
+            //this.numStampLength.Value = "";
         }
     }
 }

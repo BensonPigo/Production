@@ -40,8 +40,8 @@
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
             this.txtCTNRefno = new Sci.Win.UI.TextBox();
-            this.numFromLeft = new Sci.Win.UI.NumericBox();
-            this.numFromTop = new Sci.Win.UI.NumericBox();
+            this.numFromRight = new Sci.Win.UI.NumericBox();
+            this.numFromBottom = new Sci.Win.UI.NumericBox();
             this.numStampLength = new Sci.Win.UI.NumericBox();
             this.numStampWidth = new Sci.Win.UI.NumericBox();
             this.btnUpload = new Sci.Win.UI.Button();
@@ -50,6 +50,8 @@
             this.displayFileName = new Sci.Win.UI.DisplayBox();
             this.label10 = new Sci.Win.UI.Label();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
+            this.comboStickerSize = new Sci.Win.UI.ComboBox();
+            this.label11 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -65,6 +67,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label11);
+            this.detailcont.Controls.Add(this.comboStickerSize);
             this.detailcont.Controls.Add(this.pictureBox1);
             this.detailcont.Controls.Add(this.label10);
             this.detailcont.Controls.Add(this.displayFileName);
@@ -73,8 +77,8 @@
             this.detailcont.Controls.Add(this.btnUpload);
             this.detailcont.Controls.Add(this.numStampWidth);
             this.detailcont.Controls.Add(this.numStampLength);
-            this.detailcont.Controls.Add(this.numFromTop);
-            this.detailcont.Controls.Add(this.numFromLeft);
+            this.detailcont.Controls.Add(this.numFromBottom);
+            this.detailcont.Controls.Add(this.numFromRight);
             this.detailcont.Controls.Add(this.txtCTNRefno);
             this.detailcont.Controls.Add(this.txtcustcd1);
             this.detailcont.Controls.Add(this.txtbrand1);
@@ -88,6 +92,8 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Size = new System.Drawing.Size(787, 337);
+            this.detailcont.TabStop = true;
+            this.detailcont.Title = "2";
             // 
             // detailbtm
             // 
@@ -136,7 +142,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(365, 198);
+            this.label5.Location = new System.Drawing.Point(365, 243);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 23);
             this.label5.TabIndex = 4;
@@ -148,7 +154,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(131, 23);
             this.label6.TabIndex = 5;
-            this.label6.Text = "From Left (mm)";
+            this.label6.Text = "From Right (mm)";
             // 
             // label7
             // 
@@ -156,11 +162,11 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(131, 23);
             this.label7.TabIndex = 6;
-            this.label7.Text = "From Top (mm)";
+            this.label7.Text = "From Bottom (mm)";
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(365, 115);
+            this.label8.Location = new System.Drawing.Point(365, 156);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(131, 23);
             this.label8.TabIndex = 7;
@@ -168,7 +174,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(365, 156);
+            this.label9.Location = new System.Drawing.Point(365, 115);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(131, 23);
             this.label9.TabIndex = 8;
@@ -182,7 +188,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(138, 33);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(125, 23);
-            this.txtbrand1.TabIndex = 9;
+            this.txtbrand1.TabIndex = 1;
             // 
             // txtcustcd1
             // 
@@ -193,7 +199,7 @@
             this.txtcustcd1.Location = new System.Drawing.Point(138, 74);
             this.txtcustcd1.Name = "txtcustcd1";
             this.txtcustcd1.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd1.TabIndex = 10;
+            this.txtcustcd1.TabIndex = 2;
             // 
             // txtCTNRefno
             // 
@@ -203,55 +209,55 @@
             this.txtCTNRefno.Location = new System.Drawing.Point(138, 115);
             this.txtCTNRefno.Name = "txtCTNRefno";
             this.txtCTNRefno.Size = new System.Drawing.Size(100, 23);
-            this.txtCTNRefno.TabIndex = 11;
+            this.txtCTNRefno.TabIndex = 3;
             this.txtCTNRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCTNRefno_PopUp);
             this.txtCTNRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCTNRefno_Validating);
             // 
-            // numFromLeft
+            // numFromRight
             // 
-            this.numFromLeft.BackColor = System.Drawing.Color.White;
-            this.numFromLeft.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromLeft", true));
-            this.numFromLeft.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromLeft.Location = new System.Drawing.Point(499, 33);
-            this.numFromLeft.Maximum = new decimal(new int[] {
+            this.numFromRight.BackColor = System.Drawing.Color.White;
+            this.numFromRight.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromRight", true));
+            this.numFromRight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numFromRight.Location = new System.Drawing.Point(499, 33);
+            this.numFromRight.Maximum = new decimal(new int[] {
             99999999,
             0,
             0,
             131072});
-            this.numFromLeft.Name = "numFromLeft";
-            this.numFromLeft.NullValue = new decimal(new int[] {
+            this.numFromRight.Name = "numFromRight";
+            this.numFromRight.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numFromLeft.Size = new System.Drawing.Size(100, 23);
-            this.numFromLeft.TabIndex = 13;
-            this.numFromLeft.Value = new decimal(new int[] {
+            this.numFromRight.Size = new System.Drawing.Size(100, 23);
+            this.numFromRight.TabIndex = 5;
+            this.numFromRight.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numFromTop
+            // numFromBottom
             // 
-            this.numFromTop.BackColor = System.Drawing.Color.White;
-            this.numFromTop.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromTop", true));
-            this.numFromTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromTop.Location = new System.Drawing.Point(499, 74);
-            this.numFromTop.Maximum = new decimal(new int[] {
+            this.numFromBottom.BackColor = System.Drawing.Color.White;
+            this.numFromBottom.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromBottom", true));
+            this.numFromBottom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numFromBottom.Location = new System.Drawing.Point(499, 74);
+            this.numFromBottom.Maximum = new decimal(new int[] {
             99999999,
             0,
             0,
             131072});
-            this.numFromTop.Name = "numFromTop";
-            this.numFromTop.NullValue = new decimal(new int[] {
+            this.numFromBottom.Name = "numFromBottom";
+            this.numFromBottom.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numFromTop.Size = new System.Drawing.Size(100, 23);
-            this.numFromTop.TabIndex = 14;
-            this.numFromTop.Value = new decimal(new int[] {
+            this.numFromBottom.Size = new System.Drawing.Size(100, 23);
+            this.numFromBottom.TabIndex = 6;
+            this.numFromBottom.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -262,7 +268,7 @@
             this.numStampLength.BackColor = System.Drawing.Color.White;
             this.numStampLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StampLength", true));
             this.numStampLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numStampLength.Location = new System.Drawing.Point(499, 115);
+            this.numStampLength.Location = new System.Drawing.Point(499, 156);
             this.numStampLength.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -275,7 +281,7 @@
             0,
             0});
             this.numStampLength.Size = new System.Drawing.Size(100, 23);
-            this.numStampLength.TabIndex = 15;
+            this.numStampLength.TabIndex = 8;
             this.numStampLength.Value = new decimal(new int[] {
             0,
             0,
@@ -287,7 +293,7 @@
             this.numStampWidth.BackColor = System.Drawing.Color.White;
             this.numStampWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StampWidth", true));
             this.numStampWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numStampWidth.Location = new System.Drawing.Point(499, 156);
+            this.numStampWidth.Location = new System.Drawing.Point(499, 115);
             this.numStampWidth.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -300,7 +306,7 @@
             0,
             0});
             this.numStampWidth.Size = new System.Drawing.Size(100, 23);
-            this.numStampWidth.TabIndex = 16;
+            this.numStampWidth.TabIndex = 7;
             this.numStampWidth.Value = new decimal(new int[] {
             0,
             0,
@@ -310,10 +316,10 @@
             // btnUpload
             // 
             this.btnUpload.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnUpload.Location = new System.Drawing.Point(593, 227);
+            this.btnUpload.Location = new System.Drawing.Point(593, 272);
             this.btnUpload.Name = "btnUpload";
             this.btnUpload.Size = new System.Drawing.Size(80, 30);
-            this.btnUpload.TabIndex = 18;
+            this.btnUpload.TabIndex = 10;
             this.btnUpload.Text = "Upload";
             this.btnUpload.UseVisualStyleBackColor = true;
             this.btnUpload.Click += new System.EventHandler(this.BtnUpload_Click);
@@ -321,10 +327,10 @@
             // btnDownload
             // 
             this.btnDownload.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnDownload.Location = new System.Drawing.Point(695, 227);
+            this.btnDownload.Location = new System.Drawing.Point(695, 272);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(80, 30);
-            this.btnDownload.TabIndex = 19;
+            this.btnDownload.TabIndex = 11;
             this.btnDownload.Text = "Download";
             this.btnDownload.UseVisualStyleBackColor = true;
             this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
@@ -345,17 +351,17 @@
             this.cmbSide.Name = "cmbSide";
             this.cmbSide.OldText = "";
             this.cmbSide.Size = new System.Drawing.Size(121, 24);
-            this.cmbSide.TabIndex = 12;
+            this.cmbSide.TabIndex = 4;
             // 
             // displayFileName
             // 
             this.displayFileName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFileName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FileName", true));
             this.displayFileName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFileName.Location = new System.Drawing.Point(470, 198);
+            this.displayFileName.Location = new System.Drawing.Point(470, 243);
             this.displayFileName.Name = "displayFileName";
             this.displayFileName.Size = new System.Drawing.Size(305, 23);
-            this.displayFileName.TabIndex = 20;
+            this.displayFileName.TabIndex = 9;
             // 
             // label10
             // 
@@ -374,6 +380,33 @@
             this.pictureBox1.TabIndex = 22;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.WaitOnLoad = true;
+            // 
+            // comboStickerSize
+            // 
+            this.comboStickerSize.BackColor = System.Drawing.Color.White;
+            this.comboStickerSize.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Side", true));
+            this.comboStickerSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStickerSize.FormattingEnabled = true;
+            this.comboStickerSize.IsSupportUnselect = true;
+            this.comboStickerSize.Items.AddRange(new object[] {
+            "A",
+            "B",
+            "C",
+            "D"});
+            this.comboStickerSize.Location = new System.Drawing.Point(499, 197);
+            this.comboStickerSize.Name = "comboStickerSize";
+            this.comboStickerSize.OldText = "";
+            this.comboStickerSize.Size = new System.Drawing.Size(121, 24);
+            this.comboStickerSize.TabIndex = 23;
+            this.comboStickerSize.SelectedIndexChanged += new System.EventHandler(this.comboStickerSize_SelectedIndexChanged);
+            // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(365, 198);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(131, 23);
+            this.label11.TabIndex = 24;
+            this.label11.Text = "Sticker Size";
             // 
             // B02
             // 
@@ -416,8 +449,8 @@
         private Win.UI.Button btnUpload;
         private Win.UI.NumericBox numStampWidth;
         private Win.UI.NumericBox numStampLength;
-        private Win.UI.NumericBox numFromTop;
-        private Win.UI.NumericBox numFromLeft;
+        private Win.UI.NumericBox numFromBottom;
+        private Win.UI.NumericBox numFromRight;
         private Win.UI.TextBox txtCTNRefno;
         private Class.txtcustcd txtcustcd1;
         private Class.txtbrand txtbrand1;
@@ -425,5 +458,7 @@
         private Win.UI.DisplayBox displayFileName;
         private Win.UI.PictureBox pictureBox1;
         private Win.UI.Label label10;
+        private Win.UI.Label label11;
+        private Win.UI.ComboBox comboStickerSize;
     }
 }
