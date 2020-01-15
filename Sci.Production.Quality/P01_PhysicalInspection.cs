@@ -309,6 +309,11 @@ where	WEAVETYPEID = '{0}'
 
                     SelectItem sele;
                     string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' order by dyelot", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+
+                    if (!MyUtility.Check.Seek(roll_cmd))
+                    {
+                        roll_cmd = string.Format("Select roll,dyelot,StockQty=qty from TransferIn_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' order by dyelot", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    }
                     sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",",columndecimals:"0,0,2");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) {
@@ -366,6 +371,12 @@ where	WEAVETYPEID = '{0}'
                 }
                 if (oldvalue == newvalue) return;
                 string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue.ToString().Replace("'", "''"));
+
+                if (!MyUtility.Check.Seek(roll_cmd))
+                {
+                    roll_cmd = string.Format("Select roll,dyelot,StockQty=qty from TransferIn_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue.ToString().Replace("'", "''"));
+                }
+
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -695,10 +706,17 @@ Where DetailUkey = {15};",
                     //至少收料的每ㄧ缸都要有檢驗紀錄 ,找尋有收料的缸沒在檢驗出現
                     DataTable dyeDt;
                     string cmd = string.Format(
-                        @"Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
-                        a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
-                        and not exists 
-                        (Select distinct dyelot from FIR_Physical b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)"
+                        @"
+Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
+a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
+and not exists 
+(Select distinct dyelot from FIR_Physical b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)
+union
+Select distinct dyelot from TransferIn_Detail a WITH (NOLOCK) where 
+a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
+and not exists 
+(Select distinct dyelot from FIR_Physical b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)
+"
                         , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
                     DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
                     if (dResult)
