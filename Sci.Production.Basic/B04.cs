@@ -254,5 +254,11 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
             this.ReloadDatas();
             this.RenewData();
         }
+
+        protected override void ClickNewAfter()
+        {
+            this.CurrentMaintain["Status"] = "New";
+            base.ClickNewAfter();
+        }
     }
 }
