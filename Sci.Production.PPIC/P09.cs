@@ -456,7 +456,7 @@ from Clip where TableName = 'ReplacementReport' AND UniqueKey = '{this.CurrentMa
         {
             if (this.EditMode)
             {
-                if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
+                if (!MyUtility.Check.Empty(this.txtSPNo.Text))
                 {
                     // sql參數
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", this.txtSPNo.Text);
@@ -511,7 +511,7 @@ from Clip where TableName = 'ReplacementReport' AND UniqueKey = '{this.CurrentMa
         // SP No.
         private void TxtSPNo_Validated(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 // 清空表身Grid資料
                 foreach (DataRow dr in this.DetailDatas)
