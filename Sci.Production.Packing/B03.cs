@@ -158,12 +158,16 @@ FROM StickerSize WITH (NOLOCK) ";
                 {
                     this.CurrentMaintain["PicLength"] = Convert.ToInt32(dt.Rows[0]["Length"]);
                     this.CurrentMaintain["PicWidth"] = Convert.ToInt32(dt.Rows[0]["Width"]);
-                    this.CurrentMaintain["StickerSizeID"] = id;
                 }
             }
             else
             {
                 this.ShowErr(result);
+            }
+
+            if (this.CurrentMaintain != null)
+            {
+                this.CurrentMaintain["StickerSizeID"] = id;
             }
         }
     }

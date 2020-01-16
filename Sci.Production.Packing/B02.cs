@@ -258,7 +258,6 @@ FROM StickerSize WITH (NOLOCK) ";
                 {
                     this.CurrentMaintain["StampLength"] = Convert.ToInt32(dt.Rows[0]["Length"]);
                     this.CurrentMaintain["StampWidth"] = Convert.ToInt32(dt.Rows[0]["Width"]);
-                    this.CurrentMaintain["StickerSizeID"] = id;
                 }
             }
             else
@@ -266,6 +265,10 @@ FROM StickerSize WITH (NOLOCK) ";
                 this.ShowErr(result);
             }
 
+            if (this.CurrentMaintain != null)
+            {
+                this.CurrentMaintain["StickerSizeID"] = id;
+            }
         }
     }
 }
