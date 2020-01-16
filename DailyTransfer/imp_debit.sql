@@ -15,7 +15,7 @@ insert @Sayfty select id from Production.dbo.Factory
 
 -------------Merge update Production.Debit---------------------------
 	Merge Production.dbo.Debit as t
-	Using (select * from Trade_To_Pms.dbo.Debit WITH (NOLOCK) where BrandID in (select id from @Sayfty ) )as s
+	Using (select * from Trade_To_Pms.dbo.Debit WITH (NOLOCK) where ResponFTY in (select id from @Sayfty ) )as s
 	on t.id = s.id
 	when matched and (s.sysdate <> t.sysdate or t.EditDate <> s.EditDate) then
 		update set 
@@ -58,7 +58,7 @@ insert @Sayfty select id from Production.dbo.Factory
 			t.issuedate=s.cdate ,
 			t.AddDate=s.AddDate ,
 			t.SysDate=s.SysDate ,
-			t.MDivisionID=(SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty WITH (NOLOCK) where id=s.BrandID)
+			t.MDivisionID=(SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty WITH (NOLOCK) where id=s.ResponFTY)
 	when not matched by target then 	
 		insert(	 ID,  CurrencyID,  Amount,  Received,  BuyerID,  BrandID,  BankID,  LCFNO,  LCFDate,  EstPayDate,  Title,  SendFrom,  Attn,  CC,
 				  Subject,  Handle,  SMR,  VoucherID,  BadID,  Status,  StatusRevise,  StatusReviseNm, CustPayId,   Settled,  SettleDate,  Cfm,  CfmDate,
@@ -70,7 +70,7 @@ insert @Sayfty select id from Production.dbo.Factory
 				s.Subject,s.Handle,s.SMR,s.VoucherID,s.BadID,s.Status,s.StatusRevise,s.StatusReviseNm,s.CustPayId,s.Settled,s.SettleDate,s.Cfm,s.CfmDate,
 				s.Lock,s.Lockdate,s.OldAmount,s.Type,s.ShareFob,s.VoucherFactory,s.VoucherSettle,s.IsSubcon,s.LCLName,s.LCLCurrency,s.LCLAmount,s.LCLRate,
 				s.AddName,s.cdate,s.AddDate,s.EditName,s.EditDate,
-				s.SysDate,(SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty WITH (NOLOCK) where id=s.BrandID)
+				s.SysDate,(SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty WITH (NOLOCK) where id=s.ResponFTY)
 				)
 		
 		output inserted.id,iif(deleted.id is null,1,0) into @Tdebit ;
@@ -106,7 +106,7 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 	when not matched by target then
 		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID ,CurrencyID, AddDate, AddName,[status],MDivisionID,issuedate)
 		values( '1'    , Id, BrandID  , Amount   , CurrencyID		,CurrencyID, AddDate,'SCIMIS','New',
-			isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.BRANDID),'')
+			isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.ResponFTY),'')
 			,s.adddate )
 	output inserted.id,iif(deleted.id='',1,0) into @tLocalDebit;
 
@@ -117,13 +117,13 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 	on t.id = s.id AND t.Status='New'
 	when matched then
 		update set 
-			t.FactoryID = s.BrandID,
+			t.FactoryID = s.ResponFTY,
 			t.TaipeiAMT = s.Amount,
 			t.TaipeiCurrencyID = s.CurrencyID,
 			t.Currencyid = s.CurrencyID,
 			t.EditName = s.EditName,
 			t.EditDate = s.EditDate,
-			t.MDivisionID = isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.BRANDID),''),
+			t.MDivisionID = isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.ResponFTY),''),
 			t.issuedate = s.adddate
 	;
 	
