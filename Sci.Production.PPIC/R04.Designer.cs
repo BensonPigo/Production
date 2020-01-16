@@ -36,26 +36,24 @@
             this.dateApvDate = new Sci.Win.UI.DateRange();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.lbLeadtime = new Sci.Win.UI.Label();
+            this.comboLeadtime = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(367, 12);
-            this.print.TabIndex = 4;
+            this.print.Location = new System.Drawing.Point(352, 1);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(367, 48);
-            this.toexcel.TabIndex = 5;
+            this.toexcel.Location = new System.Drawing.Point(352, 37);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(367, 84);
-            this.close.TabIndex = 6;
+            this.close.Location = new System.Drawing.Point(352, 73);
             // 
             // label1
             // 
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(13, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(82, 23);
@@ -64,7 +62,6 @@
             // 
             // labelApvDate
             // 
-            this.labelApvDate.Lines = 0;
             this.labelApvDate.Location = new System.Drawing.Point(13, 48);
             this.labelApvDate.Name = "labelApvDate";
             this.labelApvDate.Size = new System.Drawing.Size(82, 23);
@@ -73,7 +70,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 84);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(82, 23);
@@ -82,7 +78,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 120);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(82, 23);
@@ -97,11 +92,26 @@
             this.comboReportType.IsSupportUnselect = true;
             this.comboReportType.Location = new System.Drawing.Point(99, 11);
             this.comboReportType.Name = "comboReportType";
+            this.comboReportType.OldText = "";
             this.comboReportType.Size = new System.Drawing.Size(121, 24);
             this.comboReportType.TabIndex = 0;
             // 
             // dateApvDate
             // 
+            // 
+            // 
+            // 
+            this.dateApvDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateApvDate.DateBox1.Name = "";
+            this.dateApvDate.DateBox1.Size = new System.Drawing.Size(103, 23);
+            this.dateApvDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateApvDate.DateBox2.Location = new System.Drawing.Point(125, 0);
+            this.dateApvDate.DateBox2.Name = "";
+            this.dateApvDate.DateBox2.Size = new System.Drawing.Size(103, 23);
+            this.dateApvDate.DateBox2.TabIndex = 1;
             this.dateApvDate.IsRequired = false;
             this.dateApvDate.Location = new System.Drawing.Point(99, 48);
             this.dateApvDate.Name = "dateApvDate";
@@ -116,6 +126,7 @@
             this.comboM.IsSupportUnselect = true;
             this.comboM.Location = new System.Drawing.Point(99, 83);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(81, 24);
             this.comboM.TabIndex = 2;
             // 
@@ -127,12 +138,35 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(99, 119);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(81, 24);
             this.comboFactory.TabIndex = 3;
             // 
+            // lbLeadtime
+            // 
+            this.lbLeadtime.Location = new System.Drawing.Point(188, 119);
+            this.lbLeadtime.Name = "lbLeadtime";
+            this.lbLeadtime.Size = new System.Drawing.Size(82, 23);
+            this.lbLeadtime.TabIndex = 98;
+            this.lbLeadtime.Text = "Leadtime";
+            // 
+            // comboLeadtime
+            // 
+            this.comboLeadtime.BackColor = System.Drawing.Color.White;
+            this.comboLeadtime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLeadtime.FormattingEnabled = true;
+            this.comboLeadtime.IsSupportUnselect = true;
+            this.comboLeadtime.Location = new System.Drawing.Point(273, 120);
+            this.comboLeadtime.Name = "comboLeadtime";
+            this.comboLeadtime.OldText = "";
+            this.comboLeadtime.Size = new System.Drawing.Size(90, 24);
+            this.comboLeadtime.TabIndex = 4;
+            // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(459, 178);
+            this.ClientSize = new System.Drawing.Size(459, 192);
+            this.Controls.Add(this.comboLeadtime);
+            this.Controls.Add(this.lbLeadtime);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.dateApvDate);
@@ -145,7 +179,11 @@
             this.DefaultControlForEdit = "comboReportType";
             this.IsSupportToPrint = false;
             this.Name = "R04";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R04. Lacking & Replacement BCS Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -157,6 +195,8 @@
             this.Controls.SetChildIndex(this.dateApvDate, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.lbLeadtime, 0);
+            this.Controls.SetChildIndex(this.comboLeadtime, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -172,5 +212,7 @@
         private Win.UI.DateRange dateApvDate;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
+        private Win.UI.Label lbLeadtime;
+        private Win.UI.ComboBox comboLeadtime;
     }
 }
