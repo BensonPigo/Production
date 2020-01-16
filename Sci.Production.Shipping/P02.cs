@@ -881,7 +881,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
 
             #region set Special Sending Value
             if ((this.CurrentMaintain["FromTag"].ToString() == "1") &&
-                    (this.CurrentMaintain["ToTag"].ToString() == "1" || 
+                    (this.CurrentMaintain["ToTag"].ToString() == "1" ||
                      this.CurrentMaintain["ToTag"].ToString() == "2"))
             {
                 string fromRegion = MyUtility.GetValue.Lookup($@"select NegoRegion from Factory where id='{this.CurrentMaintain["FromSite"]}'");
@@ -974,6 +974,11 @@ outer apply (
                         this.CurrentMaintain["IsSpecialSending"] = false;
                     }
                 }
+
+            }
+            else
+            {
+                this.CurrentMaintain["IsSpecialSending"] = false;
             }
             #endregion
 
