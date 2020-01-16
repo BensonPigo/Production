@@ -92,6 +92,7 @@ select
         , [OrderQty] = o.Qty
         , [ExceedQty] = 0
         , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0)
+        , [Stitch] = 1
 from orders o with (nolock)
 cross join ArtworkType at with (nolock)
 outer apply (
@@ -173,16 +174,17 @@ where   o.Junk = 0 and o.Qty > 0 and
                         findrow[0]["StyleID"] = tmp["StyleID"];
                         findrow[0]["Sewinline"] = tmp["Sewinline"];
                         findrow[0]["SciDelivery"] = tmp["SciDelivery"];
+                        findrow[0]["Stitch"] = tmp["Stitch"];
                     }
                     else
                     {
 
                         tmp["id"] = dr["id"];
+                        tmp["Stitch"] = 1;
                         tmp["ExceedQty"] = exceedQty < 0 ? 0 : exceedQty;
                         tmp.AcceptChanges();
                         tmp.SetAdded();
                         dt_artworkpo_detail.ImportRow(tmp);
-
                     }
                 }
             }
