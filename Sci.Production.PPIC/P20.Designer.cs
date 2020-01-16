@@ -1360,6 +1360,7 @@
             // CboReason
             // 
             this.CboReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.CboReason.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ReasonID", true));
             this.CboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.CboReason.FormattingEnabled = true;
             this.CboReason.IsSupportUnselect = true;
@@ -1843,7 +1844,6 @@
             // cmbCategory
             // 
             this.cmbCategory.BackColor = System.Drawing.Color.White;
-            this.cmbCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ReasonID", true));
             this.cmbCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbCategory.FormattingEnabled = true;
             this.cmbCategory.IsSupportUnselect = true;
