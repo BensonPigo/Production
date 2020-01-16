@@ -1049,7 +1049,7 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())",
                 }
             }
 
-            this.SendMail(false);
+            this.SendMail(true);
         }
 
         /// <inheritdoc/>
@@ -1271,7 +1271,7 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())",
                 }
             }
 
-            this.SendMail(false);
+            this.SendMail(true);
         }
 
         /// <inheritdoc/>
@@ -1419,6 +1419,7 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
                 this.ToExcel(true);
 
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, this.excelFile, content.ToString(), visibleForm, visibleForm);
+
                 email.ShowDialog(this);
 
                 // 刪除Excel File
