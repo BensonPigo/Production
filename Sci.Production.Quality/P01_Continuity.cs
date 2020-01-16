@@ -152,6 +152,12 @@ namespace Sci.Production.Quality
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+
+                    if (!MyUtility.Check.Seek(roll_cmd))
+                    {
+                        roll_cmd = string.Format("Select roll,dyelot,StockQty=qty from TransferIn_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    }
+
                     sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }                    
@@ -177,6 +183,12 @@ namespace Sci.Production.Quality
                 //手動輸入,oldvalue <> newvalue,就不會return並且繼續判斷
                 if (oldvalue == newvalue) return;
                 string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+
+                if (!MyUtility.Check.Seek(roll_cmd))
+                {
+                    roll_cmd = string.Format("Select roll,dyelot,StockQty=qty from TransferIn_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                }
+
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -297,10 +309,17 @@ namespace Sci.Production.Quality
                     //當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
                     DataTable dyeDt;
                     string cmd = string.Format(
-                    @"Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
-                    a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
-                    and not exists 
-                    (Select distinct dyelot from FIR_Continuity b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)"
+                    @"
+Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
+a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
+and not exists 
+(Select distinct dyelot from FIR_Continuity b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)
+union
+Select distinct dyelot from TransferIn_Detail a WITH (NOLOCK) where 
+a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
+and not exists 
+(Select distinct dyelot from FIR_Continuity b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)
+"
                         , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
 
                     DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);

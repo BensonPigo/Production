@@ -513,10 +513,17 @@ namespace Sci.Production.Quality
                         //當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
                         DataTable dyeDt;
                         string cmd = string.Format(
-                        @"Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
-                        a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
-                        and not exists 
-                        (Select distinct dyelot from FIR_ShadeBone b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)"
+                        @"
+Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
+a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
+and not exists 
+(Select distinct dyelot from FIR_ShadeBone b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)
+union
+Select distinct dyelot from TransferIn_Detail a WITH (NOLOCK) where 
+a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
+and not exists 
+(Select distinct dyelot from FIR_ShadeBone b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)
+"
                            , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
 
                         DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
