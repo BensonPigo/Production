@@ -54,9 +54,10 @@ namespace Sci.Production.Subcon
 
             if ((sciDelivery_b == null && sciDelivery_e == null) &&
                 (Inline_b == null && Inline_e == null) &&
-                string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
+                string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e) &&
+                MyUtility.Check.Empty(this.MasterSP))
             {
-                MyUtility.Msg.WarningBox("< SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< SCI Delivery > or < Inline Date > or < SP# > or <Master SP#> can't be empty!!");
                 txtSPNoStart.Focus();
                 return;
             }
