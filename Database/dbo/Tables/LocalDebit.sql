@@ -29,6 +29,7 @@
     [AddDate]          DATETIME        NULL,
     [EditName]         VARCHAR (10)    CONSTRAINT [DF_LocalDebit_EditName] DEFAULT ('') NULL,
     [EditDate]         DATETIME        NULL,
+    [ResponFTY] VARCHAR(8) NULL DEFAULT (''), 
     CONSTRAINT [PK_LocalDebit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
