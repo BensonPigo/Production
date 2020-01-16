@@ -152,7 +152,10 @@ ap.OrderID
 from dbo.ArtworkReq_Detail ap
 left join dbo.Orders o on ap.OrderID = o.id
 left join dbo.ArtworkPO_Detail apo on apo.ID = ap.ArtworkPOID
-and apo.OrderID = ap.OrderID AND AP.ArtworkID = APO.ArtworkId AND AP.PatternCode = APO.PatternCode
+	AND apo.OrderID = ap.OrderID 
+	AND AP.ArtworkID = APO.ArtworkId 
+	AND AP.PatternCode = APO.PatternCode
+	and apo.ArtworkReqID = ap.ID
 where ap.id = '{0}'  
 ORDER BY ap.OrderID   ", masterID);
 
