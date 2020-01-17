@@ -103,7 +103,7 @@ namespace Sci.Production.PPIC
 
             #region Load Reason
             DataTable dt;
-            string sqlcmd = $@"SELECT ID, Name FROM Reason WHERE ReasonTypeID = 'OMQtychange'";
+            string sqlcmd = $@"SELECT ID, ID + '-' + Name as Name FROM Reason WHERE ReasonTypeID = 'OMQtychange'";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
