@@ -24,6 +24,7 @@ namespace Sci.Production.PPIC
         private string pivotContent;
         private int reportType;
         private int totalFactory;
+        private int leadtime;
         private DataTable printData;
         private DataTable reasonData;
         private DataTable pivotData;
@@ -43,7 +44,9 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            MyUtility.Tool.SetupCombox(this.comboLeadtime, 2, 1, "7200,2hrs,10800,3hrs,14400,4hrs");
             this.comboReportType.SelectedIndex = 0;
+            this.comboLeadtime.SelectedIndex = 1;
             this.comboM.Text = Sci.Env.User.Keyword;
             this.comboFactory.Text = Sci.Env.User.Factory;
 
@@ -71,7 +74,7 @@ namespace Sci.Production.PPIC
             this.reportType = this.comboReportType.SelectedIndex;
             this.mDivision = this.comboM.Text;
             this.factory = this.comboFactory.Text;
-
+            this.leadtime = MyUtility.Convert.GetInt(this.comboLeadtime.SelectedValue);
             return base.ValidateInput();
         }
 
@@ -102,33 +105,34 @@ namespace Sci.Production.PPIC
             }
 
             sqlCmd.Append(string.Format(
-                @"
-select distinct l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID
-	,[SewingCell] = isnull(s.SewingCell,'')
-	,[StyleID] = isnull(o.StyleID,'')
-	,l.OrderID
-	,[Seq] = concat(ld.Seq1,' ',ld.Seq2)
-	,[ColorName] = isnull(c.Name,'')
-	,[Refno] = isnull(psd.Refno,'')
-	,l.ApvDate
-	,ld.RejectQty
-	,ld.RequestQty
-	,ld.IssueQty
-	,[FinishedDate] = IIF(l.Status= 'Received',l.EditDate,null)
-	,[Type] = IIF(l.Type='R','Replacement','Lacking')
-	,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
-	,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= 10800,'Y','N'),'N')
-	,l.Remark
-from Lack l WITH (NOLOCK) 
-inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
-left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
-left join Orders o WITH (NOLOCK) on o.ID = l.OrderID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
-left join Color c WITH (NOLOCK) on c.BrandId = o.BrandID and c.ID = psd.ColorID
-left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
-left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
-{0} 
-order by l.MDivisionID,l.FactoryID,l.ID", sqlCondition.ToString()));
+                @"select distinct l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID
+	                    ,[SewingCell] = isnull(s.SewingCell,'')
+	                    ,[StyleID] = isnull(o.StyleID,'')
+	                    ,l.OrderID
+	                    ,[Seq] = concat(ld.Seq1,' ',ld.Seq2)
+	                    ,[ColorName] = isnull(c.Name,'')
+	                    ,[Refno] = isnull(psd.Refno,'')
+	                    ,l.ApvDate
+	                    ,ld.RejectQty
+	                    ,ld.RequestQty
+	                    ,ld.IssueQty
+	                    ,[FinishedDate] = IIF(l.Status= 'Received',l.EditDate,null)
+	                    ,[Type] = IIF(l.Type='R','Replacement','Lacking')
+	                    ,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
+	                    ,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= {1},'Y','N'),'N')
+	                    ,l.Remark
+                    from Lack l WITH (NOLOCK) 
+                    inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
+                    left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
+                    left join Orders o WITH (NOLOCK) on o.ID = l.OrderID
+                    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
+                    left join Color c WITH (NOLOCK) on c.BrandId = o.BrandID and c.ID = psd.ColorID
+                    left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
+                    left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
+                    {0} 
+                    order by l.MDivisionID,l.FactoryID,l.ID",
+                sqlCondition.ToString(),
+                this.leadtime.ToString()));
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
@@ -271,7 +275,8 @@ order by MDivisionID,FactoryID",
                     xlsSheet++;
                     worksheet = excel.ActiveWorkbook.Worksheets[xlsSheet];
                     worksheet.Name = MyUtility.Convert.GetString(dr["FactoryID"]);
-                    worksheet.Cells[4, 7] = string.Format("{0} ~ {1}", Convert.ToDateTime(this.date1).ToString("d"), Convert.ToDateTime(this.date2).ToString("d"));
+                    worksheet.Cells[3, 8] = string.Format("{0} ~ {1}", Convert.ToDateTime(this.date1).ToString("d"), Convert.ToDateTime(this.date2).ToString("d"));
+                    worksheet.Cells[4, 8] = this.comboLeadtime.Text;
                     xlsFactory = MyUtility.Convert.GetString(dr["FactoryID"]);
                     ttlCount = 0;
                     intRowsStart = 7;
