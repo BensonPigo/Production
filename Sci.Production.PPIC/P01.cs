@@ -151,6 +151,7 @@ namespace Sci.Production.PPIC
         {
             DataRow dataRow = this.CurrentMaintain;
             base.ClickNew();
+            this.DoNewAfter();
             this.CurrentMaintain["LocalOrder"] = dataRow["LocalOrder"];
             this.CurrentMaintain["BrandID"] = dataRow["BrandID"];
             this.CurrentMaintain["ProgramID"] = dataRow["ProgramID"];
@@ -167,7 +168,7 @@ namespace Sci.Production.PPIC
             this.CurrentMaintain["Dest"] = dataRow["Dest"];
             this.CurrentMaintain["ShipModeList"] = dataRow["ShipModeList"];
             this.CurrentMaintain["MCHandle"] = dataRow["MCHandle"];
-            this.CurrentMaintain["LocalMR"] = dataRow["LocalMR"];
+            this.CurrentMaintain["LocalMR"] = dataRow["LocalMR"]; 
         }
 
         /// <inheritdoc/>
@@ -455,6 +456,11 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            this.DoNewAfter();
+        }
+
+        private void DoNewAfter()
+        {
             this.txtpaytermar1.TextBox1.ReadOnly = true;
             this.txtDevSample.ReadOnly = true;
             this.label44.Text = "/PCS";
