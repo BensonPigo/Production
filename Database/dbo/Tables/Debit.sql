@@ -48,6 +48,7 @@
     [EditName]       VARCHAR (10)    CONSTRAINT [DF_Debit_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME        NULL,
     [SysDate]        DATETIME        NULL,
+    [ResponFTY] VARCHAR(8) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Debit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
