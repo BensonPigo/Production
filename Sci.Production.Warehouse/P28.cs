@@ -43,6 +43,7 @@ namespace Sci.Production.Warehouse
                  .Text("poid", header: "Issue SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Issue" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Text("seq2", header: "Issue" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("inputqty", header: "TPE Input", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("accu_qty", header: "Accu Trans.", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("VarianceQty", header: "Variance Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
@@ -331,6 +332,7 @@ WHERE   StockType='{dr["toStocktype"]}'
             , pd.id stockpoid
             , pd.seq1 stockseq1
             , pd.seq2 stockseq2
+            , pd.Refno
             , ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty),2) N'inputqty'
             , pd.POUnit
             , pd.StockUnit
