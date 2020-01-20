@@ -271,28 +271,22 @@ where  ap.status = 'New'
             string cmdsql = string.Format(@"
 select a.* 
 , PoQty=isnull(b.PoQty,0)
-, [balance]=a.Farmin-a.AccumulatedQty
-,[PoCtn]=PoCtn.Val
+, [balance]=isnull(b.PoQty,0) - a.AccumulatedQty
+,[LocalSuppCtn]=LocalSuppCtn.Val
 from ArtworkAP_detail a
 left join artworkpo_detail b on a.ArtworkPo_DetailUkey=b.Ukey
 OUTER APPLY(
-	SELECT [Val]= COUNT([PO ID])
+	SELECT [Val]= COUNT(LocalSuppID)
 	FROM (
-		select distinct a.ID AS [PO ID]
-			, ls.ID AS [Supplier]
-			,ls.Name as [Supplier Name]
-			, sum(ad.poqty) as [PO Qty]
-			, apo.[Status] 
+		SELECT DISTINCT apo.LocalSuppID 
 		from ArtworkPO_Detail ad
 		inner join ArtworkPO apo on apo.id = ad.id
-		inner join LocalSupp ls on ls.id = apo.LocalSuppID
 		where ad.OrderID= b.OrderID
 		and ad.PatternCode=b.PatternCode
 		and ad.PatternDesc =b.PatternDesc
-		and apo.ArtworkTypeID = '{1}'
-		group by apo.id, ls.ID,ls.Name, apo.[Status]
+		and apo.ArtworkTypeID = 'PRINTING'
 	)tmp
-)PoCtn
+)LocalSuppCtn
 where a.id='{0}'
 ", masterID , ArtworkTypeID);
             this.DetailSelectCommand = cmdsql;
@@ -354,7 +348,7 @@ where a.id='{0}'
 
             for (int i = 0; i < this.detailgrid.Rows.Count; i++)
             {
-                if ((int)this.detailgrid.Rows[i].Cells["PoCtn"].Value > 1)
+                if ((int)this.detailgrid.Rows[i].Cells["LocalSuppCtn"].Value >= 2)
                 {
                     this.detailgrid.Rows[i].Cells["FarmOut"].Style.BackColor = Color.Yellow;
                     this.detailgrid.Rows[i].Cells["farmin"].Style.BackColor = Color.Yellow;
@@ -403,13 +397,13 @@ where a.id='{0}'
             .Numeric("balance", header: "Balance", width: Widths.AnsiChars(6), iseditingreadonly: true)    //10
             .Numeric("apqty", header: "Qty", width: Widths.AnsiChars(6),settings:ns2)    //11
             .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 2, integer_places: 14)
-            .Numeric("PoCtn", header: "PoCtn", width: Widths.AnsiChars(0));  //12
+            .Numeric("LocalSuppCtn", header: "LocalSuppCtn", width: Widths.AnsiChars(0));  //12
                    
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink; //qty
             #endregion
-            this.detailgrid.Columns["PoCtn"].Visible = false;
+            this.detailgrid.Columns["LocalSuppCtn"].Visible = false;
         }
 
         //Approve
@@ -428,6 +422,50 @@ where a.id='{0}'
             string sqlupfromAP = string.Empty;
             DualResult result, result2;
             DataTable datacheck;
+
+            #region 檢查表身每一筆資料的ApQty，加上其他已經Approve的ApQty，是否有超過PoQty
+
+            foreach (DataRow detailRow in this.DetailDatas)
+            {
+                string ArtworkPo_DetailUkey = detailRow["ArtworkPo_DetailUkey"].ToString();
+                string orderID = detailRow["orderID"].ToString();
+                //表身的APQTY
+                int CurrentApQty =MyUtility.Convert.GetInt(detailRow["ApQty"]);
+
+                //取得已Approve的ApQTY、PoQty
+                string chkCmd = $@"
+SELECT  [OtherApvApQty]=SUM(ISNULL(aad.apQty,0))
+        ,[PoQty] = ISNULL(ArtworkPO_Detail.PoQty,0)
+FROM ArtworkAP aa with(nolock)
+INNER JOIN ArtworkAP_detail aad with(nolock) ON aad.id = aa.id
+OUTER APPLY(
+	SELECT PoQty
+	FROM ArtworkPO_Detail apd  with(nolock)
+	WHERE apd.ID = aad.ArtworkPoID 
+	AND aad.ArtworkPo_DetailUkey = apd.Ukey
+)ArtworkPO_Detail 
+WHERE aa.Status='Approved' AND aad.ArtworkPo_DetailUkey = {ArtworkPo_DetailUkey}
+GROUP BY ArtworkPO_Detail.PoQty
+";
+                result = DBProxy.Current.Select(null, chkCmd, out datacheck);
+
+                if (!result)
+                {
+                    ShowErr(result);
+                }
+                if (datacheck.Rows != null && datacheck.Rows.Count > 0)
+                {
+                    int OtherApvApQty = MyUtility.Convert.GetInt(datacheck.Rows[0]["OtherApvApQty"]);
+                    int PoQty = MyUtility.Convert.GetInt(datacheck.Rows[0]["PoQty"]);
+
+                    if ((OtherApvApQty + CurrentApQty) > PoQty)
+                    {
+                        MyUtility.Msg.InfoBox($"SP#: {orderID} ,Total AP Qty can not more than PO Qty.");
+                        return;
+                    }
+                }
+            }
+            #endregion
 
             #region 須檢核其來源單[P10]狀態為CONFIRM。
             string check_p10status = string.Format(
@@ -493,7 +531,7 @@ where ap.status = 'New' and aa.Id ='{0}'",
 update aad set
 	Price=apd.Price,
 	Stitch=apd.Stitch,
-	Farmin=apd.Farmin,
+	--Farmin=apd.Farmin,
 	PatternCode=apd.PatternCode,
 	PatternDesc=apd.PatternDesc,
     Amount = apd.Price*aad.ApQty

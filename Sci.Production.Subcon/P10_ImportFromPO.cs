@@ -26,6 +26,7 @@ namespace Sci.Production.Subcon
             dr_artworkAp = master;
             dt_artworkApDetail = detail;
             this.Text += string.Format(" : {0} - {1}", dr_artworkAp["artworktypeid"].ToString(), dr_artworkAp["localsuppid"].ToString());
+            displayBox1.BackColor = Color.Yellow;
         }
 
         //Find Now Button
@@ -125,6 +126,7 @@ Select 1 as Selected
         ,b.ukey artworkpo_detailukey
         ,'' id
         ,[Amount] = 1.0 * IIF(MinQty.Val - b.ApQty < 0 , 0 ,MinQty.Val - b.ApQty ) * b.price --0.0 amount
+        ,[LocalSuppCtn]=LocalSuppCtn.Val
 from ArtworkPO a WITH (NOLOCK) 
 INNER JOIN ArtworkPO_Detail b WITH (NOLOCK)  ON  a.id = b.id 
 OUTER APPLY(
@@ -155,6 +157,18 @@ OUTER APPLY(
 		SELECT [Qty]=ISNULL(FarmIn.Value,0)
 	)tmp
 )MinQty
+OUTER APPLY(
+	SELECT [Val]= COUNT(LocalSuppID)
+	FROM (
+		SELECT DISTINCT apo.LocalSuppID 
+		from ArtworkPO_Detail ad
+		inner join ArtworkPO apo on apo.id = ad.id
+		where ad.OrderID= b.OrderID
+		and ad.PatternCode=b.PatternCode
+		and ad.PatternDesc =b.PatternDesc
+		and apo.ArtworkTypeID = '{dr_artworkAp["artworktypeid"]}' 
+	)tmp
+)LocalSuppCtn
 where a.status='Approved' 
 --and b.apqty < b.farmin
 and a.artworktypeid = '{dr_artworkAp["artworktypeid"]}' 
@@ -215,6 +229,16 @@ DROP TABLE #Bundle
                     if (dtArtwork.Rows.Count == 0)
                     { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtArtwork;
+
+
+                    for (int i = 0; i < this.gridImportFromPO.Rows.Count; i++)
+                    {
+                        if ((int)this.gridImportFromPO.Rows[i].Cells["LocalSuppCtn"].Value >= 2)
+                        {
+                            this.gridImportFromPO.Rows[i].Cells["FarmOut"].Style.BackColor = Color.Yellow;
+                            this.gridImportFromPO.Rows[i].Cells["farmin"].Style.BackColor = Color.Yellow;
+                        }
+                    }
                 }
                 else { ShowErr(strSQLCmd, result); }
             }
@@ -277,9 +301,11 @@ DROP TABLE #Bundle
                 .Numeric("AccumulatedQty", header: "Accu. Paid Qty", iseditingreadonly: true)
                 .Numeric("Balance", header: "Balance", iseditingreadonly: true)
                 .Numeric("ApQty", header: "Qty",settings:ns)//14
-                .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14);
+                .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14)
+                .Numeric("LocalSuppCtn", header: "LocalSuppCtn", width: Widths.AnsiChars(0));
 
             this.gridImportFromPO.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink;  //Qty
+            this.gridImportFromPO.Columns["LocalSuppCtn"].Visible = false;
 
         }
 
