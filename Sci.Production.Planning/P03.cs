@@ -8,6 +8,7 @@ using Ict;
 using Sci;
 using Sci.Data;
 using System.Linq;
+using Sci.Production.Class;
 
 namespace Sci.Production.Planning
 {
@@ -175,118 +176,7 @@ namespace Sci.Production.Planning
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
 
             #region local supplier 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
-            ts.EditingMouseDown += (s, e) =>
-            {
-                if (e.RowIndex < 0)
-                {
-                    return;
-                }
-
-                DataRow ddr = this.gridFactoryID.GetDataRow<DataRow>(e.RowIndex);
-                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                string sqlcmd = string.Empty;
-                if (MyUtility.Check.Empty(ddr["inhouseosp"]))
-                {
-                    MyUtility.Msg.WarningBox("Please select inhouse or osp first");
-                    return;
-                }
-
-                sqlcmd = string.Format(
-                    @"
-SELECT QU.localsuppid as id, 
-       localsupp.abb as abb, 
-       QU.mockup 
-FROM   order_tmscost OT WITH (nolock) 
-       INNER JOIN orders WITH (nolock) 
-               ON OT.id = orders.id 
-       INNER JOIN style_artwork SA WITH (nolock) 
-               ON OT.artworktypeid = SA.artworktypeid 
-                  AND orders.styleukey = SA.styleukey 
-       LEFT JOIN style_artwork_quot QU WITH (nolock) 
-              ON QU.ukey = SA.ukey 
-       INNER JOIN localsupp WITH (nolock) 
-               ON localsupp.id = QU.localsuppid 
-WHERE  OT.ID = '{0}'
-       AND OT.artworktypeid = 'LASER' 
-GROUP  BY QU.localsuppid, 
-          localsupp.abb, 
-          QU.mockup 
-order by QU.localsuppid ", ddr["ID"].ToString().Trim());
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30,15", null);
-                    DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-
-                    IList<DataRow> x = item.GetSelecteds();
-                    ddr["localsuppid"] = x[0][0];
-                    ddr["suppnm"] = x[0][1];
-                }
-            };
-            ts.CellValidating += (s, e) =>
-               {
-                   string code = e.FormattedValue.ToString();
-                   string sqlcmd = string.Empty;
-                   DataTable dt;
-                   DataRow ddr = this.gridFactoryID.GetDataRow<DataRow>(e.RowIndex);
-                   sqlcmd = string.Format(
-                       @"
-SELECT QU.localsuppid as id, 
-       localsupp.abb as abb, 
-       QU.mockup 
-FROM   order_tmscost OT WITH (nolock) 
-       INNER JOIN orders WITH (nolock) 
-               ON OT.id = orders.id 
-       INNER JOIN style_artwork SA WITH (nolock) 
-               ON OT.artworktypeid = SA.artworktypeid 
-                  AND orders.styleukey = SA.styleukey 
-       LEFT JOIN style_artwork_quot QU WITH (nolock) 
-              ON QU.ukey = SA.ukey 
-       INNER JOIN localsupp WITH (nolock) 
-               ON localsupp.id = QU.localsuppid 
-WHERE  OT.ID = '{0}'
-       AND OT.artworktypeid = 'LASER' 
-GROUP  BY QU.localsuppid, 
-          localsupp.abb, 
-          QU.mockup 
-order by QU.localsuppid ",
-                       ddr["ID"].ToString().Trim());
-                   Ict.DualResult result;
-                   string dtid = string.Empty;
-                   string dtabb = string.Empty;
-                   result = DBProxy.Current.Select(null, sqlcmd, out dt);
-                   for (int i = 0; i < dt.Rows.Count; i++)
-                   {
-                       dtid = dt.Rows[i]["id"].ToString();
-                       dtabb = dt.Rows[i]["abb"].ToString();
-                       if (code == dtid)
-                       {
-                           ddr["localsuppid"] = dtid;
-                           ddr["suppnm"] = dtabb;
-                           return;
-                       }
-                   }
-
-                   if (code == string.Empty)
-                   {
-                       ddr["localSuppid"] = string.Empty;
-                       ddr["suppnm"] = string.Empty;
-                       return;
-                   }
-
-                   if (code != dtid)
-                   {
-                       ddr["localSuppid"] = string.Empty;
-                       ddr["suppnm"] = string.Empty;
-                       e.Cancel = true;
-                       MyUtility.Msg.WarningBox("This supp id is wrong");
-                       return;
-                   }
-               };
+            DataGridViewGeneratorTextColumnSettings ts = cellsbuconNoConfirm.GetGridCell("localSuppid", "suppnm");
             #endregion
             this.gridFactoryID.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridFactoryID.DataSource = this.listControlBindingSource1;
