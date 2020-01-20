@@ -103,6 +103,10 @@ namespace Sci.Production.Subcon
             sqlWheres.Clear();
 
             #region where 條件
+            if (checkBoxNoClosed.Checked)
+            {
+                sqlWheres.Add("a.Status<>'Closed'");
+            }
 
             if (!this.SP.Empty() && !this.SP2.Empty())
             {
