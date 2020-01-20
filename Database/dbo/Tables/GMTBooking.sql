@@ -47,6 +47,7 @@
     [TotalAPPBookingVW] NUMERIC(21, 2) NULL DEFAULT ((0)), 
     [TotalAPPEstAmtVW] NUMERIC(21, 2) NULL DEFAULT ((0)), 
     [NonDeclare] BIT NOT NULL DEFAULT (0), 
+    [Foundry] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -225,3 +226,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'提單號�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'提單號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'BL2No';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'確認 Invoice# 是否包含請姊妹廠代工的訂單',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'GMTBooking',
+    @level2type = N'COLUMN',
+    @level2name = N'Foundry'

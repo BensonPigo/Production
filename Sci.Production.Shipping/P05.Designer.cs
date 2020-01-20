@@ -114,6 +114,7 @@
             this.lbCustomsdeclareNo = new Sci.Win.UI.Label();
             this.displayBoxDeclarationID = new Sci.Win.UI.DisplayBox();
             this.displayBoxCustomsNo = new Sci.Win.UI.DisplayBox();
+            this.chkFoundry = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -130,6 +131,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkFoundry);
             this.masterpanel.Controls.Add(this.displayBoxCustomsNo);
             this.masterpanel.Controls.Add(this.displayBoxDeclarationID);
             this.masterpanel.Controls.Add(this.lbCustomsdeclareNo);
@@ -303,6 +305,7 @@
             this.masterpanel.Controls.SetChildIndex(this.lbCustomsdeclareNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxDeclarationID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxCustomsNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkFoundry, 0);
             // 
             // detailpanel
             // 
@@ -1029,7 +1032,7 @@
             this.chkNoExportCharge.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoExportCharges", true));
             this.chkNoExportCharge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkNoExportCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNoExportCharge.Location = new System.Drawing.Point(857, 301);
+            this.chkNoExportCharge.Location = new System.Drawing.Point(857, 275);
             this.chkNoExportCharge.Name = "chkNoExportCharge";
             this.chkNoExportCharge.Size = new System.Drawing.Size(133, 20);
             this.chkNoExportCharge.TabIndex = 41;
@@ -1281,7 +1284,7 @@
             this.chkNonDeclare.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NonDeclare", true));
             this.chkNonDeclare.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkNonDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNonDeclare.Location = new System.Drawing.Point(857, 328);
+            this.chkNonDeclare.Location = new System.Drawing.Point(857, 302);
             this.chkNonDeclare.Name = "chkNonDeclare";
             this.chkNonDeclare.Size = new System.Drawing.Size(103, 20);
             this.chkNonDeclare.TabIndex = 42;
@@ -1323,6 +1326,21 @@
             this.displayBoxCustomsNo.Name = "displayBoxCustomsNo";
             this.displayBoxCustomsNo.Size = new System.Drawing.Size(164, 23);
             this.displayBoxCustomsNo.TabIndex = 40;
+            // 
+            // chkFoundry
+            // 
+            this.chkFoundry.AutoSize = true;
+            this.chkFoundry.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Foundry", true));
+            this.chkFoundry.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkFoundry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkFoundry.IsSupportEditMode = false;
+            this.chkFoundry.Location = new System.Drawing.Point(857, 327);
+            this.chkFoundry.Name = "chkFoundry";
+            this.chkFoundry.ReadOnly = true;
+            this.chkFoundry.Size = new System.Drawing.Size(122, 20);
+            this.chkFoundry.TabIndex = 87;
+            this.chkFoundry.Text = "Include Foundry";
+            this.chkFoundry.UseVisualStyleBackColor = true;
             // 
             // P05
             // 
@@ -1454,5 +1472,6 @@
         private Win.UI.Label lbDeclarationID;
         private Win.UI.DisplayBox displayBoxCustomsNo;
         private Win.UI.DisplayBox displayBoxDeclarationID;
+        private Win.UI.CheckBox chkFoundry;
     }
 }
