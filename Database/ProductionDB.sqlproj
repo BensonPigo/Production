@@ -2433,6 +2433,7 @@
     <Build Include="dbo\Stored Procedures\usp_ReTransferMtlToScrap.sql" />
     <Build Include="dbo\Functions\GetSewingLineScheduleDataBase.sql" />
     <Build Include="dbo\Functions\GetSewingLineScheduleData_Efficiency.sql" />
+    <Build Include="dbo\Functions\GetAccountNoExpressType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

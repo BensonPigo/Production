@@ -56,6 +56,7 @@ DECLARE cursor_ttlAmount CURSOR FOR
 				left join SciFMS_AccountNo a on a.ID = se.AccountID
 				left join ShippingAP s WITH (NOLOCK) on s.ID = sd.ID
 				where sd.ID = @id
+                and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)
 				group by se.AccountID, a.Name, s.CurrencyID) a,
 				(select distinct BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK
 				from ShareExpense WITH (NOLOCK) 
@@ -204,10 +205,11 @@ CLOSE cursor_ttlAmount
 select se.InvNo,se.AccountID,[Amount] = sum(se.Amount)
 into #InvNoSharedAmt
 from ShareExpense se with (nolock)
-where	se.ShippingAPID = @ID and se.Junk = 0 and
-		exists(select 1 from GMTBooking gmt with (nolock)
+where	se.ShippingAPID = @ID and se.Junk = 0 
+and	exists(select 1 from GMTBooking gmt with (nolock)
 							 inner join ShipMode sm with (nolock) on gmt.ShipModeID = sm.ID
 						     where gmt.ID = se.InvNo and sm.NeedCreateAPP = 1)
+and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)
 group by se.InvNo,se.AccountID
 
 select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)

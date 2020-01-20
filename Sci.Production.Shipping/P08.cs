@@ -424,6 +424,8 @@ where sd.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            string sqlcmd = string.Empty;
+
             this.CurrentMaintain["SubType"] = this.comboType2.SelectedValue;
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(this.CurrentMaintain["CDate"]))
@@ -549,6 +551,34 @@ where sd.ID = '{0}'", masterID);
                 return false;
             }
 
+            // 檢查表頭與表身科目是否吻合
+            string accountNO = string.Empty;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                sqlcmd = string.Format(
+                    @"select se.AccountID
+                    from ShipExpense se
+                    where se.id = '{0}'
+                    and not exists (select dbo.GetAccountNoExpressType(se.AccountID, '{1}')) ",
+                    dr["ShipExpenseID"],
+                    this.CurrentMaintain["Type"]);
+                string result = MyUtility.GetValue.Lookup(sqlcmd);
+                if (!MyUtility.Check.Empty(result))
+                {
+                    accountNO = MyUtility.Check.Empty(accountNO) ? result : accountNO + "," + result;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(accountNO))
+            {
+                MyUtility.Msg.WarningBox(string.Format(
+                    @"Account Payment Type is {0}, but Account No ({1}) is not {0} Item,
+                      Please check and correct the inconsistencies before proceeding to the next step.",
+                    this.CurrentMaintain["Type"],
+                    accountNO));
+                return false;
+            }
+
             // 表身Curreny為空
             if (currencyEmpt)
             {
@@ -616,7 +646,7 @@ where sd.ID = '{0}'", masterID);
             }
 
             DataTable tmpdt;
-            string sqlchkforisapp = $@"
+            sqlcmd = $@"
 select a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
 from #tmp sd
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
@@ -627,7 +657,7 @@ left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
             if (dtldt.Count() > 0)
             {
                 DataTable dDt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
-                DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlchkforisapp, out tmpdt);
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlcmd, out tmpdt);
                 if (!result)
                 {
                     this.ShowErr(result);
