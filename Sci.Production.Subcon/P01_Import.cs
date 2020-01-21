@@ -444,15 +444,17 @@ select distinct  Selected = 0
         , amount = ard.ReqQty *  isnull(oa.Cost,0)
         , Style = o.StyleID
         , [ArtworkReqID] = ar.ID
-        , [Article] = (SELECT Stuff((select concat( ',',Article)   from Order_Article with (nolock) where ID = o.ID FOR XML PATH('')),1,1,'') )
+        , [Article] = oat.Article
         , o.Category
 from  orders o WITH (NOLOCK)
+inner join Order_Article oat with (nolock) on o.ID = oat.ID
 inner join ArtworkReq ar WITH (NOLOCK) on ar.Status = 'Approved'
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.ArtworkTypeID = ar.ArtworkTypeID
 inner join ArtworkReq_Detail ard with (nolock) on   ard.ID = ar.ID  and
                                                     ard.OrderId = o.ID and 
                                                     ard.ArtworkPOID = ''
 left join dbo.Order_Artwork oa on oa.ID = o.ID and 
+                            oa.Article = oat.Article and
                             oa.ArtworkTypeID = '{1}' and
 							oa.ArtworkID = ard.ArtworkID and 
                             oa.PatternCode = ard.PatternCode and 

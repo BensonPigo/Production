@@ -3168,6 +3168,13 @@ SET
 from Production.dbo.GMTBooking as a inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
 where b.InvDate is not null
 
+UPDATE a
+SET   
+     a.Foundry = b.Foundry
+from Production.dbo.GMTBooking as a 
+inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
+
+
 --------SeasonSCI---------------
 truncate table SeasonSCI
 insert into SeasonSCI

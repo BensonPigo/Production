@@ -103,6 +103,10 @@ namespace Sci.Production.Subcon
             sqlWheres.Clear();
 
             #region where 條件
+            if (checkBoxNoClosed.Checked)
+            {
+                sqlWheres.Add("a.Status<>'Closed'");
+            }
 
             if (!this.SP.Empty() && !this.SP2.Empty())
             {
@@ -171,15 +175,15 @@ namespace Sci.Production.Subcon
                 {
                     if (rdbtn_payment.Checked)
                     {
-                        sqlWhere = @" where a.Status != 'Closed' AND b.qty > b.APQty and " + sqlWhere;
+                        sqlWhere = @" where b.qty > b.APQty and " + sqlWhere;
                     }
                     else if (rdbtn_incoming.Checked)
                     {
-                        sqlWhere = @" where a.Status != 'Closed' AND b.qty > b.InQty and " + sqlWhere;
+                        sqlWhere = @" where b.qty > b.InQty and " + sqlWhere;
                     }
                     else if (rdbtn_PandI.Checked)
                     {
-                        sqlWhere = @" where a.Status != 'Closed' AND (b.qty > b.APQty or b.qty > b.InQty)and " + sqlWhere;
+                        sqlWhere = @" where (b.qty > b.APQty or b.qty > b.InQty)and " + sqlWhere;
                     }
                     else
                     {
@@ -190,17 +194,17 @@ namespace Sci.Production.Subcon
                 {
                     if (rdbtn_payment.Checked)
                     {
-                        sqlWhere = @" where a.Status != 'Closed' and " + sqlWhere;
+                        sqlWhere = @" where " + sqlWhere;
                         sqlByPoOrder = "having  sum(b.Qty) >  sum(b.APQty)";
                     }
                     else if (rdbtn_incoming.Checked)
                     {
-                        sqlWhere = @" where a.Status != 'Closed' and " + sqlWhere;
+                        sqlWhere = @" where " + sqlWhere;
                         sqlByPoOrder = "having  sum(b.Qty) >  sum(b.InQty)";
                     }
                     else if (rdbtn_PandI.Checked)
                     {
-                        sqlWhere = @" where a.Status != 'Closed' and " + sqlWhere;
+                        sqlWhere = @" where " + sqlWhere;
                         sqlByPoOrder = "having  sum(b.Qty) >  sum(b.APQty) or sum(b.Qty) >  sum(b.InQty) ";
                     }
                     else
