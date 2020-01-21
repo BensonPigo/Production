@@ -168,8 +168,11 @@ from #print0 p
 outer apply(
 	select AccStdQ=max(AccStdQ)
 	from(
-		select Date,AccStdQ=sum(StdQ)over(Partition by APSNo Order by Date)
-		from dbo.[getDailystdq](p.SP) 
+		select stdQty.*
+		from SewingSchedule	s
+		outer apply(select Date,AccStdQ=sum(StdQ)over(Partition by APSNo Order by Date)
+		from dbo.[getDailystdq](s.APSNo) ) stdQty
+		where s.OrderID=P.SP
 	)x3
 	where p.SewingDate = Date
 )x4

@@ -172,6 +172,7 @@ outer apply (
     select  Inline = _SS.Inline
             , Offline = _SS.Offline
             , SewingLineID = _SS.SewingLineID
+            , APSNo
     from SewingSchedule _SS
     where   _SS.OrderID = O.ID
             and _SS.ComboType = EType.value
@@ -193,7 +194,7 @@ outer apply (
 outer apply (
 	select	value = IIF (SewingComplete.value = 'Y', 0 
 												   , (select	IIF (SUM (StdQ) >= O.Qty, O.Qty, SUM (StdQ))
-													  from dbo.getDailystdq (O.ID) _getStdq
+													  from dbo.getDailystdq (SewingScheduleData.APSNo) _getStdq
 													  where _getStdq.Date <= @SewingOutput))
 ) AccuStdOutput
 outer apply (

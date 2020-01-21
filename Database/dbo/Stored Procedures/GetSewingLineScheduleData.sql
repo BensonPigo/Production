@@ -1,6 +1,17 @@
 ﻿
-Create PROCEDURE [dbo].[GetSewingLineScheduleData]
-	@Inline DATE
+
+CREATE PROCEDURE [dbo].[GetSewingLineScheduleData]
+	@Inline DATE = null,
+	@Offline DATE = null,
+	@Line1 varchar(10) = '',
+	@Line2 varchar(10) = '',
+	@MDivisionID varchar(10) = '',
+	@FactoryID varchar(10) = '',
+	@BuyerDelivery1 date = null,
+	@BuyerDelivery2 date = null,
+	@SciDelivery1 date = null,
+	@SciDelivery2 date = null,
+	@Brand varchar(10) = ''
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -29,7 +40,8 @@ declare  @APSListWorkDay TABLE(
 	[TotalSewingTime] [int] NULL,
 	[OrderID] [varchar](13) NOT NULL,
 	[LNCSERIALNumber] [int] NULL,
-	[ComboType] [varchar](1) NULL
+	[ComboType] [varchar](1) NULL,
+	[SwitchTime] [int] NULL
 )
 insert into @APSListWorkDay
 select
@@ -54,13 +66,26 @@ select
 	s.TotalSewingTime,
 	s.OrderID,
 	s.LNCSERIALNumber,
-    s.ComboType
+    s.ComboType,
+	s.SwitchTime
 from SewingSchedule s  WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 outer apply(select [val] = iif(isnull(s.OriEff,0)=0 or isnull(s.SewLineEff,0)=0, s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
-where 1 = 1  and (s.Inline >= @Inline or (s.Inline <= @Inline and s.Offline >= @Inline)) and s.APSno <> 0
+where 1 = 1  
+and (convert(date, s.Inline) >= @Inline  or (@Inline  between convert(date,s.Inline) and convert(date,s.Offline)) or @Inline is null)
+and (convert(date,s.Offline) <= @Offline or (@Offline between convert(date,s.Inline) and convert(date,s.Offline)) or @Offline is null) 
+and (s.MDivisionID = @MDivisionID or @MDivisionID = '')
+and (s.FactoryID = @FactoryID or @FactoryID = '')
+and (s.SewingLineID >= @Line1 or @Line1 = '')
+and (s.SewingLineID <= @Line2 or @Line2 = '')
+and (o.BuyerDelivery >= @BuyerDelivery1 or @BuyerDelivery1 is null)
+and (o.BuyerDelivery <= @BuyerDelivery2 or @BuyerDelivery2 is null)
+and (o.SciDelivery >= @SciDelivery1 or @SciDelivery1 is null)
+and (o.SciDelivery <= @SciDelivery2 or @SciDelivery2 is null)
+and (o.BrandID = @Brand or @Brand ='')
+and s.APSno <> 0
 group by	s.APSNo ,
 			s.MDivisionID,
 			s.SewingLineID,
@@ -78,7 +103,8 @@ group by	s.APSNo ,
 			s.OrderID,
 			s.ComboType,
 			o.StyleUkey,
-			s.LNCSERIALNumber
+			s.LNCSERIALNumber,
+			s.SwitchTime
 
 declare @APSList TABLE(
 	[APSNo] [int] NULL,
@@ -446,7 +472,8 @@ Declare @Workhour_step1 table(
 	[Sewer] [int] NULL,
 	[OrderID] [varchar](13) NOT NULL,
 	[LNCSERIALNumber] [int] NULL,
-	[ComboType] [varchar](1) NULL
+	[ComboType] [varchar](1) NULL,
+	[SwitchTime] [int] NULL
 )
 insert into @Workhour_step1
 select  al.APSNo,
@@ -459,7 +486,7 @@ select  al.APSNo,
 		al.inlineDate,
 		al.OfflineDate,
         [StartHour] = cast(wkd.StartHour as float),
-        [EndHour] = cast(wkd.EndHour as float),
+        [EndHour] = cast(wkd.EndHour as float),		
         al.InlineHour,
         al.OfflineHour,
 		al.HourOutput,
@@ -469,7 +496,8 @@ select  al.APSNo,
 		al.Sewer,
 		al.OrderID,
 		al.LNCSERIALNumber,
-        al.ComboType
+        al.ComboType,
+		al.SwitchTime
 from @APSListWorkDay al
 inner join @WorkDate wd on wd.WorkDate >= al.InlineDate and wd.WorkDate <= al.OfflineDate and wd.FactoryID = al.FactoryID
 inner join Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and 
@@ -504,7 +532,8 @@ Declare @Workhour_step2 table(
 	[Sewer] [int] NULL,
 	[OrderID] [varchar](13) NOT NULL,
 	[LNCSERIALNumber] [int] NULL,
-	[ComboType] [varchar](1) NULL
+	[ComboType] [varchar](1) NULL,
+	[SwitchTime] [int] NULL
 )
 insert into @Workhour_step2
 select  APSNo,
@@ -529,7 +558,8 @@ select  APSNo,
 		Sewer,
 		OrderID,
 		LNCSERIALNumber,
-        ComboType
+        ComboType,		
+		SwitchTime
 from @Workhour_step1	
 
 --依照班表順序，將inline,offline當天StartHour與EndHour update與inline,offline相同
@@ -541,7 +571,9 @@ Declare @APSExtendWorkDate_step1 table(
 	[LearnCurveID] [int] NULL,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
+	[SwitchTime] [int] NULL,
 	[WorkDate] [datetime] NULL,
+	[Work_Minute] [float] NULL,
 	[WorkingTime] [float] NULL,
 	[OriWorkDateSer] [bigint] NULL,
 	[HourOutput] [numeric](38, 15) NULL,
@@ -557,8 +589,10 @@ APSNo,
 LearnCurveID,
 [SewingStart] = DATEADD(mi, min(StartHour) * 60,   WorkDate),
 [SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
+SwitchTime,
 WorkDate,
-[WorkingTime] = sum(EndHour - StartHour),
+[Work_Minute] = sum(EndHour - StartHour) * 60,--round(sum(EndHour - StartHour) * 60,4),
+[WorkingTime] = sum(EndHour - StartHour),--ROUND(sum(EndHour - StartHour),4),
 [OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,OrderID,ComboType ORDER BY WorkDate),
 HourOutput,
 OriWorkHour,
@@ -568,7 +602,102 @@ Sewer,
 LNCSERIALNumber
 from @Workhour_step2 
 group by APSNo,LearnCurveID,WorkDate,HourOutput,
-OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID,LNCSERIALNumber,ComboType
+OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID,LNCSERIALNumber,ComboType,SwitchTime
+
+/* 
+相同APSNo第一筆SewingStart Time 加上Switch Time
+如果超過SewingEnd Time, 剩餘的時間 則往下一筆"相同"APSNo的SewingStart Time加上 , 以此類推
+******
+Work hour/Day 扣除Switch Time, 如過不夠扣除則將剩餘的分鐘數
+往同APSNo 第二筆扣除, 以此類推
+若Work Hour/Day 不夠扣除,則該筆APSNo不顯示
+*/
+-- 取得相同APSNO 加總的WorkTime by Minute
+Declare @APSExtendWorkDate_step2 table(
+	[Sum_Work_Minute] [float] NULL,
+	[APSNo] [int] NULL,
+	[LearnCurveID] [int] NULL,
+	[SewingStart] [datetime] NULL,
+	[SewingEnd] [datetime] NULL,
+	[SwitchTime] [int] NULL,
+	[WorkDate] [datetime] NULL,
+	[Work_Minute] [float] NULL,
+	[WorkingTime] [float] NULL,
+	[OriWorkDateSer] [bigint] NULL,
+	[HourOutput] [numeric](38, 15) NULL,
+	[OriWorkHour] [numeric](38, 13) NULL,
+	[CPU] [float] NULL,
+	[TotalSewingTime] [int] NULL,
+	[Sewer] [int] NULL,
+	[LNCSERIALNumber] [int] NULL	
+)
+insert into @APSExtendWorkDate_step2
+select [Sum_Work_Minute] = sum(Work_Minute) over(partition by APSNo order by SewingStart)
+,* 
+from @APSExtendWorkDate_step1
+order by APSNo,SewingStart
+
+-- 取得遞減的SwitchTime
+Declare @APSExtendWorkDate_step3 table(
+	[New_SwitchTime] [float] NULL,
+	[Sum_Work_Minute] [float] NULL,
+	[APSNo] [int] NULL,
+	[LearnCurveID] [int] NULL,
+	[SewingStart] [datetime] NULL,
+	[SewingEnd] [datetime] NULL,
+	[SwitchTime] [int] NULL,
+	[WorkDate] [datetime] NULL,
+	[Work_Minute] [float] NULL,
+	[WorkingTime] [float] NULL,
+	[OriWorkDateSer] [bigint] NULL,
+	[HourOutput] [numeric](38, 15) NULL,
+	[OriWorkHour] [numeric](38, 13) NULL,
+	[CPU] [float] NULL,
+	[TotalSewingTime] [int] NULL,
+	[Sewer] [int] NULL,
+	[LNCSERIALNumber] [int] NULL
+)
+insert into @APSExtendWorkDate_step3
+select 
+[New_SwitchTime] = case when (SwitchTime - LAG(Sum_Work_Minute,1,0) over (partition by APSNo order by sewingstart) <= 0) then 0
+else SwitchTime - LAG(Sum_Work_Minute,1,0) over (partition by APSNo order by sewingstart)
+end
+,*
+from @APSExtendWorkDate_step2
+
+--取得遞減的Work Minute 
+Declare @APSExtendWorkDate_step4 table(
+	[New_Work_Minute] [float] NULL,
+	[New_SwitchTime]  [float] NULL,
+	[Sum_Work_Minute] [float] NULL,
+	[APSNo] [int] NULL,
+	[LearnCurveID] [int] NULL,
+	[SewingStart] [datetime] NULL,
+	[SewingEnd] [datetime] NULL,
+	[SwitchTime] [int] NULL,
+	[WorkDate] [datetime] NULL,
+	[Work_Minute] [float] NULL,
+	[WorkingTime] [float] NULL,
+	[OriWorkDateSer] [bigint] NULL,
+	[HourOutput] [numeric](38, 15) NULL,
+	[OriWorkHour] [numeric](38, 13) NULL,
+	[CPU] [float] NULL,
+	[TotalSewingTime] [int] NULL,
+	[Sewer] [int] NULL,
+	[LNCSERIALNumber] [int] NULL
+)
+insert into @APSExtendWorkDate_step4
+select 
+[New_Work_Minute] = 
+case when Work_Minute = Sum_Work_Minute and Work_Minute - SwitchTime > 0 then Work_Minute - SwitchTime
+     when Work_Minute != Sum_Work_Minute and Sum_Work_Minute - Work_Minute > SwitchTime then Work_Minute
+	 when LAG(New_SwitchTime,1,0) OVER (PARTITION BY APSNo ORDER BY SewingStart) !=0 
+		and Work_Minute - LAG(New_SwitchTime,1,0) OVER (PARTITION BY APSNo ORDER BY SewingStart) > 0 
+		then Work_Minute - LAG(New_SwitchTime,1,0) OVER (PARTITION BY APSNo ORDER BY SewingStart)
+	 else 0
+	 end
+,* 
+from @APSExtendWorkDate_step3
 
 --欄位 LNCSERIALNumber 
 --    第一天學習曲線計算方式 = 最後一天對應的工作天數 『減去』（該計畫總生產天數 『減去』一天因為要推出第一天）
@@ -583,6 +712,8 @@ Declare @APSExtendWorkDate table(
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[WorkDate] [datetime] NULL,
+	[New_WorkingTime] [float] NULL,
+	[New_SwitchTime] [float] NULL,
 	[WorkingTime] [float] NULL,
 	[OriWorkDateSer] [bigint] NULL,
 	[WorkDateSer] [bigint] NULL,
@@ -600,6 +731,8 @@ LearnCurveID,
 SewingStart,
 SewingEnd,
 WorkDate,
+[New_WorkingTime] = IIF(SwitchTime = 0, WorkingTime,  CONVERT(float, New_Work_Minute)/60) ,
+[New_SwitchTime]  = IIF(SwitchTime = 0, 0 , CONVERT(float, New_SwitchTime)/60) ,
 WorkingTime,
 OriWorkDateSer,
 [WorkDateSer] = case	when isnull(LNCSERIALNumber,0) = 0 then OriWorkDateSer
@@ -611,7 +744,7 @@ CPU,
 TotalSewingTime,
 Sewer,
 LNCSERIALNumber
-from @APSExtendWorkDate_step1
+from @APSExtendWorkDate_step4
 
 --取得每個計劃去除LearnCurve後的總工時
 Declare @OriTotalWorkHour table(
@@ -632,8 +765,10 @@ Declare @APSExtendWorkDateFin table(
 	[APSNo] [int] NULL,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
-	[SewingOutput] [int] NOT NULL,
+	[SewingOutput] [int] NOT NULL,	
 	[WorkingTime] [float] NULL,
+	[New_WorkingTime] [float] NULL,
+	[New_SwitchTime] [float] NULL,
 	[LearnCurveEff] [int] NOT NULL,
 	[StdOutput] [float] NULL,
 	[CPU] [float] NULL,
@@ -644,24 +779,30 @@ select  awd.APSNo
         , awd.SewingStart
         , awd.SewingEnd
         , [SewingOutput] = isnull(apo.SewingOutput,0)
-        , awd.WorkingTime
+        , awd.WorkingTime		
+		, awd.New_WorkingTime
+		, awd.New_SwitchTime
         , [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))
-        , [StdOutput] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
-        , [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
-        , [Efficienycy] = iif( awd.WorkingTime  = 0 or awd.Sewer = 0,0,
-		SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.WorkingTime * awd.Sewer * 3600.0))
+		, StdOutput = s.StdQ
+        --, [StdOutput] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
+		, [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
+         , [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0  or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * iif(awd.New_WorkingTime = 0 ,0 , ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.New_WorkingTime * awd.Sewer * 3600.0))
 from @APSExtendWorkDate awd
 inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 left join @APSSewingOutput apo on awd.APSNo = apo.APSNo and awd.WorkDate = apo.OutputDate
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
+outer  apply(select * from dbo.[getDailystdq](awd.APSNo)x where x.APSNo=awd.APSNo and x.Date = cast(awd.SewingStart as date))s
 group by awd.APSNo,
 		 awd.SewingStart,
 		 awd.SewingEnd,
 		 isnull(apo.SewingOutput,0),
 		 awd.WorkingTime,
+		 awd.New_SwitchTime,
+		 awd.New_WorkingTime,
 		 ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
 		 awd.Sewer
+		  , s.StdQ
 
 --計算這一天的標準產量
 --= (工作時數 / 車縫一件成衣需要花費的秒數) * 工人數 * 效率
@@ -697,7 +838,9 @@ select
 	[StardardOutputPerDay]= apf.StdOutput,
 	[CPU]=apf.CPU,
 	[SewingCPU] = ( apm.TotalSewingTime / (SELECT StdTMS * 1.0 FROm System))  ,
-	[WorkHourPerDay]= apf.WorkingTime,
+	[Orig_WorkHourPerDay]= apf.WorkingTime,
+	[New_SwitchTime] = apf.New_SwitchTime,
+	[New_WorkHourPerDay] = apf.New_WorkingTime,
 	[StardardOutputPerHour] = iif(apf.WorkingTime = 0,0,floor(apf.StdOutput / apf.WorkingTime)),
 	[Efficienycy]= ROUND( apf.Efficienycy ,2,1),
 	[ScheduleEfficiency]=round(apm.OriEff / 100.0,2),

@@ -1135,6 +1135,12 @@
     <Compile Include="P39_Import.Designer.cs">
       <DependentUpon>P39_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R07.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R07.Designer.cs">
+      <DependentUpon>R07.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R24.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1756,6 +1762,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P52_StocktakingList.rdlc" />
+    <EmbeddedResource Include="Report\R07.resx">
+      <DependentUpon>R07.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R24.resx">
       <DependentUpon>R24.cs</DependentUpon>
     </EmbeddedResource>
