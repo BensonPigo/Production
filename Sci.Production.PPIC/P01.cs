@@ -168,7 +168,8 @@ namespace Sci.Production.PPIC
             this.CurrentMaintain["Dest"] = dataRow["Dest"];
             this.CurrentMaintain["ShipModeList"] = dataRow["ShipModeList"];
             this.CurrentMaintain["MCHandle"] = dataRow["MCHandle"];
-            this.CurrentMaintain["LocalMR"] = dataRow["LocalMR"]; 
+            this.CurrentMaintain["LocalMR"] = dataRow["LocalMR"];
+            this.SetStyleColumn(MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]));
         }
 
         /// <inheritdoc/>
@@ -800,42 +801,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 {
                     if (!this.chkpopup)
                     {
-                        // 檢查資料是否存在
-                        // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@styleid", this.txtStyle.Text);
-
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                        cmds.Add(sp1);
-
-                        System.Data.DataTable styleData;
-                        string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleData);
-                        if (!result || styleData.Rows.Count <= 0)
-                        {
-                            if (!result)
-                            {
-                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
-                            }
-                            else
-                            {
-                                MyUtility.Msg.WarningBox("Style not found!!");
-                            }
-
-                            this.SetStyleEmptyColumn();
-                            e.Cancel = true;
-                            return;
-                        }
-                        else
-                        {
-                            this.CurrentMaintain["StyleID"] = styleData.Rows[0]["ID"];
-                            this.CurrentMaintain["BrandID"] = styleData.Rows[0]["BrandID"];
-                            this.CurrentMaintain["SeasonID"] = styleData.Rows[0]["SeasonID"];
-                            this.CurrentMaintain["CdCodeID"] = styleData.Rows[0]["CdCodeID"];
-                            this.CurrentMaintain["CPU"] = styleData.Rows[0]["CPU"];
-                            this.CurrentMaintain["StyleUnit"] = styleData.Rows[0]["StyleUnit"];
-                            this.CurrentMaintain["StyleUkey"] = styleData.Rows[0]["Ukey"];
-                            this.displayDescription.Value = MyUtility.Convert.GetString(styleData.Rows[0]["Description"]);
-                        }
+                        this.SetStyleColumn(this.txtStyle.Text);
                     }
                 }
             }
@@ -853,6 +819,44 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             this.CurrentMaintain["StyleUnit"] = string.Empty;
             this.CurrentMaintain["StyleUkey"] = 0;
             this.displayDescription.Value = string.Empty;
+        }
+
+        private void SetStyleColumn(string style)
+        {
+            // 檢查資料是否存在
+            // sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@styleid", style);
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+
+            System.Data.DataTable styleData;
+            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleData);
+            if (!result || styleData.Rows.Count <= 0)
+            {
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Style not found!!");
+                }
+
+                this.SetStyleEmptyColumn();
+            }
+            else
+            {
+                this.CurrentMaintain["StyleID"] = styleData.Rows[0]["ID"];
+                this.CurrentMaintain["BrandID"] = styleData.Rows[0]["BrandID"];
+                this.CurrentMaintain["SeasonID"] = styleData.Rows[0]["SeasonID"];
+                this.CurrentMaintain["CdCodeID"] = styleData.Rows[0]["CdCodeID"];
+                this.CurrentMaintain["CPU"] = styleData.Rows[0]["CPU"];
+                this.CurrentMaintain["StyleUnit"] = styleData.Rows[0]["StyleUnit"];
+                this.CurrentMaintain["StyleUkey"] = styleData.Rows[0]["Ukey"];
+                this.displayDescription.Value = MyUtility.Convert.GetString(styleData.Rows[0]["Description"]);
+            }
         }
 
         // Factory
