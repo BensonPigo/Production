@@ -13,6 +13,7 @@
     [AccumulatedQty]       NUMERIC (6)     CONSTRAINT [DF_ArtworkAP_Detail_AccumulatedQty] DEFAULT ((0)) NULL,
     [ArtworkPo_DetailUkey] BIGINT          CONSTRAINT [DF_ArtworkAP_Detail_ArtworkPo_DetailUkey] DEFAULT ((0)) NULL,
     [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
+    [FarmOut] NUMERIC(6) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ArtworkAP_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

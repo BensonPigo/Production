@@ -125,7 +125,7 @@ where (s.Inline between  @sewinginline and @sewingoffline
 	or @sewinginline between s.Inline and s.Offline
 	or @sewingoffline between s.Inline and s.Offline
 )
- and s.MDivisionID = @MDivisionID and s.FactoryID = @FactoryID --and SewingLineID = '18'
+ and s.MDivisionID = @MDivisionID --and (s.FactoryID = @FactoryID or @FactpryID = '') --and SewingLineID = '18'
 
 select distinct
 	d.FactoryID
@@ -285,7 +285,11 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
             string line = string.Empty;
             int ftyCount = 0;
             int colCount = 1;
+#if DEBUG
+            excel.Visible = true;
+#endif
             int monthDays = this._startDate.AddMonths(1).AddDays(-1).Subtract(this._startDate).Days + 1;
+
             foreach (DataRow dr in this._printData.Rows)
             {
                 // 當有換工廠別時，要換Sheet
