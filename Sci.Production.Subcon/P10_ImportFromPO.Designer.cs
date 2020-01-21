@@ -36,6 +36,8 @@
             this.labelSPNo = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.txtArtworkPOIDEnd = new Sci.Win.UI.TextBox();
             this.txtArtworkPOIDStart = new Sci.Win.UI.TextBox();
             this.labelArtworkPOID = new Sci.Win.UI.Label();
@@ -43,8 +45,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImportFromPO = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label8 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -107,6 +109,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.displayBox1);
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -133,6 +137,24 @@
             this.groupBox1.Size = new System.Drawing.Size(1004, 52);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(632, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(22, 17);
+            this.label1.TabIndex = 15;
+            this.label1.Text = "～";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(235, 18);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 17);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "～";
             // 
             // txtArtworkPOIDEnd
             // 
@@ -198,27 +220,31 @@
             this.gridImportFromPO.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImportFromPO.RowTemplate.Height = 24;
             this.gridImportFromPO.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImportFromPO.ShowCellToolTips = false;
             this.gridImportFromPO.Size = new System.Drawing.Size(1004, 425);
             this.gridImportFromPO.TabIndex = 0;
             this.gridImportFromPO.TabStop = false;
             // 
-            // label8
+            // label7
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(235, 18);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(22, 17);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "～";
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(41, 25);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(256, 15);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Please note that. RFID data from two supplier.";
             // 
-            // label1
+            // displayBox1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(632, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(22, 17);
-            this.label1.TabIndex = 15;
-            this.label1.Text = "～";
+            this.displayBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(12, 22);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(23, 23);
+            this.displayBox1.TabIndex = 14;
             // 
             // P10_ImportFromPO
             // 
@@ -228,8 +254,10 @@
             this.Controls.Add(this.groupBox2);
             this.DefaultControl = "txtSPNoStart";
             this.Name = "P10_ImportFromPO";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Import From P/O#";
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -257,5 +285,7 @@
         private Win.UI.TextBox txtArtworkPOIDStart;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private Win.UI.DisplayBox displayBox1;
     }
 }
