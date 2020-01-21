@@ -292,232 +292,41 @@ WHERE   StockType='{0}'
             var dr = this.CurrentMaintain;
             if (null == dr) return;
 
-            StringBuilder sqlupd2 = new StringBuilder();
-            List<NowDetail> NowDetails = new List<NowDetail>();
-            string sqlupd3 = "";
-            DualResult result;//, result2;
-            string upd_MD_2T = "";
-            string upd_Fty_26F = "";
-
-
-            //先把表身POID Seq1 2原本的MDivisionPoDetail CLocation記下來  ISP20191578
-            foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != "").ToList())
-            {
-                string POID = item["POID"].ToString();
-                string Seq1 = item["Seq"].ToString().Split(' ')[0];
-                string Seq2 = item["Seq"].ToString().Split(' ')[1];
-
-                DataTable DT_MDivisionPoDetail;
-                //從MDivisionPoDetail出現有的Location
-                DBProxy.Current.Select(null, $@"
-SELECt CLocation
-FROM MDivisionPoDetail
-WHERE POID='{POID}'
-AND Seq1='{Seq1}' AND Seq2='{Seq2}'
-", out DT_MDivisionPoDetail);
-
-                List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
-
-                NowDetail nData = new NowDetail()
-                {
-                    POID= POID,
-                    Seq1=Seq1,
-                    Seq2=Seq2,
-                    DB_CLocations= DB_CLocations
-                };
-                NowDetails.Add(nData);
-
-            }
-
-
-            #region 更新表頭狀態資料
-
-            sqlupd3 = string.Format(@"
+            string sqlComfirmUpdate = "";
+            sqlComfirmUpdate = string.Format(@"
 update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = GETDATE() where id = '{1}'
 "
 , Env.User.UserID, CurrentMaintain["id"]);
 
-            #endregion 更新表頭狀態資料
-
-            #region 更新庫存數量 ftyinventory
-
-            DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
-            foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
-            {
-                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
-                dtrLocation = dtrLocation.Distinct().ToArray();
-
-                if (dtrLocation.Length == 1)
-                {
-                    DataRow newDr = newDt.NewRow();
-                    newDr.ItemArray = dtr.ItemArray;
-                    newDt.Rows.Add(newDr);
-                }
-                else
-                {
-                    foreach (string location in dtrLocation)
-                    {
-                        DataRow newDr = newDt.NewRow();
-                        newDr.ItemArray = dtr.ItemArray;
-                        newDr["ToLocation"] = location;
-                        newDt.Rows.Add(newDr);
-                    }
-                }
-            }
-
-            var data_Fty_26F = (from b in newDt.AsEnumerable()
-                         select new
-                         {
-                             poid = b.Field<string>("poid"),
-                             seq1 = b.Field<string>("seq1"),
-                             seq2 = b.Field<string>("seq2"),
-                             stocktype = b.Field<string>("stocktype"),
-                             qty = b.Field<decimal>("qty"),
-                             toLocation = b.Field<string>("ToLocation"),
-                             roll = b.Field<string>("roll"),
-                             dyelot = b.Field<string>("dyelot"),
-                         }).ToList();
-
-            upd_Fty_26F = Prgs.UpdateFtyInventory_IO(26, null, false);
-            #endregion 更新庫存數量 po_supp_detail & ftyinventory
-
-            #region 更新庫存數量 mdivisionPoDetail
-            var data_MD_2T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                       group b by new
-                       {
-                           poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("seq1"),
-                           seq2 = b.Field<string>("seq2"),
-                           stocktype = b.Field<string>("stocktype")
-                       } into m
-                       select new Prgs_POSuppDetailData
-                       {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           location = string.Join(",", m.Select(r => r.Field<string>("ToLocation")).Distinct()),
-                           qty = 0,
-                           stocktype = m.First().Field<string>("stocktype")
-                       }).ToList();
-            #endregion
-
-            #region ISP20191578 ToLocation的資料一併更新回MDivisionPODetail.CLocation欄位
-            string updateMDivisionPODetailCLocation = string.Empty;
-            try
-            {
-                foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != "").ToList())
-                {
-                    string POID = item["POID"].ToString();
-                    string Seq1 = item["Seq"].ToString().Split(' ')[0];
-                    string Seq2 = item["Seq"].ToString().Split(' ')[1];
-
-                    List<string> New_CLocationList = this.DetailDatas.AsEnumerable().Where(o => o["POID"].ToString() == POID && o["Seq"].ToString() == (Seq1 + " " + Seq2) && o["ToLocation"].ToString() != "")
-                        .Select(o => o["ToLocation"].ToString())
-                        .Distinct().ToList();
-
-                    //List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
-                    List<string> DB_CLocations = NowDetails.Where(o => o.POID == POID && o.Seq1 == Seq1 && o.Seq2 == Seq2).FirstOrDefault().DB_CLocations;
-
-                    List<string> Fincal = new List<string>();
-
-                    foreach (var New_CLocation in New_CLocationList)
-                    {
-                        if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
-                        {
-                            DB_CLocations.Add(New_CLocation);
-                        }
-                    }
-
-                    foreach (var CLocation in DB_CLocations.Distinct().ToList())
-                    {
-                        foreach (var a in CLocation.Split(',').Where(o => o != "").Distinct().ToList())
-                        {
-                            if (!Fincal.Contains(a))
-                            {
-                                Fincal.Add(a);
-                            }
-                        }
-                    }
-
-                    string cmd = $@"
-UPDATE MDivisionPoDetail
-SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
-WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
-
-";
-                    updateMDivisionPODetailCLocation += cmd;
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ShowErr("Update MDivisionPoDetail error.", ex);
-                return;
-            }
-            #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
-            SqlConnection sqlConn = null;
-            DBProxy.Current.OpenConnection(null, out sqlConn);
             using (_transactionscope)
-            using (sqlConn)
             {
                 try
                 {
-                    /*
-                     * 先更新 FtyInventory 後更新 MDivisionPoDetail
-                     * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
-                     * 因為要在同一 SqlConnection 之下執行
-                     */
-                    DataTable resulttb;
-                    #region FtyInventory
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_26F, "", upd_Fty_26F, out resulttb, "#TmpSource", conn: sqlConn)))
+                    DualResult result = DBProxy.Current.Execute(null, sqlComfirmUpdate);
+                    if (!result)
                     {
                         _transactionscope.Dispose();
-                        ShowErr(result);
-                        return;
-                    }
-                    #endregion
-
-                    #region MDivisionPoDetail
-
-
-                    upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
-
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, "", upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(result);
-                        return;
-                    }
-                    #endregion
-
-                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd3, result);
+                        this.ShowErr(result);
                         return;
                     }
 
-                    if (!MyUtility.Check.Empty(updateMDivisionPODetailCLocation))
+                    result = Prgs.UpdateFtyInventoryMDivisionPoDetail(this.DetailDatas);
+                    if (!result)
                     {
-                        result = DBProxy.Current.Execute(null, updateMDivisionPODetailCLocation);
-
-                        if (!result)
-                        {
-                            _transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
-                        }
+                        _transactionscope.Dispose();
+                        this.ShowErr(result);
+                        return;
                     }
 
                     _transactionscope.Complete();
-                    _transactionscope.Dispose();
 
                 }
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr(ex);
                     return;
                 }
 
