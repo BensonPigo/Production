@@ -633,7 +633,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             .Text("farmout", header: "Farm Out", width: Widths.AnsiChars(5), settings: ts, iseditingreadonly: true) //15
             .Text("farmin", header: "Farm In", width: Widths.AnsiChars(5), settings: ts2, iseditingreadonly: true)  //16
             .Text("apqty", header: "A/P Qty", width: Widths.AnsiChars(5), settings: ts3, iseditingreadonly: true)   //17
-            .Text("exceedqty", header: "Exceed", width: Widths.AnsiChars(5), iseditingreadonly: true);     //18
+            .Text("ArtworkReqID", header: "Subcon Req#", width: Widths.AnsiChars(13), iseditingreadonly: true);     //18
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns["stitch"].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch

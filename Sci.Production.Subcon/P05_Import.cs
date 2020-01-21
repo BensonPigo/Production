@@ -294,7 +294,7 @@ outer apply(
             }
 
             strSQLCmd = $@"
-select  Selected = 0
+select distinct Selected = 0
         , [LocalSuppId] = isnull(ot.LocalSuppId,'')
 		, [orderID] = o.ID
         , OrderQty = o.Qty
@@ -302,20 +302,18 @@ select  Selected = 0
         , ReqQty = iif(o.Qty-(ReqQty.value + PoQty.value {tmpcurrentReq}) < 0, 0, o.Qty - (ReqQty.value + PoQty.value {tmpcurrentReq}))
 		, o.SewInLIne
 		, o.SciDelivery
-		, [ArtworkID] = ot.ArtworkTypeID
-		, stitch = 1
-		, PatternCode = ''
-		, PatternDesc = ''
+		, [ArtworkID] = oa.ArtworkID
+		, stitch = oa.qty 
+		, PatternCode = oa.PatternCode
+		, PatternDesc = oa.PatternDesc
 		, [qtygarment] = 1
         , o.StyleID
 		, o.POID
         , id = ''
         , ExceedQty = 0
 from  orders o WITH (NOLOCK)
-left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.LocalSuppId = '{dr_artworkReq["LocalSuppId"]}'
-outer apply( select top 1 ArtworkTypeID,PatternCode,PatternDesc,ArtworkID 
-                from dbo.Order_Artwork  WITH (NOLOCK) where ID = o.ID and 
-                                                            ArtworkTypeID = ot.ArtworkTypeID ) oa
+inner join dbo.Order_Artwork oa on oa.ID = o.ID and oa.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
+left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select value = ISNULL(sum(ReqQty),0)
