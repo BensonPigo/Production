@@ -62,7 +62,7 @@ select s.Id
 	,o.FactoryID
 	,s.IssueDate
 	,sd.FromPOID
-	,[InventorySeq] = sd.FromSeq1 + sd.FromSeq2
+	,[InventorySeq] = CONCAT(LTRIM(RTRIM(sd.FromSeq1)),' ',LTRIM(RTRIM(sd.FromSeq2)))
 	,sd.FromRoll
 	,sd.FromDyelot
 	,[Description] = ltrim(rtrim(dbo.getMtlDesc(sd.FromPOID, sd.FromSeq1, sd.FromSeq2, 2, 0)))
@@ -70,8 +70,8 @@ select s.Id
 	,c.Name
 	,sd.Qty
 	,sd.ToPOID
-	,[BulkSeq] = sd.ToSeq1 + sd.ToSeq2
-	,[CreateBy] = s.AddName
+	,[BulkSeq] = CONCAT(LTRIM(RTRIM(sd.ToSeq1)),' ',LTRIM(RTRIM(sd.ToSeq2)))
+	,[CreateBy] = (select dbo.getPass1_ExtNo(s.AddName))
 	,[FromLocation] = dbo.Getlocation(fty.Ukey)
 	,sd.ToLocation
 from SubTransfer s with (nolock)
@@ -84,13 +84,15 @@ left join Color c with (nolock) on po.ColorID = c.ID and po.BrandId = c.BrandId
 left join FtyInventory fty with (nolock) on sd.FromPOID = fty.POID 
 											and sd.FromSeq1 = fty.Seq1 
 											and sd.FromSeq2 = fty.Seq2 
+											and sd.FromStockType = fty.StockType
 											and sd.FromRoll = fty.Roll
 											and sd.FromDyelot = fty.Dyelot 
-											and sd.FromStockType = fty.StockType
 where {0}
 and s.Status = 'Confirmed'
 and s.Type = 'B'
+order by s.IssueDate,s.Id,o.MDivisionID,o.FactoryID,sd.FromPOID,sd.FromSeq1,sd.FromSeq2,sd.FromRoll,sd.FromDyelot
 ", sqlFilter);
+
                 result = DBProxy.Current.Select(null, sqlcmd, out dt);
                 if (!result) return result;
             }
