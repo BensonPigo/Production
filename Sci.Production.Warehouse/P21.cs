@@ -45,7 +45,7 @@ namespace Sci.Production.Warehouse
                 this.GridLocationCellPop(e.RowIndex);
             };
 
-            cellLocation.CellMouseClick += (s, e) =>
+            cellLocation.EditingMouseUp += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
                 {
@@ -83,7 +83,7 @@ namespace Sci.Production.Warehouse
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Numeric("ActQty", header: "Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Numeric("ActualQty", header: "Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Location", header: "Location", width: Widths.AnsiChars(12), settings: cellLocation)
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
@@ -241,7 +241,14 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
                 return;
             }
 
+            if (selectedReceiving.Any(s => MyUtility.Check.Empty(s["Location"])))
+            {
+                MyUtility.Msg.WarningBox("Location can not be empty");
+                return;
+            }
+
             var selectedReceivingSummary = selectedReceiving
+                                            .Where(s => s["Location"].ToString() != s["OldLocation"].ToString())
                                             .GroupBy(s => new
                                             {
                                                 POID = s["POID"].ToString(),
@@ -284,7 +291,10 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
 ";
             }
 
-            sqlInsertLocationTrans += $@"
+
+            if (selectedReceivingSummary.Any())
+            {
+                sqlInsertLocationTrans += $@"
 Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddName,AddDate)
             values( '{locationTransID}',
                     '{Env.User.Keyword}',
@@ -296,9 +306,9 @@ Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddNa
                     GetDate())
 ";
 
-            foreach (var receivingItem in selectedReceivingSummary)
-            {
-                sqlInsertLocationTrans += $@"
+                foreach (var receivingItem in selectedReceivingSummary)
+                {
+                    sqlInsertLocationTrans += $@"
 Insert into LocationTrans_Detail(   ID,
                                     FtyInventoryUkey,
                                     POID,
@@ -323,33 +333,37 @@ Insert into LocationTrans_Detail(   ID,
                        '{receivingItem.StockType}')
            
 ";
+                }
+                sqlInsertLocationTrans += $"select * from LocationTrans_Detail where ID = '{locationTransID}'";
             }
-
-            sqlInsertLocationTrans += $"select * from LocationTrans_Detail where ID = '{locationTransID}'";
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
                 try
                 {
-                    DataTable dtLocationTransDetail;
-                    DualResult result = DBProxy.Current.Select(null, sqlInsertLocationTrans, out dtLocationTransDetail);
-                    if (!result)
+                    DualResult result;
+                    if (selectedReceivingSummary.Any())
                     {
-                        _transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
+                        DataTable dtLocationTransDetail;
+                        result = DBProxy.Current.Select(null, sqlInsertLocationTrans, out dtLocationTransDetail);
+                        if (!result)
+                        {
+                            _transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        result = Prgs.UpdateFtyInventoryMDivisionPoDetail(dtLocationTransDetail.AsEnumerable().ToList());
+                        if (!result)
+                        {
+                            _transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
                     }
 
                     result = DBProxy.Current.Execute(null, sqlUpdateReceiving_Detail);
-                    if (!result)
-                    {
-                        _transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
-                    }
-
-                    result = Prgs.UpdateFtyInventoryMDivisionPoDetail(dtLocationTransDetail.AsEnumerable().ToList());
                     if (!result)
                     {
                         _transactionscope.Dispose();
@@ -367,7 +381,7 @@ Insert into LocationTrans_Detail(   ID,
                     return;
                 }
             }
-
+            this.Query();
             MyUtility.Msg.InfoBox("Complete");
 
         }
