@@ -301,7 +301,7 @@ outer apply(
 
             strSQLCmd = $@"
 select distinct Selected = 0
-        , [LocalSuppId] = isnull(ot.LocalSuppId,'')
+        , [LocalSuppId] = '{dr_artworkReq["LocalSuppId"]}'
 		, [orderID] = o.ID
         , OrderQty = o.Qty
         , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) {tmpcurrentReq}
