@@ -152,6 +152,7 @@ select
 	o.CdCodeID,
 	CDCode.ProductionFamilyID
 from Orders o with(nolock)
+inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 outer apply(select QAQty = dbo.getMinCompleteSewQty(o.ID,null,null) )s
@@ -167,7 +168,7 @@ select
 	s.OutputDate,
 	OutputCPU=isnull(s.QAQty,0)*isnull(o.CPU,0)
 from Orders o with(nolock)
-inner join Factory f on o.FactoryID = f.ID 
+inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 outer apply(
@@ -187,7 +188,7 @@ from(
 		s.OutputDate,
 		OutputCPU=isnull(s.QAQty,0)*isnull(o.CPU,0)*(-1)
 	from Orders o with(nolock)
-	inner join Factory f on o.FactoryID = f.ID 
+    inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
 	left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 	outer apply(
@@ -359,6 +360,11 @@ select ''Total'' ,null, sum(Balance),'+@col2+' from #tmp3
 '
 exec (@sql)
 
+if @sql is null
+begin
+	select Date='',Loading=null,Balance=null,[ ]=''
+end
+
 drop table #tmp,#tmp2,#tmp2_0
 ";
                 DataTable ftySummarydt;
@@ -465,7 +471,7 @@ drop table #tmp
                 worksheet2.Copy(worksheet4);
             }
 
-            for (int j = 1; j <= this.Summarydt.Count; j++)
+            for (int j = 1; j <= this.Detaildt.Count; j++)
             {
                 worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2 - 1];
                 worksheet.Name = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FtyGroup"]) + "-Summary";
