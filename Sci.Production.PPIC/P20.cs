@@ -44,7 +44,7 @@ namespace Sci.Production.PPIC
 
             // 預設查詢為 Exclude Junk
             this.queryfors.SelectedIndex = 0;
-            this.DefaultWhere = $"(select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
+            this.DefaultWhere = $"Status = 'Approved' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
             this.ReloadDatas();
             this.queryfors.SelectedIndexChanged += (s, e) =>
             {
