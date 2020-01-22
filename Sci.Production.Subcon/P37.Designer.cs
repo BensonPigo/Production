@@ -189,7 +189,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3142, 397);
+            this.gridicon.Location = new System.Drawing.Point(3267, 397);
             // 
             // refresh
             // 
@@ -368,7 +368,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(17, 73);
+            this.labelFactory.Location = new System.Drawing.Point(17, 41);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(112, 23);
             this.labelFactory.TabIndex = 58;
@@ -379,7 +379,7 @@
             this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "brandid", true));
             this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFactory.Location = new System.Drawing.Point(130, 73);
+            this.displayFactory.Location = new System.Drawing.Point(130, 41);
             this.displayFactory.Name = "displayFactory";
             this.displayFactory.Size = new System.Drawing.Size(100, 23);
             this.displayFactory.TabIndex = 6;
@@ -832,7 +832,7 @@
             // 
             // lblResponsibleFTY
             // 
-            this.lblResponsibleFTY.Location = new System.Drawing.Point(17, 41);
+            this.lblResponsibleFTY.Location = new System.Drawing.Point(17, 73);
             this.lblResponsibleFTY.Name = "lblResponsibleFTY";
             this.lblResponsibleFTY.Size = new System.Drawing.Size(112, 23);
             this.lblResponsibleFTY.TabIndex = 109;
@@ -843,7 +843,7 @@
             this.displayResponsibleFTY.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayResponsibleFTY.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponFTY", true));
             this.displayResponsibleFTY.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayResponsibleFTY.Location = new System.Drawing.Point(130, 41);
+            this.displayResponsibleFTY.Location = new System.Drawing.Point(130, 73);
             this.displayResponsibleFTY.Name = "displayResponsibleFTY";
             this.displayResponsibleFTY.Size = new System.Drawing.Size(100, 23);
             this.displayResponsibleFTY.TabIndex = 110;
