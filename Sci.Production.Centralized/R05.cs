@@ -496,7 +496,7 @@ drop table #tmp
                 MyUtility.Excel.CopyToXls(this.Detaildt[j - 1], string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[j * 2], showExcel: false, DisplayAlerts_ForSaveFile: true);
                 worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2 - 1]; // 取得工作表
                 worksheet.Columns.AutoFit();
-                worksheet.Columns[1].ColumnWidth = 10.38;
+                worksheet.Columns[1].ColumnWidth = 12;
 
                 worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2]; // 取得工作表
                 worksheet.Name = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FtyGroup"]) + "-Balance Detail";
