@@ -288,7 +288,7 @@ group by j.FtyGroup,j.OutputDate
                 return Result.F("Data not found!");
             }
 
-            List<string> ftys = this.dtAllData[0].AsEnumerable().Select(s => MyUtility.Convert.GetString(s["FtyGroup"])).Distinct().ToList();
+            List<string> ftys = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FtyGroup"])).Select(s => MyUtility.Convert.GetString(s["FtyGroup"])).Distinct().ToList();
 
             foreach (string fty in ftys)
             {
@@ -413,8 +413,12 @@ drop table #tmp
                     return dual;
                 }
 
-                ftySummarydt.ImportRow(junkdt.Rows[0]);
-                this.Summarydt.Add(ftySummarydt);
+                if (ftySummarydt != null)
+                {
+                    ftySummarydt.ImportRow(junkdt.Rows[0]);
+                    this.Summarydt.Add(ftySummarydt);
+                }
+
                 #endregion
             }
 
@@ -437,7 +441,7 @@ drop table #tmp
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
             Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
-            excelApp.Visible = true;
+            //excelApp.Visible = true;
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             if (this.Date == "1")
