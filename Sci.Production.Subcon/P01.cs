@@ -58,6 +58,7 @@ namespace Sci.Production.Subcon
                 this.CurrentMaintain["localsuppid"] = txtsubconSupplier.TextBox1.Text;
             };
 
+            this.detailgrid.RowsAdded += Detailgrid_RowsAdded;
         }
 
         // 新增時預設資料
@@ -116,7 +117,7 @@ where  apd.id = '{CurrentMaintain["id"]}'
                 MyUtility.Msg.WarningBox("Some SP# already have Subcon AP data.");
                 return false;
             }
-            this.detailgrid.RowsAdded += Detailgrid_RowsAdded;
+            
             return base.ClickDeleteBefore();
         }
 

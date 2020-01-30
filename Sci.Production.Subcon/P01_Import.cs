@@ -119,6 +119,7 @@ namespace Sci.Production.Subcon
                 {
                     this.DetalGridCellEditChange(dr.Index);
                 }
+                this.gridBatchImport.ClearSelection();
             }
             else { ShowErr(strSQLCmd, result); }
         }
@@ -434,14 +435,14 @@ select distinct  Selected = 0
         , ard.PatternCode
         , o.SewInLIne
         , o.SciDelivery
-        , coststitch = oa.qty
+        , coststitch = ot.Qty
         , ard.Stitch
         , ard.PatternDesc
         , ard.QtyGarment
-        , Cost = oa.Cost
-        , unitprice = isnull(oa.Cost,0)
-        , price = oa.Cost
-        , amount = ard.ReqQty *  isnull(oa.Cost,0)
+        , Cost = ot.Price
+        , unitprice = isnull(ot.Price,0)
+        , price = ot.Price
+        , amount = ard.ReqQty *  isnull(ot.Price,0)
         , Style = o.StyleID
         , [ArtworkReqID] = ar.ID
         , [Article] = oat.Article
@@ -453,17 +454,11 @@ inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.ArtworkType
 inner join ArtworkReq_Detail ard with (nolock) on   ard.ID = ar.ID  and
                                                     ard.OrderId = o.ID and 
                                                     ard.ArtworkPOID = ''
-left join dbo.Order_Artwork oa on oa.ID = o.ID and 
-                            oa.Article = oat.Article and
-                            oa.ArtworkTypeID = '{1}' and
-							oa.ArtworkID = ard.ArtworkID and 
-                            oa.PatternCode = ard.PatternCode and 
-                            oa.PatternDesc = ard.PatternDesc
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select IssueQty = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD, ArtworkPO A
-        where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= oa.PatternCode
+        where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= ard.PatternCode
 ) IssueQty
 where f.IsProduceFty=1
 and o.category  in ('B','S')
