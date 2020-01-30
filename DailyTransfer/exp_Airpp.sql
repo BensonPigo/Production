@@ -23,8 +23,59 @@ BEGIN
   DROP TABLE ShareExpense_APP
 END
 
-
 -----------------------------------------------------AirPP-----------------------------------------------------
+
+SELECT	app.ID
+		, tmp.VoucherID 
+		, tmp.VoucherDate
+INTO #tmpVoucher
+FROM Production.dbo.AirPP app
+OUTER APPLY(
+	------找出包含空運會計科目的ShareExpense_APP
+	SELECT	sa.VoucherID
+			, sa.VoucherDate
+	FROM Production.dbo.ShippingAP sa
+	WHERE EXISTS(
+		SELECT 1
+		FROM Production.dbo.ShareExpense_APP sea 
+		INNER JOIN FinanceEN.dbo.AccountNo an ON sea.AccountID = an.ID
+		WHERE	an.IsAPP=1 
+				AND sea.ShippingAPID=sa.ID
+				AND sea.AirPPID= app.ID
+	)
+)tmp
+WHERE	-- 30 天內新增異動的資料
+		CONVERT(datetime,isnull(app.EditDate, app.AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
+		or
+		EXISTS(
+			----包含空運會計科目的ShareExpense_APP，30天內有異動過
+			SELECT 1
+			FROM Production.dbo.ShareExpense_APP sea
+			INNER JOIN  FinanceEN.dbo.AccountNo AN ON sea.AccountID = AN.ID
+			WHERE	sea.AirPPID = app.ID
+					----包含空運費
+					AND AN.IsAPP = 1
+					----ShareExpense_APP EditDate 在 30 天內
+					AND sea.EditDate >= DATEADD(DAY, -30, GETDATE())  
+					AND sea.Junk=0
+		)
+		OR 
+		EXISTS(
+			----包含空運會計科目ShareExpense_APP的ShippingAP，30天內有異動過
+			SELECT 1
+			FROM Production.dbo.ShippingAP SA
+			INNER JOIN Production.dbo.ShareExpense_APP sea ON SA.ID = sea.ShippingAPID
+			INNER JOIN FinanceEN.dbo.AccountNo AN ON sea.AccountID = AN.ID
+			WHERE	sea.AirPPID = app.ID
+					----包含空運費
+					AND AN.IsAPP = 1
+					----ShippingAP.VoucherEditDate 在 30 天內
+					AND SA.VoucherEditDate >= DATEADD(DAY, -30, GETDATE())   
+					AND sea.Junk=0
+		)
+
+-------
+
 SELECT [ID]
       ,[CDate]
       ,[OrderID]
@@ -95,13 +146,37 @@ SELECT [ID]
       ,[TPEEditDate]
 	  ,[ShipLeader]
 	  ,[QuotationAVG]
-,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder),12) ) AS ForWardN
-,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder1) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder1),12) ) AS ForWard1N
-,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2),12) ) AS ForWard2N
+	  ,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder),12) ) AS ForWardN
+  	  ,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder1) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder1),12) ) AS ForWard1N
+	  ,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2),12) ) AS ForWard2N
+	  , [VoucherDate] = Voucher.VoucherDate
+	  , [VoucherID] = Voucher.VoucherID
 INTO AirPP
 FROM Production.dbo.AirPP AS A
+OUTER APPLY (
+	SELECT VoucherID = STUFF (	(	SELECT DISTINCT CONCAT (',', tV.VoucherID) 
+									FROM #tmpVoucher tV
+									WHERE A.ID = tV.ID
+										  AND tV.VoucherID != ''
+										  AND tV.VoucherID IS NOT NULL
+									FOR XML PATH('')
+								)
+							    , 1, 1, ''
+							  )
+		   , VoucherDate = (
+							SELECT MIN (tV.VoucherDate)
+							FROM #tmpVoucher tV
+							WHERE A.ID = tV.ID
+								  AND tV.VoucherDate IS NOT NULL
+							)
+) Voucher
 WHERE	-- 30 天內新增異動的資料
-		CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE())
+		CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
+		OR EXISTS(
+			SELECT 1
+			FROM  #tmpVoucher tV
+			WHERE A.ID = tV.ID
+		)
 ORDER BY Id 
 
 UPDATE Production.dbo.AirPP
@@ -110,6 +185,8 @@ WHERE
 CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
  AND CONVERT(DATETIME, isnull(TPEEditDate,'')) <= CONVERT(DATETIME, isnull(EditDate,''))
 AND Status IN ('New','Checked','Approved','Junked') AND FtyMgrApvDate is not null AND FtySendDate is null
+
+drop table #tmpVoucher
 
 ---------------------------------------------------------------------------------------------------------------
 

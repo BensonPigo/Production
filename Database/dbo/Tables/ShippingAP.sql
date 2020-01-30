@@ -29,6 +29,7 @@
     [SharedAmtFactory] NUMERIC (12, 2) CONSTRAINT [DF_ShippingAP_SharedAmtFactory] DEFAULT ((0)) NOT NULL,
     [SharedAmtOther]   NUMERIC (12, 2) CONSTRAINT [DF_ShippingAP_SharedAmtOther] DEFAULT ((0)) NOT NULL,
     [APPExchageRate]   NUMERIC (11, 6) DEFAULT ((0)) NOT NULL,
+    [VoucherEditDate] DATE NULL, 
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -155,4 +156,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��]', @
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�~�b�ǲ�ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'ExVoucherID';
+GO
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票資訊最後編輯日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'VoucherEditDate';
+GO
