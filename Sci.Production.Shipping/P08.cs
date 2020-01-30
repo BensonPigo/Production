@@ -556,10 +556,12 @@ where sd.ID = '{0}'", masterID);
             foreach (DataRow dr in this.DetailDatas)
             {
                 sqlcmd = string.Format(
-                    @"select se.AccountID
-                    from ShipExpense se
-                    where se.id = '{0}'
-                    and not exists (select dbo.GetAccountNoExpressType(se.AccountID, '{1}')) ",
+                    @"select iif(e.ExpressType = 1, null, se.AccountID) AccountID
+                        from ShipExpense se
+                        outer apply (
+	                        select dbo.GetAccountNoExpressType(se.AccountID, '{1}') ExpressType
+                        ) e
+                        where se.id = '{0}' ",
                     dr["ShipExpenseID"],
                     this.CurrentMaintain["Type"]);
                 string result = MyUtility.GetValue.Lookup(sqlcmd);
@@ -572,8 +574,7 @@ where sd.ID = '{0}'", masterID);
             if (!MyUtility.Check.Empty(accountNO))
             {
                 MyUtility.Msg.WarningBox(string.Format(
-                    @"Account Payment Type is {0}, but Account No ({1}) is not {0} Item,
-                      Please check and correct the inconsistencies before proceeding to the next step.",
+                    @"Account Payment Type is {0}, but Account No ({1}) is not {0} Item," + Environment.NewLine + "Please check and correct the inconsistencies before proceeding to the next step.",
                     this.CurrentMaintain["Type"],
                     accountNO));
                 return false;
