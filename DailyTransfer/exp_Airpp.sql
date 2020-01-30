@@ -25,40 +25,47 @@ INTO #tmpVoucher
 FROM Production.dbo.AirPP app
 OUTER APPLY(
 	------找出包含空運會計科目的ShareExpense_APP
-	SELECT sa.VoucherID,sa.VoucherDate
+	SELECT	sa.VoucherID
+			, sa.VoucherDate
 	FROM Production.dbo.ShippingAP sa
 	WHERE EXISTS(
 		SELECT 1
 		FROM Production.dbo.ShareExpense_APP sea 
 		INNER JOIN FinanceEN.dbo.AccountNo an ON sea.AccountID = an.ID
-		WHERE       an.IsAPP=1 
+		WHERE	an.IsAPP=1 
 				AND sea.ShippingAPID=sa.ID
-				AND sea.AirPPID= app.ID ----'外部AirPPID'
+				AND sea.AirPPID= app.ID
 	)
 )tmp
-WHERE	
-EXISTS(
-	----包含空運會計科目的ShareExpense_APP，30天內有異動過
-	SELECT 1
-	FROM Production.dbo.ShareExpense_APP sea
-	INNER JOIN  FinanceEN.dbo.AccountNo AN ON sea.AccountID = AN.ID
-	WHERE    sea.AirPPID = app.ID
-		 AND AN.IsAPP = 1
-		 AND sea.EditDate >= DATEADD(DAY, -30, GETDATE())  ----ShareExpense_APP EditDate 在 30 天內
-		 AND sea.Junk=0
-)
-OR 
-EXISTS(
-	----包含空運會計科目ShareExpense_APP的ShippingAP，30天內有異動過
-	SELECT 1
-	FROM Production.dbo.ShippingAP SA
-	INNER JOIN Production.dbo.ShareExpense_APP sea ON SA.ID = sea.ShippingAPID
-	INNER JOIN FinanceEN.dbo.AccountNo AN ON sea.AccountID = AN.ID
-	WHERE    sea.AirPPID = app.ID
-		 AND AN.IsAPP = 1
-		 AND SA.VoucherEditDate >= DATEADD(DAY, -30, GETDATE())   ----ShippingAP.VoucherEditDate 在 30 天內
-		 AND sea.Junk=0
-)
+WHERE	-- 30 天內新增異動的資料
+		CONVERT(datetime,isnull(app.EditDate, app.AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
+		or
+		EXISTS(
+			----包含空運會計科目的ShareExpense_APP，30天內有異動過
+			SELECT 1
+			FROM Production.dbo.ShareExpense_APP sea
+			INNER JOIN  FinanceEN.dbo.AccountNo AN ON sea.AccountID = AN.ID
+			WHERE	sea.AirPPID = app.ID
+					----包含空運費
+					AND AN.IsAPP = 1
+					----ShareExpense_APP EditDate 在 30 天內
+					AND sea.EditDate >= DATEADD(DAY, -30, GETDATE())  
+					AND sea.Junk=0
+		)
+		OR 
+		EXISTS(
+			----包含空運會計科目ShareExpense_APP的ShippingAP，30天內有異動過
+			SELECT 1
+			FROM Production.dbo.ShippingAP SA
+			INNER JOIN Production.dbo.ShareExpense_APP sea ON SA.ID = sea.ShippingAPID
+			INNER JOIN FinanceEN.dbo.AccountNo AN ON sea.AccountID = AN.ID
+			WHERE	sea.AirPPID = app.ID
+					----包含空運費
+					AND AN.IsAPP = 1
+					----ShippingAP.VoucherEditDate 在 30 天內
+					AND SA.VoucherEditDate >= DATEADD(DAY, -30, GETDATE())   
+					AND sea.Junk=0
+		)
 
 -------
 
@@ -156,12 +163,13 @@ OUTER APPLY (
 								  AND tV.VoucherDate IS NOT NULL
 							)
 ) Voucher
-WHERE CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
-OR EXISTS(
-	SELECT 1
-	FROM  #tmpVoucher tV
-	WHERE A.ID = tV.ID
-)
+WHERE	-- 30 天內新增異動的資料
+		CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
+		OR EXISTS(
+			SELECT 1
+			FROM  #tmpVoucher tV
+			WHERE A.ID = tV.ID
+		)
 ORDER BY Id 
 
 
