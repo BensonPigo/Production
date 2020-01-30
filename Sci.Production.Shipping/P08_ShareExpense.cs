@@ -641,6 +641,16 @@ from (
 
             sqlCmd = string.Format(
                 @"
+select [Amount] = Sum(sd.Amount)
+from ShippingAP_Detail sd WITH (NOLOCK)
+left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
+where sd.ID = '{0}'
+and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)", MyUtility.Convert.GetString(this.apData["ID"]));
+            MyUtility.Check.Seek(sqlCmd, out queryData);
+            this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(queryData["Amount"]);
+
+            sqlCmd = string.Format(
+                @"
 select  sh.Junk,sh.ShippingAPID,sh.WKNo,sh.InvNo,sh.Type,sh.GW,sh.CBM,sh.Amount,sh.ShipModeID,sh.BLNO
         ,sh.AccountID
         , an.Name as AccountName
@@ -730,7 +740,6 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             }
 
             this.listControlBindingSource1.DataSource = this.SEGroupData;
-
         }
 
         private void ControlButton()

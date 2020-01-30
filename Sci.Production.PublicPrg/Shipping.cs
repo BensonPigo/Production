@@ -75,6 +75,7 @@ DECLARE cursor_diffAccNo CURSOR FOR
 	from ShippingAP_Detail sd WITH (NOLOCK) 
 	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 	where sd.ID = @id
+    and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)
 
 --刪除已不存在AP中的會科資料
 OPEN cursor_diffAccNo
