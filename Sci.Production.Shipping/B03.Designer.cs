@@ -58,6 +58,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(882, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtAccountNo);
@@ -81,6 +85,11 @@
             this.detailcont.Controls.Add(this.txtUnit);
             this.detailcont.Controls.Add(this.txtsubconSupplier);
             this.detailcont.Controls.Add(this.txtbrand);
+            this.detailcont.Size = new System.Drawing.Size(882, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(882, 38);
             // 
             // browse
             // 
@@ -228,9 +237,11 @@
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBox1.IsSupportEditMode = false;
             this.checkBox1.Location = new System.Drawing.Point(316, 22);
             this.checkBox1.Name = "checkBox1";
+            this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
             this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Junk";
