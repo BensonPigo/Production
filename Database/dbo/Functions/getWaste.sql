@@ -1,4 +1,5 @@
-﻿-- =============================================
+﻿
+-- =============================================
 -- Author:		Jeff
 -- Create date: 2017/11/02
 -- Description:	
@@ -26,12 +27,21 @@ BEGIN
 	and v.SeasonID	   =@SeasonID
 	and v.VNContractID =@VNContractID
 	and vd.NLCode	   =@NLCode
+
 	if(@Waste is null)
 	Begin
 		select @Waste = Waste
 		from View_VNNLCodeWaste WITH (NOLOCK)
-		where  NLCode = @NLCode
+		where  NLCode = @NLCode and ContractNo = @VNContractID
 	End
+
+	if(@Waste is null)
+	Begin
+		select @Waste = Waste
+		from View_VNNLCodeWaste WITH (NOLOCK)
+		where  NLCode = @NLCode and ContractNo = ''
+	End
+
 	if(@Waste is null)
 	Begin
 		set @Waste = 0

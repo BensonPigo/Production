@@ -750,7 +750,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
                     return;
                 }
-                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and GETDATE() between StartDate and EndDate'", this.txtContractNo.Text)))
+                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and GETDATE() between StartDate and EndDate", this.txtContractNo.Text)))
                 {
                     this.txtContractNo.Text = string.Empty;
                     e.Cancel = true;
