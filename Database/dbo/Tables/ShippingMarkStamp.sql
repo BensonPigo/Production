@@ -1,6 +1,5 @@
 ﻿CREATE TABLE [dbo].[ShippingMarkStamp] (
     [BrandID]     VARCHAR (8)    NOT NULL,
-    [CustCD]      VARCHAR (16)   NOT NULL,
     [CTNRefno]    VARCHAR (21)   NOT NULL,
     [Side]        VARCHAR (5)    NOT NULL,
     [FromLeft]    INT CONSTRAINT [DF_ShippingMarkStamp_FromLeft] DEFAULT ((0)) NOT NULL,
@@ -13,7 +12,7 @@
     [EditDate]    DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_ShippingMarkStamp_EditName] DEFAULT ('') NOT NULL,
     [StickerSizeID] BIGINT NOT NULL DEFAULT ((0)), 
-    CONSTRAINT [PK_ShippingMarkStamp] PRIMARY KEY CLUSTERED ([BrandID] ASC, [CustCD] ASC, [CTNRefno] ASC, [Side] ASC)
+    CONSTRAINT [PK_ShippingMarkStamp] PRIMARY KEY CLUSTERED ([BrandID] ASC, [CTNRefno] ASC, [Side] ASC)
 );
 
 

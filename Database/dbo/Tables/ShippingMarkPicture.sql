@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [dbo].[ShippingMarkPicture]
 (
 	[BrandID] VARCHAR(8) NOT NULL , 
-    [CustCD] VARCHAR(16) NOT NULL, 
     [CTNRefno] VARCHAR(21) NOT NULL, 
     [Side] VARCHAR(5) NOT NULL, 
     [Seq] INT  NOT NULL, 
@@ -16,7 +15,7 @@
 	[IsHorizontal] bit NOT NULL DEFAULT ((0)),
     [IsSSCC] BIT NULL DEFAULT ((0)), 
     [StickerSizeID] BIGINT NOT NULL DEFAULT (0), 
-    CONSTRAINT [PK_ShippingMarkPicture] PRIMARY KEY CLUSTERED ([BrandID],[CustCD],[CTNRefno],[Side],[Seq] ASC)
+    CONSTRAINT [PK_ShippingMarkPicture] PRIMARY KEY CLUSTERED ([BrandID],[CTNRefno],[Side],[Seq] ASC)
 )
 
 GO

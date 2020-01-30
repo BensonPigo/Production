@@ -145,12 +145,6 @@ FROM StickerSize WITH (NOLOCK) ";
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["CustCD"]))
-            {
-                MyUtility.Msg.WarningBox("CustCD can not empty!");
-                return false;
-            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["CTNRefno"]))
             {
                 MyUtility.Msg.WarningBox("CTNRefno can not empty!");

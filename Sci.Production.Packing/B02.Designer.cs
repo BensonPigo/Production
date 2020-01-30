@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
@@ -38,7 +37,6 @@
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
             this.txtCTNRefno = new Sci.Win.UI.TextBox();
             this.numFromRight = new Sci.Win.UI.NumericBox();
             this.numFromBottom = new Sci.Win.UI.NumericBox();
@@ -80,7 +78,6 @@
             this.detailcont.Controls.Add(this.numFromBottom);
             this.detailcont.Controls.Add(this.numFromRight);
             this.detailcont.Controls.Add(this.txtCTNRefno);
-            this.detailcont.Controls.Add(this.txtcustcd1);
             this.detailcont.Controls.Add(this.txtbrand1);
             this.detailcont.Controls.Add(this.label9);
             this.detailcont.Controls.Add(this.label8);
@@ -89,7 +86,6 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Size = new System.Drawing.Size(787, 337);
             this.detailcont.TabStop = true;
@@ -115,17 +111,9 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Brand";
             // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(33, 74);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(102, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Cust CD";
-            // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(33, 115);
+            this.label3.Location = new System.Drawing.Point(33, 74);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 23);
             this.label3.TabIndex = 2;
@@ -133,7 +121,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(33, 156);
+            this.label4.Location = new System.Drawing.Point(33, 115);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(102, 23);
             this.label4.TabIndex = 3;
@@ -189,23 +177,12 @@
             this.txtbrand1.Size = new System.Drawing.Size(125, 23);
             this.txtbrand1.TabIndex = 1;
             // 
-            // txtcustcd1
-            // 
-            this.txtcustcd1.BackColor = System.Drawing.Color.White;
-            this.txtcustcd1.BrandObjectName = null;
-            this.txtcustcd1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustCD", true));
-            this.txtcustcd1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd1.Location = new System.Drawing.Point(138, 74);
-            this.txtcustcd1.Name = "txtcustcd1";
-            this.txtcustcd1.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd1.TabIndex = 2;
-            // 
             // txtCTNRefno
             // 
             this.txtCTNRefno.BackColor = System.Drawing.Color.White;
             this.txtCTNRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CTNRefno", true));
             this.txtCTNRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCTNRefno.Location = new System.Drawing.Point(138, 115);
+            this.txtCTNRefno.Location = new System.Drawing.Point(138, 74);
             this.txtCTNRefno.Name = "txtCTNRefno";
             this.txtCTNRefno.Size = new System.Drawing.Size(100, 23);
             this.txtCTNRefno.TabIndex = 3;
@@ -346,7 +323,7 @@
             "B",
             "C",
             "D"});
-            this.cmbSide.Location = new System.Drawing.Point(138, 156);
+            this.cmbSide.Location = new System.Drawing.Point(138, 115);
             this.cmbSide.Name = "cmbSide";
             this.cmbSide.OldText = "";
             this.cmbSide.Size = new System.Drawing.Size(121, 24);
@@ -364,7 +341,7 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(33, 198);
+            this.label10.Location = new System.Drawing.Point(33, 157);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(102, 23);
             this.label10.TabIndex = 21;
@@ -373,7 +350,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = null;
-            this.pictureBox1.Location = new System.Drawing.Point(138, 198);
+            this.pictureBox1.Location = new System.Drawing.Point(138, 157);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(215, 124);
             this.pictureBox1.TabIndex = 22;
@@ -442,7 +419,6 @@
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.Label label2;
         private Win.UI.Button btnDownload;
         private Win.UI.Button btnUpload;
         private Win.UI.NumericBox numStampWidth;
@@ -450,7 +426,6 @@
         private Win.UI.NumericBox numFromBottom;
         private Win.UI.NumericBox numFromRight;
         private Win.UI.TextBox txtCTNRefno;
-        private Class.txtcustcd txtcustcd1;
         private Class.txtbrand txtbrand1;
         private Win.UI.ComboBox cmbSide;
         private Win.UI.DisplayBox displayFileName;
