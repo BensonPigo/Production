@@ -58,10 +58,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(882, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtAccountNo);
@@ -85,11 +81,6 @@
             this.detailcont.Controls.Add(this.txtUnit);
             this.detailcont.Controls.Add(this.txtsubconSupplier);
             this.detailcont.Controls.Add(this.txtbrand);
-            this.detailcont.Size = new System.Drawing.Size(882, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(882, 38);
             // 
             // browse
             // 
@@ -354,12 +345,16 @@
             this.ExpressQuery = true;
             this.IsSupportClose = true;
             this.IsSupportDelete = false;
+            this.IsSupportJunk = true;
             this.IsSupportUnclose = true;
+            this.IsSupportUnJunk = true;
+            this.JunkChkValue = "New";
             this.Name = "B03";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B03. Shipping Expense";
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "ID";
+            this.UnjunkChkValue = "Junked";
             this.WorkAlias = "ShipExpense";
             this.FormLoaded += new System.EventHandler(this.B03_FormLoaded);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.B03_FormClosing);
