@@ -17,6 +17,14 @@ IF OBJECT_ID(N'dbo.AirPP') IS NOT NULL
 BEGIN
   DROP TABLE AirPP
 END
+
+IF OBJECT_ID(N'dbo.ShareExpense_APP') IS NOT NULL
+BEGIN
+  DROP TABLE ShareExpense_APP
+END
+
+
+-----------------------------------------------------AirPP-----------------------------------------------------
 SELECT [ID]
       ,[CDate]
       ,[OrderID]
@@ -96,13 +104,43 @@ WHERE	-- 30 天內新增異動的資料
 		CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE())
 ORDER BY Id 
 
-
 UPDATE Production.dbo.AirPP
 SET FtySendDate = GETDATE()
 WHERE 
 CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
  AND CONVERT(DATETIME, isnull(TPEEditDate,'')) <= CONVERT(DATETIME, isnull(EditDate,''))
 AND Status IN ('New','Checked','Approved','Junked') AND FtyMgrApvDate is not null AND FtySendDate is null
+
+---------------------------------------------------------------------------------------------------------------
+
+
+-----------------------------------------------------ShareExpense_APP------------------------------------------
+
+SELECT s.ShippingAPID
+,s.InvNO
+,s.PackingListID
+,s.AirPPID
+,s.AccountID
+,s.CurrencyID
+,s.NW
+,s.RatioFty
+,s.AmtFty
+,s.RatioOther
+,s.AmtOther
+,s.Junk
+,s.EditName
+,s.EditDate
+,sa.APPExchageRate
+,[APPAmtUSD] =  CASE WHEN sa.APPExchageRate = 0 THEN 0
+				ELSE ROUND( (s.AmtFty + s.AmtOther) / sa.APPExchageRate , 2 )
+				END
+INTO ShareExpense_APP
+FROM Production.dbo.ShareExpense_APP s
+LEFT JOIN Production.dbo.ShippingAP sa ON s.ShippingAPID = sa.ID
+WHERE CONVERT(datetime,s.EditDate) >= DATEADD(DAY, -30, GETDATE())
+---------------------------------------------------------------------------------------------------------------
+
+
 END
 
 
