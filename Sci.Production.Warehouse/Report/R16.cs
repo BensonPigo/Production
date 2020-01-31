@@ -118,19 +118,23 @@ left join Fabric f WITH (NOLOCK) on f.SCIRefno  = psd.SCIRefno
 left join FtyInventory fi WITH (NOLOCK) on fi.POID = id.POID and fi.Seq1 = id.Seq1 and fi.Seq2 = id.Seq2 and fi.Roll = id.Roll and fi.Dyelot = id.Dyelot and id.StockType = fi.StockType
 outer apply(
 	select cutref = stuff((
-		Select distinct concat(' / ', w.FabricCombo,'-',x1.CutNo)
+		Select concat(' / ', w.FabricCombo,'-',x1.CutNo)
 		from Cutplan_Detail cd WITH (NOLOCK)
 		inner join workorder w WITH (NOLOCK) on w.Ukey = cd.WorkorderUkey 
 		outer apply(
 			select CutNo=stuff((
-				select distinct concat(',',cd2.CutNo)
+				select concat(',',cd2.CutNo)
 				from Cutplan_Detail cd2 WITH (NOLOCK)
 				inner join workorder w2 WITH (NOLOCK) on w2.Ukey = cd2.WorkorderUkey 
 				where cd2.ID=i.CutplanID and w2.FabricCombo=w.FabricCombo
+				group by cd2.CutNo
+                order by cd2.CutNo
 				for xml path('')
 			),1,1,'')
 		)x1
 		where cd.ID=i.CutplanID
+		group by w.FabricCombo,x1.CutNo
+        order by w.FabricCombo,x1.CutNo
 		for xml path('')
 	),1,3,'')
 )x2
