@@ -886,7 +886,14 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
 
                 // 取得AccountNo
-                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
+                string accNo = MyUtility.GetValue.Lookup(string.Format(
+                    @"select se.AccountID 
+                      from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) 
+                      where sd.ID = '{0}' 
+                      and sd.ShipExpenseID = se.ID 
+                      and se.AccountID != ''
+                      and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)", 
+                    MyUtility.Convert.GetString(this.apData["ID"])));
 
                 List<CheckResult> listCheckResult = new List<CheckResult>();
                 StringBuilder msg = new StringBuilder();
