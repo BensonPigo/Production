@@ -96,6 +96,25 @@ namespace Sci.Production.Warehouse
         // 非同步取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            string sqlSeparateByWK = string.Empty;
+
+            #region Separate By WK
+            string sqlColSeparateByWK = string.Empty;
+            string sqlJoinSeparateByWK = string.Empty;
+            if (this.chkSeparateByWK.Checked)
+            {
+                sqlColSeparateByWK = @"
+        ,[WKNo] = exd.ID
+		,[WKETA] = ex.Eta
+		,[WKShipQty] = exd.Qty
+		,[WKFoc] = exd.Foc
+";
+                sqlJoinSeparateByWK = @"
+left join Export_Detail exd with (nolock) on exd.POID = psd.id and exd.Seq1 = psd.SEQ1 and exd.Seq2 = psd.SEQ2
+left join Export ex with (nolock) on ex.ID = exd.ID
+";
+            }
+            #endregion
             #region -- sql parameters declare --
             System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
             sp_spno1.ParameterName = "@spno1";
@@ -135,7 +154,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format($@"
 select  F.MDivisionID
         ,O.FactoryID
         ,[Wkno] = wk.wkno
@@ -182,6 +201,7 @@ select  F.MDivisionID
             when 'F' then FT.F
             when 'A' then FT2.A
          end
+        {sqlColSeparateByWK}
 from dbo.PO_Supp_Detail PSD
 join dbo.PO_Supp PS on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
 join dbo.Supp S on S.id = PS.SuppID
@@ -189,6 +209,7 @@ join dbo.Orders O on o.id = PSD.id
 join dbo.Factory F on f.id = o.FactoryId
 left join dbo.MDivisionPoDetail MDPD on MDPD.POID = PSD.ID and MDPD.Seq1 = PSD.Seq1 and MDPD.Seq2 = PSD.Seq2
 left join dbo.Fabric on fabric.SciRefno = psd.SciRefno
+{sqlJoinSeparateByWK}
 outer apply(select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) si
 outer apply
 (
@@ -490,7 +511,14 @@ where 1=1
             //com.TransferArray_Limit = 200000;
             com.ColumnsAutoFit = true;
             com.WriteTable(printData,2);
-                        
+
+            if (this.chkSeparateByWK.Checked)
+            {
+                objApp.Sheets[1].Cells[1, 38].Value = "WK No.";
+                objApp.Sheets[1].Cells[1, 39].Value = "WK ETA";
+                objApp.Sheets[1].Cells[1, 40].Value = "WK ShipQty";
+                objApp.Sheets[1].Cells[1, 41].Value = "WK F.O.C";
+            }
             //Excel.Worksheet worksheet = objApp.Sheets[1];
 
             //for (int i = 1; i <= printData.Rows.Count; i++)

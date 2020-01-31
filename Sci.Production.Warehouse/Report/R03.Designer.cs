@@ -70,6 +70,7 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.chkIncludeJunk = new Sci.Win.UI.CheckBox();
             this.chkExcludeMaterial = new Sci.Win.UI.CheckBox();
+            this.chkSeparateByWK = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -556,9 +557,21 @@
             this.chkExcludeMaterial.Text = "Exclude Material";
             this.chkExcludeMaterial.UseVisualStyleBackColor = true;
             // 
+            // chkSeparateByWK
+            // 
+            this.chkSeparateByWK.AutoSize = true;
+            this.chkSeparateByWK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSeparateByWK.Location = new System.Drawing.Point(12, 610);
+            this.chkSeparateByWK.Name = "chkSeparateByWK";
+            this.chkSeparateByWK.Size = new System.Drawing.Size(138, 21);
+            this.chkSeparateByWK.TabIndex = 148;
+            this.chkSeparateByWK.Text = "Separate by WK#";
+            this.chkSeparateByWK.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(528, 633);
+            this.ClientSize = new System.Drawing.Size(528, 659);
+            this.Controls.Add(this.chkSeparateByWK);
             this.Controls.Add(this.chkExcludeMaterial);
             this.Controls.Add(this.chkIncludeJunk);
             this.Controls.Add(this.txtbrand);
@@ -653,6 +666,7 @@
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.chkIncludeJunk, 0);
             this.Controls.SetChildIndex(this.chkExcludeMaterial, 0);
+            this.Controls.SetChildIndex(this.chkSeparateByWK, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -702,5 +716,6 @@
         private Win.UI.Label labelBrand;
         private Win.UI.CheckBox chkIncludeJunk;
         private Win.UI.CheckBox chkExcludeMaterial;
+        private Win.UI.CheckBox chkSeparateByWK;
     }
 }
