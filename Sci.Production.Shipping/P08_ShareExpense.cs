@@ -1455,14 +1455,14 @@ DECLARE @apid VARCHAR(13),
 		@id VARCHAR(13),
 		@shipmode VARCHAR(10),
 		@blno VARCHAR(20),
-		@gw NUMERIC(9,2),
-		@cbm NUMERIC(10,4),
+		@gw NUMERIC(10, 3),
+		@cbm NUMERIC(11,4),
 		@currency VARCHAR(3),
-		@subtype VARCHAR(15)
+		@subtype VARCHAR(25)
 
 SET @apid = '{0}'
 DECLARE cursor_GB CURSOR FOR
-	select g.ID,g.ShipModeID,g.TotalGW,g.TotalCBM,s.CurrencyID,s.SubType, '' as BLNo
+	select g.ID,g.ShipModeID,g.TotalGW,g.TotalCBM,s.CurrencyID,s.SubType, iif(g.BLNo is null or g.BLNo='', g.BL2No, g.BLNo) as BLNo
 	from GMTBooking g WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
 	where g.ID = se.InvNo
 	and s.id = se.ShippingAPID
