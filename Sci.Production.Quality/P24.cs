@@ -482,6 +482,7 @@ update PackingList_Detail
 set TransferCFADate = null
 , CFAReceiveDate = null
 , CFAReturnClogDate = CONVERT(varchar(100), GETDATE(), 111)
+, ClogLocationID = '2Clog'
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");
