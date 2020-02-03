@@ -189,8 +189,7 @@ namespace Sci.Production.Subcon
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = dt_artworkApDetail.Select(string.Format(" orderid = '{0}' and ArtworkId = '{1}' and patterncode = '{2}' and artworkpoid='{3}'", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString(), tmp["patterncode"].ToString(),tmp["artworkpoid"].ToString()));
-
+                    DataRow[] findrow = dt_artworkApDetail.Select($" orderid = '{tmp["orderid"].ToString()}' and ArtworkId = '{ tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and artworkpoid='{tmp["artworkpoid"].ToString()}' AND ArtworkPo_DetailUkey = {tmp["ArtworkPO_Detailukey"]} ");
                     if (findrow.Length > 0)
                     {
                        
