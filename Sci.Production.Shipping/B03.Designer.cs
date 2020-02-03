@@ -237,9 +237,11 @@
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBox1.IsSupportEditMode = false;
             this.checkBox1.Location = new System.Drawing.Point(316, 22);
             this.checkBox1.Name = "checkBox1";
+            this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
             this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Junk";
@@ -354,12 +356,16 @@
             this.ExpressQuery = true;
             this.IsSupportClose = true;
             this.IsSupportDelete = false;
+            this.IsSupportJunk = true;
             this.IsSupportUnclose = true;
+            this.IsSupportUnJunk = true;
+            this.JunkChkValue = "New";
             this.Name = "B03";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B03. Shipping Expense";
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "ID";
+            this.UnjunkChkValue = "Junked";
             this.WorkAlias = "ShipExpense";
             this.FormLoaded += new System.EventHandler(this.B03_FormLoaded);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.B03_FormClosing);
