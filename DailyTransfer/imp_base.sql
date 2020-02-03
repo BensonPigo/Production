@@ -905,6 +905,7 @@ from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.i
 --Factory1
 --Factory_TMS
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+-------------------------- 根據 Factory_TMS Primary Key 更新存在 PMS 的資料
 UPDATE a
 SET  
       -- a.ID	      =b.ID	
@@ -914,7 +915,7 @@ SET
       a.TMS	      =b.TMS	
 
 from Production.dbo.Factory_Tms as a inner join Trade_To_Pms.dbo.Factory_Tms as b ON a.id=b.id and a.Year=b.Year and a.ArtworkTypeID=b.ArtworkTypeID and a.Month=b.Month
--------------------------- INSERT INTO 抓
+-------------------------- 根據 Factory_TMS Primary Key 新增不存在 PMS 的資料
 INSERT INTO Production.dbo.Factory_Tms(
       ID
       ,Year
@@ -933,7 +934,17 @@ select
 from Trade_To_Pms.dbo.Factory_Tms as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Factory_Tms as a WITH (NOLOCK) where a.id = b.id and a.Year=b.Year and a.ArtworkTypeID=b.ArtworkTypeID and a.Month=b.Month)
 
-
+-------------------------- 根據 Factory_TMS Primary Key 刪除不存在 Trade 的資料
+delete pms_ft
+from Production.dbo.Factory_TMS pms_ft
+where not exists (
+		select 1
+		from Trade_To_Pms.dbo.Factory_Tms trade_ft
+		where pms_ft.ID = trade_ft.ID
+				and pms_ft.Year = trade_ft.Year
+				and pms_ft.ArtworkTypeID = trade_ft.ArtworkTypeID
+				and pms_ft.Month = trade_ft.Month
+		)
 
 --Factory4
 --Factory_BrandDefinition
