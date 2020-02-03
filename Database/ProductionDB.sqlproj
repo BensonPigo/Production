@@ -2435,6 +2435,7 @@
     <Build Include="dbo\Functions\GetSewingLineScheduleData_Efficiency.sql" />
     <Build Include="dbo\Stored Procedures\Trans_BundleHistory.sql" />
     <Build Include="dbo\Tables\StickerSize.sql" />
+	<Build Include="dbo\Stored Procedures\CheckNikeCustCD.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
