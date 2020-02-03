@@ -199,7 +199,7 @@ p.MDivisionID
 ,pd.CTNStartNo
 ,pd.ReceiveDate
 ,o.CustPONo
-,ClogLocationId=iif(pd.CFAReceiveDate is not null,'CFA',pd.ClogLocationId)
+,ClogLocationId=iif(pd.CFAReceiveDate is not null,pd.CFALocationID,pd.ClogLocationId)
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
 ,[TTLQty] = TTL.Qty

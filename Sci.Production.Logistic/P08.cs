@@ -126,7 +126,7 @@ select distinct
 ,o.BrandID
 ,c.Alias
 ,o.BuyerDelivery
-,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, p2.ClogLocationID)
+,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, '')
 ,p2.remark
 ,p2.SCICtnNo
 from PackingList_Detail p2 WITH (NOLOCK)

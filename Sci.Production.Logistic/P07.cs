@@ -516,7 +516,7 @@ and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog=
                     {
                         updateCmds.Add($@"
 update PackingList_Detail 
-set TransferCFADate = CONVERT(varchar(100), GETDATE(), 111), ClogReceiveCFADate = null, ClogLocationID  = ''
+set TransferCFADate = CONVERT(varchar(100), GETDATE(), 111), ClogReceiveCFADate = null, ClogLocationID  = '2CFA'
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and DisposeFromClog= 0
 ");
                         insertCmds.Add($@"
