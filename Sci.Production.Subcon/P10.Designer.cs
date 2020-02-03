@@ -68,6 +68,7 @@
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             this.label7 = new System.Windows.Forms.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.BtnRemoveQty0 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,6 +105,7 @@
             this.masterpanel.Controls.Add(this.displayCurrency);
             this.masterpanel.Controls.Add(this.txtsubconSupplier);
             this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.BtnRemoveQty0);
             this.masterpanel.Controls.Add(this.btnImportFromPO);
             this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.labelHandle);
@@ -142,6 +144,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportFromPO, 0);
+            this.masterpanel.Controls.SetChildIndex(this.BtnRemoveQty0, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsubconSupplier, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCurrency, 0);
@@ -219,7 +222,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 515);
+            this.browse.Size = new System.Drawing.Size(1000, 570);
             // 
             // tabs
             // 
@@ -682,6 +685,18 @@
             this.displayBox1.Size = new System.Drawing.Size(23, 23);
             this.displayBox1.TabIndex = 12;
             // 
+            // BtnRemoveQty0
+            // 
+            this.BtnRemoveQty0.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.BtnRemoveQty0.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.BtnRemoveQty0.Location = new System.Drawing.Point(791, 210);
+            this.BtnRemoveQty0.Name = "BtnRemoveQty0";
+            this.BtnRemoveQty0.Size = new System.Drawing.Size(168, 30);
+            this.BtnRemoveQty0.TabIndex = 9;
+            this.BtnRemoveQty0.Text = "Remove qty = 0 data";
+            this.BtnRemoveQty0.UseVisualStyleBackColor = true;
+            this.BtnRemoveQty0.Click += new System.EventHandler(this.BtnRemoveQty0_Click);
+            // 
             // P10
             // 
             this.ApvChkValue = "New";
@@ -763,5 +778,6 @@
         private Win.UI.Label lbExVoucherID;
         private System.Windows.Forms.Label label7;
         private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Button BtnRemoveQty0;
     }
 }

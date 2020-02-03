@@ -188,11 +188,6 @@ namespace Sci.Production.Subcon
             }
             #endregion
 
-            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("apqty = 0"))
-            {
-                row.Delete();
-            }
-
             if (DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
@@ -409,6 +404,34 @@ where a.id='{0}'
         //Approve
         protected override void ClickConfirm()
         {
+            var zerolist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["apqty"]) == 0)
+                .Select(s => new
+                {
+                    ArtworkPO = MyUtility.Convert.GetString(s["Artworkpoid"]),
+                    SP = MyUtility.Convert.GetString(s["orderid"]),
+                    Artwork = MyUtility.Convert.GetString(s["ArtworkId"]),
+                    Stitch = MyUtility.Convert.GetDecimal(s["stitch"]),
+                    CutpartID = MyUtility.Convert.GetString(s["patterncode"]),
+                    CutpartName = MyUtility.Convert.GetString(s["PatternDesc"]),
+                    Price = MyUtility.Convert.GetDecimal(s["Price"]),
+                    POQty = MyUtility.Convert.GetDecimal(s["PoQty"]),
+                    FarmOut = MyUtility.Convert.GetDecimal(s["FarmOut"]),
+                    FarmIn = MyUtility.Convert.GetDecimal(s["farmin"]),
+                    AccuPaidQty = MyUtility.Convert.GetDecimal(s["accumulatedqty"]),
+                    Balance = MyUtility.Convert.GetDecimal(s["Balance"]),
+                    Qty = MyUtility.Convert.GetDecimal(s["apqty"]),
+                    Amount = MyUtility.Convert.GetDecimal(s["amount"])
+                })
+                .ToList();
+            if (zerolist.Count > 0)
+            {
+                string msg = @"The following AP qty cannot be 0!!";
+                DataTable dt = ToDataTable(zerolist);
+                MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Warning");
+
+                return;
+            }
+
             #region 檢查LocalSupp_Bank
             DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
             if (!resultCheckLocalSupp_BankStatus)
@@ -894,6 +917,73 @@ where ap.ID= @ID";
             frm.Show();
 
             return true;
+        }
+
+        private void BtnRemoveQty0_Click(object sender, EventArgs e)
+        {
+            for (int i = ((DataTable)this.detailgridbs.DataSource).Rows.Count - 1; i >= 0; i--)
+            {
+                if (MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Rows[i]["apqty"]) == 0)
+                {
+                    ((DataTable)this.detailgridbs.DataSource).Rows[i].Delete();
+                }
+            }
+        }
+
+        private DataTable ToDataTable<T>(List<T> items)
+        {
+            var tb = new DataTable(typeof(T).Name);
+
+            PropertyInfo[] props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (PropertyInfo prop in props)
+            {
+                Type t = GetCoreType(prop.PropertyType);
+                tb.Columns.Add(prop.Name, t);
+            }
+
+            foreach (T item in items)
+            {
+                var values = new object[props.Length];
+
+                for (int i = 0; i < props.Length; i++)
+                {
+                    values[i] = props[i].GetValue(item, null);
+                }
+
+                tb.Rows.Add(values);
+            }
+
+            return tb;
+        }
+        /// <summary>
+        /// Determine of specified type is nullable
+        /// </summary>
+        public static bool IsNullable(Type t)
+        {
+            return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
+        }
+
+        /// <summary>
+        /// Return underlying type if type is Nullable otherwise return the type
+        /// </summary>
+        public static Type GetCoreType(Type t)
+        {
+            if (t != null && IsNullable(t))
+            {
+                if (!t.IsValueType)
+                {
+                    return t;
+                }
+                else
+                {
+                    return Nullable.GetUnderlyingType(t);
+                }
+            }
+            else
+            {
+                return t;
+            }
         }
     }
 }
