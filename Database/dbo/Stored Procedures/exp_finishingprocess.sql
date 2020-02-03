@@ -206,7 +206,8 @@ BEGIN
 	[FileName]		 [varchar](30) NULL,
 	[CmdTime]		 [dateTime] NOT NULL,
 	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
-	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0))
+	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0)),
+	[Image] [varbinary](max) NULL
  CONSTRAINT [PK_ShippingMarkPic_Detail] PRIMARY KEY CLUSTERED 
 (
 	[SCICtnNo] ASC,	
@@ -222,6 +223,7 @@ BEGIN
 	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'CmdTime'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'Sunrise是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'SunriseUpdated'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'GenSongUpdated'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'圖片二進位制資料', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'Image'
 END
 
 IF OBJECT_ID(N'StickerSize') IS NULL
@@ -474,6 +476,7 @@ USING(
 	,s1.FileName	
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
+	,s1.Image
 	FROM Production.dbo.ShippingMarkPic_Detail s1
 	inner join Production.dbo.ShippingMarkPic s2 on s2.ukey = s1.ShippingMarkPicUkey
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
@@ -485,10 +488,11 @@ UPDATE SET
 	t.FileName = s.FileName,
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = 0,
-	t.GenSongUpdated = 0
+	t.GenSongUpdated = 0,
+	t.Image = s.Image
 WHEN NOT MATCHED BY TARGET THEN
-INSERT([SCICtnNo],[Side],[Seq],[FilePath],[FileName],[CmdTime],[SunriseUpdated],[GenSongUpdated])
-VALUES(s.[SCICtnNo],s.[Side],s.[Seq],s.[FilePath],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated]);
+INSERT([SCICtnNo],[Side],[Seq],[FilePath],[FileName],[CmdTime],[SunriseUpdated],[GenSongUpdated],[Image])
+VALUES(s.[SCICtnNo],s.[Side],s.[Seq],s.[FilePath],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated],s.[Image]);
 
 --06. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
 MERGE PackingList AS T
@@ -665,7 +669,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 			INNER JOIN [FPS].[dbo].ShippingMarkPic_Detail spd ON sm.Side=spd.Side AND sm.Seq = spd.Seq
 			INNER JOIN [FPS].[dbo].[PackingList_Detail] pld ON pld.SCICtnNo=spd.SCICtnNo
 			WHERE pld.SCICtnNo=pd.SCICtnNo AND pld.OrderID=pd.OrderID AND pd.OrderShipmodeSeq=pld.OrderShipmodeSeq AND pd.Article=pld.Article AND pd.SizeCode=pld.SizeCode
-			AND spd.FileName = ''
+			AND spd.Image IS NULL
 		)
 
 		----找不到 PicSetting = 1 表示沒有設定對應的Packing B03, 不需考慮貼標
@@ -699,7 +703,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 			INNER JOIN [FPS].[dbo].ShippingMarkPic_Detail spd ON sm.Side=spd.Side AND sm.Seq = spd.Seq
 			INNER JOIN [FPS].[dbo].[PackingList_Detail] pld ON pld.SCICtnNo=spd.SCICtnNo
 			WHERE pld.SCICtnNo=pd.SCICtnNo AND pld.OrderID=pd.OrderID AND pd.OrderShipmodeSeq=pld.OrderShipmodeSeq AND pd.Article=pld.Article AND pd.SizeCode=pld.SizeCode
-			AND spd.FileName = ''
+			AND spd.Image IS NULL
 		)
 
 		UPDATE pd

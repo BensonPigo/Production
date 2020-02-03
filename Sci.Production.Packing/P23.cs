@@ -492,6 +492,7 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' and DisposeFromClog= 
                             this.ShowErr(insertLog.ToString(), resule);
                             return;
                         }
+
                         transactionscope.Complete();
                         transactionscope.Dispose();
                         MyUtility.Msg.InfoBox("Save successful!");
