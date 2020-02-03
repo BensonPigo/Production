@@ -133,6 +133,7 @@ SELECT
     ,o.PulloutComplete
 	,[OrderQty]= isnull(oq.Qty,0)
     ,ShipQty=isnull(s.ShipQty,0)
+    ,o.Qty
 into #tmpOrderMain
 FROM Orders o WITH(NOLOCK)
 INNER JOIN Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
@@ -205,8 +206,8 @@ select
 	,main.Category
 	,main.PartialShipment
 	,main.Cancelled
-    ,PulloutComplete = case when main.PulloutComplete=1 and main.OrderQty > isnull(main.ShipQty,0) then 'S'
-							when main.PulloutComplete=1 and main.OrderQty <= isnull(main.ShipQty,0) then 'Y'
+    ,PulloutComplete = case when main.PulloutComplete=1 and main.Qty > isnull(main.ShipQty,0) then 'S'
+							when main.PulloutComplete=1 and main.Qty <= isnull(main.ShipQty,0) then 'Y'
 							when main.PulloutComplete=0 then 'N'
 							end
 	,main.OrderQty
