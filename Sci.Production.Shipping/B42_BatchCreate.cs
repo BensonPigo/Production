@@ -158,7 +158,14 @@ namespace Sci.Production.Shipping
             parData.Style = this.txtstyle.Text;
             parData.Category = this.comboCategory.Text;
             parData.BrandID = this.txtbrand.Text;
-            parData.ContractID = "";
+            parData.ContractID = MyUtility.GetValue.Lookup(@"
+select top 1 ID
+from VNContract WITH (NOLOCK)
+where StartDate = (select MAX(StartDate)
+                   from VNContract WITH (NOLOCK)
+                   where GETDATE() between StartDate and EndDate
+                         and Status = 'Confirmed')
+order by AddDate desc ");
             DualResult result = Prgs.GetVNConsumption_Detail_Detail(parData, out this.AllDetailData);
             if (!result)
             {
@@ -260,6 +267,7 @@ where StartDate = (select MAX(StartDate)
                    from VNContract WITH (NOLOCK) 
                    where GETDATE() between StartDate and EndDate 
                          and Status = 'Confirmed')
+order by AddDate desc 
 
 OPEN cursor_tmpBasic
 FETCH NEXT FROM cursor_tmpBasic INTO @style, @season, @brand, @category,@size,@cpu,@styleukey
