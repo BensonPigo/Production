@@ -1161,6 +1161,7 @@ select  StyleID
         , FabricType
         , [UsageUnit] = StockUnit
 		, [UsageQty] = 0
+        ,VNContractID
 into #tmpFinalFixDeclare
 from #tmpFixDeclare
 where   TissuePaper = 0 
@@ -1189,6 +1190,7 @@ select  StyleID
         , FabricType
         , UsageUnit
         , UsageQty
+        ,VNContractID
 into #tlast
 from (
     select  StyleID
@@ -1216,6 +1218,7 @@ from (
             , FabricType
             , UsageUnit
             , UsageQty
+            ,VNContractID
     from #tmpFinalFixDeclare
     union
     select  StyleID
@@ -1243,6 +1246,7 @@ from (
             , FabricType
             , UsageUnit
             , [UsageQty] = sum(UsageQty)
+            , [VNContractID] = 'NA'
     from (
         select * 
         from #tmpBOFData

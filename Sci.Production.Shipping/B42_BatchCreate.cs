@@ -158,14 +158,7 @@ namespace Sci.Production.Shipping
             parData.Style = this.txtstyle.Text;
             parData.Category = this.comboCategory.Text;
             parData.BrandID = this.txtbrand.Text;
-            parData.ContractID = MyUtility.GetValue.Lookup(@"
-select top 1 ID
-from VNContract WITH (NOLOCK)
-where StartDate = (select MAX(StartDate)
-                   from VNContract WITH (NOLOCK)
-                   where GETDATE() between StartDate and EndDate
-                         and Status = 'Confirmed')
-order by AddDate desc ");
+            parData.ContractID = "";
             DualResult result = Prgs.GetVNConsumption_Detail_Detail(parData, out this.AllDetailData);
             if (!result)
             {
@@ -812,7 +805,20 @@ Insert into VNConsumption_Article (
 
                         for (int i = 0; i < selectedData.Length; i++)
                         {
-                            DataRow[] selectedDetailData = this.AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'  and Category = '{4}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(selectedData[i]["NLCode"]), MyUtility.Convert.GetString(dr["Category"])));
+                            DataRow[] selectedDetailData = this.AllDetailData.Select(string.Format(@"
+StyleUKey = {0} 
+and SizeCode = '{1}' 
+and Article = '{2}' 
+and NLCode = '{3}'  
+and Category = '{4}' 
+and (VNContractID = '{5}' or VNContractID ='NA')"
+                            , MyUtility.Convert.GetString(dr["StyleUKey"])
+                            , MyUtility.Convert.GetString(dr["SizeCode"])
+                            , MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','))
+                            , MyUtility.Convert.GetString(selectedData[i]["NLCode"])
+                            , MyUtility.Convert.GetString(dr["Category"])
+                            , MyUtility.Convert.GetString(dr["VNContractID"])
+                            ));
                             #region 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
                             bool isVNConsumption_Detail_DetailHasDupData = !Prgs.CheckVNConsumption_Detail_Dup(selectedDetailData, false);
                             if (isVNConsumption_Detail_DetailHasDupData)
