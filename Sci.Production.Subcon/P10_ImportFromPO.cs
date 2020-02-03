@@ -322,15 +322,8 @@ DROP TABLE #Bundle
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
             
             if (MyUtility.Check.Empty(dtImport)|| dtImport.Rows.Count == 0) return;
-            
-            DataRow[] dr2 = dtImport.Select("apqty = 0 and Selected = 1");
-            if (dr2.Length > 0)
-            {
-                MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
-                return;
-            }
 
-            dr2 = dtImport.Select("Selected = 1");
+            DataRow[] dr2 = dtImport.Select("Selected = 1");
             if (dr2.Length > 0)
             {
                 foreach (DataRow tmp in dr2)
