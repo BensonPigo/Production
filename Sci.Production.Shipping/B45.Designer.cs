@@ -82,6 +82,7 @@
             this.detailcont.Controls.Add(this.labelHSCode);
             this.detailcont.Controls.Add(this.labelNLCode);
             this.detailcont.Size = new System.Drawing.Size(828, 283);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
@@ -90,7 +91,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(828, 347);
+            this.browse.Size = new System.Drawing.Size(828, 321);
             // 
             // tabs
             // 
@@ -114,7 +115,7 @@
             this.labelNLCode.Location = new System.Drawing.Point(46, 45);
             this.labelNLCode.Name = "labelNLCode";
             this.labelNLCode.Size = new System.Drawing.Size(99, 23);
-            this.labelNLCode.TabIndex = 2;
+            this.labelNLCode.TabIndex = 11;
             this.labelNLCode.Text = "Customs Code";
             // 
             // labelHSCode
@@ -122,7 +123,7 @@
             this.labelHSCode.Location = new System.Drawing.Point(46, 99);
             this.labelHSCode.Name = "labelHSCode";
             this.labelHSCode.Size = new System.Drawing.Size(99, 23);
-            this.labelHSCode.TabIndex = 3;
+            this.labelHSCode.TabIndex = 13;
             this.labelHSCode.Text = "HS Code";
             // 
             // labelUnit
@@ -130,7 +131,7 @@
             this.labelUnit.Location = new System.Drawing.Point(46, 126);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(99, 23);
-            this.labelUnit.TabIndex = 4;
+            this.labelUnit.TabIndex = 14;
             this.labelUnit.Text = "Unit";
             // 
             // labelQty
@@ -138,7 +139,7 @@
             this.labelQty.Location = new System.Drawing.Point(46, 207);
             this.labelQty.Name = "labelQty";
             this.labelQty.Size = new System.Drawing.Size(99, 23);
-            this.labelQty.TabIndex = 5;
+            this.labelQty.TabIndex = 17;
             this.labelQty.Text = "Q\'ty";
             // 
             // txtNLCode
@@ -149,8 +150,7 @@
             this.txtNLCode.Location = new System.Drawing.Point(148, 45);
             this.txtNLCode.Name = "txtNLCode";
             this.txtNLCode.Size = new System.Drawing.Size(100, 23);
-            this.txtNLCode.TabIndex = 99;
-            this.txtNLCode.TabStop = false;
+            this.txtNLCode.TabIndex = 1;
             this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode_PopUp);
             this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode_Validating);
             // 
@@ -162,7 +162,7 @@
             this.displayHSCode.Location = new System.Drawing.Point(148, 99);
             this.displayHSCode.Name = "displayHSCode";
             this.displayHSCode.Size = new System.Drawing.Size(110, 23);
-            this.displayHSCode.TabIndex = 5;
+            this.displayHSCode.TabIndex = 6;
             // 
             // displayUnit
             // 
@@ -172,7 +172,7 @@
             this.displayUnit.Location = new System.Drawing.Point(148, 126);
             this.displayUnit.Name = "displayUnit";
             this.displayUnit.Size = new System.Drawing.Size(80, 23);
-            this.displayUnit.TabIndex = 6;
+            this.displayUnit.TabIndex = 7;
             // 
             // numQty
             // 
@@ -188,7 +188,7 @@
             0,
             0});
             this.numQty.Size = new System.Drawing.Size(80, 23);
-            this.numQty.TabIndex = 1;
+            this.numQty.TabIndex = 3;
             this.numQty.Value = new decimal(new int[] {
             0,
             0,
@@ -203,7 +203,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(233, 204);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(217, 57);
-            this.radioPanel1.TabIndex = 8;
+            this.radioPanel1.TabIndex = 4;
             // 
             // radioCalculate
             // 
@@ -239,7 +239,7 @@
             this.checkTissuepaper.Location = new System.Drawing.Point(444, 18);
             this.checkTissuepaper.Name = "checkTissuepaper";
             this.checkTissuepaper.Size = new System.Drawing.Size(110, 21);
-            this.checkTissuepaper.TabIndex = 9;
+            this.checkTissuepaper.TabIndex = 5;
             this.checkTissuepaper.Text = "Tissue paper";
             this.checkTissuepaper.UseVisualStyleBackColor = true;
             // 
@@ -248,7 +248,7 @@
             this.label1.Location = new System.Drawing.Point(46, 72);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(99, 23);
-            this.label1.TabIndex = 10;
+            this.label1.TabIndex = 12;
             this.label1.Text = "Ref No.";
             // 
             // txtRefno
@@ -259,7 +259,7 @@
             this.txtRefno.Location = new System.Drawing.Point(148, 72);
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(143, 23);
-            this.txtRefno.TabIndex = 0;
+            this.txtRefno.TabIndex = 2;
             this.txtRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtRefno_PopUp);
             this.txtRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRefno_Validating);
             // 
@@ -271,14 +271,14 @@
             this.displayFabricType.Location = new System.Drawing.Point(148, 180);
             this.displayFabricType.Name = "displayFabricType";
             this.displayFabricType.Size = new System.Drawing.Size(80, 23);
-            this.displayFabricType.TabIndex = 101;
+            this.displayFabricType.TabIndex = 9;
             // 
             // label2
             // 
             this.label2.Location = new System.Drawing.Point(46, 180);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(99, 23);
-            this.label2.TabIndex = 100;
+            this.label2.TabIndex = 16;
             this.label2.Text = "Fabric Type";
             // 
             // displayStockUnit
@@ -289,14 +289,14 @@
             this.displayStockUnit.Location = new System.Drawing.Point(148, 153);
             this.displayStockUnit.Name = "displayStockUnit";
             this.displayStockUnit.Size = new System.Drawing.Size(80, 23);
-            this.displayStockUnit.TabIndex = 103;
+            this.displayStockUnit.TabIndex = 8;
             // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(46, 153);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(99, 23);
-            this.label3.TabIndex = 102;
+            this.label3.TabIndex = 15;
             this.label3.Text = "Stock Unit";
             // 
             // labContractNo
@@ -304,7 +304,7 @@
             this.labContractNo.Location = new System.Drawing.Point(46, 18);
             this.labContractNo.Name = "labContractNo";
             this.labContractNo.Size = new System.Drawing.Size(99, 23);
-            this.labContractNo.TabIndex = 104;
+            this.labContractNo.TabIndex = 10;
             this.labContractNo.Text = "Contract no.";
             // 
             // txtContractNo
@@ -317,13 +317,13 @@
             this.txtContractNo.Location = new System.Drawing.Point(148, 18);
             this.txtContractNo.Name = "txtContractNo";
             this.txtContractNo.Size = new System.Drawing.Size(143, 23);
-            this.txtContractNo.TabIndex = 105;
+            this.txtContractNo.TabIndex = 0;
             // 
             // B45
             // 
             this.ClientSize = new System.Drawing.Size(836, 383);
-            this.DefaultControl = "txtNLCode";
-            this.DefaultControlForEdit = "txtNLCode";
+            this.DefaultControl = "txtContractNo";
+            this.DefaultControlForEdit = "txtContractNo";
             this.DefaultOrder = "NLCode";
             this.Name = "B45";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
