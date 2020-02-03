@@ -11,6 +11,7 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using Ict.Win.UI;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Packing
 {
@@ -191,6 +192,18 @@ where   o.ID = @orderid
                             }
                             else
                             {
+                                List<SqlParameter> listSqlPar = new List<SqlParameter>();
+                                listSqlPar.Add(new SqlParameter("@orderid", e.FormattedValue.ToString()));
+                                string sqlChkCategory = $@"
+select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B','G')  ";
+                                if (MyUtility.Check.Seek(sqlChkCategory, listSqlPar, null))
+                                {
+                                    MyUtility.Msg.WarningBox($"SP# {e.FormattedValue.ToString()} is Bulk/Garment and Unit Price is 0, please create chargeable packing list by Packing-P02, P03, P04.");
+                                    this.ClearGridRowData(this.dr);
+                                    e.Cancel = true;
+                                    return;
+                                }
+
                                 this.dr["OrderID"] = e.FormattedValue.ToString().ToUpper();
                                 this.dr["Factory"] = orderData.Rows[0]["FtyGroup"].ToString();
                                 this.dr["StyleID"] = orderData.Rows[0]["StyleID"].ToString();
@@ -813,6 +826,18 @@ where InvA.OrderID = '{0}'
                 if (MyUtility.GetValue.Lookup("BrandID", dr["OrderID"].ToString(), "Orders", "ID") != this.CurrentMaintain["BrandID"].ToString())
                 {
                     MyUtility.Msg.WarningBox("SP No:" + dr["OrderID"].ToString() + "'s brand is not equal to Brand:" + this.CurrentMaintain["BrandID"].ToString() + ", so can't be save!");
+                    return false;
+                }
+                #endregion
+
+                #region 確認訂單不可含有Bulk和Garment單
+                List<SqlParameter> listSqlPar = new List<SqlParameter>();
+                listSqlPar.Add(new SqlParameter("@orderid", dr["OrderID"].ToString()));
+                string sqlChkCategory = $@"
+select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B','G')  ";
+                if (MyUtility.Check.Seek(sqlChkCategory, listSqlPar, null))
+                {
+                    MyUtility.Msg.WarningBox($"SP# {dr["OrderID"].ToString()} is Bulk/Garment and Unit Price is 0, please create chargeable packing list by Packing-P02, P03, P04.");
                     return false;
                 }
                 #endregion
