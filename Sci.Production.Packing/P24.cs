@@ -92,7 +92,7 @@ order by pd.SCICtnNo
 
         private void Detailgrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            if (e.RowIndex < 0 || e.ColumnIndex < 8)
+            if (e.RowIndex < 0 || e.ColumnIndex < 9)
             {
                 return;
             }
@@ -126,28 +126,28 @@ order by pd.SCICtnNo
             {
                 if (this.IsTheSameCellValueBefore(dr.Index))
                 {
-                    dr.Cells[8] = new DataGridViewTextBoxCell();
+                    //dr.Cells[8] = new DataGridViewTextBoxCell();
                     dr.Cells[9] = new DataGridViewTextBoxCell();
                     dr.Cells[10] = new DataGridViewTextBoxCell();
                     dr.Cells[11] = new DataGridViewTextBoxCell();
 
-                    dr.Cells[8].Style.ForeColor = Color.White;
+                    //dr.Cells[8].Style.ForeColor = Color.White;
                     dr.Cells[9].Style.ForeColor = Color.White;
                     dr.Cells[10].Style.ForeColor = Color.White;
                     dr.Cells[11].Style.ForeColor = Color.White;
 
-                    dr.Cells[8].Style.SelectionForeColor = Color.White;
+                    //dr.Cells[8].Style.SelectionForeColor = Color.White;
                     dr.Cells[9].Style.SelectionForeColor = Color.White;
                     dr.Cells[10].Style.SelectionForeColor = Color.White;
                     dr.Cells[11].Style.SelectionForeColor = Color.White;
 
-                    dr.Cells[8].Style.SelectionBackColor = Color.White;
+                    //dr.Cells[8].Style.SelectionBackColor = Color.White;
                     dr.Cells[9].Style.SelectionBackColor = Color.White;
                     dr.Cells[10].Style.SelectionBackColor = Color.White;
                     dr.Cells[11].Style.SelectionBackColor = Color.White;
 
-                    dr.Cells[8].ReadOnly = true;
-                    dr.Cells[8].ReadOnly = true;
+                    //dr.Cells[8].ReadOnly = true;
+                    //dr.Cells[8].ReadOnly = true;
                     dr.Cells[9].ReadOnly = true;
                     dr.Cells[10].ReadOnly = true;
                     dr.Cells[11].ReadOnly = true;
@@ -283,7 +283,6 @@ from #tmp t
 left join orders o with (nolock) on t.OrderID = o.ID
 where not exists (select 1 from ShippingMarkPicture smp with (nolock) 
                             where   smp.BrandID = o.BrandID and
-                                    smp.CustCD = o.CustCDID and
                                     smp.CTNRefno = t.Refno and
                                     smp.Side = '{this.CurrentMaintain["Side"]}' and
                                     smp.Seq = '{this.CurrentMaintain["Seq"]}')
@@ -792,7 +791,7 @@ order by SCICtnNo
             if (this.detailgrid.Rows.Count > 0)
             {
                 firstDetailSP = this.detailgrid.Rows[0].Cells["OrderID"].Value.ToString();
-                MyUtility.Check.Seek($"select BrandID,CustCDID from orders with (nolock) where ID = '{firstDetailSP}'", out drOrder);
+                MyUtility.Check.Seek($"select BrandID from orders with (nolock) where ID = '{firstDetailSP}'", out drOrder);
             }
 
             if (drOrder == null)
@@ -800,7 +799,7 @@ order by SCICtnNo
                 return;
             }
 
-            string sqlGetShippingMarkPicture = $@"select distinct Side,Seq from ShippingMarkPicture where BrandID = '{drOrder["BrandID"]}' and CustCD = '{drOrder["CustCDID"]}' order by Seq";
+            string sqlGetShippingMarkPicture = $@"select distinct Side,Seq from ShippingMarkPicture where BrandID = '{drOrder["BrandID"]}' order by Seq";
             DataTable dtSeqSideSource;
             result = DBProxy.Current.Select(null, sqlGetShippingMarkPicture, out dtSeqSideSource);
 
