@@ -335,8 +335,7 @@ DROP TABLE #Bundle
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = dt_artworkApDetail.Select($"ArtworkPO_Detailukey={tmp["ArtworkPO_Detailukey"]}");
-
+                    DataRow[] findrow = dt_artworkApDetail.Select($" orderid = '{tmp["orderid"].ToString()}' and ArtworkId = '{ tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and artworkpoid='{tmp["artworkpoid"].ToString()}' AND ArtworkPo_DetailUkey = {tmp["ArtworkPO_Detailukey"]} ");
                     if (findrow.Length > 0)
                     {
                        
