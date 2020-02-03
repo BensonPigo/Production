@@ -66,6 +66,9 @@
             this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
             this.lbExVoucherID = new Sci.Win.UI.Label();
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.BtnRemoveQty0 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -102,6 +105,7 @@
             this.masterpanel.Controls.Add(this.displayCurrency);
             this.masterpanel.Controls.Add(this.txtsubconSupplier);
             this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.BtnRemoveQty0);
             this.masterpanel.Controls.Add(this.btnImportFromPO);
             this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.labelHandle);
@@ -140,6 +144,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportFromPO, 0);
+            this.masterpanel.Controls.SetChildIndex(this.BtnRemoveQty0, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsubconSupplier, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCurrency, 0);
@@ -164,7 +169,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 258);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 219);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 250);
             // 
             // gridicon
             // 
@@ -178,7 +183,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 219);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 250);
             // 
             // detail2
             // 
@@ -194,39 +199,53 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 515);
+            this.detail.Size = new System.Drawing.Size(1000, 570);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 477);
+            this.detailcont.Size = new System.Drawing.Size(1000, 508);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Controls.Add(this.label7);
+            this.detailbtm.Controls.Add(this.displayBox1);
+            this.detailbtm.Location = new System.Drawing.Point(0, 508);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 62);
             this.detailbtm.TabIndex = 0;
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.displayBox1, 0);
+            this.detailbtm.Controls.SetChildIndex(this.label7, 0);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 515);
+            this.browse.Size = new System.Drawing.Size(1000, 570);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 544);
+            this.tabs.Size = new System.Drawing.Size(1008, 599);
             // 
             // createby
             // 
+            this.createby.Location = new System.Drawing.Point(70, 31);
             this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(475, 7);
+            this.editby.Location = new System.Drawing.Point(475, 31);
             this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
             // 
+            // lblcreateby
+            // 
+            this.lblcreateby.Location = new System.Drawing.Point(5, 37);
+            // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(427, 13);
+            this.lbleditby.Location = new System.Drawing.Point(427, 37);
             // 
             // labelID
             // 
@@ -563,8 +582,10 @@
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(331, 49);
+            this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 5;
@@ -583,7 +604,6 @@
             // 
             this.txtuserAccountant.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
             this.txtuserAccountant.DisplayBox1Binding = "";
-            this.txtuserAccountant.Enabled = false;
             this.txtuserAccountant.Location = new System.Drawing.Point(569, 154);
             this.txtuserAccountant.Name = "txtuserAccountant";
             this.txtuserAccountant.Size = new System.Drawing.Size(300, 23);
@@ -618,6 +638,9 @@
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.isMisc = false;
+            this.txtsubconSupplier.isShipping = false;
+            this.txtsubconSupplier.isSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(83, 84);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(159, 23);
@@ -641,10 +664,43 @@
             this.disExVoucherID.Size = new System.Drawing.Size(313, 23);
             this.disExVoucherID.TabIndex = 53;
             // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(37, 8);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(256, 15);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "Please note that. RFID data from two supplier.";
+            // 
+            // displayBox1
+            // 
+            this.displayBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(8, 5);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(23, 23);
+            this.displayBox1.TabIndex = 12;
+            // 
+            // BtnRemoveQty0
+            // 
+            this.BtnRemoveQty0.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.BtnRemoveQty0.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.BtnRemoveQty0.Location = new System.Drawing.Point(791, 210);
+            this.BtnRemoveQty0.Name = "BtnRemoveQty0";
+            this.BtnRemoveQty0.Size = new System.Drawing.Size(168, 30);
+            this.BtnRemoveQty0.TabIndex = 9;
+            this.BtnRemoveQty0.Text = "Remove qty = 0 data";
+            this.BtnRemoveQty0.UseVisualStyleBackColor = true;
+            this.BtnRemoveQty0.Click += new System.EventHandler(this.BtnRemoveQty0_Click);
+            // 
             // P10
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1008, 577);
+            this.ClientSize = new System.Drawing.Size(1008, 632);
             this.DefaultControl = "txtpayterm_ftyTerms";
             this.DefaultControlForEdit = "txtRemark";
             this.DefaultOrder = "issuedate,id";
@@ -720,5 +776,8 @@
         private Win.UI.DateBox dateApprovedDate;
         private Win.UI.DisplayBox disExVoucherID;
         private Win.UI.Label lbExVoucherID;
+        private System.Windows.Forms.Label label7;
+        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Button BtnRemoveQty0;
     }
 }

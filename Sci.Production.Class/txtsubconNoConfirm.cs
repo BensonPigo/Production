@@ -203,7 +203,7 @@ namespace Sci.Production.Class
     }
     public class cellsbuconNoConfirm : DataGridViewGeneratorTextColumnSettings
     {
-        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string suppid)
+        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string suppid, string abbColName = "")
         {
             cellsbuconNoConfirm ts = new cellsbuconNoConfirm();
             // 右鍵彈出功能
@@ -227,8 +227,11 @@ namespace Sci.Production.Class
                         DialogResult result = sele.ShowDialog();
                         if (result == DialogResult.Cancel) { return; }
                         //e.EditingControl.Text = sele.GetSelectedString();
-                        row1["Suppid"] = sele.GetSelectedString();
-                        row["abb"] = sele.GetSelecteds()[0]["abb"].ToString();
+                        row1[suppid] = sele.GetSelectedString();
+                        if (!MyUtility.Check.Empty(abbColName))
+                        {
+                            row[abbColName] = sele.GetSelecteds()[0]["abb"].ToString();
+                        }
                     }
 
                 }
@@ -247,7 +250,7 @@ namespace Sci.Production.Class
                 string sql = string.Format("select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 and ID = '{0}'", newValue);
                 if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                 {
-                    if (!MyUtility.Check.Seek(sql, out sqlRow,"Production"))
+                    if (!MyUtility.Check.Seek(sql, out sqlRow, "Production"))
                     {
                         row[suppid] = "";
                         row.EndEdit();
@@ -255,10 +258,16 @@ namespace Sci.Production.Class
                         MyUtility.Msg.WarningBox(string.Format("< Local Supplier > : {0} not found!!!", newValue));
                         return;
                     }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(abbColName))
+                        {
+                            row[suppid] = newValue;
+                            row[abbColName] = sqlRow["abb"].ToString();
+                        }
+                       
+                    }
                 }
-
-
-
 
             };
             return ts;

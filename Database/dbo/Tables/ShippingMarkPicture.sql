@@ -1,12 +1,11 @@
 ﻿CREATE TABLE [dbo].[ShippingMarkPicture]
 (
 	[BrandID] VARCHAR(8) NOT NULL , 
-    [CustCD] VARCHAR(16) NOT NULL, 
     [CTNRefno] VARCHAR(21) NOT NULL, 
     [Side] VARCHAR(5) NOT NULL, 
     [Seq] INT  NOT NULL, 
-    [FromLeft] NUMERIC(8, 2) CONSTRAINT [DF_ShippingMarkPicture_FromLeft] DEFAULT (0) NULL, 
-    [FromTop] NUMERIC(8, 2) CONSTRAINT [DF_ShippingMarkPicture_FromTop] DEFAULT (0) NULL, 
+    [FromLeft] INT CONSTRAINT [DF_ShippingMarkPicture_FromLeft] DEFAULT (0) NOT NULL, 
+    [FromTop] INT CONSTRAINT [DF_ShippingMarkPicture_FromTop] DEFAULT (0) NOT NULL, 
     [PicLength] NUMERIC(8, 2) CONSTRAINT [DF_ShippingMarkPicture_PicLength] DEFAULT (0) NULL, 
     [PicWidth] NUMERIC(8, 2) CONSTRAINT [DF_ShippingMarkPicture_PicWidth] DEFAULT (0) NULL, 
     [AddDate] DATETIME NULL, 
@@ -15,7 +14,8 @@
     [EditName] VARCHAR(10) CONSTRAINT [DF_ShippingMarkPicture_EditName] DEFAULT ('') NULL,
 	[IsHorizontal] bit NOT NULL DEFAULT ((0)),
     [IsSSCC] BIT NULL DEFAULT ((0)), 
-    CONSTRAINT [PK_ShippingMarkPicture] PRIMARY KEY CLUSTERED ([BrandID],[CustCD],[CTNRefno],[Side],[Seq] ASC)
+    [StickerSizeID] BIGINT NOT NULL DEFAULT (0), 
+    CONSTRAINT [PK_ShippingMarkPicture] PRIMARY KEY CLUSTERED ([BrandID],[CTNRefno],[Side],[Seq] ASC)
 )
 
 GO

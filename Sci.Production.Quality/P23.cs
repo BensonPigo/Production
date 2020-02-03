@@ -525,7 +525,7 @@ and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog=
                         updateCmds.Add($@"
 update PackingList_Detail 
 set CFAReceiveDate  = CONVERT(varchar(100), GETDATE(), 111), CFAInspDate  = CONVERT(varchar(100), GETDATE(), 111),
-    CFALocationID='{dr["CFALocationID"].ToString().Trim()}'
+    CFALocationID='{dr["CFALocationID"].ToString().Trim()}', ClogLocationID = ''
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");

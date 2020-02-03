@@ -601,8 +601,14 @@ from (
                                                            and PLD.CTNStartNo = TtClog.CTNStartNo
                                                            and PLD.OrderID = TtClog.OrderID
           where (PL.Type = 'B' or PL.Type = 'L')
+                -- Clog 有收過
                 and PLD.ReceiveDate is not null
+                -- 不在 Clog 送往 CFA 的路上
+                and PLD.TransferCFADate is null
+                -- 紙箱不在 CFA
                 and PLD.CFAReceiveDate is null
+                -- 不在 CFA 送回 Clog 的路上
+                and PLD.CFAReturnClogDate is null
                 and PLD.CTNQty = 1
                 and orders.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
             #region 組條件

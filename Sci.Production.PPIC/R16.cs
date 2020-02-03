@@ -117,6 +117,7 @@ namespace Sci.Production.PPIC
             sqlcmd.Append($@"
 SELECT 
 	 o.FactoryID
+    ,o.BrandID
 	,o.ID
 	,o.CustPONo
 	,o.StyleID
@@ -129,7 +130,10 @@ SELECT
 				   END
 	,[PartialShipment]=IIF(PartialShipment.Count > 1 ,'Y','')
 	,[Cancelled]=IIF(o.Junk=1,'Y','N')
+    ,o.PulloutComplete
 	,[OrderQty]= isnull(oq.Qty,0)
+    ,ShipQty=isnull(s.ShipQty,0)
+    ,o.Qty
 into #tmpOrderMain
 FROM Orders o WITH(NOLOCK)
 INNER JOIN Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
@@ -138,6 +142,13 @@ LEFT JOIN OrderType ot WITH(NOLOCK) ON o.OrderTypeID=ot.ID AND o.BrandID = ot.Br
 OUTER APPLY(
 	SELECT [Count] = COUNT(ID) FROM Order_QtyShip oqq WITH(NOLOCK) WHERE oqq.Id=o.ID
 )PartialShipment
+outer apply(
+	select ShipQty = sum(podd.ShipQty) 
+	from Pullout_Detail_Detail podd WITH (NOLOCK) 
+	inner join Order_Qty oq WITH (NOLOCK) on oq.id=podd.OrderID 
+	and podd.Article= oq.Article and podd.SizeCode=oq.SizeCode
+	where podd.OrderID = o.ID
+)s
 where o.Category IN ('B','G') 
       and isnull(ot.IsGMTMaster,0) = 0
       {sqlWhere.ToString()}
@@ -185,6 +196,7 @@ group by OrderId
 
 select 
 	main.FactoryID
+    ,main.BrandID
 	,main.ID
 	,main.CustPONo
 	,main.StyleID
@@ -194,6 +206,10 @@ select
 	,main.Category
 	,main.PartialShipment
 	,main.Cancelled
+    ,PulloutComplete = case when main.PulloutComplete=1 and main.Qty > isnull(main.ShipQty,0) then 'S'
+							when main.PulloutComplete=1 and main.Qty <= isnull(main.ShipQty,0) then 'Y'
+							when main.PulloutComplete=0 then 'N'
+							end
 	,main.OrderQty
 	,[PackingCarton] = isnull(pd.PackingCarton,0)
 	,[PackingQty] = isnull(pd.PackingQty,0)
@@ -244,11 +260,13 @@ DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_St
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R16.xltx", 1, false, null, objApp);// 將datatable copy to excel
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.get_Range("K:O").ColumnWidth = 8;
-            objSheets.get_Range("S:X").ColumnWidth = 8;
-            objSheets.get_Range("E:E").ColumnWidth = 10;
-            objSheets.get_Range("P:P").ColumnWidth = 10;
+            objSheets.get_Range("K:K").ColumnWidth = 8;
+            objSheets.get_Range("L:L").ColumnWidth = 9;
+            objSheets.get_Range("M:Q").ColumnWidth = 8;
+            objSheets.get_Range("T:Y").ColumnWidth = 8;
+            objSheets.get_Range("F:F").ColumnWidth = 10;
             objSheets.get_Range("R:R").ColumnWidth = 10;
+            objSheets.get_Range("T:T").ColumnWidth = 10;
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R16");

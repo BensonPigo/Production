@@ -36,6 +36,8 @@
             this.editDescChinese = new Sci.Win.UI.EditBox();
             this.editDescVietnam = new Sci.Win.UI.EditBox();
             this.editDescCambodia = new Sci.Win.UI.EditBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtOperationtitle = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -46,10 +48,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(762, 410);
+            this.detail.Size = new System.Drawing.Size(773, 490);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtOperationtitle);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.editDescCambodia);
             this.detailcont.Controls.Add(this.editDescVietnam);
             this.detailcont.Controls.Add(this.editDescChinese);
@@ -58,24 +62,24 @@
             this.detailcont.Controls.Add(this.labDescVietnam);
             this.detailcont.Controls.Add(this.labDescChinese);
             this.detailcont.Controls.Add(this.labelID);
-            this.detailcont.Size = new System.Drawing.Size(762, 372);
+            this.detailcont.Size = new System.Drawing.Size(773, 452);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 372);
-            this.detailbtm.Size = new System.Drawing.Size(762, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 452);
+            this.detailbtm.Size = new System.Drawing.Size(773, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(738, 311);
+            this.browse.Size = new System.Drawing.Size(762, 410);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(770, 439);
+            this.tabs.Size = new System.Drawing.Size(781, 519);
             // 
             // labDescChinese
             // 
-            this.labDescChinese.Location = new System.Drawing.Point(22, 76);
+            this.labDescChinese.Location = new System.Drawing.Point(22, 176);
             this.labDescChinese.Name = "labDescChinese";
             this.labDescChinese.Size = new System.Drawing.Size(123, 23);
             this.labDescChinese.TabIndex = 5;
@@ -91,7 +95,7 @@
             // 
             // labDescVietnam
             // 
-            this.labDescVietnam.Location = new System.Drawing.Point(22, 168);
+            this.labDescVietnam.Location = new System.Drawing.Point(22, 271);
             this.labDescVietnam.Name = "labDescVietnam";
             this.labDescVietnam.Size = new System.Drawing.Size(123, 23);
             this.labDescVietnam.TabIndex = 7;
@@ -99,7 +103,7 @@
             // 
             // labDescCambodia
             // 
-            this.labDescCambodia.Location = new System.Drawing.Point(22, 264);
+            this.labDescCambodia.Location = new System.Drawing.Point(22, 362);
             this.labDescCambodia.Name = "labDescCambodia";
             this.labDescCambodia.Size = new System.Drawing.Size(123, 23);
             this.labDescCambodia.TabIndex = 9;
@@ -113,49 +117,68 @@
             this.txtID.Location = new System.Drawing.Point(148, 34);
             this.txtID.Name = "txtID";
             this.txtID.Size = new System.Drawing.Size(521, 23);
-            this.txtID.TabIndex = 0;
+            this.txtID.TabIndex = 1;
             // 
             // editDescChinese
             // 
             this.editDescChinese.BackColor = System.Drawing.Color.White;
             this.editDescChinese.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescCHS", true));
             this.editDescChinese.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editDescChinese.Location = new System.Drawing.Point(148, 76);
+            this.editDescChinese.Location = new System.Drawing.Point(148, 176);
             this.editDescChinese.Multiline = true;
             this.editDescChinese.Name = "editDescChinese";
             this.editDescChinese.Size = new System.Drawing.Size(521, 69);
-            this.editDescChinese.TabIndex = 1;
+            this.editDescChinese.TabIndex = 3;
             // 
             // editDescVietnam
             // 
             this.editDescVietnam.BackColor = System.Drawing.Color.White;
             this.editDescVietnam.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescVI", true));
             this.editDescVietnam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editDescVietnam.Location = new System.Drawing.Point(148, 168);
+            this.editDescVietnam.Location = new System.Drawing.Point(148, 271);
             this.editDescVietnam.Multiline = true;
             this.editDescVietnam.Name = "editDescVietnam";
             this.editDescVietnam.Size = new System.Drawing.Size(521, 69);
-            this.editDescVietnam.TabIndex = 2;
+            this.editDescVietnam.TabIndex = 4;
             // 
             // editDescCambodia
             // 
             this.editDescCambodia.BackColor = System.Drawing.Color.White;
             this.editDescCambodia.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescKH", true));
             this.editDescCambodia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editDescCambodia.Location = new System.Drawing.Point(148, 264);
+            this.editDescCambodia.Location = new System.Drawing.Point(148, 362);
             this.editDescCambodia.Multiline = true;
             this.editDescCambodia.Name = "editDescCambodia";
             this.editDescCambodia.Size = new System.Drawing.Size(521, 69);
-            this.editDescCambodia.TabIndex = 3;
+            this.editDescCambodia.TabIndex = 5;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(22, 82);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(123, 23);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Operation title";
+            // 
+            // txtOperationtitle
+            // 
+            this.txtOperationtitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtOperationtitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtOperationtitle.IsSupportEditMode = false;
+            this.txtOperationtitle.Location = new System.Drawing.Point(148, 82);
+            this.txtOperationtitle.Multiline = true;
+            this.txtOperationtitle.Name = "txtOperationtitle";
+            this.txtOperationtitle.ReadOnly = true;
+            this.txtOperationtitle.Size = new System.Drawing.Size(521, 69);
+            this.txtOperationtitle.TabIndex = 2;
             // 
             // IE_B13
             // 
-            this.ClientSize = new System.Drawing.Size(770, 472);
+            this.ClientSize = new System.Drawing.Size(781, 552);
             this.ConnectionName = "ProductionTPE";
             this.DefaultOrder = "ID";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
-            this.IsSupportPrint = false;
             this.Name = "IE_B13";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "IE_B13 Operation Translation List";
@@ -183,5 +206,7 @@
         private Win.UI.EditBox editDescChinese;
         private Win.UI.EditBox editDescCambodia;
         private Win.UI.EditBox editDescVietnam;
+        private Win.UI.EditBox txtOperationtitle;
+        private Win.UI.Label label1;
     }
 }

@@ -350,6 +350,12 @@
     <Compile Include="P19_PrintData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="P21.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P21.Designer.cs">
+      <DependentUpon>P21.cs</DependentUpon>
+    </Compile>
     <Compile Include="P22_FabricSticker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -624,6 +630,18 @@
     </Compile>
     <Compile Include="Report\R05.Designer.cs">
       <DependentUpon>R05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R12.Designer.cs">
+      <DependentUpon>R12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R16.Designer.cs">
+      <DependentUpon>R16.cs</DependentUpon>
     </Compile>
     <Compile Include="Report\R23.cs">
       <SubType>Form</SubType>
@@ -1135,6 +1153,12 @@
     <Compile Include="P39_Import.Designer.cs">
       <DependentUpon>P39_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R07.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R07.Designer.cs">
+      <DependentUpon>R07.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R24.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1299,6 +1323,9 @@
       <DependentUpon>P15_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P21.resx">
+      <DependentUpon>P21.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P22_FabricSticker.resx">
       <DependentUpon>P22_FabricSticker.cs</DependentUpon>
     </EmbeddedResource>
@@ -1458,8 +1485,14 @@
     <EmbeddedResource Include="Report\R11.resx">
       <DependentUpon>R11.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report\R12.resx">
+      <DependentUpon>R12.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R13.resx">
       <DependentUpon>R13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R16.resx">
+      <DependentUpon>R16.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R23.resx">
       <DependentUpon>R23.cs</DependentUpon>
@@ -1756,6 +1789,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P52_StocktakingList.rdlc" />
+    <EmbeddedResource Include="Report\R07.resx">
+      <DependentUpon>R07.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R24.resx">
       <DependentUpon>R24.cs</DependentUpon>
     </EmbeddedResource>

@@ -21,6 +21,8 @@
     [IsMisc]          BIT            DEFAULT ((0)) NULL,
     [IsSintexSubcon]  BIT            CONSTRAINT [DF_LocalSupp_IsSintexSubcon] DEFAULT ((0)) NULL,
     [email] VARCHAR(50) NOT NULL DEFAULT (''), 
+    [Status] VARCHAR(15) NOT NULL DEFAULT (''), 
+    [Remark] NVARCHAR(600) NULL, 
     CONSTRAINT [PK_LocalSupp] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

@@ -19,17 +19,19 @@ namespace Sci.Production.Packing
         private DataTable grid2Data = new DataTable();
         private DataTable detailData;
         private string mBrandID;
+        private string mShipModeID;
 
         /// <summary>
         /// P04_ExcelImport
         /// </summary>
         /// <param name="detailData">DetailData</param>
         /// <param name="brandID">BrandID</param>
-        public P04_ExcelImport(DataTable detailData, string brandID)
+        public P04_ExcelImport(DataTable detailData, string brandID, string ShipModeID)
         {
             this.InitializeComponent();
             this.detailData = detailData;
             this.mBrandID = brandID;
+            this.mShipModeID = ShipModeID;
         }
 
         /// <summary>
@@ -243,20 +245,33 @@ namespace Sci.Production.Packing
         private void BtnWriteIn_Click(object sender, EventArgs e)
         {
             DataTable tmpPackData;
-            try
-            {
-                string sqlcmd = @"
+
+            string sqlcmd = $@"
 select distinct a.*,o.ID,oq.Seq,oqd.Article as oArticle,oqd.SizeCode as oSizeCode,o.StyleID,o.CustPONo,o.Category,o.SeasonID,o.BrandID
+        , CheckShipMode = isnull ((select 1 
+                                   where  EXISTS(
+                                                SELECT 1
+                                                FROM ShipMode s
+                                                WHERE s.ID = a.ShipModeID AND s.ShipGroup IN
+                                                (
+	                                                SELECT ShipGroup
+	                                                FROM ShipMode ss
+	                                                WHERE ss.ID = '{this.mShipModeID}'
+                                                )
+                                          )
+                                    ), 0)
 from #tmp a
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
-left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq = oq.Seq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode where o.Category = 'S'";
+left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq = oq.Seq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode 
+WHERE o.Category = 'S'
+";
 
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource2.DataSource, "OrderID,BuyerDelivery,ShipmodeID,Article,ColorID,SizeCode,Qty", sqlcmd, out tmpPackData);
-            }
-            catch (Exception ex)
+                DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource2.DataSource, "OrderID,BuyerDelivery,ShipmodeID,Article,ColorID,SizeCode,Qty", sqlcmd, out tmpPackData);
+
+            if (result == false)
             {
-                MyUtility.Msg.ErrorBox("Process error.\r\n" + ex.ToString());
+                MyUtility.Msg.ErrorBox("Process error.\r\n" + result.ToString());
                 return;
             }
 
@@ -265,15 +280,17 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq =
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource2.DataSource).Rows)
             {
                 count++;
-                DataRow[] findDR = tmpPackData.Select(string.Format(
-                    @"OrderID = '{0}' and BuyerDelivery = {1} and ShipmodeID = '{2}' and Article = '{3}' and SizeCode = '{4}' and Qty = {5} and BrandID = '{6}'",
-                    MyUtility.Convert.GetString(dr["OrderID"]),
-                    MyUtility.Check.Empty(dr["BuyerDelivery"]) ? "null" : "'" + Convert.ToDateTime(dr["BuyerDelivery"]).ToString("d") + "'",
-                    MyUtility.Convert.GetString(dr["ShipmodeID"]),
-                    MyUtility.Convert.GetString(dr["Article"]),
-                    MyUtility.Convert.GetString(dr["SizeCode"]),
-                    MyUtility.Convert.GetString(dr["Qty"]),
-                    this.mBrandID));
+
+                DataRow[] findDR = tmpPackData.Select($@"
+OrderID = '{dr["OrderID"]}' 
+AND BuyerDelivery = {(MyUtility.Check.Empty(dr["BuyerDelivery"]) ? "null" : "'" + Convert.ToDateTime(dr["BuyerDelivery"]).ToString("d") + "'")} 
+AND ShipmodeID = '{dr["ShipmodeID"]}' 
+AND Article = '{dr["Article"]}' 
+AND SizeCode = '{dr["SizeCode"]}' 
+AND Qty = {dr["Qty"]} 
+AND BrandID = '{this.mBrandID}'
+");
+
                 if (findDR.Length > 0)
                 {
                     if (MyUtility.Check.Empty(findDR[0]["ID"]))
@@ -295,6 +312,17 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq =
                     if (MyUtility.Check.Empty(findDR[0]["oArticle"]) || MyUtility.Check.Empty(findDR[0]["oSizeCode"]))
                     {
                         dr["ErrMsg"] = "< Color Way> or < Size > is not exist to the < SP No. >!";
+                        this.gridDetail.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
+                        allPass = false;
+                        continue;
+                    }
+
+                    /*
+                        判斷匯入的 Ship Mode 所屬的ShipGroup，是否與表頭一致（A/C、E/C和A/P 或 E/P屬於相同ShipGroup）
+                    */
+                    if (MyUtility.Convert.GetString(findDR[0]["CheckShipMode"]) != "1")
+                    {
+                        dr["ErrMsg"] = "< Ship Mode > does not match Packing List ship mode.";
                         this.gridDetail.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
                         allPass = false;
                         continue;

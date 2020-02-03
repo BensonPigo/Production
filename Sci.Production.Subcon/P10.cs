@@ -44,7 +44,8 @@ namespace Sci.Production.Subcon
                     ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
                 }
             };
-            
+
+            displayBox1.BackColor = Color.Yellow;
         }
 
         private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
@@ -187,11 +188,6 @@ namespace Sci.Production.Subcon
             }
             #endregion
 
-            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("apqty = 0"))
-            {
-                row.Delete();
-            }
-
             if (DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
@@ -266,14 +262,28 @@ where  ap.status = 'New'
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string ArtworkTypeID = (e.Master == null) ? "" : e.Master["ArtworkTypeID"].ToString();
             string cmdsql = string.Format(@"
 select a.* 
 , PoQty=isnull(b.PoQty,0)
-, [balance]=a.Farmin-a.AccumulatedQty
+, [balance]=isnull(b.PoQty,0) - a.AccumulatedQty
+,[LocalSuppCtn]=LocalSuppCtn.Val
 from ArtworkAP_detail a
 left join artworkpo_detail b on a.ArtworkPo_DetailUkey=b.Ukey
+OUTER APPLY(
+	SELECT [Val]= COUNT(LocalSuppID)
+	FROM (
+		SELECT DISTINCT apo.LocalSuppID 
+		from ArtworkPO_Detail ad
+		inner join ArtworkPO apo on apo.id = ad.id
+		where ad.OrderID= b.OrderID
+		and ad.PatternCode=b.PatternCode
+		and ad.PatternDesc =b.PatternDesc
+		and apo.ArtworkTypeID = 'PRINTING'
+	)tmp
+)LocalSuppCtn
 where a.id='{0}'
-", masterID);
+", masterID , ArtworkTypeID);
             this.DetailSelectCommand = cmdsql;
             return base.OnDetailSelectCommandPrepare(e);
         }             
@@ -328,6 +338,18 @@ where a.id='{0}'
 
             #endregion
 
+            this.txtuserAccountant.TextBox1.ReadOnly = true;
+            this.txtuserAccountant.TextBox1.IsSupportEditMode = false;
+
+            for (int i = 0; i < this.detailgrid.Rows.Count; i++)
+            {
+                if ((int)this.detailgrid.Rows[i].Cells["LocalSuppCtn"].Value >= 2)
+                {
+                    this.detailgrid.Rows[i].Cells["FarmOut"].Style.BackColor = Color.Yellow;
+                    this.detailgrid.Rows[i].Cells["farmin"].Style.BackColor = Color.Yellow;
+                }
+            }
+
         }
 
         // Detail Grid 設定 & Detail Vaild
@@ -364,21 +386,52 @@ where a.id='{0}'
             .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15), iseditingreadonly: true)   //5
             .Numeric("price", header: "Price", width: Widths.AnsiChars(5), decimal_places: 4, integer_places: 4, iseditingreadonly: true)     //6
             .Numeric("PoQty", header: "PO Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //7
+            .Numeric("FarmOut", header: "Farm Out", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("farmin", header: "Farm In", width: Widths.AnsiChars(6), iseditingreadonly: true)    //8
             .Numeric("accumulatedqty", header: "Accu. Paid Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //9
             .Numeric("balance", header: "Balance", width: Widths.AnsiChars(6), iseditingreadonly: true)    //10
             .Numeric("apqty", header: "Qty", width: Widths.AnsiChars(6),settings:ns2)    //11
-            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 2, integer_places: 14);  //12
+            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 2, integer_places: 14)
+            .Numeric("LocalSuppCtn", header: "LocalSuppCtn", width: Widths.AnsiChars(0));  //12
                    
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink; //qty
             #endregion
+            this.detailgrid.Columns["LocalSuppCtn"].Visible = false;
         }
 
         //Approve
         protected override void ClickConfirm()
         {
+            var zerolist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["apqty"]) == 0)
+                .Select(s => new
+                {
+                    ArtworkPO = MyUtility.Convert.GetString(s["Artworkpoid"]),
+                    SP = MyUtility.Convert.GetString(s["orderid"]),
+                    Artwork = MyUtility.Convert.GetString(s["ArtworkId"]),
+                    Stitch = MyUtility.Convert.GetDecimal(s["stitch"]),
+                    CutpartID = MyUtility.Convert.GetString(s["patterncode"]),
+                    CutpartName = MyUtility.Convert.GetString(s["PatternDesc"]),
+                    Price = MyUtility.Convert.GetDecimal(s["Price"]),
+                    POQty = MyUtility.Convert.GetDecimal(s["PoQty"]),
+                    FarmOut = MyUtility.Convert.GetDecimal(s["FarmOut"]),
+                    FarmIn = MyUtility.Convert.GetDecimal(s["farmin"]),
+                    AccuPaidQty = MyUtility.Convert.GetDecimal(s["accumulatedqty"]),
+                    Balance = MyUtility.Convert.GetDecimal(s["Balance"]),
+                    Qty = MyUtility.Convert.GetDecimal(s["apqty"]),
+                    Amount = MyUtility.Convert.GetDecimal(s["amount"])
+                })
+                .ToList();
+            if (zerolist.Count > 0)
+            {
+                string msg = @"The following AP qty cannot be 0!!";
+                DataTable dt = ToDataTable(zerolist);
+                MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Warning");
+
+                return;
+            }
+
             #region 檢查LocalSupp_Bank
             DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
             if (!resultCheckLocalSupp_BankStatus)
@@ -392,6 +445,50 @@ where a.id='{0}'
             string sqlupfromAP = string.Empty;
             DualResult result, result2;
             DataTable datacheck;
+
+            #region 檢查表身每一筆資料的ApQty，加上其他已經Approve的ApQty，是否有超過PoQty
+
+            foreach (DataRow detailRow in this.DetailDatas)
+            {
+                string ArtworkPo_DetailUkey = detailRow["ArtworkPo_DetailUkey"].ToString();
+                string orderID = detailRow["orderID"].ToString();
+                //表身的APQTY
+                int CurrentApQty =MyUtility.Convert.GetInt(detailRow["ApQty"]);
+
+                //取得已Approve的ApQTY、PoQty
+                string chkCmd = $@"
+SELECT  [OtherApvApQty]=SUM(ISNULL(aad.apQty,0))
+        ,[PoQty] = ISNULL(ArtworkPO_Detail.PoQty,0)
+FROM ArtworkAP aa with(nolock)
+INNER JOIN ArtworkAP_detail aad with(nolock) ON aad.id = aa.id
+OUTER APPLY(
+	SELECT PoQty
+	FROM ArtworkPO_Detail apd  with(nolock)
+	WHERE apd.ID = aad.ArtworkPoID 
+	AND aad.ArtworkPo_DetailUkey = apd.Ukey
+)ArtworkPO_Detail 
+WHERE aa.Status='Approved' AND aad.ArtworkPo_DetailUkey = {ArtworkPo_DetailUkey}
+GROUP BY ArtworkPO_Detail.PoQty
+";
+                result = DBProxy.Current.Select(null, chkCmd, out datacheck);
+
+                if (!result)
+                {
+                    ShowErr(result);
+                }
+                if (datacheck.Rows != null && datacheck.Rows.Count > 0)
+                {
+                    int OtherApvApQty = MyUtility.Convert.GetInt(datacheck.Rows[0]["OtherApvApQty"]);
+                    int PoQty = MyUtility.Convert.GetInt(datacheck.Rows[0]["PoQty"]);
+
+                    if ((OtherApvApQty + CurrentApQty) > PoQty)
+                    {
+                        MyUtility.Msg.InfoBox($"SP#: {orderID} ,Total AP Qty can not more than PO Qty.");
+                        return;
+                    }
+                }
+            }
+            #endregion
 
             #region 須檢核其來源單[P10]狀態為CONFIRM。
             string check_p10status = string.Format(
@@ -438,31 +535,6 @@ where ap.status = 'New' and aa.Id ='{0}'",
                 return;
             }
             #endregion
-            #region 檢查apqty是否超過poqty
-            ids = "";
-            foreach (var dr1 in DetailDatas)
-            {
-                sqlcmd = string.Format("select * from artworkpo_detail WITH (NOLOCK) where ukey = '{0}'", dr1["artworkpo_detailukey"]);
-                if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-                {
-                    ShowErr(sqlcmd, result);
-                    return;
-                }
-                if (datacheck.Rows.Count > 0)
-                {
-                    if ((decimal)dr1["apqty"] + (decimal)datacheck.Rows[0]["apqty"] > (decimal)datacheck.Rows[0]["poqty"]
-                        || (decimal)dr1["apqty"] + (decimal)datacheck.Rows[0]["apqty"] > (decimal)datacheck.Rows[0]["farmin"])
-                    {
-                        ids += string.Format("{0}-{1}-{2}-{3}-{4} is over PO qty or Farm in", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"], datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"]) + Environment.NewLine;
-                    }
-                }
-            }
-            if (!MyUtility.Check.Empty(ids))
-            {
-                MyUtility.Msg.WarningBox(ids);
-                return;
-            }
-            #endregion
             #region 檢查exact
             string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
             if (str == null || string.IsNullOrWhiteSpace(str))
@@ -482,7 +554,7 @@ where ap.status = 'New' and aa.Id ='{0}'",
 update aad set
 	Price=apd.Price,
 	Stitch=apd.Stitch,
-	Farmin=apd.Farmin,
+	--Farmin=apd.Farmin,
 	PatternCode=apd.PatternCode,
 	PatternDesc=apd.PatternDesc,
     Amount = apd.Price*aad.ApQty
@@ -845,6 +917,73 @@ where ap.ID= @ID";
             frm.Show();
 
             return true;
+        }
+
+        private void BtnRemoveQty0_Click(object sender, EventArgs e)
+        {
+            for (int i = ((DataTable)this.detailgridbs.DataSource).Rows.Count - 1; i >= 0; i--)
+            {
+                if (MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Rows[i]["apqty"]) == 0)
+                {
+                    ((DataTable)this.detailgridbs.DataSource).Rows[i].Delete();
+                }
+            }
+        }
+
+        private DataTable ToDataTable<T>(List<T> items)
+        {
+            var tb = new DataTable(typeof(T).Name);
+
+            PropertyInfo[] props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (PropertyInfo prop in props)
+            {
+                Type t = GetCoreType(prop.PropertyType);
+                tb.Columns.Add(prop.Name, t);
+            }
+
+            foreach (T item in items)
+            {
+                var values = new object[props.Length];
+
+                for (int i = 0; i < props.Length; i++)
+                {
+                    values[i] = props[i].GetValue(item, null);
+                }
+
+                tb.Rows.Add(values);
+            }
+
+            return tb;
+        }
+        /// <summary>
+        /// Determine of specified type is nullable
+        /// </summary>
+        public static bool IsNullable(Type t)
+        {
+            return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
+        }
+
+        /// <summary>
+        /// Return underlying type if type is Nullable otherwise return the type
+        /// </summary>
+        public static Type GetCoreType(Type t)
+        {
+            if (t != null && IsNullable(t))
+            {
+                if (!t.IsValueType)
+                {
+                    return t;
+                }
+                else
+                {
+                    return Nullable.GetUnderlyingType(t);
+                }
+            }
+            else
+            {
+                return t;
+            }
         }
     }
 }

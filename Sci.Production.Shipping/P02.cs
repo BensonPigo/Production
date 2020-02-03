@@ -837,6 +837,12 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FreightBy"]))
+            {
+                this.cmbPayer.Select();
+                MyUtility.Msg.WarningBox("Payer cannot be empty.");
+                return false;
+            }
 
             if (this.EditMode && this.cmbPayer.Text.ToLower() == "Freight Collect By 3rd Party".ToLower() && MyUtility.Check.Empty(this.CurrentMaintain["CarrierID"]))
             {

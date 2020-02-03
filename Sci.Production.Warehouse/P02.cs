@@ -66,7 +66,7 @@ where exists(
 )", CurrentMaintain["id"]);
             if (MyUtility.Check.Seek(sqlcmd))
             {
-                MyUtility.Msg.WarningBox("The shipment have material, can't revise < Arrive W/H Date >.", "Warning");
+                MyUtility.Msg.WarningBox("The shipment have material, can't revise < Arrive W/H Date > or < P/L Rcv Date >.", "Warning");
                 return false;
             }
 

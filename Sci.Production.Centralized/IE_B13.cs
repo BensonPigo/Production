@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -48,7 +49,7 @@ namespace Sci.Production.Centralized
             DataTable excelDataTable;
             DualResult result;
             string sqlCmd = @"select [ID],[DescKH],[DescVI],[DescCHS],[AddDate],[AddName] from OperationDesc WITH (NOLOCK)	where 1 = 0";
-            result = DBProxy.Current.Select(null, sqlCmd, out excelDataTable);
+            result = DBProxy.Current.Select("ProductionTPE", sqlCmd, out excelDataTable);
 
             this.ShowWaitMessage("Starting Import EXCEL...");
 
@@ -66,13 +67,15 @@ namespace Sci.Production.Centralized
                 intRowsRead++;
                 range = worksheet.Range[string.Format("A{0}:G{0}", intRowsRead)];
                 objCellArray = range.Value;
-
-                DataRow newRow = excelDataTable.NewRow();
-                newRow["ID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
-                newRow["DescCHS"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
-                newRow["DescVI"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
-                newRow["DescKH"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
-                excelDataTable.Rows.Add(newRow);
+                if (objCellArray[1, 2] != null && objCellArray[1, 2].ToString().StartsWith("P"))
+                {
+                    DataRow newRow = excelDataTable.NewRow();
+                    newRow["ID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
+                    newRow["DescCHS"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
+                    newRow["DescVI"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
+                    newRow["DescKH"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
+                    excelDataTable.Rows.Add(newRow);
+                }
             }
 
             excel.Workbooks.Close();
@@ -126,6 +129,7 @@ when not matched by target then
             else
             {
                 MyUtility.Msg.InfoBox("import excel successful!");
+                this.ReloadDatas();
             }
 
         }
@@ -146,6 +150,69 @@ when not matched by target then
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            string sqlCmd = $"SELECT DescEN FROM Operation WHERE ID='{this.CurrentMaintain["ID"]}' ";
+
+            this.txtOperationtitle.Text = MyUtility.GetValue.Lookup(sqlCmd, "Production");
+
+        }
+
+        protected override bool ClickPrint()
+        {
+
+            this.ShowWaitMessage("Processing...");
+
+            DualResult result;
+            DataTable printData;
+            string sqlCmd = $@"
+SELECT   [Part]=''
+		,ID
+		,[M/C]=''
+		,[OperationTitle]=''
+		,DescCHS
+		,DescVI
+		,DescKH
+FROM OperationDesc WITH (NOLOCK)	
+--WHERE ID='{this.CurrentMaintain["ID"]}' ";
+
+            result = DBProxy.Current.Select("ProductionTPE", sqlCmd, out printData);
+
+            if (printData.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
+
+            for (int i = 0; i < printData.Rows.Count - 1; i++)
+            {
+                printData.Rows[i]["OperationTitle"] = MyUtility.GetValue.Lookup($"SELECT DescEN FROM Operation WITH (NOLOCK) WHERE ID='{ printData.Rows[i]["ID"]}' ", "Production");
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx"); // 預先開啟excel app
+
+            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx", objApp);
+
+            com.ColumnsAutoFit = false;
+            com.WriteTable(printData, 2);
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_IE_B13");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+
+            strExcelName.OpenFile();
+            #endregion
+
+            this.HideWaitMessage();
+
+            return true;
+
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Sci.Production.Subcon
         DataRow dr_artworkReq;
         DataTable dt_artworkReqDetail;
         protected DataTable dtArtwork;
-        string sciDelivery_b, sciDelivery_e, Inline_b, Inline_e, sp_b, sp_e;
+        string sciDelivery_b, sciDelivery_e, Inline_b, Inline_e, sp_b, sp_e, MasterSP;
         bool isNeedPlanningB03Quote = false;
         bool IsSintexSubcon = false;
 
@@ -50,12 +50,14 @@ namespace Sci.Production.Subcon
 
             this.sp_b = this.txtSPNoStart.Text;
             this.sp_e = this.txtSPNoEnd.Text;
+            this.MasterSP = this.txtMasterSP.Text;
 
             if ((sciDelivery_b == null && sciDelivery_e == null) &&
                 (Inline_b == null && Inline_e == null) &&
-                string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
+                string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e) &&
+                MyUtility.Check.Empty(this.MasterSP))
             {
-                MyUtility.Msg.WarningBox("< SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< SCI Delivery > or < Inline Date > or < SP# > or <Master SP#> can't be empty!!");
                 txtSPNoStart.Focus();
                 return;
             }
@@ -85,6 +87,10 @@ namespace Sci.Production.Subcon
             if (!(string.IsNullOrWhiteSpace(sp_e)))
             {
                 sqlwhere += string.Format(" and o.ID <= '{0}'", sp_e);
+            }
+            if (!MyUtility.Check.Empty(this.MasterSP))
+            {
+                sqlwhere += string.Format(" and o.poid = '{0}'", this.MasterSP);
             }
 
             string strSQLCmd = string.Empty;

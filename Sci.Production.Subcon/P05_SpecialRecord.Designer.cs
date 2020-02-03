@@ -68,6 +68,7 @@
             this.gridSpecialRecord.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSpecialRecord.RowTemplate.Height = 24;
             this.gridSpecialRecord.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSpecialRecord.ShowCellToolTips = false;
             this.gridSpecialRecord.Size = new System.Drawing.Size(723, 410);
             this.gridSpecialRecord.TabIndex = 16;
             this.gridSpecialRecord.TabStop = false;
@@ -98,7 +99,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(14, 19);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 23);
@@ -165,12 +165,11 @@
             // 
             // labelMotherSPNo
             // 
-            this.labelMotherSPNo.Lines = 0;
             this.labelMotherSPNo.Location = new System.Drawing.Point(261, 19);
             this.labelMotherSPNo.Name = "labelMotherSPNo";
             this.labelMotherSPNo.Size = new System.Drawing.Size(95, 23);
             this.labelMotherSPNo.TabIndex = 5;
-            this.labelMotherSPNo.Text = "Mother SP#";
+            this.labelMotherSPNo.Text = "Master SP#";
             // 
             // P05_SpecialRecord
             // 
@@ -180,6 +179,7 @@
             this.Controls.Add(this.groupBox1);
             this.DefaultControl = "txtSPNo";
             this.Name = "P05_SpecialRecord";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Special Record";
             ((System.ComponentModel.ISupportInitialize)(this.gridSpecialRecord)).EndInit();
             this.groupBox2.ResumeLayout(false);
