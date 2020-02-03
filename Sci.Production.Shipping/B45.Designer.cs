@@ -46,6 +46,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.displayStockUnit = new Sci.Win.UI.DisplayBox();
             this.label3 = new Sci.Win.UI.Label();
+            this.labContractNo = new Sci.Win.UI.Label();
+            this.txtContractNo = new Sci.Production.Class.txtCustomsContract();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -57,10 +59,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(828, 347);
+            this.detail.Size = new System.Drawing.Size(828, 321);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtContractNo);
+            this.detailcont.Controls.Add(this.labContractNo);
             this.detailcont.Controls.Add(this.displayStockUnit);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.displayFabricType);
@@ -77,11 +81,11 @@
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.labelHSCode);
             this.detailcont.Controls.Add(this.labelNLCode);
-            this.detailcont.Size = new System.Drawing.Size(828, 309);
+            this.detailcont.Size = new System.Drawing.Size(828, 283);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 309);
+            this.detailbtm.Location = new System.Drawing.Point(0, 283);
             this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
@@ -90,7 +94,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(836, 376);
+            this.tabs.Size = new System.Drawing.Size(836, 350);
             // 
             // createby
             // 
@@ -107,7 +111,7 @@
             // 
             // labelNLCode
             // 
-            this.labelNLCode.Location = new System.Drawing.Point(43, 18);
+            this.labelNLCode.Location = new System.Drawing.Point(46, 45);
             this.labelNLCode.Name = "labelNLCode";
             this.labelNLCode.Size = new System.Drawing.Size(99, 23);
             this.labelNLCode.TabIndex = 2;
@@ -115,7 +119,7 @@
             // 
             // labelHSCode
             // 
-            this.labelHSCode.Location = new System.Drawing.Point(43, 91);
+            this.labelHSCode.Location = new System.Drawing.Point(46, 99);
             this.labelHSCode.Name = "labelHSCode";
             this.labelHSCode.Size = new System.Drawing.Size(99, 23);
             this.labelHSCode.TabIndex = 3;
@@ -123,7 +127,7 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Location = new System.Drawing.Point(43, 130);
+            this.labelUnit.Location = new System.Drawing.Point(46, 126);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(99, 23);
             this.labelUnit.TabIndex = 4;
@@ -131,7 +135,7 @@
             // 
             // labelQty
             // 
-            this.labelQty.Location = new System.Drawing.Point(43, 234);
+            this.labelQty.Location = new System.Drawing.Point(46, 207);
             this.labelQty.Name = "labelQty";
             this.labelQty.Size = new System.Drawing.Size(99, 23);
             this.labelQty.TabIndex = 5;
@@ -142,7 +146,7 @@
             this.txtNLCode.BackColor = System.Drawing.Color.White;
             this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
             this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtNLCode.Location = new System.Drawing.Point(145, 18);
+            this.txtNLCode.Location = new System.Drawing.Point(148, 45);
             this.txtNLCode.Name = "txtNLCode";
             this.txtNLCode.Size = new System.Drawing.Size(100, 23);
             this.txtNLCode.TabIndex = 99;
@@ -155,7 +159,7 @@
             this.displayHSCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayHSCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HSCode", true));
             this.displayHSCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayHSCode.Location = new System.Drawing.Point(145, 91);
+            this.displayHSCode.Location = new System.Drawing.Point(148, 99);
             this.displayHSCode.Name = "displayHSCode";
             this.displayHSCode.Size = new System.Drawing.Size(110, 23);
             this.displayHSCode.TabIndex = 5;
@@ -165,7 +169,7 @@
             this.displayUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UnitID", true));
             this.displayUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayUnit.Location = new System.Drawing.Point(145, 130);
+            this.displayUnit.Location = new System.Drawing.Point(148, 126);
             this.displayUnit.Name = "displayUnit";
             this.displayUnit.Size = new System.Drawing.Size(80, 23);
             this.displayUnit.TabIndex = 6;
@@ -176,7 +180,7 @@
             this.numQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
             this.numQty.DecimalPlaces = 3;
             this.numQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numQty.Location = new System.Drawing.Point(145, 234);
+            this.numQty.Location = new System.Drawing.Point(148, 207);
             this.numQty.Name = "numQty";
             this.numQty.NullValue = new decimal(new int[] {
             0,
@@ -196,7 +200,7 @@
             this.radioPanel1.Controls.Add(this.radioCalculate);
             this.radioPanel1.Controls.Add(this.radioFixedQty);
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Type", true));
-            this.radioPanel1.Location = new System.Drawing.Point(230, 231);
+            this.radioPanel1.Location = new System.Drawing.Point(233, 204);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(217, 57);
             this.radioPanel1.TabIndex = 8;
@@ -241,7 +245,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(43, 54);
+            this.label1.Location = new System.Drawing.Point(46, 72);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(99, 23);
             this.label1.TabIndex = 10;
@@ -252,7 +256,7 @@
             this.txtRefno.BackColor = System.Drawing.Color.White;
             this.txtRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Refno", true));
             this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno.Location = new System.Drawing.Point(145, 54);
+            this.txtRefno.Location = new System.Drawing.Point(148, 72);
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(143, 23);
             this.txtRefno.TabIndex = 0;
@@ -264,14 +268,14 @@
             this.displayFabricType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFabricType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricType", true));
             this.displayFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFabricType.Location = new System.Drawing.Point(145, 197);
+            this.displayFabricType.Location = new System.Drawing.Point(148, 180);
             this.displayFabricType.Name = "displayFabricType";
             this.displayFabricType.Size = new System.Drawing.Size(80, 23);
             this.displayFabricType.TabIndex = 101;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(43, 197);
+            this.label2.Location = new System.Drawing.Point(46, 180);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(99, 23);
             this.label2.TabIndex = 100;
@@ -282,26 +286,47 @@
             this.displayStockUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayStockUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StockUnit", true));
             this.displayStockUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayStockUnit.Location = new System.Drawing.Point(145, 164);
+            this.displayStockUnit.Location = new System.Drawing.Point(148, 153);
             this.displayStockUnit.Name = "displayStockUnit";
             this.displayStockUnit.Size = new System.Drawing.Size(80, 23);
             this.displayStockUnit.TabIndex = 103;
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(43, 164);
+            this.label3.Location = new System.Drawing.Point(46, 153);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(99, 23);
             this.label3.TabIndex = 102;
             this.label3.Text = "Stock Unit";
             // 
+            // labContractNo
+            // 
+            this.labContractNo.Location = new System.Drawing.Point(46, 18);
+            this.labContractNo.Name = "labContractNo";
+            this.labContractNo.Size = new System.Drawing.Size(99, 23);
+            this.labContractNo.TabIndex = 104;
+            this.labContractNo.Text = "Contract no.";
+            // 
+            // txtContractNo
+            // 
+            this.txtContractNo.BackColor = System.Drawing.Color.White;
+            this.txtContractNo.CheckDate = false;
+            this.txtContractNo.CheckStatus = true;
+            this.txtContractNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VNContractID", true));
+            this.txtContractNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtContractNo.Location = new System.Drawing.Point(148, 18);
+            this.txtContractNo.Name = "txtContractNo";
+            this.txtContractNo.Size = new System.Drawing.Size(143, 23);
+            this.txtContractNo.TabIndex = 105;
+            // 
             // B45
             // 
-            this.ClientSize = new System.Drawing.Size(836, 409);
+            this.ClientSize = new System.Drawing.Size(836, 383);
             this.DefaultControl = "txtNLCode";
             this.DefaultControlForEdit = "txtNLCode";
             this.DefaultOrder = "NLCode";
             this.Name = "B45";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B45. Fixed Export Declare Data";
             this.UniqueExpress = "NLCode,Refno";
             this.WorkAlias = "VNFixedDeclareItem";
@@ -340,5 +365,7 @@
         private Win.UI.Label label3;
         private Win.UI.DisplayBox displayFabricType;
         private Win.UI.Label label2;
+        private Class.txtCustomsContract txtContractNo;
+        private Win.UI.Label labContractNo;
     }
 }

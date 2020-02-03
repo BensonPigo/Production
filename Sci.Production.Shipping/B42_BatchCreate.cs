@@ -158,6 +158,7 @@ namespace Sci.Production.Shipping
             parData.Style = this.txtstyle.Text;
             parData.Category = this.comboCategory.Text;
             parData.BrandID = this.txtbrand.Text;
+            parData.ContractID = "";
             DualResult result = Prgs.GetVNConsumption_Detail_Detail(parData, out this.AllDetailData);
             if (!result)
             {

@@ -53,6 +53,13 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["VNContractID"]))
+            {
+                MyUtility.Msg.WarningBox("Contract No. cannot be empty.");
+                this.txtContractNo.Focus();
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -83,24 +90,25 @@ namespace Sci.Production.Shipping
 
         private void TxtNLCode_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtNLCode.Text))
+            string sqlNLCode = this.txtNLCode.Text;
+            if (MyUtility.Check.Empty(sqlNLCode))
             {
                 return;
             }
 
             if (!this.IsExistsCustomRefno())
             {
-                MyUtility.Msg.WarningBox($"<Customs Code>{this.txtNLCode.Text} not found");
+                MyUtility.Msg.WarningBox($"<Customs Code>{sqlNLCode} not found");
                 e.Cancel = true;
                 return;
             }
 
             string sqlGetOtherInfo = "select top 1 HSCode,UnitID from VNContract_Detail with (nolock) where NLCode = @NLCode order by AddDate Desc ";
-            List<SqlParameter> parGetOtherInfo = new List<SqlParameter>() { new SqlParameter("@NLCode", this.txtNLCode.Text) };
+            List<SqlParameter> parGetOtherInfo = new List<SqlParameter>() { new SqlParameter("@NLCode", sqlNLCode) };
             DataRow drOtherInfo;
             if (MyUtility.Check.Seek(sqlGetOtherInfo, parGetOtherInfo, out drOtherInfo))
             {
-                this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
+                this.CurrentMaintain["NLCode"] = sqlNLCode;
                 this.CurrentMaintain["HSCode"] = drOtherInfo["HSCode"];
                 this.CurrentMaintain["UnitID"] = drOtherInfo["UnitID"];
             }

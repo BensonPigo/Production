@@ -548,13 +548,14 @@ please check again.");
             public string StyleUkey;
             public string SizeCode;
             public string Article;
+            public string ContractID;
         }
         public static DualResult GetVNConsumption_Detail_Detail(ParGetVNConsumption_Detail_Detail sqlPar, out DataTable dataTable)
         {
             StringBuilder sqlCmd = new StringBuilder();
-
+            
             #region 組撈所有明細SQL
-            sqlCmd.Append(@"
+            sqlCmd.Append($@"
 select  o.StyleUkey
         , oqd.SizeCode
         , oqd.Article
@@ -614,7 +615,14 @@ where   1=1");
             {
                 sqlCmd.Append(string.Format(" and oqd.Article = '{0}'", sqlPar.Article));
             }
-            sqlCmd.Append(@"
+
+            string sqlStrContractID = string.Empty;
+            if (!MyUtility.Check.Empty(sqlPar.ContractID))
+            {
+                sqlStrContractID = $"where vfd.VNContractID = '{sqlPar.ContractID}'";
+            }
+
+            sqlCmd.Append($@"
 group by o.StyleUkey, oqd.SizeCode, oqd.Article, o.Category, o.StyleID
          , o.SeasonID, o.BrandID, isnull(s.CPU,0), isnull(s.CTNQty,0), s.FabricType, s.ThickFabric
 		 
@@ -1124,6 +1132,8 @@ from VNFixedDeclareItem vfd WITH (NOLOCK)
 left join #tmpAllStyle t on 1 = 1
 left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = t.StyleUkey 
                                             and sa.Article = t.Article
+{sqlStrContractID}
+
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
