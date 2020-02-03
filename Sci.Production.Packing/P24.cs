@@ -95,7 +95,7 @@ order by pd.SCICtnNo
 
         private void Detailgrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            if (e.RowIndex < 0 || e.ColumnIndex < 9)
+            if (e.RowIndex < 0 || e.ColumnIndex < 8)
             {
                 return;
             }
@@ -280,25 +280,10 @@ order by pd.SCICtnNo
             {
                 DataTable dtHasFileNameDetail = checkHasFileNameData.CopyToDataTable();
                 DataTable dtCheckResult;
-<<<<<<< HEAD
-                string sqlCheckDetail = $@"
-select distinct o.BrandID,o.CustCDID,t.Refno
-from #tmp t
-left join orders o with (nolock) on t.OrderID = o.ID
-where not exists (select 1 from ShippingMarkPicture smp with (nolock) 
-                            where   smp.BrandID = o.BrandID and
-                                    smp.CTNRefno = t.Refno and
-                                    smp.Side = '{this.CurrentMaintain["Side"]}' and
-                                    smp.Seq = '{this.CurrentMaintain["Seq"]}')
-
-";
-
-                DualResult result = MyUtility.Tool.ProcessWithDatatable(dtHasFileNameDetail, string.Empty, sqlCheckDetail, out dtCheckResult);
-=======
                 //foreach (DataRow drr in dtHasFileNameDetail.Rows)
                 //{
 
-                    string sqlCheckDetail = $@"
+                string sqlCheckDetail = $@"
    /* select distinct o.BrandID,o.CustCDID,t.Refno
     from #tmp t
     left join orders o with (nolock) on t.OrderID = o.ID
@@ -318,7 +303,6 @@ where not exists (select 1 from ShippingMarkPicture smp with (nolock)
 	 SELECT *
 	 FROM ShippingMarkPicture  smp
 	 WHERE   smp.BrandID = o.BrandID 
-	 AND smp.CustCD = o.CustCDID 
 	 AND smp.CTNRefno = pd.Refno 
      AND smp.Side = '{this.CurrentMaintain["Side"]}' 
      AND smp.Seq = '{this.CurrentMaintain["Seq"]}'
@@ -327,25 +311,24 @@ where not exists (select 1 from ShippingMarkPicture smp with (nolock)
 
                 //DualResult result = MyUtility.Tool.ProcessWithDatatable(dtHasFileNameDetail, string.Empty, sqlCheckDetail, out dtCheckResult);
                 DualResult result = DBProxy.Current.Select(null, sqlCheckDetail, out dtCheckResult);
->>>>>>> ISP20191302 - 修改P25 P24圖片儲存方式
                 if (!result)
-                    {
-                        this.ShowErr(result);
-                        return false;
-                    }
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
 
-                    string errMsg = string.Empty;
-                    foreach (DataRow dr in dtCheckResult.Rows)
-                    {
-                        errMsg += $"<Brand>:{dr["BrandID"]}  <CustCD>:{dr["CustCDID"]}  <CTNRefno>:{dr["Refno"]} {Environment.NewLine}";
-                    }
+                string errMsg = string.Empty;
+                foreach (DataRow dr in dtCheckResult.Rows)
+                {
+                    errMsg += $"<Brand>:{dr["BrandID"]}  <CTNRefno>:{dr["Refno"]} {Environment.NewLine}";
+                }
 
-                    if (errMsg.Length > 0)
-                    {
-                        errMsg = "Please go to [Packing B03] to complete setting!" + Environment.NewLine + errMsg;
-                        MyUtility.Msg.WarningBox(errMsg);
-                        return false;
-                    }
+                if (errMsg.Length > 0)
+                {
+                    errMsg = "Please go to [Packing B03] to complete setting!" + Environment.NewLine + errMsg;
+                    MyUtility.Msg.WarningBox(errMsg);
+                    return false;
+                }
                 //}
             }
             #endregion

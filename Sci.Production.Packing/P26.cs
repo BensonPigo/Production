@@ -1643,31 +1643,31 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                         }
                     }
 
-                    if (this.MappingModels.Count > 0)
+                    if ((this.MappingModels.Count > 0 && this.currentFileType == UploadType.ZPL) || this.currentFileType == UploadType.PDF)
                     {
 
-                    using (TransactionScope transactionscope = new TransactionScope())
-                    {
-                        if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
+                        using (TransactionScope transactionscope = new TransactionScope())
                         {
+                            if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
+                            {
+                                transactionscope.Dispose();
+                                this.ShowErr(result);
+                                return;
+                            }
+
+                            transactionscope.Complete();
                             transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
+
+                            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                            List<DataRow> dl = dt.AsEnumerable().Where(o => fileNamess.Contains(o["FileName"].ToString())).ToList();
+                            foreach (DataRow dr in dl)
+                            {
+                                dr["Result"] = "Pass";
+                            }
                         }
+                        MyUtility.Msg.InfoBox("Data Mapping successful!");
 
-                        transactionscope.Complete();
-                        transactionscope.Dispose();
-
-                        DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                        List<DataRow> dl = dt.AsEnumerable().Where(o => fileNamess.Contains(o["FileName"].ToString())).ToList();
-                        foreach (DataRow dr in dl)
-                        {
-                            dr["Result"] = "Pass";
-                        }
-                    }
-                    MyUtility.Msg.InfoBox("Data Mapping successful!");
-
-                    this.canConvert = true;
+                        this.canConvert = true;
 
                     }
                     this.HideWaitMessage();
