@@ -811,9 +811,12 @@ drop table #tmpFinal_step1
                         {
                             string sewingDate = ((DateTime)dr["InLine"]).AddDays(d).ToString("yyyy-MM-dd");
                             DataRow[] drSummary = dtGanttSumery.Select($@" SewingDay = '{sewingDate}' and SewingLineID = '{dr["SewingLineID"]}'");
-                            worksheet.Cells[intRowsStart + 1, startCol + d] = drSummary[0]["Total_StdOutput"];
-                            worksheet.Cells[intRowsStart + 2, startCol + d] = drSummary[0]["PPH"];
-                            rngColor.Cells.Interior.Color = System.Drawing.Color.White;
+                            if (drSummary.Length > 0)
+                            {
+                                worksheet.Cells[intRowsStart + 1, startCol + d] = drSummary[0]["Total_StdOutput"];
+                                worksheet.Cells[intRowsStart + 2, startCol + d] = drSummary[0]["PPH"];
+                                rngColor.Cells.Interior.Color = System.Drawing.Color.White;
+                            }
                         }
                         #endregion
                         colCount = colCount + (startCol - colCount - 1) + totalDays;
