@@ -6,8 +6,6 @@
     [Seq] INT  NOT NULL, 
     [FromLeft] INT CONSTRAINT [DF_ShippingMarkPicture_FromLeft] DEFAULT (0) NOT NULL, 
     [FromTop] INT CONSTRAINT [DF_ShippingMarkPicture_FromTop] DEFAULT (0) NOT NULL, 
-    [PicLength] NUMERIC(8, 2) CONSTRAINT [DF_ShippingMarkPicture_PicLength] DEFAULT (0) NULL, 
-    [PicWidth] NUMERIC(8, 2) CONSTRAINT [DF_ShippingMarkPicture_PicWidth] DEFAULT (0) NULL, 
     [AddDate] DATETIME NULL, 
     [AddName] VARCHAR(10) CONSTRAINT [DF_ShippingMarkPicture_AddName] DEFAULT ('') NULL, 
     [EditDate] DATETIME NULL, 
@@ -31,9 +29,5 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'離上面的位置', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'FromTop';
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'噴碼長', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'PicLength';
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'噴碼寬', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'PicWidth';
 
 
