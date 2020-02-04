@@ -593,6 +593,16 @@ from System WITH (NOLOCK) ");
             }
             #endregion
 
+            #region 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+            DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+            DataRow[] queryData = ((DataTable)this.detailgridbs.DataSource).Select("1=1");
+            bool isVNConsumption_Detail_DetailHasDupData = !Prgs.CheckVNConsumption_Detail_Dup(queryData, false);
+            if (isVNConsumption_Detail_DetailHasDupData)
+            {
+                return false;
+            }
+            #endregion
+
             // Get ID && Get Version
             if (this.IsDetailInserting)
             {
@@ -859,6 +869,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
             parData.SizeCode = MyUtility.Convert.GetString(this.CurrentMaintain["SizeCode"]);
             parData.Article = colorway[0];
             parData.Category = this.comboCategory.Text;
+            parData.ContractID = this.CurrentMaintain["VNContractID"].ToString();
             DualResult result = Prgs.GetVNConsumption_Detail_Detail(parData, out queryDetail2Data);
             if (!result)
             {
