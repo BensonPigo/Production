@@ -295,7 +295,7 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
             if (selectedReceivingSummary.Any())
             {
                 sqlInsertLocationTrans += $@"
-Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddName,AddDate)
+Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddName,AddDate,EditName,EditDate)
             values( '{locationTransID}',
                     '{Env.User.Keyword}',
                     '{Env.User.Factory}',
@@ -303,7 +303,10 @@ Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddNa
                     'Confirmed',
                     'Create from P21.',
                     '{Env.User.UserID}',
-                    GetDate())
+                    GetDate(),
+                    '{Env.User.UserID}',
+                    GetDate()
+                )
 ";
 
                 foreach (var receivingItem in selectedReceivingSummary)
