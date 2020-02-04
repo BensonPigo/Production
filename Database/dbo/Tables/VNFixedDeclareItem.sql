@@ -1,19 +1,22 @@
 ﻿CREATE TABLE [dbo].[VNFixedDeclareItem] (
-    [NLCode]      VARCHAR (9)     CONSTRAINT [DF_FixedDeclareItem_NLCode] DEFAULT ('') NOT NULL,
-    [HSCode]      VARCHAR (11)    CONSTRAINT [DF_FixedDeclareItem_HSCode] DEFAULT ('') NOT NULL,
-    [UnitID]      VARCHAR (8)     CONSTRAINT [DF_FixedDeclareItem_UnitID] DEFAULT ('') NULL,
-    [Qty]         NUMERIC (14, 3) CONSTRAINT [DF_FixedDeclareItem_Qty] DEFAULT ((0)) NULL,
-    [Type]        TINYINT         CONSTRAINT [DF_FixedDeclareItem_Type] DEFAULT ((0)) NOT NULL,
-    [TissuePaper] BIT             CONSTRAINT [DF_FixedDeclareItem_TissuePaper] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10)    CONSTRAINT [DF_FixedDeclareItem_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME        NULL,
-    [EditName]    VARCHAR (10)    CONSTRAINT [DF_FixedDeclareItem_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME        NULL,
-	[Refno]      VARCHAR (21)     CONSTRAINT [DF_FixedDeclareItem_Refno] DEFAULT ('') NOT NULL,
-    [StockUnit] VARCHAR(8) CONSTRAINT [DF_FixedDeclareItem_StockUnit] DEFAULT ('') NULL,
-	[FabricType] VARCHAR (1)     CONSTRAINT [DF_FixedDeclareItem_FabricType] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_FixedDeclareItem] PRIMARY KEY CLUSTERED ([NLCode],[Refno] ASC)
+    [NLCode]       VARCHAR (9)     CONSTRAINT [DF_FixedDeclareItem_NLCode] DEFAULT ('') NOT NULL,
+    [HSCode]       VARCHAR (11)    CONSTRAINT [DF_FixedDeclareItem_HSCode] DEFAULT ('') NOT NULL,
+    [UnitID]       VARCHAR (8)     CONSTRAINT [DF_FixedDeclareItem_UnitID] DEFAULT ('') NULL,
+    [Qty]          NUMERIC (14, 3) CONSTRAINT [DF_FixedDeclareItem_Qty] DEFAULT ((0)) NULL,
+    [Type]         TINYINT         CONSTRAINT [DF_FixedDeclareItem_Type] DEFAULT ((0)) NOT NULL,
+    [TissuePaper]  BIT             CONSTRAINT [DF_FixedDeclareItem_TissuePaper] DEFAULT ((0)) NULL,
+    [AddName]      VARCHAR (10)    CONSTRAINT [DF_FixedDeclareItem_AddName] DEFAULT ('') NULL,
+    [AddDate]      DATETIME        NULL,
+    [EditName]     VARCHAR (10)    CONSTRAINT [DF_FixedDeclareItem_EditName] DEFAULT ('') NULL,
+    [EditDate]     DATETIME        NULL,
+    [Refno]        VARCHAR (21)    CONSTRAINT [DF_FixedDeclareItem_Refno] DEFAULT ('') NOT NULL,
+    [StockUnit]    VARCHAR (8)     CONSTRAINT [DF_FixedDeclareItem_StockUnit] DEFAULT ('') NULL,
+    [FabricType]   VARCHAR (1)     CONSTRAINT [DF_FixedDeclareItem_FabricType] DEFAULT ('') NOT NULL,
+    [VNContractID] VARCHAR (15)    DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_FixedDeclareItem] PRIMARY KEY CLUSTERED ([VNContractID] ASC, [NLCode] ASC, [Refno] ASC)
 );
+
+
 
 
 GO
