@@ -150,8 +150,9 @@ FROM StickerSize WITH (NOLOCK) ";
             {
                 if (dt.Rows != null && dt.Rows.Count > 0)
                 {
-                    this.CurrentMaintain["PicLength"] = Convert.ToInt32(dt.Rows[0]["Length"]);
-                    this.CurrentMaintain["PicWidth"] = Convert.ToInt32(dt.Rows[0]["Width"]);
+                    // ISP20200158 移除[Production].[dbo].[ShippingMarkPicture].[PicLength] 及 [PicWidth]
+                    // this.CurrentMaintain["PicLength"] = Convert.ToInt32(dt.Rows[0]["Length"]);
+                    // this.CurrentMaintain["PicWidth"] = Convert.ToInt32(dt.Rows[0]["Width"]);
                 }
             }
             else
