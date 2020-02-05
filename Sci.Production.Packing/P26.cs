@@ -492,6 +492,7 @@ namespace Sci.Production.Packing
                         foreach (var obj in chkCount)
                         {
                             string cmd = $@"
+----統計PackingList的筆數，與分析出來的檔案數量至否一致
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders
 FROM Orders 
@@ -555,7 +556,7 @@ DROP TABLE #tmpOrders
                             if (IsMixed)
                             {
                                 sqlCmd = $@"
-
+----開始Mapping
 SELECT ID ,StyleID ,POID
 INTO #tmoOrders
 FROM Orders 
@@ -635,26 +636,38 @@ WHERE p.Type ='B'
 
 
 
-SELECT IsSSCC
+----檢查是否A面一張 D面一張，A面的會是 IsSSCC
+SELECT  t.BrandID ,t.RefNo , Side,IsSSCC
+INTO #ExistsB03
 FROM ShippingMarkPicture s
-INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
+INNER JOIN #tmp t ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo AND s.Side='D'
 WHERE IsSSCC = 0
-UNION 
-SELECT IsSSCC
+UNION
+SELECT  t.BrandID ,t.RefNo , Side,IsSSCC
 FROM ShippingMarkPicture s
-INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
+INNER JOIN #tmp t ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo AND s.Side='A'
 WHERE IsSSCC = 1
 
+SELECT * FROM #ExistsB03
+
+----列出缺少的B03檔案
+SELECT  * FROM (
 SELECT t.BrandID ,t.RefNo , Side='D'
 FROM #tmp t
 LEFT JOIN ShippingMarkPicture s ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo AND s.Side='D'
+UNION
+SELECT t.BrandID ,t.RefNo , Side='A'
+FROM #tmp t
+LEFT JOIN ShippingMarkPicture s ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo AND s.Side='A'
+) a
+WHERE NOT EXISTS (SELECT 1 FROM #ExistsB03 t WHERE a.BrandID=t.BrandID AND a.RefNo=t.RefNo AND a.Side=t.Side)
 
 ";
                             }
                             else
                             {
                                 sqlCmd = $@"
-
+----開始Mapping
 
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders
@@ -707,23 +720,33 @@ AND(
 )
 
 
-
-SELECT IsSSCC
+----檢查是否A面一張 D面一張，A面的會是 IsSSCC
+SELECT  t.BrandID ,t.RefNo , Side,IsSSCC
+INTO #ExistsB03
 FROM ShippingMarkPicture s
 INNER JOIN #tmp t ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo AND s.Side='D'
 WHERE IsSSCC = 0
 UNION
-SELECT IsSSCC
+SELECT  t.BrandID ,t.RefNo , Side,IsSSCC
 FROM ShippingMarkPicture s
-INNER JOIN #tmp t ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo AND s.Side='D'
+INNER JOIN #tmp t ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo AND s.Side='A'
 WHERE IsSSCC = 1
 
+SELECT * FROM #ExistsB03
+
+----列出缺少的B03檔案
+SELECT  * FROM (
 SELECT t.BrandID ,t.RefNo , Side='D'
 FROM #tmp t
 LEFT JOIN ShippingMarkPicture s ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo AND s.Side='D'
+UNION
+SELECT t.BrandID ,t.RefNo , Side='A'
+FROM #tmp t
+LEFT JOIN ShippingMarkPicture s ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo AND s.Side='A'
+) a
+WHERE NOT EXISTS (SELECT 1 FROM #ExistsB03 t WHERE a.BrandID=t.BrandID AND a.RefNo=t.RefNo AND a.Side=t.Side)
 
-
-DROP TABLE #tmpOrders ,#tmp
+DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
 ";
                             }
 
@@ -840,12 +863,15 @@ DROP TABLE #tmpOrders ,#tmp
                                 // 準備新開的視窗
                                 if (packingLisID_Count > 0 && packingB03DataError && brand_refno_Count > 0 && !this.NotSetB03_Table.AsEnumerable().Where(o => o["BrandID"].ToString() == tmpDts[2].Rows[0]["BrandID"].ToString() && o["RefNO"].ToString() == tmpDts[2].Rows[0]["RefNO"].ToString() && o["Side"].ToString() == tmpDts[2].Rows[0]["Side"].ToString() ).Any() && !contuineCheck)
                                 {
-                                    DataRow ndr = this.NotSetB03_Table.NewRow();
-                                    ndr["BrandID"] = tmpDts[2].Rows[0]["BrandID"].ToString();
-                                    ndr["RefNO"] = tmpDts[2].Rows[0]["RefNO"].ToString();
-                                    ndr["Side"] = tmpDts[2].Rows[0]["Side"].ToString();
+                                    foreach (DataRow dr in tmpDts[2].Rows)
+                                    {
+                                        DataRow ndr = this.NotSetB03_Table.NewRow();
+                                        ndr["BrandID"] = dr["BrandID"].ToString();
+                                        ndr["RefNO"] = dr["RefNO"].ToString();
+                                        ndr["Side"] = dr["Side"].ToString();
+                                        this.NotSetB03_Table.Rows.Add(ndr);
+                                    }
 
-                                    this.NotSetB03_Table.Rows.Add(ndr);
                                 }
 
                                 #endregion
@@ -1066,12 +1092,15 @@ AND Article = '{ZPL.Article}'
 AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo{i}) 
 ORDER BY CONVERT ( int ,pd.CTNStartNo)
 
-----2. 更新PackingList_Detail的CustCTN
+----2. 更新PackingList_Detail的CustCTN，PackingList.EditDate和EditName
 UPDATE pd
 SET pd.CustCTN='{ZPL.CustCTN}'
 FROM PackingList_Detail pd
 INNER JOIN #tmp{i} t ON t.CTNStartNo=pd.CTNStartNo AND pd.ID=t.ID
 
+UPDATE PackingList
+SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+WHERE ID ='{packingListID}'
 
 ----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
 IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
@@ -1139,11 +1168,15 @@ AND (
     )
 ORDER BY CONVERT ( int ,pd.CTNStartNo)
 
-----2. 更新PackingList_Detail的CustCTN
+----2. 更新PackingList_Detail的CustCTN，PackingList.EditDate和EditName
 UPDATE pd
 SET pd.CustCTN='{ZPL.CustCTN}'
 FROM PackingList_Detail pd
 INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+
+UPDATE PackingList
+SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+WHERE ID ='{packingListID}'
 
 
 ----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
@@ -1277,12 +1310,15 @@ WHERE p.Type ='B'
     AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo{i}) 
 ORDER BY CONVERT ( int ,pd.CTNStartNo)
 
-----2. 更新PackingList_Detail的CustCTN
+----2. 更新PackingList_Detail的CustCTN，PackingList.EditDate和EditName
 UPDATE pd
 SET pd.CustCTN='{ZPL.CustCTN}'
 FROM PackingList_Detail pd
 INNER JOIN #tmp{i} t ON t.CTNStartNo=pd.CTNStartNo AND pd.ID=t.ID
 
+UPDATE PackingList
+SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+WHERE ID ='{packingListID}'
 
 ----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
 IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
@@ -1294,17 +1330,25 @@ BEGIN
 	FROM ShippingMarkPicture s
 	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+    ;
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
 END
 
-----ShippingMarkPic_Detail  (Seq=1)
+----ShippingMarkPic_Detail  (Side=D)
 IF EXISTS(
     SELECT 1 FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='D' )
     AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
 )
 BEGIN
     DELETE FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='D' )
     AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
 END
 
@@ -1313,7 +1357,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
             ,[SCICtnNo]
             ,[FileName])
         VALUES
-            ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+            ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='D' )
             ,(
 				SELECT TOP 1 pd.SCICtnNo
 				FROM PackingList_Detail pd
@@ -1323,15 +1367,15 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
  			)
 
 
-----ShippingMarkPic_Detail  (Seq=2)
+----ShippingMarkPic_Detail  (Side=A)
 IF EXISTS(
     SELECT 1 FROM ShippingMarkPic_Detail
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='A' )
     AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
 )
 BEGIN
     DELETE FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='A' )
     AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
 END
 
@@ -1340,7 +1384,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
            ,[SCICtnNo]
            ,[FileName])
      VALUES
-           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='A' )
            ,(
 				SELECT TOP 1 pd.SCICtnNo
 				FROM PackingList_Detail pd
@@ -1387,12 +1431,15 @@ WHERE p.Type ='B'
         )
 ORDER BY CONVERT ( int ,pd.CTNStartNo)
 
-----2. 更新PackingList_Detail的CustCTN
+----2. 更新PackingList_Detail的CustCTN，PackingList.EditDate和EditName
 UPDATE pd
 SET pd.CustCTN='{ZPL.CustCTN}'
 FROM PackingList_Detail pd
 INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 
+UPDATE PackingList
+SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+WHERE ID ='{packingListID}'
 
 ----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
 IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
@@ -1404,18 +1451,27 @@ BEGIN
 	FROM ShippingMarkPicture s
 	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
 	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+    ;
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+    ;
 END
 
 
-----ShippingMarkPic_Detail  (Seq=1)
+----ShippingMarkPic_Detail  (Side=D)
 IF EXISTS(
     SELECT 1 FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='D' )
     AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
 )
 BEGIN
     DELETE FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='D' )
     AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
 END
 
@@ -1424,7 +1480,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
            ,[SCICtnNo]
            ,[FileName])
      VALUES
-           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=1 AND Side='D' )
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='D' )
            ,(
 				SELECT TOP 1 pd.SCICtnNo
 				FROM PackingList_Detail pd
@@ -1435,15 +1491,15 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
 
 
 
-----ShippingMarkPic_Detail  (Seq=2)
+----ShippingMarkPic_Detail  (Side=A)
 IF EXISTS(
     SELECT 1 FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='A' )
     AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
 )
 BEGIN
     DELETE FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='A' )
     AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
 END
 
@@ -1452,7 +1508,7 @@ INSERT INTO [dbo].[ShippingMarkPic_Detail]
            ,[SCICtnNo]
            ,[FileName])
      VALUES
-           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Seq=2 AND Side='D' )
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' AND Side='A' )
            ,(
 				SELECT TOP 1 pd.SCICtnNo
 				FROM PackingList_Detail pd
@@ -1466,174 +1522,6 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                                     }
                                 }
 
-                                if (this.currentFileType == UploadType.PDF)
-                                {
-                                    if (IsMixed)
-                                    {
-
-                                        foreach (var data in ZPL.Size_Qty_List)
-                                        {
-                                            sqlMixed.Add($@"
-		( SizeCode='{data.Size}' OR SizeCode in(
-		        SELECT SizeCode 
-		        FROM Order_SizeSpec 
-		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmoOrders{i}) AND SizeSpec IN ('{data.Size}')
-	        )  
-			AND pd.ShipQty={data.Qty})
-");
-                                        }
-
-                                        cmd = $@"
-
-SELECT ID ,StyleID ,POID
-INTO #tmoOrders{i}
-FROM Orders 
-WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
-
-----1. 整理Mapping的資料
-SELECT CTNStartNo,[CartonCount]=COUNT(pd.Ukey)
-INTO #tmpMappingCartonNo{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B'
-    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
-    AND pd.CustCTN='' 
-    AND Article = '{ZPL.Article}'
-	AND (
-";
-                                        cmd += string.Join("		OR" + Environment.NewLine, sqlMixed);
-                                        cmd += $@"
-		)
-GROUP BY CTNStartNo
-HAVING COUNT(pd.Ukey)={ZPL.Size_Qty_List.Count}
-
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
-INTO #tmp{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B'
-	AND p.ID='{packingListID}'
-    AND pd.OrderID = (SELECT ID FROM #tmoOrders{i})
-    AND pd.CustCTN='' 
-    AND Article = '{ZPL.Article}'
-    AND pd.CTNStartNo IN (SELECT CTNStartNo FROM #tmpMappingCartonNo{i}) 
-ORDER BY CONVERT ( int ,pd.CTNStartNo)
-
-----2. 更新PackingList_Detail的CustCTN
-UPDATE pd
-SET pd.CustCTN='{ZPL.CustCTN}'
-FROM PackingList_Detail pd
-INNER JOIN #tmp{i} t ON t.CTNStartNo=pd.CTNStartNo AND pd.ID=t.ID
-
-
-----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
-IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
-BEGIN
-	INSERT INTO ShippingMarkPic
-		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
-
-	SELECT TOP 1 [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-	FROM ShippingMarkPicture s
-	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo --AND s.Side='D'
-	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
-	ORDER BY ISNULL(s.EditDate,s.AddDate) DESC
-END
-
-
-
-INSERT INTO [dbo].[ShippingMarkPic_Detail]
-           ([ShippingMarkPicUkey]
-           ,[SCICtnNo]
-           ,[FileName])
-     VALUES
-           ( ( SELECT  MAX(Ukey) FROM ShippingMarkPic WHERE PackingListID='{packingListID}' )
-           ,(
-				SELECT TOP 1 pd.SCICtnNo
-				FROM PackingList_Detail pd
-				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
-			)
-           ,'{ZPL.CustCTN}' 
- 			)
-
-DROP TABLE #tmoOrders{i},#tmpMappingCartonNo{i},#tmp{i}
-
-";
-                                    }
-                                    else
-                                    {
-
-                                        cmd += $@"
-----1. 整理Mapping的資料
-SELECT ID ,StyleID ,POID
-INTO #tmpOrders{i}
-FROM Orders 
-WHERE CustPONo='{ZPL.CustPONo}' AND StyleID='{ZPL.StyleID}'
-
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
-INTO #tmp{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-	AND p.ID='{packingListID}'
-    AND pd.CustCTN='' 
-    AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
-    AND Article = '{ZPL.Article}'
-    AND pd.ShipQty={ZPL.ShipQty}
-    AND (
-	        pd.SizeCode in
-	        (
-		        SELECT SizeCode 
-		        FROM Order_SizeSpec 
-		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{ZPL.SizeCode}')
-	        ) 
-	        OR 
-	        pd.SizeCode='{ZPL.SizeCode}'
-        )
-ORDER BY CONVERT ( int ,pd.CTNStartNo)
-
-----2. 更新PackingList_Detail的CustCTN
-UPDATE pd
-SET pd.CustCTN='{ZPL.CustCTN}'
-FROM PackingList_Detail pd
-INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
-
-
-----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
-IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
-BEGIN
-	INSERT INTO ShippingMarkPic
-		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
-
-	SELECT TOP 1 [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-	FROM ShippingMarkPicture s
-	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo --AND s.Side='D'
-	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
-	ORDER BY ISNULL(s.EditDate,s.AddDate) DESC
-END
-
-
-----PDF只會有一張貼紙
-INSERT INTO [dbo].[ShippingMarkPic_Detail]
-           ([ShippingMarkPicUkey]
-           ,[SCICtnNo]
-           ,[FileName])
-     VALUES
-           ( ( SELECT  MAX(Ukey) FROM ShippingMarkPic WHERE PackingListID='{packingListID}' )
-           ,(
-				SELECT TOP 1 pd.SCICtnNo
-				FROM PackingList_Detail pd
-				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
-			)
-           ,'{ZPL.CustCTN}' 
- 			)
-
-DROP TABLE #tmpOrders{i},#tmp{i}
-";
-                                    }
-                                }
 
                                 i++;
                             }
@@ -1740,6 +1628,7 @@ DROP TABLE #tmpOrders{i},#tmp{i}
             foreach (var item in chkCount)
             {
                 string cmd = $@"
+----統計PackingList的筆數，與分析出來的檔案數量至否一致
 SELECT ID ,StyleID ,POID
 INTO #tmpOrders
 FROM Orders 
@@ -1751,7 +1640,7 @@ INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type ='B' 
     AND pd.OrderID = (SELECT ID FROM #tmpOrders)
-    AND pd.CustCTN = ''
+    --AND pd.CustCTN = ''
     AND Article = '{item.Article}'
 
 DROP TABLE #tmpOrders 
@@ -1895,15 +1784,21 @@ DROP TABLE #tmpOrders
 
 
 
-    SELECT IsSSCC
+    SELECT  t.BrandID ,t.RefNo , Side,IsSSCC
+	INTO #ExistsB03
     FROM ShippingMarkPicture s
-    INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo 
-    UNION 
-    SELECT IsSSCC
+    INNER JOIN #tmp t ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo
+    UNION
+    SELECT  t.BrandID ,t.RefNo , Side,IsSSCC
     FROM ShippingMarkPicture s
-    INNER JOIN #tmp t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo 
+    INNER JOIN #tmp t ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo
+	
+	SELECT * FROM #ExistsB03
 
-    SELECT * FROM #tmp
+    SELECT * 
+	FROM #tmp a
+	WHERE NOT EXISTS (SELECT 1 FROM #ExistsB03 t WHERE a.BrandID=t.BrandID AND a.RefNo=t.RefNo )
+
 
     ";
                     }
@@ -1964,18 +1859,22 @@ DROP TABLE #tmpOrders
 
 
 
-    SELECT IsSSCC
+    SELECT  t.BrandID ,t.RefNo , Side,IsSSCC
+	INTO #ExistsB03
     FROM ShippingMarkPicture s
     INNER JOIN #tmp t ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo
     UNION
-    SELECT IsSSCC
+    SELECT  t.BrandID ,t.RefNo , Side,IsSSCC
     FROM ShippingMarkPicture s
     INNER JOIN #tmp t ON s.BrandID=t.BrandID  AND s.CTNRefno=t.RefNo
+	
+	SELECT * FROM #ExistsB03
 
+    SELECT * 
+	FROM #tmp a
+	WHERE NOT EXISTS (SELECT 1 FROM #ExistsB03 t WHERE a.BrandID=t.BrandID AND a.RefNo=t.RefNo )
 
-    SELECT * FROM #tmp
-
-    DROP TABLE #tmpOrders ,#tmp
+    DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
     ";
                     }
                     #endregion
@@ -1986,7 +1885,6 @@ DROP TABLE #tmpOrders
                     // 對應到DB的PackingList_Detail的資料筆數
                     int packingListDetail_Count = tmpDts[0].Rows.Count;
                     int brand_refno_Count = tmpDts[2].AsEnumerable().Count();
-                    
 
                     // CustCTN是否已經存在
                     bool existsCustCTN = MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{zPL.CustCTN}' ");
