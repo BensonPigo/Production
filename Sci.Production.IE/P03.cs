@@ -38,6 +38,12 @@ namespace Sci.Production.IE
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.Fill;
         }
 
+        protected override void ClickLocate()
+        {
+            base.ClickLocate();
+            this.OnDetailEntered();
+        }
+
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -74,6 +80,24 @@ order by ld.No, ld.GroupKey", masterID);
         /// </summary>
         protected override void OnDetailEntered()
         {
+            if (this.CurrentMaintain.Empty())
+            {
+                this.numCPUPC.Value = 0;
+                this.displayDesc.Text = string.Empty;
+                this.numTargetHrIdeal.Value = 0;
+                this.numDailydemandshiftIdeal.Value = 0;
+                this.numTaktTimeIdeal.Value = 0;
+                this.numTotalTimeDiff.Value = 0;
+                this.numEOLR.Value = 0;
+                this.numHighestTimeDiff.Value = 0;
+                this.numEffieiency.Value = 0;
+                this.numPPH.Value = 0;
+                this.numLBR.Value = 0;
+                this.numLLER.Value = 0;
+                this.listControlBindingSource1.DataSource = null;
+                return;
+            }
+
             base.OnDetailEntered();
             string sqlCmd = string.Format("select Description,CPU from Style WITH (NOLOCK) where Ukey = {0}", this.CurrentMaintain["StyleUkey"].ToString());
             DataRow styleData;
