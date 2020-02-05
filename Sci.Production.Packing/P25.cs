@@ -41,7 +41,7 @@ namespace Sci.Production.Packing
             .Text("Id", header: "Packing List ID", width: Widths.AnsiChars(17), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderShipmodeSeq", header: "Ship mode Seq", iseditingreadonly: true)
-            .Text("CustPONo", header: "P.O No", iseditingreadonly: true)
+            .Text("CustPONo", header: "P.O. No", iseditingreadonly: true)
             .Text("StyleID", header: "Style", iseditingreadonly: true)
             .Text("ShipModeID", header: "Ship Mode", iseditingreadonly: true)
             .Numeric("ShipQty", header: "Ship Qty", decimal_places: 0, iseditingreadonly: true)
