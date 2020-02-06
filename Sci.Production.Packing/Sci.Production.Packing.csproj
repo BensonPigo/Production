@@ -52,10 +52,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="commons-logging, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\pdfboxNet.1.8.9.0\lib\commons-logging.dll</HintPath>
+      <HintPath>..\_Dll\commons-logging.dll</HintPath>
     </Reference>
     <Reference Include="fontbox-1.8.9, Version=1.8.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\pdfboxNet.1.8.9.0\lib\fontbox-1.8.9.dll</HintPath>
+      <HintPath>..\_Dll\fontbox-1.8.9.dll</HintPath>
     </Reference>
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
@@ -85,19 +85,19 @@
       <HintPath>..\_Dll\en\Ict.Win.UI.resources.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Core, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
-      <HintPath>..\packages\pdfboxNet.1.8.9.0\lib\IKVM.OpenJDK.Core.dll</HintPath>
+      <HintPath>..\_Dll\IKVM.OpenJDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.SwingAWT, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
-      <HintPath>..\packages\pdfboxNet.1.8.9.0\lib\IKVM.OpenJDK.SwingAWT.dll</HintPath>
+      <HintPath>..\_Dll\IKVM.OpenJDK.SwingAWT.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Text, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
-      <HintPath>..\packages\pdfboxNet.1.8.9.0\lib\IKVM.OpenJDK.Text.dll</HintPath>
+      <HintPath>..\_Dll\IKVM.OpenJDK.Text.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Util, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
-      <HintPath>..\packages\pdfboxNet.1.8.9.0\lib\IKVM.OpenJDK.Util.dll</HintPath>
+      <HintPath>..\_Dll\IKVM.OpenJDK.Util.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.Runtime, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
-      <HintPath>..\packages\pdfboxNet.1.8.9.0\lib\IKVM.Runtime.dll</HintPath>
+      <HintPath>..\_Dll\IKVM.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
@@ -134,13 +134,13 @@
       <HintPath>..\Sci.Production\OnBarcode.Barcode.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="pdfbox-1.8.9, Version=1.8.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\pdfboxNet.1.8.9.0\lib\pdfbox-1.8.9.dll</HintPath>
+      <HintPath>..\_DLL\pdfbox-1.8.9.dll</HintPath>
     </Reference>
     <Reference Include="PDFLibNet32, Version=1.0.6.8, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\PdfLibNet.PieroViano.1.0.0.6\lib\net40\PDFLibNet32.dll</HintPath>
+      <HintPath>..\_DLL\PDFLibNet32.dll</HintPath>
     </Reference>
     <Reference Include="PDFLibNet64, Version=1.0.6.8, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\PdfLibNet.PieroViano.1.0.0.6\lib\net40\PDFLibNet64.dll</HintPath>
+      <HintPath>..\_DLL\PDFLibNet64.dll</HintPath>
     </Reference>
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
