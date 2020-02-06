@@ -1176,18 +1176,6 @@ order by ArticleGroup", patternukey);
             }
         }
 
-        private void numNoOfBundle_Validated(object sender, EventArgs e)
-        {
-
-            int oldcount = Convert.ToInt16(numNoOfBundle.OldValue);
-            int newcount = Convert.ToInt16(numNoOfBundle.Value);
-            if (ArticleSizeTb == null) return;
-            if (ArticleSizeTb.Rows.Count == 0) return;
-            DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
-            selectDr["Qty"] = newcount;
-            distSizeQty(oldcount, newcount, selectDr);
-        }
-
         private void btn_LefttoRight_Click(object sender, EventArgs e)
         {
             gridvalid();
@@ -1469,6 +1457,17 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void NumNoOfBundle_Validating(object sender, CancelEventArgs e)
+        {
+            int oldcount = Convert.ToInt16(numNoOfBundle.OldValue);
+            int newcount = Convert.ToInt16(numNoOfBundle.Value);
+            if (ArticleSizeTb == null) return;
+            if (ArticleSizeTb.Rows.Count == 0) return;
+            DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
+            selectDr["Qty"] = newcount;
+            distSizeQty(oldcount, newcount, selectDr);
         }
 
         private void btnCopy_to_other_Cutref_Click(object sender, EventArgs e)

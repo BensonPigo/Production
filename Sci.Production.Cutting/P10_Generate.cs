@@ -626,90 +626,6 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             }
         }
 
-        private void numNoOfBundle_Validated(object sender, EventArgs e)
-        {
-            int newvalue = (int)numNoOfBundle.Value;
-            int oldvalue = (int)numNoOfBundle.OldValue;
-            if (newvalue == oldvalue) return;
-
-            if (qtyTb.Rows.Count == 0)
-            {
-                for (int i = 0; i < newvalue; i++)
-                {
-                    DataRow ndr = qtyTb.NewRow();
-                    ndr["Qty"] = 0;
-                    qtyTb.Rows.Add(ndr);
-                }
-                qtyTb_serial();
-            }
-            else
-            {
-                if (!MyUtility.Check.Empty(maindatarow["cutref"]))
-                {
-                    int rowindex = grid_qty.CurrentRow.Index;
-                    string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
-
-                    if (!MyUtility.Check.Empty(newvalue)) qtyTb.Clear();
-
-                    int count = 0;
-                    foreach (DataRow dr in sizeTb.Rows)
-                    {
-                        if (count < newvalue)
-                        {
-                            DataRow ndr = qtyTb.NewRow();
-                            ndr["SizeCode"] = dr["SizeCode"];
-                            qtyTb.Rows.Add(ndr);
-                            count++;
-                        }
-                    }
-                    //如果No of Bundle數量>右上SizeCode數量,就依照左上滑鼠選擇的SizeCode的值複製多出來的數量
-                    if (newvalue > count)
-                    {
-                        for (int i = 0; i < newvalue - count; i++)
-                        {
-                            DataRow ndr = qtyTb.NewRow();
-                            ndr["SizeCode"] = SizeCode;
-                            qtyTb.Rows.Add(ndr);
-                        }
-                    }
-
-                    qtyTb_serial();
-                    calQty();
-                }
-                else
-                {
-                    DataTable qtytmp = qtyTb.Copy();
-                    qtyTb.Clear();
-                    int count = 0;
-                    foreach (DataRow dr in qtytmp.Rows)
-                    {
-                        if (count < newvalue)
-                        {
-                            DataRow ndr = qtyTb.NewRow();
-                            ndr[0] = dr[0];
-                            ndr[1] = dr[1];
-                            ndr[2] = dr[2];
-                            ndr[3] = dr[3];
-                            ndr[4] = dr[4];
-                            qtyTb.Rows.Add(ndr);
-                            count++;
-                        }
-                    }
-
-                    //增加時
-                    if (numNoOfBundle.OldValue != null)
-                    {
-                        for (int i = 0; i < newvalue - (int)numNoOfBundle.OldValue; i++)
-                        {
-                            DataRow ndr = qtyTb.NewRow();
-                            ndr["Qty"] = 0;
-                            qtyTb.Rows.Add(ndr);
-                        }
-                    }
-                    qtyTb_serial();
-                }
-            }
-        }
         //賦予流水號
         private void qtyTb_serial()
         {
@@ -942,6 +858,91 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             DataRow ndr = patternTb.NewRow();
             patternTb.Rows.Add();
             grid_art.ValidateControl();
+        }
+
+        private void NumNoOfBundle_Validating(object sender, CancelEventArgs e)
+        {
+            int newvalue = (int)numNoOfBundle.Value;
+            int oldvalue = (int)numNoOfBundle.OldValue;
+            if (newvalue == oldvalue) return;
+
+            if (qtyTb.Rows.Count == 0)
+            {
+                for (int i = 0; i < newvalue; i++)
+                {
+                    DataRow ndr = qtyTb.NewRow();
+                    ndr["Qty"] = 0;
+                    qtyTb.Rows.Add(ndr);
+                }
+                qtyTb_serial();
+            }
+            else
+            {
+                if (!MyUtility.Check.Empty(maindatarow["cutref"]))
+                {
+                    int rowindex = grid_qty.CurrentRow.Index;
+                    string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
+
+                    if (!MyUtility.Check.Empty(newvalue)) qtyTb.Clear();
+
+                    int count = 0;
+                    foreach (DataRow dr in sizeTb.Rows)
+                    {
+                        if (count < newvalue)
+                        {
+                            DataRow ndr = qtyTb.NewRow();
+                            ndr["SizeCode"] = dr["SizeCode"];
+                            qtyTb.Rows.Add(ndr);
+                            count++;
+                        }
+                    }
+                    //如果No of Bundle數量>右上SizeCode數量,就依照左上滑鼠選擇的SizeCode的值複製多出來的數量
+                    if (newvalue > count)
+                    {
+                        for (int i = 0; i < newvalue - count; i++)
+                        {
+                            DataRow ndr = qtyTb.NewRow();
+                            ndr["SizeCode"] = SizeCode;
+                            qtyTb.Rows.Add(ndr);
+                        }
+                    }
+
+                    qtyTb_serial();
+                    calQty();
+                }
+                else
+                {
+                    DataTable qtytmp = qtyTb.Copy();
+                    qtyTb.Clear();
+                    int count = 0;
+                    foreach (DataRow dr in qtytmp.Rows)
+                    {
+                        if (count < newvalue)
+                        {
+                            DataRow ndr = qtyTb.NewRow();
+                            ndr[0] = dr[0];
+                            ndr[1] = dr[1];
+                            ndr[2] = dr[2];
+                            ndr[3] = dr[3];
+                            ndr[4] = dr[4];
+                            qtyTb.Rows.Add(ndr);
+                            count++;
+                        }
+                    }
+
+                    //增加時
+                    if (numNoOfBundle.OldValue != null)
+                    {
+                        for (int i = 0; i < newvalue - (int)numNoOfBundle.OldValue; i++)
+                        {
+                            DataRow ndr = qtyTb.NewRow();
+                            ndr["Qty"] = 0;
+                            qtyTb.Rows.Add(ndr);
+                        }
+                    }
+                    qtyTb_serial();
+                }
+            }
         }
 
         private void deleteRecordToolStripMenuItem_Click(object sender, EventArgs e)
