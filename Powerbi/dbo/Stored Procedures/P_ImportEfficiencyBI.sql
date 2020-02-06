@@ -2,8 +2,8 @@
 
 CREATE PROCEDURE [dbo].[P_ImportEfficiencyBI]
 	(
-	 @OutputDate datetime,
-	 @ServerName varchar(50)
+	 @OutputDate datetime ,
+	 @ServerName varchar(50) 
 	)
 AS
 
@@ -21,9 +21,8 @@ declare @SqlCmd1 nvarchar(max) ='';
 declare @SqlCmd2 nvarchar(max) ='';
 declare @SqlCmd3 nvarchar(max) ='';
 
+
 SET @SqlCmd1 = '
-USE [PBIReportData]
-GO
 
 --根據條件撈基本資料
 select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
@@ -46,7 +45,6 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'''')
-	,Remark= ''''
     ,o.SciDelivery
 	,sd.Ukey
 into #tmpSewingDetail
@@ -102,7 +100,6 @@ SET @SqlCmd2 = 'y=sum(InlineQty)over(partition by id,OrderId,ComboType)
     ,SubConOutContractNumber
     ,SubconInSisterFty
     ,SewingReasonDesc
-    ,Remark
 	,Ukey
 into #tmpSewingGroup
 from #tmpSewingDetail
@@ -203,7 +200,6 @@ select * INTO #Final from(
 		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty,Diff = t.QAQty-InlineQty
 		,rate
-        ,isnull(t.Remark,'''')Remark		
         ,isnull(t.SewingReasonDesc,'''')SewingReasonDesc
 		 
     from #tmp1stFilter t )a
@@ -269,7 +265,6 @@ WHEN MATCHED THEN
 		,t.ProdOutput = s.InlineQty
 		,t.Diff = s.Diff
 		,t.Rate = s.Rate
-		,t.Remark = s.Remark
 		,t.SewingReasonDesc = s.SewingReasonDesc
 		,t.SciDelivery = s.SciDelivery
 WHEN NOT MATCHED THEN
@@ -315,7 +310,6 @@ WHEN NOT MATCHED THEN
            ,s.InlineQty
            ,s.Diff
            ,s.Rate
-           ,s.Remark
            ,s.SewingReasonDesc
 		   ,s.SciDelivery
 		  );
@@ -335,7 +329,6 @@ select OrderID from #Final s
 	AND t.ComboType=s.ComboType 
 	AND t.OutputDate = s.OutputDate);
 '
-
 
 SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3
 --SELECT @SqlCmd_Combin
