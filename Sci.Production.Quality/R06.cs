@@ -186,6 +186,32 @@ outer apply(
 		group by ss.{groupby_col}
 ) s
 order by g.{groupby_col}
+------------Total dye lots accepted(Shadeband)-------------
+{ (ReportType.Equals("supplier") ? @"
+----從篩選過的物料，找出他們的FIR紀錄
+SELECT f.*
+INTO #FirData
+FROM #tmp1 t
+INNER JOIN FIR f ON t.PoId=f.POID AND t.Seq1=f.SEQ1 AND t.Seq2 = f.Seq2 AND t.SuppID = f.Suppid AND t.Refno=f.Refno 
+
+----從得到的FIR紀錄，取得Fir_shadebone紀錄
+SELECT a.Suppid, b.ID,b.Roll,b.Dyelot,b.Result
+INTO #All_Fir_shadebone
+FROM #FirData a
+INNER JOIN Fir_shadebone b ON a.id=b.id
+
+----統計有哪些Dyelot，是全部Pass的
+SELECT t.SuppID ,[PassCTN]=COUNT(Dyelot)
+INTO #PassCountByDyelot
+FROM #tmpsd t
+/*OUTER APPLY(
+	SELECT [PassCTN]=COUNT(a.ID)
+	FROM #All_Fir_shadebone a
+	WHERE a.Suppid=t.SuppID AND a.Dyelot = t.Dyelot AND a.Result = 'Pass'
+)PassCTN*/
+WHERE NOT EXISTS(SELECT * FROM #All_Fir_shadebone b WHERE  b.Suppid=t.SuppID AND b.Dyelot = t.Dyelot AND b.Result <> 'Pass')
+GROUP BY t.SuppID
+" : "") }
 ------------Total Point----------
 select g.{groupby_col},sum(fp.TotalPoint) TotalPoint
 into #tmpTotalPoint
@@ -562,6 +588,7 @@ select --distinct
     ,totalYds.TotalInspYds 
     ,[Total PoCnt] = isnull(TLSP.cnt,0)
     ,[Total Dyelot] =isnull(TLDyelot.cnt,0)
+    { (ReportType.Equals("supplier") ? " ,[Total dye lots accepted(Shadeband)] = ISNULL( PassCountByDyelot.PassCTN ,0)" : "") }
     ,[Insp Report] = isnull(InspReport.cnt,0)
 	,[Test Report] = isnull(TestReport.cnt,0)
 	,[Continuity Card] = isnull(Contcard.cnt,0)
@@ -646,6 +673,7 @@ outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0
 and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) * 100 between range1 and range2
 )sl6
 outer apply (select cnt from #tmpDyelot where {groupby_col}=Tmp.{groupby_col} ) TLDyelot
+{ (ReportType.Equals("supplier") ? "outer apply (select PassCTN from #PassCountByDyelot where SuppID=Tmp.SuppID) PassCountByDyelot" : "") }
 outer apply (select TotalRoll from #tmpTotalRoll where {groupby_col}=tmp.{groupby_col}) TLRoll
 outer apply (select GradeA_Roll from #tmpGrade_A where {groupby_col}=tmp.{groupby_col}) GACount
 outer apply (select GradeB_Roll from #tmpGrade_B where {groupby_col}=tmp.{groupby_col}) GBCount
@@ -688,6 +716,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 ,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode
 ,#tmpCountSP,#tmpTestReport,#InspReport,#tmpContinuityCard,#BulkDyelot
 ,#tmp_DyelotMain,#tmp_DyelotMcnt,#tmp_newSeasonSCI,#tmp_DyelotMonth,#tmp_DyelotDcnt
+{ (ReportType.Equals("supplier") ? ",#PassCountByDyelot ,#FirData ,#All_Fir_shadebone" : "") }
 ");
             #endregion
             return base.ValidateInput();
@@ -768,36 +797,74 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
                 i = i + cnt - 1;
             }
             //由於複製格式的關係，會把原本的型態也取代。重新再壓回型態。
-            for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+            if (ReportType.Equals("supplier"))
             {
-                int col = (ii >= 19 && ii <= 37 && !(ii == 22)) ? 5 : 3;
-                objSheets.Columns[ii].NumberFormat = objSheets.Cells[ii][col].NumberFormat;
+                for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                {
+                    int col = (ii >= 20 && ii <= 38 && !(ii == 23)) ? 5 : 3;
+                    objSheets.Columns[ii].NumberFormat = objSheets.Cells[ii][col].NumberFormat;
+                }
+            }
+            else
+            {
+                for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                {
+                    int col = (ii >= 19 && ii <= 37 && !(ii == 22)) ? 5 : 3;
+                    objSheets.Columns[ii].NumberFormat = objSheets.Cells[ii][col].NumberFormat;
+                }
             }
 
             objSheets.Cells[2, 1] = $"Date: {this.dateArriveWHDate.DateBox1.Text} ~ {this.dateArriveWHDate.DateBox2.Text}";
             objSheets.Range["B3"].Activate();
 
             #region 調整欄寬
-            objSheets.Columns[5].ColumnWidth = 7.38;
-            objSheets.Columns[6].ColumnWidth = 7.38;
-            objSheets.Columns[7].ColumnWidth = 7.38;
+            if (ReportType.Equals("supplier"))
+            {
+                objSheets.Columns[5].ColumnWidth = 7.38;
+                objSheets.Columns[6].ColumnWidth = 7.38;
+                objSheets.Columns[7].ColumnWidth = 7.38;
 
-            objSheets.Columns[8].ColumnWidth = 7.63;
-            objSheets.Columns[9].ColumnWidth = 9.13;
-            objSheets.Columns[10].ColumnWidth = 11;
-            objSheets.Columns[11].ColumnWidth = 13.13;
-            objSheets.Columns[12].ColumnWidth = 13.13;
+                objSheets.Columns[8].ColumnWidth = 7.63;
+                objSheets.Columns[9].ColumnWidth = 11;
+                objSheets.Columns[10].ColumnWidth = 9.13;
+                objSheets.Columns[11].ColumnWidth = 11;
+                objSheets.Columns[12].ColumnWidth = 13.13;
+                objSheets.Columns[13].ColumnWidth = 13.13;
 
-            objSheets.Columns[13].ColumnWidth = 11.88;
-            objSheets.Columns[14].ColumnWidth = 6.63;
-            objSheets.Columns[15].ColumnWidth = 6.63;
-            objSheets.Columns[16].ColumnWidth = 6.63;
-            objSheets.Columns[17].ColumnWidth = 6.63;
+                objSheets.Columns[14].ColumnWidth = 11.88;
+                objSheets.Columns[15].ColumnWidth = 6.63;
+                objSheets.Columns[16].ColumnWidth = 6.63;
+                objSheets.Columns[17].ColumnWidth = 6.63;
+                objSheets.Columns[18].ColumnWidth = 6.63;
 
-            objSheets.Columns[19].ColumnWidth = 8;
-            objSheets.Columns[20].ColumnWidth = 8;
-            objSheets.Columns[22].ColumnWidth = 15.63;
-            objSheets.Columns[37].ColumnWidth = 11.88;
+                objSheets.Columns[20].ColumnWidth = 8;
+                objSheets.Columns[21].ColumnWidth = 8;
+                objSheets.Columns[23].ColumnWidth = 15.63;
+                objSheets.Columns[38].ColumnWidth = 11.88;
+            }
+            else
+            {
+                objSheets.Columns[5].ColumnWidth = 7.38;
+                objSheets.Columns[6].ColumnWidth = 7.38;
+                objSheets.Columns[7].ColumnWidth = 7.38;
+
+                objSheets.Columns[8].ColumnWidth = 7.63;
+                objSheets.Columns[9].ColumnWidth = 9.13;
+                objSheets.Columns[10].ColumnWidth = 11;
+                objSheets.Columns[11].ColumnWidth = 13.13;
+                objSheets.Columns[12].ColumnWidth = 13.13;
+
+                objSheets.Columns[13].ColumnWidth = 11.88;
+                objSheets.Columns[14].ColumnWidth = 6.63;
+                objSheets.Columns[15].ColumnWidth = 6.63;
+                objSheets.Columns[16].ColumnWidth = 6.63;
+                objSheets.Columns[17].ColumnWidth = 6.63;
+
+                objSheets.Columns[19].ColumnWidth = 8;
+                objSheets.Columns[20].ColumnWidth = 8;
+                objSheets.Columns[22].ColumnWidth = 15.63;
+                objSheets.Columns[37].ColumnWidth = 11.88;
+            }
             #endregion
             this.HideWaitMessage();
 
