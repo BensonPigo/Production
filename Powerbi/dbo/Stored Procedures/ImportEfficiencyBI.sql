@@ -38,7 +38,6 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'')
-	,Remark=isnull(sd.Remark,'')
     ,o.SciDelivery
 	,sd.Ukey
 into #tmpSewingDetail
@@ -93,7 +92,6 @@ select distinct ID,OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisi
     ,SubConOutContractNumber
     ,SubconInSisterFty
     ,SewingReasonDesc
-    ,Remark
 	,Ukey
 into #tmpSewingGroup
 from #tmpSewingDetail
@@ -194,7 +192,6 @@ select * INTO #Final from(
 		,DateRange = IIF(CumulateDate>=10,'>=10',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty,Diff = t.QAQty-InlineQty
 		,rate
-        ,isnull(t.Remark,'')Remark		
         ,isnull(t.SewingReasonDesc,'')SewingReasonDesc
 		 
     from #tmp1stFilter t )a
@@ -257,7 +254,6 @@ WHEN MATCHED THEN
 		,t.ProdOutput = s.InlineQty
 		,t.Diff = s.Diff
 		,t.Rate = s.Rate
-		,t.Remark = s.Remark
 		,t.SewingReasonDesc = s.SewingReasonDesc
 		,t.SciDelivery = s.SciDelivery
 WHEN NOT MATCHED THEN
@@ -303,7 +299,6 @@ WHEN NOT MATCHED THEN
            ,s.InlineQty
            ,s.Diff
            ,s.Rate
-           ,s.Remark
            ,s.SewingReasonDesc
 		   ,s.SciDelivery
 		  );
