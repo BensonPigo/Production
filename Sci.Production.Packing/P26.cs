@@ -203,7 +203,7 @@ namespace Sci.Production.Packing
                             List<ZPL> zPL_Objects = new List<ZPL>();
 
                             // 若是混尺碼則分開處理
-                            if (tmppArray[24] == "MIXED")
+                            if (tmppArray.Contains("MIXED"))
                             {
                                 string[] Sizes = tmppArray[Array.IndexOf(tmppArray, tmppArray.Where(o => o == "Size/Qty").FirstOrDefault()) + 1].Split(' ');
                                 string[] qtyOfSizes = tmppArray[Array.IndexOf(tmppArray, tmppArray.Where(o => o == "Size/Qty").FirstOrDefault()) + 2].Split(' ');
@@ -213,11 +213,12 @@ namespace Sci.Production.Packing
 
                                 string tmpStr = string.Empty;
                                 int q = 0;
-                                for (int ix = 0; ix <= tmppArray[33].Length - 1; ix++)
+                                int getMixInfoIndex = tmppArray.ToList().IndexOf(tmppArray.Where(o => o.Contains("of ")).FirstOrDefault()); //tmppArray.Where(o => o.Contains("of ")).FirstOrDefault()
+                                for (int ix = 0; ix <= tmppArray[getMixInfoIndex].Length - 1; ix++)
                                 {
                                     MixedCompares.Add(new MixedCompare() {
-                                        Text = tmppArray[33][ix].ToString(),
-                                        IsInt = int.TryParse(tmppArray[33][ix].ToString(), out q)
+                                        Text = tmppArray[getMixInfoIndex][ix].ToString(),
+                                        IsInt = int.TryParse(tmppArray[getMixInfoIndex][ix].ToString(), out q)
                                     });
                                 }
 
@@ -247,22 +248,29 @@ namespace Sci.Production.Packing
                                 }
 
                                 // 每個小包的總和，跟Qty的數字沒對上直接return
-                                if (size_qty.Sum(o => o.Qty) != Convert.ToInt32(tmppArray[28]))
+                                int MIXED_textindex = tmppArray.ToList().IndexOf("MIXED");
+                                int Qty_Index = MIXED_textindex + 4;
+                                if (size_qty.Sum(o => o.Qty) != Convert.ToInt32(tmppArray[Qty_Index]))
                                 {
                                     MyUtility.Msg.InfoBox($"CustCTN: {tmppArray[0].Split(' ')[1]}, Total of <Size/Qty> is not equal <Qty> !!");
                                     this.HideWaitMessage();
                                     return;
                                 }
 
+                                int Qty_textindex = tmppArray.ToList().IndexOf("Qty:");
+                                int CustPONo_index = Qty_textindex + 1;
+                                int Style_index = Qty_textindex + 2;
+                                int SizeCode_index = Qty_textindex + 4;
+                                int ShipQty_index = Qty_textindex + 8;
                                 zPL_Objects.Add(
                                      new ZPL()
                                      {
                                          CustCTN = tmppArray[0].Split(' ')[1],
-                                         CustPONo = tmppArray[21],
-                                         StyleID = tmppArray[22].Split('-')[0],
-                                         Article = tmppArray[22].Split('-')[1],
-                                         SizeCode = tmppArray[24], //MIXED
-                                         ShipQty = tmppArray[28],
+                                         CustPONo = tmppArray[CustPONo_index],
+                                         StyleID = tmppArray[Style_index].Split('-')[0],
+                                         Article = tmppArray[Style_index].Split('-')[1],
+                                         SizeCode = tmppArray[SizeCode_index], //MIXED
+                                         ShipQty = tmppArray[ShipQty_index],
                                          Size_Qty_List = size_qty
                                      }
                                  );
