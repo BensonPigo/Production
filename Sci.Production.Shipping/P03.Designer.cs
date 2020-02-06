@@ -95,6 +95,7 @@
             this.ChkDoortoDoorDelivery = new Sci.Win.UI.CheckBox();
             this.labelFormE = new Sci.Win.UI.Label();
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
+            this.chkSQCS = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -112,6 +113,7 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.labelFormE);
+            this.masterpanel.Controls.Add(this.chkSQCS);
             this.masterpanel.Controls.Add(this.ChkDoortoDoorDelivery);
             this.masterpanel.Controls.Add(this.chkNonDeclare);
             this.masterpanel.Controls.Add(this.label6);
@@ -244,6 +246,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkNonDeclare, 0);
             this.masterpanel.Controls.SetChildIndex(this.ChkDoortoDoorDelivery, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkSQCS, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFormE, 0);
             // 
             // detailpanel
@@ -1042,6 +1045,20 @@
             this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserHandle.TabIndex = 36;
             // 
+            // chkSQCS
+            // 
+            this.chkSQCS.AutoSize = true;
+            this.chkSQCS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SQCS", true));
+            this.chkSQCS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkSQCS.IsSupportEditMode = false;
+            this.chkSQCS.Location = new System.Drawing.Point(828, 306);
+            this.chkSQCS.Name = "chkSQCS";
+            this.chkSQCS.ReadOnly = true;
+            this.chkSQCS.Size = new System.Drawing.Size(65, 21);
+            this.chkSQCS.TabIndex = 65;
+            this.chkSQCS.Text = "SQCS";
+            this.chkSQCS.UseVisualStyleBackColor = true;
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(1008, 662);
@@ -1153,5 +1170,6 @@
         private Win.UI.CheckBox chkNonDeclare;
         private Win.UI.CheckBox ChkDoortoDoorDelivery;
         private Win.UI.Label labelFormE;
+        private Win.UI.CheckBox chkSQCS;
     }
 }
