@@ -349,6 +349,8 @@ SET
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
 ,a.TMS	= b.TMS
+,a.SMNoticeID = b.SMNoticeID
+,a.PatternVersion = b.PatternVersion
 --,a.TradeUkey	= b.Ukey
 
 from Production.dbo.Style_Artwork as a 
@@ -374,7 +376,8 @@ INSERT INTO Production.dbo.Style_Artwork(
 ,EditDate
 ,TMS
 ,TradeUkey
-
+,SMNoticeID
+,PatternVersion
 )
 select 
  b.StyleUkey
@@ -395,6 +398,8 @@ select
 ,b.EditDate
 ,b.TMS
 ,b.Ukey
+,b.SMNoticeID
+,b.PatternVersion
 
 from Trade_To_Pms.dbo.Style_Artwork as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Artwork as a WITH (NOLOCK) where a.TradeUkey = b.Ukey)
