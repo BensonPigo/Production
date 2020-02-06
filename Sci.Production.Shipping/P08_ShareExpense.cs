@@ -55,19 +55,11 @@ namespace Sci.Production.Shipping
             #region BLNo
             bLNo.CellValidating += (s, e) =>
             {
-                if (!this.EditMode)
+                if (!this.EditMode ||
+                    e.RowIndex == -1 ||
+                    MyUtility.Check.Empty(e.FormattedValue))
                 {
                     return; // 非編輯模式
-                }
-
-                if (e.RowIndex == -1)
-                {
-                    return; // 沒東西 return
-                }
-
-                if (MyUtility.Check.Empty(e.FormattedValue))
-                {
-                    return; // 沒資料 return
                 }
 
                 string cmd_type = string.Format(@"select * from ShippingAP where id='{0}'", this.apData["ID"]);
@@ -75,7 +67,8 @@ namespace Sci.Production.Shipping
                 DataRow drGrid = this.gridBLNo.GetDataRow<DataRow>(e.RowIndex);
 
                 DataTable dts = (DataTable)this.listControlBindingSource1.DataSource;
-                if (drGrid["BLNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper())
+                if (drGrid["BLNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper() ||
+                    (!drGrid.RowState.Equals(DataRowState.Added) && (e.FormattedValue.ToString().ToUpper().EqualString(drGrid["BLNO", DataRowVersion.Original].ToString().ToUpper()) || MyUtility.Check.Empty(drGrid["BLNO", DataRowVersion.Original]))))
                 {
                     return;
                 }
@@ -227,7 +220,8 @@ select * from Expt", e.FormattedValue.ToString());
                 string cmd_type = string.Format(@"select * from ShippingAP where id='{0}'", this.apData["ID"]);
                 DataRow drGrid = this.gridBLNo.GetDataRow<DataRow>(e.RowIndex);
                 DataTable dts = (DataTable)this.listControlBindingSource1.DataSource;
-                if (drGrid["BL2NO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper())
+                if (drGrid["BL2NO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper() ||
+                    (!drGrid.RowState.Equals(DataRowState.Added) && (e.FormattedValue.ToString().ToUpper().EqualString(drGrid["BL2NO", DataRowVersion.Original].ToString().ToUpper()) || MyUtility.Check.Empty(drGrid["BL2NO", DataRowVersion.Original]))))
                 {
                     return;
                 }
@@ -304,6 +298,7 @@ from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
                         }
                     }
 
+                    dts.AcceptChanges();
                     e.Cancel = true; // 不進入RowIndex判斷
                 }
             };
@@ -311,19 +306,11 @@ from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
             #region WKNO
             wKNO.CellValidating += (s, e) =>
             {
-                if (!this.EditMode)
+                if (!this.EditMode ||
+                    e.RowIndex == -1 ||
+                    MyUtility.Check.Empty(e.FormattedValue))
                 {
                     return; // 非編輯模式
-                }
-
-                if (e.RowIndex == -1)
-                {
-                    return; // 沒東西 return
-                }
-
-                if (MyUtility.Check.Empty(e.FormattedValue))
-                {
-                    return; // 沒資料 return
                 }
 
                 string cmd_type = string.Format(@"select * from ShippingAP where id='{0}'", this.apData["ID"]);
@@ -331,7 +318,8 @@ from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
                 DataRow drGrid = this.gridBLNo.GetDataRow<DataRow>(e.RowIndex);
 
                 DataTable dts = (DataTable)this.listControlBindingSource1.DataSource;
-                if (drGrid["WKNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper())
+                if (drGrid["WKNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper() ||
+                    (!drGrid.RowState.Equals(DataRowState.Added) && (e.FormattedValue.ToString().ToUpper().EqualString(drGrid["WKNO", DataRowVersion.Original].ToString().ToUpper()) || MyUtility.Check.Empty(drGrid["WKNO", DataRowVersion.Original]))))
                 {
                     return;
                 }
@@ -592,7 +580,7 @@ using (
 from GMTBooking g WITH (NOLOCK) 
 where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
-	and t.BLNO = s.BLNO and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
+	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
 when matched AND t.junk=1 then
 	update set
 	t.junk=0
@@ -917,22 +905,15 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                         DataRow[] findrow = null;
 
                         findrow = duplicData.Select(string.Format(
-                            @"BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'",
-                            MyUtility.Check.Empty(dr["BLNo"].ToString()) ? "Empty" : dr["BLNo"].ToString(),
+                            @"WKNo = '{0}' and InvNo = '{1}'",
                             MyUtility.Check.Empty(dr["WKNo"].ToString()) ? "Empty" : dr["WKNo"].ToString(),
                             MyUtility.Check.Empty(dr["InvNo"].ToString()) ? "Empty" : dr["InvNo"].ToString()));
 
-                        // findrow = duplicData.Select(string.Format(@"BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"])));
                         if (findrow.Length == 0)
                         {
                             duplicData.ImportRow(dr);
                             for (int i = 0; i < duplicData.Rows.Count; i++)
                             {
-                                if (MyUtility.Check.Empty(duplicData.Rows[i]["BLNo"].ToString()))
-                                {
-                                    duplicData.Rows[i]["BLNo"] = "Empty";
-                                }
-
                                 if (MyUtility.Check.Empty(duplicData.Rows[i]["WKNo"].ToString()))
                                 {
                                     duplicData.Rows[i]["WKNo"] = "Empty";
@@ -1048,12 +1029,10 @@ Orders (Seq) :";
 update s 
 set s.Junk = 1
 from  ShareExpense s
-where   s.ShippingAPID = '{0}' 
-        and s.BLNo = '{1}' 
-        and s.WKNo = '{2}' 
-        and s.InvNo = '{3}';",
+where   s.ShippingAPID = '{0}'         
+        and s.WKNo = '{1}' 
+        and s.InvNo = '{2}';",
                             MyUtility.Convert.GetString(this.apData["ID"]),
-                            MyUtility.Convert.GetString(dr["BLNo", DataRowVersion.Original]).Trim(),
                             MyUtility.Convert.GetString(dr["WKNo", DataRowVersion.Original]).Trim(),
                             MyUtility.Convert.GetString(dr["InvNo", DataRowVersion.Original]).Trim()));
                     }
@@ -1067,9 +1046,8 @@ where   s.ShippingAPID = '{0}'
                         addCmds.Add(string.Format(
                             @"
 merge ShareExpense t
-using (select '{0}', '{1}', '{2}', '{3}') as s (ShippingAPID, BLNO, WKNO, InvNo)
-on	t.ShippingAPID = s.ShippingAPID 
-	and t.BLNO = s.BLNO
+using (select '{0}', '{2}', '{3}') as s (ShippingAPID, WKNO, InvNo)
+on	t.ShippingAPID = s.ShippingAPID 	
 	and t.WKNO = s.WKNO
 	and t.InvNo = s.InvNo
 when matched then
@@ -1101,8 +1079,7 @@ update ShareExpense
 set ShipModeID = '{0}'
     , GW = {1}
     , CBM = {2} 
-where   ShippingAPID = '{3}' 
-        and BLNo = '{4}' 
+where   ShippingAPID = '{3}'
         and WKNo = '{5}' 
         and InvNo = '{6}';",
                             MyUtility.Convert.GetString(dr["ShipModeID"]),
@@ -1497,6 +1474,7 @@ BEGIN
 	FETCH NEXT FROM cursor_GB INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
 END
 CLOSE cursor_GB
+DEALLOCATE cursor_GB
 
 OPEN cursor_FtyWK
 FETCH NEXT FROM cursor_FtyWK INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
@@ -1509,6 +1487,7 @@ BEGIN
 	FETCH NEXT FROM cursor_FtyWK INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
 END
 CLOSE cursor_FtyWK
+DEALLOCATE cursor_FtyWK
 
 OPEN cursor_PackingList
 FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
@@ -1520,7 +1499,9 @@ BEGIN
 
 	FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
 END
-CLOSE cursor_PackingList", MyUtility.Convert.GetString(this.apData["ID"]));
+CLOSE cursor_PackingList
+DEALLOCATE cursor_PackingList
+", MyUtility.Convert.GetString(this.apData["ID"]));
                 #endregion
                 result = DBProxy.Current.Execute(null, updateCmd);
                 if (!result)

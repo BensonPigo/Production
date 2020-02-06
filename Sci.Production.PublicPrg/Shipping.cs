@@ -168,7 +168,7 @@ BEGIN
 				SET @inputamount = ROUND(@minusamount,@exact)
 			END
 
-	select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountID = @accno
+	select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @id and WKNo = @wkno and InvNo = @invno and AccountID = @accno
 	IF @recno = 0
 		BEGIN
 			INSERT INTO ShareExpense(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountID,EditName,EditDate)
@@ -178,7 +178,7 @@ BEGIN
 		BEGIN
 			UPDATE ShareExpense 
 			SET CurrencyID = @currency, Amount = @inputamount, ShareBase = @1stsharebase, EditName = @login, EditDate = @adddate 
-			where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountID = @accno
+			where ShippingAPID = @id and WKNo = @wkno and InvNo = @invno and AccountID = @accno
 		END
 
 	
@@ -190,7 +190,7 @@ BEGIN
 				BEGIN
 					UPDATE ShareExpense 
 			SET CurrencyID = @currency, Amount = Amount + @remainamount, EditName = @login, EditDate = @adddate 
-			where ShippingAPID = @id and WKNo = @maxwkno and BLNo = @maxblno and InvNo = @maxinvno and AccountID = @accno
+			where ShippingAPID = @id and WKNo = @maxwkno and InvNo = @maxinvno and AccountID = @accno
 				END
 		END
 	ELSE
