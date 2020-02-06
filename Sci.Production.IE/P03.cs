@@ -38,6 +38,12 @@ namespace Sci.Production.IE
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.Fill;
         }
 
+        protected override void ClickLocate()
+        {
+            base.ClickLocate();
+            this.OnDetailEntered();
+        }
+
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -74,6 +80,25 @@ order by ld.No, ld.GroupKey", masterID);
         /// </summary>
         protected override void OnDetailEntered()
         {
+            if (this.CurrentMaintain.Empty())
+            {
+                this.numCPUPC.Value = null;
+                this.displayDesc.Text = string.Empty;
+                this.numTargetHrIdeal.Value = null;
+                this.numDailydemandshiftIdeal.Value = null;
+                this.numTaktTimeIdeal.Value = null;
+                this.numTotalTimeDiff.Value = null;
+                this.numEOLR.Value = null;
+                this.numHighestTimeDiff.Value = null;
+                this.numEffieiency.Value = null;
+                this.numPPH.Value = null;
+                this.numLBR.Value = null;
+                this.numLLER.Value = null;
+                this.listControlBindingSource1.DataSource = null;
+                this.btnNotHitTargetReason.Enabled = false;
+                return;
+            }
+
             base.OnDetailEntered();
             string sqlCmd = string.Format("select Description,CPU from Style WITH (NOLOCK) where Ukey = {0}", this.CurrentMaintain["StyleUkey"].ToString());
             DataRow styleData;
@@ -870,6 +895,7 @@ WHERE Ukey={item["Ukey"]}
         {
             base.ClickUndo();
             this.txtStyleComboType.BackColor = this.txtStyleID.BackColor;
+            this.OnDetailEntered();
         }
 
         // 加總傳入的GroupKey的GSD & Cycle Time
