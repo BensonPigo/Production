@@ -155,7 +155,7 @@ from
 			, i.ProjectID
 			, i.Deadline
 			, i.Refno
-			, b.ColorID
+			, [ColorID]=IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID)
 			, i.Ukey
 			, I.SCIRefno
 			, I.UnitID POUNIT
@@ -165,6 +165,7 @@ from
 	inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
 	left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
 	left join dbo.PO_Supp as s WITH (NOLOCK) on s.ID = b.ID and s.Seq1 = b.SEQ1
+	left join fabric WITH (NOLOCK) on fabric.SCIRefno = b.scirefno
 	where f.Junk = 0 ");
 
             if (!MyUtility.Check.Empty(spno))
@@ -176,7 +177,7 @@ from
             if (!MyUtility.Check.Empty(Refno))
                 sqlcmd.Append(" and i.Refno = @Refno");
             if (!MyUtility.Check.Empty(ColorID))
-                sqlcmd.Append(" and b.ColorID = @ColorID");
+                sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID) = @ColorID");
             if (!MyUtility.Check.Empty(factory))
                 sqlcmd.Append(" and i.FactoryID = @factory");
             sqlcmd.Append(@"
@@ -242,6 +243,7 @@ from (
     inner join invtrans t WITH (NOLOCK) on t.InventoryUkey = i.Ukey
     inner join #tmp_TpeIventory tp on T.InventoryUkey = tp.Ukey
     left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
+	left join fabric WITH (NOLOCK) on fabric.SCIRefno = b.scirefno
     where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(@" 
@@ -255,7 +257,7 @@ from (
             if (!MyUtility.Check.Empty(Refno))
                 sqlcmd.Append(" and i.Refno = @Refno");
             if (!MyUtility.Check.Empty(ColorID))
-                sqlcmd.Append(" and b.ColorID = @ColorID");
+                sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID) = @ColorID");
             if (!MyUtility.Check.Empty(factory))
                 sqlcmd.Append(" and i.FactoryID = @factory");
 
@@ -285,6 +287,7 @@ from (
     inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type='3'
     inner join #tmp_TpeIventory tp on T.InventoryUkey = tp.Ukey
     left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
+	left join fabric WITH (NOLOCK) on fabric.SCIRefno = b.scirefno
     where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(@" 
@@ -298,7 +301,7 @@ from (
             if (!MyUtility.Check.Empty(Refno))
                 sqlcmd.Append(" and i.Refno = @Refno");
             if (!MyUtility.Check.Empty(ColorID))
-                sqlcmd.Append(" and b.ColorID = @ColorID");
+                sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID) = @ColorID");
             if (!MyUtility.Check.Empty(factory))
                 sqlcmd.Append(" and i.FactoryID = @factory");
 
