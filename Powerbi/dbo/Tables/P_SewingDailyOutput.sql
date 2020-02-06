@@ -41,7 +41,6 @@
     [ProdOutput]              INT             CONSTRAINT [DF__P_SewingD__ProdO__6E6149E0] DEFAULT ((0)) NULL,
     [Diff]                    INT             CONSTRAINT [DF__P_SewingDa__Diff__6F556E19] DEFAULT ((0)) NULL,
     [Rate]                    NUMERIC (10, 2) CONSTRAINT [DF__P_SewingDa__Rate__70499252] DEFAULT ((0)) NULL,
-    [Remark]                  NVARCHAR (1000) CONSTRAINT [DF__P_SewingD__Remar__713DB68B] DEFAULT ('') NULL,
     [SewingReasonDesc]        NVARCHAR (1000) CONSTRAINT [DF__P_SewingD__Sewin__7231DAC4] DEFAULT ('') NULL,
     [SciDelivery] DATE NULL, 
     CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED ([Ukey] ASC, [MDivisionID] ASC)
@@ -53,7 +52,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'原因描�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'Remark';
+
 
 
 GO
