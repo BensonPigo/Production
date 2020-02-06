@@ -343,7 +343,7 @@ BEGIN
 			, bunIO.InComing
 			, bunIO.OutGoing
 			, bunD.Qty
-			, isnull(bunD.IsPair,0)
+			, [IsPair]=ISNULL(TopIsPair.IsPair,0)
 			, iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
 	from @QtyBySetPerCutpart st0
 	inner join @SubProcess sub on st0.SubprocessId = sub.SubprocessId
@@ -359,6 +359,23 @@ BEGIN
 								bunD.Patterncode = st0.Patterncode and
 								bunD.Sizecode = os.SizeCode
 	)bund
+	outer apply(
+		select	top 1
+				bunD.ID
+				, bunD.BundleGroup
+				, bunD.BundleNo
+				, bunD.IsPair
+		from Bundle bun
+		INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  
+		inner join Bundle_Detail bunD on bunD.Id = bun.ID
+		where bun.Orderid = st0.Orderid 
+			and bun.PatternPanel = st0.PatternPanel 
+			and bun.FabricPanelCode = st0.FabricPanelCode 
+			and bun.Article = st0.Article  
+			and bunD.Patterncode = st0.Patterncode 
+			and bunD.Sizecode = os.SizeCode
+		order by bun.AddDate desc
+	)TopIsPair
 	left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = sub.SubprocessId and isnull(bunIO.RFIDProcessLocationID,'') = ''
 	where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
 
@@ -379,7 +396,7 @@ BEGIN
 									when InOutRule = 2 then sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0))
 									else sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate) and
 										  InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate)
-										  ,Qty,0)) end) / iif(IsPair=1,m,1)
+										  ,Qty,0)) end) / iif(IsPair=1,IIF(m=1,2,m),1) 
 			 ,num = count(1)
 			, num_In = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),1,0)) 
 			, num_Out= sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),1,0))
@@ -394,10 +411,44 @@ BEGIN
 	-- 篩選 BundleGroup Step.1 --
 	if (@IsNeedCombinBundleGroup = 1)
 	begin
-		update @BundleInOutQty
-		set InQty = iif(num_In<num,0,InQty)
-			, OutQty = iif(num_Out<num,0,OutQty)
-			, FinishedQty = iif(num_F<num,0,FinishedQty)
+		----只抓有BundleInOut紀錄的In/Out Qty
+		UPDATE main
+		SET  main.InQty = ISNULL(MatchIn.InQty,0) --SELECT main.InQty , ISNULL(MatchIn.InQty,0)
+		FROM @BundleInOutQty main
+		OUTER APPLY(
+			select [InQty]=SUM( bunD.Qty)
+			from Bundle bun
+			INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  
+			inner join Bundle_Detail bunD on bunD.Id = bun.ID
+			inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId ='LOADING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
+			where bun.Orderid = main.Orderid 
+				and bun.PatternPanel = main.PatternPanel 
+				and bun.FabricPanelCode = main.FabricPanelCode 
+				and bun.Article = main.Article  
+				and bunD.Patterncode = main.Patterncode 
+				and bunD.Sizecode = main.Size
+				AND bunD.BundleGroup = main.BundleGroup
+				AND (bunIO.InComing Is NOT NULL AND bunIO.OutGoing IS NULL)
+		)MatchIn
+
+		UPDATE main
+		SET  main.OutQty = ISNULL(MatchOut.OutQty,0)
+		FROM @BundleInOutQty main
+		OUTER APPLY(
+			select [OutQty]=SUM( bunD.Qty)
+			from Bundle bun
+			INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  
+			inner join Bundle_Detail bunD on bunD.Id = bun.ID
+			inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId ='SORTING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
+			where bun.Orderid = main.Orderid 
+				and bun.PatternPanel = main.PatternPanel 
+				and bun.FabricPanelCode = main.FabricPanelCode 
+				and bun.Article = main.Article  
+				and bunD.Patterncode = main.Patterncode 
+				and bunD.Sizecode = main.Size
+				AND bunD.BundleGroup = main.BundleGroup
+				AND (bunIO.InComing Is NULL AND bunIO.OutGoing IS NOT NULL)
+		)MatchOut
 	end
 	
 	-- Step 2. --	

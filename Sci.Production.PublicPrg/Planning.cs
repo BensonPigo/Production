@@ -292,7 +292,7 @@ select	st0.Orderid
 		, bunIO.InComing
 		, bunIO.OutGoing
 		, bunD.Qty
-		, IsPair=isnull(bunD.IsPair,0)
+		, [IsPair]=ISNULL(TopIsPair.IsPair,0)--isnull(bunD.IsPair,0) 
 		, m=iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
 into #BundleInOutDetail{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
@@ -305,6 +305,23 @@ left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid
 							and	bunD.Patterncode = st0.Patterncode 
 							and	bunD.Sizecode = os.SizeCode 
 left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = sub.ID and isnull(bunIO.RFIDProcessLocationID,'') = ''
+outer apply(
+	select	top 1
+			bunD.ID
+			, bunD.BundleGroup
+			, bunD.BundleNo
+			, bunD.IsPair
+	from Bundle bun
+	INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID 
+	inner join Bundle_Detail bunD on bunD.Id = bun.ID
+	where bun.Orderid = st0.Orderid 
+		and bun.PatternPanel = st0.PatternPanel 
+		and bun.FabricPanelCode = st0.FabricPanelCode 
+		and bun.Article = st0.Article  
+		and bunD.Patterncode = st0.Patterncode 
+		and bunD.Sizecode = os.SizeCode
+	order by bun.AddDate desc
+)TopIsPair
 where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
 
 select	Orderid
@@ -321,7 +338,7 @@ select	Orderid
 		, OriOutQty = sum(iif(OutGoing is not null ,cast(Qty as int),0)) 
 		, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null ,cast(Qty as int),0))
 								when InOutRule = 2 then sum(iif(OutGoing is not null ,cast(Qty as int),0))
-								else sum(iif(OutGoing is not null and InComing is not null ,cast(Qty as int),0)) end) / iif(IsPair=1,m,1)
+								else sum(iif(OutGoing is not null and InComing is not null ,cast(Qty as int),0)) end) / iif(IsPair=1,IIF(m=1,2,m),1)
 		, num = count(1)
 		, num_In = sum(iif(InComing is not null ,1,0)) 
 		, num_Out= sum(iif(OutGoing is not null ,1,0))
@@ -340,10 +357,48 @@ group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, Fabr
                 {
                     sqlcmd += $@"
 --篩選 BundleGroup Step.1 --
-update #BundleInOutQty{subprocessIDtmp}
+/*update #BundleInOutQty{subprocessIDtmp}
 set InQty = iif(num_In<num,0,InQty)
 	, OutQty = iif(num_Out<num,0,OutQty)
-	, FinishedQty = iif(num_F<num,0,FinishedQty)
+	, FinishedQty = iif(num_F<num,0,FinishedQty)*/
+
+UPDATE main
+SET  main.InQty = ISNULL(MatchIn.InQty,0) --SELECT main.InQty , ISNULL(MatchIn.InQty,0)
+FROM #BundleInOutQty{subprocessIDtmp} main
+OUTER APPLY(
+	select [InQty]=SUM( bunD.Qty)
+	from Bundle bun
+	INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
+	inner join Bundle_Detail bunD on bunD.Id = bun.ID
+	inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId ='LOADING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
+	where bun.Orderid = main.Orderid 
+		and bun.PatternPanel = main.PatternPanel 
+		and bun.FabricPanelCode = main.FabricPanelCode 
+		and bun.Article = main.Article  
+		and bunD.Patterncode = main.Patterncode 
+		and bunD.Sizecode = main.Size
+		AND bunD.BundleGroup = main.BundleGroup
+		AND (bunIO.InComing Is NOT NULL AND bunIO.OutGoing IS NULL)
+)MatchIn
+
+UPDATE main
+SET  main.OutQty = ISNULL(MatchOut.OutQty,0)
+FROM #BundleInOutQty{subprocessIDtmp} main
+OUTER APPLY(
+	select [OutQty]=SUM( bunD.Qty)
+	from Bundle bun
+	INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  
+	inner join Bundle_Detail bunD on bunD.Id = bun.ID
+	inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId ='SORTING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
+	where bun.Orderid = main.Orderid 
+		and bun.PatternPanel = main.PatternPanel 
+		and bun.FabricPanelCode = main.FabricPanelCode 
+		and bun.Article = main.Article  
+		and bunD.Patterncode = main.Patterncode 
+		and bunD.Sizecode = main.Size
+		AND bunD.BundleGroup = main.BundleGroup
+		AND (bunIO.InComing Is NULL AND bunIO.OutGoing IS NOT NULL)
+)MatchOut
 
 select	OrderID
 		, Article
