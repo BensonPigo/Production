@@ -168,46 +168,46 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 	select * into #Debit_source from Trade_To_Pms.dbo.Debit WITH (NOLOCK) where ResponFTY in (select id from @Sayfty )
 
 	--先刪除Debit_Detail,再刪除Debit , Status = 'Junked' 且Debit_schedule無資料
-	delete Debit_Detail
+	delete Production.dbo.Debit_Detail
 	from Production.dbo.Debit 
 	inner join Production.dbo.Debit_Detail on Debit.ID = Debit_Detail.ID
 	inner join #Debit_source s on s.id = Debit.ID
 	where s.Status = 'Junked'
-	and not exists(select 1 from Debit_schedule where Debit_schedule.id = Debit.id)
+	and not exists(select 1 from Production.dbo.Debit_schedule where Debit_schedule.id = Debit.id)
 
-	delete Debit
+	delete Production.dbo.Debit
 	from Production.dbo.Debit 
 	inner join #Debit_source s on s.id = Debit.ID
 	where s.Status = 'Junked'
-	and not exists(select 1 from Debit_schedule where Debit_schedule.id = Debit.id)
+	and not exists(select 1 from Production.dbo.Debit_schedule where Debit_schedule.id = Debit.id)
 	
 	--先刪除LocalDebit_Detail,再刪除LocalDebit , Status = 'Junked' 且Debit_schedule無資料
-	delete LocalDebit_Detail
+	delete Production.dbo.LocalDebit_Detail
 	from Production.dbo.LocalDebit 
 	inner join Production.dbo.LocalDebit_Detail on LocalDebit.ID = LocalDebit_Detail.ID
 	inner join #Debit_source s on s.id = LocalDebit.ID
 	where s.Status = 'Junked'
-	and not exists(select 1 from Debit_schedule where Debit_schedule.id = LocalDebit.id)
+	and not exists(select 1 from Production.dbo.Debit_schedule where Debit_schedule.id = LocalDebit.id)
 
-	delete LocalDebit
+	delete Production.dbo.LocalDebit
 	from Production.dbo.LocalDebit 
 	inner join #Debit_source s on s.id = LocalDebit.ID
 	where s.Status = 'Junked'
-	and not exists(select 1 from Debit_schedule where Debit_schedule.id = LocalDebit.id)
+	and not exists(select 1 from Production.dbo.Debit_schedule where Debit_schedule.id = LocalDebit.id)
 	
 	--先刪除LocalDebit_Detail,再刪除LocalDebit , IsSubcon=0 且Debit_schedule無資料
-	delete LocalDebit_Detail
+	delete Production.dbo.LocalDebit_Detail
 	from Production.dbo.LocalDebit 
 	inner join Production.dbo.LocalDebit_Detail on LocalDebit.ID = LocalDebit_Detail.ID
 	inner join #Debit_source s on s.id = LocalDebit.ID
 	where s.IsSubcon=0
-	and not exists(select 1 from Debit_schedule where Debit_schedule.id = LocalDebit.id)
+	and not exists(select 1 from Production.dbo.Debit_schedule where Debit_schedule.id = LocalDebit.id)
 
-	delete LocalDebit
+	delete Production.dbo.LocalDebit
 	from Production.dbo.LocalDebit 
 	inner join #Debit_source s on s.id = LocalDebit.ID
 	where s.IsSubcon=0
-	and not exists(select 1 from Debit_schedule where Debit_schedule.id = LocalDebit.id)
+	and not exists(select 1 from Production.dbo.Debit_schedule where Debit_schedule.id = LocalDebit.id)
 
 	drop table #Debit_source
 END
