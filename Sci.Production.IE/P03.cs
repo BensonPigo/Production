@@ -82,19 +82,20 @@ order by ld.No, ld.GroupKey", masterID);
         {
             if (this.CurrentMaintain.Empty())
             {
-                this.numCPUPC.Value = 0;
+                this.numCPUPC.Value = null;
                 this.displayDesc.Text = string.Empty;
-                this.numTargetHrIdeal.Value = 0;
-                this.numDailydemandshiftIdeal.Value = 0;
-                this.numTaktTimeIdeal.Value = 0;
-                this.numTotalTimeDiff.Value = 0;
-                this.numEOLR.Value = 0;
-                this.numHighestTimeDiff.Value = 0;
-                this.numEffieiency.Value = 0;
-                this.numPPH.Value = 0;
-                this.numLBR.Value = 0;
-                this.numLLER.Value = 0;
+                this.numTargetHrIdeal.Value = null;
+                this.numDailydemandshiftIdeal.Value = null;
+                this.numTaktTimeIdeal.Value = null;
+                this.numTotalTimeDiff.Value = null;
+                this.numEOLR.Value = null;
+                this.numHighestTimeDiff.Value = null;
+                this.numEffieiency.Value = null;
+                this.numPPH.Value = null;
+                this.numLBR.Value = null;
+                this.numLLER.Value = null;
                 this.listControlBindingSource1.DataSource = null;
+                this.btnNotHitTargetReason.Enabled = false;
                 return;
             }
 
@@ -894,6 +895,7 @@ WHERE Ukey={item["Ukey"]}
         {
             base.ClickUndo();
             this.txtStyleComboType.BackColor = this.txtStyleID.BackColor;
+            this.OnDetailEntered();
         }
 
         // 加總傳入的GroupKey的GSD & Cycle Time
