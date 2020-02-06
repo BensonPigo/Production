@@ -79,6 +79,8 @@
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
+            this.label2 = new Sci.Win.UI.Label();
             this.chkAEQ = new Sci.Win.UI.CheckBox();
             this.labelBalance = new Sci.Win.UI.Label();
             this.labelBalanceValue = new Sci.Win.UI.Label();
@@ -87,8 +89,6 @@
             this.splitContainer6 = new System.Windows.Forms.SplitContainer();
             this.splitContainer7 = new System.Windows.Forms.SplitContainer();
             this.splitContainer8 = new System.Windows.Forms.SplitContainer();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
             this.radioGroup1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
@@ -334,7 +334,7 @@
             0,
             0,
             0});
-            this.numNoOfBundle.Validated += new System.EventHandler(this.numNoOfBundle_Validated);
+            this.numNoOfBundle.Validating += new System.ComponentModel.CancelEventHandler(this.NumNoOfBundle_Validating);
             // 
             // label_TotalCutOutput
             // 
@@ -789,6 +789,26 @@
             this.splitContainer5.SplitterDistance = 52;
             this.splitContainer5.TabIndex = 100;
             // 
+            // txtSpreadingNo1
+            // 
+            this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo1.IncludeJunk = true;
+            this.txtSpreadingNo1.Location = new System.Drawing.Point(435, 5);
+            this.txtSpreadingNo1.MDivision = "";
+            this.txtSpreadingNo1.Name = "txtSpreadingNo1";
+            this.txtSpreadingNo1.Size = new System.Drawing.Size(60, 23);
+            this.txtSpreadingNo1.TabIndex = 4;
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label2.Location = new System.Drawing.Point(348, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(84, 23);
+            this.label2.TabIndex = 100;
+            this.label2.Text = "Spreading No";
+            // 
             // chkAEQ
             // 
             this.chkAEQ.AutoSize = true;
@@ -910,26 +930,6 @@
             this.splitContainer8.Size = new System.Drawing.Size(1169, 322);
             this.splitContainer8.SplitterDistance = 273;
             this.splitContainer8.TabIndex = 0;
-            // 
-            // label2
-            // 
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label2.Location = new System.Drawing.Point(348, 6);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(84, 23);
-            this.label2.TabIndex = 100;
-            this.label2.Text = "Spreading No";
-            // 
-            // txtSpreadingNo1
-            // 
-            this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
-            this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo1.IncludeJunk = true;
-            this.txtSpreadingNo1.Location = new System.Drawing.Point(435, 5);
-            this.txtSpreadingNo1.MDivision = "";
-            this.txtSpreadingNo1.Name = "txtSpreadingNo1";
-            this.txtSpreadingNo1.Size = new System.Drawing.Size(60, 23);
-            this.txtSpreadingNo1.TabIndex = 4;
             // 
             // P11
             // 
