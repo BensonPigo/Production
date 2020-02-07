@@ -22,6 +22,7 @@ CREATE TABLE [dbo].[FIR_Physical] (
     [QCTime]      INT            CONSTRAINT [DF_FIR_Physical_QCTime] DEFAULT ((0)) NOT NULL,
     [QCStopQty]   TINYINT        CONSTRAINT [DF_FIR_Physical_QCStopQty] DEFAULT ((0)) NOT NULL,
     [IsQMS]       BIT            DEFAULT ((0)) NULL,
+    [Issue_DetailUkey] BIGINT NOT NULL DEFAULT 0, 
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
 
