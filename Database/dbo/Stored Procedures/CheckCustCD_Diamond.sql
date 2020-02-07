@@ -1,9 +1,4 @@
 
-/*
-ISP20200031
-
-*/
-
 CREATE PROCEDURE [dbo].[CheckCustCD_Diamond]
 (
 	@BrandID As VARCHAR(50)='NIKE'   ----Default Set NIKE
@@ -18,6 +13,7 @@ BEGIN
            ,@CcAddress As VARCHAR(1000)=''
            ,@Subject   As VARCHAR(1000)=''
 		   ,@IsEmpty As Bit = 0
+		   ,@EmptyCustCD As VARCHAR(MAX)=''
 		   ;
 
 	SELECT   @ToAddress = ToAddress
@@ -29,13 +25,23 @@ BEGIN
 
 
 	IF EXISTS(
-		SELECT *
-		FROM Production.dbo.CustCD
+		SELECT BrandID,ID
+		FROM CustCD
 		WHERE BrandID = @BrandID
 		AND (DiamondCustCD ='' OR DiamondCity='')
 	)
 	BEGIN
 		SET @IsEmpty=1
+
+		SELECT @EmptyCustCD = (
+				SELECT '¡D'+ID + char(10)
+				FROM CustCD
+				WHERE BrandID = @BrandID
+				AND (DiamondCustCD ='' OR DiamondCity='')
+				FOR XML PATH('')
+			)	
+		;
+		SET @mailBody = @mailBody+@EmptyCustCD;
 	END
 
 	IF @IsEmpty = 1
