@@ -211,31 +211,42 @@ namespace Sci.Production.Packing
                                 List<SizeObject> size_qty = new List<SizeObject>();
                                 List<MixedCompare> MixedCompares = new List<MixedCompare>();
 
+                                // 判斷是否有另外小包裝，# of Prepacks: 2 of 12這類的文字，沒有的話全部都算 1 就好
                                 string tmpStr = string.Empty;
                                 int q = 0;
-                                int getMixInfoIndex = tmppArray.ToList().IndexOf(tmppArray.Where(o => o.Contains("of ")).FirstOrDefault()); //tmppArray.Where(o => o.Contains("of ")).FirstOrDefault()
-                                for (int ix = 0; ix <= tmppArray[getMixInfoIndex].Length - 1; ix++)
-                                {
-                                    MixedCompares.Add(new MixedCompare() {
-                                        Text = tmppArray[getMixInfoIndex][ix].ToString(),
-                                        IsInt = int.TryParse(tmppArray[getMixInfoIndex][ix].ToString(), out q)
-                                    });
-                                }
+                                int getMixInfoIndex = tmppArray.ToList().IndexOf(tmppArray.Where(o => o.Contains("of ")).FirstOrDefault());
 
-                                foreach (var item in MixedCompares)
+                                if (getMixInfoIndex != -1)
                                 {
-
-                                    if (tmpStr != string.Empty && !item.IsInt)
+                                    for (int ix = 0; ix <= tmppArray[getMixInfoIndex].Length - 1; ix++)
                                     {
-                                        break;
+                                        MixedCompares.Add(new MixedCompare() {
+                                            Text = tmppArray[getMixInfoIndex][ix].ToString(),
+                                            IsInt = int.TryParse(tmppArray[getMixInfoIndex][ix].ToString(), out q)
+                                        });
                                     }
 
-                                    if (item.IsInt)
+                                    foreach (var item in MixedCompares)
                                     {
-                                        tmpStr += item.Text;
+
+                                        if (tmpStr != string.Empty && !item.IsInt)
+                                        {
+                                            break;
+                                        }
+
+                                        if (item.IsInt)
+                                        {
+                                            tmpStr += item.Text;
+                                        }
                                     }
+
+                                }
+                                else
+                                {
+                                    tmpStr = "1";
                                 }
 
+                                // 得到每個小包裝的數量，再拿下去乘
                                 int QtyPerSmallPack = Convert.ToInt32(tmpStr);
 
                                 // 每個尺寸的數量
