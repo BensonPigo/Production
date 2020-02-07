@@ -339,7 +339,7 @@ and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
 
 -----orderid & ArtworkTypeID & Seq
 select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS,t.QAQty,t.FactoryID,t.Team,t.OutputDate,t.SewingLineID,
-                IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,t.Category,t.ComboType
+                IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,t.Category,t.ComboType,t.SubconOutFty
 into #idat
 from #tmpSewingGroup t
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = t.OrderId
@@ -351,19 +351,20 @@ declare @columnsName nvarchar(max) = stuff((select concat(',[',ArtworkType_Unit,
 declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)')from #atall2 for xml path(''))
 
 declare @TTLZ nvarchar(max) = 
-(select concat(',[',ArtworkType_Unit,']=sum(isnull(Rate*[',ArtworkType_Unit,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType)'
-,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType)'))
-,',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType),',iif(Unit='QTY','4','3'),')'
-,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType),',iif(Unit='QTY','4','3'),')'))
+(select concat(',[',ArtworkType_Unit,']=sum(isnull(Rate*[',ArtworkType_Unit,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty)'
+,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty)'))
+,',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty),',iif(Unit='QTY','4','3'),')'
+,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty),',iif(Unit='QTY','4','3'),')'))
 )from #atall for xml path(''))" : " ")}
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
-{(this.chk_Include_Artwork.Checked ? @"select orderid,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty '+@NameZ+N'
+{(this.chk_Include_Artwork.Checked ?
+@"select orderid,SubconOutFty,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty '+@NameZ+N'
 into #oid_at
 from
 (
 	select orderid = i.ID,a.ArtworkType_Unit,i.qaqty,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,iif(a.Unit=''CPU'',i.Price,i.Qty))),
-           i.FactoryID,i.Team,i.OutputDate,i.SewingLineID,i.LastShift,i.Category,i.ComboType
+           i.FactoryID,i.Team,i.OutputDate,i.SewingLineID,i.LastShift,i.Category,i.ComboType,i.SubconOutFty
 	from #atall2 a left join #idat i on i.ArtworkTypeID = a.ID and i.Seq = a.Seq
 )a
 PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
@@ -443,12 +444,13 @@ select * from(
             {
                 sqlCmd.Append(@" left join #oid_at o on o.orderid = t.OrderId and 
                            o.FactoryID = t.FactoryID and
-                           o.Team       = t.Team and
-                           o.OutputDate           = t.OutputDate    and
-                           o.SewingLineID          = t.SewingLineID and
-                           o.LastShift          = t.LastShift       and
-                           o.Category          = t.Category and
-                           o.ComboType      =   t.ComboType");
+                           o.Team = t.Team and
+                           o.OutputDate = t.OutputDate and
+                           o.SewingLineID = t.SewingLineID and
+                           o.LastShift = t.LastShift and
+                           o.Category = t.Category and
+                           o.ComboType = t.ComboType and
+                           o.SubconOutFty = t.SubconOutFty");
             }
 
  sqlCmd.Append($@" )a
