@@ -359,7 +359,14 @@ where o.Id = '{0}'",
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("KeyWord", MyUtility.GetValue.Lookup("FtyGroup", this.CurrentMaintain["OrderID"].ToString(), "Orders", "ID"), "Factory", "ID") + "AP", "AirPP", DateTime.Today, 2, "Id", null);
+                string keyWord = MyUtility.GetValue.Lookup("KeyWord", MyUtility.GetValue.Lookup("FtyGroup", this.CurrentMaintain["OrderID"].ToString(), "Orders", "ID"), "Factory", "ID");
+                if (MyUtility.Check.Empty(keyWord))
+                {
+                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
+                    return false;
+                }
+
+                string id = MyUtility.GetValue.GetID(keyWord + "AP", "AirPP", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
