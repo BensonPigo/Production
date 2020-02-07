@@ -34,6 +34,8 @@
     [EditDate]          DATETIME       NULL,
     [Kit]               VARCHAR (6)    DEFAULT ('') NULL,
     [BIRShipTo]         VARCHAR (300)  NULL,
+	[DiamondCustCD]		VARCHAR (10)  NULL,
+	[DiamondCity]		VARCHAR (100)  NULL,
     CONSTRAINT [PK_CustCD] PRIMARY KEY CLUSTERED ([BrandID] ASC, [ID] ASC)
 );
 
