@@ -107,7 +107,8 @@ order by M desc");
             }
             DualResult result;
 
-            string sqlcmd = string.Format(@"select a.AGCCode [Factory ID]
+            string sqlcmd = string.Format(@"select DISTINCT
+                                                   a.AGCCode [Factory ID]
                                                   ,b.SeasonId [Season]
                                                   ,b.BulkMR [DevMR]
                                                   ,b.SampleMR [BulkMR]
