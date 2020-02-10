@@ -315,9 +315,9 @@ AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
         private void Page1_Query()
         {
             // 檢查[表頭][ETA+SP#+PO#] 如果全為空請跳出訊息並return
-            if (MyUtility.Check.Empty(this.dateRange1.Value1) && MyUtility.Check.Empty(this.dateRange1.Value1) && MyUtility.Check.Empty(this.txtsp.Text) && MyUtility.Check.Empty(this.txtpo.Text))
+            if (MyUtility.Check.Empty(this.dateATA.Value1) && MyUtility.Check.Empty(this.dateATA.Value2) &&MyUtility.Check.Empty(this.dateRangeETA.Value1) && MyUtility.Check.Empty(this.dateRangeETA.Value1) && MyUtility.Check.Empty(this.txtsp.Text) && MyUtility.Check.Empty(this.txtpo.Text))
             {
-                MyUtility.Msg.WarningBox("Please select ETA or SP# or PO# at least one field entry.");
+                MyUtility.Msg.WarningBox("Please select ATA or ETA or SP# or PO# at least one field entry.");
                 return;
             }
 
@@ -327,11 +327,17 @@ AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
             string sqlwhere = string.Empty;
             List<string> sqlwheres = new List<string>();
             List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-            if (!MyUtility.Check.Empty(this.dateRange1.Value1) && !MyUtility.Check.Empty(this.dateRange1.Value1))
+            if (!MyUtility.Check.Empty(this.dateRangeETA.Value1) && !MyUtility.Check.Empty(this.dateRangeETA.Value2))
             {
-                listSQLParameter.Add(new SqlParameter("@ETA1", this.dateRange1.Value1));
-                listSQLParameter.Add(new SqlParameter("@ETA2", this.dateRange1.Value2));
+                listSQLParameter.Add(new SqlParameter("@ETA1", this.dateRangeETA.Value1));
+                listSQLParameter.Add(new SqlParameter("@ETA2", this.dateRangeETA.Value2));
                 sqlwheres.Add(" Export.ETA between @ETA1 and @ETA2 ");
+            }
+            if (!MyUtility.Check.Empty(this.dateATA.Value1) && !MyUtility.Check.Empty(this.dateATA.Value2))
+            {
+                listSQLParameter.Add(new SqlParameter("@ATA1", this.dateATA.Value1));
+                listSQLParameter.Add(new SqlParameter("@ATA2", this.dateATA.Value2));
+                sqlwheres.Add(" Export.WhseArrival between @ATA1 and @ATA2 ");
             }
 
             if (!MyUtility.Check.Empty(this.txtsp.Text))

@@ -34,6 +34,10 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabInspectionReport = new System.Windows.Forms.TabPage();
+            this.dateATA = new Sci.Win.UI.DateRange();
+            this.label8 = new Sci.Win.UI.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnDownloadFile = new Sci.Win.UI.Button();
@@ -42,7 +46,7 @@
             this.txtpo = new Sci.Win.UI.TextBox();
             this.txtsp = new Sci.Win.UI.TextBox();
             this.txtSeq = new Sci.Production.Class.txtSeq();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.dateRangeETA = new Sci.Win.UI.DateRange();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
@@ -64,8 +68,6 @@
             this.inspectionReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInspectionReport.SuspendLayout();
@@ -84,11 +86,13 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1094, 524);
+            this.tabControl1.Size = new System.Drawing.Size(1191, 524);
             this.tabControl1.TabIndex = 0;
             // 
             // tabInspectionReport
             // 
+            this.tabInspectionReport.Controls.Add(this.dateATA);
+            this.tabInspectionReport.Controls.Add(this.label8);
             this.tabInspectionReport.Controls.Add(this.label7);
             this.tabInspectionReport.Controls.Add(this.displayBox1);
             this.tabInspectionReport.Controls.Add(this.btnClose);
@@ -99,21 +103,72 @@
             this.tabInspectionReport.Controls.Add(this.txtpo);
             this.tabInspectionReport.Controls.Add(this.txtsp);
             this.tabInspectionReport.Controls.Add(this.txtSeq);
-            this.tabInspectionReport.Controls.Add(this.dateRange1);
+            this.tabInspectionReport.Controls.Add(this.dateRangeETA);
             this.tabInspectionReport.Controls.Add(this.label3);
             this.tabInspectionReport.Controls.Add(this.label2);
             this.tabInspectionReport.Controls.Add(this.label1);
             this.tabInspectionReport.Location = new System.Drawing.Point(4, 25);
             this.tabInspectionReport.Name = "tabInspectionReport";
             this.tabInspectionReport.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInspectionReport.Size = new System.Drawing.Size(1086, 495);
+            this.tabInspectionReport.Size = new System.Drawing.Size(1183, 495);
             this.tabInspectionReport.TabIndex = 0;
             this.tabInspectionReport.Text = "Inspection Report";
+            // 
+            // dateATA
+            // 
+            // 
+            // 
+            // 
+            this.dateATA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateATA.DateBox1.Name = "";
+            this.dateATA.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateATA.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateATA.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateATA.DateBox2.Name = "";
+            this.dateATA.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateATA.DateBox2.TabIndex = 1;
+            this.dateATA.Location = new System.Drawing.Point(75, 6);
+            this.dateATA.Name = "dateATA";
+            this.dateATA.Size = new System.Drawing.Size(280, 23);
+            this.dateATA.TabIndex = 1;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(8, 6);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(64, 23);
+            this.label8.TabIndex = 13;
+            this.label8.Text = "ATA";
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(36, 466);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(689, 15);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "Fabric with clima function items, need to check received report included (6.04 Wa" +
+    "ter Absorbency + 6.07 Drying Time) by dyelot.";
+            // 
+            // displayBox1
+            // 
+            this.displayBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(7, 463);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(23, 23);
+            this.displayBox1.TabIndex = 10;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(995, 459);
+            this.btnClose.Location = new System.Drawing.Point(1092, 459);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 9;
@@ -124,7 +179,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(909, 459);
+            this.btnSave.Location = new System.Drawing.Point(1006, 459);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 8;
@@ -135,7 +190,7 @@
             // btnDownloadFile
             // 
             this.btnDownloadFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDownloadFile.Location = new System.Drawing.Point(773, 459);
+            this.btnDownloadFile.Location = new System.Drawing.Point(870, 459);
             this.btnDownloadFile.Name = "btnDownloadFile";
             this.btnDownloadFile.Size = new System.Drawing.Size(130, 30);
             this.btnDownloadFile.TabIndex = 7;
@@ -174,13 +229,13 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(1075, 411);
+            this.grid1.Size = new System.Drawing.Size(1172, 411);
             this.grid1.TabIndex = 8;
             // 
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(995, 6);
+            this.btnQuery.Location = new System.Drawing.Point(1092, 6);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 6;
@@ -192,7 +247,7 @@
             // 
             this.txtpo.BackColor = System.Drawing.Color.White;
             this.txtpo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtpo.Location = new System.Drawing.Point(611, 6);
+            this.txtpo.Location = new System.Drawing.Point(984, 6);
             this.txtpo.Name = "txtpo";
             this.txtpo.Size = new System.Drawing.Size(100, 23);
             this.txtpo.TabIndex = 5;
@@ -201,45 +256,45 @@
             // 
             this.txtsp.BackColor = System.Drawing.Color.White;
             this.txtsp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsp.Location = new System.Drawing.Point(395, 6);
+            this.txtsp.Location = new System.Drawing.Point(768, 6);
             this.txtsp.Name = "txtsp";
             this.txtsp.Size = new System.Drawing.Size(100, 23);
-            this.txtsp.TabIndex = 2;
+            this.txtsp.TabIndex = 3;
             // 
             // txtSeq
             // 
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq.Location = new System.Drawing.Point(501, 6);
+            this.txtSeq.Location = new System.Drawing.Point(874, 6);
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.seq1 = "";
             this.txtSeq.seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq.TabIndex = 3;
+            this.txtSeq.TabIndex = 4;
             // 
-            // dateRange1
-            // 
-            // 
-            // 
-            // 
-            this.dateRange1.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateRange1.DateBox1.Name = "";
-            this.dateRange1.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateRange1.DateBox1.TabIndex = 0;
+            // dateRangeETA
             // 
             // 
             // 
-            this.dateRange1.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateRange1.DateBox2.Name = "";
-            this.dateRange1.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateRange1.DateBox2.TabIndex = 1;
-            this.dateRange1.Location = new System.Drawing.Point(72, 6);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            // 
+            this.dateRangeETA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRangeETA.DateBox1.Name = "";
+            this.dateRangeETA.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeETA.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRangeETA.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRangeETA.DateBox2.Name = "";
+            this.dateRangeETA.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeETA.DateBox2.TabIndex = 1;
+            this.dateRangeETA.Location = new System.Drawing.Point(434, 6);
+            this.dateRangeETA.Name = "dateRangeETA";
+            this.dateRangeETA.Size = new System.Drawing.Size(280, 23);
+            this.dateRangeETA.TabIndex = 2;
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(575, 6);
+            this.label3.Location = new System.Drawing.Point(948, 6);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(33, 23);
             this.label3.TabIndex = 2;
@@ -247,7 +302,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(355, 6);
+            this.label2.Location = new System.Drawing.Point(728, 6);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 23);
             this.label2.TabIndex = 1;
@@ -255,7 +310,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(5, 6);
+            this.label1.Location = new System.Drawing.Point(367, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(64, 23);
             this.label1.TabIndex = 0;
@@ -278,7 +333,7 @@
             this.tab1stBulkDyelot.Location = new System.Drawing.Point(4, 25);
             this.tab1stBulkDyelot.Name = "tab1stBulkDyelot";
             this.tab1stBulkDyelot.Padding = new System.Windows.Forms.Padding(3);
-            this.tab1stBulkDyelot.Size = new System.Drawing.Size(1086, 495);
+            this.tab1stBulkDyelot.Size = new System.Drawing.Size(1183, 495);
             this.tab1stBulkDyelot.TabIndex = 1;
             this.tab1stBulkDyelot.Text = "1st Bulk Dyelot";
             // 
@@ -308,7 +363,7 @@
             // btnQuery2
             // 
             this.btnQuery2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery2.Location = new System.Drawing.Point(998, 6);
+            this.btnQuery2.Location = new System.Drawing.Point(1095, 6);
             this.btnQuery2.Name = "btnQuery2";
             this.btnQuery2.Size = new System.Drawing.Size(80, 30);
             this.btnQuery2.TabIndex = 13;
@@ -319,7 +374,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(998, 459);
+            this.button1.Location = new System.Drawing.Point(1095, 459);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
             this.button1.TabIndex = 15;
@@ -330,7 +385,7 @@
             // btnSave2
             // 
             this.btnSave2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave2.Location = new System.Drawing.Point(912, 459);
+            this.btnSave2.Location = new System.Drawing.Point(1009, 459);
             this.btnSave2.Name = "btnSave2";
             this.btnSave2.Size = new System.Drawing.Size(80, 30);
             this.btnSave2.TabIndex = 14;
@@ -369,7 +424,7 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(1072, 411);
+            this.grid2.Size = new System.Drawing.Size(1169, 411);
             this.grid2.TabIndex = 8;
             // 
             // txtColor
@@ -445,31 +500,9 @@
             this.testReportToolStripMenuItem.Text = "Test Report";
             this.testReportToolStripMenuItem.Click += new System.EventHandler(this.testReportToolStripMenuItem_Click);
             // 
-            // displayBox1
-            // 
-            this.displayBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.displayBox1.BackColor = System.Drawing.Color.Yellow;
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(8, 463);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(23, 23);
-            this.displayBox1.TabIndex = 10;
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(37, 466);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(689, 15);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Fabric with clima function items, need to check received report included (6.04 Wa" +
-    "ter Absorbency + 6.07 Drying Time) by dyelot.";
-            // 
             // P09
             // 
-            this.ClientSize = new System.Drawing.Size(1094, 524);
+            this.ClientSize = new System.Drawing.Size(1191, 524);
             this.Controls.Add(this.tabControl1);
             this.DefaultControl = "txtSPNo";
             this.Name = "P09";
@@ -494,7 +527,7 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabInspectionReport;
-        private Win.UI.DateRange dateRange1;
+        private Win.UI.DateRange dateRangeETA;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
@@ -526,5 +559,7 @@
         private Win.UI.Label labapprovedSeasoinNull;
         private System.Windows.Forms.Label label7;
         private Win.UI.DisplayBox displayBox1;
+        private Win.UI.DateRange dateATA;
+        private Win.UI.Label label8;
     }
 }
