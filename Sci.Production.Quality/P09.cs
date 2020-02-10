@@ -315,9 +315,9 @@ AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
         private void Page1_Query()
         {
             // 檢查[表頭][ETA+SP#+PO#] 如果全為空請跳出訊息並return
-            if (MyUtility.Check.Empty(this.dateRangeETA.Value1) && MyUtility.Check.Empty(this.dateRangeETA.Value1) && MyUtility.Check.Empty(this.txtsp.Text) && MyUtility.Check.Empty(this.txtpo.Text))
+            if (MyUtility.Check.Empty(this.dateATA.Value1) && MyUtility.Check.Empty(this.dateATA.Value2) &&MyUtility.Check.Empty(this.dateRangeETA.Value1) && MyUtility.Check.Empty(this.dateRangeETA.Value1) && MyUtility.Check.Empty(this.txtsp.Text) && MyUtility.Check.Empty(this.txtpo.Text))
             {
-                MyUtility.Msg.WarningBox("Please select ETA or SP# or PO# at least one field entry.");
+                MyUtility.Msg.WarningBox("Please select ATA or ETA or SP# or PO# at least one field entry.");
                 return;
             }
 

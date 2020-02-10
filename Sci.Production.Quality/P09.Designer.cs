@@ -34,6 +34,8 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabInspectionReport = new System.Windows.Forms.TabPage();
+            this.dateATA = new Sci.Win.UI.DateRange();
+            this.label8 = new Sci.Win.UI.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.btnClose = new Sci.Win.UI.Button();
@@ -66,8 +68,6 @@
             this.inspectionReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.dateATA = new Sci.Win.UI.DateRange();
-            this.label8 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInspectionReport.SuspendLayout();
@@ -113,6 +113,35 @@
             this.tabInspectionReport.Size = new System.Drawing.Size(1183, 495);
             this.tabInspectionReport.TabIndex = 0;
             this.tabInspectionReport.Text = "Inspection Report";
+            // 
+            // dateATA
+            // 
+            // 
+            // 
+            // 
+            this.dateATA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateATA.DateBox1.Name = "";
+            this.dateATA.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateATA.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateATA.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateATA.DateBox2.Name = "";
+            this.dateATA.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateATA.DateBox2.TabIndex = 1;
+            this.dateATA.Location = new System.Drawing.Point(75, 6);
+            this.dateATA.Name = "dateATA";
+            this.dateATA.Size = new System.Drawing.Size(280, 23);
+            this.dateATA.TabIndex = 1;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(8, 6);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(64, 23);
+            this.label8.TabIndex = 13;
+            this.label8.Text = "ATA";
             // 
             // label7
             // 
@@ -470,35 +499,6 @@
             this.testReportToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.testReportToolStripMenuItem.Text = "Test Report";
             this.testReportToolStripMenuItem.Click += new System.EventHandler(this.testReportToolStripMenuItem_Click);
-            // 
-            // dateATA
-            // 
-            // 
-            // 
-            // 
-            this.dateATA.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateATA.DateBox1.Name = "";
-            this.dateATA.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateATA.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateATA.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateATA.DateBox2.Name = "";
-            this.dateATA.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateATA.DateBox2.TabIndex = 1;
-            this.dateATA.Location = new System.Drawing.Point(75, 6);
-            this.dateATA.Name = "dateATA";
-            this.dateATA.Size = new System.Drawing.Size(280, 23);
-            this.dateATA.TabIndex = 1;
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(8, 6);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(64, 23);
-            this.label8.TabIndex = 13;
-            this.label8.Text = "ATA";
             // 
             // P09
             // 
