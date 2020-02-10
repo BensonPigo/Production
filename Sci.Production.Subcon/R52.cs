@@ -63,7 +63,7 @@ select	[Style]= S.ID
 		,SA.AddName
 		,SA.EditDate
 		,SA.EditName
-		, JSON=[dbo].[udf-Str-JSON](0,1,(Select Style_SizeCode.Seq,	Style_SizeCode.SizeGroup,Style_SizeCode.SizeCode From Style_SizeCode where StyleUkey = vSA.StyleUkey for XML RAW))
+		, JSON=[dbo].[udf-Str-JSON](0,1,(Select Seq=ROW_NUMBER() over (order by ss.Seq), ss.SizeGroup, ss.SizeCode From Style_SizeCode ss where StyleUkey = vSA.StyleUkey order by ss.Seq for XML RAW ))
 from dbo.View_style_Artwork vSA 
 inner join Style_Artwork SA on vSA.StyleArtworkUkey = SA.Ukey
 inner join style S on vSA.StyleUkey = S.Ukey
