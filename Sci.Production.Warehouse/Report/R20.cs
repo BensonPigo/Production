@@ -130,7 +130,7 @@ select	SPNo = inv.POID
 		, RefNo = inv.Refno
 		, SuppID = inv.SuppID
 		, Width = invRef.Width
-		, ColorID = invRef.ColorID
+		, [ColorID]=IIF(Fabric.MtlTypeID LIKE '%Thread%' ,psd.SuppColor , psd.ColorID)
 		, Size = invRef.SizeSpec
 		, SizeUnit = invRef.SizeUnit
 		, Unit = psd.StockUnit
@@ -150,6 +150,7 @@ inner join Po_Supp_Detail psd on inv.POID = psd.id
                                  and inv.seq2 = psd.seq2
 left join InventoryRefno invRef on inv.InventoryRefnoID = invRef.ID
 left join MDivisionPoDetail mpd on inv.POID = mpd.POID and inv.Seq2 = mpd.Seq1 and inv.Seq2 = mpd.Seq2
+left join fabric WITH (NOLOCK) on fabric.SCIRefno = psd.scirefno
 {0}", (filte.Count > 0) ? "Where " + filte.JoinToString("\n\r and ") : "");
             #endregion
             #region Get Data
