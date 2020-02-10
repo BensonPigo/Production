@@ -409,8 +409,6 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	INNER JOIN dbo.SciTrade_To_Pms_MmsReq_Detail b ON a.ID = b.ID and a.Seq2 = b.Seq2
 
 	-- ------------MachinePO--------------------
-	declare @T table (id varchar(13))
-
 	select	a.CDate
 			,a.FactoryID
 			,a.CurrencyID
@@ -431,7 +429,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 			,b.MdivisionID 
 			into #tmpTrade_To_PmsMachinePO
 	from dbo.SciTrade_To_Pms_MmsPO a WITH (NOLOCK) left join Production.dbo.scifty b WITH (NOLOCK) on a.factoryid = b.id
-	 where a.factoryid in (select id from @Sayfty) and a.type = 'M'
+	where a.factoryid in (select id from @Sayfty) and a.type = 'M'
 
 	update t set	t.CDate = s.CDate ,
 					t.PurchaseFrom = 'T' ,		
@@ -452,20 +450,28 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 					t.EditDate = s.EditDate 
 	from dbo.MachinePO t
 	inner join #tmpTrade_To_PmsMachinePO s on t.id=s.id
+	and not (s.junk = 0 and s.ApvDate is null)
 
 	insert into dbo.MachinePO(ID ,	  CDate ,PurchaseFrom ,  FactoryID ,   CurrencyID ,   Handle,    LocalSuppID ,  Amount ,   Vatrate ,   Vat ,        Remark ,        Approve ,        ApproveDate ,        AddName ,        AddDate ,        EditName ,        EditDate
 		 ,MDivisionID,Status)
-		 select
-		 s.ID ,	s.CDate , 'T' ,	s.FactoryID ,s.CurrencyID ,	s.Handle,s.SuppID ,		s.Amount ,		s.Vatrate ,	Vat ,		s.Remark ,		s.ApvName ,		s.ApvDate ,		s.AddName ,		s.AddDate ,		s.EditName ,		s.EditDate
-		,MDivisionID, IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',ApvName,'New'))
-		 from #tmpTrade_To_PmsMachinePO s
-		 where not exists(select 1 from dbo.MachinePO t where t.id=s.id)
+	select
+	s.ID ,	s.CDate , 'T' ,	s.FactoryID ,s.CurrencyID ,	s.Handle,s.SuppID ,		s.Amount ,		s.Vatrate ,	Vat ,		s.Remark ,		s.ApvName ,		s.ApvDate ,		s.AddName ,		s.AddDate ,		s.EditName ,		s.EditDate
+,MDivisionID, IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',ApvName,'New'))
+	from #tmpTrade_To_PmsMachinePO s
+	where not exists(select 1 from dbo.MachinePO t where t.id=s.id)
+	and not (s.junk = 0 and s.ApvDate is null)
 	
-	insert into @t
-	select id 
-	from #tmpTrade_To_PmsMachinePO
+	select t.ID
+	into #deleteMachinePOID
+	from dbo.MachinePO t
+	inner join #tmpTrade_To_PmsMachinePO s on t.id=s.id
+	and s.junk = 0 and s.ApvDate is null
 
+	delete dbo.MachinePO where ID in(select ID from #deleteMachinePOID)
+	
 	drop table #tmpTrade_To_PmsMachinePO
+
+
 
 -----------------MachinePO_Detail Type <>'M'---------------------
 		update t
@@ -532,15 +538,23 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 				t.ShipETA = s.ShipETA 
 	from dbo.MachinePO_Detail t
 	inner join dbo.SciTrade_To_Pms_MachinePO_Detail s WITH (NOLOCK) on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
+	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = s.ID
+	where not (sM.junk = 0 and sM.ApvDate is null)
 
 	insert into dbo.MachinePO_Detail(ID ,Seq1 ,Seq2 ,MasterGroupID ,MachineGroupID ,MachineBrandID ,Model ,Description 
 				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA
 				,Complete , ShipQty, ShipFOC,ShipETA)
-		select	s.ID ,s.Seq1 ,s.Seq2 ,s.MasterGroupID ,s.MachineGroupID ,s.MachineBrandID ,s.Model ,s.Description
-				 ,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA
-				 ,s.Complete ,s.ShipQty ,s.ShipFOC ,s.ShipETA
-		from dbo.SciTrade_To_Pms_MachinePO_Detail s
-		where not exists(select 1 from dbo.MachinePO_Detail t where t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2)
+	select	s.ID ,s.Seq1 ,s.Seq2 ,s.MasterGroupID ,s.MachineGroupID ,s.MachineBrandID ,s.Model ,s.Description
+				,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA
+				,s.Complete ,s.ShipQty ,s.ShipFOC ,s.ShipETA
+	from dbo.SciTrade_To_Pms_MachinePO_Detail s
+	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = s.ID
+	where not exists(select 1 from dbo.MachinePO_Detail t where t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2)
+	and not (sM.junk = 0 and sM.ApvDate is null)
+	
+	delete dbo.MachinePO_Detail where ID in(select ID from #deleteMachinePOID)
+
+	drop table #deleteMachinePOID
 
 ------------------MachinePO_Detail_TPEAP----------------------
 	select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty), b.ExportID
