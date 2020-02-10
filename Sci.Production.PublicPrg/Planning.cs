@@ -357,10 +357,6 @@ group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, Fabr
                 {
                     sqlcmd += $@"
 --篩選 BundleGroup Step.1 --
-/*update #BundleInOutQty{subprocessIDtmp}
-set InQty = iif(num_In<num,0,InQty)
-	, OutQty = iif(num_Out<num,0,OutQty)
-	, FinishedQty = iif(num_F<num,0,FinishedQty)*/
 
 UPDATE main
 SET  main.InQty = ISNULL(MatchIn.InQty,0) --SELECT main.InQty , ISNULL(MatchIn.InQty,0)
@@ -370,7 +366,7 @@ OUTER APPLY(
 	from Bundle bun
 	INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
 	inner join Bundle_Detail bunD on bunD.Id = bun.ID
-	inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId ='LOADING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
+	inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = 'LOADING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
 	where bun.Orderid = main.Orderid 
 		and bun.PatternPanel = main.PatternPanel 
 		and bun.FabricPanelCode = main.FabricPanelCode 
@@ -378,8 +374,9 @@ OUTER APPLY(
 		and bunD.Patterncode = main.Patterncode 
 		and bunD.Sizecode = main.Size
 		AND bunD.BundleGroup = main.BundleGroup
-		AND (bunIO.InComing Is NOT NULL AND bunIO.OutGoing IS NULL)
+        AND (bunIO.InComing Is NOT NULL AND bunIO.OutGoing IS NULL)
 )MatchIn
+WHERE main.SubprocessId='LOADING'
 
 UPDATE main
 SET  main.OutQty = ISNULL(MatchOut.OutQty,0)
@@ -389,7 +386,7 @@ OUTER APPLY(
 	from Bundle bun
 	INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  
 	inner join Bundle_Detail bunD on bunD.Id = bun.ID
-	inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId ='SORTING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
+	inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = 'SORTING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
 	where bun.Orderid = main.Orderid 
 		and bun.PatternPanel = main.PatternPanel 
 		and bun.FabricPanelCode = main.FabricPanelCode 
@@ -397,8 +394,9 @@ OUTER APPLY(
 		and bunD.Patterncode = main.Patterncode 
 		and bunD.Sizecode = main.Size
 		AND bunD.BundleGroup = main.BundleGroup
-		AND (bunIO.InComing Is NULL AND bunIO.OutGoing IS NOT NULL)
+        AND (bunIO.InComing Is NULL AND bunIO.OutGoing IS NOT NULL)
 )MatchOut
+WHERE main.SubprocessId='SORTING'
 
 select	OrderID
 		, Article

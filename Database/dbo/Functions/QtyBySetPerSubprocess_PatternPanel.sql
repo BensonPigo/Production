@@ -430,6 +430,7 @@ BEGIN
 				AND bunD.BundleGroup = main.BundleGroup
 				AND (bunIO.InComing Is NOT NULL AND bunIO.OutGoing IS NULL)
 		)MatchIn
+		WHERE main.SubprocessId='LOADING'
 
 		UPDATE main
 		SET  main.OutQty = ISNULL(MatchOut.OutQty,0)
@@ -449,6 +450,7 @@ BEGIN
 				AND bunD.BundleGroup = main.BundleGroup
 				AND (bunIO.InComing Is NULL AND bunIO.OutGoing IS NOT NULL)
 		)MatchOut
+		WHERE main.SubprocessId='SORTING'
 	end
 	
 	-- Step 2. --	
