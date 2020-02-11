@@ -86,14 +86,15 @@ BEGIN
 	FETCH NEXT FROM cursor_diffAccNo INTO @accno
 END
 CLOSE cursor_diffAccNo
+DEALLOCATE cursor_diffAccNo
 
 DECLARE @amount NUMERIC(15,4),
 		@blno VARCHAR(20),
 		@wkno VARCHAR(13),
 		@invno VARCHAR(25),
-		@type VARCHAR(15),
-		@gw NUMERIC(9,3),
-		@cbm NUMERIC(9,4),
+		@type VARCHAR(25),
+		@gw NUMERIC(10, 3),
+		@cbm NUMERIC(11,4),
 		@shipmodeid VARCHAR(10),
 		@sharebase VARCHAR(1),
 		@count INT,
@@ -200,6 +201,7 @@ BEGIN
 	FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@sharebase
 END
 CLOSE cursor_ttlAmount
+DEALLOCATE cursor_ttlAmount
 
 --以下為Airpp 拆分Factory與Other部分
 --只有AirPP的資料需要在往下分攤

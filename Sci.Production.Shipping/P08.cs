@@ -648,11 +648,12 @@ where sd.ID = '{0}'", masterID);
 
             DataTable tmpdt;
             sqlcmd = $@"
-select a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
+select [IsAPP] = dbo.GetAccountNoExpressType(se.AccountID, 'IsAPP')
+    ,[vat] = dbo.GetAccountNoExpressType(se.AccountID, 'vat')
+    ,[AdvancePaymentTPE] = dbo.GetAccountNoExpressType(se.AccountID, 'AdvancePaymentTPE')
+    ,[SisFty] = dbo.GetAccountNoExpressType(se.AccountID, 'SisFty')
 from #tmp sd
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
-left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
 ";
             var dtldt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted);
             if (dtldt.Count() > 0)
@@ -672,8 +673,9 @@ left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
                     // 沒標記IsAPP,不是IsShippingVAT(稅),不是AdvancePaymentTPE(代墊台北), 則不是IsAPP
                     var notapp = tmpdt.AsEnumerable().
                         Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]) &&
-                                    !MyUtility.Convert.GetBool(w["IsShippingVAT"]) &&
-                                    !MyUtility.Convert.GetBool(w["AdvancePaymentTPE"]));
+                                    !MyUtility.Convert.GetBool(w["vat"]) &&
+                                    !MyUtility.Convert.GetBool(w["AdvancePaymentTPE"]) &&
+                                    !MyUtility.Convert.GetBool(w["SisFty"]));
 
                     if (notapp.Count() > 0)
                     {

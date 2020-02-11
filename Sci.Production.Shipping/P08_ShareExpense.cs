@@ -1366,10 +1366,10 @@ DECLARE @apid VARCHAR(13),
 		@id VARCHAR(13),
 		@shipmode VARCHAR(10),
 		@blno VARCHAR(20),
-		@gw NUMERIC(9,2),
-		@cbm NUMERIC(10,4),
+		@gw NUMERIC(10, 3),
+		@cbm NUMERIC(11,4),
 		@currency VARCHAR(3),
-		@subtype VARCHAR(15)
+		@subtype VARCHAR(25)
 
 SET @apid = '{0}'
 DECLARE cursor_allExport CURSOR FOR
