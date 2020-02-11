@@ -388,8 +388,8 @@ BEGIN
 			, PatternPanel
 			, FabricPanelCode
 			, PatternCode
-			, InQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0)) / iif(IsPair=1,m,1)
-			, OutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0)) / iif(IsPair=1,m,1)
+			, InQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0)) / iif(IsPair=1,IIF(m=1,2,m),1) 
+			, OutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0)) / iif(IsPair=1,IIF(m=1,2,m),1) 
 			, OriInQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0)) --原始裁片數總和
 			, OriOutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0)) --原始裁片數總和
 			, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0))

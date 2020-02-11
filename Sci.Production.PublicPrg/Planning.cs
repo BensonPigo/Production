@@ -332,8 +332,8 @@ select	Orderid
 		, PatternPanel
 		, FabricPanelCode
 		, PatternCode
-		, InQty = sum(iif(InComing is not null ,cast(Qty as int),0)) / iif(IsPair=1,m,1)
-		, OutQty = sum(iif(OutGoing is not null ,cast(Qty as int),0)) / iif(IsPair=1,m,1)
+		, InQty = sum(iif(InComing is not null ,cast(Qty as int),0)) / iif(IsPair=1,IIF(m=1,2,m),1) 
+		, OutQty = sum(iif(OutGoing is not null ,cast(Qty as int),0)) / iif(IsPair=1,IIF(m=1,2,m),1) 
 		, OriInQty = sum(iif(InComing is not null ,cast(Qty as int),0)) 
 		, OriOutQty = sum(iif(OutGoing is not null ,cast(Qty as int),0)) 
 		, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null ,cast(Qty as int),0))
