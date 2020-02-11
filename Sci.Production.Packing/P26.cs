@@ -2295,8 +2295,8 @@ DROP TABLE #tmpOrders
 
             pdfWrapper.Dispose();
 
-            this.InsertImageToDatabase(imageOutputPath + imageName + ".bmp", imageName, "1");
-            this.InsertImageToDatabase(imageOutputPath + imageName + ".bmp", imageName, "2");
+            this.InsertImageToDatabase(imageOutputPath + imageName + ".bmp", imageName, "");
+            //this.InsertImageToDatabase(imageOutputPath + imageName + ".bmp", imageName, "2");
         }
 
         /// <summary>
@@ -2304,7 +2304,7 @@ DROP TABLE #tmpOrders
         /// </summary>
         /// <param name="path">圖片暫存路徑</param>
         /// <param name="FileName">寫入ShippingMarkPic_Detail.FileName的檔名</param>
-        /// <param name="seq">ShippingMarkPic的Seq</param>
+        /// <param name="seq">圖片檔的Seq</param>
         private void InsertImageToDatabase(string path, string FileName, string seq)
         {
             byte[] data = null;
@@ -2319,16 +2319,45 @@ DROP TABLE #tmpOrders
 
             data = br.ReadBytes((int)length);
 
+            // 檔名_1的圖片，要對應到Side A、檔名_2的圖片，要對應到Side D，若為空表示為PDF，PDF只會有一張
+            string side = string.Empty;
+            switch (seq)
+            {
+                case "1":
+                    side = "A";
+                    break;
+                case "2":
+                    side = "D";
+                    break;
+                default:
+                    break;
+            }
+
             string cmd = $@"
                     UPDATE sd
                     SET sd.Image=@Image
                     FROM ShippingMarkPic s
                     INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-                    WHERE sd.FileName=@FileName AND s.Seq=@Seq
+                    WHERE sd.FileName=@FileName
                     ";
+            if (!MyUtility.Check.Empty(side))
+            {
+                cmd += " AND s.Side=@Side " + Environment.NewLine;
+            }
+
+            // 抓該檔名最新增的 P24來修改
+            cmd += @"AND s.AddDate = (
+    SELECT TOP 1 s2.AddDate 
+    FROM ShippingMarkPic s2
+    INNER JOIN ShippingMarkPic_Detail sd2 ON s2.Ukey=sd2.ShippingMarkPicUkey
+    WHERE sd2.FileName = @FileName
+    ORDER BY s2.AddDate  DESC 
+)";
+
             List<SqlParameter> para = new List<SqlParameter>();
             para.Add(new SqlParameter("@FileName", FileName));
             para.Add(new SqlParameter("@Seq", seq));
+            para.Add(new SqlParameter("@Side", side));
             para.Add(new SqlParameter("@Image", (object)data));
 
             DualResult result = DBProxy.Current.Execute(null, cmd, para);
