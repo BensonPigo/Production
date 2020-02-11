@@ -409,49 +409,7 @@ BEGIN
 	group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair,m
 
 	-- 篩選 BundleGroup Step.1 --
-	if (@IsNeedCombinBundleGroup = 1)
-	begin
-		----只抓有BundleInOut紀錄的In/Out Qty
-		UPDATE main
-		SET  main.InQty = ISNULL(MatchIn.InQty,0) --SELECT main.InQty , ISNULL(MatchIn.InQty,0)
-		FROM @BundleInOutQty main
-		OUTER APPLY(
-			select [InQty]=SUM( bunD.Qty)
-			from Bundle bun
-			INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  
-			inner join Bundle_Detail bunD on bunD.Id = bun.ID
-			inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId ='LOADING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
-			where bun.Orderid = main.Orderid 
-				and bun.PatternPanel = main.PatternPanel 
-				and bun.FabricPanelCode = main.FabricPanelCode 
-				and bun.Article = main.Article  
-				and bunD.Patterncode = main.Patterncode 
-				and bunD.Sizecode = main.Size
-				AND bunD.BundleGroup = main.BundleGroup
-				AND (bunIO.InComing Is NOT NULL AND bunIO.OutGoing IS NULL)
-		)MatchIn
-		WHERE main.SubprocessId='LOADING'
 
-		UPDATE main
-		SET  main.OutQty = ISNULL(MatchOut.OutQty,0)
-		FROM @BundleInOutQty main
-		OUTER APPLY(
-			select [OutQty]=SUM( bunD.Qty)
-			from Bundle bun
-			INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  
-			inner join Bundle_Detail bunD on bunD.Id = bun.ID
-			inner join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId ='SORTING' and isnull(bunIO.RFIDProcessLocationID,'') = ''
-			where bun.Orderid = main.Orderid 
-				and bun.PatternPanel = main.PatternPanel 
-				and bun.FabricPanelCode = main.FabricPanelCode 
-				and bun.Article = main.Article  
-				and bunD.Patterncode = main.Patterncode 
-				and bunD.Sizecode = main.Size
-				AND bunD.BundleGroup = main.BundleGroup
-				AND (bunIO.InComing Is NULL AND bunIO.OutGoing IS NOT NULL)
-		)MatchOut
-		WHERE main.SubprocessId='SORTING'
-	end
 	
 	-- Step 2. --	
 	if (@IsNeedCombinBundleGroup = 1)
