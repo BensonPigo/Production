@@ -3858,7 +3858,14 @@ order by a.OrderId,os.Seq
                 if (remarkList2.Count > 0)
                 {
                     remark = string.Join("\r\n", remarkList2) + "\r\n" + "DQS Pass Q'ty is more than balance, please inform related team";
-                    item["remark"] = remark;
+                    if (remark.Length > 1000)
+                    {
+                        item["remark"] = remark.Substring(0, 1000);
+                    }
+                    else
+                    {
+                        item["remark"] = remark;
+                    }
                 }
 
                 // 將第2層重新設定為新增狀態
