@@ -1680,7 +1680,7 @@ where   p.ID = '{0}'
             worksheet.Cells[5, 21] = "=R5-T5";
 
             int groupRec = PrintGroupData.Rows.Count, excelRow = 6, printRec = 1, printCtnCount = 0;
-
+            int chk1 = excelRow + 257, chk2 = excelRow + 258;
             string seq = "000000", article = "XXXX0000", size = "XXXX0000";
             int qtyPerCTN = -1;
             StringBuilder articleSize = new StringBuilder();
@@ -1695,7 +1695,7 @@ where   p.ID = '{0}'
                 if (MyUtility.Check.Empty(PrintGroupData.Rows[i]["CTNQty"]))
                 {
                     excelRow++;
-                    if (excelRow >= 262) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
+                    if (excelRow >= chk1) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
                     {
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
@@ -1726,7 +1726,7 @@ where   p.ID = '{0}'
                         if (printRec == 1)
                         {
                             excelRow++;
-                            if (excelRow >= 262) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
+                            if (excelRow >= chk1) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
                             {
                                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
                                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
@@ -1767,7 +1767,7 @@ where   p.ID = '{0}'
             }
 
             //刪除多餘的Row
-            if (excelRow >= 263)
+            if (excelRow >= chk2)
             {
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[excelRow + 1, Type.Missing];
                 rng.Select();
@@ -1779,7 +1779,7 @@ where   p.ID = '{0}'
             }
             else
             {
-                for (int i = excelRow + 1; i <= 263; i++)
+                for (int i = excelRow + 1; i <= chk2; i++)
                 {
                     Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[excelRow + 1, Type.Missing];
                     rng.Select();
