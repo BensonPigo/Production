@@ -10,6 +10,7 @@ using Ict;
 using Ict.Win;
 using System.Configuration;
 using PostJobLog;
+using Newtonsoft.Json;
 
 namespace Sci.Production.PublicPrg
 {
@@ -129,6 +130,45 @@ ID
 
             result = callTPEWebAPI.CallWebApiPost("/api/ReplacementReport/UpdateReplacement", postBody);
             return result;
+        }
+        public static DualResult PostOrderChange(string ID, string status)
+        {
+            string sqlOrderChange = $@"
+SELECT [ID]= '{ID}'
+      ,[Status]='{status}'
+      ,[EditName]='{Env.User.UserID}'
+";
+
+            DataTable dtOrderChange;
+            DualResult result;
+            result = DBProxy.Current.Select(null, sqlOrderChange, out dtOrderChange);
+            if (!result)
+            {
+                return result;
+            }
+
+            var postBody = dtOrderChange.AsEnumerable()
+                .Select(s => new {  ID = s["ID"].ToString(),
+                    Status = s["Status"].ToString(),
+                    EditName = s["EditName"].ToString()
+            }).First();
+            string tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"];
+
+            CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
+
+            result = callTPEWebAPI.CallWebApiPost("api/OrderChange/Receive", postBody);
+            return result;
+        }
+
+        public static bool CheckOrderChangeConfirmed(string orderid, string seq)
+        {
+            string sqlcmd = $@"
+select 1
+from OrderChangeApplication o with(nolock)
+inner join OrderChangeApplication_Detail od with(nolock) on o.ID = od.id
+where OrderID = '{orderid}' and od.Seq = '{seq}' and status != 'Confirmed' and status != 'Closed' 
+";
+            return !MyUtility.Check.Seek(sqlcmd);
         }
     }
 }
