@@ -1,0 +1,284 @@
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win.Tools;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.Linq;
+
+namespace Sci.Production.PPIC
+{
+    public partial class P20_ResponsibilityDept : Sci.Win.Subs.Input4
+    {
+        private string ID;
+
+        public P20_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3)
+            : base(canedit, id, keyvalue2, keyvalue3)
+        {
+            InitializeComponent();
+            ID = id;
+            this.EditMode = canedit;
+        }
+
+        protected override bool OnGridSetup()
+        {
+            DataGridViewGeneratorTextColumnSettings col_Factory = new DataGridViewGeneratorTextColumnSettings();
+            #region col_Factory
+            col_Factory.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S')";
+                    SelectItem item = new SelectItem(sqlcmd, "10", dr["FactoryID"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["FactoryID"] = item.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+
+            col_Factory.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S')";
+                    SelectItem item = new SelectItem(sqlcmd, "10", dr["FactoryID"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["FactoryID"] = item.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+
+            col_Factory.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["FactoryID"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (oldvalue.Equals(newvalue)) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S') and FtyGroup ='{newvalue}'";
+                if (!MyUtility.Check.Seek(sqlcmd))
+                {
+                    dr["FactoryID"] = string.Empty;
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                    return;
+                }
+
+                dr.EndEdit();
+            };
+            #endregion
+
+            DataGridViewGeneratorTextColumnSettings col_Dept = new DataGridViewGeneratorTextColumnSettings();
+            #region col_Dept
+            col_Dept.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0";
+                    SelectItem item = new SelectItem(sqlcmd, "8,30", dr["DepartmentID"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["DepartmentID"] = item.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+
+            col_Dept.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0";
+                    SelectItem item = new SelectItem(sqlcmd, "10", dr["DepartmentID"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["DepartmentID"] = item.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+
+            col_Dept.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["DepartmentID"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (oldvalue.Equals(newvalue)) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0 and id ='{newvalue}'";
+                if (!MyUtility.Check.Seek(sqlcmd))
+                {
+                    dr["DepartmentID"] = string.Empty;
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                    return;
+                }
+
+                dr.EndEdit();
+            };
+            #endregion
+
+            DataGridViewGeneratorNumericColumnSettings col_Percentage = new DataGridViewGeneratorNumericColumnSettings();
+            col_Percentage.CellValidating += (s, e) => 
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                decimal oldvalue = MyUtility.Convert.GetDecimal(dr["Percentage"]);
+                decimal newvalue = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (oldvalue.Equals(newvalue)) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                decimal? amt = this.numTotalAmt.Value
+                    * (newvalue
+                    / 100);
+                dr["Amount"] = amt;
+                dr["Percentage"] = newvalue;
+                dr.EndEdit();
+
+                // 加總表身Amount,Percentage資料
+                DataTable dt = (DataTable)this.gridbs.DataSource;
+                this.numAmount.Value = MyUtility.Convert.GetDecimal(dt.AsEnumerable().Sum(n => (decimal)n["Amount"]));
+                this.numPercentage.Value = MyUtility.Convert.GetDecimal(dt.AsEnumerable().Sum(n => (decimal)n["Percentage"]));
+            };
+
+            DataGridViewGeneratorNumericColumnSettings col_Amt = new DataGridViewGeneratorNumericColumnSettings();
+            col_Amt.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                decimal oldvalue = MyUtility.Convert.GetDecimal(dr["Amount"]);
+                decimal newvalue = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (oldvalue.Equals(newvalue)) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                decimal? perct = 0;
+                if (!MyUtility.Check.Empty(this.numTotalAmt.Value))
+                {
+                    perct = (newvalue / this.numTotalAmt.Value) * 100;
+                }
+
+                dr["Percentage"] = perct;
+                dr["Amount"] = newvalue;
+                dr.EndEdit();
+
+                // 加總表身Amount,Percentage資料
+                DataTable dt = (DataTable)this.gridbs.DataSource;
+                this.numAmount.Value = MyUtility.Convert.GetDecimal(dt.AsEnumerable().Sum(n => (decimal)n["Amount"]));
+                this.numPercentage.Value = MyUtility.Convert.GetDecimal(dt.AsEnumerable().Sum(n => (decimal)n["Percentage"]));
+            };
+
+            Helper.Controls.Grid.Generator(this.grid)
+                .Text("FactoryID", "Factory", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_Factory)
+                .Text("DepartmentID", "Dept.", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_Dept)
+                .Numeric("Percentage", header: "%", width: Widths.AnsiChars(10), iseditingreadonly: false, decimal_places: 3, integer_places: 10, settings: col_Percentage)
+                .Numeric("Amount", header: "Amt", width: Widths.AnsiChars(10), iseditingreadonly: false, decimal_places: 3, integer_places: 10, settings: col_Amt)
+                ;
+            return true;
+
+        }
+
+        protected override DualResult OnRequery()
+        {
+            DataRow drMaster;
+            DualResult result;
+            string sqlcmd = $@"
+select ICR.ID
+, [TotalAmt] = (ISNULL(RMtlAmtUSD,0) + ISNULL(ActFreightUSD,0) + ISNULL(OtherAmtUSD,0))
+, [Percentage] = isnull(i3.Percentage,0)
+, [Amt] = isnull(i3.Amt,0)
+from ICR
+outer apply(
+	select [Percentage] = SUM(ISNULL(Percentage,0))
+	, [Amt] = sum(ISNULL(Amount,0))
+	from ICR_ResponsibilityDept 
+	where id=ICR.id
+)i3
+where ICR.id = '{ID}'
+ ";
+            if (MyUtility.Check.Seek(sqlcmd,out drMaster))
+            {
+                this.numTotalAmt.Value = MyUtility.Convert.GetDecimal(drMaster["TotalAmt"]);
+                this.numPercentage.Value = MyUtility.Convert.GetDecimal(drMaster["Percentage"]);
+                this.numAmount.Value = MyUtility.Convert.GetDecimal(drMaster["Amt"]);
+            }
+            else
+            {
+                this.numTotalAmt.Value = 0;
+                this.numPercentage.Value = 0;
+                this.numAmount.Value = 0;
+            }
+
+            this.txtID.Text = ID;
+            return base.OnRequery();
+        }
+
+        protected override bool OnSaveBefore()
+        {
+            DataTable dt = (DataTable)this.gridbs.DataSource;
+
+            decimal curAmount = 0;
+            decimal curPercentage = 0;
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    curAmount += MyUtility.Convert.GetDecimal(dr["Amount"]);
+                    curPercentage += MyUtility.Convert.GetDecimal(dr["Percentage"]);
+                }
+            }
+
+            if (!curPercentage.Equals(100))
+            {
+                MyUtility.Msg.WarningBox("Total % not equal to 100.");
+                return false;
+            }
+
+            if (!curAmount.Equals(this.numTotalAmt.Value))
+            {
+                MyUtility.Msg.WarningBox("Total Amt not equal to Total Amt (USD).");
+                return false;
+            }
+
+            return base.OnSaveBefore();
+        }
+    }
+}

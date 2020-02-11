@@ -254,6 +254,105 @@ Te2.InvoiceNo)
 					  AND ec.Container=pms.Container	
 			)--不存在Trade轉出的Container
 	;
+
+
+-- Export_ShareAmount
+
+--刪除主TABLE多的資料
+Delete Production.dbo.Export_ShareAmount
+from Production.dbo.Export_ShareAmount as a 
+left join Trade_To_Pms.dbo.Export_ShareAmount as b
+on a.id = b.id 
+where b.id is null
+
+---------------------------UPDATE 主TABLE跟來源TABLE 為一樣
+UPDATE a
+SET 
+	a.Id= b.Id,
+	a.ShipPlanID= b.ShipPlanID,
+	a.SuppID= b.SuppID,
+	a.SMR= b.SMR,
+	a.Handle= b.Handle,
+	a.PCHandle= b.PCHandle,
+	a.DutyID= b.DutyID,
+	a.Duty= b.Duty,
+	a.Freight= b.Freight,
+	a.Insurance= b.Insurance,
+	a.Tax= b.Tax,
+	a.GW= b.GW,
+	a.Remark= b.Remark,
+	a.Status= b.Status,
+	a.StatusUpdate= b.StatusUpdate,
+	a.AddName= b.AddName,
+	a.AddDate= b.AddDate,
+	a.EditName= b.EditName,
+	a.EditDate= b.EditDate,
+	a.ShareGW= b.ShareGW,
+	a.GWUpdateDate= b.GWUpdateDate,
+	a.Mailed= b.Mailed,
+	a.POID= b.POID
+from Production.dbo.Export_ShareAmount as a 
+inner join Trade_To_Pms.dbo.Export_ShareAmount as b on b.ukey = a.ukey
+
+-------------------------- INSERT INTO 抓
+INSERT INTO Production.dbo.Export_ShareAmount
+ (
+	 Ukey
+	,Id
+	,ShipPlanID
+	,SuppID
+	,SMR
+	,Handle
+	,PCHandle
+	,DutyID
+	,Duty
+	,Freight
+	,Insurance
+	,Tax
+	,GW
+	,Remark
+	,Status
+	,StatusUpdate
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	,ShareGW
+	,GWUpdateDate
+	,Mailed
+	,POID
+
+)
+SELECT 
+	 Ukey
+	,Id
+	,ShipPlanID
+	,SuppID
+	,SMR
+	,Handle
+	,PCHandle
+	,DutyID
+	,Duty
+	,Freight
+	,Insurance
+	,Tax
+	,GW
+	,Remark
+	,Status
+	,StatusUpdate
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	,ShareGW
+	,GWUpdateDate
+	,Mailed
+	,POID
+
+from Trade_To_Pms.dbo.Export_ShareAmount as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Export_ShareAmount as a WITH (NOLOCK) 
+where a.Ukey = b.Ukey)
+
 drop table #TExport;
 
 END

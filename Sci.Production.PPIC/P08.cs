@@ -53,6 +53,25 @@ namespace Sci.Production.PPIC
 
                 this.ReloadDatas();
             };
+
+            // GridReplacement 欄位設定
+
+            this.Helper.Controls.Grid.Generator(this.gridReplacement)
+          .Text("SP", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+          .Text("NewSeq1", header: "New Seq1", width: Widths.AnsiChars(7), iseditingreadonly: true)
+          .Text("NewSeq2", header: "New Seq2", width: Widths.AnsiChars(5), iseditingreadonly: true)
+          .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(7), iseditingreadonly: true)
+          .Text("Seq", header: "Seq2", width: Widths.AnsiChars(5), iseditingreadonly: true)
+          .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
+          .Numeric("FinalNeededQty", header: "Final Needed Qty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+          .Numeric("PoQty", header: "P/O Q’ty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+          .Numeric("PoFoc", header: "P/O FOC", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+          .Numeric("ShipQty", header: "Ship Q’ty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+          .Numeric("ShipFoc", header: "Ship FOC", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+          .CheckBox("Complete", header: "Complete", width: Widths.AnsiChars(10), iseditable: false)
+          .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
+          ;
+
         }
 
         /// <inheritdoc/>
@@ -129,6 +148,50 @@ from Clip where TableName = 'ReplacementReport' AND UniqueKey = '{this.CurrentMa
             {
                 this.btnDownload.ForeColor = Color.Black;
             }
+
+            #region 取得Grid Replacement 資料
+            DataTable dtRelp;
+            string cmdRelp = $@"
+select 
+[SP] = psd.ID
+,[NewSeq1] = psd.SEQ1
+,[NewSeq2] = psd.SEQ2
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
+,[Refno] = psd.Refno
+,[FinalNeededQty] = psd.Qty
+,[PoQty] = psd.Qty
+,[PoFoc] = psd.FOC
+,[ShipQty] = psd.ShipQty
+,[ShipFoc] = psd.ShipFOC
+,[Complete] = psd.Complete
+,[Remark] = psd.Remark
+from ReplacementReport_Detail rd
+inner join PO_Supp_Detail psd on rd.PurchaseID = psd.ID
+and rd.SCIRefno = psd.SCIRefno
+and rd.ColorID = psd.ColorID
+and (psd.SEQ1 = rd.NewSeq1 or psd.OutputSeq1 = rd.NewSeq1)
+and (psd.SEQ2 = rd.NewSeq2 or psd.OutputSeq2 = rd.NewSeq2)
+where rd.id = '{CurrentMaintain["ID"]}'
+";
+
+            if (!(result = DBProxy.Current.Select(null,cmdRelp,out dtRelp)))
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.gridReplacement.DataSource = dtRelp;
+
+            #endregion
+
+            this.btnResponsibilitydept.ForeColor = MyUtility.Check.Seek($@"
+select 1 from ICR_ResponsibilityDept a
+where exists (
+    select 1 from ICR_ReplacementReport 
+    where id = a.ID 
+    and ReplacementNo = '{this.CurrentMaintain["id"]}'
+)") ? Color.Blue : Color.Black;
 
             this.ChangeRowColor();
         }
@@ -843,6 +906,36 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         {
             P08_Download callInputDataForm = new P08_Download(this.CurrentMaintain);
             callInputDataForm.ShowDialog(this);
+        }
+
+        private void BtnFreightList_Click(object sender, EventArgs e)
+        {
+            var frm = new P08_FreightList(this.CurrentMaintain);
+            frm.ShowDialog(this);
+            frm.Dispose();
+        }
+
+        private void BtnResponsibilitydept_Click(object sender, EventArgs e)
+        {
+            bool canEdit = false;
+            if (Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Replacement Report (Fabric)", "CanSend") && !MyUtility.Check.Empty(CurrentMaintain["VoucherDate"]))
+            {
+                canEdit = true;
+            }
+
+            string ICR_ID = string.Empty;
+            DataRow dr;
+
+            // 待確認! 
+            if (MyUtility.Check.Seek($"select top 1 id from ICR_ReplacementReport where ReplacementNo = '{this.CurrentMaintain["id"]}'", out dr))
+            {
+                ICR_ID = dr["id"].ToString();
+            }
+
+            var frm = new P20_ResponsibilityDept(canEdit, ICR_ID, null, null);
+            frm.ShowDialog(this);
+            frm.Dispose();
+            this.OnDetailEntered();
         }
     }
 }
