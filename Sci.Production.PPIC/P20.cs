@@ -153,8 +153,8 @@ where ICR.ID = '{masterID}';
             .Numeric("ICRFoc", header: "Irregular FOC", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)
             .Numeric("PriceUSD", header: "Irregular Price (USD)", width: Widths.AnsiChars(10), decimal_places: 4, integer_places: 16)
             .Numeric("IrgAmt", header: "Irregular Amt (USD)", width: Widths.AnsiChars(10), decimal_places: 4, integer_places: 16)
-            .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(20))
-            .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(20))
+            .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(25))
+            .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(25))
              .Text("WeaveType", header: "Weave Type", width: Widths.AnsiChars(16))
             ;
 
@@ -169,13 +169,13 @@ where ICR.ID = '{masterID}';
         {
             bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P20. Irregular Cost Report", "CanEdit");
 
-            // 確認Grid Replacement 帶入ReplacementReport 取得VoucherDate 是否有null, 有就沒有編輯權限
+            // 確認Grid Replacement 帶入ReplacementReport 取得VoucherDate有值就沒有編輯權限
             DataTable dt = (DataTable)this.gridReplacement.DataSource;
             foreach (DataRow dr in dt.Rows)
             {
                 string sqlcmd = $@"select 1 from ReplacementReport where id ='{dr["ReplacementNo"]}' and VoucherDate is not null";
 
-                if (!MyUtility.Check.Seek(sqlcmd))
+                if (MyUtility.Check.Seek(sqlcmd))
                 {
                     canEdit = false;
                 }

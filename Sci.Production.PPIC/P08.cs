@@ -54,9 +54,8 @@ namespace Sci.Production.PPIC
                 this.ReloadDatas();
             };
 
-            // GridReplacement 欄位設定
-
-            this.Helper.Controls.Grid.Generator(this.gridReplacement)
+           // GridReplacement 欄位設定
+           this.Helper.Controls.Grid.Generator(this.gridReplacement)
           .Text("SP", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
           .Text("NewSeq1", header: "New Seq1", width: Widths.AnsiChars(7), iseditingreadonly: true)
           .Text("NewSeq2", header: "New Seq2", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -914,7 +913,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         private void BtnResponsibilitydept_Click(object sender, EventArgs e)
         {
             bool canEdit = false;
-            if (Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Replacement Report (Fabric)", "CanSend") && !MyUtility.Check.Empty(this.CurrentMaintain["VoucherDate"]))
+            if (Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Replacement Report (Fabric)", "CanSend") && MyUtility.Check.Empty(this.CurrentMaintain["VoucherDate"]))
             {
                 canEdit = true;
             }

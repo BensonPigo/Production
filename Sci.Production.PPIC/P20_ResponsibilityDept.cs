@@ -37,7 +37,7 @@ namespace Sci.Production.PPIC
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S')";
-                    SelectItem item = new SelectItem(sqlcmd, "10", dr["FactoryID"].ToString());
+                    SelectItem item = new SelectItem(sqlcmd, "20", dr["FactoryID"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -57,7 +57,7 @@ namespace Sci.Production.PPIC
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S')";
-                    SelectItem item = new SelectItem(sqlcmd, "10", dr["FactoryID"].ToString());
+                    SelectItem item = new SelectItem(sqlcmd, "20", dr["FactoryID"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -102,7 +102,7 @@ namespace Sci.Production.PPIC
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0";
-                    SelectItem item = new SelectItem(sqlcmd, "8,30", dr["DepartmentID"].ToString());
+                    SelectItem item = new SelectItem(sqlcmd, "10,30", dr["DepartmentID"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -122,7 +122,7 @@ namespace Sci.Production.PPIC
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0";
-                    SelectItem item = new SelectItem(sqlcmd, "10", dr["DepartmentID"].ToString());
+                    SelectItem item = new SelectItem(sqlcmd, "10,30", dr["DepartmentID"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {

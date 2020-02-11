@@ -149,7 +149,7 @@
             this.masterpanel.Controls.Add(this.labelPOSMR);
             this.masterpanel.Controls.Add(this.labelSPNo);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(966, 276);
+            this.masterpanel.Size = new System.Drawing.Size(976, 276);
             this.masterpanel.TabIndex = 1;
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
@@ -207,7 +207,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 276);
-            this.detailpanel.Size = new System.Drawing.Size(966, 149);
+            this.detailpanel.Size = new System.Drawing.Size(976, 149);
             // 
             // gridicon
             // 
@@ -220,7 +220,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(966, 149);
+            this.detailgridcont.Size = new System.Drawing.Size(976, 149);
             // 
             // detail2
             // 
@@ -236,17 +236,17 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(966, 587);
+            this.detail.Size = new System.Drawing.Size(976, 587);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(966, 425);
+            this.detailcont.Size = new System.Drawing.Size(976, 425);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.gridReplacement);
             this.detailbtm.Location = new System.Drawing.Point(0, 425);
-            this.detailbtm.Size = new System.Drawing.Size(966, 162);
+            this.detailbtm.Size = new System.Drawing.Size(976, 162);
             this.detailbtm.TabIndex = 0;
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
@@ -261,7 +261,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(974, 616);
+            this.tabs.Size = new System.Drawing.Size(984, 616);
             // 
             // createby
             // 
@@ -548,7 +548,7 @@
             // 
             this.btnFreightList.Location = new System.Drawing.Point(813, 90);
             this.btnFreightList.Name = "btnFreightList";
-            this.btnFreightList.Size = new System.Drawing.Size(146, 30);
+            this.btnFreightList.Size = new System.Drawing.Size(155, 30);
             this.btnFreightList.TabIndex = 148;
             this.btnFreightList.Text = "Freight List";
             this.btnFreightList.UseVisualStyleBackColor = true;
@@ -558,7 +558,7 @@
             // 
             this.btnResponsibilitydept.Location = new System.Drawing.Point(813, 124);
             this.btnResponsibilitydept.Name = "btnResponsibilitydept";
-            this.btnResponsibilitydept.Size = new System.Drawing.Size(146, 30);
+            this.btnResponsibilitydept.Size = new System.Drawing.Size(155, 30);
             this.btnResponsibilitydept.TabIndex = 149;
             this.btnResponsibilitydept.Text = "Responsibility dept.";
             this.btnResponsibilitydept.UseVisualStyleBackColor = true;
@@ -762,7 +762,6 @@
             this.gridReplacement.AllowUserToDeleteRows = false;
             this.gridReplacement.AllowUserToOrderColumns = true;
             this.gridReplacement.AllowUserToResizeRows = false;
-            this.gridReplacement.AutoGenerateColumns = false;
             this.gridReplacement.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridReplacement.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridReplacement.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -781,7 +780,7 @@
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;
-            this.gridReplacement.Size = new System.Drawing.Size(960, 107);
+            this.gridReplacement.Size = new System.Drawing.Size(970, 107);
             this.gridReplacement.TabIndex = 54;
             // 
             // txttpeuserPCHandle
@@ -854,7 +853,7 @@
             // 
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(974, 649);
+            this.ClientSize = new System.Drawing.Size(984, 649);
             this.DefaultControl = "txtSPNo";
             this.DefaultControlForEdit = "txtSPNo";
             this.DefaultDetailOrder = "Seq1,Seq2";
