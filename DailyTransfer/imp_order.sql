@@ -1628,7 +1628,7 @@ update t set
 	,[SubconDBCRemark] = s.SubconDBCRemark
 	,[SubConName] = s.SubConName
 	,[ResponsibleSCI] = s.ResponsibleSCI
-	,[RatioSCI] = s.RatioSCI]
+	,[RatioSCI] = s.RatioSCI
 	,[SCIICRDepartment] = s.SCIICRDepartment
 	,[SCIICRNo] = s.SCIICRNo
 	,[SCIICRRemark] = s.SCIICRRemark
@@ -1644,9 +1644,10 @@ update t set
 	,[BuyerICRNo] = s.BuyerICRNo
 	,[BuyerICRRemark] = s.BuyerICRRemark
 	,[BuyerRemark] = s.BuyerRemark
+	,[ToOrderID] = s.ToOrderID
 from Production.dbo.OrderChangeApplication t
 inner join Trade_To_Pms.dbo.OrderChangeApplication s on s.ID = t.ID
-where s.Status = 'Closed'
+--where s.Status = 'Closed'
 
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 select s.ID,s.Status,s.[StatusUser],s.[StatusDate]
