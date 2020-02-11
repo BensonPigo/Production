@@ -24,7 +24,6 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
             this.gridReplacement.ReadOnly = true;
         }
 
@@ -154,8 +153,8 @@ where ICR.ID = '{masterID}';
             .Numeric("ICRFoc", header: "Irregular FOC", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)
             .Numeric("PriceUSD", header: "Irregular Price (USD)", width: Widths.AnsiChars(10), decimal_places: 4, integer_places: 16)
             .Numeric("IrgAmt", header: "Irregular Amt (USD)", width: Widths.AnsiChars(10), decimal_places: 4, integer_places: 16)
-            .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(10))
-            .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(10))
+            .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(20))
+            .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(20))
              .Text("WeaveType", header: "Weave Type", width: Widths.AnsiChars(16))
             ;
 
@@ -185,6 +184,7 @@ where ICR.ID = '{masterID}';
             var frm = new P20_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             frm.ShowDialog(this);
             frm.Dispose();
+            this.OnDetailEntered();
         }
     }
 }

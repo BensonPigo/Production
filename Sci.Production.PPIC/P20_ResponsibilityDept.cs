@@ -20,8 +20,8 @@ namespace Sci.Production.PPIC
         public P20_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
-            ID = id;
+            this.InitializeComponent();
+            this.ID = id;
             this.EditMode = canedit;
         }
 
@@ -35,7 +35,7 @@ namespace Sci.Production.PPIC
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S')";
                     SelectItem item = new SelectItem(sqlcmd, "10", dr["FactoryID"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -55,7 +55,7 @@ namespace Sci.Production.PPIC
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S')";
                     SelectItem item = new SelectItem(sqlcmd, "10", dr["FactoryID"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -71,7 +71,7 @@ namespace Sci.Production.PPIC
 
             col_Factory.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["FactoryID"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
@@ -100,7 +100,7 @@ namespace Sci.Production.PPIC
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0";
                     SelectItem item = new SelectItem(sqlcmd, "8,30", dr["DepartmentID"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -120,7 +120,7 @@ namespace Sci.Production.PPIC
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0";
                     SelectItem item = new SelectItem(sqlcmd, "10", dr["DepartmentID"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -136,7 +136,7 @@ namespace Sci.Production.PPIC
 
             col_Dept.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["DepartmentID"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
@@ -160,7 +160,7 @@ namespace Sci.Production.PPIC
             DataGridViewGeneratorNumericColumnSettings col_Percentage = new DataGridViewGeneratorNumericColumnSettings();
             col_Percentage.CellValidating += (s, e) => 
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 decimal oldvalue = MyUtility.Convert.GetDecimal(dr["Percentage"]);
                 decimal newvalue = MyUtility.Convert.GetDecimal(e.FormattedValue);
                 if (!this.EditMode) return;//非編輯模式 
@@ -175,15 +175,26 @@ namespace Sci.Production.PPIC
                 dr.EndEdit();
 
                 // 加總表身Amount,Percentage資料
+                decimal curAmount = 0;
+                decimal curPercentage = 0;
                 DataTable dt = (DataTable)this.gridbs.DataSource;
-                this.numAmount.Value = MyUtility.Convert.GetDecimal(dt.AsEnumerable().Sum(n => (decimal)n["Amount"]));
-                this.numPercentage.Value = MyUtility.Convert.GetDecimal(dt.AsEnumerable().Sum(n => (decimal)n["Percentage"]));
+                foreach (DataRow drRow in dt.Rows)
+                {
+                    if (drRow.RowState != DataRowState.Deleted)
+                    {
+                        curAmount += MyUtility.Convert.GetDecimal(drRow["Amount"]);
+                        curPercentage += MyUtility.Convert.GetDecimal(drRow["Percentage"]);
+                    }
+                }
+
+                this.numAmount.Value = curAmount;
+                this.numPercentage.Value = curPercentage;
             };
 
             DataGridViewGeneratorNumericColumnSettings col_Amt = new DataGridViewGeneratorNumericColumnSettings();
             col_Amt.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 decimal oldvalue = MyUtility.Convert.GetDecimal(dr["Amount"]);
                 decimal newvalue = MyUtility.Convert.GetDecimal(e.FormattedValue);
                 if (!this.EditMode) return;//非編輯模式 
@@ -193,7 +204,9 @@ namespace Sci.Production.PPIC
                 decimal? perct = 0;
                 if (!MyUtility.Check.Empty(this.numTotalAmt.Value))
                 {
-                    perct = (newvalue / this.numTotalAmt.Value) * 100;
+                    perct = Math.Round(
+                        (decimal)newvalue / (decimal)this.numTotalAmt.Value * 100,
+                        2);
                 }
 
                 dr["Percentage"] = perct;
@@ -201,16 +214,27 @@ namespace Sci.Production.PPIC
                 dr.EndEdit();
 
                 // 加總表身Amount,Percentage資料
+                decimal curAmount = 0;
+                decimal curPercentage = 0;
                 DataTable dt = (DataTable)this.gridbs.DataSource;
-                this.numAmount.Value = MyUtility.Convert.GetDecimal(dt.AsEnumerable().Sum(n => (decimal)n["Amount"]));
-                this.numPercentage.Value = MyUtility.Convert.GetDecimal(dt.AsEnumerable().Sum(n => (decimal)n["Percentage"]));
+                foreach (DataRow drRow in dt.Rows)
+                {
+                    if (drRow.RowState != DataRowState.Deleted)
+                    {
+                        curAmount += MyUtility.Convert.GetDecimal(drRow["Amount"]);
+                        curPercentage += MyUtility.Convert.GetDecimal(drRow["Percentage"]);
+                    }
+                }
+
+                this.numAmount.Value = curAmount;
+                this.numPercentage.Value = curPercentage;
             };
 
-            Helper.Controls.Grid.Generator(this.grid)
-                .Text("FactoryID", "Factory", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_Factory)
-                .Text("DepartmentID", "Dept.", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_Dept)
-                .Numeric("Percentage", header: "%", width: Widths.AnsiChars(10), iseditingreadonly: false, decimal_places: 3, integer_places: 10, settings: col_Percentage)
-                .Numeric("Amount", header: "Amt", width: Widths.AnsiChars(10), iseditingreadonly: false, decimal_places: 3, integer_places: 10, settings: col_Amt)
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .Text("FactoryID", "Factory", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_Factory)
+                .Text("DepartmentID", "Dept.", width: Widths.AnsiChars(21), iseditingreadonly: false, settings: col_Dept)
+                .Numeric("Percentage", header: "%", width: Widths.AnsiChars(10), iseditingreadonly: false, decimal_places: 2, integer_places: 10, settings: col_Percentage)
+                .Numeric("Amount", header: "Amt", width: Widths.AnsiChars(13), iseditingreadonly: false, decimal_places: 2, integer_places: 10, settings: col_Amt)
                 ;
             return true;
 
@@ -232,7 +256,7 @@ outer apply(
 	from ICR_ResponsibilityDept 
 	where id=ICR.id
 )i3
-where ICR.id = '{ID}'
+where ICR.id = '{this.ID}'
  ";
             if (MyUtility.Check.Seek(sqlcmd,out drMaster))
             {
@@ -247,7 +271,7 @@ where ICR.id = '{ID}'
                 this.numAmount.Value = 0;
             }
 
-            this.txtID.Text = ID;
+            this.txtID.Text = this.ID;
             return base.OnRequery();
         }
 
@@ -266,13 +290,13 @@ where ICR.id = '{ID}'
                 }
             }
 
-            if (!curPercentage.Equals(100))
+            if (curPercentage != 0 && !curPercentage.Equals(100))
             {
                 MyUtility.Msg.WarningBox("Total % not equal to 100.");
                 return false;
             }
 
-            if (!curAmount.Equals(this.numTotalAmt.Value))
+            if (curAmount != 0 && !curAmount.Equals(this.numTotalAmt.Value))
             {
                 MyUtility.Msg.WarningBox("Total Amt not equal to Total Amt (USD).");
                 return false;

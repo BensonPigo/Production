@@ -42,20 +42,20 @@
             // btmcont
             // 
             this.btmcont.Location = new System.Drawing.Point(0, 426);
-            this.btmcont.Size = new System.Drawing.Size(561, 40);
+            this.btmcont.Size = new System.Drawing.Size(528, 40);
             // 
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 39);
-            this.gridcont.Size = new System.Drawing.Size(537, 352);
+            this.gridcont.Size = new System.Drawing.Size(504, 352);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(471, 5);
+            this.undo.Location = new System.Drawing.Point(438, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(391, 5);
+            this.save.Location = new System.Drawing.Point(358, 5);
             // 
             // txtID
             // 
@@ -81,7 +81,7 @@
             this.numTotalAmt.DecimalPlaces = 2;
             this.numTotalAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalAmt.IsSupportEditMode = false;
-            this.numTotalAmt.Location = new System.Drawing.Point(444, 8);
+            this.numTotalAmt.Location = new System.Drawing.Point(412, 8);
             this.numTotalAmt.Name = "numTotalAmt";
             this.numTotalAmt.NullValue = new decimal(new int[] {
             0,
@@ -99,7 +99,7 @@
             // 
             // labTotal
             // 
-            this.labTotal.Location = new System.Drawing.Point(332, 8);
+            this.labTotal.Location = new System.Drawing.Point(300, 8);
             this.labTotal.Name = "labTotal";
             this.labTotal.Size = new System.Drawing.Size(110, 23);
             this.labTotal.TabIndex = 100;
@@ -107,11 +107,12 @@
             // 
             // numPercentage
             // 
+            this.numPercentage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.numPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numPercentage.DecimalPlaces = 2;
             this.numPercentage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numPercentage.IsSupportEditMode = false;
-            this.numPercentage.Location = new System.Drawing.Point(306, 397);
+            this.numPercentage.Location = new System.Drawing.Point(301, 397);
             this.numPercentage.Name = "numPercentage";
             this.numPercentage.NullValue = new decimal(new int[] {
             0,
@@ -119,7 +120,7 @@
             0,
             0});
             this.numPercentage.ReadOnly = true;
-            this.numPercentage.Size = new System.Drawing.Size(104, 23);
+            this.numPercentage.Size = new System.Drawing.Size(95, 23);
             this.numPercentage.TabIndex = 102;
             this.numPercentage.Value = new decimal(new int[] {
             0,
@@ -129,11 +130,12 @@
             // 
             // numAmount
             // 
+            this.numAmount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.numAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numAmount.DecimalPlaces = 2;
             this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numAmount.IsSupportEditMode = false;
-            this.numAmount.Location = new System.Drawing.Point(443, 397);
+            this.numAmount.Location = new System.Drawing.Point(401, 397);
             this.numAmount.Name = "numAmount";
             this.numAmount.NullValue = new decimal(new int[] {
             0,
@@ -151,7 +153,7 @@
             // 
             // P20_ResponsibilityDept
             // 
-            this.ClientSize = new System.Drawing.Size(561, 466);
+            this.ClientSize = new System.Drawing.Size(528, 466);
             this.Controls.Add(this.numAmount);
             this.Controls.Add(this.numPercentage);
             this.Controls.Add(this.numTotalAmt);

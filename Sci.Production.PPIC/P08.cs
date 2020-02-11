@@ -172,7 +172,7 @@ and rd.SCIRefno = psd.SCIRefno
 and rd.ColorID = psd.ColorID
 and (psd.SEQ1 = rd.NewSeq1 or psd.OutputSeq1 = rd.NewSeq1)
 and (psd.SEQ2 = rd.NewSeq2 or psd.OutputSeq2 = rd.NewSeq2)
-where rd.id = '{CurrentMaintain["ID"]}'
+where rd.id = '{this.CurrentMaintain["ID"]}'
 ";
 
             if (!(result = DBProxy.Current.Select(null,cmdRelp,out dtRelp)))
@@ -186,12 +186,8 @@ where rd.id = '{CurrentMaintain["ID"]}'
             #endregion
 
             this.btnResponsibilitydept.ForeColor = MyUtility.Check.Seek($@"
-select 1 from ICR_ResponsibilityDept a
-where exists (
-    select 1 from ICR_ReplacementReport 
-    where id = a.ID 
-    and ReplacementNo = '{this.CurrentMaintain["id"]}'
-)") ? Color.Blue : Color.Black;
+select 1 from ICR_ResponsibilityDept 
+where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
 
             this.ChangeRowColor();
         }
@@ -918,21 +914,12 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         private void BtnResponsibilitydept_Click(object sender, EventArgs e)
         {
             bool canEdit = false;
-            if (Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Replacement Report (Fabric)", "CanSend") && !MyUtility.Check.Empty(CurrentMaintain["VoucherDate"]))
+            if (Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Replacement Report (Fabric)", "CanSend") && !MyUtility.Check.Empty(this.CurrentMaintain["VoucherDate"]))
             {
                 canEdit = true;
             }
 
-            string ICR_ID = string.Empty;
-            DataRow dr;
-
-            // 待確認! 
-            if (MyUtility.Check.Seek($"select top 1 id from ICR_ReplacementReport where ReplacementNo = '{this.CurrentMaintain["id"]}'", out dr))
-            {
-                ICR_ID = dr["id"].ToString();
-            }
-
-            var frm = new P20_ResponsibilityDept(canEdit, ICR_ID, null, null);
+            var frm = new P20_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             frm.ShowDialog(this);
             frm.Dispose();
             this.OnDetailEntered();
