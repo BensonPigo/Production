@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lblReceivingID = new Sci.Win.UI.Label();
             this.lblWK = new Sci.Win.UI.Label();
             this.lblArriveWHDate = new Sci.Win.UI.Label();
@@ -41,6 +41,17 @@
             this.gridReceiving = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnUpdate = new Sci.Win.UI.Button();
+            this.cmbMaterialType = new Sci.Win.UI.ComboBox();
+            this.labelMaterialType = new Sci.Win.UI.Label();
+            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.labelRef = new Sci.Win.UI.Label();
+            this.txtRef = new Sci.Win.UI.TextBox();
+            this.txtRoll = new Sci.Win.UI.TextBox();
+            this.label6 = new Sci.Win.UI.Label();
+            this.txtColor = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtDyelot = new Sci.Win.UI.TextBox();
+            this.labelDyelot = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,7 +73,7 @@
             // 
             // lblArriveWHDate
             // 
-            this.lblArriveWHDate.Location = new System.Drawing.Point(251, 9);
+            this.lblArriveWHDate.Location = new System.Drawing.Point(220, 9);
             this.lblArriveWHDate.Name = "lblArriveWHDate";
             this.lblArriveWHDate.Size = new System.Drawing.Size(107, 23);
             this.lblArriveWHDate.TabIndex = 3;
@@ -70,7 +81,7 @@
             // 
             // lblSP
             // 
-            this.lblSP.Location = new System.Drawing.Point(251, 43);
+            this.lblSP.Location = new System.Drawing.Point(220, 43);
             this.lblSP.Name = "lblSP";
             this.lblSP.Size = new System.Drawing.Size(107, 23);
             this.lblSP.TabIndex = 4;
@@ -82,8 +93,8 @@
             this.txtRecivingID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRecivingID.Location = new System.Drawing.Point(102, 9);
             this.txtRecivingID.Name = "txtRecivingID";
-            this.txtRecivingID.Size = new System.Drawing.Size(125, 23);
-            this.txtRecivingID.TabIndex = 5;
+            this.txtRecivingID.Size = new System.Drawing.Size(114, 23);
+            this.txtRecivingID.TabIndex = 0;
             // 
             // txtWK
             // 
@@ -91,32 +102,32 @@
             this.txtWK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtWK.Location = new System.Drawing.Point(102, 43);
             this.txtWK.Name = "txtWK";
-            this.txtWK.Size = new System.Drawing.Size(125, 23);
-            this.txtWK.TabIndex = 6;
+            this.txtWK.Size = new System.Drawing.Size(114, 23);
+            this.txtWK.TabIndex = 3;
             // 
             // txtSP
             // 
             this.txtSP.BackColor = System.Drawing.Color.White;
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(361, 43);
+            this.txtSP.Location = new System.Drawing.Point(330, 43);
             this.txtSP.Name = "txtSP";
-            this.txtSP.Size = new System.Drawing.Size(125, 23);
-            this.txtSP.TabIndex = 7;
+            this.txtSP.Size = new System.Drawing.Size(112, 23);
+            this.txtSP.TabIndex = 4;
             // 
             // dateBoxArriveWH
             // 
-            this.dateBoxArriveWH.Location = new System.Drawing.Point(361, 9);
+            this.dateBoxArriveWH.Location = new System.Drawing.Point(330, 9);
             this.dateBoxArriveWH.Name = "dateBoxArriveWH";
             this.dateBoxArriveWH.Size = new System.Drawing.Size(130, 23);
-            this.dateBoxArriveWH.TabIndex = 8;
+            this.dateBoxArriveWH.TabIndex = 1;
             // 
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(916, 5);
+            this.btnQuery.Location = new System.Drawing.Point(905, 7);
             this.btnQuery.Name = "btnQuery";
-            this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 9;
+            this.btnQuery.Size = new System.Drawing.Size(92, 30);
+            this.btnQuery.TabIndex = 10;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -138,20 +149,20 @@
             this.gridReceiving.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReceiving.Location = new System.Drawing.Point(9, 76);
             this.gridReceiving.Name = "gridReceiving";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiving.RowTemplate.Height = 24;
             this.gridReceiving.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridReceiving.ShowCellToolTips = false;
-            this.gridReceiving.Size = new System.Drawing.Size(987, 339);
+            this.gridReceiving.Size = new System.Drawing.Size(988, 339);
             this.gridReceiving.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridReceiving.TabIndex = 10;
             this.gridReceiving.Sorted += new System.EventHandler(this.gridReceiving_Sorted);
@@ -159,10 +170,10 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(916, 423);
+            this.btnClose.Location = new System.Drawing.Point(917, 423);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 11;
+            this.btnClose.TabIndex = 12;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -170,19 +181,132 @@
             // btnUpdate
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdate.Location = new System.Drawing.Point(817, 423);
+            this.btnUpdate.Location = new System.Drawing.Point(818, 423);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(80, 30);
-            this.btnUpdate.TabIndex = 12;
+            this.btnUpdate.TabIndex = 11;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            // 
+            // cmbMaterialType
+            // 
+            this.cmbMaterialType.BackColor = System.Drawing.Color.White;
+            this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbMaterialType.FormattingEnabled = true;
+            this.cmbMaterialType.IsSupportUnselect = true;
+            this.cmbMaterialType.Location = new System.Drawing.Point(554, 9);
+            this.cmbMaterialType.Name = "cmbMaterialType";
+            this.cmbMaterialType.OldText = "";
+            this.cmbMaterialType.Size = new System.Drawing.Size(91, 24);
+            this.cmbMaterialType.TabIndex = 2;
+            // 
+            // labelMaterialType
+            // 
+            this.labelMaterialType.Location = new System.Drawing.Point(463, 9);
+            this.labelMaterialType.Name = "labelMaterialType";
+            this.labelMaterialType.Size = new System.Drawing.Size(88, 23);
+            this.labelMaterialType.TabIndex = 14;
+            this.labelMaterialType.Text = "Material Type";
+            // 
+            // txtSeq
+            // 
+            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq.Location = new System.Drawing.Point(445, 43);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.seq1 = "";
+            this.txtSeq.seq2 = "";
+            this.txtSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq.TabIndex = 5;
+            // 
+            // labelRef
+            // 
+            this.labelRef.Location = new System.Drawing.Point(513, 43);
+            this.labelRef.Name = "labelRef";
+            this.labelRef.Size = new System.Drawing.Size(40, 23);
+            this.labelRef.TabIndex = 16;
+            this.labelRef.Text = "Ref#";
+            // 
+            // txtRef
+            // 
+            this.txtRef.BackColor = System.Drawing.Color.White;
+            this.txtRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRef.IsSupportEditMode = false;
+            this.txtRef.Location = new System.Drawing.Point(556, 43);
+            this.txtRef.Name = "txtRef";
+            this.txtRef.Size = new System.Drawing.Size(87, 23);
+            this.txtRef.TabIndex = 6;
+            // 
+            // txtRoll
+            // 
+            this.txtRoll.BackColor = System.Drawing.Color.White;
+            this.txtRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRoll.IsSupportEditMode = false;
+            this.txtRoll.Location = new System.Drawing.Point(815, 43);
+            this.txtRoll.Name = "txtRoll";
+            this.txtRoll.Size = new System.Drawing.Size(60, 23);
+            this.txtRoll.TabIndex = 8;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(773, 43);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(39, 23);
+            this.label6.TabIndex = 24;
+            this.label6.Text = "Roll";
+            // 
+            // txtColor
+            // 
+            this.txtColor.BackColor = System.Drawing.Color.White;
+            this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtColor.IsSupportEditMode = false;
+            this.txtColor.Location = new System.Drawing.Point(700, 43);
+            this.txtColor.Name = "txtColor";
+            this.txtColor.Size = new System.Drawing.Size(70, 23);
+            this.txtColor.TabIndex = 7;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(646, 43);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(51, 23);
+            this.label5.TabIndex = 23;
+            this.label5.Text = "Color";
+            // 
+            // txtDyelot
+            // 
+            this.txtDyelot.BackColor = System.Drawing.Color.White;
+            this.txtDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDyelot.IsSupportEditMode = false;
+            this.txtDyelot.Location = new System.Drawing.Point(931, 43);
+            this.txtDyelot.Name = "txtDyelot";
+            this.txtDyelot.Size = new System.Drawing.Size(65, 23);
+            this.txtDyelot.TabIndex = 9;
+            // 
+            // labelDyelot
+            // 
+            this.labelDyelot.Location = new System.Drawing.Point(877, 43);
+            this.labelDyelot.Name = "labelDyelot";
+            this.labelDyelot.Size = new System.Drawing.Size(51, 23);
+            this.labelDyelot.TabIndex = 22;
+            this.labelDyelot.Text = "Dyelot";
             // 
             // P21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 462);
+            this.Controls.Add(this.txtRoll);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.txtColor);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.txtDyelot);
+            this.Controls.Add(this.labelDyelot);
+            this.Controls.Add(this.labelRef);
+            this.Controls.Add(this.txtRef);
+            this.Controls.Add(this.txtSeq);
+            this.Controls.Add(this.cmbMaterialType);
+            this.Controls.Add(this.labelMaterialType);
             this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.gridReceiving);
@@ -210,6 +334,17 @@
             this.Controls.SetChildIndex(this.gridReceiving, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnUpdate, 0);
+            this.Controls.SetChildIndex(this.labelMaterialType, 0);
+            this.Controls.SetChildIndex(this.cmbMaterialType, 0);
+            this.Controls.SetChildIndex(this.txtSeq, 0);
+            this.Controls.SetChildIndex(this.txtRef, 0);
+            this.Controls.SetChildIndex(this.labelRef, 0);
+            this.Controls.SetChildIndex(this.labelDyelot, 0);
+            this.Controls.SetChildIndex(this.txtDyelot, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.txtColor, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.txtRoll, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -230,5 +365,16 @@
         private Win.UI.Grid gridReceiving;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnUpdate;
+        private Win.UI.ComboBox cmbMaterialType;
+        private Win.UI.Label labelMaterialType;
+        private Class.txtSeq txtSeq;
+        private Win.UI.Label labelRef;
+        private Win.UI.TextBox txtRef;
+        private Win.UI.TextBox txtRoll;
+        private Win.UI.Label label6;
+        private Win.UI.TextBox txtColor;
+        private Win.UI.Label label5;
+        private Win.UI.TextBox txtDyelot;
+        private Win.UI.Label labelDyelot;
     }
 }

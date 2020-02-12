@@ -24,6 +24,13 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.EditMode = true;
+            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add("", "All");
+            comboBox1_RowSource.Add("F", "Fabric");
+            comboBox1_RowSource.Add("A", "Accessory");
+            cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            cmbMaterialType.ValueMember = "Key";
+            cmbMaterialType.DisplayMember = "Value";
         }
 
         protected override void OnFormLoaded()
@@ -36,7 +43,11 @@ namespace Sci.Production.Warehouse
                 DataRow curDr = this.gridReceiving.GetDataRow(e.RowIndex);
                 curDr["Differential"] = (decimal)e.FormattedValue - (decimal)curDr["Weight"];
                 curDr["ActualWeight"] = e.FormattedValue;
+                curDr.EndEdit();
+
                 this.DifferentialColorChange(e.RowIndex);
+                this.selectModify(e.RowIndex);
+                this.gridReceiving.RefreshEdit();
             };
 
             Ict.Win.DataGridViewGeneratorTextColumnSettings cellLocation = new DataGridViewGeneratorTextColumnSettings();
@@ -55,15 +66,16 @@ namespace Sci.Production.Warehouse
 
             cellLocation.CellValidating += (s, e) =>
             {
+                DataRow curDr = this.gridReceiving.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    curDr["Location"] = string.Empty;
+                    this.selectModify(e.RowIndex);
                     return;
-                }
-
-                DataRow curDr = this.gridReceiving.GetDataRow(e.RowIndex);
-                string sqlcmd = string.Empty;
+                }               
+               
                 string[] locationList = e.FormattedValue.ToString().Split(',');
-
+                
                 string notLocationExistsList = locationList.Where(a => !PublicPrg.Prgs.CheckLocationExists(curDr["StockType"].ToString(), a)).JoinToString(",");
 
                 if (!MyUtility.Check.Empty(notLocationExistsList))
@@ -72,6 +84,14 @@ namespace Sci.Production.Warehouse
                     MyUtility.Msg.WarningBox($"Location<{notLocationExistsList}> not Found");
                     return;
                 }
+                else
+                {
+                    curDr["Location"] = e.FormattedValue.ToString();
+                    curDr.EndEdit();
+                }
+
+                this.selectModify(e.RowIndex);
+                this.gridReceiving.RefreshEdit();
             };
 
             Helper.Controls.Grid.Generator(this.gridReceiving)
@@ -131,6 +151,40 @@ namespace Sci.Production.Warehouse
         {
             string sqlWhere = string.Empty;
 
+            if (!txtSeq.checkSeq1Empty() && txtSeq.checkSeq2Empty())
+            {
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}'";
+            }
+            else if (!txtSeq.checkEmpty(showErrMsg: false))
+            {
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}' and rd.seq2 = '{this.txtSeq.seq2}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtRef.Text))
+            {
+                sqlWhere += $" and psd.refno = '{this.txtRef.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtColor.Text))
+            {
+                sqlWhere += $" and (psd.SuppColor = '{this.txtColor.Text}' or psd.ColorID = '{this.txtColor.Text}')";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtRoll.Text))
+            {
+                sqlWhere += $" and rd.roll = '{this.txtRoll.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtDyelot.Text))
+            {
+                sqlWhere += $" and rd.dyelot = '{this.txtDyelot.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.cmbMaterialType.SelectedValue.ToString()))
+            {
+                sqlWhere += $" and psd.FabricType = '{this.cmbMaterialType.SelectedValue.ToString()}'";
+            }
+
             if (!MyUtility.Check.Empty(this.txtRecivingID.Text))
             {
                 sqlWhere += $" and r.ID = '{this.txtRecivingID.Text}'";
@@ -165,7 +219,7 @@ into #tmpStockType
 from DropDownList WITH (NOLOCK) where Type = 'Pms_StockType'
 
 select
-[select] = 1,
+[select] = 0,
 rd.Id,
 rd.PoId,
 [Seq] = rd.Seq1 + ' ' + rd.Seq2,
@@ -180,6 +234,7 @@ rd.Location,
 [OldLocation] = rd.Location,
 rd.Weight,
 rd.ActualWeight,
+[OldActualWeight] = rd.ActualWeight,
 [Differential] = rd.ActualWeight - rd.Weight,
 [FtyInventoryUkey] = fi.Ukey,
 [FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty,
@@ -209,6 +264,7 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
             if (this.dtReceiving.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found");
+                this.gridReceiving.DataSource = this.dtReceiving;
                 return;
             }
 
@@ -387,6 +443,50 @@ Insert into LocationTrans_Detail(   ID,
             this.Query();
             MyUtility.Msg.InfoBox("Complete");
 
+        }
+
+        /// <summary>
+        /// 檢查表身Location,ActualWeight是否有被修改過(跟DB資料比較)
+        /// 有被修改過,就自動勾選資料
+        /// </summary>
+        /// <param name="rowIndex"></param>
+        private void selectModify(int rowIndex)
+        {
+            DataRow dr = this.gridReceiving.GetDataRow(rowIndex);
+            bool chg_ActWeight = false;
+            bool chg_Location = false;
+
+            decimal oldActualWeight = MyUtility.Convert.GetDecimal(dr["OldActualWeight"]);
+            decimal newActualWeight = MyUtility.Convert.GetDecimal(dr["ActualWeight"]);
+            if (!oldActualWeight.Equals(newActualWeight))
+            {
+                chg_ActWeight = true;
+            }
+            else
+            {
+                chg_ActWeight = false;
+            }
+
+            // 判斷Location 有變更資料就自動勾選
+            string oldvalue = dr["OldLocation"].ToString();
+            string newvalue = dr["Location"].ToString();            
+            if (!oldvalue.Equals(newvalue))
+            {
+                chg_Location = true;
+            }
+            else
+            {
+                chg_Location = false;
+            }
+
+            if (chg_Location || chg_ActWeight)
+            {
+                dr["select"] = 1;
+            }
+            else
+            {
+                dr["select"] = 0;
+            }
         }
     }
 }
