@@ -96,7 +96,18 @@ order by e.Seq, f.Seq", masterID);
             base.OnDetailEntered();
             DataRow orderData;
             string sqlCmd;
-            sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]));
+            sqlCmd = string.Format(
+                @"select o.StyleID, o.SeasonID, o.CustPONo, os.Qty, o.CtnType, o.Packing,o.FtyGroup 
+                    from Orders o WITH (NOLOCK) 
+                    outer apply(
+	                    select Qty
+	                    from Order_QtyShip  WITH (NOLOCK)
+	                    where Id = o.ID
+	                    and Seq = '{1}'
+                    )os 
+                    where o.ID = '{0}'",
+                MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["OrderShipmodeSeq"]));
             if (MyUtility.Check.Seek(sqlCmd, out orderData))
             {
                 this.displayStyle.Value = orderData["StyleID"].ToString();
@@ -1031,7 +1042,6 @@ where o.ID = '{0}'
                     this.displayStyle.Value = orderData["StyleID"].ToString();
                     this.displaySeason.Value = orderData["SeasonID"].ToString();
                     this.displayPONo.Value = orderData["CustPONo"].ToString();
-                    this.numOrderQty.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
                     this.comboPackingMethod.SelectedValue = orderData["CtnType"].ToString();
                     this.CurrentMaintain["SpecialInstruction"] = orderData["Packing"].ToString();
                     this.CurrentMaintain["FactoryID"] = orderData["FtyGroup"].ToString();
@@ -1043,12 +1053,13 @@ where o.ID = '{0}'
                     {
                         if (orderData["CountID"].ToString() == "1")
                         {
-                            sqlCmd = string.Format("select ShipModeID,Seq from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);
+                            sqlCmd = string.Format("select ShipModeID,Seq,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);
                             if (MyUtility.Check.Seek(sqlCmd, out orderData))
                             {
                                 this.CurrentMaintain["OrderShipmodeSeq"] = orderData["Seq"].ToString();
                                 this.CurrentMaintain["ShipModeID"] = orderData["ShipModeID"].ToString();
                                 this.numTotalShipQty.Value = orderQty;
+                                this.numOrderQty.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
                             }
                         }
                         else
@@ -1062,6 +1073,7 @@ where o.ID = '{0}'
                                 this.CurrentMaintain["OrderShipmodeSeq"] = string.Empty;
                                 this.CurrentMaintain["ShipModeID"] = string.Empty;
                                 this.numTotalShipQty.Value = 0;
+                                this.numOrderQty.Value = 0;
                             }
                             else
                             {
@@ -1069,6 +1081,7 @@ where o.ID = '{0}'
                                 this.CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
                                 this.CurrentMaintain["ShipModeID"] = orderQtyShipData[0]["ShipmodeID"].ToString();
                                 this.numTotalShipQty.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"].ToString());
+                                this.numOrderQty.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"].ToString());
                             }
                         }
                     }
