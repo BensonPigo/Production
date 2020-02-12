@@ -343,7 +343,7 @@ BEGIN
 			, bunIO.InComing
 			, bunIO.OutGoing
 			, bunD.Qty
-			, isnull(bunD.IsPair,0)
+			, [IsPair]=ISNULL(TopIsPair.IsPair,0)
 			, iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
 	from @QtyBySetPerCutpart st0
 	inner join @SubProcess sub on st0.SubprocessId = sub.SubprocessId
@@ -359,6 +359,23 @@ BEGIN
 								bunD.Patterncode = st0.Patterncode and
 								bunD.Sizecode = os.SizeCode
 	)bund
+	outer apply(
+		select	top 1
+				bunD.ID
+				, bunD.BundleGroup
+				, bunD.BundleNo
+				, bunD.IsPair
+		from Bundle bun
+		INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  
+		inner join Bundle_Detail bunD on bunD.Id = bun.ID
+		where bun.Orderid = st0.Orderid 
+			and bun.PatternPanel = st0.PatternPanel 
+			and bun.FabricPanelCode = st0.FabricPanelCode 
+			and bun.Article = st0.Article  
+			and bunD.Patterncode = st0.Patterncode 
+			and bunD.Sizecode = os.SizeCode
+		order by bun.AddDate desc
+	)TopIsPair
 	left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = sub.SubprocessId and isnull(bunIO.RFIDProcessLocationID,'') = ''
 	where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
 
@@ -371,15 +388,15 @@ BEGIN
 			, PatternPanel
 			, FabricPanelCode
 			, PatternCode
-			, InQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0)) / iif(IsPair=1,m,1)
-			, OutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0)) / iif(IsPair=1,m,1)
+			, InQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0)) / iif(IsPair=1,IIF(m=1,2,m),1) 
+			, OutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0)) / iif(IsPair=1,IIF(m=1,2,m),1) 
 			, OriInQty = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0)) --原始裁片數總和
 			, OriOutQty = sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0)) --原始裁片數總和
 			, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),Qty,0))
 									when InOutRule = 2 then sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),Qty,0))
 									else sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate) and
 										  InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate)
-										  ,Qty,0)) end) / iif(IsPair=1,m,1)
+										  ,Qty,0)) end) / iif(IsPair=1,IIF(m=1,2,m),1) 
 			 ,num = count(1)
 			, num_In = sum(iif(InComing is not null and (@InStartDate is null or @InStartDate <= InComing) and (@InEndDate is null or InComing <= @InEndDate),1,0)) 
 			, num_Out= sum(iif(OutGoing is not null and (@OutStartDate is null or @OutStartDate <= OutGoing) and (@OutEndDate is null or OutGoing <= @OutEndDate),1,0))
@@ -392,13 +409,7 @@ BEGIN
 	group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair,m
 
 	-- 篩選 BundleGroup Step.1 --
-	if (@IsNeedCombinBundleGroup = 1)
-	begin
-		update @BundleInOutQty
-		set InQty = iif(num_In<num,0,InQty)
-			, OutQty = iif(num_Out<num,0,OutQty)
-			, FinishedQty = iif(num_F<num,0,FinishedQty)
-	end
+
 	
 	-- Step 2. --	
 	if (@IsNeedCombinBundleGroup = 1)
