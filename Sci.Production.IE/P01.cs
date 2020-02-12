@@ -142,9 +142,12 @@ order by td.Seq", masterID);
         /// </summary>
         protected override void OnFormLoaded()
         {
-            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, "All,last 2 years modify");
-            this.queryfors.SelectedIndex = 1;
-            this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, "last 2 years modify,All");
+            this.queryfors.SelectedIndex = 0;
+            if (MyUtility.Check.Empty(this.DefaultFilter))
+            {
+                this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+            }
 
             base.OnFormLoaded();
 
@@ -152,11 +155,11 @@ order by td.Seq", masterID);
             {
                 switch (this.queryfors.SelectedIndex)
                 {
-                    case 0:
-                        this.DefaultWhere = string.Empty;
-                        break;
                     case 1:
-                        this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        this.DefaultFilter = string.Empty;
+                        break;
+                    case 0:
+                        this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
                         break;
                 }
 
