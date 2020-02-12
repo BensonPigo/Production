@@ -264,6 +264,7 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
             if (this.dtReceiving.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found");
+                this.gridReceiving.DataSource = this.dtReceiving;
                 return;
             }
 
