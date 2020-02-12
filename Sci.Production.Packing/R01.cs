@@ -31,6 +31,11 @@ namespace Sci.Production.Packing
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Sci.Env.User.Factory;
             this.txtMdivision1.Text = Sci.Env.User.Keyword;
+
+            this.dateScan1.CustomFormat = "yyyy/MM/dd HH:mm";
+            this.dateScan2.CustomFormat = "yyyy/MM/dd HH:mm";
+            this.dateScan1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
+            this.dateScan2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
         }
 
         // 驗證輸入條件
@@ -68,9 +73,11 @@ namespace Sci.Production.Packing
 
         // 驗證輸入條件
         private string _scandate1;
+        private string _scandate1e;
 
         // 驗證輸入條件
         private string _scandate2;
+        private string _scandate2e;
 
         // 驗證輸入條件
         private string _ScanName;
@@ -103,22 +110,26 @@ namespace Sci.Production.Packing
                 this._bdate2 = null;
             }
 
-            if (!MyUtility.Check.Empty(this.dateSacnDate.Value1))
+            if (!MyUtility.Check.Empty(this.dateScan1.Value))
             {
-                this._scandate1 = Convert.ToDateTime(this.dateSacnDate.Value1).ToString("d");
+                this._scandate1 = Convert.ToDateTime(this.dateScan1.Value).ToString("yyyy/MM/dd HH:mm:ss");
+                this._scandate1e = Convert.ToDateTime(this.dateScan1.Value).ToString("yyyy/MM/dd HH:mm");
             }
             else
             {
                 this._scandate1 = null;
+                this._scandate1e = null;
             }
 
-            if (!MyUtility.Check.Empty(this.dateSacnDate.Value2))
+            if (!MyUtility.Check.Empty(this.dateScan2.Value))
             {
-                this._scandate2 = Convert.ToDateTime(this.dateSacnDate.Value2).ToString("d") + " 23:59:59";
+                this._scandate2 = Convert.ToDateTime(this.dateScan2.Value).AddMinutes(1).ToString("yyyy/MM/dd HH:mm:ss");
+                this._scandate2e = Convert.ToDateTime(this.dateScan2.Value).ToString("yyyy/MM/dd HH:mm");
             }
             else
             {
                 this._scandate2 = null;
+                this._scandate2e = null;
             }
 
             this._po1 = this.txtPONoStart.Text;
@@ -432,7 +443,7 @@ select Customize1 = stuff((
             worksheet.Cells[2, 2] = this._sp1 + "~" + this._sp2;
             worksheet.Cells[2, 5] = this._packingno1 + "~" + this._packingno2;
             worksheet.Cells[2, 8] = this._bdate1 + "~" + this._bdate2;
-            worksheet.Cells[2, 12] = this._scandate1 + "~" + this._scandate2;
+            worksheet.Cells[2, 11] = this._scandate1e + "~" + this._scandate2e;
             worksheet.Cells[2, 15] = this._po1 + "~" + this.Po2;
             worksheet.Cells[2, 17] = this._brand;
             worksheet.Cells[2, 20] = this._factory;

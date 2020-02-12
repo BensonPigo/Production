@@ -38,7 +38,6 @@
             this.labelPacking = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
-            this.dateSacnDate = new Sci.Win.UI.DateRange();
             this.labelSacnDate = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.txtPONoEnd = new Sci.Win.UI.TextBox();
@@ -58,20 +57,23 @@
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtBarcode = new Sci.Win.UI.TextBox();
             this.labHangtagBarcode = new Sci.Win.UI.Label();
+            this.dateScan2 = new System.Windows.Forms.DateTimePicker();
+            this.dateScan1 = new System.Windows.Forms.DateTimePicker();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(426, 81);
+            this.print.Location = new System.Drawing.Point(445, 81);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(426, 9);
+            this.toexcel.Location = new System.Drawing.Point(445, 9);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(426, 45);
+            this.close.Location = new System.Drawing.Point(445, 45);
             // 
             // label7
             // 
@@ -93,7 +95,7 @@
             this.txtSPNoEnd.Location = new System.Drawing.Point(285, 9);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(130, 23);
-            this.txtSPNoEnd.TabIndex = 111;
+            this.txtSPNoEnd.TabIndex = 1;
             // 
             // txtSPNoStart
             // 
@@ -102,7 +104,7 @@
             this.txtSPNoStart.Location = new System.Drawing.Point(127, 9);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(130, 23);
-            this.txtSPNoStart.TabIndex = 110;
+            this.txtSPNoStart.TabIndex = 0;
             // 
             // labelSPNo
             // 
@@ -132,7 +134,7 @@
             this.txtPackingEnd.Location = new System.Drawing.Point(285, 38);
             this.txtPackingEnd.Name = "txtPackingEnd";
             this.txtPackingEnd.Size = new System.Drawing.Size(130, 23);
-            this.txtPackingEnd.TabIndex = 115;
+            this.txtPackingEnd.TabIndex = 3;
             // 
             // txtPackingStart
             // 
@@ -141,7 +143,7 @@
             this.txtPackingStart.Location = new System.Drawing.Point(127, 38);
             this.txtPackingStart.Name = "txtPackingStart";
             this.txtPackingStart.Size = new System.Drawing.Size(130, 23);
-            this.txtPackingStart.TabIndex = 114;
+            this.txtPackingStart.TabIndex = 2;
             // 
             // labelPacking
             // 
@@ -170,7 +172,7 @@
             this.dateBuyerDelivery.Location = new System.Drawing.Point(127, 67);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateBuyerDelivery.TabIndex = 118;
+            this.dateBuyerDelivery.TabIndex = 4;
             // 
             // labelBuyerDelivery
             // 
@@ -179,27 +181,6 @@
             this.labelBuyerDelivery.Size = new System.Drawing.Size(115, 23);
             this.labelBuyerDelivery.TabIndex = 117;
             this.labelBuyerDelivery.Text = "Buyer Delivery";
-            // 
-            // dateSacnDate
-            // 
-            // 
-            // 
-            // 
-            this.dateSacnDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateSacnDate.DateBox1.Name = "";
-            this.dateSacnDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateSacnDate.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateSacnDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateSacnDate.DateBox2.Name = "";
-            this.dateSacnDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateSacnDate.DateBox2.TabIndex = 1;
-            this.dateSacnDate.Location = new System.Drawing.Point(127, 96);
-            this.dateSacnDate.Name = "dateSacnDate";
-            this.dateSacnDate.Size = new System.Drawing.Size(280, 23);
-            this.dateSacnDate.TabIndex = 120;
             // 
             // labelSacnDate
             // 
@@ -229,7 +210,7 @@
             this.txtPONoEnd.Location = new System.Drawing.Point(285, 154);
             this.txtPONoEnd.Name = "txtPONoEnd";
             this.txtPONoEnd.Size = new System.Drawing.Size(130, 23);
-            this.txtPONoEnd.TabIndex = 123;
+            this.txtPONoEnd.TabIndex = 9;
             // 
             // txtPONoStart
             // 
@@ -238,7 +219,7 @@
             this.txtPONoStart.Location = new System.Drawing.Point(127, 154);
             this.txtPONoStart.Name = "txtPONoStart";
             this.txtPONoStart.Size = new System.Drawing.Size(130, 23);
-            this.txtPONoStart.TabIndex = 122;
+            this.txtPONoStart.TabIndex = 8;
             // 
             // labelPONo
             // 
@@ -255,7 +236,7 @@
             this.txtbrand.Location = new System.Drawing.Point(127, 183);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(100, 23);
-            this.txtbrand.TabIndex = 126;
+            this.txtbrand.TabIndex = 10;
             // 
             // labelBrand
             // 
@@ -273,7 +254,7 @@
             this.txtMdivision1.MaxLength = 8;
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(67, 23);
-            this.txtMdivision1.TabIndex = 127;
+            this.txtMdivision1.TabIndex = 11;
             // 
             // labelM
             // 
@@ -293,7 +274,7 @@
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 130;
+            this.comboFactory.TabIndex = 12;
             // 
             // label2
             // 
@@ -310,7 +291,7 @@
             this.rdbtnSummary.Location = new System.Drawing.Point(218, 299);
             this.rdbtnSummary.Name = "rdbtnSummary";
             this.rdbtnSummary.Size = new System.Drawing.Size(111, 21);
-            this.rdbtnSummary.TabIndex = 137;
+            this.rdbtnSummary.TabIndex = 15;
             this.rdbtnSummary.Text = "Not Complete";
             this.rdbtnSummary.UseVisualStyleBackColor = true;
             // 
@@ -322,7 +303,7 @@
             this.rdbtnDetail.Location = new System.Drawing.Point(127, 299);
             this.rdbtnDetail.Name = "rdbtnDetail";
             this.rdbtnDetail.Size = new System.Drawing.Size(85, 21);
-            this.rdbtnDetail.TabIndex = 136;
+            this.rdbtnDetail.TabIndex = 14;
             this.rdbtnDetail.TabStop = true;
             this.rdbtnDetail.Text = "Complete";
             this.rdbtnDetail.UseVisualStyleBackColor = true;
@@ -342,7 +323,7 @@
             this.radioButton1.Location = new System.Drawing.Point(335, 301);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(41, 21);
-            this.radioButton1.TabIndex = 138;
+            this.radioButton1.TabIndex = 16;
             this.radioButton1.Text = "All";
             this.radioButton1.UseVisualStyleBackColor = true;
             // 
@@ -360,7 +341,7 @@
             this.txtuser1.Location = new System.Drawing.Point(127, 125);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 141;
+            this.txtuser1.TabIndex = 7;
             this.txtuser1.TextBox1Binding = "";
             // 
             // txtBarcode
@@ -370,7 +351,7 @@
             this.txtBarcode.Location = new System.Drawing.Point(127, 270);
             this.txtBarcode.Name = "txtBarcode";
             this.txtBarcode.Size = new System.Drawing.Size(130, 23);
-            this.txtBarcode.TabIndex = 143;
+            this.txtBarcode.TabIndex = 13;
             // 
             // labHangtagBarcode
             // 
@@ -380,9 +361,39 @@
             this.labHangtagBarcode.TabIndex = 142;
             this.labHangtagBarcode.Text = "Hangtag Barcode";
             // 
+            // dateScan2
+            // 
+            this.dateScan2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateScan2.Location = new System.Drawing.Point(299, 97);
+            this.dateScan2.Name = "dateScan2";
+            this.dateScan2.Size = new System.Drawing.Size(146, 23);
+            this.dateScan2.TabIndex = 6;
+            this.dateScan2.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            // 
+            // dateScan1
+            // 
+            this.dateScan1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateScan1.Location = new System.Drawing.Point(127, 96);
+            this.dateScan1.Name = "dateScan1";
+            this.dateScan1.Size = new System.Drawing.Size(146, 23);
+            this.dateScan1.TabIndex = 5;
+            this.dateScan1.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(275, 99);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(22, 17);
+            this.label4.TabIndex = 146;
+            this.label4.Text = "～";
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(518, 383);
+            this.ClientSize = new System.Drawing.Size(537, 383);
+            this.Controls.Add(this.dateScan2);
+            this.Controls.Add(this.dateScan1);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.txtBarcode);
             this.Controls.Add(this.labHangtagBarcode);
             this.Controls.Add(this.txtuser1);
@@ -401,7 +412,6 @@
             this.Controls.Add(this.txtPONoEnd);
             this.Controls.Add(this.txtPONoStart);
             this.Controls.Add(this.labelPONo);
-            this.Controls.Add(this.dateSacnDate);
             this.Controls.Add(this.labelSacnDate);
             this.Controls.Add(this.dateBuyerDelivery);
             this.Controls.Add(this.labelBuyerDelivery);
@@ -414,7 +424,11 @@
             this.Controls.Add(this.txtSPNoStart);
             this.Controls.Add(this.labelSPNo);
             this.Name = "R01";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "Scan & Pack List";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.txtSPNoStart, 0);
             this.Controls.SetChildIndex(this.txtSPNoEnd, 0);
@@ -426,7 +440,6 @@
             this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.labelSacnDate, 0);
-            this.Controls.SetChildIndex(this.dateSacnDate, 0);
             this.Controls.SetChildIndex(this.labelPONo, 0);
             this.Controls.SetChildIndex(this.txtPONoStart, 0);
             this.Controls.SetChildIndex(this.txtPONoEnd, 0);
@@ -448,6 +461,9 @@
             this.Controls.SetChildIndex(this.txtuser1, 0);
             this.Controls.SetChildIndex(this.labHangtagBarcode, 0);
             this.Controls.SetChildIndex(this.txtBarcode, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.dateScan1, 0);
+            this.Controls.SetChildIndex(this.dateScan2, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -465,7 +481,6 @@
         private Win.UI.Label labelPacking;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelBuyerDelivery;
-        private Win.UI.DateRange dateSacnDate;
         private Win.UI.Label labelSacnDate;
         private Win.UI.Label label6;
         private Win.UI.TextBox txtPONoEnd;
@@ -485,5 +500,8 @@
         private Class.txtuser txtuser1;
         private Win.UI.TextBox txtBarcode;
         private Win.UI.Label labHangtagBarcode;
+        private System.Windows.Forms.DateTimePicker dateScan2;
+        private System.Windows.Forms.DateTimePicker dateScan1;
+        private System.Windows.Forms.Label label4;
     }
 }
