@@ -1047,7 +1047,6 @@ where o.ID = '{0}'
                     this.CurrentMaintain["FactoryID"] = orderData["FtyGroup"].ToString();
 
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
-                    int orderQty = MyUtility.Convert.GetInt(orderData["Qty"]);
                     sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);
                     if (MyUtility.Check.Seek(sqlCmd, out orderData))
                     {
@@ -1058,7 +1057,7 @@ where o.ID = '{0}'
                             {
                                 this.CurrentMaintain["OrderShipmodeSeq"] = orderData["Seq"].ToString();
                                 this.CurrentMaintain["ShipModeID"] = orderData["ShipModeID"].ToString();
-                                this.numTotalShipQty.Value = orderQty;
+                                this.numTotalShipQty.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
                                 this.numOrderQty.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
                             }
                         }
