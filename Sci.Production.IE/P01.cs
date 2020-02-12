@@ -181,6 +181,12 @@ order by td.Seq", masterID);
             #endregion
         }
 
+        protected override void ClickLocate()
+        {
+            base.ClickLocate();
+            this.queryfors.SelectedIndex = 0;
+        }
+
         /// <summary>
         /// OnDetailEntered()
         /// </summary>
