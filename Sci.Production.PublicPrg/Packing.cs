@@ -1654,30 +1654,33 @@ where   p.ID = '{0}'
         /// <param name="Order Qty"></param>
         /// <param name="Special Instruction"></param>
         /// <returns></returns>
-        public static void PackingListToExcel_PackingGuideReport(string XltxName, DataTable PrintData, DataTable CtnDim, DataTable QtyCtn, DataTable ArticleSizeTtlShipQty, DataTable PrintGroupData, DataTable ClipData, DataRow PacklistData, int OrderQty, string SpecialInstruction)
+        public static void PackingListToExcel_PackingGuideReport(string XltxName, DataTable PrintData, DataTable CtnDim, DataTable QtyCtn, DataTable ArticleSizeTtlShipQty, DataTable PrintGroupData, DataTable ClipData, DataRow PacklistData, int OrderQty, string SpecialInstruction, bool visRow3)
         {            
             string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             //MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
             string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
             worksheet.Cells[1, 1] = NameEN;
-            worksheet.Cells[4, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["Factory"]);
-            worksheet.Cells[4, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
-            worksheet.Cells[4, 4] = PrintData.Rows[0]["BuyerDelivery"];
-            worksheet.Cells[4, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
-            worksheet.Cells[4, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
-            worksheet.Cells[4, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
-            worksheet.Cells[4, 12] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
-            worksheet.Cells[4, 14] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCD"]);
-            worksheet.Cells[4, 16] = MyUtility.Convert.GetString(PrintData.Rows[0]["DestAlias"]);
-            worksheet.Cells[4, 18] = OrderQty;
-            worksheet.Cells[4, 20] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
-            worksheet.Cells[4, 21] = "=R4-T4";
+            worksheet.Cells[3, 3] = MyUtility.Convert.GetString(PacklistData["ID"]);
+            worksheet.Cells[3, 20] = DateTime.Today;
+            worksheet.Cells[5, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["Factory"]);
+            worksheet.Cells[5, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
+            worksheet.Cells[5, 4] = PrintData.Rows[0]["BuyerDelivery"];
+            worksheet.Cells[5, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+            worksheet.Cells[5, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
+            worksheet.Cells[5, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
+            worksheet.Cells[5, 12] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
+            worksheet.Cells[5, 14] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCD"]);
+            worksheet.Cells[5, 16] = MyUtility.Convert.GetString(PrintData.Rows[0]["DestAlias"]);
+            worksheet.Cells[5, 18] = OrderQty;
+            worksheet.Cells[5, 20] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
+            worksheet.Cells[5, 21] = "=R5-T5";
 
-            int groupRec = PrintGroupData.Rows.Count, excelRow = 5, printRec = 1, printCtnCount = 0;
-
+            int groupRec = PrintGroupData.Rows.Count, excelRow = 6, printRec = 1, printCtnCount = 0;
+            int chk1 = excelRow + 257, chk2 = excelRow + 258;
             string seq = "000000", article = "XXXX0000", size = "XXXX0000";
             int qtyPerCTN = -1;
             StringBuilder articleSize = new StringBuilder();
@@ -1692,7 +1695,7 @@ where   p.ID = '{0}'
                 if (MyUtility.Check.Empty(PrintGroupData.Rows[i]["CTNQty"]))
                 {
                     excelRow++;
-                    if (excelRow >= 262) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
+                    if (excelRow >= chk1) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
                     {
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
@@ -1723,7 +1726,7 @@ where   p.ID = '{0}'
                         if (printRec == 1)
                         {
                             excelRow++;
-                            if (excelRow >= 262) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
+                            if (excelRow >= chk1) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
                             {
                                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
                                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
@@ -1764,7 +1767,7 @@ where   p.ID = '{0}'
             }
 
             //刪除多餘的Row
-            if (excelRow >= 263)
+            if (excelRow >= chk2)
             {
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[excelRow + 1, Type.Missing];
                 rng.Select();
@@ -1776,7 +1779,7 @@ where   p.ID = '{0}'
             }
             else
             {
-                for (int i = excelRow + 1; i <= 263; i++)
+                for (int i = excelRow + 1; i <= chk2; i++)
                 {
                     Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[excelRow + 1, Type.Missing];
                     rng.Select();
@@ -1910,6 +1913,13 @@ where   p.ID = '{0}'
                 string targetFile = Env.Cfg.ClipDir + "\\" + MyUtility.Convert.GetString(dr["Year"]) + Convert.ToString(dr["Month"]).PadLeft(2, '0') + "\\" + MyUtility.Convert.GetString(dr["TableName"]) + MyUtility.Convert.GetString(dr["PKey"]) + MyUtility.Convert.GetString(dr["SourceFile"]).Substring(MyUtility.Convert.GetString(dr["SourceFile"]).LastIndexOf('.'));
                 worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
                 Marshal.ReleaseComObject(rngToInsert);
+            }
+
+            if (!visRow3)
+            {
+                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[3, Type.Missing];
+                rng.Select();
+                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
             }
 
             #region Save & Show Excel

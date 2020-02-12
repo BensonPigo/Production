@@ -134,7 +134,7 @@ namespace Sci.Production.Packing
             this.ShowWaitMessage("Data Loading....");
             if (this.reportType == "1")
             {
-                PublicPrg.Prgs.PackingListToExcel_PackingGuideReport("\\Packing_P03_PackingGuideReport.xltx", this.printData, this.ctnDim, this.qtyCtn, this.articleSizeTtlShipQty, this.printGroupData, this.clipData, this.masterData, this.orderQty, this.specialInstruction);
+                PublicPrg.Prgs.PackingListToExcel_PackingGuideReport("\\Packing_P03_PackingGuideReport.xltx", this.printData, this.ctnDim, this.qtyCtn, this.articleSizeTtlShipQty, this.printGroupData, this.clipData, this.masterData, this.orderQty, this.specialInstruction, false);
             }
 
             this.HideWaitMessage();
