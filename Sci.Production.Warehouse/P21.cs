@@ -34,9 +34,20 @@ namespace Sci.Production.Warehouse
             cellActWeight.CellValidating += (s, e) =>
             {
                 DataRow curDr = this.gridReceiving.GetDataRow(e.RowIndex);
+                string oldvalue = curDr["Location"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                // 判斷Act.Weight 有變更資料就自動勾選
+                if (!oldvalue.Equals(newvalue))
+                {
+                    curDr["select"] = 1;                 
+                }
+
                 curDr["Differential"] = (decimal)e.FormattedValue - (decimal)curDr["Weight"];
                 curDr["ActualWeight"] = e.FormattedValue;
+                curDr.EndEdit();
+
                 this.DifferentialColorChange(e.RowIndex);
+
             };
 
             Ict.Win.DataGridViewGeneratorTextColumnSettings cellLocation = new DataGridViewGeneratorTextColumnSettings();
@@ -62,6 +73,14 @@ namespace Sci.Production.Warehouse
 
                 DataRow curDr = this.gridReceiving.GetDataRow(e.RowIndex);
                 string sqlcmd = string.Empty;
+                string oldvalue = curDr["Location"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                // 判斷Location 有變更資料就自動勾選
+                if (!oldvalue.Equals(newvalue))
+                {
+                    curDr["select"] = 1;
+                    curDr.EndEdit();
+                }
                 string[] locationList = e.FormattedValue.ToString().Split(',');
 
                 string notLocationExistsList = locationList.Where(a => !PublicPrg.Prgs.CheckLocationExists(curDr["StockType"].ToString(), a)).JoinToString(",");
@@ -131,6 +150,40 @@ namespace Sci.Production.Warehouse
         {
             string sqlWhere = string.Empty;
 
+            if (!txtSeq.checkSeq1Empty() && txtSeq.checkSeq2Empty())
+            {
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}'";
+            }
+            else if (!txtSeq.checkEmpty(showErrMsg: false))
+            {
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}' and rd.seq2 = '{this.txtSeq.seq2}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtRef.Text))
+            {
+                sqlWhere += $" and psd.refno = '{this.txtRef.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtColor.Text))
+            {
+                sqlWhere += $" and (psd.SuppColor = '{this.txtColor.Text}' or psd.ColorID = '{this.txtColor.Text}')";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtRoll.Text))
+            {
+                sqlWhere += $" and rd.roll = '{this.txtRoll.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtDyelot.Text))
+            {
+                sqlWhere += $" and rd.dyelot = '{this.txtDyelot.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.cmbMaterialType.SelectedValue.ToString()))
+            {
+                sqlWhere += $" and psd.FabricType = '{this.cmbMaterialType.SelectedValue.ToString()}'";
+            }
+
             if (!MyUtility.Check.Empty(this.txtRecivingID.Text))
             {
                 sqlWhere += $" and r.ID = '{this.txtRecivingID.Text}'";
@@ -165,7 +218,7 @@ into #tmpStockType
 from DropDownList WITH (NOLOCK) where Type = 'Pms_StockType'
 
 select
-[select] = 1,
+[select] = 0,
 rd.Id,
 rd.PoId,
 [Seq] = rd.Seq1 + ' ' + rd.Seq2,
