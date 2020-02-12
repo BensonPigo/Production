@@ -146,14 +146,14 @@ namespace Sci.Production.Packing
                                 oriZplConten = reader.ReadToEnd();
 
                                 // 1-2.去除換行符號
-                                tmpzplContent = oriZplConten.Replace("\r\n", string.Empty);
+                                tmpzplContent = oriZplConten.Replace("\r\n", string.Empty).Replace("^LH0,0", "^LH10,0");
 
                                 // 1-3.先取得檔名，CustCTN被包在 ^FD>;>8 和 ^FS之間，取得CustCTN，作為檔名
-                                tmpArray = tmpzplContent.Split(new string[] { "^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0^FO80,50^BY4^BCN,200,N,N,^FD>;>8", "^FS^FT115,280^A0N,34,47^FD" }, StringSplitOptions.RemoveEmptyEntries);
+                                tmpArray = tmpzplContent.Split(new string[] { "^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0^FO80,50^BY4^BCN,200,N,N,^FD>;>8", "^FS^FT115,280^A0N,34,47^FD" }, StringSplitOptions.RemoveEmptyEntries);
                                 ZPL_FileName_List = tmpArray.Where(o => !o.Contains("^")).Distinct().ToList();
 
-                                // 1-4.拆出多個ZPL檔的內容，每一個ZPL都是以 ^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0 開頭
-                                tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH0,0^LRN^XZ^XA^CI0");
+                                // 1-4.拆出多個ZPL檔的內容，每一個ZPL都是以 ^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0 開頭
+                                tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0");
 
                                 string[] stringSeparators = new string[] { "\r\n" };
 
@@ -1124,17 +1124,36 @@ WHERE ID ='{packingListID}'
 ----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
 IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
 BEGIN
-INSERT INTO ShippingMarkPic
-	([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+    INSERT INTO ShippingMarkPic
+	    ([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
 
-SELECT TOP 1 [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-FROM ShippingMarkPicture s
-INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo --AND s.Side='D'
-INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
-ORDER BY ISNULL(s.EditDate,s.AddDate) DESC
+    SELECT TOP 1 [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+    FROM ShippingMarkPicture s
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+    ORDER BY ISNULL(s.EditDate,s.AddDate) DESC
+END
+ELSE
+BEGIN
+    UPDATE spc
+    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    FROM ShippingMarkPic spc
+	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey  AND spc.PackingListID = pd.ID
 END
 
-
+----ShippingMarkPic_Detail  (PDF不分Side)
+IF EXISTS(
+    SELECT 1 FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+)
+BEGIN
+    DELETE FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+END
 
 INSERT INTO [dbo].[ShippingMarkPic_Detail]
         ([ShippingMarkPicUkey]
@@ -1201,16 +1220,36 @@ WHERE ID ='{packingListID}'
 ----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
 IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{packingListID}')
 BEGIN
-INSERT INTO ShippingMarkPic
-	([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+    INSERT INTO ShippingMarkPic
+	    ([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
 
-SELECT TOP 1 [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-FROM ShippingMarkPicture s
-INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo --AND s.Side='D'
-INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
-ORDER BY ISNULL(s.EditDate,s.AddDate) DESC
+    SELECT TOP 1 [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+    FROM ShippingMarkPicture s
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+    ORDER BY ISNULL(s.EditDate,s.AddDate) DESC
+END
+ELSE
+BEGIN
+    UPDATE spc
+    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    FROM ShippingMarkPic spc
+	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey  AND spc.PackingListID = pd.ID
 END
 
+----ShippingMarkPic_Detail  (PDF不分Side)
+IF EXISTS(
+    SELECT 1 FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+)
+BEGIN
+    DELETE FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{packingListID}' )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+END
 
 ----PDF只會有一張貼紙
 INSERT INTO [dbo].[ShippingMarkPic_Detail]
@@ -1358,6 +1397,22 @@ BEGIN
 	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
 	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
 END
+ELSE
+BEGIN
+    UPDATE spc
+    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    FROM ShippingMarkPic spc
+	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey  AND spc.PackingListID = pd.ID
+    ;
+    UPDATE spc
+    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    FROM ShippingMarkPic spc
+	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey  AND spc.PackingListID = pd.ID
+END
 
 ----ShippingMarkPic_Detail  (Side=D)
 IF EXISTS(
@@ -1480,7 +1535,22 @@ BEGIN
 	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
     ;
 END
-
+ELSE
+BEGIN
+    UPDATE spc
+    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    FROM ShippingMarkPic spc
+	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey  AND spc.PackingListID = pd.ID
+    ;
+    UPDATE spc
+    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    FROM ShippingMarkPic spc
+	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey  AND spc.PackingListID = pd.ID
+END
 
 ----ShippingMarkPic_Detail  (Side=D)
 IF EXISTS(
@@ -2173,7 +2243,7 @@ DROP TABLE #tmpOrders
         private void CallAPI(string zplFileName, string zplContentString, string shippingMarkPath, bool IsMixed)
         {
             // 一份ZPL有3張圖片，因此再拆一次
-            string[] stringSeparators = new string[] { "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH0,0^LRN" };
+            string[] stringSeparators = new string[] { "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH10,0^LRN" };
             List<string> content = zplContentString.Split(stringSeparators, StringSplitOptions.None).ToList();
 
             for (int i = 0; i < content.Count; i++)
@@ -2183,11 +2253,11 @@ DROP TABLE #tmpOrders
                     stringSeparators = new string[] { "^XA^MMT^XZ^XA^PRE^FS^FT0314,0058^A0N,0036,0036^FR^FDCarton Contents^FS" };
                     string[] aa = content[i].Split(stringSeparators, StringSplitOptions.None);
                     content[i] = aa[0];
-                    content.Add("^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH0,0^LRN" + aa[1]);
+                    content.Add("^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH10,0^LRN" + aa[1]);
                 }
                 else
                 {
-                    content[i] = "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH0,0^LRN" + content[i];
+                    content[i] = "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH10,0^LRN" + content[i];
                 }
 
                 byte[] zpl = Encoding.UTF8.GetBytes(content[i]);
