@@ -2404,11 +2404,11 @@ DROP TABLE #tmpOrders
             }
 
             string cmd = $@"
-                    UPDATE sd
-                    SET sd.Image=@Image
-                    FROM ShippingMarkPic s
-                    INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-                    WHERE sd.FileName=@FileName
+UPDATE sd
+SET sd.Image=@Image
+FROM ShippingMarkPic s
+INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
+WHERE sd.FileName=@FileName
                     ";
             if (!MyUtility.Check.Empty(side))
             {
@@ -2420,7 +2420,7 @@ DROP TABLE #tmpOrders
     SELECT TOP 1 s2.AddDate 
     FROM ShippingMarkPic s2
     INNER JOIN ShippingMarkPic_Detail sd2 ON s2.Ukey=sd2.ShippingMarkPicUkey
-    WHERE sd2.FileName = @FileName
+    WHERE sd2.FileName = @FileName AND s2.Side = s.Side AND s2.Seq = s.Seq  AND s2.PackingListID = s.PackingListID
     ORDER BY s2.AddDate  DESC 
 )";
 
