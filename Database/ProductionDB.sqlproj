@@ -2436,6 +2436,8 @@
     <Build Include="dbo\Stored Procedures\Trans_BundleHistory.sql" />
     <Build Include="dbo\Tables\StickerSize.sql" />
     <Build Include="dbo\Stored Procedures\CheckCustCD_Diamond.sql" />
+    <Build Include="dbo\Tables\SubprocessLeadTime_Detail.sql" />
+    <Build Include="dbo\Tables\SubprocessLeadTime.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
