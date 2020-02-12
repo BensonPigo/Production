@@ -142,7 +142,26 @@ order by td.Seq", masterID);
         /// </summary>
         protected override void OnFormLoaded()
         {
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, "All,last 2 years modify");
+            this.queryfors.SelectedIndex = 1;
+            this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+
             base.OnFormLoaded();
+
+            this.queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (this.queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = string.Empty;
+                        break;
+                    case 1:
+                        this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        break;
+                }
+
+                this.ReloadDatas();
+            };
 
             // MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "T,B,I,O");
             MyUtility.Tool.SetupCombox(this.comboStatus, 1, 1, "Estimate,Initial,Prelim,Final");
