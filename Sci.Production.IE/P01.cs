@@ -142,7 +142,29 @@ order by td.Seq", masterID);
         /// </summary>
         protected override void OnFormLoaded()
         {
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, "last 2 years modify,All");
+            this.queryfors.SelectedIndex = 0;
+            if (MyUtility.Check.Empty(this.DefaultFilter))
+            {
+                this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+            }
+
             base.OnFormLoaded();
+
+            this.queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (this.queryfors.SelectedIndex)
+                {
+                    case 1:
+                        this.DefaultFilter = string.Empty;
+                        break;
+                    case 0:
+                        this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        break;
+                }
+
+                this.ReloadDatas();
+            };
 
             // MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "T,B,I,O");
             MyUtility.Tool.SetupCombox(this.comboStatus, 1, 1, "Estimate,Initial,Prelim,Final");
@@ -157,6 +179,12 @@ order by td.Seq", masterID);
             this.comboStyle.DisplayMember = "Location";
             this.comboStyle.ValueMember = "Location";
             #endregion
+        }
+
+        protected override void ClickLocate()
+        {
+            base.ClickLocate();
+            this.queryfors.SelectedIndex = 0;
         }
 
         /// <summary>

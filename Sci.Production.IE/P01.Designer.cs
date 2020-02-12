@@ -608,6 +608,7 @@
             this.DefaultControl = "txtStyle";
             this.DefaultControlForEdit = "txtStyle";
             this.DefaultOrder = "StyleID";
+            this.ExpressQuery = true;
             this.GridAlias = "TimeStudy_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "Seq";
