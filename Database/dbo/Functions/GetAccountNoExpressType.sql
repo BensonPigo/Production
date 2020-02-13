@@ -50,7 +50,7 @@ BEGIN
 				else splitString.value  
 				end
 	from FinanceEN.dbo.AccountNo an
-	inner join FinanceEN.dbo.DropDownList ddl on an.ExpressTypeID = ddl.ID and ddl.Type = 'ExpressType'
+	LEFT JOIN FinanceEN.dbo.DropDownList ddl on an.ExpressTypeID = ddl.ID and ddl.Type = 'ExpressType'
 	outer apply (
 		select value = cast(isnull( 
 			(select 1 

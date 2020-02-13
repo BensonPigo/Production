@@ -272,15 +272,29 @@ from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
                     {
                         for (int i = 0; i < dtBl2No.Rows.Count; i++)
                         {
-                            DataRow newRow = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
-                            newRow["Blno"] = dtBl2No.Rows[i]["Blno"];
-                            newRow["Bl2no"] = dtBl2No.Rows[i]["Bl2no"];
-                            newRow["InvNo"] = dtBl2No.Rows[i]["InvNo"];
-                            newRow["ShipModeID"] = dtBl2No.Rows[i]["ShipModeID"];
-                            newRow["GW"] = dtBl2No.Rows[i]["GW"];
-                            newRow["CBM"] = dtBl2No.Rows[i]["CBM"];
-                            newRow["Amount"] = dtBl2No.Rows[i]["Amount"];
-                            ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(newRow);
+                            // 第一筆寫回原資料列
+                            if (i == 0)
+                            {
+                                drGrid["Blno"] = dtBl2No.Rows[i]["Blno"];
+                                drGrid["Bl2no"] = dtBl2No.Rows[i]["Bl2no"];
+                                drGrid["InvNo"] = dtBl2No.Rows[i]["InvNo"];
+                                drGrid["ShipModeID"] = dtBl2No.Rows[i]["ShipModeID"];
+                                drGrid["GW"] = dtBl2No.Rows[i]["GW"];
+                                drGrid["CBM"] = dtBl2No.Rows[i]["CBM"];
+                                drGrid["Amount"] = dtBl2No.Rows[i]["Amount"];
+                            }
+                            else
+                            {
+                                DataRow newRow = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
+                                newRow["Blno"] = dtBl2No.Rows[i]["Blno"];
+                                newRow["Bl2no"] = dtBl2No.Rows[i]["Bl2no"];
+                                newRow["InvNo"] = dtBl2No.Rows[i]["InvNo"];
+                                newRow["ShipModeID"] = dtBl2No.Rows[i]["ShipModeID"];
+                                newRow["GW"] = dtBl2No.Rows[i]["GW"];
+                                newRow["CBM"] = dtBl2No.Rows[i]["CBM"];
+                                newRow["Amount"] = dtBl2No.Rows[i]["Amount"];
+                                ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(newRow);
+                            }
                         }
                     }
 
@@ -298,7 +312,6 @@ from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
                         }
                     }
 
-                    dts.AcceptChanges();
                     e.Cancel = true; // 不進入RowIndex判斷
                 }
             };
@@ -743,45 +756,6 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                 this.btnUndo.Text = "Close";
                 return;
             }
-
-            // DataRow dr;
-            // 移除subType=Other, 無法append!
-            // if (MyUtility.Check.Seek(string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]),out dr))
-            // {
-            //    if (!MyUtility.Check.Empty(dr))
-            //    {
-            //        if (dr["SubType"].ToString().ToUpper()=="OTHER")
-            //        {
-            //            this.button1.Enabled = false;
-            //        }
-            //        else
-            //        {
-            //            this.button1.Enabled = true;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        return;
-            //    }
-            // }
-            if (MyUtility.Check.Empty(this.SEGroupData))
-            {
-                this.btnDelete.Enabled = false;
-                this.btnDeleteAll.Enabled = false;
-                return;
-            }
-            else
-            {
-                if (this.SEGroupData.Rows.Count == 0)
-                {
-                    this.btnDelete.Enabled = false;
-                    this.btnDeleteAll.Enabled = false;
-                    return;
-                }
-
-                this.btnDelete.Enabled = true;
-                this.btnDeleteAll.Enabled = true;
-            }
         }
 
         // Import
@@ -1134,10 +1108,12 @@ where   ShippingAPID = '{3}'
                                 return;
                             }
 
-                            bool returnValue = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]));
-                            if (!returnValue)
+                            result = DBProxy.Current.Execute(
+                                "Production",
+                                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+                            if (!result)
                             {
-                                errmsg = errmsg + "Calcute share expense failed.";
+                                errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
                                 lastResult = false;
                             }
 
@@ -1343,183 +1319,18 @@ select [resultType] = 'OK',
         // Re-Calculate
         private void BtnReCalculate_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT")
-            {
-                string deleteCmd = string.Format(
-                    @"
-update s
-set s.Junk = 1
-from ShareExpense s
-where s.ShippingAPID = '{0}' and s.WKNo != '' 
-and s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null)
-and s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null)", MyUtility.Convert.GetString(this.apData["ID"]));
-                DualResult result = DBProxy.Current.Execute(null, deleteCmd);
-                if (!result)
-                {
-                    MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
-                    return;
-                }
-                #region 組Update Sql
-                string updateCmd = string.Format(
-                    @"
-DECLARE @apid VARCHAR(13),
-		@id VARCHAR(13),
-		@shipmode VARCHAR(10),
-		@blno VARCHAR(20),
-		@gw NUMERIC(10, 3),
-		@cbm NUMERIC(11,4),
-		@currency VARCHAR(3),
-		@subtype VARCHAR(25)
-
-SET @apid = '{0}'
-DECLARE cursor_allExport CURSOR FOR
-	select  e.ID
-            , e.ShipModeID
-            , e.Blno
-            , e.WeightKg
-            , e.Cbm
-            , s.CurrencyID
-            , s.SubType
-	from Export e WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) 
-	where e.ID = se.WKNo
-	and s.ID = se.ShippingAPID
-	and s.ID = @apid
-OPEN cursor_allExport
-FETCH NEXT FROM cursor_allExport INTO @id,@shipmode,@blno,@gw,@cbm,@currency,@subtype
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	update ShareExpense 
-	set ShipModeID = @shipmode, BLNo = @blno, GW = @gw, CBM = @cbm, CurrencyID = @currency, Type = @subtype
-	where ShippingAPID = @apid and WKNo = @id
-
-	FETCH NEXT FROM cursor_allExport INTO @id,@shipmode,@blno,@gw,@cbm,@currency,@subtype
-END
-CLOSE cursor_allExport", MyUtility.Convert.GetString(this.apData["ID"]));
-                #endregion
-                result = DBProxy.Current.Execute(null, updateCmd);
-                if (!result)
-                {
-                    MyUtility.Msg.ErrorBox("Re-Calculate update faile\r\n" + result.ToString());
-                    return;
-                }
-            }
-            else
-            {
-                string deleteCmd = string.Format(
-                    @"
-update s
-set s.Junk = 1
-from ShareExpense s
-where s.ShippingAPID = '{0}' and s.InvNo != '' 
-and (
-	s.InvNo not in (select ID from GMTBooking where ID = s.InvNo and ID is not null) 
-	and s.InvNo not in (select INVNo from PackingList where INVNo = s.InvNo and INVNo is not null) 
-	and s.InvNo not in (select ID from FtyExport  where ID = s.InvNo and ID is not null)
-	and s.invno not in (select id from Export where id=s.InvNo and id is not null)
-)
-", MyUtility.Convert.GetString(this.apData["ID"]));
-                DualResult result = DBProxy.Current.Execute(null, deleteCmd);
-                if (!result)
-                {
-                    MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
-                    return;
-                }
-
-                #region 組Update Sql
-                string updateCmd = string.Format(
-                    @"
-DECLARE @apid VARCHAR(13),
-		@id VARCHAR(13),
-		@shipmode VARCHAR(10),
-		@blno VARCHAR(20),
-		@gw NUMERIC(10, 3),
-		@cbm NUMERIC(11,4),
-		@currency VARCHAR(3),
-		@subtype VARCHAR(25)
-
-SET @apid = '{0}'
-DECLARE cursor_GB CURSOR FOR
-	select g.ID,g.ShipModeID,g.TotalGW,g.TotalCBM,s.CurrencyID,s.SubType, iif(g.BLNo is null or g.BLNo='', g.BL2No, g.BLNo) as BLNo
-	from GMTBooking g WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
-	where g.ID = se.InvNo
-	and s.id = se.ShippingAPID
-	and se.FtyWK = 0
-	and s.id = @apid
-
-DECLARE cursor_FtyWK CURSOR FOR
-	select f.ID,f.ShipModeID,f.WeightKg,f.Cbm,s.CurrencyID,s.SubType, f.Blno
-	from FtyExport f WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
-	where f.ID = se.InvNo
-	and s.id = se.ShippingAPID
-	and se.FtyWK = 1
-	and s.id = @apid
-
-DECLARE cursor_PackingList CURSOR FOR
-	select p.ID,p.ShipModeID,p.GW,p.CBM,s.CurrencyID,s.SubType, '' as BLNo
-	from PackingList p WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
-	where p.ID = se.InvNo
-	and (p.Type = 'F' or p.Type = 'L')
-	and s.id = se.ShippingAPID
-	and se.FtyWK = 0
-	and s.id = @apid
-
-OPEN cursor_GB
-FETCH NEXT FROM cursor_GB INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	update ShareExpense 
-	set ShipModeID = @shipmode, BLNo = @blno, GW = @gw, CBM = @cbm, CurrencyID = @currency, Type = @subtype
-	where ShippingAPID = @apid and InvNo = @id
-
-	FETCH NEXT FROM cursor_GB INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
-END
-CLOSE cursor_GB
-DEALLOCATE cursor_GB
-
-OPEN cursor_FtyWK
-FETCH NEXT FROM cursor_FtyWK INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	update ShareExpense 
-	set ShipModeID = @shipmode, BLNo = @blno, GW = @gw, CBM = @cbm, CurrencyID = @currency, Type = @subtype
-	where ShippingAPID = @apid and InvNo = @id
-
-	FETCH NEXT FROM cursor_FtyWK INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
-END
-CLOSE cursor_FtyWK
-DEALLOCATE cursor_FtyWK
-
-OPEN cursor_PackingList
-FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	update ShareExpense 
-	set ShipModeID = @shipmode, BLNo = @blno, GW = @gw, CBM = @cbm, CurrencyID = @currency, Type = @subtype
-	where ShippingAPID = @apid and InvNo = @id
-
-	FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
-END
-CLOSE cursor_PackingList
-DEALLOCATE cursor_PackingList
-", MyUtility.Convert.GetString(this.apData["ID"]));
-                #endregion
-                result = DBProxy.Current.Execute(null, updateCmd);
-                if (!result)
-                {
-                    MyUtility.Msg.ErrorBox("Re-Calculate update faile\r\n" + result.ToString());
-                    return;
-                }
-            }
-
             if (!this.JunkShareExpense_APP())
             {
                 return;
             }
 
-            bool returnValue = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]));
-            if (!returnValue)
+            DualResult result = DBProxy.Current.Execute(
+                "Production",
+                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+            if (!result)
             {
-                MyUtility.Msg.WarningBox("Re-calcute share expense failed, please retry later.");
+                MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
+                return;
             }
 
             this.QueryData();
