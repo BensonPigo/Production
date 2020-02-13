@@ -20,17 +20,34 @@ namespace Sci.Production.Class
             InitializeComponent();
         }
 
+        private bool isPopUp = false;
+
         [Category("Custom Properties")]
         [Description("填入Reason Type。例如：RR")]
-        public string Type { set; get ; }
+        public string Type { set; get; }
 
+
+        bool _mutiSelect = false;
+        [Category("Custom Properties")]
+        [Description("是否可以多選")]
+        public bool MutiSelect
+        {
+            set
+            {
+                this._mutiSelect = value;
+            }
+            get
+            {
+                return this._mutiSelect;
+            }
+        }
 
         public Sci.Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-         public Sci.Win.UI.DisplayBox DisplayBox1
+        public Sci.Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -49,37 +66,79 @@ namespace Sci.Production.Class
             get { return this.displayBox1.Text; }
         }
 
+        public string WhereString()
+        {
+            if (this._mutiSelect)
+            {
+                return this.TextBox1.Text.Split(',').Select(s => "'" + s + "'").JoinToString(",");
+            }
+            else
+            {
+                return "'" + this.textBox1.Text + "'";
+            }
+        }
+
+
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-           // base.OnValidating(e);
-            string str = this.textBox1.Text;
+            // base.OnValidating(e);
+            string[] reasonList = this.textBox1.Text.Split(',');
             //if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
-            if (!string.IsNullOrWhiteSpace(str) )
+
+
+            if (reasonList.Length > 0 && !MyUtility.Check.Empty(this.textBox1.Text) && !isPopUp)
             {
-                if (!MyUtility.Check.Seek(Type + str, "SubconReason", "type+ID"))
+                var checkReasonResult = reasonList.Select(reasonID =>
+                {
+                    DataRow dr;
+                    bool isExists = MyUtility.Check.Seek($"select ID,Reason from SubconReason with (nolock) where Type = '{this.Type}' and ID = '{reasonID}'", out dr);
+                    if (isExists)
+                    {
+                        return new
+                        {
+                            ID = dr["ID"].ToString(),
+                            Reason = dr["Reason"].ToString(),
+                            isExists = true
+                        };
+                    }
+                    else
+                    {
+                        return new
+                        {
+                            ID = reasonID,
+                            Reason = string.Empty,
+                            isExists = false
+                        };
+                    }
+                }
+                );
+
+                var reasonNotExistsList = checkReasonResult.Where(s => s.isExists == false);
+
+                if (reasonNotExistsList.Any())
                 {
                     this.DisplayBox1.Text = "";
                     this.textBox1.Text = "";
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", reasonNotExistsList.Select(s => s.ID).JoinToString(",")));
                     this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
-                DataRow temp;
-                if (MyUtility.Check.Seek(string.Format("Select Reason from SubconReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", str, Type), out temp))
-                    this.DisplayBox1.Text = temp[0].ToString();
-
+                
+                this.DisplayBox1.Text = checkReasonResult.Select(s => s.Reason).JoinToString(",");
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
 
+            
 
-            if (string.IsNullOrWhiteSpace(str))
+            if (string.IsNullOrWhiteSpace(this.textBox1.Text))
             {
                 this.DisplayBox1.Text = "";
                 return;
             }
             if (e.Cancel)
                 return;
+            this.isPopUp = false;
             this.OnValidating(e);
         }
 
@@ -90,64 +149,59 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                (string.Format("Select Id, Reason from SubconReason WITH (NOLOCK) where type='{0}' order by id", Type), "10,30", this.textBox1.Text);
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            this.textBox1.Text = item.GetSelectedString();
-            this.DisplayBox1.Text = item.GetSelecteds()[0][1].ToString();
-            this.Validate();
+            string sqlGetSubconReason = string.Format("Select Id, Reason from SubconReason WITH (NOLOCK) where type='{0}' order by id", Type);
+
+            if (this._mutiSelect)
+            {
+                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2
+                    (sqlGetSubconReason, "10,30", this.textBox1.Text);
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                this.textBox1.Text = item.GetSelecteds().Select(s => s["Id"].ToString()).JoinToString(",");
+                this.DisplayBox1.Text = item.GetSelecteds().Select(s => s["Reason"].ToString()).JoinToString(",");
+            }
+            else
+            {
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
+                    (sqlGetSubconReason, "10,30", this.textBox1.Text);
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                this.textBox1.Text = item.GetSelectedString();
+                this.DisplayBox1.Text = item.GetSelecteds()[0][1].ToString();
+            }
+
+            this.isPopUp = true;
+            //this.Validate();
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
 
-        private void textBox1_Leave(object sender, EventArgs e)
-        {
-            string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) )
-            {
-                if (!MyUtility.Check.Seek(Type + str, "SubconReason", "type+ID"))
-                {
-                    this.DisplayBox1.Text = "";
-                    this.textBox1.Text = "";
-                    textBox1.Focus();
-                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
-                    this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
-                    return;
-                }
-                DataRow temp;
-                if (MyUtility.Check.Seek(string.Format("Select Reason from SubconReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", str, Type), out temp))
-                    this.DisplayBox1.Text = temp[0].ToString();
-
-                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
-            }
-        }
     }
 
     public class cellSubconReason : DataGridViewGeneratorTextColumnSettings
     {
-//        public static DataGridViewGeneratorComboBoxColumnSettings GetGridCell(string Type)
-//        {
-//            cellSubconReason cellcombo = new cellSubconReason();
-//            if (!Env.DesignTime)
-//            {
-//                string sqlcmd = $@"
-//Select ID as SubconReasonID, Reason 
-//from SubconReason WITH (NOLOCK) 
-//where type='{Type}'
-//order by id
-//";
-//                Ict.DualResult result;
-//                DataTable dt = new DataTable();
-//                Dictionary<string, string> dict_SubReason = new Dictionary<string, string>();
-//                if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
-//                {
-//                    cellcombo.DataSource = dt;
-//                    cellcombo.DisplayMember = "SubconReasonID";
-//                    cellcombo.ValueMember = "SubconReasonID";
-//                }
-//            }
-//            return cellcombo;
-//        }
+        //        public static DataGridViewGeneratorComboBoxColumnSettings GetGridCell(string Type)
+        //        {
+        //            cellSubconReason cellcombo = new cellSubconReason();
+        //            if (!Env.DesignTime)
+        //            {
+        //                string sqlcmd = $@"
+        //Select ID as SubconReasonID, Reason 
+        //from SubconReason WITH (NOLOCK) 
+        //where type='{Type}'
+        //order by id
+        //";
+        //                Ict.DualResult result;
+        //                DataTable dt = new DataTable();
+        //                Dictionary<string, string> dict_SubReason = new Dictionary<string, string>();
+        //                if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
+        //                {
+        //                    cellcombo.DataSource = dt;
+        //                    cellcombo.DisplayMember = "SubconReasonID";
+        //                    cellcombo.ValueMember = "SubconReasonID";
+        //                }
+        //            }
+        //            return cellcombo;
+        //        }
 
         public static DataGridViewGeneratorTextColumnSettings GetGridtxtCell(string Type)
         {
