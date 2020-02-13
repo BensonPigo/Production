@@ -1378,6 +1378,7 @@
             this.DefaultControlForEdit = "txtFactory";
             this.DefaultDetailOrder = "No";
             this.DefaultOrder = "BrandID,StyleID,SeasonID,Version";
+            this.ExpressQuery = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.GridAlias = "LineMapping_Detail";
             this.GridNew = 0;
