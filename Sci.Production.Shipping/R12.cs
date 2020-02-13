@@ -73,6 +73,7 @@ o.FactoryID
 ,o.OrigBuyerDelivery
 ,o.BuyerDelivery
 ,g.ID
+,g.InvSerial
 ,g.InvDate
 ,pd.OrderID
 ,o.CustPONo
