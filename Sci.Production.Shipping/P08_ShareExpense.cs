@@ -854,7 +854,7 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                       where sd.ID = '{0}' 
                       and sd.ShipExpenseID = se.ID 
                       and se.AccountID != ''
-                      and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)", 
+                      and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)",
                     MyUtility.Convert.GetString(this.apData["ID"])));
 
                 List<CheckResult> listCheckResult = new List<CheckResult>();
@@ -1066,74 +1066,72 @@ where   ShippingAPID = '{3}'
                     }
                 }
 
-                if (deleteCmds.Count != 0 || addCmds.Count != 0)
+                using (TransactionScope transactionScope = new TransactionScope())
                 {
-                    using (TransactionScope transactionScope = new TransactionScope())
+                    try
                     {
-                        try
+                        DualResult result, result1;
+                        bool lastResult = true;
+                        string errmsg = string.Empty;
+
+                        if (deleteCmds.Count != 0)
                         {
-                            DualResult result, result1;
-                            bool lastResult = true;
-                            string errmsg = string.Empty;
-                            if (deleteCmds.Count != 0)
+                            result = DBProxy.Current.Executes(null, deleteCmds);
+                            if (result)
                             {
-                                result = DBProxy.Current.Executes(null, deleteCmds);
-                                if (result)
-                                {
-                                    lastResult = lastResult && true;
-                                }
-                                else
-                                {
-                                    lastResult = false;
-                                    errmsg = result.ToString() + "\r\n";
-                                }
-                            }
-
-                            if (addCmds.Count != 0)
-                            {
-                                result1 = DBProxy.Current.Executes(null, addCmds);
-                                if (result1)
-                                {
-                                    lastResult = lastResult && true;
-                                }
-                                else
-                                {
-                                    lastResult = false;
-                                    errmsg = errmsg + result1.ToString() + "\r\n";
-                                }
-                            }
-
-                            if (!this.JunkShareExpense_APP())
-                            {
-                                return;
-                            }
-
-                            result = DBProxy.Current.Execute(
-                                "Production",
-                                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
-                            if (!result)
-                            {
-                                errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
-                                lastResult = false;
-                            }
-
-                            if (lastResult)
-                            {
-                                transactionScope.Complete();
+                                lastResult = lastResult && true;
                             }
                             else
                             {
-                                transactionScope.Dispose();
-                                MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try\r\n" + errmsg);
-                                return;
+                                lastResult = false;
+                                errmsg = result.ToString() + "\r\n";
                             }
                         }
-                        catch (Exception ex)
+
+                        if (addCmds.Count != 0)
                         {
-                            transactionScope.Dispose();
-                            this.ShowErr("Commit transaction error.", ex);
+                            result1 = DBProxy.Current.Executes(null, addCmds);
+                            if (result1)
+                            {
+                                lastResult = lastResult && true;
+                            }
+                            else
+                            {
+                                lastResult = false;
+                                errmsg = errmsg + result1.ToString() + "\r\n";
+                            }
+                        }
+
+                        if (!this.JunkShareExpense_APP())
+                        {
                             return;
                         }
+
+                        result = DBProxy.Current.Execute(
+                            "Production",
+                            string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+                        if (!result)
+                        {
+                            errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
+                            lastResult = false;
+                        }
+
+                        if (lastResult)
+                        {
+                            transactionScope.Complete();
+                        }
+                        else
+                        {
+                            transactionScope.Dispose();
+                            MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try\r\n" + errmsg);
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        transactionScope.Dispose();
+                        this.ShowErr("Commit transaction error.", ex);
+                        return;
                     }
                 }
                 #endregion
@@ -1274,7 +1272,7 @@ select [resultType] = 'OK',
 ";
 
             DataTable dtResult;
-            DualResult result = DBProxy.Current.Select(null, sqlCheckGarmentBookingAndPackingList,  new List<SqlParameter>() { new SqlParameter("@inputInvNo", shareExpenseItem["InvNo"]) }, out dtResult);
+            DualResult result = DBProxy.Current.Select(null, sqlCheckGarmentBookingAndPackingList, new List<SqlParameter>() { new SqlParameter("@inputInvNo", shareExpenseItem["InvNo"]) }, out dtResult);
             if (!result)
             {
                 return result;
@@ -1285,7 +1283,8 @@ select [resultType] = 'OK',
             {
                 foreach (DataRow item in dtResult.Rows)
                 {
-                    listCheckResult.Add(new CheckResult() {
+                    listCheckResult.Add(new CheckResult()
+                    {
                         resultType = item["resultType"].ToString(),
                         resultValue = item["resultValue"].ToString()
                     });
