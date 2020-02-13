@@ -905,6 +905,11 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
         private void BtnFreightList_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             var frm = new P08_FreightList(this.CurrentMaintain);
             frm.ShowDialog(this);
             frm.Dispose();
@@ -912,13 +917,18 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
         private void BtnResponsibilitydept_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             bool canEdit = false;
             if (Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Replacement Report (Fabric)", "CanSend") && MyUtility.Check.Empty(this.CurrentMaintain["VoucherDate"]))
             {
                 canEdit = true;
             }
 
-            var frm = new P20_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, "Replacement");
             frm.ShowDialog(this);
             frm.Dispose();
             this.OnDetailEntered();

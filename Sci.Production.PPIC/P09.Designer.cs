@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelID = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelPOSMR = new Sci.Win.UI.Label();
@@ -111,7 +111,6 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.numRMTlUS);
             this.masterpanel.Controls.Add(this.labEstFreight);
-            this.masterpanel.Controls.Add(this.dateVoucherDate);
             this.masterpanel.Controls.Add(this.btnResponsibilitydept);
             this.masterpanel.Controls.Add(this.btnFreightList);
             this.masterpanel.Controls.Add(this.label1);
@@ -128,6 +127,7 @@
             this.masterpanel.Controls.Add(this.displayStyleNo);
             this.masterpanel.Controls.Add(this.labelPCHandle);
             this.masterpanel.Controls.Add(this.labelPCSMR);
+            this.masterpanel.Controls.Add(this.dateVoucherDate);
             this.masterpanel.Controls.Add(this.labelStyleNo);
             this.masterpanel.Controls.Add(this.displayFactory);
             this.masterpanel.Controls.Add(this.dateCDate);
@@ -172,6 +172,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyleNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPCSMR, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPCHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayStyleNo, 0);
@@ -188,7 +189,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFreightList, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnResponsibilitydept, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labEstFreight, 0);
             this.masterpanel.Controls.SetChildIndex(this.numRMTlUS, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -256,7 +256,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(950, 490);
+            this.browse.Size = new System.Drawing.Size(976, 587);
             // 
             // tabs
             // 
@@ -557,7 +557,7 @@
             // 
             this.label15.BackColor = System.Drawing.Color.Transparent;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-            this.label15.Location = new System.Drawing.Point(638, 122);
+            this.label15.Location = new System.Drawing.Point(686, 131);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(66, 23);
             this.label15.TabIndex = 5;
@@ -569,9 +569,9 @@
             // 
             // btnMailto
             // 
-            this.btnMailto.Location = new System.Drawing.Point(884, 57);
+            this.btnMailto.Location = new System.Drawing.Point(878, 58);
             this.btnMailto.Name = "btnMailto";
-            this.btnMailto.Size = new System.Drawing.Size(80, 30);
+            this.btnMailto.Size = new System.Drawing.Size(90, 30);
             this.btnMailto.TabIndex = 3;
             this.btnMailto.Text = "Mail to";
             this.btnMailto.UseVisualStyleBackColor = true;
@@ -580,7 +580,7 @@
             // btnDownload
             // 
             this.btnDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDownload.Location = new System.Drawing.Point(711, 24);
+            this.btnDownload.Location = new System.Drawing.Point(715, 26);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(253, 30);
             this.btnDownload.TabIndex = 31;
@@ -615,7 +615,7 @@
             this.btnResponsibilitydept.Name = "btnResponsibilitydept";
             this.btnResponsibilitydept.Size = new System.Drawing.Size(155, 30);
             this.btnResponsibilitydept.TabIndex = 151;
-            this.btnResponsibilitydept.Text = "Responsibility dept.";
+            this.btnResponsibilitydept.Text = "Responsibility Dept.";
             this.btnResponsibilitydept.UseVisualStyleBackColor = true;
             this.btnResponsibilitydept.Click += new System.EventHandler(this.BtnResponsibilitydept_Click);
             // 
@@ -827,7 +827,6 @@
             this.gridReplacement.AllowUserToDeleteRows = false;
             this.gridReplacement.AllowUserToOrderColumns = true;
             this.gridReplacement.AllowUserToResizeRows = false;
-            this.gridReplacement.AutoGenerateColumns = false;
             this.gridReplacement.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridReplacement.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridReplacement.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -835,14 +834,14 @@
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReplacement.Location = new System.Drawing.Point(4, 6);
             this.gridReplacement.Name = "gridReplacement";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;

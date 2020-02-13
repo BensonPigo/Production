@@ -13,16 +13,18 @@ using System.Linq;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P20_ResponsibilityDept : Sci.Win.Subs.Input4
+    public partial class P21_ResponsibilityDept : Sci.Win.Subs.Input4
     {
         private string ID;
+        private string FormType;
 
-        public P20_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3)
+        public P21_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3, string formType)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
             this.ID = id;
             this.EditMode = canedit;
+            this.FormType = formType;
         }
 
         protected override bool OnGridSetup()
@@ -166,7 +168,7 @@ namespace Sci.Production.PPIC
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
                 if (oldvalue.Equals(newvalue)) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                //if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 decimal? amt = this.numTotalAmt.Value
                     * (newvalue
                     / 100);
@@ -187,6 +189,12 @@ namespace Sci.Production.PPIC
                     }
                 }
 
+                if (curPercentage == 100 && curAmount != this.numTotalAmt.Value)
+                {
+                    dr["Amount"] = MyUtility.Convert.GetDecimal(dr["Amount"]) + (this.numTotalAmt.Value - curAmount);
+                    curAmount = MyUtility.Convert.GetDecimal(this.numTotalAmt.Value);
+                }
+
                 this.numAmount.Value = curAmount;
                 this.numPercentage.Value = curPercentage;
             };
@@ -195,22 +203,32 @@ namespace Sci.Production.PPIC
             col_Amt.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                decimal oldvalue = MyUtility.Convert.GetDecimal(dr["Amount"]);
-                decimal newvalue = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                double oldvalue = MyUtility.Convert.GetDouble(dr["Amount"]);
+                double newvalue = MyUtility.Convert.GetDouble(e.FormattedValue);
+                double useValue = 0;
+                if (Math.Floor(oldvalue * 100) / 100 == newvalue)
+                {
+                    useValue = oldvalue;
+                }
+                else
+                {
+                    useValue = newvalue;
+                }
+
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
                 if (oldvalue.Equals(newvalue)) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                //if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 decimal? perct = 0;
                 if (!MyUtility.Check.Empty(this.numTotalAmt.Value))
                 {
                     perct = Math.Round(
-                        (decimal)newvalue / (decimal)this.numTotalAmt.Value * 100,
+                        (decimal)useValue / (decimal)this.numTotalAmt.Value * 100,
                         2);
                 }
 
                 dr["Percentage"] = perct;
-                dr["Amount"] = newvalue;
+                dr["Amount"] = useValue;
                 dr.EndEdit();
 
                 // 加總表身Amount,Percentage資料
@@ -240,11 +258,51 @@ namespace Sci.Production.PPIC
 
         }
 
+        protected override void OnDelete()
+        {
+            base.OnDelete();
+            // 加總表身Amount,Percentage資料
+            decimal curAmount = 0;
+            decimal curPercentage = 0;
+            DataTable dt = (DataTable)this.gridbs.DataSource;
+            foreach (DataRow drRow in dt.Rows)
+            {
+                if (drRow.RowState != DataRowState.Deleted)
+                {
+                    curAmount += MyUtility.Convert.GetDecimal(drRow["Amount"]);
+                    curPercentage += MyUtility.Convert.GetDecimal(drRow["Percentage"]);
+                }
+            }
+
+            this.numAmount.Value = curAmount;
+            this.numPercentage.Value = curPercentage;
+        }
+
         protected override DualResult OnRequery()
         {
             DataRow drMaster;
             DualResult result;
-            string sqlcmd = $@"
+            string sqlcmd = string.Empty;
+            if (FormType == "Replacement")
+            {
+                sqlcmd = $@"
+select r.ID
+, [TotalAmt] = ISNULL(RMtlAmt,0) + ISNULL(r.ActFreight,0) + ISNULL(r.EstFreight,0) + ISNULL(r.SurchargeAmt,0)
+, [Percentage] = isnull(i3.Percentage,0)
+, [Amt] = isnull(i3.Amt,0)
+from ReplacementReport r
+outer apply(
+	select [Percentage] = SUM(ISNULL(Percentage,0))
+	, [Amt] = sum(ISNULL(Amount,0))
+	from ICR_ResponsibilityDept 
+	where id=r.id
+)i3
+where r.id = '{this.ID}'
+ ";
+            }
+            else
+            {
+                sqlcmd = $@"
 select ICR.ID
 , [TotalAmt] = (ISNULL(RMtlAmtUSD,0) + ISNULL(ActFreightUSD,0) + ISNULL(OtherAmtUSD,0))
 , [Percentage] = isnull(i3.Percentage,0)
@@ -258,6 +316,8 @@ outer apply(
 )i3
 where ICR.id = '{this.ID}'
  ";
+            }
+
             if (MyUtility.Check.Seek(sqlcmd,out drMaster))
             {
                 this.numTotalAmt.Value = MyUtility.Convert.GetDecimal(drMaster["TotalAmt"]);

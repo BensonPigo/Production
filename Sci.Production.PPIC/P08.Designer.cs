@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelID = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelPOSMR = new Sci.Win.UI.Label();
@@ -257,7 +257,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(966, 587);
+            this.browse.Size = new System.Drawing.Size(976, 587);
             // 
             // tabs
             // 
@@ -444,7 +444,7 @@
             this.displayStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayStyleNo.Location = new System.Drawing.Point(504, 32);
             this.displayStyleNo.Name = "displayStyleNo";
-            this.displayStyleNo.Size = new System.Drawing.Size(111, 23);
+            this.displayStyleNo.Size = new System.Drawing.Size(164, 23);
             this.displayStyleNo.TabIndex = 5;
             // 
             // displayPreparedby
@@ -504,7 +504,7 @@
             // 
             // btnMailto
             // 
-            this.btnMailto.Location = new System.Drawing.Point(869, 56);
+            this.btnMailto.Location = new System.Drawing.Point(878, 58);
             this.btnMailto.Name = "btnMailto";
             this.btnMailto.Size = new System.Drawing.Size(90, 30);
             this.btnMailto.TabIndex = 18;
@@ -515,7 +515,7 @@
             // btnDownload
             // 
             this.btnDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDownload.Location = new System.Drawing.Point(706, 23);
+            this.btnDownload.Location = new System.Drawing.Point(715, 25);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(253, 30);
             this.btnDownload.TabIndex = 24;
@@ -560,7 +560,7 @@
             this.btnResponsibilitydept.Name = "btnResponsibilitydept";
             this.btnResponsibilitydept.Size = new System.Drawing.Size(155, 30);
             this.btnResponsibilitydept.TabIndex = 149;
-            this.btnResponsibilitydept.Text = "Responsibility dept.";
+            this.btnResponsibilitydept.Text = "Responsibility Dept.";
             this.btnResponsibilitydept.UseVisualStyleBackColor = true;
             this.btnResponsibilitydept.Click += new System.EventHandler(this.BtnResponsibilitydept_Click);
             // 
@@ -769,14 +769,14 @@
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReplacement.Location = new System.Drawing.Point(3, 6);
             this.gridReplacement.Name = "gridReplacement";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;

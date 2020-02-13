@@ -13,9 +13,9 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P20 : Sci.Win.Tems.Input6
+    public partial class P21 : Sci.Win.Tems.Input6
     {
-        public P20(ToolStripMenuItem menuitem)
+        public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -97,8 +97,32 @@ And Reason.ReasonTypeID = 'PO_IrregularCost'");
                 this.gridReplacement.ClearSelection();
 
             }
+            else
+            {
+                this.btnResponsibilitydept.ForeColor = Color.Black;
+                this.txtSDPKPICode.Text = string.Empty;
+                this.numTotal.Value = null;
+                this.txtBrand.Text = string.Empty;
+                this.txtFactory.Text = string.Empty;
+                this.txtStyle.Text = string.Empty;
+                this.txtProgram.Text = string.Empty;
+                this.numTotalQty.Value = null;
+                this.editPoCombo.Text = string.Empty;
+                this.txtPOHandle.DisplayBox1Binding = string.Empty;
+                this.txtPoSMR.DisplayBox1Binding = string.Empty;
+                this.txtMR.DisplayBox1Binding = string.Empty;
+                this.txtSMR.DisplayBox1Binding = string.Empty;
+                this.gridReplacement.DataSource = null;
+                this.txtIssueSubject.Text = string.Empty;
+            }
 
             base.OnDetailEntered();
+        }
+
+        protected override void ClickLocate()
+        {
+            base.ClickLocate();
+            this.OnDetailEntered();
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -160,14 +184,19 @@ where ICR.ID = '{masterID}';
 
             // 設定Replacement Grid
             this.Helper.Controls.Grid.Generator(this.gridReplacement)
-            .Text("ReplacementNo", header: "ReplacementNo", width: Widths.AnsiChars(27), alignment: DataGridViewContentAlignment.MiddleCenter)
+            .Text("ReplacementNo", header: "ReplacementNo", width: Widths.AnsiChars(16), alignment: DataGridViewContentAlignment.MiddleCenter)
             ;
             #endregion 欄位設定
         }
 
         private void BtnResponsibilitydept_Click(object sender, EventArgs e)
         {
-            bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P20. Irregular Cost Report", "CanEdit");
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P21. Irregular Cost Report", "CanEdit");
 
             // 確認Grid Replacement 帶入ReplacementReport 取得VoucherDate有值就沒有編輯權限
             DataTable dt = (DataTable)this.gridReplacement.DataSource;
@@ -181,7 +210,7 @@ where ICR.ID = '{masterID}';
                 }
             }
 
-            var frm = new P20_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, string.Empty);
             frm.ShowDialog(this);
             frm.Dispose();
             this.OnDetailEntered();

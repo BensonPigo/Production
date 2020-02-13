@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.PPIC
 {
-    partial class P20_ResponsibilityDept
+    partial class P21_ResponsibilityDept
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -151,7 +151,7 @@
             0,
             0});
             // 
-            // P20_ResponsibilityDept
+            // P21_ResponsibilityDept
             // 
             this.ClientSize = new System.Drawing.Size(528, 466);
             this.Controls.Add(this.numAmount);
@@ -161,9 +161,9 @@
             this.Controls.Add(this.txtID);
             this.Controls.Add(this.labICRNo);
             this.KeyField1 = "ID";
-            this.Name = "P20_ResponsibilityDept";
+            this.Name = "P21_ResponsibilityDept";
             this.OnLineHelpID = "Sci.Win.Subs.Input4";
-            this.Text = "P20_ResponsibilityDept";
+            this.Text = "Responsibility Dept.";
             this.WorkAlias = "ICR_ResponsibilityDept";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
