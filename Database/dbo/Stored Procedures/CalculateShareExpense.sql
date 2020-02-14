@@ -66,6 +66,7 @@ BEGIN
 	BEGIN
 		IF @Type = 'IMPORT'
 		BEGIN
+			-- 將已不存在系統中的 WK Junk
 			update s
 			set s.Junk = 1
 			from ShareExpense s
@@ -100,6 +101,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
+			-- 將已不存在系統中的 Inv/PL Junk
 			update s
 			set s.Junk = 1
 			from ShareExpense s
@@ -187,6 +189,32 @@ BEGIN
 
 			SELECT @exact = isnull(c.Exact,0) FROM ShippingAP s WITH (NOLOCK) , Currency c WITH (NOLOCK) WHERE s.ID = @ShippingAPID and c.ID = s.CurrencyID
 
+			-- 撈出費用分攤中已不存在AP中的會科
+			DECLARE cursor_diffAccNo CURSOR FOR
+				select distinct AccountID
+				from ShareExpense WITH (NOLOCK) 
+				where ShippingAPID = @ShippingAPID
+				except
+				select distinct se.AccountID
+				from ShippingAP_Detail sd WITH (NOLOCK) 
+				left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
+				where sd.ID = @ShippingAPID
+				and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)
+
+			-- Junk 已不存在 AP 中的會科資料
+			-- 包含不應費用分攤的會科
+			OPEN cursor_diffAccNo
+			FETCH NEXT FROM cursor_diffAccNo INTO @accno
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				update ShareExpense 
+				set Junk = 1
+				where ShippingAPID = @ShippingAPID and AccountID = @accno
+				FETCH NEXT FROM cursor_diffAccNo INTO @accno
+			END
+			CLOSE cursor_diffAccNo
+			DEALLOCATE cursor_diffAccNo
+		
 			--撈出依會科加總的金額與要分攤的WK or GB
 			DECLARE cursor_ttlAmount CURSOR FOR
 				select a.*,isnull(isnull(sr.ShareBase,sr1.ShareBase),'') as ShareBase
@@ -205,30 +233,6 @@ BEGIN
 				left join ShareRule sr WITH (NOLOCK) on sr.AccountID = a.AccountID and sr.ExpenseReason = a.Type and (sr.ShipModeID = '' or sr.ShipModeID like '%'+a.ShipModeID+'%')
 				left join ShareRule sr1 WITH (NOLOCK) on sr1.AccountID = left(a.AccountID,4) and sr1.ExpenseReason = a.Type and (sr1.ShipModeID = '' or sr1.ShipModeID like '%'+a.ShipModeID+'%')
 				order by a.AccountID,GW,CBM
-
-			--撈出費用分攤中已不存在AP中的會科
-			DECLARE cursor_diffAccNo CURSOR FOR
-				select distinct AccountID
-				from ShareExpense WITH (NOLOCK) 
-				where ShippingAPID = @ShippingAPID
-				except
-				select distinct se.AccountID
-				from ShippingAP_Detail sd WITH (NOLOCK) 
-				left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-				where sd.ID = @ShippingAPID
-				and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)
-
-			--刪除已不存在AP中的會科資料
-			OPEN cursor_diffAccNo
-			FETCH NEXT FROM cursor_diffAccNo INTO @accno
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				delete from ShareExpense where ShippingAPID = @ShippingAPID and AccountID = @accno
-				FETCH NEXT FROM cursor_diffAccNo INTO @accno
-			END
-			CLOSE cursor_diffAccNo
-			DEALLOCATE cursor_diffAccNo
-		
 
 			SET @count = 1
 			SET @maxdata = 0
@@ -298,7 +302,7 @@ BEGIN
 				ELSE
 					BEGIN
 						UPDATE ShareExpense 
-						SET CurrencyID = @currency, Amount = @inputamount, ShareBase = @1stsharebase, EditName = @login, EditDate = @adddate 
+						SET CurrencyID = @currency, Amount = @inputamount, ShareBase = @1stsharebase, EditName = @login, EditDate = @adddate, Junk = 0
 						where ShippingAPID = @ShippingAPID and WKNo = @wkno and InvNo = @invno and AccountID = @accno
 					END
 
@@ -310,8 +314,8 @@ BEGIN
 						IF @remainamount <> 0
 							BEGIN
 								UPDATE ShareExpense 
-						SET CurrencyID = @currency, Amount = Amount + @remainamount, EditName = @login, EditDate = @adddate 
-						where ShippingAPID = @ShippingAPID and WKNo = @maxwkno and InvNo = @maxinvno and AccountID = @accno
+								SET CurrencyID = @currency, Amount = Amount + @remainamount, EditName = @login, EditDate = @adddate, Junk = 0
+								where ShippingAPID = @ShippingAPID and WKNo = @maxwkno and InvNo = @maxinvno and AccountID = @accno
 							END
 					END
 				ELSE
@@ -324,7 +328,7 @@ BEGIN
 			DEALLOCATE cursor_ttlAmount
 
 			--以下為Airpp 拆分Factory與Other部分
-			--只有AirPP的資料需要在往下分攤
+			--只有AirPP的資料需要再往下分攤
 			select se.InvNo,se.AccountID,[Amount] = sum(se.Amount)
 			into #InvNoSharedAmt
 			from ShareExpense se with (nolock)

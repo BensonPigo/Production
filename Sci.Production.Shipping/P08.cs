@@ -710,7 +710,9 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            bool result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            DualResult result = DBProxy.Current.Execute(
+                "Production",
+                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.UserID));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-calcute share expense failed!");
@@ -735,7 +737,7 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         /// <inheritdoc/>
         protected override DualResult ClickDeletePre()
         {
-            string sqlCmd = string.Format("delete from ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string sqlCmd = string.Format("update ShareExpense set Junk = 1 where ShippingAPID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {

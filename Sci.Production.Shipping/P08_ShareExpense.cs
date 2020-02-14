@@ -610,10 +610,13 @@ when not matched by target then
             }
 
             // 重新計算
-            bool returnValue = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]));
-            if (!returnValue)
+            result = DBProxy.Current.Execute(
+                "Production",
+                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+            if (!result)
             {
-                MyUtility.Msg.WarningBox("Calcute share expense failed.");
+                MyUtility.Msg.ErrorBox("Calcute share expense failed.\r\n" + result.ToString());
+                return;
             }
         }
 
