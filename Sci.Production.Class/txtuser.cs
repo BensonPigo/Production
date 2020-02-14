@@ -76,7 +76,10 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(textValue, "Pass1", "ID"))
+                List<SqlParameter> sqlpara = new List<SqlParameter>();
+                sqlpara.Add(new SqlParameter("@ID", textValue));
+
+                if (!MyUtility.Check.Seek(@"select 1 from Pass1 where ID = @ID", sqlpara))
                 {
                     string alltrimData = textValue.Trim();
                     bool isUserExtNo = MyUtility.Check.Seek(alltrimData, "Pass1", "ExtNo");

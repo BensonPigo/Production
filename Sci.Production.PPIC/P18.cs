@@ -51,8 +51,8 @@ select
 ,[AccLacking] = a3.RefNo
 ,[Destination] = c.Alias
 ,a.*,a2.*
-from avo a
-left join AVO_Detail a2 on a.ID=a2.ID
+from AVO_Detail a2
+inner join avo a  on a.ID=a2.ID
 left join Orders o on a2.OrderID=o.ID
 left join Order_QtyShip oq on oq.Id=o.ID and oq.ShipmodeID=a2.ShipModeID
 	and oq.Seq=a2.OrderShipmodeSeq
@@ -98,13 +98,24 @@ where a.id='{masterID}'
 
                  if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                  {
-                     DataRow dr;
-                     if (MyUtility.Check.Seek($@"
+                     List<SqlParameter> sqlpara = new List<SqlParameter>();
+                     sqlpara.Add(new SqlParameter("@id", e.FormattedValue));
+
+                     DataTable odt;
+                     string sql = $@"
 select o.*,[Destination] = c.Alias from Orders o
 inner join Country c on c.ID= o.Dest
-where o.id='{e.FormattedValue}'
-and o.MDivisionID='{Sci.Env.User.Keyword}'", out dr))
+where o.id=@id
+and o.MDivisionID='{Sci.Env.User.Keyword}'";
+                     if (!(this.result = DBProxy.Current.Select(string.Empty, sql, sqlpara, out odt)))
                      {
+                         this.ShowErr(this.result);
+                         return;
+                     }
+
+                     if (odt.Rows.Count > 0)
+                     {
+                         DataRow dr = odt.Rows[0];
                          DataTable dt;
                          string sqlcmd = $@"
 SELECT Seq,ShipmodeID as 'ShipMode',oq.Qty,BuyerDelivery
@@ -117,10 +128,10 @@ outer apply(
 	where PD.orderid= oq.ID AND P.ShipModeID= oq.ShipmodeID 
 	AND PD.OrderShipmodeSeq = oq.Seq
 )Packing
-WHERE oq.ID= '{e.FormattedValue}'
+WHERE oq.ID= @id
 ";
 
-                         if (!(this.result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt)))
+                         if (!(this.result = DBProxy.Current.Select(string.Empty, sqlcmd, sqlpara, out dt)))
                          {
                              this.ShowErr(this.result);
                              return;
@@ -190,6 +201,9 @@ WHERE oq.ID= '{e.FormattedValue}'
                 DataRow dr;
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
+                    List<SqlParameter> sqlpara = new List<SqlParameter>();
+                    sqlpara.Add(new SqlParameter("@seq", e.FormattedValue));
+
                     if (MyUtility.Check.Seek($@"
 SELECT Seq,ShipmodeID as 'ShipMode',oq.Qty,BuyerDelivery
 ,[TotalCrtns] = isnull(packing.qty,0)
@@ -201,7 +215,7 @@ outer apply(
 	where PD.orderid= oq.ID AND P.ShipModeID= oq.ShipmodeID 
 	AND PD.OrderShipmodeSeq = oq.Seq
 )Packing
-where oq.id='{this.CurrentDetailData["OrderID"]}' and oq.seq='{e.FormattedValue}'", out dr))
+where oq.id='{this.CurrentDetailData["OrderID"]}' and oq.seq=@seq", sqlpara, out dr))
                     {
                         this.CurrentDetailData["OrderShipmodeSeq"] = e.FormattedValue.ToString();
                         this.CurrentDetailData["Qty"] = dr["Qty"].ToString();
@@ -256,9 +270,11 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
+                    List<SqlParameter> sqlpara = new List<SqlParameter>();
+                    sqlpara.Add(new SqlParameter("@ShipmodeID", e.FormattedValue));
                     if (MyUtility.Check.Seek($@"
 select 1 
-from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID='{e.FormattedValue}'"))
+from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID=@ShipmodeID", sqlpara))
                     {
                         this.CurrentDetailData["ShipModeID"] = e.FormattedValue.ToString();
                         this.CurrentDetailData.EndEdit();
@@ -592,11 +608,11 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             }
 
             // 表身檢查
-            foreach (DataRow row in DetailDatas)
+            for (int i = this.DetailDatas.Count - 1; i >= 0; i--)
             {
-                if (MyUtility.Check.Empty(row["OrderID"]))
+                if (MyUtility.Check.Empty(this.DetailDatas[i]["OrderID"]))
                 {
-                    row.Delete();
+                    this.DetailDatas[i].Delete();
                 }
             }
 
@@ -630,11 +646,12 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                     // 如果變更,先刪除第三層資料
                     if (dr.RowState == DataRowState.Modified)
                     {
-                        foreach (DataRow sdr in subDetailData.Rows)
+                        for (int i = subDetailData.Rows.Count - 1; i >= 0; i--)
                         {
-                            sdr.Delete();
+                            subDetailData.Rows[i].Delete();
                         }
                     }
+
                     // 變更或新增,就補上第三層資料
                     if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
                     {
