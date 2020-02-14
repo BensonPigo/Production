@@ -608,10 +608,10 @@ BEGIN
 			SELECT * 
 			INTO #DontNeedInsrt
 			FROM #tmp_Into_RFT t
-			WHERE  EXISTS (
+			WHERE EXISTS (
 				SElECT 1
 				FROM Rft
-				WHERE OrderID=t.OrderId AND CDate=t.CDate AND SewinglineID = t.SewinglineID AND FactoryID = t.FactoryID AND Shift=t.Shift  AND Team=t.Team
+				WHERE OrderID=t.OrderId AND CDate=t.CDate AND SewinglineID = t.SewinglineID AND FactoryID = t.FactoryID AND Shift=t.Shift AND Team=t.Team
 			)
 
 			INSERT INTO RFT
@@ -638,8 +638,8 @@ BEGIN
 			WHERE SewingLineID IS NOT NULL
 			AND NOT EXISTS (
 				SElECT 1
-				FROM Rft
-				WHERE OrderID=t.OrderId AND CDate=t.CDate AND SewinglineID = t.SewinglineID AND FactoryID = t.FactoryID AND Shift=t.Shift  AND Team=t.Team
+				FROM #DontNeedInsrt
+				WHERE OrderID=t.OrderId AND CDate=t.CDate AND SewinglineID = t.SewinglineID AND FactoryID = t.FactoryID AND Shift=t.Shift AND Team=t.Team
 			)
 
 			--Prepapre RFT_Detail
@@ -652,7 +652,7 @@ BEGIN
 			AND NOT EXISTS (
 				SElECT 1
 				FROM #DontNeedInsrt
-				WHERE OrderID=t.OrderId AND CDate=t.CDate AND SewinglineID = t.SewinglineID AND FactoryID = t.FactoryID AND Shift=t.Shift  AND Team=t.Team
+				WHERE OrderID=t.OrderId AND CDate=t.CDate AND SewinglineID = t.SewinglineID AND FactoryID = t.FactoryID AND Shift=t.Shift AND Team=t.Team
 			)
 
 			----由於Line可能會切換，因此要把換過去的也算進去
