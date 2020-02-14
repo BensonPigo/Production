@@ -630,7 +630,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                     // 如果變更,先刪除第三層資料
                     if (dr.RowState == DataRowState.Modified)
                     {
-                        for (int i = subDetailData.Rows.Count - 1; i > 0; i--)
+                        for (int i = subDetailData.Rows.Count - 1; i >= 0; i--)
                         {
                             subDetailData.Rows[i].Delete();
                         }
