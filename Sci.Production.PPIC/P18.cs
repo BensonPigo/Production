@@ -51,8 +51,8 @@ select
 ,[AccLacking] = a3.RefNo
 ,[Destination] = c.Alias
 ,a.*,a2.*
-from avo a
-left join AVO_Detail a2 on a.ID=a2.ID
+from AVO_Detail a2
+inner join avo a  on a.ID=a2.ID
 left join Orders o on a2.OrderID=o.ID
 left join Order_QtyShip oq on oq.Id=o.ID and oq.ShipmodeID=a2.ShipModeID
 	and oq.Seq=a2.OrderShipmodeSeq
@@ -592,11 +592,11 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             }
 
             // 表身檢查
-            foreach (DataRow row in DetailDatas)
+            for (int i = this.DetailDatas.Count - 1; i >= 0; i--)
             {
-                if (MyUtility.Check.Empty(row["OrderID"]))
+                if (MyUtility.Check.Empty(this.DetailDatas[i]["OrderID"]))
                 {
-                    row.Delete();
+                    this.DetailDatas[i].Delete();
                 }
             }
 
@@ -630,11 +630,12 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                     // 如果變更,先刪除第三層資料
                     if (dr.RowState == DataRowState.Modified)
                     {
-                        foreach (DataRow sdr in subDetailData.Rows)
+                        for (int i = subDetailData.Rows.Count - 1; i > 0; i--)
                         {
-                            sdr.Delete();
+                            subDetailData.Rows[i].Delete();
                         }
                     }
+
                     // 變更或新增,就補上第三層資料
                     if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
                     {
