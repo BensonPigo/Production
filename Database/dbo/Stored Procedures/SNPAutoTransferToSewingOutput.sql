@@ -604,6 +604,15 @@ BEGIN
 			,[MDivisionid]=(SELECT TOP 1 ID FROM MDivision)
 			INTO #RFT
 			FROM #tmp_Into_RFT
+			
+			SELECT * 
+			INTO #DontNeedInsrt
+			FROM #tmp_Into_RFT t
+			WHERE  EXISTS (
+				SElECT 1
+				FROM Rft
+				WHERE OrderID=t.OrderId AND CDate=t.CDate AND SewinglineID = t.SewinglineID AND FactoryID = t.FactoryID AND Shift=t.Shift  AND Team=t.Team
+			)
 
 			INSERT INTO RFT
 				([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty]
@@ -625,16 +634,26 @@ BEGIN
 			,[EditName]=''
 			,[EditDate]=NULL
 			,[MDivisionid]=(SELECT TOP 1 ID FROM MDivision)
-			FROM #tmp_Into_RFT
+			FROM #tmp_Into_RFT t
 			WHERE SewingLineID IS NOT NULL
+			AND NOT EXISTS (
+				SElECT 1
+				FROM Rft
+				WHERE OrderID=t.OrderId AND CDate=t.CDate AND SewinglineID = t.SewinglineID AND FactoryID = t.FactoryID AND Shift=t.Shift  AND Team=t.Team
+			)
 
 			--Prepapre RFT_Detail
 			SELECt * 
 			INTO #RFT_With_ID
-			FROM Production.dbo.RFT
+			FROM Production.dbo.RFT t
 			WHERE OrderID  IN ( SELECT OrderID FROM #RFT)
 			AND CDate = @DateStart
 			AND AddDate < GETDATE()
+			AND NOT EXISTS (
+				SElECT 1
+				FROM #DontNeedInsrt
+				WHERE OrderID=t.OrderId AND CDate=t.CDate AND SewinglineID = t.SewinglineID AND FactoryID = t.FactoryID AND Shift=t.Shift  AND Team=t.Team
+			)
 
 			----由於Line可能會切換，因此要把換過去的也算進去
 			SELECT 
