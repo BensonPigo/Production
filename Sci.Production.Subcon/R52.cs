@@ -46,10 +46,24 @@ select	[Style]= S.ID
 									  and o.Category in ('B', 'S')
 									  and o.SewInLine is not null
 								)
+        , [Refno] = 
+            (select stuff((
+	            select distinct concat(',', sb.Refno)
+	            from Style_Artwork sa
+	            inner join Pattern_GL p on p.id = sa.SMNoticeID
+		            and p.Version = sa.PatternVersion
+		            and iif(len(p.PatternCode) > 10, substring(p.PatternCode, 11, len(p.PatternCode)-10), p.PatternCode) = sa.PatternCode
+	            inner join Pattern_GL_LectraCode pgl on p.PatternUKEY = pgl.PatternUKEY and p.SEQ = pgl.SEQ
+	            inner join Style_BOF sb on sa.StyleUkey = sb.StyleUkey and sb.FabricCode = pgl.FabricCode
+	            where sa.ArtworkTypeID = 'printing' and sa.StyleUkey =  S.Ukey
+	            for xml path('')
+            ),1,1,''))
+		,TypeofGarment=(select Name  from Reason where s.ApparelType = Reason.ID and Reason.ReasonTypeID = 'Style_Apparel_Type')
 		,SA.AddDate
 		,SA.AddName
 		,SA.EditDate
 		,SA.EditName
+		, JSON=[dbo].[udf-Str-JSON](0,1,(Select Seq=ROW_NUMBER() over (order by ss.Seq), ss.SizeGroup, ss.SizeCode From Style_SizeCode ss where StyleUkey = vSA.StyleUkey order by ss.Seq for XML RAW ))
 from dbo.View_style_Artwork vSA 
 inner join Style_Artwork SA on vSA.StyleArtworkUkey = SA.Ukey
 inner join style S on vSA.StyleUkey = S.Ukey
