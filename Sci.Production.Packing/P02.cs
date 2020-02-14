@@ -58,6 +58,7 @@ select a.ID
 	   , a.GW
 	   , a.NNW
 	   , c.Description
+       , selected = cast(0 as bit)
 from PackingGuide_Detail a WITH (NOLOCK) 
 left join PackingGuide b WITH (NOLOCK) on a.Id = b.Id
 left join LocalItem c WITH (NOLOCK) on a.RefNo = c.RefNo
@@ -94,6 +95,7 @@ order by e.Seq, f.Seq", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.txtCartonRef.Text = string.Empty;
             DataRow orderData;
             string sqlCmd;
             sqlCmd = string.Format(
@@ -167,6 +169,7 @@ order by e.Seq, f.Seq", masterID);
         {
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .CheckBox("selected", header: "", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
                 .CellCartonItem("RefNo", header: "Ref No.", width: Widths.AnsiChars(13)).Get(out this.col_refno)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -2523,6 +2526,58 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                         MyUtility.Msg.WarningBox("ShipMode is incorrect!");
                         this.txtshipmode.SelectedValue = string.Empty;
                     }
+                }
+            }
+        }
+
+        private void TxtCartonRef_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim,CtnWeight from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRef.Text);
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
+            this.txtCartonRef.Text = item.GetSelectedString();
+            this.txtCartonRef.Tag = MyUtility.Convert.GetString(item.GetSelecteds()[0]["Description"]);
+            this.numCtnWeight.Value = MyUtility.Convert.GetDecimal(item.GetSelecteds()[0]["CtnWeight"]);
+        }
+
+        private void TxtCartonRef_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtCartonRef.Text))
+            {
+                this.txtCartonRef.Text = string.Empty;
+                this.txtCartonRef.Tag = string.Empty;
+                this.numCtnWeight.Value = 0.0;
+                return;
+            }
+
+            List<SqlParameter> sqlpar = new List<SqlParameter>();
+            sqlpar.Add(new SqlParameter("@CartonRef", this.txtCartonRef.Text));
+
+            string seekSql = "select RefNo,Description,CtnWeight from LocalItem where Category = 'CARTON' and Junk = 0 and RefNo = @CartonRef";
+            DataRow dr;
+            if (!MyUtility.Check.Seek(seekSql, sqlpar, out dr))
+            {
+                e.Cancel = true;
+                MyUtility.Msg.WarningBox(string.Format("< Ref No. : {0} > not found!!!", this.txtCartonRef.Text));
+                return;
+            }
+            else
+            {
+                this.txtCartonRef.Text = MyUtility.Convert.GetString(dr["RefNo"]);
+                this.txtCartonRef.Tag = MyUtility.Convert.GetString(dr["Description"]);
+                this.numCtnWeight.Value = MyUtility.Convert.GetDecimal(dr["CtnWeight"]);
+            }
+        }
+
+        private void BtnUpdate_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow item in this.DetailDatas)
+            {
+                if (MyUtility.Convert.GetBool(item["selected"]))
+                {
+                    item["Refno"] = this.txtCartonRef.Text;
+                    item["Description"] = this.txtCartonRef.Tag;
+                    item["GW"] = this.numCtnWeight.Value;
                 }
             }
         }

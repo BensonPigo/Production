@@ -60,6 +60,11 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.displayFactory = new Sci.Win.UI.DisplayBox();
             this.btnSwitchToPLByArticle = new Sci.Win.UI.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnUpdate = new Sci.Win.UI.Button();
+            this.txtCartonRef = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.numCtnWeight = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -72,10 +77,12 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.panel1);
             this.masterpanel.Controls.Add(this.btnSwitchToPLByArticle);
             this.masterpanel.Controls.Add(this.displayFactory);
             this.masterpanel.Controls.Add(this.labelFactory);
@@ -108,7 +115,7 @@
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSPNo);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(912, 207);
+            this.masterpanel.Size = new System.Drawing.Size(912, 248);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
@@ -142,15 +149,16 @@
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSwitchToPLByArticle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.panel1, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 207);
-            this.detailpanel.Size = new System.Drawing.Size(912, 243);
+            this.detailpanel.Location = new System.Drawing.Point(0, 248);
+            this.detailpanel.Size = new System.Drawing.Size(912, 202);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(777, 172);
+            this.gridicon.Location = new System.Drawing.Point(777, 213);
             // 
             // refresh
             // 
@@ -158,7 +166,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(912, 243);
+            this.detailgridcont.Size = new System.Drawing.Size(912, 202);
             // 
             // detail2
             // 
@@ -406,6 +414,7 @@
             this.comboPackingMethod.IsSupportUnselect = true;
             this.comboPackingMethod.Location = new System.Drawing.Point(483, 64);
             this.comboPackingMethod.Name = "comboPackingMethod";
+            this.comboPackingMethod.OldText = "";
             this.comboPackingMethod.ReadOnly = true;
             this.comboPackingMethod.Size = new System.Drawing.Size(216, 24);
             this.comboPackingMethod.TabIndex = 22;
@@ -524,6 +533,7 @@
             this.txtshipmode.IsSupportUnselect = true;
             this.txtshipmode.Location = new System.Drawing.Point(483, 37);
             this.txtshipmode.Name = "txtshipmode";
+            this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode.TabIndex = 2;
             this.txtshipmode.UseFunction = "ORDER";
@@ -558,6 +568,71 @@
             this.btnSwitchToPLByArticle.UseVisualStyleBackColor = true;
             this.btnSwitchToPLByArticle.Click += new System.EventHandler(this.BtnSwitchToPackingList_Click);
             // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.numCtnWeight);
+            this.panel1.Controls.Add(this.btnUpdate);
+            this.panel1.Controls.Add(this.txtCartonRef);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 210);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(912, 38);
+            this.panel1.TabIndex = 30;
+            // 
+            // btnUpdate
+            // 
+            this.btnUpdate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnUpdate.Location = new System.Drawing.Point(291, 3);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(80, 30);
+            this.btnUpdate.TabIndex = 33;
+            this.btnUpdate.Text = "Update";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
+            // 
+            // txtCartonRef
+            // 
+            this.txtCartonRef.BackColor = System.Drawing.Color.White;
+            this.txtCartonRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCartonRef.Location = new System.Drawing.Point(108, 7);
+            this.txtCartonRef.Name = "txtCartonRef";
+            this.txtCartonRef.Size = new System.Drawing.Size(177, 23);
+            this.txtCartonRef.TabIndex = 32;
+            this.txtCartonRef.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCartonRef_PopUp);
+            this.txtCartonRef.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCartonRef_Validating);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(4, 7);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(101, 23);
+            this.label1.TabIndex = 31;
+            this.label1.Text = "Carton Ref No.";
+            // 
+            // numCtnWeight
+            // 
+            this.numCtnWeight.BackColor = System.Drawing.Color.White;
+            this.numCtnWeight.DecimalPlaces = 4;
+            this.numCtnWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCtnWeight.Location = new System.Drawing.Point(185, 7);
+            this.numCtnWeight.Name = "numCtnWeight";
+            this.numCtnWeight.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numCtnWeight.Size = new System.Drawing.Size(100, 23);
+            this.numCtnWeight.TabIndex = 34;
+            this.numCtnWeight.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numCtnWeight.Visible = false;
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(920, 550);
@@ -571,6 +646,7 @@
             this.IsSupportCopy = false;
             this.KeyField1 = "ID";
             this.Name = "P02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P02. Packing Guide";
             this.UniqueExpress = "ID";
             this.WorkAlias = "PackingGuide";
@@ -589,6 +665,8 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -628,5 +706,10 @@
         private Win.UI.DisplayBox displayFactory;
         private Win.UI.Label labelFactory;
         private Win.UI.Button btnSwitchToPLByArticle;
+        private System.Windows.Forms.Panel panel1;
+        private Win.UI.Button btnUpdate;
+        private Win.UI.TextBox txtCartonRef;
+        private Win.UI.Label label1;
+        private Win.UI.NumericBox numCtnWeight;
     }
 }
