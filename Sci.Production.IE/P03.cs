@@ -41,13 +41,37 @@ namespace Sci.Production.IE
         protected override void ClickLocate()
         {
             base.ClickLocate();
+            this.queryfors.SelectedIndex = 0;
             this.OnDetailEntered();
         }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, "last 2 years modify,All");
+            this.queryfors.SelectedIndex = 0;
+            if (MyUtility.Check.Empty(this.DefaultFilter))
+            {
+                this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+            }
+
             base.OnFormLoaded();
+
+            this.queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (this.queryfors.SelectedIndex)
+                {
+                    case 1:
+                        this.DefaultFilter = string.Empty;
+                        break;
+                    case 0:
+                        this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        break;
+                }
+
+                this.ReloadDatas();
+            };
+
             this.grid.Columns["ID"].Visible = false;
         }
 
