@@ -102,8 +102,8 @@
             // 
             // gridicon
             // 
-            this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(907, 48);
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
+            this.gridicon.Location = new System.Drawing.Point(866, 48);
             // 
             // refresh
             // 
@@ -157,7 +157,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(974, 490);
+            this.browse.Size = new System.Drawing.Size(974, 525);
             // 
             // tabs
             // 
@@ -427,6 +427,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P18";
+            this.OnLineHelpID = "Sci.Win.Tems.Input8";
             this.RecallChkValue = "Sent";
             this.ReceiveChkValue = "Checked";
             this.ReturnChkValue = "Received";
