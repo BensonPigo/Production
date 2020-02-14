@@ -98,13 +98,24 @@ where a.id='{masterID}'
 
                  if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                  {
-                     DataRow dr;
-                     if (MyUtility.Check.Seek($@"
+                     List<SqlParameter> sqlpara = new List<SqlParameter>();
+                     sqlpara.Add(new SqlParameter("@id", e.FormattedValue));
+
+                     DataTable odt;
+                     string sql = $@"
 select o.*,[Destination] = c.Alias from Orders o
 inner join Country c on c.ID= o.Dest
-where o.id='{e.FormattedValue}'
-and o.MDivisionID='{Sci.Env.User.Keyword}'", out dr))
+where o.id=@id
+and o.MDivisionID='{Sci.Env.User.Keyword}'";
+                     if (!(this.result = DBProxy.Current.Select(string.Empty, sql, sqlpara, out odt)))
                      {
+                         this.ShowErr(this.result);
+                         return;
+                     }
+
+                     if (odt.Rows.Count > 0)
+                     {
+                         DataRow dr = odt.Rows[0];
                          DataTable dt;
                          string sqlcmd = $@"
 SELECT Seq,ShipmodeID as 'ShipMode',oq.Qty,BuyerDelivery
@@ -117,10 +128,10 @@ outer apply(
 	where PD.orderid= oq.ID AND P.ShipModeID= oq.ShipmodeID 
 	AND PD.OrderShipmodeSeq = oq.Seq
 )Packing
-WHERE oq.ID= '{e.FormattedValue}'
+WHERE oq.ID= @id
 ";
 
-                         if (!(this.result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt)))
+                         if (!(this.result = DBProxy.Current.Select(string.Empty, sqlcmd, sqlpara, out dt)))
                          {
                              this.ShowErr(this.result);
                              return;
@@ -190,6 +201,9 @@ WHERE oq.ID= '{e.FormattedValue}'
                 DataRow dr;
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
+                    List<SqlParameter> sqlpara = new List<SqlParameter>();
+                    sqlpara.Add(new SqlParameter("@seq", e.FormattedValue));
+
                     if (MyUtility.Check.Seek($@"
 SELECT Seq,ShipmodeID as 'ShipMode',oq.Qty,BuyerDelivery
 ,[TotalCrtns] = isnull(packing.qty,0)
@@ -201,7 +215,7 @@ outer apply(
 	where PD.orderid= oq.ID AND P.ShipModeID= oq.ShipmodeID 
 	AND PD.OrderShipmodeSeq = oq.Seq
 )Packing
-where oq.id='{this.CurrentDetailData["OrderID"]}' and oq.seq='{e.FormattedValue}'", out dr))
+where oq.id='{this.CurrentDetailData["OrderID"]}' and oq.seq=@seq", sqlpara, out dr))
                     {
                         this.CurrentDetailData["OrderShipmodeSeq"] = e.FormattedValue.ToString();
                         this.CurrentDetailData["Qty"] = dr["Qty"].ToString();
@@ -256,9 +270,11 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
+                    List<SqlParameter> sqlpara = new List<SqlParameter>();
+                    sqlpara.Add(new SqlParameter("@ShipmodeID", e.FormattedValue));
                     if (MyUtility.Check.Seek($@"
 select 1 
-from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID='{e.FormattedValue}'"))
+from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID=@ShipmodeID", sqlpara))
                     {
                         this.CurrentDetailData["ShipModeID"] = e.FormattedValue.ToString();
                         this.CurrentDetailData.EndEdit();
