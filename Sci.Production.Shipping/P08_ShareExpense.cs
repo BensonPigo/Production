@@ -1069,7 +1069,11 @@ where   ShippingAPID = '{3}'
                     }
                 }
 
+
+                SqlConnection sqlConn = null;
+                DBProxy.Current.OpenConnection(null, out sqlConn);
                 using (TransactionScope transactionScope = new TransactionScope())
+                using (sqlConn)
                 {
                     try
                     {
@@ -1079,7 +1083,7 @@ where   ShippingAPID = '{3}'
 
                         if (deleteCmds.Count != 0)
                         {
-                            result = DBProxy.Current.Executes(null, deleteCmds);
+                            result = DBProxy.Current.ExecutesByConn(sqlConn, deleteCmds);
                             if (result)
                             {
                                 lastResult = lastResult && true;
@@ -1093,7 +1097,7 @@ where   ShippingAPID = '{3}'
 
                         if (addCmds.Count != 0)
                         {
-                            result1 = DBProxy.Current.Executes(null, addCmds);
+                            result1 = DBProxy.Current.ExecutesByConn(sqlConn, addCmds);
                             if (result1)
                             {
                                 lastResult = lastResult && true;
@@ -1105,13 +1109,8 @@ where   ShippingAPID = '{3}'
                             }
                         }
 
-                        if (!this.JunkShareExpense_APP())
-                        {
-                            return;
-                        }
-
-                        result = DBProxy.Current.Execute(
-                            "Production",
+                        result = DBProxy.Current.ExecuteByConn(
+                            sqlConn,
                             string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
                         if (!result)
                         {
@@ -1321,11 +1320,6 @@ select [resultType] = 'OK',
         // Re-Calculate
         private void BtnReCalculate_Click(object sender, EventArgs e)
         {
-            if (!this.JunkShareExpense_APP())
-            {
-                return;
-            }
-
             DualResult result = DBProxy.Current.Execute(
                 "Production",
                 string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
@@ -1373,29 +1367,6 @@ select [resultType] = 'OK',
             {
                 grid1DT.Rows[i].Delete();
             }
-        }
-
-        private bool JunkShareExpense_APP()
-        {
-            string deleteCmd = $@"
-update s
-set s.Junk = 1
-    , s.EditName = '{Env.User.UserID}'
-    , s.EditDate = getdate()
-from ShareExpense_APP s
-inner join #tmp t on s.ShippingAPID = t.ShippingAPID and s.InvNo=t.InvNo and s.PackingListID = t.PackingListID and s.AirPPID = t.AirPPID and s.AccountID = t.AccountID
-where s.ShippingAPID = '{this.apData["ID"]}'
-
-";
-            DataTable dt;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.SAPP, string.Empty, deleteCmd, out dt);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Re-Calculate delete ShareExpense_APP faile\r\n" + result.ToString());
-                return false;
-            }
-
-            return true;
         }
     }
 }

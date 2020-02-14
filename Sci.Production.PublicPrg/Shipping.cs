@@ -15,7 +15,8 @@ namespace Sci.Production.PublicPrg
 {
     public static partial class Prgs
     {
-        #region CalculateShareExpense
+        #region CalculateShareExpense ISP20200101 - 重算費用分攤移至 SQL SP
+        /*
         /// <summary>
         /// CalculateShareExpense(string)
         /// </summary>
@@ -299,6 +300,7 @@ drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmtStep2,#PLSharedAmt,#Ord
             }
             return true;
         }
+        */
         #endregion
 
         #region ReCalculateExpress
