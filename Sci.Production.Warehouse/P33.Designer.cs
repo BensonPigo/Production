@@ -110,7 +110,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(2110, 111);
+            this.gridicon.Location = new System.Drawing.Point(2216, 111);
             // 
             // refresh
             // 
@@ -145,7 +145,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(999, 530);
+            this.browse.Size = new System.Drawing.Size(999, 553);
             // 
             // tabs
             // 
@@ -272,6 +272,7 @@
             this.btnBreakDown.TabIndex = 9;
             this.btnBreakDown.Text = "Issue B\'down";
             this.btnBreakDown.UseVisualStyleBackColor = true;
+            this.btnBreakDown.Click += new System.EventHandler(this.btnBreakDown_Click);
             // 
             // displayPOID
             // 
@@ -299,8 +300,8 @@
             this.txtOrderID.Name = "txtOrderID";
             this.txtOrderID.Size = new System.Drawing.Size(107, 23);
             this.txtOrderID.TabIndex = 2;
-            this.txtOrderID.VisibleChanged += new System.EventHandler(this.txtOrderID_VisibleChanged);
             this.txtOrderID.Validating += new System.ComponentModel.CancelEventHandler(this.txtOrderID_Validating);
+            this.txtOrderID.Validated += new System.EventHandler(this.txtOrderID_Validated);
             // 
             // labelOrderID
             // 
@@ -348,14 +349,13 @@
             this.checkByCombo.TabIndex = 7;
             this.checkByCombo.Text = "By Combo";
             this.checkByCombo.UseVisualStyleBackColor = true;
+            this.checkByCombo.CheckedChanged += new System.EventHandler(this.checkByCombo_CheckedChanged);
             // 
             // P33
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1007, 615);
-            this.DefaultControl = "txtRequest";
             this.DefaultControlForEdit = "checkByCombo";
-            this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,id";
             this.ExpressQuery = true;
             this.GridAlias = "Issue_Detail";
