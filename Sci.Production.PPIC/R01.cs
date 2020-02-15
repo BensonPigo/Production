@@ -112,7 +112,7 @@ namespace Sci.Production.PPIC
             }
 
             if (this.chkGanttChart.Checked &&
-                (MyUtility.Check.Empty(SewingDate1) && MyUtility.Check.Empty(SewingDate2)))
+                (MyUtility.Check.Empty(SewingDate1) || MyUtility.Check.Empty(SewingDate2)))
             {
                 MyUtility.Msg.WarningBox($@"Please input sewing date first if {"\""}Include Gantt chart{"\""} is checked");
                 return false;
@@ -324,7 +324,7 @@ select
 	,s.APSNo
 	,[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float)
 	,[HourOutput] = iif(isnull(s.TotalSewingTime,0) = 0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)
-	,[OriWorkHour] = iif (s.Sewer = 0 or isnull(s.TotalSewingTime,0)=0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime))
+	,[OriWorkHour] = iif (isnull(s.Sewer,0) = 0 or isnull(s.TotalSewingTime,0)=0 or isnull(ScheduleEff.val,0)=0 , 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime))
 	,s.TotalSewingTime
 	,s.LearnCurveID
 	,s.LNCSERIALNumber
@@ -495,7 +495,7 @@ select distinct c.FactoryID,c.SewingLineID,c.date
 	,StyleID = isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),'')
 	,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
 	,StadOutPutQtyPerDay = sum(s.StdQ)
-	,PPH = sum(c.CPU / c.TotalSewingTime * s.StdQ)	
+	,PPH = sum(iif(isnull(c.TotalSewingTime,0)=0 or isnull(s.StdQ,0)=0,0,c.CPU / c.TotalSewingTime * s.StdQ))	
 from #c c 
 left join #ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
 left join #tmpTotalWT twt on twt.APSNo = c.APSNo and twt.SewingLineID = c.SewingLineID and twt.FactoryID = c.FactoryID
