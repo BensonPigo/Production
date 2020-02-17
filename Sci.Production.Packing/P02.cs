@@ -2546,7 +2546,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
             {
                 this.txtCartonRef.Text = string.Empty;
                 this.txtCartonRef.Tag = string.Empty;
-                this.numCtnWeight.Value = 0.0;
+                this.numCtnWeight.Value = 0;
                 return;
             }
 
