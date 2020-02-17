@@ -606,7 +606,7 @@ group by Style,SewingLineID,SewingDay,SewingCPU,Sewer
 select 
 SewingLineID,SewingDay
 ,[Total_StdOutput] = sum(Total_StdOutput)
-,[PPH] = round(sum(s)/sum(m),2)
+,[PPH] = round(iif(isnull(sum(m),0)=0, 0, sum(s) / sum(m)),2)
 from #tmpFinal_step1
 where SewingDay between '{Convert.ToDateTime(this.SewingDate1).ToString("d")}' and '{Convert.ToDateTime(this.SewingDate2).ToString("d")}'
 group by SewingLineID,SewingDay
