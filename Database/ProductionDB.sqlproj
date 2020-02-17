@@ -2437,6 +2437,8 @@
     <Build Include="dbo\Tables\StickerSize.sql" />
     <Build Include="dbo\Stored Procedures\CheckCustCD_Diamond.sql" />
     <Build Include="dbo\Functions\udf-Str-JSON.sql" />
+    <Build Include="dbo\Functions\GetAccountNoExpressType.sql" />
+    <Build Include="dbo\Stored Procedures\CalculateShareExpense.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

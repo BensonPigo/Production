@@ -424,6 +424,8 @@ where sd.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            string sqlcmd = string.Empty;
+
             this.CurrentMaintain["SubType"] = this.comboType2.SelectedValue;
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(this.CurrentMaintain["CDate"]))
@@ -549,6 +551,35 @@ where sd.ID = '{0}'", masterID);
                 return false;
             }
 
+            // 檢查表頭與表身科目是否吻合
+            string accountNO = string.Empty;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                sqlcmd = string.Format(
+                    @"select iif(e.ExpressType = 1, null, se.AccountID) AccountID
+                        from ShipExpense se
+                        outer apply (
+	                        select dbo.GetAccountNoExpressType(se.AccountID, '{1}') ExpressType
+                        ) e
+                        where se.id = '{0}' ",
+                    dr["ShipExpenseID"],
+                    this.CurrentMaintain["Type"]);
+                string result = MyUtility.GetValue.Lookup(sqlcmd);
+                if (!MyUtility.Check.Empty(result))
+                {
+                    accountNO = MyUtility.Check.Empty(accountNO) ? result : accountNO + "," + result;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(accountNO))
+            {
+                MyUtility.Msg.WarningBox(string.Format(
+                    @"Account Payment Type is {0}, but Account No ({1}) is not {0} Item," + Environment.NewLine + "Please check and correct the inconsistencies before proceeding to the next step.",
+                    this.CurrentMaintain["Type"],
+                    accountNO));
+                return false;
+            }
+
             // 表身Curreny為空
             if (currencyEmpt)
             {
@@ -616,18 +647,19 @@ where sd.ID = '{0}'", masterID);
             }
 
             DataTable tmpdt;
-            string sqlchkforisapp = $@"
-select a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
+            sqlcmd = $@"
+select [IsAPP] = dbo.GetAccountNoExpressType(se.AccountID, 'IsAPP')
+    ,[vat] = dbo.GetAccountNoExpressType(se.AccountID, 'vat')
+    ,[AdvancePaymentTPE] = dbo.GetAccountNoExpressType(se.AccountID, 'AdvancePaymentTPE')
+    ,[SisFty] = dbo.GetAccountNoExpressType(se.AccountID, 'SisFty')
 from #tmp sd
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
-left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
 ";
             var dtldt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted);
             if (dtldt.Count() > 0)
             {
                 DataTable dDt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
-                DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlchkforisapp, out tmpdt);
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(dDt, string.Empty, sqlcmd, out tmpdt);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -641,8 +673,9 @@ left join [FinanceEN].dbo.AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
                     // 沒標記IsAPP,不是IsShippingVAT(稅),不是AdvancePaymentTPE(代墊台北), 則不是IsAPP
                     var notapp = tmpdt.AsEnumerable().
                         Where(w => !MyUtility.Convert.GetBool(w["IsAPP"]) &&
-                                    !MyUtility.Convert.GetBool(w["IsShippingVAT"]) &&
-                                    !MyUtility.Convert.GetBool(w["AdvancePaymentTPE"]));
+                                    !MyUtility.Convert.GetBool(w["vat"]) &&
+                                    !MyUtility.Convert.GetBool(w["AdvancePaymentTPE"]) &&
+                                    !MyUtility.Convert.GetBool(w["SisFty"]));
 
                     if (notapp.Count() > 0)
                     {
@@ -677,7 +710,9 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            bool result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            DualResult result = DBProxy.Current.Execute(
+                "Production",
+                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.UserID));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-calcute share expense failed!");
@@ -702,7 +737,7 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         /// <inheritdoc/>
         protected override DualResult ClickDeletePre()
         {
-            string sqlCmd = string.Format("delete from ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string sqlCmd = string.Format("update ShareExpense set Junk = 1 where ShippingAPID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {

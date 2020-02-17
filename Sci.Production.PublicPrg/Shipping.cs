@@ -15,7 +15,8 @@ namespace Sci.Production.PublicPrg
 {
     public static partial class Prgs
     {
-        #region CalculateShareExpense
+        #region CalculateShareExpense ISP20200101 - 重算費用分攤移至 SQL SP
+        /*
         /// <summary>
         /// CalculateShareExpense(string)
         /// </summary>
@@ -56,6 +57,7 @@ DECLARE cursor_ttlAmount CURSOR FOR
 				left join SciFMS_AccountNo a on a.ID = se.AccountID
 				left join ShippingAP s WITH (NOLOCK) on s.ID = sd.ID
 				where sd.ID = @id
+                and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)
 				group by se.AccountID, a.Name, s.CurrencyID) a,
 				(select distinct BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK
 				from ShareExpense WITH (NOLOCK) 
@@ -74,6 +76,7 @@ DECLARE cursor_diffAccNo CURSOR FOR
 	from ShippingAP_Detail sd WITH (NOLOCK) 
 	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 	where sd.ID = @id
+    and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)
 
 --刪除已不存在AP中的會科資料
 OPEN cursor_diffAccNo
@@ -84,14 +87,15 @@ BEGIN
 	FETCH NEXT FROM cursor_diffAccNo INTO @accno
 END
 CLOSE cursor_diffAccNo
+DEALLOCATE cursor_diffAccNo
 
 DECLARE @amount NUMERIC(15,4),
 		@blno VARCHAR(20),
 		@wkno VARCHAR(13),
 		@invno VARCHAR(25),
-		@type VARCHAR(15),
-		@gw NUMERIC(9,3),
-		@cbm NUMERIC(9,4),
+		@type VARCHAR(25),
+		@gw NUMERIC(10, 3),
+		@cbm NUMERIC(11,4),
 		@shipmodeid VARCHAR(10),
 		@sharebase VARCHAR(1),
 		@count INT,
@@ -166,7 +170,7 @@ BEGIN
 				SET @inputamount = ROUND(@minusamount,@exact)
 			END
 
-	select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountID = @accno
+	select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @id and WKNo = @wkno and InvNo = @invno and AccountID = @accno
 	IF @recno = 0
 		BEGIN
 			INSERT INTO ShareExpense(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountID,EditName,EditDate)
@@ -176,7 +180,7 @@ BEGIN
 		BEGIN
 			UPDATE ShareExpense 
 			SET CurrencyID = @currency, Amount = @inputamount, ShareBase = @1stsharebase, EditName = @login, EditDate = @adddate 
-			where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountID = @accno
+			where ShippingAPID = @id and WKNo = @wkno and InvNo = @invno and AccountID = @accno
 		END
 
 	
@@ -188,7 +192,7 @@ BEGIN
 				BEGIN
 					UPDATE ShareExpense 
 			SET CurrencyID = @currency, Amount = Amount + @remainamount, EditName = @login, EditDate = @adddate 
-			where ShippingAPID = @id and WKNo = @maxwkno and BLNo = @maxblno and InvNo = @maxinvno and AccountID = @accno
+			where ShippingAPID = @id and WKNo = @maxwkno and InvNo = @maxinvno and AccountID = @accno
 				END
 		END
 	ELSE
@@ -198,16 +202,18 @@ BEGIN
 	FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@sharebase
 END
 CLOSE cursor_ttlAmount
+DEALLOCATE cursor_ttlAmount
 
 --以下為Airpp 拆分Factory與Other部分
 --只有AirPP的資料需要在往下分攤
 select se.InvNo,se.AccountID,[Amount] = sum(se.Amount)
 into #InvNoSharedAmt
 from ShareExpense se with (nolock)
-where	se.ShippingAPID = @ID and se.Junk = 0 and
-		exists(select 1 from GMTBooking gmt with (nolock)
+where	se.ShippingAPID = @ID and se.Junk = 0 
+and	exists(select 1 from GMTBooking gmt with (nolock)
 							 inner join ShipMode sm with (nolock) on gmt.ShipModeID = sm.ID
 						     where gmt.ID = se.InvNo and sm.NeedCreateAPP = 1)
+and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)
 group by se.InvNo,se.AccountID
 
 select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)
@@ -294,6 +300,7 @@ drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmtStep2,#PLSharedAmt,#Ord
             }
             return true;
         }
+        */
         #endregion
 
         #region ReCalculateExpress
