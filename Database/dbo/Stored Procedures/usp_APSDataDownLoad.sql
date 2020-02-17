@@ -1116,7 +1116,6 @@ BEGIN
 					   fe.BeginDate
 					   , isnull((fe.Efficiency/100),0) as Eff 
 				From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe
-					,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la
 					,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f
 					,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa 
 				where fe.FacilityID = f.ID 
@@ -1124,6 +1123,7 @@ BEGIN
 					  And fa.Code = '''+@factoryid + ''' 
 					  and f.Name = ''' + @sewinglineid + ''' 
 					  and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' 
+					  and f.DYNAMICEFFICIENCY = 1
 				Order by fe.BeginDate Desc'
 				execute (@cmd)
 				
@@ -1299,7 +1299,6 @@ BEGIN
 							   fe.BeginDate
 							   , isnull((fe.Efficiency/100),0) as Eff 
 						From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe
-							,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la
 							,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f
 							,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa 
 						where fe.FacilityID = f.ID 
@@ -1307,6 +1306,7 @@ BEGIN
 							  And fa.Code = '''+@factoryid + ''' 
 							  and f.Name = ''' + @sewinglineid + ''' 
 							  and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' 
+							  and f.DYNAMICEFFICIENCY = 1
 						Order by fe.BeginDate Desc'
 						execute (@cmd)
 
