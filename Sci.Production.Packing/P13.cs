@@ -49,12 +49,15 @@ namespace Sci.Production.Packing
             this.poqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
             this.Helper.Controls.Grid.Generator(this.gridDetail)
+                .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(8))
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8))
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(16))
                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(13))
                 .Date("SciDelivery", header: "SCI Delivery")
+                .Date("BuyerDelivery", header: "Buyer Delivery")
                 .Date("SewInline", header: "Sewing Inline Date")
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(13))
+                .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(20))
                 .Text("Dimension", header: "L * W * H", width: Widths.AnsiChars(25))
                 .Text("CTNUnit", header: "Carton Unit", width: Widths.AnsiChars(8))
                 .Numeric("CTNQty", header: "Carton Qty", settings: this.ctnqty)
@@ -162,12 +165,25 @@ where pl.ID = pld.ID
 
             sqlCmd.Append(
  @"
-select o.BrandID,o.ID,o.SciDelivery,o.SewInLine,o.Dest,c.Alias,ocd.RefNo,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ocd.CTNQty
+select o.FtyGroup
+	,o.BrandID
+	,o.ID
+	,o.SciDelivery
+	,o.BuyerDelivery
+	,o.SewInLine
+	,o.Dest
+	,c.Alias
+	,ocd.RefNo
+	,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension
+	,li.CtnUnit
+	,ocd.CTNQty
+	,[Supplier] = li.LocalSuppid + '-' + ls.Abb
 into #tmp_OrderData
 from Orders o WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.id = o.Dest
 left join Order_CTNData ocd WITH (NOLOCK) on ocd.ID = o.ID
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ocd.RefNo
+left join LocalSupp ls WITH (NOLOCK) on li.LocalSuppid = ls.ID
 ");
             if (isPackData)
             {
@@ -197,13 +213,15 @@ left join LocalItem li WITH (NOLOCK) on li.RefNo = ocd.RefNo
 
             sqlCmd.Append(@"  
 
-SELECT BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,SUM(POQty) AS POQty,Delivery
+SELECT FtyGroup,BrandID,ID,SciDelivery,BuyerDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,SUM(POQty) AS POQty,Delivery,Supplier
 into #tmp_POData
 from 
 (
-	select DISTINCT od.BrandID
+	select DISTINCT od.FtyGroup
+        ,od.BrandID
 		,od.ID
 		,od.SciDelivery
+		,od.BuyerDelivery
 		,od.SewInLine
 		,od.Alias
 		,ld.Id as LocalPOID
@@ -212,26 +230,31 @@ from
 		,li.CtnUnit
 		,ld.Qty as POQty
 		,ld.Delivery 
+		,[Supplier] = li.LocalSuppid + '-' + ls.Abb
 	from #tmp_OrderData od
 	inner join LocalPO_Detail ld WITH (NOLOCK) on od.ID = ld.OrderId 
 	inner join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 	inner join LocalPO LP WITH (NOLOCK) on LP.id= ld.id 
+	left join LocalSupp ls WITH (NOLOCK) on li.LocalSuppid = ls.ID
 	where LP.category='CARTON'
 )a
-group by BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,Delivery;
+group by FtyGroup,BrandID,ID,SciDelivery,BuyerDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,Delivery,Supplier;
 
 SELECT RefNo,ID,SUM(POQty) as POQty 
 into #tmp_AccuQty
 FROM #tmp_POData 
 GROUP BY RefNo,ID; 
 
-select isnull(od.BrandID,pd.BrandID) as BrandID
+select isnull(od.FtyGroup, pd.FtyGroup) as FtyGroup
+    ,isnull(od.BrandID,pd.BrandID) as BrandID
 	,isnull(od.ID,pd.ID) as ID
 	,isnull(od.Alias
 	,isnull(pd.Alias,'')) as Alias
 	,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery
+    ,isnull(od.BuyerDelivery, pd.BuyerDelivery) as BuyerDelivery
 	,isnull(od.SewInLine,pd.SewInLine) as SewInLine
 	,isnull(od.Refno,pd.Refno) as Refno
+    ,isnull(od.Supplier, pd.Supplier) as Supplier
 	,isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension
 	,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit
 	,isnull(od.CTNQty,0) as CTNQty
@@ -241,7 +264,6 @@ select isnull(od.BrandID,pd.BrandID) as BrandID
 from #tmp_OrderData od
 full outer join #tmp_POData pd on pd.ID = od.ID and pd.Refno = od.RefNo
 order by SciDelivery,ID,Refno;
-
 
 drop table #tmp_AccuQty,#tmp_OrderData,#tmp_POData;
 ");

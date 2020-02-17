@@ -79,6 +79,26 @@ namespace Sci.Production.Warehouse
             return base.ClickDeleteBefore();
         }
 
+        protected override DualResult ClickDeletePost()
+        {
+            // 當表身被刪除時，要判斷是否[Issue_Detail.ukey]有在[FIR_Physical].[Issue_DetailUkey]中，若有則將[FIR_Physical].[Issue_DetailUkey]更新成0。
+            string ID = this.CurrentMaintain["ID"].ToString();
+
+             List<string>ukeyList = this.DetailDatas.AsEnumerable().Select(o => o["Ukey"].ToString()).ToList();
+            string ukeys = string.Join(",", ukeyList);
+            string cmd = $@"
+UPDATE FIR_Physical
+SET Issue_DetailUkey = 0
+WHERE Issue_DetailUkey IN ({ukeys})
+";
+            DualResult upResult;
+            if (!(upResult = DBProxy.Current.Execute(null, cmd)))
+            {
+                return upResult;
+            }
+
+            return base.ClickDeletePost();
+        }
         // edit前檢查
         protected override bool ClickEditBefore()
         {

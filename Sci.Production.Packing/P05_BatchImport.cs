@@ -97,7 +97,9 @@ with OrderData as (
             and o.PulloutComplete = 0
             and o.LocalOrder = 0
             and o.Junk = 0
-            and f.IsProduceFty = 1");
+            and f.IsProduceFty = 1
+            and o.category not in ('B','G')
+");
             if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
             {
                 sqlCmd.Append("\r\n and o.ID >= @orderID1");

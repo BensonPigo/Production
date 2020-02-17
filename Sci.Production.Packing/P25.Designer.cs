@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -37,17 +36,14 @@
             this.btnToExcel = new System.Windows.Forms.Button();
             this.panel4 = new Sci.Win.UI.Panel();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.btnQuery = new System.Windows.Forms.Button();
             this.txtPOno = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSP_e = new Sci.Win.UI.TextBox();
             this.txtSP_s = new Sci.Win.UI.TextBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.txtPGID_e = new Sci.Win.UI.TextBox();
-            this.txtPGID_s = new Sci.Win.UI.TextBox();
             this.labelSewingInlineDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
-            this.labelSP = new Sci.Win.UI.Label();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -64,7 +60,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(12, 584);
+            this.panel1.Size = new System.Drawing.Size(12, 662);
             this.panel1.TabIndex = 1;
             // 
             // panel2
@@ -72,7 +68,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(941, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(12, 584);
+            this.panel2.Size = new System.Drawing.Size(12, 662);
             this.panel2.TabIndex = 2;
             // 
             // panel3
@@ -80,7 +76,7 @@
             this.panel3.Controls.Add(this.btnClose);
             this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(12, 540);
+            this.panel3.Location = new System.Drawing.Point(12, 618);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(929, 44);
             this.panel3.TabIndex = 4;
@@ -113,28 +109,36 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel4.Location = new System.Drawing.Point(12, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(929, 110);
+            this.panel4.Size = new System.Drawing.Size(929, 98);
             this.panel4.TabIndex = 5;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.btnQuery);
             this.groupBox1.Controls.Add(this.txtPOno);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.txtSP_e);
             this.groupBox1.Controls.Add(this.txtSP_s);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.txtPGID_e);
-            this.groupBox1.Controls.Add(this.txtPGID_s);
             this.groupBox1.Controls.Add(this.labelSewingInlineDate);
             this.groupBox1.Controls.Add(this.labelSCIDelivery);
-            this.groupBox1.Controls.Add(this.labelSP);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(929, 110);
+            this.groupBox1.Size = new System.Drawing.Size(929, 98);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.Red;
+            this.label2.Location = new System.Drawing.Point(16, 76);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(681, 17);
+            this.label2.TabIndex = 27;
+            this.label2.Text = "※ If Packing List include more than one SP# + Ship mode seq, system cannot suppor" +
+    "t print Packing Guide.";
             // 
             // btnQuery
             // 
@@ -151,7 +155,7 @@
             // 
             this.txtPOno.BackColor = System.Drawing.Color.White;
             this.txtPOno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPOno.Location = new System.Drawing.Point(140, 69);
+            this.txtPOno.Location = new System.Drawing.Point(140, 44);
             this.txtPOno.Name = "txtPOno";
             this.txtPOno.Size = new System.Drawing.Size(156, 23);
             this.txtPOno.TabIndex = 5;
@@ -159,7 +163,7 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(299, 44);
+            this.label1.Location = new System.Drawing.Point(299, 19);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(22, 23);
             this.label1.TabIndex = 26;
@@ -173,7 +177,7 @@
             // 
             this.txtSP_e.BackColor = System.Drawing.Color.White;
             this.txtSP_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP_e.Location = new System.Drawing.Point(324, 44);
+            this.txtSP_e.Location = new System.Drawing.Point(324, 19);
             this.txtSP_e.Name = "txtSP_e";
             this.txtSP_e.Size = new System.Drawing.Size(156, 23);
             this.txtSP_e.TabIndex = 4;
@@ -182,45 +186,14 @@
             // 
             this.txtSP_s.BackColor = System.Drawing.Color.White;
             this.txtSP_s.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP_s.Location = new System.Drawing.Point(140, 44);
+            this.txtSP_s.Location = new System.Drawing.Point(140, 19);
             this.txtSP_s.Name = "txtSP_s";
             this.txtSP_s.Size = new System.Drawing.Size(156, 23);
             this.txtSP_s.TabIndex = 3;
             // 
-            // label6
-            // 
-            this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Location = new System.Drawing.Point(299, 19);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(22, 23);
-            this.label6.TabIndex = 23;
-            this.label6.Text = "～";
-            this.label6.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label6.TextStyle.Color = System.Drawing.Color.Black;
-            this.label6.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label6.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // txtPGID_e
-            // 
-            this.txtPGID_e.BackColor = System.Drawing.Color.White;
-            this.txtPGID_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPGID_e.Location = new System.Drawing.Point(324, 19);
-            this.txtPGID_e.Name = "txtPGID_e";
-            this.txtPGID_e.Size = new System.Drawing.Size(156, 23);
-            this.txtPGID_e.TabIndex = 2;
-            // 
-            // txtPGID_s
-            // 
-            this.txtPGID_s.BackColor = System.Drawing.Color.White;
-            this.txtPGID_s.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPGID_s.Location = new System.Drawing.Point(140, 19);
-            this.txtPGID_s.Name = "txtPGID_s";
-            this.txtPGID_s.Size = new System.Drawing.Size(156, 23);
-            this.txtPGID_s.TabIndex = 1;
-            // 
             // labelSewingInlineDate
             // 
-            this.labelSewingInlineDate.Location = new System.Drawing.Point(19, 69);
+            this.labelSewingInlineDate.Location = new System.Drawing.Point(19, 44);
             this.labelSewingInlineDate.Name = "labelSewingInlineDate";
             this.labelSewingInlineDate.Size = new System.Drawing.Size(118, 23);
             this.labelSewingInlineDate.TabIndex = 20;
@@ -228,27 +201,19 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Location = new System.Drawing.Point(19, 44);
+            this.labelSCIDelivery.Location = new System.Drawing.Point(19, 19);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(118, 23);
             this.labelSCIDelivery.TabIndex = 19;
             this.labelSCIDelivery.Text = "SP#";
             // 
-            // labelSP
-            // 
-            this.labelSP.Location = new System.Drawing.Point(19, 19);
-            this.labelSP.Name = "labelSP";
-            this.labelSP.Size = new System.Drawing.Size(118, 23);
-            this.labelSP.TabIndex = 18;
-            this.labelSP.Text = "Packing Guide ID";
-            // 
             // panel5
             // 
             this.panel5.Controls.Add(this.grid);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(12, 110);
+            this.panel5.Location = new System.Drawing.Point(12, 98);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(929, 430);
+            this.panel5.Size = new System.Drawing.Size(929, 520);
             this.panel5.TabIndex = 6;
             // 
             // grid
@@ -267,27 +232,19 @@
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(0, 0);
             this.grid.Name = "grid";
-            //dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            //dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            //dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            //dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            //dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            //dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            //dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            //this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(929, 430);
+            this.grid.Size = new System.Drawing.Size(929, 520);
             this.grid.TabIndex = 0;
             // 
             // P25
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(953, 584);
+            this.ClientSize = new System.Drawing.Size(953, 662);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -296,7 +253,7 @@
             this.EditMode = true;
             this.Name = "P25";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P25. Batch Print Packing Guide";
+            this.Text = "P25. Batch Print Packing Guide (Bulk)";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.panel3, 0);
@@ -321,11 +278,8 @@
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
         private Win.UI.GroupBox groupBox1;
-        private Win.UI.TextBox txtPGID_e;
-        private Win.UI.TextBox txtPGID_s;
         private Win.UI.Label labelSewingInlineDate;
         private Win.UI.Label labelSCIDelivery;
-        private Win.UI.Label labelSP;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnToExcel;
         private System.Windows.Forms.Button btnQuery;
@@ -333,8 +287,8 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txtSP_e;
         private Win.UI.TextBox txtSP_s;
-        private Win.UI.Label label6;
         private Win.UI.Grid grid;
         private Win.UI.ListControlBindingSource listControlBindingSource;
+        private System.Windows.Forms.Label label2;
     }
 }

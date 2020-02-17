@@ -17,6 +17,8 @@
     [EditDate]      DATETIME       NULL,
     [TMS]           INT            CONSTRAINT [DF_Style_Artwork_TMS] DEFAULT ((0)) NULL,
     [TradeUkey]     BIGINT         CONSTRAINT [DF_Style_Artwork_TradeUkey] DEFAULT ((0)) NULL,
+    [SMNoticeID] VARCHAR(10) NULL DEFAULT (''), 
+    [PatternVersion] VARCHAR(3) NULL DEFAULT (''), 
     CONSTRAINT [PK_Style_Artwork] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
