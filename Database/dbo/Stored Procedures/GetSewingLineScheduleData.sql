@@ -61,7 +61,7 @@ select
 	Sewer,
 	[AlloQty] = sum(s.AlloQty),
 	[HourOutput] = iif(isnull(s.TotalSewingTime,0)=0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime),
-	[OriWorkHour] = iif (s.Sewer = 0 or isnull(s.TotalSewingTime,0)=0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)),
+	[OriWorkHour] = iif (isnull(s.Sewer,0) = 0 or isnull(ScheduleEff.val,0) = 0 or isnull(s.TotalSewingTime,0) = 0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)),
 	[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float),
 	s.TotalSewingTime,
 	s.OrderID,
@@ -132,7 +132,7 @@ select
 	Sewer,
     OriEff,
     SewLineEff,
-	[TotalSewingTime]=SUM(TotalSewingTime)/count(1),
+	[TotalSewingTime]=iif(count(1) = 0, 0, SUM(TotalSewingTime) / count(1)),
 	AlloQty = sum(AlloQty)
 from @APSListWorkDay
 group by APSNo,
@@ -378,11 +378,11 @@ select
 	al.APSNo,
 	al.SewingLineID,
 	[CustPO] = CustPO.val,
-	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算CustPO數量
+	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��CustPO�ƶq
 	[SP] = SP.val,
 	[SpCnt] = (select count(1) from SewingSchedule where APSNo = al.APSNo),
 	[Colorway] = Colorway.val,
-	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算Colorway數量
+	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��Colorway�ƶq
 	[CDCode] = CDCode.val,
 	[ProductionFamilyID] = ProductionFamilyID.val,
 	[Style] = Style.val,
@@ -784,9 +784,8 @@ select  awd.APSNo
 		, awd.New_SwitchTime
         , [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))
 		, StdOutput = s.StdQ
-        --, [StdOutput] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
-		, [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
-         , [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0  or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * iif(awd.New_WorkingTime = 0 ,0 , ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.New_WorkingTime * awd.Sewer * 3600.0))
+		, [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or isnull(awd.CPU,0) = 0 or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
+         , [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or (awd.TotalSewingTime = 0) or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * iif(isnull(awd.New_WorkingTime,0) = 0 or isnull(awd.Sewer,0) = 0 ,0 , ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.New_WorkingTime * awd.Sewer * 3600.0))
 from @APSExtendWorkDate awd
 inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
@@ -837,7 +836,7 @@ select
 	[AlloQty]=apm.AlloQty,
 	[StardardOutputPerDay]= apf.StdOutput,
 	[CPU]=apf.CPU,
-	[SewingCPU] = ( apm.TotalSewingTime / (SELECT StdTMS * 1.0 FROm System))  ,
+	[SewingCPU] = (iif(isnull((SELECT StdTMS * 1.0 FROm System),0)=0, 0, apm.TotalSewingTime / (SELECT StdTMS * 1.0 FROm System)))  ,
 	[Orig_WorkHourPerDay]= apf.WorkingTime,
 	[New_SwitchTime] = apf.New_SwitchTime,
 	[New_WorkHourPerDay] = apf.New_WorkingTime,
