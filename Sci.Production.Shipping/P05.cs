@@ -1532,6 +1532,35 @@ Packing List : {pid}";
                 return;
             }
 
+            #region 有Cancel Order 不能confirmed
+
+            DualResult result;
+            string SP = string.Empty;
+            DataTable dtCancel;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
+            }
+
+            string sqlcmd = $@"
+select id from Orders where Junk = 1 and id in  ({SP.Substring(0, SP.Length - 1)})
+";
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtCancel);
+            if (!result)
+            {
+                this.ShowErr(sqlcmd, result);
+                return;
+            }
+
+            string msgCancel = string.Empty;
+            if (dtCancel.Rows.Count > 1)
+            {
+                MyUtility.Msg.WarningBox($@"SP# {dtCancel.Rows[0]["id"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.");
+                return;
+            }
+            #endregion
+
+
             // shipper 不可為空
             if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
             {
@@ -1545,7 +1574,6 @@ Packing List : {pid}";
                 return;
             }
 
-            DualResult result;
             // 當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
             {
@@ -1957,7 +1985,6 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                     SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
                 }
 
-                DataTable tmpdt = this.DetailDatas.CopyToDataTable();
                 string sqlcmd = $@"
 select distinct ShipperID=isnull(f1.ShipperID, f2.ShipperID)
 from Orders o

@@ -1023,6 +1023,32 @@ select STUFF((
 
             #endregion
 
+            #region 有Cancel Order 不能confirmed ISP20200236
+            string SP = string.Empty;
+            DataTable dtCancel;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
+            }
+
+            string sqlcmd = $@"
+select id from Orders where Junk = 1 and id in  ({SP.Substring(0, SP.Length - 1)})
+";
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtCancel);
+            if (!result)
+            {
+                this.ShowErr(sqlcmd, result);
+                return;
+            }
+
+            string msgCancel = string.Empty;
+            if (dtCancel.Rows.Count > 1)
+            {
+                MyUtility.Msg.WarningBox($@"SP# {dtCancel.Rows[0]["id"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.");
+                return;
+            }
+            #endregion
+
             string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed',CFMDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             result = DBProxy.Current.Execute(null, updateCmd);

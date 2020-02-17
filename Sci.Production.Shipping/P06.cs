@@ -75,7 +75,8 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select pd.*,o.StyleID,o.BrandID,o.Dest,
+                @"
+select pd.*,o.StyleID,o.BrandID,o.Dest,
 Variance = (
 	pd.OrderQty 
 	- isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where OrderID = pd.OrderID),0)
@@ -569,11 +570,12 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             {
                 return;
             }
-            
+
             if (!Prgs.CheckExistsOrder_QtyShip_Detail(PulloutID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
                 return;
             }
+
             // 模擬按Edit行為
             this.toolbar.cmdEdit.PerformClick();
 
@@ -600,6 +602,14 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     errchk = true;
                     errmsg.Append(string.Format("Please check <SP#> {0}, Variance:{1}\r\n", MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetDecimal(dr["Variance"])));
                 }
+
+                #region 有Cancel Order 不能confirmed
+                if (MyUtility.Check.Seek($"select 1 from orders where id ='{dr["OrderID"]}' and junk = 1"))
+                {
+                    MyUtility.Msg.WarningBox($"SP# {dr["OrderID"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.");
+                    return;
+                }
+                #endregion
             }
 
             if (errchk)
@@ -946,6 +956,7 @@ with ShipPlanData as (
           and s.Status = 'Confirmed'
           and p.MDivisionID = '{0}'
           and p.PulloutDate = '{1}'
+          and o.junk = 0
           and (  p.PulloutID = '' or p.PulloutID = '{2}') -- 20161220 willy 避免如果原本有資料,之後修改資料會清空shipQty問題
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode, o.Qty
           , oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest
@@ -979,6 +990,7 @@ FLPacking as (
             and p.Status = 'Confirmed'
             and p.MDivisionID = '{0}'
             and p.PulloutDate = '{1}'
+            and o.junk = 0
             and (p.PulloutID = '' or p.PulloutID='{2}')  -- 20170918 aaron 避免如果原本有資料,之後修改資料會清空shipQty問題
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode
              , o.Qty, oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest 
@@ -1293,6 +1305,7 @@ with ShipPlanData as (
                                                         and oqd.SizeCode = pd.SizeCode
     where (p.Type = 'B' or p.Type = 'S')
           and s.Status = 'Confirmed'
+          and o.junk = 0
           and p.MDivisionID = '{0}'
           and p.PulloutDate = '{1}'
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode, o.Qty
@@ -1325,6 +1338,7 @@ FLPacking as (
                                                         and oqd.SizeCode = pd.SizeCode
     where   (p.Type = 'F' or p.Type = 'L')
             and p.Status = 'Confirmed'
+            and o.junk = 0
             and p.MDivisionID = '{0}'
             and p.PulloutDate = '{1}'
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode

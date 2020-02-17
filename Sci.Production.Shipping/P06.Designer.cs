@@ -40,6 +40,7 @@
             this.btnHistory = new Sci.Win.UI.Button();
             this.btnRevisedHistory = new Sci.Win.UI.Button();
             this.labelSendtoSCI = new Sci.Win.UI.Label();
+            this.labCancelOrder = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -56,6 +57,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labCancelOrder);
             this.masterpanel.Controls.Add(this.btnHistory);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.btnRevise);
@@ -80,6 +82,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnRevise, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnHistory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labCancelOrder, 0);
             // 
             // detailpanel
             // 
@@ -260,6 +263,16 @@
             this.labelSendtoSCI.TabIndex = 9;
             this.labelSendtoSCI.Text = "Send to SCI";
             // 
+            // labCancelOrder
+            // 
+            this.labCancelOrder.AutoSize = true;
+            this.labCancelOrder.ForeColor = System.Drawing.Color.Red;
+            this.labCancelOrder.Location = new System.Drawing.Point(293, 41);
+            this.labCancelOrder.Name = "labCancelOrder";
+            this.labCancelOrder.Size = new System.Drawing.Size(316, 17);
+            this.labCancelOrder.TabIndex = 19;
+            this.labCancelOrder.Text = "Cancel order cannot import in the Pullout Report.";
+            // 
             // P06
             // 
             this.ApvChkValue = "New";
@@ -273,6 +286,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P06";
+            this.OnLineHelpID = "Sci.Win.Tems.Input8";
             this.SubDetailKeyField1 = "UKey";
             this.SubDetailKeyField2 = "Pullout_DetailUKey";
             this.SubGridAlias = "Pullout_Detail_Detail";
@@ -315,5 +329,6 @@
         private Win.UI.Label labelM;
         private Win.UI.Label labelNo;
         private Win.UI.Button btnRevisedHistory;
+        private System.Windows.Forms.Label labCancelOrder;
     }
 }
