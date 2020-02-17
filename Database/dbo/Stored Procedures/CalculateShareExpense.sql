@@ -53,7 +53,9 @@ BEGIN
 					@maxdata NUMERIC(9,2),
 					@1stsharebase VARCHAR(1)
 
-				 
+	
+		
+	SET @adddate = GETDATE()			 
 
 	DECLARE cursor_ShareExpense CURSOR FOR
 	select distinct ShippingAPID, Type
@@ -73,7 +75,9 @@ BEGIN
 			 * 將已不存在系統中的 WK Junk
 			 */
 			update s
-			set s.Junk = 1
+			set s.Junk = 1				
+				, s.EditName = @login
+				, s.EditDate = @adddate
 			from ShareExpense s
 			where s.ShippingAPID = @ShippingAPID and s.WKNo != '' 
 				  and s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null)
@@ -118,7 +122,9 @@ BEGIN
 			 * 將已不存在系統中的 Inv Junk
 			 */
 			update s
-			set s.Junk = 1
+			set s.Junk = 1				
+				, s.EditName = @login
+				, s.EditDate = @adddate
 			from ShareExpense s
 			where s.ShippingAPID = @ShippingAPID 
 					and s.InvNo != '' 
@@ -133,7 +139,7 @@ BEGIN
 			 * 更新 Inv 基本資料
 			 */ 
 			DECLARE cursor_GB CURSOR FOR
-				select g.ID,g.ShipModeID,g.TotalGW,g.TotalCBM,s.CurrencyID,s.SubType, iif(g.BLNo is null or g.BLNo='', g.BL2No, g.BLNo) as BLNo
+				select g.ID,g.ShipModeID,g.TotalGW,g.TotalCBM,s.CurrencyID,s.SubType, iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo
 				from GMTBooking g WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
 				where g.ID = se.InvNo
 						and s.id = se.ShippingAPID
@@ -215,8 +221,8 @@ BEGIN
 		 */ 
 		 update s
 		 set s.Junk = 1
-		  	 , s.EditName = @login
-			 , s.EditDate = getdate()
+			, s.EditName = @login
+			, s.EditDate = @adddate
  		 from ShareExpense_APP s
 		 where s.ShippingAPID = @ShippingAPID
 
@@ -282,7 +288,9 @@ BEGIN
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
 				update ShareExpense 
-				set Junk = 1
+				set Junk = 1					
+					, EditName = @login
+					, EditDate = @adddate
 				where ShippingAPID = @ShippingAPID and AccountID = @accno
 				FETCH NEXT FROM cursor_diffAccNo INTO @accno
 			END
@@ -354,16 +362,16 @@ BEGIN
 						SET @1stsharebase = @sharebase
 						IF @1stsharebase = 'C'
 							BEGIN
-								SET @minusamount = ROUND(@amount/@ttlcbm,4)
+								SET @minusamount = iif (@ttlcbm = 0, 0, ROUND(@amount/@ttlcbm,4))
 							END
 						ELSE
 							IF @1stsharebase = 'G'
 								BEGIN
-									SET @minusamount = ROUND(@amount/@ttlgw,4)
+									SET @minusamount = iif (@ttlgw = 0, 0, ROUND(@amount/@ttlgw,4))
 								END
 							ELSE
 								BEGIN
-									SET @minusamount = ROUND(@amount/@ttlcount,4)
+									SET @minusamount = iif (@ttlcount = 0, 0, ROUND(@amount/@ttlcount,4))
 								END
 					END
 				ELSE
@@ -538,7 +546,7 @@ BEGIN
 				,t.[AmtOther]	  =s.SharedAmtOther
 				,t.[Junk]		  =0
 				,t.[EditName]	  =@login
-				,t.[EditDate]	  =getdate()
+				,t.[EditDate]	  =@adddate
 			when not matched by target then
 			insert([ShippingAPID],[InvNo],[PackingListID],[AirPPID],[AccountID],[CurrencyID],[NW],[RatioFty],[AmtFty],[RatioOther],[AmtOther],[Junk], [EditName], [EditDate])
 			VALUES(@ShippingAPID,s.[InvNo],s.id,s.[AirPPID],s.[AccountID],@CurrencyID,s.ttlNw,s.[RatioFty],s.SharedAmtFactory,s.[RatioOther],s.SharedAmtOther,0, @login, getdate())
@@ -552,7 +560,7 @@ BEGIN
 			set SharedAmtFactory = @SharedAmtFactory
 				, SharedAmtOther = @SharedAmtOther
 				, EditName = @login
-				, EditDate = getdate() 
+				, EditDate = @adddate 
 			where ID = @ShippingAPID
  
 
