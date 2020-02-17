@@ -96,6 +96,8 @@ order by e.Seq, f.Seq", masterID);
         {
             base.OnDetailEntered();
             this.txtCartonRef.Text = string.Empty;
+            this.txtCartonRef.Tag = string.Empty;
+            this.numCtnWeight.Value = 0;
             DataRow orderData;
             string sqlCmd;
             sqlCmd = string.Format(
@@ -2571,6 +2573,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
 
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
+            this.detailgrid.ValidateControl();
             foreach (DataRow item in this.DetailDatas)
             {
                 if (MyUtility.Convert.GetBool(item["selected"]))
@@ -2578,6 +2581,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                     item["Refno"] = this.txtCartonRef.Text;
                     item["Description"] = this.txtCartonRef.Tag;
                     item["GW"] = this.numCtnWeight.Value;
+                    item.EndEdit();
                 }
             }
         }
