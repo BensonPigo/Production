@@ -271,6 +271,20 @@ order by bundlegroup"
                 MyUtility.Msg.WarningBox("<Line> can not be empty!");
                 return false;
             }
+
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, $"select CuttingP10mustCutRef from system", out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (MyUtility.Convert.GetBool(dt.Rows[0]["CuttingP10mustCutRef"]) && MyUtility.Check.Empty(this.CurrentMaintain["Cutref"]))
+            {
+                MyUtility.Msg.WarningBox("<Cut Ref#> can't be empty!!");
+                return false;
+            }
             if (IsDetailInserting)
             {
                 string Keyword = keyword + "BC";
