@@ -233,7 +233,7 @@ select distinct OutputDate
 	,MDivisionID
 	,OrderId
 	,ComboType
-	,[ActManPower] = Sum(ActManPower)over(partition by id,OrderId,ComboType)
+	,[ActManPower] = s.Manpower
 	,[WorkHour] = sum(Round(WorkHour,3))over(partition by id,OrderId,ComboType)
 	,[QAQty] = sum(QAQty)over(partition by id,OrderId,ComboType)
 	,[InlineQty] = sum(InlineQty)over(partition by id,OrderId,ComboType)
@@ -269,7 +269,11 @@ select distinct OutputDate
     ,SewingReasonDesc
     ,Remark
 into #tmpSewingGroup
-from #tmpSewingDetail
+from #tmpSewingDetail t
+outer apply(
+	select s.Manpower from SewingOutput s
+	where s.ID = t.ID
+)s
 
 select t.*
     ,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) 
