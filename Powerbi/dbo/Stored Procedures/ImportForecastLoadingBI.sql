@@ -87,7 +87,7 @@ select [FactoryID]
 	, [AddDate]
 	, [EditName]
 	, [EditDate]
-	, ID [OrderID]
+	, CustPONO [OrderID]
 	, [SubconInType]
 into #tmp_FactoryOrder
 from Production.dbo.Orders
