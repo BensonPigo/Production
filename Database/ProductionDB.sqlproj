@@ -2439,6 +2439,8 @@
     <Build Include="dbo\Functions\udf-Str-JSON.sql" />
     <Build Include="dbo\Functions\GetAccountNoExpressType.sql" />
     <Build Include="dbo\Stored Procedures\CalculateShareExpense.sql" />
+    <Build Include="dbo\Stored Procedures\insert_Air_Fir_TnsfIn.sql" /> 
+    <Build Include="dbo\Functions\GetOrderAmount.sql" />  
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
