@@ -54,7 +54,7 @@ namespace Sci.Production.Sewing
 
             if (!MyUtility.Check.Empty(this.txtfactory1.Text))
             {
-                where += "\r\n" + $"and o.FactoryID='{this.txtfactory1.Text}'";
+                where += "\r\n" + $"and o.FtyGroup='{this.txtfactory1.Text}'";
             }
 
             if (this.chkNotComplete.Checked)
