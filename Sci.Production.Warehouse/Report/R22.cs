@@ -65,6 +65,7 @@ namespace Sci.Production.Warehouse
 select	o.MDivisionID
 		, [Factory] = O.FactoryID
 		, [SP#] = Linv.OrderID
+        , o.OrderTypeID
 		, o.BrandID
 		, o.StyleID
 		, o.SeasonID
