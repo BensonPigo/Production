@@ -14,6 +14,13 @@ using Newtonsoft.Json;
 
 namespace Sci.Production.PublicPrg
 {
+    public class OrderChangeModel
+    {
+        public string ID { get; set; }
+        public string Status { get; set; }
+        public string EditName { get; set; }
+        public string FTYComments { get; set; }
+    }
 
     public static partial class Prgs
     {
@@ -131,32 +138,22 @@ ID
             result = callTPEWebAPI.CallWebApiPost("/api/ReplacementReport/UpdateReplacement", postBody);
             return result;
         }
-        public static DualResult PostOrderChange(string ID, string status)
+
+        public static DualResult PostOrderChange(string _ID, string _status, string ftyComments)
         {
-            string sqlOrderChange = $@"
-SELECT [ID]= '{ID}'
-      ,[Status]='{status}'
-      ,[EditName]='{Env.User.UserID}'
-";
-
-            DataTable dtOrderChange;
-            DualResult result;
-            result = DBProxy.Current.Select(null, sqlOrderChange, out dtOrderChange);
-            if (!result)
+            OrderChangeModel orderChangeModel = new OrderChangeModel()
             {
-                return result;
-            }
+                ID = _ID
+                , Status = _status
+                , EditName = Env.User.UserID
+                , FTYComments = ftyComments
+            };
 
-            var postBody = dtOrderChange.AsEnumerable()
-                .Select(s => new {  ID = s["ID"].ToString(),
-                    Status = s["Status"].ToString(),
-                    EditName = s["EditName"].ToString()
-            }).First();
-            string tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"];
-
+            DualResult result;
+            string tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"]; 
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
 
-            result = callTPEWebAPI.CallWebApiPost("api/OrderChange/Receive", postBody);
+            result = callTPEWebAPI.CallWebApiPost("api/OrderChange/Receive", orderChangeModel);
             return result;
         }
 
@@ -170,5 +167,7 @@ where OrderID = '{orderid}' and od.Seq = '{seq}' and status != 'Confirmed' and s
 ";
             return !MyUtility.Check.Seek(sqlcmd);
         }
+
+
     }
 }

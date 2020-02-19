@@ -130,7 +130,7 @@ namespace Sci.Production.PPIC
                 return;
             }
 
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved" && !this.EditMode)
             {
                 this.BtnConfirm.Enabled = true;
                 this.BtnReject.Enabled = true;
@@ -180,45 +180,6 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
                 this.BtnReject.Enabled = false;
                 return;
             }
-
-            var setTxtbox = new Func<string, Sci.Production.Class.txtuser, Sci.Win.UI.TextBox, bool>((signAction, tbName, tbDate) =>
-            {
-                DataRow rowSign = dtSign.AsEnumerable().Where(rr => rr["Status"].ToString() == signAction).FirstOrDefault();
-
-                tbName.TextBox1Binding = string.Empty;
-                tbDate.Text = string.Empty;
-
-                if (rowSign != null)
-                {
-                    tbName.TextBox1Binding = rowSign["StatusUser"].ToString();
-                    tbDate.Text = rowSign["StatusDate"].ToString();
-                }
-
-                return true;
-            });
-
-            var setTxtbox2 = new Func<string, Sci.Production.Class.txttpeuser, Sci.Win.UI.TextBox, bool>((signAction, tbName, tbDate) =>
-            {
-                DataRow rowSign = dtSign.AsEnumerable().Where(rr => rr["Status"].ToString() == signAction).FirstOrDefault();
-
-                tbName.DisplayBox1Binding = string.Empty;
-                tbDate.Text = string.Empty;
-
-                if (rowSign != null)
-                {
-                    tbName.DisplayBox1Binding = rowSign["StatusUser"].ToString();
-                    tbDate.Text = rowSign["StatusDate"].ToString();
-                }
-
-                return true;
-            });
-
-            setTxtbox("Confirmed", this.txtuserCFM, this.TxtCFMDate);
-            setTxtbox("Reject", this.txtuserReject, this.TxtRejectDate);
-            setTxtbox2("Sent", this.txtuserSent, this.TxtSentDate);
-            setTxtbox2("Approved", this.txtuserApprove, this.TxtAppDate);
-            setTxtbox2("Junk", this.txtuserJunk, this.TxtJunkDate);
-            setTxtbox2("Closed", this.txtuserClose, this.TxtCloseDate);
             #endregion
 
             #region 載入Orders欄位
@@ -601,12 +562,14 @@ order by ASeq",
             this.gridQtyBrkApplybyArticleSizeDetail.Columns["Seq"].Visible = false;
             #endregion
 
+            this.txtuserCFM.TextBox1.ReadOnly = true;
+            this.txtuserReject.TextBox1.ReadOnly = true;
         }
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
             DualResult result;
-            result = Prgs.PostOrderChange(this.CurrentMaintain["ID"].ToString(), "Confirmed");
+            result = Prgs.PostOrderChange(this.CurrentMaintain["ID"].ToString(), "Confirmed", this.CurrentMaintain["FTYComments"].ToString());
             if (!result)
             {
                 this.ShowErr(result);
@@ -615,11 +578,12 @@ order by ASeq",
 
             string updateCmd = string.Format(
                 @"
-update OrderChangeApplication set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'
+update OrderChangeApplication set Status = 'Confirmed',ConfirmedName = '{0}',ConfirmedDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Confirmed','{0}',getdate())
 ", Sci.Env.User.UserID,
-MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -636,7 +600,7 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         private void BtnReject_Click(object sender, EventArgs e)
         {
             DualResult result;
-            result = Prgs.PostOrderChange(this.CurrentMaintain["ID"].ToString(), "Reject");
+            result = Prgs.PostOrderChange(this.CurrentMaintain["ID"].ToString(), "Reject", this.CurrentMaintain["FTYComments"].ToString());
             if (!result)
             {
                 this.ShowErr(result);
@@ -645,11 +609,12 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             string updateCmd = string.Format(
                 @"
-update OrderChangeApplication set Status = 'Reject', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'
+update OrderChangeApplication set Status = 'Reject',RejectName = '{0}',RejectDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Reject','{0}',getdate())
 ", Sci.Env.User.UserID,
-MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -697,19 +662,6 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
         private void ClearHeader()
         {
-            this.txtuserCFM.TextBox1.Text = string.Empty;
-            this.TxtCFMDate.Text = string.Empty;
-            this.txtuserReject.TextBox1.Text = string.Empty;
-            this.TxtRejectDate.Text = string.Empty;
-            this.txtuserSent.DisplayBox1.Text = string.Empty;
-            this.TxtSentDate.Text = string.Empty;
-            this.txtuserApprove.DisplayBox1.Text = string.Empty;
-            this.TxtAppDate.Text = string.Empty;
-            this.txtuserJunk.DisplayBox1.Text = string.Empty;
-            this.TxtJunkDate.Text = string.Empty;
-            this.txtuserClose.DisplayBox1.Text = string.Empty;
-            this.TxtCloseDate.Text = string.Empty;
-
             // Order
             this.dispStyle.Text = string.Empty;
             this.dispSeason.Text = string.Empty;

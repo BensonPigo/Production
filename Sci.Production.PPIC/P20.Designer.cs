@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle91 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle92 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle93 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle94 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle95 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle96 = new System.Windows.Forms.DataGridViewCellStyle();
             this.LbJunk = new Sci.Win.UI.Label();
             this.LbClose = new Sci.Win.UI.Label();
             this.LbProjectID = new Sci.Win.UI.Label();
@@ -69,6 +69,18 @@
             this.BtnConfirm = new Sci.Win.UI.Button();
             this.tabControl = new Sci.Win.UI.TabControl();
             this.tabResponsibility = new System.Windows.Forms.TabPage();
+            this.displayBoxToOrderID = new Sci.Win.UI.DisplayBox();
+            this.lbToOrderID = new Sci.Win.UI.Label();
+            this.editBoxFTYComments = new Sci.Win.UI.EditBox();
+            this.lbFTYComments = new Sci.Win.UI.Label();
+            this.displayBuyerICRAmount = new Sci.Win.UI.DisplayBox();
+            this.displayBuyerDBCAmount = new Sci.Win.UI.DisplayBox();
+            this.displaySuppDBCAmount = new Sci.Win.UI.DisplayBox();
+            this.displaySCIICRAmount = new Sci.Win.UI.DisplayBox();
+            this.displaySubconDBCAmount = new Sci.Win.UI.DisplayBox();
+            this.displayFactoryICRAmount = new Sci.Win.UI.DisplayBox();
+            this.displayFactoryICRRemark = new Sci.Win.UI.DisplayBox();
+            this.dispFactoryICRDepartment = new Sci.Win.UI.DisplayBox();
             this.displayBuyerICRInfo = new Sci.Win.UI.DisplayBox();
             this.displaySCIICRInfo = new Sci.Win.UI.DisplayBox();
             this.txttpeuserPoHandle = new Sci.Production.Class.txttpeuser();
@@ -178,14 +190,6 @@
             this.lbFacotry = new Sci.Win.UI.Label();
             this.dispFactory = new Sci.Win.UI.DisplayBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.dispFactoryICRDepartment = new Sci.Win.UI.DisplayBox();
-            this.displayFactoryICRRemark = new Sci.Win.UI.DisplayBox();
-            this.displayFactoryICRAmount = new Sci.Win.UI.DisplayBox();
-            this.displaySubconDBCAmount = new Sci.Win.UI.DisplayBox();
-            this.displaySCIICRAmount = new Sci.Win.UI.DisplayBox();
-            this.displaySuppDBCAmount = new Sci.Win.UI.DisplayBox();
-            this.displayBuyerDBCAmount = new Sci.Win.UI.DisplayBox();
-            this.displayBuyerICRAmount = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -309,7 +313,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1143, 650);
+            this.browse.Size = new System.Drawing.Size(1057, 654);
             // 
             // tabs
             // 
@@ -589,6 +593,7 @@
             // 
             // BtnReject
             // 
+            this.BtnReject.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.BtnReject.Location = new System.Drawing.Point(959, 59);
             this.BtnReject.Name = "BtnReject";
             this.BtnReject.Size = new System.Drawing.Size(84, 28);
@@ -599,6 +604,7 @@
             // 
             // BtnConfirm
             // 
+            this.BtnConfirm.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.BtnConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.BtnConfirm.Location = new System.Drawing.Point(959, 25);
             this.BtnConfirm.Name = "BtnConfirm";
@@ -626,6 +632,10 @@
             // 
             // tabResponsibility
             // 
+            this.tabResponsibility.Controls.Add(this.displayBoxToOrderID);
+            this.tabResponsibility.Controls.Add(this.lbToOrderID);
+            this.tabResponsibility.Controls.Add(this.editBoxFTYComments);
+            this.tabResponsibility.Controls.Add(this.lbFTYComments);
             this.tabResponsibility.Controls.Add(this.displayBuyerICRAmount);
             this.tabResponsibility.Controls.Add(this.displayBuyerDBCAmount);
             this.tabResponsibility.Controls.Add(this.displaySuppDBCAmount);
@@ -692,6 +702,130 @@
             this.tabResponsibility.Size = new System.Drawing.Size(1046, 337);
             this.tabResponsibility.TabIndex = 5;
             this.tabResponsibility.Text = "Responsibility";
+            // 
+            // displayBoxToOrderID
+            // 
+            this.displayBoxToOrderID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxToOrderID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ToOrderID", true));
+            this.displayBoxToOrderID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBoxToOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxToOrderID.Location = new System.Drawing.Point(620, 3);
+            this.displayBoxToOrderID.Name = "displayBoxToOrderID";
+            this.displayBoxToOrderID.Size = new System.Drawing.Size(205, 21);
+            this.displayBoxToOrderID.TabIndex = 988;
+            // 
+            // lbToOrderID
+            // 
+            this.lbToOrderID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lbToOrderID.Location = new System.Drawing.Point(449, 3);
+            this.lbToOrderID.Name = "lbToOrderID";
+            this.lbToOrderID.Size = new System.Drawing.Size(168, 21);
+            this.lbToOrderID.TabIndex = 987;
+            this.lbToOrderID.Text = "Transfer to SP#(or New SP#)";
+            // 
+            // editBoxFTYComments
+            // 
+            this.editBoxFTYComments.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editBoxFTYComments.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FTYComments", true));
+            this.editBoxFTYComments.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.editBoxFTYComments.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editBoxFTYComments.Location = new System.Drawing.Point(116, 30);
+            this.editBoxFTYComments.Multiline = true;
+            this.editBoxFTYComments.Name = "editBoxFTYComments";
+            this.editBoxFTYComments.ReadOnly = true;
+            this.editBoxFTYComments.Size = new System.Drawing.Size(327, 23);
+            this.editBoxFTYComments.TabIndex = 986;
+            // 
+            // lbFTYComments
+            // 
+            this.lbFTYComments.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lbFTYComments.Location = new System.Drawing.Point(9, 30);
+            this.lbFTYComments.Name = "lbFTYComments";
+            this.lbFTYComments.Size = new System.Drawing.Size(104, 21);
+            this.lbFTYComments.TabIndex = 985;
+            this.lbFTYComments.Text = "FTY Comments";
+            // 
+            // displayBuyerICRAmount
+            // 
+            this.displayBuyerICRAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBuyerICRAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyerICRAmount.Location = new System.Drawing.Point(888, 240);
+            this.displayBuyerICRAmount.Name = "displayBuyerICRAmount";
+            this.displayBuyerICRAmount.Size = new System.Drawing.Size(142, 21);
+            this.displayBuyerICRAmount.TabIndex = 984;
+            // 
+            // displayBuyerDBCAmount
+            // 
+            this.displayBuyerDBCAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyerDBCAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBuyerDBCAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyerDBCAmount.Location = new System.Drawing.Point(888, 217);
+            this.displayBuyerDBCAmount.Name = "displayBuyerDBCAmount";
+            this.displayBuyerDBCAmount.Size = new System.Drawing.Size(142, 21);
+            this.displayBuyerDBCAmount.TabIndex = 983;
+            // 
+            // displaySuppDBCAmount
+            // 
+            this.displaySuppDBCAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySuppDBCAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySuppDBCAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySuppDBCAmount.Location = new System.Drawing.Point(888, 192);
+            this.displaySuppDBCAmount.Name = "displaySuppDBCAmount";
+            this.displaySuppDBCAmount.Size = new System.Drawing.Size(142, 21);
+            this.displaySuppDBCAmount.TabIndex = 982;
+            // 
+            // displaySCIICRAmount
+            // 
+            this.displaySCIICRAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIICRAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySCIICRAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIICRAmount.Location = new System.Drawing.Point(888, 147);
+            this.displaySCIICRAmount.Name = "displaySCIICRAmount";
+            this.displaySCIICRAmount.Size = new System.Drawing.Size(142, 21);
+            this.displaySCIICRAmount.TabIndex = 981;
+            // 
+            // displaySubconDBCAmount
+            // 
+            this.displaySubconDBCAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySubconDBCAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaySubconDBCAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySubconDBCAmount.Location = new System.Drawing.Point(888, 99);
+            this.displaySubconDBCAmount.Name = "displaySubconDBCAmount";
+            this.displaySubconDBCAmount.Size = new System.Drawing.Size(142, 21);
+            this.displaySubconDBCAmount.TabIndex = 980;
+            // 
+            // displayFactoryICRAmount
+            // 
+            this.displayFactoryICRAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactoryICRAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayFactoryICRAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactoryICRAmount.Location = new System.Drawing.Point(888, 74);
+            this.displayFactoryICRAmount.Name = "displayFactoryICRAmount";
+            this.displayFactoryICRAmount.Size = new System.Drawing.Size(142, 21);
+            this.displayFactoryICRAmount.TabIndex = 979;
+            // 
+            // displayFactoryICRRemark
+            // 
+            this.displayFactoryICRRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactoryICRRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryICRRemark", true));
+            this.displayFactoryICRRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayFactoryICRRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactoryICRRemark.Location = new System.Drawing.Point(552, 74);
+            this.displayFactoryICRRemark.Name = "displayFactoryICRRemark";
+            this.displayFactoryICRRemark.Size = new System.Drawing.Size(330, 21);
+            this.displayFactoryICRRemark.TabIndex = 978;
+            // 
+            // dispFactoryICRDepartment
+            // 
+            this.dispFactoryICRDepartment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispFactoryICRDepartment.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryICRDepartment", true));
+            this.dispFactoryICRDepartment.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dispFactoryICRDepartment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispFactoryICRDepartment.Location = new System.Drawing.Point(274, 75);
+            this.dispFactoryICRDepartment.Name = "dispFactoryICRDepartment";
+            this.dispFactoryICRDepartment.Size = new System.Drawing.Size(146, 21);
+            this.dispFactoryICRDepartment.TabIndex = 977;
             // 
             // displayBuyerICRInfo
             // 
@@ -1318,7 +1452,7 @@
             this.editBox1.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(152, 29);
+            this.editBox1.Location = new System.Drawing.Point(592, 26);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
@@ -1332,7 +1466,7 @@
             this.editBox2.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editBox2.IsSupportEditMode = false;
-            this.editBox2.Location = new System.Drawing.Point(592, 29);
+            this.editBox2.Location = new System.Drawing.Point(592, 50);
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
             this.editBox2.ReadOnly = true;
@@ -1342,16 +1476,16 @@
             // label4
             // 
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label4.Location = new System.Drawing.Point(9, 31);
+            this.label4.Location = new System.Drawing.Point(449, 28);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(140, 21);
             this.label4.TabIndex = 939;
-            this.label4.Text = " MR\'s Comments";
+            this.label4.Text = "Explanation by  MR\'s";
             // 
             // label5
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label5.Location = new System.Drawing.Point(446, 31);
+            this.label5.Location = new System.Drawing.Point(449, 50);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(140, 21);
             this.label5.TabIndex = 938;
@@ -1361,6 +1495,7 @@
             // 
             this.CboReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.CboReason.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ReasonID", true));
+            this.CboReason.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.CboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.CboReason.FormattingEnabled = true;
             this.CboReason.IsSupportUnselect = true;
@@ -1377,7 +1512,7 @@
             this.tabQtyOrder.Location = new System.Drawing.Point(4, 25);
             this.tabQtyOrder.Name = "tabQtyOrder";
             this.tabQtyOrder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyOrder.Size = new System.Drawing.Size(1122, 77);
+            this.tabQtyOrder.Size = new System.Drawing.Size(1032, 61);
             this.tabQtyOrder.TabIndex = 0;
             this.tabQtyOrder.Text = "Q\'ty B\'Down by Order";
             // 
@@ -1387,7 +1522,7 @@
             this.panelQtyOrder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelQtyOrder.Location = new System.Drawing.Point(3, 3);
             this.panelQtyOrder.Name = "panelQtyOrder";
-            this.panelQtyOrder.Size = new System.Drawing.Size(1116, 71);
+            this.panelQtyOrder.Size = new System.Drawing.Size(1026, 55);
             this.panelQtyOrder.TabIndex = 0;
             // 
             // GridQtyOrder
@@ -1407,21 +1542,21 @@
             this.GridQtyOrder.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.GridQtyOrder.Location = new System.Drawing.Point(0, 0);
             this.GridQtyOrder.Name = "GridQtyOrder";
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GridQtyOrder.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle91.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle91.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle91.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle91.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle91.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle91.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle91.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GridQtyOrder.RowHeadersDefaultCellStyle = dataGridViewCellStyle91;
             this.GridQtyOrder.RowHeadersVisible = false;
             this.GridQtyOrder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.GridQtyOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.GridQtyOrder.RowTemplate.Height = 24;
             this.GridQtyOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder.ShowCellToolTips = false;
-            this.GridQtyOrder.Size = new System.Drawing.Size(1116, 71);
+            this.GridQtyOrder.Size = new System.Drawing.Size(1026, 55);
             this.GridQtyOrder.TabIndex = 0;
             this.GridQtyOrder.TabStop = false;
             // 
@@ -1431,7 +1566,7 @@
             this.tabQtyShipMode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyShipMode.Name = "tabQtyShipMode";
             this.tabQtyShipMode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyShipMode.Size = new System.Drawing.Size(1122, 77);
+            this.tabQtyShipMode.Size = new System.Drawing.Size(1032, 61);
             this.tabQtyShipMode.TabIndex = 1;
             this.tabQtyShipMode.Text = "Q\'ty B\'Down by Shipmode";
             // 
@@ -1450,7 +1585,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDownbyArticleSizeDetail);
-            this.splitContainer1.Size = new System.Drawing.Size(1116, 71);
+            this.splitContainer1.Size = new System.Drawing.Size(1026, 55);
             this.splitContainer1.SplitterDistance = 25;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -1471,20 +1606,20 @@
             this.gridQtyBreakDownByShipmode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakDownByShipmode.Location = new System.Drawing.Point(0, 0);
             this.gridQtyBreakDownByShipmode.Name = "gridQtyBreakDownByShipmode";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakDownByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle92.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle92.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle92.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle92.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle92.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle92.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle92.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakDownByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle92;
             this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakDownByShipmode.RowTemplate.Height = 24;
             this.gridQtyBreakDownByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownByShipmode.ShowCellToolTips = false;
-            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(1116, 25);
+            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(1026, 25);
             this.gridQtyBreakDownByShipmode.TabIndex = 1;
             this.gridQtyBreakDownByShipmode.TabStop = false;
             // 
@@ -1521,20 +1656,20 @@
             this.gridQtyBreakDownbyArticleSizeDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakDownbyArticleSizeDetail.Location = new System.Drawing.Point(0, 28);
             this.gridQtyBreakDownbyArticleSizeDetail.Name = "gridQtyBreakDownbyArticleSizeDetail";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakDownbyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle93.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle93.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle93.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle93.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle93.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle93.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle93.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakDownbyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle93;
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.Height = 24;
             this.gridQtyBreakDownbyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownbyArticleSizeDetail.ShowCellToolTips = false;
-            this.gridQtyBreakDownbyArticleSizeDetail.Size = new System.Drawing.Size(1116, 11);
+            this.gridQtyBreakDownbyArticleSizeDetail.Size = new System.Drawing.Size(1026, 0);
             this.gridQtyBreakDownbyArticleSizeDetail.TabIndex = 1;
             this.gridQtyBreakDownbyArticleSizeDetail.TabStop = false;
             // 
@@ -1544,7 +1679,7 @@
             this.tabQtyApply.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApply.Name = "tabQtyApply";
             this.tabQtyApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApply.Size = new System.Drawing.Size(1122, 77);
+            this.tabQtyApply.Size = new System.Drawing.Size(1032, 61);
             this.tabQtyApply.TabIndex = 3;
             this.tabQtyApply.Text = "Apply Q\'ty B\'Down by Order";
             // 
@@ -1564,21 +1699,21 @@
             this.GridQtyOrder_Apply.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.GridQtyOrder_Apply.Location = new System.Drawing.Point(3, 3);
             this.GridQtyOrder_Apply.Name = "GridQtyOrder_Apply";
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GridQtyOrder_Apply.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle94.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle94.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle94.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle94.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle94.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle94.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle94.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GridQtyOrder_Apply.RowHeadersDefaultCellStyle = dataGridViewCellStyle94;
             this.GridQtyOrder_Apply.RowHeadersVisible = false;
             this.GridQtyOrder_Apply.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.GridQtyOrder_Apply.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.GridQtyOrder_Apply.RowTemplate.Height = 24;
             this.GridQtyOrder_Apply.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder_Apply.ShowCellToolTips = false;
-            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(1116, 71);
+            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(1026, 55);
             this.GridQtyOrder_Apply.TabIndex = 0;
             this.GridQtyOrder_Apply.TabStop = false;
             // 
@@ -1588,7 +1723,7 @@
             this.tabQtyApplyShipmode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApplyShipmode.Name = "tabQtyApplyShipmode";
             this.tabQtyApplyShipmode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(1122, 77);
+            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(1032, 61);
             this.tabQtyApplyShipmode.TabIndex = 4;
             this.tabQtyApplyShipmode.Text = "Apply Q\'ty B\'Down by Shipmode";
             // 
@@ -1607,7 +1742,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.label2);
             this.splitContainer2.Panel2.Controls.Add(this.gridQtyBrkApplybyArticleSizeDetail);
-            this.splitContainer2.Size = new System.Drawing.Size(1116, 71);
+            this.splitContainer2.Size = new System.Drawing.Size(1026, 55);
             this.splitContainer2.SplitterDistance = 25;
             this.splitContainer2.TabIndex = 1;
             // 
@@ -1628,20 +1763,20 @@
             this.gridQtyBrkApplyByShipmode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBrkApplyByShipmode.Location = new System.Drawing.Point(0, 0);
             this.gridQtyBrkApplyByShipmode.Name = "gridQtyBrkApplyByShipmode";
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBrkApplyByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle95.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle95.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle95.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle95.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle95.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle95.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle95.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBrkApplyByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle95;
             this.gridQtyBrkApplyByShipmode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBrkApplyByShipmode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBrkApplyByShipmode.RowTemplate.Height = 24;
             this.gridQtyBrkApplyByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBrkApplyByShipmode.ShowCellToolTips = false;
-            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(1116, 25);
+            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(1026, 25);
             this.gridQtyBrkApplyByShipmode.TabIndex = 1;
             this.gridQtyBrkApplyByShipmode.TabStop = false;
             // 
@@ -1678,26 +1813,27 @@
             this.gridQtyBrkApplybyArticleSizeDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBrkApplybyArticleSizeDetail.Location = new System.Drawing.Point(0, 28);
             this.gridQtyBrkApplybyArticleSizeDetail.Name = "gridQtyBrkApplybyArticleSizeDetail";
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBrkApplybyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle96.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle96.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle96.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle96.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle96.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle96.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle96.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBrkApplybyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle96;
             this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.Height = 24;
             this.gridQtyBrkApplybyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBrkApplybyArticleSizeDetail.ShowCellToolTips = false;
-            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(1116, 11);
+            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(1026, 0);
             this.gridQtyBrkApplybyArticleSizeDetail.TabIndex = 1;
             this.gridQtyBrkApplybyArticleSizeDetail.TabStop = false;
             // 
             // TxtAppDate
             // 
             this.TxtAppDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.TxtAppDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ApprovedDate", true));
             this.TxtAppDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtAppDate.IsSupportEditMode = false;
             this.TxtAppDate.Location = new System.Drawing.Point(395, 55);
@@ -1709,6 +1845,7 @@
             // TxtSentDate
             // 
             this.TxtSentDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.TxtSentDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SentDate", true));
             this.TxtSentDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtSentDate.IsSupportEditMode = false;
             this.TxtSentDate.Location = new System.Drawing.Point(396, 32);
@@ -1720,6 +1857,7 @@
             // TxtCFMDate
             // 
             this.TxtCFMDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.TxtCFMDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ConfirmedDate", true));
             this.TxtCFMDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtCFMDate.IsSupportEditMode = false;
             this.TxtCFMDate.Location = new System.Drawing.Point(396, 78);
@@ -1731,6 +1869,7 @@
             // TxtJunkDate
             // 
             this.TxtJunkDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.TxtJunkDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "JunkDate", true));
             this.TxtJunkDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtJunkDate.IsSupportEditMode = false;
             this.TxtJunkDate.Location = new System.Drawing.Point(862, 55);
@@ -1742,6 +1881,7 @@
             // TxtCloseDate
             // 
             this.TxtCloseDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.TxtCloseDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ClosedDate", true));
             this.TxtCloseDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtCloseDate.IsSupportEditMode = false;
             this.TxtCloseDate.Location = new System.Drawing.Point(862, 78);
@@ -1753,6 +1893,7 @@
             // TxtRejectDate
             // 
             this.TxtRejectDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.TxtRejectDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RejectDate", true));
             this.TxtRejectDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.TxtRejectDate.IsSupportEditMode = false;
             this.TxtRejectDate.Location = new System.Drawing.Point(862, 30);
@@ -1798,6 +1939,7 @@
             // 
             // txtuserApprove
             // 
+            this.txtuserApprove.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "ApprovedName", true));
             this.txtuserApprove.DisplayBox1Binding = "";
             this.txtuserApprove.DisplayBox2Binding = "";
             this.txtuserApprove.Location = new System.Drawing.Point(93, 55);
@@ -1807,6 +1949,7 @@
             // 
             // txtuserClose
             // 
+            this.txtuserClose.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "ClosedName", true));
             this.txtuserClose.DisplayBox1Binding = "";
             this.txtuserClose.DisplayBox2Binding = "";
             this.txtuserClose.Location = new System.Drawing.Point(560, 78);
@@ -1816,6 +1959,7 @@
             // 
             // txtuserJunk
             // 
+            this.txtuserJunk.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "JunkName", true));
             this.txtuserJunk.DisplayBox1Binding = "";
             this.txtuserJunk.DisplayBox2Binding = "";
             this.txtuserJunk.Location = new System.Drawing.Point(560, 55);
@@ -1825,6 +1969,7 @@
             // 
             // txtuserSent
             // 
+            this.txtuserSent.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "SentName", true));
             this.txtuserSent.DisplayBox1Binding = "";
             this.txtuserSent.DisplayBox2Binding = "";
             this.txtuserSent.Location = new System.Drawing.Point(94, 32);
@@ -1834,6 +1979,7 @@
             // 
             // txtuserReject
             // 
+            this.txtuserReject.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "RejectName", true));
             this.txtuserReject.DisplayBox1Binding = "";
             this.txtuserReject.Location = new System.Drawing.Point(560, 30);
             this.txtuserReject.Name = "txtuserReject";
@@ -1843,19 +1989,22 @@
             // 
             // cmbCategory
             // 
-            this.cmbCategory.BackColor = System.Drawing.Color.White;
-            this.cmbCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbCategory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.cmbCategory.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.cmbCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.cmbCategory.FormattingEnabled = true;
             this.cmbCategory.IsSupportUnselect = true;
             this.cmbCategory.Location = new System.Drawing.Point(94, 201);
             this.cmbCategory.Name = "cmbCategory";
             this.cmbCategory.OldText = "";
+            this.cmbCategory.ReadOnly = true;
             this.cmbCategory.Size = new System.Drawing.Size(138, 24);
             this.cmbCategory.TabIndex = 795;
             this.cmbCategory.Type = "Category";
             // 
             // txtuserCFM
             // 
+            this.txtuserCFM.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ConfirmedName", true));
             this.txtuserCFM.DisplayBox1Binding = "";
             this.txtuserCFM.Location = new System.Drawing.Point(94, 78);
             this.txtuserCFM.Name = "txtuserCFM";
@@ -1945,9 +2094,11 @@
             // 
             this.ChkNeedToProduction.AutoSize = true;
             this.ChkNeedToProduction.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedProduction", true));
-            this.ChkNeedToProduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ChkNeedToProduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ChkNeedToProduction.IsSupportEditMode = false;
             this.ChkNeedToProduction.Location = new System.Drawing.Point(229, 4);
             this.ChkNeedToProduction.Name = "ChkNeedToProduction";
+            this.ChkNeedToProduction.ReadOnly = true;
             this.ChkNeedToProduction.Size = new System.Drawing.Size(230, 21);
             this.ChkNeedToProduction.TabIndex = 856;
             this.ChkNeedToProduction.Text = "Still need to continue production";
@@ -2061,88 +2212,6 @@
     "st.";
             this.label10.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // dispFactoryICRDepartment
-            // 
-            this.dispFactoryICRDepartment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispFactoryICRDepartment.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryICRDepartment", true));
-            this.dispFactoryICRDepartment.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dispFactoryICRDepartment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispFactoryICRDepartment.Location = new System.Drawing.Point(274, 75);
-            this.dispFactoryICRDepartment.Name = "dispFactoryICRDepartment";
-            this.dispFactoryICRDepartment.Size = new System.Drawing.Size(146, 21);
-            this.dispFactoryICRDepartment.TabIndex = 977;
-            // 
-            // displayFactoryICRRemark
-            // 
-            this.displayFactoryICRRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayFactoryICRRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryICRRemark", true));
-            this.displayFactoryICRRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displayFactoryICRRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFactoryICRRemark.Location = new System.Drawing.Point(552, 74);
-            this.displayFactoryICRRemark.Name = "displayFactoryICRRemark";
-            this.displayFactoryICRRemark.Size = new System.Drawing.Size(330, 21);
-            this.displayFactoryICRRemark.TabIndex = 978;
-            // 
-            // displayFactoryICRAmount
-            // 
-            this.displayFactoryICRAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayFactoryICRAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displayFactoryICRAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFactoryICRAmount.Location = new System.Drawing.Point(888, 74);
-            this.displayFactoryICRAmount.Name = "displayFactoryICRAmount";
-            this.displayFactoryICRAmount.Size = new System.Drawing.Size(142, 21);
-            this.displayFactoryICRAmount.TabIndex = 979;
-            // 
-            // displaySubconDBCAmount
-            // 
-            this.displaySubconDBCAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySubconDBCAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displaySubconDBCAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySubconDBCAmount.Location = new System.Drawing.Point(888, 99);
-            this.displaySubconDBCAmount.Name = "displaySubconDBCAmount";
-            this.displaySubconDBCAmount.Size = new System.Drawing.Size(142, 21);
-            this.displaySubconDBCAmount.TabIndex = 980;
-            // 
-            // displaySCIICRAmount
-            // 
-            this.displaySCIICRAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySCIICRAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displaySCIICRAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySCIICRAmount.Location = new System.Drawing.Point(888, 147);
-            this.displaySCIICRAmount.Name = "displaySCIICRAmount";
-            this.displaySCIICRAmount.Size = new System.Drawing.Size(142, 21);
-            this.displaySCIICRAmount.TabIndex = 981;
-            // 
-            // displaySuppDBCAmount
-            // 
-            this.displaySuppDBCAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySuppDBCAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displaySuppDBCAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySuppDBCAmount.Location = new System.Drawing.Point(888, 192);
-            this.displaySuppDBCAmount.Name = "displaySuppDBCAmount";
-            this.displaySuppDBCAmount.Size = new System.Drawing.Size(142, 21);
-            this.displaySuppDBCAmount.TabIndex = 982;
-            // 
-            // displayBuyerDBCAmount
-            // 
-            this.displayBuyerDBCAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBuyerDBCAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displayBuyerDBCAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBuyerDBCAmount.Location = new System.Drawing.Point(888, 217);
-            this.displayBuyerDBCAmount.Name = "displayBuyerDBCAmount";
-            this.displayBuyerDBCAmount.Size = new System.Drawing.Size(142, 21);
-            this.displayBuyerDBCAmount.TabIndex = 983;
-            // 
-            // displayBuyerICRAmount
-            // 
-            this.displayBuyerICRAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBuyerICRAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displayBuyerICRAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBuyerICRAmount.Location = new System.Drawing.Point(888, 240);
-            this.displayBuyerICRAmount.Name = "displayBuyerICRAmount";
-            this.displayBuyerICRAmount.Size = new System.Drawing.Size(142, 21);
-            this.displayBuyerICRAmount.TabIndex = 984;
-            // 
             // P20
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -2153,7 +2222,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "P20";
@@ -2354,5 +2422,9 @@
         private Win.UI.DisplayBox displayFactoryICRRemark;
         private Win.UI.DisplayBox dispFactoryICRDepartment;
         private Win.UI.Label LbCFM;
+        private Win.UI.EditBox editBoxFTYComments;
+        private Win.UI.Label lbFTYComments;
+        private Win.UI.DisplayBox displayBoxToOrderID;
+        private Win.UI.Label lbToOrderID;
     }
 }

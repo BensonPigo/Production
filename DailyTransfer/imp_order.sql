@@ -1613,6 +1613,14 @@ BEGIN
 ----------------OrderChangeApplication-----------------
 update t set	
 	[Status]  =s.[Status]
+	,[SentName] = s.[SentName]
+	,[SentDate] = s.[SentDate]
+	,[ApprovedName] = s.[ApprovedName]
+	,[ApprovedDate] = s.[ApprovedDate]
+	,[ClosedName] = s.[ClosedName]
+	,[ClosedDate] = s.[ClosedDate]
+	,[JunkName] = s.[JunkName]
+	,[JunkDate] = s.[JunkDate]
 	,[EditName]=s.[EditName]
 	,[EditDate]=s.[EditDate]
 	,[MRComment] = s.MRComment
