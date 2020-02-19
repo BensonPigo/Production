@@ -1649,7 +1649,6 @@ update t set
 	,[BuyerDBCNo] = s.BuyerDBCNo
 	,[BuyerDBCRemark] = s.BuyerDBCRemark
 	,[BuyerDBCDepartment] = s.BuyerDBCDepartment
-	,[BuyerICRNo] = s.BuyerICRNo
 	,[BuyerICRRemark] = s.BuyerICRRemark
 	,[BuyerRemark] = s.BuyerRemark
 	,[ToOrderID] = s.ToOrderID
