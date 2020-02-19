@@ -602,19 +602,19 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     errchk = true;
                     errmsg.Append(string.Format("Please check <SP#> {0}, Variance:{1}\r\n", MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetDecimal(dr["Variance"])));
                 }
+            }
 
-                #region 有Cancel Order 不能confirmed
-                if (MyUtility.Check.Seek($"select 1 from orders where id ='{dr["OrderID"]}' and junk = 1"))
-                {
-                    MyUtility.Msg.WarningBox($"SP# {dr["OrderID"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.");
-                    return;
-                }
-                #endregion
+            // 有Cancel Order 不能confirmed
+            string strErrmsg = PublicPrg.Prgs.ChkCancelOrder((DataTable)this.detailgridbs.DataSource);
+            if (!MyUtility.Check.Empty(errmsg))
+            {
+                MyUtility.Msg.WarningBox(strErrmsg);
+                return;
             }
 
             if (errchk)
             {
-                MyUtility.Msg.WarningBox(errmsg.ToString());
+                MyUtility.Msg.WarningBox(strErrmsg.ToString());
                 return;
             }
             #endregion

@@ -475,11 +475,11 @@ please check again.");
             }
         }
 
-          
-    #endregion
 
-    #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
-    public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)
+        #endregion
+
+        #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+        public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)
         {
             var listDupNLCodeData = checkList
                                    .GroupBy(s => new { ID = s["ID"], NLCode = s["NLCode"], HSCode = s["HSCode"], UnitID = s["UnitID"] })
@@ -553,7 +553,7 @@ please check again.");
         public static DualResult GetVNConsumption_Detail_Detail(ParGetVNConsumption_Detail_Detail sqlPar, out DataTable dataTable)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            
+
             #region 組撈所有明細SQL
             sqlCmd.Append($@"
 select  o.StyleUkey
@@ -1304,6 +1304,40 @@ drop table #tmpThreadData");
 
         #endregion
 
+        #region Check CancelOrder cannot confirmed
+        public static string ChkCancelOrder(DataTable dt)
+        {
+            DualResult result;
+            string errmsg = string.Empty;
+            string SP = string.Empty;
+            DataTable dtCancel;
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
+                }
+            }
 
+            string sqlcmd = $@"
+select id from Orders where Junk = 1 and id in  ({SP.Substring(0, SP.Length - 1)})
+";
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtCancel);
+            if (!result)
+            {
+                errmsg = "Confirmed data fail!!\r\n" + result.ToString();
+                return errmsg;
+            }
+
+            string msgCancel = string.Empty;
+            if (dtCancel.Rows.Count > 0)
+            {
+                errmsg = $@"SP# {dtCancel.Rows[0]["id"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.";                
+                return errmsg;
+            }
+
+            return errmsg;
+        }
+        #endregion
     }
 }
