@@ -233,7 +233,7 @@ select distinct OutputDate
 	,MDivisionID
 	,OrderId
 	,ComboType
-	,[ActManPower] = Sum(ActManPower)over(partition by id,OrderId,ComboType)
+	,[ActManPower] = s.Manpower
 	,[WorkHour] = sum(Round(WorkHour,3))over(partition by id,OrderId,ComboType)
 	,[QAQty] = sum(QAQty)over(partition by id,OrderId,ComboType)
 	,[InlineQty] = sum(InlineQty)over(partition by id,OrderId,ComboType)
@@ -269,7 +269,11 @@ select distinct OutputDate
     ,SewingReasonDesc
     ,Remark
 into #tmpSewingGroup
-from #tmpSewingDetail
+from #tmpSewingDetail t
+outer apply(
+	select s.Manpower from SewingOutput s
+	where s.ID = t.ID
+)s
 
 select t.*
     ,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) 
@@ -388,17 +392,17 @@ select * from(
 		,Style = IIF(t.Category=''M'',MockupStyle,OrderStyle)
 		,Season = IIF(t.Category=''M'',MockupSeason,OrderSeason)
 		,CDNo = IIF(t.Category=''M'',MockupCDCodeID,OrderCdCodeID)+''-''+t.ComboType
-		,ActManPower = IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)
+		,ActManPower = ActManPower
 		,WorkHour
-		,ManHour = ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)
-		,TargetCPU = ROUND(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)
+		,ManHour = ROUND(ActManPower*WorkHour,2)
+		,TargetCPU = ROUND(ROUND(ActManPower*WorkHour,2)*3600/StdTMS,2)
 		,TMS = IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*StdTMS
 		,CPUPrice = IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)
-		,TargetQty = IIF(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)/IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0)
+		,TargetQty = IIF(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(ActManPower*WorkHour,2)*3600/StdTMS,2)/IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0)
 		,t.QAQty
 		,TotalCPU = ROUND(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty,3)
-		,CPUSewer = IIF(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2),0)
-		,EFF = ROUND(IIF(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1)
+		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
+		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
 		,RFT = IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0)
 		,CumulateDate
 		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
