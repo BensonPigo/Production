@@ -96,8 +96,6 @@ order by e.Seq, f.Seq", masterID);
         {
             base.OnDetailEntered();
             this.txtCartonRef.Text = string.Empty;
-            this.txtCartonRef.Tag = string.Empty;
-            this.numCtnWeight.Value = 0;
             DataRow orderData;
             string sqlCmd;
             sqlCmd = string.Format(
@@ -2534,12 +2532,10 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
 
         private void TxtCartonRef_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim,CtnWeight from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRef.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRef.Text.Trim());
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.txtCartonRef.Text = item.GetSelectedString();
-            this.txtCartonRef.Tag = MyUtility.Convert.GetString(item.GetSelecteds()[0]["Description"]);
-            this.numCtnWeight.Value = MyUtility.Convert.GetDecimal(item.GetSelecteds()[0]["CtnWeight"]);
         }
 
         private void TxtCartonRef_Validating(object sender, CancelEventArgs e)
@@ -2547,8 +2543,6 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
             if (MyUtility.Check.Empty(this.txtCartonRef.Text))
             {
                 this.txtCartonRef.Text = string.Empty;
-                this.txtCartonRef.Tag = string.Empty;
-                this.numCtnWeight.Value = 0;
                 return;
             }
 
@@ -2566,22 +2560,18 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
             else
             {
                 this.txtCartonRef.Text = MyUtility.Convert.GetString(dr["RefNo"]);
-                this.txtCartonRef.Tag = MyUtility.Convert.GetString(dr["Description"]);
-                this.numCtnWeight.Value = MyUtility.Convert.GetDecimal(dr["CtnWeight"]);
             }
         }
 
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
-            foreach (DataRow item in this.DetailDatas)
+            foreach (DataGridViewRow item in this.detailgrid.Rows)
             {
-                if (MyUtility.Convert.GetBool(item["selected"]))
+                // 判斷selected欄位
+                if (MyUtility.Convert.GetBool(item.Cells[0].Value))
                 {
-                    item["Refno"] = this.txtCartonRef.Text;
-                    item["Description"] = this.txtCartonRef.Tag;
-                    item["GW"] = this.numCtnWeight.Value;
-                    item.EndEdit();
+                    item.Cells[1].Value = this.txtCartonRef.Text; // Refno欄位
                 }
             }
         }

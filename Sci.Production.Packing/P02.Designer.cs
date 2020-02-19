@@ -64,7 +64,6 @@
             this.btnUpdate = new Sci.Win.UI.Button();
             this.txtCartonRef = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.numCtnWeight = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -571,7 +570,6 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.numCtnWeight);
             this.panel1.Controls.Add(this.btnUpdate);
             this.panel1.Controls.Add(this.txtCartonRef);
             this.panel1.Controls.Add(this.label1);
@@ -611,27 +609,6 @@
             this.label1.Size = new System.Drawing.Size(101, 23);
             this.label1.TabIndex = 31;
             this.label1.Text = "Carton Ref No.";
-            // 
-            // numCtnWeight
-            // 
-            this.numCtnWeight.BackColor = System.Drawing.Color.White;
-            this.numCtnWeight.DecimalPlaces = 4;
-            this.numCtnWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numCtnWeight.Location = new System.Drawing.Point(185, 7);
-            this.numCtnWeight.Name = "numCtnWeight";
-            this.numCtnWeight.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numCtnWeight.Size = new System.Drawing.Size(100, 23);
-            this.numCtnWeight.TabIndex = 34;
-            this.numCtnWeight.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numCtnWeight.Visible = false;
             // 
             // P02
             // 
@@ -710,6 +687,5 @@
         private Win.UI.Button btnUpdate;
         private Win.UI.TextBox txtCartonRef;
         private Win.UI.Label label1;
-        private Win.UI.NumericBox numCtnWeight;
     }
 }
