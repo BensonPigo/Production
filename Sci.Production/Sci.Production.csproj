@@ -929,6 +929,9 @@
     <None Include="XLT\Sewing_R02_MonthlyReportBySewingLine.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Sewing_R09.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Sewing_R03_ProdEfficiencyAnalysisReport.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
