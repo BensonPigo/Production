@@ -667,6 +667,64 @@ where  o.id ='{CurrentMaintain["orderid"]}'
             }
         }
 
+        private void btnAutoPick_Click(object sender, EventArgs e)
+        {
+
+            List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
+
+            //檢查是否有勾選Combo，處理傳入AutoPick資料篩選
+            if (!checkByCombo.Checked && dtIssueBreakDown != null)
+            {
+                foreach (DataRow tempRow in dtIssueBreakDown.Rows)
+                {
+                    if (tempRow["OrderID"].ToString() != txtOrderID.Text.ToString())
+                    {
+                        foreach (DataColumn tempColumn in dtIssueBreakDown.Columns)
+                        {
+                            if ("Decimal" == tempRow[tempColumn].GetType().Name)
+                                tempRow[tempColumn] = 0;
+                        }
+                    }
+                }
+
+                var tmp = dtIssueBreakDown.AsEnumerable().Select(o => new { OrderID = o["OrderID"].ToString(), Article = o["Article"].ToString() }).ToList();
+
+                foreach (var obj in tmp)
+                {
+
+                    foreach (DataRow tempRow in dtIssueBreakDown.Rows)
+                    {
+                        if (tempRow["OrderID"].ToString() == obj.OrderID && tempRow["Article"].ToString() == obj.Article)
+                        {
+                            IssueQtyBreakdown m = new IssueQtyBreakdown()
+                            {
+                                OrderID = obj.OrderID,
+                                Article = obj.Article
+                            };
+
+                            int totalQty = 0;
+                            foreach (DataColumn col in dtIssueBreakDown.Columns)
+                            {
+                                if ("Decimal" == tempRow[col].GetType().Name)
+                                {
+                                    totalQty += Convert.ToInt32(tempRow[col]);
+                                }
+                            }
+                            m.Qty = totalQty;
+                            modelList.Add(m);
+                        }
+                    }
+                    //dtIssueBreakDown.AsEnumerable().Where(o => o["OrderID"].ToString() == obj.OrderID && o["Article"].ToString() == obj.Article).Sum( o => o[Q])
+                }
+
+            }
+
+
+            var frm = new Sci.Production.Warehouse.P33_AutoPick(CurrentMaintain["id"].ToString(), this.poid, txtOrderID.Text.ToString(), dtIssueBreakDown, sbSizecode, checkByCombo.Checked , modelList);
+            DialogResult result = frm.ShowDialog(this);
+
+        }
+
         private void Get_Issue_Breakdown_Grid(string POID)
         {
 
@@ -848,5 +906,14 @@ order by [OrderID],[Article]
             return Result.True;
         }
 
+    }
+
+    public class IssueQtyBreakdown
+    {
+        public string OrderID { get; set; }
+
+        public string Article { get; set; }
+
+        public int Qty { get; set; }
     }
 }

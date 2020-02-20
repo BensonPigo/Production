@@ -110,7 +110,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(2216, 111);
+            this.gridicon.Location = new System.Drawing.Point(2269, 111);
             // 
             // refresh
             // 
@@ -248,6 +248,7 @@
             this.btnAutoPick.TabIndex = 8;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
+            this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
             // 
             // label25
             // 
