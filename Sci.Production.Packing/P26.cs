@@ -467,7 +467,6 @@ namespace Sci.Production.Packing
 
                 this.NotSetB03_Table.ColumnsStringAdd("BrandID");
                 this.NotSetB03_Table.ColumnsStringAdd("RefNo");
-                this.NotSetB03_Table.ColumnsStringAdd("Side");
                 this.NotMapCustPo_Table.ColumnsStringAdd("CustPO");
                 this.existsCustCTN_Table.ColumnsStringAdd("CustCTN");
                 this.FileCountError_Table.ColumnsStringAdd("PO#");
@@ -550,6 +549,8 @@ namespace Sci.Production.Packing
 
                 if (this.currentFileType == UploadType.ZPL)
                 {
+                    this.NotSetB03_Table.ColumnsStringAdd("Side");
+
                     foreach (var item in this._File_Name_Object_List.File_Name_Object2s)
                     {
                         // 根據上傳的ZPL展開
@@ -1196,7 +1197,7 @@ WHERE p.Type ='B'
                         DataRow ndr = this.NotSetB03_Table.NewRow();
                         ndr["BrandID"] = dr["BrandID"].ToString();
                         ndr["RefNO"] = dr["RefNO"].ToString();
-                        ndr["Side"] = dr["Side"].ToString();
+                        //ndr["Side"] = dr["Side"].ToString();
                         this.NotSetB03_Table.Rows.Add(ndr);
                     }
 
