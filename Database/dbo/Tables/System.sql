@@ -51,7 +51,8 @@
     [MarkerInputPath]            NVARCHAR (80)  NULL,
     [MarkerOutputPath]           NVARCHAR (80)  NULL, 
     [ReplacementReport ] VARCHAR(80) NULL
-	CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
+	CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC), 
+    [CuttingP10mustCutRef] BIT NOT NULL DEFAULT ((0))
 );
 
 
