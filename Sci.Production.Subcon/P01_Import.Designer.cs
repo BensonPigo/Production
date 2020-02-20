@@ -47,6 +47,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.lblIrregularQtyReason = new Sci.Win.UI.Label();
+            this.txtIrregularQtyReason = new Sci.Production.Class.txtSubconReason();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -58,7 +60,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(840, 15);
+            this.btnCancel.Location = new System.Drawing.Point(855, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 1;
@@ -70,7 +72,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(744, 16);
+            this.btnImport.Location = new System.Drawing.Point(759, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 0;
@@ -82,7 +84,7 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(829, 15);
+            this.btnFindNow.Location = new System.Drawing.Point(838, 12);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
             this.btnFindNow.TabIndex = 6;
@@ -119,7 +121,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(936, 53);
+            this.groupBox2.Size = new System.Drawing.Size(951, 53);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
@@ -143,6 +145,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblIrregularQtyReason);
+            this.groupBox1.Controls.Add(this.txtIrregularQtyReason);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.dateSCIDelivery);
             this.groupBox1.Controls.Add(this.dateApproveDate);
@@ -155,7 +159,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(936, 87);
+            this.groupBox1.Size = new System.Drawing.Size(951, 87);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
@@ -185,7 +189,7 @@
             this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(515, 15);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(556, 12);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateSCIDelivery.TabIndex = 2;
@@ -217,7 +221,7 @@
             this.labelSCIDelivery.Location = new System.Drawing.Point(417, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
+            this.labelSCIDelivery.Size = new System.Drawing.Size(136, 23);
             this.labelSCIDelivery.TabIndex = 7;
             this.labelSCIDelivery.Text = "SCI  Delivery";
             this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
@@ -247,7 +251,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 87);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(936, 390);
+            this.panel1.Size = new System.Drawing.Size(951, 390);
             this.panel1.TabIndex = 20;
             // 
             // gridBatchImport
@@ -271,13 +275,32 @@
             this.gridBatchImport.RowTemplate.Height = 24;
             this.gridBatchImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBatchImport.ShowCellToolTips = false;
-            this.gridBatchImport.Size = new System.Drawing.Size(936, 390);
+            this.gridBatchImport.Size = new System.Drawing.Size(951, 390);
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
             // 
+            // lblIrregularQtyReason
+            // 
+            this.lblIrregularQtyReason.Location = new System.Drawing.Point(417, 48);
+            this.lblIrregularQtyReason.Name = "lblIrregularQtyReason";
+            this.lblIrregularQtyReason.Size = new System.Drawing.Size(136, 23);
+            this.lblIrregularQtyReason.TabIndex = 20;
+            this.lblIrregularQtyReason.Text = "Irregular Qty Reason";
+            // 
+            // txtIrregularQtyReason
+            // 
+            this.txtIrregularQtyReason.DisplayBox1Binding = "";
+            this.txtIrregularQtyReason.Location = new System.Drawing.Point(556, 46);
+            this.txtIrregularQtyReason.MutiSelect = true;
+            this.txtIrregularQtyReason.Name = "txtIrregularQtyReason";
+            this.txtIrregularQtyReason.Size = new System.Drawing.Size(393, 27);
+            this.txtIrregularQtyReason.TabIndex = 19;
+            this.txtIrregularQtyReason.TextBox1Binding = "";
+            this.txtIrregularQtyReason.Type = "SQ";
+            // 
             // P01_Import
             // 
-            this.ClientSize = new System.Drawing.Size(936, 530);
+            this.ClientSize = new System.Drawing.Size(951, 530);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
@@ -315,5 +338,7 @@
         private System.Windows.Forms.Label label8;
         private Win.UI.Label labelNoQuoteHint;
         private Win.UI.Label labelNoQuoteHintColor;
+        private Win.UI.Label lblIrregularQtyReason;
+        private Class.txtSubconReason txtIrregularQtyReason;
     }
 }

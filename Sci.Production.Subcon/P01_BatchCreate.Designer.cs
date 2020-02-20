@@ -37,6 +37,8 @@
             this.labelApproveDate = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.lblIrregularQtyReason = new Sci.Win.UI.Label();
+            this.txtIrregularQtyReason = new Sci.Production.Class.txtSubconReason();
             this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
             this.labelNoQuoteHint = new Sci.Win.UI.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -82,7 +84,7 @@
             this.gridBatchCreateFromSubProcessData.RowTemplate.Height = 24;
             this.gridBatchCreateFromSubProcessData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBatchCreateFromSubProcessData.ShowCellToolTips = false;
-            this.gridBatchCreateFromSubProcessData.Size = new System.Drawing.Size(1024, 379);
+            this.gridBatchCreateFromSubProcessData.Size = new System.Drawing.Size(1024, 356);
             this.gridBatchCreateFromSubProcessData.TabIndex = 0;
             this.gridBatchCreateFromSubProcessData.TabStop = false;
             // 
@@ -103,10 +105,10 @@
             this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(110, 23);
             this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(479, 15);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(520, 15);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(243, 23);
-            this.dateSCIDelivery.TabIndex = 2;
+            this.dateSCIDelivery.TabIndex = 1;
             // 
             // dateApproveDate
             // 
@@ -125,17 +127,17 @@
             this.dateApproveDate.DateBox2.Size = new System.Drawing.Size(110, 23);
             this.dateApproveDate.DateBox2.TabIndex = 1;
             this.dateApproveDate.IsRequired = false;
-            this.dateApproveDate.Location = new System.Drawing.Point(107, 51);
+            this.dateApproveDate.Location = new System.Drawing.Point(107, 15);
             this.dateApproveDate.Name = "dateApproveDate";
             this.dateApproveDate.Size = new System.Drawing.Size(243, 23);
-            this.dateApproveDate.TabIndex = 3;
+            this.dateApproveDate.TabIndex = 0;
             // 
             // labelSCIDelivery
             // 
             this.labelSCIDelivery.Location = new System.Drawing.Point(381, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
+            this.labelSCIDelivery.Size = new System.Drawing.Size(136, 23);
             this.labelSCIDelivery.TabIndex = 7;
             this.labelSCIDelivery.Text = "SCI  Delivery";
             this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
@@ -144,14 +146,14 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(241, 14);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(241, 43);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(107, 23);
-            this.txtSPNoEnd.TabIndex = 1;
+            this.txtSPNoEnd.TabIndex = 3;
             // 
             // labelApproveDate
             // 
-            this.labelApproveDate.Location = new System.Drawing.Point(9, 51);
+            this.labelApproveDate.Location = new System.Drawing.Point(9, 15);
             this.labelApproveDate.Name = "labelApproveDate";
             this.labelApproveDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelApproveDate.Size = new System.Drawing.Size(95, 23);
@@ -163,13 +165,15 @@
             // 
             this.panel1.Controls.Add(this.gridBatchCreateFromSubProcessData);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 109);
+            this.panel1.Location = new System.Drawing.Point(0, 132);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1024, 379);
+            this.panel1.Size = new System.Drawing.Size(1024, 356);
             this.panel1.TabIndex = 23;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblIrregularQtyReason);
+            this.groupBox1.Controls.Add(this.txtIrregularQtyReason);
             this.groupBox1.Controls.Add(this.labelNoQuoteHintColor);
             this.groupBox1.Controls.Add(this.labelNoQuoteHint);
             this.groupBox1.Controls.Add(this.label8);
@@ -186,14 +190,33 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1024, 109);
+            this.groupBox1.Size = new System.Drawing.Size(1024, 132);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
+            // 
+            // lblIrregularQtyReason
+            // 
+            this.lblIrregularQtyReason.Location = new System.Drawing.Point(381, 46);
+            this.lblIrregularQtyReason.Name = "lblIrregularQtyReason";
+            this.lblIrregularQtyReason.Size = new System.Drawing.Size(136, 23);
+            this.lblIrregularQtyReason.TabIndex = 18;
+            this.lblIrregularQtyReason.Text = "Irregular Qty Reason";
+            // 
+            // txtIrregularQtyReason
+            // 
+            this.txtIrregularQtyReason.DisplayBox1Binding = "";
+            this.txtIrregularQtyReason.Location = new System.Drawing.Point(520, 44);
+            this.txtIrregularQtyReason.MutiSelect = true;
+            this.txtIrregularQtyReason.Name = "txtIrregularQtyReason";
+            this.txtIrregularQtyReason.Size = new System.Drawing.Size(393, 27);
+            this.txtIrregularQtyReason.TabIndex = 4;
+            this.txtIrregularQtyReason.TextBox1Binding = "";
+            this.txtIrregularQtyReason.Type = "SQ";
             // 
             // labelNoQuoteHintColor
             // 
             this.labelNoQuoteHintColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(108)))), ((int)(((byte)(126)))));
-            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(10, 81);
+            this.labelNoQuoteHintColor.Location = new System.Drawing.Point(9, 107);
             this.labelNoQuoteHintColor.Name = "labelNoQuoteHintColor";
             this.labelNoQuoteHintColor.Size = new System.Drawing.Size(19, 20);
             this.labelNoQuoteHintColor.TabIndex = 16;
@@ -201,7 +224,7 @@
             // labelNoQuoteHint
             // 
             this.labelNoQuoteHint.BackColor = System.Drawing.Color.Transparent;
-            this.labelNoQuoteHint.Location = new System.Drawing.Point(32, 80);
+            this.labelNoQuoteHint.Location = new System.Drawing.Point(31, 106);
             this.labelNoQuoteHint.Name = "labelNoQuoteHint";
             this.labelNoQuoteHint.Size = new System.Drawing.Size(395, 23);
             this.labelNoQuoteHint.TabIndex = 15;
@@ -211,7 +234,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(216, 17);
+            this.label8.Location = new System.Drawing.Point(216, 46);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(22, 17);
             this.label8.TabIndex = 15;
@@ -219,7 +242,7 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Location = new System.Drawing.Point(381, 51);
+            this.labelArtworkType.Location = new System.Drawing.Point(9, 73);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelArtworkType.Size = new System.Drawing.Size(95, 23);
@@ -233,10 +256,10 @@
             this.txtartworktype_ftyArtworkType.cClassify = "";
             this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(479, 51);
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(107, 73);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_ftyArtworkType.TabIndex = 4;
+            this.txtartworktype_ftyArtworkType.TabIndex = 5;
             this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
             // 
             // btnFindNow
@@ -256,14 +279,14 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(107, 15);
+            this.txtSPNoStart.Location = new System.Drawing.Point(107, 44);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(107, 23);
-            this.txtSPNoStart.TabIndex = 0;
+            this.txtSPNoStart.TabIndex = 2;
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(9, 15);
+            this.labelSPNo.Location = new System.Drawing.Point(9, 44);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
@@ -400,5 +423,7 @@
         private System.Windows.Forms.Label label8;
         private Win.UI.Label labelNoQuoteHintColor;
         private Win.UI.Label labelNoQuoteHint;
+        private Class.txtSubconReason txtIrregularQtyReason;
+        private Win.UI.Label lblIrregularQtyReason;
     }
 }

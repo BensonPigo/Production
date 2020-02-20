@@ -41,65 +41,11 @@ namespace Sci.Production.Subcon
             {
                 this.CurrentMaintain["localsuppid"] = txtsubconSupplier.TextBox1.Text;
             };
-
-            grid.ColumnHeaderMouseClick += (s, e) =>
-            {
-                ChangeBrowseColor();
-            };
-        }
-
-
-
-        /// <summary>
-        /// Change Browse Color 
-        /// 變更Browse 整行顏色
-        /// </summary>
-        private void ChangeBrowseColor()
-        {
-            for (int i = 0; i < grid.Rows.Count; i++)
-            {
-                DataTable dt = (DataTable)this.gridbs.DataSource;
-                DataRow dataRow = dt.Rows[i];
-                if (!MyUtility.Check.Empty(dataRow["exceed"]))
-                {
-                    this.grid.Rows[i].DefaultCellStyle.BackColor = Color.Yellow;
-                }
-                else
-                {
-                    this.grid.Rows[i].DefaultCellStyle.BackColor = Color.White;
-                }
-
-            }
-            grid.Columns["exceed"].Visible = false;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.queryfors.SelectedIndexChanged += (s, e) =>
-            {
-                string isExceed = MyUtility.Check.Empty(this.queryfors.SelectedValue) ? string.Empty : this.queryfors.SelectedValue.ToString();
-                switch (isExceed)
-                {
-                    case "1":
-                    this.DefaultWhere = "Exceed = 1";
-                        this.grid.RowsDefaultCellStyle.BackColor = Color.Yellow;
-                        this.ReloadDatas();
-                        break;
-                    default:
-                        this.DefaultWhere = string.Empty;
-                        this.ReloadDatas();
-                        ChangeBrowseColor();
-                        break;
-                }
-                
-            };
-            ChangeBrowseColor();
-
-            this.reloaddata.Click += (s, e) =>
-            {
-                ChangeBrowseColor();
-            };
 
             #region 權限控管
             // 檢查是否擁有Confirm or Check權限
@@ -499,15 +445,7 @@ group by ReqQty.value,PoQty.value";
                 return false;
             }
 
-            bool isDetailExceedQtyNotZero = this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["ExceedQty"]));
-            if (isDetailExceedQtyNotZero)
-            {
-                CurrentMaintain["Exceed"] = 1;
-            }
-            else
-            {
-                CurrentMaintain["Exceed"] = 0;
-            }
+            this.UpdateExceedStatus();
 
             // 判斷irregular Reason沒寫不能存檔
             var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)detailgridbs.DataSource);
@@ -797,7 +735,6 @@ where id = '{CurrentMaintain["id"]}'";
             var frm = new Sci.Production.Subcon.P05_BatchCreate();
             frm.ShowDialog(this);
             ReloadDatas();
-            ChangeBrowseColor();
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
@@ -881,7 +818,6 @@ where id = '{CurrentMaintain["id"]}'";
                 }
                 this.ReloadDatas();
                 this.RenewData();
-                ChangeBrowseColor();
                 if (!MyUtility.Check.Empty(idIndex)) this.gridbs.Position = this.gridbs.Find("ID", idIndex);
             }
         }
@@ -940,9 +876,11 @@ where id = '{CurrentMaintain["id"]}'";
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
             this.HideWaitMessage();
 
+            this.UpdateExceedStatus();
+            this.btnIrrQtyReason.Enabled = false;
             if (dtIrregular != null)
             {
-                if (dtIrregular.Rows.Count > 0)
+                if (dtIrregular.Rows.Count > 0 && CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE")
                 {
                     this.btnIrrQtyReason.Enabled = true;
                     this.btnIrrQtyReason.ForeColor = Color.Red;
@@ -952,8 +890,23 @@ where id = '{CurrentMaintain["id"]}'";
 
         private void P05_FormLoaded(object sender, EventArgs e)
         {
-            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, ",,1,Irregular Qty");
+            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,,1,Exceed Qty");
             this.queryfors.SelectedIndex = 0;
+            this.queryfors.SelectedIndexChanged += (s, d) =>
+            {
+                string hasJunk = MyUtility.Check.Empty(this.queryfors.SelectedValue) ? string.Empty : this.queryfors.SelectedValue.ToString();
+                switch (hasJunk)
+                {
+                    case "0":
+                        this.DefaultWhere = string.Empty;
+                        break;
+                    case "1":
+                    default:
+                        this.DefaultWhere = "Exceed = 1";
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         private void btnSpecialRecord_Click(object sender, EventArgs e)
@@ -972,6 +925,19 @@ where id = '{CurrentMaintain["id"]}'";
             detailgridbs.EndEdit();
 
             this.RefreshIrregularQtyReason();
+        }
+
+        private void UpdateExceedStatus()
+        {
+            bool isDetailExceedQtyNotZero = this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["ExceedQty"]));
+            if (isDetailExceedQtyNotZero)
+            {
+                CurrentMaintain["Exceed"] = 1;
+            }
+            else
+            {
+                CurrentMaintain["Exceed"] = 0;
+            }
         }
     }
 
