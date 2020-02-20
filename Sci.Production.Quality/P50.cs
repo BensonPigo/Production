@@ -69,7 +69,7 @@ namespace Sci.Production.Quality
     declare @MaxWorkTime datetime
     declare @MinWorkTime datetime
 
-	select [WorkTime] = i.InspectionDate
+	select [WorkTime] = i.AddDate
 		,[FailCode] = idetail.GarmentDefectCodeID
 		,[qty] = count(*) 
 	into  #tmpReworkTotal
@@ -78,7 +78,7 @@ namespace Sci.Production.Quality
 	where i.InspectionDate = cast(@Startime as date)
     and i.FactoryID = @Factory
     {sqlwhere}
-	group by i.InspectionDate, idetail.GarmentDefectCodeID
+	group by i.AddDate, idetail.GarmentDefectCodeID
 
     select @MaxWorkTime = max(WorkTime), @MinWorkTime = min(WorkTime)
     from #tmpReworkTotal
