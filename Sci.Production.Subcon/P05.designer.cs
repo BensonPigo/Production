@@ -339,6 +339,7 @@
             // 
             // btnIrrQtyReason
             // 
+            this.btnIrrQtyReason.Enabled = false;
             this.btnIrrQtyReason.Location = new System.Drawing.Point(858, 76);
             this.btnIrrQtyReason.Name = "btnIrrQtyReason";
             this.btnIrrQtyReason.Size = new System.Drawing.Size(188, 30);
