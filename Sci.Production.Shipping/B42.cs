@@ -476,7 +476,7 @@ from System WITH (NOLOCK) ");
             IList<string> deleteCmds = new List<string>();
             deleteCmds.Add(string.Format("delete VNConsumption_Article where ID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             deleteCmds.Add(string.Format("delete VNConsumption_SizeCode where ID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-
+            deleteCmds.Add(string.Format("delete VNConsumption_Detail where ID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             return DBProxy.Current.Executes(null, deleteCmds);
         }
 
