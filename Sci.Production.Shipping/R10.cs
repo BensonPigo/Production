@@ -1622,7 +1622,14 @@ where s.Type = 'EXPORT'");
                 // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
-                    worksheet.Cells[1, 22] = worksheet.Cells[1, 22].Value + "\r\n(USD)";
+                    if (this.reportContent == 1)
+                    {
+                        worksheet.Cells[1, 25] = worksheet.Cells[1, 25].Value + "\r\n(USD)";
+                    }
+                    else
+                    {
+                        worksheet.Cells[1, 22] = worksheet.Cells[1, 22].Value + "\r\n(USD)";
+                    }
                 }
 
                 // 填內容值
@@ -1665,7 +1672,7 @@ where s.Type = 'EXPORT'");
                         objArray[0, 30] = dr["VoucherDate"];
                         objArray[0, 31] = dr["SubType"];
 
-                        worksheet.Range[string.Format("A{0}:AE{0}", intRowsStart)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:AF{0}", intRowsStart)].Value2 = objArray;
                     }
                     else
                     {
@@ -1699,7 +1706,7 @@ where s.Type = 'EXPORT'");
                         objArray[0, 27] = dr["VoucherDate"];
                         objArray[0, 28] = dr["SubType"];
 
-                        worksheet.Range[string.Format("A{0}:AB{0}", intRowsStart)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:AC{0}", intRowsStart)].Value2 = objArray;
                     }
 
                     intRowsStart++;
