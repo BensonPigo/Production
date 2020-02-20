@@ -13,6 +13,7 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class B06 : Sci.Win.Tems.Input1
     {
+        private string useAPS;
         /// <summary>
         /// B06
         /// </summary>
@@ -21,15 +22,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Sci.Env.User.Factory + "'";
-            string useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
-            if (useAPS.ToUpper() == "TRUE")
-            {
-                this.IsSupportCopy = false;
-                this.IsSupportDelete = false;
-                this.IsSupportEdit = false;
-                this.IsSupportNew = false;
-            }
-
+            this.useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
             // string sqlCommand2 = "select IsSampleRoom from factory where ID = '" + Sci.Env.User.Factory + "'";
             // string IsSampleRoom = MyUtility.GetValue.Lookup(sqlCommand2, null);
             // if (IsSampleRoom == "False")
@@ -40,6 +33,13 @@ namespace Sci.Production.PPIC
             //    IsSupportNew = false;
             // }
             this.InitializeComponent();
+            if (this.useAPS.ToUpper() == "TRUE")
+            {
+                this.IsSupportCopy = false;
+                this.IsSupportDelete = false;
+                this.IsSupportNew = false;
+            }
+
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
             this.txtCellNo.MDivisionID = Sci.Env.User.Keyword;
         }
@@ -56,6 +56,14 @@ namespace Sci.Production.PPIC
         {
             base.ClickEditAfter();
             this.txtLine.ReadOnly = true;
+
+            if (this.useAPS.ToUpper() == "TRUE")
+            {
+                this.txtDescription.ReadOnly = true;
+                this.txtCellNo.ReadOnly = true;
+                this.numNoOfSewers.ReadOnly = true;
+                this.checkJunk.ReadOnly = true;
+            }
         }
 
         /// <inheritdoc/>
@@ -68,7 +76,7 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Description"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Description"].ToString()) && this.useAPS.ToUpper() != "TRUE")
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.txtDescription.Focus();
