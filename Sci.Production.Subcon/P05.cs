@@ -877,7 +877,7 @@ where id = '{CurrentMaintain["id"]}'";
             this.HideWaitMessage();
 
             this.UpdateExceedStatus();
-
+            this.btnIrrQtyReason.Enabled = false;
             if (dtIrregular != null)
             {
                 if (dtIrregular.Rows.Count > 0 && CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE")
@@ -890,8 +890,23 @@ where id = '{CurrentMaintain["id"]}'";
 
         private void P05_FormLoaded(object sender, EventArgs e)
         {
-            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, ",,1,Exceed Qty");
+            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,,1,Exceed Qty");
             this.queryfors.SelectedIndex = 0;
+            this.queryfors.SelectedIndexChanged += (s, d) =>
+            {
+                string hasJunk = MyUtility.Check.Empty(this.queryfors.SelectedValue) ? string.Empty : this.queryfors.SelectedValue.ToString();
+                switch (hasJunk)
+                {
+                    case "0":
+                        this.DefaultWhere = string.Empty;
+                        break;
+                    case "1":
+                    default:
+                        this.DefaultWhere = "Exceed = 1";
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         private void btnSpecialRecord_Click(object sender, EventArgs e)
