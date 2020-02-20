@@ -30,8 +30,8 @@ namespace Sci.Production.Cutting
 
             Helper.Controls.Grid.Generator(this.grid1)
             .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(4),maximum: 255)
-            .Text("ID", header: "SubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("artworktypeid", header: "Artwork Type", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("ID", header: "SubProcess", width: Widths.AnsiChars(24), iseditingreadonly: true)
+            .Text("artworktypeid", header: "Artwork Type", width: Widths.AnsiChars(35), iseditingreadonly: true)
             ;
 
             for (int i = 0; i < grid1.ColumnCount; i++)
