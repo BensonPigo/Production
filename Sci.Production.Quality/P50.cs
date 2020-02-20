@@ -78,7 +78,7 @@ namespace Sci.Production.Quality
 	where i.InspectionDate = cast(@Startime as date)
     and i.FactoryID = @Factory
     {sqlwhere}
-	group by i.EditDate, idetail.GarmentDefectCodeID
+	group by i.InspectionDate, idetail.GarmentDefectCodeID
 
     select @MaxWorkTime = max(WorkTime), @MinWorkTime = min(WorkTime)
     from #tmpReworkTotal
