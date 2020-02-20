@@ -599,6 +599,7 @@ from a where rnd=1
                         DataRow newrow = customSP.NewRow();
                         newrow["VNContractID"] = MyUtility.Convert.GetString(dr["VNContractID"]);
                         newrow["CustomSP"] = "SP000001";
+                        customSP.Rows.Add(newrow);
                         dr["CustomSP"] = "SP000001";
                     }
                 }
