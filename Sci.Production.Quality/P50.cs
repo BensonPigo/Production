@@ -69,7 +69,7 @@ namespace Sci.Production.Quality
     declare @MaxWorkTime datetime
     declare @MinWorkTime datetime
 
-	select [WorkTime] = i.EditDate
+	select [WorkTime] = i.InspectionDate
 		,[FailCode] = idetail.GarmentDefectCodeID
 		,[qty] = count(*) 
 	into  #tmpReworkTotal
