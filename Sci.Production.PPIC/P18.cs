@@ -608,11 +608,14 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             }
 
             // 表身檢查
-            for (int i = this.DetailDatas.Count - 1; i >= 0; i--)
+            foreach (DataRow dr in this.DetailDatas)
             {
-                if (MyUtility.Check.Empty(this.DetailDatas[i]["OrderID"]))
+                if (MyUtility.Check.Empty(dr["OrderShipmodeSeq"]) ||
+                    MyUtility.Check.Empty(dr["ShipModeID"]) ||
+                    MyUtility.Check.Empty(dr["OrderID"]))
                 {
-                    this.DetailDatas[i].Delete();
+                    MyUtility.Msg.WarningBox("Seq, Ship Mode, SP# cannot be empty! ");
+                    return false;
                 }
             }
 
