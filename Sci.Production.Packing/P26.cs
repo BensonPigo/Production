@@ -1190,18 +1190,23 @@ WHERE p.Type ='B'
                 }
 
                 // 準備新開的視窗
-                if (mapped_PackingLisID_Count > 0 && packingB03_Lack && brand_refno_NotMapping_Count > 0 && !this.NotSetB03_Table.AsEnumerable().Where(o => o["BrandID"].ToString() == mappingInfo[2].Rows[0]["BrandID"].ToString() && o["RefNO"].ToString() == mappingInfo[2].Rows[0]["RefNO"].ToString() && o["Side"].ToString() == mappingInfo[2].Rows[0]["Side"].ToString()).Any())
+                if (mapped_PackingLisID_Count > 0 && packingB03_Lack && brand_refno_NotMapping_Count > 0 && !this.NotSetB03_Table.AsEnumerable().Where(o => o["BrandID"].ToString() == mappingInfo[2].Rows[0]["BrandID"].ToString() && o["RefNO"].ToString() == mappingInfo[2].Rows[0]["RefNO"].ToString() ).Any())
                 {
                     foreach (DataRow dr in mappingInfo[2].Rows)
                     {
                         DataRow ndr = this.NotSetB03_Table.NewRow();
                         ndr["BrandID"] = dr["BrandID"].ToString();
                         ndr["RefNO"] = dr["RefNO"].ToString();
-                        //ndr["Side"] = dr["Side"].ToString();
                         this.NotSetB03_Table.Rows.Add(ndr);
                     }
 
-                    break;
+                    if (!this.mappingFailFileName.Contains(fileName))
+                    {
+                        this.mappingFailFileName.Add(fileName);
+                    }
+
+                    packingB03DataError = true;
+                    continue;
                 }
 
                 if (packingB03DataError)
@@ -1211,7 +1216,7 @@ WHERE p.Type ='B'
                         this.mappingFailFileName.Add(fileName);
                     }
 
-                    break;
+                    continue;
                 }
 
                 #endregion
