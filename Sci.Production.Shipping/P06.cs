@@ -576,6 +576,21 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 return;
             }
 
+            // 有Cancel Order 不能confirmed
+            bool errchk = false;
+            string strErrmsg = PublicPrg.Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
+            if (!MyUtility.Check.Empty(strErrmsg))
+            {
+                MyUtility.Msg.WarningBox(strErrmsg);
+                return;
+            }
+
+            if (errchk)
+            {
+                MyUtility.Msg.WarningBox(strErrmsg.ToString());
+                return;
+            }
+
             // 模擬按Edit行為
             this.toolbar.cmdEdit.PerformClick();
 
@@ -594,7 +609,6 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             #region 檢查Variance是否<0, 若<0則不能confirm 這段
             StringBuilder errmsg = new StringBuilder();
             errmsg.Append("Cannot confirm this Pullout!!\r\n");
-            bool errchk = false;
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
                 if (MyUtility.Convert.GetDecimal(dr["Variance"]) < 0)
@@ -604,19 +618,6 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 }
             }
 
-            // 有Cancel Order 不能confirmed
-            string strErrmsg = PublicPrg.Prgs.ChkCancelOrder((DataTable)this.detailgridbs.DataSource);
-            if (!MyUtility.Check.Empty(errmsg))
-            {
-                MyUtility.Msg.WarningBox(strErrmsg);
-                return;
-            }
-
-            if (errchk)
-            {
-                MyUtility.Msg.WarningBox(strErrmsg.ToString());
-                return;
-            }
             #endregion
 
             // 檢查表身資料不可為空

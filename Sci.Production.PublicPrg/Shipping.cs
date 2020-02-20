@@ -1305,22 +1305,23 @@ drop table #tmpThreadData");
         #endregion
 
         #region Check CancelOrder cannot confirmed
-        public static string ChkCancelOrder(DataTable dt)
+        public static string ChkCancelOrder(string id)
         {
             DualResult result;
             string errmsg = string.Empty;
             string SP = string.Empty;
             DataTable dtCancel;
-            foreach (DataRow dr in dt.Rows)
-            {
-                if (dr.RowState != DataRowState.Deleted)
-                {
-                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
-                }
-            }
 
             string sqlcmd = $@"
-select id from Orders where Junk = 1 and id in  ({SP.Substring(0, SP.Length - 1)})
+select distinct pd.OrderID
+from PackingList p
+inner join PackingList_Detail pd on p.ID=pd.ID
+where (
+	p.ShipPlanID = '{id}' or 
+	p.INVNo = '{id}' or
+	p.PulloutID='{id}'
+)
+and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
 ";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtCancel);
             if (!result)
@@ -1332,7 +1333,7 @@ select id from Orders where Junk = 1 and id in  ({SP.Substring(0, SP.Length - 1)
             string msgCancel = string.Empty;
             if (dtCancel.Rows.Count > 0)
             {
-                errmsg = $@"SP# {dtCancel.Rows[0]["id"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.";                
+                errmsg = $@"SP# {dtCancel.Rows[0]["OrderID"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.";                
                 return errmsg;
             }
 

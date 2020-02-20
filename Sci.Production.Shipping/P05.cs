@@ -1533,7 +1533,7 @@ Packing List : {pid}";
             }
 
             // 有Cancel Order 不能confirmed
-            string errmsg = PublicPrg.Prgs.ChkCancelOrder((DataTable)this.detailgridbs.DataSource);
+            string errmsg = PublicPrg.Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
             if (!MyUtility.Check.Empty(errmsg))
             {
                 MyUtility.Msg.WarningBox(errmsg);
