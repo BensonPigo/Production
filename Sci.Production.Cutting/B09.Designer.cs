@@ -47,10 +47,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(857, 173);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.disArtworkType);
@@ -59,20 +55,14 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(857, 135);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 135);
-            this.detailbtm.Size = new System.Drawing.Size(857, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(857, 173);
+            this.browse.Size = new System.Drawing.Size(918, 352);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(865, 202);
+            this.tabs.Size = new System.Drawing.Size(926, 381);
             // 
             // createby
             // 
@@ -213,7 +203,7 @@
             // 
             // B09
             // 
-            this.ClientSize = new System.Drawing.Size(865, 235);
+            this.ClientSize = new System.Drawing.Size(926, 414);
             this.DefaultControl = "numLeadTime";
             this.DefaultControlForEdit = "numLeadTime";
             this.DefaultOrder = "ID";
