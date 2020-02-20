@@ -172,6 +172,12 @@
     </Compile>
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
+	</Compile>
+    <Compile Include="B10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B10.Designer.cs">
+      <DependentUpon>B10.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_BundleCard.cs">
       <SubType>Form</SubType>
@@ -411,6 +417,11 @@
     <Compile Include="P20_Import_Workorder.Designer.cs">
       <DependentUpon>P20_Import_Workorder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -484,6 +495,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B10.resx">
+      <DependentUpon>B10.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_BundleCard.resx">
       <DependentUpon>P01_BundleCard.cs</DependentUpon>
@@ -598,6 +612,10 @@
     <EmbeddedResource Include="P21_QueryRevised.resx">
       <DependentUpon>P21_QueryRevised.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -678,6 +696,12 @@
     <None Include="packages.config" />
     <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P12_PrintData.datasource" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trffc15.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trffc152.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

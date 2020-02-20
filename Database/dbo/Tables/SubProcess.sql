@@ -1,21 +1,24 @@
 ﻿CREATE TABLE [dbo].[SubProcess] (
-    [Id]            VARCHAR (10) CONSTRAINT [DF_SubProcess_Id] DEFAULT ('') NOT NULL,
-    [ArtworkTypeId] VARCHAR (20) CONSTRAINT [DF_SubProcess_ArtworkTypeId] DEFAULT ('') NOT NULL,
-    [IsSelection]   BIT          CONSTRAINT [DF_SubProcess_IsSelection] DEFAULT ((0)) NULL,
-    [IsRFIDProcess] BIT          CONSTRAINT [DF_SubProcess_IsProcess] DEFAULT ((0)) NULL,
-    [IsRFIDDefault] BIT          CONSTRAINT [DF_SubProcess_IsDisplay] DEFAULT ((0)) NULL,
-    [ShowSeq]       VARCHAR (2)  CONSTRAINT [DF_SubProcess_ShowSeq] DEFAULT ('') NULL,
-    [Junk]          BIT          CONSTRAINT [DF_SubProcess_Junk] DEFAULT ((0)) NULL,
-    [AddName]       VARCHAR (10) CONSTRAINT [DF_SubProcess_AddName] DEFAULT ('') NULL,
-    [AddDate]       DATETIME     NULL,
-    [EditName]      VARCHAR (10) CONSTRAINT [DF_SubProcess_EditName] DEFAULT ('') NULL,
-    [EditDate]      DATETIME     NULL,
-    [BCSDate]       NUMERIC (2)  NULL,
-    [InOutRule]     TINYINT      DEFAULT ((0)) NOT NULL,
-    [FullName] VARCHAR(15) NULL, 
-    [IsLackingAndReplacement] BIT NOT NULL DEFAULT ((0)), 
+    [Id]                      VARCHAR (10) CONSTRAINT [DF_SubProcess_Id] DEFAULT ('') NOT NULL,
+    [ArtworkTypeId]           VARCHAR (20) CONSTRAINT [DF_SubProcess_ArtworkTypeId] DEFAULT ('') NOT NULL,
+    [IsSelection]             BIT          CONSTRAINT [DF_SubProcess_IsSelection] DEFAULT ((0)) NULL,
+    [IsRFIDProcess]           BIT          CONSTRAINT [DF_SubProcess_IsProcess] DEFAULT ((0)) NULL,
+    [IsRFIDDefault]           BIT          CONSTRAINT [DF_SubProcess_IsDisplay] DEFAULT ((0)) NULL,
+    [ShowSeq]                 VARCHAR (2)  CONSTRAINT [DF_SubProcess_ShowSeq] DEFAULT ('') NULL,
+    [Junk]                    BIT          CONSTRAINT [DF_SubProcess_Junk] DEFAULT ((0)) NULL,
+    [AddName]                 VARCHAR (10) CONSTRAINT [DF_SubProcess_AddName] DEFAULT ('') NULL,
+    [AddDate]                 DATETIME     NULL,
+    [EditName]                VARCHAR (10) CONSTRAINT [DF_SubProcess_EditName] DEFAULT ('') NULL,
+    [EditDate]                DATETIME     NULL,
+    [BCSDate]                 NUMERIC (2)  NULL,
+    [InOutRule]               TINYINT      DEFAULT ((0)) NOT NULL,
+    [FullName]                VARCHAR (15) NULL,
+    [IsLackingAndReplacement] BIT          DEFAULT ((0)) NOT NULL,
+    [Seq]                     TINYINT      DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
