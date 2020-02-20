@@ -166,12 +166,12 @@
             this.numLeadTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numLeadTime.Location = new System.Drawing.Point(125, 24);
             this.numLeadTime.Maximum = new decimal(new int[] {
-            127,
+            255,
             0,
             0,
             0});
             this.numLeadTime.Minimum = new decimal(new int[] {
-            1,
+            0,
             0,
             0,
             0});
@@ -184,11 +184,10 @@
             this.numLeadTime.Size = new System.Drawing.Size(100, 23);
             this.numLeadTime.TabIndex = 3;
             this.numLeadTime.Value = new decimal(new int[] {
-            1,
+            0,
             0,
             0,
             0});
-            this.numLeadTime.Validating += new System.ComponentModel.CancelEventHandler(this.NumLeadTime_Validating);
             // 
             // txtSubprocess
             // 

@@ -32,6 +32,13 @@ namespace Sci.Production.Cutting
 
         protected override bool ClickSaveBefore()
         {
+            if (!(numLeadTime.Value > 0 && numLeadTime.Value < 128))
+            {
+                MyUtility.Msg.WarningBox("Lead Time need >0 and <128");
+                numLeadTime.Focus();
+                return false;
+            }
+
             string sqlchk = $@"
 select 1
 from SubprocessLeadTime s
@@ -170,16 +177,6 @@ order by s.id asc
             }
             
             this.disArtworkType.Text = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ArtworkTypeId"])).JoinToString("+");
-        }
-
-        private void NumLeadTime_Validating(object sender, CancelEventArgs e)
-        {
-            if (!(numLeadTime.Value >0 && numLeadTime.Value <128))
-            {
-                MyUtility.Msg.WarningBox("Lead Time need >0 and <128");
-                e.Cancel = true;
-                return;
-            }
         }
     }
 }
