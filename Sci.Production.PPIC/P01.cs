@@ -1466,6 +1466,7 @@ where POID = @poid group by POID,b.spno";
             }
 
             #region Cancel Order 檢查總產出數量必須 = 總裝箱數量，並且每一個箱子都必須轉移到 Clog
+            /*
             System.Data.DataTable[] dtPacking;
             string sql = $@"
 -- 判斷是否有CancelOrder
@@ -1522,7 +1523,7 @@ group by o.POID";
                 MyUtility.Msg.WarningBox("SP# :" + Environment.NewLine + errormsg + @"is cancel order, already output garment must create Packing List and transfer carton to Clog before use function 'shipment finish'.");
                 return;
             }
-
+            */
             #endregion
 
             string sqlCmd;
