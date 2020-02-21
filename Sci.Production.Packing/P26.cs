@@ -293,15 +293,22 @@ namespace Sci.Production.Packing
                             }
                             else
                             {
+
+                                int Qty_textindex = tmppArray.ToList().IndexOf("Qty:");
+                                int CustPONo_index = Qty_textindex + 1;
+                                int Style_index = Qty_textindex + 2;
+                                int SizeCode_index = Qty_textindex + 4;
+                                int ShipQty_index = Qty_textindex + 8;
+
                                 zPL_Objects.Add(
                                      new ZPL()
                                      {
                                          CustCTN = tmppArray[0].Split(' ')[1],
-                                         CustPONo = tmppArray[21],
-                                         StyleID = tmppArray[22].Split('-')[0],
-                                         Article = tmppArray[22].Split('-')[1],
-                                         SizeCode = tmppArray[24],
-                                         ShipQty = tmppArray[28]
+                                         CustPONo = tmppArray[CustPONo_index],
+                                         StyleID = tmppArray[Style_index].Split('-')[0],
+                                         Article = tmppArray[Style_index].Split('-')[1],
+                                         SizeCode = tmppArray[SizeCode_index],
+                                         ShipQty = tmppArray[ShipQty_index]
                                      }
                                  );
                             }
