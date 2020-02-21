@@ -1466,7 +1466,6 @@ where POID = @poid group by POID,b.spno";
             }
 
             #region Cancel Order 檢查總產出數量必須 = 總裝箱數量，並且每一個箱子都必須轉移到 Clog
-            /*
             System.Data.DataTable[] dtPacking;
             string sql = $@"
 -- 判斷是否有CancelOrder
@@ -1474,18 +1473,10 @@ select id from Orders
 where poid= '{this.CurrentMaintain["Poid"]}'
 and Junk = 1
 
-
--- 判斷是否有進Clog
-select distinct pd.OrderID
-from PackingList_Detail pd
-inner join Orders o on pd.OrderID= o.ID
-where o.poid= '{this.CurrentMaintain["Poid"]}'
-and pd.ReceiveDate is null
-
 -- show整個採購組合總裝箱數量和總產出數量
 select 
-[TotalPackQty] = sum(pd.ShipQty)
-,[TotalQty] = sum(o.Qty) 
+ [TotalPackQty] = sum(pd.ShipQty)
+,[TotalQty] = sum(Output.value) 
 ,o.POID
 from Orders o 
 outer apply(
@@ -1493,8 +1484,21 @@ outer apply(
 	from PackingList_Detail pd
 	where pd.OrderID = o.ID
 )pd
+outer apply(
+	select value = sum(dbo.getMinCompleteSewQty(oq.ID,oq.Article,oq.SizeCode))
+	from Order_Qty oq
+	where oq.ID = o.ID
+)Output
 where o.poid= '{this.CurrentMaintain["Poid"]}'
-group by o.POID";
+group by o.POID
+
+-- 判斷是否有進Clog
+select distinct pd.OrderID
+from PackingList_Detail pd
+inner join Orders o on pd.OrderID= o.ID
+where o.poid= '{this.CurrentMaintain["Poid"]}'
+and pd.ReceiveDate is null
+";
 
             if (!(result = DBProxy.Current.Select(null, sql, out dtPacking)))
             {
@@ -1504,12 +1508,11 @@ group by o.POID";
 
             string errormsg = string.Empty;
 
-            // 判斷是否有CancelOrder
-            if (dtPacking[0].Rows.Count > 0)
+            // 判斷有CancelOrder 和總產出量>0 就接下去檢查
+            if (dtPacking[0].Rows.Count > 0 && !MyUtility.Check.Empty(dtPacking[1].Rows[0]["TotalQty"]))
             {
                 // 判斷是否每一個箱子都必須轉移到 Clog 和 總產出數量 = 總裝箱數量
-                if (dtPacking[1].Rows.Count > 0 ||
-                    MyUtility.Convert.GetInt(dtPacking[1].Rows[2]["TotalPackQty"]) != MyUtility.Convert.GetInt(dtPacking[2].Rows[0]["TotalQty"]))
+                if (MyUtility.Convert.GetInt(dtPacking[1].Rows[0]["TotalPackQty"]) != MyUtility.Convert.GetInt(dtPacking[1].Rows[0]["TotalQty"]) || dtPacking[2].Rows.Count > 0)
                 {
                     foreach (DataRow dr in dtPacking[0].Rows)
                     {
@@ -1523,7 +1526,6 @@ group by o.POID";
                 MyUtility.Msg.WarningBox("SP# :" + Environment.NewLine + errormsg + @"is cancel order, already output garment must create Packing List and transfer carton to Clog before use function 'shipment finish'.");
                 return;
             }
-            */
             #endregion
 
             string sqlCmd;
