@@ -142,15 +142,15 @@ namespace Sci.Production.Packing
 
             this.UpdateModel_List.Clear();
 
-            DataRow[] selectedRow = dt.Select("Sel=1");
+            List<DataRow> selectedRow = dt.AsEnumerable().Where(o => o["Sel"].ToString().ToUpper() == "TRUE").ToList();
 
             List<string> keys = dt.AsEnumerable().Select(o => o["PONO"].ToString()).Distinct().ToList();
 
             foreach (var pono in keys)
             {
-                DataRow[] tmpDr = dt.Select($"Sel=1 AND PONO='{pono}' ");
+                int selectCont = dt.AsEnumerable().Where(o => o["Sel"].ToString().ToUpper() == "TRUE" && o["PONO"].ToString().ToUpper() == pono.ToUpper()).Count();
 
-                if (tmpDr.Length == 0)
+                if (selectCont == 0)
                 {
                     MyUtility.Msg.InfoBox("Please select row every PO#.");
                     return;
