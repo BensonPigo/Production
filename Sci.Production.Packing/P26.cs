@@ -982,7 +982,7 @@ FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type ='B' 
-    AND pd.OrderID = (SELECT ID FROM #tmpOrders)
+    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
     AND pd.CustCTN = ''
 	AND p.ID='{packingListID}'
 "));
@@ -1315,7 +1315,7 @@ FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type ='B' 
-    AND pd.OrderID = (SELECT ID FROM #tmpOrders)
+    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
     AND pd.CustCTN = ''
 	AND p.ID='{packingListID}'
 "));
@@ -1457,7 +1457,7 @@ INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type ='B' 
 	AND p.ID='{model.PackingListID}'
     AND pd.CustCTN='' 
-    AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
+    AND pd.OrderID IN (SELECT ID FROM #tmpOrders{i})
     AND Article = '{model.Article}'
     AND pd.ShipQty={model.ShipQty}
     AND (
@@ -1596,7 +1596,7 @@ INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type ='B' 
 	AND p.ID='{model.PackingListID}'
     AND pd.CustCTN='' 
-    AND pd.OrderID = (SELECT ID FROM #tmpOrders{i})
+    AND pd.OrderID IN (SELECT ID FROM #tmpOrders{i})
     AND Article = '{model.Article}'
     AND pd.ShipQty={model.ShipQty}
     AND (
@@ -1793,7 +1793,7 @@ FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type ='B' 
-    AND pd.OrderID = (SELECT ID FROM #tmpOrders)
+    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
     AND pd.CustCTN = ''
     AND Article = '{currentZPL.Article}'
     AND pd.ShipQty={currentZPL.ShipQty}
@@ -1814,7 +1814,7 @@ FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type = 'B'
-AND pd.OrderID = (SELECT ID FROM #tmpOrders)
+AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
 AND pd.CustCTN = ''
 AND Article = '{currentZPL.Article}'
 AND pd.ShipQty ={currentZPL.ShipQty}
@@ -1892,7 +1892,7 @@ FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type ='B' 
-    AND pd.OrderID = (SELECT ID FROM #tmpOrders)
+    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
     AND pd.CustCTN = ''
     AND Article = '{currentZPL.Article}'
     AND pd.ShipQty={currentZPL.ShipQty}
@@ -1913,7 +1913,7 @@ FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
 WHERE p.Type = 'B'
-AND pd.OrderID = (SELECT ID FROM #tmpOrders)
+AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
 AND pd.CustCTN = ''
 AND Article = '{currentZPL.Article}'
 AND pd.ShipQty ={ currentZPL.ShipQty}
