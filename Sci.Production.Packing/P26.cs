@@ -169,7 +169,7 @@ namespace Sci.Production.Packing
 
                             foreach (string singleFileName in ZPL_FileName_List)
                             {
-                                string contentString = contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                                string contentString = contentsOfZPL.Where(o => o.Contains("^FD>;>8" + singleFileName+ "^FS")).FirstOrDefault();
                                 FileName_with_Data.Add(singleFileName, contentString);
                             }
 
@@ -202,11 +202,19 @@ namespace Sci.Production.Packing
                             oriZplConten = pdfStripper.getText(doc);
                             string[] stringSeparators = new string[] { "\r\n" };
                             string[] tmppArray = oriZplConten.Split(stringSeparators, StringSplitOptions.None);
-
+                            bool isMixed = false;
                             List<ZPL> zPL_Objects = new List<ZPL>();
 
+                            foreach (var s in tmppArray)
+                            {
+                                if (s.ToUpper() == "MIXED")
+                                {
+                                    isMixed = true;
+                                }
+                            }
+
                             // 若是混尺碼則分開處理
-                            if (tmppArray.Contains("MIXED"))
+                            if (isMixed)
                             {
                                 string[] Sizes = tmppArray[Array.IndexOf(tmppArray, tmppArray.Where(o => o == "Size/Qty").FirstOrDefault()) + 1].Split(' ');
                                 string[] qtyOfSizes = tmppArray[Array.IndexOf(tmppArray, tmppArray.Where(o => o == "Size/Qty").FirstOrDefault()) + 2].Split(' ');
@@ -354,7 +362,7 @@ namespace Sci.Production.Packing
                 string content = FileName_with_Data[custCTNno];
 
                 // 是否混尺碼
-                IsMiexed = content.ToUpper().Contains("MIXED");
+                IsMiexed = content.ToUpper().Contains("^FD" + "MIXED" + "^FS");
 
                 // Orders.CustPONo
                 strArray = content.Split(new string[] { "^FDPO#:^FS^FT225,850^A0B,40,50^FD", "^FS^FT280,950^A0B,40,50^FDSKU:^FS" }, StringSplitOptions.RemoveEmptyEntries);
@@ -384,7 +392,7 @@ namespace Sci.Production.Packing
                 if (IsMiexed)
                 {
                     int startIndex = Array.IndexOf(strArray2, strArray2.Where(o => o.ToString().Contains("Style-Color-Size")).FirstOrDefault());
-                    int endIndex = Array.IndexOf(strArray2, strArray2.Where(o => o.ToString().Contains("Total Qty")).FirstOrDefault());
+                    int endIndex = Array.IndexOf(strArray2, strArray2.Where(o => o.ToString().Contains("^FD" + "Total Qty")).FirstOrDefault());
                     int sizeCount = (endIndex - startIndex - 1) / 4;
                     List<string> tmpSizes = new List<string>();
                     int ii = 0;
