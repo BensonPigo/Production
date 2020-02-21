@@ -539,9 +539,9 @@ namespace Sci.Production.Packing
                             foreach (var zpl in ZPLs)
                             {
 
-                                if (!this.ErrorMessage.Contains($"Carton couunt not mapping."))
+                                if (!this.ErrorMessage.Contains($"Carton count not mapping."))
                                 {
-                                    this.ErrorMessage += $" Carton couunt not mapping." + Environment.NewLine;
+                                    this.ErrorMessage += $" Carton count not mapping." + Environment.NewLine;
                                 }
 
                                 if (!this.mappingFailFileName.Contains(zpl.FileName))
@@ -583,9 +583,9 @@ namespace Sci.Production.Packing
                         else if (this.tmp_NewFormModels.Count != ZPLs.Count && (isMixed && this.tmp_NewFormModels.FirstOrDefault().ZPL_List.Select(o => o.CTNStartNo).Distinct().Count() != ZPLs.Count))
                         {
 
-                            if (!this.ErrorMessage.Contains($"File <{fileName}> Carton couunt not mapping."))
+                            if (!this.ErrorMessage.Contains($"File <{fileName}> Carton count not mapping."))
                             {
-                                this.ErrorMessage += $"File <{fileName}> Carton couunt not mapping." + Environment.NewLine;
+                                this.ErrorMessage += $"File <{fileName}> Carton count not mapping." + Environment.NewLine;
                             }
 
                             if (!this.mappingFailFileName.Contains(fileName))
@@ -927,9 +927,9 @@ namespace Sci.Production.Packing
                         else
                         {
                             // false
-                            if (!this.ErrorMessage.Contains("Carton couunt not mapping."))
+                            if (!this.ErrorMessage.Contains("Carton count not mapping."))
                             {
-                                this.ErrorMessage += "Carton couunt not mapping." + Environment.NewLine;
+                                this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
                             }
 
                             if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
@@ -954,9 +954,9 @@ namespace Sci.Production.Packing
                         if (totalCount == fileCount)
                         {
                             // 02 false
-                            if (!this.ErrorMessage.Contains("Carton couunt not mapping."))
+                            if (!this.ErrorMessage.Contains("Carton count not mapping."))
                             {
-                                this.ErrorMessage += "Carton couunt not mapping." + Environment.NewLine;
+                                this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
                             }
 
                             if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
@@ -1040,9 +1040,9 @@ WHERE p.Type ='B'
                             else
                             {
                                 // 05 false
-                                if (!this.ErrorMessage.Contains("Carton couunt not mapping."))
+                                if (!this.ErrorMessage.Contains("Carton count not mapping."))
                                 {
-                                    this.ErrorMessage += "Carton couunt not mapping." + Environment.NewLine;
+                                    this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
                                 }
 
                                 if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
@@ -1065,9 +1065,9 @@ WHERE p.Type ='B'
                     }
                     else
                     {
-                        if (!this.ErrorMessage.Contains("Carton couunt not mapping."))
+                        if (!this.ErrorMessage.Contains("Carton count not mapping."))
                         {
-                            this.ErrorMessage += "Carton couunt not mapping." + Environment.NewLine;
+                            this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
                         }
                     }
 
@@ -1257,9 +1257,9 @@ WHERE p.Type ='B'
                     else
                     {
                         // false
-                        if (!this.ErrorMessage.Contains("Carton couunt not mapping."))
+                        if (!this.ErrorMessage.Contains("Carton count not mapping."))
                         {
-                            this.ErrorMessage += "Carton couunt not mapping." + Environment.NewLine;
+                            this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
                         }
 
                         if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
@@ -1287,9 +1287,9 @@ WHERE p.Type ='B'
                     if (totalCount == fileCount)
                     {
                         // 02 false
-                        if (!this.ErrorMessage.Contains("Carton couunt not mapping."))
+                        if (!this.ErrorMessage.Contains("Carton count not mapping."))
                         {
-                            this.ErrorMessage += "Carton couunt not mapping." + Environment.NewLine;
+                            this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
                         }
 
                         if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
@@ -1374,9 +1374,9 @@ WHERE p.Type ='B'
                         else
                         {
                             // 05 false
-                            if (!this.ErrorMessage.Contains("Carton couunt not mapping."))
+                            if (!this.ErrorMessage.Contains("Carton count not mapping."))
                             {
-                                this.ErrorMessage += "Carton couunt not mapping." + Environment.NewLine;
+                                this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
                             }
 
                             if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
@@ -1399,9 +1399,9 @@ WHERE p.Type ='B'
                 }
                 else
                 {
-                    if (!this.ErrorMessage.Contains("Carton couunt not mapping."))
+                    if (!this.ErrorMessage.Contains("Carton count not mapping."))
                     {
-                        this.ErrorMessage += "Carton couunt not mapping." + Environment.NewLine;
+                        this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
                     }
 
                     if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
