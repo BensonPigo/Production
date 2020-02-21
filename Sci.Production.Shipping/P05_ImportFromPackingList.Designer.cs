@@ -32,6 +32,10 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtSPEnd = new Sci.Win.UI.TextBox();
+            this.txtSpStart = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.dateDelivery = new Sci.Win.UI.DateRange();
             this.labelDelivery = new Sci.Win.UI.Label();
@@ -45,10 +49,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtSpStart = new Sci.Win.UI.TextBox();
-            this.txtSPEnd = new Sci.Win.UI.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labCancelOrder = new System.Windows.Forms.Label();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -74,6 +75,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.labCancelOrder);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.txtSPEnd);
             this.panel3.Controls.Add(this.txtSpStart);
@@ -88,8 +90,43 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(929, 76);
+            this.panel3.Size = new System.Drawing.Size(929, 97);
             this.panel3.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(691, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(16, 17);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "~";
+            // 
+            // txtSPEnd
+            // 
+            this.txtSPEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPEnd.Location = new System.Drawing.Point(713, 13);
+            this.txtSPEnd.Name = "txtSPEnd";
+            this.txtSPEnd.Size = new System.Drawing.Size(100, 23);
+            this.txtSPEnd.TabIndex = 9;
+            // 
+            // txtSpStart
+            // 
+            this.txtSpStart.BackColor = System.Drawing.Color.White;
+            this.txtSpStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpStart.Location = new System.Drawing.Point(585, 13);
+            this.txtSpStart.Name = "txtSpStart";
+            this.txtSpStart.Size = new System.Drawing.Size(100, 23);
+            this.txtSpStart.TabIndex = 8;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(538, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 23);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "SP#";
             // 
             // btnQuery
             // 
@@ -215,9 +252,9 @@
             // 
             this.panel5.Controls.Add(this.gridImport);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(5, 76);
+            this.panel5.Location = new System.Drawing.Point(5, 97);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(929, 340);
+            this.panel5.Size = new System.Drawing.Size(929, 319);
             this.panel5.TabIndex = 5;
             // 
             // gridImport
@@ -242,44 +279,19 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(929, 340);
+            this.gridImport.Size = new System.Drawing.Size(929, 319);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
-            // label1
+            // labCancelOrder
             // 
-            this.label1.Location = new System.Drawing.Point(538, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(44, 23);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "SP#";
-            // 
-            // txtSpStart
-            // 
-            this.txtSpStart.BackColor = System.Drawing.Color.White;
-            this.txtSpStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpStart.Location = new System.Drawing.Point(585, 13);
-            this.txtSpStart.Name = "txtSpStart";
-            this.txtSpStart.Size = new System.Drawing.Size(100, 23);
-            this.txtSpStart.TabIndex = 8;
-            // 
-            // txtSPEnd
-            // 
-            this.txtSPEnd.BackColor = System.Drawing.Color.White;
-            this.txtSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPEnd.Location = new System.Drawing.Point(713, 13);
-            this.txtSPEnd.Name = "txtSPEnd";
-            this.txtSPEnd.Size = new System.Drawing.Size(100, 23);
-            this.txtSPEnd.TabIndex = 9;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(691, 16);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(16, 17);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "~";
+            this.labCancelOrder.AutoSize = true;
+            this.labCancelOrder.ForeColor = System.Drawing.Color.Red;
+            this.labCancelOrder.Location = new System.Drawing.Point(7, 72);
+            this.labCancelOrder.Name = "labCancelOrder";
+            this.labCancelOrder.Size = new System.Drawing.Size(246, 17);
+            this.labCancelOrder.TabIndex = 11;
+            this.labCancelOrder.Text = "Cancel order cannot import in the GB.";
             // 
             // P05_ImportFromPackingList
             // 
@@ -330,5 +342,6 @@
         private Win.UI.TextBox txtSPEnd;
         private Win.UI.TextBox txtSpStart;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labCancelOrder;
     }
 }

@@ -1532,6 +1532,14 @@ Packing List : {pid}";
                 return;
             }
 
+            // 有Cancel Order 不能confirmed
+            string errmsg = PublicPrg.Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
+            if (!MyUtility.Check.Empty(errmsg))
+            {
+                MyUtility.Msg.WarningBox(errmsg);
+                return;
+            }
+
             // shipper 不可為空
             if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
             {
@@ -1957,7 +1965,6 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                     SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
                 }
 
-                DataTable tmpdt = this.DetailDatas.CopyToDataTable();
                 string sqlcmd = $@"
 select distinct ShipperID=isnull(f1.ShipperID, f2.ShipperID)
 from Orders o

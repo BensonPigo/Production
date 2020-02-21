@@ -78,17 +78,45 @@ namespace Sci.Production.Shipping
         {
             #region 組SQL
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select distinct 1 as Selected,g.ID,g.BrandID,g.ShipModeID,(g.Forwarder+' - '+ls.Abb) as Forwarder,g.CutOffDate,g.CYCFS,
-      g.SONo,g.ForwarderWhse_DetailUKey,isnull((select WhseNo from ForwarderWhse_Detail WITH (NOLOCK) where UKey = g.ForwarderWhse_DetailUKey),'') as WhseNo,iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,
-	  g.TotalCTNQty,g.TotalShipQty,g.TotalCBM,(select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null) as ClogCTNQty
-	  from GMTBooking g WITH (NOLOCK) , Order_QtyShip oq WITH (NOLOCK) , PackingList p WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK) ,LocalSupp ls WITH (NOLOCK) 
-	  where g.ShipPlanID = ''
-	  and g.SOCFMDate is not null
-	  and g.ID = p.INVNo
-	  and p.ID = pd.ID
-	  and pd.OrderID = oq.Id
-	  and pd.OrderShipmodeSeq = oq.Seq
-	  and g.Forwarder = ls.ID");
+            sqlCmd.Append(@"
+SELECT DISTINCT [Selected] = 1, 
+                g.id, 
+                g.brandid, 
+                g.shipmodeid, 
+                [Forwarder] = ( g.forwarder + ' - ' + ls.abb ), 
+                g.cutoffdate, 
+                g.cycfs, 
+                g.sono, 
+                g.forwarderwhse_detailukey, 
+                [WhseNo] = Isnull((SELECT whseno 
+                        FROM   forwarderwhse_detail WITH (nolock) 
+                        WHERE  ukey = g.forwarderwhse_detailukey), ''), 
+                [Status] = Iif(
+					g.status = 'Confirmed', 'GB Confirmed', 
+					Iif(g.socfmdate IS NULL, '', 'S/O Confirmed')), 
+                g.totalctnqty, 
+                g.totalshipqty, 
+                g.totalcbm, 
+                [ClogCTNQty] = (SELECT Isnull(Sum(pd.ctnqty), 0) 
+                 FROM   packinglist p WITH (nolock), 
+                        packinglist_detail pd WITH (nolock) 
+                 WHERE  p.invno = g.id 
+                        AND p.id = pd.id 
+                        AND pd.receivedate IS NOT NULL)
+FROM   gmtbooking g WITH (nolock), 
+       order_qtyship oq WITH (nolock), 
+       packinglist p WITH (nolock), 
+       packinglist_detail pd WITH (nolock), 
+       localsupp ls WITH (nolock),
+	   orders o WITH (nolock)
+WHERE  g.shipplanid = '' 
+       AND g.socfmdate IS NOT NULL 
+       AND g.id = p.invno 
+       AND p.id = pd.id 
+       AND pd.orderid = oq.id 
+       AND pd.ordershipmodeseq = oq.seq 
+       AND g.forwarder = ls.id 
+	   AND o.ID = oq.Id AND o.junk = 0 ");
             if (!MyUtility.Check.Empty(this.txtGBNoStart.Text))
             {
                 sqlCmd.Append(string.Format(" and g.id >= '{0}'", this.txtGBNoStart.Text));

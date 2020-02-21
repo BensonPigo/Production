@@ -75,7 +75,8 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select pd.*,o.StyleID,o.BrandID,o.Dest,
+                @"
+select pd.*,o.StyleID,o.BrandID,o.Dest,
 Variance = (
 	pd.OrderQty 
 	- isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where OrderID = pd.OrderID),0)
@@ -569,11 +570,27 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             {
                 return;
             }
-            
+
             if (!Prgs.CheckExistsOrder_QtyShip_Detail(PulloutID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
                 return;
             }
+
+            // 有Cancel Order 不能confirmed
+            bool errchk = false;
+            string strErrmsg = PublicPrg.Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
+            if (!MyUtility.Check.Empty(strErrmsg))
+            {
+                MyUtility.Msg.WarningBox(strErrmsg);
+                return;
+            }
+
+            if (errchk)
+            {
+                MyUtility.Msg.WarningBox(strErrmsg.ToString());
+                return;
+            }
+
             // 模擬按Edit行為
             this.toolbar.cmdEdit.PerformClick();
 
@@ -592,7 +609,6 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             #region 檢查Variance是否<0, 若<0則不能confirm 這段
             StringBuilder errmsg = new StringBuilder();
             errmsg.Append("Cannot confirm this Pullout!!\r\n");
-            bool errchk = false;
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
                 if (MyUtility.Convert.GetDecimal(dr["Variance"]) < 0)
@@ -602,11 +618,6 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 }
             }
 
-            if (errchk)
-            {
-                MyUtility.Msg.WarningBox(errmsg.ToString());
-                return;
-            }
             #endregion
 
             // 檢查表身資料不可為空
@@ -946,6 +957,7 @@ with ShipPlanData as (
           and s.Status = 'Confirmed'
           and p.MDivisionID = '{0}'
           and p.PulloutDate = '{1}'
+          and o.junk = 0
           and (  p.PulloutID = '' or p.PulloutID = '{2}') -- 20161220 willy 避免如果原本有資料,之後修改資料會清空shipQty問題
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode, o.Qty
           , oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest
@@ -979,6 +991,7 @@ FLPacking as (
             and p.Status = 'Confirmed'
             and p.MDivisionID = '{0}'
             and p.PulloutDate = '{1}'
+            and o.junk = 0
             and (p.PulloutID = '' or p.PulloutID='{2}')  -- 20170918 aaron 避免如果原本有資料,之後修改資料會清空shipQty問題
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode
              , o.Qty, oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest 
@@ -1293,6 +1306,7 @@ with ShipPlanData as (
                                                         and oqd.SizeCode = pd.SizeCode
     where (p.Type = 'B' or p.Type = 'S')
           and s.Status = 'Confirmed'
+          and o.junk = 0
           and p.MDivisionID = '{0}'
           and p.PulloutDate = '{1}'
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode, o.Qty
@@ -1325,6 +1339,7 @@ FLPacking as (
                                                         and oqd.SizeCode = pd.SizeCode
     where   (p.Type = 'F' or p.Type = 'L')
             and p.Status = 'Confirmed'
+            and o.junk = 0
             and p.MDivisionID = '{0}'
             and p.PulloutDate = '{1}'
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode
