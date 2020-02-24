@@ -646,9 +646,8 @@ MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
             string toAddress = string.Join(";", x);
             string ccAddress = string.Empty;
             string factory = MyUtility.GetValue.Lookup($@"select factoryID from orders with(nolock) where id = '{this.CurrentMaintain["Orderid"]}'");
-            string subject = $@"== this is my test mail (Testing) == {this.CurrentMaintain["ID"]} {this.CurrentMaintain["Orderid"]} {factory} {status}";
-            string description = $@"== this is my test mail (Testing) ==
-{status} SP#{this.CurrentMaintain["Orderid"]}-{factory} request change qty, please check, apply id# - {this.CurrentMaintain["ID"]}";
+            string subject = $@"{this.CurrentMaintain["ID"]} {this.CurrentMaintain["Orderid"]} {factory} {status}";
+            string description = $@"{status} SP#{this.CurrentMaintain["Orderid"]}-{factory} request change qty, please check, apply id# - {this.CurrentMaintain["ID"]}";
 
             var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, true, true);
             email.ShowDialog(this);
