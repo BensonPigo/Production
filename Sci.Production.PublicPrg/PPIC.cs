@@ -10,9 +10,17 @@ using Ict;
 using Ict.Win;
 using System.Configuration;
 using PostJobLog;
+using Newtonsoft.Json;
 
 namespace Sci.Production.PublicPrg
 {
+    public class OrderChangeModel
+    {
+        public string ID { get; set; }
+        public string Status { get; set; }
+        public string EditName { get; set; }
+        public string FTYComments { get; set; }
+    }
 
     public static partial class Prgs
     {
@@ -130,5 +138,36 @@ ID
             result = callTPEWebAPI.CallWebApiPost("/api/ReplacementReport/UpdateReplacement", postBody);
             return result;
         }
+
+        public static DualResult PostOrderChange(string _ID, string _status, string ftyComments)
+        {
+            OrderChangeModel orderChangeModel = new OrderChangeModel()
+            {
+                ID = _ID
+                , Status = _status
+                , EditName = Env.User.UserID
+                , FTYComments = ftyComments
+            };
+
+            DualResult result;
+            string tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"]; 
+            CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
+
+            result = callTPEWebAPI.CallWebApiPost("api/OrderChange/Receive", orderChangeModel);
+            return result;
+        }
+
+        public static bool CheckOrderChangeConfirmed(string orderid, string seq)
+        {
+            string sqlcmd = $@"
+select 1
+from OrderChangeApplication o with(nolock)
+inner join OrderChangeApplication_Detail od with(nolock) on o.ID = od.id
+where OrderID = '{orderid}' and od.Seq = '{seq}' and status != 'Confirmed' and status != 'Closed' 
+";
+            return !MyUtility.Check.Seek(sqlcmd);
+        }
+
+
     }
 }
