@@ -288,7 +288,7 @@ and ShipQty = PullQty");
                 objArray[0, 25] = dr["PullQty"];
                 objArray[0, 26] = dr["Reason"];
 
-                worksheet.Range[string.Format("A{0}:X{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:AA{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
