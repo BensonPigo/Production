@@ -40,12 +40,17 @@
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateCutOffDate = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtCustcd = new Sci.Production.Class.txtcustcd();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.checkOnlyPrintTheIrregularData = new Sci.Win.UI.CheckBox();
+            this.checkExcludeLocalOrder = new Sci.Win.UI.CheckBox();
+            this.checkExcludeFOC = new Sci.Win.UI.CheckBox();
+            this.checkOnlyFOC = new Sci.Win.UI.CheckBox();
+            this.lbPulloutDate = new Sci.Win.UI.Label();
+            this.datePulloutDate = new Sci.Win.UI.DateRange();
             this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtCustcd = new Sci.Production.Class.txtcustcd();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -86,7 +91,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(13, 120);
+            this.labelBrand.Location = new System.Drawing.Point(13, 156);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(95, 23);
             this.labelBrand.TabIndex = 97;
@@ -94,7 +99,7 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Location = new System.Drawing.Point(13, 156);
+            this.labelCustCD.Location = new System.Drawing.Point(13, 192);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(95, 23);
             this.labelCustCD.TabIndex = 98;
@@ -102,7 +107,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 192);
+            this.labelM.Location = new System.Drawing.Point(13, 228);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(95, 23);
             this.labelM.TabIndex = 99;
@@ -110,7 +115,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 228);
+            this.labelFactory.Location = new System.Drawing.Point(13, 264);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(95, 23);
             this.labelFactory.TabIndex = 100;
@@ -118,7 +123,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(13, 264);
+            this.labelCategory.Location = new System.Drawing.Point(13, 300);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(95, 23);
             this.labelCategory.TabIndex = 101;
@@ -190,35 +195,17 @@
             this.dateCutOffDate.Size = new System.Drawing.Size(280, 23);
             this.dateCutOffDate.TabIndex = 104;
             // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(112, 120);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(84, 23);
-            this.txtbrand.TabIndex = 105;
-            // 
-            // txtCustcd
-            // 
-            this.txtCustcd.BackColor = System.Drawing.Color.White;
-            this.txtCustcd.BrandObjectName = null;
-            this.txtCustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCustcd.Location = new System.Drawing.Point(112, 156);
-            this.txtCustcd.Name = "txtCustcd";
-            this.txtCustcd.Size = new System.Drawing.Size(125, 23);
-            this.txtCustcd.TabIndex = 106;
-            // 
             // comboM
             // 
             this.comboM.BackColor = System.Drawing.Color.White;
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(112, 192);
+            this.comboM.Location = new System.Drawing.Point(112, 228);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(74, 24);
-            this.comboM.TabIndex = 107;
+            this.comboM.TabIndex = 108;
             // 
             // comboFactory
             // 
@@ -226,21 +213,85 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(112, 228);
+            this.comboFactory.Location = new System.Drawing.Point(112, 264);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(74, 24);
-            this.comboFactory.TabIndex = 108;
+            this.comboFactory.TabIndex = 109;
             // 
             // checkOnlyPrintTheIrregularData
             // 
             this.checkOnlyPrintTheIrregularData.AutoSize = true;
             this.checkOnlyPrintTheIrregularData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkOnlyPrintTheIrregularData.Location = new System.Drawing.Point(13, 300);
+            this.checkOnlyPrintTheIrregularData.Location = new System.Drawing.Point(12, 339);
             this.checkOnlyPrintTheIrregularData.Name = "checkOnlyPrintTheIrregularData";
             this.checkOnlyPrintTheIrregularData.Size = new System.Drawing.Size(202, 21);
-            this.checkOnlyPrintTheIrregularData.TabIndex = 110;
+            this.checkOnlyPrintTheIrregularData.TabIndex = 111;
             this.checkOnlyPrintTheIrregularData.Text = "Only Print the irregular data";
             this.checkOnlyPrintTheIrregularData.UseVisualStyleBackColor = true;
+            // 
+            // checkExcludeLocalOrder
+            // 
+            this.checkExcludeLocalOrder.AutoSize = true;
+            this.checkExcludeLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkExcludeLocalOrder.Location = new System.Drawing.Point(12, 366);
+            this.checkExcludeLocalOrder.Name = "checkExcludeLocalOrder";
+            this.checkExcludeLocalOrder.Size = new System.Drawing.Size(155, 21);
+            this.checkExcludeLocalOrder.TabIndex = 112;
+            this.checkExcludeLocalOrder.Text = "Exclude Local Order";
+            this.checkExcludeLocalOrder.UseVisualStyleBackColor = true;
+            // 
+            // checkExcludeFOC
+            // 
+            this.checkExcludeFOC.AutoSize = true;
+            this.checkExcludeFOC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkExcludeFOC.Location = new System.Drawing.Point(12, 393);
+            this.checkExcludeFOC.Name = "checkExcludeFOC";
+            this.checkExcludeFOC.Size = new System.Drawing.Size(108, 21);
+            this.checkExcludeFOC.TabIndex = 113;
+            this.checkExcludeFOC.Text = "Exclude FOC";
+            this.checkExcludeFOC.UseVisualStyleBackColor = true;
+            // 
+            // checkOnlyFOC
+            // 
+            this.checkOnlyFOC.AutoSize = true;
+            this.checkOnlyFOC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkOnlyFOC.Location = new System.Drawing.Point(13, 420);
+            this.checkOnlyFOC.Name = "checkOnlyFOC";
+            this.checkOnlyFOC.Size = new System.Drawing.Size(88, 21);
+            this.checkOnlyFOC.TabIndex = 114;
+            this.checkOnlyFOC.Text = "Only FOC";
+            this.checkOnlyFOC.UseVisualStyleBackColor = true;
+            // 
+            // lbPulloutDate
+            // 
+            this.lbPulloutDate.Location = new System.Drawing.Point(13, 119);
+            this.lbPulloutDate.Name = "lbPulloutDate";
+            this.lbPulloutDate.Size = new System.Drawing.Size(95, 23);
+            this.lbPulloutDate.TabIndex = 144;
+            this.lbPulloutDate.Text = "Pullout Date";
+            // 
+            // datePulloutDate
+            // 
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.datePulloutDate.DateBox1.Name = "";
+            this.datePulloutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.datePulloutDate.DateBox2.Name = "";
+            this.datePulloutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox2.TabIndex = 1;
+            this.datePulloutDate.IsRequired = false;
+            this.datePulloutDate.Location = new System.Drawing.Point(112, 119);
+            this.datePulloutDate.Name = "datePulloutDate";
+            this.datePulloutDate.Size = new System.Drawing.Size(280, 23);
+            this.datePulloutDate.TabIndex = 105;
             // 
             // comboCategory
             // 
@@ -248,15 +299,40 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(112, 263);
+            this.comboCategory.Location = new System.Drawing.Point(112, 299);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(238, 24);
-            this.comboCategory.TabIndex = 140;
+            this.comboCategory.TabIndex = 110;
             this.comboCategory.Type = "Pms_GMT_Simple";
+            // 
+            // txtCustcd
+            // 
+            this.txtCustcd.BackColor = System.Drawing.Color.White;
+            this.txtCustcd.BrandObjectName = null;
+            this.txtCustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustcd.Location = new System.Drawing.Point(112, 192);
+            this.txtCustcd.Name = "txtCustcd";
+            this.txtCustcd.Size = new System.Drawing.Size(125, 23);
+            this.txtCustcd.TabIndex = 107;
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(112, 156);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(84, 23);
+            this.txtbrand.TabIndex = 106;
             // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(526, 357);
+            this.ClientSize = new System.Drawing.Size(526, 476);
+            this.Controls.Add(this.datePulloutDate);
+            this.Controls.Add(this.lbPulloutDate);
+            this.Controls.Add(this.checkOnlyFOC);
+            this.Controls.Add(this.checkExcludeFOC);
+            this.Controls.Add(this.checkExcludeLocalOrder);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.checkOnlyPrintTheIrregularData);
             this.Controls.Add(this.comboFactory);
@@ -276,7 +352,11 @@
             this.Controls.Add(this.labelBuyerDelivery);
             this.IsSupportToPrint = false;
             this.Name = "R08";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R08. Packing Check List";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -297,6 +377,11 @@
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.checkOnlyPrintTheIrregularData, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
+            this.Controls.SetChildIndex(this.checkExcludeLocalOrder, 0);
+            this.Controls.SetChildIndex(this.checkExcludeFOC, 0);
+            this.Controls.SetChildIndex(this.checkOnlyFOC, 0);
+            this.Controls.SetChildIndex(this.lbPulloutDate, 0);
+            this.Controls.SetChildIndex(this.datePulloutDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -321,5 +406,10 @@
         private Win.UI.ComboBox comboFactory;
         private Win.UI.CheckBox checkOnlyPrintTheIrregularData;
         private Class.comboDropDownList comboCategory;
+        private Win.UI.CheckBox checkExcludeLocalOrder;
+        private Win.UI.CheckBox checkExcludeFOC;
+        private Win.UI.CheckBox checkOnlyFOC;
+        private Win.UI.Label lbPulloutDate;
+        private Win.UI.DateRange datePulloutDate;
     }
 }

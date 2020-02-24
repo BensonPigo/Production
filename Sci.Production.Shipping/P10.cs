@@ -1023,6 +1023,14 @@ select STUFF((
 
             #endregion
 
+            // 有Cancel Order 不能confirmed
+            string errmsg = PublicPrg.Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
+            if (!MyUtility.Check.Empty(errmsg))
+            {
+                MyUtility.Msg.WarningBox(errmsg);
+                return;
+            }
+
             string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed',CFMDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             result = DBProxy.Current.Execute(null, updateCmd);

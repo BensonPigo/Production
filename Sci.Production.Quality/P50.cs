@@ -38,7 +38,7 @@ namespace Sci.Production.Quality
             sqlpara.Add(new SqlParameter("@inputFactory", this.txtFactory.Text));
             if (!string.IsNullOrEmpty(this.txtLine.Text)) {
                 sqlpara.Add(new SqlParameter("@line", this.txtLine.Text));
-                sqlwhere = "and WorkLine = @line";
+                sqlwhere = "and i.Line = @line";
             }
 
             string sqlQuery = $@"
@@ -68,15 +68,17 @@ namespace Sci.Production.Quality
     
     declare @MaxWorkTime datetime
     declare @MinWorkTime datetime
-    
-    select  WorkTime,
-            FailCode,
-            qty
-    into    #tmpReworkTotal
-    from [ExtendServer].[Dashboard].[dbo].[ReworkTotal] with (nolock)
-    where WorkDate = @Startime 
-    and FactoryID = @Factory
+
+	select [WorkTime] = i.AddDate
+		,[FailCode] = idetail.GarmentDefectCodeID
+		,[qty] = count(*) 
+	into  #tmpReworkTotal
+	from [ExtendServer].[ManufacturingExecution].[dbo].[Inspection] i with (nolock)
+	inner join [ExtendServer].[ManufacturingExecution].[dbo].[Inspection_Detail] idetail with (nolock) on i.ID = idetail.ID
+	where i.InspectionDate = cast(@Startime as date)
+    and i.FactoryID = @Factory
     {sqlwhere}
+	group by i.AddDate, idetail.GarmentDefectCodeID
 
     select @MaxWorkTime = max(WorkTime), @MinWorkTime = min(WorkTime)
     from #tmpReworkTotal

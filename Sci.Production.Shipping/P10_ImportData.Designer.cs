@@ -32,6 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.comboContainerType = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
@@ -62,7 +63,7 @@
             this.panel8 = new Sci.Win.UI.Panel();
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnImportData = new Sci.Win.UI.Button();
-            this.comboContainerType = new Sci.Win.UI.ComboBox();
+            this.labCancelOrder = new System.Windows.Forms.Label();
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -93,6 +94,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.labCancelOrder);
             this.panel3.Controls.Add(this.comboContainerType);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.btnQuery);
@@ -115,8 +117,20 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(779, 100);
+            this.panel3.Size = new System.Drawing.Size(779, 119);
             this.panel3.TabIndex = 2;
+            // 
+            // comboContainerType
+            // 
+            this.comboContainerType.BackColor = System.Drawing.Color.White;
+            this.comboContainerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboContainerType.FormattingEnabled = true;
+            this.comboContainerType.IsSupportUnselect = true;
+            this.comboContainerType.Location = new System.Drawing.Point(563, 66);
+            this.comboContainerType.Name = "comboContainerType";
+            this.comboContainerType.OldText = "";
+            this.comboContainerType.Size = new System.Drawing.Size(121, 24);
+            this.comboContainerType.TabIndex = 13;
             // 
             // label1
             // 
@@ -157,6 +171,9 @@
             // 
             this.txtSubconForwarder.DisplayBox1Binding = "";
             this.txtSubconForwarder.IsIncludeJunk = false;
+            this.txtSubconForwarder.isMisc = false;
+            this.txtSubconForwarder.isShipping = false;
+            this.txtSubconForwarder.isSubcon = false;
             this.txtSubconForwarder.Location = new System.Drawing.Point(81, 67);
             this.txtSubconForwarder.Name = "txtSubconForwarder";
             this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
@@ -306,9 +323,9 @@
             this.panel5.Controls.Add(this.panel7);
             this.panel5.Controls.Add(this.panel6);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(5, 100);
+            this.panel5.Location = new System.Drawing.Point(5, 119);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(779, 507);
+            this.panel5.Size = new System.Drawing.Size(779, 488);
             this.panel5.TabIndex = 4;
             // 
             // panel7
@@ -317,7 +334,7 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(0, 307);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(779, 200);
+            this.panel7.Size = new System.Drawing.Size(779, 181);
             this.panel7.TabIndex = 1;
             // 
             // grid2
@@ -342,7 +359,7 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(779, 200);
+            this.grid2.Size = new System.Drawing.Size(779, 181);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
@@ -422,17 +439,15 @@
             this.btnImportData.UseVisualStyleBackColor = true;
             this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
-            // comboContainerType
+            // labCancelOrder
             // 
-            this.comboContainerType.BackColor = System.Drawing.Color.White;
-            this.comboContainerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboContainerType.FormattingEnabled = true;
-            this.comboContainerType.IsSupportUnselect = true;
-            this.comboContainerType.Location = new System.Drawing.Point(563, 66);
-            this.comboContainerType.Name = "comboContainerType";
-            this.comboContainerType.OldText = "";
-            this.comboContainerType.Size = new System.Drawing.Size(121, 24);
-            this.comboContainerType.TabIndex = 13;
+            this.labCancelOrder.AutoSize = true;
+            this.labCancelOrder.ForeColor = System.Drawing.Color.Red;
+            this.labCancelOrder.Location = new System.Drawing.Point(5, 95);
+            this.labCancelOrder.Name = "labCancelOrder";
+            this.labCancelOrder.Size = new System.Drawing.Size(286, 17);
+            this.labCancelOrder.TabIndex = 18;
+            this.labCancelOrder.Text = "Cancel order cannot import in the Ship Plan.";
             // 
             // P10_ImportData
             // 
@@ -498,5 +513,6 @@
         private Win.UI.Button btnImportData;
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboContainerType;
+        private System.Windows.Forms.Label labCancelOrder;
     }
 }

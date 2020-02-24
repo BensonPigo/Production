@@ -1465,6 +1465,67 @@ where POID = @poid group by POID,b.spno";
                 }
             }
 
+            #region Cancel Order 檢查總產出數量必須 = 總裝箱數量，並且每一個箱子都必須轉移到 Clog
+            /*
+            System.Data.DataTable[] dtPacking;
+            string sql = $@"
+-- 判斷是否有CancelOrder
+select id from Orders 
+where poid= '{this.CurrentMaintain["Poid"]}'
+and Junk = 1
+
+
+-- 判斷是否有進Clog
+select distinct pd.OrderID
+from PackingList_Detail pd
+inner join Orders o on pd.OrderID= o.ID
+where o.poid= '{this.CurrentMaintain["Poid"]}'
+and pd.ReceiveDate is null
+
+-- show整個採購組合總裝箱數量和總產出數量
+select 
+[TotalPackQty] = sum(pd.ShipQty)
+,[TotalQty] = sum(o.Qty) 
+,o.POID
+from Orders o 
+outer apply(
+	select ShipQty = sum(shipQty)
+	from PackingList_Detail pd
+	where pd.OrderID = o.ID
+)pd
+where o.poid= '{this.CurrentMaintain["Poid"]}'
+group by o.POID";
+
+            if (!(result = DBProxy.Current.Select(null, sql, out dtPacking)))
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            string errormsg = string.Empty;
+
+            // 判斷是否有CancelOrder
+            if (dtPacking[0].Rows.Count > 0)
+            {
+                // 判斷是否每一個箱子都必須轉移到 Clog 和 總產出數量 = 總裝箱數量
+                if (dtPacking[1].Rows.Count > 0 ||
+                    MyUtility.Convert.GetInt(dtPacking[1].Rows[2]["TotalPackQty"]) != MyUtility.Convert.GetInt(dtPacking[2].Rows[0]["TotalQty"]))
+                {
+                    foreach (DataRow dr in dtPacking[0].Rows)
+                    {
+                        errormsg += $"{dr["id"]}" + Environment.NewLine;
+                    }
+                }
+            }
+
+            if (!errormsg.Empty())
+            {
+                MyUtility.Msg.WarningBox("SP# :" + Environment.NewLine + errormsg + @"is cancel order, already output garment must create Packing List and transfer carton to Clog before use function 'shipment finish'.");
+                return;
+            }
+            */
+            #endregion
+
             string sqlCmd;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "M" || MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "T")
             {

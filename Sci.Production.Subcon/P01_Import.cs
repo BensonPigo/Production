@@ -180,7 +180,8 @@ namespace Sci.Production.Subcon
                 .Numeric("Cost", header: "Cost(USD)", settings: ns, iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
                 .Numeric("UnitPrice", header: "Unit Price", settings: ns, iseditable: true, decimal_places: 4, integer_places: 4)  //12
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)  //13
-                .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14);  //14
+                .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14)
+                .Text("IrregularQtyReason", header: "Irregular Qty Reason", iseditingreadonly: true);  //14
 
 
             //this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
@@ -280,6 +281,7 @@ select distinct Selected = 0
         , [ArtworkReqID] = ar.ID
         , oa.Article
         , o.Category
+        , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
 into #quoteFromPlanningB03
 from  orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
@@ -293,6 +295,8 @@ inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = o.ID and
                                                     ard.PatternDesc = oa.PatternDesc and
                                                     ard.ArtworkPOID = ''
 inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = oa.ArtworkTypeID and ar.Status = 'Approved' and ar.LocalSuppId = '{2}'
+left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
+left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
 left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0 and sao.LocalSuppId = ar.LocalSuppId
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
@@ -312,6 +316,11 @@ and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and o.Junk=0
             if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
             if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+            if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
+            {
+                string whereReasonID = this.txtIrregularQtyReason.WhereString();
+                strSQLCmd += $@" and ai.SubconReasonID in ({whereReasonID})";
+            }
 
             strSQLCmd += @"
 --將報價相同的Article資料合併
@@ -347,6 +356,7 @@ select distinct
                                     PatternDesc = main.PatternDesc and
                                     unitprice = main.unitprice FOR XML PATH('')),1,1,'') )
         , Category
+        , IrregularQtyReason
 from #quoteFromPlanningB03 main
 
 ";
@@ -383,8 +393,11 @@ select  Selected = 0
         , [ArtworkReqID] = ar.ID
         , [Article] = (SELECT Stuff((select concat( ',',Article)   from Order_Article with (nolock) where ID = o.ID FOR XML PATH('')),1,1,'') )
         , o.Category
+        , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
 from ArtworkReq ar WITH (NOLOCK) 
 inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID and ard.ArtworkPOID = ''
+left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
+left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
 inner join orders o WITH (NOLOCK) on ard.OrderID = o.ID
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.ArtworkTypeID = ar.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
@@ -414,7 +427,11 @@ and ar.LocalSuppID = '{dr_artworkpo["localsuppid"]}'
             if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
             if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
-
+            if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
+            {
+                string whereReasonID = this.txtIrregularQtyReason.WhereString();
+                strSQLCmd += $@" and ai.SubconReasonID in ({whereReasonID})";
+            }
 
             return strSQLCmd;
         }
@@ -447,6 +464,7 @@ select distinct  Selected = 0
         , [ArtworkReqID] = ar.ID
         , [Article] = oat.Article
         , o.Category
+        , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
 from  orders o WITH (NOLOCK)
 inner join Order_Article oat with (nolock) on o.ID = oat.ID
 inner join ArtworkReq ar WITH (NOLOCK) on ar.Status = 'Approved'
@@ -454,6 +472,8 @@ inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.ArtworkType
 inner join ArtworkReq_Detail ard with (nolock) on   ard.ID = ar.ID  and
                                                     ard.OrderId = o.ID and 
                                                     ard.ArtworkPOID = ''
+left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
+left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select IssueQty = ISNULL(sum(PoQty),0)
@@ -471,6 +491,11 @@ and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !
             if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
             if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+            if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
+            {
+                string whereReasonID = this.txtIrregularQtyReason.WhereString();
+                strSQLCmd += $@" and ai.SubconReasonID in ({whereReasonID})";
+            }
 
             return strSQLCmd;
         }
@@ -483,7 +508,11 @@ and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !
             if (!(dateApproveDate.Value1 == null)) { sqlWhere += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
             if (!(dateApproveDate.Value2 == null)) { sqlWhere += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
             if (!(string.IsNullOrWhiteSpace(sp_b))) { sqlWhere += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
-
+            if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
+            {
+                string whereReasonID = this.txtIrregularQtyReason.WhereString();
+                sqlWhere += $@" and ai.SubconReasonID in ({whereReasonID})";
+            }
 
             string sqlGetSpecialRecordData = $@"
 select	ar.LocalSuppId
@@ -512,6 +541,8 @@ select	ar.LocalSuppId
         , o.Category
 from ArtworkReq ar  with (nolock)
 inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID 
+left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
+left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
 inner join orders o WITH (NOLOCK) on ard.OrderId = o.ID  
 inner join ArtworkType at with (nolock) on ar.ArtworkTypeID = at.ID
 outer apply (

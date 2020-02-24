@@ -482,11 +482,11 @@ please check again.");
             }
         }
 
-          
-    #endregion
 
-    #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
-    public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)
+        #endregion
+
+        #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+        public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)
         {
             var listDupNLCodeData = checkList
                                    .GroupBy(s => new { ID = s["ID"], NLCode = s["NLCode"], HSCode = s["HSCode"], UnitID = s["UnitID"] })
@@ -560,7 +560,7 @@ please check again.");
         public static DualResult GetVNConsumption_Detail_Detail(ParGetVNConsumption_Detail_Detail sqlPar, out DataTable dataTable)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            
+
             #region 組撈所有明細SQL
             sqlCmd.Append($@"
 select  o.StyleUkey
@@ -1311,6 +1311,41 @@ drop table #tmpThreadData");
 
         #endregion
 
+        #region Check CancelOrder cannot confirmed
+        public static string ChkCancelOrder(string id)
+        {
+            DualResult result;
+            string errmsg = string.Empty;
+            string SP = string.Empty;
+            DataTable dtCancel;
 
+            string sqlcmd = $@"
+select distinct pd.OrderID
+from PackingList p
+inner join PackingList_Detail pd on p.ID=pd.ID
+where (
+	p.ShipPlanID = '{id}' or 
+	p.INVNo = '{id}' or
+	p.PulloutID='{id}'
+)
+and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
+";
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtCancel);
+            if (!result)
+            {
+                errmsg = "Confirmed data fail!!\r\n" + result.ToString();
+                return errmsg;
+            }
+
+            string msgCancel = string.Empty;
+            if (dtCancel.Rows.Count > 0)
+            {
+                errmsg = $@"SP# {dtCancel.Rows[0]["OrderID"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.";                
+                return errmsg;
+            }
+
+            return errmsg;
+        }
+        #endregion
     }
 }

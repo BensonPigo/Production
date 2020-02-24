@@ -2414,6 +2414,10 @@
     <Build Include="dbo\Stored Procedures\Update_FabricLocation.sql" />
     <Build Include="dbo\Stored Procedures\imp_AutoFabric.sql" />
     <Build Include="dbo\Stored Procedures\exp_AutoFabric.sql" />
+    <Build Include="dbo\Tables\OrderChangeApplication_Seq.sql" />
+    <Build Include="dbo\Tables\OrderChangeApplication_History.sql" />
+    <Build Include="dbo\Tables\OrderChangeApplication_Detail.sql" />
+    <Build Include="dbo\Tables\OrderChangeApplication.sql" />
     <Build Include="dbo\Tables\ShareExpense_APP.sql" />
     <Build Include="dbo\Views\View_ShowName_TPE.sql">
       <AnsiNulls>On</AnsiNulls>
@@ -2439,6 +2443,14 @@
     <Build Include="dbo\Functions\udf-Str-JSON.sql" />
     <Build Include="dbo\Functions\GetAccountNoExpressType.sql" />
     <Build Include="dbo\Stored Procedures\CalculateShareExpense.sql" />
+    <Build Include="dbo\Stored Procedures\insert_Air_Fir_TnsfIn.sql" />
+    <Build Include="dbo\Functions\GetOrderAmount.sql" />
+    <Build Include="dbo\Tables\SubprocessLeadTime_Detail.sql" />
+    <Build Include="dbo\Tables\SubprocessLeadTime.sql" />
+    <Build Include="dbo\Tables\ICR_ResponsibilityDept.sql" />
+    <Build Include="dbo\Tables\ICR_ReplacementReport.sql" />
+    <Build Include="dbo\Tables\ICR_Detail.sql" />
+    <Build Include="dbo\Tables\ICR.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
