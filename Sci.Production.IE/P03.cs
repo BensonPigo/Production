@@ -38,10 +38,12 @@ namespace Sci.Production.IE
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.Fill;
         }
 
+        /// <summary>
+        /// ClickLocate
+        /// </summary>
         protected override void ClickLocate()
         {
             base.ClickLocate();
-            this.queryfors.SelectedIndex = 0;
             this.OnDetailEntered();
         }
 
@@ -50,9 +52,9 @@ namespace Sci.Production.IE
         {
             MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, "last 2 years modify,All");
             this.queryfors.SelectedIndex = 0;
-            if (MyUtility.Check.Empty(this.DefaultFilter))
+            if (MyUtility.Check.Empty(this.DefaultWhere))
             {
-                this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
             }
 
             base.OnFormLoaded();
@@ -61,15 +63,24 @@ namespace Sci.Production.IE
             {
                 switch (this.queryfors.SelectedIndex)
                 {
-                    case 1:
-                        this.DefaultFilter = string.Empty;
-                        break;
                     case 0:
-                        this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        break;
+                    case 1:
+                    default:
+                        this.DefaultWhere = string.Empty;
                         break;
                 }
 
+                // 請參考IE P01註解
+                if (this.QBCommand.Conditions.Count() == 0)
+                {
+                    this.QueryExpress = string.Empty;
+                }
+
                 this.ReloadDatas();
+
+                GC.Collect();
             };
 
             this.grid.Columns["ID"].Visible = false;
