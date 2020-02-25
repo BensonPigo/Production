@@ -80,6 +80,7 @@ namespace Sci.Production.Shipping
             }
 
             sqlShipperWhere += $" and gb.Shipper = '{this.txtShipper.Text}'";
+            sqlInvDateWhere += $" and gbi.Shipper = '{this.txtShipper.Text}'";
 
             if (this.txtInvSerFrom.Text.Length > 0)
             {
