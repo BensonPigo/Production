@@ -128,7 +128,7 @@ o.CPU,
 [SubProcessAMT] = SubProcessAMT.Value,
 [CPUCost] = CPUCost.Value,
 [LocalPurchase] = LocalPurchase.Value,
-[StdFtyCMP] = round(((o.CPU + SubProcessCPU.Value) * CPUCost.Value) + SubProcessAMT.Value + LocalPurchase.Value,3)
+[StdFtyCMP] = round(((o.CPU + SubProcessCPU.Value) * CPUCost.Value) + SubProcessAMT.Value + LocalPurchase.Value,2)
 into #tmpOrderStdFtyCMP
 from orders o with (nolock)
 inner join Factory f with (nolock) on o.FactoryID = f.ID
@@ -166,7 +166,7 @@ tbi.InvSerial,
 [COUNTRY_SOLD_TO] = 'TAIWAN',
 tbi.DestCountry,
 [ExRate] = 51,
-[CMP_ValuePH] = sum(pc.CMP_Value) * 51
+[CMP_ValuePH] = ''
 from #tmpBIRInvoice tbi
 inner join #PackCMP pc on pc.PackID = tbi.PackID
 group by	tbi.ShipTo,tbi.ID,tbi.InvSerial,tbi.DestCountry
@@ -194,12 +194,15 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
                 return false;
             }
 
+            int rowNum = 2;
             foreach (DataRow dr in dtResult.Rows)
             {
                 dr["ShipTo"] = dr["ShipTo"].ToString().Split(Convert.ToChar(10))[0];
 
                 // 只保留前段的數值 後面其他的文字全數去除
                 dr["InvSerial"] = dr["InvSerial"].ToString().TakeWhile(s => Regex.IsMatch(s.ToString(), "[0-9]")).Select(s => s.ToString()).JoinToString(string.Empty);
+                dr["CMP_ValuePH"] = $"=I{rowNum}*L{rowNum}";
+                rowNum++;
             }
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P11_BIRSalesReport.xltx";
