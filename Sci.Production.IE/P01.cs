@@ -171,7 +171,7 @@ order by td.Seq", masterID);
                     => 假如有設定DefaultOrder會導致，操作放大鏡後QueryExpress會恆寫入DefaultOrder所設定的值
                        ，導致在做ReloadDatas()都不會執行DefaultWhere結果。
                 */
-                if (this.QBCommand.Conditions.Count() == 0)
+                if (this.QBCommand != null && this.QBCommand.Conditions.Count() == 0)
                 {
                     this.QueryExpress = string.Empty;
                 }

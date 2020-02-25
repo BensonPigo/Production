@@ -73,7 +73,7 @@ namespace Sci.Production.IE
                 }
 
                 // 請參考IE P01註解
-                if (this.QBCommand.Conditions.Count() == 0)
+                if (this.QBCommand != null && this.QBCommand.Conditions.Count() == 0)
                 {
                     this.QueryExpress = string.Empty;
                 }
