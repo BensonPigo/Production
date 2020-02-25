@@ -585,6 +585,12 @@
     <Compile Include="R01.Designer.cs">
       <DependentUpon>R01.cs</DependentUpon>
     </Compile>
+    <Compile Include="R01_LastAPSdownloadTime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R01_LastAPSdownloadTime.Designer.cs">
+      <DependentUpon>R01_LastAPSdownloadTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -905,6 +911,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R01_LastAPSdownloadTime.resx">
+      <DependentUpon>R01_LastAPSdownloadTime.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>

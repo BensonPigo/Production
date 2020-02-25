@@ -1722,5 +1722,9 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             }
         }
 
+        private void BtnLastDownloadAPSDate_Click(object sender, EventArgs e)
+        {
+            new R01_LastAPSdownloadTime().ShowDialog();
+        }
     }
 }

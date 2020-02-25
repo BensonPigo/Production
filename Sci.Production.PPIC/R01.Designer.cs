@@ -48,21 +48,25 @@
             this.dateSewingDate = new Sci.Win.UI.DateRange();
             this.labSewingDate = new Sci.Win.UI.Label();
             this.chkGanttChart = new Sci.Win.UI.CheckBox();
+            this.btnLastDownloadAPSDate = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(401, 28);
+            this.print.Location = new System.Drawing.Point(379, 28);
+            this.print.Size = new System.Drawing.Size(115, 30);
             this.print.TabIndex = 9;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(401, 64);
+            this.toexcel.Location = new System.Drawing.Point(379, 64);
+            this.toexcel.Size = new System.Drawing.Size(115, 30);
             this.toexcel.TabIndex = 10;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(401, 100);
+            this.close.Location = new System.Drawing.Point(379, 100);
+            this.close.Size = new System.Drawing.Size(115, 30);
             this.close.TabIndex = 11;
             // 
             // txtVersion
@@ -307,9 +311,22 @@
             this.chkGanttChart.Text = "Include Gantt Chart";
             this.chkGanttChart.UseVisualStyleBackColor = true;
             // 
+            // btnLastDownloadAPSDate
+            // 
+            this.btnLastDownloadAPSDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLastDownloadAPSDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnLastDownloadAPSDate.Location = new System.Drawing.Point(379, 136);
+            this.btnLastDownloadAPSDate.Name = "btnLastDownloadAPSDate";
+            this.btnLastDownloadAPSDate.Size = new System.Drawing.Size(115, 66);
+            this.btnLastDownloadAPSDate.TabIndex = 554;
+            this.btnLastDownloadAPSDate.Text = "Last APS Download Time";
+            this.btnLastDownloadAPSDate.UseVisualStyleBackColor = true;
+            this.btnLastDownloadAPSDate.Click += new System.EventHandler(this.BtnLastDownloadAPSDate_Click);
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(493, 339);
+            this.ClientSize = new System.Drawing.Size(506, 339);
+            this.Controls.Add(this.btnLastDownloadAPSDate);
             this.Controls.Add(this.chkGanttChart);
             this.Controls.Add(this.dateSewingDate);
             this.Controls.Add(this.labSewingDate);
@@ -362,6 +379,7 @@
             this.Controls.SetChildIndex(this.labSewingDate, 0);
             this.Controls.SetChildIndex(this.dateSewingDate, 0);
             this.Controls.SetChildIndex(this.chkGanttChart, 0);
+            this.Controls.SetChildIndex(this.btnLastDownloadAPSDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -389,5 +407,6 @@
         private Win.UI.DateRange dateSewingDate;
         private Win.UI.Label labSewingDate;
         private Win.UI.CheckBox chkGanttChart;
+        private Win.UI.Button btnLastDownloadAPSDate;
     }
 }
