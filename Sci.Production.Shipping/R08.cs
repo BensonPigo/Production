@@ -23,12 +23,17 @@ namespace Sci.Production.Shipping
         private DateTime? sciDlv2;
         private DateTime? cutoffDate1;
         private DateTime? cutoffDate2;
+        private DateTime? pulloutDate1;
+        private DateTime? pulloutDate2;
         private string brand;
         private string custcd;
         private string mDivision;
         private string factory;
         private string category;
         private bool onlyirregular;
+        private bool excludeLocalOrder;
+        private bool excludeFOC;
+        private bool onlyFOC;
         private DataTable printData;
 
         /// <summary>
@@ -46,6 +51,8 @@ namespace Sci.Production.Shipping
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.SelectedIndex = -1;
+            this.checkExcludeLocalOrder.Checked = true;
+            this.checkExcludeFOC.Checked = true;
         }
 
         /// <inheritdoc/>
@@ -63,12 +70,17 @@ namespace Sci.Production.Shipping
             this.sciDlv2 = this.dateSCIDelivery.Value2;
             this.cutoffDate1 = this.dateCutOffDate.Value1;
             this.cutoffDate2 = this.dateCutOffDate.Value2;
+            this.pulloutDate1 = this.datePulloutDate.Value1;
+            this.pulloutDate2 = this.datePulloutDate.Value2;
             this.brand = this.txtbrand.Text;
             this.custcd = this.txtCustcd.Text;
             this.mDivision = this.comboM.Text;
             this.factory = this.comboFactory.Text;
             this.category = this.comboCategory.SelectedValue.ToString();
             this.onlyirregular = this.checkOnlyPrintTheIrregularData.Checked;
+            this.excludeLocalOrder = this.checkExcludeLocalOrder.Checked;
+            this.excludeFOC = this.checkExcludeFOC.Checked;
+            this.onlyFOC = this.checkOnlyFOC.Checked;
             return base.ValidateInput();
         }
 
@@ -141,24 +153,66 @@ where 1=1 and isnull(ot.IsGMTMaster,0) != 1");
                 sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}'", Convert.ToDateTime(this.cutoffDate2).ToString("d")));
             }
 
+            if (this.excludeLocalOrder)
+            {
+                sqlCmd.Append(string.Format(" and o.LocalOrder = 0"));
+            }
+
+            if (this.excludeFOC)
+            {
+                sqlCmd.Append(string.Format(" and o.FOC  = 0"));
+            }
+
+            if (this.onlyFOC)
+            {
+                sqlCmd.Append(string.Format(" and o.FOC  = 1"));
+            }
+
             sqlCmd.Append(@"
 select distinct t.ID,t.Seq into #tmpOrderdis from #tmpOrder t
 
 select t.ID,t.Seq,pd.Article,pd.SizeCode,sum(pd.ShipQty) as PackQty,p.INVNo,p.PulloutDate,
-pd.ID as PackID
+pd.ID as PackID,p.ExpressID,p.PulloutID
 into #PackData
 from #tmpOrderdis t
 inner join PackingList_Detail pd WITH (NOLOCK) on t.ID = pd.OrderID and t.Seq = pd.OrderShipmodeSeq
 inner join PackingList p WITH (NOLOCK) on pd.ID = p.ID
-group by t.ID,t.Seq,pd.Article,pd.SizeCode,p.INVNo,p.PulloutDate,pd.ID
+group by t.ID,t.Seq,pd.Article,pd.SizeCode,p.INVNo,p.PulloutDate,pd.ID,p.ExpressID,p.PulloutID
 
-select t.*,isnull(p.PackQty,0) as PackQty,isnull(p.INVNo,'') as INVNo,p.PulloutDate,isnull(p.PackID,'') as PackID,
-    isnull([dbo].getMinCompleteSewQty(t.ID,t.Article,t.SizeCode),0) as SewQty,
-    isnull((select sum(isnull(pdd.ShipQty,0)) from Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) where pd.UKey = pdd.Pullout_DetailUKey and pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and pdd.Article = t.Article and pdd.SizeCode = t.SizeCode),0) as PullQty
+select t.*
+    ,isnull(p.PackQty,0) as PackQty
+    ,isnull(p.INVNo,'') as INVNo
+    ,p.PulloutDate
+    ,isnull(p.PackID,'') as PackID
+    ,isnull([dbo].getMinCompleteSewQty(t.ID,t.Article,t.SizeCode),0) as SewQty
+    ,isnull(
+        (
+            select sum(isnull(pdd.ShipQty,0)) 
+            from Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) 
+            where pd.UKey = pdd.Pullout_DetailUKey
+            and pd.OrderID = t.ID 
+            and pd.OrderShipmodeSeq = t.Seq 
+            and pdd.Article = t.Article 
+            and pdd.SizeCode = t.SizeCode
+    ),0) as PullQty
+    ,p.ExpressID
+    ,p.PulloutID
 into #tempdata
 from #tmpOrder t
 left join #PackData p on t.ID = p.ID and t.Seq = p.Seq and t.Article = p.Article and t.SizeCode = p.SizeCode
+where 1=1");
 
+            if (!MyUtility.Check.Empty(this.pulloutDate1))
+            {
+                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.pulloutDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.pulloutDate2))
+            {
+                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.pulloutDate2).ToString("d")));
+            }
+
+            sqlCmd.Append(@"
 select *,IIF(ASQty <> SewQty,'Sewing Qty is not equal to Order Qty.','')+IIF(ShipQty <> PackQty,'Packing Qty '+IIF(ShipQty <> PullQty,'and Pullout Qty ','')+'is not equal to Order Qty by ship.',IIF(ShipQty <> PullQty,'Pullout Qty is not equal to Order Qty by ship.','')) as Reason
 from #tempdata");
 
@@ -203,35 +257,38 @@ and ShipQty = PullQty");
 
             // 填內容值
             int intRowsStart = 2;
-            object[,] objArray = new object[1, 24];
+            object[,] objArray = new object[1, 27];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["PackID"];
                 objArray[0, 1] = dr["ID"];
-                objArray[0, 2] = dr["BrandID"];
-                objArray[0, 3] = dr["CustCDID"];
-                objArray[0, 4] = dr["StyleID"];
-                objArray[0, 5] = dr["SeasonID"];
-                objArray[0, 6] = dr["Customize1"];
-                objArray[0, 7] = dr["CustPONo"];
-                objArray[0, 8] = dr["MDivisionID"];
-                objArray[0, 9] = dr["FactoryID"];
-                objArray[0, 10] = dr["Dest"];
-                objArray[0, 11] = dr["INVNo"];
-                objArray[0, 12] = dr["BuyerDelivery"];
-                objArray[0, 13] = dr["SciDelivery"];
-                objArray[0, 14] = dr["SDPDate"];
-                objArray[0, 15] = dr["PulloutDate"];
-                objArray[0, 16] = dr["Article"];
-                objArray[0, 17] = dr["SizeCode"];
-                objArray[0, 18] = dr["ASQty"];
-                objArray[0, 19] = dr["SewQty"];
-                objArray[0, 20] = dr["ShipQty"];
-                objArray[0, 21] = dr["PackQty"];
-                objArray[0, 22] = dr["PullQty"];
-                objArray[0, 23] = dr["Reason"];
+                objArray[0, 2] = dr["Seq"];
+                objArray[0, 3] = dr["BrandID"];
+                objArray[0, 4] = dr["CustCDID"];
+                objArray[0, 5] = dr["StyleID"];
+                objArray[0, 6] = dr["SeasonID"];
+                objArray[0, 7] = dr["Customize1"];
+                objArray[0, 8] = dr["CustPONo"];
+                objArray[0, 9] = dr["MDivisionID"];
+                objArray[0, 10] = dr["FactoryID"];
+                objArray[0, 11] = dr["Dest"];
+                objArray[0, 12] = dr["INVNo"];
+                objArray[0, 13] = dr["ExpressID"];
+                objArray[0, 14] = dr["BuyerDelivery"];
+                objArray[0, 15] = dr["SciDelivery"];
+                objArray[0, 16] = dr["SDPDate"];
+                objArray[0, 17] = dr["PulloutDate"];
+                objArray[0, 18] = dr["PulloutID"];
+                objArray[0, 19] = dr["Article"];
+                objArray[0, 20] = dr["SizeCode"];
+                objArray[0, 21] = dr["ASQty"];
+                objArray[0, 22] = dr["SewQty"];
+                objArray[0, 23] = dr["ShipQty"];
+                objArray[0, 24] = dr["PackQty"];
+                objArray[0, 25] = dr["PullQty"];
+                objArray[0, 26] = dr["Reason"];
 
-                worksheet.Range[string.Format("A{0}:X{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:AA{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 

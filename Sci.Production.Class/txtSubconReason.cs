@@ -154,7 +154,7 @@ namespace Sci.Production.Class
             if (this._mutiSelect)
             {
                 Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2
-                    (sqlGetSubconReason, "10,30", this.textBox1.Text);
+                    (sqlGetSubconReason, "ID,Reason", this.textBox1.Text);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 this.textBox1.Text = item.GetSelecteds().Select(s => s["Id"].ToString()).JoinToString(",");
@@ -163,7 +163,7 @@ namespace Sci.Production.Class
             else
             {
                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                    (sqlGetSubconReason, "10,30", this.textBox1.Text);
+                    (sqlGetSubconReason, "ID,Reason", this.textBox1.Text);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 this.textBox1.Text = item.GetSelectedString();

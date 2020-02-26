@@ -144,9 +144,9 @@ order by td.Seq", masterID);
         {
             MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, "last 2 years modify,All");
             this.queryfors.SelectedIndex = 0;
-            if (MyUtility.Check.Empty(this.DefaultFilter))
+            if (MyUtility.Check.Empty(this.DefaultWhere))
             {
-                this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
             }
 
             base.OnFormLoaded();
@@ -155,15 +155,30 @@ order by td.Seq", masterID);
             {
                 switch (this.queryfors.SelectedIndex)
                 {
-                    case 1:
-                        this.DefaultFilter = string.Empty;
-                        break;
                     case 0:
-                        this.DefaultFilter = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        break;
+                    case 1:
+                    default:
+                        this.DefaultWhere = string.Empty;
                         break;
                 }
 
+                /* 底層bug
+                 * 1. 放大鏡與DefaultFilter 問題
+                    => 底層寫法 if(DefaultFilter) else(放大鏡) 所以 兩者只能用一個。
+                 * 2. 放大鏡、DefaultOrder與DefaultWhere 衝突問題。
+                    => 假如有設定DefaultOrder會導致，操作放大鏡後QueryExpress會恆寫入DefaultOrder所設定的值
+                       ，導致在做ReloadDatas()都不會執行DefaultWhere結果。
+                */
+                if (this.QBCommand != null && this.QBCommand.Conditions.Count() == 0)
+                {
+                    this.QueryExpress = string.Empty;
+                }
+
                 this.ReloadDatas();
+
+                GC.Collect();
             };
 
             // MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "T,B,I,O");
@@ -179,12 +194,6 @@ order by td.Seq", masterID);
             this.comboStyle.DisplayMember = "Location";
             this.comboStyle.ValueMember = "Location";
             #endregion
-        }
-
-        protected override void ClickLocate()
-        {
-            base.ClickLocate();
-            this.queryfors.SelectedIndex = 0;
         }
 
         /// <summary>

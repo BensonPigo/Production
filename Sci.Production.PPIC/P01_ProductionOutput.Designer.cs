@@ -349,10 +349,10 @@
             // 
             this.tabPage2.Controls.Add(this.panel9);
             this.tabPage2.Controls.Add(this.panel8);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(601, 358);
+            this.tabPage2.Size = new System.Drawing.Size(601, 355);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "-(Cutting(Comb";
             // 
@@ -362,7 +362,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(595, 293);
+            this.panel9.Size = new System.Drawing.Size(595, 290);
             this.panel9.TabIndex = 1;
             // 
             // gridCutting
@@ -394,7 +394,7 @@
             this.gridCutting.RowTemplate.Height = 24;
             this.gridCutting.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCutting.ShowCellToolTips = false;
-            this.gridCutting.Size = new System.Drawing.Size(595, 293);
+            this.gridCutting.Size = new System.Drawing.Size(595, 290);
             this.gridCutting.TabIndex = 0;
             this.gridCutting.TabStop = false;
             // 
@@ -406,7 +406,7 @@
             this.panel8.Controls.Add(this.label7);
             this.panel8.Controls.Add(this.label8);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel8.Location = new System.Drawing.Point(3, 296);
+            this.panel8.Location = new System.Drawing.Point(3, 293);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(595, 59);
             this.panel8.TabIndex = 0;
@@ -681,9 +681,9 @@
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
-        private Win.UI.TabControl tabControl1;
+        public Win.UI.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        public System.Windows.Forms.TabPage tabPage2;
         private Win.UI.Label label1;
         private Win.UI.Button btnClose;
         private Win.UI.Panel panel7;
@@ -706,7 +706,7 @@
         private Win.UI.Label label6;
         private Win.UI.Label label7;
         private Win.UI.Label label8;
-        private System.Windows.Forms.TabPage LoadingQutput;
+        public System.Windows.Forms.TabPage LoadingQutput;
         private Win.UI.Panel panel10;
         private Win.UI.NumericBox numLoadingQty;
         private Win.UI.NumericBox numOrderQty_L;

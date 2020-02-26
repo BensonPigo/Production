@@ -39,11 +39,6 @@
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             this.btnBatchApprove = new Sci.Win.UI.Button();
             this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtApprove = new Sci.Win.UI.TextBox();
-            this.dateApprove = new Sci.Win.UI.DateBox();
-            this.label21 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,10 +56,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.label21);
-            this.masterpanel.Controls.Add(this.txtApprove);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.disExVoucherID);
             this.masterpanel.Controls.Add(this.lbExVoucherID);
             this.masterpanel.Controls.Add(this.txtbrand);
@@ -72,10 +63,8 @@
             this.masterpanel.Controls.Add(this.txtInvSerial);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateApprove);
             this.masterpanel.Size = new System.Drawing.Size(779, 99);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtInvSerial, 0);
@@ -83,10 +72,6 @@
             this.masterpanel.Controls.SetChildIndex(this.txtbrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbExVoucherID, 0);
             this.masterpanel.Controls.SetChildIndex(this.disExVoucherID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtApprove, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label21, 0);
             // 
             // detailpanel
             // 
@@ -224,6 +209,7 @@
             this.btnBatchApprove.TabIndex = 3;
             this.btnBatchApprove.Text = "Batch Approve";
             this.btnBatchApprove.UseVisualStyleBackColor = true;
+            this.btnBatchApprove.Visible = false;
             this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove);
             // 
             // txtbrand
@@ -236,59 +222,6 @@
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 11;
             // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(284, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(107, 23);
-            this.label3.TabIndex = 14;
-            this.label3.Text = "Approve";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(284, 37);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(107, 23);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Approve Date";
-            // 
-            // txtApprove
-            // 
-            this.txtApprove.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtApprove.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Approve", true));
-            this.txtApprove.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtApprove.IsSupportEditMode = false;
-            this.txtApprove.Location = new System.Drawing.Point(394, 9);
-            this.txtApprove.Name = "txtApprove";
-            this.txtApprove.ReadOnly = true;
-            this.txtApprove.Size = new System.Drawing.Size(130, 23);
-            this.txtApprove.TabIndex = 16;
-            // 
-            // dateApprove
-            // 
-            this.dateApprove.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApproveDate", true));
-            this.dateApprove.IsSupportEditMode = false;
-            this.dateApprove.Location = new System.Drawing.Point(394, 37);
-            this.dateApprove.Name = "dateApprove";
-            this.dateApprove.ReadOnly = true;
-            this.dateApprove.Size = new System.Drawing.Size(130, 23);
-            this.dateApprove.TabIndex = 17;
-            // 
-            // label21
-            // 
-            this.label21.BackColor = System.Drawing.Color.Transparent;
-            this.label21.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
-            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold);
-            this.label21.Location = new System.Drawing.Point(597, 9);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(164, 23);
-            this.label21.TabIndex = 42;
-            this.label21.Text = "New";
-            this.label21.TextStyle.BorderColor = System.Drawing.Color.Red;
-            this.label21.TextStyle.Color = System.Drawing.Color.Red;
-            this.label21.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
-            this.label21.TextStyle.GradientColor = System.Drawing.Color.Red;
-            // 
             // P11
             // 
             this.ApvChkValue = "New";
@@ -297,12 +230,11 @@
             this.GridAlias = "GMTBooking";
             this.GridNew = 0;
             this.IsSupportClip = false;
-            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.KeyField2 = "BIRID";
             this.Name = "P11";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P11 .BIR Invoice (PH)";
             this.UnApvChkValue = "Approved";
             this.UniqueExpress = "ID";
@@ -340,10 +272,5 @@
         private Win.UI.DisplayBox disExVoucherID;
         private Win.UI.Label lbExVoucherID;
         private Win.UI.Button btnBatchApprove;
-        private Win.UI.DateBox dateApprove;
-        private Win.UI.TextBox txtApprove;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label21;
     }
 }

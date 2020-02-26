@@ -59,6 +59,7 @@ select	[Style]= S.ID
 	            for xml path('')
             ),1,1,''))
 		,TypeofGarment=(select Name  from Reason where s.ApparelType = Reason.ID and Reason.ReasonTypeID = 'Style_Apparel_Type')
+		,x.ColorID
 		,SA.AddDate
 		,SA.AddName
 		,SA.EditDate
@@ -67,6 +68,19 @@ select	[Style]= S.ID
 from dbo.View_style_Artwork vSA 
 inner join Style_Artwork SA on vSA.StyleArtworkUkey = SA.Ukey
 inner join style S on vSA.StyleUkey = S.Ukey
+outer apply(
+	select distinct sc.ColorID
+	from (
+		select distinct pgl.FabricPanelCode
+		from Pattern_GL p 
+		inner join Pattern_GL_LectraCode pgl on p.PatternUKEY = pgl.PatternUKEY and p.SEQ = pgl.SEQ
+		where p.id = sa.SMNoticeID
+			and p.Version = sa.PatternVersion
+			and iif(len(p.PatternCode) > 10, substring(p.PatternCode, 11, len(p.PatternCode)-10), p.PatternCode) = sa.PatternCode
+			and iif(sa.Article='----', 'F_CODE', pgl.ArticleGroup)= pgl.ArticleGroup
+	) pa
+	inner join Style_ColorCombo sc on sa.StyleUkey = sc.StyleUkey and sc.FabricPanelCode = pa.FabricPanelCode and sc.Article = vSA.Article
+)x
 Where	vSA.ArtworkTypeID = 'Printing'
 ");
          if (!MyUtility.Check.Empty(SeasonID))

@@ -39,11 +39,15 @@
     [Zone]                 VARCHAR (6)    CONSTRAINT [DF_Factory_Zone] DEFAULT ('') NULL,
     [FactorySort]          VARCHAR (3)    CONSTRAINT [DF_Factory_FactorySort] DEFAULT ('') NULL,
     [IsSampleRoom]         BIT            CONSTRAINT [DF_Factory_IsSampleRoom] DEFAULT ((0)) NULL,
-    [IsSCI]				   BIT NULL DEFAULT ((0)), 
-    [IsProduceFty]		   BIT NULL DEFAULT ((1)), 
-    [TestDocFactoryGroup] VARCHAR(8) CONSTRAINT [DF_Factory_TestDocFactoryGroup] DEFAULT ('') NULL, 
+    [IsSCI]                BIT            DEFAULT ((0)) NULL,
+    [IsProduceFty]         BIT            DEFAULT ((1)) NULL,
+    [TestDocFactoryGroup]  VARCHAR (8)    CONSTRAINT [DF_Factory_TestDocFactoryGroup] DEFAULT ('') NULL,
+    [IsOriginalFty]        BIT            DEFAULT ((0)) NULL,
+    [LastDownloadAPSDate] DATETIME NULL, 
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

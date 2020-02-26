@@ -525,6 +525,12 @@
     <Compile Include="P19.Designer.cs">
       <DependentUpon>P19.cs</DependentUpon>
     </Compile>
+    <Compile Include="P20.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P20.Designer.cs">
+      <DependentUpon>P20.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="P11.cs">
       <SubType>Form</SubType>
@@ -578,6 +584,12 @@
     </Compile>
     <Compile Include="R01.Designer.cs">
       <DependentUpon>R01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R01_LastAPSdownloadTime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R01_LastAPSdownloadTime.Designer.cs">
+      <DependentUpon>R01_LastAPSdownloadTime.cs</DependentUpon>
     </Compile>
     <Compile Include="R02.cs">
       <SubType>Form</SubType>
@@ -887,6 +899,9 @@
     <EmbeddedResource Include="P19.resx">
       <DependentUpon>P19.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P20.resx">
+      <DependentUpon>P20.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -896,6 +911,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R01_LastAPSdownloadTime.resx">
+      <DependentUpon>R01_LastAPSdownloadTime.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>

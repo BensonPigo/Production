@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
@@ -31,9 +32,12 @@ namespace Sci.Production.Class
             base.OnValidating(e);
 
             string str = this.Text;
+            List<SqlParameter> listSqlPar = new List<SqlParameter>();
+            listSqlPar.Add(new SqlParameter("@MDivision", str));
+
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from Production.dbo.MDivision WITH (NOLOCK) where id = '{0}'", str)) == false)
+                if (!MyUtility.Check.Seek("select ID from Production.dbo.MDivision WITH (NOLOCK) where id = @MDivision", listSqlPar, null))
                 {
                     this.Text = "";
                     e.Cancel = true;

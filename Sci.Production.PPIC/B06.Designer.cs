@@ -38,6 +38,8 @@
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.numNoOfSewers = new Sci.Win.UI.NumericBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.lblGroup = new Sci.Win.UI.Label();
+            this.txtGroup = new Sci.Win.UI.TextBox();
             this.txtCellNo = new Sci.Production.Class.txtCell();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -53,6 +55,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtGroup);
+            this.detailcont.Controls.Add(this.lblGroup);
             this.detailcont.Controls.Add(this.txtCellNo);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.numNoOfSewers);
@@ -96,7 +100,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(27, 23);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(80, 23);
@@ -105,7 +108,6 @@
             // 
             // labelLine
             // 
-            this.labelLine.Lines = 0;
             this.labelLine.Location = new System.Drawing.Point(27, 61);
             this.labelLine.Name = "labelLine";
             this.labelLine.Size = new System.Drawing.Size(80, 23);
@@ -114,7 +116,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(27, 99);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(80, 23);
@@ -123,7 +124,6 @@
             // 
             // labelCellNo
             // 
-            this.labelCellNo.Lines = 0;
             this.labelCellNo.Location = new System.Drawing.Point(27, 137);
             this.labelCellNo.Name = "labelCellNo";
             this.labelCellNo.Size = new System.Drawing.Size(80, 23);
@@ -132,7 +132,6 @@
             // 
             // labelNoOfSewers
             // 
-            this.labelNoOfSewers.Lines = 0;
             this.labelNoOfSewers.Location = new System.Drawing.Point(27, 175);
             this.labelNoOfSewers.Name = "labelNoOfSewers";
             this.labelNoOfSewers.Size = new System.Drawing.Size(80, 23);
@@ -202,13 +201,31 @@
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
+            // lblGroup
+            // 
+            this.lblGroup.Location = new System.Drawing.Point(27, 210);
+            this.lblGroup.Name = "lblGroup";
+            this.lblGroup.Size = new System.Drawing.Size(80, 23);
+            this.lblGroup.TabIndex = 6;
+            this.lblGroup.Text = "Group";
+            // 
+            // txtGroup
+            // 
+            this.txtGroup.BackColor = System.Drawing.Color.White;
+            this.txtGroup.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LineGroup", true));
+            this.txtGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtGroup.Location = new System.Drawing.Point(112, 210);
+            this.txtGroup.Name = "txtGroup";
+            this.txtGroup.Size = new System.Drawing.Size(243, 23);
+            this.txtGroup.TabIndex = 7;
+            // 
             // txtCellNo
             // 
             this.txtCellNo.BackColor = System.Drawing.Color.White;
             this.txtCellNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingCell", true));
-            this.txtCellNo.MDivisionID = "displayBox1";
             this.txtCellNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCellNo.Location = new System.Drawing.Point(112, 137);
+            this.txtCellNo.MDivisionID = "displayBox1";
             this.txtCellNo.Name = "txtCellNo";
             this.txtCellNo.Size = new System.Drawing.Size(30, 23);
             this.txtCellNo.TabIndex = 3;
@@ -221,6 +238,7 @@
             this.DefaultOrder = "ID";
             this.IsSupportPrint = false;
             this.Name = "B06";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B06. Sewing Line";
             this.UniqueExpress = "FactoryID,ID";
             this.WorkAlias = "SewingLine";
@@ -250,5 +268,7 @@
         private Win.UI.Label labelFactory;
         private Win.UI.CheckBox checkJunk;
         private Class.txtCell txtCellNo;
+        private Win.UI.TextBox txtGroup;
+        private Win.UI.Label lblGroup;
     }
 }

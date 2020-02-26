@@ -101,6 +101,7 @@ with IniBulkPack as (
             and p.BrandID = '{2}'
             and p.Dest = '{3}'
             and p.CustCDID = '{4}'
+            and o.junk = 0
 ), IniSamplePack as (
     select  iif(p.CustCDID = '{4}',1,0) as Selected
             , p.id
@@ -131,6 +132,7 @@ with IniBulkPack as (
             and '{0}' like '%'+rtrim(o.FactoryID)+'%' 
             and p.Dest = '{3}' 
             and p.ShipModeID = '{1}'
+            and o.junk = 0
 ), AllPackData as (
     select * 
     from IniBulkPack

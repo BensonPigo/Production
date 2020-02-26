@@ -528,7 +528,7 @@ order by no
             worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,7,0)),\"\",VLOOKUP(S{rownum},Operation,7,0))";
 
             // TMS
-            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,7,0)),\"\",VLOOKUP(D{rownum},Operation,7,0))";
+            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,8,0)),\"\",VLOOKUP(D{rownum},Operation,8,0))";
             worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,8,0)),\"\",VLOOKUP(S{rownum},Operation,8,0))";
 
             // ST/MC type

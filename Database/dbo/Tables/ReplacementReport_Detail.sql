@@ -6,7 +6,7 @@
     [SCIRefno]             VARCHAR (30)   CONSTRAINT [DF_ReplacementReport_Detail_SCIRefno] DEFAULT ('') NULL,
     [INVNo]                VARCHAR (25)   CONSTRAINT [DF_ReplacementReport_Detail_INVNo] DEFAULT ('') NULL,
     [ETA]                  DATE           NULL,
-    [ColorID]              VARCHAR (6)   CONSTRAINT [DF_ReplacementReport_Detail_ColorID] DEFAULT ('') NULL,
+    [ColorID]              VARCHAR (6)    CONSTRAINT [DF_ReplacementReport_Detail_ColorID] DEFAULT ('') NULL,
     [EstInQty]             NUMERIC (8, 2) CONSTRAINT [DF_ReplacementReport_Detail_EstInQty] DEFAULT ((0)) NULL,
     [ActInQty]             NUMERIC (8, 2) CONSTRAINT [DF_ReplacementReport_Detail_ActInQty] DEFAULT ((0)) NULL,
     [AGradeDefect]         VARCHAR (20)   CONSTRAINT [DF_ReplacementReport_Detail_AGradeDefect] DEFAULT ('') NULL,
@@ -30,11 +30,16 @@
     [Suggested]            NVARCHAR (100) CONSTRAINT [DF_ReplacementReport_Detail_Suggested] DEFAULT ('') NULL,
     [OccurCost]            NUMERIC (7, 3) CONSTRAINT [DF_ReplacementReport_Detail_OccurCost] DEFAULT ((0)) NULL,
     [UKey]                 BIGINT         IDENTITY (1, 1) NOT NULL,
-    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
-    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
-    [Junk] BIT NOT NULL CONSTRAINT [DF_ReplacementReport_Detail_Junk] DEFAULT ((0)), 
+    [OldFabricUkey]        VARCHAR (10)   DEFAULT ('') NULL,
+    [OldFabricVer]         VARCHAR (2)    DEFAULT ('') NULL,
+    [Junk]                 BIT            CONSTRAINT [DF_ReplacementReport_Detail_Junk] DEFAULT ((0)) NOT NULL,
+    [NewSeq1]              VARCHAR (3)    DEFAULT ('') NULL,
+    [NewSeq2]              VARCHAR (2)    DEFAULT ('') NULL,
+    [PurchaseID]           VARCHAR (13)   DEFAULT ('') NULL,
     CONSTRAINT [PK_ReplacementReport_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO
