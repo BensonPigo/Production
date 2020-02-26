@@ -910,7 +910,18 @@ where so.id in(select distinct id from #tmp t where t.WillTransferQty > 0 )
             }
             #endregion
 
-            #region 以上第3層更新寫入完成，重算第2層 QAQty ※Sewing_P01
+            // 以上第3層更新寫入完成,才執行以下動作
+            #region 刪除為0的第3層
+            sqlcmd = $@"delete SewingOutput_Detail_Detail where QAQty=0 and id in(select distinct id from #tmp t where t.WillTransferQty > 0)";
+            result = MyUtility.Tool.ProcessWithDatatable(toDt, "ID,WillTransferQty", sqlcmd, out dto);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+            #endregion
+
+            #region 重算第2層 QAQty ※Sewing_P01
             sqlcmd = $@"
 update SD set SD.QAQty = SDD.SDD_Qty
 from  SewingOutput_Detail SD WITH (NOLOCK)
