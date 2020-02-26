@@ -105,8 +105,8 @@ namespace Sci.Production.Packing
         protected override bool ValidateInput()
         {
             this.reportType = this.radioPackingListReportFormA.Checked ? "1" :
-                this.radioPackingListReportFormB.Checked ? "2" : 
-                this.radioPackingGuideReport.Checked ? "3" : 
+                this.radioPackingListReportFormB.Checked ? "2" :
+                this.radioPackingGuideReport.Checked ? "3" :
                 this.rdbtnShippingMark.Checked ? "5" :
                 this.rdbtnShippingMarkToChina.Checked ? "6" :
                 this.rdbtnShippingMarkToUsaInd.Checked ? "7" :

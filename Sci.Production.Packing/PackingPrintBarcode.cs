@@ -315,7 +315,7 @@ namespace Sci.Production.Packing
                         }
 
                         #region 準備資料
-                        string barcode = printData.Rows[p]["SCICtnNo"].ToString();
+                        string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString();
                         string packingNo = "P/L#: " + printData.Rows[p]["ID"];
                         string spNo = "SP#: " + printData.Rows[p]["OrderID"];
                         string cartonNo = "CTN: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
