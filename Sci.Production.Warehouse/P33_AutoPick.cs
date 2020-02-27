@@ -179,7 +179,7 @@ OUTER APPLY(
 )Garment
 OUTER APPLY(
 	SELECT [Val]=SUM(((SeamLength  * Frequency * UseRatio ) + Allowance))
-	FROM dbo.GetThreadUsedQtyByBOT_Table(psd.ID)
+	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
 	WHERE SCIRefNo = psd.SCIRefNo AND SuppColor = psd.SuppColor
 )ThreadUsedQtyByBOT
 WHERE psd.ID='{this.poid}'
@@ -191,6 +191,7 @@ AND EXISTS(
 	WHERE f.SCIRefno = psd.SCIRefNo
 	AND m.IsThread=1 
 )
+AND psd.SuppColor <> ''
 --AND psd.SCIRefNo='AD-EPIC-TEX24-2.5K-A00001' 
 --AND psd.SuppColor ='23CTA'
 
@@ -261,15 +262,15 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2
             Helper.Controls.Grid.Generator(this.gridAutoPick)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("Color", header: "SuppColor", width: Widths.AnsiChars(23), iseditingreadonly: true)
-                 .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                 .Text("@Qty", header: "@Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Text("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(23), iseditingreadonly: true)
+                 .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15),decimal_places:2, iseditingreadonly: true)
+                 .Numeric("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                  .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Text("Use Qty By Use Unit", header: "Use Qty\r\nBy Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Numeric("Use Qty By Use Unit", header: "Use Qty\r\nBy Use Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                  .Text("Use Unit", header: "Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Text("Stock Unit Desc.", header: "Stock Unit Desc.", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Text("Output Qty(Garment)", header: "Output Qty\r\n(Garment)", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Numeric("Output Qty(Garment)", header: "Output Qty\r\n(Garment)", width: Widths.AnsiChars(6), decimal_places: 0, iseditingreadonly: true)
                  .Text("Bulk Balance(Stock Unit)", header: "Bulk Balance\r\n(Stock Unit)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
             gridAutoPick.Columns["Selected"].DefaultCellStyle.BackColor = Color.Pink;

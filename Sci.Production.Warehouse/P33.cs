@@ -32,6 +32,23 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
 
             this.DefaultFilter = $"MDivisionID='{Sci.Env.User.Keyword}' AND Type='E' ";
+
+
+            WorkAlias = "Issue";                        // PK: ID
+            GridAlias = "Issue_summary";           // PK: ID+UKey
+            SubGridAlias = "Issue_detail";          // PK: ID+Issue_SummaryUkey+FtyInventoryUkey
+
+            KeyField1 = "ID"; //Issue PK
+            KeyField2 = "ID"; // Summary FK
+
+            //SubKeyField1 = "Ukey";    // 將第2層的PK欄位傳給第3層的FK。
+            SubKeyField1 = "ID";    // 將第2層的PK欄位傳給第3層的FK。
+            SubKeyField2 = "Ukey";  // 將第2層的PK欄位傳給第3層的FK。
+
+            SubDetailKeyField1 = "id,Ukey";    // second PK
+            SubDetailKeyField2 = "id,Issue_SummaryUkey"; // third FK
+
+            DoSubForm = new P33_Detail();
         }
 
         public P33(ToolStripMenuItem menuitem, string transID)
@@ -45,6 +62,22 @@ namespace Sci.Production.Warehouse
             this.IsSupportConfirm = false;
             this.IsSupportUnconfirm = false;
 
+
+            WorkAlias = "Issue";                        // PK: ID
+            GridAlias = "Issue_summary";           // PK: ID+UKey
+            SubGridAlias = "Issue_detail";          // PK: ID+Issue_SummaryUkey+FtyInventoryUkey
+
+            KeyField1 = "ID"; //Issue PK
+            KeyField2 = "ID"; // Summary FK
+
+            //SubKeyField1 = "Ukey";    // 將第2層的PK欄位傳給第3層的FK。
+            SubKeyField1 = "ID";    // 將第2層的PK欄位傳給第3層的FK。
+            SubKeyField2 = "Ukey";  // 將第2層的PK欄位傳給第3層的FK。
+
+            SubDetailKeyField1 = "id,Ukey";    // second PK
+            SubDetailKeyField2 = "id,Issue_SummaryUkey"; // third FK
+
+            DoSubForm = new P33_Detail();
         }
 
         protected override void OnFormLoaded()
@@ -96,6 +129,7 @@ SELECT    psd.SCIRefno
 		, [OutputQty]=''  ----Output Qty (Garment)
 		, [Balance (Stock Unit)]= fi.InQty - fi.OutQty + fi.AdjustQty
 		, [Location] = ''
+        , [POID]=psd.ID
 FROM Issue i 
 INNER JOIN Issue_Summary iis ON i.ID= iis.Id
 INNER JOIN Issue_Detail isd ON isd.Issue_SummaryUkey=iis.Ukey
@@ -409,6 +443,15 @@ order by seq
             };
             #endregion
 
+            #region issue Qty 開窗
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings issueQty = new DataGridViewGeneratorNumericColumnSettings();
+            issueQty.CellMouseDoubleClick += (s, e) =>
+            {
+                DoSubForm.IsSupportUpdate = false;
+                OpenSubDetailPage();
+            };
+            #endregion
+
             #region -- 欄位設定 --
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), settings: RefnoSet) 
@@ -416,7 +459,7 @@ order by seq
             .EditText("Desc.", header: "Desc.", width: Widths.AnsiChars(7), iseditingreadonly: true) 
             .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)  
             .Text("Accu. Issued", header: "Accu. Issued"+Environment.NewLine+"(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Numeric("SizeUnit", header: "Issue Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("SizeUnit", header: "Issue Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), settings: issueQty, iseditingreadonly: true)
             .Numeric("SizeUnit", header: "Use Qty" + Environment.NewLine + "By Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Use Qty", header: "Use Qty" + Environment.NewLine + "By Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -746,11 +789,12 @@ where  o.id ='{CurrentMaintain["orderid"]}'
 
             // 回採購單找資料
             string sql = $@"
-SELECT  psd.SCIRefno, psd.Refno, psd.SuppColor
+SELECT  psd.SCIRefno, psd.Refno, psd.SuppColor,[POID]=psd.ID
 FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 INNER JOIN MtlType m ON m.id= f.MtlTypeID
 WHERE psd.id ='{POID}' AND m.IsThread=1 AND psd.FabricType ='A'
+and psd.SuppColor <> ''
 ORDER BY psd.SCIRefno,psd.SuppColor
 
 ";
@@ -770,10 +814,11 @@ ORDER BY psd.SCIRefno,psd.SuppColor
                 ndr["SCIRefno"] = dr["SCIRefno"];
                 ndr["Refno"] = dr["Refno"];
                 ndr["SuppColor"] = dr["SuppColor"];
+                ndr["POID"] = dr["POID"];
 
                 detailDt.Rows.Add(ndr);
 
-
+                /*
                 DataTable sizeRange, subDetails;
                 if (GetSubDetailDatas(ndr, out subDetails))
                 {
@@ -800,6 +845,7 @@ order by Seq
                         subDetails.ImportRow(drr);
                     }
                 }
+                */
 
             }
 
