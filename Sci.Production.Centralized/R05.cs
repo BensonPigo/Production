@@ -209,7 +209,7 @@ group by j.FtyGroup,j.OutputDate
             string sqlFtyLocalOrder = sqlCmd + " AND o.LocalOrder = 1 ";
             string sqlOrder2 = sqlCmd2 + " And o.Junk = 0 and o.Qty > 0  And o.Category in ('B','S')  and (o.localorder = 0 or o.SubconInType=2)";
             string sqlForecast2 = sqlCmd2 + "And o.Qty > 0 AND o.IsForecast = 1 and (o.localorder = 0 or o.SubconInType=2)";
-            string sqlFtyLocalOrder2 = sqlCmd2 + " AND o.LocalOrder = 1 ";
+            string sqlFtyLocalOrder2 = sqlCmd2 + " AND o.LocalOrder = 1 and o.SubconInType=3 ";
             List<string> sqlCmdlist = new List<string>();
             List<string> sqlCmdlist2 = new List<string>();
 
