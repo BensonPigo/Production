@@ -61,6 +61,10 @@ BEGIN
 	-------------OperationDesc-------------------
 	RAISERROR('Export OperationDesc - Starts',0,0)
 	select * into dbo.OperationDesc from (select * from ProductionTPE.dbo.OperationDesc ) as tmp
+	
+	-------------MeasurementTranslate-------------------
+	RAISERROR('Export MeasurementTranslate - Starts',0,0)
+	select * into dbo.MeasurementTranslate from (select * from ProductionTPE.dbo.MeasurementTranslate ) as tmp
 
 	set transaction isolation level read committed
 END
