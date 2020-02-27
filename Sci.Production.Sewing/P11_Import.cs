@@ -29,6 +29,8 @@ namespace Sci.Production.Sewing
 
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         private DataGridViewGeneratorTextColumnSettings ToComboType = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings ToArticle = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings ToSizeCode = new DataGridViewGeneratorTextColumnSettings();
 
         protected override void OnFormLoaded()
         {
@@ -38,12 +40,14 @@ namespace Sci.Production.Sewing
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
             .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk)
-            .Text("FromOrderID", header: "From SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("FromOrderID", header: "From SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
             .Text("FromComboType", header: "*", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("ToOrderID", header: "To SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("ToOrderID", header: "To SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
             .Text("ToComboType", header: "*", width: Widths.AnsiChars(1), settings: this.ToComboType)
+            .Text("ToArticle", header: "Article", width: Widths.AnsiChars(8), settings: this.ToArticle)
+            .Text("ToSizeCode", header: "Size", width: Widths.AnsiChars(8), settings: this.ToSizeCode)
             .Numeric("TransferQty", header: "Transfer Qty", width: Widths.AnsiChars(5))
             ;
         }
@@ -117,6 +121,114 @@ end
                 }
 
                 dr["ToComboType"] = e.FormattedValue;
+                dr.EndEdit();
+            };
+
+            this.ToArticle.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    List<SqlParameter> lis = new List<SqlParameter>();
+                    lis.Add(new SqlParameter("@ToOrderID", dr["ToOrderID"]));
+                    string sqlcmd = $@"select distinct Article from Order_Qty with(nolock) where ID = @ToOrderID";
+                    SelectItem item = new SelectItem(sqlcmd, lis, "15", MyUtility.Convert.GetString(dr["ToArticle"]));
+                    DialogResult dialogResult = item.ShowDialog();
+                    if (dialogResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["ToArticle"] = item.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+            this.ToArticle.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (!MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    if (e.FormattedValue.Equals(dr["ToArticle"]))
+                    {
+                        return;
+                    }
+
+                    List<SqlParameter> lis = new List<SqlParameter>();
+                    lis.Add(new SqlParameter("@ToOrderID", dr["ToOrderID"]));
+                    lis.Add(new SqlParameter("@ToArticle", e.FormattedValue));
+                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @ToOrderID and Article = @ToArticle";
+                    try
+                    {
+                        if (!MyUtility.Check.Seek(sqlcmd, lis, null))
+                        {
+                            MyUtility.Msg.WarningBox($"Article: {e.FormattedValue} not fround!");
+                            dr["ToArticle"] = string.Empty;
+                            dr.EndEdit();
+                            e.Cancel = true;
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.ShowErr(ex);
+                    }
+                }
+
+                dr["ToArticle"] = e.FormattedValue;
+                dr.EndEdit();
+            };
+
+            this.ToSizeCode.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    List<SqlParameter> lis = new List<SqlParameter>();
+                    lis.Add(new SqlParameter("@ToOrderID", dr["ToOrderID"]));
+                    string sqlcmd = $@"select distinct SizeCode from Order_Qty with(nolock) where ID = @ToOrderID";
+                    SelectItem item = new SelectItem(sqlcmd, lis, "15", MyUtility.Convert.GetString(dr["ToSizeCode"]));
+                    DialogResult dialogResult = item.ShowDialog();
+                    if (dialogResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["ToSizeCode"] = item.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+            this.ToSizeCode.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (!MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    if (e.FormattedValue.Equals(dr["ToSizeCode"]))
+                    {
+                        return;
+                    }
+
+                    List<SqlParameter> lis = new List<SqlParameter>();
+                    lis.Add(new SqlParameter("@ToSizeCode", e.FormattedValue));
+                    lis.Add(new SqlParameter("@ToOrderID", dr["ToOrderID"]));
+                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @ToOrderID and SizeCode = @ToSizeCode";
+                    try
+                    {
+                        if (!MyUtility.Check.Seek(sqlcmd, lis, null))
+                        {
+                            MyUtility.Msg.WarningBox($"SizeCode: {e.FormattedValue} not fround!");
+                            dr["ToSizeCode"] = string.Empty;
+                            dr.EndEdit();
+                            e.Cancel = true;
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.ShowErr(ex);
+                    }
+                }
+
+                dr["ToSizeCode"] = e.FormattedValue;
                 dr.EndEdit();
             };
         }
@@ -211,7 +323,9 @@ Select Distinct Selected = 0,
     FromComboType=sdd.ComboType,
     sdd.Article,
     sdd.SizeCode,
-    ToOrderID = '{this.txtToSP.Text}', ToComboType = '', TransferQty = 0
+    ToOrderID = '{this.txtToSP.Text}', ToComboType = '', TransferQty = 0,
+    ToArticle=sdd.Article,
+    ToSizeCode=sdd.SizeCode
 From SewingOutput_Detail_Detail sdd with(nolock)
 Where OrderID = @sp
 And QAQty > 0
@@ -249,7 +363,19 @@ And QAQty > 0
             DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
             foreach (DataRow item in dt.Rows)
             {
-                DataRow[] dataRows = this.DetailDatas.Select($"FromOrderID = '{item["FromOrderID"]}' and FromComboType = '{item["FromComboType"]}' and Article = '{item["Article"]}' and SizeCode ='{item["SizeCode"]}' and ToComboType = '{item["ToComboType"]}' and ToOrderID = '{item["ToOrderID"]}'");
+                if (MyUtility.Check.Empty(item["ToComboType"]) ||
+                    MyUtility.Check.Empty(item["ToArticle"]) ||
+                    MyUtility.Check.Empty(item["ToSizeCode"]) ||
+                    MyUtility.Check.Empty(item["TransferQty"]))
+                {
+                    MyUtility.Msg.WarningBox("* , Article, Sizecode, Transfer Qty can not empty!");
+                    return;
+                }
+            }
+
+            foreach (DataRow item in dt.Rows)
+            {
+                DataRow[] dataRows = this.DetailDatas.Select($"FromOrderID = '{item["FromOrderID"]}' and FromComboType = '{item["FromComboType"]}' and Article = '{item["Article"]}' and SizeCode ='{item["SizeCode"]}' and ToComboType = '{item["ToComboType"]}' and ToOrderID = '{item["ToOrderID"]}' and ToArticle = '{item["ToArticle"]}' and ToSizeCode = '{item["ToSizeCode"]}'  ");
                 foreach (DataRow row in dataRows)
                 {
                     row["TransferQty"] = item["TransferQty"];

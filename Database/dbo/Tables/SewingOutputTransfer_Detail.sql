@@ -8,10 +8,14 @@
     [FromSewingQty] INT          CONSTRAINT [DF_SewingOutputTransfer_Detail_FromSewingQty] DEFAULT ((0)) NOT NULL,
     [ToOrderID]     VARCHAR (13) CONSTRAINT [DF_SewingOutputTransfer_Detail_ToOrderID] DEFAULT ('') NOT NULL,
     [ToComboType]   VARCHAR (1)  CONSTRAINT [DF_SewingOutputTransfer_Detail_ToComboType] DEFAULT ('') NOT NULL,
+    [ToArticle]     VARCHAR (8)  CONSTRAINT [DF_SewingOutputTransfer_Detail_ToArticle] DEFAULT ('') NOT NULL,
+    [ToSizeCode]    VARCHAR (8)  CONSTRAINT [DF_SewingOutputTransfer_Detail_ToSizeCode] DEFAULT ('') NOT NULL,
     [ToQty]         INT          CONSTRAINT [DF_SewingOutputTransfer_Detail_ToQty] DEFAULT ((0)) NOT NULL,
     [ToSewingQty]   INT          CONSTRAINT [DF_SewingOutputTransfer_Detail_ToSewingQty] DEFAULT ((0)) NOT NULL,
     [TransferQty]   INT          CONSTRAINT [DF_SewingOutputTransfer_Detail_TransferQty] DEFAULT ((0)) NOT NULL,
     [Ukey]          BIGINT       IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_SewingOutputTransfer_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
