@@ -64,7 +64,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 88);
+            this.masterpanel.Size = new System.Drawing.Size(900, 88);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -80,16 +80,16 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 88);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 262);
+            this.detailpanel.Size = new System.Drawing.Size(900, 262);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(892, 50);
+            this.gridicon.Location = new System.Drawing.Point(792, 50);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 262);
+            this.detailgridcont.Size = new System.Drawing.Size(900, 262);
             // 
             // detail2
             // 
@@ -105,24 +105,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 388);
+            this.detail.Size = new System.Drawing.Size(900, 388);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 350);
+            this.detailcont.Size = new System.Drawing.Size(900, 350);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 388);
+            this.browse.Size = new System.Drawing.Size(794, 388);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 417);
+            this.tabs.Size = new System.Drawing.Size(908, 417);
             // 
             // label1
             // 
@@ -216,8 +216,9 @@
             // 
             // btnImport
             // 
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImport.Location = new System.Drawing.Point(892, 8);
+            this.btnImport.Location = new System.Drawing.Point(792, 12);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(100, 30);
             this.btnImport.TabIndex = 37;
@@ -230,7 +231,7 @@
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 450);
+            this.ClientSize = new System.Drawing.Size(908, 450);
             this.GridAlias = "SewingOutputTransfer_Detail";
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
