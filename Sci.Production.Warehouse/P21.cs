@@ -197,7 +197,7 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
-                sqlWhere += $" and rd.POID = '{this.txtSP.Text}'";
+                sqlWhere += $" and rd.POID like '%{this.txtSP.Text}%'";
             }
 
             if (!MyUtility.Check.Empty(this.dateBoxArriveWH.Value))
