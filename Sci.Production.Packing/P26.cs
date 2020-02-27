@@ -82,6 +82,7 @@ namespace Sci.Production.Packing
 
                 if (this.wattingForConvert_contentsOfZPL != null)
                 {
+                    //Array.Clear(this.wattingForConvert_contentsOfZPL, 0, this.wattingForConvert_contentsOfZPL.Length);
                     this.wattingForConvert_contentsOfZPL = new List<string>();
                 }
 
@@ -460,11 +461,6 @@ namespace Sci.Production.Packing
 
         private void BtnProcessing_Click(object sender, EventArgs e)
         {
-            if (this.listControlBindingSource1.DataSource == null)
-            {
-                return;
-            }
-
             try
             {
                 #region 初始設定、宣告
@@ -618,6 +614,7 @@ namespace Sci.Production.Packing
 
                 #region 如果有需要開啟新視窗的，則到下一個視窗，若無則直接修改DB
 
+
                 this.HideWaitMessage();
                 this.ShowWaitMessage("Processing....");
 
@@ -628,7 +625,7 @@ namespace Sci.Production.Packing
                     // 開啟新視窗 New Form
                     if (isUserSlect && this.NewFormModels.Count > 0)
                     {
-                        Sci.Production.Packing.P26_AssignPackingList form = new P26_AssignPackingList(this.NewFormModels, (DataTable)this.listControlBindingSource1.DataSource, this.currentFileType.ToString(), this.wattingForConvert, this.File_Name_PDF, this.wattingForConvert_contentsOfZPL);
+                        Sci.Production.Packing.P26_AssignPackingList form = new P26_AssignPackingList(this.NewFormModels, (DataTable)this.listControlBindingSource1.DataSource, this.currentFileType.ToString());
                         form.Width = 800;
                         form.ShowDialog();
                         this.canConvert = form.canConvert;
@@ -654,63 +651,69 @@ namespace Sci.Production.Packing
                     // 後續的資料還是要更新DB
                     if (this.UpdateModel_List.Count > 0)
                     {
-                        bool reasult = false;
-
-                        // 先完成P24資料寫入、轉圖片、將圖片存入P24表身
                         if (this.currentFileType == UploadType.ZPL)
                         {
-                            reasult = this.P24_Database_Update(this.UpdateModel_List, "ZPL");
+                            this.P26_UpdateDataBase(this.UpdateModel_List, "ZPL");
                         }
                         else
                         {
-                            reasult = this.P24_Database_Update(this.UpdateModel_List, "PDF");
-                        }
-
-                        if (reasult)
-                        {
-                            // 修改PackingList_Detail
-                            if (this.currentFileType == UploadType.ZPL)
-                            {
-                                this.P03_Database_Update(this.UpdateModel_List, "ZPL");
-                            }
-                            else
-                            {
-                                this.P03_Database_Update(this.UpdateModel_List, "PDF");
-                            }
+                            this.P26_UpdateDataBase(this.UpdateModel_List, "PDF");
                         }
                     }
 
                 }
                 else
                 {
-                    bool reasult = false;
-
-                    // 先完成P24資料寫入、轉圖片、將圖片存入P24表身
+                    // 全部Mapping成功，直接修改
                     if (this.currentFileType == UploadType.ZPL)
                     {
-                        reasult = this.P24_Database_Update(this.UpdateModel_List, "ZPL");
+                        this.P26_UpdateDataBase(this.UpdateModel_List, "ZPL");
                     }
                     else
                     {
-                        reasult = this.P24_Database_Update(this.UpdateModel_List, "PDF");
-                    }
-
-                    if (reasult)
-                    {
-                        // 修改PackingList_Detail
-                        if (this.currentFileType == UploadType.ZPL)
-                        {
-                            this.P03_Database_Update(this.UpdateModel_List, "ZPL");
-                        }
-                        else
-                        {
-                            this.P03_Database_Update(this.UpdateModel_List, "PDF");
-                        }
+                        this.P26_UpdateDataBase(this.UpdateModel_List, "PDF");
                     }
                 }
 
                 this.HideWaitMessage();
                 #endregion
+
+                string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
+
+                // 轉圖片
+                if (this.canConvert)
+                {
+                    // 然後開始轉圖片
+                    this.ShowWaitMessage("Convert to Image....");
+
+                    if (this.currentFileType == UploadType.ZPL)
+                    {
+                        foreach (string singleFileName in this.wattingForConvert)
+                        {
+                            string contentString = this.wattingForConvert_contentsOfZPL.Where(o => o.Contains(singleFileName)).FirstOrDefault();
+                            if (contentString != string.Empty)
+                            {
+                                this.CallAPI(singleFileName, contentString, shippingMarkPath, contentString.ToUpper().Contains("MIXED"));
+                            }
+                        }
+                    }
+
+                    if (this.currentFileType == UploadType.PDF)
+                    {
+                        foreach (var item in this.File_Name_PDF)
+                        {
+
+                            string fileName = item.Key;
+                            string custCTN = item.Value;
+
+                            FileInfo file = new FileInfo(fileName);
+                            PDDocument doc = PDDocument.load(file.FullName);
+                            this.ConvertPDF2Image(fileName, shippingMarkPath, custCTN, 1, 5, ImageFormat.Jpeg, Definition.One);
+                        }
+                    }
+
+                    this.HideWaitMessage();
+                }
 
                 // 顯示錯誤訊息
                 if (!MyUtility.Check.Empty(this.ErrorMessage))
@@ -721,12 +724,6 @@ namespace Sci.Production.Packing
             }
             catch (Exception exp)
             {
-                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                foreach (DataRow dr in dt.Rows)
-                {
-                    dr["Result"] = "Fail";
-                }
-
                 this.ShowErr(exp);
             }
         }
@@ -737,31 +734,6 @@ namespace Sci.Production.Packing
             List<UpdateModel> upateModel_List = new List<UpdateModel>();
             List<ZPL> mixedzPLs = new List<ZPL>();
             int totalFileCount = zPLs.Count;
-            bool isBreak = false;
-            // 事前檢查
-            foreach (var zPL in zPLs)
-            {
-
-                string errorMsg = this.Check_Before_Mapping(zPL);
-                if (errorMsg != string.Empty)
-                {
-                    isBreak = true;
-                    if (!this.ErrorMessage.Contains(errorMsg))
-                    {
-                        this.ErrorMessage += errorMsg + Environment.NewLine;
-                    }
-
-                    if (!this.mappingFailFileName.Contains(fileName))
-                    {
-                        this.mappingFailFileName.Add(fileName);
-                    }
-
-                }
-            }
-            if (isBreak)
-            {
-                return upateModel_List;
-            }
 
             // 若是混尺碼，則把ZPL物件拆開重新整理
             if (isMixed && MyUtility.Check.Empty(selected_PackingListID))
@@ -859,23 +831,23 @@ namespace Sci.Production.Packing
                     string currentSizeCode = zPL.SizeCode;
                     string currentShipQty = zPL.ShipQty;
 
-                    //string ss = this.Check_Before_Mapping(zPL);
+                    string ss = this.Check_Before_Mapping(zPL);
 
-                    //// 事前檢查
-                    //if (ss != string.Empty)
-                    //{
-                    //    if (!this.ErrorMessage.Contains(ss))
-                    //    {
-                    //        this.ErrorMessage += ss + Environment.NewLine;
-                    //    }
+                    // 事前檢查
+                    if (ss != string.Empty)
+                    {
+                        if (!this.ErrorMessage.Contains(ss))
+                        {
+                            this.ErrorMessage += ss + Environment.NewLine;
+                        }
 
-                    //    if (!this.mappingFailFileName.Contains(fileName))
-                    //    {
-                    //        this.mappingFailFileName.Add(fileName);
-                    //    }
+                        if (!this.mappingFailFileName.Contains(fileName))
+                        {
+                            this.mappingFailFileName.Add(fileName);
+                        }
 
-                    //    break;
-                    //}
+                        break;
+                    }
 
                     string sqlCmd = string.Empty;
 
@@ -1459,13 +1431,14 @@ WHERE p.Type ='B'
             return upateModel_List;
         }
 
-        public bool P03_Database_Update(List<List<UpdateModel>> upateModel_List, string uploadType, bool isFromNewForm = false)
+        public bool P26_UpdateDataBase(List<List<UpdateModel>> upateModel_List, string uploadType, bool isFromNewForm = false)
         {
             DualResult result;
             string updateCmd = string.Empty;
-            string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
             List<string> fileNames = new List<string>();
             int i = 0;
+            int ii = 0;
+            int iii = 0;
 
             foreach (List<UpdateModel> upateModels in upateModel_List)
             {
@@ -1524,6 +1497,97 @@ UPDATE PackingList
 SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
 WHERE ID ='{model.PackingListID}'
 
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+    ;
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+    ;
+END
+ELSE
+BEGIN
+    UPDATE spc
+    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    FROM ShippingMarkPic spc
+	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey  AND spc.PackingListID = pd.ID
+    ;
+    UPDATE spc
+    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    FROM ShippingMarkPic spc
+	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey  AND spc.PackingListID = pd.ID
+END
+
+----ShippingMarkPic_Detail  (Side=D)
+IF EXISTS(
+    SELECT 1 FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='D' )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+)
+BEGIN
+    DELETE FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='D' )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+END
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='D' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{model.CustCTN}' 
+ 			)
+
+
+
+----ShippingMarkPic_Detail  (Side=A)
+IF EXISTS(
+    SELECT 1 FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='A' )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+)
+BEGIN
+    DELETE FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='A' )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+END
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='A' )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{model.CustCTN}' 
+ 			)
+
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
                         #endregion
@@ -1572,6 +1636,55 @@ UPDATE PackingList
 SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
 WHERE ID ='{model.PackingListID}'
 
+----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
+IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}')
+BEGIN
+	INSERT INTO ShippingMarkPic
+		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
+
+	SELECT [PackingListID]=pd.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	FROM ShippingMarkPicture s
+	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo
+	INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey 
+    ;
+END
+ELSE
+BEGIN
+    UPDATE spc
+    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    FROM ShippingMarkPic spc
+	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
+    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo
+    INNER JOIN PackingList_Detail pd ON t.Ukey=pd.Ukey  AND spc.PackingListID = pd.ID
+    ;
+END
+
+----ShippingMarkPic_Detail
+IF EXISTS(
+    SELECT 1 FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+)
+BEGIN
+    DELETE FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}'  )
+    AND SCICtnNo = ( SELECT TOP 1 pd.SCICtnNo FROM PackingList_Detail pd INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey)
+END
+
+INSERT INTO [dbo].[ShippingMarkPic_Detail]
+           ([ShippingMarkPicUkey]
+           ,[SCICtnNo]
+           ,[FileName])
+     VALUES
+           ( ( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}'  )
+           ,(
+				SELECT TOP 1 pd.SCICtnNo
+				FROM PackingList_Detail pd
+				INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
+			)
+           ,'{model.CustCTN}' 
+ 			)
+
 DROP TABLE #tmpOrders{i},#tmp{i}
 ";
                         #endregion
@@ -1590,399 +1703,40 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                 return false;
             }
 
-            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                try
+                if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
                 {
-                    // Mapping資料寫入
-                    if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return false;
-                    }
-
-                    transactionscope.Complete();
+                    this.canConvert = false;
                     transactionscope.Dispose();
-
-                    if (!isFromNewForm)
-                    {
-                        DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                        List<DataRow> dl = dt.AsEnumerable().Where(o => fileNames.Contains(o["FileName"].ToString())).ToList();
-                        foreach (DataRow dr in dl)
-                        {
-                            dr["Result"] = "Pass";
-                        }
-                    }
-
-                    if (isFromNewForm)
-                    {
-                        MyUtility.Msg.InfoBox("Assign Packing List successful!");
-                    }
-                    else
-                    {
-                        MyUtility.Msg.InfoBox("Data Mapping successful!");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        dr["Result"] = "Fail";
-                    }
-
-                    transactionscope.Dispose();
-                    this.ShowErr(ex);
-                }
-            }
-
-            return true;
-        }
-
-        public bool P24_Database_Update(List<List<UpdateModel>> upateModel_List, string uploadType, bool isFromNewForm = false , List<string> _wattingForConvert = null, Dictionary<string, string> File_Name_PDF = null, List<string> _wattingForConvert_contentsOfZPL = null)
-        {
-            DualResult result;
-            string updateCmd = string.Empty;
-            string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
-            List<string> fileNames = new List<string>();
-            int i = 0;
-
-            foreach (List<UpdateModel> upateModels in upateModel_List)
-            {
-                if (upateModels.Count == 0)
-                {
-                    continue;
-                }
-
-                string fileName = upateModels.FirstOrDefault().FileName;
-                fileNames.Add(fileName);
-
-                var idList = upateModels.Select(o => new { o.PackingListID }).Distinct().ToList();
-
-                foreach (var item in idList)
-                {
-                    string cmd = string.Empty;
-
-                    if (uploadType == "ZPL")
-                    {
-                        #region SQL
-                        cmd += $@"
-
-SELECT pd.ID,pd.CTNStartNo ,o.BrandID ,pd.RefNo ,pd.SCICtnNo
-INTO #tmp{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-	AND p.ID='{item.PackingListID}'
-    AND pd.CustCTN='' 
-
-
-----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
-IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}')
-BEGIN
-	INSERT INTO ShippingMarkPic
-		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
-
-	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-	FROM ShippingMarkPicture s
-	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
-    ;
-	INSERT INTO ShippingMarkPic
-		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
-
-	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-	FROM ShippingMarkPicture s
-	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
-    ;
-END
-ELSE
-BEGIN
-    UPDATE spc
-    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-    FROM ShippingMarkPic spc
-	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
-    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D' AND t.ID = spc.PackingListID
-    ;
-    UPDATE spc
-    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-    FROM ShippingMarkPic spc
-	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
-    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A' AND t.ID = spc.PackingListID
-END
-
-----ShippingMarkPic_Detail  (Side=D)
-IF EXISTS(
-    SELECT 1 FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}' AND Side='D' )
-)
-BEGIN
-    DELETE FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}' AND Side='D' )
-END
-
-INSERT INTO [dbo].[ShippingMarkPic_Detail]
-           ([ShippingMarkPicUkey]
-           ,[SCICtnNo])
-SELECT DISTINCT [ShippingMarkPicUkey]=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}' AND Side='D' ) 
-,pd.SCICtnNo
-FROM #tmp{i} pd
-
-
-
-----ShippingMarkPic_Detail  (Side=A)
-IF EXISTS(
-    SELECT 1 FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}' AND Side='A' )
-)
-BEGIN
-    DELETE FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}' AND Side='A' )
-END
-
-INSERT INTO [dbo].[ShippingMarkPic_Detail]
-           ([ShippingMarkPicUkey]
-           ,[SCICtnNo])
-SELECT DISTINCT [ShippingMarkPicUkey]=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}' AND Side='A' ) 
-,pd.SCICtnNo
-FROM #tmp{i} pd
-
-DROP TABLE #tmp{i}
-";
-                        #endregion
-                    }
-
-                    if (uploadType == "PDF")
-                    {
-                        #region SQL
-                        cmd += $@"
-
-SELECT pd.ID,pd.CTNStartNo ,o.BrandID ,pd.RefNo ,pd.SCICtnNo
-INTO #tmp{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-	AND p.ID='{item.PackingListID}'
-    AND pd.CustCTN='' 
-
-
-----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
-IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}')
-BEGIN
-	INSERT INTO ShippingMarkPic
-		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
-
-	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-	FROM ShippingMarkPicture s
-	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo
-    ;
-END
-ELSE
-BEGIN
-    UPDATE spc
-    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-    FROM ShippingMarkPic spc
-	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
-    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND t.ID = spc.PackingListID
-    ;
-END
-
-----ShippingMarkPic_Detail
-IF EXISTS(
-    SELECT 1 FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}')
-)
-BEGIN
-    DELETE FROM ShippingMarkPic_Detail 
-    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}')
-END
-
-INSERT INTO [dbo].[ShippingMarkPic_Detail]
-           ([ShippingMarkPicUkey]
-           ,[SCICtnNo])
-SELECT DISTINCT [ShippingMarkPicUkey]=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}') 
-,pd.SCICtnNo
-FROM #tmp{i} pd
-
-DROP TABLE #tmp{i}
-";
-                        #endregion
-                    }
-
-                    i++;
-
-                    updateCmd += cmd + Environment.NewLine + "---------";
-
-                    var sameIDList = upateModels.Where(o => o.PackingListID == item.PackingListID).ToList();
-
-                    cmd = string.Empty;
-                    foreach (var model in sameIDList)
-                    {
-                        if (uploadType == "ZPL")
-                        {
-                            #region SQL
-                            cmd += $@"
-----更新A面檔名
-UPDATE t
-SET t.FileName='{model.CustCTN}'
-FROM ShippingMarkPic_Detail t
-WHERE t.ShippingMarkPicUkey =(
-	SELECT TOP 1 sd.ShippingMarkPicUkey
-	FROM ShippingMarkPic s
-	INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-	WHERE s.PackingListID = '{item.PackingListID}' AND s.Side='A' AND sd.Image IS NULL AND sd.FileName = ''
-	ORDER BY sd.SCICtnNo 
-)
-AND  t.SCICtnNo =(
-	SELECT  TOP 1  sd.SCICtnNo
-	FROM ShippingMarkPic s
-	INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-	WHERE s.PackingListID = '{item.PackingListID}' AND s.Side='A' AND sd.Image IS NULL AND sd.FileName = ''
-	ORDER BY sd.SCICtnNo 
-)
-----更新D面檔名
-UPDATE t
-SET t.FileName='{model.CustCTN}'
-FROM ShippingMarkPic_Detail t
-WHERE t.ShippingMarkPicUkey =(
-	SELECT TOP 1 sd.ShippingMarkPicUkey
-	FROM ShippingMarkPic s
-	INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-	WHERE s.PackingListID = '{item.PackingListID}' AND s.Side='D' AND sd.Image IS NULL AND sd.FileName = ''
-	ORDER BY sd.SCICtnNo 
-)
-AND  t.SCICtnNo =(
-	SELECT  TOP 1  sd.SCICtnNo
-	FROM ShippingMarkPic s
-	INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-	WHERE s.PackingListID = '{item.PackingListID}' AND s.Side='D' AND sd.Image IS NULL AND sd.FileName = ''
-	ORDER BY sd.SCICtnNo 
-)
-
-";
-                            #endregion
-                        }
-
-                        if (uploadType == "PDF")
-                        {
-                            #region SQL
-                            cmd += $@"
-----更新檔名
-UPDATE t
-SET t.FileName='{model.CustCTN}'
-FROM ShippingMarkPic_Detail t
-WHERE t.ShippingMarkPicUkey =(
-	SELECT TOP 1 sd.ShippingMarkPicUkey
-	FROM ShippingMarkPic s
-	INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-	WHERE s.PackingListID = '{item.PackingListID}' AND sd.Image IS NULL AND sd.FileName = ''
-	ORDER BY sd.SCICtnNo 
-)
-AND  t.SCICtnNo =(
-	SELECT  TOP 1  sd.SCICtnNo
-	FROM ShippingMarkPic s
-	INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-	WHERE s.PackingListID = '{item.PackingListID}' AND sd.Image IS NULL AND sd.FileName = ''
-	ORDER BY sd.SCICtnNo 
-)
-";
-                            #endregion
-                        }
-                    }
-
-                    updateCmd += cmd + Environment.NewLine + "---------";
-                }
-            }
-
-            if (MyUtility.Check.Empty(updateCmd))
-            {
-                this.canConvert = false;
-                return false;
-            }
-
-            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
-            {
-                try
-                {
-                    // 開始更新DB
-                    if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return false;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr(ex);
+                    this.ShowErr(result);
                     return false;
                 }
-            }
 
-            // 轉出圖片檔，以及寫入Packing P24 的Image
-            try
-            {
+                transactionscope.Complete();
+                transactionscope.Dispose();
 
-                List<string> zplImg = new List<string>();
-                List<string> zplContent = new List<string>();
-                Dictionary<string, string> pdfImg = new Dictionary<string, string>();
+                if (!isFromNewForm)
+                {
+                    DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                    List<DataRow> dl = dt.AsEnumerable().Where(o => fileNames.Contains(o["FileName"].ToString())).ToList();
+                    foreach (DataRow dr in dl)
+                    {
+                        dr["Result"] = "Pass";
+                    }
+                }
+
                 if (isFromNewForm)
                 {
-                    zplImg = _wattingForConvert;
-                    pdfImg = File_Name_PDF;
-                    zplContent = _wattingForConvert_contentsOfZPL;
+                    MyUtility.Msg.InfoBox("Assign Packing List successful!");
                 }
                 else
                 {
-                    zplImg = this.wattingForConvert;
-                    pdfImg = this.File_Name_PDF;
-                    zplContent = this.wattingForConvert_contentsOfZPL;
+                    MyUtility.Msg.InfoBox("Data Mapping successful!");
                 }
-
-                if (this.currentFileType == UploadType.ZPL)
-                {
-                    foreach (string singleFileName in zplImg)
-                    {
-                        string contentString = zplContent.Where(o => o.Contains(singleFileName)).FirstOrDefault();
-                        if (contentString != string.Empty)
-                        {
-                            this.CallAPI(singleFileName, contentString, shippingMarkPath, contentString.ToUpper().Contains("MIXED"));
-                        }
-                    }
-                }
-
-                if (this.currentFileType == UploadType.PDF)
-                {
-                    foreach (var item in pdfImg)
-                    {
-
-                        string fileName = item.Key;
-                        string custCTN = item.Value;
-
-                        FileInfo file = new FileInfo(fileName);
-                        PDDocument doc = PDDocument.load(file.FullName);
-                        this.ConvertPDF2Image(fileName, shippingMarkPath, custCTN, 1, 5, ImageFormat.Jpeg, Definition.One);
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                foreach (DataRow dr in dt.Rows)
-                {
-                    dr["Result"] = "Fail";
-                }
-                this.ShowErr(ex);
-                return false;
             }
 
+            this.canConvert = true;
             return true;
         }
 
@@ -2222,7 +1976,7 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
             if (this.existsCustCTN_Table.Rows.Count > 0)
             {
                 var m = MyUtility.Msg.ShowMsgGrid(this.existsCustCTN_Table, "Exists Cust CTN", "Exists Cust CTN");
-                m.Width = 850;
+                m.Width = 650;
                 m.grid1.Columns[0].Width = 200;
                 m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
                 m.TopMost = true;
@@ -2232,7 +1986,7 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
             if (this.NotMapCustPo_Table.Rows.Count > 0)
             {
                 var m = MyUtility.Msg.ShowMsgGrid(this.NotMapCustPo_Table, "No found Cust PO#", "No found Cust PO#");
-                m.Width = 850;
+                m.Width = 650;
                 m.grid1.Columns[0].Width = 200;
                 m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
                 m.TopMost = true;
@@ -2241,7 +1995,7 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
             if (this.NotSetB03_Table.Rows.Count > 0)
             {
                 var m = MyUtility.Msg.ShowMsgGrid(this.NotSetB03_Table, "No Set Packing_B03", "No Set Packing_B03");
-                m.Width = 850;
+                m.Width = 650;
                 m.grid1.Columns[0].Width = 200;
                 m.grid1.Columns[0].Width = 50;
                 m.grid1.Columns[0].Width = 100;
@@ -2436,30 +2190,16 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
 
                 try
                 {
-                    // 透過API取得圖片
                     var response = (HttpWebResponse)request.GetResponse();
                     var responseStream = response.GetResponseStream();
-
-                    #region 寫入Image欄位
-
-                    byte[] data = null;
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        responseStream.CopyTo(ms);
-
-                        data = ms.ToArray();
-                    }
-
-                    //// 寫入DB
-                    this.InsertImageToDatabase(zplFileName, (i + 1).ToString(), data);
-                    #endregion
-
                     // 存入[System].ShippingMarkPath 路徑下
-                    //var fileStream = File.Create($@"{shippingMarkPath}\{zplFileName}_{(i + 1).ToString()}.bmp"); // 如果要PDF，把副檔名改成pdf
+                    var fileStream = File.Create($@"{shippingMarkPath}\{zplFileName}_{(i + 1).ToString()}.bmp"); // 如果要PDF，把副檔名改成pdf
 
-                    // responseStream.CopyTo(fileStream);
-                    // responseStream.Close();
-                    // fileStream.Close();
+                    responseStream.CopyTo(fileStream);
+                    responseStream.Close();
+                    fileStream.Close();
+
+                    this.InsertImageToDatabase($@"{shippingMarkPath}\{zplFileName}_{(i + 1).ToString()}.bmp", zplFileName, (i + 1).ToString());
                 }
                 catch (WebException ex)
                 {
@@ -2481,7 +2221,6 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
         public void ConvertPDF2Image(string pdfInputPath, string imageOutputPath, string imageName, int startPageNum, int endPageNum, ImageFormat imageFormat, Definition definition)
         {
             PDFWrapper pdfWrapper = new PDFWrapper();
-            byte[] data = null;
 
             pdfWrapper.LoadPDF(pdfInputPath);
             pdfWrapper.ZoomIN();
@@ -2531,34 +2270,39 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
                          new Rectangle(33, 110, picWidth, picHeight),
                          //指定被切割的圖片要繪製的部分
                          GraphicsUnit.Pixel);
-
-                using (var stream = new MemoryStream())
-                {
-                    pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                    data = stream.ToArray();
-                }
-
-                //pic.Save(imageOutputPath + imageName + ".bmp");
-                //graphic.Dispose();
-                //pic.Dispose();
-                //sourceImage.Dispose();
+                pic.Save(imageOutputPath + imageName + ".bmp");
+                graphic.Dispose();
+                pic.Dispose();
+                sourceImage.Dispose();
                 //File.Delete(tmpIMG);
             }
 
             pdfWrapper.Dispose();
 
-            // 寫入DB
-            this.InsertImageToDatabase(imageName, string.Empty, data);
+            this.InsertImageToDatabase(imageOutputPath + imageName + ".bmp", imageName, "");
+            //this.InsertImageToDatabase(imageOutputPath + imageName + ".bmp", imageName, "2");
         }
 
         /// <summary>
         /// 寫入Image欄位
         /// </summary>
         /// <param name="path">圖片暫存路徑</param>
-        /// <param name="fileName">寫入ShippingMarkPic_Detail.FileName的檔名</param>
+        /// <param name="FileName">寫入ShippingMarkPic_Detail.FileName的檔名</param>
         /// <param name="seq">圖片檔的Seq</param>
-        private void InsertImageToDatabase(string fileName, string seq, byte[] dataArry)
+        private void InsertImageToDatabase(string path, string FileName, string seq)
         {
+            byte[] data = null;
+
+            FileInfo fInfo = new FileInfo(path);
+
+            long length = fInfo.Length;
+
+            FileStream fStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+
+            BinaryReader br = new BinaryReader(fStream);
+
+            data = br.ReadBytes((int)length);
+
             // 檔名_1的圖片，要對應到Side A、檔名_2的圖片，要對應到Side D，若為空表示為PDF，PDF只會有一張
             string side = string.Empty;
             switch (seq)
@@ -2593,30 +2337,18 @@ WHERE sd.FileName=@FileName
     WHERE sd2.FileName = @FileName AND s2.Side = s.Side AND s2.Seq = s.Seq  AND s2.PackingListID = s.PackingListID
     ORDER BY s2.AddDate  DESC 
 )";
-            cmd += $@"
-UPDATE s
-SET s.EditDate=GETDATE() , s.EditName='{Sci.Env.User.UserID}'
-FROM ShippingMarkPic s
-INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-WHERE sd.FileName=@FileName
-";
-            if (!MyUtility.Check.Empty(side))
-            {
-                cmd += " AND s.Side=@Side " + Environment.NewLine;
-            }
 
-            List <SqlParameter> para = new List<SqlParameter>();
-            para.Add(new SqlParameter("@FileName", fileName));
+            List<SqlParameter> para = new List<SqlParameter>();
+            para.Add(new SqlParameter("@FileName", FileName));
             para.Add(new SqlParameter("@Seq", seq));
             para.Add(new SqlParameter("@Side", side));
-            para.Add(new SqlParameter("@Image", (object)dataArry));
+            para.Add(new SqlParameter("@Image", (object)data));
 
             DualResult result = DBProxy.Current.Execute(null, cmd, para);
 
             if (!result)
             {
                 this.ShowErr(result);
-                throw result.GetException();
             }
         }
 
