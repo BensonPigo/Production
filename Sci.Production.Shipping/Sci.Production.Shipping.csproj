@@ -200,6 +200,12 @@
     <Compile Include="P03_BatchUpload.Designer.cs">
       <DependentUpon>P03_BatchUpload.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03_COInformation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_COInformation.Designer.cs">
+      <DependentUpon>P03_COInformation.cs</DependentUpon>
+    </Compile>
     <Compile Include="P05_BatchImportSO.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -604,6 +610,18 @@
     <Compile Include="P14.Designer.cs">
       <DependentUpon>P14.cs</DependentUpon>
     </Compile>
+    <Compile Include="P14_BatchUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P14_BatchUpdate.Designer.cs">
+      <DependentUpon>P14_BatchUpdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P14_Old.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P14_Old.Designer.cs">
+      <DependentUpon>P14_Old.cs</DependentUpon>
+    </Compile>
     <Compile Include="P15.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -889,6 +907,9 @@
     <EmbeddedResource Include="P03_BatchUpload.resx">
       <DependentUpon>P03_BatchUpload.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P03_COInformation.resx">
+      <DependentUpon>P03_COInformation.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P05_BatchImportSO.resx">
       <DependentUpon>P05_BatchImportSO.cs</DependentUpon>
     </EmbeddedResource>
@@ -1108,6 +1129,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P14.resx">
       <DependentUpon>P14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P14_BatchUpdate.resx">
+      <DependentUpon>P14_BatchUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P14_Old.resx">
+      <DependentUpon>P14_Old.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P15.resx">
       <DependentUpon>P15.cs</DependentUpon>

@@ -257,6 +257,172 @@ Te2.InvoiceNo)
 	;
 drop table #TExport;
 
+-----------------------MtlCertificate-----------------------------
+	select m.ID			,
+		m.Consignee	,
+		m.CartonNo	,
+		m.ExportID	,
+		m.Handle		,
+		m.Mailed		,
+		m.Junk		,
+		m.AddName		,
+		m.AddDate		,
+		m.EditName	,
+		m.EditDate
+	into #tmpMtlCertificate
+	from Trade_To_Pms.dbo.MtlCertificate m
+	inner join Production.dbo.Factory f on f.ID = m.Consignee
+	where f.IsOriginalFty = 1
+	
+	update m set	m.Consignee		 = tm.Consignee	   ,
+				m.CartonNo		 = tm.CartonNo	   ,
+				m.ExportID		 = tm.ExportID	   ,
+				m.Handle		 = tm.Handle	   ,
+				m.Mailed		 = tm.Mailed	   ,
+				m.Junk			 = tm.Junk		   ,
+				m.AddName		 = tm.AddName	   ,
+				m.AddDate		 = tm.AddDate	   ,
+				m.TPEEditName	 = tm.EditName	   ,
+				m.TPEEditDate	 = tm.EditDate
+	from Production.dbo.MtlCertificate m
+	inner join #tmpMtlCertificate tm on tm.ID = M.ID
+	
+	insert into Production.dbo.MtlCertificate(	ID		   ,
+												Consignee  ,
+												CartonNo   ,
+												ExportID   ,
+												Handle	   ,
+												Mailed	   ,
+												Junk	   ,
+												AddName	   ,
+												AddDate	   ,
+												TPEEditName,
+												TPEEditDate
+												)
+				select	tm.ID		   ,
+						tm.Consignee  ,
+						tm.CartonNo   ,
+						tm.ExportID   ,
+						tm.Handle	   ,
+						tm.Mailed	   ,
+						tm.Junk	   ,
+						tm.AddName	   ,
+						tm.AddDate	   ,
+						tm.EditName   ,
+						tm.EditDate
+				from #tmpMtlCertificate tm
+				where not exists(select 1 from Production.dbo.MtlCertificate m with (nolock) where tm.ID = m.ID)
+
+-----------------------MtlCertificate_Detail-----------------------------
+	select 
+	Ukey		   ,
+	ID			   ,
+	SuppID		   ,
+	InvoiceNo	   ,
+	FormType	   ,
+	FormNo		   ,
+	TpeReceiveDate ,
+	Remark		   ,
+	Junk		   ,
+	FtyReceiveDate ,
+	FtyReceiveName ,
+	FtyRemark	   ,
+	AddName		   ,
+	AddDate		   ,
+	EditName	   ,
+	EditDate
+	into #tmpMtlCertificate_Detail
+	from Trade_To_Pms.dbo.MtlCertificate_Detail md
+	where exists(select 1 from #tmpMtlCertificate tm where tm.ID = md.ID)
+
+	update md set	md.ID				=tmd.ID,
+					md.SuppID			=tmd.SuppID,
+					md.InvoiceNo		=tmd.InvoiceNo,
+					md.FormType			=tmd.FormType,
+					md.FormNo			=tmd.FormNo,
+					md.TPEReceiveDate	=tmd.TPEReceiveDate,
+					md.TPERemark		=tmd.Remark,
+					md.Junk				=tmd.Junk,
+					md.FtyReceiveDate	=tmd.FtyReceiveDate,
+					md.FtyReceiveName	=tmd.FtyReceiveName,
+					md.FtyRemark		=tmd.FtyRemark,
+					md.TPEAddName		=tmd.AddName,
+					md.TPEAddDate		=tmd.AddDate,
+					md.TPEEditName		=tmd.EditName,
+					md.TPEEditDate		=tmd.EditDate
+	from Production.dbo.MtlCertificate_Detail md
+	inner join #tmpMtlCertificate_Detail tmd on md.ukey = tmd.ukey
+
+	insert into Production.dbo.MtlCertificate_Detail(	Ukey		   ,
+														ID			   ,
+														SuppID		   ,
+														InvoiceNo	   ,
+														FormType	   ,
+														FormNo		   ,
+														TPEReceiveDate ,
+														TPERemark	   ,
+														Junk		   ,
+														FtyReceiveDate ,
+														FtyReceiveName ,
+														FtyRemark	   ,
+														TPEAddName	   ,
+														TPEAddDate	   ,
+														TPEEditName	   ,
+														TPEEditDate)
+							select	tmd.Ukey		  ,
+									tmd.ID			  ,
+									tmd.SuppID		  ,
+									tmd.InvoiceNo	  ,
+									tmd.FormType	  ,
+									tmd.FormNo		  ,
+									tmd.TPEReceiveDate,
+									tmd.Remark		  ,
+									tmd.Junk		  ,
+									tmd.FtyReceiveDate,
+									tmd.FtyReceiveName,
+									tmd.FtyRemark	  ,
+									tmd.AddName		  ,
+									tmd.AddDate		  ,
+									tmd.EditName	  ,
+									tmd.EditDate
+							from #tmpMtlCertificate_Detail tmd
+							where not exists( select 1 from Production.dbo.MtlCertificate_Detail md with (nolock) where md.Ukey = tmd.Ukey)
+
+drop table #tmpMtlCertificate,#tmpMtlCertificate_Detail
+
+-----------------------FormType-----------------------------
+Delete a from Production.dbo.FormType a where not exists(select 1 from Trade_To_Pms.dbo.FormType b where a.ID = b.ID)
+
+update a set	a.Name	   = b.Name			,
+				a.Remark	   = b.Remark	,
+				a.Junk	   = b.Junk			,
+				a.AddName	   = b.AddName	,
+				a.AddDate	   = b.AddDate	,
+				a.EditName   = b.EditName	,
+				a.EditDate   = b.EditDate	
+from Production.dbo.FormType a
+inner join Trade_To_Pms.dbo.FormType b on b.ID = a.ID
+
+insert into Production.dbo.FormType(	ID		,
+										Name	,
+										Remark	,
+										Junk	,
+										AddName	,
+										AddDate	,
+										EditName,
+										EditDate
+										)
+					select	a.ID		,
+							a.Name	,
+							a.Remark	,
+							a.Junk	,
+							a.AddName	,
+							a.AddDate	,
+							a.EditName,
+							a.EditDate
+					from Trade_To_Pms.dbo.FormType a
+					where not exists (select 1 from Production.dbo.FormType b where a.ID = b.ID)
+
 END
 
 

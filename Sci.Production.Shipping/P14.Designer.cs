@@ -3,14 +3,14 @@
     partial class P14
     {
         /// <summary>
-        /// 設計工具所需的變數。
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// 清除任何使用中的資源。
+        /// Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing">如果應該處置受控資源則為 true，否則為 false。</param>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,158 +20,312 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form 設計工具產生的程式碼
+        #region Windows Form Designer generated code
 
         /// <summary>
-        /// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器修改
-        /// 這個方法的內容。
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.panel3 = new Sci.Win.UI.Panel();
-            this.btnQuery = new Sci.Win.UI.Button();
-            this.txtSupp = new Sci.Win.UI.TextBox();
-            this.labelSPNo = new Sci.Win.UI.Label();
-            this.txtPayInv = new Sci.Win.UI.TextBox();
-            this.labelPackID = new Sci.Win.UI.Label();
-            this.dateETA = new Sci.Win.UI.DateRange();
-            this.labelReceiveDate = new Sci.Win.UI.Label();
-            this.gridCertOfOrigin = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.lblID = new Sci.Win.UI.Label();
+            this.lblConsignee = new Sci.Win.UI.Label();
+            this.lblHandle = new Sci.Win.UI.Label();
+            this.lblCarton = new Sci.Win.UI.Label();
+            this.lblETC = new Sci.Win.UI.Label();
+            this.lblWKID = new Sci.Win.UI.Label();
+            this.lblETD = new Sci.Win.UI.Label();
+            this.lblETA = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.displayConsignee = new Sci.Win.UI.DisplayBox();
+            this.txtHandle = new Sci.Production.Class.txtuser();
+            this.displayCarton = new Sci.Win.UI.DisplayBox();
+            this.displayExportID = new Sci.Win.UI.DisplayBox();
+            this.dateETC = new Sci.Win.UI.DateBox();
+            this.dateETD = new Sci.Win.UI.DateBox();
+            this.dateETA = new Sci.Win.UI.DateBox();
             this.gridExport = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.btnSave = new Sci.Win.UI.Button();
-            this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridCertOfOrigin)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.btnBatchUpdate = new Sci.Win.UI.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
+            this.masterpanel.SuspendLayout();
+            this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
+            this.detailpanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
+            this.detail.SuspendLayout();
+            this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
+            this.browse.SuspendLayout();
+            this.tabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridExport)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
-            // panel3
+            // masterpanel
             // 
-            this.panel3.BorderStyle = System.Windows.Forms.Border3DStyle.RaisedOuter;
-            this.panel3.Controls.Add(this.btnQuery);
-            this.panel3.Controls.Add(this.txtSupp);
-            this.panel3.Controls.Add(this.labelSPNo);
-            this.panel3.Controls.Add(this.txtPayInv);
-            this.panel3.Controls.Add(this.labelPackID);
-            this.panel3.Controls.Add(this.dateETA);
-            this.panel3.Controls.Add(this.labelReceiveDate);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel3.Location = new System.Drawing.Point(0, 0);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(971, 55);
-            this.panel3.TabIndex = 4;
+            this.masterpanel.Controls.Add(this.displayExportID);
+            this.masterpanel.Controls.Add(this.displayCarton);
+            this.masterpanel.Controls.Add(this.txtHandle);
+            this.masterpanel.Controls.Add(this.displayConsignee);
+            this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.lblETA);
+            this.masterpanel.Controls.Add(this.lblETD);
+            this.masterpanel.Controls.Add(this.lblWKID);
+            this.masterpanel.Controls.Add(this.lblETC);
+            this.masterpanel.Controls.Add(this.lblCarton);
+            this.masterpanel.Controls.Add(this.lblHandle);
+            this.masterpanel.Controls.Add(this.lblConsignee);
+            this.masterpanel.Controls.Add(this.lblID);
+            this.masterpanel.Controls.Add(this.dateETA);
+            this.masterpanel.Controls.Add(this.dateETD);
+            this.masterpanel.Controls.Add(this.dateETC);
+            this.masterpanel.Size = new System.Drawing.Size(938, 150);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateETC, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateETD, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblConsignee, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblHandle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblCarton, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblETC, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblWKID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblETD, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblETA, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayConsignee, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtHandle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCarton, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayExportID, 0);
             // 
-            // btnQuery
+            // detailpanel
             // 
-            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(870, 13);
-            this.btnQuery.Name = "btnQuery";
-            this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 3;
-            this.btnQuery.Text = "Query";
-            this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
+            this.detailpanel.Location = new System.Drawing.Point(0, 150);
+            this.detailpanel.Size = new System.Drawing.Size(938, 244);
             // 
-            // txtSupp
+            // gridicon
             // 
-            this.txtSupp.BackColor = System.Drawing.Color.White;
-            this.txtSupp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSupp.Location = new System.Drawing.Point(355, 17);
-            this.txtSupp.Name = "txtSupp";
-            this.txtSupp.Size = new System.Drawing.Size(77, 23);
-            this.txtSupp.TabIndex = 1;
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridicon.Location = new System.Drawing.Point(893, 115);
+            this.gridicon.Visible = false;
             // 
-            // labelSPNo
+            // refresh
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(286, 17);
-            this.labelSPNo.Name = "labelSPNo";
-            this.labelSPNo.Size = new System.Drawing.Size(66, 23);
-            this.labelSPNo.TabIndex = 4;
-            this.labelSPNo.Text = "Supplier";
+            this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.refresh.Location = new System.Drawing.Point(675, 237);
             // 
-            // txtPayInv
+            // detailgridcont
             // 
-            this.txtPayInv.BackColor = System.Drawing.Color.White;
-            this.txtPayInv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPayInv.Location = new System.Drawing.Point(140, 17);
-            this.txtPayInv.Name = "txtPayInv";
-            this.txtPayInv.Size = new System.Drawing.Size(130, 23);
-            this.txtPayInv.TabIndex = 0;
+            this.detailgridcont.Size = new System.Drawing.Size(938, 244);
             // 
-            // labelPackID
+            // detail2
             // 
-            this.labelPackID.Location = new System.Drawing.Point(19, 17);
-            this.labelPackID.Name = "labelPackID";
-            this.labelPackID.Size = new System.Drawing.Size(118, 23);
-            this.labelPackID.TabIndex = 2;
-            this.labelPackID.Text = "Payment Invoice#";
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(938, 668);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(938, 394);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Controls.Add(this.gridExport);
+            this.detailbtm.Location = new System.Drawing.Point(0, 394);
+            this.detailbtm.Size = new System.Drawing.Size(938, 274);
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.gridExport, 0);
+            // 
+            // browse
+            // 
+            this.browse.Controls.Add(this.btnBatchUpdate);
+            this.browse.Size = new System.Drawing.Size(938, 668);
+            this.browse.Controls.SetChildIndex(this.btnBatchUpdate, 0);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(946, 697);
+            // 
+            // createby
+            // 
+            this.createby.Location = new System.Drawing.Point(70, 243);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(400, 243);
+            // 
+            // lblcreateby
+            // 
+            this.lblcreateby.Location = new System.Drawing.Point(5, 249);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(352, 249);
+            // 
+            // lblID
+            // 
+            this.lblID.Location = new System.Drawing.Point(16, 11);
+            this.lblID.Name = "lblID";
+            this.lblID.Size = new System.Drawing.Size(75, 23);
+            this.lblID.TabIndex = 1;
+            this.lblID.Text = "ID";
+            // 
+            // lblConsignee
+            // 
+            this.lblConsignee.Location = new System.Drawing.Point(16, 36);
+            this.lblConsignee.Name = "lblConsignee";
+            this.lblConsignee.Size = new System.Drawing.Size(75, 23);
+            this.lblConsignee.TabIndex = 2;
+            this.lblConsignee.Text = "Consignee";
+            // 
+            // lblHandle
+            // 
+            this.lblHandle.Location = new System.Drawing.Point(16, 61);
+            this.lblHandle.Name = "lblHandle";
+            this.lblHandle.Size = new System.Drawing.Size(75, 23);
+            this.lblHandle.TabIndex = 3;
+            this.lblHandle.Text = "Handle";
+            // 
+            // lblCarton
+            // 
+            this.lblCarton.Location = new System.Drawing.Point(16, 86);
+            this.lblCarton.Name = "lblCarton";
+            this.lblCarton.Size = new System.Drawing.Size(75, 23);
+            this.lblCarton.TabIndex = 4;
+            this.lblCarton.Text = "Carton";
+            // 
+            // lblETC
+            // 
+            this.lblETC.Location = new System.Drawing.Point(400, 61);
+            this.lblETC.Name = "lblETC";
+            this.lblETC.Size = new System.Drawing.Size(75, 23);
+            this.lblETC.TabIndex = 5;
+            this.lblETC.Text = "ETC";
+            // 
+            // lblWKID
+            // 
+            this.lblWKID.Location = new System.Drawing.Point(400, 36);
+            this.lblWKID.Name = "lblWKID";
+            this.lblWKID.Size = new System.Drawing.Size(75, 23);
+            this.lblWKID.TabIndex = 6;
+            this.lblWKID.Text = "WKID";
+            // 
+            // lblETD
+            // 
+            this.lblETD.Location = new System.Drawing.Point(400, 86);
+            this.lblETD.Name = "lblETD";
+            this.lblETD.Size = new System.Drawing.Size(75, 23);
+            this.lblETD.TabIndex = 7;
+            this.lblETD.Text = "ETD";
+            // 
+            // lblETA
+            // 
+            this.lblETA.Location = new System.Drawing.Point(400, 111);
+            this.lblETA.Name = "lblETA";
+            this.lblETA.Size = new System.Drawing.Size(75, 23);
+            this.lblETA.TabIndex = 8;
+            this.lblETA.Text = "ETA";
+            // 
+            // displayID
+            // 
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(94, 11);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(141, 23);
+            this.displayID.TabIndex = 9;
+            // 
+            // displayConsignee
+            // 
+            this.displayConsignee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayConsignee.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Consignee", true));
+            this.displayConsignee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayConsignee.Location = new System.Drawing.Point(94, 36);
+            this.displayConsignee.Name = "displayConsignee";
+            this.displayConsignee.Size = new System.Drawing.Size(141, 23);
+            this.displayConsignee.TabIndex = 10;
+            // 
+            // txtHandle
+            // 
+            this.txtHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
+            this.txtHandle.DisplayBox1Binding = "";
+            this.txtHandle.Location = new System.Drawing.Point(94, 61);
+            this.txtHandle.Name = "txtHandle";
+            this.txtHandle.Size = new System.Drawing.Size(300, 23);
+            this.txtHandle.TabIndex = 11;
+            this.txtHandle.TextBox1Binding = "";
+            // 
+            // displayCarton
+            // 
+            this.displayCarton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCarton.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CartonNo", true));
+            this.displayCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCarton.Location = new System.Drawing.Point(94, 86);
+            this.displayCarton.Name = "displayCarton";
+            this.displayCarton.Size = new System.Drawing.Size(300, 23);
+            this.displayCarton.TabIndex = 12;
+            // 
+            // displayExportID
+            // 
+            this.displayExportID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayExportID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExportID", true));
+            this.displayExportID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayExportID.Location = new System.Drawing.Point(478, 36);
+            this.displayExportID.Name = "displayExportID";
+            this.displayExportID.Size = new System.Drawing.Size(146, 23);
+            this.displayExportID.TabIndex = 13;
+            // 
+            // dateETC
+            // 
+            this.dateETC.IsSupportEditMode = false;
+            this.dateETC.Location = new System.Drawing.Point(478, 61);
+            this.dateETC.Name = "dateETC";
+            this.dateETC.ReadOnly = true;
+            this.dateETC.Size = new System.Drawing.Size(130, 23);
+            this.dateETC.TabIndex = 14;
+            // 
+            // dateETD
+            // 
+            this.dateETD.IsSupportEditMode = false;
+            this.dateETD.Location = new System.Drawing.Point(478, 86);
+            this.dateETD.Name = "dateETD";
+            this.dateETD.ReadOnly = true;
+            this.dateETD.Size = new System.Drawing.Size(130, 23);
+            this.dateETD.TabIndex = 15;
             // 
             // dateETA
             // 
-            this.dateETA.BackColor = System.Drawing.SystemColors.Menu;
-            this.dateETA.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            // 
-            // 
-            // 
-            this.dateETA.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateETA.DateBox1.Name = "";
-            this.dateETA.DateBox1.Size = new System.Drawing.Size(124, 23);
-            this.dateETA.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateETA.DateBox2.Location = new System.Drawing.Point(146, 0);
-            this.dateETA.DateBox2.Name = "";
-            this.dateETA.DateBox2.Size = new System.Drawing.Size(124, 23);
-            this.dateETA.DateBox2.TabIndex = 1;
-            this.dateETA.Location = new System.Drawing.Point(519, 17);
+            this.dateETA.IsSupportEditMode = false;
+            this.dateETA.Location = new System.Drawing.Point(478, 111);
             this.dateETA.Name = "dateETA";
-            this.dateETA.Size = new System.Drawing.Size(270, 23);
-            this.dateETA.TabIndex = 2;
-            // 
-            // labelReceiveDate
-            // 
-            this.labelReceiveDate.Location = new System.Drawing.Point(463, 17);
-            this.labelReceiveDate.Name = "labelReceiveDate";
-            this.labelReceiveDate.Size = new System.Drawing.Size(53, 23);
-            this.labelReceiveDate.TabIndex = 0;
-            this.labelReceiveDate.Text = "ETA";
-            // 
-            // gridCertOfOrigin
-            // 
-            this.gridCertOfOrigin.AllowUserToAddRows = false;
-            this.gridCertOfOrigin.AllowUserToDeleteRows = false;
-            this.gridCertOfOrigin.AllowUserToResizeRows = false;
-            this.gridCertOfOrigin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridCertOfOrigin.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridCertOfOrigin.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridCertOfOrigin.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridCertOfOrigin.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridCertOfOrigin.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridCertOfOrigin.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridCertOfOrigin.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCertOfOrigin.Location = new System.Drawing.Point(12, 61);
-            this.gridCertOfOrigin.Name = "gridCertOfOrigin";
-            this.gridCertOfOrigin.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridCertOfOrigin.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridCertOfOrigin.RowTemplate.Height = 24;
-            this.gridCertOfOrigin.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCertOfOrigin.ShowCellToolTips = false;
-            this.gridCertOfOrigin.Size = new System.Drawing.Size(947, 259);
-            this.gridCertOfOrigin.TabIndex = 5;
-            this.gridCertOfOrigin.TabStop = false;
+            this.dateETA.ReadOnly = true;
+            this.dateETA.Size = new System.Drawing.Size(130, 23);
+            this.dateETA.TabIndex = 16;
             // 
             // gridExport
             // 
             this.gridExport.AllowUserToAddRows = false;
             this.gridExport.AllowUserToDeleteRows = false;
             this.gridExport.AllowUserToResizeRows = false;
-            this.gridExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.gridExport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gridExport.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridExport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
@@ -180,71 +334,95 @@
             this.gridExport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridExport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridExport.Location = new System.Drawing.Point(12, 364);
+            this.gridExport.Location = new System.Drawing.Point(0, 6);
             this.gridExport.Name = "gridExport";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridExport.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridExport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridExport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridExport.RowTemplate.Height = 24;
             this.gridExport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridExport.ShowCellToolTips = false;
-            this.gridExport.Size = new System.Drawing.Size(947, 164);
-            this.gridExport.TabIndex = 6;
-            this.gridExport.TabStop = false;
+            this.gridExport.Size = new System.Drawing.Size(938, 231);
+            this.gridExport.TabIndex = 3;
             // 
-            // btnSave
+            // btnBatchUpdate
             // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(870, 326);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(80, 30);
-            this.btnSave.TabIndex = 7;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
+            this.btnBatchUpdate.Location = new System.Drawing.Point(795, 4);
+            this.btnBatchUpdate.Name = "btnBatchUpdate";
+            this.btnBatchUpdate.Size = new System.Drawing.Size(128, 30);
+            this.btnBatchUpdate.TabIndex = 3;
+            this.btnBatchUpdate.Text = "Batch Update";
+            this.btnBatchUpdate.UseVisualStyleBackColor = true;
+            this.btnBatchUpdate.Click += new System.EventHandler(this.BtnBatchUpdate_Click);
             // 
             // P14
             // 
-            this.ClientSize = new System.Drawing.Size(971, 541);
-            this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.gridExport);
-            this.Controls.Add(this.gridCertOfOrigin);
-            this.Controls.Add(this.panel3);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(946, 730);
+            this.DefaultDetailOrder = "SuppID,InvoiceNo";
+            this.DefaultFilter = "Junk = 0";
+            this.DefaultOrder = "ID";
+            this.GridAlias = "MtlCertificate_Detail";
+            this.IsGridIconVisible = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
+            this.KeyField1 = "ID";
+            this.KeyField2 = "ID";
             this.Name = "P14";
-            this.OnLineHelpID = "Sci.Win.Forms.Base";
-            this.Text = "P14. Material Certificate of Origin Record";
-            this.Controls.SetChildIndex(this.panel3, 0);
-            this.Controls.SetChildIndex(this.gridCertOfOrigin, 0);
-            this.Controls.SetChildIndex(this.gridExport, 0);
-            this.Controls.SetChildIndex(this.btnSave, 0);
-            this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridCertOfOrigin)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
+            this.Text = "P14. Material C/O Maintenance";
+            this.WorkAlias = "MtlCertificate";
+            this.Controls.SetChildIndex(this.tabs, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
+            this.masterpanel.ResumeLayout(false);
+            this.masterpanel.PerformLayout();
+            this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
+            this.detailpanel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
+            this.detail.ResumeLayout(false);
+            this.detailcont.ResumeLayout(false);
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
+            this.browse.ResumeLayout(false);
+            this.tabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridExport)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private Win.UI.Panel panel3;
-        private Win.UI.Button btnQuery;
-        private Win.UI.TextBox txtSupp;
-        private Win.UI.Label labelSPNo;
-        private Win.UI.TextBox txtPayInv;
-        private Win.UI.Label labelPackID;
-        private Win.UI.DateRange dateETA;
-        private Win.UI.Label labelReceiveDate;
-        private Win.UI.Grid gridCertOfOrigin;
+        private Win.UI.DateBox dateETA;
+        private Win.UI.DateBox dateETD;
+        private Win.UI.DateBox dateETC;
+        private Win.UI.DisplayBox displayExportID;
+        private Win.UI.DisplayBox displayCarton;
+        private Class.txtuser txtHandle;
+        private Win.UI.DisplayBox displayConsignee;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.Label lblETA;
+        private Win.UI.Label lblETD;
+        private Win.UI.Label lblWKID;
+        private Win.UI.Label lblETC;
+        private Win.UI.Label lblCarton;
+        private Win.UI.Label lblHandle;
+        private Win.UI.Label lblConsignee;
+        private Win.UI.Label lblID;
         private Win.UI.Grid gridExport;
-        private Win.UI.Button btnSave;
-        private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.ListControlBindingSource listControlBindingSource2;
+        private Win.UI.Button btnBatchUpdate;
     }
 }
