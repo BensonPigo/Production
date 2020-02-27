@@ -21,8 +21,11 @@ namespace Sci.Production.Packing
         private string _UploadType = string.Empty;
         private List<PDF_Model> PO_File_List = new List<PDF_Model>();
         private List<List<UpdateModel>> UpdateModel_List = new List<List<UpdateModel>>();
+        private List<string> _wattingForConvert;
+        private Dictionary<string, string> _File_Name_PDF;
+        private List<string> _wattingForConvert_contentsOfZPL;
 
-        public P26_AssignPackingList(List<NewFormModel> newFormModels, DataTable p25Dt , string uploadType)
+        public P26_AssignPackingList(List<NewFormModel> newFormModels, DataTable p25Dt , string uploadType, List<string> wattingForConvert , Dictionary<string, string> File_Name_PDF , List<string> wattingForConvert_contentsOfZPL)
         {
             this.InitializeComponent();
             this._NewFormModels = newFormModels;
@@ -34,6 +37,10 @@ namespace Sci.Production.Packing
             // this.GridDt.Columns.Add(new DataColumn() { ColumnName = "SKU", DataType = typeof(string) });
             // this.GridDt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(string) });
             this.GridDt.Columns.Add(new DataColumn() { ColumnName = "PackingListID", DataType = typeof(string) });
+
+            this._wattingForConvert = wattingForConvert;
+            this._File_Name_PDF = File_Name_PDF;
+            this._wattingForConvert_contentsOfZPL = wattingForConvert_contentsOfZPL;
         }
 
         protected override void OnFormLoaded()
@@ -228,7 +235,14 @@ namespace Sci.Production.Packing
 
             }
 
-            bool result = p26.P26_UpdateDataBase(this.UpdateModel_List, this._UploadType, true);
+            // 先完成P24資料寫入、轉圖片、將圖片存入P24表身
+            bool result = p26.P24_Database_Update(this.UpdateModel_List, this._UploadType, true, this._wattingForConvert, this._File_Name_PDF, this._wattingForConvert_contentsOfZPL);
+
+            if (result)
+            {
+                // 修改PackingList_Detail
+                result = p26.P03_Database_Update(this.UpdateModel_List, this._UploadType, true);
+            }
 
             if (result)
             {
