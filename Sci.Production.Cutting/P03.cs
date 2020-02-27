@@ -351,7 +351,7 @@ From
                     string newestcutdate = MyUtility.Check.Empty(dr["newestcutdate"]) ? "Null" : $"'{((DateTime)dr["newestcutdate"]).ToShortDateString()}'";
                     string NewCutcellid = MyUtility.Check.Empty(dr["NewCutcellid"]) ? "Null" : $"'{dr["NewCutcellid"]}'";
                     string NewSpreadingNoID = MyUtility.Check.Empty(dr["NewSpreadingNoID"]) ? "Null" : $"'{dr["NewSpreadingNoID"]}'";
-                    string NewShift = MyUtility.Check.Empty(dr["NewShift"]) ? "Null" : $"'{dr["NewShift"]}'";
+                    string NewShift = MyUtility.Check.Empty(dr["NewShift"]) ? "''" : $"'{dr["NewShift"]}'";
                     string orgEstCutDate =((DateTime)dr["EstCutDate"]).ToShortDateString();
                     if (!MyUtility.Check.Empty(dr["newestcutdate"]))
                     {
@@ -486,7 +486,7 @@ and CutRef = '{item.CutRef}'
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(update, upResult);
+                        ShowErr(upResult);
                         return;
                     }
                     _transactionscope.Complete();
