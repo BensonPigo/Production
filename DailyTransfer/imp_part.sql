@@ -302,6 +302,15 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 		  where not exists(select 1 from dbo.MachineBrand t where t.id=s.id)
 
 	drop table #tmpTrade_To_PmsMachineBrand
+
+	----------------RepairPO-------------------------
+	update 
+		a.Status = case when b.Status = null and a.Status = 'Complete' then 'Confirmed'
+						when b.Status in ('Complete', 'Junk') then b.Status
+				   else a.Status
+				   end 
+	from RepairPO a
+	inner join SciTrade_To_Pms_RepairReq b on a.ID = b.ID
 	
 	----------------RepairPO_Detail-------------------------
 
