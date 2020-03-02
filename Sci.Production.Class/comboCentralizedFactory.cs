@@ -34,12 +34,16 @@ namespace Sci.Production.Class
         /// SetDefalutIndex
         /// </summary>
         /// <param name="defalutValue">defalutValue</param>
-        public void SetDefalutIndex(string defalutValue = null)
+        public void SetDefalutIndex(string defalutValue = null, bool ftygroup = false)
         {
             DataTable dtFty = new DataTable();
             DataRow dr;
             dtFty.Columns.Add("Factory", typeof(string));
             string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
+            if (ftygroup)
+            {
+                strSevers = ConfigurationManager.AppSettings["ServerMatchFtyGeoup"].Split(new char[] { ';' });
+            }
             foreach (string strServer in strSevers)
             {
                 string[] Factorys = strServer.Split(new char[] { ':', ',' });
