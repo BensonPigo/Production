@@ -21,7 +21,7 @@ namespace Sci.Production.Warehouse
             this.KeyField1 = "id";
             this.KeyField2 = "Issue_SummaryUkey";
         }
-
+        ///Issue_Detail
         protected override void OnSubDetailInsert(int index = -1)
         {
             var frm = new Sci.Production.Warehouse.P33_Detail_Detail(CurrentDetailData, (DataTable)gridbs.DataSource);
@@ -47,9 +47,9 @@ select t.poid
        , t.Seq1
        , t.Seq2
 	   , [BulkQty]=FTY.InQty-FTY.OutQty+ FTY.AdjustQty
-	   , [IssueQty]=t.Qty
+	   , t.Qty
 	   , [BulkLocation]=FTYD.MtlLocationID
-from #tmp t
+from #tmp t    ---- #tmp = Issue_Detail
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey AND FTY.StockType = 'B'
 Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
 ", out dtFtyinventory, "#tmp")))
@@ -87,13 +87,13 @@ Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
                     return;
                 }
 
-                if (MyUtility.Check.Empty(Convert.ToInt32(row["BulkQty"]) < Convert.ToInt32(e.FormattedValue)) )
+                if (Convert.ToDecimal(row["BulkQty"]) < Convert.ToDecimal(e.FormattedValue))
                 {
                     MyUtility.Msg.InfoBox("[Issue Qty] Can't over [Bulk Qty]!!");
                     return;
                 }
 
-                row["IssueQty"] = Convert.ToInt32(e.FormattedValue);
+                row["Qty"] = Convert.ToInt32(e.FormattedValue);
                 subDT.EndInit();
                 sum_checkedqty();
             };
@@ -101,11 +101,11 @@ Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
             .Text("seq1", header: "Seq1", width: Widths.AnsiChars(5), iseditingreadonly: true)  
             .Text("seq2", header: "Seq2", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Numeric("BulkQty", header: "Bulk Qty", width: Widths.AnsiChars(8), decimal_places: 0, integer_places: 8, iseditingreadonly: true)   
-            .Numeric("IssueQty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: ns)
+            .Numeric("Qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: ns)
             .Text("BulkLocation", header: "Bulk Location", width: Widths.AnsiChars(15), iseditingreadonly: true)
             ;    
 
-            this.grid.Columns["IssueQty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             return true;
         }
@@ -154,7 +154,7 @@ Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
         {
             grid.EndEdit();
             DataTable subDT = (DataTable)gridbs.DataSource;
-            Object SumIssueQTY = subDT.Compute("Sum(IssueQty)", "");
+            Object SumIssueQTY = subDT.Compute("Sum(Qty)", "");
             this.numIssueQty.Text = SumIssueQTY.ToString();
             //this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
 
