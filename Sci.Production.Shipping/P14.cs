@@ -30,7 +30,7 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
             this.detailgrid.Sorted += this.Detailgrid_Sorted;
             //this.detailgrid.SelectionChanged += this.Detailgrid_SelectionChanged;
-            this.detailgrid.RowSelecting += Detailgrid_RowSelecting;
+            this.detailgrid.RowSelecting += this.Detailgrid_RowSelecting;
             this.canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P14. Material C/O Maintenance", "CanEdit");
             this.btnBatchUpdate.Enabled = this.canEdit;
         }
@@ -42,12 +42,14 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            if (this.gridExportInvKey == this.CurrentDetailData["InvoiceNo"].ToString())
+            string invNo = this.detailgrid.Rows[e.RowIndex].Cells["InvoiceNo"].Value.ToString();
+
+            if (this.gridExportInvKey == invNo)
             {
                 return;
             }
 
-            this.gridExportInvKey = this.CurrentDetailData["InvoiceNo"].ToString();
+            this.gridExportInvKey = invNo;
             string sqlGetDate = $@"
 select ed.ID, e.FactoryID, e.Consignee, e.ShipModeID, e.LoadDate, e.Etd, e.Eta, e.InvNo, e.Vessel, e.Blno,[ShipQty] = Sum(ed.Qty)
 from Export_Detail ed
