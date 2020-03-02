@@ -247,6 +247,7 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
 	,[BalanceQty]=IIF(BalanceQty.BalanceQty=0,NULL,BalanceQty.BalanceQty)
 	,t.TotalRollsCalculated
     ,mp.ALocation
+    ,LT.BulkLocationDate
 	,mp.BLocation	
 	,[MinSciDelivery] = (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))
 	,[MinBuyerDelivery] = (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category)),
@@ -352,6 +353,14 @@ outer apply(select  CrockingInspector = (select name from Pass1 where id = Crock
 	,WashInspector = (select name from Pass1 where id = WashInspector)
 	from FIR_Laboratory where Id=f.ID
 )FL
+outer apply
+(
+	SELECT Max(a.EditDate) BulkLocationDate
+	FROM LocationTrans a WITH (NOLOCK) 
+	inner join LocationTrans_detail as b WITH (NOLOCK) on a.ID = b.ID 
+	WHERE a.status = 'Confirmed' and b.stocktype='B'
+	AND b.Poid=f.POID and b.Seq1=f.SEQ1 and b.Seq2=f.SEQ2
+)LT
 --OUTER APPLY(
 --	 select [BalanceQty]=sum(fit.inqty) - sum(fit.outqty) + sum(fit.adjustqty) 
 --	 from Receiving_Detail rd
@@ -375,7 +384,7 @@ ftp.TotalPoint,F.Odor,F.OdorDate,f.PhysicalInspector,f.WeightInspector
 ,fl.CrockingInspector,fl.HeatInspector,fl.WashInspector,v.Name,cfd.Name
 ,t.TotalRollsCalculated
 ,BalanceQty.BalanceQty
-,mp.ALocation,mp.BLocation
+,mp.ALocation,mp.BLocation,LT.BulkLocationDate
 
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
