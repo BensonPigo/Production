@@ -106,6 +106,7 @@ where ed.ID = '{0}'", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.btnCOInfo.Enabled = !this.EditMode;
             this.txtLocateSP.ReadOnly = false;
             this.txtLocateSP2.ReadOnly = false;
             this.chkReplacement.ReadOnly = true;
@@ -400,6 +401,11 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             {
                 this.btnExpenseData.ForeColor = Color.Black;
             }
+        }
+
+        private void BtnCOInfo_Click(object sender, EventArgs e)
+        {
+            new P03_COInformation(this.CurrentMaintain["ID"].ToString()).ShowDialog();
         }
     }
 }
