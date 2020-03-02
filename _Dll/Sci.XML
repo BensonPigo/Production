@@ -4253,9 +4253,9 @@
             <param name="dir">Path dir of Clip.</param>
             <returns>result of the method is executed.</returns>
         </member>
-        <member name="M:Sci.Win.PrivUtils.DeleteClip(Sci.Win.SYS.CLIPRow)">
+        <member name="M:Sci.Win.PrivUtils.DeleteClipRow(Sci.Win.SYS.CLIPRow)">
             <summary>
-            Delete Clip file.
+            Delete Clip Row
             </summary>
             <param name="data">DataRow of Clip information.</param>
             <returns>result of the method is executed.</returns>
@@ -4357,6 +4357,14 @@
             <param name="ukey">ukey</param>
             <returns>Result of process.</returns>
         </member>
+        <member name="M:Sci.Win.PrivUtils.GetManeger(System.String,System.Collections.Generic.IList{System.String}@)">
+            <summary>
+            取得自己與主管ID
+            </summary>
+            <param name="userID">查詢人員</param>
+            <param name="managerList">結果清單</param>
+            <returns>DualResult</returns>
+        </member>
         <member name="M:Sci.Win.PrivUtils.GetGridColumns(System.String,System.Nullable{System.Int64},System.Collections.Generic.IList{Sci.Win.IGridColumn}@)">
             <summary>
             Get grid column definition from database.
@@ -4375,6 +4383,11 @@
         <member name="M:Sci.Win.PrivUtils.OpenOnLineHelp(System.String)">
             <summary>
             打開 Help.http:\\misap:8063?onlinehelpID='{OnLineHelpID}'
+            </summary>
+        </member>
+        <member name="T:Sci.Win.CloneHelper">
+            <summary>
+            將Grid複製到另一個Grid，連同事件一同複製
             </summary>
         </member>
         <member name="T:Sci.Win.QueryBuilderOperator">
@@ -12432,11 +12445,6 @@
             
             </summary>
         </member>
-        <member name="P:Sci.Win.Tools.Clip.ClipRootDir">
-            <summary>
-            should be Sci.Env.Cfg.ClipPath
-            </summary>
-        </member>
         <member name="M:Sci.Win.Tools.Clip.GetClipDirYYYYMM(Sci.Win.SYS.CLIPRow,System.String@,System.String)">
             <summary>
             
@@ -12647,7 +12655,7 @@
         </member>
         <member name="M:Sci.Win.Tools.Clip.DeleteClip(System.String,System.String)">
             <summary>
-            隨單號 + tableName刪除其所有的副擋
+            input 1 隨單號 + tableName刪除其所有的副擋
             </summary>
             <param name="tableName">tableName</param>
             <param name="uniqueID">單號</param>
@@ -12734,7 +12742,7 @@
         <member name="M:Sci.Win.Tools.Clip01.#ctor">
             <inheritdoc />
         </member>
-        <member name="M:Sci.Win.Tools.Clip01.#ctor(System.String,System.String,System.String)">
+        <member name="M:Sci.Win.Tools.Clip01.#ctor(System.String,System.String,System.String,System.String)">
             <inheritdoc />
         </member>
         <member name="M:Sci.Win.Tools.Clip01.OnFormLoaded">
