@@ -24,7 +24,6 @@ namespace MarkerFile.Hourly
     public partial class Main : Sci.Win.Tems.Input7
     {
         bool isAuto = false;
-        DataRow mailTo;
         TransferPms transferPMS = new TransferPms();
         StringBuilder sqlmsg = new StringBuilder();
         bool isTestJobLog = false;
@@ -56,8 +55,6 @@ namespace MarkerFile.Hourly
         {
             base.OnFormLoaded();
 
-            OnRequery();
-
             transferPMS.fromSystem = "Production";
 
             if (isAuto)
@@ -65,19 +62,6 @@ namespace MarkerFile.Hourly
                 Run();
                 this.Close();
             }
-        }
-
-        private void OnRequery()
-        {
-            DataTable _mailTo;
-            String sqlCmd;
-            sqlCmd = "Select * From dbo.MailTo Where ID = '101'";
-
-            DualResult result = DBProxy.Current.Select("Production", sqlCmd, out _mailTo);
-
-            if (!result) { ShowErr(result); return; }
-
-            mailTo = _mailTo.Rows[0];
         }
 
         private void Run()
@@ -164,9 +148,6 @@ Please do not reply this mail.
             {
                 toAddress += MyUtility.Check.Empty(toAddress) ? this.tpeMisMail : ";" + this.tpeMisMail;
             }
-
-            if (String.IsNullOrEmpty(subject)) subject = mailTo["Subject"].ToString();
-            if (String.IsNullOrEmpty(desc)) desc = mailTo["Content"].ToString();
 
             if (!MyUtility.Check.Empty(toAddress))
             {
