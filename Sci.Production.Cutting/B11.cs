@@ -136,9 +136,9 @@ where s.seq is null and t.seq > 0
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            //txtstyle1.ReadOnly = true;
-            //txtseason1.ReadOnly = true;
-            //txtbrand1.ReadOnly = true;
+            txtstyle1.ReadOnly = true;
+            txtseason1.ReadOnly = true;
+            txtbrand1.ReadOnly = true;
         }
 
         protected override bool ClickCopyBefore()
