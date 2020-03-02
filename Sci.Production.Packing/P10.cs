@@ -271,14 +271,10 @@ where   a.ID = '{0}'",
                                         dr["CustPONo"] = seekData["CustPONo"].ToString().Trim();
                                         dr["Alias"] = seekData["Alias"].ToString().Trim();
                                         dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    }
 
-                                        selectDataTable.Rows.Add(dr);
-                                        insertCount++;
-                                    }
-                                    else
-                                    {
-                                        notFoundErr.Rows.Add(dr.ItemArray);
-                                    }
+                                    selectDataTable.Rows.Add(dr);
+                                    insertCount++;
                                 }
                                 else
                                 {
@@ -349,14 +345,10 @@ where   a.ID = '{0}'",
                                                 dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                                 dr["packinglistid"] = packinglistid.Trim();
                                                 dr["CTNStartNo"] = CTNStartNo.Trim();
+                                            }
 
-                                                selectDataTable.Rows.Add(dr);
-                                                insertCount++;
-                                            }
-                                            else
-                                            {
-                                                notFoundErr.Rows.Add(dr.ItemArray);
-                                            }
+                                            selectDataTable.Rows.Add(dr);
+                                            insertCount++;
                                         }
                                         else
                                         {
@@ -439,14 +431,10 @@ where   a.ID = '{0}'",
                                             dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                             dr["packinglistid"] = packinglistid.Trim();
                                             dr["CTNStartNo"] = CTNStartNo.Trim();
+                                        }
 
-                                            selectDataTable.Rows.Add(dr);
-                                            insertCount++;
-                                        }
-                                        else
-                                        {
-                                            notFoundErr.Rows.Add(dr.ItemArray);
-                                        }
+                                        insertCount++;
+                                        selectDataTable.Rows.Add(dr);
                                     }
                                     else
                                     {
