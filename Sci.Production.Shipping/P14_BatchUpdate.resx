@@ -117,19 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="detailgridbs.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="detailgrid2bs.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>138, 17</value>
-  </metadata>
-  <metadata name="mtbs.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>655, 17</value>
-  </metadata>
-  <metadata name="gridbs.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>567, 17</value>
-  </metadata>
-  <metadata name="tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>736, 17</value>
-  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnUpdateGridFtyRecieveDate.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABcAAAAdCAIAAADO02CRAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADrwAAA68AZW8ckkAAAELSURBVEhL7ZO/CoJQFIfdaqqGpMkaiqCIaujPJC1FT1K9
+        RNRUvYVu9RiOjo6Ojo6OjnbIn9HVc42gRfDDQe85v49zD6hE/6BYFtM08Sbni+VyuzZb6v1xx7eEPIvn
+        ed1+V1GUXr8XBAFOOfIs6+2GFDG7wx6nHFIL3QKCF5P51LZt1DLwFpqfbgFBwmw5C8MQHSK8heZHVISW
+        jQ4RxmJZ1lxfICcyGA9d10XfB2kLzTyajBDi0Fc6Wj9IW46nI9rlGIaB7gTBQtOqLRW9crSO5vs+Mi8E
+        C22EBo6fSrWCUEKtUX9XU9ththujddpIJ1AYtQylhae08BTCQv/UWcRxHNQySC0/8Q9LFD0BGcvldBAM
+        U1UAAAAASUVORK5CYII=
+</value>
+  </data>
 </root>
