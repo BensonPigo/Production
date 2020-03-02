@@ -147,10 +147,18 @@ Please do not reply this mail.
             String eMailID = this.CurrentData["EMailID"].ToString();
             String eMailPwd = this.CurrentData["EMailPwd"].ToString();
             transferPMS.SetSMTP(mailServer, 25, eMailID, eMailPwd);
-
+            
             String sendFrom = this.CurrentData["SendFrom"].ToString();
-            String toAddress = "pmshelp@sportscity.com.tw";
+            String toAddress = "";
             String ccAddress = "";
+
+            string sqlgetmail = "select * from Mailto where ID = '019'";
+            DataRow drmail;
+            if (MyUtility.Check.Seek(sqlgetmail, out drmail))
+            {
+                toAddress = MyUtility.Convert.GetString(drmail["ToAddress"]);
+                ccAddress = MyUtility.Convert.GetString(drmail["ccAddress"]);
+            }
 
             if (isFail)
             {
