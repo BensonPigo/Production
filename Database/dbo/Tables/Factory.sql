@@ -43,6 +43,7 @@
     [IsProduceFty]         BIT            DEFAULT ((1)) NULL,
     [TestDocFactoryGroup]  VARCHAR (8)    CONSTRAINT [DF_Factory_TestDocFactoryGroup] DEFAULT ('') NULL,
     [IsOriginalFty]        BIT            DEFAULT ((0)) NULL,
+    [LastDownloadAPSDate] DATETIME NULL, 
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

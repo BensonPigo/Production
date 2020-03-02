@@ -62,13 +62,21 @@ BEGIN
 	RAISERROR('Export SubconReason - Starts',0,0)
 	select * into dbo.SubconReason from (select * from ProductionTPE.dbo.SubconReason ) as tmp
 
+	-------------DQSReason-------------------
+	RAISERROR('Export DQSReason - Starts',0,0)
+	select * into dbo.DQSReason from (select * from ProductionTPE.dbo.DQSReason ) as tmp
+
 	-------------ClogReason-------------------
 	RAISERROR('Export ClogReason - Starts',0,0)
 	select * into dbo.ClogReason from (select * from ProductionTPE.dbo.ClogReason ) as tmp
 
-	-------------DQSReason-------------------
-	RAISERROR('Export DQSReason - Starts',0,0)
-	select * into dbo.DQSReason from (select * from ProductionTPE.dbo.DQSReason ) as tmp
+	-------------OperationDesc-------------------
+	RAISERROR('Export OperationDesc - Starts',0,0)
+	select * into dbo.OperationDesc from (select * from ProductionTPE.dbo.OperationDesc ) as tmp
+	
+	-------------MeasurementTranslate-------------------
+	RAISERROR('Export MeasurementTranslate - Starts',0,0)
+	select * into dbo.MeasurementTranslate from (select * from ProductionTPE.dbo.MeasurementTranslate ) as tmp
 
 	set transaction isolation level read committed
 END

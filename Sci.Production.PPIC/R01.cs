@@ -908,7 +908,7 @@ drop table #tmpFinal_step1
                     worksheet = null;
 
                     objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); // 預先開啟excel app
-                    result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp);
+                    result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -916,7 +916,7 @@ drop table #tmpFinal_step1
                     }
 
                     this.ShowWaitMessage("Excel Processing...");
-                    worksheet = objApp.Sheets[1];
+                    worksheet = objApp.Sheets[2];
 
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
@@ -949,6 +949,7 @@ where id = '{0}'", Env.User.Factory), null);
                     }
 
                     worksheet.Columns[26].ColumnWidth = 30;
+                    worksheet.Activate();
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_PrintOut");
@@ -971,7 +972,7 @@ where id = '{0}'", Env.User.Factory), null);
                     objApp = null;
                     worksheet = null;
                     objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_SewingLineScheduleReport.xltx"); // 預先開啟excel app
-                    result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1, showExcel: false, excelApp: objApp);
+                    result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
 
                     if (!result)
                     {
@@ -979,7 +980,8 @@ where id = '{0}'", Env.User.Factory), null);
                         return false;
                     }
 
-                    worksheet = objApp.Sheets[1];
+                    worksheet = objApp.Sheets[2];
+                    worksheet.Activate();
 
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
@@ -1722,5 +1724,9 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             }
         }
 
+        private void BtnLastDownloadAPSDate_Click(object sender, EventArgs e)
+        {
+            new R01_LastAPSdownloadTime().ShowDialog();
+        }
     }
 }

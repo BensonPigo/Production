@@ -96,6 +96,7 @@
             this.labelFormE = new Sci.Win.UI.Label();
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             this.chkSQCS = new Sci.Win.UI.CheckBox();
+            this.btnCOInfo = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -112,6 +113,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCOInfo);
             this.masterpanel.Controls.Add(this.labelFormE);
             this.masterpanel.Controls.Add(this.chkSQCS);
             this.masterpanel.Controls.Add(this.ChkDoortoDoorDelivery);
@@ -248,6 +250,7 @@
             this.masterpanel.Controls.SetChildIndex(this.ChkDoortoDoorDelivery, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkSQCS, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFormE, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCOInfo, 0);
             // 
             // detailpanel
             // 
@@ -1059,6 +1062,16 @@
             this.chkSQCS.Text = "SQCS";
             this.chkSQCS.UseVisualStyleBackColor = true;
             // 
+            // btnCOInfo
+            // 
+            this.btnCOInfo.Location = new System.Drawing.Point(861, 132);
+            this.btnCOInfo.Name = "btnCOInfo";
+            this.btnCOInfo.Size = new System.Drawing.Size(134, 30);
+            this.btnCOInfo.TabIndex = 67;
+            this.btnCOInfo.Text = "C/O Information";
+            this.btnCOInfo.UseVisualStyleBackColor = true;
+            this.btnCOInfo.Click += new System.EventHandler(this.BtnCOInfo_Click);
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(1008, 662);
@@ -1171,5 +1184,6 @@
         private Win.UI.CheckBox ChkDoortoDoorDelivery;
         private Win.UI.Label labelFormE;
         private Win.UI.CheckBox chkSQCS;
+        private Win.UI.Button btnCOInfo;
     }
 }

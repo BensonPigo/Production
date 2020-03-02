@@ -2447,10 +2447,16 @@
     <Build Include="dbo\Functions\GetOrderAmount.sql" />
     <Build Include="dbo\Tables\SubprocessLeadTime_Detail.sql" />
     <Build Include="dbo\Tables\SubprocessLeadTime.sql" />
+    <Build Include="dbo\Tables\SewingOutputTransfer_Detail.sql" />
+    <Build Include="dbo\Tables\SewingOutputTransfer.sql" />
+    <Build Include="dbo\Functions\GetOrderQtyUpperlimit.sql" />
     <Build Include="dbo\Tables\ICR_ResponsibilityDept.sql" />
     <Build Include="dbo\Tables\ICR_ReplacementReport.sql" />
     <Build Include="dbo\Tables\ICR_Detail.sql" />
     <Build Include="dbo\Tables\ICR.sql" />
+    <Build Include="dbo\Tables\MtlCertificate.sql" />
+    <Build Include="dbo\Tables\MtlCertificate_Detail.sql" />
+    <Build Include="dbo\Tables\FormType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

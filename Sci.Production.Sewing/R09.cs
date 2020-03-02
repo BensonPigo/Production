@@ -85,29 +85,7 @@ from OrderChangeApplication oca with(nolock)
 Inner Join OrderChangeApplication_Detail ocad with(nolock) on ocad.ID = oca.ID
 Inner Join Orders o with(nolock) on o.ID = oca.OrderID
 Left Join Order_Qty oq with(nolock) on oq.ID = oca.ToOrderID and oq.Article = ocad.Article and oq.SizeCode = ocad.SizeCode
-outer apply(
-	select QAQty= case when o.StyleUnit = 'PCS' then(	
-			select QAQty = sum(sdd.QAQty)
-			from SewingOutput_Detail_Detail sdd 
-			where sdd.OrderId = oca.ToOrderID 
-			and sdd.Article = ocad.Article 
-			and sdd.SizeCode = ocad.SizeCode
-	)
-	else(
-		select min(QAQty)
-		from(
-			select ol.Location, QAQty = sum(sdd.QAQty)
-			from Order_Location ol with(nolock)
-			left join SewingOutput_Detail_Detail sdd with(nolock) on sdd.ComboType = ol.Location
-			where sdd.OrderId = oca.ToOrderID 
-			and sdd.Article = ocad.Article 
-			and sdd.SizeCode = ocad.SizeCode
-			and ol.OrderID = oca.ToOrderID
-			group by ol.Location
-		)byLocation
-	)
-	end
-)s
+outer apply(select QAQty= dbo.getMinCompleteSewQty(oca.ToOrderID ,ocad.Article ,ocad.SizeCode))s
 where 1=1
 and oca.Status in ('Confirmed','Closed')
 and IIF(oca.ToOrderID is null,'', oca.ToOrderID) <> ''
