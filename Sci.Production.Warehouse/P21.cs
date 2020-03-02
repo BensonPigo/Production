@@ -103,7 +103,7 @@ namespace Sci.Production.Warehouse
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Numeric("ActualQty", header: "Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Numeric("ActualQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Location", header: "Location", width: Widths.AnsiChars(12), settings: cellLocation)
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
