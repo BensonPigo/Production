@@ -35,8 +35,8 @@ namespace Sci.Production.Warehouse
 
 
             WorkAlias = "Issue";                        // PK: ID
-            GridAlias = "Issue_summary";           // PK: ID+UKey
-            SubGridAlias = "Issue_detail";          // PK: ID+Issue_SummaryUkey+FtyInventoryUkey
+            GridAlias = "Issue_Summary";           // PK: ID+UKey
+            SubGridAlias = "Issue_Detail";          // PK: ID+Issue_SummaryUkey+FtyInventoryUkey
 
             KeyField1 = "ID"; //Issue PK
             KeyField2 = "ID"; // Summary FK
@@ -459,10 +459,10 @@ order by seq
             .EditText("Desc.", header: "Desc.", width: Widths.AnsiChars(7), iseditingreadonly: true) 
             .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)  
             .Text("Accu. Issued", header: "Accu. Issued"+Environment.NewLine+"(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Numeric("SizeUnit", header: "Issue Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), settings: issueQty, iseditingreadonly: true)
-            .Numeric("SizeUnit", header: "Use Qty" + Environment.NewLine + "By Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("IssueQty", header: "Issue Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), settings: issueQty, iseditingreadonly: true)
+            .Numeric("Use Qty By Stock Unit", header: "Use Qty" + Environment.NewLine + "By Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Numeric("Use Qty", header: "Use Qty" + Environment.NewLine + "By Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("Use Qty By Use Unit", header: "Use Qty" + Environment.NewLine + "By Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Use Unit", header: "Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Stock Unit Desc.", header: "Stock Unit Desc.", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("OutputQty", header: "Output Qty" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -475,6 +475,7 @@ order by seq
             #region 可編輯欄位變色
             this.detailgrid.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["SuppColor"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["IssueQty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion 可編輯欄位變色
         }
 
@@ -789,11 +790,35 @@ where  o.id ='{CurrentMaintain["orderid"]}'
 
             // 回採購單找資料
             string sql = $@"
-SELECT  psd.SCIRefno, psd.Refno, psd.SuppColor,[POID]=psd.ID
+
+SELECT  
+  psd.SCIRefno
+, psd.Refno
+, psd.SuppColor
+, f.DescDetail
+, [@Qty]=BOT.Val
+, [AccuIssued]=0.00
+, [IssueQty]=0.00
+, [Use Qty By Stock Unit]=0.00
+, [Stock Unit]=''
+, [Use Qty By Use Unit]=0.00
+, [Use Unit]='CM'
+, [Stock Unit Desc.]=''
+, [OutputQty]=0.00
+, [Balance (Stock Unit)]= 0.00
+, [Location] = ''
+,[POID]=psd.ID 
 FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 INNER JOIN MtlType m ON m.id= f.MtlTypeID
-WHERE psd.id ='{POID}' AND m.IsThread=1 AND psd.FabricType ='A'
+OUTER APPLY(
+	SELECT Val=SUM((SeamLength * Frequency * UseRatio) + Allowance)
+	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
+	WHERE SCIRefNo = psd.SCIRefno AND SuppColor = psd.SuppColor
+)BOT
+WHERE psd.id ='{POID}' 
+AND m.IsThread=1 
+AND psd.FabricType ='A'
 and psd.SuppColor <> ''
 ORDER BY psd.SCIRefno,psd.SuppColor
 
@@ -815,6 +840,9 @@ ORDER BY psd.SCIRefno,psd.SuppColor
                 ndr["Refno"] = dr["Refno"];
                 ndr["SuppColor"] = dr["SuppColor"];
                 ndr["POID"] = dr["POID"];
+                ndr["DescDetail"] = dr["DescDetail"];
+                ndr["@Qty"] = dr["@Qty"];
+                ndr["Use Unit"] = dr["Use Unit"];
 
                 detailDt.Rows.Add(ndr);
 

@@ -32,11 +32,14 @@ namespace Sci.Production.Warehouse
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Object localPrice = dt.Compute("Sum(IssueQty)", "selected = 1");
-            if (!MyUtility.Check.Empty(localPrice) && !MyUtility.Check.Empty(dr_master["Use Qty By Stock Unit"].ToString()))
-            {
-                numRequestVariance.Value = Convert.ToDecimal(dr_master["Use Qty By Stock Unit"].ToString()) - Convert.ToDecimal(localPrice.ToString());
-            }
-            this.displayTotalQty.Value = localPrice.ToString();              
+
+            this.numIssueQty.Value = Convert.ToDecimal(dt.Compute("Sum(IssueQty)", "selected = 1"));
+
+            //if (!MyUtility.Check.Empty(localPrice) && !MyUtility.Check.Empty(dr_master["Use Qty By Stock Unit"].ToString()))
+            //{
+            //    numRequestVariance.Value = Convert.ToDecimal(dr_master["Use Qty By Stock Unit"].ToString()) - Convert.ToDecimal(localPrice.ToString());
+            //}
+            //this.displayTotalQty.Value = localPrice.ToString();              
         }
 
         protected override void OnFormLoaded()
@@ -45,8 +48,8 @@ namespace Sci.Production.Warehouse
 
             this.displayRefno.Text = dr_master["refno"].ToString();
             this.displaySPNo.Text = dr_master["poid"].ToString();
-            this.displayColorID.Text = dr_master["colorid"].ToString();
-
+            this.displayColorID.Text = dr_master["SuppColor"].ToString();
+            this.editDesc.Text = dr_master["DescDetail"].ToString();
 
             StringBuilder strSQLCmd = new StringBuilder();
             #region -- sqlcmd query -- 
