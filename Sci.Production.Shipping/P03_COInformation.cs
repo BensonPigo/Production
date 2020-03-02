@@ -62,9 +62,11 @@ select  distinct
         md.TPEEditName     ,
         md.TPEEditDate     ,
         md.FtyEditName     ,
-        md.FtyEditDate
+        md.FtyEditDate,
+        [FormName] = ft.Name
 from Export_Detail ed
 inner join MtlCertificate_Detail md on md.InvoiceNo = ed.FormXPayINV
+left join FormType ft with (nolock) on ft.ID = md.FormType
 where ed.ID = '{this.exportID}'
 
 ";
