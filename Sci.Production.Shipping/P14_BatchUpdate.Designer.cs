@@ -124,6 +124,7 @@
             // 
             // dateFtyReceive
             // 
+            this.dateFtyReceive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.dateFtyReceive.Location = new System.Drawing.Point(468, 415);
             this.dateFtyReceive.Name = "dateFtyReceive";
             this.dateFtyReceive.Size = new System.Drawing.Size(130, 23);
@@ -131,6 +132,7 @@
             // 
             // btnUpdateGridFtyRecieveDate
             // 
+            this.btnUpdateGridFtyRecieveDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateGridFtyRecieveDate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnUpdateGridFtyRecieveDate.Image = ((System.Drawing.Image)(resources.GetObject("btnUpdateGridFtyRecieveDate.Image")));
             this.btnUpdateGridFtyRecieveDate.Location = new System.Drawing.Point(603, 412);

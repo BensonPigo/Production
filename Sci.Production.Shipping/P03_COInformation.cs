@@ -45,7 +45,8 @@ namespace Sci.Production.Shipping
                 .EditText("TPERemark", header: "TPE Remark", width: Widths.AnsiChars(25), iseditingreadonly: true);
 
             string sqlGetData = $@"
-select  md.ID              ,
+select  distinct
+        md.ID              ,
         md.SuppID          ,
         md.InvoiceNo       ,
         md.FormType        ,

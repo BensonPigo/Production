@@ -283,6 +283,7 @@ order by ed.ID
         private void BtnBatchUpdate_Click(object sender, EventArgs e)
         {
             new P14_BatchUpdate().ShowDialog();
+            this.ReloadDatas();
         }
     }
 }

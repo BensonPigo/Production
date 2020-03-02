@@ -164,11 +164,26 @@ where md.TpeReceiveDate is not null  and FtyReceiveDate is null
                     {
                         sqlUpdate = $@" update MtlCertificate_Detail set   FtyEditName = '{Env.User.UserID}', 
                                                                     FtyEditDate  = getdate(),
-                                                                    FtyReceiveName = '{dr["FtyReceiveName"]}',
-                                                                    FtyReceiveDate = @FtyReceiveDate
+                                                                    FtyReceiveName = '{Env.User.UserID}',
+                                                                    FtyReceiveDate = @FtyReceiveDate,
+                                                                    FtyRemark = '{dr["FtyRemark"]}'
                                         where Ukey = {dr["Ukey"]}
 ";
                         result = DBProxy.Current.Execute(null, sqlUpdate, new List<SqlParameter>() { new SqlParameter("@FtyReceiveDate", dr["FtyReceiveDate"]) });
+                        if (!result)
+                        {
+                            transaction.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
+                    // 更新表頭LastEdit
+                    var listMtlCertificateID = listSelected.Select(s => s["ID"].ToString()).Distinct();
+                    foreach (string mtlCertificateID in listMtlCertificateID)
+                    {
+                        sqlUpdate = $@"update MtlCertificate set EditDate = getdate(),EditName = '{Env.User.UserID}'";
+                        result = DBProxy.Current.Execute(null, sqlUpdate);
                         if (!result)
                         {
                             transaction.Dispose();

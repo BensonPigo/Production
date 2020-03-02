@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lblID = new Sci.Win.UI.Label();
             this.lblConsignee = new Sci.Win.UI.Label();
             this.lblHandle = new Sci.Win.UI.Label();
@@ -81,7 +81,7 @@
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.dateETD);
             this.masterpanel.Controls.Add(this.dateETC);
-            this.masterpanel.Size = new System.Drawing.Size(938, 150);
+            this.masterpanel.Size = new System.Drawing.Size(938, 115);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETC, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETD, 0);
@@ -102,23 +102,23 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 150);
-            this.detailpanel.Size = new System.Drawing.Size(938, 244);
+            this.detailpanel.Location = new System.Drawing.Point(0, 115);
+            this.detailpanel.Size = new System.Drawing.Size(938, 212);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(893, 115);
+            this.gridicon.Location = new System.Drawing.Point(956, 80);
             this.gridicon.Visible = false;
             // 
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.refresh.Location = new System.Drawing.Point(675, 237);
+            this.refresh.Location = new System.Drawing.Point(675, 176);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(938, 244);
+            this.detailgridcont.Size = new System.Drawing.Size(938, 212);
             // 
             // detail2
             // 
@@ -134,17 +134,17 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(938, 668);
+            this.detail.Size = new System.Drawing.Size(938, 540);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(938, 394);
+            this.detailcont.Size = new System.Drawing.Size(938, 327);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.gridExport);
-            this.detailbtm.Location = new System.Drawing.Point(0, 394);
-            this.detailbtm.Size = new System.Drawing.Size(938, 274);
+            this.detailbtm.Location = new System.Drawing.Point(0, 327);
+            this.detailbtm.Size = new System.Drawing.Size(938, 213);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -160,23 +160,23 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(946, 697);
+            this.tabs.Size = new System.Drawing.Size(946, 569);
             // 
             // createby
             // 
-            this.createby.Location = new System.Drawing.Point(70, 243);
+            this.createby.Location = new System.Drawing.Point(70, 182);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(400, 243);
+            this.editby.Location = new System.Drawing.Point(400, 182);
             // 
             // lblcreateby
             // 
-            this.lblcreateby.Location = new System.Drawing.Point(5, 249);
+            this.lblcreateby.Location = new System.Drawing.Point(5, 188);
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(352, 249);
+            this.lbleditby.Location = new System.Drawing.Point(352, 188);
             // 
             // lblID
             // 
@@ -212,7 +212,7 @@
             // 
             // lblETC
             // 
-            this.lblETC.Location = new System.Drawing.Point(400, 61);
+            this.lblETC.Location = new System.Drawing.Point(400, 36);
             this.lblETC.Name = "lblETC";
             this.lblETC.Size = new System.Drawing.Size(75, 23);
             this.lblETC.TabIndex = 5;
@@ -220,7 +220,7 @@
             // 
             // lblWKID
             // 
-            this.lblWKID.Location = new System.Drawing.Point(400, 36);
+            this.lblWKID.Location = new System.Drawing.Point(400, 11);
             this.lblWKID.Name = "lblWKID";
             this.lblWKID.Size = new System.Drawing.Size(75, 23);
             this.lblWKID.TabIndex = 6;
@@ -228,7 +228,7 @@
             // 
             // lblETD
             // 
-            this.lblETD.Location = new System.Drawing.Point(400, 86);
+            this.lblETD.Location = new System.Drawing.Point(400, 61);
             this.lblETD.Name = "lblETD";
             this.lblETD.Size = new System.Drawing.Size(75, 23);
             this.lblETD.TabIndex = 7;
@@ -236,7 +236,7 @@
             // 
             // lblETA
             // 
-            this.lblETA.Location = new System.Drawing.Point(400, 111);
+            this.lblETA.Location = new System.Drawing.Point(400, 86);
             this.lblETA.Name = "lblETA";
             this.lblETA.Size = new System.Drawing.Size(75, 23);
             this.lblETA.TabIndex = 8;
@@ -287,7 +287,7 @@
             this.displayExportID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayExportID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExportID", true));
             this.displayExportID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayExportID.Location = new System.Drawing.Point(478, 36);
+            this.displayExportID.Location = new System.Drawing.Point(478, 11);
             this.displayExportID.Name = "displayExportID";
             this.displayExportID.Size = new System.Drawing.Size(146, 23);
             this.displayExportID.TabIndex = 13;
@@ -295,7 +295,7 @@
             // dateETC
             // 
             this.dateETC.IsSupportEditMode = false;
-            this.dateETC.Location = new System.Drawing.Point(478, 61);
+            this.dateETC.Location = new System.Drawing.Point(478, 36);
             this.dateETC.Name = "dateETC";
             this.dateETC.ReadOnly = true;
             this.dateETC.Size = new System.Drawing.Size(130, 23);
@@ -304,7 +304,7 @@
             // dateETD
             // 
             this.dateETD.IsSupportEditMode = false;
-            this.dateETD.Location = new System.Drawing.Point(478, 86);
+            this.dateETD.Location = new System.Drawing.Point(478, 61);
             this.dateETD.Name = "dateETD";
             this.dateETD.ReadOnly = true;
             this.dateETD.Size = new System.Drawing.Size(130, 23);
@@ -313,7 +313,7 @@
             // dateETA
             // 
             this.dateETA.IsSupportEditMode = false;
-            this.dateETA.Location = new System.Drawing.Point(478, 111);
+            this.dateETA.Location = new System.Drawing.Point(478, 86);
             this.dateETA.Name = "dateETA";
             this.dateETA.ReadOnly = true;
             this.dateETA.Size = new System.Drawing.Size(130, 23);
@@ -334,22 +334,22 @@
             this.gridExport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridExport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridExport.Location = new System.Drawing.Point(0, 6);
+            this.gridExport.Location = new System.Drawing.Point(0, 3);
             this.gridExport.Name = "gridExport";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridExport.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridExport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridExport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridExport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridExport.RowTemplate.Height = 24;
             this.gridExport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridExport.ShowCellToolTips = false;
-            this.gridExport.Size = new System.Drawing.Size(938, 231);
+            this.gridExport.Size = new System.Drawing.Size(938, 173);
             this.gridExport.TabIndex = 3;
             // 
             // btnBatchUpdate
@@ -366,7 +366,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(946, 730);
+            this.ClientSize = new System.Drawing.Size(946, 602);
             this.DefaultDetailOrder = "SuppID,InvoiceNo";
             this.DefaultFilter = "Junk = 0";
             this.DefaultOrder = "ID";
