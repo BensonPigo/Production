@@ -236,6 +236,14 @@ select SP = (select ID + ','
                         return;
                     }
                 }
+
+                // check cancel Order
+                string strCancelOrder = Production.PPIC.P01.ChkCancelOrder(item["POID"].ToString());
+                if (strCancelOrder.Empty() == false)
+                {
+                    MyUtility.Msg.WarningBox(strCancelOrder);
+                    return;
+                }
             }
 
             #region 更新Orders, Chgover資料
