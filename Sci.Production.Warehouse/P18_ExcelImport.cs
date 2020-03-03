@@ -242,7 +242,7 @@ namespace Sci.Production.Warehouse
                             stockType = "I";
                             break;
                         default:
-                            stockType = string.Empty;
+                            listNewRowErrMsg.Add("<Stock Type> can only be [Bulk] or [Inventory]", false);
                             break;
                     }
 
@@ -318,6 +318,7 @@ namespace Sci.Production.Warehouse
                         listNewRowErrMsg.Add(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Transfer In Qty can't be empty"
                             , newRow["poid"], newRow["seq1"], newRow["seq2"], newRow["roll"], newRow["dyelot"]), false);
                     }
+
 
                     // POID
                     string dataFrom = "Po_Supp_Detail";
@@ -409,10 +410,10 @@ namespace Sci.Production.Warehouse
         //Write in
         private void btnWriteIn_Click(object sender, EventArgs e)
         {
-            DataTable tmpPacking = (DataTable)listControlBindingSource2.DataSource;
+            var tmpPacking = ((DataTable)listControlBindingSource2.DataSource).AsEnumerable();
 
             //如果資料中有錯誤不能WriteIn
-            if (tmpPacking.AsEnumerable().Any(s => (bool)s["CanWriteIn"] == false))
+            if (tmpPacking.Any(s => (bool)s["CanWriteIn"] == false))
             {
                 MyUtility.Msg.WarningBox("Import data error, please check column [Error Message] information to fix Excel.");
                 return;
@@ -420,7 +421,7 @@ namespace Sci.Production.Warehouse
 
             try
             {
-                var q = from p in tmpPacking.AsEnumerable()
+                var q = from p in tmpPacking
                         group p by new
                         {
                             poid = p.Field<string>("poid"),
@@ -451,7 +452,7 @@ namespace Sci.Production.Warehouse
                     return;
                 }
 
-                foreach (DataRow dr2 in tmpPacking.Rows)
+                foreach (DataRow dr2 in tmpPacking)
                 {
                     //刪除 Import 重複的資料 by SP# Seq Carton#
                     DataRow[] checkRow = detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
