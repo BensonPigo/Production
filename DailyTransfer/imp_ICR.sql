@@ -8,12 +8,25 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 /*
-轉入 ICR,ICR_Detail,ICR_ReplacementReport,ICR_ResponsibilityDept
+轉入 ICR,ICR_Detail,ICR_ReplacementReport
 */
+
+-- 設定區間資料
+declare @DateStart date
+declare @DateEnd date
+
+IF EXISTS (Select 1 From Trade_To_Pms.dbo.DateInfo Where Name = 'ICR')
+BEGIN
+	Select
+	 @DateStart = DateStart
+	,@DateEnd   = DateEnd 
+	From Trade_To_Pms.dbo.DateInfo 
+	Where Name = 'ICR'
+END
 
 -- #tmp Trade_To_PMS ICR
 	SELECT *
-	INTO #Trade_ICR --先下條件把PO成為工廠別
+	INTO #Trade_ICR 
 	FROM  Trade_To_Pms.dbo.ICR b WITH (NOLOCK) 
 	where exists(
 		select 1 from Production.dbo.Factory
@@ -38,24 +51,13 @@ BEGIN
 		where id = b.ID
 	)
 
--- #tmp Trade_To_PMS ICR_ResponsibilityDept
-	select * 
-	into #Trade_ICR_ResponsibilityDept
-	FROM  Trade_To_Pms.dbo.ICR_ResponsibilityDept b WITH (NOLOCK) 
-	where exists(
-		select 1 from #Trade_ICR
-		where id = b.ID
-	)
-
-
--- ICR
---刪除主TABLE多的資料
+-- ICR 刪除主TABLE多的資料
 Delete Production.dbo.ICR
 from Production.dbo.ICR as a 
 left join #Trade_ICR as b
 on a.id = b.id
 where b.id is null
-
+and a.EditDate between @DateStart and @DateEnd
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET 
@@ -79,11 +81,11 @@ SET
 	a.DutyStatusUpdate= b.DutyStatusUpdate,
 	a.RMtlAmt= b.RMtlAmt,
 	a.EstFreight= b.EstFreight,
-	a.ActFreight= b.ActFreight,
+	--a.ActFreight= b.ActFreight,
 	a.OtherAmt= b.OtherAmt,
 	a.RMtlAmtUSD= ROUND(b.RMtlAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
 	a.EstFreightUSD= ROUND(b.EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
-	a.ActFreightUSD= ROUND(b.ActFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
+	--a.ActFreightUSD= ROUND(b.ActFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
 	a.OtherAmtUSD= ROUND(b.OtherAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
 	a.Exchange= b.Exchange,
 	a.IrregularPOCostID= b.IrregularPOCostID,
@@ -93,14 +95,12 @@ SET
 	a.AddName= b.AddName,
 	a.AddDate= b.AddDate,
 	a.EditName= b.EditName,
-	a.EditDate= b.EditDate,
-	a.VoucherID= b.VoucherID,
-	a.VoucherDate= b.VoucherDate
+	a.EditDate= b.EditDate
 from Production.dbo.ICR as a 
 inner join #Trade_ICR as b ON a.id=b.id
 
 
--------------------------- INSERT INTO 抓
+-------------------------- INSERT INTO 
 INSERT INTO Production.dbo.ICR
  (
 	   [Id]
@@ -124,11 +124,11 @@ INSERT INTO Production.dbo.ICR
       ,[DutyStatusUpdate]
       ,[RMtlAmt]
       ,[EstFreight]
-      ,[ActFreight]
+      --,[ActFreight]
       ,[OtherAmt]
       ,[RMtlAmtUSD]
       ,[EstFreightUSD]
-      ,[ActFreightUSD]
+      --,[ActFreightUSD]
       ,[OtherAmtUSD]
       ,[Exchange]
       ,[IrregularPOCostID]
@@ -139,8 +139,6 @@ INSERT INTO Production.dbo.ICR
       ,[AddDate]
       ,[EditName]
       ,[EditDate]
-      ,[VoucherID]
-      ,[VoucherDate]
 )
 SELECT 
 	  [Id]
@@ -164,11 +162,11 @@ SELECT
       ,[DutyStatusUpdate]
       ,[RMtlAmt]
       ,[EstFreight]
-      ,[ActFreight]
+      --,[ActFreight]
       ,[OtherAmt]
       ,ROUND(RMtlAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
 	  ,ROUND(EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
-	  ,ROUND(ActFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
+	  --,ROUND(ActFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
 	  ,ROUND(OtherAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
       ,[Exchange]
       ,[IrregularPOCostID]
@@ -179,19 +177,22 @@ SELECT
       ,[AddDate]
       ,[EditName]
       ,[EditDate]
-      ,[VoucherID]
-      ,[VoucherDate]
 from #Trade_ICR as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ICR as a WITH (NOLOCK) where a.id = b.id)
 
 
--- ICR_Detail
---刪除主TABLE多的資料
+-- ICR_Detail 刪除主TABLE多的資料
 Delete Production.dbo.ICR_Detail
 from Production.dbo.ICR_Detail as a 
 left join #Trade_ICR_Detail as b
 on a.id = b.id and a.Seq1=b.Seq1 and a.Seq2=b.Seq2
 where b.id is null
+and exists(
+	select 1 
+	from Production.dbo.ICR t
+	where t.ID = a.ID
+	and t.EditDate between @DateStart and @DateEnd
+)
 
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣
 UPDATE a
@@ -212,7 +213,7 @@ from Production.dbo.ICR_Detail as a
 inner join #Trade_ICR_Detail as b ON a.id=b.id
 and a.Seq1=b.Seq1 and a.Seq2=b.Seq2
 
--------------------------- INSERT INTO 抓
+-------------------------- INSERT INTO
 INSERT INTO Production.dbo.ICR_Detail
  (
 	 ID
@@ -245,16 +246,21 @@ from #Trade_ICR_Detail as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ICR_Detail as a WITH (NOLOCK) where a.id = b.id 
 and a.Seq1=b.Seq1 and a.Seq2=b.Seq2)
 
--- ICR_ReplacementReport
 
---刪除主TABLE多的資料
+--ICR_ReplacementReport 刪除主TABLE多的資料
 Delete Production.dbo.ICR_ReplacementReport
 from Production.dbo.ICR_ReplacementReport as a 
 left join #Trade_ICR_ReplacementReport as b
 on a.id = b.id and a.ReplacementNo=b.ReplacementNo
 where b.id is null
+and exists(
+	select 1 
+	from Production.dbo.ICR t
+	where t.ID = a.ID
+	and t.EditDate between @DateStart and @DateEnd
+)
 
--------------------------- INSERT INTO 抓
+-------------------------- INSERT INTO 
 INSERT INTO Production.dbo.ICR_ReplacementReport
  (
 	 ID
@@ -264,46 +270,12 @@ SELECT
 	 ID
 	,ReplacementNo
 from #Trade_ICR_ReplacementReport as b WITH (NOLOCK)
-where not exists(select id from Production.dbo.ICR_ReplacementReport as a WITH (NOLOCK) where a.id = b.id 
-and a.ReplacementNo=b.ReplacementNo)
-
-
--- ICR_ResponsibilityDept
-
---刪除主TABLE多的資料
-Delete Production.dbo.ICR_ResponsibilityDept
-from Production.dbo.ICR_ResponsibilityDept as a 
-left join #Trade_ICR_ResponsibilityDept as b
-on a.id = b.id and a.FactoryID = b.FactoryID and a.DepartmentID = b.DepartmentID
-where b.id is null
-
----------------------------UPDATE 主TABLE跟來源TABLE 為一樣
-UPDATE a
-SET 
-	a.Percentage= b.Percentage,
-	a.Amount= b.Amount
-from Production.dbo.ICR_ResponsibilityDept as a 
-inner join #Trade_ICR_ResponsibilityDept as b ON a.id=b.id
-and a.FactoryID = b.FactoryID and a.DepartmentID = b.DepartmentID
-
--------------------------- INSERT INTO 抓
-INSERT INTO Production.dbo.ICR_ResponsibilityDept
- (
-	 ID
-	,FactoryID
-	,DepartmentID
-	,Percentage
-	,Amount
+where not exists(
+	select id 
+	from Production.dbo.ICR_ReplacementReport as a WITH (NOLOCK) 
+	where a.id = b.id 
+	and a.ReplacementNo=b.ReplacementNo
 )
-SELECT 
-	 ID
-	,FactoryID
-	,DepartmentID
-	,Percentage
-	,Amount
-from #Trade_ICR_ResponsibilityDept as b WITH (NOLOCK)
-where not exists(select id from Production.dbo.ICR_ResponsibilityDept as a WITH (NOLOCK) where a.id = b.id 
-and a.DepartmentID = b.DepartmentID and a.FactoryID = b.FactoryID)
 
 
 END
