@@ -169,7 +169,7 @@
             this.gridArtworkType.TabIndex = 1;
             this.gridArtworkType.TabStop = false;
             this.gridArtworkType.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.GridArtworkType_RowSelecting);
-            this.gridArtworkType.SelectionChanged += new System.EventHandler(this.Grid1_SelectionChanged);
+            this.gridArtworkType.Sorted += new System.EventHandler(this.GridArtworkType_Sorted);
             // 
             // displayBrand
             // 
@@ -292,7 +292,7 @@
         private Win.UI.DisplayBox displayStyle;
         private Win.UI.Label labelBrand;
         private Win.UI.DisplayBox displayBrand;
-        private Win.UI.Grid gridArtworkType;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        public Win.UI.Grid gridArtworkType;
     }
 }

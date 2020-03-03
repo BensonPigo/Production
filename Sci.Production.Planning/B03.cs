@@ -113,7 +113,7 @@ namespace Sci.Production.Planning
         /// </summary>
         protected override void ClickSaveAfter()
         {
-            this.Filter_detailgrid();
+            this.Filter_detailgrid(this.gridArtworkType.GetSelectedRowIndex());
             base.ClickSaveAfter();
         }
 
@@ -277,38 +277,44 @@ LEFT JOIN ArtworkType B WITH (NOLOCK) ON t.ArtworkTypeID=B.ID where styleukey={0
             this.listControlBindingSource1.DataSource = null;
             this.listControlBindingSource1.DataSource = this.style_artwork;
             this.gridArtworkType.AutoResizeColumns();
+            this.GridArtworkTypeCellFormat();
         }
 
-        private void Grid1_SelectionChanged(object sender, EventArgs e)
+        private void Filter_detailgrid(int rowIndex)
         {
-            this.Filter_detailgrid();
-        }
-
-        private void Filter_detailgrid()
-        {
-            if (this.gridArtworkType.GetSelectedRowIndex() >= 0)
+            if (rowIndex >= 0)
             {
-                this.detailgridbs.Filter = "ukey=" + this.gridArtworkType.GetDataRow(this.gridArtworkType.GetSelectedRowIndex())["ukey"].ToString();
+                this.detailgridbs.Filter = "ukey=" + this.gridArtworkType.GetDataRow(rowIndex)["ukey"].ToString();
             }
+        }
+
+        private void GridArtworkTypeCellFormat()
+        {
+            foreach (DataGridViewRow item in this.gridArtworkType.Rows)
+            {
+                string unit = item.Cells["unit"].Value.ToString();
+
+                if (unit == "STITCH")
+                {
+                    item.Cells["ActStitch"].ReadOnly = false;
+                    item.Cells["ActStitch"].Style.ForeColor = System.Drawing.Color.Red;
+                }
+                else
+                {
+                    item.Cells["ActStitch"].ReadOnly = true;
+                    item.Cells["ActStitch"].Style.ForeColor = System.Drawing.Color.Black;
+                }
+            }
+        }
+
+        private void GridArtworkType_Sorted(object sender, EventArgs e)
+        {
+            this.GridArtworkTypeCellFormat();
         }
 
         private void GridArtworkType_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
         {
-            if (this.CurrentDetailData == null || !this.EditMode)
-            {
-                return;
-            }
-
-            string unit = this.gridArtworkType.Rows[e.RowIndex].Cells["unit"].Value.ToString();
-
-            if (unit == "STITCH")
-            {
-                this.gridArtworkType.Rows[e.RowIndex].Cells["ActStitch"].ReadOnly = false;
-            }
-            else
-            {
-                this.gridArtworkType.Rows[e.RowIndex].Cells["ActStitch"].ReadOnly = true;
-            }
+            this.Filter_detailgrid(e.RowIndex);
         }
     }
 }
